@@ -70,7 +70,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       email,
       password,
       options: {
-        data: { nom: metadata.nom, prenom: metadata.prenom },
+        data: { nom: metadata.nom, prenom: metadata.prenom, role: metadata.role },
         emailRedirectTo: window.location.origin,
       },
     });
