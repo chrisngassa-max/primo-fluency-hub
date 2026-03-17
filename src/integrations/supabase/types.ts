@@ -963,7 +963,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_group_formateur: { Args: { _group_id: string }; Returns: string }
+      get_session_formateur: { Args: { _session_id: string }; Returns: string }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       alerte_type:
