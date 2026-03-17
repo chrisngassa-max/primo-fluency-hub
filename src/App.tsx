@@ -13,6 +13,8 @@ import NotFound from "@/pages/NotFound";
 
 import FormateurLayout from "@/layouts/FormateurLayout";
 import FormateurDashboard from "@/pages/formateur/Dashboard";
+import SeancesPage from "@/pages/formateur/Seances";
+import SessionPilot from "@/pages/formateur/SessionPilot";
 
 import EleveLayout from "@/layouts/EleveLayout";
 import EleveDashboard from "@/pages/eleve/Dashboard";
@@ -41,9 +43,9 @@ const App = () => (
               }
             >
               <Route index element={<FormateurDashboard />} />
-              {/* Placeholder routes for future pages */}
               <Route path="groupes" element={<FormateurDashboard />} />
-              <Route path="seances" element={<FormateurDashboard />} />
+              <Route path="seances" element={<SeancesPage />} />
+              <Route path="seances/:id/pilote" element={<SessionPilot />} />
               <Route path="exercices" element={<FormateurDashboard />} />
               <Route path="monitoring" element={<FormateurDashboard />} />
               <Route path="tests" element={<FormateurDashboard />} />
