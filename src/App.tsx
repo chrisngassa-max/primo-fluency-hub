@@ -18,6 +18,8 @@ import FormateurLayout from "@/layouts/FormateurLayout";
 import FormateurDashboard from "@/pages/formateur/Dashboard";
 import SeancesPage from "@/pages/formateur/Seances";
 import SessionPilot from "@/pages/formateur/SessionPilot";
+import SessionBilan from "@/pages/formateur/SessionBilan";
+import SequenceBuilder from "@/pages/formateur/SequenceBuilder";
 
 import EleveLayout from "@/layouts/EleveLayout";
 import EleveDashboard from "@/pages/eleve/Dashboard";
@@ -52,6 +54,8 @@ const App = () => (
               <Route path="groupes" element={<FormateurDashboard />} />
               <Route path="seances" element={<SeancesPage />} />
               <Route path="seances/:id/pilote" element={<SessionPilot />} />
+              <Route path="seances/:id/bilan" element={<SessionBilan />} />
+              <Route path="sequences/new" element={<SequenceBuilder />} />
               <Route path="exercices" element={<FormateurDashboard />} />
               <Route path="monitoring" element={<FormateurDashboard />} />
               <Route path="tests" element={<FormateurDashboard />} />
