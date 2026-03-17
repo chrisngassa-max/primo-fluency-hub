@@ -14,7 +14,950 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      activity_logs: {
+        Row: {
+          action: string
+          created_at: string
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          metadata: Json | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          metadata?: Json | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          metadata?: Json | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      alertes: {
+        Row: {
+          created_at: string
+          eleve_id: string
+          formateur_id: string
+          id: string
+          is_read: boolean
+          is_resolved: boolean
+          message: string | null
+          resolved_at: string | null
+          type: Database["public"]["Enums"]["alerte_type"]
+        }
+        Insert: {
+          created_at?: string
+          eleve_id: string
+          formateur_id: string
+          id?: string
+          is_read?: boolean
+          is_resolved?: boolean
+          message?: string | null
+          resolved_at?: string | null
+          type: Database["public"]["Enums"]["alerte_type"]
+        }
+        Update: {
+          created_at?: string
+          eleve_id?: string
+          formateur_id?: string
+          id?: string
+          is_read?: boolean
+          is_resolved?: boolean
+          message?: string | null
+          resolved_at?: string | null
+          type?: Database["public"]["Enums"]["alerte_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alertes_eleve_id_fkey"
+            columns: ["eleve_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alertes_formateur_id_fkey"
+            columns: ["formateur_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      devoirs: {
+        Row: {
+          created_at: string
+          date_echeance: string
+          eleve_id: string
+          exercice_id: string
+          formateur_id: string
+          id: string
+          nb_reussites_consecutives: number
+          raison: Database["public"]["Enums"]["devoir_raison"]
+          statut: Database["public"]["Enums"]["devoir_statut"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          date_echeance?: string
+          eleve_id: string
+          exercice_id: string
+          formateur_id: string
+          id?: string
+          nb_reussites_consecutives?: number
+          raison?: Database["public"]["Enums"]["devoir_raison"]
+          statut?: Database["public"]["Enums"]["devoir_statut"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          date_echeance?: string
+          eleve_id?: string
+          exercice_id?: string
+          formateur_id?: string
+          id?: string
+          nb_reussites_consecutives?: number
+          raison?: Database["public"]["Enums"]["devoir_raison"]
+          statut?: Database["public"]["Enums"]["devoir_statut"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "devoirs_eleve_id_fkey"
+            columns: ["eleve_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "devoirs_exercice_id_fkey"
+            columns: ["exercice_id"]
+            isOneToOne: false
+            referencedRelation: "exercices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "devoirs_formateur_id_fkey"
+            columns: ["formateur_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      epreuves: {
+        Row: {
+          competence: Database["public"]["Enums"]["competence_type"]
+          created_at: string
+          description: string | null
+          id: string
+          nom: string
+          ordre: number
+        }
+        Insert: {
+          competence: Database["public"]["Enums"]["competence_type"]
+          created_at?: string
+          description?: string | null
+          id?: string
+          nom: string
+          ordre?: number
+        }
+        Update: {
+          competence?: Database["public"]["Enums"]["competence_type"]
+          created_at?: string
+          description?: string | null
+          id?: string
+          nom?: string
+          ordre?: number
+        }
+        Relationships: []
+      }
+      exercices: {
+        Row: {
+          collectif: boolean
+          competence: Database["public"]["Enums"]["competence_type"]
+          consigne: string
+          contenu: Json
+          contexte_irn: string | null
+          created_at: string
+          difficulte: number
+          eleve_id: string | null
+          format: Database["public"]["Enums"]["exercice_format"]
+          formateur_id: string
+          id: string
+          is_ai_generated: boolean
+          is_devoir: boolean
+          is_template: boolean
+          mode: Database["public"]["Enums"]["exercice_mode"]
+          niveau_vise: Database["public"]["Enums"]["niveau_cecrl"]
+          point_a_maitriser_id: string
+          sequence_id: string | null
+          sous_competence: string | null
+          titre: string
+          updated_at: string
+        }
+        Insert: {
+          collectif?: boolean
+          competence: Database["public"]["Enums"]["competence_type"]
+          consigne: string
+          contenu?: Json
+          contexte_irn?: string | null
+          created_at?: string
+          difficulte?: number
+          eleve_id?: string | null
+          format?: Database["public"]["Enums"]["exercice_format"]
+          formateur_id: string
+          id?: string
+          is_ai_generated?: boolean
+          is_devoir?: boolean
+          is_template?: boolean
+          mode?: Database["public"]["Enums"]["exercice_mode"]
+          niveau_vise?: Database["public"]["Enums"]["niveau_cecrl"]
+          point_a_maitriser_id: string
+          sequence_id?: string | null
+          sous_competence?: string | null
+          titre: string
+          updated_at?: string
+        }
+        Update: {
+          collectif?: boolean
+          competence?: Database["public"]["Enums"]["competence_type"]
+          consigne?: string
+          contenu?: Json
+          contexte_irn?: string | null
+          created_at?: string
+          difficulte?: number
+          eleve_id?: string | null
+          format?: Database["public"]["Enums"]["exercice_format"]
+          formateur_id?: string
+          id?: string
+          is_ai_generated?: boolean
+          is_devoir?: boolean
+          is_template?: boolean
+          mode?: Database["public"]["Enums"]["exercice_mode"]
+          niveau_vise?: Database["public"]["Enums"]["niveau_cecrl"]
+          point_a_maitriser_id?: string
+          sequence_id?: string | null
+          sous_competence?: string | null
+          titre?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercices_eleve_id_fkey"
+            columns: ["eleve_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercices_formateur_id_fkey"
+            columns: ["formateur_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercices_point_a_maitriser_id_fkey"
+            columns: ["point_a_maitriser_id"]
+            isOneToOne: false
+            referencedRelation: "points_a_maitriser"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercices_sequence_id_fkey"
+            columns: ["sequence_id"]
+            isOneToOne: false
+            referencedRelation: "sequences_pedagogiques"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_members: {
+        Row: {
+          eleve_id: string
+          group_id: string
+          id: string
+          joined_at: string
+        }
+        Insert: {
+          eleve_id: string
+          group_id: string
+          id?: string
+          joined_at?: string
+        }
+        Update: {
+          eleve_id?: string
+          group_id?: string
+          id?: string
+          joined_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_members_eleve_id_fkey"
+            columns: ["eleve_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "group_members_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      groups: {
+        Row: {
+          created_at: string
+          description: string | null
+          formateur_id: string
+          id: string
+          is_active: boolean
+          niveau: Database["public"]["Enums"]["niveau_cecrl"]
+          nom: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          formateur_id: string
+          id?: string
+          is_active?: boolean
+          niveau?: Database["public"]["Enums"]["niveau_cecrl"]
+          nom: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          formateur_id?: string
+          id?: string
+          is_active?: boolean
+          niveau?: Database["public"]["Enums"]["niveau_cecrl"]
+          nom?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "groups_formateur_id_fkey"
+            columns: ["formateur_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean
+          link: string | null
+          message: string
+          titre: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          link?: string | null
+          message: string
+          titre: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          link?: string | null
+          message?: string
+          titre?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      parametres: {
+        Row: {
+          alerte_absence_heures: number
+          created_at: string
+          delai_devoirs_jours: number
+          formateur_id: string
+          id: string
+          max_devoirs_actifs: number
+          nb_reussites_consecutives: number
+          seuil_acquis: number
+          seuil_consolidation: number
+          seuil_score_risque: number
+          updated_at: string
+        }
+        Insert: {
+          alerte_absence_heures?: number
+          created_at?: string
+          delai_devoirs_jours?: number
+          formateur_id: string
+          id?: string
+          max_devoirs_actifs?: number
+          nb_reussites_consecutives?: number
+          seuil_acquis?: number
+          seuil_consolidation?: number
+          seuil_score_risque?: number
+          updated_at?: string
+        }
+        Update: {
+          alerte_absence_heures?: number
+          created_at?: string
+          delai_devoirs_jours?: number
+          formateur_id?: string
+          id?: string
+          max_devoirs_actifs?: number
+          nb_reussites_consecutives?: number
+          seuil_acquis?: number
+          seuil_consolidation?: number
+          seuil_score_risque?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parametres_formateur_id_fkey"
+            columns: ["formateur_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      points_a_maitriser: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          niveau_max: Database["public"]["Enums"]["niveau_cecrl"]
+          niveau_min: Database["public"]["Enums"]["niveau_cecrl"]
+          nom: string
+          ordre: number
+          sous_section_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          niveau_max?: Database["public"]["Enums"]["niveau_cecrl"]
+          niveau_min?: Database["public"]["Enums"]["niveau_cecrl"]
+          nom: string
+          ordre?: number
+          sous_section_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          niveau_max?: Database["public"]["Enums"]["niveau_cecrl"]
+          niveau_min?: Database["public"]["Enums"]["niveau_cecrl"]
+          nom?: string
+          ordre?: number
+          sous_section_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "points_a_maitriser_sous_section_id_fkey"
+            columns: ["sous_section_id"]
+            isOneToOne: false
+            referencedRelation: "sous_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          is_active: boolean
+          last_login: string | null
+          nom: string
+          prenom: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id: string
+          is_active?: boolean
+          last_login?: string | null
+          nom?: string
+          prenom?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          is_active?: boolean
+          last_login?: string | null
+          nom?: string
+          prenom?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profils_eleves: {
+        Row: {
+          eleve_id: string
+          id: string
+          niveau_actuel: Database["public"]["Enums"]["niveau_cecrl"]
+          priorites_pedagogiques: Json
+          score_risque: number
+          taux_reussite_ce: number
+          taux_reussite_co: number
+          taux_reussite_ee: number
+          taux_reussite_eo: number
+          taux_reussite_global: number
+          taux_reussite_structures: number
+          updated_at: string
+        }
+        Insert: {
+          eleve_id: string
+          id?: string
+          niveau_actuel?: Database["public"]["Enums"]["niveau_cecrl"]
+          priorites_pedagogiques?: Json
+          score_risque?: number
+          taux_reussite_ce?: number
+          taux_reussite_co?: number
+          taux_reussite_ee?: number
+          taux_reussite_eo?: number
+          taux_reussite_global?: number
+          taux_reussite_structures?: number
+          updated_at?: string
+        }
+        Update: {
+          eleve_id?: string
+          id?: string
+          niveau_actuel?: Database["public"]["Enums"]["niveau_cecrl"]
+          priorites_pedagogiques?: Json
+          score_risque?: number
+          taux_reussite_ce?: number
+          taux_reussite_co?: number
+          taux_reussite_ee?: number
+          taux_reussite_eo?: number
+          taux_reussite_global?: number
+          taux_reussite_structures?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profils_eleves_eleve_id_fkey"
+            columns: ["eleve_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      resultats: {
+        Row: {
+          correction_detaillee: Json
+          created_at: string
+          devoir_id: string | null
+          eleve_id: string
+          exercice_id: string
+          id: string
+          reponses_eleve: Json
+          score: number
+          tentative: number
+        }
+        Insert: {
+          correction_detaillee?: Json
+          created_at?: string
+          devoir_id?: string | null
+          eleve_id: string
+          exercice_id: string
+          id?: string
+          reponses_eleve?: Json
+          score: number
+          tentative?: number
+        }
+        Update: {
+          correction_detaillee?: Json
+          created_at?: string
+          devoir_id?: string | null
+          eleve_id?: string
+          exercice_id?: string
+          id?: string
+          reponses_eleve?: Json
+          score?: number
+          tentative?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resultats_devoir_id_fkey"
+            columns: ["devoir_id"]
+            isOneToOne: false
+            referencedRelation: "devoirs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resultats_eleve_id_fkey"
+            columns: ["eleve_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resultats_exercice_id_fkey"
+            columns: ["exercice_id"]
+            isOneToOne: false
+            referencedRelation: "exercices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sequences_pedagogiques: {
+        Row: {
+          created_at: string
+          description: string | null
+          formateur_id: string
+          id: string
+          is_ai_generated: boolean
+          niveau: Database["public"]["Enums"]["niveau_cecrl"]
+          titre: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          formateur_id: string
+          id?: string
+          is_ai_generated?: boolean
+          niveau?: Database["public"]["Enums"]["niveau_cecrl"]
+          titre: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          formateur_id?: string
+          id?: string
+          is_ai_generated?: boolean
+          niveau?: Database["public"]["Enums"]["niveau_cecrl"]
+          titre?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sequences_pedagogiques_formateur_id_fkey"
+            columns: ["formateur_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      session_exercices: {
+        Row: {
+          created_at: string
+          exercice_id: string
+          id: string
+          notes: string | null
+          ordre: number
+          session_id: string
+          statut: Database["public"]["Enums"]["session_exercice_statut"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          exercice_id: string
+          id?: string
+          notes?: string | null
+          ordre?: number
+          session_id: string
+          statut?: Database["public"]["Enums"]["session_exercice_statut"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          exercice_id?: string
+          id?: string
+          notes?: string | null
+          ordre?: number
+          session_id?: string
+          statut?: Database["public"]["Enums"]["session_exercice_statut"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_exercices_exercice_id_fkey"
+            columns: ["exercice_id"]
+            isOneToOne: false
+            referencedRelation: "exercices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_exercices_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sessions: {
+        Row: {
+          created_at: string
+          date_seance: string
+          duree_minutes: number
+          group_id: string
+          id: string
+          lien_visio: string | null
+          lieu: string | null
+          niveau_cible: Database["public"]["Enums"]["niveau_cecrl"]
+          objectifs: string | null
+          statut: Database["public"]["Enums"]["session_statut"]
+          titre: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          date_seance: string
+          duree_minutes?: number
+          group_id: string
+          id?: string
+          lien_visio?: string | null
+          lieu?: string | null
+          niveau_cible?: Database["public"]["Enums"]["niveau_cecrl"]
+          objectifs?: string | null
+          statut?: Database["public"]["Enums"]["session_statut"]
+          titre: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          date_seance?: string
+          duree_minutes?: number
+          group_id?: string
+          id?: string
+          lien_visio?: string | null
+          lieu?: string | null
+          niveau_cible?: Database["public"]["Enums"]["niveau_cecrl"]
+          objectifs?: string | null
+          statut?: Database["public"]["Enums"]["session_statut"]
+          titre?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sessions_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sous_sections: {
+        Row: {
+          created_at: string
+          description: string | null
+          epreuve_id: string
+          id: string
+          nom: string
+          ordre: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          epreuve_id: string
+          id?: string
+          nom: string
+          ordre?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          epreuve_id?: string
+          id?: string
+          nom?: string
+          ordre?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sous_sections_epreuve_id_fkey"
+            columns: ["epreuve_id"]
+            isOneToOne: false
+            referencedRelation: "epreuves"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      student_competency_status: {
+        Row: {
+          competence: Database["public"]["Enums"]["competence_type"]
+          eleve_id: string
+          id: string
+          statut: Database["public"]["Enums"]["competence_statut"]
+          updated_at: string
+        }
+        Insert: {
+          competence: Database["public"]["Enums"]["competence_type"]
+          eleve_id: string
+          id?: string
+          statut?: Database["public"]["Enums"]["competence_statut"]
+          updated_at?: string
+        }
+        Update: {
+          competence?: Database["public"]["Enums"]["competence_type"]
+          eleve_id?: string
+          id?: string
+          statut?: Database["public"]["Enums"]["competence_statut"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_competency_status_eleve_id_fkey"
+            columns: ["eleve_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      test_entree_items: {
+        Row: {
+          competence: Database["public"]["Enums"]["competence_type"]
+          contenu: Json
+          created_at: string
+          format: Database["public"]["Enums"]["exercice_format"]
+          id: string
+          niveau: Database["public"]["Enums"]["niveau_cecrl"]
+          ordre: number
+        }
+        Insert: {
+          competence: Database["public"]["Enums"]["competence_type"]
+          contenu?: Json
+          created_at?: string
+          format?: Database["public"]["Enums"]["exercice_format"]
+          id?: string
+          niveau?: Database["public"]["Enums"]["niveau_cecrl"]
+          ordre?: number
+        }
+        Update: {
+          competence?: Database["public"]["Enums"]["competence_type"]
+          contenu?: Json
+          created_at?: string
+          format?: Database["public"]["Enums"]["exercice_format"]
+          id?: string
+          niveau?: Database["public"]["Enums"]["niveau_cecrl"]
+          ordre?: number
+        }
+        Relationships: []
+      }
+      tests_entree: {
+        Row: {
+          completed_at: string | null
+          derniere_question: number
+          eleve_id: string
+          en_cours: boolean
+          id: string
+          niveau_estime: Database["public"]["Enums"]["niveau_cecrl"] | null
+          recommandations: string | null
+          score_ce: number | null
+          score_co: number | null
+          score_ee: number | null
+          score_global: number | null
+          score_structures: number | null
+          started_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          derniere_question?: number
+          eleve_id: string
+          en_cours?: boolean
+          id?: string
+          niveau_estime?: Database["public"]["Enums"]["niveau_cecrl"] | null
+          recommandations?: string | null
+          score_ce?: number | null
+          score_co?: number | null
+          score_ee?: number | null
+          score_global?: number | null
+          score_structures?: number | null
+          started_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          derniere_question?: number
+          eleve_id?: string
+          en_cours?: boolean
+          id?: string
+          niveau_estime?: Database["public"]["Enums"]["niveau_cecrl"] | null
+          recommandations?: string | null
+          score_ce?: number | null
+          score_co?: number | null
+          score_ee?: number | null
+          score_global?: number | null
+          score_structures?: number | null
+          started_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tests_entree_eleve_id_fkey"
+            columns: ["eleve_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +966,37 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      alerte_type:
+        | "score_risque"
+        | "absence"
+        | "devoir_expire"
+        | "tendance_baisse"
+      app_role: "formateur" | "eleve" | "admin"
+      competence_statut:
+        | "non_evalue"
+        | "non_acquis"
+        | "consolide"
+        | "acquis_provisoire"
+      competence_type: "CO" | "CE" | "EE" | "EO" | "Structures"
+      devoir_raison: "remediation" | "consolidation"
+      devoir_statut: "en_attente" | "fait" | "expire" | "arrete"
+      exercice_format:
+        | "qcm"
+        | "vrai_faux"
+        | "appariement"
+        | "production_ecrite"
+        | "production_orale"
+        | "texte_lacunaire"
+        | "transformation"
+      exercice_mode: "papier" | "en_ligne" | "les_deux"
+      niveau_cecrl: "A1" | "A2" | "B1" | "B2" | "C1"
+      session_exercice_statut:
+        | "planifie"
+        | "traite_en_classe"
+        | "reporte"
+        | "devoir_remediation"
+        | "devoir_anticipation"
+      session_statut: "planifiee" | "en_cours" | "terminee" | "annulee"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +1123,42 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      alerte_type: [
+        "score_risque",
+        "absence",
+        "devoir_expire",
+        "tendance_baisse",
+      ],
+      app_role: ["formateur", "eleve", "admin"],
+      competence_statut: [
+        "non_evalue",
+        "non_acquis",
+        "consolide",
+        "acquis_provisoire",
+      ],
+      competence_type: ["CO", "CE", "EE", "EO", "Structures"],
+      devoir_raison: ["remediation", "consolidation"],
+      devoir_statut: ["en_attente", "fait", "expire", "arrete"],
+      exercice_format: [
+        "qcm",
+        "vrai_faux",
+        "appariement",
+        "production_ecrite",
+        "production_orale",
+        "texte_lacunaire",
+        "transformation",
+      ],
+      exercice_mode: ["papier", "en_ligne", "les_deux"],
+      niveau_cecrl: ["A1", "A2", "B1", "B2", "C1"],
+      session_exercice_statut: [
+        "planifie",
+        "traite_en_classe",
+        "reporte",
+        "devoir_remediation",
+        "devoir_anticipation",
+      ],
+      session_statut: ["planifiee", "en_cours", "terminee", "annulee"],
+    },
   },
 } as const
