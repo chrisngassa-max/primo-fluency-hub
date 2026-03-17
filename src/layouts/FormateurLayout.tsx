@@ -1,19 +1,55 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { FormateurSidebar } from "@/components/FormateurSidebar";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Menu, LogOut, GraduationCap } from "lucide-react";
+import {
+  Menu,
+  LogOut,
+  GraduationCap,
+  LayoutDashboard,
+  Users,
+  Calendar,
+  BookOpen,
+  Activity,
+  FileText,
+  Settings,
+  ClipboardList,
+} from "lucide-react";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
+
+const mainNav = [
+  { title: "Tableau de bord", url: "/formateur", icon: LayoutDashboard },
+  { title: "Groupes & Élèves", url: "/formateur/groupes", icon: Users },
+  { title: "Séances", url: "/formateur/seances", icon: Calendar },
+  { title: "Exercices", url: "/formateur/exercices", icon: BookOpen },
+];
+
+const monitorNav = [
+  { title: "Monitoring", url: "/formateur/monitoring", icon: Activity },
+  { title: "Tests d'entrée", url: "/formateur/tests", icon: ClipboardList },
+  { title: "Rapports", url: "/formateur/rapports", icon: FileText },
+];
 
 const FormateurLayout = () => {
   const { user, signOut } = useAuth();
   const isMobile = useIsMobile();
   const [sheetOpen, setSheetOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  // Tablet / mobile: hamburger menu with Sheet
+  const isActive = (path: string) =>
+    path === "/formateur" ? location.pathname === path : location.pathname.startsWith(path);
+
+  const handleNav = (url: string) => {
+    navigate(url);
+    setSheetOpen(false);
+  };
+
+  // Tablet / mobile: hamburger menu with Sheet containing simple nav links
   if (isMobile) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
@@ -25,9 +61,73 @@ const FormateurLayout = () => {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-64 p-0">
-              <SidebarProvider defaultOpen={true}>
-                <FormateurSidebar onNavigate={() => setSheetOpen(false)} />
-              </SidebarProvider>
+              <div className="flex flex-col h-full">
+                {/* Header */}
+                <div className="flex items-center gap-2 p-4 border-b">
+                  <GraduationCap className="h-7 w-7 text-primary" />
+                  <span className="font-bold text-lg text-primary tracking-tight">TCF Pro</span>
+                </div>
+
+                {/* Navigation */}
+                <nav className="flex-1 overflow-auto p-3 space-y-1">
+                  <p className="text-xs font-semibold text-muted-foreground px-3 py-2">Pédagogie</p>
+                  {mainNav.map((item) => (
+                    <button
+                      key={item.url}
+                      onClick={() => handleNav(item.url)}
+                      className={cn(
+                        "flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm transition-colors text-left",
+                        isActive(item.url)
+                          ? "bg-primary/10 text-primary font-medium"
+                          : "text-foreground hover:bg-muted"
+                      )}
+                    >
+                      <item.icon className="h-4 w-4 shrink-0" />
+                      {item.title}
+                    </button>
+                  ))}
+
+                  <p className="text-xs font-semibold text-muted-foreground px-3 py-2 mt-4">Suivi</p>
+                  {monitorNav.map((item) => (
+                    <button
+                      key={item.url}
+                      onClick={() => handleNav(item.url)}
+                      className={cn(
+                        "flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm transition-colors text-left",
+                        isActive(item.url)
+                          ? "bg-primary/10 text-primary font-medium"
+                          : "text-foreground hover:bg-muted"
+                      )}
+                    >
+                      <item.icon className="h-4 w-4 shrink-0" />
+                      {item.title}
+                    </button>
+                  ))}
+                </nav>
+
+                {/* Footer */}
+                <div className="border-t p-3 space-y-1">
+                  <button
+                    onClick={() => handleNav("/formateur/parametres")}
+                    className={cn(
+                      "flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm transition-colors text-left",
+                      isActive("/formateur/parametres")
+                        ? "bg-primary/10 text-primary font-medium"
+                        : "text-foreground hover:bg-muted"
+                    )}
+                  >
+                    <Settings className="h-4 w-4 shrink-0" />
+                    Paramètres
+                  </button>
+                  <button
+                    onClick={signOut}
+                    className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm text-muted-foreground hover:bg-muted transition-colors text-left"
+                  >
+                    <LogOut className="h-4 w-4 shrink-0" />
+                    Déconnexion
+                  </button>
+                </div>
+              </div>
             </SheetContent>
           </Sheet>
           <GraduationCap className="h-6 w-6 text-primary" />
