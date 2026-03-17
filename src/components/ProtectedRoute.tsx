@@ -24,14 +24,14 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
   }
 
   if (!session) {
-    return <Navigate to="/auth" replace />;
+    return <Navigate to="/" replace />;
   }
 
   if (requiredRole && role !== requiredRole) {
-    // Redirect to correct dashboard based on role
     if (role === "formateur") return <Navigate to="/formateur" replace />;
     if (role === "eleve") return <Navigate to="/eleve" replace />;
-    return <Navigate to="/auth" replace />;
+    if (role === "admin") return <Navigate to="/admin" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return <>{children}</>;
