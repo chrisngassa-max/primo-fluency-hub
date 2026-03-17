@@ -31,7 +31,7 @@ const EleveLayout = () => {
       {/* Top bar */}
       <header className="h-14 flex items-center gap-3 border-b bg-card px-4 shrink-0">
         <GraduationCap className="h-6 w-6 text-primary" />
-        <span className="font-bold text-lg text-primary tracking-tight">TCF IRN</span>
+        <span className="font-bold text-lg text-primary tracking-tight">TCF Pro</span>
         <div className="ml-auto flex items-center gap-3">
           <span className="text-sm text-muted-foreground hidden sm:inline">
             {user?.user_metadata?.prenom} {user?.user_metadata?.nom}

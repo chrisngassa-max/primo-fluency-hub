@@ -58,7 +58,7 @@ export function FormateurSidebar() {
           <GraduationCap className="h-7 w-7 text-sidebar-primary" />
           {!collapsed && (
             <span className="font-bold text-lg text-sidebar-primary tracking-tight">
-              TCF IRN
+              TCF Pro
             </span>
           )}
         </div>

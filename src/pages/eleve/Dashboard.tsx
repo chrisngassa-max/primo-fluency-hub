@@ -13,7 +13,7 @@ const EleveDashboard = () => {
         <h1 className="text-2xl font-bold text-foreground">
           Bienvenue, {user?.user_metadata?.prenom || "Élève"} 👋
         </h1>
-        <p className="text-muted-foreground mt-1">Votre espace de préparation au TCF IRN.</p>
+        <p className="text-muted-foreground mt-1">Votre espace de préparation au TCF Pro.</p>
       </div>
 
       {/* Global progress */}
