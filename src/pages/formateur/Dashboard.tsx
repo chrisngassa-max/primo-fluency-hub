@@ -1,8 +1,10 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Users, GraduationCap, Calendar, AlertTriangle } from "lucide-react";
+import SkillTree from "@/components/SkillTree";
 
 const kpis = [
   { label: "Groupes actifs", value: "0", icon: Users, color: "text-primary" },
@@ -42,21 +44,38 @@ const FormateurDashboard = () => {
         ))}
       </div>
 
-      {/* Recent sessions placeholder */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Séances récentes</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <Calendar className="h-12 w-12 text-muted-foreground/40 mb-3" />
-            <p className="text-muted-foreground font-medium">Aucune séance planifiée</p>
-            <p className="text-sm text-muted-foreground/70 mt-1">
-              Commencez par créer un groupe, puis planifiez votre première séance.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Tabs: Séances / Skill Tree */}
+      <Tabs defaultValue="seances">
+        <TabsList>
+          <TabsTrigger value="seances">Séances récentes</TabsTrigger>
+          <TabsTrigger value="skilltree">Progression détaillée</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="seances">
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <Calendar className="h-12 w-12 text-muted-foreground/40 mb-3" />
+                <p className="text-muted-foreground font-medium">Aucune séance planifiée</p>
+                <p className="text-sm text-muted-foreground/70 mt-1">
+                  Commencez par créer un groupe, puis planifiez votre première séance.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="skilltree">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Arborescence TCF — Skill Tree</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <SkillTree />
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
