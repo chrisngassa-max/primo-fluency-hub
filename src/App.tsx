@@ -1,26 +1,76 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import Index from "./pages/Index.tsx";
-import NotFound from "./pages/NotFound.tsx";
+import { AuthProvider } from "@/contexts/AuthContext";
+import ProtectedRoute from "@/components/ProtectedRoute";
+
+import Index from "@/pages/Index";
+import Auth from "@/pages/Auth";
+import ResetPassword from "@/pages/ResetPassword";
+import NotFound from "@/pages/NotFound";
+
+import FormateurLayout from "@/layouts/FormateurLayout";
+import FormateurDashboard from "@/pages/formateur/Dashboard";
+
+import EleveLayout from "@/layouts/EleveLayout";
+import EleveDashboard from "@/pages/eleve/Dashboard";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <HashRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+
+            {/* Formateur routes */}
+            <Route
+              path="/formateur"
+              element={
+                <ProtectedRoute requiredRole="formateur">
+                  <FormateurLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<FormateurDashboard />} />
+              {/* Placeholder routes for future pages */}
+              <Route path="groupes" element={<FormateurDashboard />} />
+              <Route path="seances" element={<FormateurDashboard />} />
+              <Route path="exercices" element={<FormateurDashboard />} />
+              <Route path="monitoring" element={<FormateurDashboard />} />
+              <Route path="tests" element={<FormateurDashboard />} />
+              <Route path="rapports" element={<FormateurDashboard />} />
+              <Route path="parametres" element={<FormateurDashboard />} />
+            </Route>
+
+            {/* Élève routes */}
+            <Route
+              path="/eleve"
+              element={
+                <ProtectedRoute requiredRole="eleve">
+                  <EleveLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<EleveDashboard />} />
+              <Route path="test" element={<EleveDashboard />} />
+              <Route path="devoirs" element={<EleveDashboard />} />
+              <Route path="progression" element={<EleveDashboard />} />
+            </Route>
+
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </HashRouter>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 
