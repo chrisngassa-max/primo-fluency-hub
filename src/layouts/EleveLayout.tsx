@@ -2,7 +2,6 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   LayoutDashboard,
-  ClipboardList,
   BookOpen,
   TrendingUp,
   LogOut,
@@ -13,9 +12,8 @@ import { Button } from "@/components/ui/button";
 
 const navItems = [
   { title: "Accueil", path: "/eleve", icon: LayoutDashboard },
-  { title: "Test", path: "/eleve/test", icon: ClipboardList },
-  { title: "Devoirs", path: "/eleve/devoirs", icon: BookOpen },
-  { title: "Progrès", path: "/eleve/progression", icon: TrendingUp },
+  { title: "Exercices", path: "/eleve/devoirs", icon: BookOpen },
+  { title: "Profil", path: "/eleve/progression", icon: TrendingUp },
 ];
 
 const EleveLayout = () => {
@@ -42,55 +40,29 @@ const EleveLayout = () => {
         </div>
       </header>
 
-      {/* Content */}
-      <main className="flex-1 overflow-auto p-4 md:p-6 pb-20 md:pb-6">
+      {/* Content — always full width, bottom padding for nav */}
+      <main className="flex-1 overflow-auto p-4 md:p-6 pb-24">
         <Outlet />
       </main>
 
-      {/* Bottom navigation - mobile */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 bg-card border-t flex justify-around py-2 z-50">
+      {/* Bottom navigation — ALWAYS visible (no sidebar ever) */}
+      <nav className="fixed bottom-0 inset-x-0 bg-card shadow-[0_-2px_10px_rgba(0,0,0,0.08)] flex justify-around py-2 z-50">
         {navItems.map((item) => (
           <button
             key={item.path}
             onClick={() => navigate(item.path)}
             className={cn(
-              "flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg text-xs transition-colors min-w-[60px]",
+              "flex flex-col items-center gap-1 px-4 py-1.5 rounded-lg transition-colors min-w-[72px]",
               isActive(item.path)
                 ? "text-primary font-semibold"
                 : "text-muted-foreground"
             )}
           >
-            <item.icon className={cn("h-5 w-5", isActive(item.path) && "text-primary")} />
-            {item.title}
+            <item.icon className={cn("h-6 w-6", isActive(item.path) && "text-primary")} />
+            <span className="text-xs">{item.title}</span>
           </button>
         ))}
       </nav>
-
-      {/* Side navigation - desktop */}
-      <nav className="hidden md:flex fixed left-0 top-14 bottom-0 w-56 bg-card border-r flex-col p-3 gap-1 z-40">
-        {navItems.map((item) => (
-          <button
-            key={item.path}
-            onClick={() => navigate(item.path)}
-            className={cn(
-              "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors text-left",
-              isActive(item.path)
-                ? "bg-primary/10 text-primary font-medium"
-                : "text-muted-foreground hover:bg-muted"
-            )}
-          >
-            <item.icon className="h-4 w-4 shrink-0" />
-            {item.title}
-          </button>
-        ))}
-      </nav>
-
-      {/* Desktop content offset */}
-      <style>{`
-        @media (min-width: 768px) {
-          main { margin-left: 14rem; }
-        }
-      `}</style>
     </div>
   );
 };
