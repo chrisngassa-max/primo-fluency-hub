@@ -7,9 +7,12 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
 import Index from "@/pages/Index";
-import Auth from "@/pages/Auth";
 import ResetPassword from "@/pages/ResetPassword";
 import NotFound from "@/pages/NotFound";
+
+import LoginEleve from "@/pages/auth/LoginEleve";
+import LoginFormateur from "@/pages/auth/LoginFormateur";
+import LoginAdmin from "@/pages/auth/LoginAdmin";
 
 import FormateurLayout from "@/layouts/FormateurLayout";
 import FormateurDashboard from "@/pages/formateur/Dashboard";
@@ -29,8 +32,11 @@ const App = () => (
         <Sonner />
         <HashRouter>
           <Routes>
+            {/* Public */}
             <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
+            <Route path="/eleve/login" element={<LoginEleve />} />
+            <Route path="/formateur/login" element={<LoginFormateur />} />
+            <Route path="/admin/login" element={<LoginAdmin />} />
             <Route path="/reset-password" element={<ResetPassword />} />
 
             {/* Formateur routes */}
