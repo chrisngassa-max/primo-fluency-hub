@@ -41,8 +41,12 @@ const monitorNav = [
   { title: "Rapports", url: "/formateur/rapports", icon: FileText },
 ];
 
-export function FormateurSidebar() {
-  const { signOut, user } = useAuth();
+interface FormateurSidebarProps {
+  onNavigate?: () => void;
+}
+
+export function FormateurSidebar({ onNavigate }: FormateurSidebarProps) {
+  const { signOut } = useAuth();
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
@@ -71,15 +75,13 @@ export function FormateurSidebar() {
             <SidebarMenu>
               {mainNav.map((item) => (
                 <SidebarMenuItem key={item.url}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isActive(item.url)}
-                  >
+                  <SidebarMenuButton asChild isActive={isActive(item.url)}>
                     <NavLink
                       to={item.url}
                       end={item.url === "/formateur"}
                       className="hover:bg-sidebar-accent/60"
                       activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                      onClick={onNavigate}
                     >
                       <item.icon className="mr-2 h-4 w-4 shrink-0" />
                       {!collapsed && <span>{item.title}</span>}
@@ -97,14 +99,12 @@ export function FormateurSidebar() {
             <SidebarMenu>
               {monitorNav.map((item) => (
                 <SidebarMenuItem key={item.url}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isActive(item.url)}
-                  >
+                  <SidebarMenuButton asChild isActive={isActive(item.url)}>
                     <NavLink
                       to={item.url}
                       className="hover:bg-sidebar-accent/60"
                       activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                      onClick={onNavigate}
                     >
                       <item.icon className="mr-2 h-4 w-4 shrink-0" />
                       {!collapsed && <span>{item.title}</span>}
@@ -125,6 +125,7 @@ export function FormateurSidebar() {
                 to="/formateur/parametres"
                 className="hover:bg-sidebar-accent/60"
                 activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                onClick={onNavigate}
               >
                 <Settings className="mr-2 h-4 w-4 shrink-0" />
                 {!collapsed && <span>Paramètres</span>}
