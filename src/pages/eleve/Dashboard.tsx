@@ -1,11 +1,30 @@
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, ClipboardList, TrendingUp } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { BookOpen, ClipboardList, TrendingUp, AlertCircle } from "lucide-react";
 
 const EleveDashboard = () => {
   const { user } = useAuth();
+
+  // Fetch active devoirs for current student
+  const { data: devoirs, isLoading: devoirsLoading } = useQuery({
+    queryKey: ["eleve-devoirs", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("devoirs")
+        .select("*, exercice:exercices(titre, competence, consigne, format)")
+        .eq("eleve_id", user!.id)
+        .eq("statut", "en_attente")
+        .order("date_echeance", { ascending: true });
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: !!user?.id,
+  });
 
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
@@ -38,22 +57,70 @@ const EleveDashboard = () => {
         </CardContent>
       </Card>
 
-      {/* Pending assignments */}
+      {/* Mes devoirs du jour */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <BookOpen className="h-5 w-5 text-accent" />
-            Devoirs en attente
+            Mes devoirs du jour
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col items-center justify-center py-8 text-center">
-            <BookOpen className="h-10 w-10 text-muted-foreground/40 mb-3" />
-            <p className="text-muted-foreground font-medium">Aucun devoir en attente</p>
-            <p className="text-sm text-muted-foreground/70 mt-1">
-              Les devoirs apparaîtront ici après vos premières séances.
-            </p>
-          </div>
+          {devoirsLoading ? (
+            <div className="space-y-3">
+              <Skeleton className="h-16 w-full" />
+              <Skeleton className="h-16 w-full" />
+            </div>
+          ) : devoirs && devoirs.length > 0 ? (
+            <div className="space-y-3">
+              {devoirs.map((d) => {
+                const ex = d.exercice as any;
+                const isUrgent = d.raison === "remediation";
+                const daysLeft = Math.max(0, Math.ceil((new Date(d.date_echeance).getTime() - Date.now()) / 86400000));
+                return (
+                  <div
+                    key={d.id}
+                    className="flex items-start gap-3 p-4 rounded-xl border bg-card hover:bg-muted/30 transition-colors cursor-pointer"
+                  >
+                    <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-primary/10 shrink-0">
+                      <BookOpen className="h-6 w-6 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0 space-y-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-semibold text-sm">{ex?.titre || "Exercice"}</span>
+                        {isUrgent && (
+                          <Badge variant="destructive" className="text-[10px] gap-1">
+                            <AlertCircle className="h-3 w-3" />
+                            Remédiation
+                          </Badge>
+                        )}
+                        {!isUrgent && (
+                          <Badge variant="secondary" className="text-[10px] border-orange-500/30 text-orange-600">
+                            Consolidation
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="text-xs text-muted-foreground truncate">{ex?.consigne}</p>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className="text-[10px]">{ex?.competence}</Badge>
+                        <span className="text-[10px] text-muted-foreground">
+                          {daysLeft === 0 ? "Aujourd'hui !" : `${daysLeft} jour(s) restant(s)`}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-8 text-center">
+              <BookOpen className="h-10 w-10 text-muted-foreground/40 mb-3" />
+              <p className="text-muted-foreground font-medium">Aucun devoir en attente</p>
+              <p className="text-sm text-muted-foreground/70 mt-1">
+                Les devoirs apparaîtront ici après vos séances.
+              </p>
+            </div>
+          )}
         </CardContent>
       </Card>
 
