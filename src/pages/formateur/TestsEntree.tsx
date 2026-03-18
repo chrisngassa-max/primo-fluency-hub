@@ -1,30 +1,101 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer,
 } from "recharts";
-import { Sparkles, Volume2, ChevronLeft, ChevronRight, CheckCircle2, Users, Clock, AlertTriangle } from "lucide-react";
+import { Sparkles, Volume2, ChevronLeft, ChevronRight, CheckCircle2, Users, Clock, AlertTriangle, Save, BarChart3 } from "lucide-react";
 import { TCF_QUESTIONS, SECTIONS_META, EXAM_DURATION_SECONDS } from "@/data/tcfQuestions";
 
-/* ───────── Types ───────── */
-type Scores = { CO: number; CE: number; EO: number; EE: number };
-const COMP_LABELS: Record<keyof Scores, string> = {
+/* ───────── Sub-items definition ───────── */
+const DIAGNOSTIC_SOUS_ITEMS: Record<string, string[]> = {
+  CO: [
+    "Nombres et chiffres",
+    "Consignes simples",
+    "Salutations et présentations",
+    "Indications de lieu",
+    "Horaires et rendez-vous",
+    "Conversations téléphoniques simples",
+  ],
+  CE: [
+    "Alphabet et épellation",
+    "Panneaux et signalétique",
+    "Étiquettes de prix",
+    "Formulaires administratifs",
+    "Messages courts (SMS, email)",
+    "Documents officiels simples",
+  ],
+  EO: [
+    "Se présenter",
+    "Demander un renseignement",
+    "Exprimer un besoin",
+    "Décrire une situation",
+    "Interaction au guichet",
+  ],
+  EE: [
+    "Écrire son identité",
+    "Remplir un formulaire",
+    "Rédiger un message court",
+    "Décrire son logement",
+    "Écrire une demande simple",
+  ],
+  Structures: [
+    "Articles définis / indéfinis",
+    "Pluriel des noms",
+    "Conjugaison présent (être/avoir)",
+    "Négation simple",
+    "Prépositions de lieu",
+    "Pronoms personnels sujets",
+  ],
+};
+
+const COMPETENCES = ["CO", "CE", "EO", "EE", "Structures"] as const;
+const COMP_LABELS: Record<string, string> = {
   CO: "Compréhension Orale",
   CE: "Compréhension Écrite",
   EO: "Expression Orale",
   EE: "Expression Écrite",
+  Structures: "Structures",
 };
-const COMP_KEYS = Object.keys(COMP_LABELS) as (keyof Scores)[];
+const COMP_COLORS: Record<string, string> = {
+  CO: "hsl(var(--primary))",
+  CE: "hsl(210, 70%, 50%)",
+  EO: "hsl(150, 60%, 45%)",
+  EE: "hsl(30, 80%, 50%)",
+  Structures: "hsl(280, 60%, 55%)",
+};
+
+type SubItemScores = Record<string, Record<string, number>>;
+
+function getScoreColor(score: number) {
+  if (score <= 30) return "bg-red-500";
+  if (score <= 70) return "bg-amber-500";
+  return "bg-emerald-500";
+}
+function getScoreTextColor(score: number) {
+  if (score <= 30) return "text-red-600 dark:text-red-400";
+  if (score <= 70) return "text-amber-600 dark:text-amber-400";
+  return "text-emerald-600 dark:text-emerald-400";
+}
+function getScoreBgColor(score: number) {
+  if (score <= 30) return "bg-red-100 dark:bg-red-900/30";
+  if (score <= 70) return "bg-amber-100 dark:bg-amber-900/30";
+  return "bg-emerald-100 dark:bg-emerald-900/30";
+}
+
+function scoreToDifficulty(score: number): number {
+  return Math.round(score / 10);
+}
 
 /* ───────── TTS helper ───────── */
 function speak(text: string) {
@@ -49,21 +120,32 @@ function formatTime(seconds: number) {
   return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }
 
-/* ───────── Formateur Evaluation Section ───────── */
-function EvaluationFormateur() {
-  const [scores, setScores] = useState<Scores>({ CO: 50, CE: 50, EO: 50, EE: 50 });
+/* ═══════════════════════════════════════════════════════════════
+   DIAGNOSTIC PAR SOUS-ITEMS (Action 1-4)
+   ═══════════════════════════════════════════════════════════════ */
+function DiagnosticSousItems() {
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+  const [selectedEleve, setSelectedEleve] = useState<string>("");
+  const [scores, setScores] = useState<SubItemScores>(() => {
+    const init: SubItemScores = {};
+    for (const comp of COMPETENCES) {
+      init[comp] = {};
+      for (const item of DIAGNOSTIC_SOUS_ITEMS[comp]) {
+        init[comp][item] = 0;
+      }
+    }
+    return init;
+  });
   const [analysis, setAnalysis] = useState<string | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
-  const [selectedEleve, setSelectedEleve] = useState<string>("");
-  const { user } = useAuth();
+  const [saving, setSaving] = useState(false);
 
+  // Load students
   const { data: eleves, isLoading: loadingEleves } = useQuery({
     queryKey: ["formateur-eleves", user?.id],
     queryFn: async () => {
-      const { data: groups } = await supabase
-        .from("groups")
-        .select("id")
-        .eq("formateur_id", user!.id);
+      const { data: groups } = await supabase.from("groups").select("id").eq("formateur_id", user!.id);
       if (!groups?.length) return [];
       const { data: members } = await supabase
         .from("group_members")
@@ -72,33 +154,136 @@ function EvaluationFormateur() {
       if (!members) return [];
       const unique = new Map<string, { id: string; prenom: string; nom: string }>();
       members.forEach((m: any) => {
-        if (m.profiles && !unique.has(m.profiles.id)) {
-          unique.set(m.profiles.id, m.profiles);
-        }
+        if (m.profiles && !unique.has(m.profiles.id)) unique.set(m.profiles.id, m.profiles);
       });
       return Array.from(unique.values());
     },
     enabled: !!user,
   });
 
+  // Load existing diagnostic for selected student
+  const { data: existingDiag } = useQuery({
+    queryKey: ["diagnostic-entree", selectedEleve],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("diagnostic_entree" as any)
+        .select("*")
+        .eq("eleve_id", selectedEleve);
+      if (error) throw error;
+      return data as any[];
+    },
+    enabled: !!selectedEleve,
+  });
+
+  // Populate scores from existing data
+  useEffect(() => {
+    if (!existingDiag) return;
+    const newScores: SubItemScores = {};
+    for (const comp of COMPETENCES) {
+      newScores[comp] = {};
+      for (const item of DIAGNOSTIC_SOUS_ITEMS[comp]) {
+        const found = existingDiag.find((d: any) => d.competence === comp && d.sous_item === item);
+        newScores[comp][item] = found ? Number(found.score) : 0;
+      }
+    }
+    setScores(newScores);
+    setAnalysis(null);
+  }, [existingDiag]);
+
+  // Compute averages
+  const compAverages = useMemo(() => {
+    const avgs: Record<string, number> = {};
+    for (const comp of COMPETENCES) {
+      const items = DIAGNOSTIC_SOUS_ITEMS[comp];
+      const sum = items.reduce((s, item) => s + (scores[comp]?.[item] ?? 0), 0);
+      avgs[comp] = Math.round(sum / items.length);
+    }
+    return avgs;
+  }, [scores]);
+
+  const globalAvg = useMemo(() => {
+    const vals = Object.values(compAverages);
+    return Math.round(vals.reduce((s, v) => s + v, 0) / vals.length);
+  }, [compAverages]);
+
   const radarData = useMemo(
-    () => COMP_KEYS.map((k) => ({ competence: k, score: scores[k], fullMark: 100 })),
-    [scores],
+    () => COMPETENCES.map((c) => ({ competence: c, score: compAverages[c], fullMark: 100 })),
+    [compAverages],
   );
 
-  const moyenne = Math.round(COMP_KEYS.reduce((s, k) => s + scores[k], 0) / 4);
+  const niveauEstime = globalAvg >= 80 ? "B1" : globalAvg >= 60 ? "A2" : globalAvg >= 30 ? "A1" : "A0";
 
+  // Save scores
+  const handleSave = async () => {
+    if (!selectedEleve || !user) return;
+    setSaving(true);
+    try {
+      const rows: any[] = [];
+      for (const comp of COMPETENCES) {
+        for (const item of DIAGNOSTIC_SOUS_ITEMS[comp]) {
+          rows.push({
+            eleve_id: selectedEleve,
+            competence: comp,
+            sous_item: item,
+            score: scores[comp][item],
+            formateur_id: user.id,
+            updated_at: new Date().toISOString(),
+          });
+        }
+      }
+      // Upsert all rows
+      const { error } = await supabase.from("diagnostic_entree" as any).upsert(rows, {
+        onConflict: "eleve_id,competence,sous_item",
+      });
+      if (error) throw error;
+      queryClient.invalidateQueries({ queryKey: ["diagnostic-entree", selectedEleve] });
+      toast.success("Diagnostic sauvegardé avec succès");
+    } catch (e: any) {
+      toast.error(e.message || "Erreur lors de la sauvegarde");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // AI Analysis
   const handleAnalyze = async () => {
+    if (!selectedEleve) {
+      toast.error("Sélectionnez un élève d'abord");
+      return;
+    }
     setAnalyzing(true);
     setAnalysis(null);
     try {
       const eleveObj = eleves?.find((e) => e.id === selectedEleve);
+      const detailScores: Record<string, any> = {};
+      for (const comp of COMPETENCES) {
+        detailScores[comp] = {
+          moyenne: compAverages[comp],
+          niveau_difficulte: scoreToDifficulty(compAverages[comp]),
+          sous_items: Object.entries(scores[comp]).map(([item, score]) => ({
+            item,
+            score,
+            niveau_difficulte: scoreToDifficulty(score),
+          })),
+        };
+      }
       const { data, error } = await supabase.functions.invoke("analyze-test-entree", {
-        body: { scores, eleveNom: eleveObj ? `${eleveObj.prenom} ${eleveObj.nom}` : null },
+        body: {
+          scores: {
+            CO: compAverages.CO,
+            CE: compAverages.CE,
+            EO: compAverages.EO,
+            EE: compAverages.EE,
+          },
+          eleveNom: eleveObj ? `${eleveObj.prenom} ${eleveObj.nom}` : null,
+          detailScores,
+          globalAvg,
+          niveauEstime,
+        },
       });
       if (error) throw error;
       setAnalysis(data.analysis);
-      toast.success("Analyse générée avec succès");
+      toast.success("Diagnostic IA généré avec succès");
     } catch (e: any) {
       toast.error(e.message || "Erreur lors de l'analyse");
     } finally {
@@ -106,10 +291,9 @@ function EvaluationFormateur() {
     }
   };
 
-  const niveauEstime = moyenne >= 80 ? "B1" : moyenne >= 60 ? "A2" : moyenne >= 30 ? "A1" : "A0";
-
   return (
     <div className="space-y-6">
+      {/* Header: student selector + summary badges */}
       <Card>
         <CardContent className="pt-6">
           <div className="flex items-center gap-4 flex-wrap">
@@ -136,51 +320,137 @@ function EvaluationFormateur() {
               Niveau estimé : <span className="font-bold ml-1">{niveauEstime}</span>
             </Badge>
             <Badge variant="secondary" className="text-base px-3 py-1">
-              Moyenne : {moyenne}/100
+              Moyenne : <span className={`font-bold ml-1 ${getScoreTextColor(globalAvg)}`}>{globalAvg}/100</span>
+            </Badge>
+            <Badge variant="secondary" className="text-base px-3 py-1">
+              Difficulté suggérée : <span className="font-bold ml-1">{scoreToDifficulty(globalAvg)}/10</span>
             </Badge>
           </div>
         </CardContent>
       </Card>
 
+      {/* Radar Chart */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
-          <CardHeader><CardTitle className="text-lg">Évaluation par compétence</CardTitle></CardHeader>
-          <CardContent className="space-y-6">
-            {COMP_KEYS.map((key) => (
-              <div key={key} className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium">{COMP_LABELS[key]}</label>
-                  <span className="text-sm font-bold tabular-nums w-12 text-right">{scores[key]}</span>
-                </div>
-                <Slider value={[scores[key]]} onValueChange={([v]) => setScores((p) => ({ ...p, [key]: v }))} max={100} step={1} className="w-full" />
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader><CardTitle className="text-lg">Profil de compétences</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <BarChart3 className="h-5 w-5" /> Profil Radar — 5 compétences
+            </CardTitle>
+          </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={320}>
               <RadarChart data={radarData}>
                 <PolarGrid />
-                <PolarAngleAxis dataKey="competence" tick={{ fontSize: 14 }} />
+                <PolarAngleAxis dataKey="competence" tick={{ fontSize: 13 }} />
                 <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 11 }} />
                 <Radar name="Score" dataKey="score" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.25} strokeWidth={2} />
               </RadarChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
+
+        {/* Summary per competence */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Synthèse par compétence</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {COMPETENCES.map((comp) => {
+              const avg = compAverages[comp];
+              return (
+                <div key={comp} className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">{COMP_LABELS[comp]}</span>
+                    <div className="flex items-center gap-2">
+                      <span className={`text-sm font-bold ${getScoreTextColor(avg)}`}>{avg}/100</span>
+                      <Badge variant="outline" className="text-xs">
+                        Niv. {scoreToDifficulty(avg)}
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="h-3 rounded-full bg-muted overflow-hidden">
+                    <div className={`h-full rounded-full transition-all ${getScoreColor(avg)}`} style={{ width: `${avg}%` }} />
+                  </div>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
       </div>
 
-      <Card>
-        <CardContent className="pt-6">
-          <Button onClick={handleAnalyze} disabled={analyzing} className="w-full sm:w-auto gap-2">
-            <Sparkles className="h-4 w-4" />
-            {analyzing ? "Analyse en cours…" : "Générer l'analyse IA"}
-          </Button>
-          {analysis && (
-            <div className="mt-6 prose prose-sm max-w-none bg-muted/50 rounded-lg p-6 border">
+      {/* Detailed sub-items per competence */}
+      {COMPETENCES.map((comp) => (
+        <Card key={comp}>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center justify-between">
+              <span>{COMP_LABELS[comp]} — Sous-items</span>
+              <Badge variant="outline">
+                Moyenne : {compAverages[comp]}/100 → Niv. {scoreToDifficulty(compAverages[comp])}
+              </Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            {DIAGNOSTIC_SOUS_ITEMS[comp].map((item) => {
+              const val = scores[comp]?.[item] ?? 0;
+              return (
+                <div key={item} className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium">{item}</label>
+                    <div className="flex items-center gap-3">
+                      <span className={`text-sm font-bold tabular-nums ${getScoreTextColor(val)}`}>
+                        {val}/100
+                      </span>
+                      <span className="text-xs text-muted-foreground">→ Niv. {scoreToDifficulty(val)}</span>
+                    </div>
+                  </div>
+                  <Slider
+                    value={[val]}
+                    onValueChange={([v]) =>
+                      setScores((prev) => ({
+                        ...prev,
+                        [comp]: { ...prev[comp], [item]: v },
+                      }))
+                    }
+                    max={100}
+                    step={1}
+                    className="w-full"
+                  />
+                  {/* Color bar preview */}
+                  <div className="h-2 rounded-full bg-muted overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all ${getScoreColor(val)}`}
+                      style={{ width: `${val}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+      ))}
+
+      {/* Action buttons */}
+      <div className="flex flex-wrap gap-3">
+        <Button onClick={handleSave} disabled={saving || !selectedEleve} variant="outline" className="gap-2">
+          <Save className="h-4 w-4" />
+          {saving ? "Sauvegarde…" : "Sauvegarder le diagnostic"}
+        </Button>
+        <Button onClick={handleAnalyze} disabled={analyzing || !selectedEleve} className="gap-2">
+          <Sparkles className="h-4 w-4" />
+          {analyzing ? "Analyse en cours…" : "Générer Diagnostic de Départ"}
+        </Button>
+      </div>
+
+      {/* AI Analysis result */}
+      {analysis && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-primary" /> Diagnostic IA de Départ
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="prose prose-sm max-w-none bg-muted/50 rounded-lg p-6 border">
               {analysis.split("\n").map((line, i) => {
                 if (line.startsWith("###")) return <h4 key={i} className="text-base font-semibold mt-4 mb-1">{line.replace(/^###\s*/, "")}</h4>;
                 if (line.startsWith("##")) return <h3 key={i} className="text-lg font-bold mt-4 mb-1">{line.replace(/^##\s*/, "")}</h3>;
@@ -190,14 +460,16 @@ function EvaluationFormateur() {
                 return <p key={i} className="text-sm leading-relaxed">{line}</p>;
               })}
             </div>
-          )}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
 
-/* ───────── Student Test Section (TCF Official — 80 questions, 90 min) ───────── */
+/* ═══════════════════════════════════════════════════════════════
+   PASSATION TEST (preserved from original)
+   ═══════════════════════════════════════════════════════════════ */
 function PassationTest() {
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState<(number | null)[]>(Array(TCF_QUESTIONS.length).fill(null));
@@ -212,20 +484,15 @@ function PassationTest() {
   const isNewSection = q.section !== prevSection;
   const meta = SECTIONS_META[q.section];
 
-  // Section progress
   const sectionStart = TCF_QUESTIONS.findIndex((qq) => qq.section === q.section);
   const sectionTotal = meta.total;
   const sectionIndex = current - sectionStart + 1;
 
-  // Timer
   useEffect(() => {
     if (started && !submitted) {
       timerRef.current = setInterval(() => {
         setTimeLeft((t) => {
-          if (t <= 1) {
-            clearInterval(timerRef.current!);
-            return 0;
-          }
+          if (t <= 1) { clearInterval(timerRef.current!); return 0; }
           return t - 1;
         });
       }, 1000);
@@ -233,24 +500,16 @@ function PassationTest() {
     }
   }, [started, submitted]);
 
-  // Auto-submit when time runs out
   useEffect(() => {
-    if (timeLeft === 0 && started && !submitted) {
-      doSubmit();
-    }
+    if (timeLeft === 0 && started && !submitted) doSubmit();
   }, [timeLeft, started, submitted]);
 
   const doSubmit = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
     setSubmitted(true);
-    const score = answers.reduce<number>(
-      (acc, a, i) => acc + (a === TCF_QUESTIONS[i].correct ? 1 : 0), 0,
-    );
-    if (timeLeft === 0) {
-      toast.error("Temps écoulé ! Le test est terminé automatiquement.");
-    } else {
-      toast.success(`Test terminé ! Score : ${score}/${TCF_QUESTIONS.length}`);
-    }
+    const score = answers.reduce<number>((acc, a, i) => acc + (a === TCF_QUESTIONS[i].correct ? 1 : 0), 0);
+    if (timeLeft === 0) toast.error("Temps écoulé ! Le test est terminé automatiquement.");
+    else toast.success(`Test terminé ! Score : ${score}/${TCF_QUESTIONS.length}`);
   }, [answers, timeLeft]);
 
   const handleAnswer = (idx: number) => {
@@ -266,13 +525,12 @@ function PassationTest() {
     }
   };
 
-  const isUrgent = timeLeft <= 600; // 10 minutes
+  const isUrgent = timeLeft <= 600;
   const totalScore = submitted ? answers.reduce<number>((acc, a, i) => acc + (a === TCF_QUESTIONS[i].correct ? 1 : 0), 0) : null;
   const scoreCO = submitted ? TCF_QUESTIONS.reduce((acc, qq, i) => acc + (qq.section === "CO" && answers[i] === qq.correct ? 1 : 0), 0) : 0;
   const scoreStr = submitted ? TCF_QUESTIONS.reduce((acc, qq, i) => acc + (qq.section === "Structures" && answers[i] === qq.correct ? 1 : 0), 0) : 0;
   const scoreCE = submitted ? TCF_QUESTIONS.reduce((acc, qq, i) => acc + (qq.section === "CE" && answers[i] === qq.correct ? 1 : 0), 0) : 0;
 
-  // Welcome screen
   if (!started) {
     return (
       <Card className="overflow-hidden">
@@ -310,11 +568,9 @@ function PassationTest() {
     );
   }
 
-  // Section intro screen
   if (sectionIntro && isNewSection && !submitted) {
     return (
       <div className="space-y-4">
-        {/* Timer always visible */}
         <TimerBar timeLeft={timeLeft} isUrgent={isUrgent} />
         <Card className="overflow-hidden">
           <div className={`${meta.color} p-6 text-center`}>
@@ -323,9 +579,7 @@ function PassationTest() {
           <CardContent className="pt-6 text-center space-y-4">
             <h2 className="text-xl font-bold">{meta.title}</h2>
             <p className="text-muted-foreground text-base">{meta.description}</p>
-            <p className="text-sm text-muted-foreground">
-              {sectionTotal} questions dans cette partie
-            </p>
+            <p className="text-sm text-muted-foreground">{sectionTotal} questions dans cette partie</p>
             <Button onClick={() => setSectionIntro(false)} size="lg" className="mt-4">
               Commencer <ChevronRight className="h-4 w-4 ml-1" />
             </Button>
@@ -337,10 +591,8 @@ function PassationTest() {
 
   return (
     <div className="space-y-4">
-      {/* Timer + Section indicator */}
       <TimerBar timeLeft={timeLeft} isUrgent={isUrgent} />
 
-      {/* Section progress header */}
       <Card>
         <CardContent className="py-4">
           <div className="flex items-center justify-between mb-2">
@@ -350,34 +602,26 @@ function PassationTest() {
               <span className="text-sm text-muted-foreground">—</span>
               <span className="font-bold text-sm">Question {sectionIndex} / {sectionTotal}</span>
             </div>
-            <Badge variant="secondary" className="text-xs">
-              {current + 1}/{TCF_QUESTIONS.length} total
-            </Badge>
+            <Badge variant="secondary" className="text-xs">{current + 1}/{TCF_QUESTIONS.length} total</Badge>
           </div>
-          {/* Section mini-progress */}
           <div className="flex gap-0.5">
             {Array.from({ length: sectionTotal }).map((_, i) => {
               const globalIdx = sectionStart + i;
               return (
-                <div
-                  key={i}
-                  className={`h-1.5 flex-1 rounded-full transition-colors ${
-                    globalIdx === current
-                      ? "bg-primary"
-                      : answers[globalIdx] !== null
-                        ? submitted
-                          ? answers[globalIdx] === TCF_QUESTIONS[globalIdx].correct ? "bg-success" : "bg-destructive"
-                          : "bg-primary/40"
-                        : "bg-muted"
-                  }`}
-                />
+                <div key={i} className={`h-1.5 flex-1 rounded-full transition-colors ${
+                  globalIdx === current ? "bg-primary"
+                    : answers[globalIdx] !== null
+                      ? submitted
+                        ? answers[globalIdx] === TCF_QUESTIONS[globalIdx].correct ? "bg-emerald-500" : "bg-destructive"
+                        : "bg-primary/40"
+                      : "bg-muted"
+                }`} />
               );
             })}
           </div>
         </CardContent>
       </Card>
 
-      {/* Question card */}
       <Card>
         <CardContent className="pt-6">
           {q.section === "CO" && q.audio && (
@@ -438,7 +682,7 @@ function PassationTest() {
                   className={`w-full flex items-center gap-3 rounded-lg border text-left transition-all ${
                     q.section === "CO" ? "p-5 flex-col text-center justify-center" : "p-4"
                   } ${
-                    isCorrect ? "border-success bg-success/10"
+                    isCorrect ? "border-emerald-500 bg-emerald-500/10"
                     : isWrong ? "border-destructive bg-destructive/10"
                     : selected ? "border-primary bg-primary/10"
                     : "border-border hover:border-primary/50 hover:bg-muted/50"
@@ -451,7 +695,7 @@ function PassationTest() {
                       <Volume2 className="h-4 w-4 text-muted-foreground" />
                     </Button>
                   )}
-                  {isCorrect && <CheckCircle2 className="h-5 w-5 text-success shrink-0" />}
+                  {isCorrect && <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" />}
                 </button>
               );
             })}
@@ -459,7 +703,6 @@ function PassationTest() {
         </CardContent>
       </Card>
 
-      {/* Navigation */}
       <div className="flex items-center justify-between">
         <Button variant="outline" onClick={() => setCurrent((c) => Math.max(0, c - 1))} disabled={current === 0}>
           <ChevronLeft className="h-4 w-4 mr-1" /> Précédent
@@ -475,7 +718,6 @@ function PassationTest() {
         )}
       </div>
 
-      {/* Results */}
       {submitted && totalScore !== null && (
         <Card>
           <CardContent className="pt-6 space-y-4">
@@ -530,18 +772,18 @@ const TestsEntreePage = () => {
       <div>
         <h1 className="text-2xl font-bold text-foreground">Tests d'entrée</h1>
         <p className="text-muted-foreground mt-1">
-          Évaluez vos élèves et prévisualisez le test de positionnement.
+          Diagnostic précis par sous-items, radar de compétences et analyse IA.
         </p>
       </div>
 
-      <Tabs defaultValue="evaluation">
+      <Tabs defaultValue="diagnostic">
         <TabsList>
-          <TabsTrigger value="evaluation">Évaluation Formateur</TabsTrigger>
+          <TabsTrigger value="diagnostic">Diagnostic par sous-items</TabsTrigger>
           <TabsTrigger value="passation">Passage du Test (Aperçu)</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="evaluation" className="mt-4">
-          <EvaluationFormateur />
+        <TabsContent value="diagnostic" className="mt-4">
+          <DiagnosticSousItems />
         </TabsContent>
 
         <TabsContent value="passation" className="mt-4">
