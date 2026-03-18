@@ -24,6 +24,8 @@ import SequenceBuilder from "@/pages/formateur/SequenceBuilder";
 
 import EleveLayout from "@/layouts/EleveLayout";
 import EleveDashboard from "@/pages/eleve/Dashboard";
+import EleveDevoirs from "@/pages/eleve/Devoirs";
+import DevoirPassation from "@/pages/eleve/DevoirPassation";
 import EleveProgression from "@/pages/eleve/Progression";
 import EleveDetail from "@/pages/formateur/EleveDetail";
 import TestsEntreePage from "@/pages/formateur/TestsEntree";
