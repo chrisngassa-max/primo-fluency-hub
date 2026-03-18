@@ -73,16 +73,6 @@ const SequenceBuilder = () => {
   const [manualFormat, setManualFormat] = useState("qcm");
   const [manualCompetence, setManualCompetence] = useState("CE");
 
-  // Flatten points for the selector
-  const allPoints = (tree ?? []).flatMap((ep) =>
-    ep.sous_sections.flatMap((ss) =>
-      ss.points_a_maitriser.map((p) => ({
-        ...p,
-        competence: ep.competence,
-        sousSection: ss.nom,
-      }))
-    )
-  );
 
   const handleGenerate = async () => {
     if (!selectedPoint) {
