@@ -986,6 +986,12 @@ ${Array.isArray(item.options) && item.options.length > 0
                         <Button variant="outline" size="sm" className="gap-1" onClick={() => setPreviewExercise(ex)}>
                           <Eye className="h-3.5 w-3.5" />Aperçu Élève
                         </Button>
+                        {ex?.animation_guide && (
+                          <Button variant="outline" size="sm" className="gap-1 text-amber-700 border-amber-200 hover:bg-amber-50 dark:text-amber-400 dark:border-amber-800"
+                            onClick={() => setAnimationGuide({ ...ex.animation_guide, titre: ex.titre })}>
+                            <Gamepad2 className="h-3.5 w-3.5" />Atelier Ludique
+                          </Button>
+                        )}
                         <Button variant="outline" size="sm" className="gap-1" onClick={() => openEditor(se)}>
                           <Pencil className="h-3.5 w-3.5" />Modifier
                         </Button>
