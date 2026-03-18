@@ -984,7 +984,7 @@ ${Array.isArray(item.options) && item.options.length > 0
                         </div>
                       )}
                       <div className="flex gap-2 print:hidden">
-                        <Button variant="outline" size="sm" className="gap-1" onClick={() => setPreviewExercise(ex)}>
+                        <Button variant="outline" size="sm" className="gap-1" onClick={() => { setPreviewExercise(ex); setPreviewPage(0); }}>
                           <Eye className="h-3.5 w-3.5" />Aperçu Élève
                         </Button>
                         {ex?.animation_guide && (
