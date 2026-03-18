@@ -23,6 +23,12 @@ RÈGLES STRICTES :
 - Formats possibles : qcm, vrai_faux, texte_lacunaire, appariement, transformation
 - Langue simple et claire
 
+IMPORTANT — Pour CHAQUE exercice, tu dois aussi proposer un "animation_guide" :
+- scenario : une mise en situation simple et concrète liée à l'exercice (ex: "Vous êtes à la boulangerie et vous achetez du pain")
+- jeu : une règle de jeu ludique adaptée au niveau (jeu de rôle, mime, jeu de cartes, Jacques a dit, etc.)
+- materiel : ce qu'il faut préparer (jetons, images, cartes, etc.)
+- objectif_oral : la structure de phrase que les élèves doivent réussir à prononcer
+
 Tu DOIS utiliser le tool "generate_exercises" pour retourner le résultat.`;
 
     const userPrompt = `Génère ${count} exercices pour :
@@ -47,7 +53,7 @@ Tu DOIS utiliser le tool "generate_exercises" pour retourner le résultat.`;
             type: "function",
             function: {
               name: "generate_exercises",
-              description: "Return generated exercises",
+              description: "Return generated exercises with animation guides",
               parameters: {
                 type: "object",
                 properties: {
@@ -79,8 +85,19 @@ Tu DOIS utiliser le tool "generate_exercises" pour retourner le résultat.`;
                           },
                           required: ["items"],
                         },
+                        animation_guide: {
+                          type: "object",
+                          description: "Guide d'animation ludique pour le formateur",
+                          properties: {
+                            scenario: { type: "string", description: "Mise en situation concrète" },
+                            jeu: { type: "string", description: "Règle de jeu ludique" },
+                            materiel: { type: "string", description: "Matériel à préparer" },
+                            objectif_oral: { type: "string", description: "Structure de phrase cible" },
+                          },
+                          required: ["scenario", "jeu", "materiel", "objectif_oral"],
+                        },
                       },
-                      required: ["titre", "consigne", "format", "difficulte", "contenu"],
+                      required: ["titre", "consigne", "format", "difficulte", "contenu", "animation_guide"],
                     },
                   },
                 },
