@@ -291,6 +291,35 @@ const SessionBilan = () => {
     }
   };
 
+  const autoApplyAdaptation = async (adaptation: any) => {
+    if (!nextSession) return;
+    try {
+      await supabase
+        .from("sessions")
+        .update({
+          objectifs: adaptation.objectifs_ajustes,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", nextSession.id);
+
+      await supabase.from("notifications").insert({
+        user_id: user!.id,
+        titre: "Séance auto-adaptée par l'IA",
+        message: adaptation.message_formateur,
+        link: `/formateur/seances/${nextSession.id}/pilote`,
+      });
+
+      qc.invalidateQueries({ queryKey: ["formateur-sessions"] });
+      toast.success("Pilote automatique — Séance N+1 adaptée !", {
+        description: adaptation.message_formateur,
+      });
+      navigate("/formateur/seances");
+    } catch (e: any) {
+      toast.error("Erreur d'auto-adaptation", { description: e.message });
+      navigate("/formateur/seances");
+    }
+  };
+
   const applyAdaptation = async () => {
     if (!nextSession || !adaptationResult) return;
     setSaving(true);
@@ -303,7 +332,6 @@ const SessionBilan = () => {
         })
         .eq("id", nextSession.id);
 
-      // Create notification
       await supabase.from("notifications").insert({
         user_id: user!.id,
         titre: "Séance adaptée par l'IA",
