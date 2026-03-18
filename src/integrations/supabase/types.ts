@@ -203,6 +203,7 @@ export type Database = {
       }
       exercices: {
         Row: {
+          animation_guide: Json | null
           collectif: boolean
           competence: Database["public"]["Enums"]["competence_type"]
           consigne: string
@@ -226,6 +227,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          animation_guide?: Json | null
           collectif?: boolean
           competence: Database["public"]["Enums"]["competence_type"]
           consigne: string
@@ -249,6 +251,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          animation_guide?: Json | null
           collectif?: boolean
           competence?: Database["public"]["Enums"]["competence_type"]
           consigne?: string

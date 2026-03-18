@@ -1,0 +1,1 @@
+ALTER TABLE public.exercices ADD COLUMN IF NOT EXISTS animation_guide jsonb DEFAULT NULL;
