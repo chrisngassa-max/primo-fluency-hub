@@ -29,6 +29,8 @@ import EleveDetail from "@/pages/formateur/EleveDetail";
 import TestsEntreePage from "@/pages/formateur/TestsEntree";
 import ImportProgramme from "@/pages/formateur/ImportProgramme";
 import Parametres from "@/pages/formateur/Parametres";
+import ParcoursPage from "@/pages/formateur/ParcoursPage";
+import ParcoursDetail from "@/pages/formateur/ParcoursDetail";
 
 const queryClient = new QueryClient();
 
