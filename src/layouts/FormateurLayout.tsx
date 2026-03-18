@@ -18,6 +18,7 @@ import {
   Settings,
   ClipboardList,
   Upload,
+  Route,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -28,6 +29,7 @@ const mainNav = [
   { title: "Séances", url: "/formateur/seances", icon: Calendar },
   { title: "Exercices", url: "/formateur/exercices", icon: BookOpen },
   { title: "Importer programme", url: "/formateur/import-programme", icon: Upload },
+  { title: "Plans de formation", url: "/formateur/parcours", icon: Route },
 ];
 
 const monitorNav = [
