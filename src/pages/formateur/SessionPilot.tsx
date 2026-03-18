@@ -214,6 +214,39 @@ const SessionPilot = () => {
     enabled: !!id,
   });
 
+  // Fetch next session for preview
+  const { data: nextSession } = useQuery({
+    queryKey: ["next-session-preview", session?.group_id, session?.date_seance],
+    queryFn: async () => {
+      if (!session) return null;
+      const groupId = (session as any)?.group?.id || session.group_id;
+      const { data } = await supabase
+        .from("sessions")
+        .select("id, titre, date_seance, duree_minutes, objectifs, statut")
+        .eq("group_id", groupId)
+        .gt("date_seance", session.date_seance)
+        .order("date_seance", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!session,
+  });
+
+  // Fetch next session exercise count
+  const { data: nextSessionExCount } = useQuery({
+    queryKey: ["next-session-ex-count", nextSession?.id],
+    queryFn: async () => {
+      if (!nextSession) return 0;
+      const { count } = await supabase
+        .from("session_exercices")
+        .select("id", { count: "exact", head: true })
+        .eq("session_id", nextSession.id);
+      return count || 0;
+    },
+    enabled: !!nextSession,
+  });
+
   const exercises = sessionExercices ?? [];
   const reported = reportedExercises ?? [];
 
