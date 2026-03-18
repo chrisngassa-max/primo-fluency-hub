@@ -101,7 +101,7 @@ const SessionPilot = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("session_exercices")
-        .select("*, exercice:exercices(id, titre, consigne, competence, format, contenu, difficulte, niveau_vise, point_a_maitriser_id)")
+        .select("*, exercice:exercices(id, titre, consigne, competence, format, contenu, difficulte, niveau_vise, point_a_maitriser_id, animation_guide)")
         .eq("session_id", id!)
         .order("ordre");
       if (error) throw error;
