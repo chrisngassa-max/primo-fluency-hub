@@ -173,7 +173,7 @@ const SequenceBuilder = () => {
       if (seqErr) throw seqErr;
 
       // Find a default point_a_maitriser_id
-      const defaultPointId = selectedPointId || allPoints[0]?.id;
+      const defaultPointId = selectedPointId || (tree ?? []).flatMap(ep => ep.sous_sections.flatMap(ss => ss.points_a_maitriser))[0]?.id;
       if (!defaultPointId) throw new Error("Aucun point à maîtriser trouvé.");
 
       // Create exercises linked to the sequence
