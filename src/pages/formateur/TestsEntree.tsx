@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
@@ -13,7 +13,8 @@ import { toast } from "sonner";
 import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer,
 } from "recharts";
-import { Sparkles, Volume2, ChevronLeft, ChevronRight, CheckCircle2, Users } from "lucide-react";
+import { Sparkles, Volume2, ChevronLeft, ChevronRight, CheckCircle2, Users, Clock, AlertTriangle } from "lucide-react";
+import { TCF_QUESTIONS, SECTIONS_META, EXAM_DURATION_SECONDS, type TCFQuestion } from "@/data/tcfQuestions";
 
 /* ───────── Types ───────── */
 type Scores = { CO: number; CE: number; EO: number; EE: number };
