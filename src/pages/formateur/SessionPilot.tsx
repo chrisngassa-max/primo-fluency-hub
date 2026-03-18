@@ -681,7 +681,35 @@ ${Array.isArray(item.options) && item.options.length > 0
         </p>
       </div>
 
-      {/* ─── Debriefing Widget (homework stats from previous session) ─── */}
+      {/* ─── Session Summary Card ─── */}
+      <Card className="print:hidden">
+        <CardContent className="py-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="text-center p-3 rounded-lg bg-muted/50">
+              <p className="text-2xl font-bold text-primary">{exercises.length}</p>
+              <p className="text-[11px] text-muted-foreground">Exercices prévus</p>
+            </div>
+            <div className="text-center p-3 rounded-lg bg-muted/50">
+              <p className="text-2xl font-bold text-green-600">{checkedCount}</p>
+              <p className="text-[11px] text-muted-foreground">Réalisés</p>
+            </div>
+            <div className="text-center p-3 rounded-lg bg-muted/50">
+              <p className="text-2xl font-bold">{session?.duree_minutes || 180} min</p>
+              <p className="text-[11px] text-muted-foreground">Durée prévue</p>
+            </div>
+            <div className="text-center p-3 rounded-lg bg-muted/50">
+              <p className="text-2xl font-bold">~{exercises.length > 0 ? Math.round((session?.duree_minutes || 180) / exercises.length) : 0} min</p>
+              <p className="text-[11px] text-muted-foreground">Par exercice</p>
+            </div>
+          </div>
+          <div className="flex gap-2 mt-3">
+            <Button variant="outline" className="gap-2" onClick={handlePrintAll}>
+              <Printer className="h-4 w-4" />Tout imprimer pour la classe
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       {homeworkStats && homeworkStats.total > 0 && (
         <Card className="border-primary/20 print:hidden">
           <CardHeader className="pb-3">
