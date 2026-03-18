@@ -206,6 +206,164 @@ const TCF_QUESTIONS: TCFQuestion[] = [
   },
 ];
 
+/* ───────── Formateur Evaluation Section ───────── */
+function EvaluationFormateur() {
+  const [scores, setScores] = useState<Scores>({ CO: 50, CE: 50, EO: 50, EE: 50 });
+  const [analysis, setAnalysis] = useState<string | null>(null);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [selectedEleve, setSelectedEleve] = useState<string>("");
+  const { user } = useAuth();
+
+  const { data: eleves, isLoading: loadingEleves } = useQuery({
+    queryKey: ["formateur-eleves", user?.id],
+    queryFn: async () => {
+      const { data: groups } = await supabase
+        .from("groups")
+        .select("id")
+        .eq("formateur_id", user!.id);
+      if (!groups?.length) return [];
+      const { data: members } = await supabase
+        .from("group_members")
+        .select("eleve_id, profiles:eleve_id(id, prenom, nom)")
+        .in("group_id", groups.map((g) => g.id));
+      if (!members) return [];
+      const unique = new Map<string, { id: string; prenom: string; nom: string }>();
+      members.forEach((m: any) => {
+        if (m.profiles && !unique.has(m.profiles.id)) {
+          unique.set(m.profiles.id, m.profiles);
+        }
+      });
+      return Array.from(unique.values());
+    },
+    enabled: !!user,
+  });
+
+  const radarData = useMemo(
+    () => COMP_KEYS.map((k) => ({ competence: k, score: scores[k], fullMark: 100 })),
+    [scores],
+  );
+
+  const moyenne = Math.round(COMP_KEYS.reduce((s, k) => s + scores[k], 0) / 4);
+
+  const handleAnalyze = async () => {
+    setAnalyzing(true);
+    setAnalysis(null);
+    try {
+      const eleveObj = eleves?.find((e) => e.id === selectedEleve);
+      const { data, error } = await supabase.functions.invoke("analyze-test-entree", {
+        body: { scores, eleveNom: eleveObj ? `${eleveObj.prenom} ${eleveObj.nom}` : null },
+      });
+      if (error) throw error;
+      setAnalysis(data.analysis);
+      toast.success("Analyse générée avec succès");
+    } catch (e: any) {
+      toast.error(e.message || "Erreur lors de l'analyse");
+    } finally {
+      setAnalyzing(false);
+    }
+  };
+
+  const niveauEstime = moyenne >= 80 ? "B1" : moyenne >= 60 ? "A2" : moyenne >= 30 ? "A1" : "A0";
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardContent className="pt-6">
+          <div className="flex items-center gap-4 flex-wrap">
+            <Users className="h-5 w-5 text-muted-foreground" />
+            <div className="flex-1 min-w-[200px] max-w-xs">
+              {loadingEleves ? (
+                <Skeleton className="h-10 w-full" />
+              ) : (
+                <Select value={selectedEleve} onValueChange={setSelectedEleve}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionner un élève" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {eleves?.map((e) => (
+                      <SelectItem key={e.id} value={e.id}>
+                        {e.prenom} {e.nom}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+            <Badge variant="outline" className="text-base px-3 py-1">
+              Niveau estimé : <span className="font-bold ml-1">{niveauEstime}</span>
+            </Badge>
+            <Badge variant="secondary" className="text-base px-3 py-1">
+              Moyenne : {moyenne}/100
+            </Badge>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Évaluation par compétence</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {COMP_KEYS.map((key) => (
+              <div key={key} className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium">{COMP_LABELS[key]}</label>
+                  <span className="text-sm font-bold tabular-nums w-12 text-right">{scores[key]}</span>
+                </div>
+                <Slider
+                  value={[scores[key]]}
+                  onValueChange={([v]) => setScores((p) => ({ ...p, [key]: v }))}
+                  max={100}
+                  step={1}
+                  className="w-full"
+                />
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Profil de compétences</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <RadarChart data={radarData}>
+                <PolarGrid />
+                <PolarAngleAxis dataKey="competence" tick={{ fontSize: 14 }} />
+                <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 11 }} />
+                <Radar name="Score" dataKey="score" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.25} strokeWidth={2} />
+              </RadarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardContent className="pt-6">
+          <Button onClick={handleAnalyze} disabled={analyzing} className="w-full sm:w-auto gap-2">
+            <Sparkles className="h-4 w-4" />
+            {analyzing ? "Analyse en cours…" : "Générer l'analyse IA"}
+          </Button>
+          {analysis && (
+            <div className="mt-6 prose prose-sm max-w-none bg-muted/50 rounded-lg p-6 border">
+              {analysis.split("\n").map((line, i) => {
+                if (line.startsWith("###")) return <h4 key={i} className="text-base font-semibold mt-4 mb-1">{line.replace(/^###\s*/, "")}</h4>;
+                if (line.startsWith("##")) return <h3 key={i} className="text-lg font-bold mt-4 mb-1">{line.replace(/^##\s*/, "")}</h3>;
+                if (line.startsWith("#")) return <h2 key={i} className="text-xl font-bold mt-4 mb-2">{line.replace(/^#\s*/, "")}</h2>;
+                if (line.startsWith("- ")) return <li key={i} className="ml-4 text-sm">{line.slice(2)}</li>;
+                if (line.trim() === "") return <br key={i} />;
+                return <p key={i} className="text-sm leading-relaxed">{line}</p>;
+              })}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
 /* ───────── Student Test Section (TCF Simulator) ───────── */
 function PassationTest() {
   const [current, setCurrent] = useState(0);
