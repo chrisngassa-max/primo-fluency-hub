@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS mot_de_passe_initial text DEFAULT NULL;
