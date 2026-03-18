@@ -59,6 +59,7 @@ const App = () => (
               <Route path="seances/:id/pilote" element={<SessionPilot />} />
               <Route path="seances/:id/bilan" element={<SessionBilan />} />
               <Route path="sequences/new" element={<SequenceBuilder />} />
+              <Route path="eleves/:eleveId" element={<EleveDetail />} />
               <Route path="exercices" element={<FormateurDashboard />} />
               <Route path="monitoring" element={<FormateurDashboard />} />
               <Route path="tests" element={<FormateurDashboard />} />
