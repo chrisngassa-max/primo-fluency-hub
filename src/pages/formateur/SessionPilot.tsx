@@ -55,6 +55,7 @@ import {
   Eye, Volume2, ChevronDown, ChevronLeft, ChevronRight, Drama, Package, MessageCircle, Wand2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/DifficultyBadge";
 
 type ExerciseStatus = "traite_en_classe" | "reporte" | "planifie";
 
