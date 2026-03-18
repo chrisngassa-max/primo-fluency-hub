@@ -79,7 +79,7 @@ const App = () => (
               <Route index element={<EleveDashboard />} />
               <Route path="test" element={<EleveDashboard />} />
               <Route path="devoirs" element={<EleveDashboard />} />
-              <Route path="progression" element={<EleveDashboard />} />
+              <Route path="progression" element={<EleveProgression />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />
