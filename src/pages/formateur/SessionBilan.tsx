@@ -74,6 +74,23 @@ const SessionBilan = () => {
   const [adaptationResult, setAdaptationResult] = useState<any>(null);
   const [showAdaptation, setShowAdaptation] = useState(false);
 
+  // Fetch formateur settings for auto_adapt
+  const { data: formateurParams } = useQuery({
+    queryKey: ["formateur-parametres-bilan", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("parametres")
+        .select("*")
+        .eq("formateur_id", user!.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  const isAutoAdapt = (formateurParams as any)?.auto_adapt ?? false;
+
   const { data: sessionExercices, isLoading } = useQuery({
     queryKey: ["session-bilan", id],
     queryFn: async () => {
