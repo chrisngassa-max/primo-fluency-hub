@@ -9,8 +9,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Accordion, AccordionContent, AccordionItem, AccordionTrigger,
+} from "@/components/ui/accordion";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter,
 } from "@/components/ui/dialog";
@@ -20,7 +24,10 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Plus, Users, Trash2, Edit, UserPlus, UserMinus, Loader2, Copy, Check } from "lucide-react";
+import {
+  Plus, Users, Trash2, Edit, UserPlus, UserMinus, Loader2,
+  Copy, Check, Eye, ChevronRight,
+} from "lucide-react";
 
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
 
@@ -50,18 +57,17 @@ const GroupesPage = () => {
   const [editNiveau, setEditNiveau] = useState("A1");
   const [editDesc, setEditDesc] = useState("");
 
-  // Member management
-  const [memberOpen, setMemberOpen] = useState(false);
-  const [memberGroupId, setMemberGroupId] = useState("");
-
-  // Add student form
+  // Add student dialog
+  const [addOpen, setAddOpen] = useState(false);
+  const [addGroupId, setAddGroupId] = useState("");
   const [newPrenom, setNewPrenom] = useState("");
   const [newNom, setNewNom] = useState("");
   const [addingMember, setAddingMember] = useState(false);
-
-  // Created student credentials display
   const [createdStudent, setCreatedStudent] = useState<CreatedStudent | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  // Track expanded groups to fetch members
+  const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
 
   // Fetch groups
   const { data: groups, isLoading } = useQuery({
@@ -78,34 +84,45 @@ const GroupesPage = () => {
     enabled: !!user,
   });
 
-  // Fetch members for selected group
-  const { data: members, isLoading: membersLoading } = useQuery({
-    queryKey: ["group-members", memberGroupId],
+  // Fetch members for ALL groups (simpler approach, one query)
+  const { data: allMembers } = useQuery({
+    queryKey: ["all-group-members", user?.id],
     queryFn: async () => {
+      if (!groups || groups.length === 0) return [];
+      const groupIds = groups.map((g) => g.id);
       const { data, error } = await supabase
         .from("group_members")
-        .select("*, eleve:profiles(id, nom, prenom, email)")
-        .eq("group_id", memberGroupId);
+        .select("*, eleve:profiles(id, nom, prenom, email, mot_de_passe_initial)")
+        .in("group_id", groupIds);
       if (error) throw error;
       return data;
     },
-    enabled: !!memberGroupId && memberOpen,
+    enabled: !!groups && groups.length > 0,
   });
 
-  // Fetch member counts
-  const { data: memberCounts } = useQuery({
-    queryKey: ["group-member-counts", user?.id],
+  // Fetch profils_eleves for progress display
+  const { data: allProfils } = useQuery({
+    queryKey: ["all-eleve-profils", user?.id],
     queryFn: async () => {
+      if (!allMembers || allMembers.length === 0) return [];
+      const eleveIds = [...new Set(allMembers.map((m: any) => m.eleve_id))];
       const { data, error } = await supabase
-        .from("group_members")
-        .select("group_id");
+        .from("profils_eleves")
+        .select("eleve_id, taux_reussite_global")
+        .in("eleve_id", eleveIds);
       if (error) throw error;
-      const counts: Record<string, number> = {};
-      data.forEach((m) => { counts[m.group_id] = (counts[m.group_id] || 0) + 1; });
-      return counts;
+      return data;
     },
-    enabled: !!user,
+    enabled: !!allMembers && allMembers.length > 0,
   });
+
+  const getMembersForGroup = (groupId: string) =>
+    (allMembers ?? []).filter((m: any) => m.group_id === groupId);
+
+  const getProgress = (eleveId: string) => {
+    const p = (allProfils ?? []).find((p: any) => p.eleve_id === eleveId);
+    return p ? Math.round(Number(p.taux_reussite_global)) : 0;
+  };
 
   const handleCreate = async () => {
     if (!nom.trim()) { toast.error("Le nom est obligatoire."); return; }
@@ -150,6 +167,14 @@ const GroupesPage = () => {
     }
   };
 
+  const openAddStudent = (groupId: string) => {
+    setAddGroupId(groupId);
+    setCreatedStudent(null);
+    setNewPrenom("");
+    setNewNom("");
+    setAddOpen(true);
+  };
+
   const handleAddStudent = async () => {
     if (!newPrenom.trim() || !newNom.trim()) {
       toast.error("Prénom et nom sont obligatoires.");
@@ -159,7 +184,7 @@ const GroupesPage = () => {
     setCreatedStudent(null);
     try {
       const { data, error } = await supabase.functions.invoke("create-student", {
-        body: { prenom: newPrenom.trim(), nom: newNom.trim(), group_id: memberGroupId },
+        body: { prenom: newPrenom.trim(), nom: newNom.trim(), group_id: addGroupId },
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
@@ -168,9 +193,8 @@ const GroupesPage = () => {
       setCreatedStudent(student);
       setNewPrenom("");
       setNewNom("");
-      toast.success(`${student.prenom} ${student.nom} créé(e) et ajouté(e) au groupe !`);
-      qc.invalidateQueries({ queryKey: ["group-members", memberGroupId] });
-      qc.invalidateQueries({ queryKey: ["group-member-counts"] });
+      toast.success(`${student.prenom} ${student.nom} créé(e) et ajouté(e) !`);
+      qc.invalidateQueries({ queryKey: ["all-group-members"] });
     } catch (e: any) {
       toast.error("Erreur lors de la création", { description: e.message });
     } finally { setAddingMember(false); }
@@ -181,8 +205,7 @@ const GroupesPage = () => {
       const { error } = await supabase.from("group_members").delete().eq("id", membershipId);
       if (error) throw error;
       toast.success("Élève retiré du groupe.");
-      qc.invalidateQueries({ queryKey: ["group-members", memberGroupId] });
-      qc.invalidateQueries({ queryKey: ["group-member-counts"] });
+      qc.invalidateQueries({ queryKey: ["all-group-members"] });
     } catch (e: any) {
       toast.error("Erreur", { description: e.message });
     }
@@ -199,12 +222,11 @@ const GroupesPage = () => {
     setEditOpen(true);
   };
 
-  const openMembers = (groupId: string) => {
-    setMemberGroupId(groupId);
-    setCreatedStudent(null);
-    setNewPrenom("");
-    setNewNom("");
-    setMemberOpen(true);
+  const progressColor = (val: number) => {
+    if (val >= 80) return "bg-green-500";
+    if (val >= 60) return "bg-orange-400";
+    if (val > 0) return "bg-destructive";
+    return "bg-muted";
   };
 
   if (isLoading) {
@@ -221,7 +243,7 @@ const GroupesPage = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Groupes & Élèves</h1>
-          <p className="text-sm text-muted-foreground">Gérez vos groupes de formation.</p>
+          <p className="text-sm text-muted-foreground">Cliquez sur un groupe pour voir ses élèves.</p>
         </div>
         <Dialog open={createOpen} onOpenChange={setCreateOpen}>
           <DialogTrigger asChild>
@@ -257,7 +279,7 @@ const GroupesPage = () => {
         </Dialog>
       </div>
 
-      {/* Groups list */}
+      {/* Empty state */}
       {groups && groups.length === 0 && (
         <Card className="border-dashed">
           <CardContent className="py-12 text-center">
@@ -268,38 +290,44 @@ const GroupesPage = () => {
         </Card>
       )}
 
-      <div className="space-y-3">
-        {(groups ?? []).map((g) => (
-          <Card key={g.id} className="hover:border-primary/20 transition-colors">
-            <CardContent className="py-4 px-4">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="flex items-center justify-center h-10 w-10 rounded-lg bg-primary/10 shrink-0">
-                    <Users className="h-5 w-5 text-primary" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <p className="font-semibold text-sm">{g.nom}</p>
-                      <Badge variant="outline">{g.niveau}</Badge>
-                      <span className="text-xs text-muted-foreground">
-                        {memberCounts?.[g.id] || 0} élève(s)
-                      </span>
+      {/* Accordion groups */}
+      <Accordion
+        type="multiple"
+        value={expandedGroups}
+        onValueChange={setExpandedGroups}
+        className="space-y-3"
+      >
+        {(groups ?? []).map((g) => {
+          const members = getMembersForGroup(g.id);
+          return (
+            <AccordionItem key={g.id} value={g.id} className="border rounded-lg overflow-hidden">
+              <div className="flex items-center">
+                <AccordionTrigger className="flex-1 px-4 py-3 hover:no-underline">
+                  <div className="flex items-center gap-3 w-full">
+                    <div className="flex items-center justify-center h-10 w-10 rounded-lg bg-primary/10 shrink-0">
+                      <Users className="h-5 w-5 text-primary" />
                     </div>
-                    {g.description && (
-                      <p className="text-xs text-muted-foreground truncate mt-0.5">{g.description}</p>
-                    )}
+                    <div className="text-left min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-semibold text-sm">{g.nom}</span>
+                        <Badge variant="outline">{g.niveau}</Badge>
+                        <span className="text-xs text-muted-foreground">
+                          {members.length} élève(s)
+                        </span>
+                      </div>
+                      {g.description && (
+                        <p className="text-xs text-muted-foreground truncate mt-0.5">{g.description}</p>
+                      )}
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-1 shrink-0">
-                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openMembers(g.id)}>
-                    <UserPlus className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(g)}>
+                </AccordionTrigger>
+                <div className="flex items-center gap-1 pr-2 shrink-0">
+                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => { e.stopPropagation(); openEdit(g); }}>
                     <Edit className="h-4 w-4" />
                   </Button>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive">
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={(e) => e.stopPropagation()}>
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </AlertDialogTrigger>
@@ -318,10 +346,115 @@ const GroupesPage = () => {
                   </AlertDialog>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+
+              <AccordionContent className="px-4 pb-4 pt-0">
+                {/* Add student button */}
+                <div className="flex justify-end mb-3">
+                  <Button size="sm" variant="outline" onClick={() => openAddStudent(g.id)}>
+                    <UserPlus className="h-4 w-4 mr-2" />Ajouter un élève
+                  </Button>
+                </div>
+
+                {members.length === 0 ? (
+                  <div className="text-center py-6 text-muted-foreground text-sm">
+                    Aucun élève dans ce groupe. Ajoutez-en un !
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto max-h-[360px] overflow-y-auto border rounded-lg">
+                    <table className="w-full text-sm">
+                      <thead className="sticky top-0 bg-muted/80 backdrop-blur-sm">
+                        <tr className="border-b">
+                          <th className="text-left py-2.5 px-3 font-medium text-muted-foreground">Prénom & Nom</th>
+                          <th className="text-left py-2.5 px-3 font-medium text-muted-foreground">Identifiant</th>
+                          <th className="text-center py-2.5 px-3 font-medium text-muted-foreground">MDP</th>
+                          <th className="text-center py-2.5 px-3 font-medium text-muted-foreground">Progression</th>
+                          <th className="text-center py-2.5 px-3 font-medium text-muted-foreground w-24">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {members.map((m: any) => {
+                          const prog = getProgress(m.eleve_id);
+                          const eleve = m.eleve;
+                          return (
+                            <tr
+                              key={m.id}
+                              className="border-b last:border-0 hover:bg-muted/50 transition-colors cursor-pointer"
+                              onClick={() => navigate(`/formateur/eleves/${m.eleve_id}`)}
+                            >
+                              <td className="py-2.5 px-3 font-medium">
+                                {eleve?.prenom} {eleve?.nom}
+                              </td>
+                              <td className="py-2.5 px-3">
+                                <div className="flex items-center gap-1">
+                                  <code className="text-xs bg-muted px-1.5 py-0.5 rounded max-w-[180px] truncate block">
+                                    {eleve?.email || "—"}
+                                  </code>
+                                  {eleve?.email && (
+                                    <Button
+                                      variant="ghost" size="icon" className="h-6 w-6 shrink-0"
+                                      onClick={(e) => { e.stopPropagation(); copyToClipboard(eleve.email, `email-${m.id}`); }}
+                                    >
+                                      {copiedField === `email-${m.id}` ? <Check className="h-3 w-3 text-primary" /> : <Copy className="h-3 w-3" />}
+                                    </Button>
+                                  )}
+                                </div>
+                              </td>
+                              <td className="py-2.5 px-3 text-center">
+                                {eleve?.mot_de_passe_initial ? (
+                                  <div className="flex items-center justify-center gap-1">
+                                    <code className="text-xs bg-muted px-1.5 py-0.5 rounded">{eleve.mot_de_passe_initial}</code>
+                                    <Button
+                                      variant="ghost" size="icon" className="h-6 w-6 shrink-0"
+                                      onClick={(e) => { e.stopPropagation(); copyToClipboard(eleve.mot_de_passe_initial, `pwd-${m.id}`); }}
+                                    >
+                                      {copiedField === `pwd-${m.id}` ? <Check className="h-3 w-3 text-primary" /> : <Copy className="h-3 w-3" />}
+                                    </Button>
+                                  </div>
+                                ) : (
+                                  <span className="text-xs text-muted-foreground">—</span>
+                                )}
+                              </td>
+                              <td className="py-2.5 px-3">
+                                <div className="flex items-center gap-2 justify-center">
+                                  <div className="w-16 h-2 rounded-full bg-muted overflow-hidden">
+                                    <div
+                                      className={`h-full rounded-full transition-all ${progressColor(prog)}`}
+                                      style={{ width: `${Math.max(prog, 4)}%` }}
+                                    />
+                                  </div>
+                                  <span className="text-xs text-muted-foreground w-8">{prog}%</span>
+                                </div>
+                              </td>
+                              <td className="py-2.5 px-3 text-center">
+                                <div className="flex items-center justify-center gap-1">
+                                  <Button
+                                    variant="ghost" size="icon" className="h-7 w-7"
+                                    onClick={(e) => { e.stopPropagation(); navigate(`/formateur/eleves/${m.eleve_id}`); }}
+                                    title="Voir le dossier"
+                                  >
+                                    <Eye className="h-4 w-4" />
+                                  </Button>
+                                  <Button
+                                    variant="ghost" size="icon" className="h-7 w-7 text-destructive"
+                                    onClick={(e) => { e.stopPropagation(); handleRemoveMember(m.id); }}
+                                    title="Retirer du groupe"
+                                  >
+                                    <UserMinus className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </AccordionContent>
+            </AccordionItem>
+          );
+        })}
+      </Accordion>
 
       {/* Edit Dialog */}
       <Dialog open={editOpen} onOpenChange={setEditOpen}>
@@ -354,92 +487,52 @@ const GroupesPage = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Members Dialog */}
-      <Dialog open={memberOpen} onOpenChange={setMemberOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader><DialogTitle>Gérer les membres</DialogTitle></DialogHeader>
+      {/* Add Student Dialog */}
+      <Dialog open={addOpen} onOpenChange={setAddOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>Ajouter un élève</DialogTitle></DialogHeader>
           <div className="space-y-4">
-            {/* Add student form */}
-            <div className="space-y-3 p-3 rounded-lg border border-dashed">
-              <p className="text-sm font-medium">Ajouter un élève</p>
-              <div className="grid grid-cols-2 gap-2">
-                <div className="space-y-1">
-                  <Label className="text-xs">Prénom</Label>
-                  <Input
-                    placeholder="Prénom"
-                    value={newPrenom}
-                    onChange={(e) => setNewPrenom(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-xs">Nom</Label>
-                  <Input
-                    placeholder="Nom"
-                    value={newNom}
-                    onChange={(e) => setNewNom(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && handleAddStudent()}
-                  />
-                </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label>Prénom</Label>
+                <Input placeholder="Prénom" value={newPrenom} onChange={(e) => setNewPrenom(e.target.value)} />
               </div>
-              <Button onClick={handleAddStudent} disabled={addingMember} size="sm" className="w-full">
-                {addingMember ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <UserPlus className="h-4 w-4 mr-2" />}
-                Créer et ajouter
-              </Button>
+              <div className="space-y-1">
+                <Label>Nom</Label>
+                <Input
+                  placeholder="Nom" value={newNom}
+                  onChange={(e) => setNewNom(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleAddStudent()}
+                />
+              </div>
             </div>
+            <Button onClick={handleAddStudent} disabled={addingMember} className="w-full">
+              {addingMember ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <UserPlus className="h-4 w-4 mr-2" />}
+              Créer et ajouter
+            </Button>
 
-            {/* Created student credentials card */}
             {createdStudent && (
               <div className="rounded-lg border-2 border-primary/30 bg-primary/5 p-4 space-y-3">
                 <p className="text-sm font-semibold text-primary">
                   ✅ Élève créé — notez ces identifiants :
                 </p>
                 <div className="space-y-2 text-sm">
-                  <div className="flex items-center justify-between">
-                    <span><strong>Nom :</strong> {createdStudent.prenom} {createdStudent.nom}</span>
-                  </div>
+                  <div><strong>Nom :</strong> {createdStudent.prenom} {createdStudent.nom}</div>
                   <div className="flex items-center justify-between gap-2">
                     <span className="truncate"><strong>Identifiant :</strong> {createdStudent.email}</span>
-                    <Button
-                      variant="ghost" size="icon" className="h-7 w-7 shrink-0"
-                      onClick={() => copyToClipboard(createdStudent.email, "email")}
-                    >
-                      {copiedField === "email" ? <Check className="h-3.5 w-3.5 text-primary" /> : <Copy className="h-3.5 w-3.5" />}
+                    <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0"
+                      onClick={() => copyToClipboard(createdStudent.email, "new-email")}>
+                      {copiedField === "new-email" ? <Check className="h-3.5 w-3.5 text-primary" /> : <Copy className="h-3.5 w-3.5" />}
                     </Button>
                   </div>
                   <div className="flex items-center justify-between gap-2">
                     <span><strong>Mot de passe :</strong> <code className="bg-muted px-1.5 py-0.5 rounded text-xs">{createdStudent.password}</code></span>
-                    <Button
-                      variant="ghost" size="icon" className="h-7 w-7 shrink-0"
-                      onClick={() => copyToClipboard(createdStudent.password, "password")}
-                    >
-                      {copiedField === "password" ? <Check className="h-3.5 w-3.5 text-primary" /> : <Copy className="h-3.5 w-3.5" />}
+                    <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0"
+                      onClick={() => copyToClipboard(createdStudent.password, "new-pwd")}>
+                      {copiedField === "new-pwd" ? <Check className="h-3.5 w-3.5 text-primary" /> : <Copy className="h-3.5 w-3.5" />}
                     </Button>
                   </div>
                 </div>
-              </div>
-            )}
-
-            {/* Members list */}
-            {membersLoading ? (
-              <div className="space-y-2">{[1, 2].map((i) => <Skeleton key={i} className="h-10" />)}</div>
-            ) : (members ?? []).length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-4">Aucun membre dans ce groupe.</p>
-            ) : (
-              <div className="space-y-2 max-h-60 overflow-y-auto">
-                {(members ?? []).map((m: any) => (
-                  <div key={m.id} className="flex items-center justify-between p-2 rounded-lg border">
-                    <button
-                      className="text-left hover:text-primary transition-colors"
-                      onClick={() => { setMemberOpen(false); navigate(`/formateur/eleves/${m.eleve?.id}`); }}
-                    >
-                      <p className="text-sm font-medium">{m.eleve?.prenom} {m.eleve?.nom}</p>
-                      <p className="text-xs text-muted-foreground">Voir la progression →</p>
-                    </button>
-                    <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleRemoveMember(m.id)}>
-                      <UserMinus className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
               </div>
             )}
           </div>
