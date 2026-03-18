@@ -51,7 +51,7 @@ const ExercicesPage = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("exercices")
-        .select("id, titre, consigne, competence, format, contenu, difficulte, niveau_vise, created_at, is_ai_generated")
+        .select("id, titre, consigne, competence, format, contenu, difficulte, niveau_vise, created_at, is_ai_generated, animation_guide")
         .eq("formateur_id", user!.id)
         .order("created_at", { ascending: false });
       if (error) throw error;
