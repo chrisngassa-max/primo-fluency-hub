@@ -781,64 +781,107 @@ const SessionPilot = () => {
             </CardContent>
           </Card>
 
-          {/* Exercise List */}
-          <div className="space-y-3">
+          {/* Exercise List — Accordion */}
+          <Accordion type="multiple" className="space-y-2">
             {exercises.map((se, i) => {
               const ex = (se as any).exercice;
               const status = getStatus(se.id);
               const config = statusConfig[status];
               const StatusIcon = config.icon;
               const isChecked = !!checked[se.id];
+              const contenu = typeof ex?.contenu === "object" && ex?.contenu !== null ? ex.contenu : { items: [] };
+              const items: any[] = Array.isArray((contenu as any).items) ? (contenu as any).items : [];
 
               return (
-                <Card key={se.id}
-                  className={cn(
-                    "transition-all cursor-pointer print:break-inside-avoid print:border print:shadow-none",
-                    isChecked && "border-green-200 bg-green-50/30 dark:border-green-800 dark:bg-green-950/30",
-                    !isChecked && checkedCount > 0 && "opacity-60"
-                  )}
-                  onClick={() => toggleExercise(se.id)}>
-                  <CardContent className="py-4 px-4">
-                    <div className="flex items-start gap-3">
-                      <div className="pt-0.5 print:hidden">
-                        <Checkbox checked={isChecked} onCheckedChange={() => toggleExercise(se.id)}
-                          onClick={(e) => e.stopPropagation()} className="h-5 w-5" />
+                <AccordionItem key={se.id} value={se.id} className={cn(
+                  "border rounded-lg transition-all print:break-inside-avoid",
+                  isChecked && "border-green-200 bg-green-50/30 dark:border-green-800 dark:bg-green-950/30",
+                  !isChecked && checkedCount > 0 && "opacity-60"
+                )}>
+                  <div className="flex items-center gap-3 px-4 py-3">
+                    <div className="pt-0.5 print:hidden">
+                      <Checkbox checked={isChecked} onCheckedChange={() => toggleExercise(se.id)}
+                        className="h-5 w-5" />
+                    </div>
+                    <div className={cn("flex items-center justify-center h-8 w-8 rounded-full text-sm font-bold shrink-0 border", config.color)}>
+                      {i + 1}
+                    </div>
+                    <AccordionTrigger className="flex-1 min-w-0 py-0 hover:no-underline">
+                      <div className="flex items-center gap-2 flex-wrap text-left">
+                        <h3 className="font-semibold text-sm">{ex?.titre || "Exercice"}</h3>
+                        <Badge variant="secondary" className="text-[10px]">{ex?.competence}</Badge>
+                        <Badge variant="outline" className="text-[10px]">{ex?.format?.replace(/_/g, " ")}</Badge>
+                        <span className={cn("inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-medium border print:hidden", config.color)}>
+                          <StatusIcon className="h-3 w-3" />{config.label}
+                        </span>
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 px-2 py-0.5 text-[10px] font-semibold print:hidden">
+                          <Circle className="h-2 w-2 fill-emerald-500 text-emerald-500" />
+                          En ligne
+                        </span>
                       </div>
-                      <div className={cn("flex items-center justify-center h-8 w-8 rounded-full text-sm font-bold shrink-0 border", config.color)}>
-                        {i + 1}
-                      </div>
-                      <div className="flex-1 min-w-0 space-y-1">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <h3 className="font-semibold text-sm">{ex?.titre || "Exercice"}</h3>
-                          <Badge variant="secondary" className="text-[10px]">{ex?.competence}</Badge>
-                          <span className={cn("inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-medium border print:hidden", config.color)}>
-                            <StatusIcon className="h-3 w-3" />{config.label}
-                          </span>
-                          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 px-2 py-0.5 text-[10px] font-semibold print:hidden">
-                            <Circle className="h-2 w-2 fill-emerald-500 text-emerald-500" />
-                            En ligne
-                          </span>
-                        </div>
-                        <p className="text-xs text-muted-foreground">{ex?.consigne}</p>
-                        <p className="text-[10px] text-muted-foreground/60 print:hidden">Format : {ex?.format?.replace(/_/g, " ")}</p>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 shrink-0 print:hidden"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openEditor(se);
-                        }}
-                      >
+                    </AccordionTrigger>
+                    <div className="flex gap-1 shrink-0 print:hidden">
+                      <Button variant="outline" size="icon" className="h-8 w-8"
+                        onClick={(e) => { e.stopPropagation(); setPreviewExercise(ex); }}>
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8"
+                        onClick={(e) => { e.stopPropagation(); openEditor(se); }}>
                         <Pencil className="h-4 w-4" />
                       </Button>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                  <AccordionContent className="px-4 pb-4 pt-0">
+                    <div className="space-y-3 border-t pt-3">
+                      <div>
+                        <p className="text-xs font-semibold text-muted-foreground mb-1">Consigne</p>
+                        <p className="text-sm">{ex?.consigne}</p>
+                      </div>
+                      <div className="grid grid-cols-3 gap-3 text-xs">
+                        <div>
+                          <span className="text-muted-foreground">Niveau</span>
+                          <p className="font-medium">{ex?.niveau_vise}</p>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Difficulté</span>
+                          <p className="font-medium">{ex?.difficulte}/5</p>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Questions</span>
+                          <p className="font-medium">{items.length}</p>
+                        </div>
+                      </div>
+                      {items.length > 0 && (
+                        <div className="space-y-2">
+                          <p className="text-xs font-semibold text-muted-foreground">Aperçu rapide ({items.length} items)</p>
+                          {items.slice(0, 3).map((item: any, idx: number) => (
+                            <div key={idx} className="text-xs p-2 rounded-md bg-muted/50 border">
+                              <span className="font-semibold text-primary">Q{idx + 1}.</span>{" "}
+                              <span>{item.question}</span>
+                              {Array.isArray(item.options) && (
+                                <span className="text-muted-foreground ml-1">({item.options.length} choix)</span>
+                              )}
+                            </div>
+                          ))}
+                          {items.length > 3 && (
+                            <p className="text-[11px] text-muted-foreground">+ {items.length - 3} autre(s) question(s)…</p>
+                          )}
+                        </div>
+                      )}
+                      <div className="flex gap-2 print:hidden">
+                        <Button variant="outline" size="sm" className="gap-1" onClick={() => setPreviewExercise(ex)}>
+                          <Eye className="h-3.5 w-3.5" />Aperçu Élève
+                        </Button>
+                        <Button variant="outline" size="sm" className="gap-1" onClick={() => openEditor(se)}>
+                          <Pencil className="h-3.5 w-3.5" />Modifier
+                        </Button>
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
               );
             })}
-          </div>
+          </Accordion>
         </>
       )}
 
