@@ -69,7 +69,7 @@ const App = () => (
               <Route path="sequences/new" element={<SequenceBuilder />} />
               <Route path="eleves/:eleveId" element={<EleveDetail />} />
               <Route path="exercices" element={<ExercicesPage />} />
-              <Route path="monitoring" element={<FormateurDashboard />} />
+              <Route path="monitoring" element={<MonitoringPage />} />
               <Route path="tests" element={<TestsEntreePage />} />
               <Route path="import-programme" element={<ImportProgramme />} />
               <Route path="parcours" element={<ParcoursPage />} />
