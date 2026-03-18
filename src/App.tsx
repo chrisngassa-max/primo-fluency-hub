@@ -24,6 +24,8 @@ import SequenceBuilder from "@/pages/formateur/SequenceBuilder";
 
 import EleveLayout from "@/layouts/EleveLayout";
 import EleveDashboard from "@/pages/eleve/Dashboard";
+import EleveProgression from "@/pages/eleve/Progression";
+import EleveDetail from "@/pages/formateur/EleveDetail";
 
 const queryClient = new QueryClient();
 
