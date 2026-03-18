@@ -28,6 +28,7 @@ import EleveProgression from "@/pages/eleve/Progression";
 import EleveDetail from "@/pages/formateur/EleveDetail";
 import TestsEntreePage from "@/pages/formateur/TestsEntree";
 import ImportProgramme from "@/pages/formateur/ImportProgramme";
+import Parametres from "@/pages/formateur/Parametres";
 
 const queryClient = new QueryClient();
 
@@ -67,7 +68,7 @@ const App = () => (
               <Route path="tests" element={<TestsEntreePage />} />
               <Route path="import-programme" element={<ImportProgramme />} />
               <Route path="rapports" element={<FormateurDashboard />} />
-              <Route path="parametres" element={<FormateurDashboard />} />
+              <Route path="parametres" element={<Parametres />} />
             </Route>
 
             {/* Élève routes */}

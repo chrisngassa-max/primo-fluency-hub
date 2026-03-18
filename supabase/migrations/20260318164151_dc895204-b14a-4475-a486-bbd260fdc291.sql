@@ -1,0 +1,1 @@
+ALTER TABLE public.parametres ADD COLUMN IF NOT EXISTS auto_adapt boolean NOT NULL DEFAULT false;

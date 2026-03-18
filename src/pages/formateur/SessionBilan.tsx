@@ -74,6 +74,23 @@ const SessionBilan = () => {
   const [adaptationResult, setAdaptationResult] = useState<any>(null);
   const [showAdaptation, setShowAdaptation] = useState(false);
 
+  // Fetch formateur settings for auto_adapt
+  const { data: formateurParams } = useQuery({
+    queryKey: ["formateur-parametres-bilan", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("parametres")
+        .select("*")
+        .eq("formateur_id", user!.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  const isAutoAdapt = (formateurParams as any)?.auto_adapt ?? false;
+
   const { data: sessionExercices, isLoading } = useQuery({
     queryKey: ["session-bilan", id],
     queryFn: async () => {
@@ -258,13 +275,48 @@ const SessionBilan = () => {
       if (data?.error) throw new Error(data.error);
 
       setAdaptationResult(data.adaptation);
-      setShowAdaptation(true);
+
+      // Auto-apply if pilote automatique is enabled
+      if (isAutoAdapt && nextSession) {
+        await autoApplyAdaptation(data.adaptation);
+      } else {
+        setShowAdaptation(true);
+      }
     } catch (e: any) {
       console.error(e);
       toast.error("L'adaptation IA a échoué", { description: e.message });
       navigate("/formateur/seances");
     } finally {
       setAdapting(false);
+    }
+  };
+
+  const autoApplyAdaptation = async (adaptation: any) => {
+    if (!nextSession) return;
+    try {
+      await supabase
+        .from("sessions")
+        .update({
+          objectifs: adaptation.objectifs_ajustes,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", nextSession.id);
+
+      await supabase.from("notifications").insert({
+        user_id: user!.id,
+        titre: "Séance auto-adaptée par l'IA",
+        message: adaptation.message_formateur,
+        link: `/formateur/seances/${nextSession.id}/pilote`,
+      });
+
+      qc.invalidateQueries({ queryKey: ["formateur-sessions"] });
+      toast.success("Pilote automatique — Séance N+1 adaptée !", {
+        description: adaptation.message_formateur,
+      });
+      navigate("/formateur/seances");
+    } catch (e: any) {
+      toast.error("Erreur d'auto-adaptation", { description: e.message });
+      navigate("/formateur/seances");
     }
   };
 
@@ -280,7 +332,6 @@ const SessionBilan = () => {
         })
         .eq("id", nextSession.id);
 
-      // Create notification
       await supabase.from("notifications").insert({
         user_id: user!.id,
         titre: "Séance adaptée par l'IA",
@@ -517,7 +568,9 @@ const SessionBilan = () => {
       {nextSession && (
         <p className="text-xs text-muted-foreground text-center print:hidden">
           <Sparkles className="h-3 w-3 inline mr-1" />
-          L'IA adaptera automatiquement la séance suivante "{nextSession.titre}" après validation
+          {isAutoAdapt
+            ? `Pilote auto activé — La séance "${nextSession.titre}" sera adaptée automatiquement`
+            : `L'IA proposera des suggestions pour adapter "${nextSession.titre}"`}
         </p>
       )}
 
