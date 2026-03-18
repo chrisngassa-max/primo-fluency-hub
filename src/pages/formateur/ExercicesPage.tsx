@@ -24,6 +24,7 @@ import {
   Pencil, Trash2, Plus, CirclePlus, CheckCircle2, Loader2, ChevronLeft, ChevronRight, Save,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/DifficultyBadge";
 
 const COMPETENCES = ["CO", "CE", "EE", "EO", "Structures"] as const;
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
