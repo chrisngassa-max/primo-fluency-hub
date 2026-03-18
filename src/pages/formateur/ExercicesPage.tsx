@@ -19,7 +19,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 import {
-  BookOpen, Printer, Search, Eye, Volume2, Circle, Filter,
+  BookOpen, Printer, Search, Eye, Volume2, Circle, Filter, Drama, Package, MessageCircle, Wand2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -42,6 +42,7 @@ const ExercicesPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [previewExercise, setPreviewExercise] = useState<any>(null);
+  const [animationGuide, setAnimationGuide] = useState<any>(null);
   const printRef = useRef<HTMLDivElement>(null);
 
   // Fetch all exercises for this formateur
@@ -50,7 +51,7 @@ const ExercicesPage = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("exercices")
-        .select("id, titre, consigne, competence, format, contenu, difficulte, niveau_vise, created_at, is_ai_generated")
+        .select("id, titre, consigne, competence, format, contenu, difficulte, niveau_vise, created_at, is_ai_generated, animation_guide")
         .eq("formateur_id", user!.id)
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -348,6 +349,12 @@ ${Array.isArray(item.options) && item.options.length > 0
                         </div>
                       </AccordionTrigger>
                       <div className="flex gap-1 shrink-0">
+                        {ex.animation_guide && (
+                          <Button variant="outline" size="icon" className="h-8 w-8 text-amber-600 border-amber-200 hover:bg-amber-50 dark:border-amber-800 dark:hover:bg-amber-950"
+                            onClick={(e) => { e.stopPropagation(); setAnimationGuide({ ...ex.animation_guide, titre: ex.titre }); }}>
+                            <Drama className="h-4 w-4" />
+                          </Button>
+                        )}
                         <Button variant="outline" size="icon" className="h-8 w-8"
                           onClick={(e) => { e.stopPropagation(); setPreviewExercise(ex); }}>
                           <Eye className="h-4 w-4" />
@@ -462,6 +469,63 @@ ${Array.isArray(item.options) && item.options.length > 0
               </div>
             );
           })()}
+        </DialogContent>
+      </Dialog>
+
+      {/* ─── Animation Guide Dialog (Formateur only) ─── */}
+      <Dialog open={!!animationGuide} onOpenChange={(open) => { if (!open) setAnimationGuide(null); }}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Drama className="h-5 w-5 text-amber-600" />
+              Atelier Ludique / Mise en situation
+            </DialogTitle>
+            <DialogDescription>
+              {animationGuide?.titre} — Guide d'animation réservé au formateur
+            </DialogDescription>
+          </DialogHeader>
+          {animationGuide && (
+            <div className="space-y-4 pt-2">
+              <div className="p-4 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="flex items-center justify-center h-8 w-8 rounded-full bg-amber-100 dark:bg-amber-900/60 shrink-0">
+                    <Drama className="h-4 w-4 text-amber-700 dark:text-amber-400" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wide">Scénario</p>
+                    <p className="text-sm mt-1">{animationGuide.scenario}</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="flex items-center justify-center h-8 w-8 rounded-full bg-amber-100 dark:bg-amber-900/60 shrink-0">
+                    <Wand2 className="h-4 w-4 text-amber-700 dark:text-amber-400" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wide">Jeu pédagogique</p>
+                    <p className="text-sm mt-1">{animationGuide.jeu}</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="flex items-center justify-center h-8 w-8 rounded-full bg-amber-100 dark:bg-amber-900/60 shrink-0">
+                    <Package className="h-4 w-4 text-amber-700 dark:text-amber-400" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wide">Matériel à préparer</p>
+                    <p className="text-sm mt-1">{animationGuide.materiel}</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="flex items-center justify-center h-8 w-8 rounded-full bg-amber-100 dark:bg-amber-900/60 shrink-0">
+                    <MessageCircle className="h-4 w-4 text-amber-700 dark:text-amber-400" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wide">Objectif oral</p>
+                    <p className="text-sm mt-1 font-medium italic">« {animationGuide.objectif_oral} »</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
