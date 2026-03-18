@@ -52,7 +52,7 @@ import {
   CheckCircle2, Clock, ArrowRight, Printer, ArrowLeft,
   BookOpen, Minus, Plus, Loader2, Sparkles, Pencil, Trash2, CirclePlus, Circle,
   AlertTriangle, RotateCcw, ClipboardCheck, FileText, Users, Brain,
-  Eye, Volume2, ChevronDown, Drama, Package, MessageCircle, Wand2,
+  Eye, Volume2, ChevronDown, ChevronLeft, ChevronRight, Drama, Package, MessageCircle, Wand2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
