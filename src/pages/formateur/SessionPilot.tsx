@@ -932,7 +932,7 @@ ${Array.isArray(item.options) && item.options.length > 0
                       {ex?.animation_guide && (
                         <Button variant="outline" size="icon" className="h-8 w-8 text-amber-600 border-amber-200 hover:bg-amber-50 dark:border-amber-800 dark:hover:bg-amber-950"
                           onClick={(e) => { e.stopPropagation(); setAnimationGuide({ ...ex.animation_guide, titre: ex.titre }); }}>
-                          <Gamepad2 className="h-4 w-4" />
+                          <Drama className="h-4 w-4" />
                         </Button>
                       )}
                       <Button variant="outline" size="icon" className="h-8 w-8"
