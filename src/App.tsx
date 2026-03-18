@@ -21,6 +21,7 @@ import SeancesPage from "@/pages/formateur/Seances";
 import SessionPilot from "@/pages/formateur/SessionPilot";
 import SessionBilan from "@/pages/formateur/SessionBilan";
 import SequenceBuilder from "@/pages/formateur/SequenceBuilder";
+import ExercicesPage from "@/pages/formateur/ExercicesPage";
 
 import EleveLayout from "@/layouts/EleveLayout";
 import EleveDashboard from "@/pages/eleve/Dashboard";
@@ -67,7 +68,7 @@ const App = () => (
               <Route path="seances/:id/bilan" element={<SessionBilan />} />
               <Route path="sequences/new" element={<SequenceBuilder />} />
               <Route path="eleves/:eleveId" element={<EleveDetail />} />
-              <Route path="exercices" element={<FormateurDashboard />} />
+              <Route path="exercices" element={<ExercicesPage />} />
               <Route path="monitoring" element={<FormateurDashboard />} />
               <Route path="tests" element={<TestsEntreePage />} />
               <Route path="import-programme" element={<ImportProgramme />} />

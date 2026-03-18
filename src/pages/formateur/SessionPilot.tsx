@@ -214,6 +214,39 @@ const SessionPilot = () => {
     enabled: !!id,
   });
 
+  // Fetch next session for preview
+  const { data: nextSession } = useQuery({
+    queryKey: ["next-session-preview", session?.group_id, session?.date_seance],
+    queryFn: async () => {
+      if (!session) return null;
+      const groupId = (session as any)?.group?.id || session.group_id;
+      const { data } = await supabase
+        .from("sessions")
+        .select("id, titre, date_seance, duree_minutes, objectifs, statut")
+        .eq("group_id", groupId)
+        .gt("date_seance", session.date_seance)
+        .order("date_seance", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!session,
+  });
+
+  // Fetch next session exercise count
+  const { data: nextSessionExCount } = useQuery({
+    queryKey: ["next-session-ex-count", nextSession?.id],
+    queryFn: async () => {
+      if (!nextSession) return 0;
+      const { count } = await supabase
+        .from("session_exercices")
+        .select("id", { count: "exact", head: true })
+        .eq("session_id", nextSession.id);
+      return count || 0;
+    },
+    enabled: !!nextSession,
+  });
+
   const exercises = sessionExercices ?? [];
   const reported = reportedExercises ?? [];
 
@@ -318,7 +351,7 @@ const SessionPilot = () => {
       const competences = (parcoursSeance as any)?.competences_cibles;
       const competence = competences?.length > 0 ? competences[0] : "CE";
       const objectif = (parcoursSeance as any)?.objectif_principal || session.objectifs || "Exercice de séance";
-      const count = (parcoursSeance as any)?.nb_exercices_suggeres || 5;
+      const count = (parcoursSeance as any)?.nb_exercices_suggeres || 10;
 
       const { data: defaultPoint } = await supabase
         .from("points_a_maitriser")
@@ -558,6 +591,51 @@ const SessionPilot = () => {
     } finally { setSaving(false); }
   };
 
+  const handlePrintAll = () => {
+    const allExercises = exercises.map((se: any) => se.exercice).filter(Boolean);
+    if (allExercises.length === 0) { toast.warning("Aucun exercice à imprimer."); return; }
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) { toast.error("Pop-up bloqué."); return; }
+    const html = `<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8"><title>${session?.titre || "Séance"} — TCF Pro</title>
+<style>
+body { font-family: 'Segoe UI', sans-serif; padding: 24px; font-size: 13pt; color: #222; }
+h1 { font-size: 18pt; border-bottom: 2px solid #333; padding-bottom: 8px; margin-bottom: 20px; }
+.exercise { page-break-inside: avoid; margin-bottom: 28px; border: 1px solid #ddd; border-radius: 8px; padding: 16px; }
+.exercise h2 { font-size: 14pt; margin: 0 0 4px; }
+.exercise .meta { font-size: 10pt; color: #666; margin-bottom: 8px; }
+.exercise .consigne { font-style: italic; margin-bottom: 12px; font-size: 12pt; }
+.question { margin-bottom: 14px; }
+.question p { font-weight: 600; margin-bottom: 6px; }
+.option { padding: 4px 0 4px 20px; position: relative; }
+.option::before { content: "☐"; position: absolute; left: 0; }
+.write-zone { border: 1px dashed #aaa; height: 60px; border-radius: 4px; margin-top: 6px; }
+@media print { body { padding: 0; } }
+</style></head><body>
+<h1>📝 ${session?.titre || "Séance"} — ${allExercises.length} exercice(s)</h1>
+<p style="font-size:10pt;color:#666;">${(session as any)?.group?.nom || ""} · ${new Date().toLocaleDateString("fr-FR")} — TCF Pro</p>
+${allExercises.map((ex: any, i: number) => {
+      const c = typeof ex.contenu === "object" && ex.contenu !== null ? ex.contenu : { items: [] };
+      const its: any[] = Array.isArray((c as any).items) ? (c as any).items : [];
+      return `<div class="exercise">
+<h2>${i + 1}. ${ex.titre}</h2>
+<div class="meta">${ex.competence} · ${ex.format?.replace(/_/g, " ")} · Niveau ${ex.niveau_vise} · Difficulté ${ex.difficulte}/5</div>
+<div class="consigne">${ex.consigne}</div>
+${its.map((item: any, qi: number) => `<div class="question">
+<p>Q${qi + 1}. ${item.question || ""}</p>
+${Array.isArray(item.options) && item.options.length > 0
+        ? item.options.map((o: string) => `<div class="option">${o}</div>`).join("")
+        : '<div class="write-zone"></div>'}
+</div>`).join("")}
+</div>`;
+    }).join("")}
+</body></html>`;
+    printWindow.document.write(html);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => printWindow.print(), 300);
+  };
+
   const handlePrint = () => window.print();
 
   if (isLoading) {
@@ -603,7 +681,35 @@ const SessionPilot = () => {
         </p>
       </div>
 
-      {/* ─── Debriefing Widget (homework stats from previous session) ─── */}
+      {/* ─── Session Summary Card ─── */}
+      <Card className="print:hidden">
+        <CardContent className="py-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="text-center p-3 rounded-lg bg-muted/50">
+              <p className="text-2xl font-bold text-primary">{exercises.length}</p>
+              <p className="text-[11px] text-muted-foreground">Exercices prévus</p>
+            </div>
+            <div className="text-center p-3 rounded-lg bg-muted/50">
+              <p className="text-2xl font-bold text-green-600">{checkedCount}</p>
+              <p className="text-[11px] text-muted-foreground">Réalisés</p>
+            </div>
+            <div className="text-center p-3 rounded-lg bg-muted/50">
+              <p className="text-2xl font-bold">{session?.duree_minutes || 180} min</p>
+              <p className="text-[11px] text-muted-foreground">Durée prévue</p>
+            </div>
+            <div className="text-center p-3 rounded-lg bg-muted/50">
+              <p className="text-2xl font-bold">~{exercises.length > 0 ? Math.round((session?.duree_minutes || 180) / exercises.length) : 0} min</p>
+              <p className="text-[11px] text-muted-foreground">Par exercice</p>
+            </div>
+          </div>
+          <div className="flex gap-2 mt-3">
+            <Button variant="outline" className="gap-2" onClick={handlePrintAll}>
+              <Printer className="h-4 w-4" />Tout imprimer pour la classe
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       {homeworkStats && homeworkStats.total > 0 && (
         <Card className="border-primary/20 print:hidden">
           <CardHeader className="pb-3">
@@ -1089,6 +1195,36 @@ const SessionPilot = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* ─── Next Session Preview ─── */}
+      {nextSession && (
+        <Card className="border-dashed print:hidden">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <ArrowRight className="h-5 w-5 text-muted-foreground" />
+              Séance suivante
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-medium text-sm">{nextSession.titre}</p>
+                <p className="text-xs text-muted-foreground">
+                  {new Date(nextSession.date_seance).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}
+                  {" · "}{nextSession.duree_minutes} min
+                  {" · "}{nextSessionExCount || 0} exercice(s) prévus
+                </p>
+                {nextSession.objectifs && (
+                  <p className="text-xs text-muted-foreground mt-1 italic">{nextSession.objectifs}</p>
+                )}
+              </div>
+              <Button variant="outline" size="sm" onClick={() => navigate(`/formateur/seances/${nextSession.id}/pilote`)}>
+                Ouvrir
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <style>{`@media print { nav, header, .print\\:hidden { display: none !important; } body { font-size: 12pt; } }`}</style>
     </div>
