@@ -130,7 +130,7 @@ const SessionPilot = () => {
       const prevId = prevSessions[0].id;
       const { data, error } = await supabase
         .from("session_exercices")
-        .select("*, exercice:exercices(id, titre, consigne, competence, format, contenu, difficulte, niveau_vise, point_a_maitriser_id)")
+        .select("*, exercice:exercices(id, titre, consigne, competence, format, contenu, difficulte, niveau_vise, point_a_maitriser_id, animation_guide)")
         .eq("session_id", prevId)
         .eq("statut", "reporte")
         .order("ordre");
