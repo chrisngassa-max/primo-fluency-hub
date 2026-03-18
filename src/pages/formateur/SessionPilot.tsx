@@ -937,7 +937,7 @@ ${Array.isArray(item.options) && item.options.length > 0
                         </Button>
                       )}
                       <Button variant="outline" size="icon" className="h-8 w-8"
-                        onClick={(e) => { e.stopPropagation(); setPreviewExercise(ex); }}>
+                        onClick={(e) => { e.stopPropagation(); setPreviewExercise(ex); setPreviewPage(0); }}>
                         <Eye className="h-4 w-4" />
                       </Button>
                       <Button variant="ghost" size="icon" className="h-8 w-8"
