@@ -88,7 +88,8 @@ const App = () => (
             >
               <Route index element={<EleveDashboard />} />
               <Route path="test" element={<EleveDashboard />} />
-              <Route path="devoirs" element={<EleveDashboard />} />
+              <Route path="devoirs" element={<EleveDevoirs />} />
+              <Route path="devoirs/:devoirId" element={<DevoirPassation />} />
               <Route path="progression" element={<EleveProgression />} />
             </Route>
 

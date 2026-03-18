@@ -142,7 +142,7 @@ const SessionPilot = () => {
       const { data: devoirs } = await supabase
         .from("devoirs")
         .select("*, exercice:exercices(titre, competence), eleve:profiles(nom, prenom)")
-        .eq("session_id" as any, prevSessionId);
+        .eq("session_id", prevSessionId);
 
       if (!devoirs || devoirs.length === 0) return null;
 
