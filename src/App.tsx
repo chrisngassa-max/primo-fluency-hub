@@ -16,6 +16,7 @@ import LoginAdmin from "@/pages/auth/LoginAdmin";
 
 import FormateurLayout from "@/layouts/FormateurLayout";
 import FormateurDashboard from "@/pages/formateur/Dashboard";
+import GroupesPage from "@/pages/formateur/Groupes";
 import SeancesPage from "@/pages/formateur/Seances";
 import SessionPilot from "@/pages/formateur/SessionPilot";
 import SessionBilan from "@/pages/formateur/SessionBilan";
