@@ -281,22 +281,63 @@ const SequenceBuilder = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
+            {/* Épreuve */}
             <div className="space-y-2">
-              <Label>Point à maîtriser</Label>
-              <Select value={selectedPointId} onValueChange={setSelectedPointId}>
+              <Label>Épreuve (compétence)</Label>
+              <Select value={selectedEpreuveId} onValueChange={(v) => {
+                setSelectedEpreuveId(v);
+                setSelectedSousSectionId("");
+                setSelectedPointId("");
+              }}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Choisir un point..." />
+                  <SelectValue placeholder="Choisir une épreuve..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {allPoints.map((p) => (
-                    <SelectItem key={p.id} value={p.id}>
-                      <span className="text-xs text-muted-foreground mr-1">[{p.competence}]</span>
-                      {p.nom}
+                  {(tree ?? []).map((ep) => (
+                    <SelectItem key={ep.id} value={ep.id}>
+                      [{ep.competence}] {ep.nom}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
+
+            {/* Sous-section */}
+            {selectedEpreuveId && (
+              <div className="space-y-2">
+                <Label>Sous-section</Label>
+                <Select value={selectedSousSectionId} onValueChange={(v) => {
+                  setSelectedSousSectionId(v);
+                  setSelectedPointId("");
+                }}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choisir une sous-section..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {sousSectionsForEpreuve.map((ss) => (
+                      <SelectItem key={ss.id} value={ss.id}>{ss.nom}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {/* Point à maîtriser */}
+            {selectedSousSectionId && (
+              <div className="space-y-2">
+                <Label>Point à maîtriser</Label>
+                <Select value={selectedPointId} onValueChange={setSelectedPointId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choisir un point..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {pointsForSousSection.map((p) => (
+                      <SelectItem key={p.id} value={p.id}>{p.nom}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
             <Button
               onClick={handleGenerate}
               disabled={generating || !selectedPointId}
