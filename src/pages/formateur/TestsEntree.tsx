@@ -409,7 +409,7 @@ function PassationTest() {
         ) : (
           <Button
             onClick={() => setCurrent((c) => Math.min(SAMPLE_QUESTIONS.length - 1, c + 1))}
-            disabled={current === SAMPLE_QUESTIONS.length - 1}
+            disabled={current === SAMPLE_QUESTIONS.length - 1 || answers[current] === null}
           >
             Suivant <ChevronRight className="h-4 w-4 ml-1" />
           </Button>
