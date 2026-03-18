@@ -208,7 +208,7 @@ export type Database = {
           is_devoir: boolean
           is_template: boolean
           mode: Database["public"]["Enums"]["exercice_mode"]
-          niveau_vise: Database["public"]["Enums"]["niveau_cecrl"]
+          niveau_vise: string
           point_a_maitriser_id: string
           sequence_id: string | null
           sous_competence: string | null
@@ -231,7 +231,7 @@ export type Database = {
           is_devoir?: boolean
           is_template?: boolean
           mode?: Database["public"]["Enums"]["exercice_mode"]
-          niveau_vise?: Database["public"]["Enums"]["niveau_cecrl"]
+          niveau_vise: string
           point_a_maitriser_id: string
           sequence_id?: string | null
           sous_competence?: string | null
@@ -254,7 +254,7 @@ export type Database = {
           is_devoir?: boolean
           is_template?: boolean
           mode?: Database["public"]["Enums"]["exercice_mode"]
-          niveau_vise?: Database["public"]["Enums"]["niveau_cecrl"]
+          niveau_vise?: string
           point_a_maitriser_id?: string
           sequence_id?: string | null
           sous_competence?: string | null
@@ -335,7 +335,7 @@ export type Database = {
           formateur_id: string
           id: string
           is_active: boolean
-          niveau: Database["public"]["Enums"]["niveau_cecrl"]
+          niveau: string
           nom: string
           updated_at: string
         }
@@ -345,7 +345,7 @@ export type Database = {
           formateur_id: string
           id?: string
           is_active?: boolean
-          niveau?: Database["public"]["Enums"]["niveau_cecrl"]
+          niveau: string
           nom: string
           updated_at?: string
         }
@@ -355,7 +355,7 @@ export type Database = {
           formateur_id?: string
           id?: string
           is_active?: boolean
-          niveau?: Database["public"]["Enums"]["niveau_cecrl"]
+          niveau?: string
           nom?: string
           updated_at?: string
         }
@@ -462,8 +462,8 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
-          niveau_max: Database["public"]["Enums"]["niveau_cecrl"]
-          niveau_min: Database["public"]["Enums"]["niveau_cecrl"]
+          niveau_max: string
+          niveau_min: string
           nom: string
           ordre: number
           sous_section_id: string
@@ -472,8 +472,8 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
-          niveau_max?: Database["public"]["Enums"]["niveau_cecrl"]
-          niveau_min?: Database["public"]["Enums"]["niveau_cecrl"]
+          niveau_max: string
+          niveau_min: string
           nom: string
           ordre?: number
           sous_section_id: string
@@ -482,8 +482,8 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
-          niveau_max?: Database["public"]["Enums"]["niveau_cecrl"]
-          niveau_min?: Database["public"]["Enums"]["niveau_cecrl"]
+          niveau_max?: string
+          niveau_min?: string
           nom?: string
           ordre?: number
           sous_section_id?: string
@@ -535,7 +535,7 @@ export type Database = {
         Row: {
           eleve_id: string
           id: string
-          niveau_actuel: Database["public"]["Enums"]["niveau_cecrl"]
+          niveau_actuel: string
           priorites_pedagogiques: Json
           score_risque: number
           taux_reussite_ce: number
@@ -549,7 +549,7 @@ export type Database = {
         Insert: {
           eleve_id: string
           id?: string
-          niveau_actuel?: Database["public"]["Enums"]["niveau_cecrl"]
+          niveau_actuel: string
           priorites_pedagogiques?: Json
           score_risque?: number
           taux_reussite_ce?: number
@@ -563,7 +563,7 @@ export type Database = {
         Update: {
           eleve_id?: string
           id?: string
-          niveau_actuel?: Database["public"]["Enums"]["niveau_cecrl"]
+          niveau_actuel?: string
           priorites_pedagogiques?: Json
           score_risque?: number
           taux_reussite_ce?: number
@@ -649,7 +649,7 @@ export type Database = {
           formateur_id: string
           id: string
           is_ai_generated: boolean
-          niveau: Database["public"]["Enums"]["niveau_cecrl"]
+          niveau: string
           titre: string
           updated_at: string
         }
@@ -659,7 +659,7 @@ export type Database = {
           formateur_id: string
           id?: string
           is_ai_generated?: boolean
-          niveau?: Database["public"]["Enums"]["niveau_cecrl"]
+          niveau: string
           titre: string
           updated_at?: string
         }
@@ -669,7 +669,7 @@ export type Database = {
           formateur_id?: string
           id?: string
           is_ai_generated?: boolean
-          niveau?: Database["public"]["Enums"]["niveau_cecrl"]
+          niveau?: string
           titre?: string
           updated_at?: string
         }
@@ -740,7 +740,7 @@ export type Database = {
           id: string
           lien_visio: string | null
           lieu: string | null
-          niveau_cible: Database["public"]["Enums"]["niveau_cecrl"]
+          niveau_cible: string
           objectifs: string | null
           statut: Database["public"]["Enums"]["session_statut"]
           titre: string
@@ -754,7 +754,7 @@ export type Database = {
           id?: string
           lien_visio?: string | null
           lieu?: string | null
-          niveau_cible?: Database["public"]["Enums"]["niveau_cecrl"]
+          niveau_cible: string
           objectifs?: string | null
           statut?: Database["public"]["Enums"]["session_statut"]
           titre: string
@@ -768,7 +768,7 @@ export type Database = {
           id?: string
           lien_visio?: string | null
           lieu?: string | null
-          niveau_cible?: Database["public"]["Enums"]["niveau_cecrl"]
+          niveau_cible?: string
           objectifs?: string | null
           statut?: Database["public"]["Enums"]["session_statut"]
           titre?: string
@@ -858,7 +858,7 @@ export type Database = {
           created_at: string
           format: Database["public"]["Enums"]["exercice_format"]
           id: string
-          niveau: Database["public"]["Enums"]["niveau_cecrl"]
+          niveau: string
           ordre: number
         }
         Insert: {
@@ -867,7 +867,7 @@ export type Database = {
           created_at?: string
           format?: Database["public"]["Enums"]["exercice_format"]
           id?: string
-          niveau?: Database["public"]["Enums"]["niveau_cecrl"]
+          niveau: string
           ordre?: number
         }
         Update: {
@@ -876,7 +876,7 @@ export type Database = {
           created_at?: string
           format?: Database["public"]["Enums"]["exercice_format"]
           id?: string
-          niveau?: Database["public"]["Enums"]["niveau_cecrl"]
+          niveau?: string
           ordre?: number
         }
         Relationships: []
@@ -888,7 +888,7 @@ export type Database = {
           eleve_id: string
           en_cours: boolean
           id: string
-          niveau_estime: Database["public"]["Enums"]["niveau_cecrl"] | null
+          niveau_estime: string | null
           recommandations: string | null
           score_ce: number | null
           score_co: number | null
@@ -903,7 +903,7 @@ export type Database = {
           eleve_id: string
           en_cours?: boolean
           id?: string
-          niveau_estime?: Database["public"]["Enums"]["niveau_cecrl"] | null
+          niveau_estime?: string | null
           recommandations?: string | null
           score_ce?: number | null
           score_co?: number | null
@@ -918,7 +918,7 @@ export type Database = {
           eleve_id?: string
           en_cours?: boolean
           id?: string
-          niveau_estime?: Database["public"]["Enums"]["niveau_cecrl"] | null
+          niveau_estime?: string | null
           recommandations?: string | null
           score_ce?: number | null
           score_co?: number | null
@@ -997,7 +997,6 @@ export type Database = {
         | "texte_lacunaire"
         | "transformation"
       exercice_mode: "papier" | "en_ligne" | "les_deux"
-      niveau_cecrl: "A1" | "A2" | "B1" | "B2" | "C1"
       session_exercice_statut:
         | "planifie"
         | "traite_en_classe"
@@ -1158,7 +1157,6 @@ export const Constants = {
         "transformation",
       ],
       exercice_mode: ["papier", "en_ligne", "les_deux"],
-      niveau_cecrl: ["A1", "A2", "B1", "B2", "C1"],
       session_exercice_statut: [
         "planifie",
         "traite_en_classe",
