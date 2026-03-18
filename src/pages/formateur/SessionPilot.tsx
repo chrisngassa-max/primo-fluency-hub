@@ -351,7 +351,7 @@ const SessionPilot = () => {
       const competences = (parcoursSeance as any)?.competences_cibles;
       const competence = competences?.length > 0 ? competences[0] : "CE";
       const objectif = (parcoursSeance as any)?.objectif_principal || session.objectifs || "Exercice de séance";
-      const count = (parcoursSeance as any)?.nb_exercices_suggeres || 5;
+      const count = (parcoursSeance as any)?.nb_exercices_suggeres || 10;
 
       const { data: defaultPoint } = await supabase
         .from("points_a_maitriser")
