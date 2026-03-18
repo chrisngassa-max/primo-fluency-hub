@@ -54,9 +54,17 @@ const SequenceBuilder = () => {
   const [generating, setGenerating] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  // AI generation state
+  // AI generation state — cascading selects
+  const [selectedEpreuveId, setSelectedEpreuveId] = useState("");
+  const [selectedSousSectionId, setSelectedSousSectionId] = useState("");
   const [selectedPointId, setSelectedPointId] = useState("");
-  const [selectedCompetence, setSelectedCompetence] = useState("");
+
+  // Derived lists for cascading
+  const selectedEpreuve = (tree ?? []).find((ep) => ep.id === selectedEpreuveId);
+  const sousSectionsForEpreuve = selectedEpreuve?.sous_sections ?? [];
+  const selectedSousSection = sousSectionsForEpreuve.find((ss) => ss.id === selectedSousSectionId);
+  const pointsForSousSection = selectedSousSection?.points_a_maitriser ?? [];
+  const selectedPoint = pointsForSousSection.find((p) => p.id === selectedPointId);
 
   // Manual add state
   const [manualOpen, setManualOpen] = useState(false);
