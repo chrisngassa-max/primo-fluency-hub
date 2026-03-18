@@ -1,13 +1,16 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Textarea } from "@/components/ui/textarea";
+import { Slider } from "@/components/ui/slider";
+import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
@@ -25,20 +28,52 @@ import {
   Save,
   BookOpen,
   Loader2,
+  Sparkles,
+  AlertTriangle,
+  Brain,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+const COMPETENCES = ["CO", "CE", "EE", "EO", "Structures"] as const;
+
+interface BilanScores {
+  CO: number;
+  CE: number;
+  EE: number;
+  EO: number;
+  Structures: number;
+}
+
+interface BlockedStudent {
+  nom: string;
+  competence: string;
+}
 
 const SessionBilan = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const qc = useQueryClient();
 
   const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set());
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [pendingAction, setPendingAction] = useState<"devoir" | "reporter" | null>(null);
 
-  // Fetch session exercices
+  // Bilan scores per competence
+  const [bilanScores, setBilanScores] = useState<BilanScores>({
+    CO: 50, CE: 50, EE: 50, EO: 50, Structures: 50,
+  });
+  const [blockedStudents, setBlockedStudents] = useState<BlockedStudent[]>([]);
+  const [newBlockedName, setNewBlockedName] = useState("");
+  const [newBlockedCompetence, setNewBlockedCompetence] = useState("CO");
+  const [bilanNotes, setBilanNotes] = useState("");
+
+  // Adaptation IA
+  const [adapting, setAdapting] = useState(false);
+  const [adaptationResult, setAdaptationResult] = useState<any>(null);
+  const [showAdaptation, setShowAdaptation] = useState(false);
+
   const { data: sessionExercices, isLoading } = useQuery({
     queryKey: ["session-bilan", id],
     queryFn: async () => {
@@ -53,13 +88,12 @@ const SessionBilan = () => {
     enabled: !!id,
   });
 
-  // Fetch session info
   const { data: session } = useQuery({
     queryKey: ["session-info", id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("sessions")
-        .select("*, group:groups(nom)")
+        .select("*, group:groups(nom, id)")
         .eq("id", id!)
         .single();
       if (error) throw error;
@@ -68,8 +102,27 @@ const SessionBilan = () => {
     enabled: !!id,
   });
 
+  // Find next session for this group
+  const { data: nextSession } = useQuery({
+    queryKey: ["next-session", session?.group_id, id],
+    queryFn: async () => {
+      if (!session) return null;
+      const { data, error } = await supabase
+        .from("sessions")
+        .select("*")
+        .eq("group_id", (session as any).group?.id || session.group_id)
+        .eq("statut", "planifiee")
+        .gt("date_seance", session.date_seance)
+        .order("date_seance")
+        .limit(1)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!session,
+  });
+
   const exercises = sessionExercices ?? [];
-  const checkedExercises = exercises.filter((e) => checkedIds.has(e.id));
   const uncheckedExercises = exercises.filter((e) => !checkedIds.has(e.id));
 
   const toggleCheck = (seId: string) => {
@@ -79,6 +132,19 @@ const SessionBilan = () => {
       else next.add(seId);
       return next;
     });
+  };
+
+  const addBlockedStudent = () => {
+    if (!newBlockedName.trim()) return;
+    setBlockedStudents((prev) => [
+      ...prev,
+      { nom: newBlockedName.trim(), competence: newBlockedCompetence },
+    ]);
+    setNewBlockedName("");
+  };
+
+  const removeBlockedStudent = (index: number) => {
+    setBlockedStudents((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleValidate = () => {
@@ -96,7 +162,6 @@ const SessionBilan = () => {
   const saveWithAction = async (action: "devoir" | "reporter" | "none") => {
     setSaving(true);
     try {
-      // Mark checked exercises as traite_en_classe
       if (checkedIds.size > 0) {
         const { error: e1 } = await supabase
           .from("session_exercices")
@@ -105,17 +170,14 @@ const SessionBilan = () => {
         if (e1) throw e1;
       }
 
-      // Handle unchecked exercises
       if (uncheckedExercises.length > 0) {
         if (action === "devoir") {
-          // Mark as devoir_remediation in session_exercices
           const { error: e2 } = await supabase
             .from("session_exercices")
             .update({ statut: "devoir_remediation" as any, updated_at: new Date().toISOString() })
             .in("id", uncheckedExercises.map((e) => e.id));
           if (e2) throw e2;
 
-          // Create devoirs for each student in the group
           if (session?.group_id) {
             const { data: members } = await supabase
               .from("group_members")
@@ -145,7 +207,6 @@ const SessionBilan = () => {
         }
       }
 
-      // Update session status to terminee
       await supabase
         .from("sessions")
         .update({ statut: "terminee" as any, updated_at: new Date().toISOString() })
@@ -155,9 +216,85 @@ const SessionBilan = () => {
         description: `${checkedIds.size} traité(s), ${uncheckedExercises.length} ${action === "devoir" ? "en devoirs" : action === "reporter" ? "reporté(s)" : ""}`.trim(),
       });
       setConfirmOpen(false);
-      navigate("/formateur/seances");
+
+      // Trigger AI adaptation
+      if (nextSession) {
+        await triggerAdaptation();
+      } else {
+        navigate("/formateur/seances");
+      }
     } catch (e: any) {
       console.error(e);
+      toast.error("Erreur", { description: e.message });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const triggerAdaptation = async () => {
+    setAdapting(true);
+    try {
+      const exercicesTraites = exercises
+        .filter((e) => checkedIds.has(e.id))
+        .map((e) => (e as any).exercice?.titre);
+      const exercicesNonTraites = uncheckedExercises.map(
+        (e) => (e as any).exercice?.titre
+      );
+
+      const { data, error } = await supabase.functions.invoke("adapt-next-session", {
+        body: {
+          sessionTitle: session?.titre,
+          bilanScores,
+          blockedStudents,
+          exercicesTraites,
+          exercicesNonTraites,
+          nextSessionTitle: nextSession?.titre,
+          nextSessionObjectifs: nextSession?.objectifs,
+          nextSessionNiveauCible: nextSession?.niveau_cible,
+        },
+      });
+
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      setAdaptationResult(data.adaptation);
+      setShowAdaptation(true);
+    } catch (e: any) {
+      console.error(e);
+      toast.error("L'adaptation IA a échoué", { description: e.message });
+      navigate("/formateur/seances");
+    } finally {
+      setAdapting(false);
+    }
+  };
+
+  const applyAdaptation = async () => {
+    if (!nextSession || !adaptationResult) return;
+    setSaving(true);
+    try {
+      await supabase
+        .from("sessions")
+        .update({
+          objectifs: adaptationResult.objectifs_ajustes,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", nextSession.id);
+
+      // Create notification
+      await supabase.from("notifications").insert({
+        user_id: user!.id,
+        titre: "Séance adaptée par l'IA",
+        message: adaptationResult.message_formateur,
+        link: `/formateur/seances/${nextSession.id}/pilote`,
+      });
+
+      qc.invalidateQueries({ queryKey: ["formateur-sessions"] });
+      toast.success("Séance N+1 adaptée !", {
+        description: adaptationResult.message_formateur,
+      });
+      setShowAdaptation(false);
+      navigate("/formateur/seances");
+    } catch (e: any) {
       toast.error("Erreur", { description: e.message });
     } finally {
       setSaving(false);
@@ -209,7 +346,7 @@ const SessionBilan = () => {
         </Badge>
       </div>
 
-      {/* Exercise list with checkboxes */}
+      {/* Exercise list */}
       <div className="space-y-2">
         {exercises.map((se, i) => {
           const ex = (se as any).exercice;
@@ -253,18 +390,123 @@ const SessionBilan = () => {
         <Card className="border-dashed">
           <CardContent className="py-12 text-center">
             <BookOpen className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
-            <p className="text-muted-foreground">
-              Aucun exercice rattaché à cette séance.
-            </p>
+            <p className="text-muted-foreground">Aucun exercice rattaché à cette séance.</p>
           </CardContent>
         </Card>
       )}
 
+      {/* Bilan de fin de cours */}
+      <Card className="border-primary/20 print:hidden">
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Brain className="h-5 w-5 text-primary" />
+            Bilan de fin de cours
+          </CardTitle>
+          <CardDescription>
+            Évaluez le groupe par compétence et signalez les blocages
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Score par compétence */}
+          <div className="space-y-4">
+            <Label className="text-sm font-semibold">Score moyen du groupe par compétence</Label>
+            {COMPETENCES.map((comp) => (
+              <div key={comp} className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">{comp}</span>
+                  <Badge
+                    variant="outline"
+                    className={cn(
+                      "text-xs",
+                      bilanScores[comp] >= 80 && "border-green-500/50 text-green-600",
+                      bilanScores[comp] >= 60 && bilanScores[comp] < 80 && "border-orange-500/50 text-orange-600",
+                      bilanScores[comp] < 60 && "border-red-500/50 text-red-600"
+                    )}
+                  >
+                    {bilanScores[comp]}%
+                  </Badge>
+                </div>
+                <Slider
+                  value={[bilanScores[comp]]}
+                  onValueChange={([v]) =>
+                    setBilanScores((prev) => ({ ...prev, [comp]: v }))
+                  }
+                  min={0}
+                  max={100}
+                  step={5}
+                  className="w-full"
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Élèves en difficulté */}
+          <div className="space-y-3">
+            <Label className="text-sm font-semibold flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4 text-orange-500" />
+              Élèves en difficulté
+            </Label>
+            {blockedStudents.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {blockedStudents.map((s, i) => (
+                  <Badge key={i} variant="secondary" className="gap-1 pr-1">
+                    {s.nom} ({s.competence})
+                    <button
+                      onClick={() => removeBlockedStudent(i)}
+                      className="ml-1 rounded-full hover:bg-muted p-0.5"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+            )}
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={newBlockedName}
+                onChange={(e) => setNewBlockedName(e.target.value)}
+                placeholder="Nom de l'élève"
+                className="flex h-9 rounded-md border border-input bg-background px-3 py-1 text-sm flex-1"
+                onKeyDown={(e) => e.key === "Enter" && addBlockedStudent()}
+              />
+              <select
+                value={newBlockedCompetence}
+                onChange={(e) => setNewBlockedCompetence(e.target.value)}
+                className="h-9 rounded-md border border-input bg-background px-2 text-sm"
+              >
+                {COMPETENCES.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+              <Button size="sm" variant="outline" onClick={addBlockedStudent}>
+                Ajouter
+              </Button>
+            </div>
+          </div>
+
+          {/* Notes */}
+          <div className="space-y-2">
+            <Label className="text-sm font-semibold">Notes complémentaires</Label>
+            <Textarea
+              value={bilanNotes}
+              onChange={(e) => setBilanNotes(e.target.value)}
+              placeholder="Observations, points positifs, ajustements suggérés..."
+              className="min-h-[80px]"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Action bar */}
       <div className="flex gap-2 print:hidden">
-        <Button onClick={handleValidate} className="flex-1" disabled={saving}>
-          {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
-          Valider la séance
+        <Button onClick={handleValidate} className="flex-1" disabled={saving || adapting}>
+          {saving || adapting ? (
+            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+          ) : (
+            <Save className="h-4 w-4 mr-2" />
+          )}
+          {adapting ? "Adaptation IA en cours..." : "Valider le bilan"}
         </Button>
         <Button variant="outline" onClick={handlePrint}>
           <Printer className="h-4 w-4 mr-2" />
@@ -272,14 +514,20 @@ const SessionBilan = () => {
         </Button>
       </div>
 
-      {/* Confirmation dialog */}
+      {nextSession && (
+        <p className="text-xs text-muted-foreground text-center print:hidden">
+          <Sparkles className="h-3 w-3 inline mr-1" />
+          L'IA adaptera automatiquement la séance suivante "{nextSession.titre}" après validation
+        </p>
+      )}
+
+      {/* Confirmation dialog for unchecked exercises */}
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Exercices non traités</DialogTitle>
             <DialogDescription>
-              {uncheckedExercises.length} exercice(s) n'ont pas été traité(s) en classe.
-              Que souhaitez-vous en faire ?
+              {uncheckedExercises.length} exercice(s) n'ont pas été traité(s).
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2 py-4">
@@ -307,13 +555,79 @@ const SessionBilan = () => {
               className="flex-1"
             >
               <ArrowRight className="h-4 w-4 mr-2" />
-              Reporter à la prochaine séance
+              Reporter
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Print styles */}
+      {/* AI Adaptation result dialog */}
+      <Dialog open={showAdaptation} onOpenChange={setShowAdaptation}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-primary" />
+              Adaptation IA — Séance N+1
+            </DialogTitle>
+            <DialogDescription>
+              Suggestions basées sur le bilan d'aujourd'hui
+            </DialogDescription>
+          </DialogHeader>
+          {adaptationResult && (
+            <div className="space-y-4 py-2">
+              <div>
+                <Label className="text-xs text-muted-foreground">Focus compétence</Label>
+                <Badge className="ml-2">{adaptationResult.competence_focus}</Badge>
+              </div>
+              <div>
+                <Label className="text-xs text-muted-foreground">Analyse</Label>
+                <p className="text-sm mt-1">{adaptationResult.analyse_bilan}</p>
+              </div>
+              {adaptationResult.exercices_remediation?.length > 0 && (
+                <div>
+                  <Label className="text-xs text-muted-foreground">
+                    Exercices de remédiation suggérés
+                  </Label>
+                  <div className="space-y-2 mt-2">
+                    {adaptationResult.exercices_remediation.map((ex: any, i: number) => (
+                      <div key={i} className="p-3 rounded-md border bg-muted/30 space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-sm">{ex.titre}</span>
+                          <Badge variant="outline" className="text-[10px]">{ex.competence}</Badge>
+                          <Badge variant="secondary" className="text-[10px]">{ex.format}</Badge>
+                        </div>
+                        <p className="text-xs text-muted-foreground">{ex.description}</p>
+                        <span className="text-xs text-muted-foreground">~{ex.duree_minutes} min</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div>
+                <Label className="text-xs text-muted-foreground">Objectifs ajustés</Label>
+                <p className="text-sm mt-1">{adaptationResult.objectifs_ajustes}</p>
+              </div>
+            </div>
+          )}
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button onClick={applyAdaptation} disabled={saving} className="flex-1">
+              {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <CheckCircle2 className="h-4 w-4 mr-2" />}
+              Appliquer les suggestions
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowAdaptation(false);
+                navigate("/formateur/seances");
+              }}
+              className="flex-1"
+            >
+              Ignorer et continuer
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <style>{`
         @media print {
           nav, header, .print\\:hidden { display: none !important; }

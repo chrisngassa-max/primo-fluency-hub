@@ -17,6 +17,7 @@ import {
   FileText,
   Settings,
   ClipboardList,
+  Upload,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -26,6 +27,7 @@ const mainNav = [
   { title: "Groupes & Élèves", url: "/formateur/groupes", icon: Users },
   { title: "Séances", url: "/formateur/seances", icon: Calendar },
   { title: "Exercices", url: "/formateur/exercices", icon: BookOpen },
+  { title: "Importer programme", url: "/formateur/import-programme", icon: Upload },
 ];
 
 const monitorNav = [

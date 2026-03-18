@@ -9,6 +9,7 @@ import {
   LogOut,
   GraduationCap,
   ClipboardList,
+  Upload,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
@@ -33,6 +34,7 @@ const mainNav = [
   { title: "Groupes & Élèves", url: "/formateur/groupes", icon: Users },
   { title: "Séances", url: "/formateur/seances", icon: Calendar },
   { title: "Exercices", url: "/formateur/exercices", icon: BookOpen },
+  { title: "Importer programme", url: "/formateur/import-programme", icon: Upload },
 ];
 
 const monitorNav = [
