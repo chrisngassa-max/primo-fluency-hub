@@ -410,6 +410,7 @@ export type Database = {
       parametres: {
         Row: {
           alerte_absence_heures: number
+          auto_adapt: boolean
           created_at: string
           delai_devoirs_jours: number
           formateur_id: string
@@ -423,6 +424,7 @@ export type Database = {
         }
         Insert: {
           alerte_absence_heures?: number
+          auto_adapt?: boolean
           created_at?: string
           delai_devoirs_jours?: number
           formateur_id: string
@@ -436,6 +438,7 @@ export type Database = {
         }
         Update: {
           alerte_absence_heures?: number
+          auto_adapt?: boolean
           created_at?: string
           delai_devoirs_jours?: number
           formateur_id?: string
