@@ -387,8 +387,8 @@ const GroupesPage = () => {
 
             {/* Created student credentials card */}
             {createdStudent && (
-              <div className="rounded-lg border-2 border-green-500/30 bg-green-50 dark:bg-green-950/20 p-4 space-y-3">
-                <p className="text-sm font-semibold text-green-700 dark:text-green-400">
+              <div className="rounded-lg border-2 border-primary/30 bg-primary/5 p-4 space-y-3">
+                <p className="text-sm font-semibold text-primary">
                   ✅ Élève créé — notez ces identifiants :
                 </p>
                 <div className="space-y-2 text-sm">
