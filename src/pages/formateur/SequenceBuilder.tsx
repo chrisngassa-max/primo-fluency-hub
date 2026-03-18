@@ -250,7 +250,7 @@ const SequenceBuilder = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {["A1", "A2", "B1", "B2", "C1"].map((n) => (
+                  {["A0", "A1", "A2", "B1", "B2", "C1"].map((n) => (
                     <SelectItem key={n} value={n}>{n}</SelectItem>
                   ))}
                 </SelectContent>

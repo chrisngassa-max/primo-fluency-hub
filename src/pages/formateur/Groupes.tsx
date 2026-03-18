@@ -21,7 +21,7 @@ import {
 import { toast } from "sonner";
 import { Plus, Users, Trash2, Edit, UserPlus, UserMinus, Loader2 } from "lucide-react";
 
-const NIVEAUX = ["A1", "A2", "B1", "B2", "C1"] as const;
+const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
 
 const GroupesPage = () => {
   const { user } = useAuth();

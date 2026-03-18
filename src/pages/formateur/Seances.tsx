@@ -18,7 +18,7 @@ import {
 import { toast } from "sonner";
 import { Plus, Calendar, Loader2, BookOpen } from "lucide-react";
 
-const NIVEAUX = ["A1", "A2", "B1", "B2", "C1"] as const;
+const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
 
 const statutBadge: Record<string, { label: string; variant: "default" | "secondary" | "outline" | "destructive" }> = {
   planifiee: { label: "Planifiée", variant: "outline" },
