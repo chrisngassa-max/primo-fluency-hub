@@ -52,7 +52,7 @@ const App = () => (
               }
             >
               <Route index element={<FormateurDashboard />} />
-              <Route path="groupes" element={<FormateurDashboard />} />
+              <Route path="groupes" element={<GroupesPage />} />
               <Route path="seances" element={<SeancesPage />} />
               <Route path="seances/:id/pilote" element={<SessionPilot />} />
               <Route path="seances/:id/bilan" element={<SessionBilan />} />
