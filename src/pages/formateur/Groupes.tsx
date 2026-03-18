@@ -33,6 +33,7 @@ interface CreatedStudent {
 
 const GroupesPage = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const qc = useQueryClient();
 
   // Create group dialog
