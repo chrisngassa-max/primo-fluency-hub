@@ -976,6 +976,54 @@ export type Database = {
           },
         ]
       }
+      student_competency_levels: {
+        Row: {
+          competence: Database["public"]["Enums"]["competence_type"]
+          created_at: string
+          eleve_id: string
+          id: string
+          niveau_actuel: number
+          updated_at: string
+          validated_at: string | null
+          validated_by: string | null
+        }
+        Insert: {
+          competence: Database["public"]["Enums"]["competence_type"]
+          created_at?: string
+          eleve_id: string
+          id?: string
+          niveau_actuel?: number
+          updated_at?: string
+          validated_at?: string | null
+          validated_by?: string | null
+        }
+        Update: {
+          competence?: Database["public"]["Enums"]["competence_type"]
+          created_at?: string
+          eleve_id?: string
+          id?: string
+          niveau_actuel?: number
+          updated_at?: string
+          validated_at?: string | null
+          validated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_competency_levels_eleve_id_fkey"
+            columns: ["eleve_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_competency_levels_validated_by_fkey"
+            columns: ["validated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       student_competency_status: {
         Row: {
           competence: Database["public"]["Enums"]["competence_type"]
@@ -1140,6 +1188,7 @@ export type Database = {
         | "absence"
         | "devoir_expire"
         | "tendance_baisse"
+        | "progression"
       app_role: "formateur" | "eleve" | "admin"
       competence_statut:
         | "non_evalue"
@@ -1297,6 +1346,7 @@ export const Constants = {
         "absence",
         "devoir_expire",
         "tendance_baisse",
+        "progression",
       ],
       app_role: ["formateur", "eleve", "admin"],
       competence_statut: [

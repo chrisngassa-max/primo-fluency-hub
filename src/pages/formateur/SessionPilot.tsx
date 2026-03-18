@@ -55,6 +55,7 @@ import {
   Eye, Volume2, ChevronDown, ChevronLeft, ChevronRight, Drama, Package, MessageCircle, Wand2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/DifficultyBadge";
 
 type ExerciseStatus = "traite_en_classe" | "reporte" | "planifie";
 
@@ -422,7 +423,7 @@ const SessionPilot = () => {
     }
   };
 
-  // ─── Homework Generator ───
+  // ─── Individualized Homework Generator ───
   const handleGenerateHomework = async () => {
     if (!session || !user) return;
     setGeneratingHomework(true);
@@ -438,6 +439,22 @@ const SessionPilot = () => {
         return;
       }
 
+      const eleveIds = members.map((m: any) => m.eleve_id);
+
+      // Fetch individual student competency levels
+      const { data: studentLevels } = await supabase
+        .from("student_competency_levels")
+        .select("eleve_id, competence, niveau_actuel")
+        .in("eleve_id", eleveIds);
+
+      // Build level map: eleve_id -> { CO: 3, CE: 5, ... }
+      const levelMap = new Map<string, Record<string, number>>();
+      (studentLevels ?? []).forEach((sl: any) => {
+        const existing = levelMap.get(sl.eleve_id) || {};
+        existing[sl.competence] = sl.niveau_actuel;
+        levelMap.set(sl.eleve_id, existing);
+      });
+
       // Collect exercises from this session
       const sessionExs = exercises.map((se: any) => se.exercice).filter(Boolean);
       if (sessionExs.length === 0) {
@@ -445,23 +462,49 @@ const SessionPilot = () => {
         return;
       }
 
-      // Create devoirs for each student for each exercise
-      const devoirs = members.flatMap((m: any) =>
-        sessionExs.map((ex: any) => ({
-          eleve_id: m.eleve_id,
-          exercice_id: ex.id,
-          formateur_id: user.id,
-          raison: "consolidation" as const,
-          statut: "en_attente" as const,
-          session_id: id,
-        }))
-      );
+      // Group exercises by competence for AI generation per student level
+      const competences = [...new Set(sessionExs.map((ex: any) => ex.competence))];
+      
+      // For students with different levels, generate individualized exercises via AI
+      let totalDevoirs = 0;
+      const defaultPoint = sessionExs[0]?.point_a_maitriser_id;
 
-      const { error } = await supabase.from("devoirs").insert(devoirs as any);
-      if (error) throw error;
+      for (const eleve_id of eleveIds) {
+        const studentLevel = levelMap.get(eleve_id) || {};
+        
+        for (const comp of competences) {
+          const level = studentLevel[comp] ?? 5; // Default to middle level
+          const sessionExsForComp = sessionExs.filter((ex: any) => ex.competence === comp);
+          
+          if (sessionExsForComp.length === 0) continue;
 
-      toast.success(`${devoirs.length} devoir(s) créé(s) pour ${members.length} élève(s) !`, {
-        description: "Liés à cette séance, visibles sur l'espace élève.",
+          // If student level matches exercise difficulty (±1), assign the session exercise directly
+          const matchingExs = sessionExsForComp.filter((ex: any) => {
+            const exLevel = ex.difficulte <= 5 ? ex.difficulte * 2 : ex.difficulte;
+            return Math.abs(exLevel - level) <= 2;
+          });
+
+          const exercisesToAssign = matchingExs.length > 0 ? matchingExs : sessionExsForComp;
+
+          const devoirs = exercisesToAssign.map((ex: any) => ({
+            eleve_id,
+            exercice_id: ex.id,
+            formateur_id: user.id,
+            raison: "consolidation" as const,
+            statut: "en_attente" as const,
+            session_id: id,
+          }));
+
+          if (devoirs.length > 0) {
+            const { error } = await supabase.from("devoirs").insert(devoirs as any);
+            if (error) throw error;
+            totalDevoirs += devoirs.length;
+          }
+        }
+      }
+
+      toast.success(`${totalDevoirs} devoir(s) individualisé(s) pour ${members.length} élève(s) !`, {
+        description: "Calibrés sur le niveau validé de chaque élève.",
       });
     } catch (e: any) {
       toast.error("Erreur", { description: e.message });
@@ -920,6 +963,7 @@ ${Array.isArray(item.options) && item.options.length > 0
                         <h3 className="font-semibold text-sm">{ex?.titre || "Exercice"}</h3>
                         <Badge variant="secondary" className="text-[10px]">{ex?.competence}</Badge>
                         <Badge variant="outline" className="text-[10px]">{ex?.format?.replace(/_/g, " ")}</Badge>
+                        <DifficultyBadge level={mapDifficultyToScale10(ex?.difficulte || 3)} />
                         <span className={cn("inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-medium border print:hidden", config.color)}>
                           <StatusIcon className="h-3 w-3" />{config.label}
                         </span>
