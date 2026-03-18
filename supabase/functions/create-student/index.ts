@@ -103,6 +103,12 @@ Deno.serve(async (req) => {
 
     const userId = newUser.user.id;
 
+    // Store initial password in profile for formateur reference
+    await adminClient
+      .from("profiles")
+      .update({ mot_de_passe_initial: password })
+      .eq("id", userId);
+
     // Add to group
     const { error: memberError } = await adminClient
       .from("group_members")
