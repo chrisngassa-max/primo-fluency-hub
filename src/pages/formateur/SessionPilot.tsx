@@ -80,6 +80,7 @@ const SessionPilot = () => {
   const [editForm, setEditForm] = useState<{ titre: string; consigne: string; contenu: any }>({ titre: "", consigne: "", contenu: { items: [] } });
   const [savingEdit, setSavingEdit] = useState(false);
   const [previewExercise, setPreviewExercise] = useState<any>(null);
+  const [animationGuide, setAnimationGuide] = useState<any>(null);
 
   const { data: session } = useQuery({
     queryKey: ["session-info", id],
