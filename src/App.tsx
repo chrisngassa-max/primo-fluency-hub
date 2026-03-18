@@ -26,6 +26,7 @@ import EleveLayout from "@/layouts/EleveLayout";
 import EleveDashboard from "@/pages/eleve/Dashboard";
 import EleveProgression from "@/pages/eleve/Progression";
 import EleveDetail from "@/pages/formateur/EleveDetail";
+import TestsEntreePage from "@/pages/formateur/TestsEntree";
 
 const queryClient = new QueryClient();
 
@@ -62,7 +63,7 @@ const App = () => (
               <Route path="eleves/:eleveId" element={<EleveDetail />} />
               <Route path="exercices" element={<FormateurDashboard />} />
               <Route path="monitoring" element={<FormateurDashboard />} />
-              <Route path="tests" element={<FormateurDashboard />} />
+              <Route path="tests" element={<TestsEntreePage />} />
               <Route path="rapports" element={<FormateurDashboard />} />
               <Route path="parametres" element={<FormateurDashboard />} />
             </Route>
