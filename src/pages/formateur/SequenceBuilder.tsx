@@ -94,8 +94,8 @@ const SequenceBuilder = () => {
     try {
       const { data, error } = await supabase.functions.invoke("generate-exercises", {
         body: {
-          pointName: point.nom,
-          competence: point.competence,
+          pointName: selectedPoint.nom,
+          competence,
           niveauVise,
           count: 10,
         },
@@ -107,12 +107,11 @@ const SequenceBuilder = () => {
         consigne: ex.consigne,
         format: ex.format,
         difficulte: ex.difficulte,
-        competence: point.competence,
+        competence,
         contenu: ex.contenu,
         isAiGenerated: true,
       }));
       setExercises((prev) => [...prev, ...generated]);
-      setSelectedCompetence(point.competence);
       toast.success(`${generated.length} exercices générés par l'IA !`);
     } catch (e: any) {
       console.error(e);
