@@ -85,11 +85,11 @@ const SequenceBuilder = () => {
   );
 
   const handleGenerate = async () => {
-    const point = allPoints.find((p) => p.id === selectedPointId);
-    if (!point) {
+    if (!selectedPoint) {
       toast.error("Sélectionnez un point à maîtriser.");
       return;
     }
+    const competence = selectedEpreuve?.competence ?? "";
     setGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke("generate-exercises", {
