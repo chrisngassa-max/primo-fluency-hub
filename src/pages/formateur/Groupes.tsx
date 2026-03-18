@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
@@ -32,6 +33,7 @@ interface CreatedStudent {
 
 const GroupesPage = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const qc = useQueryClient();
 
   // Create group dialog
@@ -426,9 +428,13 @@ const GroupesPage = () => {
               <div className="space-y-2 max-h-60 overflow-y-auto">
                 {(members ?? []).map((m: any) => (
                   <div key={m.id} className="flex items-center justify-between p-2 rounded-lg border">
-                    <div>
+                    <button
+                      className="text-left hover:text-primary transition-colors"
+                      onClick={() => { setMemberOpen(false); navigate(`/formateur/eleves/${m.eleve?.id}`); }}
+                    >
                       <p className="text-sm font-medium">{m.eleve?.prenom} {m.eleve?.nom}</p>
-                    </div>
+                      <p className="text-xs text-muted-foreground">Voir la progression →</p>
+                    </button>
                     <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleRemoveMember(m.id)}>
                       <UserMinus className="h-4 w-4" />
                     </Button>

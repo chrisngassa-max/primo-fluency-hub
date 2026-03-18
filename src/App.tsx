@@ -24,6 +24,8 @@ import SequenceBuilder from "@/pages/formateur/SequenceBuilder";
 
 import EleveLayout from "@/layouts/EleveLayout";
 import EleveDashboard from "@/pages/eleve/Dashboard";
+import EleveProgression from "@/pages/eleve/Progression";
+import EleveDetail from "@/pages/formateur/EleveDetail";
 
 const queryClient = new QueryClient();
 
@@ -57,6 +59,7 @@ const App = () => (
               <Route path="seances/:id/pilote" element={<SessionPilot />} />
               <Route path="seances/:id/bilan" element={<SessionBilan />} />
               <Route path="sequences/new" element={<SequenceBuilder />} />
+              <Route path="eleves/:eleveId" element={<EleveDetail />} />
               <Route path="exercices" element={<FormateurDashboard />} />
               <Route path="monitoring" element={<FormateurDashboard />} />
               <Route path="tests" element={<FormateurDashboard />} />
@@ -76,7 +79,7 @@ const App = () => (
               <Route index element={<EleveDashboard />} />
               <Route path="test" element={<EleveDashboard />} />
               <Route path="devoirs" element={<EleveDashboard />} />
-              <Route path="progression" element={<EleveDashboard />} />
+              <Route path="progression" element={<EleveProgression />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />
