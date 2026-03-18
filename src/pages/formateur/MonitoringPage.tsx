@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
@@ -7,19 +7,20 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer,
   RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,
-  LineChart, Line, Legend,
+  LineChart, Line, Legend, ReferenceLine,
 } from "recharts";
 import {
   Users, TrendingUp, Target, AlertTriangle, ChevronRight, Sparkles, Loader2, ArrowLeft,
-  Brain, BookOpen, Award, XCircle,
+  Brain, BookOpen, XCircle, GitCompareArrows, Crosshair, Info,
 } from "lucide-react";
 import { DifficultyBadge } from "@/components/DifficultyBadge";
 import { format } from "date-fns";
@@ -31,7 +32,22 @@ const COMP_LABELS: Record<string, string> = {
   CO: "Compréhension Orale", CE: "Compréhension Écrite",
   EE: "Expression Écrite", EO: "Expression Orale", Structures: "Structures",
 };
-const COMP_COLORS = ["hsl(var(--primary))", "#10b981", "#8b5cf6", "#f59e0b", "#ef4444"];
+const PALETTE = [
+  "hsl(var(--primary))", "#10b981", "#8b5cf6", "#f59e0b", "#ef4444",
+  "#06b6d4", "#ec4899", "#84cc16", "#f97316", "#6366f1",
+];
+
+// ─── Types ───
+interface SessionPoint {
+  sessionId: string;
+  sessionTitre: string;
+  sessionDate: string;
+  ordre: number;
+  cible: number;
+  groupe: number;
+  competences: string[];
+  [key: string]: any; // student names
+}
 
 // ─── Main Component ───
 const MonitoringPage = () => {
@@ -40,6 +56,11 @@ const MonitoringPage = () => {
   const [selectedEleveId, setSelectedEleveId] = useState<string | null>(null);
   const [aiAdvice, setAiAdvice] = useState<string | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
+  const [trajectoryAiResult, setTrajectoryAiResult] = useState<string | null>(null);
+  const [trajectoryAiLoading, setTrajectoryAiLoading] = useState(false);
+  const [selectedSessionDetail, setSelectedSessionDetail] = useState<SessionPoint | null>(null);
+  const [compareEleves, setCompareEleves] = useState<string[]>([]);
+  const [compareMode, setCompareMode] = useState(false);
 
   // ─── Fetch all groups ───
   const { data: groups = [], isLoading: loadingGroups } = useQuery({
@@ -106,39 +127,119 @@ const MonitoringPage = () => {
     enabled: !!selectedGroupId,
   });
 
-  // ─── Progression curves: last 10 results per student ───
-  const { data: progressionData = [] } = useQuery({
-    queryKey: ["monitoring-progression", selectedGroupId],
+  // ─── TRAJECTORY DATA: Session-based progression ───
+  const { data: trajectoryData = [], isLoading: loadingTrajectory } = useQuery({
+    queryKey: ["monitoring-trajectory", selectedGroupId],
     queryFn: async () => {
+      // 1. Get all sessions for this group, ordered by date
+      const { data: sessions } = await supabase
+        .from("sessions")
+        .select("id, titre, date_seance, objectifs, niveau_cible")
+        .eq("group_id", selectedGroupId!)
+        .order("date_seance", { ascending: true });
+      if (!sessions?.length) return [];
+
+      // 2. Get group members
       const { data: members } = await supabase.from("group_members").select("eleve_id").eq("group_id", selectedGroupId!);
       if (!members?.length) return [];
-      const ids = members.map(m => m.eleve_id);
-      const { data: profiles } = await supabase.from("profiles").select("id, prenom").in("id", ids);
-      const nameMap = Object.fromEntries((profiles ?? []).map(p => [p.id, p.prenom]));
-      const { data: results } = await supabase.from("resultats").select("eleve_id, score, created_at").in("eleve_id", ids).order("created_at", { ascending: true }).limit(500);
-      if (!results?.length) return [];
-      // Group by student and take last 10
-      const byStudent: Record<string, { score: number; date: string }[]> = {};
-      results.forEach(r => { (byStudent[r.eleve_id] = byStudent[r.eleve_id] || []).push({ score: Number(r.score), date: r.created_at }); });
-      // Build chart data: common timeline indices
-      const maxLen = Math.max(...Object.values(byStudent).map(a => a.length));
-      const chartData: any[] = [];
-      for (let i = 0; i < Math.min(maxLen, 15); i++) {
-        const point: any = { index: i + 1 };
-        Object.entries(byStudent).forEach(([id, arr]) => {
-          if (i < arr.length) point[nameMap[id] || id.slice(0, 6)] = arr[i].score;
+      const eleveIds = members.map(m => m.eleve_id);
+
+      // 3. Get student names
+      const { data: profiles } = await supabase.from("profiles").select("id, prenom").in("id", eleveIds);
+      const nameMap = Object.fromEntries((profiles ?? []).map(p => [p.id, p.prenom || p.id.slice(0, 6)]));
+
+      // 4. Get all session_exercices to know which exercices belong to which session
+      const sessionIds = sessions.map(s => s.id);
+      const { data: sessionExercices } = await supabase
+        .from("session_exercices")
+        .select("session_id, exercice_id")
+        .in("session_id", sessionIds);
+
+      // 5. Get all exercices for competence & difficulty info
+      const exerciceIds = [...new Set((sessionExercices ?? []).map(se => se.exercice_id))];
+      const { data: exercices } = exerciceIds.length
+        ? await supabase.from("exercices").select("id, competence, difficulte").in("id", exerciceIds)
+        : { data: [] };
+      const exerciceMap = Object.fromEntries((exercices ?? []).map(e => [e.id, e]));
+
+      // Build session→exercice mapping
+      const sessionExMap: Record<string, string[]> = {};
+      (sessionExercices ?? []).forEach(se => {
+        (sessionExMap[se.session_id] = sessionExMap[se.session_id] || []).push(se.exercice_id);
+      });
+
+      // 6. Get all results for these students
+      const { data: resultats } = await supabase
+        .from("resultats")
+        .select("eleve_id, exercice_id, score, created_at")
+        .in("eleve_id", eleveIds)
+        .in("exercice_id", exerciceIds.length ? exerciceIds : ["__none__"])
+        .order("created_at", { ascending: true });
+
+      // Index results by exercice_id→eleve_id
+      const resultsByExEleve: Record<string, Record<string, number[]>> = {};
+      (resultats ?? []).forEach(r => {
+        const key = r.exercice_id;
+        if (!resultsByExEleve[key]) resultsByExEleve[key] = {};
+        if (!resultsByExEleve[key][r.eleve_id]) resultsByExEleve[key][r.eleve_id] = [];
+        resultsByExEleve[key][r.eleve_id].push(Number(r.score));
+      });
+
+      // 7. Build trajectory points
+      const totalSessions = sessions.length;
+      const points: SessionPoint[] = sessions.map((s, i) => {
+        const cible = totalSessions > 1 ? Math.round((10 / (totalSessions - 1)) * i * 10) / 10 : 10;
+        const exIds = sessionExMap[s.id] || [];
+        const comps = [...new Set(exIds.map(eid => exerciceMap[eid]?.competence).filter(Boolean))];
+
+        // Compute avg difficulty for the session (as proxy for "level reached")
+        const avgDiffForStudent = (eleveId: string) => {
+          const scores: number[] = [];
+          exIds.forEach(eid => {
+            const s = resultsByExEleve[eid]?.[eleveId];
+            if (s?.length) scores.push(...s);
+          });
+          if (!scores.length) return null;
+          const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+          // Map score (0-100) to difficulty scale (0-10)
+          return Math.round(avgScore / 10 * 10) / 10;
+        };
+
+        // Group average
+        const groupScores: number[] = [];
+        const point: SessionPoint = {
+          sessionId: s.id,
+          sessionTitre: s.titre,
+          sessionDate: s.date_seance,
+          ordre: i + 1,
+          cible,
+          groupe: 0,
+          competences: comps as string[],
+        };
+
+        eleveIds.forEach(eid => {
+          const val = avgDiffForStudent(eid);
+          const name = nameMap[eid];
+          if (val !== null) {
+            point[name] = val;
+            groupScores.push(val);
+          }
         });
-        chartData.push(point);
-      }
-      return chartData;
+
+        point.groupe = groupScores.length ? Math.round(groupScores.reduce((a, b) => a + b, 0) / groupScores.length * 10) / 10 : 0;
+        return point;
+      });
+
+      return points;
     },
     enabled: !!selectedGroupId,
   });
 
-  const studentNames = useMemo(() => {
-    if (!progressionData.length) return [];
-    return Object.keys(progressionData[0]).filter(k => k !== "index");
-  }, [progressionData]);
+  const trajectoryStudentNames = useMemo(() => {
+    if (!trajectoryData.length) return [];
+    const skip = new Set(["sessionId", "sessionTitre", "sessionDate", "ordre", "cible", "groupe", "competences"]);
+    return Object.keys(trajectoryData[0]).filter(k => !skip.has(k));
+  }, [trajectoryData]);
 
   // ─── Individual student detail ───
   const { data: eleveDetail, isLoading: loadingDetail } = useQuery({
@@ -149,7 +250,6 @@ const MonitoringPage = () => {
       const { data: levels } = await supabase.from("student_competency_levels").select("*").eq("eleve_id", selectedEleveId!);
       const { data: results } = await supabase.from("resultats").select("*, exercices(titre, competence, difficulte, contenu)").eq("eleve_id", selectedEleveId!).order("created_at", { ascending: false }).limit(30);
       const { data: testEntree } = await supabase.from("tests_entree").select("*").eq("eleve_id", selectedEleveId!).maybeSingle();
-      // Find failure patterns
       const failures: { titre: string; competence: string; score: number; count: number }[] = [];
       const failMap: Record<string, { titre: string; competence: string; totalScore: number; count: number }> = {};
       (results ?? []).forEach((r: any) => {
@@ -162,13 +262,12 @@ const MonitoringPage = () => {
       });
       Object.values(failMap).forEach(f => failures.push({ ...f, score: Math.round(f.totalScore / f.count) }));
       failures.sort((a, b) => a.score - b.score);
-
       return { profile, profil, levels: levels ?? [], results: results ?? [], testEntree, failures: failures.slice(0, 8) };
     },
     enabled: !!selectedEleveId,
   });
 
-  // ─── AI Advice ───
+  // ─── AI Advice (individual) ───
   const handleAiAdvice = async () => {
     if (!selectedEleveId || !eleveDetail) return;
     setAiLoading(true);
@@ -202,6 +301,38 @@ const MonitoringPage = () => {
     }
   };
 
+  // ─── AI Trajectory Analysis ───
+  const handleTrajectoryAi = async () => {
+    if (!trajectoryData.length || !selectedGroupId) return;
+    setTrajectoryAiLoading(true);
+    setTrajectoryAiResult(null);
+    try {
+      const { data, error } = await supabase.functions.invoke("analyze-trajectory", {
+        body: {
+          groupNom: selectedGroup?.nom || "Groupe",
+          trajectoryData: trajectoryData.map(p => ({
+            seance: p.ordre,
+            titre: p.sessionTitre,
+            date: p.sessionDate,
+            cible: p.cible,
+            groupe: p.groupe,
+            competences: p.competences,
+            eleves: Object.fromEntries(
+              trajectoryStudentNames.map(n => [n, p[n] ?? null])
+            ),
+          })),
+          totalSeances: trajectoryData.length,
+        },
+      });
+      if (error) throw error;
+      setTrajectoryAiResult(data.analysis || "Analyse indisponible.");
+    } catch (e: any) {
+      toast.error("Erreur IA", { description: e.message });
+    } finally {
+      setTrajectoryAiLoading(false);
+    }
+  };
+
   // ─── Radar data for selected group ───
   const groupRadarData = useMemo(() => {
     const g = groupStats.find(s => s.id === selectedGroupId);
@@ -211,9 +342,39 @@ const MonitoringPage = () => {
 
   const selectedGroup = groups.find(g => g.id === selectedGroupId);
 
+  // ─── Compare toggle ───
+  const toggleCompareEleve = useCallback((name: string) => {
+    setCompareEleves(prev => {
+      if (prev.includes(name)) return prev.filter(n => n !== name);
+      if (prev.length >= 2) return [prev[1], name]; // max 2
+      return [...prev, name];
+    });
+  }, []);
+
+  // ─── Custom tooltip for trajectory chart ───
+  const TrajectoryTooltip = ({ active, payload, label }: any) => {
+    if (!active || !payload?.length) return null;
+    const point = trajectoryData.find(p => p.ordre === label);
+    return (
+      <div className="rounded-lg border bg-card p-3 shadow-md text-sm max-w-xs">
+        <p className="font-semibold text-foreground">{point?.sessionTitre || `Séance ${label}`}</p>
+        {point?.sessionDate && (
+          <p className="text-xs text-muted-foreground mb-2">{format(new Date(point.sessionDate), "d MMM yyyy", { locale: fr })}</p>
+        )}
+        {payload.map((p: any, i: number) => (
+          <div key={i} className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full" style={{ backgroundColor: p.color }} />
+            <span className="text-muted-foreground">{p.name}:</span>
+            <span className="font-medium">{p.value ?? "—"}</span>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   // ──────────────── RENDER ────────────────
 
-  // Individual student view
+  // ─── Individual student view ───
   if (selectedEleveId && eleveDetail) {
     const d = eleveDetail;
     const radarData = COMPETENCES.map(c => {
@@ -227,9 +388,7 @@ const MonitoringPage = () => {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">
-              {d.profile?.prenom} {d.profile?.nom}
-            </h1>
+            <h1 className="text-2xl font-bold text-foreground">{d.profile?.prenom} {d.profile?.nom}</h1>
             <p className="text-muted-foreground text-sm">
               Niveau estimé : {d.profil?.niveau_actuel || "—"} · Score moyen : {d.profil ? Math.round(Number(d.profil.taux_reussite_global)) : 0}%
             </p>
@@ -242,7 +401,6 @@ const MonitoringPage = () => {
           </div>
         </div>
 
-        {/* AI Advice Dialog */}
         <Dialog open={!!aiAdvice} onOpenChange={() => setAiAdvice(null)}>
           <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
@@ -254,7 +412,6 @@ const MonitoringPage = () => {
         </Dialog>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Radar: Niveaux par compétence */}
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-base flex items-center gap-2"><Target className="h-4 w-4" /> Niveaux par compétence (0-10)</CardTitle>
@@ -281,7 +438,6 @@ const MonitoringPage = () => {
             </CardContent>
           </Card>
 
-          {/* Failures */}
           <Card className="border-destructive/30">
             <CardHeader className="pb-2">
               <CardTitle className="text-base flex items-center gap-2 text-destructive"><XCircle className="h-4 w-4" /> Points d'échec récurrents</CardTitle>
@@ -306,7 +462,6 @@ const MonitoringPage = () => {
           </Card>
         </div>
 
-        {/* Recent results table */}
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-base flex items-center gap-2"><BookOpen className="h-4 w-4" /> Derniers résultats</CardTitle>
@@ -344,10 +499,13 @@ const MonitoringPage = () => {
 
   // ─── Group detail view ───
   if (selectedGroupId) {
+    // Filter lines for compare mode
+    const visibleStudents = compareMode && compareEleves.length > 0 ? compareEleves : trajectoryStudentNames;
+
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => setSelectedGroupId(null)}>
+          <Button variant="ghost" size="icon" onClick={() => { setSelectedGroupId(null); setCompareMode(false); setCompareEleves([]); setTrajectoryAiResult(null); }}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
@@ -356,37 +514,204 @@ const MonitoringPage = () => {
           </div>
         </div>
 
-        <Tabs defaultValue="courbes">
+        <Tabs defaultValue="trajectoire">
           <TabsList>
-            <TabsTrigger value="courbes">Courbes de progression</TabsTrigger>
+            <TabsTrigger value="trajectoire">📈 Courbe de Trajectoire</TabsTrigger>
             <TabsTrigger value="competences">Compétences</TabsTrigger>
             <TabsTrigger value="tableau">Tableau détaillé</TabsTrigger>
           </TabsList>
 
-          {/* Progression curves */}
-          <TabsContent value="courbes">
+          {/* ─── TRAJECTORY CURVE ─── */}
+          <TabsContent value="trajectoire" className="space-y-4">
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-base">Progression des scores</CardTitle>
-                <CardDescription>Évolution chronologique des scores par élève</CardDescription>
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div>
+                    <CardTitle className="text-base flex items-center gap-2"><Crosshair className="h-4 w-4" /> Courbe de Trajectoire Cible</CardTitle>
+                    <CardDescription>Progression par séance · Cible = niveau 10 en dernière séance</CardDescription>
+                  </div>
+                  <Button
+                    variant={compareMode ? "default" : "outline"}
+                    size="sm"
+                    className="gap-1.5"
+                    onClick={() => { setCompareMode(!compareMode); if (compareMode) setCompareEleves([]); }}
+                  >
+                    <GitCompareArrows className="h-4 w-4" />
+                    {compareMode ? "Mode normal" : "Comparer"}
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
-                {progressionData.length === 0 ? (
-                  <p className="text-center text-muted-foreground py-12">Aucun résultat enregistré pour ce groupe.</p>
+                {/* Compare selectors */}
+                {compareMode && trajectoryStudentNames.length > 0 && (
+                  <div className="flex flex-wrap gap-3 mb-4 p-3 rounded-lg border bg-muted/30">
+                    <span className="text-sm text-muted-foreground self-center">Sélectionnez 2 élèves :</span>
+                    {trajectoryStudentNames.map(name => (
+                      <label key={name} className="flex items-center gap-1.5 cursor-pointer">
+                        <Checkbox
+                          checked={compareEleves.includes(name)}
+                          onCheckedChange={() => toggleCompareEleve(name)}
+                        />
+                        <span className="text-sm">{name}</span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+
+                {loadingTrajectory ? (
+                  <Skeleton className="h-80 w-full" />
+                ) : trajectoryData.length === 0 ? (
+                  <p className="text-center text-muted-foreground py-16">Aucune séance planifiée pour ce groupe.</p>
                 ) : (
-                  <div className="h-80">
+                  <div className="h-80 cursor-pointer">
                     <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={progressionData}>
+                      <LineChart data={trajectoryData} onClick={(e: any) => {
+                        if (e?.activePayload?.[0]) {
+                          const point = trajectoryData.find(p => p.ordre === e.activeLabel);
+                          if (point) setSelectedSessionDetail(point);
+                        }
+                      }}>
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="index" label={{ value: "Exercice #", position: "insideBottom", offset: -5 }} />
-                        <YAxis domain={[0, 100]} />
-                        <Tooltip />
+                        <XAxis
+                          dataKey="ordre"
+                          tickFormatter={(v) => `S${v}`}
+                          label={{ value: "Séances", position: "insideBottom", offset: -5, fontSize: 12 }}
+                        />
+                        <YAxis domain={[0, 10]} label={{ value: "Niveau (0-10)", angle: -90, position: "insideLeft", fontSize: 12 }} />
+                        <RechartsTooltip content={<TrajectoryTooltip />} />
                         <Legend />
-                        {studentNames.map((name, i) => (
-                          <Line key={name} type="monotone" dataKey={name} stroke={COMP_COLORS[i % COMP_COLORS.length]} strokeWidth={2} dot={{ r: 3 }} connectNulls />
+                        {/* Target line */}
+                        <Line
+                          type="linear"
+                          dataKey="cible"
+                          name="🎯 Cible"
+                          stroke="#94a3b8"
+                          strokeWidth={2}
+                          strokeDasharray="8 4"
+                          dot={false}
+                          connectNulls
+                        />
+                        {/* Group average */}
+                        <Line
+                          type="monotone"
+                          dataKey="groupe"
+                          name="📊 Moyenne groupe"
+                          stroke="hsl(var(--primary))"
+                          strokeWidth={3}
+                          dot={{ r: 5, strokeWidth: 2 }}
+                          connectNulls
+                        />
+                        {/* Individual students */}
+                        {visibleStudents.map((name, i) => (
+                          <Line
+                            key={name}
+                            type="monotone"
+                            dataKey={name}
+                            name={name}
+                            stroke={PALETTE[(i + 2) % PALETTE.length]}
+                            strokeWidth={compareMode ? 2.5 : 1.5}
+                            strokeOpacity={compareMode ? 1 : 0.6}
+                            dot={{ r: compareMode ? 4 : 2 }}
+                            connectNulls
+                          />
                         ))}
                       </LineChart>
                     </ResponsiveContainer>
+                  </div>
+                )}
+
+                {/* Legend: above/below target */}
+                {trajectoryData.length > 0 && (
+                  <div className="flex flex-wrap gap-3 mt-4 text-xs">
+                    {trajectoryStudentNames.map(name => {
+                      const lastPoint = [...trajectoryData].reverse().find(p => p[name] != null);
+                      const lastCible = lastPoint?.cible ?? 0;
+                      const lastVal = lastPoint?.[name] as number | undefined;
+                      if (lastVal == null) return null;
+                      const above = lastVal >= lastCible;
+                      return (
+                        <span key={name} className={cn("px-2 py-1 rounded-md border", above ? "bg-green-50 border-green-200 text-green-700 dark:bg-green-950/30 dark:border-green-800 dark:text-green-400" : "bg-red-50 border-red-200 text-red-700 dark:bg-red-950/30 dark:border-red-800 dark:text-red-400")}>
+                          {above ? "▲" : "▼"} {name}: {lastVal}
+                        </span>
+                      );
+                    })}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Session detail panel */}
+            <Dialog open={!!selectedSessionDetail} onOpenChange={() => setSelectedSessionDetail(null)}>
+              <DialogContent className="max-w-lg">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2"><Info className="h-5 w-5 text-primary" /> Détails — {selectedSessionDetail?.sessionTitre}</DialogTitle>
+                  <DialogDescription>
+                    {selectedSessionDetail?.sessionDate && format(new Date(selectedSessionDetail.sessionDate), "EEEE d MMMM yyyy", { locale: fr })}
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground mb-1">Compétences travaillées</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {(selectedSessionDetail?.competences || []).length > 0
+                        ? selectedSessionDetail!.competences.map(c => <Badge key={c} variant="outline">{c}</Badge>)
+                        : <span className="text-sm text-muted-foreground">Aucune compétence enregistrée</span>}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground mb-1">Niveau cible vs réel</p>
+                    <div className="flex items-center gap-4">
+                      <div className="text-center">
+                        <p className="text-2xl font-bold text-muted-foreground">{selectedSessionDetail?.cible ?? "—"}</p>
+                        <p className="text-xs text-muted-foreground">Cible</p>
+                      </div>
+                      <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                      <div className="text-center">
+                        <p className={cn("text-2xl font-bold", (selectedSessionDetail?.groupe ?? 0) >= (selectedSessionDetail?.cible ?? 0) ? "text-green-600" : "text-destructive")}>
+                          {selectedSessionDetail?.groupe ?? "—"}
+                        </p>
+                        <p className="text-xs text-muted-foreground">Groupe réel</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground mb-1">Scores individuels</p>
+                    <div className="space-y-1.5">
+                      {trajectoryStudentNames.map(name => {
+                        const val = selectedSessionDetail?.[name];
+                        if (val == null) return null;
+                        const above = (val as number) >= (selectedSessionDetail?.cible ?? 0);
+                        return (
+                          <div key={name} className="flex items-center justify-between p-2 rounded border bg-muted/30">
+                            <span className="text-sm font-medium">{name}</span>
+                            <span className={cn("font-semibold text-sm", above ? "text-green-600" : "text-destructive")}>
+                              {above ? "▲" : "▼"} {String(val)}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            {/* AI Trajectory Analysis */}
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between flex-wrap gap-3">
+                  <div>
+                    <p className="font-semibold text-foreground flex items-center gap-2"><Brain className="h-4 w-4 text-primary" /> Hypothèses & Diagnostic IA</p>
+                    <p className="text-sm text-muted-foreground">Analyse des inflexions, blocages et projections</p>
+                  </div>
+                  <Button onClick={handleTrajectoryAi} disabled={trajectoryAiLoading || !trajectoryData.length} className="gap-2">
+                    {trajectoryAiLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                    Générer Analyse de Progression
+                  </Button>
+                </div>
+                {trajectoryAiResult && (
+                  <div className="mt-4 p-4 rounded-lg border bg-muted/30 prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
+                    {trajectoryAiResult}
                   </div>
                 )}
               </CardContent>
@@ -480,7 +805,6 @@ const MonitoringPage = () => {
         <p className="text-muted-foreground mt-1">Analyse comparative de vos groupes et élèves</p>
       </div>
 
-      {/* Group comparison bar chart */}
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-base flex items-center gap-2"><TrendingUp className="h-4 w-4" /> Progression moyenne par groupe</CardTitle>
@@ -501,7 +825,7 @@ const MonitoringPage = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis type="number" domain={[0, 100]} />
                   <YAxis dataKey="nom" type="category" width={120} tick={{ fontSize: 12 }} />
-                  <Tooltip formatter={(v: number) => `${v}%`} />
+                  <RechartsTooltip formatter={(v: number) => `${v}%`} />
                   <Bar dataKey="scoreMoyen" name="Score moyen" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -510,7 +834,6 @@ const MonitoringPage = () => {
         </CardContent>
       </Card>
 
-      {/* Competency breakdown per group */}
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-base flex items-center gap-2"><Target className="h-4 w-4" /> Scores par compétence TCF</CardTitle>
@@ -525,10 +848,10 @@ const MonitoringPage = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="nom" tick={{ fontSize: 11 }} />
                   <YAxis domain={[0, 100]} />
-                  <Tooltip formatter={(v: number) => `${v}%`} />
+                  <RechartsTooltip formatter={(v: number) => `${v}%`} />
                   <Legend />
                   {COMPETENCES.map((c, i) => (
-                    <Bar key={c} dataKey={c} name={c} fill={COMP_COLORS[i]} />
+                    <Bar key={c} dataKey={c} name={c} fill={PALETTE[i]} />
                   ))}
                 </BarChart>
               </ResponsiveContainer>
@@ -537,7 +860,6 @@ const MonitoringPage = () => {
         </CardContent>
       </Card>
 
-      {/* Group cards: click to drill down */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {loadingGroups ? (
           [1, 2, 3].map(i => <Skeleton key={i} className="h-28" />)
