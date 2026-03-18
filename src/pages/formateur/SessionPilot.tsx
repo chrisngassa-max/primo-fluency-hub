@@ -591,6 +591,51 @@ const SessionPilot = () => {
     } finally { setSaving(false); }
   };
 
+  const handlePrintAll = () => {
+    const allExercises = exercises.map((se: any) => se.exercice).filter(Boolean);
+    if (allExercises.length === 0) { toast.warning("Aucun exercice à imprimer."); return; }
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) { toast.error("Pop-up bloqué."); return; }
+    const html = `<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8"><title>${session?.titre || "Séance"} — TCF Pro</title>
+<style>
+body { font-family: 'Segoe UI', sans-serif; padding: 24px; font-size: 13pt; color: #222; }
+h1 { font-size: 18pt; border-bottom: 2px solid #333; padding-bottom: 8px; margin-bottom: 20px; }
+.exercise { page-break-inside: avoid; margin-bottom: 28px; border: 1px solid #ddd; border-radius: 8px; padding: 16px; }
+.exercise h2 { font-size: 14pt; margin: 0 0 4px; }
+.exercise .meta { font-size: 10pt; color: #666; margin-bottom: 8px; }
+.exercise .consigne { font-style: italic; margin-bottom: 12px; font-size: 12pt; }
+.question { margin-bottom: 14px; }
+.question p { font-weight: 600; margin-bottom: 6px; }
+.option { padding: 4px 0 4px 20px; position: relative; }
+.option::before { content: "☐"; position: absolute; left: 0; }
+.write-zone { border: 1px dashed #aaa; height: 60px; border-radius: 4px; margin-top: 6px; }
+@media print { body { padding: 0; } }
+</style></head><body>
+<h1>📝 ${session?.titre || "Séance"} — ${allExercises.length} exercice(s)</h1>
+<p style="font-size:10pt;color:#666;">${(session as any)?.group?.nom || ""} · ${new Date().toLocaleDateString("fr-FR")} — TCF Pro</p>
+${allExercises.map((ex: any, i: number) => {
+      const c = typeof ex.contenu === "object" && ex.contenu !== null ? ex.contenu : { items: [] };
+      const its: any[] = Array.isArray((c as any).items) ? (c as any).items : [];
+      return `<div class="exercise">
+<h2>${i + 1}. ${ex.titre}</h2>
+<div class="meta">${ex.competence} · ${ex.format?.replace(/_/g, " ")} · Niveau ${ex.niveau_vise} · Difficulté ${ex.difficulte}/5</div>
+<div class="consigne">${ex.consigne}</div>
+${its.map((item: any, qi: number) => `<div class="question">
+<p>Q${qi + 1}. ${item.question || ""}</p>
+${Array.isArray(item.options) && item.options.length > 0
+        ? item.options.map((o: string) => `<div class="option">${o}</div>`).join("")
+        : '<div class="write-zone"></div>'}
+</div>`).join("")}
+</div>`;
+    }).join("")}
+</body></html>`;
+    printWindow.document.write(html);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => printWindow.print(), 300);
+  };
+
   const handlePrint = () => window.print();
 
   if (isLoading) {
