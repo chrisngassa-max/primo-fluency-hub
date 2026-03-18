@@ -174,6 +174,57 @@ export type Database = {
           },
         ]
       }
+      diagnostic_entree: {
+        Row: {
+          competence: string
+          created_at: string
+          eleve_id: string
+          formateur_id: string
+          id: string
+          niveau_difficulte: number | null
+          score: number
+          sous_item: string
+          updated_at: string
+        }
+        Insert: {
+          competence: string
+          created_at?: string
+          eleve_id: string
+          formateur_id: string
+          id?: string
+          niveau_difficulte?: number | null
+          score?: number
+          sous_item: string
+          updated_at?: string
+        }
+        Update: {
+          competence?: string
+          created_at?: string
+          eleve_id?: string
+          formateur_id?: string
+          id?: string
+          niveau_difficulte?: number | null
+          score?: number
+          sous_item?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "diagnostic_entree_eleve_id_fkey"
+            columns: ["eleve_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "diagnostic_entree_formateur_id_fkey"
+            columns: ["formateur_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       epreuves: {
         Row: {
           competence: Database["public"]["Enums"]["competence_type"]
