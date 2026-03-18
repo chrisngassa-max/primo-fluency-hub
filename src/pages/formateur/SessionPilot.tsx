@@ -32,9 +32,27 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
+  RadioGroup,
+  RadioGroupItem,
+} from "@/components/ui/radio-group";
+import {
   CheckCircle2, Clock, ArrowRight, Printer, ArrowLeft,
   BookOpen, Minus, Plus, Loader2, Sparkles, Pencil, Trash2, CirclePlus, Circle,
   AlertTriangle, RotateCcw, ClipboardCheck, FileText, Users, Brain,
+  Eye, Volume2, ChevronDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -61,6 +79,7 @@ const SessionPilot = () => {
   const [editingExercise, setEditingExercise] = useState<any>(null);
   const [editForm, setEditForm] = useState<{ titre: string; consigne: string; contenu: any }>({ titre: "", consigne: "", contenu: { items: [] } });
   const [savingEdit, setSavingEdit] = useState(false);
+  const [previewExercise, setPreviewExercise] = useState<any>(null);
 
   const { data: session } = useQuery({
     queryKey: ["session-info", id],
@@ -762,66 +781,199 @@ const SessionPilot = () => {
             </CardContent>
           </Card>
 
-          {/* Exercise List */}
-          <div className="space-y-3">
+          {/* Exercise List — Accordion */}
+          <Accordion type="multiple" className="space-y-2">
             {exercises.map((se, i) => {
               const ex = (se as any).exercice;
               const status = getStatus(se.id);
               const config = statusConfig[status];
               const StatusIcon = config.icon;
               const isChecked = !!checked[se.id];
+              const contenu = typeof ex?.contenu === "object" && ex?.contenu !== null ? ex.contenu : { items: [] };
+              const items: any[] = Array.isArray((contenu as any).items) ? (contenu as any).items : [];
 
               return (
-                <Card key={se.id}
-                  className={cn(
-                    "transition-all cursor-pointer print:break-inside-avoid print:border print:shadow-none",
-                    isChecked && "border-green-200 bg-green-50/30 dark:border-green-800 dark:bg-green-950/30",
-                    !isChecked && checkedCount > 0 && "opacity-60"
-                  )}
-                  onClick={() => toggleExercise(se.id)}>
-                  <CardContent className="py-4 px-4">
-                    <div className="flex items-start gap-3">
-                      <div className="pt-0.5 print:hidden">
-                        <Checkbox checked={isChecked} onCheckedChange={() => toggleExercise(se.id)}
-                          onClick={(e) => e.stopPropagation()} className="h-5 w-5" />
+                <AccordionItem key={se.id} value={se.id} className={cn(
+                  "border rounded-lg transition-all print:break-inside-avoid",
+                  isChecked && "border-green-200 bg-green-50/30 dark:border-green-800 dark:bg-green-950/30",
+                  !isChecked && checkedCount > 0 && "opacity-60"
+                )}>
+                  <div className="flex items-center gap-3 px-4 py-3">
+                    <div className="pt-0.5 print:hidden">
+                      <Checkbox checked={isChecked} onCheckedChange={() => toggleExercise(se.id)}
+                        className="h-5 w-5" />
+                    </div>
+                    <div className={cn("flex items-center justify-center h-8 w-8 rounded-full text-sm font-bold shrink-0 border", config.color)}>
+                      {i + 1}
+                    </div>
+                    <AccordionTrigger className="flex-1 min-w-0 py-0 hover:no-underline">
+                      <div className="flex items-center gap-2 flex-wrap text-left">
+                        <h3 className="font-semibold text-sm">{ex?.titre || "Exercice"}</h3>
+                        <Badge variant="secondary" className="text-[10px]">{ex?.competence}</Badge>
+                        <Badge variant="outline" className="text-[10px]">{ex?.format?.replace(/_/g, " ")}</Badge>
+                        <span className={cn("inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-medium border print:hidden", config.color)}>
+                          <StatusIcon className="h-3 w-3" />{config.label}
+                        </span>
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 px-2 py-0.5 text-[10px] font-semibold print:hidden">
+                          <Circle className="h-2 w-2 fill-emerald-500 text-emerald-500" />
+                          En ligne
+                        </span>
                       </div>
-                      <div className={cn("flex items-center justify-center h-8 w-8 rounded-full text-sm font-bold shrink-0 border", config.color)}>
-                        {i + 1}
-                      </div>
-                      <div className="flex-1 min-w-0 space-y-1">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <h3 className="font-semibold text-sm">{ex?.titre || "Exercice"}</h3>
-                          <Badge variant="secondary" className="text-[10px]">{ex?.competence}</Badge>
-                          <span className={cn("inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-medium border print:hidden", config.color)}>
-                            <StatusIcon className="h-3 w-3" />{config.label}
-                          </span>
-                          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 px-2 py-0.5 text-[10px] font-semibold print:hidden">
-                            <Circle className="h-2 w-2 fill-emerald-500 text-emerald-500" />
-                            En ligne
-                          </span>
-                        </div>
-                        <p className="text-xs text-muted-foreground">{ex?.consigne}</p>
-                        <p className="text-[10px] text-muted-foreground/60 print:hidden">Format : {ex?.format?.replace(/_/g, " ")}</p>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 shrink-0 print:hidden"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openEditor(se);
-                        }}
-                      >
+                    </AccordionTrigger>
+                    <div className="flex gap-1 shrink-0 print:hidden">
+                      <Button variant="outline" size="icon" className="h-8 w-8"
+                        onClick={(e) => { e.stopPropagation(); setPreviewExercise(ex); }}>
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8"
+                        onClick={(e) => { e.stopPropagation(); openEditor(se); }}>
                         <Pencil className="h-4 w-4" />
                       </Button>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                  <AccordionContent className="px-4 pb-4 pt-0">
+                    <div className="space-y-3 border-t pt-3">
+                      <div>
+                        <p className="text-xs font-semibold text-muted-foreground mb-1">Consigne</p>
+                        <p className="text-sm">{ex?.consigne}</p>
+                      </div>
+                      <div className="grid grid-cols-3 gap-3 text-xs">
+                        <div>
+                          <span className="text-muted-foreground">Niveau</span>
+                          <p className="font-medium">{ex?.niveau_vise}</p>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Difficulté</span>
+                          <p className="font-medium">{ex?.difficulte}/5</p>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Questions</span>
+                          <p className="font-medium">{items.length}</p>
+                        </div>
+                      </div>
+                      {items.length > 0 && (
+                        <div className="space-y-2">
+                          <p className="text-xs font-semibold text-muted-foreground">Aperçu rapide ({items.length} items)</p>
+                          {items.slice(0, 3).map((item: any, idx: number) => (
+                            <div key={idx} className="text-xs p-2 rounded-md bg-muted/50 border">
+                              <span className="font-semibold text-primary">Q{idx + 1}.</span>{" "}
+                              <span>{item.question}</span>
+                              {Array.isArray(item.options) && (
+                                <span className="text-muted-foreground ml-1">({item.options.length} choix)</span>
+                              )}
+                            </div>
+                          ))}
+                          {items.length > 3 && (
+                            <p className="text-[11px] text-muted-foreground">+ {items.length - 3} autre(s) question(s)…</p>
+                          )}
+                        </div>
+                      )}
+                      <div className="flex gap-2 print:hidden">
+                        <Button variant="outline" size="sm" className="gap-1" onClick={() => setPreviewExercise(ex)}>
+                          <Eye className="h-3.5 w-3.5" />Aperçu Élève
+                        </Button>
+                        <Button variant="outline" size="sm" className="gap-1" onClick={() => openEditor(se)}>
+                          <Pencil className="h-3.5 w-3.5" />Modifier
+                        </Button>
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
               );
             })}
-          </div>
+          </Accordion>
         </>
       )}
+
+      {/* ─── Student Preview Dialog ─── */}
+      <Dialog open={!!previewExercise} onOpenChange={(open) => { if (!open) setPreviewExercise(null); }}>
+        <DialogContent className="sm:max-w-xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Eye className="h-4 w-4 text-primary" />
+              Aperçu Élève — {previewExercise?.titre}
+            </DialogTitle>
+            <DialogDescription>
+              Voici l'exercice tel que l'élève le verra sur son espace.
+            </DialogDescription>
+          </DialogHeader>
+
+          {previewExercise && (() => {
+            const pc = typeof previewExercise.contenu === "object" && previewExercise.contenu !== null
+              ? previewExercise.contenu : { items: [] };
+            const pitems: any[] = Array.isArray((pc as any).items) ? (pc as any).items : [];
+
+            return (
+              <div className="space-y-5 pt-2">
+                {/* Consigne */}
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base">Consigne</CardTitle>
+                    <CardDescription>{previewExercise.consigne}</CardDescription>
+                  </CardHeader>
+                </Card>
+
+                {/* Competence + format info */}
+                <div className="flex gap-2 flex-wrap">
+                  <Badge>{previewExercise.competence}</Badge>
+                  <Badge variant="outline">{previewExercise.format?.replace(/_/g, " ")}</Badge>
+                  <Badge variant="secondary">Niveau {previewExercise.niveau_vise}</Badge>
+                </div>
+
+                {/* Questions rendered as the student sees them */}
+                {pitems.length > 0 ? (
+                  <div className="space-y-4">
+                    {pitems.map((item: any, idx: number) => (
+                      <Card key={idx}>
+                        <CardContent className="pt-4 space-y-3">
+                          <p className="font-medium text-sm">
+                            <span className="text-primary font-bold mr-2">Q{idx + 1}.</span>
+                            {item.question}
+                          </p>
+
+                          {/* Audio button placeholder for CO */}
+                          {previewExercise.competence === "CO" && (
+                            <Button variant="outline" size="sm" className="gap-2" disabled>
+                              <Volume2 className="h-4 w-4" />
+                              Écouter l'audio
+                            </Button>
+                          )}
+
+                          {/* Options rendered as radio group (non-interactive preview) */}
+                          {Array.isArray(item.options) && item.options.length > 0 ? (
+                            <RadioGroup disabled className="space-y-1">
+                              {item.options.map((opt: string, oi: number) => (
+                                <div key={oi} className="flex items-center space-x-2 p-2 rounded-lg bg-muted/30 border">
+                                  <RadioGroupItem value={opt} id={`prev-q${idx}-o${oi}`} disabled />
+                                  <Label htmlFor={`prev-q${idx}-o${oi}`} className="cursor-default flex-1 text-sm">
+                                    {opt}
+                                  </Label>
+                                </div>
+                              ))}
+                            </RadioGroup>
+                          ) : (
+                            <div className="border rounded-md p-3 bg-muted/20 text-sm text-muted-foreground italic">
+                              Zone de saisie libre pour l'élève
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground text-sm">
+                    Aucune question dans cet exercice.
+                  </div>
+                )}
+
+                <Button variant="outline" className="w-full" disabled>
+                  Soumettre mes réponses
+                </Button>
+              </div>
+            );
+          })()}
+        </DialogContent>
+      </Dialog>
 
       {/* Editor Sheet */}
       <Sheet open={!!editingExercise} onOpenChange={(open) => { if (!open) setEditingExercise(null); }}>
