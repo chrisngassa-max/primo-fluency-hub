@@ -52,7 +52,7 @@ import {
   CheckCircle2, Clock, ArrowRight, Printer, ArrowLeft,
   BookOpen, Minus, Plus, Loader2, Sparkles, Pencil, Trash2, CirclePlus, Circle,
   AlertTriangle, RotateCcw, ClipboardCheck, FileText, Users, Brain,
-  Eye, Volume2, ChevronDown, Drama, Package, MessageCircle, Wand2,
+  Eye, Volume2, ChevronDown, ChevronLeft, ChevronRight, Drama, Package, MessageCircle, Wand2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -80,6 +80,7 @@ const SessionPilot = () => {
   const [editForm, setEditForm] = useState<{ titre: string; consigne: string; contenu: any }>({ titre: "", consigne: "", contenu: { items: [] } });
   const [savingEdit, setSavingEdit] = useState(false);
   const [previewExercise, setPreviewExercise] = useState<any>(null);
+  const [previewPage, setPreviewPage] = useState(0);
   const [animationGuide, setAnimationGuide] = useState<any>(null);
 
   const { data: session } = useQuery({
@@ -936,7 +937,7 @@ ${Array.isArray(item.options) && item.options.length > 0
                         </Button>
                       )}
                       <Button variant="outline" size="icon" className="h-8 w-8"
-                        onClick={(e) => { e.stopPropagation(); setPreviewExercise(ex); }}>
+                        onClick={(e) => { e.stopPropagation(); setPreviewExercise(ex); setPreviewPage(0); }}>
                         <Eye className="h-4 w-4" />
                       </Button>
                       <Button variant="ghost" size="icon" className="h-8 w-8"
@@ -983,7 +984,7 @@ ${Array.isArray(item.options) && item.options.length > 0
                         </div>
                       )}
                       <div className="flex gap-2 print:hidden">
-                        <Button variant="outline" size="sm" className="gap-1" onClick={() => setPreviewExercise(ex)}>
+                        <Button variant="outline" size="sm" className="gap-1" onClick={() => { setPreviewExercise(ex); setPreviewPage(0); }}>
                           <Eye className="h-3.5 w-3.5" />Aperçu Élève
                         </Button>
                         {ex?.animation_guide && (
@@ -1005,7 +1006,7 @@ ${Array.isArray(item.options) && item.options.length > 0
         </>
       )}
 
-      {/* ─── Student Preview Dialog ─── */}
+      {/* ─── Student Preview Dialog with Navigation ─── */}
       <Dialog open={!!previewExercise} onOpenChange={(open) => { if (!open) setPreviewExercise(null); }}>
         <DialogContent className="sm:max-w-xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
@@ -1022,10 +1023,11 @@ ${Array.isArray(item.options) && item.options.length > 0
             const pc = typeof previewExercise.contenu === "object" && previewExercise.contenu !== null
               ? previewExercise.contenu : { items: [] };
             const pitems: any[] = Array.isArray((pc as any).items) ? (pc as any).items : [];
+            const totalPages = pitems.length;
+            const currentItem = pitems[previewPage];
 
             return (
               <div className="space-y-5 pt-2">
-                {/* Consigne */}
                 <Card>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-base">Consigne</CardTitle>
@@ -1033,39 +1035,47 @@ ${Array.isArray(item.options) && item.options.length > 0
                   </CardHeader>
                 </Card>
 
-                {/* Competence + format info */}
                 <div className="flex gap-2 flex-wrap">
                   <Badge>{previewExercise.competence}</Badge>
                   <Badge variant="outline">{previewExercise.format?.replace(/_/g, " ")}</Badge>
                   <Badge variant="secondary">Niveau {previewExercise.niveau_vise}</Badge>
                 </div>
 
-                {/* Questions rendered as the student sees them */}
-                {pitems.length > 0 ? (
-                  <div className="space-y-4">
-                    {pitems.map((item: any, idx: number) => (
-                      <Card key={idx}>
+                {totalPages > 0 ? (
+                  <>
+                    {/* Navigation */}
+                    <div className="flex items-center justify-between">
+                      <Button variant="outline" size="sm" disabled={previewPage === 0}
+                        onClick={() => setPreviewPage(p => p - 1)} className="gap-1">
+                        <ChevronLeft className="h-4 w-4" />Précédent
+                      </Button>
+                      <span className="text-sm font-medium text-muted-foreground">
+                        Question {previewPage + 1} / {totalPages}
+                      </span>
+                      <Button variant="outline" size="sm" disabled={previewPage >= totalPages - 1}
+                        onClick={() => setPreviewPage(p => p + 1)} className="gap-1">
+                        Suivant<ChevronRight className="h-4 w-4" />
+                      </Button>
+                    </div>
+
+                    {currentItem && (
+                      <Card>
                         <CardContent className="pt-4 space-y-3">
                           <p className="font-medium text-sm">
-                            <span className="text-primary font-bold mr-2">Q{idx + 1}.</span>
-                            {item.question}
+                            <span className="text-primary font-bold mr-2">Q{previewPage + 1}.</span>
+                            {currentItem.question}
                           </p>
-
-                          {/* Audio button placeholder for CO */}
                           {previewExercise.competence === "CO" && (
                             <Button variant="outline" size="sm" className="gap-2" disabled>
-                              <Volume2 className="h-4 w-4" />
-                              Écouter l'audio
+                              <Volume2 className="h-4 w-4" />Écouter l'audio
                             </Button>
                           )}
-
-                          {/* Options rendered as radio group (non-interactive preview) */}
-                          {Array.isArray(item.options) && item.options.length > 0 ? (
+                          {Array.isArray(currentItem.options) && currentItem.options.length > 0 ? (
                             <RadioGroup disabled className="space-y-1">
-                              {item.options.map((opt: string, oi: number) => (
+                              {currentItem.options.map((opt: string, oi: number) => (
                                 <div key={oi} className="flex items-center space-x-2 p-2 rounded-lg bg-muted/30 border">
-                                  <RadioGroupItem value={opt} id={`prev-q${idx}-o${oi}`} disabled />
-                                  <Label htmlFor={`prev-q${idx}-o${oi}`} className="cursor-default flex-1 text-sm">
+                                  <RadioGroupItem value={opt} id={`prev-q${previewPage}-o${oi}`} disabled />
+                                  <Label htmlFor={`prev-q${previewPage}-o${oi}`} className="cursor-default flex-1 text-sm">
                                     {opt}
                                   </Label>
                                 </div>
@@ -1078,8 +1088,19 @@ ${Array.isArray(item.options) && item.options.length > 0
                           )}
                         </CardContent>
                       </Card>
-                    ))}
-                  </div>
+                    )}
+
+                    {/* Page dots */}
+                    <div className="flex justify-center gap-1">
+                      {pitems.map((_, i) => (
+                        <button key={i} onClick={() => setPreviewPage(i)}
+                          className={cn(
+                            "h-2.5 w-2.5 rounded-full transition-colors",
+                            i === previewPage ? "bg-primary" : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                          )} />
+                      ))}
+                    </div>
+                  </>
                 ) : (
                   <div className="text-center py-8 text-muted-foreground text-sm">
                     Aucune question dans cet exercice.
