@@ -26,6 +26,7 @@ import EleveLayout from "@/layouts/EleveLayout";
 import EleveDashboard from "@/pages/eleve/Dashboard";
 import EleveProgression from "@/pages/eleve/Progression";
 import EleveDetail from "@/pages/formateur/EleveDetail";
+import TestsEntreePage from "@/pages/formateur/TestsEntree";
 
 const queryClient = new QueryClient();
 
