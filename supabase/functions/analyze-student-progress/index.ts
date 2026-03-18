@@ -1,0 +1,69 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+};
+
+serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+  try {
+    const { eleveNom, profil, levels, recentResults, testEntree, failures } = await req.json();
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+
+    const systemPrompt = `Tu es un conseiller pédagogique expert en FLE (Français Langue Étrangère) spécialisé dans la préparation au TCF IRN (niveau A1).
+Tu analyses le profil d'un élève adulte primo-arrivant et tu fournis des recommandations précises et actionnables.
+Réponds en français. Structure ta réponse en 3 sections :
+1. **Diagnostic des blocages** : Identifie les compétences et points spécifiques où l'élève échoue régulièrement.
+2. **Points de travail immédiats** : 3 à 5 axes prioritaires concrets à travailler en classe ou en autonomie.
+3. **Exercices recommandés** : Propose 3 à 5 types d'exercices spécifiques (avec format et thème) adaptés au niveau actuel de l'élève.
+Sois concis, bienveillant et pragmatique.`;
+
+    const userPrompt = `Analyse le profil de l'élève "${eleveNom}" :
+
+**Profil actuel :**
+- Niveau : ${profil?.niveau_actuel || "non évalué"}
+- Score moyen global : ${profil ? Math.round(Number(profil.taux_reussite_global)) : 0}%
+- CO : ${profil ? Math.round(Number(profil.taux_reussite_co)) : 0}% | CE : ${profil ? Math.round(Number(profil.taux_reussite_ce)) : 0}% | EE : ${profil ? Math.round(Number(profil.taux_reussite_ee)) : 0}% | EO : ${profil ? Math.round(Number(profil.taux_reussite_eo)) : 0}%
+- Score de risque : ${profil ? Math.round(Number(profil.score_risque)) : 0}/100
+
+**Niveaux validés (0-10) :**
+${(levels || []).map((l: any) => `- ${l.competence} : Niveau ${l.niveau_actuel}`).join("\n") || "Aucun niveau validé"}
+
+**Test d'entrée :**
+${testEntree ? `Score global : ${testEntree.score_global}% | Niveau estimé : ${testEntree.niveau_estime}` : "Pas de test d'entrée"}
+
+**Derniers résultats :**
+${(recentResults || []).map((r: any) => `- ${r.titre} (${r.competence}, diff. ${r.difficulte}) → ${r.score}%`).join("\n") || "Aucun résultat"}
+
+**Points d'échec récurrents :**
+${(failures || []).map((f: any) => `- "${f.titre}" (${f.competence}) : ${f.score}% en moyenne, ${f.count} échec(s)`).join("\n") || "Aucun échec récurrent"}`;
+
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "google/gemini-3-flash-preview",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+      }),
+    });
+
+    if (!response.ok) {
+      if (response.status === 429) return new Response(JSON.stringify({ error: "Trop de requêtes, réessayez dans quelques instants." }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      if (response.status === 402) return new Response(JSON.stringify({ error: "Crédits IA insuffisants." }), { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      throw new Error(`AI gateway error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const content = data.choices?.[0]?.message?.content || "Analyse indisponible.";
+    return new Response(JSON.stringify({ analysis: content }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+  } catch (e) {
+    console.error("analyze-student-progress error:", e);
+    return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+  }
+});
