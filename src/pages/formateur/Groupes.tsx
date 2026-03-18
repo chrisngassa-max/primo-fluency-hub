@@ -410,7 +410,7 @@ const GroupesPage = () => {
                       variant="ghost" size="icon" className="h-7 w-7 shrink-0"
                       onClick={() => copyToClipboard(createdStudent.password, "password")}
                     >
-                      {copiedField === "password" ? <Check className="h-3.5 w-3.5 text-green-600" /> : <Copy className="h-3.5 w-3.5" />}
+                      {copiedField === "password" ? <Check className="h-3.5 w-3.5 text-primary" /> : <Copy className="h-3.5 w-3.5" />}
                     </Button>
                   </div>
                 </div>
