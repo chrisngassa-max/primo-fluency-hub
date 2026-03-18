@@ -1,13 +1,14 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
@@ -20,6 +21,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 import {
   BookOpen, Printer, Search, Eye, Volume2, Circle, Filter, Drama, Package, MessageCircle, Wand2,
+  Pencil, Trash2, Plus, CirclePlus, CheckCircle2, Loader2, ChevronLeft, ChevronRight, Save,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -36,13 +38,17 @@ const competenceColor: Record<string, string> = {
 
 const ExercicesPage = () => {
   const { user } = useAuth();
+  const qc = useQueryClient();
   const [filterCompetence, setFilterCompetence] = useState<string>("all");
   const [filterNiveau, setFilterNiveau] = useState<string>("all");
   const [filterSession, setFilterSession] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [previewExercise, setPreviewExercise] = useState<any>(null);
+  const [previewPage, setPreviewPage] = useState(0);
   const [animationGuide, setAnimationGuide] = useState<any>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [savingItemId, setSavingItemId] = useState<string | null>(null);
   const printRef = useRef<HTMLDivElement>(null);
 
   // Fetch all exercises for this formateur
@@ -144,9 +150,124 @@ const ExercicesPage = () => {
     }
   };
 
+  // ─── Auto-save item to Supabase ───
+  const autoSaveExercise = useCallback(async (exerciseId: string, updates: { titre?: string; consigne?: string; contenu?: any }) => {
+    setSavingItemId(exerciseId);
+    try {
+      const { error } = await supabase
+        .from("exercices")
+        .update({ ...updates, updated_at: new Date().toISOString() })
+        .eq("id", exerciseId);
+      if (error) throw error;
+      qc.invalidateQueries({ queryKey: ["formateur-all-exercices", user?.id] });
+    } catch (e: any) {
+      toast.error("Erreur de sauvegarde", { description: e.message });
+    } finally {
+      setSavingItemId(null);
+    }
+  }, [qc, user?.id]);
+
+  // Debounced save
+  const saveTimerRef = useRef<Record<string, NodeJS.Timeout>>({});
+  const debouncedSave = useCallback((exerciseId: string, updates: { titre?: string; consigne?: string; contenu?: any }) => {
+    if (saveTimerRef.current[exerciseId]) clearTimeout(saveTimerRef.current[exerciseId]);
+    saveTimerRef.current[exerciseId] = setTimeout(() => {
+      autoSaveExercise(exerciseId, updates);
+    }, 800);
+  }, [autoSaveExercise]);
+
+  // Local edit state per exercise
+  const [localEdits, setLocalEdits] = useState<Record<string, any>>({});
+
+  const getEditableContenu = (ex: any) => {
+    if (localEdits[ex.id]?.contenu) return localEdits[ex.id].contenu;
+    const c = typeof ex.contenu === "object" && ex.contenu !== null ? ex.contenu : { items: [] };
+    return { items: Array.isArray((c as any).items) ? (c as any).items : [] };
+  };
+
+  const getEditableField = (ex: any, field: "titre" | "consigne") => {
+    if (localEdits[ex.id]?.[field] !== undefined) return localEdits[ex.id][field];
+    return ex[field] || "";
+  };
+
+  const updateLocalField = (exId: string, field: string, value: any, ex: any) => {
+    setLocalEdits((prev) => ({
+      ...prev,
+      [exId]: { ...prev[exId], [field]: value },
+    }));
+    const updates: any = {};
+    if (field === "titre" || field === "consigne") {
+      updates[field] = value;
+    } else if (field === "contenu") {
+      updates.contenu = value;
+    }
+    debouncedSave(exId, updates);
+  };
+
+  const updateItemField = (exId: string, itemIdx: number, field: string, value: any, ex: any) => {
+    const contenu = getEditableContenu(ex);
+    const items = [...contenu.items];
+    items[itemIdx] = { ...items[itemIdx], [field]: value };
+    const newContenu = { items };
+    updateLocalField(exId, "contenu", newContenu, ex);
+  };
+
+  const updateItemOption = (exId: string, itemIdx: number, optIdx: number, value: string, ex: any) => {
+    const contenu = getEditableContenu(ex);
+    const items = [...contenu.items];
+    const options = [...(items[itemIdx].options || [])];
+    options[optIdx] = value;
+    items[itemIdx] = { ...items[itemIdx], options };
+    const newContenu = { items };
+    updateLocalField(exId, "contenu", newContenu, ex);
+  };
+
+  const setCorrectAnswer = (exId: string, itemIdx: number, optIdx: number, ex: any) => {
+    const contenu = getEditableContenu(ex);
+    const items = [...contenu.items];
+    const options = items[itemIdx].options || [];
+    items[itemIdx] = { ...items[itemIdx], bonne_reponse: options[optIdx] || "" };
+    const newContenu = { items };
+    updateLocalField(exId, "contenu", newContenu, ex);
+  };
+
+  const addItem = (exId: string, ex: any) => {
+    const contenu = getEditableContenu(ex);
+    const items = [...contenu.items, { question: "", options: ["", "", "", ""], bonne_reponse: "", explication: "" }];
+    const newContenu = { items };
+    updateLocalField(exId, "contenu", newContenu, ex);
+  };
+
+  const removeItem = (exId: string, itemIdx: number, ex: any) => {
+    const contenu = getEditableContenu(ex);
+    const items = [...contenu.items];
+    items.splice(itemIdx, 1);
+    const newContenu = { items };
+    updateLocalField(exId, "contenu", newContenu, ex);
+  };
+
+  const addOption = (exId: string, itemIdx: number, ex: any) => {
+    const contenu = getEditableContenu(ex);
+    const items = [...contenu.items];
+    const options = [...(items[itemIdx].options || []), ""];
+    items[itemIdx] = { ...items[itemIdx], options };
+    const newContenu = { items };
+    updateLocalField(exId, "contenu", newContenu, ex);
+  };
+
+  const removeOption = (exId: string, itemIdx: number, optIdx: number, ex: any) => {
+    const contenu = getEditableContenu(ex);
+    const items = [...contenu.items];
+    const options = [...(items[itemIdx].options || [])];
+    options.splice(optIdx, 1);
+    items[itemIdx] = { ...items[itemIdx], options };
+    const newContenu = { items };
+    updateLocalField(exId, "contenu", newContenu, ex);
+  };
+
+  // ─── Print ───
   const handlePrintSelection = () => {
     if (selected.size === 0) return;
-    // Build print content
     const selectedExercises = (exercices ?? []).filter((e) => selected.has(e.id));
     const printWindow = window.open("", "_blank");
     if (!printWindow) { toast.error("Pop-up bloqué. Autorisez les pop-ups."); return; }
@@ -327,8 +448,10 @@ ${Array.isArray(item.options) && item.options.length > 0
             <Accordion type="multiple" className="space-y-1">
               {exs.map((ex: any) => {
                 const isSelected = selected.has(ex.id);
-                const contenu = typeof ex.contenu === "object" && ex.contenu !== null ? ex.contenu : { items: [] };
-                const items: any[] = Array.isArray((contenu as any).items) ? (contenu as any).items : [];
+                const contenu = getEditableContenu(ex);
+                const items: any[] = contenu.items;
+                const isEditing = editingId === ex.id;
+                const isSaving = savingItemId === ex.id;
 
                 return (
                   <AccordionItem key={ex.id} value={ex.id} className={cn(
@@ -339,13 +462,11 @@ ${Array.isArray(item.options) && item.options.length > 0
                       <Checkbox checked={isSelected} onCheckedChange={() => toggle(ex.id)} className="h-5 w-5" />
                       <AccordionTrigger className="flex-1 min-w-0 py-0 hover:no-underline">
                         <div className="flex items-center gap-2 flex-wrap text-left">
-                          <h3 className="font-semibold text-sm">{ex.titre}</h3>
+                          <h3 className="font-semibold text-sm">{getEditableField(ex, "titre")}</h3>
                           <Badge variant="outline" className="text-[10px]">{ex.format?.replace(/_/g, " ")}</Badge>
                           <Badge variant="secondary" className="text-[10px]">Niv. {ex.niveau_vise}</Badge>
                           <span className="text-[10px] text-muted-foreground">{items.length} Q</span>
-                          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 px-2 py-0.5 text-[10px] font-semibold">
-                            <Circle className="h-2 w-2 fill-emerald-500 text-emerald-500" />En ligne
-                          </span>
+                          {isSaving && <Loader2 className="h-3 w-3 animate-spin text-primary" />}
                         </div>
                       </AccordionTrigger>
                       <div className="flex gap-1 shrink-0">
@@ -356,8 +477,12 @@ ${Array.isArray(item.options) && item.options.length > 0
                           </Button>
                         )}
                         <Button variant="outline" size="icon" className="h-8 w-8"
-                          onClick={(e) => { e.stopPropagation(); setPreviewExercise(ex); }}>
+                          onClick={(e) => { e.stopPropagation(); setPreviewExercise(ex); setPreviewPage(0); }}>
                           <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button variant={isEditing ? "default" : "outline"} size="icon" className="h-8 w-8"
+                          onClick={(e) => { e.stopPropagation(); setEditingId(isEditing ? null : ex.id); }}>
+                          <Pencil className="h-4 w-4" />
                         </Button>
                         <Button variant="outline" size="icon" className="h-8 w-8"
                           onClick={(e) => { e.stopPropagation(); handlePrintSingle(ex); }}>
@@ -366,28 +491,139 @@ ${Array.isArray(item.options) && item.options.length > 0
                       </div>
                     </div>
                     <AccordionContent className="px-4 pb-4 pt-0">
-                      <div className="space-y-3 border-t pt-3">
-                        <div>
-                          <p className="text-xs font-semibold text-muted-foreground mb-1">Consigne</p>
-                          <p className="text-sm">{ex.consigne}</p>
-                        </div>
+                      <div className="space-y-4 border-t pt-3">
+                        {/* Editable title & consigne */}
+                        {isEditing && (
+                          <div className="space-y-3">
+                            <div className="space-y-1">
+                              <Label className="text-xs font-semibold">Titre</Label>
+                              <Input value={getEditableField(ex, "titre")}
+                                onChange={(e) => updateLocalField(ex.id, "titre", e.target.value, ex)} />
+                            </div>
+                            <div className="space-y-1">
+                              <Label className="text-xs font-semibold">Consigne</Label>
+                              <Textarea value={getEditableField(ex, "consigne")} rows={2}
+                                onChange={(e) => updateLocalField(ex.id, "consigne", e.target.value, ex)} />
+                            </div>
+                          </div>
+                        )}
+                        {!isEditing && (
+                          <div>
+                            <p className="text-xs font-semibold text-muted-foreground mb-1">Consigne</p>
+                            <p className="text-sm">{getEditableField(ex, "consigne")}</p>
+                          </div>
+                        )}
+
                         <div className="grid grid-cols-3 gap-3 text-xs">
                           <div><span className="text-muted-foreground">Niveau</span><p className="font-medium">{ex.niveau_vise}</p></div>
                           <div><span className="text-muted-foreground">Difficulté</span><p className="font-medium">{ex.difficulte}/5</p></div>
                           <div><span className="text-muted-foreground">Questions</span><p className="font-medium">{items.length}</p></div>
                         </div>
-                        {items.length > 0 && (
-                          <div className="space-y-1">
-                            <p className="text-xs font-semibold text-muted-foreground">Aperçu ({items.length} items)</p>
-                            {items.slice(0, 3).map((item: any, idx: number) => (
-                              <div key={idx} className="text-xs p-2 rounded-md bg-muted/50 border">
-                                <span className="font-semibold text-primary">Q{idx + 1}.</span>{" "}
-                                <span>{item.question}</span>
-                              </div>
-                            ))}
-                            {items.length > 3 && <p className="text-[11px] text-muted-foreground">+ {items.length - 3} autre(s)…</p>}
+
+                        {/* ─── Full item list (editable or readonly) ─── */}
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <p className="text-xs font-semibold text-muted-foreground">
+                              {isEditing ? "Édition des items" : "Tous les items"} ({items.length})
+                            </p>
+                            {isEditing && (
+                              <Button variant="outline" size="sm" className="gap-1 h-7 text-xs"
+                                onClick={() => addItem(ex.id, ex)}>
+                                <CirclePlus className="h-3 w-3" />Ajouter un item
+                              </Button>
+                            )}
                           </div>
-                        )}
+
+                          {items.map((item: any, idx: number) => (
+                            <Card key={idx} className={cn("p-3", isEditing ? "space-y-3" : "space-y-2")}>
+                              {isEditing ? (
+                                /* ─── EDIT MODE ─── */
+                                <div className="space-y-3">
+                                  <div className="flex items-start gap-2">
+                                    <span className="text-xs font-bold text-primary mt-2 shrink-0">Q{idx + 1}</span>
+                                    <Input className="flex-1" placeholder="Énoncé de la question" value={item.question || ""}
+                                      onChange={(e) => updateItemField(ex.id, idx, "question", e.target.value, ex)} />
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0"
+                                      onClick={() => removeItem(ex.id, idx, ex)}>
+                                      <Trash2 className="h-4 w-4 text-destructive" />
+                                    </Button>
+                                  </div>
+
+                                  {Array.isArray(item.options) && (
+                                    <div className="space-y-1.5 ml-6">
+                                      <span className="text-[11px] text-muted-foreground font-medium">Choix de réponse — cochez la bonne réponse</span>
+                                      {item.options.map((opt: string, oi: number) => {
+                                        const isCorrect = item.bonne_reponse === opt && opt !== "";
+                                        const letter = String.fromCharCode(65 + oi);
+                                        return (
+                                          <div key={oi} className={cn(
+                                            "flex items-center gap-2 p-1.5 rounded-md border transition-colors",
+                                            isCorrect ? "border-green-400 bg-green-50 dark:border-green-700 dark:bg-green-950/30" : "border-border"
+                                          )}>
+                                            <Checkbox
+                                              checked={isCorrect}
+                                              onCheckedChange={() => setCorrectAnswer(ex.id, idx, oi, ex)}
+                                              className="h-4 w-4"
+                                            />
+                                            <span className="text-xs font-bold text-muted-foreground w-4">{letter}</span>
+                                            <Input className="h-8 text-xs flex-1" value={opt}
+                                              onChange={(e) => updateItemOption(ex.id, idx, oi, e.target.value, ex)} />
+                                            <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0"
+                                              onClick={() => removeOption(ex.id, idx, oi, ex)}>
+                                              <Trash2 className="h-3 w-3 text-destructive" />
+                                            </Button>
+                                          </div>
+                                        );
+                                      })}
+                                      <Button variant="ghost" size="sm" className="text-xs gap-1 h-7"
+                                        onClick={() => addOption(ex.id, idx, ex)}>
+                                        <Plus className="h-3 w-3" />Ajouter un choix
+                                      </Button>
+                                    </div>
+                                  )}
+
+                                  <div className="ml-6">
+                                    <span className="text-[11px] text-muted-foreground font-medium">Explication (correction)</span>
+                                    <Input className="h-8 text-xs mt-1" value={item.explication || ""}
+                                      onChange={(e) => updateItemField(ex.id, idx, "explication", e.target.value, ex)} />
+                                  </div>
+                                </div>
+                              ) : (
+                                /* ─── READ MODE ─── */
+                                <div>
+                                  <p className="text-sm">
+                                    <span className="font-bold text-primary mr-2">Q{idx + 1}.</span>
+                                    {item.question}
+                                  </p>
+                                  {Array.isArray(item.options) && item.options.length > 0 && (
+                                    <div className="mt-2 space-y-1 ml-6">
+                                      {item.options.map((opt: string, oi: number) => {
+                                        const isCorrect = item.bonne_reponse === opt && opt !== "";
+                                        const letter = String.fromCharCode(65 + oi);
+                                        return (
+                                          <div key={oi} className={cn(
+                                            "flex items-center gap-2 text-xs p-1.5 rounded-md border",
+                                            isCorrect ? "border-green-400 bg-green-50 dark:border-green-700 dark:bg-green-950/30 font-semibold" : "border-border"
+                                          )}>
+                                            <span className="font-bold text-muted-foreground w-4">{letter}</span>
+                                            <span className="flex-1">{opt}</span>
+                                            {isCorrect && <CheckCircle2 className="h-3.5 w-3.5 text-green-600" />}
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </Card>
+                          ))}
+
+                          {items.length === 0 && (
+                            <p className="text-sm text-muted-foreground text-center py-4">
+                              Aucune question.{isEditing && " Cliquez « Ajouter un item » pour commencer."}
+                            </p>
+                          )}
+                        </div>
                       </div>
                     </AccordionContent>
                   </AccordionItem>
@@ -408,7 +644,7 @@ ${Array.isArray(item.options) && item.options.length > 0
         </div>
       )}
 
-      {/* Preview Dialog */}
+      {/* ─── Preview Dialog with navigation ─── */}
       <Dialog open={!!previewExercise} onOpenChange={(open) => { if (!open) setPreviewExercise(null); }}>
         <DialogContent className="sm:max-w-xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
@@ -419,52 +655,85 @@ ${Array.isArray(item.options) && item.options.length > 0
             <DialogDescription>Exercice tel que l'élève le verra.</DialogDescription>
           </DialogHeader>
           {previewExercise && (() => {
-            const pc = typeof previewExercise.contenu === "object" && previewExercise.contenu !== null
-              ? previewExercise.contenu : { items: [] };
-            const pitems: any[] = Array.isArray((pc as any).items) ? (pc as any).items : [];
+            const pc = getEditableContenu(previewExercise);
+            const pitems: any[] = pc.items;
+            const totalPages = pitems.length;
+            const currentItem = pitems[previewPage];
+
             return (
               <div className="space-y-5 pt-2">
                 <Card><CardHeader className="pb-2">
                   <CardTitle className="text-base">Consigne</CardTitle>
-                  <p className="text-sm text-muted-foreground">{previewExercise.consigne}</p>
+                  <p className="text-sm text-muted-foreground">{getEditableField(previewExercise, "consigne")}</p>
                 </CardHeader></Card>
                 <div className="flex gap-2 flex-wrap">
                   <Badge>{previewExercise.competence}</Badge>
                   <Badge variant="outline">{previewExercise.format?.replace(/_/g, " ")}</Badge>
                   <Badge variant="secondary">Niveau {previewExercise.niveau_vise}</Badge>
                 </div>
-                {pitems.length > 0 ? (
-                  <div className="space-y-4">
-                    {pitems.map((item: any, idx: number) => (
-                      <Card key={idx}><CardContent className="pt-4 space-y-3">
-                        <p className="font-medium text-sm">
-                          <span className="text-primary font-bold mr-2">Q{idx + 1}.</span>{item.question}
-                        </p>
-                        {previewExercise.competence === "CO" && (
-                          <Button variant="outline" size="sm" className="gap-2" disabled>
-                            <Volume2 className="h-4 w-4" />Écouter l'audio
-                          </Button>
-                        )}
-                        {Array.isArray(item.options) && item.options.length > 0 ? (
-                          <RadioGroup disabled className="space-y-1">
-                            {item.options.map((opt: string, oi: number) => (
-                              <div key={oi} className="flex items-center space-x-2 p-2 rounded-lg bg-muted/30 border">
-                                <RadioGroupItem value={opt} id={`pv-q${idx}-o${oi}`} disabled />
-                                <Label htmlFor={`pv-q${idx}-o${oi}`} className="cursor-default flex-1 text-sm">{opt}</Label>
-                              </div>
-                            ))}
-                          </RadioGroup>
-                        ) : (
-                          <div className="border rounded-md p-3 bg-muted/20 text-sm text-muted-foreground italic">
-                            Zone de saisie libre
-                          </div>
-                        )}
-                      </CardContent></Card>
-                    ))}
-                  </div>
+
+                {totalPages > 0 ? (
+                  <>
+                    {/* Navigation header */}
+                    <div className="flex items-center justify-between">
+                      <Button variant="outline" size="sm" disabled={previewPage === 0}
+                        onClick={() => setPreviewPage(p => p - 1)} className="gap-1">
+                        <ChevronLeft className="h-4 w-4" />Précédent
+                      </Button>
+                      <span className="text-sm font-medium text-muted-foreground">
+                        Question {previewPage + 1} / {totalPages}
+                      </span>
+                      <Button variant="outline" size="sm" disabled={previewPage >= totalPages - 1}
+                        onClick={() => setPreviewPage(p => p + 1)} className="gap-1">
+                        Suivant<ChevronRight className="h-4 w-4" />
+                      </Button>
+                    </div>
+
+                    {/* Current question */}
+                    {currentItem && (
+                      <Card>
+                        <CardContent className="pt-4 space-y-3">
+                          <p className="font-medium text-sm">
+                            <span className="text-primary font-bold mr-2">Q{previewPage + 1}.</span>{currentItem.question}
+                          </p>
+                          {previewExercise.competence === "CO" && (
+                            <Button variant="outline" size="sm" className="gap-2" disabled>
+                              <Volume2 className="h-4 w-4" />Écouter l'audio
+                            </Button>
+                          )}
+                          {Array.isArray(currentItem.options) && currentItem.options.length > 0 ? (
+                            <RadioGroup disabled className="space-y-1">
+                              {currentItem.options.map((opt: string, oi: number) => (
+                                <div key={oi} className="flex items-center space-x-2 p-2 rounded-lg bg-muted/30 border">
+                                  <RadioGroupItem value={opt} id={`pv-q${previewPage}-o${oi}`} disabled />
+                                  <Label htmlFor={`pv-q${previewPage}-o${oi}`} className="cursor-default flex-1 text-sm">{opt}</Label>
+                                </div>
+                              ))}
+                            </RadioGroup>
+                          ) : (
+                            <div className="border rounded-md p-3 bg-muted/20 text-sm text-muted-foreground italic">
+                              Zone de saisie libre
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    {/* Page dots */}
+                    <div className="flex justify-center gap-1">
+                      {pitems.map((_, i) => (
+                        <button key={i} onClick={() => setPreviewPage(i)}
+                          className={cn(
+                            "h-2.5 w-2.5 rounded-full transition-colors",
+                            i === previewPage ? "bg-primary" : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                          )} />
+                      ))}
+                    </div>
+                  </>
                 ) : (
                   <div className="text-center py-8 text-muted-foreground text-sm">Aucune question.</div>
                 )}
+
                 <Button variant="outline" className="w-full" disabled>Soumettre mes réponses</Button>
               </div>
             );
@@ -472,7 +741,7 @@ ${Array.isArray(item.options) && item.options.length > 0
         </DialogContent>
       </Dialog>
 
-      {/* ─── Animation Guide Dialog (Formateur only) ─── */}
+      {/* ─── Animation Guide Dialog ─── */}
       <Dialog open={!!animationGuide} onOpenChange={(open) => { if (!open) setAnimationGuide(null); }}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
@@ -487,42 +756,22 @@ ${Array.isArray(item.options) && item.options.length > 0
           {animationGuide && (
             <div className="space-y-4 pt-2">
               <div className="p-4 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="flex items-center justify-center h-8 w-8 rounded-full bg-amber-100 dark:bg-amber-900/60 shrink-0">
-                    <Drama className="h-4 w-4 text-amber-700 dark:text-amber-400" />
+                {[
+                  { icon: Drama, label: "Scénario", value: animationGuide.scenario },
+                  { icon: Wand2, label: "Jeu pédagogique", value: animationGuide.jeu },
+                  { icon: Package, label: "Matériel à préparer", value: animationGuide.materiel },
+                  { icon: MessageCircle, label: "Objectif oral", value: animationGuide.objectif_oral, italic: true },
+                ].map(({ icon: Icon, label, value, italic }) => (
+                  <div key={label} className="flex items-start gap-3">
+                    <div className="flex items-center justify-center h-8 w-8 rounded-full bg-amber-100 dark:bg-amber-900/60 shrink-0">
+                      <Icon className="h-4 w-4 text-amber-700 dark:text-amber-400" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wide">{label}</p>
+                      <p className={cn("text-sm mt-1", italic && "font-medium italic")}>{italic ? `« ${value} »` : value}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wide">Scénario</p>
-                    <p className="text-sm mt-1">{animationGuide.scenario}</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="flex items-center justify-center h-8 w-8 rounded-full bg-amber-100 dark:bg-amber-900/60 shrink-0">
-                    <Wand2 className="h-4 w-4 text-amber-700 dark:text-amber-400" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wide">Jeu pédagogique</p>
-                    <p className="text-sm mt-1">{animationGuide.jeu}</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="flex items-center justify-center h-8 w-8 rounded-full bg-amber-100 dark:bg-amber-900/60 shrink-0">
-                    <Package className="h-4 w-4 text-amber-700 dark:text-amber-400" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wide">Matériel à préparer</p>
-                    <p className="text-sm mt-1">{animationGuide.materiel}</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="flex items-center justify-center h-8 w-8 rounded-full bg-amber-100 dark:bg-amber-900/60 shrink-0">
-                    <MessageCircle className="h-4 w-4 text-amber-700 dark:text-amber-400" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wide">Objectif oral</p>
-                    <p className="text-sm mt-1 font-medium italic">« {animationGuide.objectif_oral} »</p>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           )}
