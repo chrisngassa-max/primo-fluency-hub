@@ -40,15 +40,15 @@ const SessionPilot = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const exercises = mockExercises;
+
   // Individual checked state for each exercise
   const [checked, setChecked] = useState<Record<string, boolean>>({});
 
   const checkedCount = useMemo(
     () => exercises.filter((ex) => checked[ex.id]).length,
-    [checked]
+    [checked, exercises]
   );
-
-  const exercises = mockExercises;
 
   const toggleExercise = useCallback((exerciseId: string) => {
     setChecked((prev) => ({ ...prev, [exerciseId]: !prev[exerciseId] }));
