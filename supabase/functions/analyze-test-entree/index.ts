@@ -9,27 +9,52 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { scores, eleveNom } = await req.json();
+    const { scores, eleveNom, detailScores, globalAvg, niveauEstime } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
     const systemPrompt = `Tu es un expert en FLE spécialisé dans la préparation au TCF IRN.
-Tu analyses les scores d'évaluation d'un élève primo-arrivant et fournis des recommandations pédagogiques.
-Sois concis, pratique et bienveillant. Écris en français. Structure ta réponse avec des titres en markdown.`;
+Tu analyses les scores d'évaluation détaillés d'un élève primo-arrivant et fournis un diagnostic de départ complet.
+Sois concis, pratique et bienveillant. Écris en français. Structure ta réponse avec des titres en markdown.
 
-    const userPrompt = `Voici les scores d'évaluation de l'élève${eleveNom ? ` ${eleveNom}` : ""} :
-- Compréhension Orale (CO) : ${scores.CO}/100
-- Compréhension Écrite (CE) : ${scores.CE}/100
-- Expression Orale (EO) : ${scores.EO}/100
-- Expression Écrite (EE) : ${scores.EE}/100
+IMPORTANT : Chaque sous-item est évalué de 0 à 100. Le niveau de difficulté correspondant (0-10) est calculé automatiquement (score/10).
+- 0-30 = Zone critique (rouge) → priorité absolue
+- 31-70 = Zone de travail (orange) → à consolider
+- 71-100 = Zone de confort (vert) → acquis ou en bonne voie
 
-Score moyen : ${Math.round((scores.CO + scores.CE + scores.EO + scores.EE) / 4)}/100
+Tu dois :
+1. Identifier les sous-items critiques (< 30) et proposer des actions immédiates
+2. Donner un niveau CECRL estimé
+3. Proposer un plan de priorités pédagogiques
+4. Recommander des exercices spécifiques pour chaque zone critique
+5. Suggérer le niveau de difficulté de départ pour les exercices (échelle 0-10)`;
 
-Donne :
-1. Un niveau CECRL estimé (A0, A1, A2, B1)
-2. Les points forts et points faibles
+    let userPrompt = `Voici les scores d'évaluation de l'élève${eleveNom ? ` ${eleveNom}` : ""} :\n\n`;
+
+    if (detailScores) {
+      for (const [comp, data] of Object.entries(detailScores as Record<string, any>)) {
+        userPrompt += `## ${comp} — Moyenne : ${data.moyenne}/100 (Niveau ${data.niveau_difficulte}/10)\n`;
+        for (const si of data.sous_items) {
+          const zone = si.score <= 30 ? "🔴" : si.score <= 70 ? "🟠" : "🟢";
+          userPrompt += `  ${zone} ${si.item} : ${si.score}/100 (Niv. ${si.niveau_difficulte})\n`;
+        }
+        userPrompt += "\n";
+      }
+      userPrompt += `Score global moyen : ${globalAvg}/100\nNiveau CECRL estimé automatiquement : ${niveauEstime}\n`;
+    } else {
+      userPrompt += `- Compréhension Orale (CO) : ${scores.CO}/100\n`;
+      userPrompt += `- Compréhension Écrite (CE) : ${scores.CE}/100\n`;
+      userPrompt += `- Expression Orale (EO) : ${scores.EO}/100\n`;
+      userPrompt += `- Expression Écrite (EE) : ${scores.EE}/100\n\n`;
+      userPrompt += `Score moyen : ${Math.round((scores.CO + scores.CE + scores.EO + scores.EE) / 4)}/100\n`;
+    }
+
+    userPrompt += `\nDonne un diagnostic de départ complet avec :
+1. Niveau CECRL estimé (A0, A1, A2, B1)
+2. Les sous-items critiques à traiter en priorité
 3. Les priorités pédagogiques (3 max)
-4. Des exercices recommandés pour les compétences les plus faibles`;
+4. Le niveau de difficulté recommandé pour démarrer les exercices (0-10)
+5. Des exercices recommandés pour chaque zone critique`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
