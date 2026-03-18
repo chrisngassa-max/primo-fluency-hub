@@ -129,7 +129,7 @@ const FormateurDashboard = () => {
     queryFn: async () => {
       const { data: alertes } = await supabase
         .from("alertes")
-        .select("id, message, eleve_id, created_at, is_resolved, metadata")
+        .select("id, message, eleve_id, created_at, is_resolved")
         .eq("formateur_id", user!.id)
         .eq("type", "progression" as any)
         .eq("is_resolved", false)
@@ -144,27 +144,21 @@ const FormateurDashboard = () => {
         .select("id, nom, prenom")
         .in("id", eleveIds);
 
-      const { data: levels } = await supabase
-        .from("student_competency_levels")
-        .select("eleve_id, competence, niveau_actuel")
-        .in("eleve_id", eleveIds);
-
       const nameMap = Object.fromEntries((profiles ?? []).map((p) => [p.id, `${p.prenom} ${p.nom}`]));
-      const levelMap = new Map<string, any[]>();
-      (levels ?? []).forEach((l) => {
-        const arr = levelMap.get(l.eleve_id) || [];
-        arr.push(l);
-        levelMap.set(l.eleve_id, arr);
-      });
 
       return alertes.map((a) => {
-        const meta = typeof a.metadata === "object" && a.metadata !== null ? a.metadata : {};
+        // Parse structured message: "PROGRESSION|competence|niveau_actuel|niveau_propose"
+        const parts = (a.message || "").split("|");
+        const competence = parts.length >= 2 ? parts[1] : "CE";
+        const niveauActuel = parts.length >= 3 ? parseInt(parts[2]) || 3 : 3;
+        const niveauPropose = parts.length >= 4 ? parseInt(parts[3]) || 4 : niveauActuel + 1;
         return {
-          ...a,
+          id: a.id,
+          eleve_id: a.eleve_id,
           eleve_nom: nameMap[a.eleve_id] || "Élève",
-          competence: (meta as any).competence || "CE",
-          niveau_actuel: (meta as any).niveau_actuel || 3,
-          niveau_propose: (meta as any).niveau_propose || 4,
+          competence,
+          niveau_actuel: niveauActuel,
+          niveau_propose: niveauPropose,
         };
       });
     },
