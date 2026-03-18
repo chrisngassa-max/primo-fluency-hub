@@ -275,7 +275,13 @@ const SessionBilan = () => {
       if (data?.error) throw new Error(data.error);
 
       setAdaptationResult(data.adaptation);
-      setShowAdaptation(true);
+
+      // Auto-apply if pilote automatique is enabled
+      if (isAutoAdapt && nextSession) {
+        await autoApplyAdaptation(data.adaptation);
+      } else {
+        setShowAdaptation(true);
+      }
     } catch (e: any) {
       console.error(e);
       toast.error("L'adaptation IA a échoué", { description: e.message });
