@@ -460,6 +460,144 @@ export type Database = {
           },
         ]
       }
+      parcours: {
+        Row: {
+          created_at: string
+          description: string | null
+          formateur_id: string
+          group_id: string | null
+          heures_totales_prevues: number
+          heures_totales_reelles: number
+          id: string
+          is_template: boolean
+          nb_seances_prevues: number
+          niveau_cible: string
+          niveau_depart: string
+          statut: string
+          titre: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          formateur_id: string
+          group_id?: string | null
+          heures_totales_prevues?: number
+          heures_totales_reelles?: number
+          id?: string
+          is_template?: boolean
+          nb_seances_prevues?: number
+          niveau_cible?: string
+          niveau_depart?: string
+          statut?: string
+          titre: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          formateur_id?: string
+          group_id?: string | null
+          heures_totales_prevues?: number
+          heures_totales_reelles?: number
+          id?: string
+          is_template?: boolean
+          nb_seances_prevues?: number
+          niveau_cible?: string
+          niveau_depart?: string
+          statut?: string
+          titre?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parcours_formateur_id_fkey"
+            columns: ["formateur_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "parcours_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      parcours_seances: {
+        Row: {
+          competences_cibles: string[]
+          created_at: string
+          duree_minutes: number
+          exercices_faits: number | null
+          exercices_total: number | null
+          heures_reelles: number | null
+          id: string
+          nb_exercices_suggeres: number
+          notes: string | null
+          objectif_principal: string | null
+          ordre: number
+          parcours_id: string
+          session_id: string | null
+          statut: string
+          titre: string
+          updated_at: string
+        }
+        Insert: {
+          competences_cibles?: string[]
+          created_at?: string
+          duree_minutes?: number
+          exercices_faits?: number | null
+          exercices_total?: number | null
+          heures_reelles?: number | null
+          id?: string
+          nb_exercices_suggeres?: number
+          notes?: string | null
+          objectif_principal?: string | null
+          ordre?: number
+          parcours_id: string
+          session_id?: string | null
+          statut?: string
+          titre: string
+          updated_at?: string
+        }
+        Update: {
+          competences_cibles?: string[]
+          created_at?: string
+          duree_minutes?: number
+          exercices_faits?: number | null
+          exercices_total?: number | null
+          heures_reelles?: number | null
+          id?: string
+          nb_exercices_suggeres?: number
+          notes?: string | null
+          objectif_principal?: string | null
+          ordre?: number
+          parcours_id?: string
+          session_id?: string | null
+          statut?: string
+          titre?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parcours_seances_parcours_id_fkey"
+            columns: ["parcours_id"]
+            isOneToOne: false
+            referencedRelation: "parcours"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "parcours_seances_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       points_a_maitriser: {
         Row: {
           created_at: string
@@ -970,6 +1108,10 @@ export type Database = {
     }
     Functions: {
       get_group_formateur: { Args: { _group_id: string }; Returns: string }
+      get_parcours_formateur: {
+        Args: { _parcours_id: string }
+        Returns: string
+      }
       get_session_formateur: { Args: { _session_id: string }; Returns: string }
       has_role: {
         Args: {
