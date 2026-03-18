@@ -885,6 +885,96 @@ const SessionPilot = () => {
         </>
       )}
 
+      {/* ─── Student Preview Dialog ─── */}
+      <Dialog open={!!previewExercise} onOpenChange={(open) => { if (!open) setPreviewExercise(null); }}>
+        <DialogContent className="sm:max-w-xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Eye className="h-4 w-4 text-primary" />
+              Aperçu Élève — {previewExercise?.titre}
+            </DialogTitle>
+            <DialogDescription>
+              Voici l'exercice tel que l'élève le verra sur son espace.
+            </DialogDescription>
+          </DialogHeader>
+
+          {previewExercise && (() => {
+            const pc = typeof previewExercise.contenu === "object" && previewExercise.contenu !== null
+              ? previewExercise.contenu : { items: [] };
+            const pitems: any[] = Array.isArray((pc as any).items) ? (pc as any).items : [];
+
+            return (
+              <div className="space-y-5 pt-2">
+                {/* Consigne */}
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base">Consigne</CardTitle>
+                    <CardDescription>{previewExercise.consigne}</CardDescription>
+                  </CardHeader>
+                </Card>
+
+                {/* Competence + format info */}
+                <div className="flex gap-2 flex-wrap">
+                  <Badge>{previewExercise.competence}</Badge>
+                  <Badge variant="outline">{previewExercise.format?.replace(/_/g, " ")}</Badge>
+                  <Badge variant="secondary">Niveau {previewExercise.niveau_vise}</Badge>
+                </div>
+
+                {/* Questions rendered as the student sees them */}
+                {pitems.length > 0 ? (
+                  <div className="space-y-4">
+                    {pitems.map((item: any, idx: number) => (
+                      <Card key={idx}>
+                        <CardContent className="pt-4 space-y-3">
+                          <p className="font-medium text-sm">
+                            <span className="text-primary font-bold mr-2">Q{idx + 1}.</span>
+                            {item.question}
+                          </p>
+
+                          {/* Audio button placeholder for CO */}
+                          {previewExercise.competence === "CO" && (
+                            <Button variant="outline" size="sm" className="gap-2" disabled>
+                              <Volume2 className="h-4 w-4" />
+                              Écouter l'audio
+                            </Button>
+                          )}
+
+                          {/* Options rendered as radio group (non-interactive preview) */}
+                          {Array.isArray(item.options) && item.options.length > 0 ? (
+                            <RadioGroup disabled className="space-y-1">
+                              {item.options.map((opt: string, oi: number) => (
+                                <div key={oi} className="flex items-center space-x-2 p-2 rounded-lg bg-muted/30 border">
+                                  <RadioGroupItem value={opt} id={`prev-q${idx}-o${oi}`} disabled />
+                                  <Label htmlFor={`prev-q${idx}-o${oi}`} className="cursor-default flex-1 text-sm">
+                                    {opt}
+                                  </Label>
+                                </div>
+                              ))}
+                            </RadioGroup>
+                          ) : (
+                            <div className="border rounded-md p-3 bg-muted/20 text-sm text-muted-foreground italic">
+                              Zone de saisie libre pour l'élève
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground text-sm">
+                    Aucune question dans cet exercice.
+                  </div>
+                )}
+
+                <Button variant="outline" className="w-full" disabled>
+                  Soumettre mes réponses
+                </Button>
+              </div>
+            );
+          })()}
+        </DialogContent>
+      </Dialog>
+
       {/* Editor Sheet */}
       <Sheet open={!!editingExercise} onOpenChange={(open) => { if (!open) setEditingExercise(null); }}>
         <SheetContent className="sm:max-w-lg overflow-y-auto">
