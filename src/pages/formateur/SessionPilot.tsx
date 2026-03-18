@@ -1,9 +1,9 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Slider } from "@/components/ui/slider";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import {
@@ -13,6 +13,8 @@ import {
   Printer,
   ArrowLeft,
   BookOpen,
+  Minus,
+  Plus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -29,30 +31,56 @@ const mockExercises = [
 type ExerciseStatus = "traite_en_classe" | "reporte" | "planifie";
 
 const statusConfig: Record<ExerciseStatus, { label: string; color: string; icon: React.ElementType }> = {
-  traite_en_classe: { label: "Traité", color: "bg-success/10 text-success border-success/30", icon: CheckCircle2 },
-  reporte: { label: "Reporté", color: "bg-warning/10 text-warning border-warning/30", icon: ArrowRight },
+  traite_en_classe: { label: "Traité", color: "bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800", icon: CheckCircle2 },
+  reporte: { label: "Reporté", color: "bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-950 dark:text-orange-300 dark:border-orange-800", icon: ArrowRight },
   planifie: { label: "Planifié", color: "bg-muted text-muted-foreground border-border", icon: Clock },
 };
 
 const SessionPilot = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [cursor, setCursor] = useState(0);
 
   const exercises = mockExercises;
 
-  const exerciseStatuses = useMemo(() => {
-    return exercises.map((ex, i) => {
-      if (cursor === 0) return "planifie" as ExerciseStatus;
-      if (i < cursor) return "traite_en_classe" as ExerciseStatus;
-      return "reporte" as ExerciseStatus;
+  // Individual checked state for each exercise
+  const [checked, setChecked] = useState<Record<string, boolean>>({});
+
+  const checkedCount = useMemo(
+    () => exercises.filter((ex) => checked[ex.id]).length,
+    [checked, exercises]
+  );
+
+  const toggleExercise = useCallback((exerciseId: string) => {
+    setChecked((prev) => ({ ...prev, [exerciseId]: !prev[exerciseId] }));
+  }, []);
+
+  const checkAll = useCallback(() => {
+    const allChecked = exercises.every((ex) => checked[ex.id]);
+    const newState: Record<string, boolean> = {};
+    exercises.forEach((ex) => {
+      newState[ex.id] = !allChecked;
     });
-  }, [cursor, exercises.length]);
+    setChecked(newState);
+  }, [checked, exercises]);
+
+  const checkUpTo = useCallback((index: number) => {
+    const newState: Record<string, boolean> = {};
+    exercises.forEach((ex, i) => {
+      newState[ex.id] = i <= index;
+    });
+    setChecked(newState);
+  }, [exercises]);
+
+  const getStatus = (exerciseId: string): ExerciseStatus => {
+    if (checked[exerciseId]) return "traite_en_classe";
+    // If any exercise is checked, unchecked ones are "reporté"
+    if (checkedCount > 0) return "reporte";
+    return "planifie";
+  };
 
   const handleSave = () => {
-    // TODO: Save to DB via session_exercices table
     toast.success("Bilan de séance sauvegardé", {
-      description: `${cursor} exercice(s) traité(s), ${exercises.length - cursor} reporté(s).`,
+      description: `${checkedCount} exercice(s) traité(s), ${exercises.length - checkedCount} reporté(s).`,
     });
   };
 
@@ -83,46 +111,81 @@ const SessionPilot = () => {
         </p>
       </div>
 
-      {/* Cursor Slider */}
+      {/* Quick Controls */}
       <Card className="print:hidden">
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
             <BookOpen className="h-5 w-5 text-primary" />
-            Curseur d'avancement
+            Avancement de la séance
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm text-muted-foreground">
-              <span>Début</span>
-              <span className="font-medium text-foreground">
-                {cursor === 0
-                  ? "Aucun exercice traité"
-                  : `Arrêté à l'exercice ${cursor} / ${exercises.length}`}
-              </span>
-              <span>Fin</span>
+          {/* Quick cursor buttons */}
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-muted-foreground whitespace-nowrap">Curseur rapide :</span>
+            <div className="flex items-center gap-1">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => {
+                  const currentMax = exercises.findIndex((ex) => !checked[ex.id]);
+                  if (currentMax > 0) checkUpTo(currentMax - 2);
+                  else if (currentMax === -1) checkUpTo(exercises.length - 2);
+                  else setChecked({});
+                }}
+              >
+                <Minus className="h-4 w-4" />
+              </Button>
+              <div className="flex gap-1">
+                {exercises.map((ex, i) => (
+                  <button
+                    key={ex.id}
+                    onClick={() => checkUpTo(i)}
+                    className={cn(
+                      "h-8 w-8 rounded-md text-xs font-semibold border transition-colors",
+                      checked[ex.id]
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-muted text-muted-foreground border-border hover:bg-accent"
+                    )}
+                  >
+                    {ex.ordre}
+                  </button>
+                ))}
+              </div>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => {
+                  const firstUnchecked = exercises.findIndex((ex) => !checked[ex.id]);
+                  if (firstUnchecked >= 0) checkUpTo(firstUnchecked);
+                }}
+              >
+                <Plus className="h-4 w-4" />
+              </Button>
             </div>
-            <Slider
-              value={[cursor]}
-              onValueChange={([v]) => setCursor(v)}
-              min={0}
-              max={exercises.length}
-              step={1}
-              className="py-2"
-            />
           </div>
 
-          <div className="flex gap-3 text-sm">
-            <Badge variant="outline" className="gap-1 border-success/30 text-success">
+          {/* Stats */}
+          <div className="flex gap-3 text-sm flex-wrap">
+            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-green-50 text-green-700 border border-green-200 text-xs font-medium dark:bg-green-950 dark:text-green-300 dark:border-green-800">
               <CheckCircle2 className="h-3 w-3" />
-              {cursor} traité(s)
-            </Badge>
-            <Badge variant="outline" className="gap-1 border-warning/30 text-warning">
+              {checkedCount} traité(s)
+            </span>
+            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-orange-50 text-orange-700 border border-orange-200 text-xs font-medium dark:bg-orange-950 dark:text-orange-300 dark:border-orange-800">
               <ArrowRight className="h-3 w-3" />
-              {cursor > 0 ? exercises.length - cursor : 0} reporté(s)
-            </Badge>
+              {checkedCount > 0 ? exercises.length - checkedCount : 0} reporté(s)
+            </span>
+            <button
+              onClick={checkAll}
+              className="text-xs text-primary hover:underline ml-auto"
+            >
+              {exercises.every((ex) => checked[ex.id]) ? "Tout décocher" : "Tout cocher"}
+            </button>
           </div>
 
+          {/* Actions */}
           <div className="flex gap-2">
             <Button onClick={handleSave} className="flex-1">
               Sauvegarder le bilan
@@ -135,24 +198,36 @@ const SessionPilot = () => {
         </CardContent>
       </Card>
 
-      {/* Exercise List */}
+      {/* Exercise List with Checkboxes */}
       <div className="space-y-3">
-        {exercises.map((ex, i) => {
-          const status = exerciseStatuses[i];
+        {exercises.map((ex) => {
+          const status = getStatus(ex.id);
           const config = statusConfig[status];
           const StatusIcon = config.icon;
+          const isChecked = !!checked[ex.id];
 
           return (
             <Card
               key={ex.id}
               className={cn(
-                "transition-all print:break-inside-avoid print:border print:shadow-none",
-                status === "traite_en_classe" && "border-success/20",
-                status === "reporte" && "border-warning/20 opacity-70 print:opacity-100"
+                "transition-all cursor-pointer print:break-inside-avoid print:border print:shadow-none",
+                isChecked && "border-green-200 bg-green-50/30 dark:border-green-800 dark:bg-green-950/30",
+                !isChecked && checkedCount > 0 && "opacity-60"
               )}
+              onClick={() => toggleExercise(ex.id)}
             >
               <CardContent className="py-4 px-4">
                 <div className="flex items-start gap-3">
+                  {/* Checkbox */}
+                  <div className="pt-0.5 print:hidden">
+                    <Checkbox
+                      checked={isChecked}
+                      onCheckedChange={() => toggleExercise(ex.id)}
+                      onClick={(e) => e.stopPropagation()}
+                      className="h-5 w-5"
+                    />
+                  </div>
+
                   {/* Number */}
                   <div
                     className={cn(
@@ -166,13 +241,13 @@ const SessionPilot = () => {
                   <div className="flex-1 min-w-0 space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <h3 className="font-semibold text-sm">{ex.titre}</h3>
-                      <Badge variant="secondary" className="text-[10px] print:hidden">
+                      <span className="inline-flex items-center rounded-md bg-secondary px-1.5 py-0.5 text-[10px] font-medium text-secondary-foreground print:hidden">
                         {ex.competence}
-                      </Badge>
-                      <Badge variant="outline" className={cn("text-[10px] gap-1 print:hidden", config.color)}>
+                      </span>
+                      <span className={cn("inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-medium border print:hidden", config.color)}>
                         <StatusIcon className="h-3 w-3" />
                         {config.label}
-                      </Badge>
+                      </span>
                     </div>
                     <p className="text-xs text-muted-foreground">{ex.consigne}</p>
                     <p className="text-[10px] text-muted-foreground/60 print:hidden">
