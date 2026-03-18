@@ -1196,6 +1196,36 @@ ${Array.isArray(item.options) && item.options.length > 0
         </AlertDialogContent>
       </AlertDialog>
 
+      {/* ─── Next Session Preview ─── */}
+      {nextSession && (
+        <Card className="border-dashed print:hidden">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <ArrowRight className="h-5 w-5 text-muted-foreground" />
+              Séance suivante
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-medium text-sm">{nextSession.titre}</p>
+                <p className="text-xs text-muted-foreground">
+                  {new Date(nextSession.date_seance).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}
+                  {" · "}{nextSession.duree_minutes} min
+                  {" · "}{nextSessionExCount || 0} exercice(s) prévus
+                </p>
+                {nextSession.objectifs && (
+                  <p className="text-xs text-muted-foreground mt-1 italic">{nextSession.objectifs}</p>
+                )}
+              </div>
+              <Button variant="outline" size="sm" onClick={() => navigate(`/formateur/seances/${nextSession.id}/pilote`)}>
+                Ouvrir
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <style>{`@media print { nav, header, .print\\:hidden { display: none !important; } body { font-size: 12pt; } }`}</style>
     </div>
   );
