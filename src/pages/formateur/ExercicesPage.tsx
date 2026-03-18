@@ -471,6 +471,63 @@ ${Array.isArray(item.options) && item.options.length > 0
           })()}
         </DialogContent>
       </Dialog>
+
+      {/* ─── Animation Guide Dialog (Formateur only) ─── */}
+      <Dialog open={!!animationGuide} onOpenChange={(open) => { if (!open) setAnimationGuide(null); }}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Drama className="h-5 w-5 text-amber-600" />
+              Atelier Ludique / Mise en situation
+            </DialogTitle>
+            <DialogDescription>
+              {animationGuide?.titre} — Guide d'animation réservé au formateur
+            </DialogDescription>
+          </DialogHeader>
+          {animationGuide && (
+            <div className="space-y-4 pt-2">
+              <div className="p-4 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="flex items-center justify-center h-8 w-8 rounded-full bg-amber-100 dark:bg-amber-900/60 shrink-0">
+                    <Drama className="h-4 w-4 text-amber-700 dark:text-amber-400" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wide">Scénario</p>
+                    <p className="text-sm mt-1">{animationGuide.scenario}</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="flex items-center justify-center h-8 w-8 rounded-full bg-amber-100 dark:bg-amber-900/60 shrink-0">
+                    <Wand2 className="h-4 w-4 text-amber-700 dark:text-amber-400" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wide">Jeu pédagogique</p>
+                    <p className="text-sm mt-1">{animationGuide.jeu}</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="flex items-center justify-center h-8 w-8 rounded-full bg-amber-100 dark:bg-amber-900/60 shrink-0">
+                    <Package className="h-4 w-4 text-amber-700 dark:text-amber-400" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wide">Matériel à préparer</p>
+                    <p className="text-sm mt-1">{animationGuide.materiel}</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="flex items-center justify-center h-8 w-8 rounded-full bg-amber-100 dark:bg-amber-900/60 shrink-0">
+                    <MessageCircle className="h-4 w-4 text-amber-700 dark:text-amber-400" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wide">Objectif oral</p>
+                    <p className="text-sm mt-1 font-medium italic">« {animationGuide.objectif_oral} »</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
