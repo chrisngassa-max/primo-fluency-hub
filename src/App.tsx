@@ -21,6 +21,7 @@ import SeancesPage from "@/pages/formateur/Seances";
 import SessionPilot from "@/pages/formateur/SessionPilot";
 import SessionBilan from "@/pages/formateur/SessionBilan";
 import SequenceBuilder from "@/pages/formateur/SequenceBuilder";
+import ExercicesPage from "@/pages/formateur/ExercicesPage";
 
 import EleveLayout from "@/layouts/EleveLayout";
 import EleveDashboard from "@/pages/eleve/Dashboard";
