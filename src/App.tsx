@@ -63,7 +63,7 @@ const App = () => (
               <Route path="eleves/:eleveId" element={<EleveDetail />} />
               <Route path="exercices" element={<FormateurDashboard />} />
               <Route path="monitoring" element={<FormateurDashboard />} />
-              <Route path="tests" element={<FormateurDashboard />} />
+              <Route path="tests" element={<TestsEntreePage />} />
               <Route path="rapports" element={<FormateurDashboard />} />
               <Route path="parametres" element={<FormateurDashboard />} />
             </Route>
