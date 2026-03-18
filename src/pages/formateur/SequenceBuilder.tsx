@@ -54,9 +54,17 @@ const SequenceBuilder = () => {
   const [generating, setGenerating] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  // AI generation state
+  // AI generation state — cascading selects
+  const [selectedEpreuveId, setSelectedEpreuveId] = useState("");
+  const [selectedSousSectionId, setSelectedSousSectionId] = useState("");
   const [selectedPointId, setSelectedPointId] = useState("");
-  const [selectedCompetence, setSelectedCompetence] = useState("");
+
+  // Derived lists for cascading
+  const selectedEpreuve = (tree ?? []).find((ep) => ep.id === selectedEpreuveId);
+  const sousSectionsForEpreuve = selectedEpreuve?.sous_sections ?? [];
+  const selectedSousSection = sousSectionsForEpreuve.find((ss) => ss.id === selectedSousSectionId);
+  const pointsForSousSection = selectedSousSection?.points_a_maitriser ?? [];
+  const selectedPoint = pointsForSousSection.find((p) => p.id === selectedPointId);
 
   // Manual add state
   const [manualOpen, setManualOpen] = useState(false);
@@ -65,29 +73,19 @@ const SequenceBuilder = () => {
   const [manualFormat, setManualFormat] = useState("qcm");
   const [manualCompetence, setManualCompetence] = useState("CE");
 
-  // Flatten points for the selector
-  const allPoints = (tree ?? []).flatMap((ep) =>
-    ep.sous_sections.flatMap((ss) =>
-      ss.points_a_maitriser.map((p) => ({
-        ...p,
-        competence: ep.competence,
-        sousSection: ss.nom,
-      }))
-    )
-  );
 
   const handleGenerate = async () => {
-    const point = allPoints.find((p) => p.id === selectedPointId);
-    if (!point) {
+    if (!selectedPoint) {
       toast.error("Sélectionnez un point à maîtriser.");
       return;
     }
+    const competence = selectedEpreuve?.competence ?? "";
     setGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke("generate-exercises", {
         body: {
-          pointName: point.nom,
-          competence: point.competence,
+          pointName: selectedPoint.nom,
+          competence,
           niveauVise,
           count: 10,
         },
@@ -99,12 +97,11 @@ const SequenceBuilder = () => {
         consigne: ex.consigne,
         format: ex.format,
         difficulte: ex.difficulte,
-        competence: point.competence,
+        competence,
         contenu: ex.contenu,
         isAiGenerated: true,
       }));
       setExercises((prev) => [...prev, ...generated]);
-      setSelectedCompetence(point.competence);
       toast.success(`${generated.length} exercices générés par l'IA !`);
     } catch (e: any) {
       console.error(e);
@@ -176,7 +173,7 @@ const SequenceBuilder = () => {
       if (seqErr) throw seqErr;
 
       // Find a default point_a_maitriser_id
-      const defaultPointId = selectedPointId || allPoints[0]?.id;
+      const defaultPointId = selectedPointId || (tree ?? []).flatMap(ep => ep.sous_sections.flatMap(ss => ss.points_a_maitriser))[0]?.id;
       if (!defaultPointId) throw new Error("Aucun point à maîtriser trouvé.");
 
       // Create exercises linked to the sequence
@@ -284,22 +281,63 @@ const SequenceBuilder = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
+            {/* Épreuve */}
             <div className="space-y-2">
-              <Label>Point à maîtriser</Label>
-              <Select value={selectedPointId} onValueChange={setSelectedPointId}>
+              <Label>Épreuve (compétence)</Label>
+              <Select value={selectedEpreuveId} onValueChange={(v) => {
+                setSelectedEpreuveId(v);
+                setSelectedSousSectionId("");
+                setSelectedPointId("");
+              }}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Choisir un point..." />
+                  <SelectValue placeholder="Choisir une épreuve..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {allPoints.map((p) => (
-                    <SelectItem key={p.id} value={p.id}>
-                      <span className="text-xs text-muted-foreground mr-1">[{p.competence}]</span>
-                      {p.nom}
+                  {(tree ?? []).map((ep) => (
+                    <SelectItem key={ep.id} value={ep.id}>
+                      [{ep.competence}] {ep.nom}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
+
+            {/* Sous-section */}
+            {selectedEpreuveId && (
+              <div className="space-y-2">
+                <Label>Sous-section</Label>
+                <Select value={selectedSousSectionId} onValueChange={(v) => {
+                  setSelectedSousSectionId(v);
+                  setSelectedPointId("");
+                }}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choisir une sous-section..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {sousSectionsForEpreuve.map((ss) => (
+                      <SelectItem key={ss.id} value={ss.id}>{ss.nom}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {/* Point à maîtriser */}
+            {selectedSousSectionId && (
+              <div className="space-y-2">
+                <Label>Point à maîtriser</Label>
+                <Select value={selectedPointId} onValueChange={setSelectedPointId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choisir un point..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {pointsForSousSection.map((p) => (
+                      <SelectItem key={p.id} value={p.id}>{p.nom}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
             <Button
               onClick={handleGenerate}
               disabled={generating || !selectedPointId}
