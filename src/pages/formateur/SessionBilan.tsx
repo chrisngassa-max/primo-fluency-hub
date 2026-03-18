@@ -568,7 +568,9 @@ const SessionBilan = () => {
       {nextSession && (
         <p className="text-xs text-muted-foreground text-center print:hidden">
           <Sparkles className="h-3 w-3 inline mr-1" />
-          L'IA adaptera automatiquement la séance suivante "{nextSession.titre}" après validation
+          {isAutoAdapt
+            ? `Pilote auto activé — La séance "${nextSession.titre}" sera adaptée automatiquement`
+            : `L'IA proposera des suggestions pour adapter "${nextSession.titre}"`}
         </p>
       )}
 
