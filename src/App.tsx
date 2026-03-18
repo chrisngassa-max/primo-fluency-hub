@@ -16,6 +16,7 @@ import LoginAdmin from "@/pages/auth/LoginAdmin";
 
 import FormateurLayout from "@/layouts/FormateurLayout";
 import FormateurDashboard from "@/pages/formateur/Dashboard";
+import GroupesPage from "@/pages/formateur/Groupes";
 import SeancesPage from "@/pages/formateur/Seances";
 import SessionPilot from "@/pages/formateur/SessionPilot";
 import SessionBilan from "@/pages/formateur/SessionBilan";
@@ -51,7 +52,7 @@ const App = () => (
               }
             >
               <Route index element={<FormateurDashboard />} />
-              <Route path="groupes" element={<FormateurDashboard />} />
+              <Route path="groupes" element={<GroupesPage />} />
               <Route path="seances" element={<SeancesPage />} />
               <Route path="seances/:id/pilote" element={<SessionPilot />} />
               <Route path="seances/:id/bilan" element={<SessionBilan />} />
