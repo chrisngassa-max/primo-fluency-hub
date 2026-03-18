@@ -168,7 +168,7 @@ const ExercicesPage = () => {
   }, [qc, user?.id]);
 
   // Debounced save
-  const saveTimerRef = useRef<Record<string, NodeJS.Timeout>>({});
+  const saveTimerRef = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
   const debouncedSave = useCallback((exerciseId: string, updates: { titre?: string; consigne?: string; contenu?: any }) => {
     if (saveTimerRef.current[exerciseId]) clearTimeout(saveTimerRef.current[exerciseId]);
     saveTimerRef.current[exerciseId] = setTimeout(() => {
