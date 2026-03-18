@@ -68,7 +68,7 @@ const App = () => (
               <Route path="tests" element={<TestsEntreePage />} />
               <Route path="import-programme" element={<ImportProgramme />} />
               <Route path="rapports" element={<FormateurDashboard />} />
-              <Route path="parametres" element={<FormateurDashboard />} />
+              <Route path="parametres" element={<Parametres />} />
             </Route>
 
             {/* Élève routes */}
