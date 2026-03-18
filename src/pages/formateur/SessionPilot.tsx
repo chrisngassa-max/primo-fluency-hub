@@ -921,6 +921,7 @@ ${Array.isArray(item.options) && item.options.length > 0
                         <h3 className="font-semibold text-sm">{ex?.titre || "Exercice"}</h3>
                         <Badge variant="secondary" className="text-[10px]">{ex?.competence}</Badge>
                         <Badge variant="outline" className="text-[10px]">{ex?.format?.replace(/_/g, " ")}</Badge>
+                        <DifficultyBadge level={mapDifficultyToScale10(ex?.difficulte || 3)} />
                         <span className={cn("inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-medium border print:hidden", config.color)}>
                           <StatusIcon className="h-3 w-3" />{config.label}
                         </span>

@@ -466,6 +466,7 @@ ${Array.isArray(item.options) && item.options.length > 0
                           <h3 className="font-semibold text-sm">{getEditableField(ex, "titre")}</h3>
                           <Badge variant="outline" className="text-[10px]">{ex.format?.replace(/_/g, " ")}</Badge>
                           <Badge variant="secondary" className="text-[10px]">Niv. {ex.niveau_vise}</Badge>
+                          <DifficultyBadge level={mapDifficultyToScale10(ex.difficulte)} />
                           <span className="text-[10px] text-muted-foreground">{items.length} Q</span>
                           {isSaving && <Loader2 className="h-3 w-3 animate-spin text-primary" />}
                         </div>
