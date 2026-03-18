@@ -113,6 +113,7 @@ export type Database = {
           id: string
           nb_reussites_consecutives: number
           raison: Database["public"]["Enums"]["devoir_raison"]
+          session_id: string | null
           statut: Database["public"]["Enums"]["devoir_statut"]
           updated_at: string
         }
@@ -125,6 +126,7 @@ export type Database = {
           id?: string
           nb_reussites_consecutives?: number
           raison?: Database["public"]["Enums"]["devoir_raison"]
+          session_id?: string | null
           statut?: Database["public"]["Enums"]["devoir_statut"]
           updated_at?: string
         }
@@ -137,6 +139,7 @@ export type Database = {
           id?: string
           nb_reussites_consecutives?: number
           raison?: Database["public"]["Enums"]["devoir_raison"]
+          session_id?: string | null
           statut?: Database["public"]["Enums"]["devoir_statut"]
           updated_at?: string
         }
@@ -160,6 +163,13 @@ export type Database = {
             columns: ["formateur_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "devoirs_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
             referencedColumns: ["id"]
           },
         ]
