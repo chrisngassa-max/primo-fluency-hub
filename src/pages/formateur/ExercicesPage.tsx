@@ -42,6 +42,7 @@ const ExercicesPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [previewExercise, setPreviewExercise] = useState<any>(null);
+  const [animationGuide, setAnimationGuide] = useState<any>(null);
   const printRef = useRef<HTMLDivElement>(null);
 
   // Fetch all exercises for this formateur
