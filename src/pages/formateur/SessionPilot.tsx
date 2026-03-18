@@ -386,6 +386,7 @@ const SessionPilot = () => {
         format: (ex.format || "qcm") as any,
         difficulte: ex.difficulte || 3,
         contenu: ex.contenu || {},
+        animation_guide: ex.animation_guide || null,
         niveau_vise: niveauVise,
         formateur_id: user.id,
         point_a_maitriser_id: defaultPoint.id,
