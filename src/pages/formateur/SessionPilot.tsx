@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
 import {
   Sheet,
   SheetContent,
@@ -19,10 +20,21 @@ import {
   SheetDescription,
   SheetFooter,
 } from "@/components/ui/sheet";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import {
   CheckCircle2, Clock, ArrowRight, Printer, ArrowLeft,
   BookOpen, Minus, Plus, Loader2, Sparkles, Pencil, Trash2, CirclePlus, Circle,
+  AlertTriangle, RotateCcw, ClipboardCheck, FileText, Users, Brain,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -42,6 +54,8 @@ const SessionPilot = () => {
   const [checked, setChecked] = useState<Record<string, boolean>>({});
   const [saving, setSaving] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [generatingHomework, setGeneratingHomework] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
   // Editor state
   const [editingExercise, setEditingExercise] = useState<any>(null);
@@ -76,7 +90,97 @@ const SessionPilot = () => {
     enabled: !!id,
   });
 
-  // Fetch parcours_seances linked to this session for AI generation context
+  // Fetch reported exercises from previous session
+  const { data: reportedExercises } = useQuery({
+    queryKey: ["reported-exercises", session?.group_id, id],
+    queryFn: async () => {
+      if (!session) return [];
+      const groupId = (session as any)?.group?.id || session.group_id;
+      // Find previous session for this group
+      const { data: prevSessions } = await supabase
+        .from("sessions")
+        .select("id")
+        .eq("group_id", groupId)
+        .lt("date_seance", session.date_seance)
+        .order("date_seance", { ascending: false })
+        .limit(1);
+
+      if (!prevSessions || prevSessions.length === 0) return [];
+
+      const prevId = prevSessions[0].id;
+      const { data, error } = await supabase
+        .from("session_exercices")
+        .select("*, exercice:exercices(id, titre, consigne, competence, format, contenu, difficulte, niveau_vise, point_a_maitriser_id)")
+        .eq("session_id", prevId)
+        .eq("statut", "reporte")
+        .order("ordre");
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: !!session,
+  });
+
+  // Fetch homework completion stats from previous session (debriefing)
+  const { data: homeworkStats } = useQuery({
+    queryKey: ["homework-debriefing", session?.group_id, id],
+    queryFn: async () => {
+      if (!session) return null;
+      const groupId = (session as any)?.group?.id || session.group_id;
+      // Find previous session
+      const { data: prevSessions } = await supabase
+        .from("sessions")
+        .select("id")
+        .eq("group_id", groupId)
+        .lt("date_seance", session.date_seance)
+        .order("date_seance", { ascending: false })
+        .limit(1);
+
+      if (!prevSessions || prevSessions.length === 0) return null;
+
+      const prevSessionId = prevSessions[0].id;
+      // Get devoirs linked to previous session
+      const { data: devoirs } = await supabase
+        .from("devoirs")
+        .select("*, exercice:exercices(titre, competence), eleve:profiles(nom, prenom)")
+        .eq("session_id" as any, prevSessionId);
+
+      if (!devoirs || devoirs.length === 0) return null;
+
+      const total = devoirs.length;
+      const done = devoirs.filter((d: any) => d.statut === "fait" || d.statut === "arrete").length;
+      const expired = devoirs.filter((d: any) => d.statut === "expire").length;
+      const pending = devoirs.filter((d: any) => d.statut === "en_attente").length;
+
+      // Get scores for completed devoirs
+      const devoirIds = devoirs.filter((d: any) => d.statut === "fait").map((d: any) => d.id);
+      let avgScore = 0;
+      let lowScoreItems: { eleve: string; exercice: string; score: number }[] = [];
+      if (devoirIds.length > 0) {
+        const { data: resultats } = await supabase
+          .from("resultats")
+          .select("score, eleve_id, exercice_id")
+          .in("devoir_id", devoirIds);
+
+        if (resultats && resultats.length > 0) {
+          avgScore = Math.round(resultats.reduce((s: number, r: any) => s + Number(r.score), 0) / resultats.length);
+          lowScoreItems = resultats
+            .filter((r: any) => Number(r.score) < 60)
+            .map((r: any) => {
+              const devoir = devoirs.find((d: any) => d.exercice_id === r.exercice_id && d.eleve_id === r.eleve_id);
+              return {
+                eleve: devoir ? `${(devoir as any).eleve?.prenom} ${(devoir as any).eleve?.nom}` : "Élève",
+                exercice: (devoir as any)?.exercice?.titre || "Exercice",
+                score: Number(r.score),
+              };
+            });
+        }
+      }
+
+      return { total, done, expired, pending, avgScore, lowScoreItems, completionRate: total > 0 ? Math.round((done / total) * 100) : 0 };
+    },
+    enabled: !!session,
+  });
+
   const { data: parcoursSeance } = useQuery({
     queryKey: ["parcours-seance-for-session", id],
     queryFn: async () => {
@@ -92,6 +196,7 @@ const SessionPilot = () => {
   });
 
   const exercises = sessionExercices ?? [];
+  const reported = reportedExercises ?? [];
 
   const checkedCount = useMemo(
     () => exercises.filter((ex) => checked[ex.id]).length,
@@ -121,7 +226,71 @@ const SessionPilot = () => {
     return "planifie";
   };
 
-  // ─── Action 1: AI Generation ───
+  // ─── Reported exercise actions ───
+  const handleKeepReported = async (se: any) => {
+    // Transfer to current session
+    try {
+      const maxOrdre = exercises.length;
+      const { error } = await supabase
+        .from("session_exercices")
+        .update({ session_id: id!, ordre: maxOrdre + 1, statut: "planifie" as any, updated_at: new Date().toISOString() })
+        .eq("id", se.id);
+      if (error) throw error;
+      qc.invalidateQueries({ queryKey: ["session-exercices", id] });
+      qc.invalidateQueries({ queryKey: ["reported-exercises"] });
+      toast.success("Exercice transféré à cette séance.");
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    }
+  };
+
+  const handleToHomework = async (se: any) => {
+    if (!session || !user) return;
+    try {
+      const groupId = (session as any)?.group?.id || session.group_id;
+      const { data: members } = await supabase
+        .from("group_members")
+        .select("eleve_id")
+        .eq("group_id", groupId);
+
+      if (members && members.length > 0) {
+        const devoirs = members.map((m: any) => ({
+          eleve_id: m.eleve_id,
+          exercice_id: (se as any).exercice_id,
+          formateur_id: user.id,
+          raison: "remediation" as const,
+          statut: "en_attente" as const,
+          session_id: id,
+        }));
+        const { error } = await supabase.from("devoirs").insert(devoirs as any);
+        if (error) throw error;
+      }
+      // Mark as devoir_remediation
+      await supabase
+        .from("session_exercices")
+        .update({ statut: "devoir_remediation" as any, updated_at: new Date().toISOString() })
+        .eq("id", se.id);
+
+      qc.invalidateQueries({ queryKey: ["reported-exercises"] });
+      toast.success("Exercice basculé en devoirs pour tous les élèves.");
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    }
+  };
+
+  const handleDeleteReported = async (seId: string) => {
+    try {
+      const { error } = await supabase.from("session_exercices").delete().eq("id", seId);
+      if (error) throw error;
+      qc.invalidateQueries({ queryKey: ["reported-exercises"] });
+      setDeleteConfirm(null);
+      toast.success("Exercice reporté supprimé.");
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    }
+  };
+
+  // ─── AI Generation ───
   const handleGenerateExercises = async () => {
     if (!session || !user) return;
     setGenerating(true);
@@ -132,7 +301,6 @@ const SessionPilot = () => {
       const objectif = (parcoursSeance as any)?.objectif_principal || session.objectifs || "Exercice de séance";
       const count = (parcoursSeance as any)?.nb_exercices_suggeres || 5;
 
-      // Get a default point_a_maitriser_id
       const { data: defaultPoint } = await supabase
         .from("points_a_maitriser")
         .select("id")
@@ -157,9 +325,8 @@ const SessionPilot = () => {
         return;
       }
 
-      // Insert exercises into DB (directly active, no draft)
       const currentMax = exercises.length;
-      const exercisesToInsert = generated.map((ex: any, i: number) => ({
+      const exercisesToInsert = generated.map((ex: any) => ({
         titre: ex.titre,
         consigne: ex.consigne,
         competence: competence as any,
@@ -180,7 +347,6 @@ const SessionPilot = () => {
         .select("id");
       if (insertErr) throw insertErr;
 
-      // Link to session
       const sessionExLinks = (inserted ?? []).map((ex: any, i: number) => ({
         session_id: id!,
         exercice_id: ex.id,
@@ -192,24 +358,64 @@ const SessionPilot = () => {
       if (linkErr) throw linkErr;
 
       qc.invalidateQueries({ queryKey: ["session-exercices", id] });
-      toast.success(`${inserted?.length} exercice(s) généré(s) et publiés !`, {
-        description: "Les élèves y ont accès immédiatement.",
-      });
+      toast.success(`${inserted?.length} exercice(s) généré(s) et publiés !`);
     } catch (e: any) {
       console.error(e);
-      if (e.message?.includes("429") || e.message?.includes("Trop de requêtes")) {
-        toast.error("Trop de requêtes, réessayez dans quelques instants.");
-      } else if (e.message?.includes("402") || e.message?.includes("Crédits")) {
-        toast.error("Crédits IA insuffisants.");
-      } else {
-        toast.error("Erreur de génération", { description: e.message });
-      }
+      toast.error("Erreur de génération", { description: e.message });
     } finally {
       setGenerating(false);
     }
   };
 
-  // ─── Action 2: Inline Editor ───
+  // ─── Homework Generator ───
+  const handleGenerateHomework = async () => {
+    if (!session || !user) return;
+    setGeneratingHomework(true);
+    try {
+      const groupId = (session as any)?.group?.id || session.group_id;
+      const { data: members } = await supabase
+        .from("group_members")
+        .select("eleve_id")
+        .eq("group_id", groupId);
+
+      if (!members || members.length === 0) {
+        toast.warning("Aucun élève dans ce groupe.");
+        return;
+      }
+
+      // Collect exercises from this session
+      const sessionExs = exercises.map((se: any) => se.exercice).filter(Boolean);
+      if (sessionExs.length === 0) {
+        toast.warning("Aucun exercice dans la séance.");
+        return;
+      }
+
+      // Create devoirs for each student for each exercise
+      const devoirs = members.flatMap((m: any) =>
+        sessionExs.map((ex: any) => ({
+          eleve_id: m.eleve_id,
+          exercice_id: ex.id,
+          formateur_id: user.id,
+          raison: "consolidation" as const,
+          statut: "en_attente" as const,
+          session_id: id,
+        }))
+      );
+
+      const { error } = await supabase.from("devoirs").insert(devoirs as any);
+      if (error) throw error;
+
+      toast.success(`${devoirs.length} devoir(s) créé(s) pour ${members.length} élève(s) !`, {
+        description: "Liés à cette séance, visibles sur l'espace élève.",
+      });
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    } finally {
+      setGeneratingHomework(false);
+    }
+  };
+
+  // ─── Inline Editor ───
   const openEditor = (se: any) => {
     const ex = se.exercice;
     if (!ex) return;
@@ -288,7 +494,6 @@ const SessionPilot = () => {
         })
         .eq("id", editingExercise.id);
       if (error) throw error;
-
       qc.invalidateQueries({ queryKey: ["session-exercices", id] });
       toast.success("Exercice mis à jour !");
       setEditingExercise(null);
@@ -342,7 +547,6 @@ const SessionPilot = () => {
         <Skeleton className="h-8 w-64" />
         <Skeleton className="h-40 w-full" />
         <Skeleton className="h-20 w-full" />
-        <Skeleton className="h-20 w-full" />
       </div>
     );
   }
@@ -360,11 +564,16 @@ const SessionPilot = () => {
             {session?.titre || "Séance"} · {(session as any)?.group?.nom} · {exercises.length} exercice(s)
           </p>
         </div>
-        {/* Action 1: AI Generate button */}
-        <Button onClick={handleGenerateExercises} disabled={generating} className="gap-2 print:hidden">
-          {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-          {generating ? "Génération…" : "Générer exercices IA"}
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={handleGenerateExercises} disabled={generating} variant="outline" className="gap-2">
+            {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+            Générer IA
+          </Button>
+          <Button onClick={handleGenerateHomework} disabled={generatingHomework} className="gap-2">
+            {generatingHomework ? <Loader2 className="h-4 w-4 animate-spin" /> : <ClipboardCheck className="h-4 w-4" />}
+            Générer devoirs
+          </Button>
+        </div>
       </div>
 
       {/* Print header */}
@@ -375,7 +584,101 @@ const SessionPilot = () => {
         </p>
       </div>
 
-      {exercises.length === 0 ? (
+      {/* ─── Debriefing Widget (homework stats from previous session) ─── */}
+      {homeworkStats && homeworkStats.total > 0 && (
+        <Card className="border-primary/20 print:hidden">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Brain className="h-5 w-5 text-primary" />
+              Bilan des devoirs (séance précédente)
+            </CardTitle>
+            <CardDescription>Débriefing de début de cours — 5 à 10 minutes suggérées</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="text-center p-3 rounded-lg bg-muted/50">
+                <p className="text-2xl font-bold text-primary">{homeworkStats.completionRate}%</p>
+                <p className="text-[11px] text-muted-foreground">Complétion</p>
+              </div>
+              <div className="text-center p-3 rounded-lg bg-muted/50">
+                <p className="text-2xl font-bold text-green-600">{homeworkStats.done}</p>
+                <p className="text-[11px] text-muted-foreground">Faits</p>
+              </div>
+              <div className="text-center p-3 rounded-lg bg-muted/50">
+                <p className="text-2xl font-bold text-orange-600">{homeworkStats.pending}</p>
+                <p className="text-[11px] text-muted-foreground">En attente</p>
+              </div>
+              <div className="text-center p-3 rounded-lg bg-muted/50">
+                <p className="text-2xl font-bold">{homeworkStats.avgScore > 0 ? `${homeworkStats.avgScore}%` : "—"}</p>
+                <p className="text-[11px] text-muted-foreground">Score moyen</p>
+              </div>
+            </div>
+            <Progress value={homeworkStats.completionRate} className="h-2" />
+            {homeworkStats.lowScoreItems.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-destructive flex items-center gap-1">
+                  <AlertTriangle className="h-3.5 w-3.5" />
+                  Points de blocage détectés
+                </p>
+                <div className="space-y-1">
+                  {homeworkStats.lowScoreItems.slice(0, 5).map((item, i) => (
+                    <div key={i} className="flex items-center justify-between text-xs p-2 rounded-md bg-destructive/5 border border-destructive/10">
+                      <span className="font-medium">{item.eleve}</span>
+                      <span className="text-muted-foreground">{item.exercice}</span>
+                      <Badge variant="destructive" className="text-[10px]">{item.score}%</Badge>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* ─── Reported Exercises from Previous Session ─── */}
+      {reported.length > 0 && (
+        <Card className="border-dashed border-orange-300 dark:border-orange-700 bg-orange-50/30 dark:bg-orange-950/10 print:hidden">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2 text-orange-700 dark:text-orange-400">
+              <RotateCcw className="h-5 w-5" />
+              À terminer — Exercices reportés ({reported.length})
+            </CardTitle>
+            <CardDescription>Exercices non terminés lors de la séance précédente</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {reported.map((se: any) => {
+              const ex = se.exercice;
+              return (
+                <div key={se.id} className="flex items-center gap-3 p-3 rounded-lg border border-orange-200 dark:border-orange-800 bg-card">
+                  <div className="flex items-center justify-center h-7 w-7 rounded-full bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-400 text-xs font-bold shrink-0">
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm truncate">{ex?.titre || "Exercice"}</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <Badge variant="secondary" className="text-[10px]">{ex?.competence}</Badge>
+                      <span className="text-[10px] text-muted-foreground">{ex?.format?.replace(/_/g, " ")}</span>
+                    </div>
+                  </div>
+                  <div className="flex gap-1 shrink-0">
+                    <Button variant="outline" size="sm" className="h-7 text-xs gap-1" onClick={() => handleKeepReported(se)}>
+                      <Plus className="h-3 w-3" />Garder
+                    </Button>
+                    <Button variant="outline" size="sm" className="h-7 text-xs gap-1" onClick={() => handleToHomework(se)}>
+                      <ClipboardCheck className="h-3 w-3" />Devoirs
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setDeleteConfirm(se.id)}>
+                      <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+      )}
+
+      {exercises.length === 0 && reported.length === 0 ? (
         <Card className="border-dashed">
           <CardContent className="py-12 text-center">
             <BookOpen className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
@@ -389,7 +692,7 @@ const SessionPilot = () => {
             </Button>
           </CardContent>
         </Card>
-      ) : (
+      ) : exercises.length > 0 && (
         <>
           {/* Quick Controls */}
           <Card className="print:hidden">
@@ -488,13 +791,10 @@ const SessionPilot = () => {
                       <div className="flex-1 min-w-0 space-y-1">
                         <div className="flex items-center gap-2 flex-wrap">
                           <h3 className="font-semibold text-sm">{ex?.titre || "Exercice"}</h3>
-                          <span className="inline-flex items-center rounded-md bg-secondary px-1.5 py-0.5 text-[10px] font-medium text-secondary-foreground print:hidden">
-                            {ex?.competence}
-                          </span>
+                          <Badge variant="secondary" className="text-[10px]">{ex?.competence}</Badge>
                           <span className={cn("inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-medium border print:hidden", config.color)}>
                             <StatusIcon className="h-3 w-3" />{config.label}
                           </span>
-                          {/* Action 3: Green "En ligne" badge */}
                           <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 px-2 py-0.5 text-[10px] font-semibold print:hidden">
                             <Circle className="h-2 w-2 fill-emerald-500 text-emerald-500" />
                             En ligne
@@ -503,7 +803,6 @@ const SessionPilot = () => {
                         <p className="text-xs text-muted-foreground">{ex?.consigne}</p>
                         <p className="text-[10px] text-muted-foreground/60 print:hidden">Format : {ex?.format?.replace(/_/g, " ")}</p>
                       </div>
-                      {/* Action 2: Edit button */}
                       <Button
                         variant="ghost"
                         size="icon"
@@ -524,7 +823,7 @@ const SessionPilot = () => {
         </>
       )}
 
-      {/* Action 2: Editor Sheet */}
+      {/* Editor Sheet */}
       <Sheet open={!!editingExercise} onOpenChange={(open) => { if (!open) setEditingExercise(null); }}>
         <SheetContent className="sm:max-w-lg overflow-y-auto">
           <SheetHeader>
@@ -564,8 +863,6 @@ const SessionPilot = () => {
                     <div className="flex-1 space-y-2">
                       <Input placeholder="Question" value={item.question || ""}
                         onChange={(e) => updateEditItem(idx, "question", e.target.value)} />
-                      
-                      {/* Options */}
                       {Array.isArray(item.options) && (
                         <div className="space-y-1">
                           <span className="text-[11px] text-muted-foreground font-medium">Choix de réponse</span>
@@ -585,7 +882,6 @@ const SessionPilot = () => {
                           </Button>
                         </div>
                       )}
-
                       <div className="grid grid-cols-2 gap-2">
                         <div>
                           <span className="text-[11px] text-muted-foreground font-medium">Bonne réponse</span>
@@ -623,6 +919,24 @@ const SessionPilot = () => {
           </SheetFooter>
         </SheetContent>
       </Sheet>
+
+      {/* Delete confirmation */}
+      <AlertDialog open={!!deleteConfirm} onOpenChange={(open) => { if (!open) setDeleteConfirm(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Supprimer cet exercice reporté ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              L'exercice sera retiré définitivement. Cette action est irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={() => deleteConfirm && handleDeleteReported(deleteConfirm)}>
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <style>{`@media print { nav, header, .print\\:hidden { display: none !important; } body { font-size: 12pt; } }`}</style>
     </div>
