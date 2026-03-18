@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,15 +19,22 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Plus, Users, Trash2, Edit, UserPlus, UserMinus, Loader2 } from "lucide-react";
+import { Plus, Users, Trash2, Edit, UserPlus, UserMinus, Loader2, Copy, Check } from "lucide-react";
 
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
+
+interface CreatedStudent {
+  prenom: string;
+  nom: string;
+  email: string;
+  password: string;
+}
 
 const GroupesPage = () => {
   const { user } = useAuth();
   const qc = useQueryClient();
 
-  // Create dialog
+  // Create group dialog
   const [createOpen, setCreateOpen] = useState(false);
   const [nom, setNom] = useState("");
   const [niveau, setNiveau] = useState("A1");
@@ -44,8 +51,15 @@ const GroupesPage = () => {
   // Member management
   const [memberOpen, setMemberOpen] = useState(false);
   const [memberGroupId, setMemberGroupId] = useState("");
-  const [newMemberEmail, setNewMemberEmail] = useState("");
+
+  // Add student form
+  const [newPrenom, setNewPrenom] = useState("");
+  const [newNom, setNewNom] = useState("");
   const [addingMember, setAddingMember] = useState(false);
+
+  // Created student credentials display
+  const [createdStudent, setCreatedStudent] = useState<CreatedStudent | null>(null);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
 
   // Fetch groups
   const { data: groups, isLoading } = useQuery({
@@ -134,35 +148,29 @@ const GroupesPage = () => {
     }
   };
 
-  const handleAddMember = async () => {
-    if (!newMemberEmail.trim()) { toast.error("Entrez un email."); return; }
+  const handleAddStudent = async () => {
+    if (!newPrenom.trim() || !newNom.trim()) {
+      toast.error("Prénom et nom sont obligatoires.");
+      return;
+    }
     setAddingMember(true);
+    setCreatedStudent(null);
     try {
-      // Find eleve by email
-      const { data: profiles, error: pErr } = await supabase
-        .from("profiles")
-        .select("id, nom, prenom")
-        .eq("email", newMemberEmail.trim().toLowerCase());
-      if (pErr) throw pErr;
-      if (!profiles || profiles.length === 0) {
-        toast.error("Aucun élève trouvé avec cet email.");
-        return;
-      }
-      const eleveId = profiles[0].id;
-      // Check not already member
-      const existing = members?.find((m) => (m as any).eleve?.id === eleveId);
-      if (existing) { toast.error("Cet élève est déjà dans le groupe."); return; }
-
-      const { error } = await supabase.from("group_members").insert({
-        group_id: memberGroupId, eleve_id: eleveId,
+      const { data, error } = await supabase.functions.invoke("create-student", {
+        body: { prenom: newPrenom.trim(), nom: newNom.trim(), group_id: memberGroupId },
       });
       if (error) throw error;
-      toast.success(`${profiles[0].prenom} ${profiles[0].nom} ajouté(e) !`);
-      setNewMemberEmail("");
+      if (data?.error) throw new Error(data.error);
+
+      const student = data.student as CreatedStudent;
+      setCreatedStudent(student);
+      setNewPrenom("");
+      setNewNom("");
+      toast.success(`${student.prenom} ${student.nom} créé(e) et ajouté(e) au groupe !`);
       qc.invalidateQueries({ queryKey: ["group-members", memberGroupId] });
       qc.invalidateQueries({ queryKey: ["group-member-counts"] });
     } catch (e: any) {
-      toast.error("Erreur", { description: e.message });
+      toast.error("Erreur lors de la création", { description: e.message });
     } finally { setAddingMember(false); }
   };
 
@@ -178,6 +186,12 @@ const GroupesPage = () => {
     }
   };
 
+  const copyToClipboard = async (text: string, field: string) => {
+    await navigator.clipboard.writeText(text);
+    setCopiedField(field);
+    setTimeout(() => setCopiedField(null), 2000);
+  };
+
   const openEdit = (g: any) => {
     setEditId(g.id); setEditNom(g.nom); setEditNiveau(g.niveau); setEditDesc(g.description || "");
     setEditOpen(true);
@@ -185,6 +199,9 @@ const GroupesPage = () => {
 
   const openMembers = (groupId: string) => {
     setMemberGroupId(groupId);
+    setCreatedStudent(null);
+    setNewPrenom("");
+    setNewNom("");
     setMemberOpen(true);
   };
 
@@ -337,34 +354,80 @@ const GroupesPage = () => {
 
       {/* Members Dialog */}
       <Dialog open={memberOpen} onOpenChange={setMemberOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-lg">
           <DialogHeader><DialogTitle>Gérer les membres</DialogTitle></DialogHeader>
           <div className="space-y-4">
-            {/* Add member */}
-            <div className="flex gap-2">
-              <Input
-                placeholder="Email de l'élève"
-                value={newMemberEmail}
-                onChange={(e) => setNewMemberEmail(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleAddMember()}
-              />
-              <Button onClick={handleAddMember} disabled={addingMember} size="sm">
-                {addingMember ? <Loader2 className="h-4 w-4 animate-spin" /> : <UserPlus className="h-4 w-4" />}
+            {/* Add student form */}
+            <div className="space-y-3 p-3 rounded-lg border border-dashed">
+              <p className="text-sm font-medium">Ajouter un élève</p>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-1">
+                  <Label className="text-xs">Prénom</Label>
+                  <Input
+                    placeholder="Prénom"
+                    value={newPrenom}
+                    onChange={(e) => setNewPrenom(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs">Nom</Label>
+                  <Input
+                    placeholder="Nom"
+                    value={newNom}
+                    onChange={(e) => setNewNom(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleAddStudent()}
+                  />
+                </div>
+              </div>
+              <Button onClick={handleAddStudent} disabled={addingMember} size="sm" className="w-full">
+                {addingMember ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <UserPlus className="h-4 w-4 mr-2" />}
+                Créer et ajouter
               </Button>
             </div>
+
+            {/* Created student credentials card */}
+            {createdStudent && (
+              <div className="rounded-lg border-2 border-primary/30 bg-primary/5 p-4 space-y-3">
+                <p className="text-sm font-semibold text-primary">
+                  ✅ Élève créé — notez ces identifiants :
+                </p>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center justify-between">
+                    <span><strong>Nom :</strong> {createdStudent.prenom} {createdStudent.nom}</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="truncate"><strong>Identifiant :</strong> {createdStudent.email}</span>
+                    <Button
+                      variant="ghost" size="icon" className="h-7 w-7 shrink-0"
+                      onClick={() => copyToClipboard(createdStudent.email, "email")}
+                    >
+                      {copiedField === "email" ? <Check className="h-3.5 w-3.5 text-primary" /> : <Copy className="h-3.5 w-3.5" />}
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between gap-2">
+                    <span><strong>Mot de passe :</strong> <code className="bg-muted px-1.5 py-0.5 rounded text-xs">{createdStudent.password}</code></span>
+                    <Button
+                      variant="ghost" size="icon" className="h-7 w-7 shrink-0"
+                      onClick={() => copyToClipboard(createdStudent.password, "password")}
+                    >
+                      {copiedField === "password" ? <Check className="h-3.5 w-3.5 text-primary" /> : <Copy className="h-3.5 w-3.5" />}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Members list */}
             {membersLoading ? (
               <div className="space-y-2">{[1, 2].map((i) => <Skeleton key={i} className="h-10" />)}</div>
             ) : (members ?? []).length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-4">Aucun membre.</p>
+              <p className="text-sm text-muted-foreground text-center py-4">Aucun membre dans ce groupe.</p>
             ) : (
               <div className="space-y-2 max-h-60 overflow-y-auto">
                 {(members ?? []).map((m: any) => (
                   <div key={m.id} className="flex items-center justify-between p-2 rounded-lg border">
                     <div>
                       <p className="text-sm font-medium">{m.eleve?.prenom} {m.eleve?.nom}</p>
-                      <p className="text-xs text-muted-foreground">{m.eleve?.email}</p>
                     </div>
                     <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleRemoveMember(m.id)}>
                       <UserMinus className="h-4 w-4" />
