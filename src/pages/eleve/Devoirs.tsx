@@ -11,10 +11,12 @@ import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import {
   BookOpen, CheckCircle2, AlertCircle, Clock, ArrowRight,
-  Send, Loader2, ChevronRight,
+  Send, Loader2, ChevronRight, AlertTriangle, XCircle, Calendar,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import CompetenceLabel from "@/components/CompetenceLabel";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 
 const EleveDevoirs = () => {
   const { user } = useAuth();
@@ -119,12 +121,46 @@ const EleveDevoirs = () => {
   );
 };
 
+function DeadlineDisplay({ dateEcheance, isDone, isExpired }: { dateEcheance: string; isDone: boolean; isExpired: boolean }) {
+  if (isDone) return null;
+
+  const deadline = new Date(dateEcheance);
+  const now = new Date();
+  const diffMs = deadline.getTime() - now.getTime();
+  const daysLeft = Math.ceil(diffMs / 86400000);
+  const dateStr = format(deadline, "EEEE d MMMM yyyy", { locale: fr });
+
+  if (isExpired || daysLeft < 0) {
+    return (
+      <div className="flex items-center gap-1.5 text-destructive text-sm mt-1">
+        <XCircle className="h-3.5 w-3.5" />
+        <span>Devoir en retard — attendu le {dateStr}</span>
+      </div>
+    );
+  }
+
+  if (daysLeft <= 2) {
+    return (
+      <div className="flex items-center gap-1.5 text-orange-600 text-sm mt-1">
+        <AlertTriangle className="h-3.5 w-3.5" />
+        <span>{daysLeft === 0 ? "À rendre aujourd'hui !" : daysLeft === 1 ? "À rendre demain" : "À rendre dans 2 jours"}</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-1.5 text-muted-foreground text-sm mt-1">
+      <Calendar className="h-3.5 w-3.5" />
+      <span>À rendre avant le : {dateStr}</span>
+    </div>
+  );
+}
+
 function DevoirCard({ devoir, onOpen }: { devoir: any; onOpen: () => void }) {
   const ex = devoir.exercice as any;
   const isUrgent = devoir.raison === "remediation";
   const isDone = devoir.statut === "fait" || devoir.statut === "arrete";
   const isExpired = devoir.statut === "expire";
-  const daysLeft = Math.max(0, Math.ceil((new Date(devoir.date_echeance).getTime() - Date.now()) / 86400000));
 
   return (
     <Card
@@ -167,13 +203,8 @@ function DevoirCard({ devoir, onOpen }: { devoir: any; onOpen: () => void }) {
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Badge variant="outline" className="text-xs"><CompetenceLabel code={ex?.competence} /></Badge>
-              {!isDone && !isExpired && (
-                <span className="flex items-center gap-1">
-                  <Clock className="h-3 w-3" />
-                  {daysLeft === 0 ? "Aujourd'hui !" : `${daysLeft}j restant(s)`}
-                </span>
-              )}
             </div>
+            <DeadlineDisplay dateEcheance={devoir.date_echeance} isDone={isDone} isExpired={isExpired} />
           </div>
           <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
         </div>

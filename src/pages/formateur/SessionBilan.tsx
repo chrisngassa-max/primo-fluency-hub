@@ -11,15 +11,19 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import {
   CheckCircle2, ArrowRight, ArrowLeft, Printer, Save, BookOpen, Loader2, Sparkles,
-  AlertTriangle, Brain, X, ClipboardCheck, Send, Clock,
+  AlertTriangle, Brain, X, ClipboardCheck, Send, Clock, CalendarIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { format, addDays } from "date-fns";
+import { fr } from "date-fns/locale";
 
 const COMPETENCES = ["CO", "CE", "EE", "EO", "Structures"] as const;
 
@@ -57,6 +61,7 @@ const SessionBilan = () => {
   const [generatedTest, setGeneratedTest] = useState<any>(null);
   const [showTestModal, setShowTestModal] = useState(false);
   const [sendingTest, setSendingTest] = useState(false);
+  const [devoirDeadline, setDevoirDeadline] = useState<Date | undefined>(undefined);
 
   const { data: formateurParams } = useQuery({
     queryKey: ["formateur-parametres-bilan", user?.id],
@@ -69,6 +74,10 @@ const SessionBilan = () => {
   });
 
   const isAutoAdapt = (formateurParams as any)?.auto_adapt ?? false;
+  const defaultDeadlineDays = (formateurParams as any)?.delai_devoirs_jours ?? 3;
+  const defaultDeadline = addDays(new Date(), defaultDeadlineDays);
+  const effectiveDeadline = devoirDeadline || defaultDeadline;
+  const minDeadline = addDays(new Date(), 1);
 
   const { data: session } = useQuery({
     queryKey: ["session-info-bilan", id],
@@ -175,6 +184,7 @@ const SessionBilan = () => {
                   formateur_id: user!.id,
                   raison: "remediation" as const,
                   statut: "en_attente" as const,
+                  date_echeance: effectiveDeadline.toISOString(),
                 }))
               );
               const { error: e3 } = await supabase.from("devoirs").insert(devoirs);
@@ -524,13 +534,40 @@ const SessionBilan = () => {
             <DialogTitle>Exercices non traités</DialogTitle>
             <DialogDescription>{uncheckedExercises.length} exercice(s) n'ont pas été traité(s).</DialogDescription>
           </DialogHeader>
-          <div className="space-y-2 py-4">
+          <div className="space-y-2 py-2">
             {uncheckedExercises.map((se, i) => (
               <div key={se.id} className="text-sm flex items-center gap-2">
                 <span className="text-muted-foreground">•</span>
                 <span>{(se as any).exercice?.titre || `Exercice ${i + 1}`}</span>
               </div>
             ))}
+          </div>
+          {/* Date picker for homework deadline */}
+          <div className="space-y-2 border-t pt-4">
+            <Label className="text-sm font-semibold flex items-center gap-2">
+              <CalendarIcon className="h-4 w-4" />Date limite de rendu
+            </Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !devoirDeadline && "text-muted-foreground")}>
+                  <CalendarIcon className="h-4 w-4 mr-2" />
+                  {format(effectiveDeadline, "EEEE d MMMM yyyy", { locale: fr })}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={effectiveDeadline}
+                  onSelect={(d) => d && setDevoirDeadline(d)}
+                  disabled={(date) => date < minDeadline}
+                  initialFocus
+                  className="p-3 pointer-events-auto"
+                />
+              </PopoverContent>
+            </Popover>
+            <p className="text-xs text-muted-foreground">
+              Par défaut : J+{defaultDeadlineDays} — modifiable dans Paramètres
+            </p>
           </div>
           <DialogFooter className="flex-col sm:flex-row gap-2">
             <Button variant="default" onClick={() => saveWithAction("devoir")} disabled={saving} className="flex-1">

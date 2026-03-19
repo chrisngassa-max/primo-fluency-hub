@@ -11,7 +11,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import {
-  ArrowLeft, CheckCircle2, XCircle, Loader2, Send,
+  ArrowLeft, CheckCircle2, XCircle, Loader2, Send, FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -22,7 +22,7 @@ const DevoirPassation = () => {
   const qc = useQueryClient();
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [submitting, setSubmitting] = useState(false);
-  const [result, setResult] = useState<{ score: number; correction: any[] } | null>(null);
+  const [result, setResult] = useState<{ score: number; correction: any[]; bilanId?: string } | null>(null);
 
   const { data: devoir, isLoading } = useQuery({
     queryKey: ["devoir-detail", devoirId],
@@ -61,6 +61,72 @@ const DevoirPassation = () => {
   const contenu = ex?.contenu as any;
   const items: any[] = contenu?.items ?? [];
   const isDone = devoir?.statut === "fait" || devoir?.statut === "arrete";
+
+  const triggerBilanGeneration = async (score: number, correction: any[]) => {
+    try {
+      if (!devoir || !user) return;
+
+      // Get student name
+      const { data: profile } = await supabase.from("profiles").select("nom, prenom").eq("id", user.id).single();
+      const eleveNom = profile ? `${profile.prenom} ${profile.nom}` : "Élève";
+
+      // Get session info if available
+      let sessionTitle = "Séance";
+      let sessionId: string | null = devoir.session_id;
+      if (sessionId) {
+        const { data: sess } = await supabase.from("sessions").select("titre").eq("id", sessionId).single();
+        if (sess) sessionTitle = sess.titre;
+      }
+
+      // Get formateur ID
+      const formateurId = devoir.formateur_id;
+
+      // Build devoir results for the AI
+      const devoirResults = [{
+        titre: ex?.titre || "Exercice",
+        competence: ex?.competence || "CE",
+        score,
+        erreurs: correction.filter((c: any) => !c.correct).map((c: any) => c.question).join("; "),
+      }];
+
+      // Call AI to generate both bilans
+      const { data: bilanData, error: bilanErr } = await supabase.functions.invoke("generate-post-devoir-bilan", {
+        body: { eleveNom, bilanTestScore: { score }, devoirResults, sessionTitle },
+      });
+
+      if (bilanErr || bilanData?.error) {
+        console.error("Bilan generation failed:", bilanErr || bilanData?.error);
+        return;
+      }
+
+      // Store bilan in database
+      const { data: inserted, error: insertErr } = await supabase.from("bilan_post_devoirs").insert({
+        eleve_id: user.id,
+        formateur_id: formateurId,
+        session_id: sessionId,
+        analyse_data: bilanData as any,
+        is_read: false,
+        is_integrated: false,
+      }).select("id").single();
+
+      if (insertErr) {
+        console.error("Failed to save bilan:", insertErr);
+        return;
+      }
+
+      // Send notification to formateur
+      await supabase.from("notifications").insert({
+        user_id: formateurId,
+        titre: `${eleveNom} a rendu ses devoirs`,
+        message: `Score global : ${score}% · ${correction.filter((c: any) => !c.correct).length} erreur(s) détectée(s)`,
+        link: `/formateur/monitoring`,
+      });
+
+      return inserted?.id;
+    } catch (e) {
+      console.error("Bilan trigger error:", e);
+    }
+  };
 
   const handleSubmit = async () => {
     if (!devoir || !ex || !user) return;
@@ -109,7 +175,10 @@ const DevoirPassation = () => {
         .eq("id", devoirId!);
       if (devErr) throw devErr;
 
-      setResult({ score, correction });
+      // Trigger AI bilan generation in background
+      const bilanId = await triggerBilanGeneration(score, correction);
+
+      setResult({ score, correction, bilanId });
       qc.invalidateQueries({ queryKey: ["eleve-devoirs"] });
       qc.invalidateQueries({ queryKey: ["devoir-detail", devoirId] });
       toast.success(`Devoir soumis ! Score : ${score}%`);
@@ -207,6 +276,13 @@ const DevoirPassation = () => {
               </Card>
             ))}
           </div>
+        )}
+
+        {/* Link to bilan if generated */}
+        {(result as any)?.bilanId && (
+          <Button variant="outline" className="w-full gap-2" onClick={() => navigate(`/eleve/bilan-devoirs/${(result as any).bilanId}`)}>
+            <FileText className="h-4 w-4" />Voir mon bilan détaillé
+          </Button>
         )}
 
         <Button variant="outline" className="w-full" onClick={() => navigate("/eleve/devoirs")}>
