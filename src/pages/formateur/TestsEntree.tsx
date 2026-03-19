@@ -10,11 +10,12 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { toast } from "sonner";
 import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer,
 } from "recharts";
-import { Sparkles, Volume2, ChevronLeft, ChevronRight, CheckCircle2, Users, Clock, AlertTriangle, Save, BarChart3 } from "lucide-react";
+import { Sparkles, Volume2, ChevronLeft, ChevronRight, CheckCircle2, Users, Clock, AlertTriangle, Save, BarChart3, ChevronDown } from "lucide-react";
 import { TCF_QUESTIONS, SECTIONS_META, EXAM_DURATION_SECONDS } from "@/data/tcfQuestions";
 
 /* ───────── Sub-items definition ───────── */
