@@ -160,7 +160,7 @@ const ParcoursPage = () => {
       if (sErr) throw sErr;
 
       qc.invalidateQueries({ queryKey: ["formateur-parcours"] });
-      toast.success(isTemplate ? "Modèle sauvegardé !" : "Parcours créé !");
+      toast.success(isTemplate ? "Modèle sauvegardé !" : "Plan de formation créé !");
       resetForm();
     } catch (e: any) {
       console.error(e);
