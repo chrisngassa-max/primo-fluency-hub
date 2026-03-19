@@ -7,10 +7,12 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BookOpen, TrendingUp, AlertCircle, ArrowRight, Target } from "lucide-react";
+import { BookOpen, TrendingUp, AlertCircle, ArrowRight, Target, ClipboardCheck, Calendar } from "lucide-react";
 import CompetenceLabel from "@/components/CompetenceLabel";
 import EleveOnboarding, { useShowOnboarding } from "@/components/EleveOnboarding";
 import JoinGroupCard from "@/components/JoinGroupCard";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 
 const EleveDashboard = () => {
   const { user } = useAuth();
@@ -46,6 +48,73 @@ const EleveDashboard = () => {
         .order("date_echeance", { ascending: true });
       if (error) throw error;
       return data ?? [];
+    },
+    enabled: !!user?.id,
+  });
+
+  // Fetch completed sessions that have exercises the student hasn't done a bilan on
+  const { data: pendingBilans, isLoading: bilansLoading } = useQuery({
+    queryKey: ["eleve-bilans", user?.id],
+    queryFn: async () => {
+      // Get student's groups
+      const { data: memberships, error: mErr } = await supabase
+        .from("group_members")
+        .select("group_id")
+        .eq("eleve_id", user!.id);
+      if (mErr) throw mErr;
+      if (!memberships || memberships.length === 0) return [];
+
+      const groupIds = memberships.map((m) => m.group_id);
+
+      // Get completed sessions from student's groups
+      const { data: sessions, error: sErr } = await supabase
+        .from("sessions")
+        .select("id, titre, date_seance, group_id")
+        .in("group_id", groupIds)
+        .eq("statut", "terminee")
+        .order("date_seance", { ascending: false })
+        .limit(10);
+      if (sErr) throw sErr;
+      if (!sessions || sessions.length === 0) return [];
+
+      // For each session, check if there are exercises traite_en_classe
+      const sessionIds = sessions.map((s) => s.id);
+      const { data: sessionExercices, error: seErr } = await supabase
+        .from("session_exercices")
+        .select("session_id, exercice_id")
+        .in("session_id", sessionIds)
+        .eq("statut", "traite_en_classe" as any);
+      if (seErr) throw seErr;
+
+      if (!sessionExercices || sessionExercices.length === 0) return [];
+
+      // Check which exercises the student already has results for
+      const allExIds = sessionExercices.map((se) => se.exercice_id);
+      const { data: doneResults, error: rErr } = await supabase
+        .from("resultats")
+        .select("exercice_id")
+        .eq("eleve_id", user!.id)
+        .in("exercice_id", allExIds);
+      if (rErr) throw rErr;
+
+      const doneSet = new Set((doneResults ?? []).map((r) => r.exercice_id));
+
+      // Build pending bilans: sessions that have at least 1 un-done exercise
+      const pendingSessions: { id: string; titre: string; date_seance: string; exerciceCount: number }[] = [];
+      for (const session of sessions) {
+        const exsForSession = sessionExercices.filter((se) => se.session_id === session.id);
+        const pendingCount = exsForSession.filter((se) => !doneSet.has(se.exercice_id)).length;
+        if (pendingCount > 0) {
+          pendingSessions.push({
+            id: session.id,
+            titre: session.titre,
+            date_seance: session.date_seance,
+            exerciceCount: pendingCount,
+          });
+        }
+      }
+
+      return pendingSessions;
     },
     enabled: !!user?.id,
   });
@@ -86,6 +155,47 @@ const EleveDashboard = () => {
                 </Button>
               </div>
             </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Pending session bilans */}
+      {!bilansLoading && pendingBilans && pendingBilans.length > 0 && (
+        <Card className="border-primary/30 bg-primary/5">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <ClipboardCheck className="h-5 w-5 text-primary" />
+              Bilans de séance à compléter
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <p className="text-sm text-muted-foreground mb-3">
+              Validez vos acquis en passant le bilan des exercices réalisés en classe.
+              Vos résultats alimenteront votre progression et généreront des devoirs adaptés.
+            </p>
+            {pendingBilans.map((bilan) => (
+              <div
+                key={bilan.id}
+                className="flex items-center gap-3 p-3 rounded-xl border bg-card hover:bg-muted/30 transition-colors cursor-pointer"
+                onClick={() => navigate(`/eleve/bilan/${bilan.id}`)}
+              >
+                <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <ClipboardCheck className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-sm truncate">{bilan.titre}</p>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Calendar className="h-3 w-3" />
+                    {format(new Date(bilan.date_seance), "d MMMM yyyy", { locale: fr })}
+                    <span>·</span>
+                    <span>{bilan.exerciceCount} exercice(s)</span>
+                  </div>
+                </div>
+                <Button size="sm" variant="default" className="gap-1 shrink-0">
+                  Passer le bilan <ArrowRight className="h-3 w-3" />
+                </Button>
+              </div>
+            ))}
           </CardContent>
         </Card>
       )}
@@ -146,6 +256,7 @@ const EleveDashboard = () => {
                   <div
                     key={d.id}
                     className="flex items-start gap-3 p-4 rounded-xl border bg-card hover:bg-muted/30 transition-colors cursor-pointer"
+                    onClick={() => navigate(`/eleve/devoirs/${d.id}`)}
                   >
                     <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-primary/10 shrink-0">
                       <BookOpen className="h-6 w-6 text-primary" />
