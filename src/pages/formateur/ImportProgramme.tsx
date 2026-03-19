@@ -243,7 +243,24 @@ const ImportProgramme = () => {
           </div>
 
           {parsedSessions.map((s, i) => (
-            <Card key={i} className="hover:shadow-md transition-shadow">
+            <Card
+              key={i}
+              className="hover:shadow-md transition-shadow cursor-pointer hover:border-primary/30"
+              onClick={() =>
+                navigate("/formateur/session-builder", {
+                  state: {
+                    titre: s.titre,
+                    objectifs: s.objectifs,
+                    competences_cibles: s.competences_cibles,
+                    duree_minutes: s.duree_minutes,
+                    niveau_cible: s.niveau_cible,
+                    exercices_suggeres: s.exercices_suggeres,
+                    source: "import",
+                    groupId,
+                  },
+                })
+              }
+            >
               <CardContent className="py-4 px-5">
                 <div className="flex items-start gap-3">
                   <div className="flex items-center justify-center h-8 w-8 rounded-full bg-primary/10 text-primary text-sm font-bold shrink-0 mt-0.5">
@@ -254,6 +271,10 @@ const ImportProgramme = () => {
                       <span className="font-semibold">{s.titre}</span>
                       <Badge variant="outline" className="text-xs">
                         {s.niveau_cible}
+                      </Badge>
+                      <Badge variant="secondary" className="text-[10px] gap-1">
+                        <Sparkles className="h-3 w-3" />
+                        Cliquez pour générer
                       </Badge>
                     </div>
                     <p className="text-sm text-muted-foreground">{s.objectifs}</p>
