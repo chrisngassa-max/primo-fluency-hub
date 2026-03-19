@@ -229,7 +229,7 @@ const ParcoursDetail = () => {
       qc.invalidateQueries({ queryKey: ["parcours-seances", parcoursId] });
       qc.invalidateQueries({ queryKey: ["parcours-detail", parcoursId] });
 
-      toast.success("Parcours adapté !", { description: adaptationResult.message_formateur });
+      toast.success("Plan adapté !", { description: adaptationResult.message_formateur });
       setShowAdaptResult(false);
       setAdaptationResult(null);
     } catch (e: any) {
@@ -270,7 +270,7 @@ const ParcoursDetail = () => {
       <Card>
         <CardContent className="py-4 px-5">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium">Progression du parcours</span>
+            <span className="text-sm font-medium">Progression du plan</span>
             <span className="text-sm text-muted-foreground">{completedSeances.length} / {allSeances.length} séances</span>
           </div>
           <Progress value={progressPercent} className="h-3" />
@@ -292,7 +292,7 @@ const ParcoursDetail = () => {
         <Card className="border-primary/30 bg-primary/5">
           <CardContent className="py-8 text-center">
             <Loader2 className="h-8 w-8 mx-auto animate-spin text-primary mb-3" />
-            <p className="font-medium">L'IA adapte votre parcours...</p>
+            <p className="font-medium">L'IA adapte votre plan de formation...</p>
             <p className="text-sm text-muted-foreground mt-1">Analyse des retards et recalcul de la progression</p>
           </CardContent>
         </Card>

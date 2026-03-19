@@ -160,7 +160,7 @@ const ParcoursPage = () => {
       if (sErr) throw sErr;
 
       qc.invalidateQueries({ queryKey: ["formateur-parcours"] });
-      toast.success(isTemplate ? "Modèle sauvegardé !" : "Parcours créé !");
+      toast.success(isTemplate ? "Modèle sauvegardé !" : "Plan de formation créé !");
       resetForm();
     } catch (e: any) {
       console.error(e);
@@ -178,7 +178,7 @@ const ParcoursPage = () => {
         .select("*")
         .eq("id", parcoursId)
         .single();
-      if (!original) throw new Error("Parcours introuvable");
+      if (!original) throw new Error("Plan introuvable");
 
       const { data: seances } = await supabase
         .from("parcours_seances")
@@ -220,7 +220,7 @@ const ParcoursPage = () => {
       }
 
       qc.invalidateQueries({ queryKey: ["formateur-parcours"] });
-      toast.success("Parcours dupliqué !");
+      toast.success("Plan dupliqué !");
     } catch (e: any) {
       toast.error("Erreur", { description: e.message });
     }
@@ -231,7 +231,7 @@ const ParcoursPage = () => {
       const { error } = await supabase.from("parcours").delete().eq("id", parcoursId);
       if (error) throw error;
       qc.invalidateQueries({ queryKey: ["formateur-parcours"] });
-      toast.success("Parcours supprimé.");
+      toast.success("Plan supprimé.");
     } catch (e: any) {
       toast.error("Erreur", { description: e.message });
     }
@@ -269,12 +269,12 @@ const ParcoursPage = () => {
             Plans de formation
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Créez et gérez vos parcours pédagogiques adaptatifs
+            Créez et gérez vos plans de formation adaptatifs
           </p>
         </div>
         <Button onClick={() => setShowForm(true)} disabled={showForm}>
           <Plus className="h-4 w-4 mr-2" />
-          Nouveau parcours
+          Nouveau plan
         </Button>
       </div>
 
@@ -282,7 +282,7 @@ const ParcoursPage = () => {
       {showForm && (
         <Card className="border-primary/20">
           <CardHeader>
-            <CardTitle className="text-lg">Créer un parcours</CardTitle>
+            <CardTitle className="text-lg">Créer un plan de formation</CardTitle>
             <CardDescription>
               Définissez le cadre global, puis laissez l'IA découper la progression
             </CardDescription>
@@ -290,7 +290,7 @@ const ParcoursPage = () => {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Titre du parcours</Label>
+                <Label>Titre du plan</Label>
                 <Input value={titre} onChange={(e) => setTitre(e.target.value)} placeholder="Ex: Préparation TCF A1 - Groupe Mars 2026" />
               </div>
               <div className="space-y-2">
@@ -422,7 +422,7 @@ const ParcoursPage = () => {
 
             <Button onClick={handleSave} disabled={saving} className="w-full mt-4" size="lg">
               {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
-              {isTemplate ? "Sauvegarder le modèle" : "Créer le parcours"}
+              {isTemplate ? "Sauvegarder le modèle" : "Créer le plan de formation"}
             </Button>
           </CardContent>
         </Card>
@@ -438,7 +438,7 @@ const ParcoursPage = () => {
         <Card className="border-dashed">
           <CardContent className="py-12 text-center">
             <GraduationCap className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
-            <p className="text-muted-foreground">Aucun parcours créé</p>
+            <p className="text-muted-foreground">Aucun plan de formation créé</p>
             <p className="text-xs text-muted-foreground mt-1">
               Créez votre premier plan de formation adaptatif
             </p>
