@@ -151,22 +151,22 @@ function DevoirCard({ devoir, onOpen }: { devoir: any; onOpen: () => void }) {
           </div>
           <div className="flex-1 min-w-0 space-y-0.5">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-semibold text-sm truncate">{ex?.titre || "Exercice"}</span>
+              <span className="font-semibold truncate">{ex?.titre || "Exercice"}</span>
               {isUrgent && !isDone && (
-                <Badge variant="destructive" className="text-[10px]">Remédiation</Badge>
+                <Badge variant="destructive" className="text-xs">Remédiation</Badge>
               )}
               {!isUrgent && !isDone && (
-                <Badge variant="secondary" className="text-[10px] border-orange-500/30 text-orange-600">Consolidation</Badge>
+                <Badge variant="secondary" className="text-xs border-orange-500/30 text-orange-600">Consolidation</Badge>
               )}
               {isDone && (
-                <Badge variant="outline" className="text-[10px] border-green-500/30 text-green-600">Terminé</Badge>
+                <Badge variant="outline" className="text-xs border-green-500/30 text-green-600">Terminé</Badge>
               )}
               {isExpired && (
-                <Badge variant="destructive" className="text-[10px]">Expiré</Badge>
+                <Badge variant="destructive" className="text-xs">Expiré</Badge>
               )}
             </div>
-            <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
-              <Badge variant="outline" className="text-[10px]"><CompetenceLabel code={ex?.competence} /></Badge>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Badge variant="outline" className="text-xs"><CompetenceLabel code={ex?.competence} /></Badge>
               {!isDone && !isExpired && (
                 <span className="flex items-center gap-1">
                   <Clock className="h-3 w-3" />
