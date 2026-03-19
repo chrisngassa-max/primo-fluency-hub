@@ -13,6 +13,7 @@ import EleveOnboarding, { useShowOnboarding } from "@/components/EleveOnboarding
 
 const EleveDashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [showOnboarding, dismissOnboarding] = useShowOnboarding();
 
   // Fetch active devoirs for current student
