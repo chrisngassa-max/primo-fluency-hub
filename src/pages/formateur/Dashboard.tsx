@@ -1,11 +1,15 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users, GraduationCap, Calendar, Bell, Clock, TrendingUp, CheckCircle2, Pause, ArrowUpCircle, Play, Printer, Eye, UserPlus, AlertTriangle, Send, Gamepad2, BookOpen, ChevronRight, Rocket } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { Progress } from "@/components/ui/progress";
+import { Users, GraduationCap, Calendar, Bell, Clock, TrendingUp, CheckCircle2, Pause, ArrowUpCircle, Play, Printer, Eye, UserPlus, AlertTriangle, Send, Gamepad2, BookOpen, ChevronRight, Rocket, ClipboardCheck, ListChecks, FileCheck } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
@@ -41,12 +45,21 @@ const formatLabels: Record<string, string> = {
   production_orale: "Production orale",
 };
 
+// Track exercise completion & test inclusion state
+interface ExerciseTrackingState {
+  isCompleted: boolean;
+  isIncludedInTest: boolean;
+}
+
 const FormateurDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const qc = useQueryClient();
   const [showNextPreview, setShowNextPreview] = useState(false);
   const [sending, setSending] = useState(false);
+  const [exerciseTracking, setExerciseTracking] = useState<Record<string, ExerciseTrackingState>>({});
+  const [selectedExerciseId, setSelectedExerciseId] = useState<string | null>(null);
+  const [sessionSubTab, setSessionSubTab] = useState<"exercices" | "test-validation">("exercices");
 
   // ─── KPI queries ───
   const { data: groupCount = 0, isLoading: loadingGroups } = useQuery({
@@ -319,6 +332,72 @@ ${sessionExercises.map((ex: any, i: number) => `
     printWindow.print();
   };
 
+  // ─── Exercise tracking helpers ───
+  const getTracking = (id: string): ExerciseTrackingState => exerciseTracking[id] || { isCompleted: false, isIncludedInTest: false };
+
+  const toggleCompleted = (id: string, checked: boolean) => {
+    setExerciseTracking((prev) => ({
+      ...prev,
+      [id]: { ...getTracking(id), isCompleted: checked, ...(checked ? {} : { isIncludedInTest: false }) },
+    }));
+  };
+
+  const toggleIncludedInTest = (id: string, checked: boolean) => {
+    setExerciseTracking((prev) => ({
+      ...prev,
+      [id]: { ...getTracking(id), isIncludedInTest: checked },
+    }));
+  };
+
+  const completedCount = sessionExercises.filter((e: any) => getTracking(e.sessionExerciceId).isCompleted).length;
+
+  const testExercises = useMemo(() =>
+    sessionExercises.filter((e: any) => {
+      const t = getTracking(e.sessionExerciceId);
+      return t.isCompleted && t.isIncludedInTest;
+    }),
+    [sessionExercises, exerciseTracking]
+  );
+
+  const selectedExercise = useMemo(() =>
+    selectedExerciseId ? sessionExercises.find((e: any) => e.sessionExerciceId === selectedExerciseId) : null,
+    [selectedExerciseId, sessionExercises]
+  );
+
+  const handlePrintTest = () => {
+    if (testExercises.length === 0) {
+      toast.error("Aucun exercice dans le test.");
+      return;
+    }
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+
+    const renderItems = (items: any[]) => items.map((item: any, j: number) => {
+      const optionsHtml = item.options?.length
+        ? '<div class="options">' + item.options.map((o: string) => '<div class="option">☐ ' + o + '</div>').join("") + '</div>'
+        : '<div class="write-zone"></div>';
+      return '<div class="item"><strong>' + (j + 1) + '.</strong> ' + item.question + optionsHtml + '</div>';
+    }).join("");
+
+    const exercisesHtml = testExercises.map((ex: any, i: number) =>
+      '<div class="exercise"><h2>' + (i + 1) + '. ' + ex.titre + '</h2>' +
+      '<span class="badge">' + ex.competence + '</span>' +
+      '<span class="badge">' + (formatLabels[ex.format] || ex.format) + '</span>' +
+      '<p class="consigne">' + ex.consigne + '</p>' +
+      renderItems(ex.contenu?.items || []) + '</div>'
+    ).join("");
+
+    const html = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Test de validation</title>' +
+      '<style>body{font-family:Arial,sans-serif;margin:2cm;font-size:16px;color:#333}h1{font-size:22px;border-bottom:2px solid #333;padding-bottom:8px}.header-info{color:#666;font-size:13px;margin-bottom:20px}.exercise{page-break-inside:avoid;margin-bottom:28px;border:1px solid #ddd;padding:18px;border-radius:8px}.exercise h2{font-size:18px;margin:0 0 6px 0}.badge{display:inline-block;background:#eee;padding:2px 8px;border-radius:4px;font-size:12px;margin-right:4px}.consigne{font-style:italic;margin:10px 0;font-size:15px}.item{margin:10px 0 10px 16px}.options{margin-left:16px}.option{margin:4px 0;font-size:15px}.write-zone{border:1px dashed #ccc;min-height:80px;margin-top:10px;border-radius:4px}.nom-zone{border-bottom:1px solid #333;width:200px;display:inline-block;margin-left:8px}@media print{body{margin:1cm}}</style></head><body>' +
+      '<h1>Test de validation — ' + (nextSession?.titre || "Séance") + '</h1>' +
+      '<p class="header-info">Nom : <span class="nom-zone">&nbsp;</span> &nbsp;&nbsp; Date : ' + format(new Date(), "d MMMM yyyy", { locale: fr }) + ' &nbsp;&nbsp; Niveau : ' + (nextSession?.niveau_cible || "") + '</p>' +
+      exercisesHtml + '</body></html>';
+
+    printWindow.document.write(html);
+    printWindow.document.close();
+    printWindow.print();
+  };
+
   const isLoading = loadingGroups || loadingEleves || loadingSessions || loadingAlertes;
 
   const ALERT_TYPE_LABELS: Record<string, string> = {
@@ -493,8 +572,6 @@ ${sessionExercises.map((ex: any, i: number) => `
                       <Badge variant="secondary">{nextSession.duree_minutes} min</Badge>
                     </div>
                   </div>
-
-                  {/* Action buttons */}
                   <div className="flex items-center gap-3 mt-4 flex-wrap">
                     <Button size="lg" className="gap-2" onClick={() => navigate(`/formateur/seances/${nextSession.id}/pilote`)}>
                       <Play className="h-4 w-4" /> Lancer la séance
@@ -510,96 +587,188 @@ ${sessionExercises.map((ex: any, i: number) => `
                 </CardContent>
               </Card>
 
-              {/* Exercises + Ateliers list */}
-              {loadingExercises ? (
-                <div className="space-y-3">
-                  {[1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-28 w-full" />)}
-                </div>
-              ) : sessionExercises.length === 0 ? (
-                <Card className="border-dashed">
-                  <CardContent className="py-10 text-center">
-                    <BookOpen className="h-10 w-10 text-muted-foreground/40 mx-auto mb-3" />
-                    <p className="text-muted-foreground font-medium">Aucun exercice prévu</p>
-                    <p className="text-sm text-muted-foreground/70 mt-1">
-                      Ajoutez des exercices depuis un plan de formation ou le constructeur de séance.
-                    </p>
-                    <div className="flex gap-2 justify-center mt-4">
-                      <Button variant="outline" onClick={() => navigate("/formateur/import-programme")}>Importer un programme</Button>
-                      <Button variant="outline" onClick={() => navigate("/formateur/parcours")}>Plans de formation</Button>
+              {/* Progress bar */}
+              {sessionExercises.length > 0 && (
+                <Card>
+                  <CardContent className="py-4 px-5">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+                        <ClipboardCheck className="h-4 w-4 text-primary" />
+                        Progression de la séance
+                      </div>
+                      <span className="text-sm font-bold text-primary">
+                        {completedCount}/{sessionExercises.length} terminé{completedCount !== 1 ? "s" : ""}
+                      </span>
                     </div>
+                    <Progress value={(completedCount / sessionExercises.length) * 100} className="h-3" />
                   </CardContent>
                 </Card>
-              ) : (
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-                      {sessionExercises.length} exercice{sessionExercises.length !== 1 ? "s" : ""} + ateliers
-                    </h3>
-                    <Badge variant="outline" className="text-xs">
-                      {sessionExercises.filter((e: any) => e.statut === "traite_en_classe").length} envoyé(s)
-                    </Badge>
-                  </div>
-
-                  {sessionExercises.map((ex: any, i: number) => {
-                    const guide = ex.animation_guide as any;
-                    const isSent = ex.statut === "traite_en_classe";
-                    return (
-                      <Card key={ex.sessionExerciceId} className={isSent ? "border-green-500/30 bg-green-50/20 dark:bg-green-950/10" : ""}>
-                        <CardContent className="py-4 px-5">
-                          <div className="space-y-3">
-                            {/* Exercise part (visible to students) */}
-                            <div className="space-y-1.5">
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <BookOpen className="h-4 w-4 text-primary shrink-0" />
-                                <span className="font-semibold text-sm">{i + 1}. {ex.titre}</span>
-                                <Badge className={`text-[10px] ${competenceColors[ex.competence] || ""}`}>{ex.competence}</Badge>
-                                <Badge variant="outline" className="text-[10px]">{formatLabels[ex.format] || ex.format}</Badge>
-                                {isSent && <Badge className="text-[10px] bg-green-600 text-white">✓ Envoyé</Badge>}
-                              </div>
-                              <p className="text-sm text-muted-foreground italic pl-6">{ex.consigne}</p>
-                              <p className="text-xs text-muted-foreground pl-6">{ex.contenu?.items?.length || 0} item(s) · Difficulté {ex.difficulte}/10</p>
-                            </div>
-
-                            {/* Workshop part (formateur only) */}
-                            {guide && (
-                              <div className="border-t pt-3 ml-6 space-y-1.5">
-                                <div className="flex items-center gap-2 text-sm font-medium text-orange-600 dark:text-orange-400">
-                                  <Gamepad2 className="h-4 w-4" />
-                                  Atelier ludique — formateur uniquement
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
-                                  {guide.scenario && (
-                                    <div className="p-2 rounded bg-muted/50">
-                                      <span className="font-semibold">🎭 Scénario :</span> {guide.scenario}
-                                    </div>
-                                  )}
-                                  {guide.jeu && (
-                                    <div className="p-2 rounded bg-muted/50">
-                                      <span className="font-semibold">🎲 Jeu :</span> {guide.jeu}
-                                    </div>
-                                  )}
-                                  {guide.materiel && (
-                                    <div className="p-2 rounded bg-muted/50">
-                                      <span className="font-semibold">📦 Matériel :</span> {guide.materiel}
-                                    </div>
-                                  )}
-                                  {guide.objectif_oral && (
-                                    <div className="p-2 rounded bg-muted/50">
-                                      <span className="font-semibold">🗣️ Objectif oral :</span> {guide.objectif_oral}
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
-                </div>
               )}
 
-              {/* Next session preview link */}
+              {/* Sub-tabs: Exercices | Test de validation */}
+              <Tabs value={sessionSubTab} onValueChange={(v) => setSessionSubTab(v as any)}>
+                <TabsList className="w-full justify-start">
+                  <TabsTrigger value="exercices" className="gap-2">
+                    <ListChecks className="h-4 w-4" />
+                    Exercices
+                  </TabsTrigger>
+                  <TabsTrigger value="test-validation" className="gap-2">
+                    <FileCheck className="h-4 w-4" />
+                    Test de validation
+                    {testExercises.length > 0 && (
+                      <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-[10px]">{testExercises.length}</Badge>
+                    )}
+                  </TabsTrigger>
+                </TabsList>
+
+                {/* Sub-tab: Exercices */}
+                <TabsContent value="exercices">
+                  {loadingExercises ? (
+                    <div className="space-y-3">
+                      {[1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-28 w-full" />)}
+                    </div>
+                  ) : sessionExercises.length === 0 ? (
+                    <Card className="border-dashed">
+                      <CardContent className="py-10 text-center">
+                        <BookOpen className="h-10 w-10 text-muted-foreground/40 mx-auto mb-3" />
+                        <p className="text-muted-foreground font-medium">Aucun exercice prévu</p>
+                        <p className="text-sm text-muted-foreground/70 mt-1">Ajoutez des exercices depuis un plan de formation ou le constructeur de séance.</p>
+                        <div className="flex gap-2 justify-center mt-4">
+                          <Button variant="outline" onClick={() => navigate("/formateur/import-programme")}>Importer un programme</Button>
+                          <Button variant="outline" onClick={() => navigate("/formateur/parcours")}>Plans de formation</Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ) : (
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+                          {sessionExercises.length} exercice{sessionExercises.length !== 1 ? "s" : ""} + ateliers
+                        </h3>
+                        <Badge variant="outline" className="text-xs">
+                          {sessionExercises.filter((e: any) => e.statut === "traite_en_classe").length} envoyé(s)
+                        </Badge>
+                      </div>
+
+                      {sessionExercises.map((ex: any, i: number) => {
+                        const guide = ex.animation_guide as any;
+                        const isSent = ex.statut === "traite_en_classe";
+                        const tracking = getTracking(ex.sessionExerciceId);
+                        return (
+                          <Card key={ex.sessionExerciceId} className={`transition-all ${tracking.isCompleted ? "border-green-500/40 bg-green-50/30 dark:bg-green-950/15" : isSent ? "border-green-500/30 bg-green-50/20 dark:bg-green-950/10" : ""}`}>
+                            <CardContent className="py-4 px-5">
+                              <div className="space-y-3">
+                                <div className="flex items-start gap-3">
+                                  <Checkbox
+                                    checked={tracking.isCompleted}
+                                    onCheckedChange={(checked) => toggleCompleted(ex.sessionExerciceId, !!checked)}
+                                    className="mt-1 h-5 w-5"
+                                  />
+                                  <div className="flex-1 cursor-pointer hover:bg-muted/30 rounded-lg p-1 -m-1 transition-colors" onClick={() => setSelectedExerciseId(ex.sessionExerciceId)}>
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                      <BookOpen className="h-4 w-4 text-primary shrink-0" />
+                                      <span className={`font-semibold text-sm ${tracking.isCompleted ? "line-through text-muted-foreground" : ""}`}>{i + 1}. {ex.titre}</span>
+                                      <Badge className={`text-[10px] ${competenceColors[ex.competence] || ""}`}>{ex.competence}</Badge>
+                                      <Badge variant="outline" className="text-[10px]">{formatLabels[ex.format] || ex.format}</Badge>
+                                      {tracking.isCompleted && <Badge className="text-[10px] bg-green-600 text-white">✓ Fait</Badge>}
+                                      {tracking.isIncludedInTest && <Badge variant="secondary" className="text-[10px]">📝 Test</Badge>}
+                                      {isSent && !tracking.isCompleted && <Badge className="text-[10px] bg-green-600 text-white">✓ Envoyé</Badge>}
+                                    </div>
+                                    <p className="text-sm text-muted-foreground italic mt-1">{ex.consigne}</p>
+                                    <p className="text-xs text-muted-foreground mt-0.5">{ex.contenu?.items?.length || 0} item(s) · Difficulté {ex.difficulte}/10</p>
+                                  </div>
+                                </div>
+
+                                {guide && (
+                                  <div className="border-t pt-3 ml-8 space-y-1.5">
+                                    <div className="flex items-center gap-2 text-sm font-medium text-orange-600 dark:text-orange-400">
+                                      <Gamepad2 className="h-4 w-4" />
+                                      Atelier ludique — formateur uniquement
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                                      {guide.scenario && <div className="p-2 rounded bg-muted/50"><span className="font-semibold">🎭 Scénario :</span> {guide.scenario}</div>}
+                                      {guide.jeu && <div className="p-2 rounded bg-muted/50"><span className="font-semibold">🎲 Jeu :</span> {guide.jeu}</div>}
+                                      {guide.materiel && <div className="p-2 rounded bg-muted/50"><span className="font-semibold">📦 Matériel :</span> {guide.materiel}</div>}
+                                      {guide.objectif_oral && <div className="p-2 rounded bg-muted/50"><span className="font-semibold">🗣️ Objectif oral :</span> {guide.objectif_oral}</div>}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </CardContent>
+                          </Card>
+                        );
+                      })}
+                    </div>
+                  )}
+                </TabsContent>
+
+                {/* Sub-tab: Test de validation */}
+                <TabsContent value="test-validation">
+                  <Card>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-base flex items-center gap-2">
+                        <FileCheck className="h-5 w-5 text-primary" />
+                        Test de validation de fin de séance
+                      </CardTitle>
+                      <CardDescription>
+                        Questions issues des exercices marqués "Fait" avec le switch "Inclure dans le test" activé.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      {testExercises.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center py-10 text-center">
+                          <ClipboardCheck className="h-10 w-10 text-muted-foreground/40 mb-3" />
+                          <p className="text-muted-foreground font-medium">Aucun exercice sélectionné pour le test</p>
+                          <p className="text-sm text-muted-foreground/70 mt-1">Cochez des exercices comme "Fait" puis activez "Inclure dans le test" dans le panneau de détail.</p>
+                          <Button variant="outline" size="sm" className="mt-4" onClick={() => setSessionSubTab("exercices")}>Retour aux exercices</Button>
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-between">
+                            <Badge variant="secondary" className="text-xs">
+                              {testExercises.reduce((acc: number, ex: any) => acc + (ex.contenu?.items?.length || 0), 0)} question(s)
+                            </Badge>
+                            <Button variant="outline" size="sm" className="gap-2" onClick={handlePrintTest}>
+                              <Printer className="h-4 w-4" /> Imprimer le test
+                            </Button>
+                          </div>
+                          {testExercises.map((ex: any, i: number) => (
+                            <Card key={ex.sessionExerciceId} className="border-primary/20">
+                              <CardContent className="py-4 px-5">
+                                <div className="flex items-center gap-2 mb-3 flex-wrap">
+                                  <span className="font-semibold text-sm">{i + 1}. {ex.titre}</span>
+                                  <Badge className={`text-[10px] ${competenceColors[ex.competence] || ""}`}>{ex.competence}</Badge>
+                                  <Badge variant="outline" className="text-[10px]">{formatLabels[ex.format] || ex.format}</Badge>
+                                </div>
+                                <p className="text-sm text-muted-foreground italic mb-3">{ex.consigne}</p>
+                                <div className="space-y-2">
+                                  {(ex.contenu?.items || []).map((item: any, j: number) => (
+                                    <div key={j} className="p-3 rounded-lg bg-muted/40 border">
+                                      <p className="text-sm font-medium mb-1">{j + 1}. {item.question}</p>
+                                      {item.options?.length > 0 && (
+                                        <div className="ml-4 space-y-1 mt-2">
+                                          {item.options.map((opt: string, k: number) => (
+                                            <div key={k} className="flex items-center gap-2 text-sm text-muted-foreground">
+                                              <span className="h-5 w-5 rounded border flex items-center justify-center text-xs shrink-0">{String.fromCharCode(65 + k)}</span>
+                                              {opt}
+                                            </div>
+                                          ))}
+                                        </div>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              </Tabs>
+
+              {/* Next session preview */}
               {followingSession && (
                 <div className="flex justify-end pt-2">
                   {!showNextPreview ? (
@@ -615,11 +784,8 @@ ${sessionExercises.map((ex: any, i: number) => `
                             <p className="text-xs text-muted-foreground">
                               {format(new Date(followingSession.date_seance), "EEEE d MMMM · HH:mm", { locale: fr })} · {followingSession.group_nom} · {followingSession.niveau_cible}
                             </p>
-                            {followingSession.objectifs && <p className="text-xs text-muted-foreground mt-1">{followingSession.objectifs}</p>}
                           </div>
-                          <Button variant="outline" size="sm" onClick={() => navigate(`/formateur/seances/${followingSession.id}/pilote`)}>
-                            Ouvrir
-                          </Button>
+                          <Button variant="outline" size="sm" onClick={() => navigate(`/formateur/seances/${followingSession.id}/pilote`)}>Ouvrir</Button>
                         </div>
                       </CardContent>
                     </Card>
@@ -628,6 +794,86 @@ ${sessionExercises.map((ex: any, i: number) => `
               )}
             </div>
           )}
+
+          {/* Exercise Detail Sheet */}
+          <Sheet open={!!selectedExerciseId} onOpenChange={(open) => !open && setSelectedExerciseId(null)}>
+            <SheetContent className="sm:max-w-lg overflow-y-auto">
+              {selectedExercise && (() => {
+                const tracking = getTracking(selectedExercise.sessionExerciceId);
+                const guide = selectedExercise.animation_guide as any;
+                return (
+                  <>
+                    <SheetHeader>
+                      <SheetTitle className="text-lg">{selectedExercise.titre}</SheetTitle>
+                      <SheetDescription>
+                        <span className="flex items-center gap-2 flex-wrap mt-1">
+                          <Badge className={`text-[10px] ${competenceColors[selectedExercise.competence] || ""}`}>{selectedExercise.competence}</Badge>
+                          <Badge variant="outline" className="text-[10px]">{formatLabels[selectedExercise.format] || selectedExercise.format}</Badge>
+                          <Badge variant="secondary" className="text-[10px]">Difficulté {selectedExercise.difficulte}/10</Badge>
+                        </span>
+                      </SheetDescription>
+                    </SheetHeader>
+                    <div className="space-y-6 mt-6">
+                      <div className="space-y-4 p-4 rounded-lg border bg-muted/20">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <CheckCircle2 className="h-4 w-4 text-green-600" />
+                            <span className="text-sm font-medium">Marquer comme fait</span>
+                          </div>
+                          <Checkbox checked={tracking.isCompleted} onCheckedChange={(checked) => toggleCompleted(selectedExercise.sessionExerciceId, !!checked)} className="h-5 w-5" />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <FileCheck className="h-4 w-4 text-primary" />
+                            <span className="text-sm font-medium">Inclure dans le test de validation</span>
+                          </div>
+                          <Switch checked={tracking.isIncludedInTest} onCheckedChange={(checked) => toggleIncludedInTest(selectedExercise.sessionExerciceId, checked)} />
+                        </div>
+                      </div>
+
+                      <div>
+                        <h4 className="text-sm font-semibold mb-2">Consigne</h4>
+                        <p className="text-sm text-muted-foreground italic">{selectedExercise.consigne}</p>
+                      </div>
+
+                      <div>
+                        <h4 className="text-sm font-semibold mb-3">Questions ({(selectedExercise.contenu as any)?.items?.length || 0})</h4>
+                        <div className="space-y-3">
+                          {((selectedExercise.contenu as any)?.items || []).map((item: any, j: number) => (
+                            <div key={j} className="p-3 rounded-lg bg-muted/30 border">
+                              <p className="text-sm font-medium mb-1.5">{j + 1}. {item.question}</p>
+                              {item.options?.length > 0 && (
+                                <div className="ml-3 space-y-1">
+                                  {item.options.map((opt: string, k: number) => (
+                                    <div key={k} className="flex items-center gap-2 text-sm text-muted-foreground">
+                                      <span className="h-5 w-5 rounded border flex items-center justify-center text-xs bg-background shrink-0">{String.fromCharCode(65 + k)}</span>
+                                      {opt}
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {guide && (
+                        <div className="space-y-2">
+                          <h4 className="text-sm font-semibold flex items-center gap-2"><Gamepad2 className="h-4 w-4 text-orange-500" /> Atelier ludique</h4>
+                          <div className="grid gap-2 text-xs">
+                            {guide.scenario && <div className="p-2 rounded bg-muted/50"><span className="font-semibold">🎭 Scénario :</span> {guide.scenario}</div>}
+                            {guide.jeu && <div className="p-2 rounded bg-muted/50"><span className="font-semibold">🎲 Jeu :</span> {guide.jeu}</div>}
+                            {guide.materiel && <div className="p-2 rounded bg-muted/50"><span className="font-semibold">📦 Matériel :</span> {guide.materiel}</div>}
+                            {guide.objectif_oral && <div className="p-2 rounded bg-muted/50"><span className="font-semibold">🗣️ Objectif oral :</span> {guide.objectif_oral}</div>}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                );
+              })()}
+            </SheetContent>
+          </Sheet>
         </TabsContent>
 
         {/* ═══ Tab 2: Mes Groupes ═══ */}
@@ -742,3 +988,4 @@ ${sessionExercises.map((ex: any, i: number) => `
 };
 
 export default FormateurDashboard;
+
