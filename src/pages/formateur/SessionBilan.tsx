@@ -259,9 +259,22 @@ const SessionBilan = () => {
     }
   };
 
+  const handleSendNowClick = async () => {
+    // Get member count for confirmation
+    if (session?.group_id) {
+      const { count } = await supabase
+        .from("group_members")
+        .select("*", { count: "exact", head: true })
+        .eq("group_id", session.group_id);
+      setGroupMemberCount(count || 0);
+    }
+    setConfirmSendOpen(true);
+  };
+
   const handleSendTest = async (sendNow: boolean) => {
     if (!generatedTest || !session) return;
     setSendingTest(true);
+    setConfirmSendOpen(false);
     try {
       const statut = sendNow ? "envoye" : "pret";
       const { error } = await supabase.from("bilan_tests" as any).insert({
@@ -275,15 +288,14 @@ const SessionBilan = () => {
       if (error) throw error;
 
       if (sendNow) {
-        // Notify students
         if (session.group_id) {
           const { data: members } = await supabase
             .from("group_members").select("eleve_id").eq("group_id", session.group_id);
           if (members && members.length > 0) {
             const notifs = members.map((m) => ({
               user_id: m.eleve_id,
-              titre: "Test de bilan disponible",
-              message: `Un test de bilan pour la séance "${session.titre}" est prêt. Passez-le pour valider vos acquis.`,
+              titre: "Évaluation de séance disponible",
+              message: `Une évaluation pour la séance "${session.titre}" est prête. Passez-la pour valider vos acquis.`,
               link: "/eleve",
             }));
             await supabase.from("notifications").insert(notifs);
@@ -296,7 +308,6 @@ const SessionBilan = () => {
 
       setShowTestModal(false);
 
-      // Continue with AI adaptation
       if (nextSession) await triggerAdaptation();
       else navigate("/formateur/seances");
     } catch (e: any) {
@@ -308,6 +319,17 @@ const SessionBilan = () => {
 
   const handleSkipTest = async () => {
     setShowTestModal(false);
+    // Archive the test
+    if (generatedTest && session) {
+      await supabase.from("bilan_tests" as any).insert({
+        session_id: id!,
+        formateur_id: user!.id,
+        statut: "archive",
+        contenu: generatedTest.questions || [],
+        competences_couvertes: generatedTest.competences_couvertes || [],
+        nb_questions: generatedTest.questions?.length || 0,
+      }).then(() => {});
+    }
     if (nextSession) await triggerAdaptation();
     else navigate("/formateur/seances");
   };
