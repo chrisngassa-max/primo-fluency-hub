@@ -7,9 +7,11 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BookOpen, ClipboardList, TrendingUp, AlertCircle } from "lucide-react";
 import CompetenceLabel from "@/components/CompetenceLabel";
+import EleveOnboarding, { useShowOnboarding } from "@/components/EleveOnboarding";
 
 const EleveDashboard = () => {
   const { user } = useAuth();
+  const [showOnboarding, dismissOnboarding] = useShowOnboarding();
 
   // Fetch active devoirs for current student
   const { data: devoirs, isLoading: devoirsLoading } = useQuery({
