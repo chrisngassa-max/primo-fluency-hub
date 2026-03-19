@@ -282,7 +282,7 @@ const ParcoursPage = () => {
       {showForm && (
         <Card className="border-primary/20">
           <CardHeader>
-            <CardTitle className="text-lg">Créer un parcours</CardTitle>
+            <CardTitle className="text-lg">Créer un plan de formation</CardTitle>
             <CardDescription>
               Définissez le cadre global, puis laissez l'IA découper la progression
             </CardDescription>
