@@ -26,8 +26,9 @@ import {
 import { toast } from "sonner";
 import {
   Plus, Users, Trash2, Edit, UserPlus, UserMinus, Loader2,
-  Copy, Check, Eye, ChevronRight,
+  Copy, Check, Eye, ChevronRight, Ticket, Mail,
 } from "lucide-react";
+import InviteStudentDialog from "@/components/InviteStudentDialog";
 
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
 
