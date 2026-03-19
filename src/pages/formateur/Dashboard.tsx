@@ -62,6 +62,10 @@ const FormateurDashboard = () => {
   const [exerciseTracking, setExerciseTracking] = useState<Record<string, ExerciseTrackingState>>({});
   const [selectedExerciseId, setSelectedExerciseId] = useState<string | null>(null);
   const [sessionSubTab, setSessionSubTab] = useState<"exercices" | "test-validation">("exercices");
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedConsigne, setEditedConsigne] = useState("");
+  const [editedItems, setEditedItems] = useState<any[]>([]);
+  const [savingEdit, setSavingEdit] = useState(false);
 
   // ─── KPI queries ───
   const { data: groupCount = 0, isLoading: loadingGroups } = useQuery({
