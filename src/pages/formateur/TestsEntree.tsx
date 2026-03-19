@@ -386,40 +386,60 @@ function DiagnosticSousItems() {
         </CardContent>
       </Card>
 
-      {/* Summary Dashboard — Radar + Competence overview */}
+      {/* Radar de Trajectoire Multicouche */}
       <Card>
         <CardContent className="pt-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Radar Chart */}
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-6">
             <div>
-              <h3 className="text-base font-semibold flex items-center gap-2 mb-3">
-                <BarChart3 className="h-5 w-5 text-primary" /> Profil Radar — 5 compétences
-              </h3>
-              <ResponsiveContainer width="100%" height={280}>
-                <RadarChart data={radarData}>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-base font-semibold flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5 text-primary" /> Radar de Trajectoire
+                </h3>
+                <div className="flex items-center gap-5">
+                  <label className="flex items-center gap-2 text-sm cursor-pointer">
+                    <Switch checked={showExpected} onCheckedChange={setShowExpected} />
+                    <span className="text-muted-foreground">Attendu (Séance T)</span>
+                  </label>
+                  <label className="flex items-center gap-2 text-sm cursor-pointer">
+                    <Switch checked={showObjectif} onCheckedChange={setShowObjectif} />
+                    <span className="text-muted-foreground">Objectif TCF A1</span>
+                  </label>
+                </div>
+              </div>
+              <ResponsiveContainer width="100%" height={300}>
+                <RadarChart data={multiRadarData}>
                   <PolarGrid />
-                  <PolarAngleAxis dataKey="competence" tick={{ fontSize: 13 }} />
+                  <PolarAngleAxis dataKey="competence" tick={{ fontSize: 13, fill: "hsl(var(--foreground))" }} />
                   <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 11 }} />
-                  <Radar name="Score" dataKey="score" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.25} strokeWidth={2} />
+                  {showObjectif && (
+                    <Radar name="Objectif TCF A1" dataKey="objectif" stroke="hsl(0, 70%, 55%)" fill="none" strokeWidth={2} strokeDasharray="0" />
+                  )}
+                  {showExpected && (
+                    <Radar name="Attendu (T)" dataKey="attendu" stroke="hsl(30, 80%, 50%)" fill="none" strokeWidth={2} strokeDasharray="6 3" />
+                  )}
+                  <Radar name="Niveau actuel" dataKey="actuel" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.2} strokeWidth={2} />
                 </RadarChart>
               </ResponsiveContainer>
+              {/* Legend */}
+              <div className="flex items-center justify-center gap-6 mt-2 text-xs text-muted-foreground">
+                <span className="flex items-center gap-1.5"><span className="h-2.5 w-5 rounded-sm bg-primary inline-block opacity-60" /> Niveau actuel</span>
+                {showExpected && <span className="flex items-center gap-1.5"><span className="h-0.5 w-5 border-t-2 border-dashed inline-block" style={{ borderColor: "hsl(30,80%,50%)" }} /> Attendu (T)</span>}
+                {showObjectif && <span className="flex items-center gap-1.5"><span className="h-0.5 w-5 border-t-2 inline-block" style={{ borderColor: "hsl(0,70%,55%)" }} /> Objectif 100%</span>}
+              </div>
             </div>
 
-            {/* Competence summary bars */}
-            <div className="flex flex-col justify-center space-y-3">
-              <h3 className="text-base font-semibold mb-1">Synthèse par compétence</h3>
+            {/* Compact summary sidebar */}
+            <div className="flex flex-col justify-center space-y-3 min-w-[220px]">
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-1">Synthèse</h3>
               {COMPETENCES.map((comp) => {
                 const avg = compAverages[comp];
                 return (
                   <div key={comp} className="space-y-1">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">{COMP_LABELS[comp]}</span>
-                      <div className="flex items-center gap-2">
-                        <span className={`text-sm font-bold ${getScoreTextColor(avg)}`}>{avg}/100</span>
-                        <Badge variant="outline" className="text-xs">Niv. {scoreToDifficulty(avg)}</Badge>
-                      </div>
+                      <span className="text-sm font-medium">{comp}</span>
+                      <span className={`text-sm font-bold tabular-nums ${getScoreTextColor(avg)}`}>{avg}/100</span>
                     </div>
-                    <div className="h-2.5 rounded-full bg-muted overflow-hidden">
+                    <div className="h-2 rounded-full bg-muted overflow-hidden">
                       <div className={`h-full rounded-full transition-all ${getScoreColor(avg)}`} style={{ width: `${avg}%` }} />
                     </div>
                   </div>
@@ -430,12 +450,13 @@ function DiagnosticSousItems() {
         </CardContent>
       </Card>
 
-      {/* Accordion-based sub-items — all closed by default */}
+      {/* Accordion détail par compétence — fermés par défaut */}
       <Card>
         <CardContent className="pt-6">
           <Accordion type="multiple" className="w-full">
             {COMPETENCES.map((comp) => {
               const avg = compAverages[comp];
+              const trend = compTrends[comp];
               return (
                 <AccordionItem key={comp} value={comp}>
                   <AccordionTrigger className="hover:no-underline py-3">
@@ -443,6 +464,9 @@ function DiagnosticSousItems() {
                       <div className="flex items-center gap-3">
                         <div className={`h-3 w-3 rounded-full ${getScoreColor(avg)}`} />
                         <span className="font-semibold text-sm">{COMP_LABELS[comp]}</span>
+                        {trend === "up" && <TrendingUp className="h-4 w-4 text-emerald-500" />}
+                        {trend === "flat" && <TrendingFlat className="h-4 w-4 text-muted-foreground" />}
+                        {trend === "down" && <TrendingUp className="h-4 w-4 text-destructive rotate-180" />}
                       </div>
                       <div className="flex items-center gap-2">
                         <span className={`text-sm font-bold tabular-nums ${getScoreTextColor(avg)}`}>{avg}/100</span>
