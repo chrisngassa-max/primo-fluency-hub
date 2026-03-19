@@ -31,6 +31,7 @@ const EleveDashboard = () => {
 
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
+      {showOnboarding && <EleveOnboarding onComplete={dismissOnboarding} />}
       <div>
         <h1 className="text-2xl font-bold text-foreground">
           Bienvenue, {user?.user_metadata?.prenom || "Élève"} 👋
