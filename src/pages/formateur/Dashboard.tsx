@@ -371,40 +371,32 @@ ${sessionExercises.map((ex: any, i: number) => `
     }
     const printWindow = window.open("", "_blank");
     if (!printWindow) return;
-    const html = `<!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>Test de validation — ${nextSession?.titre || "Séance"}</title>
-<style>
-body { font-family: Arial, sans-serif; margin: 2cm; font-size: 16px; color: #333; }
-h1 { font-size: 22px; border-bottom: 2px solid #333; padding-bottom: 8px; }
-.header-info { color: #666; font-size: 13px; margin-bottom: 20px; }
-.exercise { page-break-inside: avoid; margin-bottom: 28px; border: 1px solid #ddd; padding: 18px; border-radius: 8px; }
-.exercise h2 { font-size: 18px; margin: 0 0 6px 0; }
-.badge { display: inline-block; background: #eee; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-right: 4px; }
-.consigne { font-style: italic; margin: 10px 0; font-size: 15px; }
-.item { margin: 10px 0 10px 16px; }
-.options { margin-left: 16px; }
-.option { margin: 4px 0; font-size: 15px; }
-.write-zone { border: 1px dashed #ccc; min-height: 80px; margin-top: 10px; border-radius: 4px; }
-.nom-zone { border-bottom: 1px solid #333; width: 200px; display: inline-block; margin-left: 8px; }
-@media print { body { margin: 1cm; } }
-</style></head><body>
-<h1>Test de validation — ${nextSession?.titre || "Séance"}</h1>
-<p class="header-info">Nom : <span class="nom-zone">&nbsp;</span> &nbsp;&nbsp; Date : ${format(new Date(), "d MMMM yyyy", { locale: fr })} &nbsp;&nbsp; Niveau : ${nextSession?.niveau_cible || ""}</p>
-${testExercises.map((ex: any, i: number) => `
-<div class="exercise">
-  <h2>${i + 1}. ${ex.titre}</h2>
-  <span class="badge">${ex.competence}</span>
-  <span class="badge">${formatLabels[ex.format] || ex.format}</span>
-  <p class="consigne">${ex.consigne}</p>
-  ${(ex.contenu?.items || []).map((item: any, j: number) => `
-    <div class="item">
-      <strong>${j + 1}.</strong> ${item.question}
-      ${item.options?.length
-        ? \`<div class="options">\${item.options.map((o: string) => \`<div class="option">☐ \${o}</div>\`).join("")}</div>\`
-        : '<div class="write-zone"></div>'}
-    </div>`).join("")}
-</div>`).join("")}
-</body></html>`;
+
+    const renderItems = (items: any[]) => items.map((item: any, j: number) => {
+      const optionsHtml = item.options?.length
+        ? '<div class="options">' + item.options.map((o: string) => '<div class="option">☐ ' + o + '</div>').join("") + '</div>'
+        : '<div class="write-zone"></div>';
+      return '<div class="item"><strong>' + (j + 1) + '.</strong> ' + item.question + optionsHtml + '</div>';
+    }).join("");
+
+    const exercisesHtml = testExercises.map((ex: any, i: number) =>
+      '<div class="exercise"><h2>' + (i + 1) + '. ' + ex.titre + '</h2>' +
+      '<span class="badge">' + ex.competence + '</span>' +
+      '<span class="badge">' + (formatLabels[ex.format] || ex.format) + '</span>' +
+      '<p class="consigne">' + ex.consigne + '</p>' +
+      renderItems(ex.contenu?.items || []) + '</div>'
+    ).join("");
+
+    const html = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Test de validation</title>' +
+      '<style>body{font-family:Arial,sans-serif;margin:2cm;font-size:16px;color:#333}h1{font-size:22px;border-bottom:2px solid #333;padding-bottom:8px}.header-info{color:#666;font-size:13px;margin-bottom:20px}.exercise{page-break-inside:avoid;margin-bottom:28px;border:1px solid #ddd;padding:18px;border-radius:8px}.exercise h2{font-size:18px;margin:0 0 6px 0}.badge{display:inline-block;background:#eee;padding:2px 8px;border-radius:4px;font-size:12px;margin-right:4px}.consigne{font-style:italic;margin:10px 0;font-size:15px}.item{margin:10px 0 10px 16px}.options{margin-left:16px}.option{margin:4px 0;font-size:15px}.write-zone{border:1px dashed #ccc;min-height:80px;margin-top:10px;border-radius:4px}.nom-zone{border-bottom:1px solid #333;width:200px;display:inline-block;margin-left:8px}@media print{body{margin:1cm}}</style></head><body>' +
+      '<h1>Test de validation — ' + (nextSession?.titre || "Séance") + '</h1>' +
+      '<p class="header-info">Nom : <span class="nom-zone">&nbsp;</span> &nbsp;&nbsp; Date : ' + format(new Date(), "d MMMM yyyy", { locale: fr }) + ' &nbsp;&nbsp; Niveau : ' + (nextSession?.niveau_cible || "") + '</p>' +
+      exercisesHtml + '</body></html>';
+
+    printWindow.document.write(html);
+    printWindow.document.close();
+    printWindow.print();
+  };
     printWindow.document.write(html);
     printWindow.document.close();
     printWindow.print();
