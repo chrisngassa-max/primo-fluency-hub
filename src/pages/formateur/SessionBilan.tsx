@@ -534,13 +534,40 @@ const SessionBilan = () => {
             <DialogTitle>Exercices non traités</DialogTitle>
             <DialogDescription>{uncheckedExercises.length} exercice(s) n'ont pas été traité(s).</DialogDescription>
           </DialogHeader>
-          <div className="space-y-2 py-4">
+          <div className="space-y-2 py-2">
             {uncheckedExercises.map((se, i) => (
               <div key={se.id} className="text-sm flex items-center gap-2">
                 <span className="text-muted-foreground">•</span>
                 <span>{(se as any).exercice?.titre || `Exercice ${i + 1}`}</span>
               </div>
             ))}
+          </div>
+          {/* Date picker for homework deadline */}
+          <div className="space-y-2 border-t pt-4">
+            <Label className="text-sm font-semibold flex items-center gap-2">
+              <CalendarIcon className="h-4 w-4" />Date limite de rendu
+            </Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !devoirDeadline && "text-muted-foreground")}>
+                  <CalendarIcon className="h-4 w-4 mr-2" />
+                  {format(effectiveDeadline, "EEEE d MMMM yyyy", { locale: fr })}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={effectiveDeadline}
+                  onSelect={(d) => d && setDevoirDeadline(d)}
+                  disabled={(date) => date < minDeadline}
+                  initialFocus
+                  className="p-3 pointer-events-auto"
+                />
+              </PopoverContent>
+            </Popover>
+            <p className="text-xs text-muted-foreground">
+              Par défaut : J+{defaultDeadlineDays} — modifiable dans Paramètres
+            </p>
           </div>
           <DialogFooter className="flex-col sm:flex-row gap-2">
             <Button variant="default" onClick={() => saveWithAction("devoir")} disabled={saving} className="flex-1">
