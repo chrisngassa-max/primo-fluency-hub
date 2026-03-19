@@ -307,10 +307,12 @@ function BulletChart({ data, onGroupClick, expandedGroup, members }: { data: Gro
     ? "bg-destructive"
     : data.status === "pas_commence" ? "bg-muted" : "bg-green-500";
 
-  const statusIcon = data.status === "en_retard"
+  const statusIcon = data.status === "en_retard" || data.status === "retard_important"
     ? <TrendingDown className="h-3.5 w-3.5 text-destructive" />
     : data.status === "en_avance"
     ? <TrendingUp className="h-3.5 w-3.5 text-green-600" />
+    : data.status === "pas_commence"
+    ? <Minus className="h-3.5 w-3.5 text-muted-foreground" />
     : <Minus className="h-3.5 w-3.5 text-green-600" />;
 
   const cfg = STATUS_CONFIG[data.status];
