@@ -233,7 +233,7 @@ export default function PacingTracker() {
         </CardHeader>
         <CardContent className="space-y-5">
           {groupPacings.map((gp) => (
-            <BulletChart key={gp.groupId} data={gp} onGroupClick={setExpandedGroup} expandedGroup={expandedGroup} />
+            <BulletChart key={gp.groupId} data={gp} onGroupClick={setExpandedGroup} expandedGroup={expandedGroup} members={groupMembersMap[gp.groupId]} />
           ))}
         </CardContent>
       </Card>
