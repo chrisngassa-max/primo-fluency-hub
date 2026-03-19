@@ -1,6 +1,8 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,7 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Progress } from "@/components/ui/progress";
-import { Users, GraduationCap, Calendar, Bell, Clock, TrendingUp, CheckCircle2, Pause, ArrowUpCircle, Play, Printer, Eye, UserPlus, AlertTriangle, Send, Gamepad2, BookOpen, ChevronRight, Rocket, ClipboardCheck, ListChecks, FileCheck } from "lucide-react";
+import { Users, GraduationCap, Calendar, Bell, Clock, TrendingUp, CheckCircle2, Pause, ArrowUpCircle, Play, Printer, Eye, UserPlus, AlertTriangle, Send, Gamepad2, BookOpen, ChevronRight, Rocket, ClipboardCheck, ListChecks, FileCheck, Pencil, Trash2, Plus, Save, X } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
@@ -60,6 +62,10 @@ const FormateurDashboard = () => {
   const [exerciseTracking, setExerciseTracking] = useState<Record<string, ExerciseTrackingState>>({});
   const [selectedExerciseId, setSelectedExerciseId] = useState<string | null>(null);
   const [sessionSubTab, setSessionSubTab] = useState<"exercices" | "test-validation">("exercices");
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedConsigne, setEditedConsigne] = useState("");
+  const [editedItems, setEditedItems] = useState<any[]>([]);
+  const [savingEdit, setSavingEdit] = useState(false);
 
   // ─── KPI queries ───
   const { data: groupCount = 0, isLoading: loadingGroups } = useQuery({
@@ -363,6 +369,72 @@ ${sessionExercises.map((ex: any, i: number) => `
     selectedExerciseId ? sessionExercises.find((e: any) => e.sessionExerciceId === selectedExerciseId) : null,
     [selectedExerciseId, sessionExercises]
   );
+
+  // ─── Edit mode helpers ───
+  const startEditing = useCallback(() => {
+    if (!selectedExercise) return;
+    setEditedConsigne(selectedExercise.consigne || "");
+    setEditedItems(JSON.parse(JSON.stringify((selectedExercise.contenu as any)?.items || [])));
+    setIsEditing(true);
+  }, [selectedExercise]);
+
+  const cancelEditing = () => { setIsEditing(false); };
+
+  const updateItemQuestion = (index: number, value: string) => {
+    setEditedItems(prev => prev.map((item, i) => i === index ? { ...item, question: value } : item));
+  };
+
+  const updateItemOption = (itemIndex: number, optIndex: number, value: string) => {
+    setEditedItems(prev => prev.map((item, i) => {
+      if (i !== itemIndex) return item;
+      const newOptions = [...(item.options || [])];
+      newOptions[optIndex] = value;
+      return { ...item, options: newOptions };
+    }));
+  };
+
+  const removeItemOption = (itemIndex: number, optIndex: number) => {
+    setEditedItems(prev => prev.map((item, i) => {
+      if (i !== itemIndex) return item;
+      const newOptions = (item.options || []).filter((_: any, k: number) => k !== optIndex);
+      return { ...item, options: newOptions };
+    }));
+  };
+
+  const addItemOption = (itemIndex: number) => {
+    setEditedItems(prev => prev.map((item, i) => {
+      if (i !== itemIndex) return item;
+      return { ...item, options: [...(item.options || []), ""] };
+    }));
+  };
+
+  const removeItem = (index: number) => {
+    setEditedItems(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const addItem = () => {
+    setEditedItems(prev => [...prev, { question: "", options: ["", ""], correct: 0 }]);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!selectedExercise) return;
+    setSavingEdit(true);
+    try {
+      const newContenu = { ...((selectedExercise.contenu as any) || {}), items: editedItems };
+      const { error } = await supabase
+        .from("exercices")
+        .update({ consigne: editedConsigne, contenu: newContenu, updated_at: new Date().toISOString() })
+        .eq("id", selectedExercise.id);
+      if (error) throw error;
+      qc.invalidateQueries({ queryKey: ["today-session-exercises"] });
+      setIsEditing(false);
+      toast.success("Exercice mis à jour !");
+    } catch (e: any) {
+      toast.error("Erreur de sauvegarde", { description: e.message });
+    } finally {
+      setSavingEdit(false);
+    }
+  };
 
   const handlePrintTest = () => {
     if (testExercises.length === 0) {
@@ -796,11 +868,12 @@ ${sessionExercises.map((ex: any, i: number) => `
           )}
 
           {/* Exercise Detail Sheet */}
-          <Sheet open={!!selectedExerciseId} onOpenChange={(open) => !open && setSelectedExerciseId(null)}>
+          <Sheet open={!!selectedExerciseId} onOpenChange={(open) => { if (!open) { setSelectedExerciseId(null); setIsEditing(false); } }}>
             <SheetContent className="sm:max-w-lg overflow-y-auto">
               {selectedExercise && (() => {
                 const tracking = getTracking(selectedExercise.sessionExerciceId);
                 const guide = selectedExercise.animation_guide as any;
+                const items = isEditing ? editedItems : ((selectedExercise.contenu as any)?.items || []);
                 return (
                   <>
                     <SheetHeader>
@@ -814,6 +887,7 @@ ${sessionExercises.map((ex: any, i: number) => `
                       </SheetDescription>
                     </SheetHeader>
                     <div className="space-y-6 mt-6">
+                      {/* Tracking controls */}
                       <div className="space-y-4 p-4 rounded-lg border bg-muted/20">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
@@ -831,32 +905,88 @@ ${sessionExercises.map((ex: any, i: number) => `
                         </div>
                       </div>
 
-                      <div>
-                        <h4 className="text-sm font-semibold mb-2">Consigne</h4>
-                        <p className="text-sm text-muted-foreground italic">{selectedExercise.consigne}</p>
+                      {/* Edit toggle button */}
+                      <div className="flex justify-end">
+                        {!isEditing ? (
+                          <Button variant="outline" size="sm" className="gap-2" onClick={startEditing}>
+                            <Pencil className="h-3.5 w-3.5" /> Modifier l'exercice
+                          </Button>
+                        ) : (
+                          <div className="flex gap-2">
+                            <Button variant="ghost" size="sm" className="gap-2" onClick={cancelEditing}>
+                              <X className="h-3.5 w-3.5" /> Annuler
+                            </Button>
+                            <Button size="sm" className="gap-2" onClick={handleSaveEdit} disabled={savingEdit}>
+                              <Save className="h-3.5 w-3.5" /> {savingEdit ? "Enregistrement…" : "Enregistrer"}
+                            </Button>
+                          </div>
+                        )}
                       </div>
 
+                      {/* Consigne */}
                       <div>
-                        <h4 className="text-sm font-semibold mb-3">Questions ({(selectedExercise.contenu as any)?.items?.length || 0})</h4>
+                        <h4 className="text-sm font-semibold mb-2">Consigne</h4>
+                        {isEditing ? (
+                          <Textarea value={editedConsigne} onChange={(e) => setEditedConsigne(e.target.value)} className="min-h-[60px]" />
+                        ) : (
+                          <p className="text-sm text-muted-foreground italic">{selectedExercise.consigne}</p>
+                        )}
+                      </div>
+
+                      {/* Questions */}
+                      <div>
+                        <h4 className="text-sm font-semibold mb-3">Questions ({items.length})</h4>
                         <div className="space-y-3">
-                          {((selectedExercise.contenu as any)?.items || []).map((item: any, j: number) => (
-                            <div key={j} className="p-3 rounded-lg bg-muted/30 border">
-                              <p className="text-sm font-medium mb-1.5">{j + 1}. {item.question}</p>
-                              {item.options?.length > 0 && (
-                                <div className="ml-3 space-y-1">
-                                  {item.options.map((opt: string, k: number) => (
-                                    <div key={k} className="flex items-center gap-2 text-sm text-muted-foreground">
+                          {items.map((item: any, j: number) => (
+                            <div key={j} className="p-3 rounded-lg bg-muted/30 border space-y-2">
+                              <div className="flex items-start gap-2">
+                                <span className="text-sm font-semibold text-muted-foreground mt-1 shrink-0">{j + 1}.</span>
+                                {isEditing ? (
+                                  <Input value={item.question} onChange={(e) => updateItemQuestion(j, e.target.value)} className="flex-1" placeholder="Énoncé de la question" />
+                                ) : (
+                                  <p className="text-sm font-medium flex-1">{item.question}</p>
+                                )}
+                                {isEditing && (
+                                  <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 text-destructive hover:text-destructive" onClick={() => removeItem(j)}>
+                                    <Trash2 className="h-3.5 w-3.5" />
+                                  </Button>
+                                )}
+                              </div>
+                              {(item.options?.length > 0 || isEditing) && (
+                                <div className="ml-5 space-y-1.5">
+                                  {(item.options || []).map((opt: string, k: number) => (
+                                    <div key={k} className="flex items-center gap-2">
                                       <span className="h-5 w-5 rounded border flex items-center justify-center text-xs bg-background shrink-0">{String.fromCharCode(65 + k)}</span>
-                                      {opt}
+                                      {isEditing ? (
+                                        <>
+                                          <Input value={opt} onChange={(e) => updateItemOption(j, k, e.target.value)} className="flex-1 h-8 text-sm" placeholder={`Option ${String.fromCharCode(65 + k)}`} />
+                                          <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0 text-destructive hover:text-destructive" onClick={() => removeItemOption(j, k)}>
+                                            <Trash2 className="h-3 w-3" />
+                                          </Button>
+                                        </>
+                                      ) : (
+                                        <span className="text-sm text-muted-foreground">{opt}</span>
+                                      )}
                                     </div>
                                   ))}
+                                  {isEditing && (
+                                    <Button variant="ghost" size="sm" className="text-xs gap-1 h-7 mt-1" onClick={() => addItemOption(j)}>
+                                      <Plus className="h-3 w-3" /> Option
+                                    </Button>
+                                  )}
                                 </div>
                               )}
                             </div>
                           ))}
                         </div>
+                        {isEditing && (
+                          <Button variant="outline" size="sm" className="gap-2 mt-4 w-full" onClick={addItem}>
+                            <Plus className="h-3.5 w-3.5" /> Ajouter une question
+                          </Button>
+                        )}
                       </div>
 
+                      {/* Animation guide (read-only) */}
                       {guide && (
                         <div className="space-y-2">
                           <h4 className="text-sm font-semibold flex items-center gap-2"><Gamepad2 className="h-4 w-4 text-orange-500" /> Atelier ludique</h4>
