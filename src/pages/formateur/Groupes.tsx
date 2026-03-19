@@ -26,8 +26,9 @@ import {
 import { toast } from "sonner";
 import {
   Plus, Users, Trash2, Edit, UserPlus, UserMinus, Loader2,
-  Copy, Check, Eye, ChevronRight,
+  Copy, Check, Eye, ChevronRight, Ticket, Mail,
 } from "lucide-react";
+import InviteStudentDialog from "@/components/InviteStudentDialog";
 
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
 
@@ -62,9 +63,16 @@ const GroupesPage = () => {
   const [addGroupId, setAddGroupId] = useState("");
   const [newPrenom, setNewPrenom] = useState("");
   const [newNom, setNewNom] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [addingMember, setAddingMember] = useState(false);
   const [createdStudent, setCreatedStudent] = useState<CreatedStudent | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  // Invite dialog
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [inviteGroupId, setInviteGroupId] = useState("");
+  const [inviteGroupName, setInviteGroupName] = useState("");
 
   // Track expanded groups to fetch members
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
@@ -172,19 +180,37 @@ const GroupesPage = () => {
     setCreatedStudent(null);
     setNewPrenom("");
     setNewNom("");
+    setNewEmail("");
+    setNewPassword("");
     setAddOpen(true);
   };
 
+  const openInvite = (groupId: string, groupName: string) => {
+    setInviteGroupId(groupId);
+    setInviteGroupName(groupName);
+    setInviteOpen(true);
+  };
+
   const handleAddStudent = async () => {
-    if (!newPrenom.trim() || !newNom.trim()) {
-      toast.error("Prénom et nom sont obligatoires.");
+    if (!newPrenom.trim() || !newNom.trim() || !newEmail.trim() || !newPassword.trim()) {
+      toast.error("Tous les champs sont obligatoires.");
+      return;
+    }
+    if (newPassword.length < 6) {
+      toast.error("Le mot de passe doit contenir au moins 6 caractères.");
       return;
     }
     setAddingMember(true);
     setCreatedStudent(null);
     try {
       const { data, error } = await supabase.functions.invoke("create-student", {
-        body: { prenom: newPrenom.trim(), nom: newNom.trim(), group_id: addGroupId },
+        body: {
+          prenom: newPrenom.trim(),
+          nom: newNom.trim(),
+          email: newEmail.trim(),
+          password: newPassword.trim(),
+          group_id: addGroupId,
+        },
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
@@ -193,6 +219,8 @@ const GroupesPage = () => {
       setCreatedStudent(student);
       setNewPrenom("");
       setNewNom("");
+      setNewEmail("");
+      setNewPassword("");
       toast.success(`${student.prenom} ${student.nom} créé(e) et ajouté(e) !`);
       qc.invalidateQueries({ queryKey: ["all-group-members"] });
     } catch (e: any) {
@@ -348,10 +376,13 @@ const GroupesPage = () => {
               </div>
 
               <AccordionContent className="px-4 pb-4 pt-0">
-                {/* Add student button */}
-                <div className="flex justify-end mb-3">
+                {/* Action buttons */}
+                <div className="flex justify-end gap-2 mb-3">
+                  <Button size="sm" variant="outline" onClick={() => openInvite(g.id, g.nom)}>
+                    <Ticket className="h-4 w-4 mr-2" />Inviter un élève
+                  </Button>
                   <Button size="sm" variant="outline" onClick={() => openAddStudent(g.id)}>
-                    <UserPlus className="h-4 w-4 mr-2" />Ajouter un élève
+                    <UserPlus className="h-4 w-4 mr-2" />Créer un compte élève
                   </Button>
                 </div>
 
@@ -474,7 +505,7 @@ const GroupesPage = () => {
       {/* Add Student Dialog */}
       <Dialog open={addOpen} onOpenChange={setAddOpen}>
         <DialogContent className="max-w-md">
-          <DialogHeader><DialogTitle>Ajouter un élève</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Créer un compte élève</DialogTitle></DialogHeader>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
@@ -483,16 +514,22 @@ const GroupesPage = () => {
               </div>
               <div className="space-y-1">
                 <Label>Nom</Label>
-                <Input
-                  placeholder="Nom" value={newNom}
-                  onChange={(e) => setNewNom(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleAddStudent()}
-                />
+                <Input placeholder="Nom" value={newNom} onChange={(e) => setNewNom(e.target.value)} />
               </div>
+            </div>
+            <div className="space-y-1">
+              <Label>Email</Label>
+              <Input type="email" placeholder="email@exemple.com" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} />
+            </div>
+            <div className="space-y-1">
+              <Label>Mot de passe temporaire</Label>
+              <Input type="text" placeholder="Minimum 6 caractères" value={newPassword} onChange={(e) => setNewPassword(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleAddStudent()}
+              />
             </div>
             <Button onClick={handleAddStudent} disabled={addingMember} className="w-full">
               {addingMember ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <UserPlus className="h-4 w-4 mr-2" />}
-              Créer et ajouter
+              Créer et ajouter au groupe
             </Button>
 
             {createdStudent && (
@@ -503,7 +540,7 @@ const GroupesPage = () => {
                 <div className="space-y-2 text-sm">
                   <div><strong>Nom :</strong> {createdStudent.prenom} {createdStudent.nom}</div>
                   <div className="flex items-center justify-between gap-2">
-                    <span className="truncate"><strong>Identifiant :</strong> {createdStudent.email}</span>
+                    <span className="truncate"><strong>Email :</strong> {createdStudent.email}</span>
                     <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0"
                       onClick={() => copyToClipboard(createdStudent.email, "new-email")}>
                       {copiedField === "new-email" ? <Check className="h-3.5 w-3.5 text-primary" /> : <Copy className="h-3.5 w-3.5" />}
@@ -522,6 +559,14 @@ const GroupesPage = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Invite Student Dialog */}
+      <InviteStudentDialog
+        groupId={inviteGroupId}
+        groupName={inviteGroupName}
+        open={inviteOpen}
+        onOpenChange={setInviteOpen}
+      />
     </div>
   );
 };

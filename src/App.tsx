@@ -30,6 +30,7 @@ import EleveDevoirs from "@/pages/eleve/Devoirs";
 import DevoirPassation from "@/pages/eleve/DevoirPassation";
 import EleveProgression from "@/pages/eleve/Progression";
 import EleveProfil from "@/pages/eleve/Profil";
+import EleveTestEntree from "@/pages/eleve/TestEntree";
 import EleveDetail from "@/pages/formateur/EleveDetail";
 import TestsEntreePage from "@/pages/formateur/TestsEntree";
 import ImportProgramme from "@/pages/formateur/ImportProgramme";
@@ -93,7 +94,7 @@ const App = () => (
               }
             >
               <Route index element={<EleveDashboard />} />
-              <Route path="test" element={<EleveDashboard />} />
+              <Route path="test-entree" element={<EleveTestEntree />} />
               <Route path="devoirs" element={<EleveDevoirs />} />
               <Route path="devoirs/:devoirId" element={<DevoirPassation />} />
               <Route path="progression" element={<EleveProgression />} />

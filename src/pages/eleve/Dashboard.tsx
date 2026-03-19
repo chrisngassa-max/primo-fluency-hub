@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { BookOpen, ClipboardList, TrendingUp, AlertCircle, ArrowRight } from "lucide-react";
 import CompetenceLabel from "@/components/CompetenceLabel";
 import EleveOnboarding, { useShowOnboarding } from "@/components/EleveOnboarding";
+import JoinGroupCard from "@/components/JoinGroupCard";
 
 const EleveDashboard = () => {
   const { user } = useAuth();
@@ -130,6 +131,9 @@ const EleveDashboard = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Join group */}
+      <JoinGroupCard />
 
       {/* Entry test CTA */}
       <Card className="border-primary/30 bg-primary/5">
