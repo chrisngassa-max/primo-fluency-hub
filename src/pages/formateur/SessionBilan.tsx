@@ -637,15 +637,34 @@ const SessionBilan = () => {
             </div>
           )}
           <DialogFooter className="flex-col gap-2">
-            <Button onClick={() => handleSendTest(true)} disabled={sendingTest} className="w-full gap-2">
+            <Button onClick={handleSendNowClick} disabled={sendingTest} className="w-full gap-2">
               {sendingTest ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-              Envoyer le test aux élèves
+              Envoyer maintenant aux élèves
             </Button>
             <Button variant="outline" onClick={() => handleSendTest(false)} disabled={sendingTest} className="w-full gap-2">
               <Clock className="h-4 w-4" />Envoyer plus tard
             </Button>
             <Button variant="ghost" onClick={handleSkipTest} disabled={sendingTest} className="w-full text-muted-foreground">
-              Passer — pas de test pour cette séance
+              Ne pas envoyer
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Confirmation dialog for sending test */}
+      <Dialog open={confirmSendOpen} onOpenChange={setConfirmSendOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Confirmer l'envoi</DialogTitle>
+            <DialogDescription>
+              Envoyer le test à {groupMemberCount} élève(s) du groupe « {(session as any)?.group?.nom || "—"} » ?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setConfirmSendOpen(false)}>Annuler</Button>
+            <Button onClick={() => handleSendTest(true)} disabled={sendingTest} className="gap-1.5">
+              {sendingTest ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              Confirmer
             </Button>
           </DialogFooter>
         </DialogContent>
