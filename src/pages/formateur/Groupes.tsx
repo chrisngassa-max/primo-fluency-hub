@@ -398,8 +398,7 @@ const GroupesPage = () => {
                                   )}
                                 </div>
                               </td>
-                              <td className="py-2.5 px-3">
-                              <td className="py-2.5 px-3">
+                              <td className="py-2.5 px-3 text-center">
                                 <div className="flex items-center gap-2 justify-center">
                                   <div className="w-16 h-2 rounded-full bg-muted overflow-hidden">
                                     <div
