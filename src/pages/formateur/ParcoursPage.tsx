@@ -438,7 +438,7 @@ const ParcoursPage = () => {
         <Card className="border-dashed">
           <CardContent className="py-12 text-center">
             <GraduationCap className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
-            <p className="text-muted-foreground">Aucun parcours créé</p>
+            <p className="text-muted-foreground">Aucun plan de formation créé</p>
             <p className="text-xs text-muted-foreground mt-1">
               Créez votre premier plan de formation adaptatif
             </p>
