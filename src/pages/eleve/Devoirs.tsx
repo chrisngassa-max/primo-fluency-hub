@@ -14,6 +14,7 @@ import {
   Send, Loader2, ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import CompetenceLabel from "@/components/CompetenceLabel";
 
 const EleveDevoirs = () => {
   const { user } = useAuth();
@@ -53,19 +54,19 @@ const EleveDevoirs = () => {
           <Card className="text-center">
             <CardContent className="pt-4 pb-3">
               <p className="text-2xl font-bold text-orange-600">{pending.length}</p>
-              <p className="text-[11px] text-muted-foreground">En attente</p>
+              <p className="text-sm text-muted-foreground">En attente</p>
             </CardContent>
           </Card>
           <Card className="text-center">
             <CardContent className="pt-4 pb-3">
               <p className="text-2xl font-bold text-green-600">{completed.length}</p>
-              <p className="text-[11px] text-muted-foreground">Terminés</p>
+              <p className="text-sm text-muted-foreground">Terminés</p>
             </CardContent>
           </Card>
           <Card className="text-center">
             <CardContent className="pt-4 pb-3">
               <p className="text-2xl font-bold text-destructive">{expired.length}</p>
-              <p className="text-[11px] text-muted-foreground">Expirés</p>
+              <p className="text-sm text-muted-foreground">Expirés</p>
             </CardContent>
           </Card>
         </div>
@@ -150,22 +151,22 @@ function DevoirCard({ devoir, onOpen }: { devoir: any; onOpen: () => void }) {
           </div>
           <div className="flex-1 min-w-0 space-y-0.5">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-semibold text-sm truncate">{ex?.titre || "Exercice"}</span>
+              <span className="font-semibold truncate">{ex?.titre || "Exercice"}</span>
               {isUrgent && !isDone && (
-                <Badge variant="destructive" className="text-[10px]">Remédiation</Badge>
+                <Badge variant="destructive" className="text-xs">Remédiation</Badge>
               )}
               {!isUrgent && !isDone && (
-                <Badge variant="secondary" className="text-[10px] border-orange-500/30 text-orange-600">Consolidation</Badge>
+                <Badge variant="secondary" className="text-xs border-orange-500/30 text-orange-600">Consolidation</Badge>
               )}
               {isDone && (
-                <Badge variant="outline" className="text-[10px] border-green-500/30 text-green-600">Terminé</Badge>
+                <Badge variant="outline" className="text-xs border-green-500/30 text-green-600">Terminé</Badge>
               )}
               {isExpired && (
-                <Badge variant="destructive" className="text-[10px]">Expiré</Badge>
+                <Badge variant="destructive" className="text-xs">Expiré</Badge>
               )}
             </div>
-            <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
-              <Badge variant="outline" className="text-[10px]">{ex?.competence}</Badge>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Badge variant="outline" className="text-xs"><CompetenceLabel code={ex?.competence} /></Badge>
               {!isDone && !isExpired && (
                 <span className="flex items-center gap-1">
                   <Clock className="h-3 w-3" />

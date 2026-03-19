@@ -15,6 +15,7 @@ import {
 import { TrendingUp, BookOpen, Award } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import CompetenceLabel from "@/components/CompetenceLabel";
 
 const COMPETENCES = ["CO", "CE", "EE", "EO"] as const;
 
@@ -237,17 +238,11 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
               {COMPETENCES.map((comp) => {
                 const statut = compMap[comp] || "non_evalue";
                 const info = statutLabel[statut] || statutLabel.non_evalue;
-                const compLabels: Record<string, string> = {
-                  CO: "Compréhension Orale",
-                  CE: "Compréhension Écrite",
-                  EE: "Expression Écrite",
-                  EO: "Expression Orale",
-                };
                 return (
                   <div key={comp} className="flex items-center justify-between p-3 rounded-lg border">
                     <div>
-                      <p className="font-semibold text-sm">{comp}</p>
-                      <p className="text-xs text-muted-foreground">{compLabels[comp]}</p>
+                      <CompetenceLabel code={comp} className="font-semibold text-sm cursor-help" />
+                      <CompetenceLabel code={comp} showFull className="block text-xs text-muted-foreground" />
                     </div>
                     <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${info.color}`}>
                       {info.label}
@@ -296,7 +291,7 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
                         </td>
                         <td className="py-2.5 px-2 text-center">
                           <Badge variant="outline" className="text-xs">
-                            {r.exercice?.competence || "—"}
+                            <CompetenceLabel code={r.exercice?.competence || "—"} />
                           </Badge>
                         </td>
                         <td className={`py-2.5 px-2 text-center font-bold ${scoreColor(r.score)}`}>

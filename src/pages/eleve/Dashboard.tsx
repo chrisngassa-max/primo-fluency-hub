@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BookOpen, ClipboardList, TrendingUp, AlertCircle } from "lucide-react";
+import CompetenceLabel from "@/components/CompetenceLabel";
 
 const EleveDashboard = () => {
   const { user } = useAuth();
@@ -87,23 +88,23 @@ const EleveDashboard = () => {
                     </div>
                     <div className="flex-1 min-w-0 space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-semibold text-sm">{ex?.titre || "Exercice"}</span>
+                        <span className="font-semibold">{ex?.titre || "Exercice"}</span>
                         {isUrgent && (
-                          <Badge variant="destructive" className="text-[10px] gap-1">
+                          <Badge variant="destructive" className="text-xs gap-1">
                             <AlertCircle className="h-3 w-3" />
                             Remédiation
                           </Badge>
                         )}
                         {!isUrgent && (
-                          <Badge variant="secondary" className="text-[10px] border-orange-500/30 text-orange-600">
+                          <Badge variant="secondary" className="text-xs border-orange-500/30 text-orange-600">
                             Consolidation
                           </Badge>
                         )}
                       </div>
-                      <p className="text-xs text-muted-foreground truncate">{ex?.consigne}</p>
+                      <p className="text-sm text-muted-foreground truncate">{ex?.consigne}</p>
                       <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="text-[10px]">{ex?.competence}</Badge>
-                        <span className="text-[10px] text-muted-foreground">
+                        <Badge variant="outline" className="text-xs"><CompetenceLabel code={ex?.competence} /></Badge>
+                        <span className="text-sm text-muted-foreground">
                           {daysLeft === 0 ? "Aujourd'hui !" : `${daysLeft} jour(s) restant(s)`}
                         </span>
                       </div>

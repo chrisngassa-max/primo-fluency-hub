@@ -36,8 +36,9 @@ const EleveLayout = () => {
           <span className="text-sm text-muted-foreground hidden sm:inline">
             {user?.user_metadata?.prenom} {user?.user_metadata?.nom}
           </span>
-          <Button variant="ghost" size="icon" onClick={signOut} title="Déconnexion">
+          <Button variant="ghost" size="sm" onClick={signOut} className="gap-1.5 text-sm">
             <LogOut className="h-4 w-4" />
+            <span className="hidden sm:inline">Déconnexion</span>
           </Button>
         </div>
       </header>
@@ -61,7 +62,7 @@ const EleveLayout = () => {
             )}
           >
             <item.icon className={cn("h-6 w-6", isActive(item.path) && "text-primary")} />
-            <span className="text-xs">{item.title}</span>
+            <span className="text-[13px]">{item.title}</span>
           </button>
         ))}
       </nav>
