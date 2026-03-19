@@ -132,6 +132,9 @@ const EleveDashboard = () => {
         </CardContent>
       </Card>
 
+      {/* Join group */}
+      <JoinGroupCard />
+
       {/* Entry test CTA */}
       <Card className="border-primary/30 bg-primary/5">
         <CardContent className="pt-6">
