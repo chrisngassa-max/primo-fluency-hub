@@ -201,27 +201,36 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-            {/* Radar chart */}
-            <div className="h-64 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="70%">
-                  <PolarGrid stroke="hsl(var(--border))" />
-                  <PolarAngleAxis
-                    dataKey="competence"
-                    tick={{ fill: "hsl(var(--foreground))", fontSize: 14, fontWeight: 600 }}
-                  />
-                  <PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} axisLine={false} />
-                  <Radar
-                    name="Niveau"
-                    dataKey="value"
-                    stroke="hsl(var(--primary))"
-                    fill="hsl(var(--primary))"
-                    fillOpacity={0.25}
-                    strokeWidth={2}
-                  />
-                </RadarChart>
-              </ResponsiveContainer>
-            </div>
+            {/* Radar chart or empty message */}
+            {hasRadarData ? (
+              <div className="h-64 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="70%">
+                    <PolarGrid stroke="hsl(var(--border))" />
+                    <PolarAngleAxis
+                      dataKey="competence"
+                      tick={{ fill: "hsl(var(--foreground))", fontSize: 14, fontWeight: 600 }}
+                    />
+                    <PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} axisLine={false} />
+                    <Radar
+                      name="Niveau"
+                      dataKey="value"
+                      stroke="hsl(var(--primary))"
+                      fill="hsl(var(--primary))"
+                      fillOpacity={0.25}
+                      strokeWidth={2}
+                    />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <div className="h-64 w-full flex flex-col items-center justify-center text-center p-4">
+                <TrendingUp className="h-10 w-10 text-muted-foreground/40 mb-3" />
+                <p className="text-muted-foreground text-sm">
+                  Votre progression s'affichera ici après votre test d'entrée.
+                </p>
+              </div>
+            )}
 
             {/* Competency badges */}
             <div className="space-y-3">
