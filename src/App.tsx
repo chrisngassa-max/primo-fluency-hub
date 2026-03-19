@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
 import Index from "@/pages/Index";
+import Legal from "@/pages/Legal";
 import ResetPassword from "@/pages/ResetPassword";
 import NotFound from "@/pages/NotFound";
 
@@ -52,6 +53,7 @@ const App = () => (
           <Routes>
             {/* Public */}
             <Route path="/" element={<Index />} />
+            <Route path="/legal" element={<Legal />} />
             <Route path="/eleve/login" element={<LoginEleve />} />
             <Route path="/formateur/login" element={<LoginFormateur />} />
             <Route path="/admin/login" element={<LoginAdmin />} />

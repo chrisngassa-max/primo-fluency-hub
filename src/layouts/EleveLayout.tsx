@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import AppFooter from "@/components/AppFooter";
 
 const navItems = [
   { title: "Accueil", path: "/eleve", icon: LayoutDashboard },
@@ -65,6 +66,10 @@ const EleveLayout = () => {
       <main className="p-4 pb-32 md:p-6 md:pb-32 lg:pb-8">
         <Outlet />
       </main>
+
+      <div className="hidden lg:block">
+        <AppFooter />
+      </div>
 
       <nav className="fixed inset-x-0 bottom-0 z-50 flex justify-around border-t bg-card px-2 py-2 shadow-[0_-2px_10px_hsl(var(--foreground)/0.08)] lg:hidden">
         {navItems.map((item) => (
