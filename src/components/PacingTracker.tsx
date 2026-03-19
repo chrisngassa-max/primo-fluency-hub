@@ -293,7 +293,9 @@ export default function PacingTracker() {
   );
 }
 
-function BulletChart({ data }: { data: GroupPacing }) {
+function BulletChart({ data, onGroupClick, expandedGroup, members }: { data: GroupPacing; onGroupClick: (id: string | null) => void; expandedGroup: string | null; members?: GroupMember[] }) {
+  const navigate = useNavigate();
+  const isExpanded = expandedGroup === data.groupId;
   const barColor = data.status === "en_retard"
     ? "bg-destructive"
     : "bg-green-500";
@@ -311,7 +313,13 @@ function BulletChart({ data }: { data: GroupPacing }) {
       {/* Header row */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="font-medium text-sm text-foreground">{data.groupName}</span>
+          <button
+            className="flex items-center gap-1.5 font-medium text-sm text-foreground hover:text-primary transition-colors cursor-pointer"
+            onClick={() => onGroupClick(isExpanded ? null : data.groupId)}
+          >
+            {isExpanded ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+            {data.groupName}
+          </button>
           <Badge variant="outline" className="text-[10px] h-5 px-1.5">{data.niveau}</Badge>
           <span className="text-xs text-muted-foreground">
             {data.seancesFaites}/{data.seancesTotal} séances
@@ -329,20 +337,15 @@ function BulletChart({ data }: { data: GroupPacing }) {
       <Tooltip>
         <TooltipTrigger asChild>
           <div className="relative h-7 w-full rounded-md bg-muted/60 border overflow-visible">
-            {/* Background track with subtle gradient zones */}
             <div className="absolute inset-0 rounded-md overflow-hidden">
               <div className="absolute inset-y-0 left-0 bg-muted/40" style={{ width: "60%" }} />
               <div className="absolute inset-y-0 bg-muted/20" style={{ left: "60%", width: "20%" }} />
               <div className="absolute inset-y-0 bg-muted/10" style={{ left: "80%", width: "20%" }} />
             </div>
-
-            {/* Actual progress bar */}
             <div
               className={`absolute inset-y-0 left-0 rounded-l-md ${barColor} transition-all duration-700 ease-out`}
               style={{ width: `${Math.min(data.progressPct, 100)}%`, opacity: 0.85 }}
             />
-
-            {/* Progress label inside bar */}
             <div className="absolute inset-y-0 left-0 flex items-center pl-2 z-10"
               style={{ width: `${Math.min(data.progressPct, 100)}%` }}>
               {data.progressPct >= 10 && (
@@ -351,26 +354,15 @@ function BulletChart({ data }: { data: GroupPacing }) {
                 </span>
               )}
             </div>
-
-            {/* Expected marker (vertical line) */}
             {data.expectedPct > 0 && data.expectedPct <= 100 && (
-              <div
-                className="absolute top-0 bottom-0 w-0.5 z-20"
-                style={{ left: `${data.expectedPct}%` }}
-              >
+              <div className="absolute top-0 bottom-0 w-0.5 z-20" style={{ left: `${data.expectedPct}%` }}>
                 <div className="absolute inset-y-0 w-0.5 bg-foreground/80" />
-                {/* Triangle marker on top */}
                 <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[4px] border-r-[4px] border-t-[5px] border-l-transparent border-r-transparent border-t-foreground/80" />
-                {/* Label */}
                 <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap">
-                  <span className="text-[9px] text-muted-foreground font-medium">
-                    Attendu {data.expectedPct}%
-                  </span>
+                  <span className="text-[9px] text-muted-foreground font-medium">Attendu {data.expectedPct}%</span>
                 </div>
               </div>
             )}
-
-            {/* 100% goal marker */}
             <div className="absolute right-1 inset-y-0 flex items-center z-10">
               {data.progressPct < 90 && (
                 <span className="text-[9px] text-muted-foreground font-medium">100%</span>
@@ -388,8 +380,34 @@ function BulletChart({ data }: { data: GroupPacing }) {
         </TooltipContent>
       </Tooltip>
 
-      {/* Bottom spacing for the "Attendu" label */}
       <div className="h-2" />
+
+      {/* Expanded member list */}
+      {isExpanded && (
+        <div className="pl-4 pb-2 space-y-1 border-l-2 border-primary/20 ml-1">
+          {(!members || members.length === 0) ? (
+            <p className="text-xs text-muted-foreground py-2 flex items-center gap-1.5">
+              <Users className="h-3.5 w-3.5" /> Aucun élève dans ce groupe
+            </p>
+          ) : (
+            members.map((m) => (
+              <div
+                key={m.eleve_id}
+                className="flex items-center justify-between py-1.5 px-2 rounded hover:bg-muted/30 cursor-pointer transition-colors"
+                onClick={() => navigate(`/formateur/eleves/${m.eleve_id}`)}
+              >
+                <span className="text-sm text-foreground">{m.nom}</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-16 h-1.5 rounded-full bg-muted overflow-hidden">
+                    <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${Math.min(m.progression, 100)}%` }} />
+                  </div>
+                  <span className="text-xs text-muted-foreground w-8 text-right">{Math.round(m.progression)}%</span>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
     </div>
   );
 }
