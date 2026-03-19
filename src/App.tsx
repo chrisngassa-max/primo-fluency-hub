@@ -76,7 +76,7 @@ const App = () => (
               <Route path="import-programme" element={<ImportProgramme />} />
               <Route path="parcours" element={<ParcoursPage />} />
               <Route path="parcours/:parcoursId" element={<ParcoursDetail />} />
-              <Route path="rapports" element={<FormateurDashboard />} />
+              <Route path="rapports" element={<RapportsPage />} />
               <Route path="parametres" element={<Parametres />} />
             </Route>
 
