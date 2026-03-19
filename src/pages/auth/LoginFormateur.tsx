@@ -5,23 +5,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { translateAuthError } from "@/lib/authErrors";
 
 const LoginFormateur = () => {
-  const { signIn, signUp, session, role, loading } = useAuth();
+  const { signIn, session, role, loading } = useAuth();
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
 
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
-
-  const [signupEmail, setSignupEmail] = useState("");
-  const [signupPassword, setSignupPassword] = useState("");
-  const [signupNom, setSignupNom] = useState("");
-  const [signupPrenom, setSignupPrenom] = useState("");
+  const [showPw, setShowPw] = useState(false);
 
   const [forgotEmail, setForgotEmail] = useState("");
   const [showForgot, setShowForgot] = useState(false);
@@ -33,18 +29,8 @@ const LoginFormateur = () => {
     e.preventDefault();
     setBusy(true);
     const { error } = await signIn(loginEmail, loginPassword);
-    if (error) toast.error("Erreur de connexion", { description: error.message });
+    if (error) toast.error("Erreur de connexion", { description: translateAuthError(error.message) });
     else toast.success("Connexion réussie !");
-    setBusy(false);
-  };
-
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!signupNom || !signupPrenom) { toast.error("Remplissez votre nom et prénom."); return; }
-    setBusy(true);
-    const { error } = await signUp(signupEmail, signupPassword, { nom: signupNom, prenom: signupPrenom, role: "formateur" });
-    if (error) toast.error("Erreur d'inscription", { description: error.message });
-    else toast.success("Inscription réussie !", { description: "Vous pouvez maintenant vous connecter." });
     setBusy(false);
   };
 
@@ -54,7 +40,7 @@ const LoginFormateur = () => {
     const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
       redirectTo: `${window.location.origin}/reset-password`,
     });
-    if (error) toast.error("Erreur", { description: error.message });
+    if (error) toast.error("Erreur", { description: translateAuthError(error.message) });
     else toast.success("Email envoyé", { description: "Consultez votre boîte mail." });
     setBusy(false);
   };
@@ -71,7 +57,7 @@ const LoginFormateur = () => {
             <form onSubmit={handleForgot} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="forgot-email">Adresse email</Label>
-                <Input id="forgot-email" type="email" value={forgotEmail} onChange={(e) => setForgotEmail(e.target.value)} required />
+                <Input id="forgot-email" type="email" placeholder="votre@email.com" value={forgotEmail} onChange={(e) => setForgotEmail(e.target.value)} required />
               </div>
               <Button type="submit" className="w-full" disabled={busy}>{busy ? "Envoi…" : "Envoyer le lien"}</Button>
               <Button type="button" variant="ghost" className="w-full" onClick={() => setShowForgot(false)}>Retour</Button>
@@ -97,57 +83,45 @@ const LoginFormateur = () => {
 
         <Card>
           <CardContent className="pt-6">
-            <Tabs defaultValue="login">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="login">Connexion</TabsTrigger>
-                <TabsTrigger value="signup">Inscription</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="login">
-                <form onSubmit={handleLogin} className="space-y-4 mt-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="form-login-email">Adresse email</Label>
-                    <Input id="form-login-email" type="email" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="form-login-password">Mot de passe</Label>
-                    <Input id="form-login-password" type="password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} required />
-                  </div>
-                  <Button type="submit" className="w-full" disabled={busy}>
-                    {busy ? "Connexion…" : "Se connecter"}
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="form-login-email">Adresse email</Label>
+                <Input id="form-login-email" type="email" placeholder="votre@email.com" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="form-login-password">Mot de passe</Label>
+                <div className="relative">
+                  <Input
+                    id="form-login-password"
+                    type={showPw ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    required
+                    className="pr-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                    onClick={() => setShowPw(!showPw)}
+                    tabIndex={-1}
+                  >
+                    {showPw ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                   </Button>
-                  <Button type="button" variant="link" className="w-full text-sm" onClick={() => setShowForgot(true)}>
-                    Mot de passe oublié ?
-                  </Button>
-                </form>
-              </TabsContent>
-
-              <TabsContent value="signup">
-                <form onSubmit={handleSignup} className="space-y-4 mt-4">
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-2">
-                      <Label htmlFor="form-signup-prenom">Prénom</Label>
-                      <Input id="form-signup-prenom" value={signupPrenom} onChange={(e) => setSignupPrenom(e.target.value)} required />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="form-signup-nom">Nom</Label>
-                      <Input id="form-signup-nom" value={signupNom} onChange={(e) => setSignupNom(e.target.value)} required />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="form-signup-email">Adresse email</Label>
-                    <Input id="form-signup-email" type="email" value={signupEmail} onChange={(e) => setSignupEmail(e.target.value)} required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="form-signup-password">Mot de passe</Label>
-                    <Input id="form-signup-password" type="password" minLength={6} value={signupPassword} onChange={(e) => setSignupPassword(e.target.value)} required />
-                  </div>
-                  <Button type="submit" className="w-full" disabled={busy}>
-                    {busy ? "Inscription…" : "S'inscrire"}
-                  </Button>
-                </form>
-              </TabsContent>
-            </Tabs>
+                </div>
+              </div>
+              <Button type="submit" className="w-full" disabled={busy}>
+                {busy ? "Connexion…" : "Se connecter"}
+              </Button>
+              <Button type="button" variant="link" className="w-full text-sm" onClick={() => setShowForgot(true)}>
+                Mot de passe oublié ?
+              </Button>
+            </form>
+            <p className="text-xs text-muted-foreground text-center mt-4">
+              Pas encore de compte ? Contactez votre administrateur.
+            </p>
           </CardContent>
         </Card>
       </div>
