@@ -60,7 +60,7 @@ const EleveDevoirs = () => {
           <Card className="text-center">
             <CardContent className="pt-4 pb-3">
               <p className="text-2xl font-bold text-green-600">{completed.length}</p>
-              <p className="text-[11px] text-muted-foreground">Terminés</p>
+              <p className="text-sm text-muted-foreground">Terminés</p>
             </CardContent>
           </Card>
           <Card className="text-center">
