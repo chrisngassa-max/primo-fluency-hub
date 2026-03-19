@@ -370,6 +370,72 @@ ${sessionExercises.map((ex: any, i: number) => `
     [selectedExerciseId, sessionExercises]
   );
 
+  // ─── Edit mode helpers ───
+  const startEditing = useCallback(() => {
+    if (!selectedExercise) return;
+    setEditedConsigne(selectedExercise.consigne || "");
+    setEditedItems(JSON.parse(JSON.stringify((selectedExercise.contenu as any)?.items || [])));
+    setIsEditing(true);
+  }, [selectedExercise]);
+
+  const cancelEditing = () => { setIsEditing(false); };
+
+  const updateItemQuestion = (index: number, value: string) => {
+    setEditedItems(prev => prev.map((item, i) => i === index ? { ...item, question: value } : item));
+  };
+
+  const updateItemOption = (itemIndex: number, optIndex: number, value: string) => {
+    setEditedItems(prev => prev.map((item, i) => {
+      if (i !== itemIndex) return item;
+      const newOptions = [...(item.options || [])];
+      newOptions[optIndex] = value;
+      return { ...item, options: newOptions };
+    }));
+  };
+
+  const removeItemOption = (itemIndex: number, optIndex: number) => {
+    setEditedItems(prev => prev.map((item, i) => {
+      if (i !== itemIndex) return item;
+      const newOptions = (item.options || []).filter((_: any, k: number) => k !== optIndex);
+      return { ...item, options: newOptions };
+    }));
+  };
+
+  const addItemOption = (itemIndex: number) => {
+    setEditedItems(prev => prev.map((item, i) => {
+      if (i !== itemIndex) return item;
+      return { ...item, options: [...(item.options || []), ""] };
+    }));
+  };
+
+  const removeItem = (index: number) => {
+    setEditedItems(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const addItem = () => {
+    setEditedItems(prev => [...prev, { question: "", options: ["", ""], correct: 0 }]);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!selectedExercise) return;
+    setSavingEdit(true);
+    try {
+      const newContenu = { ...((selectedExercise.contenu as any) || {}), items: editedItems };
+      const { error } = await supabase
+        .from("exercices")
+        .update({ consigne: editedConsigne, contenu: newContenu, updated_at: new Date().toISOString() })
+        .eq("id", selectedExercise.id);
+      if (error) throw error;
+      qc.invalidateQueries({ queryKey: ["today-session-exercises"] });
+      setIsEditing(false);
+      toast.success("Exercice mis à jour !");
+    } catch (e: any) {
+      toast.error("Erreur de sauvegarde", { description: e.message });
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
   const handlePrintTest = () => {
     if (testExercises.length === 0) {
       toast.error("Aucun exercice dans le test.");
