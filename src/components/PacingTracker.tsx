@@ -26,7 +26,7 @@ interface GroupPacing {
   seancesTotal: number;
   progressPct: number; // actual mastery %
   expectedPct: number; // where they should be based on elapsed sessions
-  status: "en_avance" | "dans_les_temps" | "en_retard";
+  status: "en_avance" | "dans_les_temps" | "en_retard" | "retard_important" | "pas_commence";
   aiPrediction: string;
 }
 
