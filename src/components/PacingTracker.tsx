@@ -303,9 +303,9 @@ export default function PacingTracker() {
 function BulletChart({ data, onGroupClick, expandedGroup, members }: { data: GroupPacing; onGroupClick: (id: string | null) => void; expandedGroup: string | null; members?: GroupMember[] }) {
   const navigate = useNavigate();
   const isExpanded = expandedGroup === data.groupId;
-  const barColor = data.status === "en_retard"
+  const barColor = data.status === "en_retard" || data.status === "retard_important"
     ? "bg-destructive"
-    : "bg-green-500";
+    : data.status === "pas_commence" ? "bg-muted" : "bg-green-500";
 
   const statusIcon = data.status === "en_retard"
     ? <TrendingDown className="h-3.5 w-3.5 text-destructive" />
