@@ -41,6 +41,7 @@ interface EleveProgressionProps {
 
 const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const targetId = eleveId || user?.id;
 
   // Fetch competency status
