@@ -166,7 +166,7 @@ function DevoirCard({ devoir, onOpen }: { devoir: any; onOpen: () => void }) {
               )}
             </div>
             <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
-              <Badge variant="outline" className="text-[10px]">{ex?.competence}</Badge>
+              <Badge variant="outline" className="text-[10px]"><CompetenceLabel code={ex?.competence} /></Badge>
               {!isDone && !isExpired && (
                 <span className="flex items-center gap-1">
                   <Clock className="h-3 w-3" />

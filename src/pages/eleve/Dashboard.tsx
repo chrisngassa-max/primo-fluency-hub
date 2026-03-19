@@ -103,7 +103,7 @@ const EleveDashboard = () => {
                       </div>
                       <p className="text-xs text-muted-foreground truncate">{ex?.consigne}</p>
                       <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="text-[10px]">{ex?.competence}</Badge>
+                        <Badge variant="outline" className="text-[10px]"><CompetenceLabel code={ex?.competence} /></Badge>
                         <span className="text-[10px] text-muted-foreground">
                           {daysLeft === 0 ? "Aujourd'hui !" : `${daysLeft} jour(s) restant(s)`}
                         </span>

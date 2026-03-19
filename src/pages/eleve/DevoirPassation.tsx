@@ -220,8 +220,8 @@ const DevoirPassation = () => {
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
       <div className="flex items-center gap-3">
-        <Button variant="ghost" size="icon" onClick={() => navigate("/eleve/devoirs")}>
-          <ArrowLeft className="h-4 w-4" />
+        <Button variant="ghost" size="sm" onClick={() => navigate("/eleve/devoirs")} className="gap-1.5">
+          <ArrowLeft className="h-4 w-4" /> Retour
         </Button>
         <div>
           <h1 className="text-xl font-bold">{ex?.titre}</h1>

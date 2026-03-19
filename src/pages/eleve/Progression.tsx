@@ -291,7 +291,7 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
                         </td>
                         <td className="py-2.5 px-2 text-center">
                           <Badge variant="outline" className="text-xs">
-                            {r.exercice?.competence || "—"}
+                            <CompetenceLabel code={r.exercice?.competence || "—"} />
                           </Badge>
                         </td>
                         <td className={`py-2.5 px-2 text-center font-bold ${scoreColor(r.score)}`}>
