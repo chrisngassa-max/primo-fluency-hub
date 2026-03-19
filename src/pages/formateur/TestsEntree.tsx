@@ -10,11 +10,12 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { toast } from "sonner";
 import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer,
 } from "recharts";
-import { Sparkles, Volume2, ChevronLeft, ChevronRight, CheckCircle2, Users, Clock, AlertTriangle, Save, BarChart3 } from "lucide-react";
+import { Sparkles, Volume2, ChevronLeft, ChevronRight, CheckCircle2, Users, Clock, AlertTriangle, Save, BarChart3, ChevronDown } from "lucide-react";
 import { TCF_QUESTIONS, SECTIONS_META, EXAM_DURATION_SECONDS } from "@/data/tcfQuestions";
 
 /* ───────── Sub-items definition ───────── */
@@ -329,105 +330,106 @@ function DiagnosticSousItems() {
         </CardContent>
       </Card>
 
-      {/* Radar Chart */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <BarChart3 className="h-5 w-5" /> Profil Radar — 5 compétences
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={320}>
-              <RadarChart data={radarData}>
-                <PolarGrid />
-                <PolarAngleAxis dataKey="competence" tick={{ fontSize: 13 }} />
-                <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 11 }} />
-                <Radar name="Score" dataKey="score" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.25} strokeWidth={2} />
-              </RadarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+      {/* Summary Dashboard — Radar + Competence overview */}
+      <Card>
+        <CardContent className="pt-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Radar Chart */}
+            <div>
+              <h3 className="text-base font-semibold flex items-center gap-2 mb-3">
+                <BarChart3 className="h-5 w-5 text-primary" /> Profil Radar — 5 compétences
+              </h3>
+              <ResponsiveContainer width="100%" height={280}>
+                <RadarChart data={radarData}>
+                  <PolarGrid />
+                  <PolarAngleAxis dataKey="competence" tick={{ fontSize: 13 }} />
+                  <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 11 }} />
+                  <Radar name="Score" dataKey="score" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.25} strokeWidth={2} />
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
 
-        {/* Summary per competence */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Synthèse par compétence</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+            {/* Competence summary bars */}
+            <div className="flex flex-col justify-center space-y-3">
+              <h3 className="text-base font-semibold mb-1">Synthèse par compétence</h3>
+              {COMPETENCES.map((comp) => {
+                const avg = compAverages[comp];
+                return (
+                  <div key={comp} className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">{COMP_LABELS[comp]}</span>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-sm font-bold ${getScoreTextColor(avg)}`}>{avg}/100</span>
+                        <Badge variant="outline" className="text-xs">Niv. {scoreToDifficulty(avg)}</Badge>
+                      </div>
+                    </div>
+                    <div className="h-2.5 rounded-full bg-muted overflow-hidden">
+                      <div className={`h-full rounded-full transition-all ${getScoreColor(avg)}`} style={{ width: `${avg}%` }} />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Accordion-based sub-items — all closed by default */}
+      <Card>
+        <CardContent className="pt-6">
+          <Accordion type="multiple" className="w-full">
             {COMPETENCES.map((comp) => {
               const avg = compAverages[comp];
               return (
-                <div key={comp} className="space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">{COMP_LABELS[comp]}</span>
-                    <div className="flex items-center gap-2">
-                      <span className={`text-sm font-bold ${getScoreTextColor(avg)}`}>{avg}/100</span>
-                      <Badge variant="outline" className="text-xs">
-                        Niv. {scoreToDifficulty(avg)}
-                      </Badge>
+                <AccordionItem key={comp} value={comp}>
+                  <AccordionTrigger className="hover:no-underline py-3">
+                    <div className="flex items-center justify-between w-full mr-4">
+                      <div className="flex items-center gap-3">
+                        <div className={`h-3 w-3 rounded-full ${getScoreColor(avg)}`} />
+                        <span className="font-semibold text-sm">{COMP_LABELS[comp]}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-sm font-bold tabular-nums ${getScoreTextColor(avg)}`}>{avg}/100</span>
+                        <Badge variant="outline" className="text-xs">Niv. {scoreToDifficulty(avg)}</Badge>
+                      </div>
                     </div>
-                  </div>
-                  <div className="h-3 rounded-full bg-muted overflow-hidden">
-                    <div className={`h-full rounded-full transition-all ${getScoreColor(avg)}`} style={{ width: `${avg}%` }} />
-                  </div>
-                </div>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 pt-2 pb-2">
+                      {DIAGNOSTIC_SOUS_ITEMS[comp].map((item) => {
+                        const val = scores[comp]?.[item] ?? 0;
+                        return (
+                          <div key={item} className="space-y-1.5">
+                            <div className="flex items-center justify-between">
+                              <label className="text-sm font-medium truncate mr-2">{item}</label>
+                              <div className="flex items-center gap-2 shrink-0">
+                                <span className={`text-xs font-bold tabular-nums ${getScoreTextColor(val)}`}>{val}</span>
+                                <span className="text-xs text-muted-foreground">→ Niv.{scoreToDifficulty(val)}</span>
+                              </div>
+                            </div>
+                            <Slider
+                              value={[val]}
+                              onValueChange={([v]) =>
+                                setScores((prev) => ({ ...prev, [comp]: { ...prev[comp], [item]: v } }))
+                              }
+                              max={100}
+                              step={1}
+                              className="w-full"
+                            />
+                            <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                              <div className={`h-full rounded-full transition-all ${getScoreColor(val)}`} style={{ width: `${val}%` }} />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
               );
             })}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Detailed sub-items per competence */}
-      {COMPETENCES.map((comp) => (
-        <Card key={comp}>
-          <CardHeader>
-            <CardTitle className="text-base flex items-center justify-between">
-              <span>{COMP_LABELS[comp]} — Sous-items</span>
-              <Badge variant="outline">
-                Moyenne : {compAverages[comp]}/100 → Niv. {scoreToDifficulty(compAverages[comp])}
-              </Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-5">
-            {DIAGNOSTIC_SOUS_ITEMS[comp].map((item) => {
-              const val = scores[comp]?.[item] ?? 0;
-              return (
-                <div key={item} className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium">{item}</label>
-                    <div className="flex items-center gap-3">
-                      <span className={`text-sm font-bold tabular-nums ${getScoreTextColor(val)}`}>
-                        {val}/100
-                      </span>
-                      <span className="text-xs text-muted-foreground">→ Niv. {scoreToDifficulty(val)}</span>
-                    </div>
-                  </div>
-                  <Slider
-                    value={[val]}
-                    onValueChange={([v]) =>
-                      setScores((prev) => ({
-                        ...prev,
-                        [comp]: { ...prev[comp], [item]: v },
-                      }))
-                    }
-                    max={100}
-                    step={1}
-                    className="w-full"
-                  />
-                  {/* Color bar preview */}
-                  <div className="h-2 rounded-full bg-muted overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all ${getScoreColor(val)}`}
-                      style={{ width: `${val}%` }}
-                    />
-                  </div>
-                </div>
-              );
-            })}
-          </CardContent>
-        </Card>
-      ))}
+          </Accordion>
+        </CardContent>
+      </Card>
 
       {/* Action buttons */}
       <div className="flex flex-wrap gap-3">
