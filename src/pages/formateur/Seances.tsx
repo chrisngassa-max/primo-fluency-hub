@@ -20,11 +20,20 @@ import { Plus, Calendar, Loader2, BookOpen } from "lucide-react";
 
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
 
-const statutBadge: Record<string, { label: string; variant: "default" | "secondary" | "outline" | "destructive" }> = {
-  planifiee: { label: "Planifiée", variant: "outline" },
-  en_cours: { label: "En cours", variant: "default" },
-  terminee: { label: "Terminée", variant: "secondary" },
-  annulee: { label: "Annulée", variant: "destructive" },
+const getSessionBadge = (statut: string, dateSeance: string): { label: string; variant: "default" | "secondary" | "outline" | "destructive" } => {
+  if (statut === "annulee") return { label: "Annulée", variant: "destructive" };
+  if (statut === "terminee") return { label: "Terminée", variant: "secondary" };
+  if (statut === "en_cours") return { label: "En cours", variant: "default" };
+
+  // For planifiee, determine based on date
+  const now = new Date();
+  const seanceDate = new Date(dateSeance);
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const seanceDay = new Date(seanceDate.getFullYear(), seanceDate.getMonth(), seanceDate.getDate());
+
+  if (seanceDay.getTime() === today.getTime()) return { label: "Aujourd'hui", variant: "default" };
+  if (seanceDay < today) return { label: "Terminée", variant: "secondary" };
+  return { label: "Planifiée", variant: "outline" };
 };
 
 const SeancesPage = () => {
