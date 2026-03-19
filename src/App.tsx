@@ -43,6 +43,7 @@ import ParcoursPage from "@/pages/formateur/ParcoursPage";
 import ParcoursDetail from "@/pages/formateur/ParcoursDetail";
 import RapportsPage from "@/pages/formateur/RapportsPage";
 import SessionSupermarket from "@/pages/formateur/SessionSupermarket";
+import SuiviDevoirsPage from "@/pages/formateur/SuiviDevoirsPage";
 
 const queryClient = new QueryClient();
 
