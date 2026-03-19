@@ -220,7 +220,7 @@ const ParcoursPage = () => {
       }
 
       qc.invalidateQueries({ queryKey: ["formateur-parcours"] });
-      toast.success("Parcours dupliqué !");
+      toast.success("Plan dupliqué !");
     } catch (e: any) {
       toast.error("Erreur", { description: e.message });
     }
