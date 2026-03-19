@@ -7,11 +7,13 @@ export const getDifficultyColor = (level: number) => {
   return "bg-red-100 text-red-800 border-red-300 dark:bg-red-900/40 dark:text-red-300 dark:border-red-700";
 };
 
-/** Returns label for difficulty range */
+/** Returns CECRL level label for difficulty range */
 export const getDifficultyLabel = (level: number) => {
-  if (level <= 2) return "Alpha";
-  if (level <= 7) return "Vers A1";
-  return "TCF A1";
+  if (level <= 2) return "A0";
+  if (level <= 4) return "A1";
+  if (level <= 6) return "A2";
+  if (level <= 8) return "B1";
+  return "B2";
 };
 
 /** Renders a compact difficulty badge */

@@ -318,7 +318,7 @@ const SeancesPage = () => {
 
       <div className="space-y-3">
         {(sessions ?? []).map((s: any) => {
-          const badge = statutBadge[s.statut] || statutBadge.planifiee;
+          const badge = getSessionBadge(s.statut, s.date_seance);
           return (
             <Card key={s.id} className="cursor-pointer hover:border-primary/30 transition-colors"
               onClick={() => navigate(`/formateur/seances/${s.id}/pilote`)}>
