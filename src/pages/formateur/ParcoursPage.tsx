@@ -422,7 +422,7 @@ const ParcoursPage = () => {
 
             <Button onClick={handleSave} disabled={saving} className="w-full mt-4" size="lg">
               {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
-              {isTemplate ? "Sauvegarder le modèle" : "Créer le parcours"}
+              {isTemplate ? "Sauvegarder le modèle" : "Créer le plan de formation"}
             </Button>
           </CardContent>
         </Card>
