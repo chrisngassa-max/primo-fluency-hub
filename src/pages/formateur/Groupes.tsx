@@ -363,13 +363,12 @@ const GroupesPage = () => {
                   <div className="overflow-x-auto max-h-[360px] overflow-y-auto border rounded-lg">
                     <table className="w-full text-sm">
                       <thead className="sticky top-0 bg-muted/80 backdrop-blur-sm">
-                        <tr className="border-b">
-                          <th className="text-left py-2.5 px-3 font-medium text-muted-foreground">Prénom & Nom</th>
-                          <th className="text-left py-2.5 px-3 font-medium text-muted-foreground">Identifiant</th>
-                          <th className="text-center py-2.5 px-3 font-medium text-muted-foreground">MDP</th>
-                          <th className="text-center py-2.5 px-3 font-medium text-muted-foreground">Progression</th>
-                          <th className="text-center py-2.5 px-3 font-medium text-muted-foreground w-24">Actions</th>
-                        </tr>
+                         <tr className="border-b">
+                           <th className="text-left py-2.5 px-3 font-medium text-muted-foreground">Prénom & Nom</th>
+                           <th className="text-left py-2.5 px-3 font-medium text-muted-foreground">Identifiant</th>
+                           <th className="text-center py-2.5 px-3 font-medium text-muted-foreground">Progression</th>
+                           <th className="text-center py-2.5 px-3 font-medium text-muted-foreground w-24">Actions</th>
+                         </tr>
                       </thead>
                       <tbody>
                         {members.map((m: any) => {
