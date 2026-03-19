@@ -41,6 +41,7 @@ const mainNav = [
 
 const monitorNav = [
   { title: "Monitoring", url: "/formateur/monitoring", icon: Activity },
+  { title: "Suivi des devoirs", url: "/formateur/suivi-devoirs", icon: BookOpen },
   { title: "Tests d'entrée", url: "/formateur/tests", icon: ClipboardList },
   { title: "Rapports", url: "/formateur/rapports", icon: FileText },
 ];

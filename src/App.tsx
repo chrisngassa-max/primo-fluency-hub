@@ -86,6 +86,7 @@ const App = () => (
               <Route path="parcours" element={<ParcoursPage />} />
               <Route path="parcours/:parcoursId" element={<ParcoursDetail />} />
               <Route path="rapports" element={<RapportsPage />} />
+              <Route path="suivi-devoirs" element={<SuiviDevoirsPage />} />
               <Route path="session-builder" element={<SessionSupermarket />} />
               <Route path="parametres" element={<Parametres />} />
             </Route>
