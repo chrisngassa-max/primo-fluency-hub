@@ -178,7 +178,7 @@ const ParcoursPage = () => {
         .select("*")
         .eq("id", parcoursId)
         .single();
-      if (!original) throw new Error("Parcours introuvable");
+      if (!original) throw new Error("Plan introuvable");
 
       const { data: seances } = await supabase
         .from("parcours_seances")
