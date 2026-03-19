@@ -46,9 +46,11 @@ const Index = () => {
         {/* ÉLÈVE — Priority visual, biggest card */}
         <button
           onClick={() => navigate("/eleve/login")}
-          className="w-full rounded-2xl border-2 border-sky-200 bg-sky-50 dark:bg-sky-950/30 dark:border-sky-800 p-8 md:p-10 flex flex-col items-center gap-4 transition-all hover:shadow-xl hover:scale-[1.02] hover:border-primary focus:outline-none focus:ring-4 focus:ring-primary/30 cursor-pointer"
+          className="w-full rounded-2xl border-2 border-sky-200 bg-sky-50 dark:bg-sky-950/30 dark:border-sky-800 p-8 md:p-10 flex flex-col items-center gap-4 transition-all duration-200 hover:shadow-lg hover:border-primary focus:outline-none focus:ring-4 focus:ring-primary/30 cursor-pointer"
         >
-          <span className="text-6xl" role="img" aria-label="Élève">🎓</span>
+          <div className="h-16 w-16 rounded-2xl bg-sky-100 dark:bg-sky-900/40 flex items-center justify-center">
+            <GraduationCap className="h-9 w-9 text-sky-500" />
+          </div>
           <span className="text-2xl md:text-3xl font-bold text-foreground tracking-wide">
             ESPACE ÉLÈVE
           </span>
@@ -60,9 +62,11 @@ const Index = () => {
         {/* FORMATEUR */}
         <button
           onClick={() => navigate("/formateur/login")}
-          className="w-full rounded-2xl border border-border bg-card p-6 md:p-8 flex flex-col items-center gap-3 transition-all hover:shadow-lg hover:scale-[1.01] hover:border-primary focus:outline-none focus:ring-4 focus:ring-primary/30 cursor-pointer"
+          className="w-full rounded-2xl border border-indigo-200 bg-indigo-50 dark:bg-indigo-950/30 dark:border-indigo-800 p-6 md:p-8 flex flex-col items-center gap-3 transition-all duration-200 hover:shadow-lg hover:border-primary focus:outline-none focus:ring-4 focus:ring-primary/30 cursor-pointer"
         >
-          <span className="text-5xl" role="img" aria-label="Formateur">💼</span>
+          <div className="h-14 w-14 rounded-2xl bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center">
+            <Briefcase className="h-7 w-7 text-indigo-500" />
+          </div>
           <span className="text-xl md:text-2xl font-bold text-foreground">
             ESPACE FORMATEUR
           </span>
@@ -74,9 +78,11 @@ const Index = () => {
         {/* ADMIN — smaller, sober */}
         <button
           onClick={() => navigate("/admin/login")}
-          className="w-full max-w-xs rounded-xl border border-border bg-muted/50 p-4 md:p-5 flex flex-col items-center gap-2 transition-all hover:shadow-md hover:border-primary focus:outline-none focus:ring-4 focus:ring-primary/30 cursor-pointer"
+          className="w-full max-w-xs rounded-xl border border-border bg-muted/50 p-4 md:p-5 flex flex-col items-center gap-2 transition-all duration-200 hover:shadow-lg hover:border-primary focus:outline-none focus:ring-4 focus:ring-primary/30 cursor-pointer"
         >
-          <span className="text-3xl" role="img" aria-label="Administration">🛡️</span>
+          <div className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center">
+            <Shield className="h-5 w-5 text-muted-foreground" />
+          </div>
           <span className="text-base font-semibold text-foreground">
             ADMINISTRATION
           </span>
