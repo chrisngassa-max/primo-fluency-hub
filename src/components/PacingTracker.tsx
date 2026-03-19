@@ -33,7 +33,9 @@ interface GroupPacing {
 const STATUS_CONFIG = {
   en_avance: { label: "En avance", color: "bg-green-500", badgeVariant: "default" as const, badgeClass: "bg-green-600 text-white hover:bg-green-700" },
   dans_les_temps: { label: "Dans les temps", color: "bg-green-500", badgeVariant: "default" as const, badgeClass: "bg-green-600 text-white hover:bg-green-700" },
-  en_retard: { label: "En retard", color: "bg-destructive", badgeVariant: "destructive" as const, badgeClass: "" },
+  en_retard: { label: "En retard", color: "bg-destructive", badgeVariant: "secondary" as const, badgeClass: "bg-orange-500 text-white hover:bg-orange-600" },
+  retard_important: { label: "Retard important", color: "bg-destructive", badgeVariant: "destructive" as const, badgeClass: "" },
+  pas_commence: { label: "Non démarré", color: "bg-muted", badgeVariant: "secondary" as const, badgeClass: "" },
 };
 
 export default function PacingTracker() {
