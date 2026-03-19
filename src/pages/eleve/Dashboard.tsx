@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BookOpen, ClipboardList, TrendingUp, AlertCircle } from "lucide-react";
+import CompetenceLabel from "@/components/CompetenceLabel";
 
 const EleveDashboard = () => {
   const { user } = useAuth();
