@@ -850,7 +850,10 @@ const MonitoringPage = () => {
               {loadingStats ? <Skeleton className="h-64 w-full" /> : groupStats.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-16 text-center">
                   <Users className="h-12 w-12 text-muted-foreground/40 mb-3" />
-                  <p className="text-muted-foreground font-medium">Aucun groupe actif</p>
+                  <p className="text-lg font-semibold text-foreground">Pas encore de données</p>
+                  <p className="text-sm text-muted-foreground mt-1 max-w-sm">
+                    Les données de progression s'afficheront ici une fois que vos élèves auront commencé leurs exercices.
+                  </p>
                 </div>
               ) : (
                 <div className="h-72">
@@ -876,7 +879,15 @@ const MonitoringPage = () => {
               <CardTitle className="text-base flex items-center gap-2"><Target className="h-4 w-4" /> Scores par compétence TCF</CardTitle>
             </CardHeader>
             <CardContent>
-              {loadingStats ? <Skeleton className="h-64 w-full" /> : groupStats.length === 0 ? null : (
+              {loadingStats ? <Skeleton className="h-64 w-full" /> : groupStats.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-16 text-center">
+                  <Target className="h-12 w-12 text-muted-foreground/40 mb-3" />
+                  <p className="text-lg font-semibold text-foreground">Pas encore de données</p>
+                  <p className="text-sm text-muted-foreground mt-1 max-w-sm">
+                    Les données de progression s'afficheront ici une fois que vos élèves auront commencé leurs exercices.
+                  </p>
+                </div>
+              ) : (
                 <div className="h-72">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={groupStats}>

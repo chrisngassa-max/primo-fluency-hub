@@ -436,12 +436,18 @@ const ParcoursPage = () => {
         </div>
       ) : (parcoursList || []).length === 0 && !showForm ? (
         <Card className="border-dashed">
-          <CardContent className="py-12 text-center">
-            <GraduationCap className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
-            <p className="text-muted-foreground">Aucun plan de formation créé</p>
-            <p className="text-xs text-muted-foreground mt-1">
-              Créez votre premier plan de formation adaptatif
-            </p>
+          <CardContent className="py-16 text-center space-y-4">
+            <GraduationCap className="h-14 w-14 mx-auto text-muted-foreground/40" />
+            <div>
+              <p className="text-lg font-semibold text-foreground">Aucun plan de formation créé</p>
+              <p className="text-sm text-muted-foreground mt-1 max-w-sm mx-auto">
+                Créez votre premier plan de formation adaptatif pour organiser la progression de vos groupes.
+              </p>
+            </div>
+            <Button onClick={() => setShowForm(true)} size="lg" className="gap-2">
+              <Plus className="h-4 w-4" />
+              Nouveau plan de formation
+            </Button>
           </CardContent>
         </Card>
       ) : (
