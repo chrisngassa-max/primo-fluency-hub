@@ -49,7 +49,7 @@ const EleveDashboard = () => {
               <span className="text-muted-foreground">Niveau estimé</span>
               <Badge variant="secondary">Non évalué</Badge>
             </div>
-            <Progress value={0} className="h-3" />
+            <Progress value={0} className="h-3 [&>div]:bg-muted" />
             <p className="text-xs text-muted-foreground">
               Passez le test d'entrée pour évaluer votre niveau initial.
             </p>

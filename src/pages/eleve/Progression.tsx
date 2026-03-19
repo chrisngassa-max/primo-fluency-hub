@@ -1,10 +1,13 @@
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 import {
   RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,
   ResponsiveContainer,
@@ -40,6 +43,7 @@ interface EleveProgressionProps {
 
 const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const targetId = eleveId || user?.id;
 
   // Fetch competency status
@@ -117,6 +121,8 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
     return { competence: comp, value, fullMark: 100 };
   });
 
+  const hasRadarData = radarData.some((d) => d.value > 0);
+
   // Global progress: compute from profil or average competencies
   const globalProgress = profil?.taux_reussite_global ?? 0;
   const niveauActuel = profil?.niveau_actuel ?? "A0";
@@ -167,11 +173,19 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
               <span>{niveauActuel}</span>
               <span>Objectif : {niveauTarget}</span>
             </div>
-            <Progress value={globalProgress} className="h-4" />
+            <Progress value={globalProgress} className={cn("h-4", globalProgress === 0 && "[&>div]:bg-muted")} />
             <p className="text-xs text-muted-foreground text-center">
               {globalProgress > 0
                 ? `${Math.round(globalProgress)}% de progression globale`
-                : "Pas encore de résultats — passez le test d'entrée !"}
+                : (
+                  <Button
+                    variant="link"
+                    className="text-xs p-0 h-auto text-primary underline"
+                    onClick={() => navigate("/eleve/test")}
+                  >
+                    Passez le test d'entrée pour évaluer votre niveau !
+                  </Button>
+                )}
             </p>
           </div>
         </CardContent>
@@ -187,27 +201,36 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-            {/* Radar chart */}
-            <div className="h-64 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="70%">
-                  <PolarGrid stroke="hsl(var(--border))" />
-                  <PolarAngleAxis
-                    dataKey="competence"
-                    tick={{ fill: "hsl(var(--foreground))", fontSize: 14, fontWeight: 600 }}
-                  />
-                  <PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} axisLine={false} />
-                  <Radar
-                    name="Niveau"
-                    dataKey="value"
-                    stroke="hsl(var(--primary))"
-                    fill="hsl(var(--primary))"
-                    fillOpacity={0.25}
-                    strokeWidth={2}
-                  />
-                </RadarChart>
-              </ResponsiveContainer>
-            </div>
+            {/* Radar chart or empty message */}
+            {hasRadarData ? (
+              <div className="h-64 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="70%">
+                    <PolarGrid stroke="hsl(var(--border))" />
+                    <PolarAngleAxis
+                      dataKey="competence"
+                      tick={{ fill: "hsl(var(--foreground))", fontSize: 14, fontWeight: 600 }}
+                    />
+                    <PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} axisLine={false} />
+                    <Radar
+                      name="Niveau"
+                      dataKey="value"
+                      stroke="hsl(var(--primary))"
+                      fill="hsl(var(--primary))"
+                      fillOpacity={0.25}
+                      strokeWidth={2}
+                    />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <div className="h-64 w-full flex flex-col items-center justify-center text-center p-4">
+                <TrendingUp className="h-10 w-10 text-muted-foreground/40 mb-3" />
+                <p className="text-muted-foreground text-sm">
+                  Votre progression s'affichera ici après votre test d'entrée.
+                </p>
+              </div>
+            )}
 
             {/* Competency badges */}
             <div className="space-y-3">

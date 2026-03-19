@@ -84,13 +84,23 @@ const EleveDevoirs = () => {
             <DevoirCard key={d.id} devoir={d} onOpen={() => navigate(`/eleve/devoirs/${d.id}`)} />
           ))}
         </div>
-      ) : (
+      ) : devoirs && devoirs.length > 0 ? (
         <Card className="border-dashed">
           <CardContent className="py-12 text-center">
             <CheckCircle2 className="h-10 w-10 mx-auto text-green-500 mb-3" />
             <p className="text-muted-foreground font-medium">Tous vos devoirs sont à jour !</p>
             <p className="text-sm text-muted-foreground/70 mt-1">
               De nouveaux devoirs apparaîtront après vos séances.
+            </p>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="border-dashed">
+          <CardContent className="py-12 text-center">
+            <BookOpen className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
+            <p className="text-muted-foreground font-medium">Pas encore de devoirs</p>
+            <p className="text-sm text-muted-foreground/70 mt-1">
+              Vos devoirs apparaîtront ici après votre première séance avec votre formateur.
             </p>
           </CardContent>
         </Card>
