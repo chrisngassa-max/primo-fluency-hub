@@ -11,15 +11,19 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import {
   CheckCircle2, ArrowRight, ArrowLeft, Printer, Save, BookOpen, Loader2, Sparkles,
-  AlertTriangle, Brain, X, ClipboardCheck, Send, Clock,
+  AlertTriangle, Brain, X, ClipboardCheck, Send, Clock, CalendarIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { format, addDays } from "date-fns";
+import { fr } from "date-fns/locale";
 
 const COMPETENCES = ["CO", "CE", "EE", "EO", "Structures"] as const;
 
