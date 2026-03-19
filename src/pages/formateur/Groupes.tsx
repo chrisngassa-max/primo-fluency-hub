@@ -376,10 +376,13 @@ const GroupesPage = () => {
               </div>
 
               <AccordionContent className="px-4 pb-4 pt-0">
-                {/* Add student button */}
-                <div className="flex justify-end mb-3">
+                {/* Action buttons */}
+                <div className="flex justify-end gap-2 mb-3">
+                  <Button size="sm" variant="outline" onClick={() => openInvite(g.id, g.nom)}>
+                    <Ticket className="h-4 w-4 mr-2" />Inviter un élève
+                  </Button>
                   <Button size="sm" variant="outline" onClick={() => openAddStudent(g.id)}>
-                    <UserPlus className="h-4 w-4 mr-2" />Ajouter un élève
+                    <UserPlus className="h-4 w-4 mr-2" />Créer un compte élève
                   </Button>
                 </div>
 
