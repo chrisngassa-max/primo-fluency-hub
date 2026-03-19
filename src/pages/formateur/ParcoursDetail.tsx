@@ -270,7 +270,7 @@ const ParcoursDetail = () => {
       <Card>
         <CardContent className="py-4 px-5">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium">Progression du parcours</span>
+            <span className="text-sm font-medium">Progression du plan</span>
             <span className="text-sm text-muted-foreground">{completedSeances.length} / {allSeances.length} séances</span>
           </div>
           <Progress value={progressPercent} className="h-3" />
