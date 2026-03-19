@@ -63,12 +63,6 @@ const SessionBilan = () => {
   const [sendingTest, setSendingTest] = useState(false);
   const [devoirDeadline, setDevoirDeadline] = useState<Date | undefined>(undefined);
 
-  // Compute default deadline from params
-  const defaultDeadlineDays = (formateurParams as any)?.delai_devoirs_jours ?? 3;
-  const defaultDeadline = addDays(new Date(), defaultDeadlineDays);
-  const effectiveDeadline = devoirDeadline || defaultDeadline;
-  const minDeadline = addDays(new Date(), 1);
-
   const { data: formateurParams } = useQuery({
     queryKey: ["formateur-parametres-bilan", user?.id],
     queryFn: async () => {
