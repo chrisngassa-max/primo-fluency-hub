@@ -119,6 +119,35 @@ const EleveDashboard = () => {
     enabled: !!user?.id,
   });
 
+  // Fetch pending bilan tests (AI-generated tests sent by formateur)
+  const { data: pendingTests } = useQuery({
+    queryKey: ["eleve-bilans-tests", user?.id],
+    queryFn: async () => {
+      const { data: tests, error } = await supabase
+        .from("bilan_tests" as any)
+        .select("id, nb_questions, competences_couvertes, session:sessions(titre, date_seance)")
+        .eq("statut", "envoye")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      if (!tests || tests.length === 0) return [];
+      const testIds = (tests as any[]).map((t: any) => t.id);
+      const { data: done } = await supabase
+        .from("bilan_test_results" as any)
+        .select("bilan_test_id, score_global")
+        .eq("eleve_id", user!.id)
+        .in("bilan_test_id", testIds);
+      const doneMap = new Map((done ?? []).map((d: any) => [d.bilan_test_id, d.score_global]));
+      return (tests as any[]).map((t: any) => ({
+        ...t,
+        completed: doneMap.has(t.id),
+        score: doneMap.get(t.id),
+      }));
+    },
+    enabled: !!user?.id,
+  });
+
+  const uncompletedTests = (pendingTests ?? []).filter((t: any) => !t.completed);
+
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
       {showOnboarding && <EleveOnboarding onComplete={dismissOnboarding} />}
