@@ -67,6 +67,10 @@ const EleveLayout = () => {
         <Outlet />
       </main>
 
+      <div className="hidden lg:block">
+        <AppFooter />
+      </div>
+
       <nav className="fixed inset-x-0 bottom-0 z-50 flex justify-around border-t bg-card px-2 py-2 shadow-[0_-2px_10px_hsl(var(--foreground)/0.08)] lg:hidden">
         {navItems.map((item) => (
           <button
