@@ -214,7 +214,59 @@ function DiagnosticSousItems() {
     [compAverages],
   );
 
-  const niveauEstime = globalAvg >= 80 ? "B1" : globalAvg >= 60 ? "A2" : globalAvg >= 30 ? "A1" : "A0";
+  // Query sessions count for "expected at session T" calculation
+  const { data: sessionsData } = useQuery({
+    queryKey: ["formateur-sessions-count", user?.id],
+    queryFn: async () => {
+      const { data: groups } = await supabase.from("groups").select("id").eq("formateur_id", user!.id);
+      if (!groups?.length) return { total: 10, completed: 0 };
+      const { count: total } = await supabase
+        .from("sessions")
+        .select("id", { count: "exact", head: true })
+        .in("group_id", groups.map((g) => g.id));
+      const { count: completed } = await supabase
+        .from("sessions")
+        .select("id", { count: "exact", head: true })
+        .in("group_id", groups.map((g) => g.id))
+        .in("statut", ["terminee"]);
+      return { total: Math.max(total || 10, 1), completed: completed || 0 };
+    },
+    enabled: !!user,
+  });
+
+  const expectedAtT = useMemo(() => {
+    const t = sessionsData?.total || 10;
+    const c = sessionsData?.completed || 0;
+    const ratio = Math.min(c / t, 1);
+    return Math.round(ratio * 100);
+  }, [sessionsData]);
+
+  const multiRadarData = useMemo(
+    () => COMPETENCES.map((comp) => ({
+      competence: comp,
+      actuel: compAverages[comp],
+      attendu: expectedAtT,
+      objectif: 100,
+      fullMark: 100,
+    })),
+    [compAverages, expectedAtT],
+  );
+
+  // Trend indicator: compare current avg to initial diagnostic score
+  const compTrends = useMemo(() => {
+    const trends: Record<string, "up" | "flat" | "down"> = {};
+    for (const comp of COMPETENCES) {
+      const avg = compAverages[comp];
+      // If no existing diagnostic, treat as flat; otherwise compare
+      const initial = existingDiag?.filter((d: any) => d.competence === comp);
+      if (!initial?.length) { trends[comp] = "flat"; continue; }
+      const initAvg = Math.round(initial.reduce((s: number, d: any) => s + Number(d.score), 0) / initial.length);
+      if (avg > initAvg + 5) trends[comp] = "up";
+      else if (avg < initAvg - 5) trends[comp] = "down";
+      else trends[comp] = "flat";
+    }
+    return trends;
+  }, [compAverages, existingDiag]);
 
   // Save scores
   const handleSave = async () => {
