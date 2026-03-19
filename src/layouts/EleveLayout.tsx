@@ -29,7 +29,7 @@ const EleveLayout = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       {/* Top bar */}
-      <header className="h-14 flex items-center gap-3 border-b bg-card px-4 shrink-0">
+      <header className="sticky top-0 z-40 h-14 flex items-center gap-3 border-b bg-card px-4 shrink-0">
         <GraduationCap className="h-6 w-6 text-primary" />
         <span className="font-bold text-lg text-primary tracking-tight">TCF Pro</span>
         <div className="ml-auto flex items-center gap-3">
@@ -44,7 +44,7 @@ const EleveLayout = () => {
       </header>
 
       {/* Content — always full width, bottom padding for nav */}
-      <main className="flex-1 overflow-auto p-4 md:p-6 pb-24">
+      <main className="flex-1 p-4 md:p-6 pb-24">
         <Outlet />
       </main>
 

@@ -1,16 +1,19 @@
 import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BookOpen, ClipboardList, TrendingUp, AlertCircle } from "lucide-react";
+import { BookOpen, ClipboardList, TrendingUp, AlertCircle, ArrowRight } from "lucide-react";
 import CompetenceLabel from "@/components/CompetenceLabel";
 import EleveOnboarding, { useShowOnboarding } from "@/components/EleveOnboarding";
 
 const EleveDashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [showOnboarding, dismissOnboarding] = useShowOnboarding();
 
   // Fetch active devoirs for current student
@@ -133,14 +136,18 @@ const EleveDashboard = () => {
         <CardContent className="pt-6">
           <div className="flex items-start gap-4">
             <ClipboardList className="h-8 w-8 text-primary shrink-0 mt-0.5" />
-            <div>
+            <div className="flex-1">
               <h3 className="font-semibold text-foreground">Test d'entrée</h3>
               <p className="text-sm text-muted-foreground mt-1">
                 Évaluez votre niveau en Compréhension orale, écrite, Expression écrite et Structures de la langue.
               </p>
-              <Badge className="mt-3" variant="outline">
-                À compléter
-              </Badge>
+              <Button
+                className="mt-3 gap-2"
+                onClick={() => navigate("/eleve/test-entree")}
+              >
+                Passer le test d'entrée
+                <ArrowRight className="h-4 w-4" />
+              </Button>
             </div>
           </div>
         </CardContent>
