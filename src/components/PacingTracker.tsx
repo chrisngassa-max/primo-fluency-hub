@@ -156,13 +156,13 @@ export default function PacingTracker() {
           status = "retard_important";
         }
 
-        // Simple AI prediction
         let aiPrediction: string;
-        if (seancesTerminees === 0) {
+        if (status === "pas_commence") {
           aiPrediction = "Pas encore de séance terminée — impossible de projeter.";
+        } else if (status === "retard_important") {
+          aiPrediction = `Retard important. Seulement ${Math.round(completionRatio * 100)}% des séances réalisées. Risque de ne pas atteindre l'objectif ${g.niveau || "A1"}.`;
         } else if (status === "en_retard") {
-          const deficit = expectedPct - progressPct;
-          aiPrediction = `Retard de ${deficit}pts. Au rythme actuel, le groupe n'atteindra pas l'objectif ${g.niveau || "A1"} dans les temps.`;
+          aiPrediction = `En retard sur le programme. Au rythme actuel, l'objectif ${g.niveau || "A1"} sera difficile à atteindre.`;
         } else if (status === "en_avance") {
           aiPrediction = `Le groupe progresse plus vite que prévu. Objectif ${g.niveau || "A1"} atteignable en avance.`;
         } else {
