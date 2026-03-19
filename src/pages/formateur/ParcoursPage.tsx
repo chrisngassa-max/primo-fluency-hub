@@ -231,7 +231,7 @@ const ParcoursPage = () => {
       const { error } = await supabase.from("parcours").delete().eq("id", parcoursId);
       if (error) throw error;
       qc.invalidateQueries({ queryKey: ["formateur-parcours"] });
-      toast.success("Parcours supprimé.");
+      toast.success("Plan supprimé.");
     } catch (e: any) {
       toast.error("Erreur", { description: e.message });
     }
