@@ -62,6 +62,8 @@ const SessionBilan = () => {
   const [showTestModal, setShowTestModal] = useState(false);
   const [sendingTest, setSendingTest] = useState(false);
   const [devoirDeadline, setDevoirDeadline] = useState<Date | undefined>(undefined);
+  const [confirmSendOpen, setConfirmSendOpen] = useState(false);
+  const [groupMemberCount, setGroupMemberCount] = useState(0);
 
   const { data: formateurParams } = useQuery({
     queryKey: ["formateur-parametres-bilan", user?.id],
