@@ -180,19 +180,37 @@ const GroupesPage = () => {
     setCreatedStudent(null);
     setNewPrenom("");
     setNewNom("");
+    setNewEmail("");
+    setNewPassword("");
     setAddOpen(true);
   };
 
+  const openInvite = (groupId: string, groupName: string) => {
+    setInviteGroupId(groupId);
+    setInviteGroupName(groupName);
+    setInviteOpen(true);
+  };
+
   const handleAddStudent = async () => {
-    if (!newPrenom.trim() || !newNom.trim()) {
-      toast.error("Prénom et nom sont obligatoires.");
+    if (!newPrenom.trim() || !newNom.trim() || !newEmail.trim() || !newPassword.trim()) {
+      toast.error("Tous les champs sont obligatoires.");
+      return;
+    }
+    if (newPassword.length < 6) {
+      toast.error("Le mot de passe doit contenir au moins 6 caractères.");
       return;
     }
     setAddingMember(true);
     setCreatedStudent(null);
     try {
       const { data, error } = await supabase.functions.invoke("create-student", {
-        body: { prenom: newPrenom.trim(), nom: newNom.trim(), group_id: addGroupId },
+        body: {
+          prenom: newPrenom.trim(),
+          nom: newNom.trim(),
+          email: newEmail.trim(),
+          password: newPassword.trim(),
+          group_id: addGroupId,
+        },
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
@@ -201,6 +219,8 @@ const GroupesPage = () => {
       setCreatedStudent(student);
       setNewPrenom("");
       setNewNom("");
+      setNewEmail("");
+      setNewPassword("");
       toast.success(`${student.prenom} ${student.nom} créé(e) et ajouté(e) !`);
       qc.invalidateQueries({ queryKey: ["all-group-members"] });
     } catch (e: any) {
