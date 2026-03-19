@@ -35,6 +35,7 @@ import ImportProgramme from "@/pages/formateur/ImportProgramme";
 import Parametres from "@/pages/formateur/Parametres";
 import ParcoursPage from "@/pages/formateur/ParcoursPage";
 import ParcoursDetail from "@/pages/formateur/ParcoursDetail";
+import RapportsPage from "@/pages/formateur/RapportsPage";
 
 const queryClient = new QueryClient();
 
@@ -75,7 +76,7 @@ const App = () => (
               <Route path="import-programme" element={<ImportProgramme />} />
               <Route path="parcours" element={<ParcoursPage />} />
               <Route path="parcours/:parcoursId" element={<ParcoursDetail />} />
-              <Route path="rapports" element={<FormateurDashboard />} />
+              <Route path="rapports" element={<RapportsPage />} />
               <Route path="parametres" element={<Parametres />} />
             </Route>
 
