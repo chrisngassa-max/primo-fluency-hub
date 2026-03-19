@@ -39,6 +39,36 @@ const STATUS_CONFIG = {
 export default function PacingTracker() {
   const { user } = useAuth();
   const [compareOpen, setCompareOpen] = useState(false);
+  const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
+
+  // Fetch group members for expanded view
+  const { data: groupMembersMap = {} } = useQuery({
+    queryKey: ["pacing-group-members", user?.id],
+    queryFn: async () => {
+      const { data: groups } = await supabase.from("groups").select("id").eq("formateur_id", user!.id);
+      if (!groups?.length) return {};
+      const groupIds = groups.map((g) => g.id);
+      const { data: members } = await supabase.from("group_members").select("eleve_id, group_id").in("group_id", groupIds);
+      if (!members?.length) return {};
+      const eleveIds = [...new Set(members.map((m) => m.eleve_id))];
+      const [{ data: profiles }, { data: profils }] = await Promise.all([
+        supabase.from("profiles").select("id, nom, prenom").in("id", eleveIds),
+        supabase.from("profils_eleves").select("eleve_id, taux_reussite_global").in("eleve_id", eleveIds),
+      ]);
+      const nameMap = Object.fromEntries((profiles ?? []).map((p) => [p.id, `${p.prenom} ${p.nom}`]));
+      const scoreMap = Object.fromEntries((profils ?? []).map((p) => [p.eleve_id, Number(p.taux_reussite_global) || 0]));
+      const result: Record<string, GroupMember[]> = {};
+      for (const gId of groupIds) {
+        result[gId] = members.filter((m) => m.group_id === gId).map((m) => ({
+          eleve_id: m.eleve_id,
+          nom: nameMap[m.eleve_id] || "Élève",
+          progression: scoreMap[m.eleve_id] ?? 0,
+        }));
+      }
+      return result;
+    },
+    enabled: !!user,
+  });
 
   const { data: groupPacings = [], isLoading } = useQuery({
     queryKey: ["pacing-tracker", user?.id],
