@@ -184,6 +184,7 @@ const SessionBilan = () => {
                   formateur_id: user!.id,
                   raison: "remediation" as const,
                   statut: "en_attente" as const,
+                  date_echeance: effectiveDeadline.toISOString(),
                 }))
               );
               const { error: e3 } = await supabase.from("devoirs").insert(devoirs);
