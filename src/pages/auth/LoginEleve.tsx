@@ -8,24 +8,24 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { translateAuthError } from "@/lib/authErrors";
 
 const LoginEleve = () => {
   const { signIn, signUp, session, role, loading } = useAuth();
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
 
-  // Login
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
+  const [showLoginPw, setShowLoginPw] = useState(false);
 
-  // Signup
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
   const [signupNom, setSignupNom] = useState("");
   const [signupPrenom, setSignupPrenom] = useState("");
+  const [showSignupPw, setShowSignupPw] = useState(false);
 
-  // Forgot
   const [forgotEmail, setForgotEmail] = useState("");
   const [showForgot, setShowForgot] = useState(false);
 
@@ -36,7 +36,7 @@ const LoginEleve = () => {
     e.preventDefault();
     setBusy(true);
     const { error } = await signIn(loginEmail, loginPassword);
-    if (error) toast.error("Erreur de connexion", { description: error.message });
+    if (error) toast.error("Erreur de connexion", { description: translateAuthError(error.message) });
     else toast.success("Connexion réussie !");
     setBusy(false);
   };
@@ -46,7 +46,7 @@ const LoginEleve = () => {
     if (!signupNom || !signupPrenom) { toast.error("Remplissez votre nom et prénom."); return; }
     setBusy(true);
     const { error } = await signUp(signupEmail, signupPassword, { nom: signupNom, prenom: signupPrenom, role: "eleve" });
-    if (error) toast.error("Erreur d'inscription", { description: error.message });
+    if (error) toast.error("Erreur d'inscription", { description: translateAuthError(error.message) });
     else toast.success("Inscription réussie !", { description: "Vous pouvez maintenant vous connecter." });
     setBusy(false);
   };
@@ -57,10 +57,40 @@ const LoginEleve = () => {
     const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
       redirectTo: `${window.location.origin}/reset-password`,
     });
-    if (error) toast.error("Erreur", { description: error.message });
+    if (error) toast.error("Erreur", { description: translateAuthError(error.message) });
     else toast.success("Email envoyé", { description: "Consultez votre boîte mail." });
     setBusy(false);
   };
+
+  const PasswordInput = ({
+    id, value, onChange, show, onToggle, minLength,
+  }: {
+    id: string; value: string; onChange: (v: string) => void;
+    show: boolean; onToggle: () => void; minLength?: number;
+  }) => (
+    <div className="relative">
+      <Input
+        id={id}
+        type={show ? "text" : "password"}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder="••••••••"
+        minLength={minLength}
+        required
+        className="pr-10"
+      />
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+        onClick={onToggle}
+        tabIndex={-1}
+      >
+        {show ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
+      </Button>
+    </div>
+  );
 
   if (showForgot) {
     return (
@@ -74,7 +104,7 @@ const LoginEleve = () => {
             <form onSubmit={handleForgot} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="forgot-email">Adresse email</Label>
-                <Input id="forgot-email" type="email" value={forgotEmail} onChange={(e) => setForgotEmail(e.target.value)} required />
+                <Input id="forgot-email" type="email" placeholder="votre@email.com" value={forgotEmail} onChange={(e) => setForgotEmail(e.target.value)} required />
               </div>
               <Button type="submit" className="w-full" disabled={busy}>{busy ? "Envoi…" : "Envoyer le lien"}</Button>
               <Button type="button" variant="ghost" className="w-full" onClick={() => setShowForgot(false)}>Retour</Button>
@@ -110,11 +140,11 @@ const LoginEleve = () => {
                 <form onSubmit={handleLogin} className="space-y-4 mt-4">
                   <div className="space-y-2">
                     <Label htmlFor="eleve-login-email">Adresse email</Label>
-                    <Input id="eleve-login-email" type="email" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} required />
+                    <Input id="eleve-login-email" type="email" placeholder="votre@email.com" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} required />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="eleve-login-password">Mot de passe</Label>
-                    <Input id="eleve-login-password" type="password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} required />
+                    <PasswordInput id="eleve-login-password" value={loginPassword} onChange={setLoginPassword} show={showLoginPw} onToggle={() => setShowLoginPw(!showLoginPw)} />
                   </div>
                   <Button type="submit" className="w-full text-lg py-6" disabled={busy}>
                     {busy ? "Connexion…" : "Se connecter"}
@@ -130,20 +160,20 @@ const LoginEleve = () => {
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-2">
                       <Label htmlFor="eleve-signup-prenom">Prénom</Label>
-                      <Input id="eleve-signup-prenom" value={signupPrenom} onChange={(e) => setSignupPrenom(e.target.value)} required />
+                      <Input id="eleve-signup-prenom" placeholder="Prénom" value={signupPrenom} onChange={(e) => setSignupPrenom(e.target.value)} required />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="eleve-signup-nom">Nom</Label>
-                      <Input id="eleve-signup-nom" value={signupNom} onChange={(e) => setSignupNom(e.target.value)} required />
+                      <Input id="eleve-signup-nom" placeholder="Nom" value={signupNom} onChange={(e) => setSignupNom(e.target.value)} required />
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="eleve-signup-email">Adresse email</Label>
-                    <Input id="eleve-signup-email" type="email" value={signupEmail} onChange={(e) => setSignupEmail(e.target.value)} required />
+                    <Input id="eleve-signup-email" type="email" placeholder="votre@email.com" value={signupEmail} onChange={(e) => setSignupEmail(e.target.value)} required />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="eleve-signup-password">Mot de passe</Label>
-                    <Input id="eleve-signup-password" type="password" minLength={6} value={signupPassword} onChange={(e) => setSignupPassword(e.target.value)} required />
+                    <PasswordInput id="eleve-signup-password" value={signupPassword} onChange={setSignupPassword} show={showSignupPw} onToggle={() => setShowSignupPw(!showSignupPw)} minLength={6} />
                   </div>
                   <Button type="submit" className="w-full text-lg py-6" disabled={busy}>
                     {busy ? "Inscription…" : "S'inscrire"}
