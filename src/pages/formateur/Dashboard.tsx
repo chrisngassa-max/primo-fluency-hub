@@ -868,11 +868,12 @@ ${sessionExercises.map((ex: any, i: number) => `
           )}
 
           {/* Exercise Detail Sheet */}
-          <Sheet open={!!selectedExerciseId} onOpenChange={(open) => !open && setSelectedExerciseId(null)}>
+          <Sheet open={!!selectedExerciseId} onOpenChange={(open) => { if (!open) { setSelectedExerciseId(null); setIsEditing(false); } }}>
             <SheetContent className="sm:max-w-lg overflow-y-auto">
               {selectedExercise && (() => {
                 const tracking = getTracking(selectedExercise.sessionExerciceId);
                 const guide = selectedExercise.animation_guide as any;
+                const items = isEditing ? editedItems : ((selectedExercise.contenu as any)?.items || []);
                 return (
                   <>
                     <SheetHeader>
@@ -886,6 +887,7 @@ ${sessionExercises.map((ex: any, i: number) => `
                       </SheetDescription>
                     </SheetHeader>
                     <div className="space-y-6 mt-6">
+                      {/* Tracking controls */}
                       <div className="space-y-4 p-4 rounded-lg border bg-muted/20">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
@@ -903,32 +905,88 @@ ${sessionExercises.map((ex: any, i: number) => `
                         </div>
                       </div>
 
-                      <div>
-                        <h4 className="text-sm font-semibold mb-2">Consigne</h4>
-                        <p className="text-sm text-muted-foreground italic">{selectedExercise.consigne}</p>
+                      {/* Edit toggle button */}
+                      <div className="flex justify-end">
+                        {!isEditing ? (
+                          <Button variant="outline" size="sm" className="gap-2" onClick={startEditing}>
+                            <Pencil className="h-3.5 w-3.5" /> Modifier l'exercice
+                          </Button>
+                        ) : (
+                          <div className="flex gap-2">
+                            <Button variant="ghost" size="sm" className="gap-2" onClick={cancelEditing}>
+                              <X className="h-3.5 w-3.5" /> Annuler
+                            </Button>
+                            <Button size="sm" className="gap-2" onClick={handleSaveEdit} disabled={savingEdit}>
+                              <Save className="h-3.5 w-3.5" /> {savingEdit ? "Enregistrement…" : "Enregistrer"}
+                            </Button>
+                          </div>
+                        )}
                       </div>
 
+                      {/* Consigne */}
                       <div>
-                        <h4 className="text-sm font-semibold mb-3">Questions ({(selectedExercise.contenu as any)?.items?.length || 0})</h4>
+                        <h4 className="text-sm font-semibold mb-2">Consigne</h4>
+                        {isEditing ? (
+                          <Textarea value={editedConsigne} onChange={(e) => setEditedConsigne(e.target.value)} className="min-h-[60px]" />
+                        ) : (
+                          <p className="text-sm text-muted-foreground italic">{selectedExercise.consigne}</p>
+                        )}
+                      </div>
+
+                      {/* Questions */}
+                      <div>
+                        <h4 className="text-sm font-semibold mb-3">Questions ({items.length})</h4>
                         <div className="space-y-3">
-                          {((selectedExercise.contenu as any)?.items || []).map((item: any, j: number) => (
-                            <div key={j} className="p-3 rounded-lg bg-muted/30 border">
-                              <p className="text-sm font-medium mb-1.5">{j + 1}. {item.question}</p>
-                              {item.options?.length > 0 && (
-                                <div className="ml-3 space-y-1">
-                                  {item.options.map((opt: string, k: number) => (
-                                    <div key={k} className="flex items-center gap-2 text-sm text-muted-foreground">
+                          {items.map((item: any, j: number) => (
+                            <div key={j} className="p-3 rounded-lg bg-muted/30 border space-y-2">
+                              <div className="flex items-start gap-2">
+                                <span className="text-sm font-semibold text-muted-foreground mt-1 shrink-0">{j + 1}.</span>
+                                {isEditing ? (
+                                  <Input value={item.question} onChange={(e) => updateItemQuestion(j, e.target.value)} className="flex-1" placeholder="Énoncé de la question" />
+                                ) : (
+                                  <p className="text-sm font-medium flex-1">{item.question}</p>
+                                )}
+                                {isEditing && (
+                                  <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 text-destructive hover:text-destructive" onClick={() => removeItem(j)}>
+                                    <Trash2 className="h-3.5 w-3.5" />
+                                  </Button>
+                                )}
+                              </div>
+                              {(item.options?.length > 0 || isEditing) && (
+                                <div className="ml-5 space-y-1.5">
+                                  {(item.options || []).map((opt: string, k: number) => (
+                                    <div key={k} className="flex items-center gap-2">
                                       <span className="h-5 w-5 rounded border flex items-center justify-center text-xs bg-background shrink-0">{String.fromCharCode(65 + k)}</span>
-                                      {opt}
+                                      {isEditing ? (
+                                        <>
+                                          <Input value={opt} onChange={(e) => updateItemOption(j, k, e.target.value)} className="flex-1 h-8 text-sm" placeholder={`Option ${String.fromCharCode(65 + k)}`} />
+                                          <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0 text-destructive hover:text-destructive" onClick={() => removeItemOption(j, k)}>
+                                            <Trash2 className="h-3 w-3" />
+                                          </Button>
+                                        </>
+                                      ) : (
+                                        <span className="text-sm text-muted-foreground">{opt}</span>
+                                      )}
                                     </div>
                                   ))}
+                                  {isEditing && (
+                                    <Button variant="ghost" size="sm" className="text-xs gap-1 h-7 mt-1" onClick={() => addItemOption(j)}>
+                                      <Plus className="h-3 w-3" /> Option
+                                    </Button>
+                                  )}
                                 </div>
                               )}
                             </div>
                           ))}
                         </div>
+                        {isEditing && (
+                          <Button variant="outline" size="sm" className="gap-2 mt-4 w-full" onClick={addItem}>
+                            <Plus className="h-3.5 w-3.5" /> Ajouter une question
+                          </Button>
+                        )}
                       </div>
 
+                      {/* Animation guide (read-only) */}
                       {guide && (
                         <div className="space-y-2">
                           <h4 className="text-sm font-semibold flex items-center gap-2"><Gamepad2 className="h-4 w-4 text-orange-500" /> Atelier ludique</h4>
