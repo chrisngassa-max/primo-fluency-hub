@@ -269,12 +269,12 @@ const ParcoursPage = () => {
             Plans de formation
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Créez et gérez vos parcours pédagogiques adaptatifs
+            Créez et gérez vos plans de formation adaptatifs
           </p>
         </div>
         <Button onClick={() => setShowForm(true)} disabled={showForm}>
           <Plus className="h-4 w-4 mr-2" />
-          Nouveau parcours
+          Nouveau plan
         </Button>
       </div>
 
