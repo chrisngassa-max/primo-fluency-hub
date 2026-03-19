@@ -290,7 +290,7 @@ const ParcoursPage = () => {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Titre du parcours</Label>
+                <Label>Titre du plan</Label>
                 <Input value={titre} onChange={(e) => setTitre(e.target.value)} placeholder="Ex: Préparation TCF A1 - Groupe Mars 2026" />
               </div>
               <div className="space-y-2">
