@@ -238,17 +238,11 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
               {COMPETENCES.map((comp) => {
                 const statut = compMap[comp] || "non_evalue";
                 const info = statutLabel[statut] || statutLabel.non_evalue;
-                const compLabels: Record<string, string> = {
-                  CO: "Compréhension Orale",
-                  CE: "Compréhension Écrite",
-                  EE: "Expression Écrite",
-                  EO: "Expression Orale",
-                };
                 return (
                   <div key={comp} className="flex items-center justify-between p-3 rounded-lg border">
                     <div>
-                      <p className="font-semibold text-sm">{comp}</p>
-                      <p className="text-xs text-muted-foreground">{compLabels[comp]}</p>
+                      <CompetenceLabel code={comp} className="font-semibold text-sm cursor-help" />
+                      <CompetenceLabel code={comp} showFull className="block text-xs text-muted-foreground" />
                     </div>
                     <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${info.color}`}>
                       {info.label}
