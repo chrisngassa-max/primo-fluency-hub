@@ -837,9 +837,9 @@ ${sessionExercises.map((ex: any, i: number) => `
                       </div>
 
                       <div>
-                        <h4 className="text-sm font-semibold mb-3">Questions ({selectedExercise.contenu?.items?.length || 0})</h4>
+                        <h4 className="text-sm font-semibold mb-3">Questions ({(selectedExercise.contenu as any)?.items?.length || 0})</h4>
                         <div className="space-y-3">
-                          {(selectedExercise.contenu?.items || []).map((item: any, j: number) => (
+                          {((selectedExercise.contenu as any)?.items || []).map((item: any, j: number) => (
                             <div key={j} className="p-3 rounded-lg bg-muted/30 border">
                               <p className="text-sm font-medium mb-1.5">{j + 1}. {item.question}</p>
                               {item.options?.length > 0 && (
