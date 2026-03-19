@@ -142,7 +142,8 @@ function DiagnosticSousItems() {
   const [analysis, setAnalysis] = useState<string | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [saving, setSaving] = useState(false);
-
+  const [showExpected, setShowExpected] = useState(false);
+  const [showObjectif, setShowObjectif] = useState(false);
   // Load students
   const { data: eleves, isLoading: loadingEleves } = useQuery({
     queryKey: ["formateur-eleves", user?.id],
