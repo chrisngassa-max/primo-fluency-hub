@@ -310,6 +310,9 @@ const FormateurDashboard = () => {
         </Card>
       )}
 
+      {/* Pacing Tracker */}
+      <PacingTracker />
+
       {/* Tabs */}
       <Tabs defaultValue="seances">
         <TabsList>
