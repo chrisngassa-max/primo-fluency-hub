@@ -398,21 +398,7 @@ const GroupesPage = () => {
                                   )}
                                 </div>
                               </td>
-                              <td className="py-2.5 px-3 text-center">
-                                {eleve?.mot_de_passe_initial ? (
-                                  <div className="flex items-center justify-center gap-1">
-                                    <code className="text-xs bg-muted px-1.5 py-0.5 rounded">{eleve.mot_de_passe_initial}</code>
-                                    <Button
-                                      variant="ghost" size="icon" className="h-6 w-6 shrink-0"
-                                      onClick={(e) => { e.stopPropagation(); copyToClipboard(eleve.mot_de_passe_initial, `pwd-${m.id}`); }}
-                                    >
-                                      {copiedField === `pwd-${m.id}` ? <Check className="h-3 w-3 text-primary" /> : <Copy className="h-3 w-3" />}
-                                    </Button>
-                                  </div>
-                                ) : (
-                                  <span className="text-xs text-muted-foreground">—</span>
-                                )}
-                              </td>
+                              <td className="py-2.5 px-3">
                               <td className="py-2.5 px-3">
                                 <div className="flex items-center gap-2 justify-center">
                                   <div className="w-16 h-2 rounded-full bg-muted overflow-hidden">
