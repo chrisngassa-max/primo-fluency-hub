@@ -13,6 +13,7 @@ import { fr } from "date-fns/locale";
 import { toast } from "sonner";
 import SkillTree from "@/components/SkillTree";
 import { DifficultyBadge } from "@/components/DifficultyBadge";
+import PacingTracker from "@/components/PacingTracker";
 
 const COMPETENCE_LABELS: Record<string, string> = {
   CO: "Compréhension Orale",
