@@ -99,6 +99,7 @@ const App = () => (
               <Route index element={<EleveDashboard />} />
               <Route path="test-entree" element={<EleveTestEntree />} />
               <Route path="devoirs" element={<EleveDevoirs />} />
+              <Route path="bilan/:sessionId" element={<BilanSeance />} />
               <Route path="devoirs/:devoirId" element={<DevoirPassation />} />
               <Route path="progression" element={<EleveProgression />} />
               <Route path="profil" element={<EleveProfil />} />
