@@ -121,6 +121,8 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
     return { competence: comp, value, fullMark: 100 };
   });
 
+  const hasRadarData = radarData.some((d) => d.value > 0);
+
   // Global progress: compute from profil or average competencies
   const globalProgress = profil?.taux_reussite_global ?? 0;
   const niveauActuel = profil?.niveau_actuel ?? "A0";
