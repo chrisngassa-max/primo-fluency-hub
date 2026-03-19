@@ -15,6 +15,7 @@ import {
 import { TrendingUp, BookOpen, Award } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import CompetenceLabel from "@/components/CompetenceLabel";
 
 const COMPETENCES = ["CO", "CE", "EE", "EO"] as const;
 
