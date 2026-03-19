@@ -136,14 +136,18 @@ const EleveDashboard = () => {
         <CardContent className="pt-6">
           <div className="flex items-start gap-4">
             <ClipboardList className="h-8 w-8 text-primary shrink-0 mt-0.5" />
-            <div>
+            <div className="flex-1">
               <h3 className="font-semibold text-foreground">Test d'entrée</h3>
               <p className="text-sm text-muted-foreground mt-1">
                 Évaluez votre niveau en Compréhension orale, écrite, Expression écrite et Structures de la langue.
               </p>
-              <Badge className="mt-3" variant="outline">
-                À compléter
-              </Badge>
+              <Button
+                className="mt-3 gap-2"
+                onClick={() => navigate("/eleve/test-entree")}
+              >
+                Passer le test d'entrée
+                <ArrowRight className="h-4 w-4" />
+              </Button>
             </div>
           </div>
         </CardContent>
