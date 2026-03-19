@@ -12,7 +12,6 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Verify caller is authenticated
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "Non autorisé" }), {
@@ -24,7 +23,6 @@ Deno.serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
-    // Verify the caller is a formateur
     const anonClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!, {
       global: { headers: { Authorization: authHeader } },
     });
@@ -38,7 +36,6 @@ Deno.serve(async (req) => {
 
     const adminClient = createClient(supabaseUrl, serviceRoleKey);
 
-    // Check caller has formateur role
     const { data: hasRole } = await adminClient.rpc("has_role", {
       _user_id: caller.id,
       _role: "formateur",
@@ -50,7 +47,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const { prenom, nom, group_id } = await req.json();
+    const { prenom, nom, email, password, group_id } = await req.json();
 
     if (!prenom?.trim() || !nom?.trim() || !group_id?.trim()) {
       return new Response(JSON.stringify({ error: "Prénom, nom et groupe sont obligatoires" }), {
@@ -61,6 +58,22 @@ Deno.serve(async (req) => {
 
     const cleanPrenom = prenom.trim();
     const cleanNom = nom.trim();
+    const cleanEmail = email?.trim();
+    const cleanPassword = password?.trim();
+
+    if (!cleanEmail || !cleanPassword) {
+      return new Response(JSON.stringify({ error: "Email et mot de passe sont obligatoires" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (cleanPassword.length < 6) {
+      return new Response(JSON.stringify({ error: "Le mot de passe doit contenir au moins 6 caractères" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     // Verify the group belongs to this formateur
     const { data: group } = await adminClient
@@ -76,20 +89,10 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Generate unique fake email and simple password
-    const slug = `${cleanPrenom}.${cleanNom}`
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9.]/g, "");
-    const uniqueId = crypto.randomUUID().slice(0, 6);
-    const fakeEmail = `${slug}.${uniqueId}@tcf.local`;
-    const password = "123456";
-
     // Create auth user with auto-confirm
     const { data: newUser, error: createError } = await adminClient.auth.admin.createUser({
-      email: fakeEmail,
-      password,
+      email: cleanEmail,
+      password: cleanPassword,
       email_confirm: true,
       user_metadata: { prenom: cleanPrenom, nom: cleanNom, role: "eleve" },
     });
@@ -106,7 +109,7 @@ Deno.serve(async (req) => {
     // Store initial password in profile for formateur reference
     await adminClient
       .from("profiles")
-      .update({ mot_de_passe_initial: password })
+      .update({ mot_de_passe_initial: cleanPassword })
       .eq("id", userId);
 
     // Add to group
@@ -125,8 +128,8 @@ Deno.serve(async (req) => {
           id: userId,
           prenom: cleanPrenom,
           nom: cleanNom,
-          email: fakeEmail,
-          password,
+          email: cleanEmail,
+          password: cleanPassword,
         },
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }

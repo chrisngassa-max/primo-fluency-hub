@@ -505,7 +505,7 @@ const GroupesPage = () => {
       {/* Add Student Dialog */}
       <Dialog open={addOpen} onOpenChange={setAddOpen}>
         <DialogContent className="max-w-md">
-          <DialogHeader><DialogTitle>Ajouter un élève</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Créer un compte élève</DialogTitle></DialogHeader>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
@@ -514,16 +514,22 @@ const GroupesPage = () => {
               </div>
               <div className="space-y-1">
                 <Label>Nom</Label>
-                <Input
-                  placeholder="Nom" value={newNom}
-                  onChange={(e) => setNewNom(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleAddStudent()}
-                />
+                <Input placeholder="Nom" value={newNom} onChange={(e) => setNewNom(e.target.value)} />
               </div>
+            </div>
+            <div className="space-y-1">
+              <Label>Email</Label>
+              <Input type="email" placeholder="email@exemple.com" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} />
+            </div>
+            <div className="space-y-1">
+              <Label>Mot de passe temporaire</Label>
+              <Input type="text" placeholder="Minimum 6 caractères" value={newPassword} onChange={(e) => setNewPassword(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleAddStudent()}
+              />
             </div>
             <Button onClick={handleAddStudent} disabled={addingMember} className="w-full">
               {addingMember ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <UserPlus className="h-4 w-4 mr-2" />}
-              Créer et ajouter
+              Créer et ajouter au groupe
             </Button>
 
             {createdStudent && (
@@ -534,7 +540,7 @@ const GroupesPage = () => {
                 <div className="space-y-2 text-sm">
                   <div><strong>Nom :</strong> {createdStudent.prenom} {createdStudent.nom}</div>
                   <div className="flex items-center justify-between gap-2">
-                    <span className="truncate"><strong>Identifiant :</strong> {createdStudent.email}</span>
+                    <span className="truncate"><strong>Email :</strong> {createdStudent.email}</span>
                     <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0"
                       onClick={() => copyToClipboard(createdStudent.email, "new-email")}>
                       {copiedField === "new-email" ? <Check className="h-3.5 w-3.5 text-primary" /> : <Copy className="h-3.5 w-3.5" />}
@@ -553,6 +559,14 @@ const GroupesPage = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Invite Student Dialog */}
+      <InviteStudentDialog
+        groupId={inviteGroupId}
+        groupName={inviteGroupName}
+        open={inviteOpen}
+        onOpenChange={setInviteOpen}
+      />
     </div>
   );
 };
