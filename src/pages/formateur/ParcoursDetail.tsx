@@ -32,6 +32,7 @@ import {
   Timer,
   Shield,
   TrendingUp,
+  ShoppingCart,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -373,11 +374,33 @@ const ParcoursDetail = () => {
                   </div>
 
                   {/* Actions */}
-                  <div className="shrink-0">
+                  <div className="shrink-0 flex gap-1">
                     {!isCompleted && !isInBilan && (
-                      <Button size="sm" variant="outline" onClick={() => startBilan(s)}>
-                        Bilan
-                      </Button>
+                      <>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate("/formateur/session-builder", {
+                              state: {
+                                titre: s.titre,
+                                objectifs: s.objectif_principal,
+                                competences_cibles: s.competences_cibles || [],
+                                duree_minutes: s.duree_minutes,
+                                niveau_cible: parcours?.niveau_cible || "A1",
+                                source: "parcours",
+                                groupId: parcours?.group_id,
+                              },
+                            });
+                          }}
+                        >
+                          <ShoppingCart className="h-4 w-4 mr-1" /> Construire
+                        </Button>
+                        <Button size="sm" variant="outline" onClick={() => startBilan(s)}>
+                          Bilan
+                        </Button>
+                      </>
                     )}
                   </div>
                 </div>

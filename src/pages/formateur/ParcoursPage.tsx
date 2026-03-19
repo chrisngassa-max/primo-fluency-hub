@@ -379,7 +379,23 @@ const ParcoursPage = () => {
           </CardHeader>
           <CardContent className="space-y-2">
             {generatedSeances.map((s, i) => (
-              <div key={i} className="flex items-start gap-3 p-3 rounded-lg border bg-muted/20 hover:bg-muted/40 transition-colors">
+              <div
+                key={i}
+                className="flex items-start gap-3 p-3 rounded-lg border bg-muted/20 hover:bg-muted/40 hover:border-primary/30 transition-colors cursor-pointer"
+                onClick={() =>
+                  navigate("/formateur/session-builder", {
+                    state: {
+                      titre: s.titre,
+                      objectifs: s.objectif_principal,
+                      competences_cibles: s.competences_cibles,
+                      duree_minutes: s.duree_minutes,
+                      niveau_cible: niveauCible,
+                      source: "parcours",
+                      groupId: groupId !== "none" ? groupId : undefined,
+                    },
+                  })
+                }
+              >
                 <div className="flex items-center justify-center h-7 w-7 rounded-full bg-primary/10 text-primary text-xs font-bold shrink-0 mt-0.5">
                   {i + 1}
                 </div>
@@ -389,6 +405,10 @@ const ParcoursPage = () => {
                     <span className="text-xs text-muted-foreground">{s.duree_minutes} min</span>
                     <span className="text-xs text-muted-foreground">·</span>
                     <span className="text-xs text-muted-foreground">{s.nb_exercices_suggeres} ex.</span>
+                    <Badge variant="secondary" className="text-[10px] gap-1">
+                      <Sparkles className="h-3 w-3" />
+                      Ouvrir
+                    </Badge>
                   </div>
                   <p className="text-xs text-muted-foreground">{s.objectif_principal}</p>
                   <div className="flex gap-1 flex-wrap">
