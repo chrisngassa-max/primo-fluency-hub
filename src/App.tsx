@@ -97,6 +97,7 @@ const App = () => (
               <Route path="devoirs" element={<EleveDevoirs />} />
               <Route path="devoirs/:devoirId" element={<DevoirPassation />} />
               <Route path="progression" element={<EleveProgression />} />
+              <Route path="profil" element={<EleveProfil />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />

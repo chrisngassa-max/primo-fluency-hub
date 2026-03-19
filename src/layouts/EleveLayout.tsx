@@ -4,6 +4,7 @@ import {
   LayoutDashboard,
   BookOpen,
   TrendingUp,
+  User,
   LogOut,
   GraduationCap,
 } from "lucide-react";
