@@ -142,13 +142,18 @@ export default function PacingTracker() {
         const expectedPct = seancesTotal > 0 ? Math.round((seancesTerminees / seancesTotal) * 100) : 0;
         const progressPct = Math.round(avgMastery);
 
-        // Status
-        const diff = progressPct - expectedPct;
+        // Status based on session completion ratio
+        const completionRatio = seancesTotal > 0 ? seancesTerminees / seancesTotal : 0;
         let status: GroupPacing["status"];
-        if (diff >= 0) {
+        if (seancesTerminees === 0) {
+          status = "pas_commence";
+        } else if (completionRatio >= 0.5) {
+          const diff = progressPct - expectedPct;
           status = diff > 5 ? "en_avance" : "dans_les_temps";
-        } else {
+        } else if (completionRatio >= 0.25) {
           status = "en_retard";
+        } else {
+          status = "retard_important";
         }
 
         // Simple AI prediction
