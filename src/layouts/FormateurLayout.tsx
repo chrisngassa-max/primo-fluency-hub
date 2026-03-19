@@ -1,4 +1,5 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import AppFooter from "@/components/AppFooter";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { FormateurSidebar } from "@/components/FormateurSidebar";
 import { useAuth } from "@/contexts/AuthContext";
