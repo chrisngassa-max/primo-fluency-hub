@@ -32,6 +32,7 @@ import {
   Timer,
   Shield,
   TrendingUp,
+  ShoppingCart,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
