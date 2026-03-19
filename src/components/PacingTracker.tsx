@@ -26,14 +26,16 @@ interface GroupPacing {
   seancesTotal: number;
   progressPct: number; // actual mastery %
   expectedPct: number; // where they should be based on elapsed sessions
-  status: "en_avance" | "dans_les_temps" | "en_retard";
+  status: "en_avance" | "dans_les_temps" | "en_retard" | "retard_important" | "pas_commence";
   aiPrediction: string;
 }
 
 const STATUS_CONFIG = {
   en_avance: { label: "En avance", color: "bg-green-500", badgeVariant: "default" as const, badgeClass: "bg-green-600 text-white hover:bg-green-700" },
   dans_les_temps: { label: "Dans les temps", color: "bg-green-500", badgeVariant: "default" as const, badgeClass: "bg-green-600 text-white hover:bg-green-700" },
-  en_retard: { label: "En retard", color: "bg-destructive", badgeVariant: "destructive" as const, badgeClass: "" },
+  en_retard: { label: "En retard", color: "bg-destructive", badgeVariant: "secondary" as const, badgeClass: "bg-orange-500 text-white hover:bg-orange-600" },
+  retard_important: { label: "Retard important", color: "bg-destructive", badgeVariant: "destructive" as const, badgeClass: "" },
+  pas_commence: { label: "Non démarré", color: "bg-muted", badgeVariant: "secondary" as const, badgeClass: "" },
 };
 
 export default function PacingTracker() {
@@ -140,22 +142,27 @@ export default function PacingTracker() {
         const expectedPct = seancesTotal > 0 ? Math.round((seancesTerminees / seancesTotal) * 100) : 0;
         const progressPct = Math.round(avgMastery);
 
-        // Status
-        const diff = progressPct - expectedPct;
+        // Status based on session completion ratio
+        const completionRatio = seancesTotal > 0 ? seancesTerminees / seancesTotal : 0;
         let status: GroupPacing["status"];
-        if (diff >= 0) {
+        if (seancesTerminees === 0) {
+          status = "pas_commence";
+        } else if (completionRatio >= 0.5) {
+          const diff = progressPct - expectedPct;
           status = diff > 5 ? "en_avance" : "dans_les_temps";
-        } else {
+        } else if (completionRatio >= 0.25) {
           status = "en_retard";
+        } else {
+          status = "retard_important";
         }
 
-        // Simple AI prediction
         let aiPrediction: string;
-        if (seancesTerminees === 0) {
+        if (status === "pas_commence") {
           aiPrediction = "Pas encore de séance terminée — impossible de projeter.";
+        } else if (status === "retard_important") {
+          aiPrediction = `Retard important. Seulement ${Math.round(completionRatio * 100)}% des séances réalisées. Risque de ne pas atteindre l'objectif ${g.niveau || "A1"}.`;
         } else if (status === "en_retard") {
-          const deficit = expectedPct - progressPct;
-          aiPrediction = `Retard de ${deficit}pts. Au rythme actuel, le groupe n'atteindra pas l'objectif ${g.niveau || "A1"} dans les temps.`;
+          aiPrediction = `En retard sur le programme. Au rythme actuel, l'objectif ${g.niveau || "A1"} sera difficile à atteindre.`;
         } else if (status === "en_avance") {
           aiPrediction = `Le groupe progresse plus vite que prévu. Objectif ${g.niveau || "A1"} atteignable en avance.`;
         } else {
@@ -296,14 +303,16 @@ export default function PacingTracker() {
 function BulletChart({ data, onGroupClick, expandedGroup, members }: { data: GroupPacing; onGroupClick: (id: string | null) => void; expandedGroup: string | null; members?: GroupMember[] }) {
   const navigate = useNavigate();
   const isExpanded = expandedGroup === data.groupId;
-  const barColor = data.status === "en_retard"
+  const barColor = data.status === "en_retard" || data.status === "retard_important"
     ? "bg-destructive"
-    : "bg-green-500";
+    : data.status === "pas_commence" ? "bg-muted" : "bg-green-500";
 
-  const statusIcon = data.status === "en_retard"
+  const statusIcon = data.status === "en_retard" || data.status === "retard_important"
     ? <TrendingDown className="h-3.5 w-3.5 text-destructive" />
     : data.status === "en_avance"
     ? <TrendingUp className="h-3.5 w-3.5 text-green-600" />
+    : data.status === "pas_commence"
+    ? <Minus className="h-3.5 w-3.5 text-muted-foreground" />
     : <Minus className="h-3.5 w-3.5 text-green-600" />;
 
   const cfg = STATUS_CONFIG[data.status];

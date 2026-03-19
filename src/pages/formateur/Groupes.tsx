@@ -363,13 +363,12 @@ const GroupesPage = () => {
                   <div className="overflow-x-auto max-h-[360px] overflow-y-auto border rounded-lg">
                     <table className="w-full text-sm">
                       <thead className="sticky top-0 bg-muted/80 backdrop-blur-sm">
-                        <tr className="border-b">
-                          <th className="text-left py-2.5 px-3 font-medium text-muted-foreground">Prénom & Nom</th>
-                          <th className="text-left py-2.5 px-3 font-medium text-muted-foreground">Identifiant</th>
-                          <th className="text-center py-2.5 px-3 font-medium text-muted-foreground">MDP</th>
-                          <th className="text-center py-2.5 px-3 font-medium text-muted-foreground">Progression</th>
-                          <th className="text-center py-2.5 px-3 font-medium text-muted-foreground w-24">Actions</th>
-                        </tr>
+                         <tr className="border-b">
+                           <th className="text-left py-2.5 px-3 font-medium text-muted-foreground">Prénom & Nom</th>
+                           <th className="text-left py-2.5 px-3 font-medium text-muted-foreground">Identifiant</th>
+                           <th className="text-center py-2.5 px-3 font-medium text-muted-foreground">Progression</th>
+                           <th className="text-center py-2.5 px-3 font-medium text-muted-foreground w-24">Actions</th>
+                         </tr>
                       </thead>
                       <tbody>
                         {members.map((m: any) => {
@@ -400,21 +399,6 @@ const GroupesPage = () => {
                                 </div>
                               </td>
                               <td className="py-2.5 px-3 text-center">
-                                {eleve?.mot_de_passe_initial ? (
-                                  <div className="flex items-center justify-center gap-1">
-                                    <code className="text-xs bg-muted px-1.5 py-0.5 rounded">{eleve.mot_de_passe_initial}</code>
-                                    <Button
-                                      variant="ghost" size="icon" className="h-6 w-6 shrink-0"
-                                      onClick={(e) => { e.stopPropagation(); copyToClipboard(eleve.mot_de_passe_initial, `pwd-${m.id}`); }}
-                                    >
-                                      {copiedField === `pwd-${m.id}` ? <Check className="h-3 w-3 text-primary" /> : <Copy className="h-3 w-3" />}
-                                    </Button>
-                                  </div>
-                                ) : (
-                                  <span className="text-xs text-muted-foreground">—</span>
-                                )}
-                              </td>
-                              <td className="py-2.5 px-3">
                                 <div className="flex items-center gap-2 justify-center">
                                   <div className="w-16 h-2 rounded-full bg-muted overflow-hidden">
                                     <div

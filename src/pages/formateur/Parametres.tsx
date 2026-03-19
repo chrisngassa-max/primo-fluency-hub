@@ -181,8 +181,11 @@ const Parametres = () => {
 
       <Button onClick={handleSave} disabled={saving} className="w-full" size="lg">
         {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
-        Sauvegarder les paramètres
+        Enregistrer les modifications
       </Button>
+      <p className="text-xs text-muted-foreground text-center">
+        Les modifications ne sont pas sauvegardées automatiquement. Cliquez sur le bouton ci-dessus pour les enregistrer.
+      </p>
     </div>
   );
 };
