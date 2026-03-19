@@ -169,11 +169,19 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
               <span>{niveauActuel}</span>
               <span>Objectif : {niveauTarget}</span>
             </div>
-            <Progress value={globalProgress} className="h-4" />
+            <Progress value={globalProgress} className={cn("h-4", globalProgress === 0 && "[&>div]:bg-muted")} />
             <p className="text-xs text-muted-foreground text-center">
               {globalProgress > 0
                 ? `${Math.round(globalProgress)}% de progression globale`
-                : "Pas encore de résultats — passez le test d'entrée !"}
+                : (
+                  <Button
+                    variant="link"
+                    className="text-xs p-0 h-auto text-primary underline"
+                    onClick={() => navigate("/eleve/test")}
+                  >
+                    Passez le test d'entrée pour évaluer votre niveau !
+                  </Button>
+                )}
             </p>
           </div>
         </CardContent>
