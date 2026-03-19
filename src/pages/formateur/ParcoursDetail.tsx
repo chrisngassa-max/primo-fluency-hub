@@ -229,7 +229,7 @@ const ParcoursDetail = () => {
       qc.invalidateQueries({ queryKey: ["parcours-seances", parcoursId] });
       qc.invalidateQueries({ queryKey: ["parcours-detail", parcoursId] });
 
-      toast.success("Parcours adapté !", { description: adaptationResult.message_formateur });
+      toast.success("Plan adapté !", { description: adaptationResult.message_formateur });
       setShowAdaptResult(false);
       setAdaptationResult(null);
     } catch (e: any) {
