@@ -12,8 +12,9 @@ import { Button } from "@/components/ui/button";
 
 const navItems = [
   { title: "Accueil", path: "/eleve", icon: LayoutDashboard },
-  { title: "Exercices", path: "/eleve/devoirs", icon: BookOpen },
-  { title: "Profil", path: "/eleve/progression", icon: TrendingUp },
+  { title: "Mes devoirs", path: "/eleve/devoirs", icon: BookOpen },
+  { title: "Ma progression", path: "/eleve/progression", icon: TrendingUp },
+  { title: "Mon profil", path: "/eleve/profil", icon: User },
 ];
 
 const EleveLayout = () => {
