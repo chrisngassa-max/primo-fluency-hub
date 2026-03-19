@@ -1,11 +1,15 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users, GraduationCap, Calendar, Bell, Clock, TrendingUp, CheckCircle2, Pause, ArrowUpCircle, Play, Printer, Eye, UserPlus, AlertTriangle, Send, Gamepad2, BookOpen, ChevronRight, Rocket } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { Progress } from "@/components/ui/progress";
+import { Users, GraduationCap, Calendar, Bell, Clock, TrendingUp, CheckCircle2, Pause, ArrowUpCircle, Play, Printer, Eye, UserPlus, AlertTriangle, Send, Gamepad2, BookOpen, ChevronRight, Rocket, ClipboardCheck, ListChecks, FileCheck } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
@@ -41,12 +45,21 @@ const formatLabels: Record<string, string> = {
   production_orale: "Production orale",
 };
 
+// Track exercise completion & test inclusion state
+interface ExerciseTrackingState {
+  isCompleted: boolean;
+  isIncludedInTest: boolean;
+}
+
 const FormateurDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const qc = useQueryClient();
   const [showNextPreview, setShowNextPreview] = useState(false);
   const [sending, setSending] = useState(false);
+  const [exerciseTracking, setExerciseTracking] = useState<Record<string, ExerciseTrackingState>>({});
+  const [selectedExerciseId, setSelectedExerciseId] = useState<string | null>(null);
+  const [sessionSubTab, setSessionSubTab] = useState<"exercices" | "test-validation">("exercices");
 
   // ─── KPI queries ───
   const { data: groupCount = 0, isLoading: loadingGroups } = useQuery({
