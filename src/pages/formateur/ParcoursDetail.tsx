@@ -292,7 +292,7 @@ const ParcoursDetail = () => {
         <Card className="border-primary/30 bg-primary/5">
           <CardContent className="py-8 text-center">
             <Loader2 className="h-8 w-8 mx-auto animate-spin text-primary mb-3" />
-            <p className="font-medium">L'IA adapte votre parcours...</p>
+            <p className="font-medium">L'IA adapte votre plan de formation...</p>
             <p className="text-sm text-muted-foreground mt-1">Analyse des retards et recalcul de la progression</p>
           </CardContent>
         </Card>
