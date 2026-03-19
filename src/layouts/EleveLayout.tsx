@@ -44,7 +44,7 @@ const EleveLayout = () => {
       </header>
 
       {/* Content — always full width, bottom padding for nav */}
-      <main className="flex-1 overflow-auto p-4 md:p-6 pb-24">
+      <main className="flex-1 p-4 md:p-6 pb-24">
         <Outlet />
       </main>
 
