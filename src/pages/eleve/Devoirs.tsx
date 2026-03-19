@@ -14,6 +14,7 @@ import {
   Send, Loader2, ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import CompetenceLabel from "@/components/CompetenceLabel";
 
 const EleveDevoirs = () => {
   const { user } = useAuth();
