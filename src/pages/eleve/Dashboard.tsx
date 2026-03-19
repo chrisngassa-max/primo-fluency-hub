@@ -320,10 +320,10 @@ const EleveDashboard = () => {
               {devoirs.map((d) => {
                 const ex = d.exercice as any;
                 const isUrgent = d.raison === "remediation";
-                const daysLeft = Math.max(
-                  0,
-                  Math.ceil((new Date(d.date_echeance).getTime() - Date.now()) / 86400000)
-                );
+                const deadline = new Date(d.date_echeance);
+                const daysLeft = Math.ceil((deadline.getTime() - Date.now()) / 86400000);
+                const isLate = daysLeft < 0;
+                const isUrgentTime = daysLeft <= 2 && daysLeft >= 0;
                 return (
                   <div
                     key={d.id}
@@ -355,10 +355,24 @@ const EleveDashboard = () => {
                         <Badge variant="outline" className="text-xs">
                           <CompetenceLabel code={ex?.competence} />
                         </Badge>
-                        <span className="text-sm text-muted-foreground">
-                          {daysLeft === 0 ? "Aujourd'hui !" : `${daysLeft} jour(s) restant(s)`}
-                        </span>
                       </div>
+                      {/* Deadline display */}
+                      {isLate ? (
+                        <p className="text-sm text-destructive flex items-center gap-1">
+                          <AlertCircle className="h-3 w-3" />
+                          Devoir en retard — attendu le {format(deadline, "d MMMM", { locale: fr })}
+                        </p>
+                      ) : isUrgentTime ? (
+                        <p className="text-sm text-orange-600 flex items-center gap-1">
+                          <AlertCircle className="h-3 w-3" />
+                          {daysLeft === 0 ? "À rendre aujourd'hui !" : daysLeft === 1 ? "À rendre demain" : "À rendre dans 2 jours"}
+                        </p>
+                      ) : (
+                        <p className="text-sm text-muted-foreground flex items-center gap-1">
+                          <Calendar className="h-3 w-3" />
+                          À rendre avant le : {format(deadline, "EEEE d MMMM yyyy", { locale: fr })}
+                        </p>
+                      )}
                     </div>
                   </div>
                 );
