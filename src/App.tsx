@@ -103,6 +103,7 @@ const App = () => (
               <Route path="devoirs" element={<EleveDevoirs />} />
               <Route path="bilan/:sessionId" element={<BilanSeance />} />
               <Route path="bilan-test/:testId" element={<BilanTestPassation />} />
+              <Route path="bilan-devoirs/:bilanId" element={<BilanDevoirs />} />
               <Route path="devoirs/:devoirId" element={<DevoirPassation />} />
               <Route path="progression" element={<EleveProgression />} />
               <Route path="profil" element={<EleveProfil />} />
