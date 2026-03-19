@@ -74,6 +74,10 @@ const SessionBilan = () => {
   });
 
   const isAutoAdapt = (formateurParams as any)?.auto_adapt ?? false;
+  const defaultDeadlineDays = (formateurParams as any)?.delai_devoirs_jours ?? 3;
+  const defaultDeadline = addDays(new Date(), defaultDeadlineDays);
+  const effectiveDeadline = devoirDeadline || defaultDeadline;
+  const minDeadline = addDays(new Date(), 1);
 
   const { data: session } = useQuery({
     queryKey: ["session-info-bilan", id],
