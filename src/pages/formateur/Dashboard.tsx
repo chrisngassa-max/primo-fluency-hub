@@ -1,10 +1,11 @@
+import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users, GraduationCap, Calendar, Bell, Clock, TrendingUp, CheckCircle2, Pause, ArrowUpCircle, Play, Printer, Eye, UserPlus, AlertTriangle } from "lucide-react";
+import { Users, GraduationCap, Calendar, Bell, Clock, TrendingUp, CheckCircle2, Pause, ArrowUpCircle, Play, Printer, Eye, UserPlus, AlertTriangle, Send, Gamepad2, BookOpen, ChevronRight, Rocket } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
@@ -22,19 +23,36 @@ const COMPETENCE_LABELS: Record<string, string> = {
   Structures: "Structures",
 };
 
+const competenceColors: Record<string, string> = {
+  CO: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+  CE: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+  EE: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
+  EO: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400",
+  Structures: "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400",
+};
+
+const formatLabels: Record<string, string> = {
+  qcm: "QCM",
+  vrai_faux: "Vrai/Faux",
+  texte_lacunaire: "Texte lacunaire",
+  appariement: "Appariement",
+  transformation: "Transformation",
+  production_ecrite: "Production écrite",
+  production_orale: "Production orale",
+};
+
 const FormateurDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const [showNextPreview, setShowNextPreview] = useState(false);
+  const [sending, setSending] = useState(false);
 
+  // ─── KPI queries ───
   const { data: groupCount = 0, isLoading: loadingGroups } = useQuery({
     queryKey: ["kpi-groups", user?.id],
     queryFn: async () => {
-      const { count } = await supabase
-        .from("groups")
-        .select("*", { count: "exact", head: true })
-        .eq("formateur_id", user!.id)
-        .eq("is_active", true);
+      const { count } = await supabase.from("groups").select("*", { count: "exact", head: true }).eq("formateur_id", user!.id).eq("is_active", true);
       return count ?? 0;
     },
     enabled: !!user,
@@ -43,37 +61,10 @@ const FormateurDashboard = () => {
   const { data: eleveCount = 0, isLoading: loadingEleves } = useQuery({
     queryKey: ["kpi-eleves", user?.id],
     queryFn: async () => {
-      const { data: groups } = await supabase
-        .from("groups")
-        .select("id")
-        .eq("formateur_id", user!.id);
+      const { data: groups } = await supabase.from("groups").select("id").eq("formateur_id", user!.id);
       if (!groups?.length) return 0;
-      const { count } = await supabase
-        .from("group_members")
-        .select("*", { count: "exact", head: true })
-        .in("group_id", groups.map((g) => g.id));
+      const { count } = await supabase.from("group_members").select("*", { count: "exact", head: true }).in("group_id", groups.map((g) => g.id));
       return count ?? 0;
-    },
-    enabled: !!user,
-  });
-
-  const { data: upcomingSessions = [], isLoading: loadingSessions } = useQuery({
-    queryKey: ["kpi-sessions", user?.id],
-    queryFn: async () => {
-      const { data: groups } = await supabase
-        .from("groups")
-        .select("id, nom")
-        .eq("formateur_id", user!.id);
-      if (!groups?.length) return [];
-      const { data } = await supabase
-        .from("sessions")
-        .select("id, titre, date_seance, duree_minutes, niveau_cible, objectifs, statut, group_id")
-        .in("group_id", groups.map((g) => g.id))
-        .gte("date_seance", new Date().toISOString())
-        .order("date_seance", { ascending: true })
-        .limit(4);
-      const groupMap = Object.fromEntries(groups.map((g) => [g.id, g.nom]));
-      return (data ?? []).map((s) => ({ ...s, group_nom: groupMap[s.group_id] || "—" }));
     },
     enabled: !!user,
   });
@@ -81,17 +72,61 @@ const FormateurDashboard = () => {
   const { data: alertCount = 0, isLoading: loadingAlertes } = useQuery({
     queryKey: ["kpi-alertes", user?.id],
     queryFn: async () => {
-      const { count } = await supabase
-        .from("alertes")
-        .select("*", { count: "exact", head: true })
-        .eq("formateur_id", user!.id)
-        .eq("is_resolved", false);
+      const { count } = await supabase.from("alertes").select("*", { count: "exact", head: true }).eq("formateur_id", user!.id).eq("is_resolved", false);
       return count ?? 0;
     },
     enabled: !!user,
   });
 
-  // ─── All alerts for Centre d'Alertes tab ───
+  // ─── Today's session (nearest upcoming) ───
+  const { data: upcomingSessions = [], isLoading: loadingSessions } = useQuery({
+    queryKey: ["kpi-sessions", user?.id],
+    queryFn: async () => {
+      const { data: groups } = await supabase.from("groups").select("id, nom").eq("formateur_id", user!.id);
+      if (!groups?.length) return [];
+      const { data } = await supabase
+        .from("sessions")
+        .select("id, titre, date_seance, duree_minutes, niveau_cible, objectifs, statut, group_id")
+        .in("group_id", groups.map((g) => g.id))
+        .gte("date_seance", new Date().toISOString())
+        .order("date_seance", { ascending: true })
+        .limit(3);
+      const groupMap = Object.fromEntries(groups.map((g) => [g.id, g.nom]));
+      return (data ?? []).map((s) => ({ ...s, group_nom: groupMap[s.group_id] || "—" }));
+    },
+    enabled: !!user,
+  });
+
+  const nextSession = upcomingSessions[0] || null;
+  const followingSession = upcomingSessions[1] || null;
+
+  // ─── Exercises for today's session (with full exercise data) ───
+  const { data: sessionExercises = [], isLoading: loadingExercises } = useQuery({
+    queryKey: ["today-session-exercises", nextSession?.id],
+    queryFn: async () => {
+      const { data: seLinks } = await supabase
+        .from("session_exercices")
+        .select("id, ordre, statut, exercice_id")
+        .eq("session_id", nextSession!.id)
+        .order("ordre");
+      if (!seLinks?.length) return [];
+      const exIds = seLinks.map((se) => se.exercice_id);
+      const { data: exercices } = await supabase
+        .from("exercices")
+        .select("id, titre, consigne, format, competence, difficulte, contenu, animation_guide")
+        .in("id", exIds);
+      const exMap = Object.fromEntries((exercices ?? []).map((e) => [e.id, e]));
+      return seLinks.map((se) => ({
+        sessionExerciceId: se.id,
+        ordre: se.ordre,
+        statut: se.statut,
+        ...exMap[se.exercice_id],
+      })).filter((e) => e.titre);
+    },
+    enabled: !!nextSession,
+  });
+
+  // ─── Alerts ───
   const { data: allAlerts = [], isLoading: loadingAllAlerts } = useQuery({
     queryKey: ["all-alerts", user?.id],
     queryFn: async () => {
@@ -104,35 +139,21 @@ const FormateurDashboard = () => {
         .limit(50);
       if (!alertes?.length) return [];
       const eleveIds = [...new Set(alertes.map((a) => a.eleve_id))];
-      const { data: profiles } = await supabase
-        .from("profiles")
-        .select("id, nom, prenom")
-        .in("id", eleveIds);
+      const { data: profiles } = await supabase.from("profiles").select("id, nom, prenom").in("id", eleveIds);
       const nameMap = Object.fromEntries((profiles ?? []).map((p) => [p.id, `${p.prenom} ${p.nom}`]));
-      return alertes.map((a) => ({
-        ...a,
-        eleve_nom: nameMap[a.eleve_id] || "Élève",
-      }));
+      return alertes.map((a) => ({ ...a, eleve_nom: nameMap[a.eleve_id] || "Élève" }));
     },
     enabled: !!user,
   });
 
-  // ─── Groups list for "Mes Groupes" tab ───
+  // ─── Groups list ───
   const { data: groupsList = [], isLoading: loadingGroupsList } = useQuery({
     queryKey: ["dashboard-groups-list", user?.id],
     queryFn: async () => {
-      const { data: groups } = await supabase
-        .from("groups")
-        .select("id, nom, niveau")
-        .eq("formateur_id", user!.id)
-        .eq("is_active", true)
-        .order("nom");
+      const { data: groups } = await supabase.from("groups").select("id, nom, niveau").eq("formateur_id", user!.id).eq("is_active", true).order("nom");
       if (!groups?.length) return [];
       const groupIds = groups.map((g) => g.id);
-      const { data: members } = await supabase
-        .from("group_members")
-        .select("eleve_id, group_id")
-        .in("group_id", groupIds);
+      const { data: members } = await supabase.from("group_members").select("eleve_id, group_id").in("group_id", groupIds);
       const eleveIds = [...new Set((members ?? []).map((m) => m.eleve_id))];
       let profilesMap: Record<string, { nom: string; prenom: string }> = {};
       let profilsMap: Record<string, number> = {};
@@ -159,21 +180,7 @@ const FormateurDashboard = () => {
     enabled: !!user,
   });
 
-  // Session exercises count for next session
-  const nextSession = upcomingSessions[0] || null;
-  const { data: nextSessionExercises = 0 } = useQuery({
-    queryKey: ["next-session-exercises", nextSession?.id],
-    queryFn: async () => {
-      const { count } = await supabase
-        .from("session_exercices")
-        .select("*", { count: "exact", head: true })
-        .eq("session_id", nextSession!.id);
-      return count ?? 0;
-    },
-    enabled: !!nextSession,
-  });
-
-  // Progression alerts
+  // ─── Progression alerts ───
   const { data: progressionAlerts = [] } = useQuery({
     queryKey: ["progression-alerts", user?.id],
     queryFn: async () => {
@@ -187,30 +194,28 @@ const FormateurDashboard = () => {
         .limit(20);
       if (!alertes?.length) return [];
       const eleveIds = [...new Set(alertes.map((a) => a.eleve_id))];
-      const { data: profiles } = await supabase
-        .from("profiles")
-        .select("id, nom, prenom")
-        .in("id", eleveIds);
+      const { data: profiles } = await supabase.from("profiles").select("id, nom, prenom").in("id", eleveIds);
       const nameMap = Object.fromEntries((profiles ?? []).map((p) => [p.id, `${p.prenom} ${p.nom}`]));
       return alertes.map((a) => {
         const parts = (a.message || "").split("|");
-        const competence = parts.length >= 2 ? parts[1] : "CE";
-        const niveauActuel = parts.length >= 3 ? parseInt(parts[2]) || 3 : 3;
-        const niveauPropose = parts.length >= 4 ? parseInt(parts[3]) || 4 : niveauActuel + 1;
-        return { id: a.id, eleve_id: a.eleve_id, eleve_nom: nameMap[a.eleve_id] || "Élève", competence, niveau_actuel: niveauActuel, niveau_propose: niveauPropose };
+        return {
+          id: a.id,
+          eleve_id: a.eleve_id,
+          eleve_nom: nameMap[a.eleve_id] || "Élève",
+          competence: parts.length >= 2 ? parts[1] : "CE",
+          niveau_actuel: parts.length >= 3 ? parseInt(parts[2]) || 3 : 3,
+          niveau_propose: parts.length >= 4 ? parseInt(parts[3]) || 4 : 4,
+        };
       });
     },
     enabled: !!user,
   });
 
+  // ─── Actions ───
   const handleValidateProgression = async (alertId: string, eleveId: string, competence: string, niveauPropose: number) => {
     try {
-      const { error: levelError } = await supabase
-        .from("student_competency_levels")
-        .upsert({ eleve_id: eleveId, competence: competence as any, niveau_actuel: niveauPropose, validated_at: new Date().toISOString(), validated_by: user!.id, updated_at: new Date().toISOString() }, { onConflict: "eleve_id,competence" });
-      if (levelError) throw levelError;
-      const { error: alertError } = await supabase.from("alertes").update({ is_resolved: true, resolved_at: new Date().toISOString() }).eq("id", alertId);
-      if (alertError) throw alertError;
+      await supabase.from("student_competency_levels").upsert({ eleve_id: eleveId, competence: competence as any, niveau_actuel: niveauPropose, validated_at: new Date().toISOString(), validated_by: user!.id, updated_at: new Date().toISOString() }, { onConflict: "eleve_id,competence" });
+      await supabase.from("alertes").update({ is_resolved: true, resolved_at: new Date().toISOString() }).eq("id", alertId);
       qc.invalidateQueries({ queryKey: ["progression-alerts"] });
       qc.invalidateQueries({ queryKey: ["kpi-alertes"] });
       qc.invalidateQueries({ queryKey: ["all-alerts"] });
@@ -220,19 +225,17 @@ const FormateurDashboard = () => {
 
   const handlePauseProgression = async (alertId: string) => {
     try {
-      const { error } = await supabase.from("alertes").update({ is_resolved: true, resolved_at: new Date().toISOString() }).eq("id", alertId);
-      if (error) throw error;
+      await supabase.from("alertes").update({ is_resolved: true, resolved_at: new Date().toISOString() }).eq("id", alertId);
       qc.invalidateQueries({ queryKey: ["progression-alerts"] });
       qc.invalidateQueries({ queryKey: ["kpi-alertes"] });
       qc.invalidateQueries({ queryKey: ["all-alerts"] });
-      toast.info("Progression mise en pause — l'élève reste au niveau actuel.");
+      toast.info("Progression mise en pause.");
     } catch (e: any) { toast.error("Erreur", { description: e.message }); }
   };
 
   const handleMarkRead = async (alertId: string) => {
     try {
-      const { error } = await supabase.from("alertes").update({ is_read: true }).eq("id", alertId);
-      if (error) throw error;
+      await supabase.from("alertes").update({ is_read: true }).eq("id", alertId);
       qc.invalidateQueries({ queryKey: ["all-alerts"] });
       toast.success("Alerte marquée comme lue.");
     } catch (e: any) { toast.error("Erreur", { description: e.message }); }
@@ -240,12 +243,80 @@ const FormateurDashboard = () => {
 
   const handleResolveAlert = async (alertId: string) => {
     try {
-      const { error } = await supabase.from("alertes").update({ is_resolved: true, resolved_at: new Date().toISOString() }).eq("id", alertId);
-      if (error) throw error;
+      await supabase.from("alertes").update({ is_resolved: true, resolved_at: new Date().toISOString() }).eq("id", alertId);
       qc.invalidateQueries({ queryKey: ["all-alerts"] });
       qc.invalidateQueries({ queryKey: ["kpi-alertes"] });
       toast.success("Alerte résolue.");
     } catch (e: any) { toast.error("Erreur", { description: e.message }); }
+  };
+
+  // ─── Send exercises to students (make visible) ───
+  const handleSendToStudents = async () => {
+    if (!nextSession || sessionExercises.length === 0) return;
+    setSending(true);
+    try {
+      const ids = sessionExercises.map((e: any) => e.sessionExerciceId);
+      const { error } = await supabase
+        .from("session_exercices")
+        .update({ statut: "traite_en_classe" as any, updated_at: new Date().toISOString() })
+        .in("id", ids);
+      if (error) throw error;
+      qc.invalidateQueries({ queryKey: ["today-session-exercises"] });
+      toast.success(`${sessionExercises.length} exercice(s) envoyé(s) aux élèves !`, {
+        description: "Les ateliers ludiques restent sur votre espace formateur.",
+      });
+    } catch (e: any) {
+      toast.error("Erreur d'envoi", { description: e.message });
+    } finally {
+      setSending(false);
+    }
+  };
+
+  // ─── Print session (exercises only) ───
+  const handlePrintSession = () => {
+    if (sessionExercises.length === 0) {
+      toast.error("Aucun exercice à imprimer.");
+      return;
+    }
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+    const html = `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>${nextSession?.titre || "Séance"}</title>
+<style>
+body { font-family: Arial, sans-serif; margin: 2cm; font-size: 16px; color: #333; }
+h1 { font-size: 22px; border-bottom: 2px solid #333; padding-bottom: 8px; }
+.header-info { color: #666; font-size: 13px; margin-bottom: 20px; }
+.exercise { page-break-inside: avoid; margin-bottom: 28px; border: 1px solid #ddd; padding: 18px; border-radius: 8px; }
+.exercise h2 { font-size: 18px; margin: 0 0 6px 0; }
+.badge { display: inline-block; background: #eee; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-right: 4px; }
+.consigne { font-style: italic; margin: 10px 0; font-size: 15px; }
+.item { margin: 10px 0 10px 16px; }
+.options { margin-left: 16px; }
+.option { margin: 4px 0; font-size: 15px; }
+.write-zone { border: 1px dashed #ccc; min-height: 80px; margin-top: 10px; border-radius: 4px; }
+.nom-zone { border-bottom: 1px solid #333; width: 200px; display: inline-block; margin-left: 8px; }
+@media print { body { margin: 1cm; } }
+</style></head><body>
+<h1>${nextSession?.titre || "Séance du jour"}</h1>
+<p class="header-info">Nom : <span class="nom-zone">&nbsp;</span> &nbsp;&nbsp; Date : ${format(new Date(), "d MMMM yyyy", { locale: fr })} &nbsp;&nbsp; Groupe : ${nextSession?.group_nom || ""} &nbsp;&nbsp; Niveau : ${nextSession?.niveau_cible || ""}</p>
+${sessionExercises.map((ex: any, i: number) => `
+<div class="exercise">
+  <h2>${i + 1}. ${ex.titre}</h2>
+  <span class="badge">${ex.competence}</span>
+  <span class="badge">${formatLabels[ex.format] || ex.format}</span>
+  <p class="consigne">${ex.consigne}</p>
+  ${(ex.contenu?.items || []).map((item: any, j: number) => `
+    <div class="item">
+      <strong>${j + 1}.</strong> ${item.question}
+      ${item.options?.length
+        ? `<div class="options">${item.options.map((o: string) => `<div class="option">☐ ${o}</div>`).join("")}</div>`
+        : '<div class="write-zone"></div>'}
+    </div>`).join("")}
+</div>`).join("")}
+</body></html>`;
+    printWindow.document.write(html);
+    printWindow.document.close();
+    printWindow.print();
   };
 
   const isLoading = loadingGroups || loadingEleves || loadingSessions || loadingAlertes;
@@ -273,16 +344,13 @@ const FormateurDashboard = () => {
           Bonjour, {user?.user_metadata?.prenom || "Formateur"} 👋
         </h1>
         <p className="text-muted-foreground mt-1">
-          Voici un aperçu de votre activité pédagogique.
+          Voici votre cockpit de séance.
         </p>
       </div>
 
-      {/* ─── KPI Cards (Clickable) ─── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card
-          className="cursor-pointer hover:shadow-md transition-shadow border-l-4 border-l-primary"
-          onClick={() => navigate("/formateur/groupes")}
-        >
+      {/* ─── KPI Cards ─── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="cursor-pointer hover:shadow-md transition-shadow border-l-4 border-l-primary" onClick={() => navigate("/formateur/groupes")}>
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
@@ -293,11 +361,7 @@ const FormateurDashboard = () => {
             </div>
           </CardContent>
         </Card>
-
-        <Card
-          className="cursor-pointer hover:shadow-md transition-shadow border-l-4 border-l-green-500"
-          onClick={() => navigate("/formateur/groupes")}
-        >
+        <Card className="cursor-pointer hover:shadow-md transition-shadow border-l-4 border-l-green-500" onClick={() => navigate("/formateur/groupes")}>
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
@@ -308,32 +372,20 @@ const FormateurDashboard = () => {
             </div>
           </CardContent>
         </Card>
-
         <Card className="border-l-4 border-l-accent">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Prochaine séance</p>
-                {loadingSessions ? (
-                  <Skeleton className="h-5 w-32 mt-1" />
-                ) : nextSession ? (
+                {loadingSessions ? <Skeleton className="h-5 w-32 mt-1" /> : nextSession ? (
                   <p className="text-sm font-medium mt-1 line-clamp-1">{format(new Date(nextSession.date_seance), "d MMM · HH:mm", { locale: fr })}</p>
-                ) : (
-                  <p className="text-sm text-muted-foreground mt-1">Aucune</p>
-                )}
+                ) : <p className="text-sm text-muted-foreground mt-1">Aucune</p>}
               </div>
               <Calendar className="h-8 w-8 text-accent opacity-80" />
             </div>
           </CardContent>
         </Card>
-
-        <Card
-          className="cursor-pointer hover:shadow-md transition-shadow border-l-4 border-l-destructive relative"
-          onClick={() => {
-            const tabEl = document.querySelector('[data-value="alertes"]') as HTMLElement;
-            tabEl?.click();
-          }}
-        >
+        <Card className="cursor-pointer hover:shadow-md transition-shadow border-l-4 border-l-destructive relative" onClick={() => { const el = document.querySelector('[data-value="alertes"]') as HTMLElement; el?.click(); }}>
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
@@ -361,7 +413,6 @@ const FormateurDashboard = () => {
               <ArrowUpCircle className="h-5 w-5" />
               Alertes de Progression ({progressionAlerts.length})
             </CardTitle>
-            <CardDescription>Élèves prêts à passer au niveau supérieur — Validation requise</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
             {progressionAlerts.map((alert: any) => (
@@ -391,179 +442,230 @@ const FormateurDashboard = () => {
         </Card>
       )}
 
-      {/* ─── Pacing Tracker (Interactive) ─── */}
+      {/* ─── Pacing Tracker ─── */}
       <PacingTracker />
 
-      {/* ─── 3 Tabs: Ma Prochaine Séance / Mes Groupes / Centre d'Alertes ─── */}
-      <Tabs defaultValue="prochaine-seance">
+      {/* ─── 3 Tabs ─── */}
+      <Tabs defaultValue="seance-du-jour">
         <TabsList>
-          <TabsTrigger value="prochaine-seance">Ma Prochaine Séance</TabsTrigger>
+          <TabsTrigger value="seance-du-jour">🎯 Ma Séance du Jour</TabsTrigger>
           <TabsTrigger value="groupes">Mes Groupes</TabsTrigger>
           <TabsTrigger value="alertes" data-value="alertes">
             Centre d'Alertes
-            {alertCount > 0 && (
-              <Badge variant="destructive" className="ml-1.5 h-5 px-1.5 text-[10px]">{alertCount}</Badge>
-            )}
+            {alertCount > 0 && <Badge variant="destructive" className="ml-1.5 h-5 px-1.5 text-[10px]">{alertCount}</Badge>}
           </TabsTrigger>
         </TabsList>
 
-        {/* ─── Tab 1: Ma Prochaine Séance ─── */}
-        <TabsContent value="prochaine-seance">
-          <Card>
-            <CardContent className="pt-6">
-              {loadingSessions ? (
-                <div className="space-y-3">
-                  {[1, 2, 3].map((i) => <Skeleton key={i} className="h-16 w-full" />)}
+        {/* ═══ Tab 1: Séance du Jour (Cockpit) ═══ */}
+        <TabsContent value="seance-du-jour">
+          {loadingSessions ? (
+            <div className="space-y-3">
+              {[1, 2, 3].map((i) => <Skeleton key={i} className="h-20 w-full" />)}
+            </div>
+          ) : !nextSession ? (
+            <Card>
+              <CardContent className="py-12 text-center">
+                <Calendar className="h-12 w-12 text-muted-foreground/40 mb-3 mx-auto" />
+                <p className="text-muted-foreground font-medium">Aucune séance planifiée</p>
+                <p className="text-sm text-muted-foreground/70 mt-1">Planifiez votre première séance ou importez un programme.</p>
+                <div className="flex gap-2 justify-center mt-4">
+                  <Button onClick={() => navigate("/formateur/seances")}>Planifier une séance</Button>
+                  <Button variant="outline" onClick={() => navigate("/formateur/import-programme")}>Importer un programme</Button>
                 </div>
-              ) : !nextSession ? (
-                <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <Calendar className="h-12 w-12 text-muted-foreground/40 mb-3" />
-                  <p className="text-muted-foreground font-medium">Aucune séance planifiée</p>
-                  <p className="text-sm text-muted-foreground/70 mt-1">
-                    Commencez par créer un groupe, puis planifiez votre première séance.
-                  </p>
-                  <Button className="mt-4" onClick={() => navigate("/formateur/seances")}>
-                    Planifier une séance
-                  </Button>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <h3 className="text-lg font-semibold text-foreground">{nextSession.titre}</h3>
-                      <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Clock className="h-3.5 w-3.5" />
-                          {format(new Date(nextSession.date_seance), "EEEE d MMMM yyyy · HH:mm", { locale: fr })}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Users className="h-3.5 w-3.5" />
-                          {nextSession.group_nom}
-                        </span>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-4">
+              {/* Session header */}
+              <Card className="border-primary/20 bg-primary/5">
+                <CardContent className="py-5 px-6">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="space-y-1.5">
+                      <h2 className="text-xl font-bold text-foreground">{nextSession.titre}</h2>
+                      <div className="flex items-center gap-3 text-sm text-muted-foreground flex-wrap">
+                        <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{format(new Date(nextSession.date_seance), "EEEE d MMMM · HH:mm", { locale: fr })}</span>
+                        <span className="flex items-center gap-1"><Users className="h-3.5 w-3.5" />{nextSession.group_nom}</span>
                       </div>
+                      {nextSession.objectifs && <p className="text-sm text-muted-foreground mt-1">{nextSession.objectifs}</p>}
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 shrink-0">
                       <Badge variant="outline">{nextSession.niveau_cible}</Badge>
                       <Badge variant="secondary">{nextSession.duree_minutes} min</Badge>
                     </div>
                   </div>
 
-                  {nextSession.objectifs && (
-                    <div className="p-3 rounded-lg bg-muted/40 border">
-                      <p className="text-sm text-muted-foreground font-medium mb-1">Objectifs</p>
-                      <p className="text-sm text-foreground">{nextSession.objectifs}</p>
-                    </div>
-                  )}
+                  {/* Action buttons */}
+                  <div className="flex items-center gap-3 mt-4 flex-wrap">
+                    <Button size="lg" className="gap-2" onClick={() => navigate(`/formateur/seances/${nextSession.id}/pilote`)}>
+                      <Play className="h-4 w-4" /> Lancer la séance
+                    </Button>
+                    <Button variant="default" className="gap-2 bg-green-600 hover:bg-green-700 text-white" onClick={handleSendToStudents} disabled={sending || sessionExercises.length === 0}>
+                      {sending ? <Clock className="h-4 w-4 animate-spin" /> : <Rocket className="h-4 w-4" />}
+                      Envoyer aux élèves ({sessionExercises.length})
+                    </Button>
+                    <Button variant="outline" className="gap-2" onClick={handlePrintSession} disabled={sessionExercises.length === 0}>
+                      <Printer className="h-4 w-4" /> Imprimer la séance
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
 
-                  <div className="p-3 rounded-lg bg-muted/40 border">
-                    <p className="text-sm text-muted-foreground">
-                      <strong>{nextSessionExercises}</strong> exercice{nextSessionExercises !== 1 ? "s" : ""} prévu{nextSessionExercises !== 1 ? "s" : ""}
+              {/* Exercises + Ateliers list */}
+              {loadingExercises ? (
+                <div className="space-y-3">
+                  {[1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-28 w-full" />)}
+                </div>
+              ) : sessionExercises.length === 0 ? (
+                <Card className="border-dashed">
+                  <CardContent className="py-10 text-center">
+                    <BookOpen className="h-10 w-10 text-muted-foreground/40 mx-auto mb-3" />
+                    <p className="text-muted-foreground font-medium">Aucun exercice prévu</p>
+                    <p className="text-sm text-muted-foreground/70 mt-1">
+                      Ajoutez des exercices depuis un plan de formation ou le constructeur de séance.
                     </p>
-                  </div>
-
-                  <div className="flex items-center gap-3 pt-2">
-                    <Button
-                      size="lg"
-                      className="gap-2"
-                      onClick={() => navigate(`/formateur/seances/${nextSession.id}/pilote`)}
-                    >
-                      <Play className="h-4 w-4" />
-                      Lancer la séance
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => navigate(`/formateur/seances/${nextSession.id}/pilote`)}
-                    >
-                      <Printer className="h-4 w-4 mr-1.5" />
-                      Imprimer
-                    </Button>
-                  </div>
-
-                  {/* Other upcoming sessions */}
-                  {upcomingSessions.length > 1 && (
-                    <div className="pt-4 border-t">
-                      <p className="text-xs text-muted-foreground font-medium mb-2">Séances suivantes</p>
-                      <div className="space-y-2">
-                        {upcomingSessions.slice(1).map((s: any) => (
-                          <div
-                            key={s.id}
-                            onClick={() => navigate(`/formateur/seances/${s.id}/pilote`)}
-                            className="flex items-center justify-between p-3 rounded-lg border bg-muted/20 hover:bg-muted/40 cursor-pointer transition-colors"
-                          >
-                            <div className="space-y-0.5">
-                              <p className="text-sm font-medium text-foreground">{s.titre}</p>
-                              <p className="text-xs text-muted-foreground">
-                                {format(new Date(s.date_seance), "d MMM · HH:mm", { locale: fr })} · {s.group_nom}
-                              </p>
-                            </div>
-                            <Badge variant="outline" className="text-[10px]">{s.niveau_cible}</Badge>
-                          </div>
-                        ))}
-                      </div>
+                    <div className="flex gap-2 justify-center mt-4">
+                      <Button variant="outline" onClick={() => navigate("/formateur/import-programme")}>Importer un programme</Button>
+                      <Button variant="outline" onClick={() => navigate("/formateur/parcours")}>Plans de formation</Button>
                     </div>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+                      {sessionExercises.length} exercice{sessionExercises.length !== 1 ? "s" : ""} + ateliers
+                    </h3>
+                    <Badge variant="outline" className="text-xs">
+                      {sessionExercises.filter((e: any) => e.statut === "traite_en_classe").length} envoyé(s)
+                    </Badge>
+                  </div>
+
+                  {sessionExercises.map((ex: any, i: number) => {
+                    const guide = ex.animation_guide as any;
+                    const isSent = ex.statut === "traite_en_classe";
+                    return (
+                      <Card key={ex.sessionExerciceId} className={isSent ? "border-green-500/30 bg-green-50/20 dark:bg-green-950/10" : ""}>
+                        <CardContent className="py-4 px-5">
+                          <div className="space-y-3">
+                            {/* Exercise part (visible to students) */}
+                            <div className="space-y-1.5">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <BookOpen className="h-4 w-4 text-primary shrink-0" />
+                                <span className="font-semibold text-sm">{i + 1}. {ex.titre}</span>
+                                <Badge className={`text-[10px] ${competenceColors[ex.competence] || ""}`}>{ex.competence}</Badge>
+                                <Badge variant="outline" className="text-[10px]">{formatLabels[ex.format] || ex.format}</Badge>
+                                {isSent && <Badge className="text-[10px] bg-green-600 text-white">✓ Envoyé</Badge>}
+                              </div>
+                              <p className="text-sm text-muted-foreground italic pl-6">{ex.consigne}</p>
+                              <p className="text-xs text-muted-foreground pl-6">{ex.contenu?.items?.length || 0} item(s) · Difficulté {ex.difficulte}/10</p>
+                            </div>
+
+                            {/* Workshop part (formateur only) */}
+                            {guide && (
+                              <div className="border-t pt-3 ml-6 space-y-1.5">
+                                <div className="flex items-center gap-2 text-sm font-medium text-orange-600 dark:text-orange-400">
+                                  <Gamepad2 className="h-4 w-4" />
+                                  Atelier ludique — formateur uniquement
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                                  {guide.scenario && (
+                                    <div className="p-2 rounded bg-muted/50">
+                                      <span className="font-semibold">🎭 Scénario :</span> {guide.scenario}
+                                    </div>
+                                  )}
+                                  {guide.jeu && (
+                                    <div className="p-2 rounded bg-muted/50">
+                                      <span className="font-semibold">🎲 Jeu :</span> {guide.jeu}
+                                    </div>
+                                  )}
+                                  {guide.materiel && (
+                                    <div className="p-2 rounded bg-muted/50">
+                                      <span className="font-semibold">📦 Matériel :</span> {guide.materiel}
+                                    </div>
+                                  )}
+                                  {guide.objectif_oral && (
+                                    <div className="p-2 rounded bg-muted/50">
+                                      <span className="font-semibold">🗣️ Objectif oral :</span> {guide.objectif_oral}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Next session preview link */}
+              {followingSession && (
+                <div className="flex justify-end pt-2">
+                  {!showNextPreview ? (
+                    <Button variant="ghost" size="sm" className="text-xs gap-1 text-muted-foreground" onClick={() => setShowNextPreview(true)}>
+                      Aperçu de la séance suivante <ChevronRight className="h-3.5 w-3.5" />
+                    </Button>
+                  ) : (
+                    <Card className="w-full border-dashed bg-muted/20">
+                      <CardContent className="py-3 px-4">
+                        <div className="flex items-center justify-between">
+                          <div className="space-y-0.5">
+                            <p className="text-sm font-medium">{followingSession.titre}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {format(new Date(followingSession.date_seance), "EEEE d MMMM · HH:mm", { locale: fr })} · {followingSession.group_nom} · {followingSession.niveau_cible}
+                            </p>
+                            {followingSession.objectifs && <p className="text-xs text-muted-foreground mt-1">{followingSession.objectifs}</p>}
+                          </div>
+                          <Button variant="outline" size="sm" onClick={() => navigate(`/formateur/seances/${followingSession.id}/pilote`)}>
+                            Ouvrir
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
                   )}
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          )}
         </TabsContent>
 
-        {/* ─── Tab 2: Mes Groupes ─── */}
+        {/* ═══ Tab 2: Mes Groupes ═══ */}
         <TabsContent value="groupes">
           <Card>
             <CardContent className="pt-6">
               {loadingGroupsList ? (
-                <div className="space-y-3">
-                  {[1, 2, 3].map((i) => <Skeleton key={i} className="h-16 w-full" />)}
-                </div>
+                <div className="space-y-3">{[1, 2, 3].map((i) => <Skeleton key={i} className="h-16 w-full" />)}</div>
               ) : groupsList.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <Users className="h-12 w-12 text-muted-foreground/40 mb-3" />
                   <p className="text-muted-foreground font-medium">Aucun groupe actif</p>
-                  <Button className="mt-4" onClick={() => navigate("/formateur/groupes")}>
-                    Créer un groupe
-                  </Button>
+                  <Button className="mt-4" onClick={() => navigate("/formateur/groupes")}>Créer un groupe</Button>
                 </div>
               ) : (
                 <div className="space-y-4">
                   {groupsList.map((g: any) => (
                     <div key={g.id} className="rounded-lg border">
-                      <div
-                        className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted/30 transition-colors"
-                        onClick={() => navigate("/formateur/groupes")}
-                      >
+                      <div className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => navigate("/formateur/groupes")}>
                         <div className="flex items-center gap-3">
-                          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                            <Users className="h-5 w-5 text-primary" />
-                          </div>
+                          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center"><Users className="h-5 w-5 text-primary" /></div>
                           <div>
                             <p className="font-medium text-foreground">{g.nom}</p>
                             <p className="text-xs text-muted-foreground">Niveau {g.niveau} · {g.members.length} élève{g.members.length !== 1 ? "s" : ""}</p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Button variant="outline" size="sm" className="gap-1 text-xs" onClick={(e) => { e.stopPropagation(); navigate("/formateur/groupes"); }}>
-                            <UserPlus className="h-3.5 w-3.5" /> Ajouter
-                          </Button>
-                        </div>
+                        <Button variant="outline" size="sm" className="gap-1 text-xs" onClick={(e) => { e.stopPropagation(); navigate("/formateur/groupes"); }}>
+                          <UserPlus className="h-3.5 w-3.5" /> Ajouter
+                        </Button>
                       </div>
                       {g.members.length > 0 && (
                         <div className="px-4 pb-3 border-t">
                           <div className="space-y-1.5 pt-2">
                             {g.members.map((m: any) => (
-                              <div
-                                key={m.eleve_id}
-                                className="flex items-center justify-between py-1.5 px-2 rounded hover:bg-muted/30 cursor-pointer transition-colors"
-                                onClick={() => navigate(`/formateur/eleves/${m.eleve_id}`)}
-                              >
+                              <div key={m.eleve_id} className="flex items-center justify-between py-1.5 px-2 rounded hover:bg-muted/30 cursor-pointer transition-colors" onClick={() => navigate(`/formateur/eleves/${m.eleve_id}`)}>
                                 <span className="text-sm text-foreground">{m.nom}</span>
                                 <div className="flex items-center gap-2">
-                                  <div className="w-20 h-2 rounded-full bg-muted overflow-hidden">
-                                    <div
-                                      className="h-full rounded-full bg-primary transition-all"
-                                      style={{ width: `${Math.min(m.progression, 100)}%` }}
-                                    />
-                                  </div>
+                                  <div className="w-20 h-2 rounded-full bg-muted overflow-hidden"><div className="h-full rounded-full bg-primary transition-all" style={{ width: `${Math.min(m.progression, 100)}%` }} /></div>
                                   <span className="text-xs text-muted-foreground w-8 text-right">{Math.round(m.progression)}%</span>
                                 </div>
                               </div>
@@ -579,14 +681,12 @@ const FormateurDashboard = () => {
           </Card>
         </TabsContent>
 
-        {/* ─── Tab 3: Centre d'Alertes ─── */}
+        {/* ═══ Tab 3: Centre d'Alertes ═══ */}
         <TabsContent value="alertes">
           <Card>
             <CardContent className="pt-6">
               {loadingAllAlerts ? (
-                <div className="space-y-3">
-                  {[1, 2, 3].map((i) => <Skeleton key={i} className="h-14 w-full" />)}
-                </div>
+                <div className="space-y-3">{[1, 2, 3].map((i) => <Skeleton key={i} className="h-14 w-full" />)}</div>
               ) : allAlerts.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <Bell className="h-12 w-12 text-muted-foreground/40 mb-3" />
@@ -596,12 +696,7 @@ const FormateurDashboard = () => {
               ) : (
                 <div className="space-y-2">
                   {allAlerts.map((alert: any) => (
-                    <div
-                      key={alert.id}
-                      className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
-                        alert.is_read ? "bg-muted/20 opacity-70" : "bg-card"
-                      }`}
-                    >
+                    <div key={alert.id} className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${alert.is_read ? "bg-muted/20 opacity-70" : "bg-card"}`}>
                       <div className={`flex items-center justify-center h-9 w-9 rounded-full shrink-0 ${
                         alert.type === "progression" ? "bg-green-100 dark:bg-green-900/40" :
                         alert.type === "score_risque" || alert.type === "tendance_baisse" ? "bg-destructive/10" :
@@ -622,8 +717,7 @@ const FormateurDashboard = () => {
                         </div>
                         <p className="text-xs text-muted-foreground mt-0.5">
                           {alert.message && alert.message.length > 80 ? alert.message.substring(0, 80) + "…" : alert.message || "Alerte système"}
-                          {" · "}
-                          {format(new Date(alert.created_at), "d MMM HH:mm", { locale: fr })}
+                          {" · "}{format(new Date(alert.created_at), "d MMM HH:mm", { locale: fr })}
                         </p>
                       </div>
                       <div className="flex gap-1.5 shrink-0">
@@ -631,13 +725,9 @@ const FormateurDashboard = () => {
                           <Eye className="h-3.5 w-3.5" /> Voir
                         </Button>
                         {!alert.is_read && (
-                          <Button variant="outline" size="sm" className="h-8 text-xs" onClick={() => handleMarkRead(alert.id)}>
-                            Lu
-                          </Button>
+                          <Button variant="outline" size="sm" className="h-8 text-xs" onClick={() => handleMarkRead(alert.id)}>Lu</Button>
                         )}
-                        <Button variant="outline" size="sm" className="h-8 text-xs text-destructive" onClick={() => handleResolveAlert(alert.id)}>
-                          Résoudre
-                        </Button>
+                        <Button variant="outline" size="sm" className="h-8 text-xs text-destructive" onClick={() => handleResolveAlert(alert.id)}>Résoudre</Button>
                       </div>
                     </div>
                   ))}
