@@ -27,9 +27,8 @@ const EleveLayout = () => {
     path === "/eleve" ? location.pathname === path : location.pathname.startsWith(path);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      {/* Top bar */}
-      <header className="sticky top-0 z-40 h-14 flex items-center gap-3 border-b bg-card px-4 shrink-0">
+    <div className="min-h-screen bg-background">
+      <header className="sticky top-0 z-50 h-14 flex items-center gap-3 border-b bg-card px-4">
         <GraduationCap className="h-6 w-6 text-primary" />
         <span className="font-bold text-lg text-primary tracking-tight">TCF Pro</span>
         <div className="ml-auto flex items-center gap-3">
@@ -43,22 +42,38 @@ const EleveLayout = () => {
         </div>
       </header>
 
-      {/* Content — always full width, bottom padding for nav */}
-      <main className="flex-1 p-4 md:p-6 pb-24">
+      <nav className="hidden lg:flex sticky top-14 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 px-4 md:px-6">
+        <div className="mx-auto flex w-full max-w-5xl gap-2 py-3">
+          {navItems.map((item) => (
+            <button
+              key={item.path}
+              onClick={() => navigate(item.path)}
+              className={cn(
+                "inline-flex items-center gap-2 rounded-md px-4 py-2 text-base transition-colors",
+                isActive(item.path)
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+              )}
+            >
+              <item.icon className="h-5 w-5" />
+              <span>{item.title}</span>
+            </button>
+          ))}
+        </div>
+      </nav>
+
+      <main className="p-4 pb-32 md:p-6 md:pb-32 lg:pb-8">
         <Outlet />
       </main>
 
-      {/* Bottom navigation — ALWAYS visible (no sidebar ever) */}
-      <nav className="fixed bottom-0 inset-x-0 bg-card shadow-[0_-2px_10px_rgba(0,0,0,0.08)] flex justify-around py-2 z-50">
+      <nav className="fixed inset-x-0 bottom-0 z-50 flex justify-around border-t bg-card px-2 py-2 shadow-[0_-2px_10px_hsl(var(--foreground)/0.08)] lg:hidden">
         {navItems.map((item) => (
           <button
             key={item.path}
             onClick={() => navigate(item.path)}
             className={cn(
-              "flex flex-col items-center gap-1 px-4 py-1.5 rounded-lg transition-colors min-w-[72px]",
-              isActive(item.path)
-                ? "text-primary font-semibold"
-                : "text-muted-foreground"
+              "flex min-w-[72px] flex-col items-center gap-1 rounded-lg px-4 py-1.5 transition-colors",
+              isActive(item.path) ? "text-primary font-semibold" : "text-muted-foreground"
             )}
           >
             <item.icon className={cn("h-6 w-6", isActive(item.path) && "text-primary")} />
