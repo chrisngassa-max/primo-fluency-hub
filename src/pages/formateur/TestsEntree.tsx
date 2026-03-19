@@ -268,6 +268,8 @@ function DiagnosticSousItems() {
     return trends;
   }, [compAverages, existingDiag]);
 
+  const niveauEstime = globalAvg >= 80 ? "B1" : globalAvg >= 60 ? "A2" : globalAvg >= 30 ? "A1" : "A0";
+
   // Save scores
   const handleSave = async () => {
     if (!selectedEleve || !user) return;
