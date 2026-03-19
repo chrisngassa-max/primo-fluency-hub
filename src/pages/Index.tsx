@@ -36,6 +36,9 @@ const Index = () => {
         <p className="text-muted-foreground mt-2 text-lg">
           Plateforme de préparation au TCF — Intégration et Résidence
         </p>
+        <p className="text-muted-foreground mt-1 text-base max-w-xl mx-auto">
+          Le TCF IRN est le test de français obligatoire pour votre titre de séjour en France.
+        </p>
       </header>
 
       {/* Portal cards */}

@@ -62,7 +62,7 @@ const EleveLayout = () => {
             )}
           >
             <item.icon className={cn("h-6 w-6", isActive(item.path) && "text-primary")} />
-            <span className="text-xs">{item.title}</span>
+            <span className="text-[13px]">{item.title}</span>
           </button>
         ))}
       </nav>
