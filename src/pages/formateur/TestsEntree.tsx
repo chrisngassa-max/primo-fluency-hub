@@ -16,7 +16,7 @@ import { toast } from "sonner";
 import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer,
 } from "recharts";
-import { Sparkles, Volume2, ChevronLeft, ChevronRight, CheckCircle2, Users, Clock, AlertTriangle, Save, BarChart3, ChevronDown } from "lucide-react";
+import { Sparkles, Volume2, ChevronLeft, ChevronRight, CheckCircle2, Users, Clock, AlertTriangle, Save, BarChart3, ChevronDown, TrendingUp, Minus as TrendingFlat } from "lucide-react";
 import { TCF_QUESTIONS, SECTIONS_META, EXAM_DURATION_SECONDS } from "@/data/tcfQuestions";
 
 /* ───────── Sub-items definition ───────── */
