@@ -992,3 +992,4 @@ ${sessionExercises.map((ex: any, i: number) => `
 };
 
 export default FormateurDashboard;
+
