@@ -188,6 +188,50 @@ const EleveDashboard = () => {
         </Card>
       )}
 
+      {/* Pending AI bilan tests from formateur */}
+      {uncompletedTests.length > 0 && (
+        <Card className="border-primary/30 bg-primary/5">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <BarChart2 className="h-5 w-5 text-primary" />
+              Tests de bilan à passer
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <p className="text-sm text-muted-foreground mb-3">
+              Votre formateur vous a envoyé un test pour valider vos acquis de séance.
+            </p>
+            {uncompletedTests.map((test: any) => (
+              <div
+                key={test.id}
+                className="flex items-center gap-3 p-3 rounded-xl border bg-card hover:bg-muted/30 transition-colors cursor-pointer"
+                onClick={() => navigate(`/eleve/bilan-test/${test.id}`)}
+              >
+                <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <ClipboardCheck className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-sm truncate">
+                    Test de bilan — {test.session?.titre || "Séance"}
+                  </p>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Calendar className="h-3 w-3" />
+                    {test.session?.date_seance ? format(new Date(test.session.date_seance), "d MMMM yyyy", { locale: fr }) : ""}
+                    <span>·</span>
+                    <span>{test.nb_questions} questions</span>
+                    <span>·</span>
+                    <span>{(test.competences_couvertes || []).join(", ")}</span>
+                  </div>
+                </div>
+                <Button size="sm" variant="default" className="gap-1 shrink-0">
+                  Commencer le test <ArrowRight className="h-3 w-3" />
+                </Button>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+
       {/* Pending session bilans */}
       {!bilansLoading && pendingBilans && pendingBilans.length > 0 && (
         <Card className="border-primary/30 bg-primary/5">
@@ -200,7 +244,6 @@ const EleveDashboard = () => {
           <CardContent className="space-y-2">
             <p className="text-sm text-muted-foreground mb-3">
               Validez vos acquis en passant le bilan des exercices réalisés en classe.
-              Vos résultats alimenteront votre progression et généreront des devoirs adaptés.
             </p>
             {pendingBilans.map((bilan) => (
               <div
