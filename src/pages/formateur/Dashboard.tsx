@@ -397,10 +397,6 @@ ${sessionExercises.map((ex: any, i: number) => `
     printWindow.document.close();
     printWindow.print();
   };
-    printWindow.document.write(html);
-    printWindow.document.close();
-    printWindow.print();
-  };
 
   const isLoading = loadingGroups || loadingEleves || loadingSessions || loadingAlertes;
 
