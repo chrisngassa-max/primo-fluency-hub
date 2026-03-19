@@ -54,7 +54,7 @@ const EleveDevoirs = () => {
           <Card className="text-center">
             <CardContent className="pt-4 pb-3">
               <p className="text-2xl font-bold text-orange-600">{pending.length}</p>
-              <p className="text-[11px] text-muted-foreground">En attente</p>
+              <p className="text-sm text-muted-foreground">En attente</p>
             </CardContent>
           </Card>
           <Card className="text-center">
