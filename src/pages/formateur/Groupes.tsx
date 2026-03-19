@@ -63,9 +63,16 @@ const GroupesPage = () => {
   const [addGroupId, setAddGroupId] = useState("");
   const [newPrenom, setNewPrenom] = useState("");
   const [newNom, setNewNom] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [addingMember, setAddingMember] = useState(false);
   const [createdStudent, setCreatedStudent] = useState<CreatedStudent | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  // Invite dialog
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [inviteGroupId, setInviteGroupId] = useState("");
+  const [inviteGroupName, setInviteGroupName] = useState("");
 
   // Track expanded groups to fetch members
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
