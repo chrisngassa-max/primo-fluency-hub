@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { BookOpen, ClipboardList, TrendingUp, AlertCircle, ArrowRight } from "lucide-react";
 import CompetenceLabel from "@/components/CompetenceLabel";
 import EleveOnboarding, { useShowOnboarding } from "@/components/EleveOnboarding";
+import JoinGroupCard from "@/components/JoinGroupCard";
 
 const EleveDashboard = () => {
   const { user } = useAuth();
