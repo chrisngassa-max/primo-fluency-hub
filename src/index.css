@@ -107,3 +107,11 @@
     line-height: 1.6;
   }
 }
+
+/* Hide Lovable badge */
+a[href*="lovable.dev"][style*="fixed"],
+div[id*="lovable"],
+#lovable-badge,
+a[aria-label*="Lovable"] {
+  display: none !important;
+}

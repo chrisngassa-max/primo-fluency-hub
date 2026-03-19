@@ -1,13 +1,15 @@
 import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Skeleton } from "@/components/ui/skeleton";
-import { GraduationCap, Briefcase, Shield } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { GraduationCap, Bot, Users } from "lucide-react";
+import AppFooter from "@/components/AppFooter";
 
 const Index = () => {
   const { session, role, loading } = useAuth();
   const navigate = useNavigate();
 
-  // If logged in, redirect to correct dashboard
   if (!loading && session && role) {
     if (role === "formateur") return <Navigate to="/formateur" replace />;
     if (role === "eleve") return <Navigate to="/eleve" replace />;
@@ -28,70 +30,89 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
-      <header className="text-center pt-10 pb-6 px-4">
-        <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
-          TCF Pro
+      {/* BLOC 1 — Hero */}
+      <section className="flex flex-col items-center justify-center text-center px-4 pt-16 pb-12 md:pt-24 md:pb-16">
+        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-foreground max-w-3xl leading-tight">
+          Préparez votre TCF IRN avec un programme personnalisé
         </h1>
-        <p className="text-muted-foreground mt-2 text-lg">
-          Plateforme de préparation au TCF — Intégration et Résidence
+        <p className="mt-4 text-base md:text-lg text-muted-foreground max-w-2xl">
+          TCF Pro accompagne les primo-arrivants vers la réussite à la certification TCF IRN
+          grâce à des séances adaptatives, un suivi par formateur et une IA pédagogique.
         </p>
-        <p className="text-muted-foreground mt-1 text-base max-w-xl mx-auto">
-          Le TCF IRN est le test de français obligatoire pour votre titre de séjour en France.
+        <div className="mt-8 flex flex-col sm:flex-row gap-3">
+          <Button size="lg" onClick={() => navigate("/eleve/login")} className="text-base px-8">
+            Je commence maintenant
+          </Button>
+          <Button
+            size="lg"
+            variant="outline"
+            onClick={() => navigate("/formateur/login")}
+            className="text-base px-8"
+          >
+            Espace formateur
+          </Button>
+        </div>
+      </section>
+
+      {/* BLOC 2 — 3 arguments */}
+      <section className="px-4 pb-12 md:pb-16">
+        <div className="max-w-5xl mx-auto grid gap-6 md:grid-cols-3">
+          <Card className="border bg-card">
+            <CardContent className="pt-6 space-y-3">
+              <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                <GraduationCap className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="text-lg font-bold text-foreground">Programme structuré A0→B2</h3>
+              <p className="text-sm text-muted-foreground">
+                20 séances progressives couvrant les 5 compétences TCF : Compréhension Orale,
+                Compréhension Écrite, Expression Écrite, Expression Orale et Structures de la
+                Langue.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border bg-card">
+            <CardContent className="pt-6 space-y-3">
+              <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Bot className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="text-lg font-bold text-foreground">IA pédagogique adaptative</h3>
+              <p className="text-sm text-muted-foreground">
+                Le moteur IA génère des exercices ciblés sur vos lacunes et ajuste
+                automatiquement le rythme de progression selon vos résultats.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border bg-card">
+            <CardContent className="pt-6 space-y-3">
+              <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Users className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="text-lg font-bold text-foreground">Suivi formateur personnalisé</h3>
+              <p className="text-sm text-muted-foreground">
+                Votre formateur pilote votre parcours, assigne des devoirs, monitore votre
+                progression et génère des rapports de préparation.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* BLOC 3 — CTA final */}
+      <section className="px-4 pb-16 text-center">
+        <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+          Rejoignez TCF Pro dès aujourd'hui
+        </h2>
+        <p className="mt-2 text-muted-foreground">
+          Inscription gratuite · Aucune carte bancaire requise
         </p>
-      </header>
+        <Button size="lg" className="mt-6 text-base px-8" onClick={() => navigate("/eleve/login")}>
+          Créer mon compte
+        </Button>
+      </section>
 
-      {/* Portal cards */}
-      <main className="flex-1 flex flex-col items-center justify-center px-4 pb-10 gap-6 max-w-3xl mx-auto w-full">
-        {/* ÉLÈVE — Priority visual, biggest card */}
-        <button
-          onClick={() => navigate("/eleve/login")}
-          className="w-full rounded-2xl border-2 border-sky-200 bg-sky-50 dark:bg-sky-950/30 dark:border-sky-800 p-8 md:p-10 flex flex-col items-center gap-4 transition-all duration-200 hover:shadow-lg hover:border-primary focus:outline-none focus:ring-4 focus:ring-primary/30 cursor-pointer"
-        >
-          <div className="h-16 w-16 rounded-2xl bg-sky-100 dark:bg-sky-900/40 flex items-center justify-center">
-            <GraduationCap className="h-9 w-9 text-sky-500" />
-          </div>
-          <span className="text-2xl md:text-3xl font-bold text-foreground tracking-wide">
-            ESPACE ÉLÈVE
-          </span>
-          <span className="text-base md:text-lg text-muted-foreground">
-            Faire mes exercices et mon test
-          </span>
-        </button>
-
-        {/* FORMATEUR */}
-        <button
-          onClick={() => navigate("/formateur/login")}
-          className="w-full rounded-2xl border border-indigo-200 bg-indigo-50 dark:bg-indigo-950/30 dark:border-indigo-800 p-6 md:p-8 flex flex-col items-center gap-3 transition-all duration-200 hover:shadow-lg hover:border-primary focus:outline-none focus:ring-4 focus:ring-primary/30 cursor-pointer"
-        >
-          <div className="h-14 w-14 rounded-2xl bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center">
-            <Briefcase className="h-7 w-7 text-indigo-500" />
-          </div>
-          <span className="text-xl md:text-2xl font-bold text-foreground">
-            ESPACE FORMATEUR
-          </span>
-          <span className="text-sm md:text-base text-muted-foreground">
-            Gérer mes groupes et mes séances
-          </span>
-        </button>
-
-        {/* ADMIN — smaller, sober */}
-        <button
-          onClick={() => navigate("/admin/login")}
-          className="w-full max-w-xs rounded-xl border border-border bg-muted/50 p-4 md:p-5 flex flex-col items-center gap-2 transition-all duration-200 hover:shadow-lg hover:border-primary focus:outline-none focus:ring-4 focus:ring-primary/30 cursor-pointer"
-        >
-          <div className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center">
-            <Shield className="h-5 w-5 text-muted-foreground" />
-          </div>
-          <span className="text-base font-semibold text-foreground">
-            ADMINISTRATION
-          </span>
-        </button>
-      </main>
-
-      <footer className="text-center py-4 text-xs text-muted-foreground">
-        © {new Date().getFullYear()} TCF Pro — Tous droits réservés
-      </footer>
+      <AppFooter />
     </div>
   );
 };
