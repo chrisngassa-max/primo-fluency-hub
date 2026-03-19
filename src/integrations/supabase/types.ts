@@ -356,6 +356,51 @@ export type Database = {
           },
         ]
       }
+      group_invitations: {
+        Row: {
+          code: string
+          created_at: string
+          created_by: string
+          expires_at: string
+          group_id: string
+          id: string
+          used_count: number
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          created_by: string
+          expires_at?: string
+          group_id: string
+          id?: string
+          used_count?: number
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          created_by?: string
+          expires_at?: string
+          group_id?: string
+          id?: string
+          used_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_invitations_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "group_invitations_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       group_members: {
         Row: {
           eleve_id: string
