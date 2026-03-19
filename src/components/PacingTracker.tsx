@@ -5,11 +5,18 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { BarChart3, GitCompareArrows, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { BarChart3, GitCompareArrows, TrendingUp, TrendingDown, Minus, ChevronDown, ChevronRight, Users } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useNavigate } from "react-router-dom";
+
+interface GroupMember {
+  eleve_id: string;
+  nom: string;
+  progression: number;
+}
 
 interface GroupPacing {
   groupId: string;
