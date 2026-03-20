@@ -246,7 +246,7 @@ const DevoirPassation = () => {
               {finalResult.score}%
             </p>
             <p className="text-sm text-muted-foreground mt-2">
-              {finalResult.score >= 80 ? "Excellent travail ! 🎉" : finalResult.score >= 60 ? "Bien, continuez vos efforts." : "Des révisions sont nécessaires."}
+              {finalResult.score >= 80 ? "Excellent travail ! 🎉" : finalResult.score >= 60 ? "Bien, continue tes efforts." : "Des révisions sont nécessaires."}
             </p>
           </CardContent>
         </Card>
