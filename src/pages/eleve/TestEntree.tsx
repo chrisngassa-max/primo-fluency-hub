@@ -288,8 +288,8 @@ const TestEntreePage = () => {
             <CardContent className="pt-6 flex items-start gap-3">
               <AlertTriangle className="h-5 w-5 text-warning shrink-0 mt-0.5" />
               <p className="text-sm text-muted-foreground">
-                Vous pouvez passer le test maintenant. Votre formateur verra vos résultats
-                une fois que vous aurez rejoint son groupe.
+                Tu peux passer le test maintenant. Ton formateur verra tes résultats
+                une fois que tu auras rejoint son groupe.
               </p>
             </CardContent>
           </Card>
