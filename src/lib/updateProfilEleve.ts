@@ -5,7 +5,6 @@ import { supabase } from "@/integrations/supabase/client";
  * Shared across BilanSeance, BilanTestPassation, DevoirPassation.
  */
 export async function updateProfilEleve(eleveId: string, niveauActuel?: string): Promise<void> {
-  // Fetch all results for this student with competence info
   const { data: allResults } = await supabase
     .from("resultats")
     .select("score, exercice:exercices(competence)")
@@ -31,39 +30,24 @@ export async function updateProfilEleve(eleveId: string, niveauActuel?: string):
 
   const globalAvg = avg(allScores);
 
-  const compFieldMap: Record<string, string> = {
-    CO: "taux_reussite_co",
-    CE: "taux_reussite_ce",
-    EE: "taux_reussite_ee",
-    EO: "taux_reussite_eo",
-    Structures: "taux_reussite_structures",
-  };
+  // Determine niveau
+  let niveau = niveauActuel;
+  if (!niveau) {
+    if (globalAvg >= 80) niveau = "B1";
+    else if (globalAvg >= 60) niveau = "A2";
+    else if (globalAvg >= 30) niveau = "A1";
+    else niveau = "A0";
+  }
 
-  const profilUpdate: Record<string, unknown> = {
+  await supabase.from("profils_eleves").upsert({
     eleve_id: eleveId,
     taux_reussite_global: globalAvg,
+    taux_reussite_co: avg(byCompetence["CO"] ?? []),
+    taux_reussite_ce: avg(byCompetence["CE"] ?? []),
+    taux_reussite_ee: avg(byCompetence["EE"] ?? []),
+    taux_reussite_eo: avg(byCompetence["EO"] ?? []),
+    taux_reussite_structures: avg(byCompetence["Structures"] ?? []),
+    niveau_actuel: niveau,
     updated_at: new Date().toISOString(),
-  };
-
-  if (niveauActuel) {
-    profilUpdate.niveau_actuel = niveauActuel;
-  }
-
-  for (const [comp, field] of Object.entries(compFieldMap)) {
-    if (byCompetence[comp]) {
-      profilUpdate[field] = avg(byCompetence[comp]);
-    }
-  }
-
-  // Need niveau_actuel for insert — use provided or estimate from score
-  if (!profilUpdate.niveau_actuel) {
-    if (globalAvg >= 80) profilUpdate.niveau_actuel = "B1";
-    else if (globalAvg >= 60) profilUpdate.niveau_actuel = "A2";
-    else if (globalAvg >= 30) profilUpdate.niveau_actuel = "A1";
-    else profilUpdate.niveau_actuel = "A0";
-  }
-
-  await supabase
-    .from("profils_eleves")
-    .upsert(profilUpdate as Parameters<typeof supabase.from<"profils_eleves">>[0] extends infer T ? Record<string, unknown> : never, { onConflict: "eleve_id" } as never);
+  }, { onConflict: "eleve_id" });
 }
