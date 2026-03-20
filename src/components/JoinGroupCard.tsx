@@ -64,7 +64,7 @@ const JoinGroupCard = () => {
         .maybeSingle();
 
       if (existing) {
-        toast.info("Vous faites déjà partie de ce groupe !");
+        toast.info("Tu fais déjà partie de ce groupe !");
         setCode("");
         return;
       }
