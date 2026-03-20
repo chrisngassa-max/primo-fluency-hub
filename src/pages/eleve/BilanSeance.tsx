@@ -194,10 +194,19 @@ const BilanSeance = () => {
         ? Math.round(totalScore / pendingExercices.length)
         : 0;
 
+      // Propagate scores to profils_eleves for monitoring visibility
+      try {
+        await updateProfilEleve(user.id, session?.niveau_cible || undefined);
+      } catch (profileErr) {
+        console.error("Profile update failed:", profileErr);
+      }
+
       setResults({ scores, globalScore, devoirsCreated });
       qc.invalidateQueries({ queryKey: ["eleve-devoirs"] });
       qc.invalidateQueries({ queryKey: ["eleve-bilans"] });
       qc.invalidateQueries({ queryKey: ["bilan-existing"] });
+      qc.invalidateQueries({ queryKey: ["profil-eleve"] });
+      qc.invalidateQueries({ queryKey: ["eleve-resultats"] });
       toast.success(`Bilan soumis ! Score moyen : ${globalScore}%`);
     } catch (e: any) {
       toast.error("Erreur lors de la soumission", { description: e.message });
