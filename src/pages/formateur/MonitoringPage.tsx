@@ -979,6 +979,7 @@ const MonitoringPage = () => {
                       <TableHead>Groupe(s)</TableHead>
                       <TableHead>Niveau</TableHead>
                       <TableHead>Score moyen</TableHead>
+                      <TableHead>Dernière activité</TableHead>
                       <TableHead>Risque</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
@@ -986,6 +987,7 @@ const MonitoringPage = () => {
                   <TableBody>
                     {filteredEleves.map((e: any) => {
                       const p = e.profil;
+                      const displayScore = e.computedScore ?? 0;
                       return (
                         <TableRow key={e.id} className="cursor-pointer hover:bg-muted/50" onClick={() => goToEleveDetail(e.id)}>
                           <TableCell className="font-medium">{e.prenom} {e.nom}</TableCell>
@@ -997,9 +999,14 @@ const MonitoringPage = () => {
                           <TableCell>{p?.niveau_actuel || "—"}</TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
-                              <Progress value={p ? Number(p.taux_reussite_global) : 0} className="h-2 w-20" />
-                              <span className="text-sm">{p ? Math.round(Number(p.taux_reussite_global)) : 0}%</span>
+                              <Progress value={displayScore} className="h-2 w-20" />
+                              <span className="text-sm">{displayScore}%</span>
                             </div>
+                          </TableCell>
+                          <TableCell className="text-xs text-muted-foreground">
+                            {e.lastActivity
+                              ? format(new Date(e.lastActivity), "d MMM yyyy", { locale: fr })
+                              : "—"}
                           </TableCell>
                           <TableCell>
                             {p && Number(p.score_risque) >= 60
