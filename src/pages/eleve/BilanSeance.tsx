@@ -231,7 +231,7 @@ const BilanSeance = () => {
       <div className="max-w-2xl mx-auto text-center py-12 space-y-4">
         <CheckCircle2 className="h-12 w-12 mx-auto text-green-500" />
         <h2 className="text-xl font-bold">Bilan déjà complété</h2>
-        <p className="text-muted-foreground">Vous avez déjà passé le bilan pour cette séance.</p>
+        <p className="text-muted-foreground">Tu as déjà passé le bilan pour cette séance.</p>
         <Button variant="outline" onClick={() => navigate("/eleve")}>
           <ArrowLeft className="h-4 w-4 mr-2" /> Retour au dashboard
         </Button>
