@@ -243,7 +243,7 @@ const EleveDashboard = () => {
           </CardHeader>
           <CardContent className="space-y-2">
             <p className="text-sm text-muted-foreground mb-3">
-              Validez vos acquis en passant le bilan des exercices réalisés en classe.
+              Valide tes acquis en passant le bilan des exercices réalisés en classe.
             </p>
             {pendingBilans.map((bilan) => (
               <div
