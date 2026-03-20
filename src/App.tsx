@@ -60,7 +60,7 @@ const App = () => (
             <Route path="/legal" element={<Legal />} />
             <Route path="/eleve/login" element={<LoginEleve />} />
             <Route path="/formateur/login" element={<LoginFormateur />} />
-            <Route path="/admin/login" element={<LoginAdmin />} />
+            {/* Admin route removed — no admin dashboard */}
             <Route path="/reset-password" element={<ResetPassword />} />
 
             {/* Formateur routes */}
