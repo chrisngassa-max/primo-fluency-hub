@@ -103,7 +103,7 @@ const EleveDevoirs = () => {
             <BookOpen className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
             <p className="text-muted-foreground font-medium">Pas encore de devoirs</p>
             <p className="text-sm text-muted-foreground/70 mt-1">
-              Vos devoirs apparaîtront ici après votre première séance avec votre formateur.
+              Tes devoirs apparaîtront ici après ta première séance. Les devoirs sont générés automatiquement après chaque séance.
             </p>
           </CardContent>
         </Card>
