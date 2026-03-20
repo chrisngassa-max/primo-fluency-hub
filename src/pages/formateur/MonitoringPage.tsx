@@ -75,7 +75,7 @@ const MonitoringPage = () => {
     enabled: !!user,
   });
 
-  // ─── All students (for search + "Vue Élèves") ───
+  // ─── All students (for search + "Vue Élèves") with fallback score from resultats ───
   const { data: allEleves = [], isLoading: loadingAllEleves } = useQuery({
     queryKey: ["monitoring-all-eleves", user?.id],
     queryFn: async () => {
@@ -88,15 +88,41 @@ const MonitoringPage = () => {
       const { data: profiles } = await supabase.from("profiles").select("id, nom, prenom").in("id", ids);
       const { data: profils } = await supabase.from("profils_eleves").select("*").in("eleve_id", ids);
       const profilMap = Object.fromEntries((profils ?? []).map(p => [p.eleve_id, p]));
+
+      // Fallback: compute score from resultats if profils_eleves is missing or at 0
+      const { data: allResults } = await supabase.from("resultats")
+        .select("eleve_id, score, created_at")
+        .in("eleve_id", ids)
+        .order("created_at", { ascending: false });
+      const resultsByEleve: Record<string, { scores: number[]; lastActivity: string | null }> = {};
+      (allResults ?? []).forEach(r => {
+        if (!resultsByEleve[r.eleve_id]) resultsByEleve[r.eleve_id] = { scores: [], lastActivity: null };
+        resultsByEleve[r.eleve_id].scores.push(Number(r.score));
+        if (!resultsByEleve[r.eleve_id].lastActivity) resultsByEleve[r.eleve_id].lastActivity = r.created_at;
+      });
+
       // Map eleve to group names
       const groupMap = Object.fromEntries(grps.map(g => [g.id, groups.find(gg => gg.id === g.id)?.nom || ""]));
       const eleveGroups: Record<string, string[]> = {};
       members.forEach(m => {
         (eleveGroups[m.eleve_id] = eleveGroups[m.eleve_id] || []).push(groupMap[m.group_id] || "");
       });
-      return (profiles ?? []).map(p => ({
-        ...p, profil: profilMap[p.id] || null, groupes: eleveGroups[p.id] || [],
-      }));
+      return (profiles ?? []).map(p => {
+        const profil = profilMap[p.id] || null;
+        const fallback = resultsByEleve[p.id];
+        const fallbackScore = fallback?.scores.length
+          ? Math.round(fallback.scores.reduce((a, b) => a + b, 0) / fallback.scores.length)
+          : 0;
+        return {
+          ...p,
+          profil,
+          groupes: eleveGroups[p.id] || [],
+          computedScore: profil && Number(profil.taux_reussite_global) > 0
+            ? Math.round(Number(profil.taux_reussite_global))
+            : fallbackScore,
+          lastActivity: fallback?.lastActivity || null,
+        };
+      });
     },
     enabled: !!user && groups.length > 0,
   });
@@ -367,7 +393,7 @@ const MonitoringPage = () => {
       const level = d.levels.find((l: any) => l.competence === c);
       return { competence: c, niveau: level?.niveau_actuel ?? 0 };
     });
-    // Competence scores from profil (0-100)
+    // Competence scores from profil (0-100) — or compute from results as fallback
     const compScores = d.profil ? [
       { comp: "CO", score: Number(d.profil.taux_reussite_co) },
       { comp: "CE", score: Number(d.profil.taux_reussite_ce) },
@@ -376,6 +402,15 @@ const MonitoringPage = () => {
       { comp: "Structures", score: Number(d.profil.taux_reussite_structures) },
     ] : [];
 
+    // Fallback score from resultats if profil is missing or at 0
+    const fallbackScore = d.results.length > 0
+      ? Math.round(d.results.reduce((acc: number, r: any) => acc + Number(r.score), 0) / d.results.length)
+      : 0;
+    const displayScore = d.profil && Number(d.profil.taux_reussite_global) > 0
+      ? Math.round(Number(d.profil.taux_reussite_global))
+      : fallbackScore;
+    const lastActivity = d.results[0]?.created_at || null;
+
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-3">
@@ -383,7 +418,8 @@ const MonitoringPage = () => {
           <div>
             <h1 className="text-2xl font-bold text-foreground">{d.profile?.prenom} {d.profile?.nom}</h1>
             <p className="text-muted-foreground text-sm">
-              Niveau estimé : {d.profil?.niveau_actuel || "—"} · Score moyen : {d.profil ? Math.round(Number(d.profil.taux_reussite_global)) : 0}%
+              Niveau estimé : {d.profil?.niveau_actuel || "—"} · Score moyen : {displayScore}%
+              {lastActivity && <> · Dernière activité : {format(new Date(lastActivity), "d MMM yyyy", { locale: fr })}</>}
             </p>
           </div>
           {/* Navigation tabs in header */}
@@ -953,6 +989,7 @@ const MonitoringPage = () => {
                       <TableHead>Groupe(s)</TableHead>
                       <TableHead>Niveau</TableHead>
                       <TableHead>Score moyen</TableHead>
+                      <TableHead>Dernière activité</TableHead>
                       <TableHead>Risque</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
@@ -960,6 +997,7 @@ const MonitoringPage = () => {
                   <TableBody>
                     {filteredEleves.map((e: any) => {
                       const p = e.profil;
+                      const displayScore = e.computedScore ?? 0;
                       return (
                         <TableRow key={e.id} className="cursor-pointer hover:bg-muted/50" onClick={() => goToEleveDetail(e.id)}>
                           <TableCell className="font-medium">{e.prenom} {e.nom}</TableCell>
@@ -971,9 +1009,14 @@ const MonitoringPage = () => {
                           <TableCell>{p?.niveau_actuel || "—"}</TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
-                              <Progress value={p ? Number(p.taux_reussite_global) : 0} className="h-2 w-20" />
-                              <span className="text-sm">{p ? Math.round(Number(p.taux_reussite_global)) : 0}%</span>
+                              <Progress value={displayScore} className="h-2 w-20" />
+                              <span className="text-sm">{displayScore}%</span>
                             </div>
+                          </TableCell>
+                          <TableCell className="text-xs text-muted-foreground">
+                            {e.lastActivity
+                              ? format(new Date(e.lastActivity), "d MMM yyyy", { locale: fr })
+                              : "—"}
                           </TableCell>
                           <TableCell>
                             {p && Number(p.score_risque) >= 60

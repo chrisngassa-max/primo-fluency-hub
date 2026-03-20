@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { updateProfilEleve } from "@/lib/updateProfilEleve";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -193,10 +194,19 @@ const BilanSeance = () => {
         ? Math.round(totalScore / pendingExercices.length)
         : 0;
 
+      // Propagate scores to profils_eleves for monitoring visibility
+      try {
+        await updateProfilEleve(user.id, session?.niveau_cible || undefined);
+      } catch (profileErr) {
+        console.error("Profile update failed:", profileErr);
+      }
+
       setResults({ scores, globalScore, devoirsCreated });
       qc.invalidateQueries({ queryKey: ["eleve-devoirs"] });
       qc.invalidateQueries({ queryKey: ["eleve-bilans"] });
       qc.invalidateQueries({ queryKey: ["bilan-existing"] });
+      qc.invalidateQueries({ queryKey: ["profil-eleve"] });
+      qc.invalidateQueries({ queryKey: ["eleve-resultats"] });
       toast.success(`Bilan soumis ! Score moyen : ${globalScore}%`);
     } catch (e: any) {
       toast.error("Erreur lors de la soumission", { description: e.message });
@@ -301,7 +311,10 @@ const BilanSeance = () => {
                       <div>
                         <p className="text-muted-foreground">{c.question}</p>
                         {!c.correct && (
-                          <p className="text-xs text-green-600 mt-0.5">Réponse : {c.bonne_reponse}</p>
+                          <p className="text-xs text-green-600 mt-0.5">Réponse correcte : {c.bonne_reponse}</p>
+                        )}
+                        {c.explication && (
+                          <p className="text-xs text-muted-foreground/70 mt-0.5 italic">{c.explication}</p>
                         )}
                       </div>
                     </div>

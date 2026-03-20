@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { updateProfilEleve } from "@/lib/updateProfilEleve";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -185,15 +186,9 @@ const BilanTestPassation = () => {
         }, { onConflict: "eleve_id,competence" });
       }
 
-      // PROMPT C: Propagate scores to profils_eleves for monitoring visibility
+      // Propagate scores to profils_eleves for monitoring visibility
       try {
-        const compFieldMap: Record<string, string> = { CO: "taux_reussite_co", CE: "taux_reussite_ce", EE: "taux_reussite_ee", EO: "taux_reussite_eo", Structures: "taux_reussite_structures" };
-        const profilUpdate: Record<string, any> = { eleve_id: user.id, taux_reussite_global: scoreGlobal, niveau_actuel: bilanTest.session?.niveau_cible || "A1", updated_at: new Date().toISOString() };
-        for (const [comp, stats] of Object.entries(scoresParCompetence)) {
-          const field = compFieldMap[comp];
-          if (field) profilUpdate[field] = stats.pct;
-        }
-        await supabase.from("profils_eleves").upsert(profilUpdate as any, { onConflict: "eleve_id" });
+        await updateProfilEleve(user.id, bilanTest.session?.niveau_cible || "A1");
       } catch (profileErr) {
         console.error("Profile update failed:", profileErr);
       }

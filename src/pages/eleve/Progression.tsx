@@ -17,7 +17,7 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import CompetenceLabel from "@/components/CompetenceLabel";
 
-const COMPETENCES = ["CO", "CE", "EE", "EO"] as const;
+const COMPETENCES = ["CO", "CE", "EE", "EO", "Structures"] as const;
 
 const statutLabel: Record<string, { label: string; color: string }> = {
   non_evalue: { label: "Non évalué", color: "bg-muted text-muted-foreground" },
