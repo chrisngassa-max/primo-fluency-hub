@@ -468,6 +468,11 @@ ${Array.isArray(item.options) && item.options.length > 0
                           <Badge variant="secondary" className="text-[10px]">Niv. {ex.niveau_vise}</Badge>
                           <DifficultyBadge level={mapDifficultyToScale10(ex.difficulte)} />
                           <span className="text-[10px] text-muted-foreground">{items.length} Q</span>
+                          {ex.is_ai_generated && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-400 px-2 py-0.5 text-[10px] font-semibold">
+                              ✨ Généré par IA
+                            </span>
+                          )}
                           {isSaving && <Loader2 className="h-3 w-3 animate-spin text-primary" />}
                         </div>
                       </AccordionTrigger>

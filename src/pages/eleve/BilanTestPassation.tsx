@@ -185,6 +185,19 @@ const BilanTestPassation = () => {
         }, { onConflict: "eleve_id,competence" });
       }
 
+      // PROMPT C: Propagate scores to profils_eleves for monitoring visibility
+      try {
+        const compFieldMap: Record<string, string> = { CO: "taux_reussite_co", CE: "taux_reussite_ce", EE: "taux_reussite_ee", EO: "taux_reussite_eo", Structures: "taux_reussite_structures" };
+        const profilUpdate: Record<string, any> = { eleve_id: user.id, taux_reussite_global: scoreGlobal, niveau_actuel: bilanTest.session?.niveau_cible || "A1", updated_at: new Date().toISOString() };
+        for (const [comp, stats] of Object.entries(scoresParCompetence)) {
+          const field = compFieldMap[comp];
+          if (field) profilUpdate[field] = stats.pct;
+        }
+        await supabase.from("profils_eleves").upsert(profilUpdate as any, { onConflict: "eleve_id" });
+      } catch (profileErr) {
+        console.error("Profile update failed:", profileErr);
+      }
+
       setResult({ scoreGlobal, totalQuestions: questions.length, correct: totalCorrect, scoresParCompetence, correction, devoirsGenerated });
       qc.invalidateQueries({ queryKey: ["eleve-devoirs"] });
       qc.invalidateQueries({ queryKey: ["eleve-bilans-tests"] });
