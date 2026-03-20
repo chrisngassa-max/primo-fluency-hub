@@ -169,11 +169,11 @@ const EleveDashboard = () => {
               </div>
               <div className="flex-1">
                 <h3 className="font-semibold text-foreground text-lg">
-                  Commencez par évaluer votre niveau
+                  Commence par évaluer ton niveau
                 </h3>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Passez le test de positionnement (10 min) pour que TCF Pro adapte votre
-                  programme à votre niveau réel.
+                  Passe le test de positionnement (10 min) pour que TCF Pro adapte ton
+                  programme à ton niveau réel.
                 </p>
                 <Button
                   className="mt-3 gap-2"
