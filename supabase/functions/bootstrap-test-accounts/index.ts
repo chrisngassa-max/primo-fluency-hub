@@ -21,6 +21,7 @@ Deno.serve(async (req) => {
     const accounts = [
       { email: "formateur.e2e@tcfpro.fr", password: "TestFormateur123!", nom: "Dupont", prenom: "Marie", role: "formateur" },
       { email: "eleve.e2e@tcfpro.fr", password: "TestEleve123!", nom: "Martin", prenom: "Lucas", role: "eleve" },
+      { email: "eleve2.e2e@tcfpro.fr", password: "TestEleve2-123!", nom: "Bernard", prenom: "Sofia", role: "eleve" },
     ];
 
     const results: any[] = [];
@@ -52,6 +53,7 @@ Deno.serve(async (req) => {
     // Setup group + membership if both exist
     const formateurId = results.find(r => r.email === "formateur.e2e@tcfpro.fr")?.id;
     const eleveId = results.find(r => r.email === "eleve.e2e@tcfpro.fr")?.id;
+    const eleve2Id = results.find(r => r.email === "eleve2.e2e@tcfpro.fr")?.id;
 
     if (formateurId && eleveId) {
       // Check if group exists
@@ -65,10 +67,18 @@ Deno.serve(async (req) => {
         groupId = newGroup!.id;
       }
 
-      // Check membership
+      // Check membership for eleve 1
       const { data: membership } = await admin.from("group_members").select("id").eq("group_id", groupId).eq("eleve_id", eleveId).limit(1);
       if (!membership || membership.length === 0) {
         await admin.from("group_members").insert({ group_id: groupId, eleve_id: eleveId });
+      }
+
+      // Check membership for eleve 2
+      if (eleve2Id) {
+        const { data: membership2 } = await admin.from("group_members").select("id").eq("group_id", groupId).eq("eleve_id", eleve2Id).limit(1);
+        if (!membership2 || membership2.length === 0) {
+          await admin.from("group_members").insert({ group_id: groupId, eleve_id: eleve2Id });
+        }
       }
 
       // Create a session with exercises
