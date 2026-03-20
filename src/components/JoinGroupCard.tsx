@@ -77,7 +77,7 @@ const JoinGroupCard = () => {
       if (joinErr) throw joinErr;
 
       const groupName = (invitation as any).group?.nom || "le groupe";
-      toast.success(`Vous avez rejoint le groupe « ${groupName} » !`);
+      toast.success(`Tu as rejoint le groupe « ${groupName} » !`);
       setCode("");
       qc.invalidateQueries({ queryKey: ["eleve-memberships"] });
     } catch (e: any) {
