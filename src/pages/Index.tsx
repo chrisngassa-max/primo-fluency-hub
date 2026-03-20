@@ -13,7 +13,7 @@ const Index = () => {
   if (!loading && session && role) {
     if (role === "formateur") return <Navigate to="/formateur" replace />;
     if (role === "eleve") return <Navigate to="/eleve" replace />;
-    if (role === "admin") return <Navigate to="/admin" replace />;
+    if (role === "admin") return <Navigate to="/formateur" replace />;
   }
 
   if (loading) {

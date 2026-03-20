@@ -91,9 +91,9 @@ const EleveDevoirs = () => {
         <Card className="border-dashed">
           <CardContent className="py-12 text-center">
             <CheckCircle2 className="h-10 w-10 mx-auto text-green-500 mb-3" />
-            <p className="text-muted-foreground font-medium">Tous vos devoirs sont à jour !</p>
+            <p className="text-muted-foreground font-medium">Tous tes devoirs sont à jour !</p>
             <p className="text-sm text-muted-foreground/70 mt-1">
-              De nouveaux devoirs apparaîtront après vos séances.
+              De nouveaux devoirs apparaîtront après tes séances.
             </p>
           </CardContent>
         </Card>
@@ -103,7 +103,7 @@ const EleveDevoirs = () => {
             <BookOpen className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
             <p className="text-muted-foreground font-medium">Pas encore de devoirs</p>
             <p className="text-sm text-muted-foreground/70 mt-1">
-              Vos devoirs apparaîtront ici après votre première séance avec votre formateur.
+              Tes devoirs apparaîtront ici après ta première séance. Les devoirs sont générés automatiquement après chaque séance.
             </p>
           </CardContent>
         </Card>

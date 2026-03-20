@@ -13,7 +13,7 @@ import NotFound from "@/pages/NotFound";
 
 import LoginEleve from "@/pages/auth/LoginEleve";
 import LoginFormateur from "@/pages/auth/LoginFormateur";
-import LoginAdmin from "@/pages/auth/LoginAdmin";
+// LoginAdmin removed — no admin dashboard exists yet
 
 import FormateurLayout from "@/layouts/FormateurLayout";
 import FormateurDashboard from "@/pages/formateur/Dashboard";
@@ -60,7 +60,7 @@ const App = () => (
             <Route path="/legal" element={<Legal />} />
             <Route path="/eleve/login" element={<LoginEleve />} />
             <Route path="/formateur/login" element={<LoginFormateur />} />
-            <Route path="/admin/login" element={<LoginAdmin />} />
+            {/* Admin route removed — no admin dashboard */}
             <Route path="/reset-password" element={<ResetPassword />} />
 
             {/* Formateur routes */}

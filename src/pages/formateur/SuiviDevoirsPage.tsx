@@ -104,7 +104,7 @@ const SuiviDevoirsPage = () => {
 
       // Get bilan tests for these sessions
       const { data: tests } = await supabase
-        .from("bilan_tests" as any)
+        .from("bilan_tests")
         .select("id, session_id, nb_questions, competences_couvertes")
         .in("session_id", sessionIds)
         .eq("statut", "envoye");
@@ -114,7 +114,7 @@ const SuiviDevoirsPage = () => {
 
       // Get results
       const { data: results } = await supabase
-        .from("bilan_test_results" as any)
+        .from("bilan_test_results")
         .select("*, eleve:profiles!bilan_test_results_eleve_id_fkey(prenom, nom)")
         .in("bilan_test_id", testIds);
 

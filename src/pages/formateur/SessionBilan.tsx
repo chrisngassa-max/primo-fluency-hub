@@ -277,7 +277,7 @@ const SessionBilan = () => {
     setConfirmSendOpen(false);
     try {
       const statut = sendNow ? "envoye" : "pret";
-      const { error } = await supabase.from("bilan_tests" as any).insert({
+      const { error } = await supabase.from("bilan_tests").insert({
         session_id: id!,
         formateur_id: user!.id,
         statut,
@@ -321,7 +321,7 @@ const SessionBilan = () => {
     setShowTestModal(false);
     // Archive the test
     if (generatedTest && session) {
-      await supabase.from("bilan_tests" as any).insert({
+      await supabase.from("bilan_tests").insert({
         session_id: id!,
         formateur_id: user!.id,
         statut: "archive",
