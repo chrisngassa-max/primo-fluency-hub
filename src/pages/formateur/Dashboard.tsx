@@ -658,8 +658,8 @@ ${sessionExercises.map((ex: any, i: number) => `
                     </div>
                   </div>
                   <div className="flex items-center gap-3 mt-4 flex-wrap">
-                    <Button size="lg" className="gap-2" onClick={() => navigate(`/formateur/seances/${nextSession.id}/pilote`)}>
-                      <Play className="h-4 w-4" /> Lancer la séance
+                    <Button size="lg" className="gap-2" onClick={() => navigate(`/formateur/seances/${nextSession.id}/pilote`)} disabled={nextSession.statut === "terminee" || nextSession.statut === "annulee"}>
+                      <Play className="h-4 w-4" /> {nextSession.statut === "terminee" ? "Séance terminée" : nextSession.statut === "annulee" ? "Séance annulée" : "Lancer la séance"}
                     </Button>
                     <Button variant="default" className="gap-2 bg-green-600 hover:bg-green-700 text-white" onClick={handleSendToStudents} disabled={sending || sessionExercises.length === 0}>
                       {sending ? <Clock className="h-4 w-4 animate-spin" /> : <Rocket className="h-4 w-4" />}
