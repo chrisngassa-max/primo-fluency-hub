@@ -158,6 +158,102 @@ export type Database = {
           },
         ]
       }
+      bilan_test_results: {
+        Row: {
+          bilan_test_id: string
+          correction: Json
+          created_at: string
+          eleve_id: string
+          id: string
+          reponses: Json
+          score_global: number
+          scores_par_competence: Json
+        }
+        Insert: {
+          bilan_test_id: string
+          correction?: Json
+          created_at?: string
+          eleve_id: string
+          id?: string
+          reponses?: Json
+          score_global?: number
+          scores_par_competence?: Json
+        }
+        Update: {
+          bilan_test_id?: string
+          correction?: Json
+          created_at?: string
+          eleve_id?: string
+          id?: string
+          reponses?: Json
+          score_global?: number
+          scores_par_competence?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bilan_test_results_bilan_test_id_fkey"
+            columns: ["bilan_test_id"]
+            isOneToOne: false
+            referencedRelation: "bilan_tests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bilan_test_results_eleve_id_fkey"
+            columns: ["eleve_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bilan_tests: {
+        Row: {
+          competences_couvertes: string[]
+          contenu: Json
+          created_at: string
+          formateur_id: string
+          id: string
+          nb_questions: number
+          session_id: string
+          statut: string
+        }
+        Insert: {
+          competences_couvertes?: string[]
+          contenu?: Json
+          created_at?: string
+          formateur_id: string
+          id?: string
+          nb_questions?: number
+          session_id: string
+          statut?: string
+        }
+        Update: {
+          competences_couvertes?: string[]
+          contenu?: Json
+          created_at?: string
+          formateur_id?: string
+          id?: string
+          nb_questions?: number
+          session_id?: string
+          statut?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bilan_tests_formateur_id_fkey"
+            columns: ["formateur_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bilan_tests_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       devoirs: {
         Row: {
           created_at: string
