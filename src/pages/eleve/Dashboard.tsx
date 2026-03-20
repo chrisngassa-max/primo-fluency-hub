@@ -153,8 +153,8 @@ const EleveDashboard = () => {
       {showOnboarding && <EleveOnboarding onComplete={dismissOnboarding} />}
 
       <div>
-        <h1 className="text-2xl font-bold text-foreground">
-          Bienvenue, {user?.user_metadata?.prenom || "Apprenant"} 👋
+      <h1 className="text-2xl font-bold text-foreground">
+          Bienvenue{user?.user_metadata?.prenom ? `, ${user.user_metadata.prenom}` : ""} 👋
         </h1>
         <p className="text-muted-foreground mt-1">Ton espace de préparation au TCF IRN.</p>
       </div>
