@@ -124,7 +124,7 @@ const EleveDashboard = () => {
     queryKey: ["eleve-bilans-tests", user?.id],
     queryFn: async () => {
       const { data: tests, error } = await supabase
-        .from("bilan_tests" as any)
+        .from("bilan_tests")
         .select("id, nb_questions, competences_couvertes, session:sessions(titre, date_seance)")
         .eq("statut", "envoye")
         .order("created_at", { ascending: false });
@@ -132,7 +132,7 @@ const EleveDashboard = () => {
       if (!tests || tests.length === 0) return [];
       const testIds = (tests as any[]).map((t: any) => t.id);
       const { data: done } = await supabase
-        .from("bilan_test_results" as any)
+        .from("bilan_test_results")
         .select("bilan_test_id, score_global")
         .eq("eleve_id", user!.id)
         .in("bilan_test_id", testIds);

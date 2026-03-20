@@ -40,7 +40,7 @@ const BilanTestPassation = () => {
     queryKey: ["bilan-test-detail", testId],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("bilan_tests" as any)
+        .from("bilan_tests")
         .select("*, session:sessions(titre, date_seance, niveau_cible, group_id)")
         .eq("id", testId!)
         .single();
@@ -55,7 +55,7 @@ const BilanTestPassation = () => {
     queryKey: ["bilan-test-result", testId, user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("bilan_test_results" as any)
+        .from("bilan_test_results")
         .select("*")
         .eq("bilan_test_id", testId!)
         .eq("eleve_id", user!.id)
@@ -105,7 +105,7 @@ const BilanTestPassation = () => {
       }
 
       // Save result
-      const { error: insertErr } = await supabase.from("bilan_test_results" as any).insert({
+      const { error: insertErr } = await supabase.from("bilan_test_results").insert({
         bilan_test_id: testId!,
         eleve_id: user.id,
         score_global: scoreGlobal,
