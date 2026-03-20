@@ -710,7 +710,7 @@ ${Array.isArray(item.options) && item.options.length > 0
         <div className="flex gap-2">
           <Button onClick={handleGenerateExercises} disabled={generating} variant="outline" className="gap-2">
             {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-            Générer IA
+            ✨ Générer IA
           </Button>
           <Button onClick={handleGenerateHomework} disabled={generatingHomework} className="gap-2">
             {generatingHomework ? <Loader2 className="h-4 w-4 animate-spin" /> : <ClipboardCheck className="h-4 w-4" />}
