@@ -182,7 +182,7 @@ const DevoirPassation = () => {
         const field = compFieldMap[comp];
         if (field) {
           const profilUpdate: Record<string, any> = { eleve_id: user.id, [field]: score, taux_reussite_global: score, niveau_actuel: ex?.niveau_vise || "A1", updated_at: new Date().toISOString() };
-          await supabase.from("profils_eleves").upsert(profilUpdate, { onConflict: "eleve_id" });
+          await supabase.from("profils_eleves").upsert(profilUpdate as any, { onConflict: "eleve_id" });
         }
       } catch (profileErr) {
         console.error("Profile update failed:", profileErr);

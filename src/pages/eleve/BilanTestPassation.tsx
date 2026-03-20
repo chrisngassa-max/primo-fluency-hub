@@ -193,7 +193,7 @@ const BilanTestPassation = () => {
           const field = compFieldMap[comp];
           if (field) profilUpdate[field] = stats.pct;
         }
-        await supabase.from("profils_eleves").upsert(profilUpdate, { onConflict: "eleve_id" });
+        await supabase.from("profils_eleves").upsert(profilUpdate as any, { onConflict: "eleve_id" });
       } catch (profileErr) {
         console.error("Profile update failed:", profileErr);
       }
