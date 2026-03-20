@@ -182,7 +182,7 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
                   <Button
                     variant="link"
                     className="text-xs p-0 h-auto text-primary underline"
-                    onClick={() => navigate("/eleve/test")}
+                    onClick={() => navigate("/eleve/test-entree")}
                   >
                     Passez le test d'entrée pour évaluer votre niveau !
                   </Button>
