@@ -279,7 +279,7 @@ const TestEntreePage = () => {
         <div>
           <h1 className="text-2xl font-bold text-foreground">Test d'entrée TCF IRN</h1>
           <p className="text-muted-foreground mt-1">
-            Évaluez votre niveau en français. Ce test ne peut être passé qu'une seule fois.
+            Évalue ton niveau en français. Ce test ne peut être passé qu'une seule fois.
           </p>
         </div>
 
