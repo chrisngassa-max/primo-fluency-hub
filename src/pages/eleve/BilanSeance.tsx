@@ -311,7 +311,10 @@ const BilanSeance = () => {
                       <div>
                         <p className="text-muted-foreground">{c.question}</p>
                         {!c.correct && (
-                          <p className="text-xs text-green-600 mt-0.5">Réponse : {c.bonne_reponse}</p>
+                          <p className="text-xs text-green-600 mt-0.5">Réponse correcte : {c.bonne_reponse}</p>
+                        )}
+                        {c.explication && (
+                          <p className="text-xs text-muted-foreground/70 mt-0.5 italic">{c.explication}</p>
                         )}
                       </div>
                     </div>
