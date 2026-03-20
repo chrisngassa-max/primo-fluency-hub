@@ -153,7 +153,7 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
             : "Ma progression"}
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Suivi de votre parcours vers le TCF IRN
+          Suivi de ton parcours vers le TCF IRN
         </p>
       </div>
 
