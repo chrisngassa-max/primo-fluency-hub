@@ -75,7 +75,7 @@ const MonitoringPage = () => {
     enabled: !!user,
   });
 
-  // ─── All students (for search + "Vue Élèves") ───
+  // ─── All students (for search + "Vue Élèves") with fallback score from resultats ───
   const { data: allEleves = [], isLoading: loadingAllEleves } = useQuery({
     queryKey: ["monitoring-all-eleves", user?.id],
     queryFn: async () => {
@@ -88,15 +88,41 @@ const MonitoringPage = () => {
       const { data: profiles } = await supabase.from("profiles").select("id, nom, prenom").in("id", ids);
       const { data: profils } = await supabase.from("profils_eleves").select("*").in("eleve_id", ids);
       const profilMap = Object.fromEntries((profils ?? []).map(p => [p.eleve_id, p]));
+
+      // Fallback: compute score from resultats if profils_eleves is missing or at 0
+      const { data: allResults } = await supabase.from("resultats")
+        .select("eleve_id, score, created_at")
+        .in("eleve_id", ids)
+        .order("created_at", { ascending: false });
+      const resultsByEleve: Record<string, { scores: number[]; lastActivity: string | null }> = {};
+      (allResults ?? []).forEach(r => {
+        if (!resultsByEleve[r.eleve_id]) resultsByEleve[r.eleve_id] = { scores: [], lastActivity: null };
+        resultsByEleve[r.eleve_id].scores.push(Number(r.score));
+        if (!resultsByEleve[r.eleve_id].lastActivity) resultsByEleve[r.eleve_id].lastActivity = r.created_at;
+      });
+
       // Map eleve to group names
       const groupMap = Object.fromEntries(grps.map(g => [g.id, groups.find(gg => gg.id === g.id)?.nom || ""]));
       const eleveGroups: Record<string, string[]> = {};
       members.forEach(m => {
         (eleveGroups[m.eleve_id] = eleveGroups[m.eleve_id] || []).push(groupMap[m.group_id] || "");
       });
-      return (profiles ?? []).map(p => ({
-        ...p, profil: profilMap[p.id] || null, groupes: eleveGroups[p.id] || [],
-      }));
+      return (profiles ?? []).map(p => {
+        const profil = profilMap[p.id] || null;
+        const fallback = resultsByEleve[p.id];
+        const fallbackScore = fallback?.scores.length
+          ? Math.round(fallback.scores.reduce((a, b) => a + b, 0) / fallback.scores.length)
+          : 0;
+        return {
+          ...p,
+          profil,
+          groupes: eleveGroups[p.id] || [],
+          computedScore: profil && Number(profil.taux_reussite_global) > 0
+            ? Math.round(Number(profil.taux_reussite_global))
+            : fallbackScore,
+          lastActivity: fallback?.lastActivity || null,
+        };
+      });
     },
     enabled: !!user && groups.length > 0,
   });
