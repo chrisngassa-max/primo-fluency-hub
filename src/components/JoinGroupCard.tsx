@@ -110,7 +110,7 @@ const JoinGroupCard = () => {
                 </div>
               ) : (
                 <p className="text-sm text-muted-foreground mt-1">
-                  Entrez le code donné par votre formateur pour rejoindre votre groupe.
+                  Entre le code donné par ton formateur pour rejoindre ton groupe.
                 </p>
               )}
             </div>

@@ -309,7 +309,7 @@ const BilanTestPassation = () => {
               <input
                 type="text"
                 className="w-full border rounded-md px-3 py-2 text-sm bg-background"
-                placeholder="Votre réponse..."
+                placeholder="Ta réponse..."
                 value={answers[currentIdx] || ""}
                 onChange={(e) => setAnswers((prev) => ({ ...prev, [currentIdx]: e.target.value }))}
               />

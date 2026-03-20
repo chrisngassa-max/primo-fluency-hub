@@ -173,12 +173,12 @@ const TestEntreePage = () => {
       else niveauEstime = "A0";
 
       const recommandations = [
-        scoreCO < 60 && "Compréhension orale : travaillez l'écoute active.",
-        scoreCE < 60 && "Compréhension écrite : lisez des documents du quotidien.",
-        scoreStructures < 60 && "Structures : révisez la grammaire de base.",
+        scoreCO < 60 && "Compréhension orale : travaille l'écoute active.",
+        scoreCE < 60 && "Compréhension écrite : lis des documents du quotidien.",
+        scoreStructures < 60 && "Structures : révise la grammaire de base.",
       ]
         .filter(Boolean)
-        .join(" ") || "Bon niveau ! Continuez vos efforts.";
+        .join(" ") || "Bon niveau ! Continue tes efforts.";
 
       const { error } = await supabase
         .from("tests_entree")

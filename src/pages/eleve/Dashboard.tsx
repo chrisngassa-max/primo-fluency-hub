@@ -383,7 +383,7 @@ const EleveDashboard = () => {
               <BookOpen className="h-10 w-10 text-muted-foreground/40 mb-3" />
               <p className="text-muted-foreground font-medium">Aucun devoir en attente</p>
               <p className="text-sm text-muted-foreground/70 mt-1">
-                Les devoirs apparaîtront ici après vos séances.
+                Les devoirs apparaîtront ici après tes séances.
               </p>
             </div>
           )}
