@@ -13,7 +13,7 @@ import NotFound from "@/pages/NotFound";
 
 import LoginEleve from "@/pages/auth/LoginEleve";
 import LoginFormateur from "@/pages/auth/LoginFormateur";
-import LoginAdmin from "@/pages/auth/LoginAdmin";
+// LoginAdmin removed — no admin dashboard exists yet
 
 import FormateurLayout from "@/layouts/FormateurLayout";
 import FormateurDashboard from "@/pages/formateur/Dashboard";
