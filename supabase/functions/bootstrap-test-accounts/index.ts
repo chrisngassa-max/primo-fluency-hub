@@ -21,6 +21,7 @@ Deno.serve(async (req) => {
     const accounts = [
       { email: "formateur.e2e@tcfpro.fr", password: "TestFormateur123!", nom: "Dupont", prenom: "Marie", role: "formateur" },
       { email: "eleve.e2e@tcfpro.fr", password: "TestEleve123!", nom: "Martin", prenom: "Lucas", role: "eleve" },
+      { email: "eleve2.e2e@tcfpro.fr", password: "TestEleve2-123!", nom: "Bernard", prenom: "Sofia", role: "eleve" },
     ];
 
     const results: any[] = [];
