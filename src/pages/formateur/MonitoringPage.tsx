@@ -393,7 +393,7 @@ const MonitoringPage = () => {
       const level = d.levels.find((l: any) => l.competence === c);
       return { competence: c, niveau: level?.niveau_actuel ?? 0 };
     });
-    // Competence scores from profil (0-100)
+    // Competence scores from profil (0-100) — or compute from results as fallback
     const compScores = d.profil ? [
       { comp: "CO", score: Number(d.profil.taux_reussite_co) },
       { comp: "CE", score: Number(d.profil.taux_reussite_ce) },
@@ -402,6 +402,15 @@ const MonitoringPage = () => {
       { comp: "Structures", score: Number(d.profil.taux_reussite_structures) },
     ] : [];
 
+    // Fallback score from resultats if profil is missing or at 0
+    const fallbackScore = d.results.length > 0
+      ? Math.round(d.results.reduce((acc: number, r: any) => acc + Number(r.score), 0) / d.results.length)
+      : 0;
+    const displayScore = d.profil && Number(d.profil.taux_reussite_global) > 0
+      ? Math.round(Number(d.profil.taux_reussite_global))
+      : fallbackScore;
+    const lastActivity = d.results[0]?.created_at || null;
+
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-3">
@@ -409,7 +418,8 @@ const MonitoringPage = () => {
           <div>
             <h1 className="text-2xl font-bold text-foreground">{d.profile?.prenom} {d.profile?.nom}</h1>
             <p className="text-muted-foreground text-sm">
-              Niveau estimé : {d.profil?.niveau_actuel || "—"} · Score moyen : {d.profil ? Math.round(Number(d.profil.taux_reussite_global)) : 0}%
+              Niveau estimé : {d.profil?.niveau_actuel || "—"} · Score moyen : {displayScore}%
+              {lastActivity && <> · Dernière activité : {format(new Date(lastActivity), "d MMM yyyy", { locale: fr })}</>}
             </p>
           </div>
           {/* Navigation tabs in header */}
