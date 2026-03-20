@@ -294,7 +294,7 @@ const EleveDashboard = () => {
             />
             {!testCompleted && (
               <p className="text-xs text-muted-foreground">
-                Passez le test d'entrée pour évaluer votre niveau initial.
+                Passe le test d'entrée pour évaluer ton niveau initial.
               </p>
             )}
           </div>
