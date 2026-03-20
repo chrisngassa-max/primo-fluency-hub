@@ -540,7 +540,7 @@ ${sessionExercises.map((ex: any, i: number) => `
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Prochaine séance</p>
+                <p className="text-sm text-muted-foreground">{nextSession?.isPast ? "Dernière séance" : "Prochaine séance"}</p>
                 {loadingSessions ? <Skeleton className="h-5 w-32 mt-1" /> : nextSession ? (
                   <p className="text-sm font-medium mt-1 line-clamp-1">{format(new Date(nextSession.date_seance), "d MMM · HH:mm", { locale: fr })}</p>
                 ) : <p className="text-sm text-muted-foreground mt-1">Aucune</p>}
