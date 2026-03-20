@@ -758,9 +758,10 @@ ${sessionExercises.map((ex: any, i: number) => `
                                       {tracking.isCompleted && <Badge className="text-[10px] bg-green-600 text-white">✓ Fait</Badge>}
                                       {tracking.isIncludedInTest && <Badge variant="secondary" className="text-[10px]">📝 Test</Badge>}
                                       {isSent && !tracking.isCompleted && <Badge className="text-[10px] bg-green-600 text-white">✓ Envoyé</Badge>}
+                                      {ex.is_ai_generated && <span className="inline-flex items-center gap-0.5 rounded-full bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-400 px-1.5 py-0.5 text-[10px] font-semibold">✨ IA</span>}
                                     </div>
                                     <p className="text-sm text-muted-foreground italic mt-1">{ex.consigne}</p>
-                                    <p className="text-xs text-muted-foreground mt-0.5">{ex.contenu?.items?.length || 0} item(s) · Difficulté {ex.difficulte}/10</p>
+                                    <p className="text-xs text-muted-foreground mt-0.5">{ex.contenu?.items?.length || 0} item(s) · <DifficultyBadge level={ex.difficulte} /></p>
                                   </div>
                                 </div>
 

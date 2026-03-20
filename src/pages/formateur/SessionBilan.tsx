@@ -610,10 +610,10 @@ const SessionBilan = () => {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <ClipboardCheck className="h-5 w-5 text-primary" />
-              Test de bilan généré — {generatedTest?.questions?.length || 0} questions créées
+              <span className="inline-flex items-center gap-1">✨ Test de bilan généré par l'IA — {generatedTest?.questions?.length || 0} questions</span>
             </DialogTitle>
             <DialogDescription>
-              Ce test porte sur les exercices faits en séance aujourd'hui.
+              Ce test a été créé automatiquement à partir des exercices traités en séance.
             </DialogDescription>
           </DialogHeader>
           {generatedTest && (

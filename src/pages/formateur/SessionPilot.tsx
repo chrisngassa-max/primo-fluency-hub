@@ -967,6 +967,11 @@ ${Array.isArray(item.options) && item.options.length > 0
                         <span className={cn("inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-medium border print:hidden", config.color)}>
                           <StatusIcon className="h-3 w-3" />{config.label}
                         </span>
+                        {ex?.is_ai_generated && (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-400 px-2 py-0.5 text-[10px] font-semibold print:hidden">
+                            ✨ IA
+                          </span>
+                        )}
                         <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 px-2 py-0.5 text-[10px] font-semibold print:hidden">
                           <Circle className="h-2 w-2 fill-emerald-500 text-emerald-500" />
                           En ligne

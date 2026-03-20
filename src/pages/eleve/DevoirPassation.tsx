@@ -175,6 +175,19 @@ const DevoirPassation = () => {
         .eq("id", devoirId!);
       if (devErr) throw devErr;
 
+      // PROMPT C: Propagate score to profils_eleves
+      try {
+        const comp = ex?.competence || "CE";
+        const compFieldMap: Record<string, string> = { CO: "taux_reussite_co", CE: "taux_reussite_ce", EE: "taux_reussite_ee", EO: "taux_reussite_eo", Structures: "taux_reussite_structures" };
+        const field = compFieldMap[comp];
+        if (field) {
+          const profilUpdate: Record<string, any> = { eleve_id: user.id, [field]: score, taux_reussite_global: score, niveau_actuel: ex?.niveau_vise || "A1", updated_at: new Date().toISOString() };
+          await supabase.from("profils_eleves").upsert(profilUpdate, { onConflict: "eleve_id" });
+        }
+      } catch (profileErr) {
+        console.error("Profile update failed:", profileErr);
+      }
+
       // Trigger AI bilan generation in background
       const bilanId = await triggerBilanGeneration(score, correction);
 
