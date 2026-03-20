@@ -97,21 +97,34 @@ const FormateurDashboard = () => {
     enabled: !!user,
   });
 
-  // ─── Today's session (nearest upcoming) ───
+  // ─── Today's session (nearest upcoming or most recent past) ───
   const { data: upcomingSessions = [], isLoading: loadingSessions } = useQuery({
     queryKey: ["kpi-sessions", user?.id],
     queryFn: async () => {
       const { data: groups } = await supabase.from("groups").select("id, nom").eq("formateur_id", user!.id);
       if (!groups?.length) return [];
-      const { data } = await supabase
+      const groupIds = groups.map((g) => g.id);
+      const groupMap = Object.fromEntries(groups.map((g) => [g.id, g.nom]));
+      // Try upcoming first
+      const { data: upcoming } = await supabase
         .from("sessions")
         .select("id, titre, date_seance, duree_minutes, niveau_cible, objectifs, statut, group_id")
-        .in("group_id", groups.map((g) => g.id))
+        .in("group_id", groupIds)
         .gte("date_seance", new Date().toISOString())
         .order("date_seance", { ascending: true })
         .limit(3);
-      const groupMap = Object.fromEntries(groups.map((g) => [g.id, g.nom]));
-      return (data ?? []).map((s) => ({ ...s, group_nom: groupMap[s.group_id] || "—" }));
+      if (upcoming && upcoming.length > 0) {
+        return upcoming.map((s) => ({ ...s, group_nom: groupMap[s.group_id] || "—", isPast: false }));
+      }
+      // Fallback: most recent past session
+      const { data: recent } = await supabase
+        .from("sessions")
+        .select("id, titre, date_seance, duree_minutes, niveau_cible, objectifs, statut, group_id")
+        .in("group_id", groupIds)
+        .lt("date_seance", new Date().toISOString())
+        .order("date_seance", { ascending: false })
+        .limit(1);
+      return (recent ?? []).map((s) => ({ ...s, group_nom: groupMap[s.group_id] || "—", isPast: true }));
     },
     enabled: !!user,
   });
