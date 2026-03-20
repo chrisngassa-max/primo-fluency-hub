@@ -221,7 +221,7 @@ const TestEntreePage = () => {
       <div className="max-w-2xl mx-auto space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Résultats du test d'entrée</h1>
-          <p className="text-muted-foreground mt-1">Votre évaluation initiale est terminée.</p>
+          <p className="text-muted-foreground mt-1">Ton évaluation initiale est terminée.</p>
         </div>
 
         <Card className="border-primary/30 bg-primary/5">
