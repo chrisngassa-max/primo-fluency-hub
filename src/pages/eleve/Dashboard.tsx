@@ -199,7 +199,7 @@ const EleveDashboard = () => {
           </CardHeader>
           <CardContent className="space-y-2">
             <p className="text-sm text-muted-foreground mb-3">
-              Votre formateur vous a envoyé un test pour valider vos acquis de séance.
+              Ton formateur t'a envoyé un test pour valider tes acquis de séance.
             </p>
             {uncompletedTests.map((test: any) => (
               <div
