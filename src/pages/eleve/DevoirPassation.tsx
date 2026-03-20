@@ -246,7 +246,7 @@ const DevoirPassation = () => {
               {finalResult.score}%
             </p>
             <p className="text-sm text-muted-foreground mt-2">
-              {finalResult.score >= 80 ? "Excellent travail ! 🎉" : finalResult.score >= 60 ? "Bien, continuez vos efforts." : "Des révisions sont nécessaires."}
+              {finalResult.score >= 80 ? "Excellent travail ! 🎉" : finalResult.score >= 60 ? "Bien, continue tes efforts." : "Des révisions sont nécessaires."}
             </p>
           </CardContent>
         </Card>
@@ -271,8 +271,8 @@ const DevoirPassation = () => {
                       <p className="text-sm font-medium">{c.question}</p>
                       {!c.correct && (
                         <>
-                          <p className="text-xs text-destructive">Votre réponse : {c.reponse_eleve || "—"}</p>
-                          <p className="text-xs text-green-600">Bonne réponse : {c.bonne_reponse}</p>
+                       <p className="text-xs text-destructive">Ta réponse : {c.reponse_eleve || "—"}</p>
+                       <p className="text-xs text-green-600">Bonne réponse : {c.bonne_reponse}</p>
                         </>
                       )}
                       {c.explication && (
@@ -347,7 +347,7 @@ const DevoirPassation = () => {
                   <input
                     type="text"
                     className="w-full border rounded-md px-3 py-2 text-sm bg-background"
-                    placeholder="Votre réponse..."
+                    placeholder="Ta réponse..."
                     value={answers[idx] || ""}
                     onChange={(e) => setAnswers((prev) => ({ ...prev, [idx]: e.target.value }))}
                   />

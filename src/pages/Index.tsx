@@ -105,7 +105,7 @@ const Index = () => {
           Rejoignez TCF Pro dès aujourd'hui
         </h2>
         <p className="mt-2 text-muted-foreground">
-          Inscription gratuite · Aucune carte bancaire requise
+          Commencez dès maintenant · Résultats visibles en quelques séances
         </p>
         <Button size="lg" className="mt-6 text-base px-8" onClick={() => navigate("/eleve/login")}>
           Créer mon compte

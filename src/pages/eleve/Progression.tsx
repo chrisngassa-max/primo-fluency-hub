@@ -184,7 +184,7 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
                     className="text-xs p-0 h-auto text-primary underline"
                     onClick={() => navigate("/eleve/test-entree")}
                   >
-                    Passez le test d'entrée pour évaluer votre niveau !
+                    Passe le test d'entrée pour évaluer ton niveau !
                   </Button>
                 )}
             </p>
@@ -228,7 +228,7 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
               <div className="h-64 w-full flex flex-col items-center justify-center text-center p-4">
                 <TrendingUp className="h-10 w-10 text-muted-foreground/40 mb-3" />
                 <p className="text-muted-foreground text-sm">
-                  Votre progression s'affichera ici après votre test d'entrée.
+                  Ta progression s'affichera ici après ton test d'entrée.
                 </p>
               </div>
             )}

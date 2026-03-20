@@ -127,7 +127,7 @@ const BilanDevoirs = () => {
       ) : (
         <Card className="border-dashed">
           <CardContent className="py-8 text-center text-muted-foreground">
-            Le bilan n'a pas pu être généré. Contactez votre formateur.
+            Le bilan n'a pas pu être généré. Contacte ton formateur.
           </CardContent>
         </Card>
       )}

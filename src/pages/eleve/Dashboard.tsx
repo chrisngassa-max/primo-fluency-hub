@@ -153,8 +153,8 @@ const EleveDashboard = () => {
       {showOnboarding && <EleveOnboarding onComplete={dismissOnboarding} />}
 
       <div>
-        <h1 className="text-2xl font-bold text-foreground">
-          Bienvenue, {user?.user_metadata?.prenom || "Apprenant"} 👋
+      <h1 className="text-2xl font-bold text-foreground">
+          Bienvenue{user?.user_metadata?.prenom ? `, ${user.user_metadata.prenom}` : ""} 👋
         </h1>
         <p className="text-muted-foreground mt-1">Ton espace de préparation au TCF IRN.</p>
       </div>
@@ -169,11 +169,11 @@ const EleveDashboard = () => {
               </div>
               <div className="flex-1">
                 <h3 className="font-semibold text-foreground text-lg">
-                  Commencez par évaluer votre niveau
+                  Commence par évaluer ton niveau
                 </h3>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Passez le test de positionnement (10 min) pour que TCF Pro adapte votre
-                  programme à votre niveau réel.
+                  Passe le test de positionnement (10 min) pour que TCF Pro adapte ton
+                  programme à ton niveau réel.
                 </p>
                 <Button
                   className="mt-3 gap-2"
@@ -199,7 +199,7 @@ const EleveDashboard = () => {
           </CardHeader>
           <CardContent className="space-y-2">
             <p className="text-sm text-muted-foreground mb-3">
-              Votre formateur vous a envoyé un test pour valider vos acquis de séance.
+              Ton formateur t'a envoyé un test pour valider tes acquis de séance.
             </p>
             {uncompletedTests.map((test: any) => (
               <div
@@ -243,7 +243,7 @@ const EleveDashboard = () => {
           </CardHeader>
           <CardContent className="space-y-2">
             <p className="text-sm text-muted-foreground mb-3">
-              Validez vos acquis en passant le bilan des exercices réalisés en classe.
+              Valide tes acquis en passant le bilan des exercices réalisés en classe.
             </p>
             {pendingBilans.map((bilan) => (
               <div
@@ -294,7 +294,7 @@ const EleveDashboard = () => {
             />
             {!testCompleted && (
               <p className="text-xs text-muted-foreground">
-                Passez le test d'entrée pour évaluer votre niveau initial.
+                Passe le test d'entrée pour évaluer ton niveau initial.
               </p>
             )}
           </div>
@@ -383,7 +383,7 @@ const EleveDashboard = () => {
               <BookOpen className="h-10 w-10 text-muted-foreground/40 mb-3" />
               <p className="text-muted-foreground font-medium">Aucun devoir en attente</p>
               <p className="text-sm text-muted-foreground/70 mt-1">
-                Les devoirs apparaîtront ici après vos séances.
+                Les devoirs apparaîtront ici après tes séances.
               </p>
             </div>
           )}

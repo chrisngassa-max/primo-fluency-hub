@@ -64,7 +64,7 @@ const JoinGroupCard = () => {
         .maybeSingle();
 
       if (existing) {
-        toast.info("Vous faites déjà partie de ce groupe !");
+        toast.info("Tu fais déjà partie de ce groupe !");
         setCode("");
         return;
       }
@@ -77,7 +77,7 @@ const JoinGroupCard = () => {
       if (joinErr) throw joinErr;
 
       const groupName = (invitation as any).group?.nom || "le groupe";
-      toast.success(`Vous avez rejoint le groupe « ${groupName} » !`);
+      toast.success(`Tu as rejoint le groupe « ${groupName} » !`);
       setCode("");
       qc.invalidateQueries({ queryKey: ["eleve-memberships"] });
     } catch (e: any) {
@@ -110,7 +110,7 @@ const JoinGroupCard = () => {
                 </div>
               ) : (
                 <p className="text-sm text-muted-foreground mt-1">
-                  Entrez le code donné par votre formateur pour rejoindre votre groupe.
+                  Entre le code donné par ton formateur pour rejoindre ton groupe.
                 </p>
               )}
             </div>

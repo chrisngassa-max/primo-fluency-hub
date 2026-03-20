@@ -173,12 +173,12 @@ const TestEntreePage = () => {
       else niveauEstime = "A0";
 
       const recommandations = [
-        scoreCO < 60 && "Compréhension orale : travaillez l'écoute active.",
-        scoreCE < 60 && "Compréhension écrite : lisez des documents du quotidien.",
-        scoreStructures < 60 && "Structures : révisez la grammaire de base.",
+        scoreCO < 60 && "Compréhension orale : travaille l'écoute active.",
+        scoreCE < 60 && "Compréhension écrite : lis des documents du quotidien.",
+        scoreStructures < 60 && "Structures : révise la grammaire de base.",
       ]
         .filter(Boolean)
-        .join(" ") || "Bon niveau ! Continuez vos efforts.";
+        .join(" ") || "Bon niveau ! Continue tes efforts.";
 
       const { error } = await supabase
         .from("tests_entree")
@@ -221,7 +221,7 @@ const TestEntreePage = () => {
       <div className="max-w-2xl mx-auto space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Résultats du test d'entrée</h1>
-          <p className="text-muted-foreground mt-1">Votre évaluation initiale est terminée.</p>
+          <p className="text-muted-foreground mt-1">Ton évaluation initiale est terminée.</p>
         </div>
 
         <Card className="border-primary/30 bg-primary/5">
@@ -279,7 +279,7 @@ const TestEntreePage = () => {
         <div>
           <h1 className="text-2xl font-bold text-foreground">Test d'entrée TCF IRN</h1>
           <p className="text-muted-foreground mt-1">
-            Évaluez votre niveau en français. Ce test ne peut être passé qu'une seule fois.
+            Évalue ton niveau en français. Ce test ne peut être passé qu'une seule fois.
           </p>
         </div>
 
@@ -288,8 +288,8 @@ const TestEntreePage = () => {
             <CardContent className="pt-6 flex items-start gap-3">
               <AlertTriangle className="h-5 w-5 text-warning shrink-0 mt-0.5" />
               <p className="text-sm text-muted-foreground">
-                Vous pouvez passer le test maintenant. Votre formateur verra vos résultats
-                une fois que vous aurez rejoint son groupe.
+                Tu peux passer le test maintenant. Ton formateur verra tes résultats
+                une fois que tu auras rejoint son groupe.
               </p>
             </CardContent>
           </Card>

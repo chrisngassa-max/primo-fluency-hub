@@ -10,20 +10,20 @@ const steps = [
   {
     icon: ClipboardList,
     emoji: "📝",
-    title: "Passez votre test d'entrée",
-    description: "Le test évalue votre niveau en français pour adapter les exercices à votre profil.",
+    title: "Passe ton test d'entrée",
+    description: "Le test évalue ton niveau en français pour adapter les exercices à ton profil.",
   },
   {
     icon: BookOpen,
     emoji: "📚",
-    title: "Faites vos exercices et devoirs",
-    description: "Votre formateur vous assigne des exercices adaptés à votre niveau. Faites-les régulièrement.",
+    title: "Fais tes exercices et devoirs",
+    description: "Ton formateur t'assigne des exercices adaptés à ton niveau. Fais-les régulièrement.",
   },
   {
     icon: TrendingUp,
     emoji: "📈",
-    title: "Suivez votre progression",
-    description: "Regardez vos résultats par compétence : écouter, lire, écrire, parler.",
+    title: "Suis ta progression",
+    description: "Regarde tes résultats par compétence : écouter, lire, écrire, parler.",
   },
 ];
 
