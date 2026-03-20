@@ -430,8 +430,8 @@ function ResultView({
                   <p className="text-sm font-medium">{c.question}</p>
                   {!c.correct && (
                     <>
-                      <p className="text-xs text-destructive">Votre réponse : {c.reponse_eleve || "—"}</p>
-                      <p className="text-xs text-green-600">Bonne réponse : {c.bonne_reponse}</p>
+                       <p className="text-xs text-destructive">Ta réponse : {c.reponse_eleve || "—"}</p>
+                       <p className="text-xs text-green-600">Bonne réponse : {c.bonne_reponse}</p>
                     </>
                   )}
                   {c.explication && (
