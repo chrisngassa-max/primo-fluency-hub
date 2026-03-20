@@ -101,10 +101,13 @@ Deno.serve(async (req) => {
       const { data: existingExercises } = await admin.from("session_exercices").select("id").eq("session_id", sessionId).limit(1);
       if (!existingExercises || existingExercises.length === 0) {
         for (const comp of ["CE", "Structures"] as const) {
+          const items = comp === "CE"
+            ? [{ question: "Que signifie ce panneau ?", options: ["Entrée", "Sortie", "Parking"], bonne_reponse: "Entrée", explication: "Le panneau indique l'entrée du bâtiment." }]
+            : [{ question: "Je ___ français.", options: ["suis", "parle", "mange"], bonne_reponse: "suis", explication: "On dit « Je suis français » avec le verbe être." }];
           const { data: ex } = await admin.from("exercices").insert({
-            formateur_id: formateurId, titre: `Exercice ${comp} E2E`, consigne: `Consigne ${comp}`,
+            formateur_id: formateurId, titre: `Exercice ${comp} E2E`, consigne: comp === "CE" ? "Lis et réponds" : "Complète la phrase",
             competence: comp, niveau_vise: "A1", point_a_maitriser_id: pointId, difficulte: 2,
-            contenu: { items: [{ question: `Q ${comp}?`, options: ["A", "B", "C"], bonne_reponse: "A", explication: "..." }] }
+            contenu: { items }
           }).select("id").single();
           await admin.from("session_exercices").insert({ session_id: sessionId, exercice_id: ex!.id, statut: "traite_en_classe", ordre: 1 });
         }
