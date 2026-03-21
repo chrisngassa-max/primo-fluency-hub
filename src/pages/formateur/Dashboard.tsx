@@ -1,4 +1,6 @@
 import { useState, useMemo, useCallback } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import CompetencyGauge from "@/components/CompetencyGauge";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -66,6 +68,61 @@ const FormateurDashboard = () => {
   const [editedConsigne, setEditedConsigne] = useState("");
   const [editedItems, setEditedItems] = useState<any[]>([]);
   const [savingEdit, setSavingEdit] = useState(false);
+  const [progGroupId, setProgGroupId] = useState<string>("all");
+  const [progViewId, setProgViewId] = useState<string>("moyenne");
+
+  // ─── Mock data for progression tracking ───
+  const mockProgressionGroups = useMemo(() => [
+    {
+      id: "g1", nom: "Groupe A1 Matin",
+      eleves: [
+        { id: "e1", nom: "Fatima B.", co: { initial: 20, current: 45 }, ce: { initial: 25, current: 50 }, ee: { initial: 10, current: 25 }, structures: { initial: 15, current: 40 }, completed: 5, total: 10 },
+        { id: "e2", nom: "Ahmed K.", co: { initial: 30, current: 55 }, ce: { initial: 35, current: 60 }, ee: { initial: 20, current: 35 }, structures: { initial: 25, current: 50 }, completed: 5, total: 10 },
+        { id: "e3", nom: "Maria L.", co: { initial: 15, current: 30 }, ce: { initial: 20, current: 28 }, ee: { initial: 5, current: 15 }, structures: { initial: 10, current: 22 }, completed: 5, total: 10 },
+      ],
+    },
+    {
+      id: "g2", nom: "Groupe A2 Après-midi",
+      eleves: [
+        { id: "e4", nom: "Chen W.", co: { initial: 50, current: 70 }, ce: { initial: 55, current: 72 }, ee: { initial: 40, current: 60 }, structures: { initial: 45, current: 65 }, completed: 7, total: 10 },
+        { id: "e5", nom: "Olga P.", co: { initial: 45, current: 68 }, ce: { initial: 40, current: 55 }, ee: { initial: 35, current: 50 }, structures: { initial: 50, current: 70 }, completed: 7, total: 10 },
+      ],
+    },
+    {
+      id: "g3", nom: "Groupe B1 Soir",
+      eleves: [
+        { id: "e6", nom: "Yusuf A.", co: { initial: 60, current: 78 }, ce: { initial: 65, current: 80 }, ee: { initial: 55, current: 70 }, structures: { initial: 58, current: 75 }, completed: 8, total: 10 },
+        { id: "e7", nom: "Priya S.", co: { initial: 55, current: 85 }, ce: { initial: 60, current: 82 }, ee: { initial: 50, current: 76 }, structures: { initial: 52, current: 80 }, completed: 8, total: 10 },
+        { id: "e8", nom: "Andrei M.", co: { initial: 58, current: 62 }, ce: { initial: 62, current: 65 }, ee: { initial: 48, current: 52 }, structures: { initial: 55, current: 58 }, completed: 8, total: 10 },
+      ],
+    },
+  ], []);
+
+  const selectedProgGroup = useMemo(() => mockProgressionGroups.find((g) => g.id === progGroupId), [progGroupId, mockProgressionGroups]);
+
+  const progGaugeData = useMemo(() => {
+    if (!selectedProgGroup) return null;
+    const eleves = selectedProgGroup.eleves;
+
+    if (progViewId === "moyenne") {
+      const avg = (arr: number[]) => Math.round(arr.reduce((a, b) => a + b, 0) / arr.length);
+      return [
+        { label: "Compréhension Orale", initialScore: avg(eleves.map((e) => e.co.initial)), currentScore: avg(eleves.map((e) => e.co.current)), completedSessions: eleves[0].completed, totalSessions: eleves[0].total },
+        { label: "Compréhension Écrite", initialScore: avg(eleves.map((e) => e.ce.initial)), currentScore: avg(eleves.map((e) => e.ce.current)), completedSessions: eleves[0].completed, totalSessions: eleves[0].total },
+        { label: "Expression Écrite", initialScore: avg(eleves.map((e) => e.ee.initial)), currentScore: avg(eleves.map((e) => e.ee.current)), completedSessions: eleves[0].completed, totalSessions: eleves[0].total },
+        { label: "Structures de la langue", initialScore: avg(eleves.map((e) => e.structures.initial)), currentScore: avg(eleves.map((e) => e.structures.current)), completedSessions: eleves[0].completed, totalSessions: eleves[0].total },
+      ];
+    }
+
+    const eleve = eleves.find((e) => e.id === progViewId);
+    if (!eleve) return null;
+    return [
+      { label: "Compréhension Orale", initialScore: eleve.co.initial, currentScore: eleve.co.current, completedSessions: eleve.completed, totalSessions: eleve.total },
+      { label: "Compréhension Écrite", initialScore: eleve.ce.initial, currentScore: eleve.ce.current, completedSessions: eleve.completed, totalSessions: eleve.total },
+      { label: "Expression Écrite", initialScore: eleve.ee.initial, currentScore: eleve.ee.current, completedSessions: eleve.completed, totalSessions: eleve.total },
+      { label: "Structures de la langue", initialScore: eleve.structures.initial, currentScore: eleve.structures.current, completedSessions: eleve.completed, totalSessions: eleve.total },
+    ];
+  }, [selectedProgGroup, progViewId]);
 
   // ─── KPI queries ───
   const { data: groupCount = 0, isLoading: loadingGroups } = useQuery({
@@ -609,7 +666,51 @@ ${sessionExercises.map((ex: any, i: number) => `
       {/* ─── Pacing Tracker ─── */}
       <PacingTracker />
 
-      {/* ─── 3 Tabs ─── */}
+      {/* ─── Suivi de progression détaillée ─── */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <TrendingUp className="h-5 w-5 text-primary" />
+            Suivi de progression détaillé
+          </CardTitle>
+          <div className="flex items-center gap-3 mt-3">
+            <Select value={progGroupId} onValueChange={(v) => { setProgGroupId(v); setProgViewId("moyenne"); }}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Choisir un groupe" />
+              </SelectTrigger>
+              <SelectContent>
+                {mockProgressionGroups.map((g) => (
+                  <SelectItem key={g.id} value={g.id}>{g.nom}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {selectedProgGroup && (
+              <Select value={progViewId} onValueChange={setProgViewId}>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="moyenne">Moyenne du groupe</SelectItem>
+                  {selectedProgGroup.eleves.map((e) => (
+                    <SelectItem key={e.id} value={e.id}>{e.nom}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent>
+          {!selectedProgGroup ? (
+            <p className="text-sm text-muted-foreground py-4">Sélectionnez un groupe pour voir la progression.</p>
+          ) : progGaugeData ? (
+            <div className="space-y-5">
+              {progGaugeData.map((comp) => (
+                <CompetencyGauge key={comp.label} {...comp} />
+              ))}
+            </div>
+          ) : null}
+        </CardContent>
+      </Card>
       <Tabs defaultValue="seance-du-jour">
         <TabsList>
           <TabsTrigger value="seance-du-jour">🎯 Ma Séance du Jour</TabsTrigger>
