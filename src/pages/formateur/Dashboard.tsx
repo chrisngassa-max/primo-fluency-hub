@@ -731,12 +731,12 @@ ${sessionExercises.map((ex: any, i: number) => `
             Suivi de progression détaillé
           </CardTitle>
           <div className="flex items-center gap-3 mt-3">
-            <Select value={progGroupId} onValueChange={(v) => { setProgGroupId(v); setProgViewId("moyenne"); }}>
+            <Select value={effectiveProgGroupId} onValueChange={(v) => { setProgGroupId(v); setProgViewId("moyenne"); }}>
               <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder="Choisir un groupe" />
               </SelectTrigger>
               <SelectContent>
-                {mockProgressionGroups.map((g) => (
+                {progGroupsList.map((g: any) => (
                   <SelectItem key={g.id} value={g.id}>{g.nom}</SelectItem>
                 ))}
               </SelectContent>
