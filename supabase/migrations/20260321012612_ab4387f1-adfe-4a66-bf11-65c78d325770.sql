@@ -1,0 +1,1 @@
+UPDATE public.groups SET nom = 'G1' WHERE id = 'ac050063-4f68-41fc-a0c2-ec22a6f93ff4';
