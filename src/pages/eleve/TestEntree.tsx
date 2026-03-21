@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import {
   ChevronLeft, ChevronRight, CheckCircle2, AlertTriangle, Clock,
-  ArrowRight, Loader2,
+  ArrowRight, Loader2, Volume2, VolumeX,
 } from "lucide-react";
 import { TCF_QUESTIONS, SECTIONS_META, type TCFQuestion } from "@/data/tcfQuestions";
 import CompetenceLabel from "@/components/CompetenceLabel";
