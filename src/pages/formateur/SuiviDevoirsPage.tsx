@@ -191,15 +191,28 @@ const SuiviDevoirsPage = () => {
     setSynthesizing(true);
     try {
       const groupName = groups?.find((g) => g.id === activeGroup)?.nom || "Groupe";
+      // Build trajectory data from progressionData for the edge function
+      const trajectoryData = (progressionData || []).map((p: any, i: number) => ({
+        seance: i + 1,
+        titre: p.session || `Séance ${i + 1}`,
+        date: null,
+        cible: Math.round(((i + 1) / Math.max(progressionData.length, 1)) * 10),
+        groupe: p.score ?? 0,
+        competences: [],
+        eleves: groupTableData.reduce((acc: any, el: any) => {
+          acc[el.nom] = el.score ?? null;
+          return acc;
+        }, {}),
+      }));
       const { data, error } = await supabase.functions.invoke("analyze-trajectory", {
         body: {
-          groupName,
-          tableData: groupTableData,
-          progressionData,
+          groupNom: groupName,
+          trajectoryData,
+          totalSeances: progressionData.length || 10,
         },
       });
       if (error) throw error;
-      setSynthesis(data?.analyse || data?.message || "Analyse indisponible.");
+      setSynthesis(data?.analysis || data?.message || "Analyse indisponible.");
       toast.success("Synthèse IA générée");
     } catch (e: any) {
       toast.error("Erreur de synthèse", { description: e.message });
