@@ -748,7 +748,7 @@ ${sessionExercises.map((ex: any, i: number) => `
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="moyenne">Moyenne du groupe</SelectItem>
-                  {selectedProgGroup.eleves.map((e) => (
+                  {(selectedProgGroup.eleves ?? []).map((e: any) => (
                     <SelectItem key={e.id} value={e.id}>{e.nom}</SelectItem>
                   ))}
                 </SelectContent>
