@@ -666,7 +666,51 @@ ${sessionExercises.map((ex: any, i: number) => `
       {/* ─── Pacing Tracker ─── */}
       <PacingTracker />
 
-      {/* ─── 3 Tabs ─── */}
+      {/* ─── Suivi de progression détaillée ─── */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <TrendingUp className="h-5 w-5 text-primary" />
+            Suivi de progression détaillé
+          </CardTitle>
+          <div className="flex items-center gap-3 mt-3">
+            <Select value={progGroupId} onValueChange={(v) => { setProgGroupId(v); setProgViewId("moyenne"); }}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Choisir un groupe" />
+              </SelectTrigger>
+              <SelectContent>
+                {mockProgressionGroups.map((g) => (
+                  <SelectItem key={g.id} value={g.id}>{g.nom}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {selectedProgGroup && (
+              <Select value={progViewId} onValueChange={setProgViewId}>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="moyenne">Moyenne du groupe</SelectItem>
+                  {selectedProgGroup.eleves.map((e) => (
+                    <SelectItem key={e.id} value={e.id}>{e.nom}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent>
+          {!selectedProgGroup ? (
+            <p className="text-sm text-muted-foreground py-4">Sélectionnez un groupe pour voir la progression.</p>
+          ) : progGaugeData ? (
+            <div className="space-y-5">
+              {progGaugeData.map((comp) => (
+                <CompetencyGauge key={comp.label} {...comp} />
+              ))}
+            </div>
+          ) : null}
+        </CardContent>
+      </Card>
       <Tabs defaultValue="seance-du-jour">
         <TabsList>
           <TabsTrigger value="seance-du-jour">🎯 Ma Séance du Jour</TabsTrigger>
