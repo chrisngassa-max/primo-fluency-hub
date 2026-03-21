@@ -759,6 +759,14 @@ ${sessionExercises.map((ex: any, i: number) => `
         <CardContent>
           {!selectedProgGroup ? (
             <p className="text-sm text-muted-foreground py-4">Sélectionnez un groupe pour voir la progression.</p>
+          ) : selectedProgGroup.eleves.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-8 text-center">
+              <Users className="h-10 w-10 text-muted-foreground/40 mb-3" />
+              <p className="text-muted-foreground font-medium">Aucun élève inscrit dans ce groupe pour le moment.</p>
+              <p className="text-sm text-muted-foreground/70 mt-1">
+                Invitez des élèves depuis la page Groupes & Élèves.
+              </p>
+            </div>
           ) : progGaugeData ? (
             <div className="space-y-5">
               {progGaugeData.map((comp) => (

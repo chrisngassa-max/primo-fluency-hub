@@ -343,24 +343,46 @@ const EleveDashboard = () => {
         </Card>
       )}
 
-      {/* Ma progression détaillée — only after test completed */}
-      {progressionData && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-primary" />
-              Ma progression détaillée
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+      {/* Ma progression détaillée */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <TrendingUp className="h-5 w-5 text-primary" />
+            Ma progression détaillée
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {testLoading ? (
+            <div className="space-y-3">
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
+            </div>
+          ) : progressionData ? (
             <div className="space-y-5">
               {progressionData.map((comp) => (
                 <CompetencyGauge key={comp.label} {...comp} />
               ))}
             </div>
-          </CardContent>
-        </Card>
-      )}
+          ) : (
+            <div className="flex flex-col items-center justify-center py-8 text-center">
+              <Target className="h-10 w-10 text-muted-foreground/40 mb-3" />
+              <p className="text-muted-foreground font-medium">
+                Bienvenue ! Commencez par réaliser votre Test d'entrée pour initialiser votre suivi de progression.
+              </p>
+              <Button
+                className="mt-4 gap-2"
+                variant="outline"
+                onClick={() => navigate("/eleve/test-entree")}
+              >
+                Passer le test de niveau
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Devoirs */}
       <Card>
@@ -442,9 +464,9 @@ const EleveDashboard = () => {
           ) : (
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <BookOpen className="h-10 w-10 text-muted-foreground/40 mb-3" />
-              <p className="text-muted-foreground font-medium">Aucun devoir en attente</p>
+              <p className="text-muted-foreground font-medium">Aucun devoir pour le moment</p>
               <p className="text-sm text-muted-foreground/70 mt-1">
-                Les devoirs apparaîtront ici après tes séances.
+                Réalisez votre première séance pour recevoir vos devoirs !
               </p>
             </div>
           )}
