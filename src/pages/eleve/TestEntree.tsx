@@ -384,6 +384,53 @@ const TestEntreePage = () => {
     );
   }
 
+  // Break screen between sections
+  if (onBreak) {
+    const nextSection = currentQuestion?.section;
+    const nextMeta = nextSection ? SECTIONS_META[nextSection] : null;
+    return (
+      <div className="max-w-2xl mx-auto space-y-6">
+        <div className="flex items-center justify-between">
+          <Badge variant="outline" className="gap-1.5 text-base px-3 py-1">
+            <Clock className="h-4 w-4" />
+            {formatTime(timeLeft)}
+            <span className="text-xs text-muted-foreground ml-1">(en pause)</span>
+          </Badge>
+        </div>
+
+        <Card className="border-primary/30">
+          <CardContent className="pt-8 pb-8 text-center space-y-6">
+            <div className="text-5xl">☕</div>
+            <div className="space-y-2">
+              <h2 className="text-2xl font-bold text-foreground">Pause</h2>
+              <p className="text-muted-foreground">
+                Vous avez terminé la section précédente. Prenez un moment de repos.
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Le chronomètre est en pause. Appuyez sur le bouton ci-dessous quand vous êtes prêt(e).
+              </p>
+            </div>
+
+            {nextMeta && (
+              <div className="p-4 rounded-lg bg-muted/50 inline-flex items-center gap-3 mx-auto">
+                <span className="text-2xl">{nextMeta.icon}</span>
+                <div className="text-left">
+                  <p className="font-semibold text-sm">Prochaine section : {nextMeta.title}</p>
+                  <p className="text-xs text-muted-foreground">{nextMeta.total} questions — {nextMeta.description}</p>
+                </div>
+              </div>
+            )}
+
+            <Button size="lg" className="gap-2" onClick={() => setOnBreak(false)}>
+              Reprendre le test
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   // Passation screen
   const answeredCount = Object.keys(answers).length;
   const progressPercent = Math.round((answeredCount / totalQuestions) * 100);
