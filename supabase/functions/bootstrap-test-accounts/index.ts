@@ -18,6 +18,57 @@ Deno.serve(async (req) => {
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const admin = createClient(supabaseUrl, serviceRoleKey, { auth: { autoRefreshToken: false, persistSession: false } });
 
+    const body = await req.json().catch(() => ({}));
+    const mode = body.mode || "default";
+
+    // ---- Custom mode: create students and add to group ----
+    if (mode === "add-students") {
+      const { groupId, students } = body as { groupId: string; students: { prenom: string; nom: string; email: string; password: string }[] };
+      const results: any[] = [];
+
+      for (const s of students) {
+        const { data: existing } = await admin.auth.admin.listUsers();
+        const found = existing?.users?.find((u: any) => u.email === s.email);
+        
+        let userId: string;
+        if (found) {
+          userId = found.id;
+          results.push({ email: s.email, status: "already_exists", id: userId });
+        } else {
+          const { data, error } = await admin.auth.admin.createUser({
+            email: s.email, password: s.password, email_confirm: true,
+            user_metadata: { nom: s.nom, prenom: s.prenom, role: "eleve" },
+          });
+          if (error) { results.push({ email: s.email, status: "error", error: error.message }); continue; }
+          userId = data.user.id;
+          results.push({ email: s.email, status: "created", id: userId });
+        }
+
+        // Add to group
+        const { data: mem } = await admin.from("group_members").select("id").eq("group_id", groupId).eq("eleve_id", userId).limit(1);
+        if (!mem || mem.length === 0) {
+          await admin.from("group_members").insert({ group_id: groupId, eleve_id: userId });
+        }
+
+        // Create profil_eleve with some scores
+        const { data: profil } = await admin.from("profils_eleves").select("id").eq("eleve_id", userId).limit(1);
+        if (!profil || profil.length === 0) {
+          await admin.from("profils_eleves").insert({
+            eleve_id: userId,
+            niveau_actuel: "A2",
+            taux_reussite_global: Math.round(40 + Math.random() * 40),
+            taux_reussite_co: Math.round(30 + Math.random() * 50),
+            taux_reussite_ce: Math.round(30 + Math.random() * 50),
+            taux_reussite_ee: Math.round(20 + Math.random() * 40),
+            taux_reussite_structures: Math.round(30 + Math.random() * 50),
+          });
+        }
+      }
+
+      return new Response(JSON.stringify({ results }), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    // ---- Default mode: original bootstrap ----
     const accounts = [
       { email: "formateur.e2e@tcfpro.fr", password: "TestFormateur123!", nom: "Dupont", prenom: "Marie", role: "formateur" },
       { email: "eleve.e2e@tcfpro.fr", password: "TestEleve123!", nom: "Martin", prenom: "Lucas", role: "eleve" },
@@ -27,7 +78,6 @@ Deno.serve(async (req) => {
     const results: any[] = [];
 
     for (const acc of accounts) {
-      // Check if user exists
       const { data: existing } = await admin.auth.admin.listUsers();
       const found = existing?.users?.find((u: any) => u.email === acc.email);
       
@@ -37,9 +87,7 @@ Deno.serve(async (req) => {
       }
 
       const { data, error } = await admin.auth.admin.createUser({
-        email: acc.email,
-        password: acc.password,
-        email_confirm: true,
+        email: acc.email, password: acc.password, email_confirm: true,
         user_metadata: { nom: acc.nom, prenom: acc.prenom, role: acc.role },
       });
 
@@ -56,7 +104,6 @@ Deno.serve(async (req) => {
     const eleve2Id = results.find(r => r.email === "eleve2.e2e@tcfpro.fr")?.id;
 
     if (formateurId && eleveId) {
-      // Check if group exists
       const { data: groups } = await admin.from("groups").select("id").eq("formateur_id", formateurId).eq("nom", "Groupe E2E").limit(1);
       
       let groupId: string;
@@ -67,13 +114,11 @@ Deno.serve(async (req) => {
         groupId = newGroup!.id;
       }
 
-      // Check membership for eleve 1
       const { data: membership } = await admin.from("group_members").select("id").eq("group_id", groupId).eq("eleve_id", eleveId).limit(1);
       if (!membership || membership.length === 0) {
         await admin.from("group_members").insert({ group_id: groupId, eleve_id: eleveId });
       }
 
-      // Check membership for eleve 2
       if (eleve2Id) {
         const { data: membership2 } = await admin.from("group_members").select("id").eq("group_id", groupId).eq("eleve_id", eleve2Id).limit(1);
         if (!membership2 || membership2.length === 0) {
@@ -81,7 +126,6 @@ Deno.serve(async (req) => {
         }
       }
 
-      // Create a session with exercises
       const { data: sessions } = await admin.from("sessions").select("id").eq("group_id", groupId).limit(1);
       let sessionId: string;
       if (sessions && sessions.length > 0) {
@@ -94,20 +138,17 @@ Deno.serve(async (req) => {
         sessionId = newSession!.id;
       }
 
-      // Ensure a point_a_maitriser exists
       let pointId: string;
       const { data: points } = await admin.from("points_a_maitriser").select("id").limit(1);
       if (points && points.length > 0) {
         pointId = points[0].id;
       } else {
-        // Need epreuve + sous_section first
         const { data: ep } = await admin.from("epreuves").insert({ nom: "CO", competence: "CO", ordre: 1 }).select("id").single();
         const { data: ss } = await admin.from("sous_sections").insert({ epreuve_id: ep!.id, nom: "Comprendre", ordre: 1 }).select("id").single();
         const { data: pt } = await admin.from("points_a_maitriser").insert({ sous_section_id: ss!.id, nom: "Comprendre un message", niveau_min: "A1", niveau_max: "B1" }).select("id").single();
         pointId = pt!.id;
       }
 
-      // Create exercises + link to session
       const { data: existingExercises } = await admin.from("session_exercices").select("id").eq("session_id", sessionId).limit(1);
       if (!existingExercises || existingExercises.length === 0) {
         for (const comp of ["CE", "Structures"] as const) {
