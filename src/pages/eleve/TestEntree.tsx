@@ -388,9 +388,32 @@ const TestEntreePage = () => {
       <Card>
         <CardContent className="pt-6 space-y-4">
           {currentQuestion.audio && (
-            <div className="p-3 rounded-lg bg-muted/50 text-sm">
-              <p className="font-medium text-muted-foreground mb-1">🔊 Audio :</p>
-              <p className="italic">« {currentQuestion.audio} »</p>
+            <div className="p-4 rounded-xl bg-primary/5 border border-primary/20 flex items-center gap-4">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-12 w-12 rounded-full border-primary/30 shrink-0"
+                onClick={() => {
+                  if (isSpeaking) {
+                    window.speechSynthesis.cancel();
+                    setIsSpeaking(false);
+                  } else {
+                    speak(currentQuestion.audio!);
+                  }
+                }}
+              >
+                {isSpeaking ? (
+                  <VolumeX className="h-5 w-5 text-primary" />
+                ) : (
+                  <Volume2 className="h-5 w-5 text-primary" />
+                )}
+              </Button>
+              <div className="flex-1">
+                <p className="font-semibold text-sm text-primary">🎧 Écoute l'audio</p>
+                <p className="text-xs text-muted-foreground">
+                  {isSpeaking ? "Lecture en cours… Clique pour arrêter." : "Clique sur le bouton pour réécouter."}
+                </p>
+              </div>
             </div>
           )}
           {currentQuestion.visual && (
