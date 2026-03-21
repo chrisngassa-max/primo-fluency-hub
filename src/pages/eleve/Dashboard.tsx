@@ -272,31 +272,24 @@ const EleveDashboard = () => {
         </Card>
       )}
 
-      {/* Global progress */}
+      {/* Ma progression détaillée */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-primary" />
-            Progression globale
+            Ma progression détaillée
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Niveau estimé</span>
-              <Badge variant="secondary">
-                {testCompleted ? testEntree.niveau_estime || "Non évalué" : "Non évalué"}
-              </Badge>
-            </div>
-            <Progress
-              value={testCompleted ? (testEntree.score_global ?? 0) : 0}
-              className={`h-3 ${testCompleted ? "" : "[&>div]:bg-muted"}`}
-            />
-            {!testCompleted && (
-              <p className="text-xs text-muted-foreground">
-                Passe le test d'entrée pour évaluer ton niveau initial.
-              </p>
-            )}
+          <div className="space-y-5">
+            {[
+              { label: "Compréhension Orale", initialScore: 25, currentScore: 55, completedSessions: 4, totalSessions: 8 },
+              { label: "Compréhension Écrite", initialScore: 30, currentScore: 40, completedSessions: 4, totalSessions: 8 },
+              { label: "Expression Écrite", initialScore: 15, currentScore: 20, completedSessions: 4, totalSessions: 8 },
+              { label: "Structures de la langue", initialScore: 20, currentScore: 50, completedSessions: 4, totalSessions: 8 },
+            ].map((comp) => (
+              <CompetencyGauge key={comp.label} {...comp} />
+            ))}
           </div>
         </CardContent>
       </Card>
