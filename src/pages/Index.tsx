@@ -36,7 +36,7 @@ const Index = () => {
           Préparez votre TCF IRN avec un programme personnalisé
         </h1>
         <p className="mt-4 text-base md:text-lg text-muted-foreground max-w-2xl">
-          TCF Pro accompagne les primo-arrivants vers la réussite à la certification TCF IRN
+          CAP TCF accompagne les primo-arrivants vers la réussite à la certification TCF IRN
           grâce à des séances adaptatives, un suivi par formateur et une IA pédagogique.
         </p>
         <div className="mt-8 flex flex-col sm:flex-row gap-3">
@@ -102,7 +102,7 @@ const Index = () => {
       {/* BLOC 3 — CTA final */}
       <section className="px-4 pb-16 text-center">
         <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-          Rejoignez TCF Pro dès aujourd'hui
+          Rejoignez CAP TCF dès aujourd'hui
         </h2>
         <p className="mt-2 text-muted-foreground">
           Commencez dès maintenant · Résultats visibles en quelques séances

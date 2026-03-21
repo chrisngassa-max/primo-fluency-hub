@@ -63,7 +63,7 @@ const InviteStudentDialog = ({ groupId, groupName, open, onOpenChange }: Props) 
   };
 
   const copyMessage = async () => {
-    const msg = `Rejoignez mon groupe TCF Pro « ${groupName} » avec le code : ${generatedCode}`;
+    const msg = `Rejoignez mon groupe CAP TCF « ${groupName} » avec le code : ${generatedCode}`;
     await navigator.clipboard.writeText(msg);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -108,7 +108,7 @@ const InviteStudentDialog = ({ groupId, groupName, open, onOpenChange }: Props) 
 
             <div className="rounded-lg border bg-muted/50 p-3 text-sm">
               <p className="text-muted-foreground italic">
-                « Rejoignez mon groupe TCF Pro « {groupName} » avec le code : {generatedCode} »
+                « Rejoignez mon groupe CAP TCF « {groupName} » avec le code : {generatedCode} »
               </p>
             </div>
 

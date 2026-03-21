@@ -8,7 +8,7 @@ const Legal = () => (
       <section className="space-y-2">
         <h2 className="text-xl font-semibold text-foreground">1. Éditeur</h2>
         <p className="text-muted-foreground">
-          <strong>TCF Pro</strong> — Application de préparation à la certification TCF IRN
+          <strong>CAP TCF</strong> — Application de préparation à la certification TCF IRN
           (Test de Connaissance du Français — Intégration, Résidence et Nationalité)
           destinée aux apprenants FLE et aux formateurs.
         </p>
@@ -51,7 +51,7 @@ const Legal = () => (
       </section>
 
       <footer className="border-t pt-6 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} TCF Pro ·{" "}
+        © {new Date().getFullYear()} CAP TCF ·{" "}
         <span className="text-foreground font-medium">Mentions légales</span>
       </footer>
     </div>

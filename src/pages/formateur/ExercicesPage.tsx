@@ -274,7 +274,7 @@ const ExercicesPage = () => {
     if (!printWindow) { toast.error("Pop-up bloqué. Autorisez les pop-ups."); return; }
 
     const html = `<!DOCTYPE html>
-<html lang="fr"><head><meta charset="utf-8"><title>Exercices — TCF Pro</title>
+<html lang="fr"><head><meta charset="utf-8"><title>Exercices — CAP TCF</title>
 <style>
 body { font-family: 'Segoe UI', sans-serif; padding: 24px; font-size: 13pt; color: #222; }
 h1 { font-size: 18pt; border-bottom: 2px solid #333; padding-bottom: 8px; margin-bottom: 20px; }
@@ -290,7 +290,7 @@ h1 { font-size: 18pt; border-bottom: 2px solid #333; padding-bottom: 8px; margin
 @media print { body { padding: 0; } .exercise { border: 1px solid #ccc; } }
 </style></head><body>
 <h1>📝 Exercices sélectionnés — ${selectedExercises.length} exercice(s)</h1>
-<p style="font-size:10pt;color:#666;">Imprimé le ${new Date().toLocaleDateString("fr-FR")} — TCF Pro</p>
+<p style="font-size:10pt;color:#666;">Imprimé le ${new Date().toLocaleDateString("fr-FR")} — CAP TCF</p>
 ${selectedExercises.map((ex, i) => {
   const contenu = typeof ex.contenu === "object" && ex.contenu !== null ? ex.contenu : { items: [] };
   const items: any[] = Array.isArray((contenu as any).items) ? (contenu as any).items : [];
@@ -320,7 +320,7 @@ ${Array.isArray(item.options) && item.options.length > 0
     const contenu = typeof ex.contenu === "object" && ex.contenu !== null ? ex.contenu : { items: [] };
     const items: any[] = Array.isArray((contenu as any).items) ? (contenu as any).items : [];
     const html = `<!DOCTYPE html>
-<html lang="fr"><head><meta charset="utf-8"><title>${ex.titre} — TCF Pro</title>
+<html lang="fr"><head><meta charset="utf-8"><title>${ex.titre} — CAP TCF</title>
 <style>
 body { font-family: 'Segoe UI', sans-serif; padding: 24px; font-size: 13pt; color: #222; }
 h1 { font-size: 16pt; margin-bottom: 4px; }
