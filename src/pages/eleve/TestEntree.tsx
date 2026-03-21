@@ -66,9 +66,9 @@ const TestEntreePage = () => {
     }
   }, [existingTest]);
 
-  // Timer
+  // Timer — paused during breaks
   useEffect(() => {
-    if (!started || (existingTest && !existingTest.en_cours)) return;
+    if (!started || onBreak || (existingTest && !existingTest.en_cours)) return;
     const interval = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
@@ -80,7 +80,20 @@ const TestEntreePage = () => {
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, [started, existingTest]);
+  }, [started, onBreak, existingTest]);
+
+  // Section boundary indices (last question index of each section)
+  const sectionBoundaries = useMemo(() => {
+    const boundaries: number[] = [];
+    let prevSection = questions[0]?.section;
+    for (let i = 1; i < questions.length; i++) {
+      if (questions[i].section !== prevSection) {
+        boundaries.push(i - 1); // last index of previous section
+        prevSection = questions[i].section;
+      }
+    }
+    return boundaries; // e.g. [29, 39] for CO→Structures, Structures→CE
+  }, [questions]);
 
   const currentQuestion = questions[currentIndex];
   const currentSection = currentQuestion?.section;
