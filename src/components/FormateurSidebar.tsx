@@ -68,7 +68,7 @@ export function FormateurSidebar({ onNavigate }: FormateurSidebarProps) {
           <GraduationCap className="h-7 w-7 text-sidebar-primary" />
           {!collapsed && (
             <span className="font-bold text-lg text-sidebar-primary tracking-tight">
-              TCF Pro
+              CAP TCF
             </span>
           )}
         </div>

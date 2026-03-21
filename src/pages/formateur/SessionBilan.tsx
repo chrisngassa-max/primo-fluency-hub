@@ -419,7 +419,7 @@ const SessionBilan = () => {
 
       {/* Print header */}
       <div className="hidden print:block mb-6">
-        <h1 className="text-2xl font-bold">Fiche Séance — TCF Pro</h1>
+        <h1 className="text-2xl font-bold">Fiche Séance — CAP TCF</h1>
         <p>{session?.titre} · {new Date().toLocaleDateString("fr-FR")}</p>
       </div>
 

@@ -643,7 +643,7 @@ const SessionPilot = () => {
     const printWindow = window.open("", "_blank");
     if (!printWindow) { toast.error("Pop-up bloqué."); return; }
     const html = `<!DOCTYPE html>
-<html lang="fr"><head><meta charset="utf-8"><title>${session?.titre || "Séance"} — TCF Pro</title>
+<html lang="fr"><head><meta charset="utf-8"><title>${session?.titre || "Séance"} — CAP TCF</title>
 <style>
 body { font-family: 'Segoe UI', sans-serif; padding: 24px; font-size: 13pt; color: #222; }
 h1 { font-size: 18pt; border-bottom: 2px solid #333; padding-bottom: 8px; margin-bottom: 20px; }
@@ -659,7 +659,7 @@ h1 { font-size: 18pt; border-bottom: 2px solid #333; padding-bottom: 8px; margin
 @media print { body { padding: 0; } }
 </style></head><body>
 <h1>📝 ${session?.titre || "Séance"} — ${allExercises.length} exercice(s)</h1>
-<p style="font-size:10pt;color:#666;">${(session as any)?.group?.nom || ""} · ${new Date().toLocaleDateString("fr-FR")} — TCF Pro</p>
+<p style="font-size:10pt;color:#666;">${(session as any)?.group?.nom || ""} · ${new Date().toLocaleDateString("fr-FR")} — CAP TCF</p>
 ${allExercises.map((ex: any, i: number) => {
       const c = typeof ex.contenu === "object" && ex.contenu !== null ? ex.contenu : { items: [] };
       const its: any[] = Array.isArray((c as any).items) ? (c as any).items : [];
@@ -721,7 +721,7 @@ ${Array.isArray(item.options) && item.options.length > 0
 
       {/* Print header */}
       <div className="hidden print:block mb-8">
-        <h1 className="text-2xl font-bold">Fiche Séance — TCF Pro</h1>
+        <h1 className="text-2xl font-bold">Fiche Séance — CAP TCF</h1>
         <p className="text-muted-foreground">
           {session?.titre} · {exercises.length} exercices · {new Date().toLocaleDateString("fr-FR")}
         </p>

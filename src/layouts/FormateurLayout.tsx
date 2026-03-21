@@ -71,7 +71,7 @@ const FormateurLayout = () => {
                 {/* Header */}
                 <div className="flex items-center gap-2 p-4 border-b">
                   <GraduationCap className="h-7 w-7 text-primary" />
-                  <span className="font-bold text-lg text-primary tracking-tight">TCF Pro</span>
+                  <span className="font-bold text-lg text-primary tracking-tight">CAP TCF</span>
                 </div>
 
                 {/* Navigation */}
@@ -137,7 +137,7 @@ const FormateurLayout = () => {
             </SheetContent>
           </Sheet>
           <GraduationCap className="h-6 w-6 text-primary" />
-          <span className="font-bold text-lg text-primary tracking-tight">TCF Pro</span>
+          <span className="font-bold text-lg text-primary tracking-tight">CAP TCF</span>
           <div className="ml-auto flex items-center gap-3">
             <span className="text-sm text-muted-foreground">
               {user?.user_metadata?.prenom}

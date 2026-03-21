@@ -31,7 +31,7 @@ const EleveLayout = () => {
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-50 h-14 flex items-center gap-3 border-b bg-card px-4">
         <GraduationCap className="h-6 w-6 text-primary" />
-        <span className="font-bold text-lg text-primary tracking-tight">TCF Pro</span>
+        <span className="font-bold text-lg text-primary tracking-tight">CAP TCF</span>
         <div className="ml-auto flex items-center gap-3">
           <span className="text-sm text-muted-foreground hidden sm:inline">
             {user?.user_metadata?.prenom} {user?.user_metadata?.nom}
