@@ -56,6 +56,7 @@ const TestEntreePage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [started, setStarted] = useState(false);
   const [timeLeft, setTimeLeft] = useState(90 * 60); // 1h30
+  const [onBreak, setOnBreak] = useState(false); // pause inter-sections
 
   // Resume from existing in-progress test
   useEffect(() => {
@@ -65,9 +66,9 @@ const TestEntreePage = () => {
     }
   }, [existingTest]);
 
-  // Timer
+  // Timer — paused during breaks
   useEffect(() => {
-    if (!started || (existingTest && !existingTest.en_cours)) return;
+    if (!started || onBreak || (existingTest && !existingTest.en_cours)) return;
     const interval = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
@@ -79,7 +80,20 @@ const TestEntreePage = () => {
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, [started, existingTest]);
+  }, [started, onBreak, existingTest]);
+
+  // Section boundary indices (last question index of each section)
+  const sectionBoundaries = useMemo(() => {
+    const boundaries: number[] = [];
+    let prevSection = questions[0]?.section;
+    for (let i = 1; i < questions.length; i++) {
+      if (questions[i].section !== prevSection) {
+        boundaries.push(i - 1); // last index of previous section
+        prevSection = questions[i].section;
+      }
+    }
+    return boundaries; // e.g. [29, 39] for CO→Structures, Structures→CE
+  }, [questions]);
 
   const currentQuestion = questions[currentIndex];
   const currentSection = currentQuestion?.section;
@@ -165,6 +179,16 @@ const TestEntreePage = () => {
   const handleNext = async () => {
     if (currentIndex < totalQuestions - 1) {
       const next = currentIndex + 1;
+      // Check if we're crossing a section boundary → trigger break
+      if (sectionBoundaries.includes(currentIndex) && questions[next]?.section !== currentQuestion?.section) {
+        setOnBreak(true);
+        setCurrentIndex(next);
+        await supabase
+          .from("tests_entree")
+          .update({ derniere_question: next })
+          .eq("eleve_id", user!.id);
+        return;
+      }
       setCurrentIndex(next);
       // Save progress
       await supabase
@@ -352,6 +376,53 @@ const TestEntreePage = () => {
             </div>
             <Button className="w-full gap-2" size="lg" onClick={handleStart}>
               Commencer le test
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Break screen between sections
+  if (onBreak) {
+    const nextSection = currentQuestion?.section;
+    const nextMeta = nextSection ? SECTIONS_META[nextSection] : null;
+    return (
+      <div className="max-w-2xl mx-auto space-y-6">
+        <div className="flex items-center justify-between">
+          <Badge variant="outline" className="gap-1.5 text-base px-3 py-1">
+            <Clock className="h-4 w-4" />
+            {formatTime(timeLeft)}
+            <span className="text-xs text-muted-foreground ml-1">(en pause)</span>
+          </Badge>
+        </div>
+
+        <Card className="border-primary/30">
+          <CardContent className="pt-8 pb-8 text-center space-y-6">
+            <div className="text-5xl">☕</div>
+            <div className="space-y-2">
+              <h2 className="text-2xl font-bold text-foreground">Pause</h2>
+              <p className="text-muted-foreground">
+                Vous avez terminé la section précédente. Prenez un moment de repos.
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Le chronomètre est en pause. Appuyez sur le bouton ci-dessous quand vous êtes prêt(e).
+              </p>
+            </div>
+
+            {nextMeta && (
+              <div className="p-4 rounded-lg bg-muted/50 inline-flex items-center gap-3 mx-auto">
+                <span className="text-2xl">{nextMeta.icon}</span>
+                <div className="text-left">
+                  <p className="font-semibold text-sm">Prochaine section : {nextMeta.title}</p>
+                  <p className="text-xs text-muted-foreground">{nextMeta.total} questions — {nextMeta.description}</p>
+                </div>
+              </div>
+            )}
+
+            <Button size="lg" className="gap-2" onClick={() => setOnBreak(false)}>
+              Reprendre le test
               <ArrowRight className="h-4 w-4" />
             </Button>
           </CardContent>
