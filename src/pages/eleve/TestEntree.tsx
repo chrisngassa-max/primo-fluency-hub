@@ -179,6 +179,16 @@ const TestEntreePage = () => {
   const handleNext = async () => {
     if (currentIndex < totalQuestions - 1) {
       const next = currentIndex + 1;
+      // Check if we're crossing a section boundary → trigger break
+      if (sectionBoundaries.includes(currentIndex) && questions[next]?.section !== currentQuestion?.section) {
+        setOnBreak(true);
+        setCurrentIndex(next);
+        await supabase
+          .from("tests_entree")
+          .update({ derniere_question: next })
+          .eq("eleve_id", user!.id);
+        return;
+      }
       setCurrentIndex(next);
       // Save progress
       await supabase
