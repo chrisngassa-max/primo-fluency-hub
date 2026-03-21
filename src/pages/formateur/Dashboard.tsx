@@ -21,7 +21,7 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toast } from "sonner";
 import { DifficultyBadge } from "@/components/DifficultyBadge";
-import PacingTracker from "@/components/PacingTracker";
+
 
 const COMPETENCE_LABELS: Record<string, string> = {
   CO: "Compréhension Orale",
@@ -68,53 +68,110 @@ const FormateurDashboard = () => {
   const [editedConsigne, setEditedConsigne] = useState("");
   const [editedItems, setEditedItems] = useState<any[]>([]);
   const [savingEdit, setSavingEdit] = useState(false);
-  const [progGroupId, setProgGroupId] = useState<string>("all");
+  const [progGroupId, setProgGroupId] = useState<string>("");
   const [progViewId, setProgViewId] = useState<string>("moyenne");
 
-  // ─── Mock data for progression tracking ───
-  const mockProgressionGroups = useMemo(() => [
-    {
-      id: "g1", nom: "Groupe A1 Matin",
-      eleves: [
-        { id: "e1", nom: "Fatima B.", co: { initial: 20, current: 45 }, ce: { initial: 25, current: 50 }, ee: { initial: 10, current: 25 }, structures: { initial: 15, current: 40 }, completed: 5, total: 10 },
-        { id: "e2", nom: "Ahmed K.", co: { initial: 30, current: 55 }, ce: { initial: 35, current: 60 }, ee: { initial: 20, current: 35 }, structures: { initial: 25, current: 50 }, completed: 5, total: 10 },
-        { id: "e3", nom: "Maria L.", co: { initial: 15, current: 30 }, ce: { initial: 20, current: 28 }, ee: { initial: 5, current: 15 }, structures: { initial: 10, current: 22 }, completed: 5, total: 10 },
-      ],
-    },
-    {
-      id: "g2", nom: "Groupe A2 Après-midi",
-      eleves: [
-        { id: "e4", nom: "Chen W.", co: { initial: 50, current: 70 }, ce: { initial: 55, current: 72 }, ee: { initial: 40, current: 60 }, structures: { initial: 45, current: 65 }, completed: 7, total: 10 },
-        { id: "e5", nom: "Olga P.", co: { initial: 45, current: 68 }, ce: { initial: 40, current: 55 }, ee: { initial: 35, current: 50 }, structures: { initial: 50, current: 70 }, completed: 7, total: 10 },
-      ],
-    },
-    {
-      id: "g3", nom: "Groupe B1 Soir",
-      eleves: [
-        { id: "e6", nom: "Yusuf A.", co: { initial: 60, current: 78 }, ce: { initial: 65, current: 80 }, ee: { initial: 55, current: 70 }, structures: { initial: 58, current: 75 }, completed: 8, total: 10 },
-        { id: "e7", nom: "Priya S.", co: { initial: 55, current: 85 }, ce: { initial: 60, current: 82 }, ee: { initial: 50, current: 76 }, structures: { initial: 52, current: 80 }, completed: 8, total: 10 },
-        { id: "e8", nom: "Andrei M.", co: { initial: 58, current: 62 }, ce: { initial: 62, current: 65 }, ee: { initial: 48, current: 52 }, structures: { initial: 55, current: 58 }, completed: 8, total: 10 },
-      ],
-    },
-  ], []);
+  // ─── Progression: fetch real groups with members, test scores, and profiles ───
+  const { data: progGroups } = useQuery({
+    queryKey: ["prog-groups-detail", user?.id],
+    queryFn: async () => {
+      // 1. Get formateur's groups
+      const { data: groups } = await supabase
+        .from("groups")
+        .select("id, nom")
+        .eq("formateur_id", user!.id)
+        .eq("is_active", true)
+        .order("nom");
+      if (!groups || groups.length === 0) return [];
 
-  const selectedProgGroup = useMemo(() => mockProgressionGroups.find((g) => g.id === progGroupId), [progGroupId, mockProgressionGroups]);
+      // 2. Get all members
+      const groupIds = groups.map((g) => g.id);
+      const { data: members } = await supabase
+        .from("group_members")
+        .select("eleve_id, group_id")
+        .in("group_id", groupIds);
+      if (!members || members.length === 0) return groups.map((g) => ({ ...g, eleves: [] }));
+
+      const eleveIds = [...new Set(members.map((m) => m.eleve_id))];
+
+      // 3. Fetch profiles, tests_entree, profils_eleves, and session counts in parallel
+      const [profilesRes, testsRes, profilsRes, sessionsRes] = await Promise.all([
+        supabase.from("profiles").select("id, nom, prenom").in("id", eleveIds),
+        supabase.from("tests_entree").select("eleve_id, score_co, score_ce, score_ee, score_structures, completed_at, en_cours").in("eleve_id", eleveIds),
+        supabase.from("profils_eleves").select("eleve_id, taux_reussite_co, taux_reussite_ce, taux_reussite_ee, taux_reussite_structures").in("eleve_id", eleveIds),
+        supabase.from("sessions").select("id, statut, group_id").in("group_id", groupIds),
+      ]);
+
+      const profilesMap: Record<string, { nom: string; prenom: string }> = {};
+      for (const p of profilesRes.data ?? []) profilesMap[p.id] = p;
+
+      const testsMap: Record<string, any> = {};
+      for (const t of testsRes.data ?? []) if (t.completed_at && !t.en_cours) testsMap[t.eleve_id] = t;
+
+      const profilsMap: Record<string, any> = {};
+      for (const p of profilsRes.data ?? []) profilsMap[p.eleve_id] = p;
+
+      // Session counts per group
+      const sessionsByGroup: Record<string, { completed: number; total: number }> = {};
+      for (const gid of groupIds) {
+        const groupSessions = (sessionsRes.data ?? []).filter((s) => s.group_id === gid);
+        sessionsByGroup[gid] = {
+          completed: groupSessions.filter((s) => s.statut === "terminee").length,
+          total: Math.max(groupSessions.length, 1),
+        };
+      }
+
+      return groups.map((g) => {
+        const groupMembers = members.filter((m) => m.group_id === g.id);
+        const sc = sessionsByGroup[g.id] ?? { completed: 0, total: 1 };
+        return {
+          ...g,
+          eleves: groupMembers.map((m) => {
+            const profile = profilesMap[m.eleve_id];
+            const test = testsMap[m.eleve_id];
+            const profil = profilsMap[m.eleve_id];
+            return {
+              id: m.eleve_id,
+              nom: profile ? `${profile.prenom} ${profile.nom}` : "Élève",
+              co: { initial: Math.round(Number(test?.score_co ?? 0)), current: Math.round(Number(profil?.taux_reussite_co ?? test?.score_co ?? 0)) },
+              ce: { initial: Math.round(Number(test?.score_ce ?? 0)), current: Math.round(Number(profil?.taux_reussite_ce ?? test?.score_ce ?? 0)) },
+              ee: { initial: Math.round(Number(test?.score_ee ?? 0)), current: Math.round(Number(profil?.taux_reussite_ee ?? test?.score_ee ?? 0)) },
+              structures: { initial: Math.round(Number(test?.score_structures ?? 0)), current: Math.round(Number(profil?.taux_reussite_structures ?? test?.score_structures ?? 0)) },
+              completed: sc.completed,
+              total: sc.total,
+            };
+          }),
+        };
+      });
+    },
+    enabled: !!user?.id,
+  });
+
+  // Auto-select first group
+  const progGroupsList = progGroups ?? [];
+  if (progGroupId === "" && progGroupsList.length > 0) {
+    // Will set on next render
+  }
+  const effectiveProgGroupId = progGroupId || (progGroupsList.length > 0 ? progGroupsList[0].id : "");
+
+  const selectedProgGroup = useMemo(() => progGroupsList.find((g: any) => g.id === effectiveProgGroupId), [effectiveProgGroupId, progGroupsList]);
 
   const progGaugeData = useMemo(() => {
-    if (!selectedProgGroup) return null;
+    if (!selectedProgGroup || !selectedProgGroup.eleves || selectedProgGroup.eleves.length === 0) return null;
     const eleves = selectedProgGroup.eleves;
 
     if (progViewId === "moyenne") {
-      const avg = (arr: number[]) => Math.round(arr.reduce((a, b) => a + b, 0) / arr.length);
+      const avg = (arr: number[]) => arr.length > 0 ? Math.round(arr.reduce((a, b) => a + b, 0) / arr.length) : 0;
+      const sc = eleves[0];
       return [
-        { label: "Compréhension Orale", initialScore: avg(eleves.map((e) => e.co.initial)), currentScore: avg(eleves.map((e) => e.co.current)), completedSessions: eleves[0].completed, totalSessions: eleves[0].total },
-        { label: "Compréhension Écrite", initialScore: avg(eleves.map((e) => e.ce.initial)), currentScore: avg(eleves.map((e) => e.ce.current)), completedSessions: eleves[0].completed, totalSessions: eleves[0].total },
-        { label: "Expression Écrite", initialScore: avg(eleves.map((e) => e.ee.initial)), currentScore: avg(eleves.map((e) => e.ee.current)), completedSessions: eleves[0].completed, totalSessions: eleves[0].total },
-        { label: "Structures de la langue", initialScore: avg(eleves.map((e) => e.structures.initial)), currentScore: avg(eleves.map((e) => e.structures.current)), completedSessions: eleves[0].completed, totalSessions: eleves[0].total },
+        { label: "Compréhension Orale", initialScore: avg(eleves.map((e: any) => e.co.initial)), currentScore: avg(eleves.map((e: any) => e.co.current)), completedSessions: sc.completed, totalSessions: sc.total },
+        { label: "Compréhension Écrite", initialScore: avg(eleves.map((e: any) => e.ce.initial)), currentScore: avg(eleves.map((e: any) => e.ce.current)), completedSessions: sc.completed, totalSessions: sc.total },
+        { label: "Expression Écrite", initialScore: avg(eleves.map((e: any) => e.ee.initial)), currentScore: avg(eleves.map((e: any) => e.ee.current)), completedSessions: sc.completed, totalSessions: sc.total },
+        { label: "Structures de la langue", initialScore: avg(eleves.map((e: any) => e.structures.initial)), currentScore: avg(eleves.map((e: any) => e.structures.current)), completedSessions: sc.completed, totalSessions: sc.total },
       ];
     }
 
-    const eleve = eleves.find((e) => e.id === progViewId);
+    const eleve = eleves.find((e: any) => e.id === progViewId);
     if (!eleve) return null;
     return [
       { label: "Compréhension Orale", initialScore: eleve.co.initial, currentScore: eleve.co.current, completedSessions: eleve.completed, totalSessions: eleve.total },
@@ -674,12 +731,12 @@ ${sessionExercises.map((ex: any, i: number) => `
             Suivi de progression détaillé
           </CardTitle>
           <div className="flex items-center gap-3 mt-3">
-            <Select value={progGroupId} onValueChange={(v) => { setProgGroupId(v); setProgViewId("moyenne"); }}>
+            <Select value={effectiveProgGroupId} onValueChange={(v) => { setProgGroupId(v); setProgViewId("moyenne"); }}>
               <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder="Choisir un groupe" />
               </SelectTrigger>
               <SelectContent>
-                {mockProgressionGroups.map((g) => (
+                {progGroupsList.map((g: any) => (
                   <SelectItem key={g.id} value={g.id}>{g.nom}</SelectItem>
                 ))}
               </SelectContent>
@@ -691,7 +748,7 @@ ${sessionExercises.map((ex: any, i: number) => `
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="moyenne">Moyenne du groupe</SelectItem>
-                  {selectedProgGroup.eleves.map((e) => (
+                  {(selectedProgGroup.eleves ?? []).map((e: any) => (
                     <SelectItem key={e.id} value={e.id}>{e.nom}</SelectItem>
                   ))}
                 </SelectContent>
