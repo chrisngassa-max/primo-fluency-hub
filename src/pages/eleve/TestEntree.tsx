@@ -56,6 +56,7 @@ const TestEntreePage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [started, setStarted] = useState(false);
   const [timeLeft, setTimeLeft] = useState(90 * 60); // 1h30
+  const [onBreak, setOnBreak] = useState(false); // pause inter-sections
 
   // Resume from existing in-progress test
   useEffect(() => {
