@@ -81,6 +81,46 @@ const TestEntreePage = () => {
     return () => clearInterval(interval);
   }, [started, existingTest]);
 
+  // ── TTS (synthèse vocale) ──
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const lastSpokenRef = useRef<number>(-1);
+
+  const speak = useCallback((text: string) => {
+    if (!("speechSynthesis" in window)) {
+      toast.error("La synthèse vocale n'est pas prise en charge par ton navigateur.");
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "fr-FR";
+    utterance.rate = 0.85;
+    utterance.pitch = 1;
+    // Try to pick a French voice
+    const voices = window.speechSynthesis.getVoices();
+    const frVoice = voices.find((v) => v.lang.startsWith("fr"));
+    if (frVoice) utterance.voice = frVoice;
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+    window.speechSynthesis.speak(utterance);
+  }, []);
+
+  // Auto-play audio for CO questions when navigating
+  useEffect(() => {
+    if (!started || !currentQuestion) return;
+    if (currentQuestion.audio && lastSpokenRef.current !== currentIndex) {
+      lastSpokenRef.current = currentIndex;
+      // Small delay to let the UI render first
+      const timer = setTimeout(() => speak(currentQuestion.audio!), 400);
+      return () => clearTimeout(timer);
+    }
+  }, [currentIndex, started, currentQuestion, speak]);
+
+  // Stop speech on unmount
+  useEffect(() => {
+    return () => { window.speechSynthesis?.cancel(); };
+  }, []);
+
   const formatTime = (s: number) => {
     const m = Math.floor(s / 60);
     const sec = s % 60;
