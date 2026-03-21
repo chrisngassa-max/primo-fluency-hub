@@ -663,8 +663,8 @@ ${sessionExercises.map((ex: any, i: number) => `
         </Card>
       )}
 
-      {/* ─── Pacing Tracker ─── */}
-      <PacingTracker />
+
+
 
       {/* ─── Suivi de progression détaillée ─── */}
       <Card>
