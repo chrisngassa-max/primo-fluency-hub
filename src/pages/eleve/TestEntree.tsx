@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import {
   ChevronLeft, ChevronRight, CheckCircle2, AlertTriangle, Clock,
-  ArrowRight, Loader2,
+  ArrowRight, Loader2, Volume2, VolumeX,
 } from "lucide-react";
 import { TCF_QUESTIONS, SECTIONS_META, type TCFQuestion } from "@/data/tcfQuestions";
 import CompetenceLabel from "@/components/CompetenceLabel";
@@ -81,14 +81,52 @@ const TestEntreePage = () => {
     return () => clearInterval(interval);
   }, [started, existingTest]);
 
+  const currentQuestion = questions[currentIndex];
+  const currentSection = currentQuestion?.section;
+
+  // ── TTS (synthèse vocale) ──
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const lastSpokenRef = useRef<number>(-1);
+
+  const speak = useCallback((text: string) => {
+    if (!("speechSynthesis" in window)) {
+      toast.error("La synthèse vocale n'est pas prise en charge par ton navigateur.");
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "fr-FR";
+    utterance.rate = 0.85;
+    utterance.pitch = 1;
+    const voices = window.speechSynthesis.getVoices();
+    const frVoice = voices.find((v) => v.lang.startsWith("fr"));
+    if (frVoice) utterance.voice = frVoice;
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+    window.speechSynthesis.speak(utterance);
+  }, []);
+
+  // Auto-play audio when arriving on a CO question
+  useEffect(() => {
+    if (!started || !currentQuestion) return;
+    if (currentQuestion.audio && lastSpokenRef.current !== currentIndex) {
+      lastSpokenRef.current = currentIndex;
+      const timer = setTimeout(() => speak(currentQuestion.audio!), 400);
+      return () => clearTimeout(timer);
+    }
+  }, [currentIndex, started, currentQuestion, speak]);
+
+  // Stop speech on unmount
+  useEffect(() => {
+    return () => { window.speechSynthesis?.cancel(); };
+  }, []);
+
   const formatTime = (s: number) => {
     const m = Math.floor(s / 60);
     const sec = s % 60;
     return `${m}:${sec.toString().padStart(2, "0")}`;
   };
-
-  const currentQuestion = questions[currentIndex];
-  const currentSection = currentQuestion?.section;
 
   const sectionProgress = useMemo(() => {
     const sections = ["CO", "Structures", "CE"] as const;
@@ -350,9 +388,32 @@ const TestEntreePage = () => {
       <Card>
         <CardContent className="pt-6 space-y-4">
           {currentQuestion.audio && (
-            <div className="p-3 rounded-lg bg-muted/50 text-sm">
-              <p className="font-medium text-muted-foreground mb-1">🔊 Audio :</p>
-              <p className="italic">« {currentQuestion.audio} »</p>
+            <div className="p-4 rounded-xl bg-primary/5 border border-primary/20 flex items-center gap-4">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-12 w-12 rounded-full border-primary/30 shrink-0"
+                onClick={() => {
+                  if (isSpeaking) {
+                    window.speechSynthesis.cancel();
+                    setIsSpeaking(false);
+                  } else {
+                    speak(currentQuestion.audio!);
+                  }
+                }}
+              >
+                {isSpeaking ? (
+                  <VolumeX className="h-5 w-5 text-primary" />
+                ) : (
+                  <Volume2 className="h-5 w-5 text-primary" />
+                )}
+              </Button>
+              <div className="flex-1">
+                <p className="font-semibold text-sm text-primary">🎧 Écoute l'audio</p>
+                <p className="text-xs text-muted-foreground">
+                  {isSpeaking ? "Lecture en cours… Clique pour arrêter." : "Clique sur le bouton pour réécouter."}
+                </p>
+              </div>
             </div>
           )}
           {currentQuestion.visual && (
