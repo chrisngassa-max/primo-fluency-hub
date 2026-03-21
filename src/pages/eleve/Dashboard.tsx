@@ -343,27 +343,24 @@ const EleveDashboard = () => {
         </Card>
       )}
 
-      {/* Ma progression détaillée */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-primary" />
-            Ma progression détaillée
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-5">
-            {[
-              { label: "Compréhension Orale", initialScore: 25, currentScore: 55, completedSessions: 4, totalSessions: 8 },
-              { label: "Compréhension Écrite", initialScore: 30, currentScore: 40, completedSessions: 4, totalSessions: 8 },
-              { label: "Expression Écrite", initialScore: 15, currentScore: 20, completedSessions: 4, totalSessions: 8 },
-              { label: "Structures de la langue", initialScore: 20, currentScore: 50, completedSessions: 4, totalSessions: 8 },
-            ].map((comp) => (
-              <CompetencyGauge key={comp.label} {...comp} />
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      {/* Ma progression détaillée — only after test completed */}
+      {progressionData && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-primary" />
+              Ma progression détaillée
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-5">
+              {progressionData.map((comp) => (
+                <CompetencyGauge key={comp.label} {...comp} />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Devoirs */}
       <Card>
