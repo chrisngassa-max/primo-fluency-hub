@@ -11,6 +11,7 @@ import { BookOpen, TrendingUp, AlertCircle, ArrowRight, Target, ClipboardCheck, 
 import CompetenceLabel from "@/components/CompetenceLabel";
 import EleveOnboarding, { useShowOnboarding } from "@/components/EleveOnboarding";
 import JoinGroupCard from "@/components/JoinGroupCard";
+import CompetencyGauge from "@/components/CompetencyGauge";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
