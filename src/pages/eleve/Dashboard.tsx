@@ -149,6 +149,76 @@ const EleveDashboard = () => {
 
   const uncompletedTests = (pendingTests ?? []).filter((t: any) => !t.completed);
 
+  // Fetch profil_eleve for current scores
+  const { data: profilEleve } = useQuery({
+    queryKey: ["eleve-profil", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profils_eleves")
+        .select("taux_reussite_co, taux_reussite_ce, taux_reussite_ee, taux_reussite_structures")
+        .eq("eleve_id", user!.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id,
+  });
+
+  // Fetch parcours sessions count for the student's group
+  const { data: sessionsData } = useQuery({
+    queryKey: ["eleve-sessions-count", user?.id],
+    queryFn: async () => {
+      const { data: memberships } = await supabase
+        .from("group_members")
+        .select("group_id")
+        .eq("eleve_id", user!.id);
+      if (!memberships || memberships.length === 0) return { completed: 0, total: 0 };
+      const groupIds = memberships.map((m) => m.group_id);
+      const { data: allSessions } = await supabase
+        .from("sessions")
+        .select("id, statut")
+        .in("group_id", groupIds);
+      if (!allSessions) return { completed: 0, total: 0 };
+      return {
+        completed: allSessions.filter((s) => s.statut === "terminee").length,
+        total: allSessions.length,
+      };
+    },
+    enabled: !!user?.id,
+  });
+
+  // Build progression data from real sources
+  const progressionData = testCompleted && testEntree ? [
+    {
+      label: "Compréhension Orale",
+      initialScore: Math.round(Number(testEntree.score_co ?? 0)),
+      currentScore: Math.round(Number(profilEleve?.taux_reussite_co ?? testEntree.score_co ?? 0)),
+      completedSessions: sessionsData?.completed ?? 0,
+      totalSessions: Math.max(sessionsData?.total ?? 1, 1),
+    },
+    {
+      label: "Compréhension Écrite",
+      initialScore: Math.round(Number(testEntree.score_ce ?? 0)),
+      currentScore: Math.round(Number(profilEleve?.taux_reussite_ce ?? testEntree.score_ce ?? 0)),
+      completedSessions: sessionsData?.completed ?? 0,
+      totalSessions: Math.max(sessionsData?.total ?? 1, 1),
+    },
+    {
+      label: "Expression Écrite",
+      initialScore: Math.round(Number(testEntree.score_ee ?? 0)),
+      currentScore: Math.round(Number(profilEleve?.taux_reussite_ee ?? testEntree.score_ee ?? 0)),
+      completedSessions: sessionsData?.completed ?? 0,
+      totalSessions: Math.max(sessionsData?.total ?? 1, 1),
+    },
+    {
+      label: "Structures de la langue",
+      initialScore: Math.round(Number(testEntree.score_structures ?? 0)),
+      currentScore: Math.round(Number(profilEleve?.taux_reussite_structures ?? testEntree.score_structures ?? 0)),
+      completedSessions: sessionsData?.completed ?? 0,
+      totalSessions: Math.max(sessionsData?.total ?? 1, 1),
+    },
+  ] : null;
+
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
       {showOnboarding && <EleveOnboarding onComplete={dismissOnboarding} />}
