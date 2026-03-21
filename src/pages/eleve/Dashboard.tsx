@@ -149,6 +149,76 @@ const EleveDashboard = () => {
 
   const uncompletedTests = (pendingTests ?? []).filter((t: any) => !t.completed);
 
+  // Fetch profil_eleve for current scores
+  const { data: profilEleve } = useQuery({
+    queryKey: ["eleve-profil", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profils_eleves")
+        .select("taux_reussite_co, taux_reussite_ce, taux_reussite_ee, taux_reussite_structures")
+        .eq("eleve_id", user!.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id,
+  });
+
+  // Fetch parcours sessions count for the student's group
+  const { data: sessionsData } = useQuery({
+    queryKey: ["eleve-sessions-count", user?.id],
+    queryFn: async () => {
+      const { data: memberships } = await supabase
+        .from("group_members")
+        .select("group_id")
+        .eq("eleve_id", user!.id);
+      if (!memberships || memberships.length === 0) return { completed: 0, total: 0 };
+      const groupIds = memberships.map((m) => m.group_id);
+      const { data: allSessions } = await supabase
+        .from("sessions")
+        .select("id, statut")
+        .in("group_id", groupIds);
+      if (!allSessions) return { completed: 0, total: 0 };
+      return {
+        completed: allSessions.filter((s) => s.statut === "terminee").length,
+        total: allSessions.length,
+      };
+    },
+    enabled: !!user?.id,
+  });
+
+  // Build progression data from real sources
+  const progressionData = testCompleted && testEntree ? [
+    {
+      label: "Compréhension Orale",
+      initialScore: Math.round(Number(testEntree.score_co ?? 0)),
+      currentScore: Math.round(Number(profilEleve?.taux_reussite_co ?? testEntree.score_co ?? 0)),
+      completedSessions: sessionsData?.completed ?? 0,
+      totalSessions: Math.max(sessionsData?.total ?? 1, 1),
+    },
+    {
+      label: "Compréhension Écrite",
+      initialScore: Math.round(Number(testEntree.score_ce ?? 0)),
+      currentScore: Math.round(Number(profilEleve?.taux_reussite_ce ?? testEntree.score_ce ?? 0)),
+      completedSessions: sessionsData?.completed ?? 0,
+      totalSessions: Math.max(sessionsData?.total ?? 1, 1),
+    },
+    {
+      label: "Expression Écrite",
+      initialScore: Math.round(Number(testEntree.score_ee ?? 0)),
+      currentScore: Math.round(Number(profilEleve?.taux_reussite_ee ?? testEntree.score_ee ?? 0)),
+      completedSessions: sessionsData?.completed ?? 0,
+      totalSessions: Math.max(sessionsData?.total ?? 1, 1),
+    },
+    {
+      label: "Structures de la langue",
+      initialScore: Math.round(Number(testEntree.score_structures ?? 0)),
+      currentScore: Math.round(Number(profilEleve?.taux_reussite_structures ?? testEntree.score_structures ?? 0)),
+      completedSessions: sessionsData?.completed ?? 0,
+      totalSessions: Math.max(sessionsData?.total ?? 1, 1),
+    },
+  ] : null;
+
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
       {showOnboarding && <EleveOnboarding onComplete={dismissOnboarding} />}
@@ -273,27 +343,24 @@ const EleveDashboard = () => {
         </Card>
       )}
 
-      {/* Ma progression détaillée */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-primary" />
-            Ma progression détaillée
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-5">
-            {[
-              { label: "Compréhension Orale", initialScore: 25, currentScore: 55, completedSessions: 4, totalSessions: 8 },
-              { label: "Compréhension Écrite", initialScore: 30, currentScore: 40, completedSessions: 4, totalSessions: 8 },
-              { label: "Expression Écrite", initialScore: 15, currentScore: 20, completedSessions: 4, totalSessions: 8 },
-              { label: "Structures de la langue", initialScore: 20, currentScore: 50, completedSessions: 4, totalSessions: 8 },
-            ].map((comp) => (
-              <CompetencyGauge key={comp.label} {...comp} />
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      {/* Ma progression détaillée — only after test completed */}
+      {progressionData && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-primary" />
+              Ma progression détaillée
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-5">
+              {progressionData.map((comp) => (
+                <CompetencyGauge key={comp.label} {...comp} />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Devoirs */}
       <Card>
