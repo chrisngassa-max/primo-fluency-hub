@@ -81,6 +81,9 @@ const TestEntreePage = () => {
     return () => clearInterval(interval);
   }, [started, existingTest]);
 
+  const currentQuestion = questions[currentIndex];
+  const currentSection = currentQuestion?.section;
+
   // ── TTS (synthèse vocale) ──
   const [isSpeaking, setIsSpeaking] = useState(false);
   const lastSpokenRef = useRef<number>(-1);
@@ -95,7 +98,6 @@ const TestEntreePage = () => {
     utterance.lang = "fr-FR";
     utterance.rate = 0.85;
     utterance.pitch = 1;
-    // Try to pick a French voice
     const voices = window.speechSynthesis.getVoices();
     const frVoice = voices.find((v) => v.lang.startsWith("fr"));
     if (frVoice) utterance.voice = frVoice;
@@ -105,12 +107,11 @@ const TestEntreePage = () => {
     window.speechSynthesis.speak(utterance);
   }, []);
 
-  // Auto-play audio for CO questions when navigating
+  // Auto-play audio when arriving on a CO question
   useEffect(() => {
     if (!started || !currentQuestion) return;
     if (currentQuestion.audio && lastSpokenRef.current !== currentIndex) {
       lastSpokenRef.current = currentIndex;
-      // Small delay to let the UI render first
       const timer = setTimeout(() => speak(currentQuestion.audio!), 400);
       return () => clearTimeout(timer);
     }
@@ -126,9 +127,6 @@ const TestEntreePage = () => {
     const sec = s % 60;
     return `${m}:${sec.toString().padStart(2, "0")}`;
   };
-
-  const currentQuestion = questions[currentIndex];
-  const currentSection = currentQuestion?.section;
 
   const sectionProgress = useMemo(() => {
     const sections = ["CO", "Structures", "CE"] as const;
