@@ -909,6 +909,7 @@ export type Database = {
           mot_de_passe_initial: string | null
           nom: string
           prenom: string
+          status: string
           updated_at: string
         }
         Insert: {
@@ -920,6 +921,7 @@ export type Database = {
           mot_de_passe_initial?: string | null
           nom?: string
           prenom?: string
+          status?: string
           updated_at?: string
         }
         Update: {
@@ -931,6 +933,7 @@ export type Database = {
           mot_de_passe_initial?: string | null
           nom?: string
           prenom?: string
+          status?: string
           updated_at?: string
         }
         Relationships: []
