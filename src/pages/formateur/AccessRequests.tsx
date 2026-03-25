@@ -29,25 +29,15 @@ const AccessRequests = () => {
   const { data: pendingStudents, isLoading: loadingStudents } = useQuery({
     queryKey: ["pending-students"],
     queryFn: async () => {
-      // We need to fetch profiles with status='pending' and role='eleve'
+      // Pending profiles are only eleves (formateurs are created as 'approved')
       const { data: profiles, error } = await supabase
         .from("profiles")
         .select("id, prenom, nom, email, created_at, status")
-        .eq("status", "pending");
+        .eq("status", "pending")
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
-
-      // Filter to only eleves by checking user_roles
-      if (!profiles || profiles.length === 0) return [];
-
-      const { data: roles } = await supabase
-        .from("user_roles")
-        .select("user_id")
-        .eq("role", "eleve")
-        .in("user_id", profiles.map(p => p.id));
-
-      const eleveIds = new Set(roles?.map(r => r.user_id) || []);
-      return profiles.filter(p => eleveIds.has(p.id));
+      return profiles || [];
     },
   });
 
