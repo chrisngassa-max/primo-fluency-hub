@@ -88,7 +88,7 @@ const Unsubscribe = () => {
           )}
           {status === "done" && (
             <div className="flex flex-col items-center gap-2">
-              <CheckCircle className="h-10 w-10 text-green-500" />
+              <CheckCircle className="h-10 w-10 text-success" />
               <p className="text-foreground font-medium">Désabonnement confirmé</p>
               <p className="text-sm text-muted-foreground">
                 Tu ne recevras plus d'emails de notre part.

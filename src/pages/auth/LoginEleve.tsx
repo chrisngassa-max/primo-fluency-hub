@@ -46,8 +46,42 @@ const LoginEleve = () => {
     if (!signupNom || !signupPrenom) { toast.error("Remplissez votre nom et prénom."); return; }
     setBusy(true);
     const { error } = await signUp(signupEmail, signupPassword, { nom: signupNom, prenom: signupPrenom, role: "eleve" });
-    if (error) toast.error("Erreur d'inscription", { description: translateAuthError(error.message) });
-    else toast.success("Inscription réussie !", { description: "Vous pouvez maintenant vous connecter." });
+    if (error) {
+      toast.error("Erreur d'inscription", { description: translateAuthError(error.message) });
+    } else {
+      toast.success("Inscription réussie !", { description: "Vous pouvez maintenant vous connecter." });
+      // Notify all formateurs about new student registration
+      try {
+        const { data: formateurs } = await supabase
+          .from("user_roles")
+          .select("user_id")
+          .eq("role", "formateur");
+        if (formateurs) {
+          for (const f of formateurs) {
+            const { data: profile } = await supabase
+              .from("profiles")
+              .select("email")
+              .eq("id", f.user_id)
+              .maybeSingle();
+            if (profile?.email) {
+              await supabase.functions.invoke("send-transactional-email", {
+                body: {
+                  templateName: "new-student-notification",
+                  recipientEmail: profile.email,
+                  idempotencyKey: `new-student-${signupEmail}-${f.user_id}`,
+                  templateData: {
+                    studentName: `${signupPrenom} ${signupNom}`,
+                    studentEmail: signupEmail,
+                  },
+                },
+              });
+            }
+          }
+        }
+      } catch (e) {
+        console.error("Failed to send formateur notification", e);
+      }
+    }
     setBusy(false);
   };
 

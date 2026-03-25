@@ -64,6 +64,7 @@ const App = () => (
             <Route path="/formateur/login" element={<LoginFormateur />} />
             {/* Admin route removed — no admin dashboard */}
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/unsubscribe" element={<Unsubscribe />} />
 
             {/* Formateur routes */}
             <Route
