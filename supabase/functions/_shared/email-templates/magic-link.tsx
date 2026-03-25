@@ -22,21 +22,21 @@ export const MagicLinkEmail = ({
   siteName,
   confirmationUrl,
 }: MagicLinkEmailProps) => (
-  <Html lang="en" dir="ltr">
+  <Html lang="fr" dir="ltr">
     <Head />
-    <Preview>Your login link for {siteName}</Preview>
+    <Preview>Ton lien de connexion CAP TCF</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>Your login link</Heading>
+        <Heading style={h1}>Ton lien de connexion</Heading>
         <Text style={text}>
-          Click the button below to log in to {siteName}. This link will expire
-          shortly.
+          Clique sur le bouton ci-dessous pour te connecter à CAP TCF.
+          Ce lien expire dans quelques minutes.
         </Text>
         <Button style={button} href={confirmationUrl}>
-          Log In
+          Se connecter
         </Button>
         <Text style={footer}>
-          If you didn't request this link, you can safely ignore this email.
+          Si tu n'as pas demandé ce lien, tu peux ignorer cet email.
         </Text>
       </Container>
     </Body>
@@ -50,20 +50,20 @@ const container = { padding: '20px 25px' }
 const h1 = {
   fontSize: '22px',
   fontWeight: 'bold' as const,
-  color: '#000000',
+  color: '#171D27',
   margin: '0 0 20px',
 }
 const text = {
   fontSize: '14px',
-  color: '#55575d',
+  color: '#6B7082',
   lineHeight: '1.5',
   margin: '0 0 25px',
 }
 const button = {
-  backgroundColor: '#000000',
+  backgroundColor: '#225FA6',
   color: '#ffffff',
   fontSize: '14px',
-  borderRadius: '8px',
+  borderRadius: '10px',
   padding: '12px 20px',
   textDecoration: 'none',
 }
