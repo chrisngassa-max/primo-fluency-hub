@@ -12,8 +12,12 @@ Deno.serve(async (req) => {
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
   const supabase = createClient(supabaseUrl, serviceKey);
 
-  const email = "formateur@captcf.fr";
-  const password = "CapTcf2025!";
+  // Accept email/password from body, or use defaults
+  const body = await req.json().catch(() => ({}));
+  const email = body.email || "formateur@captcf.fr";
+  const password = body.password || "CapTcf2025!";
+  const nom = body.nom || "Formateur";
+  const prenom = body.prenom || "CAP TCF";
 
   // Check if user already exists
   const { data: existing } = await supabase.from("profiles").select("id").eq("email", email).maybeSingle();
@@ -25,12 +29,12 @@ Deno.serve(async (req) => {
     email,
     password,
     email_confirm: true,
-    user_metadata: { nom: "Formateur", prenom: "CAP TCF", role: "formateur" },
+    user_metadata: { nom, prenom, role: "formateur" },
   });
 
   if (error) {
     return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 
-  return new Response(JSON.stringify({ success: true, email, password, userId: data.user.id }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+  return new Response(JSON.stringify({ success: true, email, userId: data.user.id }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
 });
