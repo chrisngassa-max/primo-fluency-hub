@@ -89,6 +89,7 @@ const App = () => (
               <Route path="rapports" element={<RapportsPage />} />
               <Route path="suivi-devoirs" element={<SuiviDevoirsPage />} />
               <Route path="session-builder" element={<SessionSupermarket />} />
+              <Route path="demandes" element={<AccessRequests />} />
               <Route path="parametres" element={<Parametres />} />
             </Route>
 
