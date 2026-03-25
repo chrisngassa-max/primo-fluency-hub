@@ -12,6 +12,7 @@ import {
   Upload,
   Route,
   ClipboardCheck,
+  Inbox,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
@@ -33,6 +34,7 @@ import { useLocation } from "react-router-dom";
 
 const mainNav = [
   { title: "Tableau de bord", url: "/formateur", icon: LayoutDashboard },
+  { title: "Demandes d'accès", url: "/formateur/demandes", icon: Inbox },
   { title: "Groupes & Élèves", url: "/formateur/groupes", icon: Users },
   { title: "Séances", url: "/formateur/seances", icon: Calendar },
   { title: "Exercices", url: "/formateur/exercices", icon: BookOpen },

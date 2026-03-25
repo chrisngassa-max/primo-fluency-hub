@@ -3,11 +3,13 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Session, User } from "@supabase/supabase-js";
 
 type AppRole = "formateur" | "eleve" | "admin";
+type ProfileStatus = "pending" | "approved";
 
 interface AuthContextType {
   session: Session | null;
   user: User | null;
   role: AppRole | null;
+  profileStatus: ProfileStatus | null;
   loading: boolean;
   signUp: (email: string, password: string, metadata: { nom: string; prenom: string; role: AppRole }) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
@@ -26,6 +28,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [role, setRole] = useState<AppRole | null>(null);
+  const [profileStatus, setProfileStatus] = useState<ProfileStatus | null>(null);
   const [loading, setLoading] = useState(true);
 
   const fetchRole = async (userId: string) => {
@@ -37,17 +40,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setRole((data?.role as AppRole) ?? null);
   };
 
+  const fetchProfileStatus = async (userId: string) => {
+    const { data } = await supabase
+      .from("profiles")
+      .select("status")
+      .eq("id", userId)
+      .maybeSingle();
+    setProfileStatus((data?.status as ProfileStatus) ?? null);
+  };
+
   useEffect(() => {
-    // Set up listener BEFORE getSession
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
-          // Use setTimeout to avoid potential deadlock with Supabase client
-          setTimeout(() => fetchRole(session.user.id), 0);
+          setTimeout(() => {
+            fetchRole(session.user.id);
+            fetchProfileStatus(session.user.id);
+          }, 0);
         } else {
           setRole(null);
+          setProfileStatus(null);
         }
         setLoading(false);
       }
@@ -58,6 +72,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(session?.user ?? null);
       if (session?.user) {
         fetchRole(session.user.id);
+        fetchProfileStatus(session.user.id);
       }
       setLoading(false);
     });
@@ -74,10 +89,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         emailRedirectTo: window.location.origin,
       },
     });
-    if (!error) {
-      // Role will be assigned after email confirmation via a separate step
-      // For now we store the intended role in user metadata
-    }
     return { error };
   };
 
@@ -91,10 +102,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setSession(null);
     setUser(null);
     setRole(null);
+    setProfileStatus(null);
   };
 
   return (
-    <AuthContext.Provider value={{ session, user, role, loading, signUp, signIn, signOut }}>
+    <AuthContext.Provider value={{ session, user, role, profileStatus, loading, signUp, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );

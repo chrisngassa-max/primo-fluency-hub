@@ -44,6 +44,7 @@ import ParcoursDetail from "@/pages/formateur/ParcoursDetail";
 import RapportsPage from "@/pages/formateur/RapportsPage";
 import SessionSupermarket from "@/pages/formateur/SessionSupermarket";
 import SuiviDevoirsPage from "@/pages/formateur/SuiviDevoirsPage";
+import AccessRequests from "@/pages/formateur/AccessRequests";
 
 const queryClient = new QueryClient();
 
@@ -88,6 +89,7 @@ const App = () => (
               <Route path="rapports" element={<RapportsPage />} />
               <Route path="suivi-devoirs" element={<SuiviDevoirsPage />} />
               <Route path="session-builder" element={<SessionSupermarket />} />
+              <Route path="demandes" element={<AccessRequests />} />
               <Route path="parametres" element={<Parametres />} />
             </Route>
 

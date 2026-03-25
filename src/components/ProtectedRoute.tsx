@@ -1,6 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Skeleton } from "@/components/ui/skeleton";
+import PendingApprovalPage from "@/components/PendingApprovalPage";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -8,7 +9,7 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
-  const { session, role, loading } = useAuth();
+  const { session, role, profileStatus, loading } = useAuth();
 
   if (loading) {
     return (
@@ -32,6 +33,11 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
     if (role === "eleve") return <Navigate to="/eleve" replace />;
     if (role === "admin") return <Navigate to="/admin" replace />;
     return <Navigate to="/" replace />;
+  }
+
+  // Block pending students from accessing the eleve dashboard
+  if (requiredRole === "eleve" && profileStatus === "pending") {
+    return <PendingApprovalPage />;
   }
 
   return <>{children}</>;
