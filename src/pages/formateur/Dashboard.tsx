@@ -618,13 +618,16 @@ ${sessionExercises.map((ex: any, i: number) => `
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">
-          Bonjour, {user?.user_metadata?.prenom || "Formateur"} 👋
-        </h1>
-        <p className="text-muted-foreground mt-1">
-          Voici votre cockpit de séance.
-        </p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">
+            Bonjour, {user?.user_metadata?.prenom || "Formateur"} 👋
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Voici votre cockpit de séance.
+          </p>
+        </div>
+        <DebugSimulationModal />
       </div>
 
       {/* ─── KPI Cards ─── */}
