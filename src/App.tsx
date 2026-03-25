@@ -10,6 +10,7 @@ import Index from "@/pages/Index";
 import Legal from "@/pages/Legal";
 import ResetPassword from "@/pages/ResetPassword";
 import NotFound from "@/pages/NotFound";
+import Unsubscribe from "@/pages/Unsubscribe";
 
 import LoginEleve from "@/pages/auth/LoginEleve";
 import LoginFormateur from "@/pages/auth/LoginFormateur";
@@ -63,6 +64,7 @@ const App = () => (
             <Route path="/formateur/login" element={<LoginFormateur />} />
             {/* Admin route removed — no admin dashboard */}
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/unsubscribe" element={<Unsubscribe />} />
 
             {/* Formateur routes */}
             <Route
