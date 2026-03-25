@@ -58,6 +58,14 @@ const LoginEleve = () => {
           .eq("role", "formateur");
         if (formateurs) {
           for (const f of formateurs) {
+            // In-app notification
+            await supabase.from("notifications").insert({
+              user_id: f.user_id,
+              titre: "Nouvel élève inscrit",
+              message: `${signupPrenom} ${signupNom} (${signupEmail}) vient de s'inscrire et attend ta validation.`,
+              link: "/formateur/demandes",
+            });
+            // Email notification
             const { data: profile } = await supabase
               .from("profiles")
               .select("email")
