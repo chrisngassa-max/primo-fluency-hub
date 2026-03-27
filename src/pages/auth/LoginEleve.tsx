@@ -71,6 +71,7 @@ const LoginEleve = () => {
           .from("group_members")
           .insert({ group_id: invitation.group_id, eleve_id: user.id });
 
+        sessionStorage.removeItem("tcf-invite-code");
         const groupName = (invitation as any).group?.nom || "le groupe";
         toast.success(`Tu as rejoint le groupe « ${groupName} » !`);
       } catch (e) {
