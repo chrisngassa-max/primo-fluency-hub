@@ -183,6 +183,59 @@ const SeancesPage = () => {
     setSelectedSequenceId(""); setSelectedExerciseIds(new Set());
   };
 
+  // ── Edit session state ──
+  const [editOpen, setEditOpen] = useState(false);
+  const [editSession, setEditSession] = useState<any>(null);
+  const [editSaving, setEditSaving] = useState(false);
+  const [editGroupId, setEditGroupId] = useState("");
+  const [editTitre, setEditTitre] = useState("");
+  const [editDate, setEditDate] = useState("");
+  const [editNiveau, setEditNiveau] = useState("A2");
+  const [editDuree, setEditDuree] = useState("90");
+  const [editLieu, setEditLieu] = useState("");
+  const [editObjectifs, setEditObjectifs] = useState("");
+
+  const openEdit = (s: any, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditSession(s);
+    setEditGroupId(s.group_id);
+    setEditTitre(s.titre);
+    setEditDate(new Date(s.date_seance).toISOString().slice(0, 16));
+    setEditNiveau(s.niveau_cible);
+    setEditDuree(String(s.duree_minutes));
+    setEditLieu(s.lieu ?? "");
+    setEditObjectifs(s.objectifs ?? "");
+    setEditOpen(true);
+  };
+
+  const handleEditSave = async () => {
+    if (!editTitre.trim()) { toast.error("Le titre est obligatoire."); return; }
+    if (!editGroupId) { toast.error("Sélectionnez un groupe."); return; }
+    if (!editDate) { toast.error("Choisissez une date."); return; }
+
+    setEditSaving(true);
+    try {
+      const { error } = await supabase
+        .from("sessions")
+        .update({
+          titre: editTitre,
+          group_id: editGroupId,
+          date_seance: new Date(editDate).toISOString(),
+          niveau_cible: editNiveau as any,
+          duree_minutes: parseInt(editDuree) || 90,
+          lieu: editLieu || null,
+          objectifs: editObjectifs || null,
+        })
+        .eq("id", editSession.id);
+      if (error) throw error;
+      toast.success("Séance modifiée !");
+      setEditOpen(false);
+      qc.invalidateQueries({ queryKey: ["formateur-sessions"] });
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    } finally { setEditSaving(false); }
+  };
+
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -305,6 +358,66 @@ const SeancesPage = () => {
         </Dialog>
       </div>
 
+      {/* Edit session dialog */}
+      <Dialog open={editOpen} onOpenChange={setEditOpen}>
+        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>Modifier la séance</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Titre</Label>
+              <Input value={editTitre} onChange={(e) => setEditTitre(e.target.value)} />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label>Groupe</Label>
+                <Select value={editGroupId} onValueChange={setEditGroupId}>
+                  <SelectTrigger><SelectValue placeholder="Choisir..." /></SelectTrigger>
+                  <SelectContent>
+                    {(groups ?? []).map((g) => (
+                      <SelectItem key={g.id} value={g.id}>{g.nom} ({g.niveau})</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Niveau cible</Label>
+                <Select value={editNiveau} onValueChange={setEditNiveau}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {NIVEAUX.map((n) => <SelectItem key={n} value={n}>{n}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label>Date et heure</Label>
+                <Input type="datetime-local" value={editDate} onChange={(e) => setEditDate(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>Durée (min)</Label>
+                <Input type="number" value={editDuree} onChange={(e) => setEditDuree(e.target.value)} />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Lieu (optionnel)</Label>
+              <Input value={editLieu} onChange={(e) => setEditLieu(e.target.value)} placeholder="Salle A3 / Lien Zoom" />
+            </div>
+            <div className="space-y-2">
+              <Label>Objectifs (optionnel)</Label>
+              <Textarea value={editObjectifs} onChange={(e) => setEditObjectifs(e.target.value)} rows={2} />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditOpen(false)}>Annuler</Button>
+            <Button onClick={handleEditSave} disabled={editSaving}>
+              {editSaving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              Enregistrer
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Sessions list */}
       {sessions && sessions.length === 0 && (
         <Card className="border-dashed">
@@ -333,7 +446,18 @@ const SeancesPage = () => {
                       </p>
                     </div>
                   </div>
-                  <Badge variant={badge.variant}>{badge.label}</Badge>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={(e) => openEdit(s, e)}
+                      title="Modifier la séance"
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Badge variant={badge.variant}>{badge.label}</Badge>
+                  </div>
                 </div>
               </CardContent>
             </Card>
