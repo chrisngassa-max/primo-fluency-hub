@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate, Navigate } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { useNavigate, Navigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,13 +8,17 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, Users } from "lucide-react";
 import { translateAuthError } from "@/lib/authErrors";
+import { Badge } from "@/components/ui/badge";
 
 const LoginEleve = () => {
-  const { signIn, signUp, session, role, loading } = useAuth();
+  const { signIn, signUp, session, role, loading, user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const inviteCode = searchParams.get("invite");
   const [busy, setBusy] = useState(false);
+  const autoJoinAttempted = useRef(false);
 
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -28,6 +32,44 @@ const LoginEleve = () => {
 
   const [forgotEmail, setForgotEmail] = useState("");
   const [showForgot, setShowForgot] = useState(false);
+
+  // Auto-join group when user is logged in and has an invite code
+  useEffect(() => {
+    if (!session || !user || !inviteCode || autoJoinAttempted.current) return;
+    autoJoinAttempted.current = true;
+
+    const joinGroup = async () => {
+      try {
+        const { data: invitation } = await supabase
+          .from("group_invitations")
+          .select("id, group_id, expires_at, used_count, group:groups(nom)")
+          .eq("code", inviteCode)
+          .maybeSingle();
+
+        if (!invitation) return;
+        if (new Date(invitation.expires_at) < new Date()) return;
+
+        const { data: existing } = await supabase
+          .from("group_members")
+          .select("id")
+          .eq("group_id", invitation.group_id)
+          .eq("eleve_id", user.id)
+          .maybeSingle();
+
+        if (existing) return;
+
+        await supabase
+          .from("group_members")
+          .insert({ group_id: invitation.group_id, eleve_id: user.id });
+
+        const groupName = (invitation as any).group?.nom || "le groupe";
+        toast.success(`Tu as rejoint le groupe « ${groupName} » !`);
+      } catch (e) {
+        console.error("Auto-join failed", e);
+      }
+    };
+    joinGroup();
+  }, [session, user, inviteCode]);
 
   if (!loading && session && role === "eleve") return <Navigate to="/eleve" replace />;
   if (!loading && session && role === "formateur") return <Navigate to="/formateur" replace />;
@@ -169,6 +211,15 @@ const LoginEleve = () => {
           <h1 className="text-3xl font-bold text-foreground">Espace Élève</h1>
           <p className="text-muted-foreground">Faire mes exercices et mon test</p>
         </div>
+
+        {inviteCode && (
+          <div className="flex items-center gap-3 rounded-lg border border-primary/30 bg-primary/5 p-3">
+            <Users className="h-5 w-5 text-primary shrink-0" />
+            <p className="text-sm text-foreground">
+              Inscrivez-vous ou connectez-vous pour rejoindre automatiquement le groupe de votre formateur.
+            </p>
+          </div>
+        )}
 
         <Card>
           <CardContent className="pt-6">
