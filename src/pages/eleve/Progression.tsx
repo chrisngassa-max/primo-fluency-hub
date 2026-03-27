@@ -107,6 +107,24 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
     enabled: !!targetId && !!eleveId,
   });
 
+  // Fetch attendance stats
+  const { data: presenceStats } = useQuery({
+    queryKey: ["presence-stats", targetId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("presences")
+        .select("present, session_id")
+        .eq("eleve_id", targetId!);
+      if (error) throw error;
+      const total = (data ?? []).length;
+      const presents = (data ?? []).filter((p: any) => p.present).length;
+      const absents = total - presents;
+      const rate = total > 0 ? Math.round((presents / total) * 100) : null;
+      return { total, presents, absents, rate };
+    },
+    enabled: !!targetId,
+  });
+
   const isLoading = compLoading || profilLoading || resLoading;
 
   // Build competency map
