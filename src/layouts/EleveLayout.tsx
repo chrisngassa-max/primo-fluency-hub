@@ -7,6 +7,7 @@ import {
   User,
   LogOut,
   GraduationCap,
+  ClipboardList,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,7 @@ import AppFooter from "@/components/AppFooter";
 
 const navItems = [
   { title: "Accueil", path: "/eleve", icon: LayoutDashboard },
+  { title: "Test", path: "/eleve/test-positionnement", icon: ClipboardList },
   { title: "Mes devoirs", path: "/eleve/devoirs", icon: BookOpen },
   { title: "Ma progression", path: "/eleve/progression", icon: TrendingUp },
   { title: "Mon profil", path: "/eleve/profil", icon: User },

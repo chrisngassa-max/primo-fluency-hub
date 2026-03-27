@@ -46,6 +46,10 @@ import RapportsPage from "@/pages/formateur/RapportsPage";
 import SessionSupermarket from "@/pages/formateur/SessionSupermarket";
 import SuiviDevoirsPage from "@/pages/formateur/SuiviDevoirsPage";
 import AccessRequests from "@/pages/formateur/AccessRequests";
+import TestResultats from "@/pages/formateur/TestResultats";
+import TestResultatDetail from "@/pages/formateur/TestResultatDetail";
+import TestResultatGroupes from "@/pages/formateur/TestResultatGroupes";
+import TestPositionnement from "@/pages/eleve/TestPositionnement";
 
 const queryClient = new QueryClient();
 
@@ -92,6 +96,9 @@ const App = () => (
               <Route path="suivi-devoirs" element={<SuiviDevoirsPage />} />
               <Route path="session-builder" element={<SessionSupermarket />} />
               <Route path="demandes" element={<AccessRequests />} />
+              <Route path="test-resultats" element={<TestResultats />} />
+              <Route path="test-resultats/groupes" element={<TestResultatGroupes />} />
+              <Route path="test-resultats/:apprenantId" element={<TestResultatDetail />} />
               <Route path="parametres" element={<Parametres />} />
             </Route>
 
@@ -106,6 +113,7 @@ const App = () => (
             >
               <Route index element={<EleveDashboard />} />
               <Route path="test-entree" element={<EleveTestEntree />} />
+              <Route path="test-positionnement" element={<TestPositionnement />} />
               <Route path="devoirs" element={<EleveDevoirs />} />
               <Route path="bilan/:sessionId" element={<BilanSeance />} />
               <Route path="bilan-test/:testId" element={<BilanTestPassation />} />
