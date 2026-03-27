@@ -1,0 +1,1 @@
+DELETE FROM public.user_roles WHERE user_id = '82acac8e-8add-4f62-9cfd-701989a82bd9' AND role = 'eleve';
