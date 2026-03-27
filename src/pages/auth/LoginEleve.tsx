@@ -16,9 +16,18 @@ const LoginEleve = () => {
   const { signIn, signUp, session, role, loading, user } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const inviteCode = searchParams.get("invite");
+  const inviteParam = searchParams.get("invite");
   const [busy, setBusy] = useState(false);
   const autoJoinAttempted = useRef(false);
+
+  // Persist invite code across email confirmation redirect
+  useEffect(() => {
+    if (inviteParam) {
+      sessionStorage.setItem("tcf-invite-code", inviteParam);
+    }
+  }, [inviteParam]);
+
+  const inviteCode = inviteParam || sessionStorage.getItem("tcf-invite-code");
 
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
