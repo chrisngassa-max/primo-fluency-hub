@@ -410,8 +410,19 @@ const SeancesPage = () => {
               <Label>Objectifs (optionnel)</Label>
               <Textarea value={editObjectifs} onChange={(e) => setEditObjectifs(e.target.value)} rows={2} />
             </div>
+            <div className="space-y-2">
+              <Label>Statut</Label>
+              <Select value={editStatut} onValueChange={setEditStatut}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="planifiee">Planifiée</SelectItem>
+                  <SelectItem value="en_cours">En cours</SelectItem>
+                  <SelectItem value="terminee">Terminée</SelectItem>
+                  <SelectItem value="annulee">Annulée</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-          <DialogFooter>
             <Button variant="outline" onClick={() => setEditOpen(false)}>Annuler</Button>
             <Button onClick={handleEditSave} disabled={editSaving}>
               {editSaving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
