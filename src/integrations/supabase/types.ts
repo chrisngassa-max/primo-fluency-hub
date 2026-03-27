@@ -1447,6 +1447,257 @@ export type Database = {
         }
         Relationships: []
       }
+      test_questions: {
+        Row: {
+          choix_a: string | null
+          choix_b: string | null
+          choix_c: string | null
+          competence: string
+          consigne: string
+          criteres_evaluation: Json | null
+          id: string
+          numero_dans_palier: number
+          palier: number
+          points_max: number | null
+          reponse_correcte: string | null
+          script_audio: string | null
+          support: string | null
+          type_reponse: string
+        }
+        Insert: {
+          choix_a?: string | null
+          choix_b?: string | null
+          choix_c?: string | null
+          competence: string
+          consigne: string
+          criteres_evaluation?: Json | null
+          id?: string
+          numero_dans_palier: number
+          palier: number
+          points_max?: number | null
+          reponse_correcte?: string | null
+          script_audio?: string | null
+          support?: string | null
+          type_reponse: string
+        }
+        Update: {
+          choix_a?: string | null
+          choix_b?: string | null
+          choix_c?: string | null
+          competence?: string
+          consigne?: string
+          criteres_evaluation?: Json | null
+          id?: string
+          numero_dans_palier?: number
+          palier?: number
+          points_max?: number | null
+          reponse_correcte?: string | null
+          script_audio?: string | null
+          support?: string | null
+          type_reponse?: string
+        }
+        Relationships: []
+      }
+      test_reponses: {
+        Row: {
+          competence: string
+          date_reponse: string | null
+          est_correct: boolean | null
+          id: string
+          justification_ia: string | null
+          palier: number
+          question_id: string
+          reponse_apprenant: string | null
+          reponse_audio_url: string | null
+          score_formateur: number | null
+          score_ia: number | null
+          score_obtenu: number | null
+          session_id: string
+        }
+        Insert: {
+          competence: string
+          date_reponse?: string | null
+          est_correct?: boolean | null
+          id?: string
+          justification_ia?: string | null
+          palier: number
+          question_id: string
+          reponse_apprenant?: string | null
+          reponse_audio_url?: string | null
+          score_formateur?: number | null
+          score_ia?: number | null
+          score_obtenu?: number | null
+          session_id: string
+        }
+        Update: {
+          competence?: string
+          date_reponse?: string | null
+          est_correct?: boolean | null
+          id?: string
+          justification_ia?: string | null
+          palier?: number
+          question_id?: string
+          reponse_apprenant?: string | null
+          reponse_audio_url?: string | null
+          score_formateur?: number | null
+          score_ia?: number | null
+          score_obtenu?: number | null
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "test_reponses_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "test_questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "test_reponses_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "test_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      test_resultats_apprenants: {
+        Row: {
+          apprenant_id: string
+          date_test: string | null
+          groupe_confirme: string | null
+          groupe_suggere: string | null
+          id: string
+          palier_final_ce: number | null
+          palier_final_co: number | null
+          palier_final_ee: number | null
+          palier_final_eo: number | null
+          profil: string | null
+          score_ce: number | null
+          score_co: number | null
+          score_ee: number | null
+          score_eo: number | null
+          score_total: number | null
+          session_id: string
+        }
+        Insert: {
+          apprenant_id: string
+          date_test?: string | null
+          groupe_confirme?: string | null
+          groupe_suggere?: string | null
+          id?: string
+          palier_final_ce?: number | null
+          palier_final_co?: number | null
+          palier_final_ee?: number | null
+          palier_final_eo?: number | null
+          profil?: string | null
+          score_ce?: number | null
+          score_co?: number | null
+          score_ee?: number | null
+          score_eo?: number | null
+          score_total?: number | null
+          session_id: string
+        }
+        Update: {
+          apprenant_id?: string
+          date_test?: string | null
+          groupe_confirme?: string | null
+          groupe_suggere?: string | null
+          id?: string
+          palier_final_ce?: number | null
+          palier_final_co?: number | null
+          palier_final_ee?: number | null
+          palier_final_eo?: number | null
+          profil?: string | null
+          score_ce?: number | null
+          score_co?: number | null
+          score_ee?: number | null
+          score_eo?: number | null
+          score_total?: number | null
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "test_resultats_apprenants_apprenant_id_fkey"
+            columns: ["apprenant_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "test_resultats_apprenants_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "test_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      test_sessions: {
+        Row: {
+          apprenant_id: string
+          date_debut: string | null
+          date_fin: string | null
+          groupe_suggere: string | null
+          groupe_valide_par_formateur: string | null
+          id: string
+          palier_ce: number | null
+          palier_co: number | null
+          palier_ee: number | null
+          palier_eo: number | null
+          profil_final: string | null
+          score_ce: number | null
+          score_co: number | null
+          score_ee: number | null
+          score_eo: number | null
+          statut: string | null
+        }
+        Insert: {
+          apprenant_id: string
+          date_debut?: string | null
+          date_fin?: string | null
+          groupe_suggere?: string | null
+          groupe_valide_par_formateur?: string | null
+          id?: string
+          palier_ce?: number | null
+          palier_co?: number | null
+          palier_ee?: number | null
+          palier_eo?: number | null
+          profil_final?: string | null
+          score_ce?: number | null
+          score_co?: number | null
+          score_ee?: number | null
+          score_eo?: number | null
+          statut?: string | null
+        }
+        Update: {
+          apprenant_id?: string
+          date_debut?: string | null
+          date_fin?: string | null
+          groupe_suggere?: string | null
+          groupe_valide_par_formateur?: string | null
+          id?: string
+          palier_ce?: number | null
+          palier_co?: number | null
+          palier_ee?: number | null
+          palier_eo?: number | null
+          profil_final?: string | null
+          score_ce?: number | null
+          score_co?: number | null
+          score_ee?: number | null
+          score_eo?: number | null
+          statut?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "test_sessions_apprenant_id_fkey"
+            columns: ["apprenant_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tests_entree: {
         Row: {
           completed_at: string | null
