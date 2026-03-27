@@ -807,6 +807,13 @@ ${Array.isArray(item.options) && item.options.length > 0
         </Card>
       )}
 
+      {/* ─── Feuille d'appel ─── */}
+      {session && (
+        <div className="print:hidden">
+          <FeuilleAppel sessionId={id!} session={session as any} />
+        </div>
+      )}
+
       {/* ─── Reported Exercises from Previous Session ─── */}
       {reported.length > 0 && (
         <Card className="border-dashed border-orange-300 dark:border-orange-700 bg-orange-50/30 dark:bg-orange-950/10 print:hidden">
