@@ -210,6 +210,45 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
         </CardContent>
       </Card>
 
+      {/* Attendance stats */}
+      {presenceStats && presenceStats.total > 0 && (
+        <Card>
+          <CardContent className="pt-6 pb-4">
+            <div className="flex items-center gap-2 mb-3">
+              <CalendarCheck className="h-5 w-5 text-primary" />
+              <span className="font-semibold">Assiduité</span>
+              <Badge
+                variant={presenceStats.rate! >= 80 ? "default" : presenceStats.rate! >= 60 ? "outline" : "destructive"}
+                className={cn(
+                  "ml-auto",
+                  presenceStats.rate! >= 80 && "bg-green-600 hover:bg-green-700"
+                )}
+              >
+                {presenceStats.rate}%
+              </Badge>
+            </div>
+            <div className="grid grid-cols-3 gap-3 text-center">
+              <div className="p-2 rounded-lg bg-muted/50">
+                <p className="text-xl font-bold">{presenceStats.total}</p>
+                <p className="text-[11px] text-muted-foreground">Séances</p>
+              </div>
+              <div className="p-2 rounded-lg bg-muted/50">
+                <p className="text-xl font-bold text-green-600">{presenceStats.presents}</p>
+                <p className="text-[11px] text-muted-foreground">Présences</p>
+              </div>
+              <div className="p-2 rounded-lg bg-muted/50">
+                <p className="text-xl font-bold text-destructive">{presenceStats.absents}</p>
+                <p className="text-[11px] text-muted-foreground">Absences</p>
+              </div>
+            </div>
+            <Progress
+              value={presenceStats.rate ?? 0}
+              className={cn("h-2 mt-3", presenceStats.rate! < 60 && "[&>div]:bg-destructive")}
+            />
+          </CardContent>
+        </Card>
+      )}
+
       {/* Competency radar + badges */}
       <Card>
         <CardHeader className="pb-2">
