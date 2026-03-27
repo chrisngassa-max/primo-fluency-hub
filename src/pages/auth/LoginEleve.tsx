@@ -212,6 +212,15 @@ const LoginEleve = () => {
           <p className="text-muted-foreground">Faire mes exercices et mon test</p>
         </div>
 
+        {inviteCode && (
+          <div className="flex items-center gap-3 rounded-lg border border-primary/30 bg-primary/5 p-3">
+            <Users className="h-5 w-5 text-primary shrink-0" />
+            <p className="text-sm text-foreground">
+              Inscrivez-vous ou connectez-vous pour rejoindre automatiquement le groupe de votre formateur.
+            </p>
+          </div>
+        )}
+
         <Card>
           <CardContent className="pt-6">
             <Tabs defaultValue="login">
