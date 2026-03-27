@@ -206,6 +206,7 @@ const SeancesPage = () => {
     setEditDuree(String(s.duree_minutes));
     setEditLieu(s.lieu ?? "");
     setEditObjectifs(s.objectifs ?? "");
+    setEditStatut(s.statut);
     setEditOpen(true);
   };
 
