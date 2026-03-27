@@ -986,6 +986,51 @@ export type Database = {
           },
         ]
       }
+      presences: {
+        Row: {
+          commentaire: string | null
+          created_at: string
+          eleve_id: string
+          id: string
+          present: boolean
+          session_id: string
+          updated_at: string
+        }
+        Insert: {
+          commentaire?: string | null
+          created_at?: string
+          eleve_id: string
+          id?: string
+          present?: boolean
+          session_id: string
+          updated_at?: string
+        }
+        Update: {
+          commentaire?: string | null
+          created_at?: string
+          eleve_id?: string
+          id?: string
+          present?: boolean
+          session_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "presences_eleve_id_fkey"
+            columns: ["eleve_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "presences_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string

@@ -56,6 +56,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/DifficultyBadge";
+import FeuilleAppel from "@/components/FeuilleAppel";
 
 type ExerciseStatus = "traite_en_classe" | "reporte" | "planifie";
 
@@ -804,6 +805,13 @@ ${Array.isArray(item.options) && item.options.length > 0
             )}
           </CardContent>
         </Card>
+      )}
+
+      {/* ─── Feuille d'appel ─── */}
+      {session && (
+        <div className="print:hidden">
+          <FeuilleAppel sessionId={id!} session={session as any} />
+        </div>
       )}
 
       {/* ─── Reported Exercises from Previous Session ─── */}
