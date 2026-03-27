@@ -194,6 +194,7 @@ const SeancesPage = () => {
   const [editDuree, setEditDuree] = useState("90");
   const [editLieu, setEditLieu] = useState("");
   const [editObjectifs, setEditObjectifs] = useState("");
+  const [editStatut, setEditStatut] = useState("planifiee");
 
   const openEdit = (s: any, e: React.MouseEvent) => {
     e.stopPropagation();
