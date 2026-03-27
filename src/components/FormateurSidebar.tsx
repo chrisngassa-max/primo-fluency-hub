@@ -46,6 +46,7 @@ const monitorNav = [
   { title: "Monitoring", url: "/formateur/monitoring", icon: Activity },
   { title: "Suivi des devoirs", url: "/formateur/suivi-devoirs", icon: ClipboardCheck },
   { title: "Tests d'entrée", url: "/formateur/tests", icon: ClipboardList },
+  { title: "Test positionnement", url: "/formateur/test-resultats", icon: GraduationCap },
   { title: "Rapports IA", url: "/formateur/rapports", icon: FileText },
 ];
 
