@@ -194,6 +194,7 @@ const SeancesPage = () => {
   const [editDuree, setEditDuree] = useState("90");
   const [editLieu, setEditLieu] = useState("");
   const [editObjectifs, setEditObjectifs] = useState("");
+  const [editStatut, setEditStatut] = useState("planifiee");
 
   const openEdit = (s: any, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -205,6 +206,7 @@ const SeancesPage = () => {
     setEditDuree(String(s.duree_minutes));
     setEditLieu(s.lieu ?? "");
     setEditObjectifs(s.objectifs ?? "");
+    setEditStatut(s.statut);
     setEditOpen(true);
   };
 
@@ -225,6 +227,7 @@ const SeancesPage = () => {
           duree_minutes: parseInt(editDuree) || 90,
           lieu: editLieu || null,
           objectifs: editObjectifs || null,
+          statut: editStatut as any,
         })
         .eq("id", editSession.id);
       if (error) throw error;
@@ -406,6 +409,18 @@ const SeancesPage = () => {
             <div className="space-y-2">
               <Label>Objectifs (optionnel)</Label>
               <Textarea value={editObjectifs} onChange={(e) => setEditObjectifs(e.target.value)} rows={2} />
+            </div>
+            <div className="space-y-2">
+              <Label>Statut</Label>
+              <Select value={editStatut} onValueChange={setEditStatut}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="planifiee">Planifiée</SelectItem>
+                  <SelectItem value="en_cours">En cours</SelectItem>
+                  <SelectItem value="terminee">Terminée</SelectItem>
+                  <SelectItem value="annulee">Annulée</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <DialogFooter>
