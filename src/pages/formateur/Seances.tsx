@@ -227,6 +227,7 @@ const SeancesPage = () => {
           duree_minutes: parseInt(editDuree) || 90,
           lieu: editLieu || null,
           objectifs: editObjectifs || null,
+          statut: editStatut as any,
         })
         .eq("id", editSession.id);
       if (error) throw error;
