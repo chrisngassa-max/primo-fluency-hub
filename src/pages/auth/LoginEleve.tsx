@@ -16,9 +16,18 @@ const LoginEleve = () => {
   const { signIn, signUp, session, role, loading, user } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const inviteCode = searchParams.get("invite");
+  const inviteParam = searchParams.get("invite");
   const [busy, setBusy] = useState(false);
   const autoJoinAttempted = useRef(false);
+
+  // Persist invite code across email confirmation redirect
+  useEffect(() => {
+    if (inviteParam) {
+      sessionStorage.setItem("tcf-invite-code", inviteParam);
+    }
+  }, [inviteParam]);
+
+  const inviteCode = inviteParam || sessionStorage.getItem("tcf-invite-code");
 
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -62,6 +71,7 @@ const LoginEleve = () => {
           .from("group_members")
           .insert({ group_id: invitation.group_id, eleve_id: user.id });
 
+        sessionStorage.removeItem("tcf-invite-code");
         const groupName = (invitation as any).group?.nom || "le groupe";
         toast.success(`Tu as rejoint le groupe « ${groupName} » !`);
       } catch (e) {
