@@ -24,7 +24,7 @@ const InviteStudentDialog = ({ groupId, groupName, open, onOpenChange }: Props) 
   const [copiedWhatsApp, setCopiedWhatsApp] = useState(false);
 
   const getInviteLink = (code: string) => {
-    const publishedBase = "https://primo-fluency-hub.lovable.app";
+    const publishedBase = "https://captcf.fr";
     return `${publishedBase}/#/eleve/login?invite=${code}`;
   };
 
