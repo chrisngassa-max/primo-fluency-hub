@@ -33,6 +33,44 @@ const LoginEleve = () => {
   const [forgotEmail, setForgotEmail] = useState("");
   const [showForgot, setShowForgot] = useState(false);
 
+  // Auto-join group when user is logged in and has an invite code
+  useEffect(() => {
+    if (!session || !user || !inviteCode || autoJoinAttempted.current) return;
+    autoJoinAttempted.current = true;
+
+    const joinGroup = async () => {
+      try {
+        const { data: invitation } = await supabase
+          .from("group_invitations")
+          .select("id, group_id, expires_at, used_count, group:groups(nom)")
+          .eq("code", inviteCode)
+          .maybeSingle();
+
+        if (!invitation) return;
+        if (new Date(invitation.expires_at) < new Date()) return;
+
+        const { data: existing } = await supabase
+          .from("group_members")
+          .select("id")
+          .eq("group_id", invitation.group_id)
+          .eq("eleve_id", user.id)
+          .maybeSingle();
+
+        if (existing) return;
+
+        await supabase
+          .from("group_members")
+          .insert({ group_id: invitation.group_id, eleve_id: user.id });
+
+        const groupName = (invitation as any).group?.nom || "le groupe";
+        toast.success(`Tu as rejoint le groupe « ${groupName} » !`);
+      } catch (e) {
+        console.error("Auto-join failed", e);
+      }
+    };
+    joinGroup();
+  }, [session, user, inviteCode]);
+
   if (!loading && session && role === "eleve") return <Navigate to="/eleve" replace />;
   if (!loading && session && role === "formateur") return <Navigate to="/formateur" replace />;
 
