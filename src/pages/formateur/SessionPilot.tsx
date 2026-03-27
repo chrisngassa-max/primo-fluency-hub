@@ -56,6 +56,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/DifficultyBadge";
+import FeuilleAppel from "@/components/FeuilleAppel";
 
 type ExerciseStatus = "traite_en_classe" | "reporte" | "planifie";
 
