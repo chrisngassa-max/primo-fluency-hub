@@ -1,7 +1,8 @@
+import { useEffect, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
@@ -14,11 +15,54 @@ import JoinGroupCard from "@/components/JoinGroupCard";
 import CompetencyGauge from "@/components/CompetencyGauge";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { toast } from "sonner";
 
 const EleveDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [showOnboarding, dismissOnboarding] = useShowOnboarding();
+  const qc = useQueryClient();
+  const autoJoinRef = useRef(false);
+
+  // Auto-join group from persisted invite code (survives email confirmation redirect)
+  useEffect(() => {
+    const code = sessionStorage.getItem("tcf-invite-code");
+    if (!user || !code || autoJoinRef.current) return;
+    autoJoinRef.current = true;
+
+    (async () => {
+      try {
+        const { data: invitation } = await supabase
+          .from("group_invitations")
+          .select("id, group_id, expires_at, group:groups(nom)")
+          .eq("code", code)
+          .maybeSingle();
+        if (!invitation || new Date(invitation.expires_at) < new Date()) {
+          sessionStorage.removeItem("tcf-invite-code");
+          return;
+        }
+        const { data: existing } = await supabase
+          .from("group_members")
+          .select("id")
+          .eq("group_id", invitation.group_id)
+          .eq("eleve_id", user.id)
+          .maybeSingle();
+        if (existing) {
+          sessionStorage.removeItem("tcf-invite-code");
+          return;
+        }
+        await supabase
+          .from("group_members")
+          .insert({ group_id: invitation.group_id, eleve_id: user.id });
+        sessionStorage.removeItem("tcf-invite-code");
+        const groupName = (invitation as any).group?.nom || "le groupe";
+        toast.success(`Tu as rejoint le groupe « ${groupName} » !`);
+        qc.invalidateQueries({ queryKey: ["eleve-memberships"] });
+      } catch (e) {
+        console.error("Auto-join failed", e);
+      }
+    })();
+  }, [user, qc]);
 
   // Check if student already passed the test
   const { data: testEntree, isLoading: testLoading } = useQuery({
