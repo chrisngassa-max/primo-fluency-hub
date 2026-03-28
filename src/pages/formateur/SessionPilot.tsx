@@ -74,6 +74,7 @@ const SessionPilot = () => {
   const qc = useQueryClient();
   const [checked, setChecked] = useState<Record<string, boolean>>({});
   const [saving, setSaving] = useState(false);
+  const [sending, setSending] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [generatingHomework, setGeneratingHomework] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
