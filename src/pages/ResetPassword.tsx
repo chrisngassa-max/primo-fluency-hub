@@ -7,6 +7,29 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
+const getRecoveryParams = () => {
+  const searchParams = new URLSearchParams(window.location.search);
+  const hash = window.location.hash;
+  const hashQuery = hash.includes("?")
+    ? hash.split("?")[1]
+    : hash.startsWith("#access_token=")
+      ? hash.slice(1)
+      : "";
+  const hashParams = new URLSearchParams(hashQuery);
+
+  return {
+    type: searchParams.get("type") ?? hashParams.get("type"),
+    hasToken: Boolean(
+      searchParams.get("access_token") ||
+      hashParams.get("access_token") ||
+      searchParams.get("refresh_token") ||
+      hashParams.get("refresh_token") ||
+      searchParams.get("code") ||
+      hashParams.get("code")
+    ),
+  };
+};
+
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -14,11 +37,28 @@ const ResetPassword = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check for recovery token in URL hash
-    const hash = window.location.hash;
-    if (hash.includes("type=recovery")) {
-      setReady(true);
-    }
+    const syncRecoveryState = async () => {
+      const recovery = getRecoveryParams();
+      if (recovery.type === "recovery" || recovery.hasToken) {
+        setReady(true);
+        return;
+      }
+
+      const { data } = await supabase.auth.getSession();
+      setReady(Boolean(data.session));
+    };
+
+    syncRecoveryState();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") {
+        setReady(true);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const handleReset = async (e: React.FormEvent) => {
@@ -33,7 +73,7 @@ const ResetPassword = () => {
       toast.error("Erreur", { description: error.message });
     } else {
       toast.success("Mot de passe mis à jour !");
-      navigate("/");
+      navigate("/formateur/login");
     }
     setLoading(false);
   };
