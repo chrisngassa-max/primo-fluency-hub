@@ -453,7 +453,8 @@ const BilanSeance = () => {
                 />
               )}
             </div>
-          ))}
+            );
+          })}
         </CardContent>
       </Card>
 
