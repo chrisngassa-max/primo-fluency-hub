@@ -733,12 +733,20 @@ ${Array.isArray(item.options) && item.options.length > 0
             {session?.titre || "Séance"} · {(session as any)?.group?.nom} · {exercises.length} exercice(s)
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <Button
+            onClick={handleSendToStudents}
+            disabled={sending || checkedCount === 0}
+            className="gap-2 bg-green-600 hover:bg-green-700 text-white"
+          >
+            {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Rocket className="h-4 w-4" />}
+            Envoyer aux élèves ({checkedCount})
+          </Button>
           <Button onClick={handleGenerateExercises} disabled={generating} variant="outline" className="gap-2">
             {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
             ✨ Générer IA
           </Button>
-          <Button onClick={handleGenerateHomework} disabled={generatingHomework} className="gap-2">
+          <Button onClick={handleGenerateHomework} disabled={generatingHomework} variant="outline" className="gap-2">
             {generatingHomework ? <Loader2 className="h-4 w-4 animate-spin" /> : <ClipboardCheck className="h-4 w-4" />}
             Générer devoirs
           </Button>
