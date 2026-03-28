@@ -81,6 +81,7 @@ Utilise le tool fourni pour retourner le résultat.`;
                         contenu: {
                           type: "object",
                           properties: {
+                            texte: { type: "string", description: "Texte support / paragraphe à lire avant les questions (obligatoire pour CE, facultatif sinon)" },
                             items: {
                               type: "array",
                               items: {
