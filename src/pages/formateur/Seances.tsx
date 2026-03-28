@@ -501,6 +501,40 @@ const SeancesPage = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Duplicate session dialog */}
+      <Dialog open={dupOpen} onOpenChange={setDupOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>Dupliquer la séance</DialogTitle></DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            « {dupSession?.titre} » — les exercices seront copiés automatiquement.
+          </p>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Groupe cible</Label>
+              <Select value={dupGroupId} onValueChange={setDupGroupId}>
+                <SelectTrigger><SelectValue placeholder="Choisir un groupe..." /></SelectTrigger>
+                <SelectContent>
+                  {(groups ?? []).map((g) => (
+                    <SelectItem key={g.id} value={g.id}>{g.nom} ({g.niveau})</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Date et heure</Label>
+              <Input type="datetime-local" value={dupDate} onChange={(e) => setDupDate(e.target.value)} />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDupOpen(false)}>Annuler</Button>
+            <Button onClick={handleDuplicate} disabled={dupSaving}>
+              {dupSaving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              Dupliquer
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Sessions list */}
       {sessions && sessions.length === 0 && (
         <Card className="border-dashed">
