@@ -144,7 +144,7 @@ const EleveDashboard = () => {
         .from("sessions")
         .select("id, titre, date_seance, group:groups(nom)")
         .in("group_id", groupIds)
-        .in("statut", ["en_cours", "terminee"])
+        .in("statut", ["planifiee", "en_cours", "terminee"])
         .order("date_seance", { ascending: false })
         .limit(20);
       if (!sessions?.length) return [];
