@@ -51,7 +51,7 @@ import {
 import {
   CheckCircle2, Clock, ArrowRight, Printer, ArrowLeft,
   BookOpen, Minus, Plus, Loader2, Sparkles, Pencil, Trash2, CirclePlus, Circle,
-  AlertTriangle, RotateCcw, ClipboardCheck, FileText, Users, Brain,
+  AlertTriangle, RotateCcw, ClipboardCheck, FileText, Users, Brain, Target,
   Eye, Volume2, ChevronDown, ChevronLeft, ChevronRight, Drama, Package, MessageCircle, Wand2,
   Rocket,
 } from "lucide-react";
