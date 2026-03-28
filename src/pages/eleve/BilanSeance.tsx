@@ -143,7 +143,7 @@ const BilanSeance = () => {
           const isCorrect = userAnswer.trim().toLowerCase() === (item.bonne_reponse || "").trim().toLowerCase();
           if (isCorrect) correct++;
           return {
-            question: item.question,
+            question: item.question || item.texte || item.enonce || `Question ${idx + 1}`,
             reponse_eleve: userAnswer,
             bonne_reponse: item.bonne_reponse,
             correct: isCorrect,
