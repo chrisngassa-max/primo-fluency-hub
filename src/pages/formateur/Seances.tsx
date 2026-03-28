@@ -16,7 +16,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Plus, Calendar, Loader2, BookOpen, Pencil } from "lucide-react";
+import { Plus, Calendar, Loader2, BookOpen, Pencil, Copy } from "lucide-react";
 
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
 
@@ -195,6 +195,74 @@ const SeancesPage = () => {
   const [editLieu, setEditLieu] = useState("");
   const [editObjectifs, setEditObjectifs] = useState("");
   const [editStatut, setEditStatut] = useState("planifiee");
+
+  // ── Duplicate session state ──
+  const [dupOpen, setDupOpen] = useState(false);
+  const [dupSession, setDupSession] = useState<any>(null);
+  const [dupGroupId, setDupGroupId] = useState("");
+  const [dupDate, setDupDate] = useState("");
+  const [dupSaving, setDupSaving] = useState(false);
+
+  const openDuplicate = (s: any, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDupSession(s);
+    setDupGroupId("");
+    setDupDate("");
+    setDupOpen(true);
+  };
+
+  const handleDuplicate = async () => {
+    if (!dupSession || !dupGroupId || !dupDate) {
+      toast.error("Choisissez un groupe et une date.");
+      return;
+    }
+    setDupSaving(true);
+    try {
+      // 1. Create duplicate session
+      const { data: newSession, error: sErr } = await supabase
+        .from("sessions")
+        .insert({
+          titre: dupSession.titre,
+          group_id: dupGroupId,
+          date_seance: new Date(dupDate).toISOString(),
+          niveau_cible: dupSession.niveau_cible,
+          objectifs: dupSession.objectifs,
+          duree_minutes: dupSession.duree_minutes,
+          lieu: dupSession.lieu,
+        })
+        .select()
+        .single();
+      if (sErr) throw sErr;
+
+      // 2. Copy session exercises
+      const { data: srcExercises } = await supabase
+        .from("session_exercices")
+        .select("exercice_id, ordre")
+        .eq("session_id", dupSession.id)
+        .order("ordre");
+
+      if (srcExercises && srcExercises.length > 0) {
+        const newExercises = srcExercises.map((se: any) => ({
+          session_id: newSession.id,
+          exercice_id: se.exercice_id,
+          ordre: se.ordre,
+        }));
+        const { error: seErr } = await supabase.from("session_exercices").insert(newExercises);
+        if (seErr) throw seErr;
+      }
+
+      const targetGroup = (groups ?? []).find((g) => g.id === dupGroupId);
+      toast.success("Séance dupliquée !", {
+        description: `Pour le groupe ${targetGroup?.nom || ""} avec ${srcExercises?.length || 0} exercice(s).`,
+      });
+      setDupOpen(false);
+      qc.invalidateQueries({ queryKey: ["formateur-sessions"] });
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    } finally {
+      setDupSaving(false);
+    }
+  };
 
   const openEdit = (s: any, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -433,6 +501,40 @@ const SeancesPage = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Duplicate session dialog */}
+      <Dialog open={dupOpen} onOpenChange={setDupOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>Dupliquer la séance</DialogTitle></DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            « {dupSession?.titre} » — les exercices seront copiés automatiquement.
+          </p>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Groupe cible</Label>
+              <Select value={dupGroupId} onValueChange={setDupGroupId}>
+                <SelectTrigger><SelectValue placeholder="Choisir un groupe..." /></SelectTrigger>
+                <SelectContent>
+                  {(groups ?? []).map((g) => (
+                    <SelectItem key={g.id} value={g.id}>{g.nom} ({g.niveau})</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Date et heure</Label>
+              <Input type="datetime-local" value={dupDate} onChange={(e) => setDupDate(e.target.value)} />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDupOpen(false)}>Annuler</Button>
+            <Button onClick={handleDuplicate} disabled={dupSaving}>
+              {dupSaving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              Dupliquer
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Sessions list */}
       {sessions && sessions.length === 0 && (
         <Card className="border-dashed">
@@ -461,7 +563,16 @@ const SeancesPage = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex items-center gap-1 shrink-0">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={(e) => openDuplicate(s, e)}
+                      title="Dupliquer pour un autre groupe"
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
                     <Button
                       variant="ghost"
                       size="icon"
