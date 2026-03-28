@@ -261,13 +261,18 @@ const SessionBilan = () => {
   };
 
   const handleSendNowClick = async () => {
-    // Get member count for confirmation
     if (session?.group_id) {
-      const { count } = await supabase
+      const { data: members } = await supabase
         .from("group_members")
-        .select("*", { count: "exact", head: true })
+        .select("eleve_id, profile:profiles(nom, prenom)")
         .eq("group_id", session.group_id);
-      setGroupMemberCount(count || 0);
+      const mapped = (members || []).map((m: any) => ({
+        eleve_id: m.eleve_id,
+        nom: m.profile?.nom || "",
+        prenom: m.profile?.prenom || "",
+      }));
+      setGroupMembers(mapped);
+      setSelectedStudentIds(new Set(mapped.map((m: any) => m.eleve_id)));
     }
     setConfirmSendOpen(true);
   };
