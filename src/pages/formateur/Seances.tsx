@@ -16,7 +16,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Plus, Calendar, Loader2, BookOpen, Pencil, Copy } from "lucide-react";
+import { Plus, Calendar, Loader2, BookOpen, Pencil, Copy, Rocket } from "lucide-react";
 import { COMPETENCES_ORDER, COMPETENCE_COLORS, resolveSessionCompetences } from "@/lib/competences";
 
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
@@ -647,27 +647,36 @@ const SeancesPage = () => {
                       )}
                     </div>
                   </div>
-                  <div className="flex items-center gap-1 shrink-0">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={(e) => openDuplicate(s, e)}
-                      title="Dupliquer pour un autre groupe"
-                    >
-                      <Copy className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={(e) => openEdit(s, e)}
-                      title="Modifier la séance"
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Badge variant={badge.variant}>{badge.label}</Badge>
-                  </div>
+                   <div className="flex items-center gap-1 shrink-0">
+                     <Button
+                       variant="default"
+                       size="sm"
+                       className="gap-1.5 h-8"
+                       onClick={(e) => { e.stopPropagation(); navigate(`/formateur/seances/${s.id}/pilote`); }}
+                       title="Piloter la séance"
+                     >
+                       <Rocket className="h-3.5 w-3.5" /> Piloter
+                     </Button>
+                     <Button
+                       variant="ghost"
+                       size="icon"
+                       className="h-8 w-8"
+                       onClick={(e) => openDuplicate(s, e)}
+                       title="Dupliquer pour un autre groupe"
+                     >
+                       <Copy className="h-4 w-4" />
+                     </Button>
+                     <Button
+                       variant="ghost"
+                       size="icon"
+                       className="h-8 w-8"
+                       onClick={(e) => openEdit(s, e)}
+                       title="Modifier la séance"
+                     >
+                       <Pencil className="h-4 w-4" />
+                     </Button>
+                     <Badge variant={badge.variant}>{badge.label}</Badge>
+                   </div>
                 </div>
               </CardContent>
             </Card>
