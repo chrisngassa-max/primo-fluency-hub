@@ -38,6 +38,8 @@ RÈGLES STRICTES :
 - Public : adultes primo-arrivants, niveau ${niveauVise}
 - Formats possibles : qcm, vrai_faux, texte_lacunaire, appariement, transformation
 - Langue simple et claire
+- IMPORTANT : pour les exercices de CE (compréhension écrite), tu DOIS OBLIGATOIREMENT inclure un champ "texte" dans contenu avec le paragraphe/document support à lire AVANT les questions. Sans ce texte, l'exercice est inutilisable pour l'élève.
+- Pour les exercices de CO, inclus aussi un champ "texte" avec le script audio/dialogue.
 
 IMPORTANT — Pour CHAQUE exercice, tu dois aussi proposer un "animation_guide" :
 - scenario : une mise en situation simple et concrète liée à l'exercice
@@ -86,6 +88,7 @@ Tu DOIS utiliser le tool "generate_exercises" pour retourner le résultat.`;
                         contenu: {
                           type: "object",
                           properties: {
+                            texte: { type: "string", description: "Texte support / paragraphe à lire avant les questions (OBLIGATOIRE pour CE, recommandé pour CO)" },
                             items: {
                               type: "array",
                               items: {

@@ -39,6 +39,8 @@ RÈGLES :
 - Contextes IRN : préfecture, CAF, emploi, logement, transport, santé, citoyenneté
 - Varier les formats : qcm, vrai_faux, texte_lacunaire, appariement, transformation
 - Chaque exercice doit être ORIGINAL
+- IMPORTANT : pour les exercices de CE (compréhension écrite), tu DOIS OBLIGATOIREMENT inclure un champ "texte" dans contenu avec le paragraphe/document à lire AVANT les questions. Sans ce texte, l'exercice est inutilisable.
+- Pour les exercices de CO, inclus aussi un champ "texte" avec le script audio/dialogue à écouter.
 - Les ateliers ludiques doivent être réalistes et réalisables en classe (jeu de rôle, mime, Jacques a dit, cartes, etc.)
 ${objectifs ? `- Objectifs de la séance : ${objectifs}` : ""}
 ${exercices_suggeres?.length ? `- Types d'exercices suggérés : ${exercices_suggeres.join(", ")}` : ""}
@@ -81,6 +83,7 @@ Utilise le tool fourni pour retourner le résultat.`;
                         contenu: {
                           type: "object",
                           properties: {
+                            texte: { type: "string", description: "Texte support / paragraphe à lire avant les questions (obligatoire pour CE, facultatif sinon)" },
                             items: {
                               type: "array",
                               items: {
