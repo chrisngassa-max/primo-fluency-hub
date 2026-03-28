@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { updateProfilEleve } from "@/lib/updateProfilEleve";
@@ -19,13 +19,27 @@ import {
 import { cn } from "@/lib/utils";
 import CompetenceLabel from "@/components/CompetenceLabel";
 
+const STORAGE_KEY_PREFIX = "bilan-seance-progress-";
+
 const BilanSeance = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
   const qc = useQueryClient();
-  const [currentExIdx, setCurrentExIdx] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, Record<number, string>>>({});
+
+  const storageKey = `${STORAGE_KEY_PREFIX}${sessionId}-${user?.id}`;
+
+  // Restore saved progress from localStorage
+  const savedProgress = (() => {
+    try {
+      const raw = localStorage.getItem(storageKey);
+      if (raw) return JSON.parse(raw) as { currentExIdx: number; answers: Record<string, Record<number, string>> };
+    } catch { /* ignore */ }
+    return null;
+  })();
+
+  const [currentExIdx, setCurrentExIdx] = useState(savedProgress?.currentExIdx ?? 0);
+  const [answers, setAnswers] = useState<Record<string, Record<number, string>>>(savedProgress?.answers ?? {});
   const [submitting, setSubmitting] = useState(false);
   const [results, setResults] = useState<{
     scores: { exerciceId: string; titre: string; competence: string; score: number; correction: any[] }[];
@@ -102,6 +116,13 @@ const BilanSeance = () => {
     (acc, exAnswers) => acc + Object.keys(exAnswers).length,
     0
   );
+  // Auto-save progress to localStorage whenever answers or index change
+  useEffect(() => {
+    if (!storageKey || !sessionId || !user?.id) return;
+    try {
+      localStorage.setItem(storageKey, JSON.stringify({ currentExIdx, answers }));
+    } catch { /* quota exceeded, ignore */ }
+  }, [currentExIdx, answers, storageKey, sessionId, user?.id]);
 
   const handleSubmit = async () => {
     if (!user || pendingExercices.length === 0) return;
@@ -122,7 +143,7 @@ const BilanSeance = () => {
           const isCorrect = userAnswer.trim().toLowerCase() === (item.bonne_reponse || "").trim().toLowerCase();
           if (isCorrect) correct++;
           return {
-            question: item.question,
+            question: item.question || item.texte || item.enonce || `Question ${idx + 1}`,
             reponse_eleve: userAnswer,
             bonne_reponse: item.bonne_reponse,
             correct: isCorrect,
@@ -201,6 +222,8 @@ const BilanSeance = () => {
         console.error("Profile update failed:", profileErr);
       }
 
+      // Clear saved progress after successful submission
+      try { localStorage.removeItem(storageKey); } catch { /* ignore */ }
       setResults({ scores, globalScore, devoirsCreated });
       qc.invalidateQueries({ queryKey: ["eleve-devoirs"] });
       qc.invalidateQueries({ queryKey: ["eleve-bilans"] });
@@ -380,11 +403,21 @@ const BilanSeance = () => {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          {currentItems.map((item: any, idx: number) => (
+          {currentItems.map((item: any, idx: number) => {
+            // Skip malformed items with no question text
+            if (!item.question && !item.texte && !item.enonce) return null;
+            const questionText = item.question || item.texte || item.enonce || `Question ${idx + 1}`;
+            return (
             <div key={idx} className="space-y-2">
+              {/* Show support text/paragraph if present */}
+              {(item.texte_support || item.paragraphe || item.document || item.contexte) && (
+                <div className="p-3 rounded-lg bg-muted/50 text-sm whitespace-pre-line border border-border/50 mb-2">
+                  {item.texte_support || item.paragraphe || item.document || item.contexte}
+                </div>
+              )}
               <p className="font-medium text-sm">
                 <span className="text-primary font-bold mr-2">Q{idx + 1}.</span>
-                {item.question}
+                {questionText}
               </p>
               {Array.isArray(item.options) && item.options.length > 0 ? (
                 <RadioGroup
@@ -420,7 +453,8 @@ const BilanSeance = () => {
                 />
               )}
             </div>
-          ))}
+            );
+          })}
         </CardContent>
       </Card>
 

@@ -51,12 +51,31 @@ const TestEntreePage = () => {
   const questions = TCF_QUESTIONS;
   const totalQuestions = questions.length;
 
+  const testStorageKey = `test-entree-answers-${user?.id}`;
+
+  // Restore saved answers from localStorage
+  const savedAnswers = (() => {
+    try {
+      const raw = localStorage.getItem(testStorageKey);
+      if (raw) return JSON.parse(raw) as Record<number, number>;
+    } catch { /* ignore */ }
+    return {};
+  })();
+
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<number, number>>({});
+  const [answers, setAnswers] = useState<Record<number, number>>(savedAnswers);
   const [submitting, setSubmitting] = useState(false);
   const [started, setStarted] = useState(false);
   const [timeLeft, setTimeLeft] = useState(90 * 60); // 1h30
   const [onBreak, setOnBreak] = useState(false); // pause inter-sections
+
+  // Auto-save answers to localStorage
+  useEffect(() => {
+    if (!user?.id || Object.keys(answers).length === 0) return;
+    try {
+      localStorage.setItem(testStorageKey, JSON.stringify(answers));
+    } catch { /* ignore */ }
+  }, [answers, testStorageKey, user?.id]);
 
   // Resume from existing in-progress test
   useEffect(() => {
@@ -259,6 +278,8 @@ const TestEntreePage = () => {
         .eq("eleve_id", user!.id);
 
       if (error) throw error;
+      // Clear saved answers after successful submission
+      try { localStorage.removeItem(testStorageKey); } catch { /* ignore */ }
       toast.success("Test terminé !");
       qc.invalidateQueries({ queryKey: ["eleve-test-entree"] });
     } catch (e: any) {
