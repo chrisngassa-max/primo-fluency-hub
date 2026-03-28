@@ -127,6 +127,74 @@ const EleveDashboard = () => {
 
   const uncompletedTests = (pendingTests ?? []).filter((t: any) => !t.completed);
 
+  // Fetch sessions with exercises sent to students (traite_en_classe) that student hasn't completed
+  const { data: sessionExercises, isLoading: loadingSessionEx } = useQuery({
+    queryKey: ["eleve-session-exercises", user?.id],
+    queryFn: async () => {
+      // Get student's groups
+      const { data: memberships } = await supabase
+        .from("group_members")
+        .select("group_id")
+        .eq("eleve_id", user!.id);
+      if (!memberships?.length) return [];
+      const groupIds = memberships.map((m) => m.group_id);
+
+      // Get sessions for those groups
+      const { data: sessions } = await supabase
+        .from("sessions")
+        .select("id, titre, date_seance, group:groups(nom)")
+        .in("group_id", groupIds)
+        .in("statut", ["en_cours", "terminee"])
+        .order("date_seance", { ascending: false })
+        .limit(20);
+      if (!sessions?.length) return [];
+
+      // Get session_exercices with statut traite_en_classe
+      const sessionIds = sessions.map((s) => s.id);
+      const { data: seLinks } = await supabase
+        .from("session_exercices")
+        .select("session_id, exercice_id")
+        .in("session_id", sessionIds)
+        .eq("statut", "traite_en_classe" as any);
+      if (!seLinks?.length) return [];
+
+      // Check which exercises student already completed
+      const exerciceIds = [...new Set(seLinks.map((se) => se.exercice_id))];
+      const { data: resultats } = await supabase
+        .from("resultats")
+        .select("exercice_id")
+        .eq("eleve_id", user!.id)
+        .in("exercice_id", exerciceIds);
+      const doneExIds = new Set((resultats ?? []).map((r) => r.exercice_id));
+
+      // Build per-session summary
+      const sessionMap = new Map(sessions.map((s) => [s.id, s]));
+      const grouped: Record<string, { total: number; done: number }> = {};
+      for (const se of seLinks) {
+        if (!grouped[se.session_id]) grouped[se.session_id] = { total: 0, done: 0 };
+        grouped[se.session_id].total++;
+        if (doneExIds.has(se.exercice_id)) grouped[se.session_id].done++;
+      }
+
+      return Object.entries(grouped)
+        .filter(([, v]) => v.done < v.total) // Only sessions with pending exercises
+        .map(([sessionId, v]) => {
+          const s = sessionMap.get(sessionId)!;
+          return {
+            sessionId,
+            titre: s.titre,
+            date_seance: s.date_seance,
+            group_nom: (s.group as any)?.nom || "",
+            total: v.total,
+            done: v.done,
+            remaining: v.total - v.done,
+          };
+        })
+        .sort((a, b) => new Date(b.date_seance).getTime() - new Date(a.date_seance).getTime());
+    },
+    enabled: !!user?.id,
+  });
+
   // Fetch profil_eleve for current scores
   const { data: profilEleve } = useQuery({
     queryKey: ["eleve-profil", user?.id],
