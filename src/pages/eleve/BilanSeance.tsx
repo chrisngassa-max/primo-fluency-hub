@@ -21,6 +21,56 @@ import CompetenceLabel from "@/components/CompetenceLabel";
 
 const STORAGE_KEY_PREFIX = "bilan-seance-progress-";
 
+const SUPPORT_KEYS = ["texte", "paragraphe", "document", "contexte", "texte_support", "script_audio"] as const;
+
+const getStringValue = (value: unknown) => {
+  if (typeof value !== "string") return "";
+  return value.trim();
+};
+
+const extractQuotedBlock = (text: string, open: string, close: string = open) => {
+  const start = text.indexOf(open);
+  const end = text.lastIndexOf(close);
+
+  if (start === -1 || end === -1 || end <= start) return "";
+
+  return getStringValue(text.slice(start + open.length, end));
+};
+
+const extractSupportFromConsigne = (consigne?: string) => {
+  const normalized = getStringValue(consigne);
+  if (!normalized) return "";
+
+  const quotedText =
+    extractQuotedBlock(normalized, "«", "»") ||
+    extractQuotedBlock(normalized, '"') ||
+    extractQuotedBlock(normalized, "'");
+
+  if (quotedText.length >= 12) return quotedText;
+
+  const colonIndex = normalized.indexOf(":");
+  if (colonIndex === -1) return "";
+
+  const trailingText = getStringValue(normalized.slice(colonIndex + 1));
+  return trailingText.length >= 24 && /[.!?]/.test(trailingText) ? trailingText : "";
+};
+
+const getSupportText = (source?: Record<string, unknown> | null) => {
+  if (!source) return "";
+
+  for (const key of SUPPORT_KEYS) {
+    const value = getStringValue(source[key]);
+    if (value) return value;
+  }
+
+  return "";
+};
+
+const getExerciseSupportText = (exercise: any) => {
+  const contenu = exercise?.contenu as Record<string, unknown> | undefined;
+  return getSupportText(contenu) || extractSupportFromConsigne(exercise?.consigne);
+};
+
 const BilanSeance = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
   const navigate = useNavigate();
@@ -107,6 +157,7 @@ const BilanSeance = () => {
   const currentSe = pendingExercices[currentExIdx];
   const currentEx = currentSe?.exercice as any;
   const currentItems: any[] = currentEx?.contenu?.items ?? [];
+  const exerciseSupportText = getExerciseSupportText(currentEx);
   const currentAnswers = answers[currentEx?.id] ?? {};
   const totalQuestions = pendingExercices.reduce((acc: number, se: any) => {
     const items = se.exercice?.contenu?.items ?? [];
@@ -403,28 +454,24 @@ const BilanSeance = () => {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Exercise-level support text (paragraph, document, context) */}
-          {(() => {
-            const contenu = currentEx?.contenu as any;
-            const supportText = contenu?.texte || contenu?.paragraphe || contenu?.document || contenu?.contexte || contenu?.texte_support;
-            if (!supportText) return null;
-            return (
-              <div className="p-4 rounded-lg bg-muted/50 text-sm whitespace-pre-line border border-border/50 leading-relaxed">
-                <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide font-semibold">📄 Document</p>
-                {supportText}
-              </div>
-            );
-          })()}
+          {exerciseSupportText && (
+            <div className="p-4 rounded-lg bg-muted/50 text-sm whitespace-pre-line border border-border/50 leading-relaxed">
+              <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide font-semibold">📄 Document</p>
+              {exerciseSupportText}
+            </div>
+          )}
           {currentItems.map((item: any, idx: number) => {
             // Skip malformed items with no question text
             if (!item.question && !item.texte && !item.enonce) return null;
             const questionText = item.question || item.texte || item.enonce || `Question ${idx + 1}`;
+            const itemSupportText = getSupportText(item);
+            const shouldShowItemSupport = itemSupportText && itemSupportText !== exerciseSupportText;
             return (
             <div key={idx} className="space-y-2">
               {/* Item-level support text if different from exercise-level */}
-              {(item.texte_support || item.paragraphe || item.document || item.contexte) && (
+              {shouldShowItemSupport && (
                 <div className="p-3 rounded-lg bg-muted/50 text-sm whitespace-pre-line border border-border/50 mb-2">
-                  {item.texte_support || item.paragraphe || item.document || item.contexte}
+                  {itemSupportText}
                 </div>
               )}
               <p className="font-medium text-sm">
