@@ -349,6 +349,47 @@ const EleveDashboard = () => {
         </Card>
       )}
 
+      {/* Exercices de séance envoyés par le formateur */}
+      {sessionExercises && sessionExercises.length > 0 && (
+        <Card className="border-green-500/30 bg-green-50/50 dark:bg-green-950/20">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Pencil className="h-5 w-5 text-green-600" />
+              Exercices de séance à faire
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <p className="text-sm text-muted-foreground mb-3">
+              Ton formateur t'a envoyé des exercices à réaliser.
+            </p>
+            {sessionExercises.map((se: any) => (
+              <div
+                key={se.sessionId}
+                className="flex items-center gap-3 p-3 rounded-xl border bg-card hover:bg-muted/30 transition-colors cursor-pointer"
+                onClick={() => navigate(`/eleve/bilan/${se.sessionId}`)}
+              >
+                <div className="h-10 w-10 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center shrink-0">
+                  <Pencil className="h-5 w-5 text-green-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-sm truncate">{se.titre}</p>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Calendar className="h-3 w-3" />
+                    {format(new Date(se.date_seance), "d MMMM yyyy", { locale: fr })}
+                    {se.group_nom && <><span>·</span><span>{se.group_nom}</span></>}
+                    <span>·</span>
+                    <span>{se.remaining} exercice(s) restant(s)</span>
+                  </div>
+                </div>
+                <Button size="sm" variant="default" className="gap-1 shrink-0">
+                  Faire <ArrowRight className="h-3 w-3" />
+                </Button>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+
       {/* Ma progression détaillée */}
       <Card>
         <CardHeader>
