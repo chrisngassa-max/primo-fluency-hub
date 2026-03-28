@@ -8,7 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BookOpen, TrendingUp, AlertCircle, ArrowRight, Target, ClipboardCheck, Calendar, BarChart2 } from "lucide-react";
+import { BookOpen, TrendingUp, AlertCircle, ArrowRight, Target, ClipboardCheck, Calendar, BarChart2, Pencil } from "lucide-react";
 import CompetenceLabel from "@/components/CompetenceLabel";
 import EleveOnboarding, { useShowOnboarding } from "@/components/EleveOnboarding";
 import JoinGroupCard from "@/components/JoinGroupCard";
@@ -126,6 +126,74 @@ const EleveDashboard = () => {
   });
 
   const uncompletedTests = (pendingTests ?? []).filter((t: any) => !t.completed);
+
+  // Fetch sessions with exercises sent to students (traite_en_classe) that student hasn't completed
+  const { data: sessionExercises, isLoading: loadingSessionEx } = useQuery({
+    queryKey: ["eleve-session-exercises", user?.id],
+    queryFn: async () => {
+      // Get student's groups
+      const { data: memberships } = await supabase
+        .from("group_members")
+        .select("group_id")
+        .eq("eleve_id", user!.id);
+      if (!memberships?.length) return [];
+      const groupIds = memberships.map((m) => m.group_id);
+
+      // Get sessions for those groups
+      const { data: sessions } = await supabase
+        .from("sessions")
+        .select("id, titre, date_seance, group:groups(nom)")
+        .in("group_id", groupIds)
+        .in("statut", ["en_cours", "terminee"])
+        .order("date_seance", { ascending: false })
+        .limit(20);
+      if (!sessions?.length) return [];
+
+      // Get session_exercices with statut traite_en_classe
+      const sessionIds = sessions.map((s) => s.id);
+      const { data: seLinks } = await supabase
+        .from("session_exercices")
+        .select("session_id, exercice_id")
+        .in("session_id", sessionIds)
+        .eq("statut", "traite_en_classe" as any);
+      if (!seLinks?.length) return [];
+
+      // Check which exercises student already completed
+      const exerciceIds = [...new Set(seLinks.map((se) => se.exercice_id))];
+      const { data: resultats } = await supabase
+        .from("resultats")
+        .select("exercice_id")
+        .eq("eleve_id", user!.id)
+        .in("exercice_id", exerciceIds);
+      const doneExIds = new Set((resultats ?? []).map((r) => r.exercice_id));
+
+      // Build per-session summary
+      const sessionMap = new Map(sessions.map((s) => [s.id, s]));
+      const grouped: Record<string, { total: number; done: number }> = {};
+      for (const se of seLinks) {
+        if (!grouped[se.session_id]) grouped[se.session_id] = { total: 0, done: 0 };
+        grouped[se.session_id].total++;
+        if (doneExIds.has(se.exercice_id)) grouped[se.session_id].done++;
+      }
+
+      return Object.entries(grouped)
+        .filter(([, v]) => v.done < v.total) // Only sessions with pending exercises
+        .map(([sessionId, v]) => {
+          const s = sessionMap.get(sessionId)!;
+          return {
+            sessionId,
+            titre: s.titre,
+            date_seance: s.date_seance,
+            group_nom: (s.group as any)?.nom || "",
+            total: v.total,
+            done: v.done,
+            remaining: v.total - v.done,
+          };
+        })
+        .sort((a, b) => new Date(b.date_seance).getTime() - new Date(a.date_seance).getTime());
+    },
+    enabled: !!user?.id,
+  });
 
   // Fetch profil_eleve for current scores
   const { data: profilEleve } = useQuery({
@@ -274,6 +342,47 @@ const EleveDashboard = () => {
                 </div>
                 <Button size="sm" variant="default" className="gap-1 shrink-0">
                   Commencer le test <ArrowRight className="h-3 w-3" />
+                </Button>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Exercices de séance envoyés par le formateur */}
+      {sessionExercises && sessionExercises.length > 0 && (
+        <Card className="border-green-500/30 bg-green-50/50 dark:bg-green-950/20">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Pencil className="h-5 w-5 text-green-600" />
+              Exercices de séance à faire
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <p className="text-sm text-muted-foreground mb-3">
+              Ton formateur t'a envoyé des exercices à réaliser.
+            </p>
+            {sessionExercises.map((se: any) => (
+              <div
+                key={se.sessionId}
+                className="flex items-center gap-3 p-3 rounded-xl border bg-card hover:bg-muted/30 transition-colors cursor-pointer"
+                onClick={() => navigate(`/eleve/bilan/${se.sessionId}`)}
+              >
+                <div className="h-10 w-10 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center shrink-0">
+                  <Pencil className="h-5 w-5 text-green-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-sm truncate">{se.titre}</p>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Calendar className="h-3 w-3" />
+                    {format(new Date(se.date_seance), "d MMMM yyyy", { locale: fr })}
+                    {se.group_nom && <><span>·</span><span>{se.group_nom}</span></>}
+                    <span>·</span>
+                    <span>{se.remaining} exercice(s) restant(s)</span>
+                  </div>
+                </div>
+                <Button size="sm" variant="default" className="gap-1 shrink-0">
+                  Faire <ArrowRight className="h-3 w-3" />
                 </Button>
               </div>
             ))}
