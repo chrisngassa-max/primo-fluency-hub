@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Plus, Calendar, Loader2, BookOpen, Pencil, Copy } from "lucide-react";
+import { COMPETENCES_ORDER, COMPETENCE_COLORS, resolveSessionCompetences } from "@/lib/competences";
 
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
 
@@ -25,7 +26,6 @@ const getSessionBadge = (statut: string, dateSeance: string): { label: string; v
   if (statut === "terminee") return { label: "Terminée", variant: "secondary" };
   if (statut === "en_cours") return { label: "En cours", variant: "default" };
 
-  // For planifiee, determine based on date
   const now = new Date();
   const seanceDate = new Date(dateSeance);
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -35,6 +35,44 @@ const getSessionBadge = (statut: string, dateSeance: string): { label: string; v
   if (seanceDay < today) return { label: "Terminée", variant: "secondary" };
   return { label: "Planifiée", variant: "outline" };
 };
+
+/** Toggle a competence in a Set-like array */
+const toggleComp = (comps: string[], comp: string): string[] =>
+  comps.includes(comp) ? comps.filter((c) => c !== comp) : [...comps, comp];
+
+/** Competence multi-select UI block */
+const CompetenceMultiSelect = ({
+  value,
+  onChange,
+  label = "Compétences TCF ciblées",
+}: {
+  value: string[];
+  onChange: (v: string[]) => void;
+  label?: string;
+}) => (
+  <div className="space-y-2">
+    <Label>{label}</Label>
+    <div className="flex flex-wrap gap-2">
+      {COMPETENCES_ORDER.map((c) => {
+        const selected = value.includes(c);
+        return (
+          <button
+            key={c}
+            type="button"
+            onClick={() => onChange(toggleComp(value, c))}
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+              selected
+                ? `${COMPETENCE_COLORS[c]} border-current ring-1 ring-current/30`
+                : "bg-muted/40 text-muted-foreground border-border hover:bg-muted"
+            }`}
+          >
+            {c}
+          </button>
+        );
+      })}
+    </div>
+  </div>
+);
 
 const SeancesPage = () => {
   const { user } = useAuth();
@@ -50,6 +88,7 @@ const SeancesPage = () => {
   const [objectifs, setObjectifs] = useState("");
   const [dureeMinutes, setDureeMinutes] = useState("90");
   const [lieu, setLieu] = useState("");
+  const [competencesCibles, setCompetencesCibles] = useState<string[]>([]);
 
   // Sequence attachment
   const [selectedSequenceId, setSelectedSequenceId] = useState("");
@@ -69,7 +108,7 @@ const SeancesPage = () => {
     enabled: !!user,
   });
 
-  // Fetch sessions
+  // Fetch sessions with exercise competences for fallback
   const { data: sessions, isLoading } = useQuery({
     queryKey: ["formateur-sessions", user?.id],
     queryFn: async () => {
@@ -78,8 +117,33 @@ const SeancesPage = () => {
         .select("*, group:groups(nom, formateur_id)")
         .order("date_seance", { ascending: false });
       if (error) throw error;
-      // Filter by formateur (RLS should handle this but double check)
-      return (data ?? []).filter((s: any) => s.group?.formateur_id === user!.id);
+      const filtered = (data ?? []).filter((s: any) => s.group?.formateur_id === user!.id);
+
+      // Fetch exercise competences for sessions without competences_cibles
+      const sessionIds = filtered.map((s: any) => s.id);
+      if (sessionIds.length === 0) return filtered;
+
+      const { data: seLinks } = await supabase
+        .from("session_exercices")
+        .select("session_id, exercice:exercices(competence)")
+        .in("session_id", sessionIds);
+
+      const exerciseCompsBySession: Record<string, string[]> = {};
+      for (const link of seLinks ?? []) {
+        const comp = (link as any).exercice?.competence;
+        if (comp) {
+          if (!exerciseCompsBySession[link.session_id]) exerciseCompsBySession[link.session_id] = [];
+          exerciseCompsBySession[link.session_id].push(comp);
+        }
+      }
+
+      return filtered.map((s: any) => ({
+        ...s,
+        _resolvedComps: resolveSessionCompetences(
+          (s as any).competences_cibles,
+          exerciseCompsBySession[s.id] || []
+        ),
+      }));
     },
     enabled: !!user,
   });
@@ -137,7 +201,6 @@ const SeancesPage = () => {
 
     setSaving(true);
     try {
-      // Create session
       const { data: session, error: sErr } = await supabase
         .from("sessions")
         .insert({
@@ -148,12 +211,12 @@ const SeancesPage = () => {
           objectifs: objectifs || null,
           duree_minutes: parseInt(dureeMinutes) || 90,
           lieu: lieu || null,
-        })
+          competences_cibles: competencesCibles.length > 0 ? competencesCibles : null,
+        } as any)
         .select()
         .single();
       if (sErr) throw sErr;
 
-      // Attach selected exercises
       if (selectedExerciseIds.size > 0) {
         const sessionExercises = Array.from(selectedExerciseIds).map((exId, i) => ({
           session_id: session.id,
@@ -181,6 +244,7 @@ const SeancesPage = () => {
     setTitre(""); setGroupId(""); setDateSeance(""); setNiveauCible("A2");
     setObjectifs(""); setDureeMinutes("90"); setLieu("");
     setSelectedSequenceId(""); setSelectedExerciseIds(new Set());
+    setCompetencesCibles([]);
   };
 
   // ── Edit session state ──
@@ -195,6 +259,7 @@ const SeancesPage = () => {
   const [editLieu, setEditLieu] = useState("");
   const [editObjectifs, setEditObjectifs] = useState("");
   const [editStatut, setEditStatut] = useState("planifiee");
+  const [editCompetences, setEditCompetences] = useState<string[]>([]);
 
   // ── Duplicate session state ──
   const [dupOpen, setDupOpen] = useState(false);
@@ -218,7 +283,6 @@ const SeancesPage = () => {
     }
     setDupSaving(true);
     try {
-      // 1. Create duplicate session
       const { data: newSession, error: sErr } = await supabase
         .from("sessions")
         .insert({
@@ -229,12 +293,12 @@ const SeancesPage = () => {
           objectifs: dupSession.objectifs,
           duree_minutes: dupSession.duree_minutes,
           lieu: dupSession.lieu,
-        })
+          competences_cibles: (dupSession as any).competences_cibles || null,
+        } as any)
         .select()
         .single();
       if (sErr) throw sErr;
 
-      // 2. Copy session exercises
       const { data: srcExercises } = await supabase
         .from("session_exercices")
         .select("exercice_id, ordre")
@@ -275,6 +339,7 @@ const SeancesPage = () => {
     setEditLieu(s.lieu ?? "");
     setEditObjectifs(s.objectifs ?? "");
     setEditStatut(s.statut);
+    setEditCompetences((s as any).competences_cibles || []);
     setEditOpen(true);
   };
 
@@ -296,7 +361,8 @@ const SeancesPage = () => {
           lieu: editLieu || null,
           objectifs: editObjectifs || null,
           statut: editStatut as any,
-        })
+          competences_cibles: editCompetences.length > 0 ? editCompetences : null,
+        } as any)
         .eq("id", editSession.id);
       if (error) throw error;
       toast.success("Séance modifiée !");
@@ -356,6 +422,10 @@ const SeancesPage = () => {
                   </Select>
                 </div>
               </div>
+
+              {/* Competences TCF */}
+              <CompetenceMultiSelect value={competencesCibles} onChange={setCompetencesCibles} />
+
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
                   <Label>Date et heure</Label>
@@ -460,6 +530,10 @@ const SeancesPage = () => {
                 </Select>
               </div>
             </div>
+
+            {/* Competences TCF */}
+            <CompetenceMultiSelect value={editCompetences} onChange={setEditCompetences} />
+
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
                 <Label>Date et heure</Label>
@@ -549,6 +623,7 @@ const SeancesPage = () => {
       <div className="space-y-3">
         {(sessions ?? []).map((s: any) => {
           const badge = getSessionBadge(s.statut, s.date_seance);
+          const comps: string[] = s._resolvedComps || [];
           return (
             <Card key={s.id} className="cursor-pointer hover:border-primary/30 transition-colors"
               onClick={() => navigate(`/formateur/seances/${s.id}/pilote`)}>
@@ -561,6 +636,15 @@ const SeancesPage = () => {
                       <p className="text-xs text-muted-foreground">
                         {s.group?.nom} · {new Date(s.date_seance).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
                       </p>
+                      {comps.length > 0 && (
+                        <div className="flex gap-1 flex-wrap mt-1">
+                          {comps.map((c) => (
+                            <span key={c} className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold ${COMPETENCE_COLORS[c] || ""}`}>
+                              {c}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
