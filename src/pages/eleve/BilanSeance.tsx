@@ -403,11 +403,21 @@ const BilanSeance = () => {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          {currentItems.map((item: any, idx: number) => (
+          {currentItems.map((item: any, idx: number) => {
+            // Skip malformed items with no question text
+            if (!item.question && !item.texte && !item.enonce) return null;
+            const questionText = item.question || item.texte || item.enonce || `Question ${idx + 1}`;
+            return (
             <div key={idx} className="space-y-2">
+              {/* Show support text/paragraph if present */}
+              {(item.texte_support || item.paragraphe || item.document || item.contexte) && (
+                <div className="p-3 rounded-lg bg-muted/50 text-sm whitespace-pre-line border border-border/50 mb-2">
+                  {item.texte_support || item.paragraphe || item.document || item.contexte}
+                </div>
+              )}
               <p className="font-medium text-sm">
                 <span className="text-primary font-bold mr-2">Q{idx + 1}.</span>
-                {item.question}
+                {questionText}
               </p>
               {Array.isArray(item.options) && item.options.length > 0 ? (
                 <RadioGroup
