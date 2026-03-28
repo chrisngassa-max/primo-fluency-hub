@@ -1,0 +1,1 @@
+ALTER TABLE public.sessions ADD COLUMN competences_cibles text[] DEFAULT NULL;
