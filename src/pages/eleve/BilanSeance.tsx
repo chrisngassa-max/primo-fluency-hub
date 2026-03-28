@@ -19,13 +19,27 @@ import {
 import { cn } from "@/lib/utils";
 import CompetenceLabel from "@/components/CompetenceLabel";
 
+const STORAGE_KEY_PREFIX = "bilan-seance-progress-";
+
 const BilanSeance = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
   const qc = useQueryClient();
-  const [currentExIdx, setCurrentExIdx] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, Record<number, string>>>({});
+
+  const storageKey = `${STORAGE_KEY_PREFIX}${sessionId}-${user?.id}`;
+
+  // Restore saved progress from localStorage
+  const savedProgress = (() => {
+    try {
+      const raw = localStorage.getItem(storageKey);
+      if (raw) return JSON.parse(raw) as { currentExIdx: number; answers: Record<string, Record<number, string>> };
+    } catch { /* ignore */ }
+    return null;
+  })();
+
+  const [currentExIdx, setCurrentExIdx] = useState(savedProgress?.currentExIdx ?? 0);
+  const [answers, setAnswers] = useState<Record<string, Record<number, string>>>(savedProgress?.answers ?? {});
   const [submitting, setSubmitting] = useState(false);
   const [results, setResults] = useState<{
     scores: { exerciceId: string; titre: string; competence: string; score: number; correction: any[] }[];
