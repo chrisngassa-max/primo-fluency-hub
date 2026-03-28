@@ -617,42 +617,204 @@ const SessionBilan = () => {
 
       {/* MAILLON 1: Test de bilan généré — modal de confirmation */}
       <Dialog open={showTestModal} onOpenChange={setShowTestModal}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <ClipboardCheck className="h-5 w-5 text-primary" />
-              <span className="inline-flex items-center gap-1">✨ Test de bilan généré par l'IA — {generatedTest?.questions?.length || 0} questions</span>
+              <span className="inline-flex items-center gap-1">✨ Test de bilan — {generatedTest?.questions?.length || 0} questions</span>
             </DialogTitle>
             <DialogDescription>
-              Ce test a été créé automatiquement à partir des exercices traités en séance.
+              Vous pouvez modifier, supprimer ou ajouter des questions avant d'envoyer.
             </DialogDescription>
           </DialogHeader>
           {generatedTest && (
-            <div className="py-3 space-y-3">
+            <div className="py-3 space-y-4">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-sm font-medium text-muted-foreground">Compétences couvertes :</span>
+                <span className="text-sm font-medium text-muted-foreground">Compétences :</span>
                 {(generatedTest.competences_couvertes || []).map((c: string) => (
                   <Badge key={c} variant="secondary">{c}</Badge>
                 ))}
               </div>
-              <div className="bg-muted/30 rounded-lg p-3 space-y-1">
-                {(generatedTest.questions || []).slice(0, 3).map((q: any, i: number) => (
-                  <p key={i} className="text-sm text-muted-foreground">
-                    <span className="font-medium text-foreground">Q{i + 1}.</span> {q.question}
-                  </p>
+
+              {/* Editable questions list */}
+              <div className="space-y-3">
+                {(generatedTest.questions || []).map((q: any, i: number) => (
+                  <Card key={i} className="border">
+                    <CardContent className="py-3 px-4 space-y-3">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-center gap-2 flex-1 min-w-0">
+                          <span className="text-xs font-bold text-primary shrink-0">Q{i + 1}</span>
+                          <Badge variant="outline" className="text-[10px] shrink-0">{q.competence}</Badge>
+                          <Badge variant="secondary" className="text-[10px] shrink-0">{q.format?.replace(/_/g, " ")}</Badge>
+                        </div>
+                        <div className="flex gap-1 shrink-0">
+                          <Button
+                            variant="ghost" size="icon" className="h-7 w-7"
+                            onClick={() => {
+                              setEditingQuestionIdx(editingQuestionIdx === i ? null : i);
+                            }}
+                          >
+                            <Pencil className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button
+                            variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive"
+                            onClick={() => {
+                              const updated = { ...generatedTest };
+                              updated.questions = updated.questions.filter((_: any, idx: number) => idx !== i);
+                              if (editingQuestionIdx === i) setEditingQuestionIdx(null);
+                              else if (editingQuestionIdx !== null && editingQuestionIdx > i) setEditingQuestionIdx(editingQuestionIdx - 1);
+                              setGeneratedTest(updated);
+                            }}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      </div>
+
+                      {editingQuestionIdx === i ? (
+                        <div className="space-y-2 border-t pt-2">
+                          <div className="space-y-1">
+                            <Label className="text-xs">Question</Label>
+                            <Textarea
+                              value={q.question}
+                              onChange={(e) => {
+                                const updated = { ...generatedTest };
+                                updated.questions = [...updated.questions];
+                                updated.questions[i] = { ...updated.questions[i], question: e.target.value };
+                                setGeneratedTest(updated);
+                              }}
+                              className="min-h-[50px] text-sm"
+                            />
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="space-y-1">
+                              <Label className="text-xs">Compétence</Label>
+                              <Select
+                                value={q.competence}
+                                onValueChange={(v) => {
+                                  const updated = { ...generatedTest };
+                                  updated.questions = [...updated.questions];
+                                  updated.questions[i] = { ...updated.questions[i], competence: v };
+                                  setGeneratedTest(updated);
+                                }}
+                              >
+                                <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+                                <SelectContent>
+                                  {["CO", "CE", "EE", "EO", "Structures"].map((c) => (
+                                    <SelectItem key={c} value={c}>{c}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div className="space-y-1">
+                              <Label className="text-xs">Format</Label>
+                              <Select
+                                value={q.format}
+                                onValueChange={(v) => {
+                                  const updated = { ...generatedTest };
+                                  updated.questions = [...updated.questions];
+                                  updated.questions[i] = { ...updated.questions[i], format: v };
+                                  setGeneratedTest(updated);
+                                }}
+                              >
+                                <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+                                <SelectContent>
+                                  {["qcm", "vrai_faux", "texte_lacunaire"].map((f) => (
+                                    <SelectItem key={f} value={f}>{f.replace(/_/g, " ")}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+                          {(q.options?.length > 0) && (
+                            <div className="space-y-1">
+                              <Label className="text-xs">Options</Label>
+                              {q.options.map((opt: string, oi: number) => (
+                                <div key={oi} className="flex gap-1 items-center">
+                                  <Input
+                                    value={opt}
+                                    onChange={(e) => {
+                                      const updated = { ...generatedTest };
+                                      updated.questions = [...updated.questions];
+                                      const newOpts = [...updated.questions[i].options];
+                                      newOpts[oi] = e.target.value;
+                                      updated.questions[i] = { ...updated.questions[i], options: newOpts };
+                                      setGeneratedTest(updated);
+                                    }}
+                                    className={cn("h-7 text-xs", opt === q.bonne_reponse && "border-green-500 bg-green-50/50 dark:bg-green-950/20")}
+                                  />
+                                  {opt === q.bonne_reponse && <CheckCircle2 className="h-3.5 w-3.5 text-green-600 shrink-0" />}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          <div className="space-y-1">
+                            <Label className="text-xs">Bonne réponse</Label>
+                            <Input
+                              value={q.bonne_reponse}
+                              onChange={(e) => {
+                                const updated = { ...generatedTest };
+                                updated.questions = [...updated.questions];
+                                updated.questions[i] = { ...updated.questions[i], bonne_reponse: e.target.value };
+                                setGeneratedTest(updated);
+                              }}
+                              className="h-8 text-xs"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <Label className="text-xs">Explication</Label>
+                            <Textarea
+                              value={q.explication || ""}
+                              onChange={(e) => {
+                                const updated = { ...generatedTest };
+                                updated.questions = [...updated.questions];
+                                updated.questions[i] = { ...updated.questions[i], explication: e.target.value };
+                                setGeneratedTest(updated);
+                              }}
+                              className="min-h-[40px] text-xs"
+                            />
+                          </div>
+                        </div>
+                      ) : (
+                        <div>
+                          <p className="text-sm">{q.question}</p>
+                          {q.options?.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mt-1">
+                              {q.options.map((opt: string, oi: number) => (
+                                <Badge key={oi} variant={opt === q.bonne_reponse ? "default" : "outline"} className="text-[10px]">{opt}</Badge>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
                 ))}
-                {(generatedTest.questions?.length || 0) > 3 && (
-                  <p className="text-xs text-muted-foreground italic">... et {generatedTest.questions.length - 3} autres questions</p>
-                )}
               </div>
+
+              {/* Add question button */}
+              <Button
+                variant="outline" size="sm" className="w-full gap-2"
+                onClick={() => {
+                  const updated = { ...generatedTest };
+                  updated.questions = [...(updated.questions || []), {
+                    question: "", competence: "CE", format: "qcm",
+                    options: ["", "", "", ""], bonne_reponse: "", explication: "",
+                  }];
+                  setGeneratedTest(updated);
+                  setEditingQuestionIdx(updated.questions.length - 1);
+                }}
+              >
+                <Plus className="h-4 w-4" />Ajouter une question
+              </Button>
             </div>
           )}
           <DialogFooter className="flex-col gap-2">
-            <Button onClick={handleSendNowClick} disabled={sendingTest} className="w-full gap-2">
+            <Button onClick={handleSendNowClick} disabled={sendingTest || !generatedTest?.questions?.length} className="w-full gap-2">
               {sendingTest ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
               Envoyer maintenant aux élèves
             </Button>
-            <Button variant="outline" onClick={() => handleSendTest(false)} disabled={sendingTest} className="w-full gap-2">
+            <Button variant="outline" onClick={() => handleSendTest(false)} disabled={sendingTest || !generatedTest?.questions?.length} className="w-full gap-2">
               <Clock className="h-4 w-4" />Envoyer plus tard
             </Button>
             <Button variant="ghost" onClick={handleSkipTest} disabled={sendingTest} className="w-full text-muted-foreground">
