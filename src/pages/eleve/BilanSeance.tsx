@@ -116,6 +116,13 @@ const BilanSeance = () => {
     (acc, exAnswers) => acc + Object.keys(exAnswers).length,
     0
   );
+  // Auto-save progress to localStorage whenever answers or index change
+  useEffect(() => {
+    if (!storageKey || !sessionId || !user?.id) return;
+    try {
+      localStorage.setItem(storageKey, JSON.stringify({ currentExIdx, answers }));
+    } catch { /* quota exceeded, ignore */ }
+  }, [currentExIdx, answers, storageKey, sessionId, user?.id]);
 
   const handleSubmit = async () => {
     if (!user || pendingExercices.length === 0) return;
