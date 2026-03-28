@@ -98,8 +98,14 @@ Deno.serve(async (req) => {
     });
 
     if (createError) {
-      return new Response(JSON.stringify({ error: createError.message }), {
-        status: 500,
+      const isDuplicate = createError.message?.toLowerCase().includes("already") || 
+                          createError.message?.toLowerCase().includes("existe") ||
+                          createError.message?.toLowerCase().includes("registered");
+      const userMessage = isDuplicate 
+        ? "Un compte avec cet email existe déjà" 
+        : createError.message;
+      return new Response(JSON.stringify({ error: userMessage }), {
+        status: isDuplicate ? 409 : 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }

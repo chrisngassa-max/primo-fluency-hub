@@ -212,7 +212,11 @@ const GroupesPage = () => {
           group_id: addGroupId,
         },
       });
-      if (error) throw error;
+      if (error) {
+        // Try to extract server error message from the response
+        const serverMsg = data?.error || error.message;
+        throw new Error(serverMsg);
+      }
       if (data?.error) throw new Error(data.error);
 
       const student = data.student as CreatedStudent;
