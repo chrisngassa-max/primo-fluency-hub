@@ -294,20 +294,17 @@ const SessionBilan = () => {
       if (error) throw error;
 
       if (sendNow) {
-        if (session.group_id) {
-          const { data: members } = await supabase
-            .from("group_members").select("eleve_id").eq("group_id", session.group_id);
-          if (members && members.length > 0) {
-            const notifs = members.map((m) => ({
-              user_id: m.eleve_id,
-              titre: "Évaluation de séance disponible",
-              message: `Une évaluation pour la séance "${session.titre}" est prête. Passez-la pour valider vos acquis.`,
-              link: "/eleve",
-            }));
-            await supabase.from("notifications").insert(notifs);
-          }
+        const targetIds = Array.from(selectedStudentIds);
+        if (targetIds.length > 0) {
+          const notifs = targetIds.map((eleveId) => ({
+            user_id: eleveId,
+            titre: "Évaluation de séance disponible",
+            message: `Une évaluation pour la séance "${session.titre}" est prête. Passez-la pour valider vos acquis.`,
+            link: "/eleve",
+          }));
+          await supabase.from("notifications").insert(notifs);
         }
-        toast.success("Test envoyé aux élèves !", { description: `${generatedTest.questions?.length} questions` });
+        toast.success(`Test envoyé à ${targetIds.length} élève(s) !`, { description: `${generatedTest.questions?.length} questions` });
       } else {
         toast.success("Test sauvegardé", { description: "Vous pourrez l'envoyer plus tard depuis le tableau de bord." });
       }
