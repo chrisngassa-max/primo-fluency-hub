@@ -1269,7 +1269,7 @@ ${sessionExercises.map((ex: any, i: number) => `
                         }`} />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <p className="text-sm font-medium text-foreground">{alert.eleve_nom}</p>
                           <Badge variant="outline" className={`text-[10px] h-5 ${ALERT_TYPE_COLORS[alert.type] || ""}`}>
                             {ALERT_TYPE_LABELS[alert.type] || alert.type}
