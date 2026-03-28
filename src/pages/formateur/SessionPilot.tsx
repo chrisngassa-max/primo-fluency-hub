@@ -51,13 +51,14 @@ import {
 import {
   CheckCircle2, Clock, ArrowRight, Printer, ArrowLeft,
   BookOpen, Minus, Plus, Loader2, Sparkles, Pencil, Trash2, CirclePlus, Circle,
-  AlertTriangle, RotateCcw, ClipboardCheck, FileText, Users, Brain,
+  AlertTriangle, RotateCcw, ClipboardCheck, FileText, Users, Brain, Target,
   Eye, Volume2, ChevronDown, ChevronLeft, ChevronRight, Drama, Package, MessageCircle, Wand2,
   Rocket,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/DifficultyBadge";
 import FeuilleAppel from "@/components/FeuilleAppel";
+import { COMPETENCE_COLORS, resolveSessionCompetences, sortCompetences } from "@/lib/competences";
 
 type ExerciseStatus = "traite_en_classe" | "reporte" | "planifie";
 
@@ -760,6 +761,94 @@ ${Array.isArray(item.options) && item.options.length > 0
           {session?.titre} · {exercises.length} exercices · {new Date().toLocaleDateString("fr-FR")}
         </p>
       </div>
+
+      {/* ─── Competence Coverage Synthesis ─── */}
+      {(() => {
+        const cibles = resolveSessionCompetences(
+          (session as any)?.competences_cibles,
+          []
+        );
+        const exerciseComps = sortCompetences(
+          [...new Set(exercises.map((ex: any) => ex.exercice?.competence).filter(Boolean))]
+        );
+        // Count exercises per competence
+        const compCounts: Record<string, number> = {};
+        exercises.forEach((ex: any) => {
+          const c = ex.exercice?.competence;
+          if (c) compCounts[c] = (compCounts[c] || 0) + 1;
+        });
+        const hasCibles = cibles.length > 0;
+        const uncovered = cibles.filter((c) => !exerciseComps.includes(c));
+
+        return (
+          <Card className="print:hidden border-primary/20">
+            <CardContent className="py-4">
+              <div className="space-y-3">
+                {/* Cibles */}
+                <div className="flex items-start gap-3">
+                  <div className="shrink-0 mt-0.5">
+                    <Target className="h-4 w-4 text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">Compétences ciblées</p>
+                    {hasCibles ? (
+                      <div className="flex gap-1.5 flex-wrap">
+                        {cibles.map((c) => (
+                          <span key={c} className={`inline-flex px-2.5 py-1 rounded-full text-[11px] font-semibold ${COMPETENCE_COLORS[c] || ""}`}>
+                            {c}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-muted-foreground italic">Aucune compétence ciblée déclarée</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Couverture */}
+                <div className="flex items-start gap-3">
+                  <div className="shrink-0 mt-0.5">
+                    <CheckCircle2 className="h-4 w-4 text-green-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">Couverture réelle</p>
+                    {exerciseComps.length > 0 ? (
+                      <div className="flex gap-1.5 flex-wrap">
+                        {exerciseComps.map((c) => (
+                          <span key={c} className={`inline-flex px-2.5 py-1 rounded-full text-[11px] font-semibold ${COMPETENCE_COLORS[c] || ""}`}>
+                            {c} <span className="ml-1 opacity-70">({compCounts[c] || 0})</span>
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-muted-foreground italic">Aucun exercice rattaché</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Écart */}
+                {uncovered.length > 0 && (
+                  <div className="flex items-start gap-3 p-2.5 rounded-lg bg-orange-50/60 dark:bg-orange-950/20 border border-orange-200/50 dark:border-orange-800/30">
+                    <AlertTriangle className="h-4 w-4 text-orange-600 dark:text-orange-400 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-xs font-semibold text-orange-700 dark:text-orange-400">
+                        {uncovered.length === 1 ? "Compétence ciblée non couverte" : `${uncovered.length} compétences ciblées non couvertes`}
+                      </p>
+                      <div className="flex gap-1 flex-wrap mt-1">
+                        {uncovered.map((c) => (
+                          <span key={c} className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300">
+                            {c}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })()}
 
       {/* ─── Session Summary Card ─── */}
       <Card className="print:hidden">

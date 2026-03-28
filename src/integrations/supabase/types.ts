@@ -1272,6 +1272,7 @@ export type Database = {
       }
       sessions: {
         Row: {
+          competences_cibles: string[] | null
           created_at: string
           date_seance: string
           duree_minutes: number
@@ -1286,6 +1287,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          competences_cibles?: string[] | null
           created_at?: string
           date_seance: string
           duree_minutes?: number
@@ -1300,6 +1302,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          competences_cibles?: string[] | null
           created_at?: string
           date_seance?: string
           duree_minutes?: number
