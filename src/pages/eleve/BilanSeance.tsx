@@ -403,13 +403,25 @@ const BilanSeance = () => {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
+          {/* Exercise-level support text (paragraph, document, context) */}
+          {(() => {
+            const contenu = currentEx?.contenu as any;
+            const supportText = contenu?.texte || contenu?.paragraphe || contenu?.document || contenu?.contexte || contenu?.texte_support;
+            if (!supportText) return null;
+            return (
+              <div className="p-4 rounded-lg bg-muted/50 text-sm whitespace-pre-line border border-border/50 leading-relaxed">
+                <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide font-semibold">📄 Document</p>
+                {supportText}
+              </div>
+            );
+          })()}
           {currentItems.map((item: any, idx: number) => {
             // Skip malformed items with no question text
             if (!item.question && !item.texte && !item.enonce) return null;
             const questionText = item.question || item.texte || item.enonce || `Question ${idx + 1}`;
             return (
             <div key={idx} className="space-y-2">
-              {/* Show support text/paragraph if present */}
+              {/* Item-level support text if different from exercise-level */}
               {(item.texte_support || item.paragraphe || item.document || item.contexte) && (
                 <div className="p-3 rounded-lg bg-muted/50 text-sm whitespace-pre-line border border-border/50 mb-2">
                   {item.texte_support || item.paragraphe || item.document || item.contexte}
