@@ -435,45 +435,43 @@ const SessionBilan = () => {
         <p>{session?.titre} · {new Date().toLocaleDateString("fr-FR")}</p>
       </div>
 
-      {/* Summary bar */}
-      <div className="flex gap-3 text-sm print:hidden">
-        <Badge variant="outline" className="gap-1 border-green-500/30 text-green-600">
-          <CheckCircle2 className="h-3 w-3" />{checkedIds.size} traité(s)
-        </Badge>
-        <Badge variant="outline" className="gap-1 border-orange-500/30 text-orange-600">
-          <ArrowRight className="h-3 w-3" />{uncheckedExercises.length} restant(s)
-        </Badge>
+      {/* Summary bar + select all */}
+      <div className="flex items-center justify-between gap-2 print:hidden">
+        <div className="flex gap-2 text-sm">
+          <Badge variant="outline" className="gap-1 border-green-500/30 text-green-600">
+            <CheckCircle2 className="h-3 w-3" />{checkedIds.size}/{exercises.length}
+          </Badge>
+        </div>
+        <Button
+          variant="ghost" size="sm" className="text-xs h-7"
+          onClick={() => {
+            if (checkedIds.size === exercises.length) setCheckedIds(new Set());
+            else setCheckedIds(new Set(exercises.map((e) => e.id)));
+          }}
+        >
+          {checkedIds.size === exercises.length ? "Tout désélectionner" : "Tout cocher"}
+        </Button>
       </div>
 
-      {/* Exercise list */}
-      <div className="space-y-2">
+      {/* Compact exercise list */}
+      <div className="border rounded-lg divide-y overflow-hidden">
         {exercises.map((se, i) => {
           const ex = (se as any).exercice;
           const isChecked = checkedIds.has(se.id);
           return (
-            <Card
+            <div
               key={se.id}
               className={cn(
-                "transition-all cursor-pointer print:break-inside-avoid",
-                isChecked && "border-green-500/30 bg-green-50/50 dark:bg-green-950/10"
+                "flex items-center gap-2 px-3 py-2 cursor-pointer transition-colors",
+                isChecked && "bg-green-50/60 dark:bg-green-950/10"
               )}
               onClick={() => toggleCheck(se.id)}
             >
-              <CardContent className="py-3 px-4">
-                <div className="flex items-start gap-3">
-                  <Checkbox checked={isChecked} onCheckedChange={() => toggleCheck(se.id)} className="mt-1 print:hidden" onClick={(e) => e.stopPropagation()} />
-                  <div className="flex items-center justify-center h-7 w-7 rounded-full bg-primary/10 text-primary text-xs font-bold shrink-0">{i + 1}</div>
-                  <div className="flex-1 min-w-0 space-y-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-medium text-sm">{ex?.titre || "Exercice"}</span>
-                      <Badge variant="secondary" className="text-[10px]">{ex?.competence}</Badge>
-                      <Badge variant="outline" className="text-[10px]">{ex?.format?.replace(/_/g, " ")}</Badge>
-                    </div>
-                    <p className="text-xs text-muted-foreground">{ex?.consigne}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+              <Checkbox checked={isChecked} onCheckedChange={() => toggleCheck(se.id)} className="print:hidden shrink-0" onClick={(e) => e.stopPropagation()} />
+              <span className="text-xs font-bold text-muted-foreground w-5 shrink-0">{i + 1}</span>
+              <span className="text-sm truncate flex-1">{ex?.titre || "Exercice"}</span>
+              <Badge variant="secondary" className="text-[9px] shrink-0 hidden sm:inline-flex">{ex?.competence}</Badge>
+            </div>
           );
         })}
       </div>
