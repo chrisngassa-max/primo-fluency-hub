@@ -278,6 +278,8 @@ const TestEntreePage = () => {
         .eq("eleve_id", user!.id);
 
       if (error) throw error;
+      // Clear saved answers after successful submission
+      try { localStorage.removeItem(testStorageKey); } catch { /* ignore */ }
       toast.success("Test terminé !");
       qc.invalidateQueries({ queryKey: ["eleve-test-entree"] });
     } catch (e: any) {

@@ -222,6 +222,8 @@ const BilanSeance = () => {
         console.error("Profile update failed:", profileErr);
       }
 
+      // Clear saved progress after successful submission
+      try { localStorage.removeItem(storageKey); } catch { /* ignore */ }
       setResults({ scores, globalScore, devoirsCreated });
       qc.invalidateQueries({ queryKey: ["eleve-devoirs"] });
       qc.invalidateQueries({ queryKey: ["eleve-bilans"] });
