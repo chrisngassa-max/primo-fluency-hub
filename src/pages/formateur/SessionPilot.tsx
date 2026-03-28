@@ -284,6 +284,29 @@ const SessionPilot = () => {
     return "planifie";
   };
 
+  // ─── Send checked exercises to students ───
+  const handleSendToStudents = async () => {
+    const checkedIds = exercises.filter((ex) => checked[ex.id]).map((ex) => ex.id);
+    if (checkedIds.length === 0) {
+      toast.warning("Cochez au moins un exercice à envoyer.");
+      return;
+    }
+    setSending(true);
+    try {
+      const { error } = await supabase
+        .from("session_exercices")
+        .update({ statut: "traite_en_classe" as any, updated_at: new Date().toISOString() })
+        .in("id", checkedIds);
+      if (error) throw error;
+      qc.invalidateQueries({ queryKey: ["session-exercices", id] });
+      toast.success(`${checkedIds.length} exercice(s) envoyé(s) aux élèves du groupe !`);
+    } catch (e: any) {
+      toast.error("Erreur d'envoi", { description: e.message });
+    } finally {
+      setSending(false);
+    }
+  };
+
   // ─── Reported exercise actions ───
   const handleKeepReported = async (se: any) => {
     // Transfer to current session
