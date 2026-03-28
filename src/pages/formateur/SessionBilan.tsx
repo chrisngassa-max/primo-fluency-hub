@@ -20,7 +20,15 @@ import { toast } from "sonner";
 import {
   CheckCircle2, ArrowRight, ArrowLeft, Printer, Save, BookOpen, Loader2, Sparkles,
   AlertTriangle, Brain, X, ClipboardCheck, Send, Clock, CalendarIcon,
+  Pencil, Trash2, Plus, ChevronDown, ChevronUp, Eye, EyeOff,
 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
+import {
+  Accordion, AccordionContent, AccordionItem, AccordionTrigger,
+} from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
 import { format, addDays } from "date-fns";
 import { fr } from "date-fns/locale";
