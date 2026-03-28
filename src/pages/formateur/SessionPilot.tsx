@@ -53,6 +53,7 @@ import {
   BookOpen, Minus, Plus, Loader2, Sparkles, Pencil, Trash2, CirclePlus, Circle,
   AlertTriangle, RotateCcw, ClipboardCheck, FileText, Users, Brain,
   Eye, Volume2, ChevronDown, ChevronLeft, ChevronRight, Drama, Package, MessageCircle, Wand2,
+  Rocket,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/DifficultyBadge";
@@ -73,6 +74,7 @@ const SessionPilot = () => {
   const qc = useQueryClient();
   const [checked, setChecked] = useState<Record<string, boolean>>({});
   const [saving, setSaving] = useState(false);
+  const [sending, setSending] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [generatingHomework, setGeneratingHomework] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
@@ -280,6 +282,29 @@ const SessionPilot = () => {
     if (checked[exerciseId]) return "traite_en_classe";
     if (checkedCount > 0) return "reporte";
     return "planifie";
+  };
+
+  // ─── Send checked exercises to students ───
+  const handleSendToStudents = async () => {
+    const checkedIds = exercises.filter((ex) => checked[ex.id]).map((ex) => ex.id);
+    if (checkedIds.length === 0) {
+      toast.warning("Cochez au moins un exercice à envoyer.");
+      return;
+    }
+    setSending(true);
+    try {
+      const { error } = await supabase
+        .from("session_exercices")
+        .update({ statut: "traite_en_classe" as any, updated_at: new Date().toISOString() })
+        .in("id", checkedIds);
+      if (error) throw error;
+      qc.invalidateQueries({ queryKey: ["session-exercices", id] });
+      toast.success(`${checkedIds.length} exercice(s) envoyé(s) aux élèves du groupe !`);
+    } catch (e: any) {
+      toast.error("Erreur d'envoi", { description: e.message });
+    } finally {
+      setSending(false);
+    }
   };
 
   // ─── Reported exercise actions ───
@@ -708,12 +733,20 @@ ${Array.isArray(item.options) && item.options.length > 0
             {session?.titre || "Séance"} · {(session as any)?.group?.nom} · {exercises.length} exercice(s)
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <Button
+            onClick={handleSendToStudents}
+            disabled={sending || checkedCount === 0}
+            className="gap-2 bg-green-600 hover:bg-green-700 text-white"
+          >
+            {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Rocket className="h-4 w-4" />}
+            Envoyer aux élèves ({checkedCount})
+          </Button>
           <Button onClick={handleGenerateExercises} disabled={generating} variant="outline" className="gap-2">
             {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
             ✨ Générer IA
           </Button>
-          <Button onClick={handleGenerateHomework} disabled={generatingHomework} className="gap-2">
+          <Button onClick={handleGenerateHomework} disabled={generatingHomework} variant="outline" className="gap-2">
             {generatingHomework ? <Loader2 className="h-4 w-4 animate-spin" /> : <ClipboardCheck className="h-4 w-4" />}
             Générer devoirs
           </Button>
