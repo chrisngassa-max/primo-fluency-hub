@@ -63,7 +63,8 @@ const SessionBilan = () => {
   const [sendingTest, setSendingTest] = useState(false);
   const [devoirDeadline, setDevoirDeadline] = useState<Date | undefined>(undefined);
   const [confirmSendOpen, setConfirmSendOpen] = useState(false);
-  const [groupMemberCount, setGroupMemberCount] = useState(0);
+  const [groupMembers, setGroupMembers] = useState<{ eleve_id: string; nom: string; prenom: string }[]>([]);
+  const [selectedStudentIds, setSelectedStudentIds] = useState<Set<string>>(new Set());
 
   const { data: formateurParams } = useQuery({
     queryKey: ["formateur-parametres-bilan", user?.id],
@@ -260,13 +261,18 @@ const SessionBilan = () => {
   };
 
   const handleSendNowClick = async () => {
-    // Get member count for confirmation
     if (session?.group_id) {
-      const { count } = await supabase
+      const { data: members } = await supabase
         .from("group_members")
-        .select("*", { count: "exact", head: true })
+        .select("eleve_id, profile:profiles(nom, prenom)")
         .eq("group_id", session.group_id);
-      setGroupMemberCount(count || 0);
+      const mapped = (members || []).map((m: any) => ({
+        eleve_id: m.eleve_id,
+        nom: m.profile?.nom || "",
+        prenom: m.profile?.prenom || "",
+      }));
+      setGroupMembers(mapped);
+      setSelectedStudentIds(new Set(mapped.map((m: any) => m.eleve_id)));
     }
     setConfirmSendOpen(true);
   };
@@ -288,20 +294,17 @@ const SessionBilan = () => {
       if (error) throw error;
 
       if (sendNow) {
-        if (session.group_id) {
-          const { data: members } = await supabase
-            .from("group_members").select("eleve_id").eq("group_id", session.group_id);
-          if (members && members.length > 0) {
-            const notifs = members.map((m) => ({
-              user_id: m.eleve_id,
-              titre: "Évaluation de séance disponible",
-              message: `Une évaluation pour la séance "${session.titre}" est prête. Passez-la pour valider vos acquis.`,
-              link: "/eleve",
-            }));
-            await supabase.from("notifications").insert(notifs);
-          }
+        const targetIds = Array.from(selectedStudentIds);
+        if (targetIds.length > 0) {
+          const notifs = targetIds.map((eleveId) => ({
+            user_id: eleveId,
+            titre: "Évaluation de séance disponible",
+            message: `Une évaluation pour la séance "${session.titre}" est prête. Passez-la pour valider vos acquis.`,
+            link: "/eleve",
+          }));
+          await supabase.from("notifications").insert(notifs);
         }
-        toast.success("Test envoyé aux élèves !", { description: `${generatedTest.questions?.length} questions` });
+        toast.success(`Test envoyé à ${targetIds.length} élève(s) !`, { description: `${generatedTest.questions?.length} questions` });
       } else {
         toast.success("Test sauvegardé", { description: "Vous pourrez l'envoyer plus tard depuis le tableau de bord." });
       }
@@ -655,16 +658,50 @@ const SessionBilan = () => {
       <Dialog open={confirmSendOpen} onOpenChange={setConfirmSendOpen}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
-            <DialogTitle>Confirmer l'envoi</DialogTitle>
+            <DialogTitle>Envoyer le test</DialogTitle>
             <DialogDescription>
-              Envoyer le test à {groupMemberCount} élève(s) du groupe « {(session as any)?.group?.nom || "—"} » ?
+              Sélectionnez les élèves à qui envoyer le test.
             </DialogDescription>
           </DialogHeader>
+          <div className="space-y-2 py-2 max-h-60 overflow-y-auto">
+            <div className="flex items-center justify-between mb-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  if (selectedStudentIds.size === groupMembers.length) {
+                    setSelectedStudentIds(new Set());
+                  } else {
+                    setSelectedStudentIds(new Set(groupMembers.map((m) => m.eleve_id)));
+                  }
+                }}
+                className="text-xs"
+              >
+                {selectedStudentIds.size === groupMembers.length ? "Tout désélectionner" : "Tout sélectionner"}
+              </Button>
+              <span className="text-xs text-muted-foreground">{selectedStudentIds.size}/{groupMembers.length}</span>
+            </div>
+            {groupMembers.map((m) => (
+              <label key={m.eleve_id} className="flex items-center gap-2 p-2 rounded-md hover:bg-muted/50 cursor-pointer">
+                <Checkbox
+                  checked={selectedStudentIds.has(m.eleve_id)}
+                  onCheckedChange={(checked) => {
+                    setSelectedStudentIds((prev) => {
+                      const next = new Set(prev);
+                      if (checked) next.add(m.eleve_id); else next.delete(m.eleve_id);
+                      return next;
+                    });
+                  }}
+                />
+                <span className="text-sm">{m.prenom} {m.nom}</span>
+              </label>
+            ))}
+          </div>
           <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => setConfirmSendOpen(false)}>Annuler</Button>
-            <Button onClick={() => handleSendTest(true)} disabled={sendingTest} className="gap-1.5">
+            <Button onClick={() => handleSendTest(true)} disabled={sendingTest || selectedStudentIds.size === 0} className="gap-1.5">
               {sendingTest ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-              Confirmer
+              Envoyer ({selectedStudentIds.size})
             </Button>
           </DialogFooter>
         </DialogContent>
