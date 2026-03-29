@@ -3,7 +3,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { GraduationCap, Bot, Users } from "lucide-react";
+import { GraduationCap, Bot, Users, LogIn } from "lucide-react";
 import AppFooter from "@/components/AppFooter";
 
 const Index = () => {
@@ -30,8 +30,33 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      {/* HEADER PUBLIC */}
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
+          <span className="font-bold text-lg text-foreground tracking-tight">TCF Pro</span>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate("/eleve/login")}
+              className="gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+            >
+              <LogIn className="h-4 w-4" />
+              Se connecter
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => navigate("/formateur/login")}
+              className="text-sm"
+            >
+              Espace formateur
+            </Button>
+          </div>
+        </div>
+      </header>
+
       {/* BLOC 1 — Hero */}
-      <section className="flex flex-col items-center justify-center text-center px-4 pt-16 pb-12 md:pt-24 md:pb-16">
+      <section className="flex flex-col items-center justify-center text-center px-4 pt-12 pb-12 md:pt-16 md:pb-16">
         <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-foreground max-w-3xl leading-tight">
           Préparez votre TCF IRN avec un programme personnalisé
         </h1>
