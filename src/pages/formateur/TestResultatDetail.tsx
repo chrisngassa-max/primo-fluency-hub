@@ -21,8 +21,8 @@ import {
   suggererGroupe,
   getProfilLabel,
 } from "@/lib/testPositionnement";
-import { useState, useEffect } from "react";
-import { ArrowLeft, RefreshCw } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { ArrowLeft, RefreshCw, Mic, CheckCircle } from "lucide-react";
 
 const TestResultatDetail = () => {
   const { apprenantId } = useParams();
@@ -109,10 +109,9 @@ const TestResultatDetail = () => {
     toast({ title: "Score mis à jour" });
   };
 
-  const handleRecalculate = async () => {
-    if (!reponses || !resultat) return;
+  const recalculateAndPersist = useCallback(async () => {
+    if (!reponses || !resultat || !session) return;
 
-    // Recalculate scores per competence using formateur scores where available
     const compScores: Record<string, number> = { co: 0, ce: 0, eo: 0, ee: 0 };
     const compMaxPalier: Record<string, number> = { co: 1, ce: 1, eo: 1, ee: 1 };
 
@@ -135,6 +134,7 @@ const TestResultatDetail = () => {
 
     const profil = calculerProfilFinal(paliers);
     const groupe = suggererGroupe(profil);
+    const totalScore = compScores.co + compScores.ce + compScores.eo + compScores.ee;
 
     await supabase
       .from("test_resultats_apprenants")
@@ -143,7 +143,7 @@ const TestResultatDetail = () => {
         score_ce: compScores.ce,
         score_eo: compScores.eo,
         score_ee: compScores.ee,
-        score_total: compScores.co + compScores.ce + compScores.eo + compScores.ee,
+        score_total: totalScore,
         palier_final_co: paliers.co,
         palier_final_ce: paliers.ce,
         palier_final_eo: paliers.eo,
@@ -153,8 +153,43 @@ const TestResultatDetail = () => {
       })
       .eq("id", resultat.id);
 
-    toast({ title: "Profil recalculé", description: getProfilLabel(profil) });
-    refetchResultat();
+    await supabase
+      .from("test_sessions")
+      .update({
+        score_co: compScores.co,
+        score_ce: compScores.ce,
+        score_eo: compScores.eo,
+        score_ee: compScores.ee,
+        palier_co: paliers.co,
+        palier_ce: paliers.ce,
+        palier_eo: paliers.eo,
+        palier_ee: paliers.ee,
+        profil_final: profil,
+        groupe_suggere: groupe,
+      })
+      .eq("id", session.id);
+
+    return { profil, groupe };
+  }, [reponses, resultat, session, scoreOverrides]);
+
+  const handleRecalculate = async () => {
+    const result = await recalculateAndPersist();
+    if (result) {
+      toast({ title: "Profil recalculé", description: getProfilLabel(result.profil) });
+      refetchResultat();
+    }
+  };
+
+  const handleConfirmAudioScore = async (reponseId: string, score: number) => {
+    await supabase
+      .from("test_reponses")
+      .update({ score_formateur: score, score_obtenu: score })
+      .eq("id", reponseId);
+    setScoreOverrides((prev) => ({ ...prev, [reponseId]: score }));
+    await refetchReponses();
+    await recalculateAndPersist();
+    await refetchResultat();
+    toast({ title: "Score audio confirmé et profil recalculé" });
   };
 
   const handleConfirmGroupe = async (groupe: string) => {
@@ -212,6 +247,84 @@ const TestResultatDetail = () => {
           </SelectContent>
         </Select>
       </div>
+
+      {/* Section Validations Audios en attente */}
+      {(() => {
+        const audioReponses = reponses.filter((r: any) => r.reponse_audio_url);
+        if (!audioReponses.length) return null;
+        return (
+          <Card className="border-destructive/30 bg-destructive/5">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-destructive">
+                <Mic className="h-5 w-5" />
+                🚨 Validations Audios en attente
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {audioReponses.map((r: any) => {
+                const q = r.test_questions;
+                const localScore = scoreOverrides[r.id] ?? r.score_formateur ?? r.score_obtenu ?? 0;
+                return (
+                  <div key={r.id} className="border rounded-lg p-4 space-y-3 bg-background">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <Badge variant="outline" className="mb-1">{r.competence} — Palier {r.palier}</Badge>
+                        <p className="font-medium text-base">{q?.consigne}</p>
+                      </div>
+                    </div>
+
+                    <audio controls src={r.reponse_audio_url} className="w-full" />
+
+                    {r.reponse_apprenant && (
+                      <p className="text-sm">
+                        <span className="text-muted-foreground">Transcription : </span>
+                        {r.reponse_apprenant}
+                      </p>
+                    )}
+
+                    <div className="flex flex-col sm:flex-row sm:items-end gap-3 bg-muted/50 rounded-lg p-3">
+                      <div className="flex-1 space-y-1">
+                        <p className="text-sm text-muted-foreground">
+                          Note IA : <span className="font-semibold text-foreground">{r.score_ia ?? "—"}/3</span>
+                        </p>
+                        {r.justification_ia && (
+                          <p className="text-xs italic text-muted-foreground">{r.justification_ia}</p>
+                        )}
+                      </div>
+                      <div className="flex items-end gap-2">
+                        <div className="space-y-1">
+                          <Label className="text-xs">Score (0-3)</Label>
+                          <Input
+                            type="number"
+                            min={0}
+                            max={3}
+                            value={localScore}
+                            onChange={(e) => {
+                              const val = parseInt(e.target.value);
+                              if (!isNaN(val) && val >= 0 && val <= 3) {
+                                setScoreOverrides((prev) => ({ ...prev, [r.id]: val }));
+                              }
+                            }}
+                            className="w-20"
+                          />
+                        </div>
+                        <Button
+                          size="sm"
+                          onClick={() => handleConfirmAudioScore(r.id, localScore)}
+                          className="gap-1"
+                        >
+                          <CheckCircle className="h-4 w-4" />
+                          Confirmer
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </CardContent>
+          </Card>
+        );
+      })()}
 
       {(["CO", "CE", "EO", "EE"] as const).map((comp) => {
         const items = groupByCompetence(comp);
