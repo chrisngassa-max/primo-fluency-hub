@@ -409,7 +409,7 @@ const FormateurDashboard = () => {
         .in("id", ids);
       if (error) throw error;
       qc.invalidateQueries({ queryKey: ["today-session-exercises"] });
-      toast.success(`${sessionExercises.length} exercice(s) envoyé(s) aux élèves !`, {
+      toast.success(`${sessionExercises.length} ${sessionExercises.length === 1 ? 'exercice envoyé' : 'exercices envoyés'} aux élèves !`, {
         description: "Les ateliers ludiques restent sur votre espace formateur.",
       });
     } catch (e: any) {
@@ -901,7 +901,7 @@ ${sessionExercises.map((ex: any, i: number) => `
                           {sessionExercises.length} exercice{sessionExercises.length !== 1 ? "s" : ""} + ateliers
                         </h3>
                         <Badge variant="outline" className="text-xs">
-                          {sessionExercises.filter((e: any) => e.statut === "traite_en_classe").length} envoyé(s)
+                          {(() => { const n = sessionExercises.filter((e: any) => e.statut === "traite_en_classe").length; return n === 1 ? "1 envoyé" : `${n} envoyés`; })()}
                         </Badge>
                       </div>
 
@@ -931,7 +931,7 @@ ${sessionExercises.map((ex: any, i: number) => `
                                       {ex.is_ai_generated && <span className="inline-flex items-center gap-0.5 rounded-full bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-400 px-1.5 py-0.5 text-[10px] font-semibold">✨ IA</span>}
                                     </div>
                                     <p className="text-sm text-muted-foreground italic mt-1">{ex.consigne}</p>
-                                    <p className="text-xs text-muted-foreground mt-0.5">{ex.contenu?.items?.length || 0} item(s) · <DifficultyBadge level={ex.difficulte} /></p>
+                                    <p className="text-xs text-muted-foreground mt-0.5">{`${ex.contenu?.items?.length || 0} ${(ex.contenu?.items?.length || 0) === 1 ? "item" : "items"}`} · <DifficultyBadge level={ex.difficulte} /></p>
                                   </div>
                                 </div>
 
@@ -982,7 +982,7 @@ ${sessionExercises.map((ex: any, i: number) => `
                         <div className="space-y-4">
                           <div className="flex items-center justify-between">
                             <Badge variant="secondary" className="text-xs">
-                              {testExercises.reduce((acc: number, ex: any) => acc + (ex.contenu?.items?.length || 0), 0)} question(s)
+                              {(() => { const n = testExercises.reduce((acc: number, ex: any) => acc + (ex.contenu?.items?.length || 0), 0); return `${n} ${n === 1 ? "question" : "questions"}`; })()}
                             </Badge>
                             <Button variant="outline" size="sm" className="gap-2" onClick={handlePrintTest}>
                               <Printer className="h-4 w-4" /> Imprimer le test

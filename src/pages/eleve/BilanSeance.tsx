@@ -336,12 +336,12 @@ const BilanSeance = () => {
               {results.globalScore}%
             </p>
             <p className="text-sm text-muted-foreground mt-2">
-              Score moyen sur {results.scores.length} exercice(s)
+              {`Score moyen sur ${results.scores.length} ${results.scores.length === 1 ? "exercice" : "exercices"}`}
             </p>
             {results.devoirsCreated > 0 && (
               <Badge variant="secondary" className="mt-3 gap-1">
                 <BookOpen className="h-3 w-3" />
-                {results.devoirsCreated} devoir(s) de révision créé(s) automatiquement
+                {`${results.devoirsCreated} ${results.devoirsCreated === 1 ? "devoir de révision créé" : "devoirs de révision créés"} automatiquement`}
               </Badge>
             )}
           </CardContent>
@@ -423,7 +423,7 @@ const BilanSeance = () => {
             Bilan de séance{session ? ` — ${(session as any).titre}` : ""}
           </h1>
           <p className="text-sm text-muted-foreground">
-            {(session as any)?.group?.nom} · {pendingExercices.length} exercice(s) à évaluer
+            {(session as any)?.group?.nom} · {`${pendingExercices.length} ${pendingExercices.length === 1 ? "exercice à évaluer" : "exercices à évaluer"}`}
           </p>
         </div>
       </div>

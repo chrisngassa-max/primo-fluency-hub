@@ -536,7 +536,7 @@ const MonitoringPage = () => {
                     <div key={i} className="flex items-center justify-between p-2.5 rounded-lg border bg-destructive/5">
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium truncate">{f.titre}</p>
-                        <p className="text-xs text-muted-foreground">{COMP_LABELS[f.competence] || f.competence} · {f.count} échec(s)</p>
+                        <p className="text-xs text-muted-foreground">{COMP_LABELS[f.competence] || f.competence} · {f.count === 1 ? "1 échec" : `${f.count} échecs`}</p>
                       </div>
                       <Badge variant="destructive" className="shrink-0">{f.score}%</Badge>
                     </div>
@@ -594,7 +594,7 @@ const MonitoringPage = () => {
           <Button variant="ghost" size="icon" onClick={goBack}><ArrowLeft className="h-5 w-5" /></Button>
           <div>
             <h1 className="text-2xl font-bold text-foreground">{selectedGroup?.nom || "Groupe"}</h1>
-            <p className="text-muted-foreground text-sm">Comparaison inter-élèves · {groupEleves.length} élève(s)</p>
+            <p className="text-muted-foreground text-sm">{`Comparaison inter-élèves · ${groupEleves.length} ${groupEleves.length === 1 ? "élève" : "élèves"}`}</p>
           </div>
           <div className="ml-auto flex items-center gap-2">
             <Button variant={viewMode === "groupes" ? "default" : "outline"} size="sm" onClick={() => { setSelectedGroupId(null); setViewMode("groupes"); }}>
@@ -884,7 +884,7 @@ const MonitoringPage = () => {
                   <p className="text-xl font-bold text-foreground">Vue par Groupes</p>
                   <p className="text-sm text-muted-foreground mt-1">Comparer les dynamiques de classe (G1 vs G2)</p>
                 </div>
-                <Badge variant="secondary" className="text-sm">{groups.length} groupe(s) actif(s)</Badge>
+                <Badge variant="secondary" className="text-sm">{groups.length === 1 ? "1 groupe actif" : `${groups.length} groupes actifs`}</Badge>
               </CardContent>
             </Card>
 
@@ -897,7 +897,7 @@ const MonitoringPage = () => {
                   <p className="text-xl font-bold text-foreground">Vue par Élèves</p>
                   <p className="text-sm text-muted-foreground mt-1">Entrer dans le détail individuel d'un élève</p>
                 </div>
-                <Badge variant="secondary" className="text-sm">{allEleves.length} élève(s)</Badge>
+                <Badge variant="secondary" className="text-sm">{allEleves.length === 0 ? "Aucun élève" : allEleves.length === 1 ? "1 élève" : `${allEleves.length} élèves`}</Badge>
               </CardContent>
             </Card>
           </div>
@@ -978,7 +978,7 @@ const MonitoringPage = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="font-semibold text-foreground">{g.nom}</p>
-                        <p className="text-sm text-muted-foreground">{stat?.nbEleves ?? 0} élève(s) · {g.niveau}</p>
+                        <p className="text-sm text-muted-foreground">{(() => { const n = stat?.nbEleves ?? 0; return `${n === 0 ? "Aucun élève" : n === 1 ? "1 élève" : `${n} élèves`} · ${g.niveau}`; })()}</p>
                       </div>
                       <div className="text-right">
                         <p className="text-2xl font-bold">{stat?.scoreMoyen ?? 0}%</p>
@@ -1011,7 +1011,7 @@ const MonitoringPage = () => {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Élève</TableHead>
-                      <TableHead>Groupe(s)</TableHead>
+                      <TableHead>Groupes</TableHead>
                       <TableHead>Niveau</TableHead>
                       <TableHead>Score moyen</TableHead>
                       <TableHead>Dernière activité</TableHead>

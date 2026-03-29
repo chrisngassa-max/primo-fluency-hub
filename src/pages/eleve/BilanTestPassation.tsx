@@ -381,7 +381,7 @@ function ResultView({
           {devoirsGenerated > 0 && (
             <Badge variant="secondary" className="mt-3 gap-1">
               <BookOpen className="h-3 w-3" />
-              {devoirsGenerated} devoir(s) de révision généré(s)
+              {`${devoirsGenerated} ${devoirsGenerated === 1 ? "devoir de révision généré" : "devoirs de révision générés"}`}
             </Badge>
           )}
         </CardContent>

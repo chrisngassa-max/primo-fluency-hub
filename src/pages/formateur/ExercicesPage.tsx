@@ -364,7 +364,7 @@ ${Array.isArray(item.options) && item.options.length > 0
       <div>
         <h1 className="text-2xl font-bold">Exercices</h1>
         <p className="text-sm text-muted-foreground">
-          {exercices?.length || 0} exercice(s) au total · {filtered.length} affiché(s)
+          {`${exercices?.length || 0} ${(exercices?.length || 0) === 1 ? "exercice" : "exercices"} au total · ${filtered.length} affiché${filtered.length > 1 ? "s" : ""}`}
         </p>
       </div>
 
@@ -423,7 +423,7 @@ ${Array.isArray(item.options) && item.options.length > 0
         <button onClick={toggleAll} className="text-xs text-primary hover:underline">
           {selected.size === filtered.length && filtered.length > 0 ? "Tout désélectionner" : "Tout sélectionner"}
         </button>
-        <span className="text-xs text-muted-foreground">{selected.size} sélectionné(s)</span>
+        <span className="text-xs text-muted-foreground">{selected.size === 0 ? "Aucun sélectionné" : selected.size === 1 ? "1 sélectionné" : `${selected.size} sélectionnés`}</span>
       </div>
 
       {/* Exercise list grouped by competence */}
@@ -444,7 +444,7 @@ ${Array.isArray(item.options) && item.options.length > 0
               <Badge className={cn("text-xs", competenceColor[comp] || "bg-muted text-muted-foreground")}>
                 {comp}
               </Badge>
-              <span className="text-xs text-muted-foreground">{exs.length} exercice(s)</span>
+              <span className="text-xs text-muted-foreground">{exs.length === 1 ? "1 exercice" : `${exs.length} exercices`}</span>
             </div>
             <Accordion type="multiple" className="space-y-1">
               {exs.map((ex: any) => {

@@ -46,7 +46,7 @@ const EleveDevoirs = () => {
       <div>
         <h1 className="text-2xl font-bold text-foreground">Mes devoirs</h1>
         <p className="text-muted-foreground mt-1">
-          {pending.length} devoir(s) en attente
+          {pending.length === 0 ? "Aucun devoir en attente" : pending.length === 1 ? "1 devoir en attente" : `${pending.length} devoirs en attente`}
         </p>
       </div>
 

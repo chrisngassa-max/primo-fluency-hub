@@ -186,7 +186,7 @@ export default function FeuilleAppel({ sessionId, session }: FeuilleAppelProps) 
         <tbody>${rows}</tbody>
       </table>
       <div class="summary">
-        <strong>Récapitulatif :</strong> ${presentCount} présent(s) / ${totalCount} inscrits · ${totalCount - presentCount} absent(s)
+        <strong>Récapitulatif :</strong> ${presentCount} ${presentCount === 1 ? "présent" : "présents"} / ${totalCount} inscrits · ${totalCount - presentCount} ${(totalCount - presentCount) === 1 ? "absent" : "absents"}
       </div>
       <div class="signature">Signature du formateur</div>
     </body></html>`;
@@ -258,7 +258,7 @@ ${totalCount - presentCount > 0 ? `❌ Absents : ${absentNames}` : "🎉 Aucune 
             Feuille d'appel
           </CardTitle>
           <Badge variant={presentCount === totalCount ? "default" : "secondary"}>
-            {presentCount}/{totalCount} présent(s)
+            {presentCount}/{totalCount} {presentCount === 1 ? "présent" : "présents"}
           </Badge>
         </div>
       </CardHeader>

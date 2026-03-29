@@ -378,7 +378,7 @@ const EleveDashboard = () => {
                     {format(new Date(se.date_seance), "d MMMM yyyy", { locale: fr })}
                     {se.group_nom && <><span>·</span><span>{se.group_nom}</span></>}
                     <span>·</span>
-                    <span>{se.remaining} exercice(s) restant(s)</span>
+                    <span>{se.remaining <= 0 ? "Aucun exercice restant" : se.remaining === 1 ? "1 exercice restant" : `${se.remaining} exercices restants`}</span>
                   </div>
                 </div>
                 <Button size="sm" variant="default" className="gap-1 shrink-0">

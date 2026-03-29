@@ -344,7 +344,7 @@ const GroupesPage = () => {
                         <span className="font-semibold text-sm">{g.nom}</span>
                         <Badge variant="outline">{g.niveau}</Badge>
                         <span className="text-xs text-muted-foreground">
-                          {members.length} élève(s)
+                          {members.length === 0 ? "Aucun élève" : members.length === 1 ? "1 élève" : `${members.length} élèves`}
                         </span>
                       </div>
                       {g.description && (
