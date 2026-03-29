@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -50,10 +50,15 @@ const SessionBilan = () => {
   const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set());
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [manualScoreOverride, setManualScoreOverride] = useState(false);
 
   const [bilanScores, setBilanScores] = useState<BilanScores>({
     CO: 50, CE: 50, EE: 50, EO: 50, Structures: 50,
   });
+
+  // Tronc commun modal state
+  const [showTroncCommunModal, setShowTroncCommunModal] = useState(false);
+  const [troncCommunSelected, setTroncCommunSelected] = useState<Set<string>>(new Set());
   const [blockedStudents, setBlockedStudents] = useState<BlockedStudent[]>([]);
   const [newBlockedName, setNewBlockedName] = useState("");
   const [newBlockedCompetence, setNewBlockedCompetence] = useState("CO");
@@ -136,6 +141,19 @@ const SessionBilan = () => {
   const exercises = sessionExercices ?? [];
   const uncheckedExercises = exercises.filter((e) => !checkedIds.has(e.id));
 
+  // Auto-calculate bilan scores from checked exercises
+  useEffect(() => {
+    if (manualScoreOverride || exercises.length === 0) return;
+    const newScores: BilanScores = { CO: 50, CE: 50, EE: 50, EO: 50, Structures: 50 };
+    for (const comp of COMPETENCES) {
+      const total = exercises.filter((e) => (e as any).exercice?.competence === comp).length;
+      if (total === 0) continue;
+      const checked = exercises.filter((e) => (e as any).exercice?.competence === comp && checkedIds.has(e.id)).length;
+      newScores[comp] = Math.round((checked / total) * 100);
+    }
+    setBilanScores(newScores);
+  }, [checkedIds, exercises, manualScoreOverride]);
+
   const toggleCheck = (seId: string) => {
     setCheckedIds((prev) => {
       const next = new Set(prev);
@@ -160,13 +178,34 @@ const SessionBilan = () => {
       return;
     }
     if (uncheckedExercises.length > 0) {
-      setConfirmOpen(true);
+      // Pre-select all unchecked exercises for tronc commun
+      setTroncCommunSelected(new Set(uncheckedExercises.map((e) => e.id)));
+      setShowTroncCommunModal(true);
     } else {
-      saveWithAction("none");
+      saveWithAction("none", []);
     }
   };
 
-  const saveWithAction = async (action: "devoir" | "reporter" | "none") => {
+  const handleTroncCommunConfirm = async () => {
+    setShowTroncCommunModal(false);
+    const selectedTronc = uncheckedExercises.filter((e) => troncCommunSelected.has(e.id));
+    const nonSelectedUnchecked = uncheckedExercises.filter((e) => !troncCommunSelected.has(e.id));
+    // Report non-selected unchecked exercises
+    if (nonSelectedUnchecked.length > 0) {
+      await supabase
+        .from("session_exercices")
+        .update({ statut: "reporte" as any, updated_at: new Date().toISOString() })
+        .in("id", nonSelectedUnchecked.map((e) => e.id));
+    }
+    await saveWithAction("tronc_commun", selectedTronc);
+  };
+
+  const handleTroncCommunSkip = async () => {
+    setShowTroncCommunModal(false);
+    setConfirmOpen(true);
+  };
+
+  const saveWithAction = async (action: "devoir" | "reporter" | "none" | "tronc_commun", troncExercises: any[] = []) => {
     setSaving(true);
     try {
       if (checkedIds.size > 0) {
@@ -177,7 +216,34 @@ const SessionBilan = () => {
         if (e1) throw e1;
       }
 
-      if (uncheckedExercises.length > 0) {
+      // Section A: Tronc commun devoirs
+      if (action === "tronc_commun" && troncExercises.length > 0) {
+        // Mark as devoir_remediation in session_exercices
+        await supabase
+          .from("session_exercices")
+          .update({ statut: "devoir_remediation" as any, updated_at: new Date().toISOString() })
+          .in("id", troncExercises.map((e) => e.id));
+
+        if (session?.group_id) {
+          const { data: members } = await supabase
+            .from("group_members").select("eleve_id").eq("group_id", session.group_id);
+          if (members && members.length > 0) {
+            const devoirs = troncExercises.flatMap((se) =>
+              (members ?? []).map((m) => ({
+                eleve_id: m.eleve_id,
+                exercice_id: (se as any).exercice_id,
+                formateur_id: user!.id,
+                raison: "consolidation" as const,
+                statut: "en_attente" as const,
+                date_echeance: effectiveDeadline.toISOString(),
+                source_label: "tronc_commun",
+              }))
+            );
+            const { error: e3 } = await supabase.from("devoirs").insert(devoirs as any);
+            if (e3) throw e3;
+          }
+        }
+      } else if (uncheckedExercises.length > 0) {
         if (action === "devoir") {
           const { error: e2 } = await supabase
             .from("session_exercices")
@@ -197,9 +263,10 @@ const SessionBilan = () => {
                   raison: "remediation" as const,
                   statut: "en_attente" as const,
                   date_echeance: effectiveDeadline.toISOString(),
+                  source_label: "individualise",
                 }))
               );
-              const { error: e3 } = await supabase.from("devoirs").insert(devoirs);
+              const { error: e3 } = await supabase.from("devoirs").insert(devoirs as any);
               if (e3) throw e3;
             }
           }
@@ -506,7 +573,8 @@ const SessionBilan = () => {
                     bilanScores[comp] < 60 && "border-red-500/50 text-red-600"
                   )}>{bilanScores[comp]}%</Badge>
                 </div>
-                <Slider value={[bilanScores[comp]]} onValueChange={([v]) => setBilanScores((prev) => ({ ...prev, [comp]: v }))} min={0} max={100} step={5} className="w-full" />
+                <Slider value={[bilanScores[comp]]} onValueChange={([v]) => { setManualScoreOverride(true); setBilanScores((prev) => ({ ...prev, [comp]: v })); }} min={0} max={100} step={5} className="w-full" />
+                <p className="text-[10px] text-muted-foreground/70">Calculé depuis les exercices cochés — ajustable</p>
               </div>
             ))}
           </div>
@@ -561,6 +629,66 @@ const SessionBilan = () => {
         </p>
       )}
 
+      {/* Tronc commun modal — Section A */}
+      <Dialog open={showTroncCommunModal} onOpenChange={setShowTroncCommunModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-blue-600" />Devoirs tronc commun
+            </DialogTitle>
+            <DialogDescription>
+              {uncheckedExercises.length} exercice(s) non traité(s). Sélectionnez ceux à envoyer en devoir à tout le groupe.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-1 py-2 max-h-60 overflow-y-auto">
+            {uncheckedExercises.map((se) => {
+              const ex = (se as any).exercice;
+              return (
+                <label key={se.id} className="flex items-center gap-2 p-2 rounded-md hover:bg-muted/50 cursor-pointer">
+                  <Checkbox
+                    checked={troncCommunSelected.has(se.id)}
+                    onCheckedChange={(checked) => {
+                      setTroncCommunSelected((prev) => {
+                        const next = new Set(prev);
+                        if (checked) next.add(se.id); else next.delete(se.id);
+                        return next;
+                      });
+                    }}
+                  />
+                  <span className="text-sm flex-1 truncate">{ex?.titre || "Exercice"}</span>
+                  <Badge variant="secondary" className="text-[10px] shrink-0">{ex?.competence}</Badge>
+                </label>
+              );
+            })}
+          </div>
+          <div className="space-y-2 border-t pt-3">
+            <Label className="text-sm font-semibold flex items-center gap-2">
+              <CalendarIcon className="h-4 w-4" />Date limite
+            </Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !devoirDeadline && "text-muted-foreground")}>
+                  <CalendarIcon className="h-4 w-4 mr-2" />
+                  {format(effectiveDeadline, "EEEE d MMMM yyyy", { locale: fr })}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar mode="single" selected={effectiveDeadline} onSelect={(d) => d && setDevoirDeadline(d)} disabled={(date) => date < minDeadline} initialFocus className="p-3 pointer-events-auto" />
+              </PopoverContent>
+            </Popover>
+          </div>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button onClick={handleTroncCommunConfirm} disabled={saving || troncCommunSelected.size === 0} className="flex-1 gap-2">
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              Envoyer ({troncCommunSelected.size}) en devoirs
+            </Button>
+            <Button variant="outline" onClick={handleTroncCommunSkip} className="flex-1">
+              Reporter les exercices
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Confirmation dialog for unchecked exercises */}
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <DialogContent>
@@ -604,10 +732,10 @@ const SessionBilan = () => {
             </p>
           </div>
           <DialogFooter className="flex-col sm:flex-row gap-2">
-            <Button variant="default" onClick={() => saveWithAction("devoir")} disabled={saving} className="flex-1">
+            <Button variant="default" onClick={() => saveWithAction("devoir", [])} disabled={saving} className="flex-1">
               {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <BookOpen className="h-4 w-4 mr-2" />}Envoyer en devoirs
             </Button>
-            <Button variant="outline" onClick={() => saveWithAction("reporter")} disabled={saving} className="flex-1">
+            <Button variant="outline" onClick={() => saveWithAction("reporter", [])} disabled={saving} className="flex-1">
               <ArrowRight className="h-4 w-4 mr-2" />Reporter
             </Button>
           </DialogFooter>

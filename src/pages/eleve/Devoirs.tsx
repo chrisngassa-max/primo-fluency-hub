@@ -188,10 +188,14 @@ function DevoirCard({ devoir, onOpen }: { devoir: any; onOpen: () => void }) {
           <div className="flex-1 min-w-0 space-y-0.5">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="font-semibold truncate">{ex?.titre || "Exercice"}</span>
-              {isUrgent && !isDone && (
-                <Badge variant="destructive" className="text-xs">Remédiation</Badge>
+              {/* Source label badges */}
+              {(devoir as any).source_label === "tronc_commun" && !isDone && (
+                <Badge className="text-xs bg-blue-100 text-blue-700 border-blue-300 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700">Tronc commun</Badge>
               )}
-              {!isUrgent && !isDone && (
+              {((devoir as any).source_label === "individualise" || (!((devoir as any).source_label) && isUrgent)) && !isDone && (
+                <Badge variant="secondary" className="text-xs border-orange-500/30 text-orange-600">Personnalisé</Badge>
+              )}
+              {!isUrgent && !isDone && !(devoir as any).source_label && (
                 <Badge variant="secondary" className="text-xs border-orange-500/30 text-orange-600">Consolidation</Badge>
               )}
               {isDone && (

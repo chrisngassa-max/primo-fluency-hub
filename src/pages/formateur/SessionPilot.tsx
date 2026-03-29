@@ -79,6 +79,9 @@ const SessionPilot = () => {
   const [generating, setGenerating] = useState(false);
   const [generatingHomework, setGeneratingHomework] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [rappelChecked, setRappelChecked] = useState<Record<string, boolean>>({});
+  const [rappelDismissed, setRappelDismissed] = useState(false);
+  const [validatingRappel, setValidatingRappel] = useState(false);
 
   // Editor state
   const [editingExercise, setEditingExercise] = useState<any>(null);
@@ -936,45 +939,64 @@ ${Array.isArray(item.options) && item.options.length > 0
         </div>
       )}
 
-      {/* ─── Reported Exercises from Previous Session ─── */}
-      {reported.length > 0 && (
-        <Card className="border-dashed border-orange-300 dark:border-orange-700 bg-orange-50/30 dark:bg-orange-950/10 print:hidden">
+      {/* ─── Bloc 0: Rappel — Exercices reportés (séance N-1) ─── */}
+      {reported.length > 0 && !rappelDismissed && (
+        <Card className="border-2 border-blue-300 dark:border-blue-700 bg-blue-50/30 dark:bg-blue-950/10 print:hidden">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2 text-orange-700 dark:text-orange-400">
+            <CardTitle className="text-base flex items-center gap-2 text-blue-700 dark:text-blue-400">
               <RotateCcw className="h-5 w-5" />
-              À terminer — Exercices reportés ({reported.length})
+              🔁 RAPPEL — Exercices reportés (séance N-1)
             </CardTitle>
-            <CardDescription>Exercices non terminés lors de la séance précédente</CardDescription>
+            <CardDescription>Ces exercices n'ont pas pu être traités lors de la séance précédente.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-2">
-            {reported.map((se: any) => {
-              const ex = se.exercice;
-              return (
-                <div key={se.id} className="flex items-center gap-3 p-3 rounded-lg border border-orange-200 dark:border-orange-800 bg-card">
-                  <div className="flex items-center justify-center h-7 w-7 rounded-full bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-400 text-xs font-bold shrink-0">
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm truncate">{ex?.titre || "Exercice"}</p>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <Badge variant="secondary" className="text-[10px]">{ex?.competence}</Badge>
-                      <span className="text-[10px] text-muted-foreground">{ex?.format?.replace(/_/g, " ")}</span>
-                    </div>
-                  </div>
-                  <div className="flex gap-1 shrink-0">
-                    <Button variant="outline" size="sm" className="h-7 text-xs gap-1" onClick={() => handleKeepReported(se)}>
-                      <Plus className="h-3 w-3" />Garder
-                    </Button>
-                    <Button variant="outline" size="sm" className="h-7 text-xs gap-1" onClick={() => handleToHomework(se)}>
-                      <ClipboardCheck className="h-3 w-3" />Devoirs
-                    </Button>
-                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setDeleteConfirm(se.id)}>
-                      <Trash2 className="h-3.5 w-3.5 text-destructive" />
-                    </Button>
-                  </div>
-                </div>
-              );
-            })}
+          <CardContent className="space-y-3">
+            <div className="space-y-1">
+              {reported.map((se: any) => {
+                const ex = se.exercice;
+                return (
+                  <label key={se.id} className="flex items-center gap-3 p-2.5 rounded-lg border bg-card hover:bg-muted/30 cursor-pointer transition-colors">
+                    <Checkbox
+                      checked={!!rappelChecked[se.id]}
+                      onCheckedChange={() => setRappelChecked((prev) => ({ ...prev, [se.id]: !prev[se.id] }))}
+                    />
+                    <span className="text-sm flex-1 truncate font-medium">{ex?.titre || "Exercice"}</span>
+                    <Badge variant="secondary" className="text-[10px] shrink-0">{ex?.competence}</Badge>
+                  </label>
+                );
+              })}
+            </div>
+            <div className="flex gap-2 pt-1">
+              <Button
+                className="flex-1 gap-2"
+                disabled={validatingRappel || !Object.values(rappelChecked).some(Boolean)}
+                onClick={async () => {
+                  setValidatingRappel(true);
+                  try {
+                    const toValidate = reported.filter((se: any) => rappelChecked[se.id]).map((se: any) => se.id);
+                    if (toValidate.length > 0) {
+                      const { error } = await supabase
+                        .from("session_exercices")
+                        .update({ statut: "traite_en_classe" as any, updated_at: new Date().toISOString() })
+                        .in("id", toValidate);
+                      if (error) throw error;
+                      qc.invalidateQueries({ queryKey: ["reported-exercises"] });
+                      toast.success(`${toValidate.length} exercice(s) validé(s) !`);
+                      setRappelChecked({});
+                    }
+                  } catch (e: any) {
+                    toast.error("Erreur", { description: e.message });
+                  } finally {
+                    setValidatingRappel(false);
+                  }
+                }}
+              >
+                {validatingRappel ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
+                Valider le rappel
+              </Button>
+              <Button variant="outline" className="flex-1 gap-2" onClick={() => setRappelDismissed(true)}>
+                <ArrowRight className="h-4 w-4" />Garder en devoirs
+              </Button>
+            </div>
           </CardContent>
         </Card>
       )}

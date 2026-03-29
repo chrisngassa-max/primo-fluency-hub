@@ -265,6 +265,7 @@ export type Database = {
           nb_reussites_consecutives: number
           raison: Database["public"]["Enums"]["devoir_raison"]
           session_id: string | null
+          source_label: string | null
           statut: Database["public"]["Enums"]["devoir_statut"]
           updated_at: string
         }
@@ -278,6 +279,7 @@ export type Database = {
           nb_reussites_consecutives?: number
           raison?: Database["public"]["Enums"]["devoir_raison"]
           session_id?: string | null
+          source_label?: string | null
           statut?: Database["public"]["Enums"]["devoir_statut"]
           updated_at?: string
         }
@@ -291,6 +293,7 @@ export type Database = {
           nb_reussites_consecutives?: number
           raison?: Database["public"]["Enums"]["devoir_raison"]
           session_id?: string | null
+          source_label?: string | null
           statut?: Database["public"]["Enums"]["devoir_statut"]
           updated_at?: string
         }
