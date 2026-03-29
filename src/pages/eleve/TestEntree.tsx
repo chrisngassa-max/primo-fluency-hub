@@ -599,8 +599,9 @@ const TestEntreePage = () => {
               <div className="flex-1">
                 <p className="font-semibold text-sm text-primary">🎧 Écoute l'audio</p>
                 <p className="text-xs text-muted-foreground">
-                  {isSpeaking ? "Lecture en cours… Clique pour arrêter." : "Clique sur le bouton pour réécouter."}
-                </p>
+                  {isSpeaking ? "Lecture en cours… Clique pour arrêter." : (
+                    <span className="animate-pulse text-primary font-medium">👉 Cliquez sur l'icône Audio pour écouter la question</span>
+                  )}
               </div>
             </div>
           )}
