@@ -172,23 +172,25 @@ const SessionSupermarket = () => {
     setExercices([]);
     setSelected(new Set());
     try {
-      const { data, error } = await supabase.functions.invoke("generate-session-content", {
-        body: {
-          titre: sessionInfo.titre,
-          objectifs: sessionInfo.objectifs,
-          competences_cibles: sessionInfo.competences_cibles,
-          niveau_cible: sessionInfo.niveau_cible,
-          duree_minutes: sessionInfo.duree_minutes,
-          exercices_suggeres: sessionInfo.exercices_suggeres,
-        },
-      });
+      const useGabarit = detectedGabarit && !gabaritIgnored;
+      const body: any = {
+        titre: sessionInfo.titre,
+        objectifs: sessionInfo.objectifs,
+        competences_cibles: sessionInfo.competences_cibles,
+        niveau_cible: sessionInfo.niveau_cible,
+        duree_minutes: sessionInfo.duree_minutes,
+        exercices_suggeres: sessionInfo.exercices_suggeres,
+      };
+      if (useGabarit) {
+        body.gabaritNumero = detectedGabarit.numero;
+      }
+      const { data, error } = await supabase.functions.invoke("generate-session-content", { body });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       const exs = data.exercices || [];
       setExercices(exs);
-      // Select all by default
       setSelected(new Set(exs.map((_: any, i: number) => i)));
-      toast.success(`${exs.length} exercices + ateliers générés !`);
+      toast.success(`${exs.length} exercices + ateliers générés !${useGabarit ? " (gabarit appliqué)" : ""}`);
     } catch (e: any) {
       console.error(e);
       toast.error("Erreur de génération", { description: e.message });
