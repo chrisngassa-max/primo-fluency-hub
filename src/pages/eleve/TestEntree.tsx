@@ -181,7 +181,6 @@ const TestEntreePage = () => {
 
   // TTS
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const lastSpokenRef = useRef<number>(-1);
 
   const speak = useCallback((text: string) => {
     if (!("speechSynthesis" in window)) {
