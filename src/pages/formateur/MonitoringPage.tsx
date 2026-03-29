@@ -32,24 +32,14 @@ import { cn } from "@/lib/utils";
 function renderMarkdown(text: string): string {
   if (!text) return "";
   return text
-    // Headings ### ## #
     .replace(/^### (.+)$/gm, '<h3 class="text-base font-bold mt-3 mb-1">$1</h3>')
     .replace(/^## (.+)$/gm, '<h2 class="text-lg font-bold mt-4 mb-2">$1</h2>')
     .replace(/^# (.+)$/gm, '<h1 class="text-xl font-bold mt-4 mb-2">$1</h1>')
-    // Bold **text**
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    // Bullet points * item or - item
     .replace(/^[*\-] (.+)$/gm, '<li class="ml-4 list-disc">$1</li>')
-    // Wrap consecutive <li> in <ul>
-    .replace(/(<li[^>]*>.*<\/li>
-?)+/g, (match) => `<ul class="space-y-0.5 my-1">${match}</ul>`)
-    // Line breaks (double newline = paragraph)
-    .replace(/
-
-/g, '</p><p class="mt-2">')
-    // Single newlines
-    .replace(/
-/g, '<br/>');
+    .replace(/(<li[^>]*>.*<\/li>\n?)+/g, (match) => `<ul class="space-y-0.5 my-1">${match}</ul>`)
+    .replace(/\n\n/g, '</p><p class="mt-2">')
+    .replace(/\n/g, '<br/>');
 }
 
 const COMPETENCES = ["CO", "CE", "EE", "EO", "Structures"] as const;
