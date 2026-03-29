@@ -481,11 +481,23 @@ ${Array.isArray(item.options) && item.options.length > 0
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold">Exercices</h1>
-        <p className="text-sm text-muted-foreground">
-          {`${exercices?.length || 0} ${(exercices?.length || 0) === 1 ? "exercice" : "exercices"} au total · ${filtered.length} affiché${filtered.length > 1 ? "s" : ""}`}
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">Exercices</h1>
+          <p className="text-sm text-muted-foreground">
+            {`${exercices?.length || 0} ${(exercices?.length || 0) === 1 ? "exercice" : "exercices"} au total · ${filtered.length} affiché${filtered.length > 1 ? "s" : ""}`}
+          </p>
+        </div>
+        <div className="flex gap-3">
+          <Button size="lg" className="gap-2" onClick={() => setThemeDialogOpen(true)}>
+            <Brain className="h-5 w-5" />
+            🧠 Générer à partir d'un Thème
+          </Button>
+          <Button size="lg" variant="secondary" className="gap-2" onClick={() => setImportDialogOpen(true)}>
+            <FileText className="h-5 w-5" />
+            📄 Importer &amp; Transformer
+          </Button>
+        </div>
       </div>
 
       {/* Filters */}
