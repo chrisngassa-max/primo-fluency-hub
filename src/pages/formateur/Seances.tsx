@@ -638,6 +638,8 @@ const SeancesPage = () => {
             <Calendar className="h-12 w-12 mx-auto text-muted-foreground/40 mb-3" />
             <p className="text-muted-foreground font-medium">Aucune séance</p>
             <p className="text-sm text-muted-foreground/70 mt-1">Créez votre première séance.</p>
+            <Button onClick={() => setCreateOpen(true)} className="mt-4"><Plus className="h-4 w-4 mr-2" />Créer ma première séance</Button>
+          </CardContent>
           </CardContent>
         </Card>
       )}
