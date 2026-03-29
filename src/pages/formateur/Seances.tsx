@@ -16,7 +16,11 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Plus, Calendar, Loader2, BookOpen, Pencil, Copy, Rocket } from "lucide-react";
+import { Plus, Calendar, Loader2, BookOpen, Pencil, Copy, Rocket, Trash2 } from "lucide-react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { COMPETENCES_ORDER, COMPETENCE_COLORS, resolveSessionCompetences } from "@/lib/competences";
 
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
@@ -89,6 +93,9 @@ const SeancesPage = () => {
   const [dureeMinutes, setDureeMinutes] = useState("90");
   const [lieu, setLieu] = useState("");
   const [competencesCibles, setCompetencesCibles] = useState<string[]>([]);
+
+  // Delete state
+  const [deleteSessionId, setDeleteSessionId] = useState<string | null>(null);
 
   // Sequence attachment
   const [selectedSequenceId, setSelectedSequenceId] = useState("");
@@ -371,6 +378,21 @@ const SeancesPage = () => {
     } catch (e: any) {
       toast.error("Erreur", { description: e.message });
     } finally { setEditSaving(false); }
+  };
+
+  const handleDeleteSession = async () => {
+    if (!deleteSessionId) return;
+    try {
+      await supabase.from("session_exercices").delete().eq("session_id", deleteSessionId);
+      const { error } = await supabase.from("sessions").delete().eq("id", deleteSessionId);
+      if (error) throw error;
+      toast.success("Séance supprimée");
+      qc.invalidateQueries({ queryKey: ["formateur-sessions"] });
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    } finally {
+      setDeleteSessionId(null);
+    }
   };
 
   if (isLoading) {
@@ -667,14 +689,23 @@ const SeancesPage = () => {
                        <Copy className="h-4 w-4" />
                      </Button>
                      <Button
-                       variant="ghost"
-                       size="icon"
-                       className="h-8 w-8"
-                       onClick={(e) => openEdit(s, e)}
-                       title="Modifier la séance"
-                     >
-                       <Pencil className="h-4 w-4" />
-                     </Button>
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={(e) => openEdit(s, e)}
+                        title="Modifier la séance"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-destructive hover:text-destructive"
+                        onClick={(e) => { e.stopPropagation(); setDeleteSessionId(s.id); }}
+                        title="Supprimer la séance"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                      <Badge variant={badge.variant}>{badge.label}</Badge>
                    </div>
                 </div>
@@ -683,6 +714,24 @@ const SeancesPage = () => {
           );
         })}
       </div>
+
+      {/* Delete confirmation dialog */}
+      <AlertDialog open={!!deleteSessionId} onOpenChange={(v) => { if (!v) setDeleteSessionId(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Supprimer cette séance ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Voulez-vous vraiment supprimer cette séance ? Les exercices rattachés seront également détachés.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteSession} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
