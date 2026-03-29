@@ -320,6 +320,15 @@ const DevoirPassation = () => {
         </CardHeader>
       </Card>
 
+      {contenu?.texte && (
+        <Card className="border-primary/20 bg-primary/5">
+          <CardContent className="pt-4 pb-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-primary mb-2">Support de l'exercice :</p>
+            <p className="text-sm whitespace-pre-wrap leading-relaxed">{contenu.texte}</p>
+          </CardContent>
+        </Card>
+      )}
+
       {items.length > 0 ? (
         <div className="space-y-4">
           {items.map((item: any, idx: number) => (
