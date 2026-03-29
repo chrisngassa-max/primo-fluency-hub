@@ -597,6 +597,54 @@ export type Database = {
           },
         ]
       }
+      gabarits_pedagogiques: {
+        Row: {
+          bloc: string | null
+          competences_cibles: string[]
+          consignes_generation: string | null
+          created_at: string
+          criteres_reussite: string | null
+          dependances_seances: number[]
+          id: string
+          lexique_cibles: string[]
+          niveau_cible: string | null
+          numero: number
+          objectif_principal: string | null
+          palier_cecrl: string | null
+          titre: string
+        }
+        Insert: {
+          bloc?: string | null
+          competences_cibles?: string[]
+          consignes_generation?: string | null
+          created_at?: string
+          criteres_reussite?: string | null
+          dependances_seances?: number[]
+          id?: string
+          lexique_cibles?: string[]
+          niveau_cible?: string | null
+          numero: number
+          objectif_principal?: string | null
+          palier_cecrl?: string | null
+          titre: string
+        }
+        Update: {
+          bloc?: string | null
+          competences_cibles?: string[]
+          consignes_generation?: string | null
+          created_at?: string
+          criteres_reussite?: string | null
+          dependances_seances?: number[]
+          id?: string
+          lexique_cibles?: string[]
+          niveau_cible?: string | null
+          numero?: number
+          objectif_principal?: string | null
+          palier_cecrl?: string | null
+          titre?: string
+        }
+        Relationships: []
+      }
       group_invitations: {
         Row: {
           code: string
