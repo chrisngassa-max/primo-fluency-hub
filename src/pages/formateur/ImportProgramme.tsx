@@ -205,7 +205,7 @@ const ImportProgramme = () => {
           <Textarea
             value={planText}
             onChange={(e) => setPlanText(e.target.value)}
-            placeholder="Collez ici votre plan de formation généré par NotebookLM ou tout autre outil...&#10;&#10;Exemple :&#10;Séance 1 — Découverte CO/CE (A1) — 90 min&#10;Objectifs : Comprendre des annonces simples, lire un panneau&#10;&#10;Séance 2 — Structures de base (A1) — 90 min&#10;Objectifs : Articles définis, prépositions de lieu"
+            placeholder="Collez ici votre plan de formation (généré par un assistant IA ou rédigé manuellement)...&#10;&#10;Exemple :&#10;Séance 1 — Découverte CO/CE (A1) — 90 min&#10;Objectifs : Comprendre des annonces simples, lire un panneau&#10;&#10;Séance 2 — Structures de base (A1) — 90 min&#10;Objectifs : Articles définis, prépositions de lieu"
             className="min-h-[200px] font-mono text-sm"
           />
 

@@ -348,7 +348,7 @@ Sujets_Echoues_Majoritairement: ${sujetsEchoues.length > 0 ? sujetsEchoues.join(
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Rapports IA</h1>
-        <p className="text-sm text-muted-foreground">Génère un rapport texte brut optimisé pour NotebookLM</p>
+        <p className="text-sm text-muted-foreground">Génère un rapport pédagogique détaillé que vous pouvez soumettre à votre assistant IA (ChatGPT, NotebookLM…) pour obtenir des recommandations approfondies.</p>
       </div>
 
       {/* Filters */}
