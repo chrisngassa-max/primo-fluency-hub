@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { useBlocker } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -66,6 +67,14 @@ const TestEntreePage = () => {
   const [answers, setAnswers] = useState<Record<number, number>>(savedAnswers);
   const [submitting, setSubmitting] = useState(false);
   const [started, setStarted] = useState(false);
+
+  // Navigation guard : bloque toute navigation pendant le test
+  const blocker = useBlocker(
+    ({ currentLocation, nextLocation }) =>
+      started &&
+      !submitting &&
+      currentLocation.pathname !== nextLocation.pathname
+  );
   const [timeLeft, setTimeLeft] = useState(90 * 60); // 1h30
   const [onBreak, setOnBreak] = useState(false); // pause inter-sections
 
@@ -457,7 +466,36 @@ const TestEntreePage = () => {
   const progressPercent = Math.round((answeredCount / totalQuestions) * 100);
 
   return (
-    <div className="max-w-2xl mx-auto space-y-4">
+    <>
+      {/* Navigation guard dialog */}
+      <AlertDialog open={blocker.state === "blocked"}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-destructive" />
+              Quitter le test ?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Êtes-vous sûr de vouloir quitter le test ?{" "}
+              <strong>Votre progression sera perdue</strong> et le test ne peut
+              être passé qu'une seule fois. Cette action est irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => blocker.reset?.()}>
+              Rester sur le test
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive hover:bg-destructive/90"
+              onClick={() => blocker.proceed?.()}
+            >
+              Quitter quand même
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <div className="max-w-2xl mx-auto space-y-4">
       {/* Timer + progress */}
       <div className="flex items-center justify-between">
         <Badge variant="outline" className="gap-1.5 text-base px-3 py-1">
@@ -572,6 +610,7 @@ const TestEntreePage = () => {
         </p>
       </div>
     </div>
+    </>
   );
 };
 
