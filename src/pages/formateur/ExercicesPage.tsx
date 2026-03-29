@@ -22,6 +22,7 @@ import { toast } from "sonner";
 import {
   BookOpen, Printer, Search, Eye, Volume2, Circle, Filter, Drama, Package, MessageCircle, Wand2,
   Pencil, Trash2, Plus, CirclePlus, CheckCircle2, Loader2, ChevronLeft, ChevronRight, Save,
+  Brain, FileText, Upload,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/DifficultyBadge";
@@ -70,6 +71,106 @@ const ExercicesPage = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [savingItemId, setSavingItemId] = useState<string | null>(null);
   const printRef = useRef<HTMLDivElement>(null);
+
+  // ─── AI Generation State ───
+  const [themeDialogOpen, setThemeDialogOpen] = useState(false);
+  const [importDialogOpen, setImportDialogOpen] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
+
+  // Theme dialog fields
+  const [aiTheme, setAiTheme] = useState("");
+  const [aiCompetence, setAiCompetence] = useState("");
+  const [aiNiveau, setAiNiveau] = useState("");
+  const [aiFormat, setAiFormat] = useState("");
+
+  // Import dialog fields
+  const [importText, setImportText] = useState("");
+  const [importUrl, setImportUrl] = useState("");
+  const [importTreatment, setImportTreatment] = useState<"extract" | "reconfigure">("extract");
+  const [importTargetFormat, setImportTargetFormat] = useState("");
+
+  const FORMATS_TCF = [
+    { value: "qcm", label: "QCM" },
+    { value: "vrai_faux", label: "Vrai / Faux" },
+    { value: "texte_lacunaire", label: "Texte à trous" },
+    { value: "appariement", label: "Appariement" },
+    { value: "transformation", label: "Transformation de phrase" },
+    { value: "production_ecrite", label: "Production libre" },
+  ];
+
+  const handleAiGenerate = async (mode: "theme" | "import") => {
+    if (!user) return;
+    setAiLoading(true);
+    try {
+      const payload: any = { mode };
+      if (mode === "theme") {
+        if (!aiTheme || !aiCompetence || !aiNiveau || !aiFormat) {
+          toast.error("Veuillez remplir tous les champs");
+          setAiLoading(false);
+          return;
+        }
+        payload.theme = aiTheme;
+        payload.competence = aiCompetence;
+        payload.niveau = aiNiveau;
+        payload.format = aiFormat;
+      } else {
+        const source = importText.trim() || importUrl.trim();
+        if (!source) {
+          toast.error("Veuillez fournir un texte ou une URL");
+          setAiLoading(false);
+          return;
+        }
+        payload.sourceText = source;
+        payload.treatment = importTreatment;
+        if (importTreatment === "reconfigure") {
+          if (!importTargetFormat) {
+            toast.error("Veuillez choisir un format cible");
+            setAiLoading(false);
+            return;
+          }
+          payload.targetFormat = importTargetFormat;
+        }
+      }
+
+      const { data, error } = await supabase.functions.invoke("smart-exercise-generator", { body: payload });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      const ex = data.exercise;
+      if (!ex) throw new Error("Aucun exercice retourné par l'IA");
+
+      // Find a default point_a_maitriser_id
+      const { data: points } = await supabase.from("points_a_maitriser").select("id").limit(1);
+      const pointId = points?.[0]?.id;
+      if (!pointId) throw new Error("Aucun point à maîtriser trouvé en base");
+
+      const { error: insertError } = await supabase.from("exercices").insert({
+        formateur_id: user.id,
+        titre: ex.titre,
+        consigne: ex.consigne,
+        competence: ex.competence || aiCompetence || "CE",
+        format: ex.format || aiFormat || "qcm",
+        difficulte: ex.difficulte || 3,
+        niveau_vise: ex.niveau_vise || aiNiveau || "A1",
+        contenu: ex.contenu || { items: [] },
+        point_a_maitriser_id: pointId,
+        is_ai_generated: true,
+      });
+      if (insertError) throw insertError;
+
+      toast.success("Exercice créé par l'IA !");
+      qc.invalidateQueries({ queryKey: ["formateur-all-exercices", user.id] });
+      setThemeDialogOpen(false);
+      setImportDialogOpen(false);
+      // Reset fields
+      setAiTheme(""); setAiCompetence(""); setAiNiveau(""); setAiFormat("");
+      setImportText(""); setImportUrl(""); setImportTreatment("extract"); setImportTargetFormat("");
+    } catch (e: any) {
+      toast.error("Erreur génération IA", { description: e.message });
+    } finally {
+      setAiLoading(false);
+    }
+  };
 
   // Fetch all exercises for this formateur
   const { data: exercices, isLoading } = useQuery({
@@ -380,11 +481,23 @@ ${Array.isArray(item.options) && item.options.length > 0
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold">Exercices</h1>
-        <p className="text-sm text-muted-foreground">
-          {`${exercices?.length || 0} ${(exercices?.length || 0) === 1 ? "exercice" : "exercices"} au total · ${filtered.length} affiché${filtered.length > 1 ? "s" : ""}`}
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">Exercices</h1>
+          <p className="text-sm text-muted-foreground">
+            {`${exercices?.length || 0} ${(exercices?.length || 0) === 1 ? "exercice" : "exercices"} au total · ${filtered.length} affiché${filtered.length > 1 ? "s" : ""}`}
+          </p>
+        </div>
+        <div className="flex gap-3">
+          <Button size="lg" className="gap-2" onClick={() => setThemeDialogOpen(true)}>
+            <Brain className="h-5 w-5" />
+            🧠 Générer à partir d'un Thème
+          </Button>
+          <Button size="lg" variant="secondary" className="gap-2" onClick={() => setImportDialogOpen(true)}>
+            <FileText className="h-5 w-5" />
+            📄 Importer &amp; Transformer
+          </Button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -831,6 +944,101 @@ ${Array.isArray(item.options) && item.options.length > 0
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* ─── Theme Generation Dialog ─── */}
+      <Dialog open={themeDialogOpen} onOpenChange={setThemeDialogOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>🧠 Générer à partir d'un Thème</DialogTitle>
+            <DialogDescription>L'IA va créer un exercice complet ancré dans un contexte IRN.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 mt-2">
+            <div className="space-y-1.5">
+              <Label>Thème précis</Label>
+              <Input placeholder="ex : la boulangerie, la CAF, le médecin…" value={aiTheme} onChange={(e) => setAiTheme(e.target.value)} />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Item TCF (compétence)</Label>
+              <Select value={aiCompetence} onValueChange={setAiCompetence}>
+                <SelectTrigger><SelectValue placeholder="Choisir…" /></SelectTrigger>
+                <SelectContent>
+                  {COMPETENCES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label>Niveau de difficulté</Label>
+              <Select value={aiNiveau} onValueChange={setAiNiveau}>
+                <SelectTrigger><SelectValue placeholder="Choisir…" /></SelectTrigger>
+                <SelectContent>
+                  {["A1", "A2", "B1", "B2", "C1"].map((n) => <SelectItem key={n} value={n}>{n}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label>Format d'exercice</Label>
+              <Select value={aiFormat} onValueChange={setAiFormat}>
+                <SelectTrigger><SelectValue placeholder="Choisir…" /></SelectTrigger>
+                <SelectContent>
+                  {FORMATS_TCF.map((f) => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <Button className="w-full gap-2" disabled={aiLoading} onClick={() => handleAiGenerate("theme")}>
+              {aiLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />}
+              {aiLoading ? "Génération en cours…" : "Créer l'exercice"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ─── Import & Transform Dialog ─── */}
+      <Dialog open={importDialogOpen} onOpenChange={setImportDialogOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>📄 Importer &amp; Transformer</DialogTitle>
+            <DialogDescription>Collez un texte ou une URL, et l'IA en fera un exercice TCF.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 mt-2">
+            <div className="space-y-1.5">
+              <Label>Texte source (copier/coller)</Label>
+              <Textarea placeholder="Collez ici un texte, un exercice existant, un extrait de document…" rows={5} value={importText} onChange={(e) => setImportText(e.target.value)} />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Ou URL de page web</Label>
+              <Input placeholder="https://…" value={importUrl} onChange={(e) => setImportUrl(e.target.value)} />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Traitement par l'IA</Label>
+              <RadioGroup value={importTreatment} onValueChange={(v) => setImportTreatment(v as "extract" | "reconfigure")} className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="extract" id="treat-extract" />
+                  <Label htmlFor="treat-extract" className="font-normal">Extraire l'exercice tel quel</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="reconfigure" id="treat-reconfig" />
+                  <Label htmlFor="treat-reconfig" className="font-normal">Reconfigurer au format…</Label>
+                </div>
+              </RadioGroup>
+            </div>
+            {importTreatment === "reconfigure" && (
+              <div className="space-y-1.5">
+                <Label>Format cible</Label>
+                <Select value={importTargetFormat} onValueChange={setImportTargetFormat}>
+                  <SelectTrigger><SelectValue placeholder="Choisir…" /></SelectTrigger>
+                  <SelectContent>
+                    {FORMATS_TCF.map((f) => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            <Button className="w-full gap-2" disabled={aiLoading} onClick={() => handleAiGenerate("import")}>
+              {aiLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+              {aiLoading ? "Transformation en cours…" : "Lancer la transformation"}
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
