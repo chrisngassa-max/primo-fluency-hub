@@ -181,7 +181,6 @@ const TestEntreePage = () => {
 
   // TTS
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const lastSpokenRef = useRef<number>(-1);
 
   const speak = useCallback((text: string) => {
     if (!("speechSynthesis" in window)) {
@@ -202,15 +201,11 @@ const TestEntreePage = () => {
     window.speechSynthesis.speak(utterance);
   }, []);
 
-  // Auto-play audio for CO questions
+  // Cancel speech on question change
   useEffect(() => {
-    if (!started || !currentQuestion) return;
-    if (currentQuestion.audio && lastSpokenRef.current !== currentIndex) {
-      lastSpokenRef.current = currentIndex;
-      const timer = setTimeout(() => speak(currentQuestion.audio!), 400);
-      return () => clearTimeout(timer);
-    }
-  }, [currentIndex, started, currentQuestion, speak]);
+    window.speechSynthesis?.cancel();
+    setIsSpeaking(false);
+  }, [currentIndex]);
 
   // Stop speech on unmount
   useEffect(() => {
@@ -604,7 +599,9 @@ const TestEntreePage = () => {
               <div className="flex-1">
                 <p className="font-semibold text-sm text-primary">🎧 Écoute l'audio</p>
                 <p className="text-xs text-muted-foreground">
-                  {isSpeaking ? "Lecture en cours… Clique pour arrêter." : "Clique sur le bouton pour réécouter."}
+                  {isSpeaking ? "Lecture en cours… Clique pour arrêter." : (
+                    <span className="animate-pulse text-primary font-medium">👉 Cliquez sur l'icône Audio pour écouter la question</span>
+                  )}
                 </p>
               </div>
             </div>
