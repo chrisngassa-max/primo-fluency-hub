@@ -640,7 +640,6 @@ const SeancesPage = () => {
             <p className="text-sm text-muted-foreground/70 mt-1">Créez votre première séance.</p>
             <Button onClick={() => setCreateOpen(true)} className="mt-4"><Plus className="h-4 w-4 mr-2" />Créer ma première séance</Button>
           </CardContent>
-          </CardContent>
         </Card>
       )}
 
