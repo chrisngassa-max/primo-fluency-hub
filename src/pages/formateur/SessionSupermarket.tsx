@@ -410,12 +410,58 @@ ${selectedExercices
         </CardContent>
       </Card>
 
-      {/* Generate button */}
+      {/* Gabarit detection + Generate button */}
       {exercices.length === 0 && !generating && (
-        <Button onClick={handleGenerate} size="lg" className="w-full">
-          <Sparkles className="h-4 w-4 mr-2" />
-          Générer les exercices et ateliers ludiques
-        </Button>
+        <div className="space-y-3">
+          {detectedGabarit && !gabaritIgnored && (
+            <Card className="border-primary/40 bg-primary/5">
+              <CardContent className="py-4 px-5 space-y-2">
+                <div className="flex items-start gap-3">
+                  <ClipboardList className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                  <div className="flex-1 space-y-1">
+                    <p className="text-sm font-semibold">
+                      📋 Gabarit détecté : Séance {detectedGabarit.numero} — {detectedGabarit.titre}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {detectedGabarit.palier_cecrl && `Palier ${detectedGabarit.palier_cecrl}`}
+                      {detectedGabarit.competences_cibles?.length > 0 && ` · ${detectedGabarit.competences_cibles.join(", ")}`}
+                    </p>
+                    {detectedGabarit.lexique_cibles?.length > 0 && (
+                      <p className="text-xs text-muted-foreground">
+                        <span className="font-medium">Lexique :</span>{" "}
+                        {detectedGabarit.lexique_cibles.slice(0, 8).join(", ")}
+                        {detectedGabarit.lexique_cibles.length > 8 && "…"}
+                      </p>
+                    )}
+                    {detectedGabarit.objectif_principal && (
+                      <p className="text-xs text-muted-foreground">
+                        <span className="font-medium">Objectif :</span> {detectedGabarit.objectif_principal}
+                      </p>
+                    )}
+                  </div>
+                  <Button variant="ghost" size="icon" className="shrink-0 h-7 w-7" onClick={() => setGabaritIgnored(true)}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="flex gap-2 pt-1">
+                  <Button onClick={handleGenerate} className="flex-1" data-gabarit={detectedGabarit.numero}>
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    Générer selon ce gabarit
+                  </Button>
+                  <Button variant="outline" onClick={() => setGabaritIgnored(true)}>
+                    Ignorer le gabarit
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+          {(!detectedGabarit || gabaritIgnored) && (
+            <Button onClick={handleGenerate} size="lg" className="w-full">
+              <Sparkles className="h-4 w-4 mr-2" />
+              Générer les exercices et ateliers ludiques
+            </Button>
+          )}
+        </div>
       )}
 
       {generating && (
