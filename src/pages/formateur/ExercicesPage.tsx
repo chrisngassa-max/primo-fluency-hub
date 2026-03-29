@@ -44,6 +44,25 @@ const ExercicesPage = () => {
   const [filterNiveau, setFilterNiveau] = useState<string>("all");
   const [filterSession, setFilterSession] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
+
+  // Reset filters when leaving the page
+  useEffect(() => {
+    return () => {
+      setFilterCompetence("all");
+      setFilterNiveau("all");
+      setFilterSession("all");
+      setSearchTerm("");
+    };
+  }, []);
+
+  const hasActiveFilters = filterCompetence !== "all" || filterNiveau !== "all" || filterSession !== "all" || searchTerm !== "";
+
+  const resetFilters = () => {
+    setFilterCompetence("all");
+    setFilterNiveau("all");
+    setFilterSession("all");
+    setSearchTerm("");
+  };
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [previewExercise, setPreviewExercise] = useState<any>(null);
   const [previewPage, setPreviewPage] = useState(0);
@@ -415,6 +434,19 @@ ${Array.isArray(item.options) && item.options.length > 0
               </Select>
             </div>
           </div>
+          {hasActiveFilters && (
+            <div className="flex justify-end mt-3">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={resetFilters}
+                className="text-xs text-muted-foreground hover:text-foreground gap-1.5"
+              >
+                <Filter className="h-3 w-3" />
+                Réinitialiser les filtres
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -432,9 +464,26 @@ ${Array.isArray(item.options) && item.options.length > 0
           <CardContent className="py-12 text-center">
             <BookOpen className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
             <p className="text-muted-foreground font-medium">Aucun exercice trouvé</p>
-            <p className="text-sm text-muted-foreground/70 mt-1">
-              Modifiez vos filtres ou générez des exercices depuis une séance.
-            </p>
+            {hasActiveFilters ? (
+              <>
+                <p className="text-sm text-muted-foreground/70 mt-1">
+                  Des filtres sont actifs — aucun exercice ne correspond à votre sélection.
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={resetFilters}
+                  className="mt-3 gap-1.5"
+                >
+                  <Filter className="h-3 w-3" />
+                  Réinitialiser les filtres
+                </Button>
+              </>
+            ) : (
+              <p className="text-sm text-muted-foreground/70 mt-1">
+                Générez des exercices depuis une séance pour les voir apparaître ici.
+              </p>
+            )}
           </CardContent>
         </Card>
       ) : (
