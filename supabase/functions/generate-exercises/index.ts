@@ -1,17 +1,34 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { pointName, competence, niveauVise, count = 10, difficultyLevel } = await req.json();
+    const { pointName, competence, niveauVise, count = 10, difficultyLevel, gabaritNumero } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+
+    // If gabaritNumero provided, load gabarit from DB
+    let gabarit: any = null;
+    if (gabaritNumero != null) {
+      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+      const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+      const supabase = createClient(supabaseUrl, supabaseKey);
+      const { data, error } = await supabase
+        .from("gabarits_pedagogiques")
+        .select("*")
+        .eq("numero", gabaritNumero)
+        .maybeSingle();
+      if (error) console.error("Error loading gabarit:", error);
+      gabarit = data;
+    }
 
     // Determine difficulty range description
     const diffLevel = difficultyLevel ?? 5;
@@ -22,6 +39,29 @@ serve(async (req) => {
       difficultyDescription = `Niveau de difficulté ${diffLevel}/10 — PROGRESSION VERS A1 : phrases courtes, vocabulaire quotidien, situations simples de la vie courante. Complexité progressive des structures grammaticales.`;
     } else {
       difficultyDescription = `Niveau de difficulté ${diffLevel}/10 — STANDARD TCF IRN A1 : exercices au standard exact des épreuves du TCF IRN niveau A1. Textes authentiques simplifiés, consignes proches de l'examen.`;
+    }
+
+    let gabaritPrompt = "";
+    if (gabarit) {
+      const lexique = Array.isArray(gabarit.lexique_cibles) ? gabarit.lexique_cibles.join(", ") : (gabarit.lexique_cibles || "");
+      gabaritPrompt = `
+
+Tu génères des exercices pour la séance suivante du plan TCF IRN v2.0 :
+
+SÉANCE : ${gabarit.titre}
+BLOC : ${gabarit.bloc || "Non spécifié"}
+PALIER : ${gabarit.palier_cecrl || "Non spécifié"}
+OBJECTIF : ${gabarit.objectif_principal || "Non spécifié"}
+LEXIQUE OBLIGATOIRE : ${lexique}
+CONSIGNES TECHNIQUES : ${gabarit.consignes_generation || "Aucune consigne spécifique"}
+CRITÈRES DE RÉUSSITE : ${gabarit.criteres_reussite || "Non spécifiés"}
+
+RÈGLES STRICTES :
+1. N'utilise QUE le lexique listé ci-dessus pour les exercices de cette séance
+2. Respecte les formats d'exercices indiqués dans les consignes techniques
+3. Tous les contextes doivent être administratifs / vie quotidienne primo-arrivant
+4. Niveau de langue : ${gabarit.palier_cecrl || niveauVise} — adapter la complexité en conséquence
+5. Ne pas inventer de situations hors du contexte IRN (préfecture, OFII, médecin, école...)`;
     }
 
     const systemPrompt = `Tu es un expert en FLE (Français Langue Étrangère) spécialisé dans la préparation au TCF IRN (Intégration et Résidence en France).
@@ -47,13 +87,13 @@ IMPORTANT — Pour CHAQUE exercice, tu dois aussi proposer un "animation_guide" 
 - materiel : ce qu'il faut préparer (jetons, images, cartes, etc.)
 - objectif_oral : la structure de phrase que les élèves doivent réussir à prononcer
 
-Tu DOIS utiliser le tool "generate_exercises" pour retourner le résultat.`;
+Tu DOIS utiliser le tool "generate_exercises" pour retourner le résultat.${gabaritPrompt}`;
 
     const userPrompt = `Génère ${count} exercices pour :
 - Point à maîtriser : "${pointName}"
 - Compétence : ${competence}
 - Niveau visé : ${niveauVise}
-- Difficulté calibrée : ${diffLevel}/10`;
+- Difficulté calibrée : ${diffLevel}/10${gabarit ? `\n- Gabarit séance : ${gabarit.titre} (n°${gabarit.numero})` : ""}`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",

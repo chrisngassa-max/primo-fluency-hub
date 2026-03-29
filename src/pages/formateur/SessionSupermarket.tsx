@@ -24,6 +24,8 @@ import {
   Send,
   Eye,
   EyeOff,
+  ClipboardList,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
