@@ -22,6 +22,7 @@ import { toast } from "sonner";
 import {
   BookOpen, Printer, Search, Eye, Volume2, Circle, Filter, Drama, Package, MessageCircle, Wand2,
   Pencil, Trash2, Plus, CirclePlus, CheckCircle2, Loader2, ChevronLeft, ChevronRight, Save,
+  Brain, FileText, Upload,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/DifficultyBadge";
