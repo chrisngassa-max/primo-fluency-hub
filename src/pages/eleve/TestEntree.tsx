@@ -17,12 +17,63 @@ import {
   ChevronLeft, ChevronRight, CheckCircle2, AlertTriangle, Clock,
   ArrowRight, Loader2, Volume2, VolumeX,
 } from "lucide-react";
-import { TCF_QUESTIONS, SECTIONS_META, type TCFQuestion } from "@/data/tcfQuestions";
 import CompetenceLabel from "@/components/CompetenceLabel";
+
+// Section metadata (kept for display)
+const SECTIONS_META: Record<string, { title: string; icon: string; color: string; description: string }> = {
+  CO: { title: "Compréhension Orale", icon: "🎧", color: "bg-primary", description: "Écoutez l'audio puis choisissez la bonne image ou réponse." },
+  Structures: { title: "Structures de la langue", icon: "📝", color: "bg-accent", description: "Complétez la phrase avec le mot correct." },
+  CE: { title: "Compréhension Écrite", icon: "📖", color: "bg-success", description: "Lisez le document puis répondez à la question." },
+};
+
+// Map DB rows to the shape we need
+interface DBQuestion {
+  section: "CO" | "Structures" | "CE";
+  audio?: string;
+  question: string;
+  options: { label: string; emoji?: string }[];
+  correct: number;
+  visual?: string;
+}
+
+function mapDbItem(item: any): DBQuestion {
+  const contenu = item.contenu as any;
+  return {
+    section: item.competence as "CO" | "Structures" | "CE",
+    audio: contenu.audio,
+    question: contenu.question,
+    options: contenu.options || [],
+    correct: contenu.correct ?? 0,
+    visual: contenu.visual,
+  };
+}
 
 const TestEntreePage = () => {
   const { user } = useAuth();
   const qc = useQueryClient();
+
+  // Load questions from DB
+  const { data: dbItems, isLoading: itemsLoading } = useQuery({
+    queryKey: ["test-entree-items"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("test_entree_items")
+        .select("*")
+        .order("ordre", { ascending: true });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const questions: DBQuestion[] = useMemo(() => (dbItems || []).map(mapDbItem), [dbItems]);
+  const totalQuestions = questions.length;
+
+  // Section totals for display
+  const sectionTotals = useMemo(() => {
+    const totals: Record<string, number> = {};
+    questions.forEach(q => { totals[q.section] = (totals[q.section] || 0) + 1; });
+    return totals;
+  }, [questions]);
 
   // Check if test already exists
   const { data: existingTest, isLoading: testLoading } = useQuery({
@@ -53,9 +104,6 @@ const TestEntreePage = () => {
     enabled: !!user?.id,
   });
 
-  const questions = TCF_QUESTIONS;
-  const totalQuestions = questions.length;
-
   const testStorageKey = `test-entree-answers-${user?.id}`;
 
   // Restore saved answers from localStorage
@@ -72,15 +120,15 @@ const TestEntreePage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [started, setStarted] = useState(false);
 
-  // Navigation guard : bloque toute navigation pendant le test
+  // Navigation guard
   const blocker = useBlocker(
     ({ currentLocation, nextLocation }) =>
       started &&
       !submitting &&
       currentLocation.pathname !== nextLocation.pathname
   );
-  const [timeLeft, setTimeLeft] = useState(90 * 60); // 1h30
-  const [onBreak, setOnBreak] = useState(false); // pause inter-sections
+  const [timeLeft, setTimeLeft] = useState(90 * 60);
+  const [onBreak, setOnBreak] = useState(false);
 
   // Auto-save answers to localStorage
   useEffect(() => {
@@ -98,7 +146,7 @@ const TestEntreePage = () => {
     }
   }, [existingTest]);
 
-  // Timer — paused during breaks
+  // Timer
   useEffect(() => {
     if (!started || onBreak || (existingTest && !existingTest.en_cours)) return;
     const interval = setInterval(() => {
@@ -114,23 +162,24 @@ const TestEntreePage = () => {
     return () => clearInterval(interval);
   }, [started, onBreak, existingTest]);
 
-  // Section boundary indices (last question index of each section)
+  // Section boundary indices
   const sectionBoundaries = useMemo(() => {
     const boundaries: number[] = [];
+    if (questions.length === 0) return boundaries;
     let prevSection = questions[0]?.section;
     for (let i = 1; i < questions.length; i++) {
       if (questions[i].section !== prevSection) {
-        boundaries.push(i - 1); // last index of previous section
+        boundaries.push(i - 1);
         prevSection = questions[i].section;
       }
     }
-    return boundaries; // e.g. [29, 39] for CO→Structures, Structures→CE
+    return boundaries;
   }, [questions]);
 
   const currentQuestion = questions[currentIndex];
   const currentSection = currentQuestion?.section;
 
-  // ── TTS (synthèse vocale) ──
+  // TTS
   const [isSpeaking, setIsSpeaking] = useState(false);
   const lastSpokenRef = useRef<number>(-1);
 
@@ -153,7 +202,7 @@ const TestEntreePage = () => {
     window.speechSynthesis.speak(utterance);
   }, []);
 
-  // Auto-play audio when arriving on a CO question
+  // Auto-play audio for CO questions
   useEffect(() => {
     if (!started || !currentQuestion) return;
     if (currentQuestion.audio && lastSpokenRef.current !== currentIndex) {
@@ -192,7 +241,6 @@ const TestEntreePage = () => {
 
   const handleStart = async () => {
     try {
-      // Create or resume test entry
       if (!existingTest) {
         const { error } = await supabase.from("tests_entree").insert({
           eleve_id: user!.id,
@@ -211,7 +259,6 @@ const TestEntreePage = () => {
   const handleNext = async () => {
     if (currentIndex < totalQuestions - 1) {
       const next = currentIndex + 1;
-      // Check if we're crossing a section boundary → trigger break
       if (sectionBoundaries.includes(currentIndex) && questions[next]?.section !== currentQuestion?.section) {
         setOnBreak(true);
         setCurrentIndex(next);
@@ -222,7 +269,6 @@ const TestEntreePage = () => {
         return;
       }
       setCurrentIndex(next);
-      // Save progress
       await supabase
         .from("tests_entree")
         .update({ derniere_question: next })
@@ -237,7 +283,6 @@ const TestEntreePage = () => {
   const handleSubmit = async () => {
     setSubmitting(true);
     try {
-      // Calculate scores per section
       const sectionScores: Record<string, { correct: number; total: number }> = {};
       questions.forEach((q, i) => {
         if (!sectionScores[q.section]) sectionScores[q.section] = { correct: 0, total: 0 };
@@ -253,13 +298,15 @@ const TestEntreePage = () => {
       const scoreCO = scoreFor("CO");
       const scoreCE = scoreFor("CE");
       const scoreStructures = scoreFor("Structures");
-      const scoreEE = 0; // No EE section in current questions
-      const scoreGlobal = Math.round(
-        (scoreCO * 30 + scoreCE * 40 + scoreStructures * 10) /
-          (30 + 40 + 10)
-      );
+      const scoreEE = 0;
 
-      // Estimate level
+      const totalWeighted = (sectionTotals["CO"] || 0) + (sectionTotals["CE"] || 0) + (sectionTotals["Structures"] || 0);
+      const scoreGlobal = totalWeighted > 0
+        ? Math.round(
+            (scoreCO * (sectionTotals["CO"] || 0) + scoreCE * (sectionTotals["CE"] || 0) + scoreStructures * (sectionTotals["Structures"] || 0)) / totalWeighted
+          )
+        : 0;
+
       let niveauEstime = "A1";
       if (scoreGlobal >= 80) niveauEstime = "B1";
       else if (scoreGlobal >= 60) niveauEstime = "A2";
@@ -291,7 +338,6 @@ const TestEntreePage = () => {
         .eq("eleve_id", user!.id);
 
       if (error) throw error;
-      // Clear saved answers after successful submission
       try { localStorage.removeItem(testStorageKey); } catch { /* ignore */ }
       toast.success("Test terminé !");
       qc.invalidateQueries({ queryKey: ["eleve-test-entree"] });
@@ -302,11 +348,24 @@ const TestEntreePage = () => {
     }
   };
 
-  if (testLoading) {
+  if (testLoading || itemsLoading) {
     return (
       <div className="max-w-2xl mx-auto space-y-4">
         <Skeleton className="h-8 w-64" />
         <Skeleton className="h-64 w-full" />
+      </div>
+    );
+  }
+
+  if (totalQuestions === 0) {
+    return (
+      <div className="max-w-2xl mx-auto space-y-4">
+        <h1 className="text-2xl font-bold text-foreground">Test d'entrée TCF IRN</h1>
+        <Card>
+          <CardContent className="pt-6">
+            <p className="text-muted-foreground">Les questions du test ne sont pas encore configurées. Contacte ton formateur.</p>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -399,7 +458,7 @@ const TestEntreePage = () => {
                   <span className="text-2xl">{meta.icon}</span>
                   <div>
                     <p className="font-semibold text-sm">{meta.title}</p>
-                    <p className="text-xs text-muted-foreground">{meta.total} questions — {meta.description}</p>
+                    <p className="text-xs text-muted-foreground">{sectionTotals[key] || 0} questions — {meta.description}</p>
                   </div>
                 </div>
               ))}
@@ -450,7 +509,7 @@ const TestEntreePage = () => {
                 <span className="text-2xl">{nextMeta.icon}</span>
                 <div className="text-left">
                   <p className="font-semibold text-sm">Prochaine section : {nextMeta.title}</p>
-                  <p className="text-xs text-muted-foreground">{nextMeta.total} questions — {nextMeta.description}</p>
+                  <p className="text-xs text-muted-foreground">{sectionTotals[currentQuestion?.section] || 0} questions — {nextMeta.description}</p>
                 </div>
               </div>
             )}
