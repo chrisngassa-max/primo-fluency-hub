@@ -109,10 +109,9 @@ const TestResultatDetail = () => {
     toast({ title: "Score mis à jour" });
   };
 
-  const handleRecalculate = async () => {
-    if (!reponses || !resultat) return;
+  const recalculateAndPersist = useCallback(async () => {
+    if (!reponses || !resultat || !session) return;
 
-    // Recalculate scores per competence using formateur scores where available
     const compScores: Record<string, number> = { co: 0, ce: 0, eo: 0, ee: 0 };
     const compMaxPalier: Record<string, number> = { co: 1, ce: 1, eo: 1, ee: 1 };
 
@@ -135,6 +134,7 @@ const TestResultatDetail = () => {
 
     const profil = calculerProfilFinal(paliers);
     const groupe = suggererGroupe(profil);
+    const totalScore = compScores.co + compScores.ce + compScores.eo + compScores.ee;
 
     await supabase
       .from("test_resultats_apprenants")
@@ -143,7 +143,7 @@ const TestResultatDetail = () => {
         score_ce: compScores.ce,
         score_eo: compScores.eo,
         score_ee: compScores.ee,
-        score_total: compScores.co + compScores.ce + compScores.eo + compScores.ee,
+        score_total: totalScore,
         palier_final_co: paliers.co,
         palier_final_ce: paliers.ce,
         palier_final_eo: paliers.eo,
@@ -153,8 +153,43 @@ const TestResultatDetail = () => {
       })
       .eq("id", resultat.id);
 
-    toast({ title: "Profil recalculé", description: getProfilLabel(profil) });
-    refetchResultat();
+    await supabase
+      .from("test_sessions")
+      .update({
+        score_co: compScores.co,
+        score_ce: compScores.ce,
+        score_eo: compScores.eo,
+        score_ee: compScores.ee,
+        palier_co: paliers.co,
+        palier_ce: paliers.ce,
+        palier_eo: paliers.eo,
+        palier_ee: paliers.ee,
+        profil_final: profil,
+        groupe_suggere: groupe,
+      })
+      .eq("id", session.id);
+
+    return { profil, groupe };
+  }, [reponses, resultat, session, scoreOverrides]);
+
+  const handleRecalculate = async () => {
+    const result = await recalculateAndPersist();
+    if (result) {
+      toast({ title: "Profil recalculé", description: getProfilLabel(result.profil) });
+      refetchResultat();
+    }
+  };
+
+  const handleConfirmAudioScore = async (reponseId: string, score: number) => {
+    await supabase
+      .from("test_reponses")
+      .update({ score_formateur: score, score_obtenu: score })
+      .eq("id", reponseId);
+    setScoreOverrides((prev) => ({ ...prev, [reponseId]: score }));
+    await refetchReponses();
+    await recalculateAndPersist();
+    await refetchResultat();
+    toast({ title: "Score audio confirmé et profil recalculé" });
   };
 
   const handleConfirmGroupe = async (groupe: string) => {
