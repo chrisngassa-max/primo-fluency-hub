@@ -79,6 +79,9 @@ const SessionPilot = () => {
   const [generating, setGenerating] = useState(false);
   const [generatingHomework, setGeneratingHomework] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [rappelChecked, setRappelChecked] = useState<Record<string, boolean>>({});
+  const [rappelDismissed, setRappelDismissed] = useState(false);
+  const [validatingRappel, setValidatingRappel] = useState(false);
 
   // Editor state
   const [editingExercise, setEditingExercise] = useState<any>(null);
