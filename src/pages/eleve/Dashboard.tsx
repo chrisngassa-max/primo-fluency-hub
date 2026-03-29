@@ -203,7 +203,7 @@ const EleveDashboard = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profils_eleves")
-        .select("taux_reussite_co, taux_reussite_ce, taux_reussite_ee, taux_reussite_structures")
+        .select("taux_reussite_co, taux_reussite_ce, taux_reussite_ee, taux_reussite_eo, taux_reussite_structures")
         .eq("eleve_id", user!.id)
         .maybeSingle();
       if (error) throw error;
