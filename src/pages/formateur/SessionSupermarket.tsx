@@ -140,6 +140,32 @@ const SessionSupermarket = () => {
     },
   });
 
+  // Auto-detect matching gabarit from session title
+  const { data: detectedGabarit } = useQuery({
+    queryKey: ["detected-gabarit", sessionInfo?.titre],
+    queryFn: async () => {
+      if (!sessionInfo?.titre) return null;
+      // Try exact-ish match via ilike
+      const words = sessionInfo.titre.split(/\s+/).filter(w => w.length > 3).slice(0, 3);
+      if (words.length === 0) return null;
+      
+      // Try matching with the longest keyword
+      const keyword = words.reduce((a, b) => a.length > b.length ? a : b);
+      const { data, error } = await supabase
+        .from("gabarits_pedagogiques")
+        .select("*")
+        .ilike("titre", `%${keyword}%`)
+        .limit(1)
+        .maybeSingle();
+      if (error) {
+        console.error("Gabarit search error:", error);
+        return null;
+      }
+      return data;
+    },
+    enabled: !!sessionInfo?.titre,
+  });
+
   const handleGenerate = async () => {
     if (!sessionInfo) return;
     setGenerating(true);
