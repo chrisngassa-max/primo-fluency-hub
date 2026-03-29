@@ -27,6 +27,42 @@ serve(async (req) => {
     const duree = duree_minutes || 180;
     const nbExercices = Math.max(8, Math.round(duree / 18));
 
+    // Load gabarit if provided
+    let gabarit: any = null;
+    if (gabaritNumero != null) {
+      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+      const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+      const sb = createClient(supabaseUrl, supabaseKey);
+      const { data } = await sb
+        .from("gabarits_pedagogiques")
+        .select("*")
+        .eq("numero", gabaritNumero)
+        .maybeSingle();
+      gabarit = data;
+    }
+
+    let gabaritBlock = "";
+    if (gabarit) {
+      const lexique = Array.isArray(gabarit.lexique_cibles) ? gabarit.lexique_cibles.join(", ") : (gabarit.lexique_cibles || "");
+      gabaritBlock = `
+
+GABARIT SÉANCE TCF IRN v2.0 :
+SÉANCE : ${gabarit.titre}
+BLOC : ${gabarit.bloc || "Non spécifié"}
+PALIER : ${gabarit.palier_cecrl || "Non spécifié"}
+OBJECTIF : ${gabarit.objectif_principal || "Non spécifié"}
+LEXIQUE OBLIGATOIRE : ${lexique}
+CONSIGNES TECHNIQUES : ${gabarit.consignes_generation || "Aucune"}
+CRITÈRES DE RÉUSSITE : ${gabarit.criteres_reussite || "Non spécifiés"}
+
+RÈGLES DU GABARIT :
+1. N'utilise QUE le lexique listé ci-dessus
+2. Respecte les formats indiqués dans les consignes techniques
+3. Contextes administratifs / vie quotidienne primo-arrivant uniquement
+4. Niveau : ${gabarit.palier_cecrl || niveau} — adapter la complexité
+5. Pas de situations hors contexte IRN`;
+    }
+
     const systemPrompt = `Tu es un expert FLE spécialisé TCF IRN. Tu dois générer le contenu complet d'une séance de ${duree} minutes pour un cours collectif d'adultes primo-arrivants.
 
 Pour CHAQUE exercice, tu dois fournir :
