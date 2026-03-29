@@ -81,6 +81,7 @@ RÈGLES :
 - Les ateliers ludiques doivent être réalistes et réalisables en classe (jeu de rôle, mime, Jacques a dit, cartes, etc.)
 ${objectifs ? `- Objectifs de la séance : ${objectifs}` : ""}
 ${exercices_suggeres?.length ? `- Types d'exercices suggérés : ${exercices_suggeres.join(", ")}` : ""}
+${gabaritBlock}
 
 Utilise le tool fourni pour retourner le résultat.`;
 
