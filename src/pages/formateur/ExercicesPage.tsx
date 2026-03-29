@@ -946,6 +946,101 @@ ${Array.isArray(item.options) && item.options.length > 0
           )}
         </DialogContent>
       </Dialog>
+
+      {/* ─── Theme Generation Dialog ─── */}
+      <Dialog open={themeDialogOpen} onOpenChange={setThemeDialogOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>🧠 Générer à partir d'un Thème</DialogTitle>
+            <DialogDescription>L'IA va créer un exercice complet ancré dans un contexte IRN.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 mt-2">
+            <div className="space-y-1.5">
+              <Label>Thème précis</Label>
+              <Input placeholder="ex : la boulangerie, la CAF, le médecin…" value={aiTheme} onChange={(e) => setAiTheme(e.target.value)} />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Item TCF (compétence)</Label>
+              <Select value={aiCompetence} onValueChange={setAiCompetence}>
+                <SelectTrigger><SelectValue placeholder="Choisir…" /></SelectTrigger>
+                <SelectContent>
+                  {COMPETENCES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label>Niveau de difficulté</Label>
+              <Select value={aiNiveau} onValueChange={setAiNiveau}>
+                <SelectTrigger><SelectValue placeholder="Choisir…" /></SelectTrigger>
+                <SelectContent>
+                  {["A1", "A2", "B1", "B2", "C1"].map((n) => <SelectItem key={n} value={n}>{n}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label>Format d'exercice</Label>
+              <Select value={aiFormat} onValueChange={setAiFormat}>
+                <SelectTrigger><SelectValue placeholder="Choisir…" /></SelectTrigger>
+                <SelectContent>
+                  {FORMATS_TCF.map((f) => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <Button className="w-full gap-2" disabled={aiLoading} onClick={() => handleAiGenerate("theme")}>
+              {aiLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />}
+              {aiLoading ? "Génération en cours…" : "Créer l'exercice"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ─── Import & Transform Dialog ─── */}
+      <Dialog open={importDialogOpen} onOpenChange={setImportDialogOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>📄 Importer &amp; Transformer</DialogTitle>
+            <DialogDescription>Collez un texte ou une URL, et l'IA en fera un exercice TCF.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 mt-2">
+            <div className="space-y-1.5">
+              <Label>Texte source (copier/coller)</Label>
+              <Textarea placeholder="Collez ici un texte, un exercice existant, un extrait de document…" rows={5} value={importText} onChange={(e) => setImportText(e.target.value)} />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Ou URL de page web</Label>
+              <Input placeholder="https://…" value={importUrl} onChange={(e) => setImportUrl(e.target.value)} />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Traitement par l'IA</Label>
+              <RadioGroup value={importTreatment} onValueChange={(v) => setImportTreatment(v as "extract" | "reconfigure")} className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="extract" id="treat-extract" />
+                  <Label htmlFor="treat-extract" className="font-normal">Extraire l'exercice tel quel</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="reconfigure" id="treat-reconfig" />
+                  <Label htmlFor="treat-reconfig" className="font-normal">Reconfigurer au format…</Label>
+                </div>
+              </RadioGroup>
+            </div>
+            {importTreatment === "reconfigure" && (
+              <div className="space-y-1.5">
+                <Label>Format cible</Label>
+                <Select value={importTargetFormat} onValueChange={setImportTargetFormat}>
+                  <SelectTrigger><SelectValue placeholder="Choisir…" /></SelectTrigger>
+                  <SelectContent>
+                    {FORMATS_TCF.map((f) => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            <Button className="w-full gap-2" disabled={aiLoading} onClick={() => handleAiGenerate("import")}>
+              {aiLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+              {aiLoading ? "Transformation en cours…" : "Lancer la transformation"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
