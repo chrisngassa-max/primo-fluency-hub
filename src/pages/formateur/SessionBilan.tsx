@@ -141,6 +141,19 @@ const SessionBilan = () => {
   const exercises = sessionExercices ?? [];
   const uncheckedExercises = exercises.filter((e) => !checkedIds.has(e.id));
 
+  // Auto-calculate bilan scores from checked exercises
+  useEffect(() => {
+    if (manualScoreOverride || exercises.length === 0) return;
+    const newScores: BilanScores = { CO: 50, CE: 50, EE: 50, EO: 50, Structures: 50 };
+    for (const comp of COMPETENCES) {
+      const total = exercises.filter((e) => (e as any).exercice?.competence === comp).length;
+      if (total === 0) continue;
+      const checked = exercises.filter((e) => (e as any).exercice?.competence === comp && checkedIds.has(e.id)).length;
+      newScores[comp] = Math.round((checked / total) * 100);
+    }
+    setBilanScores(newScores);
+  }, [checkedIds, exercises, manualScoreOverride]);
+
   const toggleCheck = (seId: string) => {
     setCheckedIds((prev) => {
       const next = new Set(prev);
@@ -511,7 +524,8 @@ const SessionBilan = () => {
                     bilanScores[comp] < 60 && "border-red-500/50 text-red-600"
                   )}>{bilanScores[comp]}%</Badge>
                 </div>
-                <Slider value={[bilanScores[comp]]} onValueChange={([v]) => setBilanScores((prev) => ({ ...prev, [comp]: v }))} min={0} max={100} step={5} className="w-full" />
+                <Slider value={[bilanScores[comp]]} onValueChange={([v]) => { setManualScoreOverride(true); setBilanScores((prev) => ({ ...prev, [comp]: v })); }} min={0} max={100} step={5} className="w-full" />
+                <p className="text-[10px] text-muted-foreground/70">Calculé depuis les exercices cochés — ajustable</p>
               </div>
             ))}
           </div>
