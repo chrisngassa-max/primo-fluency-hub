@@ -50,10 +50,15 @@ const SessionBilan = () => {
   const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set());
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [manualScoreOverride, setManualScoreOverride] = useState(false);
 
   const [bilanScores, setBilanScores] = useState<BilanScores>({
     CO: 50, CE: 50, EE: 50, EO: 50, Structures: 50,
   });
+
+  // Tronc commun modal state
+  const [showTroncCommunModal, setShowTroncCommunModal] = useState(false);
+  const [troncCommunSelected, setTroncCommunSelected] = useState<Set<string>>(new Set());
   const [blockedStudents, setBlockedStudents] = useState<BlockedStudent[]>([]);
   const [newBlockedName, setNewBlockedName] = useState("");
   const [newBlockedCompetence, setNewBlockedCompetence] = useState("CO");
