@@ -21,8 +21,8 @@ import {
   suggererGroupe,
   getProfilLabel,
 } from "@/lib/testPositionnement";
-import { useState, useEffect } from "react";
-import { ArrowLeft, RefreshCw } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { ArrowLeft, RefreshCw, Mic, CheckCircle } from "lucide-react";
 
 const TestResultatDetail = () => {
   const { apprenantId } = useParams();
