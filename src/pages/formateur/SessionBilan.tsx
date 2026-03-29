@@ -178,13 +178,34 @@ const SessionBilan = () => {
       return;
     }
     if (uncheckedExercises.length > 0) {
-      setConfirmOpen(true);
+      // Pre-select all unchecked exercises for tronc commun
+      setTroncCommunSelected(new Set(uncheckedExercises.map((e) => e.id)));
+      setShowTroncCommunModal(true);
     } else {
-      saveWithAction("none");
+      saveWithAction("none", []);
     }
   };
 
-  const saveWithAction = async (action: "devoir" | "reporter" | "none") => {
+  const handleTroncCommunConfirm = async () => {
+    setShowTroncCommunModal(false);
+    const selectedTronc = uncheckedExercises.filter((e) => troncCommunSelected.has(e.id));
+    const nonSelectedUnchecked = uncheckedExercises.filter((e) => !troncCommunSelected.has(e.id));
+    // Report non-selected unchecked exercises
+    if (nonSelectedUnchecked.length > 0) {
+      await supabase
+        .from("session_exercices")
+        .update({ statut: "reporte" as any, updated_at: new Date().toISOString() })
+        .in("id", nonSelectedUnchecked.map((e) => e.id));
+    }
+    await saveWithAction("tronc_commun", selectedTronc);
+  };
+
+  const handleTroncCommunSkip = async () => {
+    setShowTroncCommunModal(false);
+    setConfirmOpen(true);
+  };
+
+  const saveWithAction = async (action: "devoir" | "reporter" | "none" | "tronc_commun", troncExercises: any[] = []) => {
     setSaving(true);
     try {
       if (checkedIds.size > 0) {
@@ -195,7 +216,34 @@ const SessionBilan = () => {
         if (e1) throw e1;
       }
 
-      if (uncheckedExercises.length > 0) {
+      // Section A: Tronc commun devoirs
+      if (action === "tronc_commun" && troncExercises.length > 0) {
+        // Mark as devoir_remediation in session_exercices
+        await supabase
+          .from("session_exercices")
+          .update({ statut: "devoir_remediation" as any, updated_at: new Date().toISOString() })
+          .in("id", troncExercises.map((e) => e.id));
+
+        if (session?.group_id) {
+          const { data: members } = await supabase
+            .from("group_members").select("eleve_id").eq("group_id", session.group_id);
+          if (members && members.length > 0) {
+            const devoirs = troncExercises.flatMap((se) =>
+              (members ?? []).map((m) => ({
+                eleve_id: m.eleve_id,
+                exercice_id: (se as any).exercice_id,
+                formateur_id: user!.id,
+                raison: "consolidation" as const,
+                statut: "en_attente" as const,
+                date_echeance: effectiveDeadline.toISOString(),
+                source_label: "tronc_commun",
+              }))
+            );
+            const { error: e3 } = await supabase.from("devoirs").insert(devoirs as any);
+            if (e3) throw e3;
+          }
+        }
+      } else if (uncheckedExercises.length > 0) {
         if (action === "devoir") {
           const { error: e2 } = await supabase
             .from("session_exercices")
@@ -215,9 +263,10 @@ const SessionBilan = () => {
                   raison: "remediation" as const,
                   statut: "en_attente" as const,
                   date_echeance: effectiveDeadline.toISOString(),
+                  source_label: "individualise",
                 }))
               );
-              const { error: e3 } = await supabase.from("devoirs").insert(devoirs);
+              const { error: e3 } = await supabase.from("devoirs").insert(devoirs as any);
               if (e3) throw e3;
             }
           }
