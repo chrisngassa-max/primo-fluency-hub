@@ -72,6 +72,106 @@ const ExercicesPage = () => {
   const [savingItemId, setSavingItemId] = useState<string | null>(null);
   const printRef = useRef<HTMLDivElement>(null);
 
+  // ─── AI Generation State ───
+  const [themeDialogOpen, setThemeDialogOpen] = useState(false);
+  const [importDialogOpen, setImportDialogOpen] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
+
+  // Theme dialog fields
+  const [aiTheme, setAiTheme] = useState("");
+  const [aiCompetence, setAiCompetence] = useState("");
+  const [aiNiveau, setAiNiveau] = useState("");
+  const [aiFormat, setAiFormat] = useState("");
+
+  // Import dialog fields
+  const [importText, setImportText] = useState("");
+  const [importUrl, setImportUrl] = useState("");
+  const [importTreatment, setImportTreatment] = useState<"extract" | "reconfigure">("extract");
+  const [importTargetFormat, setImportTargetFormat] = useState("");
+
+  const FORMATS_TCF = [
+    { value: "qcm", label: "QCM" },
+    { value: "vrai_faux", label: "Vrai / Faux" },
+    { value: "texte_lacunaire", label: "Texte à trous" },
+    { value: "appariement", label: "Appariement" },
+    { value: "transformation", label: "Transformation de phrase" },
+    { value: "production_ecrite", label: "Production libre" },
+  ];
+
+  const handleAiGenerate = async (mode: "theme" | "import") => {
+    if (!user) return;
+    setAiLoading(true);
+    try {
+      const payload: any = { mode };
+      if (mode === "theme") {
+        if (!aiTheme || !aiCompetence || !aiNiveau || !aiFormat) {
+          toast.error("Veuillez remplir tous les champs");
+          setAiLoading(false);
+          return;
+        }
+        payload.theme = aiTheme;
+        payload.competence = aiCompetence;
+        payload.niveau = aiNiveau;
+        payload.format = aiFormat;
+      } else {
+        const source = importText.trim() || importUrl.trim();
+        if (!source) {
+          toast.error("Veuillez fournir un texte ou une URL");
+          setAiLoading(false);
+          return;
+        }
+        payload.sourceText = source;
+        payload.treatment = importTreatment;
+        if (importTreatment === "reconfigure") {
+          if (!importTargetFormat) {
+            toast.error("Veuillez choisir un format cible");
+            setAiLoading(false);
+            return;
+          }
+          payload.targetFormat = importTargetFormat;
+        }
+      }
+
+      const { data, error } = await supabase.functions.invoke("smart-exercise-generator", { body: payload });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      const ex = data.exercise;
+      if (!ex) throw new Error("Aucun exercice retourné par l'IA");
+
+      // Find a default point_a_maitriser_id
+      const { data: points } = await supabase.from("points_a_maitriser").select("id").limit(1);
+      const pointId = points?.[0]?.id;
+      if (!pointId) throw new Error("Aucun point à maîtriser trouvé en base");
+
+      const { error: insertError } = await supabase.from("exercices").insert({
+        formateur_id: user.id,
+        titre: ex.titre,
+        consigne: ex.consigne,
+        competence: ex.competence || aiCompetence || "CE",
+        format: ex.format || aiFormat || "qcm",
+        difficulte: ex.difficulte || 3,
+        niveau_vise: ex.niveau_vise || aiNiveau || "A1",
+        contenu: ex.contenu || { items: [] },
+        point_a_maitriser_id: pointId,
+        is_ai_generated: true,
+      });
+      if (insertError) throw insertError;
+
+      toast.success("Exercice créé par l'IA !");
+      qc.invalidateQueries({ queryKey: ["formateur-all-exercices", user.id] });
+      setThemeDialogOpen(false);
+      setImportDialogOpen(false);
+      // Reset fields
+      setAiTheme(""); setAiCompetence(""); setAiNiveau(""); setAiFormat("");
+      setImportText(""); setImportUrl(""); setImportTreatment("extract"); setImportTargetFormat("");
+    } catch (e: any) {
+      toast.error("Erreur génération IA", { description: e.message });
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
   // Fetch all exercises for this formateur
   const { data: exercices, isLoading } = useQuery({
     queryKey: ["formateur-all-exercices", user?.id],
