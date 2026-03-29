@@ -344,14 +344,18 @@ const FormateurDashboard = () => {
       const { data: profiles } = await supabase.from("profiles").select("id, nom, prenom").in("id", eleveIds);
       const nameMap = Object.fromEntries((profiles ?? []).map((p) => [p.id, `${p.prenom} ${p.nom}`]));
       return alertes.map((a) => {
-        const parts = (a.message || "").split("|");
+        const raw = (a.message || "").trim();
+        const parts = raw.includes("|") ? raw.split("|").map((p) => p.trim()) : [];
+        const competence = (parts.length >= 2 && parts[1]) ? parts[1] : "CE";
+        const niveauActuelRaw = parts.length >= 3 ? parseInt(parts[2], 10) : NaN;
+        const niveauProposeRaw = parts.length >= 4 ? parseInt(parts[3], 10) : NaN;
         return {
           id: a.id,
           eleve_id: a.eleve_id,
           eleve_nom: nameMap[a.eleve_id] || "Élève",
-          competence: parts.length >= 2 ? parts[1] : "CE",
-          niveau_actuel: parts.length >= 3 ? parseInt(parts[2]) || 3 : 3,
-          niveau_propose: parts.length >= 4 ? parseInt(parts[3]) || 4 : 4,
+          competence,
+          niveau_actuel: Number.isFinite(niveauActuelRaw) ? niveauActuelRaw : 3,
+          niveau_propose: Number.isFinite(niveauProposeRaw) ? niveauProposeRaw : 4,
         };
       });
     },
