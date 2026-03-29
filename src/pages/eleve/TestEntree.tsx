@@ -602,6 +602,7 @@ const TestEntreePage = () => {
                   {isSpeaking ? "Lecture en cours… Clique pour arrêter." : (
                     <span className="animate-pulse text-primary font-medium">👉 Cliquez sur l'icône Audio pour écouter la question</span>
                   )}
+                </p>
               </div>
             </div>
           )}
