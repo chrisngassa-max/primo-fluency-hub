@@ -202,15 +202,11 @@ const TestEntreePage = () => {
     window.speechSynthesis.speak(utterance);
   }, []);
 
-  // Auto-play audio for CO questions
+  // Cancel speech on question change
   useEffect(() => {
-    if (!started || !currentQuestion) return;
-    if (currentQuestion.audio && lastSpokenRef.current !== currentIndex) {
-      lastSpokenRef.current = currentIndex;
-      const timer = setTimeout(() => speak(currentQuestion.audio!), 400);
-      return () => clearTimeout(timer);
-    }
-  }, [currentIndex, started, currentQuestion, speak]);
+    window.speechSynthesis?.cancel();
+    setIsSpeaking(false);
+  }, [currentIndex]);
 
   // Stop speech on unmount
   useEffect(() => {
