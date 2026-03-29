@@ -87,6 +87,7 @@ const SessionSupermarket = () => {
   const [dispatching, setDispatching] = useState(false);
   const [targetSessionId, setTargetSessionId] = useState("");
   const [showAteliers, setShowAteliers] = useState(true);
+  const [gabaritIgnored, setGabaritIgnored] = useState(false);
 
   // Fetch today's sessions for dispatch target
   const { data: todaySessions } = useQuery({
