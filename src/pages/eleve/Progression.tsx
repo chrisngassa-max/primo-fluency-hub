@@ -142,12 +142,30 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
 
   const hasRadarData = radarData.some((d) => d.value > 0);
 
+  // Fetch test d'entrée status
+  const { data: testEntree } = useQuery({
+    queryKey: ["eleve-test-entree-progression", targetId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("tests_entree")
+        .select("completed_at, en_cours")
+        .eq("eleve_id", targetId!)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!targetId && !eleveId, // only for student view
+  });
+
+  const testCompleted = !eleveId && testEntree && !testEntree.en_cours && !!testEntree.completed_at;
+
   // Global progress: compute from profil or average competencies
   const globalProgress = profil?.taux_reussite_global ?? 0;
-  const niveauActuel = profil?.niveau_actuel ?? "A0";
+  // Show "Non évalué" until test is completed
+  const niveauActuel = (testCompleted || eleveId) ? (profil?.niveau_actuel ?? "A0") : "Non évalué";
 
-  // Determine target level
-  const niveauTarget = niveauActuel === "A0" ? "A1" : niveauActuel === "A1" ? "A2" : "B1";
+  // Determine target level (only meaningful after evaluation)
+  const niveauTarget = profil?.niveau_actuel === "A0" ? "A1" : profil?.niveau_actuel === "A1" ? "A2" : "B1";
 
   if (isLoading) {
     return (
@@ -183,30 +201,34 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
               <Award className="h-5 w-5 text-primary" />
               <span className="font-semibold">Niveau actuel</span>
             </div>
-            <Badge variant="outline" className="text-base px-3 py-1 font-bold">
+            <Badge variant="outline" className={cn("text-base px-3 py-1 font-bold", niveauActuel === "Non évalué" && "text-muted-foreground")}>
               {niveauActuel}
             </Badge>
           </div>
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm text-muted-foreground">
-              <span>{niveauActuel}</span>
-              <span>Objectif : {niveauTarget}</span>
+          {niveauActuel === "Non évalué" ? (
+            <div className="text-center py-2">
+              <Button
+                variant="link"
+                className="text-sm p-0 h-auto text-primary underline"
+                onClick={() => navigate("/eleve/test-entree")}
+              >
+                Passe le test d'entrée pour évaluer ton niveau !
+              </Button>
             </div>
-            <Progress value={globalProgress} className={cn("h-4", globalProgress === 0 && "[&>div]:bg-muted")} />
-            <p className="text-xs text-muted-foreground text-center">
-              {globalProgress > 0
-                ? `${Math.round(globalProgress)}% de progression globale`
-                : (
-                  <Button
-                    variant="link"
-                    className="text-xs p-0 h-auto text-primary underline"
-                    onClick={() => navigate("/eleve/test-entree")}
-                  >
-                    Passe le test d'entrée pour évaluer ton niveau !
-                  </Button>
-                )}
-            </p>
-          </div>
+          ) : (
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm text-muted-foreground">
+                <span>{niveauActuel}</span>
+                <span>Objectif : {niveauTarget}</span>
+              </div>
+              <Progress value={globalProgress} className={cn("h-4", globalProgress === 0 && "[&>div]:bg-muted")} />
+              <p className="text-xs text-muted-foreground text-center">
+                {globalProgress > 0
+                  ? `${Math.round(globalProgress)}% de progression globale`
+                  : "Commence les exercices pour voir ta progression !"}
+              </p>
+            </div>
+          )}
         </CardContent>
       </Card>
 

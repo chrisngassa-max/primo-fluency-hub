@@ -213,6 +213,7 @@ const EleveProfil = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
+              autoComplete="new-password"
             />
           </div>
           <div className="space-y-2">
@@ -223,6 +224,7 @@ const EleveProfil = () => {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="••••••••"
+              autoComplete="new-password"
             />
           </div>
         </CardContent>

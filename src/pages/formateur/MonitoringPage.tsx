@@ -27,6 +27,31 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 
+
+// Simple Markdown renderer (bold, headings, bullet lists)
+function renderMarkdown(text: string): string {
+  if (!text) return "";
+  return text
+    // Headings ### ## #
+    .replace(/^### (.+)$/gm, '<h3 class="text-base font-bold mt-3 mb-1">$1</h3>')
+    .replace(/^## (.+)$/gm, '<h2 class="text-lg font-bold mt-4 mb-2">$1</h2>')
+    .replace(/^# (.+)$/gm, '<h1 class="text-xl font-bold mt-4 mb-2">$1</h1>')
+    // Bold **text**
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    // Bullet points * item or - item
+    .replace(/^[*\-] (.+)$/gm, '<li class="ml-4 list-disc">$1</li>')
+    // Wrap consecutive <li> in <ul>
+    .replace(/(<li[^>]*>.*<\/li>
+?)+/g, (match) => `<ul class="space-y-0.5 my-1">${match}</ul>`)
+    // Line breaks (double newline = paragraph)
+    .replace(/
+
+/g, '</p><p class="mt-2">')
+    // Single newlines
+    .replace(/
+/g, '<br/>');
+}
+
 const COMPETENCES = ["CO", "CE", "EE", "EO", "Structures"] as const;
 const COMP_LABELS: Record<string, string> = {
   CO: "Compréhension Orale", CE: "Compréhension Écrite",
@@ -443,7 +468,7 @@ const MonitoringPage = () => {
               <DialogTitle className="flex items-center gap-2"><Brain className="h-5 w-5 text-primary" /> Conseil IA — {d.profile?.prenom}</DialogTitle>
               <DialogDescription>Analyse pédagogique basée sur l'historique complet</DialogDescription>
             </DialogHeader>
-            <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">{aiAdvice}</div>
+            <div className="prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: renderMarkdown(aiAdvice || "") }} />
           </DialogContent>
         </Dialog>
 

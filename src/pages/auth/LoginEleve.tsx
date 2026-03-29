@@ -170,6 +170,7 @@ const LoginEleve = () => {
         onChange={(e) => onChange(e.target.value)}
         placeholder="••••••••"
         minLength={minLength}
+        autoComplete="new-password"
         required
         className="pr-10"
       />
