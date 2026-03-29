@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -10,7 +11,7 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { titre, objectifs, competences_cibles, niveau_cible, duree_minutes, exercices_suggeres } = await req.json();
+    const { titre, objectifs, competences_cibles, niveau_cible, duree_minutes, exercices_suggeres, gabaritNumero } = await req.json();
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
@@ -25,6 +26,42 @@ serve(async (req) => {
     const niveau = niveau_cible || "A1";
     const duree = duree_minutes || 180;
     const nbExercices = Math.max(8, Math.round(duree / 18));
+
+    // Load gabarit if provided
+    let gabarit: any = null;
+    if (gabaritNumero != null) {
+      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+      const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+      const sb = createClient(supabaseUrl, supabaseKey);
+      const { data } = await sb
+        .from("gabarits_pedagogiques")
+        .select("*")
+        .eq("numero", gabaritNumero)
+        .maybeSingle();
+      gabarit = data;
+    }
+
+    let gabaritBlock = "";
+    if (gabarit) {
+      const lexique = Array.isArray(gabarit.lexique_cibles) ? gabarit.lexique_cibles.join(", ") : (gabarit.lexique_cibles || "");
+      gabaritBlock = `
+
+GABARIT SÉANCE TCF IRN v2.0 :
+SÉANCE : ${gabarit.titre}
+BLOC : ${gabarit.bloc || "Non spécifié"}
+PALIER : ${gabarit.palier_cecrl || "Non spécifié"}
+OBJECTIF : ${gabarit.objectif_principal || "Non spécifié"}
+LEXIQUE OBLIGATOIRE : ${lexique}
+CONSIGNES TECHNIQUES : ${gabarit.consignes_generation || "Aucune"}
+CRITÈRES DE RÉUSSITE : ${gabarit.criteres_reussite || "Non spécifiés"}
+
+RÈGLES DU GABARIT :
+1. N'utilise QUE le lexique listé ci-dessus
+2. Respecte les formats indiqués dans les consignes techniques
+3. Contextes administratifs / vie quotidienne primo-arrivant uniquement
+4. Niveau : ${gabarit.palier_cecrl || niveau} — adapter la complexité
+5. Pas de situations hors contexte IRN`;
+    }
 
     const systemPrompt = `Tu es un expert FLE spécialisé TCF IRN. Tu dois générer le contenu complet d'une séance de ${duree} minutes pour un cours collectif d'adultes primo-arrivants.
 
@@ -44,6 +81,7 @@ RÈGLES :
 - Les ateliers ludiques doivent être réalistes et réalisables en classe (jeu de rôle, mime, Jacques a dit, cartes, etc.)
 ${objectifs ? `- Objectifs de la séance : ${objectifs}` : ""}
 ${exercices_suggeres?.length ? `- Types d'exercices suggérés : ${exercices_suggeres.join(", ")}` : ""}
+${gabaritBlock}
 
 Utilise le tool fourni pour retourner le résultat.`;
 

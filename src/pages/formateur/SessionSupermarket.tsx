@@ -24,6 +24,8 @@ import {
   Send,
   Eye,
   EyeOff,
+  ClipboardList,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -85,6 +87,7 @@ const SessionSupermarket = () => {
   const [dispatching, setDispatching] = useState(false);
   const [targetSessionId, setTargetSessionId] = useState("");
   const [showAteliers, setShowAteliers] = useState(true);
+  const [gabaritIgnored, setGabaritIgnored] = useState(false);
 
   // Fetch today's sessions for dispatch target
   const { data: todaySessions } = useQuery({
@@ -137,29 +140,57 @@ const SessionSupermarket = () => {
     },
   });
 
+  // Auto-detect matching gabarit from session title
+  const { data: detectedGabarit } = useQuery({
+    queryKey: ["detected-gabarit", sessionInfo?.titre],
+    queryFn: async () => {
+      if (!sessionInfo?.titre) return null;
+      // Try exact-ish match via ilike
+      const words = sessionInfo.titre.split(/\s+/).filter(w => w.length > 3).slice(0, 3);
+      if (words.length === 0) return null;
+      
+      // Try matching with the longest keyword
+      const keyword = words.reduce((a, b) => a.length > b.length ? a : b);
+      const { data, error } = await supabase
+        .from("gabarits_pedagogiques")
+        .select("*")
+        .ilike("titre", `%${keyword}%`)
+        .limit(1)
+        .maybeSingle();
+      if (error) {
+        console.error("Gabarit search error:", error);
+        return null;
+      }
+      return data;
+    },
+    enabled: !!sessionInfo?.titre,
+  });
+
   const handleGenerate = async () => {
     if (!sessionInfo) return;
     setGenerating(true);
     setExercices([]);
     setSelected(new Set());
     try {
-      const { data, error } = await supabase.functions.invoke("generate-session-content", {
-        body: {
-          titre: sessionInfo.titre,
-          objectifs: sessionInfo.objectifs,
-          competences_cibles: sessionInfo.competences_cibles,
-          niveau_cible: sessionInfo.niveau_cible,
-          duree_minutes: sessionInfo.duree_minutes,
-          exercices_suggeres: sessionInfo.exercices_suggeres,
-        },
-      });
+      const useGabarit = detectedGabarit && !gabaritIgnored;
+      const body: any = {
+        titre: sessionInfo.titre,
+        objectifs: sessionInfo.objectifs,
+        competences_cibles: sessionInfo.competences_cibles,
+        niveau_cible: sessionInfo.niveau_cible,
+        duree_minutes: sessionInfo.duree_minutes,
+        exercices_suggeres: sessionInfo.exercices_suggeres,
+      };
+      if (useGabarit) {
+        body.gabaritNumero = detectedGabarit.numero;
+      }
+      const { data, error } = await supabase.functions.invoke("generate-session-content", { body });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       const exs = data.exercices || [];
       setExercices(exs);
-      // Select all by default
       setSelected(new Set(exs.map((_: any, i: number) => i)));
-      toast.success(`${exs.length} exercices + ateliers générés !`);
+      toast.success(`${exs.length} exercices + ateliers générés !${useGabarit ? " (gabarit appliqué)" : ""}`);
     } catch (e: any) {
       console.error(e);
       toast.error("Erreur de génération", { description: e.message });
@@ -381,12 +412,58 @@ ${selectedExercices
         </CardContent>
       </Card>
 
-      {/* Generate button */}
+      {/* Gabarit detection + Generate button */}
       {exercices.length === 0 && !generating && (
-        <Button onClick={handleGenerate} size="lg" className="w-full">
-          <Sparkles className="h-4 w-4 mr-2" />
-          Générer les exercices et ateliers ludiques
-        </Button>
+        <div className="space-y-3">
+          {detectedGabarit && !gabaritIgnored && (
+            <Card className="border-primary/40 bg-primary/5">
+              <CardContent className="py-4 px-5 space-y-2">
+                <div className="flex items-start gap-3">
+                  <ClipboardList className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                  <div className="flex-1 space-y-1">
+                    <p className="text-sm font-semibold">
+                      📋 Gabarit détecté : Séance {detectedGabarit.numero} — {detectedGabarit.titre}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {detectedGabarit.palier_cecrl && `Palier ${detectedGabarit.palier_cecrl}`}
+                      {detectedGabarit.competences_cibles?.length > 0 && ` · ${detectedGabarit.competences_cibles.join(", ")}`}
+                    </p>
+                    {detectedGabarit.lexique_cibles?.length > 0 && (
+                      <p className="text-xs text-muted-foreground">
+                        <span className="font-medium">Lexique :</span>{" "}
+                        {detectedGabarit.lexique_cibles.slice(0, 8).join(", ")}
+                        {detectedGabarit.lexique_cibles.length > 8 && "…"}
+                      </p>
+                    )}
+                    {detectedGabarit.objectif_principal && (
+                      <p className="text-xs text-muted-foreground">
+                        <span className="font-medium">Objectif :</span> {detectedGabarit.objectif_principal}
+                      </p>
+                    )}
+                  </div>
+                  <Button variant="ghost" size="icon" className="shrink-0 h-7 w-7" onClick={() => setGabaritIgnored(true)}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="flex gap-2 pt-1">
+                  <Button onClick={handleGenerate} className="flex-1" data-gabarit={detectedGabarit.numero}>
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    Générer selon ce gabarit
+                  </Button>
+                  <Button variant="outline" onClick={() => setGabaritIgnored(true)}>
+                    Ignorer le gabarit
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+          {(!detectedGabarit || gabaritIgnored) && (
+            <Button onClick={handleGenerate} size="lg" className="w-full">
+              <Sparkles className="h-4 w-4 mr-2" />
+              Générer les exercices et ateliers ludiques
+            </Button>
+          )}
+        </div>
       )}
 
       {generating && (
