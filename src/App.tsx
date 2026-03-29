@@ -32,7 +32,7 @@ import EleveDevoirs from "@/pages/eleve/Devoirs";
 import DevoirPassation from "@/pages/eleve/DevoirPassation";
 import EleveProgression from "@/pages/eleve/Progression";
 import EleveProfil from "@/pages/eleve/Profil";
-import EleveTestEntree from "@/pages/eleve/TestEntree";
+
 import BilanSeance from "@/pages/eleve/BilanSeance";
 import BilanTestPassation from "@/pages/eleve/BilanTestPassation";
 import BilanDevoirs from "@/pages/eleve/BilanDevoirs";
@@ -112,7 +112,7 @@ const App = () => (
               }
             >
               <Route index element={<EleveDashboard />} />
-              <Route path="test-entree" element={<EleveTestEntree />} />
+              
               <Route path="test-positionnement" element={<TestPositionnement />} />
               <Route path="devoirs" element={<EleveDevoirs />} />
               <Route path="bilan/:sessionId" element={<BilanSeance />} />

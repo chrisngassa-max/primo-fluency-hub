@@ -64,14 +64,16 @@ const EleveDashboard = () => {
     })();
   }, [user, qc]);
 
-  // Check if student already passed the test
-  const { data: testEntree, isLoading: testLoading } = useQuery({
-    queryKey: ["eleve-test-entree", user?.id],
+  // Check if student already passed the positioning test
+  const { data: testResultat, isLoading: testLoading } = useQuery({
+    queryKey: ["eleve-test-positionnement-result", user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("tests_entree")
+        .from("test_resultats_apprenants")
         .select("*")
-        .eq("eleve_id", user!.id)
+        .eq("apprenant_id", user!.id)
+        .order("date_test", { ascending: false })
+        .limit(1)
         .maybeSingle();
       if (error) throw error;
       return data;
@@ -79,7 +81,7 @@ const EleveDashboard = () => {
     enabled: !!user?.id,
   });
 
-  const testCompleted = testEntree && !testEntree.en_cours && testEntree.completed_at;
+  const testCompleted = !!testResultat;
 
   // Fetch active devoirs
   const { data: devoirs, isLoading: devoirsLoading } = useQuery({
@@ -201,7 +203,7 @@ const EleveDashboard = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profils_eleves")
-        .select("taux_reussite_co, taux_reussite_ce, taux_reussite_ee, taux_reussite_structures")
+        .select("taux_reussite_co, taux_reussite_ce, taux_reussite_ee, taux_reussite_eo, taux_reussite_structures")
         .eq("eleve_id", user!.id)
         .maybeSingle();
       if (error) throw error;
@@ -233,33 +235,33 @@ const EleveDashboard = () => {
     enabled: !!user?.id,
   });
 
-  // Build progression data from real sources
-  const progressionData = testCompleted && testEntree ? [
+  // Build progression data from positioning test results
+  const progressionData = testCompleted && testResultat ? [
     {
       label: "Compréhension Orale",
-      initialScore: Math.round(Number(testEntree.score_co ?? 0)),
-      currentScore: Math.round(Number(profilEleve?.taux_reussite_co ?? testEntree.score_co ?? 0)),
+      initialScore: Math.round(Number(testResultat.score_co ?? 0)),
+      currentScore: Math.round(Number(profilEleve?.taux_reussite_co ?? testResultat.score_co ?? 0)),
       completedSessions: sessionsData?.completed ?? 0,
       totalSessions: Math.max(sessionsData?.total ?? 1, 1),
     },
     {
       label: "Compréhension Écrite",
-      initialScore: Math.round(Number(testEntree.score_ce ?? 0)),
-      currentScore: Math.round(Number(profilEleve?.taux_reussite_ce ?? testEntree.score_ce ?? 0)),
+      initialScore: Math.round(Number(testResultat.score_ce ?? 0)),
+      currentScore: Math.round(Number(profilEleve?.taux_reussite_ce ?? testResultat.score_ce ?? 0)),
+      completedSessions: sessionsData?.completed ?? 0,
+      totalSessions: Math.max(sessionsData?.total ?? 1, 1),
+    },
+    {
+      label: "Expression Orale",
+      initialScore: Math.round(Number(testResultat.score_eo ?? 0)),
+      currentScore: Math.round(Number(profilEleve?.taux_reussite_eo ?? testResultat.score_eo ?? 0)),
       completedSessions: sessionsData?.completed ?? 0,
       totalSessions: Math.max(sessionsData?.total ?? 1, 1),
     },
     {
       label: "Expression Écrite",
-      initialScore: Math.round(Number(testEntree.score_ee ?? 0)),
-      currentScore: Math.round(Number(profilEleve?.taux_reussite_ee ?? testEntree.score_ee ?? 0)),
-      completedSessions: sessionsData?.completed ?? 0,
-      totalSessions: Math.max(sessionsData?.total ?? 1, 1),
-    },
-    {
-      label: "Structures de la langue",
-      initialScore: Math.round(Number(testEntree.score_structures ?? 0)),
-      currentScore: Math.round(Number(profilEleve?.taux_reussite_structures ?? testEntree.score_structures ?? 0)),
+      initialScore: Math.round(Number(testResultat.score_ee ?? 0)),
+      currentScore: Math.round(Number(profilEleve?.taux_reussite_ee ?? testResultat.score_ee ?? 0)),
       completedSessions: sessionsData?.completed ?? 0,
       totalSessions: Math.max(sessionsData?.total ?? 1, 1),
     },
@@ -294,7 +296,7 @@ const EleveDashboard = () => {
                 </p>
                 <Button
                   className="mt-3 gap-2"
-                  onClick={() => navigate("/eleve/test-entree")}
+                  onClick={() => navigate("/eleve/test-positionnement")}
                 >
                   Commencer le test de niveau
                   <ArrowRight className="h-4 w-4" />
@@ -421,7 +423,7 @@ const EleveDashboard = () => {
               <Button
                 className="mt-4 gap-2"
                 variant="outline"
-                onClick={() => navigate("/eleve/test-entree")}
+                onClick={() => navigate("/eleve/test-positionnement")}
               >
                 Passer le test de niveau
                 <ArrowRight className="h-4 w-4" />
