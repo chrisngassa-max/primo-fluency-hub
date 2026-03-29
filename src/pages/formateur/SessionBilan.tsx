@@ -629,6 +629,66 @@ const SessionBilan = () => {
         </p>
       )}
 
+      {/* Tronc commun modal — Section A */}
+      <Dialog open={showTroncCommunModal} onOpenChange={setShowTroncCommunModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-blue-600" />Devoirs tronc commun
+            </DialogTitle>
+            <DialogDescription>
+              {uncheckedExercises.length} exercice(s) non traité(s). Sélectionnez ceux à envoyer en devoir à tout le groupe.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-1 py-2 max-h-60 overflow-y-auto">
+            {uncheckedExercises.map((se) => {
+              const ex = (se as any).exercice;
+              return (
+                <label key={se.id} className="flex items-center gap-2 p-2 rounded-md hover:bg-muted/50 cursor-pointer">
+                  <Checkbox
+                    checked={troncCommunSelected.has(se.id)}
+                    onCheckedChange={(checked) => {
+                      setTroncCommunSelected((prev) => {
+                        const next = new Set(prev);
+                        if (checked) next.add(se.id); else next.delete(se.id);
+                        return next;
+                      });
+                    }}
+                  />
+                  <span className="text-sm flex-1 truncate">{ex?.titre || "Exercice"}</span>
+                  <Badge variant="secondary" className="text-[10px] shrink-0">{ex?.competence}</Badge>
+                </label>
+              );
+            })}
+          </div>
+          <div className="space-y-2 border-t pt-3">
+            <Label className="text-sm font-semibold flex items-center gap-2">
+              <CalendarIcon className="h-4 w-4" />Date limite
+            </Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !devoirDeadline && "text-muted-foreground")}>
+                  <CalendarIcon className="h-4 w-4 mr-2" />
+                  {format(effectiveDeadline, "EEEE d MMMM yyyy", { locale: fr })}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar mode="single" selected={effectiveDeadline} onSelect={(d) => d && setDevoirDeadline(d)} disabled={(date) => date < minDeadline} initialFocus className="p-3 pointer-events-auto" />
+              </PopoverContent>
+            </Popover>
+          </div>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button onClick={handleTroncCommunConfirm} disabled={saving || troncCommunSelected.size === 0} className="flex-1 gap-2">
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              Envoyer ({troncCommunSelected.size}) en devoirs
+            </Button>
+            <Button variant="outline" onClick={handleTroncCommunSkip} className="flex-1">
+              Reporter les exercices
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Confirmation dialog for unchecked exercises */}
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <DialogContent>
