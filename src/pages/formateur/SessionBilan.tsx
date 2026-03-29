@@ -732,10 +732,10 @@ const SessionBilan = () => {
             </p>
           </div>
           <DialogFooter className="flex-col sm:flex-row gap-2">
-            <Button variant="default" onClick={() => saveWithAction("devoir")} disabled={saving} className="flex-1">
+            <Button variant="default" onClick={() => saveWithAction("devoir", [])} disabled={saving} className="flex-1">
               {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <BookOpen className="h-4 w-4 mr-2" />}Envoyer en devoirs
             </Button>
-            <Button variant="outline" onClick={() => saveWithAction("reporter")} disabled={saving} className="flex-1">
+            <Button variant="outline" onClick={() => saveWithAction("reporter", [])} disabled={saving} className="flex-1">
               <ArrowRight className="h-4 w-4 mr-2" />Reporter
             </Button>
           </DialogFooter>
