@@ -29,6 +29,17 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+interface FicheEleve {
+  titre_fiche: string;
+  contenu_fiche: string;
+  lexique_cles: string[];
+}
+
+interface DocumentationFournie {
+  guide_formateur: string;
+  fiches_eleves: FicheEleve[];
+}
+
 interface SessionExercice {
   titre: string;
   consigne: string;
@@ -43,6 +54,7 @@ interface SessionExercice {
     objectif_oral: string;
     duree_minutes?: number;
     variante?: string;
+    documentation_fournie?: DocumentationFournie;
   };
 }
 
@@ -243,7 +255,7 @@ const SessionSupermarket = () => {
         difficulte: ex.difficulte,
         niveau_vise: sessionInfo?.niveau_cible || "A1",
         contenu: ex.contenu,
-        animation_guide: ex.atelier_ludique,
+        animation_guide: ex.atelier_ludique as any,
         point_a_maitriser_id: defaultPoint.id,
         is_ai_generated: true,
         collectif: true,
@@ -302,7 +314,7 @@ h1 { font-size: 20px; border-bottom: 2px solid #333; padding-bottom: 8px; }
 .options { margin-left: 16px; }
 .option { margin: 2px 0; }
 .write-zone { border: 1px dashed #ccc; min-height: 60px; margin-top: 8px; border-radius: 4px; }
-@media print { body { margin: 1cm; } }
+@media print { body { margin: 1cm; } .no-print { display: none !important; } }
 </style></head><body>
 <h1>${sessionInfo?.titre || "Exercices"}</h1>
 <p style="color:#666;font-size:12px;">Niveau : ${sessionInfo?.niveau_cible || ""} · ${selectedExercices.length} exercices · ${sessionInfo?.duree_minutes || 0} min</p>
@@ -328,6 +340,70 @@ ${selectedExercices
     )
     .join("")}
 </div>`
+  )
+  .join("")}
+</body></html>`;
+
+    printWindow.document.write(html);
+    printWindow.document.close();
+    printWindow.print();
+  };
+
+  const handlePrintMateriel = () => {
+    const exsWithDocs = selectedExercices.filter(
+      (ex) => ex.atelier_ludique?.documentation_fournie
+    );
+    if (exsWithDocs.length === 0) {
+      toast.error("Aucun matériel pédagogique disponible dans la sélection.");
+      return;
+    }
+
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+
+    const html = `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Matériel — ${sessionInfo?.titre || "Séance"}</title>
+<style>
+body { font-family: Arial, sans-serif; margin: 1.5cm; font-size: 16px; color: #000; background: #fff; }
+h1 { font-size: 22px; border-bottom: 3px solid #000; padding-bottom: 8px; margin-bottom: 24px; }
+h2 { font-size: 18px; margin: 24px 0 8px 0; }
+.guide { border: 2px solid #333; padding: 16px; border-radius: 8px; margin-bottom: 16px; page-break-inside: avoid; }
+.guide-title { font-weight: bold; font-size: 14px; margin-bottom: 8px; }
+.guide-body { white-space: pre-line; font-size: 14px; line-height: 1.6; }
+.fiche { page-break-before: always; border: 2px solid #000; padding: 24px; border-radius: 8px; }
+.fiche-titre { font-size: 20px; font-weight: bold; text-align: center; margin-bottom: 16px; border-bottom: 2px dashed #666; padding-bottom: 12px; }
+.fiche-contenu { font-size: 16px; line-height: 1.8; white-space: pre-line; margin-bottom: 16px; }
+.lexique { display: flex; flex-wrap: wrap; gap: 8px; }
+.lexique-mot { border: 1px solid #000; padding: 4px 12px; border-radius: 4px; font-size: 14px; font-weight: bold; }
+.lexique-titre { font-weight: bold; font-size: 14px; margin-bottom: 6px; }
+@media print { body { margin: 1cm; } .fiche { page-break-before: always; } }
+</style></head><body>
+<h1>📦 Matériel Pédagogique — ${sessionInfo?.titre || ""}</h1>
+<p style="color:#666;font-size:12px;">Niveau : ${sessionInfo?.niveau_cible || ""} · ${exsWithDocs.length} activité(s)</p>
+${exsWithDocs
+  .map(
+    (ex, i) => {
+      const doc = ex.atelier_ludique.documentation_fournie!;
+      return `
+<h2>${i + 1}. ${ex.titre} — Guide Formateur</h2>
+<div class="guide">
+  <div class="guide-title">📋 Instructions pas-à-pas</div>
+  <div class="guide-body">${doc.guide_formateur}</div>
+</div>
+${(doc.fiches_eleves || [])
+  .map(
+    (fiche) => `
+<div class="fiche">
+  <div class="fiche-titre">${fiche.titre_fiche}</div>
+  <div class="fiche-contenu">${fiche.contenu_fiche}</div>
+  <div class="lexique-titre">📝 Lexique clé :</div>
+  <div class="lexique">
+    ${(fiche.lexique_cles || []).map((m: string) => `<span class="lexique-mot">${m}</span>`).join("")}
+  </div>
+</div>`
+  )
+  .join("")}`;
+    }
   )
   .join("")}
 </body></html>`;
@@ -568,6 +644,40 @@ ${selectedExercices
                               💡 Variante : {ex.atelier_ludique.variante}
                             </p>
                           )}
+
+                          {/* Documentation Fournie */}
+                          {ex.atelier_ludique.documentation_fournie && (
+                            <div className="mt-3 space-y-2">
+                              <div className="flex items-center gap-2 text-sm font-medium text-primary">
+                                📦 Matériel Pédagogique & Jeux
+                              </div>
+                              {/* Guide Formateur */}
+                              <div className="p-3 rounded-md bg-muted/60 text-xs whitespace-pre-line">
+                                <span className="font-semibold block mb-1">📋 Guide formateur :</span>
+                                {ex.atelier_ludique.documentation_fournie.guide_formateur}
+                              </div>
+                              {/* Fiches Eleves */}
+                              {ex.atelier_ludique.documentation_fournie.fiches_eleves?.length > 0 && (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                  {ex.atelier_ludique.documentation_fournie.fiches_eleves.map((fiche, fi) => (
+                                    <Card key={fi} className="border bg-accent/20">
+                                      <CardContent className="p-3 space-y-1.5">
+                                        <p className="text-xs font-bold">{fiche.titre_fiche}</p>
+                                        <p className="text-xs whitespace-pre-line">{fiche.contenu_fiche}</p>
+                                        {fiche.lexique_cles?.length > 0 && (
+                                          <div className="flex flex-wrap gap-1 pt-1">
+                                            {fiche.lexique_cles.map((mot, mi) => (
+                                              <Badge key={mi} variant="secondary" className="text-[9px]">{mot}</Badge>
+                                            ))}
+                                          </div>
+                                        )}
+                                      </CardContent>
+                                    </Card>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
@@ -629,7 +739,11 @@ ${selectedExercices
             </Button>
             <Button variant="outline" onClick={handlePrint} disabled={selected.size === 0}>
               <Printer className="h-4 w-4 mr-2" />
-              Imprimer PDF
+              Exercices
+            </Button>
+            <Button variant="outline" onClick={handlePrintMateriel} disabled={selected.size === 0}>
+              <Printer className="h-4 w-4 mr-2" />
+              🖨️ Matériel
             </Button>
           </div>
         </div>

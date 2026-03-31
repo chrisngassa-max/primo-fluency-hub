@@ -68,6 +68,7 @@ RÈGLES DU GABARIT :
 Pour CHAQUE exercice, tu dois fournir :
 1. L'exercice numérique (visible par l'élève) : titre, consigne, format, items avec options et réponses
 2. L'atelier ludique associé (visible uniquement par le formateur) : mise en situation, jeu, matériel, objectif oral
+3. La documentation_fournie : tout le matériel pédagogique nécessaire au formateur et aux élèves pour réaliser l'atelier ludique
 
 RÈGLES :
 - Génère exactement ${nbExercices} paires [exercice + atelier ludique]
@@ -79,6 +80,16 @@ RÈGLES :
 - IMPORTANT : pour les exercices de CE (compréhension écrite), tu DOIS OBLIGATOIREMENT inclure un champ "texte" dans contenu avec le paragraphe/document à lire AVANT les questions. Sans ce texte, l'exercice est inutilisable.
 - Pour les exercices de CO, inclus aussi un champ "texte" avec le script audio/dialogue à écouter.
 - Les ateliers ludiques doivent être réalistes et réalisables en classe (jeu de rôle, mime, Jacques a dit, cartes, etc.)
+
+DOCUMENTATION_FOURNIE (OBLIGATOIRE pour chaque atelier ludique) :
+- guide_formateur : instructions pas-à-pas claires pour animer l'activité en classe
+- fiches_eleves : un tableau de fiches physiques. Chaque fiche = un rôle ou une mission (ex: "Fiche A : Le Vendeur", "Fiche B : Le Client")
+  - titre_fiche : titre de la fiche
+  - contenu_fiche : description du rôle, mission spécifique, vocabulaire imposé, budget/prix/données concrètes
+  - lexique_cles : liste de 5-10 mots/phrases de niveau A1 à utiliser pendant le jeu
+- Le formateur doit avoir 100% du matériel textuel nécessaire. AUCUNE recherche externe permise.
+- Si c'est un jeu de rôle au marché, génère les prix, la liste des produits, le budget de l'acheteur.
+- Si c'est une simulation médicale, génère les symptômes, le vocabulaire du corps, les phrases types.
 ${objectifs ? `- Objectifs de la séance : ${objectifs}` : ""}
 ${exercices_suggeres?.length ? `- Types d'exercices suggérés : ${exercices_suggeres.join(", ")}` : ""}
 ${gabaritBlock}
@@ -147,8 +158,29 @@ Utilise le tool fourni pour retourner le résultat.`;
                             objectif_oral: { type: "string", description: "Structure de phrase cible à l'oral" },
                             duree_minutes: { type: "number", description: "Durée estimée de l'atelier" },
                             variante: { type: "string", description: "Variante possible pour adapter" },
+                            documentation_fournie: {
+                              type: "object",
+                              description: "Matériel pédagogique complet pour le formateur et les élèves",
+                              properties: {
+                                guide_formateur: { type: "string", description: "Instructions pas-à-pas pour animer l'activité" },
+                                fiches_eleves: {
+                                  type: "array",
+                                  description: "Fiches physiques à distribuer aux élèves",
+                                  items: {
+                                    type: "object",
+                                    properties: {
+                                      titre_fiche: { type: "string", description: "Ex: Fiche A — Le Vendeur" },
+                                      contenu_fiche: { type: "string", description: "Rôle, mission, vocabulaire imposé, données concrètes" },
+                                      lexique_cles: { type: "array", items: { type: "string" }, description: "5-10 mots/phrases A1 à utiliser" },
+                                    },
+                                    required: ["titre_fiche", "contenu_fiche", "lexique_cles"],
+                                  },
+                                },
+                              },
+                              required: ["guide_formateur", "fiches_eleves"],
+                            },
                           },
-                          required: ["scenario", "jeu", "materiel", "objectif_oral"],
+                          required: ["scenario", "jeu", "materiel", "objectif_oral", "documentation_fournie"],
                         },
                       },
                       required: ["titre", "consigne", "format", "competence", "difficulte", "contenu", "atelier_ludique"],
