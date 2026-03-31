@@ -141,6 +141,14 @@ const GroupesPage = () => {
     return p ? Math.round(Number(p.taux_reussite_global)) : 0;
   };
 
+  const sortedStudents = useMemo(() => {
+    return [...(allMembers ?? [])].sort((a: any, b: any) => {
+      const nomA = (a.eleve?.nom || "").toLowerCase();
+      const nomB = (b.eleve?.nom || "").toLowerCase();
+      return nomA.localeCompare(nomB);
+    });
+  }, [allMembers]);
+
   const handleCreate = async () => {
     if (!nom.trim()) { toast.error("Le nom est obligatoire."); return; }
     setSaving(true);
