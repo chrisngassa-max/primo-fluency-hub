@@ -566,6 +566,54 @@ const SessionPilot = () => {
     }
   };
 
+  // ─── Purge pending homework for this session ───
+  const handlePurgeHomework = async () => {
+    setPurgingHomework(true);
+    try {
+      const { error } = await supabase
+        .from("devoirs")
+        .delete()
+        .eq("session_id", id!)
+        .eq("statut", "en_attente");
+      if (error) throw error;
+      toast.success("Devoirs en attente purgés pour cette séance.");
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    } finally {
+      setPurgingHomework(false);
+    }
+  };
+
+  // ─── Generate Daily Homework via AI ───
+  const handleGenerateDailyHomework = async (params: {
+    targetSessionId: string;
+    dailyDuration: number;
+    targetDays: number;
+    targetWeaknesses: boolean;
+  }) => {
+    if (!user) return;
+    try {
+      const { data, error } = await supabase.functions.invoke("generate-daily-homework", {
+        body: {
+          sessionId: id,
+          dailyDuration: params.dailyDuration,
+          targetDays: params.targetDays,
+          targetWeaknesses: params.targetWeaknesses,
+          formateurId: user.id,
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast.success(
+        `${data.totalExercices} exercice(s) répartis sur ${data.totalJours} jour(s) !`,
+        { description: `${data.totalDevoirs} devoirs créés au total.` }
+      );
+    } catch (e: any) {
+      toast.error("Erreur de génération", { description: e.message });
+      throw e;
+    }
+  };
+
   // ─── Inline Editor ───
   const openEditor = (se: any) => {
     const ex = se.exercice;
