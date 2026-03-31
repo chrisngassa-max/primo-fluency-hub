@@ -29,6 +29,17 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+interface FicheEleve {
+  titre_fiche: string;
+  contenu_fiche: string;
+  lexique_cles: string[];
+}
+
+interface DocumentationFournie {
+  guide_formateur: string;
+  fiches_eleves: FicheEleve[];
+}
+
 interface SessionExercice {
   titre: string;
   consigne: string;
@@ -43,6 +54,7 @@ interface SessionExercice {
     objectif_oral: string;
     duree_minutes?: number;
     variante?: string;
+    documentation_fournie?: DocumentationFournie;
   };
 }
 
