@@ -262,6 +262,24 @@ const SessionPilot = () => {
     enabled: !!nextSession,
   });
 
+  // Fetch all future sessions for daily homework dialog
+  const { data: futureSessions } = useQuery({
+    queryKey: ["future-sessions", session?.group_id, session?.date_seance],
+    queryFn: async () => {
+      if (!session) return [];
+      const groupId = (session as any)?.group?.id || session.group_id;
+      const { data } = await supabase
+        .from("sessions")
+        .select("id, titre, date_seance")
+        .eq("group_id", groupId)
+        .gt("date_seance", session.date_seance)
+        .order("date_seance", { ascending: true })
+        .limit(10);
+      return data ?? [];
+    },
+    enabled: !!session,
+  });
+
   const exercises = sessionExercices ?? [];
   const reported = reportedExercises ?? [];
 
