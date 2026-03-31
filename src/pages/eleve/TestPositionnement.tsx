@@ -21,7 +21,8 @@ import {
   getProfilMessage,
   COMPETENCE_ORDER,
 } from "@/lib/testPositionnement";
-import { Mic, Square, Volume2 } from "lucide-react";
+import { Mic, Square } from "lucide-react";
+import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
 
 type Screen = "accueil" | "question" | "resultats";
 
