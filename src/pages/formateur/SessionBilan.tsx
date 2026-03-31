@@ -521,7 +521,7 @@ const SessionBilan = () => {
       </div>
 
       {/* Compact exercise list */}
-      <div className="border rounded-lg divide-y overflow-hidden">
+      <div className="border rounded-lg divide-y overflow-hidden overflow-y-auto max-h-[50vh] md:max-h-[400px]">
         {exercises.map((se, i) => {
           const ex = (se as any).exercice;
           const isChecked = checkedIds.has(se.id);
@@ -696,7 +696,7 @@ const SessionBilan = () => {
             <DialogTitle>Exercices non traités</DialogTitle>
             <DialogDescription>{uncheckedExercises.length} exercice(s) n'ont pas été traité(s).</DialogDescription>
           </DialogHeader>
-          <div className="space-y-2 py-2">
+          <div className="space-y-2 py-2 max-h-60 overflow-y-auto">
             {uncheckedExercises.map((se, i) => (
               <div key={se.id} className="text-sm flex items-center gap-2">
                 <span className="text-muted-foreground">•</span>
