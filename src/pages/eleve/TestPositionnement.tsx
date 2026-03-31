@@ -288,7 +288,7 @@ const TestPositionnement = () => {
     if (!sessionState || !currentQuestion || !audioBlob) return;
     setIsSubmitting(true);
 
-    // Upload audio
+    // Upload audio to storage (kept for formateur playback)
     const path = `${sessionState.sessionId}/${currentQuestion.id}.webm`;
     const { error: uploadError } = await supabase.storage
       .from("test-audio")
@@ -302,12 +302,39 @@ const TestPositionnement = () => {
       data: { publicUrl },
     } = supabase.storage.from("test-audio").getPublicUrl(path);
 
-    // AI evaluation
+    // Convert audioBlob to base64 for STT
+    let transcription = "(Transcription échouée - Audio illisible)";
+    try {
+      const base64Data = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const dataUrl = reader.result as string;
+          // Strip the data:audio/webm;base64, prefix
+          const base64 = dataUrl.split(",")[1] || "";
+          resolve(base64);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(audioBlob);
+      });
+
+      const { data: sttData, error: sttError } = await supabase.functions.invoke(
+        "transcribe-audio",
+        { body: { audioBase64: base64Data } }
+      );
+
+      if (!sttError && sttData?.transcript) {
+        transcription = sttData.transcript;
+      }
+    } catch (sttErr) {
+      console.error("STT error:", sttErr);
+    }
+
+    // AI evaluation with real transcription
     let evaluation = aiEvaluation;
     if (!evaluation) {
       evaluation = await evaluerReponseIA(
         { criteres_evaluation: currentQuestion.criteres_evaluation },
-        "(Enregistrement audio soumis)"
+        transcription
       );
       setAiEvaluation(evaluation);
     }
@@ -318,6 +345,7 @@ const TestPositionnement = () => {
       competence: currentCompetence,
       palier: sessionState.palier,
       reponse_audio_url: publicUrl,
+      reponse_apprenant: transcription,
       score_ia: evaluation.score,
       justification_ia: evaluation.justification,
       score_obtenu: evaluation.score,
