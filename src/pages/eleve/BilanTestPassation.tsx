@@ -304,6 +304,12 @@ const BilanTestPassation = () => {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
+            {currentQ.competence === "CO" && (
+              <TTSAudioPlayer
+                text={currentQ.script_audio || currentQ.question}
+                className="mb-2"
+              />
+            )}
             <p className="font-medium">{currentQ.question}</p>
 
             {currentQ.format === "texte_lacunaire" || !currentQ.options?.length ? (
