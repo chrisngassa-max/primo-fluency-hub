@@ -60,6 +60,7 @@ const FormateurDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const [activeTab, setActiveTab] = useState("seance-du-jour");
   const [showNextPreview, setShowNextPreview] = useState(false);
   const [sending, setSending] = useState(false);
   const [exerciseTracking, setExerciseTracking] = useState<Record<string, ExerciseTrackingState>>({});
@@ -671,7 +672,7 @@ ${sessionExercises.map((ex: any, i: number) => `
             </div>
           </CardContent>
         </Card>
-        <Card className="cursor-pointer hover:shadow-md transition-shadow border-l-4 border-l-destructive relative" onClick={() => { const el = document.querySelector('[data-value="alertes"]') as HTMLElement; el?.click(); }}>
+        <Card className="cursor-pointer hover:shadow-md transition-shadow border-l-4 border-l-destructive relative" onClick={() => setActiveTab("alertes")}>
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
@@ -784,7 +785,7 @@ ${sessionExercises.map((ex: any, i: number) => `
           ) : null}
         </CardContent>
       </Card>
-      <Tabs defaultValue="seance-du-jour">
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
           <TabsTrigger value="seance-du-jour">🎯 Ma Séance du Jour</TabsTrigger>
           <TabsTrigger value="groupes">Mes Groupes</TabsTrigger>
