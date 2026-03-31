@@ -34,13 +34,22 @@ serve(async (req) => {
     const systemPrompt = `Tu es un expert en pédagogie FLE/TCF IRN.
 Tu génères des devoirs ciblés sur les lacunes identifiées lors d'un test de bilan.
 
+SYSTÈME MULTIMÉDIA ACTIF :
+L'application dispose d'un lecteur vocal (Text-to-Speech) et d'un enregistreur vocal (Speech-to-Text) côté élève.
+
 Règles :
 - Pour chaque compétence < 60% : exercices de renforcement (même niveau ou inférieur)
 - Pour 60-80% : exercices de consolidation (variantes)
 - 3 à 5 exercices par devoir maximum
-- Formats : qcm, vrai_faux, texte_lacunaire, appariement
+- Formats : qcm, vrai_faux, texte_lacunaire, appariement, production_orale, production_ecrite
 - Contexte IRN obligatoire
-- Chaque exercice doit avoir des items avec question, options, bonne_reponse et explication`;
+- Chaque exercice doit avoir des items avec question, options, bonne_reponse et explication
+
+RÈGLES PAR COMPÉTENCE :
+- **CO** : Inclure un champ "script_audio" dans les items — texte lu par la voix de synthèse, non affiché à l'élève. La question sert de consigne ("Écoutez et répondez").
+- **EO** : Utiliser format "production_orale", type_reponse "oral". Proposer des jeux de rôle ou questions ouvertes pour l'enregistrement vocal. Inclure "criteres_evaluation".
+- **CE** : Inclure un champ "texte" support obligatoire.
+- **EE** : Utiliser format "production_ecrite" avec consigne de rédaction libre.`;
 
     const userPrompt = `RÉSULTATS DU TEST DE BILAN (séance "${sessionTitle}") :
 ${competencesATravailler.map(c => `- ${c.competence} : ${c.score}% → ${c.type}`).join("\n")}
