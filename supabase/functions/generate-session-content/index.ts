@@ -147,8 +147,29 @@ Utilise le tool fourni pour retourner le résultat.`;
                             objectif_oral: { type: "string", description: "Structure de phrase cible à l'oral" },
                             duree_minutes: { type: "number", description: "Durée estimée de l'atelier" },
                             variante: { type: "string", description: "Variante possible pour adapter" },
+                            documentation_fournie: {
+                              type: "object",
+                              description: "Matériel pédagogique complet pour le formateur et les élèves",
+                              properties: {
+                                guide_formateur: { type: "string", description: "Instructions pas-à-pas pour animer l'activité" },
+                                fiches_eleves: {
+                                  type: "array",
+                                  description: "Fiches physiques à distribuer aux élèves",
+                                  items: {
+                                    type: "object",
+                                    properties: {
+                                      titre_fiche: { type: "string", description: "Ex: Fiche A — Le Vendeur" },
+                                      contenu_fiche: { type: "string", description: "Rôle, mission, vocabulaire imposé, données concrètes" },
+                                      lexique_cles: { type: "array", items: { type: "string" }, description: "5-10 mots/phrases A1 à utiliser" },
+                                    },
+                                    required: ["titre_fiche", "contenu_fiche", "lexique_cles"],
+                                  },
+                                },
+                              },
+                              required: ["guide_formateur", "fiches_eleves"],
+                            },
                           },
-                          required: ["scenario", "jeu", "materiel", "objectif_oral"],
+                          required: ["scenario", "jeu", "materiel", "objectif_oral", "documentation_fournie"],
                         },
                       },
                       required: ["titre", "consigne", "format", "competence", "difficulte", "contenu", "atelier_ludique"],
