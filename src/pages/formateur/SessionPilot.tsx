@@ -1230,6 +1230,9 @@ ${Array.isArray(item.options) && item.options.length > 0
                         <Button variant="outline" size="sm" className="gap-1" onClick={() => openEditor(se)}>
                           <Pencil className="h-3.5 w-3.5" />Modifier
                         </Button>
+                        <Button variant="outline" size="sm" className="gap-1 text-destructive border-destructive/30 hover:bg-destructive/10" onClick={() => setDeleteSeId(se.id)}>
+                          <Trash2 className="h-3.5 w-3.5" />Supprimer
+                        </Button>
                       </div>
                     </div>
                   </AccordionContent>
