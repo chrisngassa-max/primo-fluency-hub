@@ -60,6 +60,7 @@ const FormateurDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const [activeTab, setActiveTab] = useState("seance-du-jour");
   const [showNextPreview, setShowNextPreview] = useState(false);
   const [sending, setSending] = useState(false);
   const [exerciseTracking, setExerciseTracking] = useState<Record<string, ExerciseTrackingState>>({});
