@@ -580,6 +580,40 @@ ${selectedExercices
                               💡 Variante : {ex.atelier_ludique.variante}
                             </p>
                           )}
+
+                          {/* Documentation Fournie */}
+                          {ex.atelier_ludique.documentation_fournie && (
+                            <div className="mt-3 space-y-2">
+                              <div className="flex items-center gap-2 text-sm font-medium text-primary">
+                                📦 Matériel Pédagogique & Jeux
+                              </div>
+                              {/* Guide Formateur */}
+                              <div className="p-3 rounded-md bg-muted/60 text-xs whitespace-pre-line">
+                                <span className="font-semibold block mb-1">📋 Guide formateur :</span>
+                                {ex.atelier_ludique.documentation_fournie.guide_formateur}
+                              </div>
+                              {/* Fiches Eleves */}
+                              {ex.atelier_ludique.documentation_fournie.fiches_eleves?.length > 0 && (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                  {ex.atelier_ludique.documentation_fournie.fiches_eleves.map((fiche, fi) => (
+                                    <Card key={fi} className="border bg-accent/20">
+                                      <CardContent className="p-3 space-y-1.5">
+                                        <p className="text-xs font-bold">{fiche.titre_fiche}</p>
+                                        <p className="text-xs whitespace-pre-line">{fiche.contenu_fiche}</p>
+                                        {fiche.lexique_cles?.length > 0 && (
+                                          <div className="flex flex-wrap gap-1 pt-1">
+                                            {fiche.lexique_cles.map((mot, mi) => (
+                                              <Badge key={mi} variant="secondary" className="text-[9px]">{mot}</Badge>
+                                            ))}
+                                          </div>
+                                        )}
+                                      </CardContent>
+                                    </Card>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
