@@ -10,7 +10,7 @@ interface TTSAudioPlayerProps {
   onPlayComplete?: () => void;
 }
 
-const TTSAudioPlayer = ({ text, className = "" }: TTSAudioPlayerProps) => {
+const TTSAudioPlayer = ({ text, className = "", onPlayComplete }: TTSAudioPlayerProps) => {
   const [loading, setLoading] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [playing, setPlaying] = useState(false);
