@@ -59,6 +59,7 @@ import { cn } from "@/lib/utils";
 import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/DifficultyBadge";
 import FeuilleAppel from "@/components/FeuilleAppel";
 import { COMPETENCE_COLORS, resolveSessionCompetences, sortCompetences } from "@/lib/competences";
+import GenerateDailyHomeworkDialog from "@/components/GenerateDailyHomeworkDialog";
 
 type ExerciseStatus = "traite_en_classe" | "reporte" | "planifie";
 
