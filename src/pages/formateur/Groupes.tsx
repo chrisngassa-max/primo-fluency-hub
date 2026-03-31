@@ -512,19 +512,35 @@ const GroupesPage = () => {
               </CardContent>
             </Card>
           ) : (
-            <div className="border rounded-lg overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Prénom & Nom</TableHead>
-                    <TableHead>Identifiant</TableHead>
-                    <TableHead>Groupe</TableHead>
-                    <TableHead className="text-center">Progression</TableHead>
-                    <TableHead className="text-center w-20">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {sortedStudents.map((m: any) => {
+            <div className="space-y-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Rechercher un nom ou prénom..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+              <div className="border rounded-lg overflow-hidden">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Prénom & Nom</TableHead>
+                      <TableHead>Identifiant</TableHead>
+                      <TableHead>Groupe</TableHead>
+                      <TableHead className="text-center">Progression</TableHead>
+                      <TableHead className="text-center w-20">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {sortedStudents
+                      .filter((m: any) => {
+                        if (!searchQuery.trim()) return true;
+                        const q = searchQuery.toLowerCase();
+                        return (m.eleve?.prenom || "").toLowerCase().includes(q) || (m.eleve?.nom || "").toLowerCase().includes(q);
+                      })
+                      .map((m: any) => {
                     const eleve = m.eleve;
                     const group = (groups ?? []).find((g) => g.id === m.group_id);
                     const prog = getProgress(m.eleve_id);
