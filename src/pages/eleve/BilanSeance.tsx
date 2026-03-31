@@ -455,7 +455,14 @@ const BilanSeance = () => {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          {exerciseSupportText && (
+          {/* TTS for CO exercises */}
+          {currentEx?.competence === "CO" && (currentEx?.contenu as any)?.script_audio && (
+            <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
+              <p className="text-xs text-primary mb-2 uppercase tracking-wide font-semibold">🔊 Écoute audio</p>
+              <TTSAudioPlayer text={(currentEx.contenu as any).script_audio} />
+            </div>
+          )}
+          {exerciseSupportText && currentEx?.competence !== "CO" && (
             <div className="p-4 rounded-lg bg-muted/50 text-sm whitespace-pre-line border border-border/50 leading-relaxed">
               <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide font-semibold">📄 Document</p>
               {exerciseSupportText}
