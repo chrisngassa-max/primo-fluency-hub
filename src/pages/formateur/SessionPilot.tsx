@@ -848,9 +848,13 @@ ${Array.isArray(item.options) && item.options.length > 0
             {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
             ✨ Générer IA
           </Button>
-          <Button onClick={handleGenerateHomework} disabled={generatingHomework} variant="outline" className="gap-2">
+          <Button onClick={() => setDailyHomeworkOpen(true)} disabled={generatingHomework || exercises.length === 0} variant="outline" className="gap-2">
             {generatingHomework ? <Loader2 className="h-4 w-4 animate-spin" /> : <ClipboardCheck className="h-4 w-4" />}
             Générer devoirs
+          </Button>
+          <Button variant="outline" className="gap-2 text-destructive border-destructive/30 hover:bg-destructive/10" disabled={purgingHomework} onClick={handlePurgeHomework}>
+            {purgingHomework ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+            Purger devoirs
           </Button>
           <Button variant="outline" className="gap-2 text-destructive border-destructive/30 hover:bg-destructive/10" disabled={exercises.length === 0} onClick={() => setClearConfirm(true)}>
             <Trash2 className="h-4 w-4" />
