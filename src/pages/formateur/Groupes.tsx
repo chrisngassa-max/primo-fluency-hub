@@ -45,6 +45,13 @@ const GroupesPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "groupes");
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    setSearchParams(value === "groupes" ? {} : { tab: value }, { replace: true });
+  };
 
   // Create group dialog
   const [createOpen, setCreateOpen] = useState(false);
