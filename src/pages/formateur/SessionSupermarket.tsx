@@ -314,7 +314,7 @@ h1 { font-size: 20px; border-bottom: 2px solid #333; padding-bottom: 8px; }
 .options { margin-left: 16px; }
 .option { margin: 2px 0; }
 .write-zone { border: 1px dashed #ccc; min-height: 60px; margin-top: 8px; border-radius: 4px; }
-@media print { body { margin: 1cm; } }
+@media print { body { margin: 1cm; } .no-print { display: none !important; } }
 </style></head><body>
 <h1>${sessionInfo?.titre || "Exercices"}</h1>
 <p style="color:#666;font-size:12px;">Niveau : ${sessionInfo?.niveau_cible || ""} · ${selectedExercices.length} exercices · ${sessionInfo?.duree_minutes || 0} min</p>
@@ -340,6 +340,70 @@ ${selectedExercices
     )
     .join("")}
 </div>`
+  )
+  .join("")}
+</body></html>`;
+
+    printWindow.document.write(html);
+    printWindow.document.close();
+    printWindow.print();
+  };
+
+  const handlePrintMateriel = () => {
+    const exsWithDocs = selectedExercices.filter(
+      (ex) => ex.atelier_ludique?.documentation_fournie
+    );
+    if (exsWithDocs.length === 0) {
+      toast.error("Aucun matériel pédagogique disponible dans la sélection.");
+      return;
+    }
+
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+
+    const html = `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Matériel — ${sessionInfo?.titre || "Séance"}</title>
+<style>
+body { font-family: Arial, sans-serif; margin: 1.5cm; font-size: 16px; color: #000; background: #fff; }
+h1 { font-size: 22px; border-bottom: 3px solid #000; padding-bottom: 8px; margin-bottom: 24px; }
+h2 { font-size: 18px; margin: 24px 0 8px 0; }
+.guide { border: 2px solid #333; padding: 16px; border-radius: 8px; margin-bottom: 16px; page-break-inside: avoid; }
+.guide-title { font-weight: bold; font-size: 14px; margin-bottom: 8px; }
+.guide-body { white-space: pre-line; font-size: 14px; line-height: 1.6; }
+.fiche { page-break-before: always; border: 2px solid #000; padding: 24px; border-radius: 8px; }
+.fiche-titre { font-size: 20px; font-weight: bold; text-align: center; margin-bottom: 16px; border-bottom: 2px dashed #666; padding-bottom: 12px; }
+.fiche-contenu { font-size: 16px; line-height: 1.8; white-space: pre-line; margin-bottom: 16px; }
+.lexique { display: flex; flex-wrap: wrap; gap: 8px; }
+.lexique-mot { border: 1px solid #000; padding: 4px 12px; border-radius: 4px; font-size: 14px; font-weight: bold; }
+.lexique-titre { font-weight: bold; font-size: 14px; margin-bottom: 6px; }
+@media print { body { margin: 1cm; } .fiche { page-break-before: always; } }
+</style></head><body>
+<h1>📦 Matériel Pédagogique — ${sessionInfo?.titre || ""}</h1>
+<p style="color:#666;font-size:12px;">Niveau : ${sessionInfo?.niveau_cible || ""} · ${exsWithDocs.length} activité(s)</p>
+${exsWithDocs
+  .map(
+    (ex, i) => {
+      const doc = ex.atelier_ludique.documentation_fournie!;
+      return `
+<h2>${i + 1}. ${ex.titre} — Guide Formateur</h2>
+<div class="guide">
+  <div class="guide-title">📋 Instructions pas-à-pas</div>
+  <div class="guide-body">${doc.guide_formateur}</div>
+</div>
+${(doc.fiches_eleves || [])
+  .map(
+    (fiche) => `
+<div class="fiche">
+  <div class="fiche-titre">${fiche.titre_fiche}</div>
+  <div class="fiche-contenu">${fiche.contenu_fiche}</div>
+  <div class="lexique-titre">📝 Lexique clé :</div>
+  <div class="lexique">
+    ${(fiche.lexique_cles || []).map((m: string) => `<span class="lexique-mot">${m}</span>`).join("")}
+  </div>
+</div>`
+  )
+  .join("")}`;
+    }
   )
   .join("")}
 </body></html>`;
