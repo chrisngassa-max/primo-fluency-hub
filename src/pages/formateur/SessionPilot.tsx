@@ -1528,6 +1528,42 @@ ${Array.isArray(item.options) && item.options.length > 0
         </AlertDialogContent>
       </AlertDialog>
 
+      {/* Delete single exercise confirmation */}
+      <AlertDialog open={!!deleteSeId} onOpenChange={(open) => { if (!open) setDeleteSeId(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Supprimer cet exercice ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              L'exercice sera retiré de cette séance. Cette action est irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={() => deleteSeId && handleDeleteExercise(deleteSeId)}>
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Clear all exercises confirmation */}
+      <AlertDialog open={clearConfirm} onOpenChange={setClearConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Vider tous les exercices ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tous les exercices seront retirés de cette séance. Cette action est irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={handleClearExercises}>
+              Vider la séance
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {/* ─── Next Session Preview ─── */}
       {nextSession && (
         <Card className="border-dashed print:hidden">
