@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { updateProfilEleve } from "@/lib/updateProfilEleve";
@@ -10,11 +10,14 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import {
-  ArrowLeft, CheckCircle2, XCircle, Loader2, Send, FileText,
+  ArrowLeft, CheckCircle2, XCircle, Loader2, Send, FileText, Mic, Square,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
+import { evaluerReponseIA } from "@/lib/testPositionnement";
 
 const DevoirPassation = () => {
   const { devoirId } = useParams<{ devoirId: string }>();
@@ -24,6 +27,12 @@ const DevoirPassation = () => {
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ score: number; correction: any[]; bilanId?: string } | null>(null);
+
+  // Audio recording state for EO
+  const [isRecording, setIsRecording] = useState(false);
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
 
   const { data: devoir, isLoading } = useQuery({
     queryKey: ["devoir-detail", devoirId],
@@ -40,7 +49,6 @@ const DevoirPassation = () => {
     enabled: !!devoirId && !!user?.id,
   });
 
-  // Check if already submitted
   const { data: existingResult } = useQuery({
     queryKey: ["devoir-result", devoirId],
     queryFn: async () => {
@@ -63,44 +71,74 @@ const DevoirPassation = () => {
   const items: any[] = contenu?.items ?? [];
   const isDone = devoir?.statut === "fait" || devoir?.statut === "arrete";
 
+  const isCompetenceCO = ex?.competence === "CO";
+  const isCompetenceEO = ex?.competence === "EO" || contenu?.type_reponse === "oral" || ex?.format === "production_orale";
+  const scriptAudio = contenu?.script_audio;
+
+  // Audio recording helpers
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream, { mimeType: "audio/webm" });
+      chunksRef.current = [];
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunksRef.current.push(e.data);
+      };
+      recorder.onstop = () => {
+        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+        setAudioBlob(blob);
+        stream.getTracks().forEach((t) => t.stop());
+      };
+      mediaRecorderRef.current = recorder;
+      recorder.start();
+      setIsRecording(true);
+    } catch {
+      toast.error("Impossible d'accéder au microphone.");
+    }
+  };
+
+  const stopRecording = () => {
+    mediaRecorderRef.current?.stop();
+    setIsRecording(false);
+  };
+
+  const blobToBase64 = (blob: Blob): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const dataUrl = reader.result as string;
+        resolve(dataUrl.split(",")[1] || "");
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  };
+
   const triggerBilanGeneration = async (score: number, correction: any[]) => {
     try {
       if (!devoir || !user) return;
-
-      // Get student name
       const { data: profile } = await supabase.from("profiles").select("nom, prenom").eq("id", user.id).single();
       const eleveNom = profile ? `${profile.prenom} ${profile.nom}` : "Élève";
-
-      // Get session info if available
       let sessionTitle = "Séance";
       let sessionId: string | null = devoir.session_id;
       if (sessionId) {
         const { data: sess } = await supabase.from("sessions").select("titre").eq("id", sessionId).single();
         if (sess) sessionTitle = sess.titre;
       }
-
-      // Get formateur ID
       const formateurId = devoir.formateur_id;
-
-      // Build devoir results for the AI
       const devoirResults = [{
         titre: ex?.titre || "Exercice",
         competence: ex?.competence || "CE",
         score,
         erreurs: correction.filter((c: any) => !c.correct).map((c: any) => c.question).join("; "),
       }];
-
-      // Call AI to generate both bilans
       const { data: bilanData, error: bilanErr } = await supabase.functions.invoke("generate-post-devoir-bilan", {
         body: { eleveNom, bilanTestScore: { score }, devoirResults, sessionTitle },
       });
-
       if (bilanErr || bilanData?.error) {
         console.error("Bilan generation failed:", bilanErr || bilanData?.error);
         return;
       }
-
-      // Store bilan in database
       const { data: inserted, error: insertErr } = await supabase.from("bilan_post_devoirs").insert({
         eleve_id: user.id,
         formateur_id: formateurId,
@@ -109,23 +147,90 @@ const DevoirPassation = () => {
         is_read: false,
         is_integrated: false,
       }).select("id").single();
-
       if (insertErr) {
         console.error("Failed to save bilan:", insertErr);
         return;
       }
-
-      // Send notification to formateur
       await supabase.from("notifications").insert({
         user_id: formateurId,
         titre: `${eleveNom} a rendu ses devoirs`,
         message: `Score global : ${score}% · ${correction.filter((c: any) => !c.correct).length} erreur(s) détectée(s)`,
         link: `/formateur/monitoring`,
       });
-
       return inserted?.id;
     } catch (e) {
       console.error("Bilan trigger error:", e);
+    }
+  };
+
+  const handleSubmitOral = async () => {
+    if (!devoir || !ex || !user || !audioBlob) return;
+    setSubmitting(true);
+    try {
+      // Upload audio to storage
+      const path = `devoirs/${devoirId}/${user.id}.webm`;
+      await supabase.storage.from("test-audio").upload(path, audioBlob, { contentType: "audio/webm", upsert: true });
+
+      // Transcribe
+      let transcription = "(Transcription échouée - Audio illisible)";
+      try {
+        const base64Data = await blobToBase64(audioBlob);
+        const { data: sttData, error: sttError } = await supabase.functions.invoke("transcribe-audio", {
+          body: { audioBase64: base64Data },
+        });
+        if (!sttError && sttData?.transcript) {
+          transcription = sttData.transcript;
+        }
+      } catch (sttErr) {
+        console.error("STT error:", sttErr);
+      }
+
+      // AI evaluation
+      const evaluation = await evaluerReponseIA(
+        { criteres_evaluation: contenu?.criteres_evaluation || { prononciation: "clarté", vocabulaire: "pertinence", grammaire: "correction", coherence: "logique" } },
+        transcription
+      );
+
+      const score = Math.round((evaluation.score / 3) * 100);
+      const correction = [{
+        question: ex.consigne || "Production orale",
+        reponse_eleve: transcription,
+        bonne_reponse: "(Évaluation IA)",
+        correct: score >= 60,
+        explication: evaluation.justification,
+      }];
+
+      // Insert result
+      await supabase.from("resultats").insert({
+        eleve_id: user.id,
+        exercice_id: ex.id,
+        devoir_id: devoirId!,
+        score,
+        reponses_eleve: { transcription, audio_path: path } as any,
+        correction_detaillee: correction as any,
+        tentative: 1,
+      });
+
+      // Update devoir status
+      const newConsecutive = (devoir.nb_reussites_consecutives || 0) + (score >= 80 ? 1 : 0);
+      const newStatut = newConsecutive >= 2 ? "arrete" : "fait";
+      await supabase.from("devoirs").update({
+        statut: newStatut as any,
+        nb_reussites_consecutives: score >= 80 ? newConsecutive : 0,
+        updated_at: new Date().toISOString(),
+      }).eq("id", devoirId!);
+
+      try { await updateProfilEleve(user.id, ex?.niveau_vise || "A1"); } catch {}
+      const bilanId = await triggerBilanGeneration(score, correction);
+
+      setResult({ score, correction, bilanId });
+      qc.invalidateQueries({ queryKey: ["eleve-devoirs"] });
+      qc.invalidateQueries({ queryKey: ["devoir-detail", devoirId] });
+      toast.success(`Devoir oral soumis ! Score : ${score}%`);
+    } catch (e: any) {
+      toast.error("Erreur de soumission", { description: e.message });
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -133,7 +238,6 @@ const DevoirPassation = () => {
     if (!devoir || !ex || !user) return;
     setSubmitting(true);
     try {
-      // Calculate score
       let correct = 0;
       const correction = items.map((item: any, idx: number) => {
         const userAnswer = answers[idx] || "";
@@ -150,7 +254,6 @@ const DevoirPassation = () => {
 
       const score = items.length > 0 ? Math.round((correct / items.length) * 100) : 0;
 
-      // Insert result
       const { error: resErr } = await supabase.from("resultats").insert({
         eleve_id: user.id,
         exercice_id: ex.id,
@@ -162,28 +265,16 @@ const DevoirPassation = () => {
       });
       if (resErr) throw resErr;
 
-      // Update devoir status
       const newConsecutive = (devoir.nb_reussites_consecutives || 0) + (score >= 80 ? 1 : 0);
       const newStatut = newConsecutive >= 2 ? "arrete" : "fait";
-
-      const { error: devErr } = await supabase
-        .from("devoirs")
-        .update({
-          statut: newStatut as any,
-          nb_reussites_consecutives: score >= 80 ? newConsecutive : 0,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", devoirId!);
+      const { error: devErr } = await supabase.from("devoirs").update({
+        statut: newStatut as any,
+        nb_reussites_consecutives: score >= 80 ? newConsecutive : 0,
+        updated_at: new Date().toISOString(),
+      }).eq("id", devoirId!);
       if (devErr) throw devErr;
 
-      // Propagate scores to profils_eleves for monitoring visibility
-      try {
-        await updateProfilEleve(user.id, ex?.niveau_vise || "A1");
-      } catch (profileErr) {
-        console.error("Profile update failed:", profileErr);
-      }
-
-      // Trigger AI bilan generation in background
+      try { await updateProfilEleve(user.id, ex?.niveau_vise || "A1"); } catch {}
       const bilanId = await triggerBilanGeneration(score, correction);
 
       setResult({ score, correction, bilanId });
@@ -217,7 +308,6 @@ const DevoirPassation = () => {
     );
   }
 
-  // Show existing result if already done
   const showResult = result || (existingResult ? { score: Number(existingResult.score), correction: (existingResult.correction_detaillee as any) || [] } : null);
 
   if (showResult || isDone) {
@@ -251,15 +341,11 @@ const DevoirPassation = () => {
           </CardContent>
         </Card>
 
-        {/* Correction détaillée */}
         {Array.isArray(finalResult.correction) && finalResult.correction.length > 0 && (
           <div className="space-y-2">
             <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Correction détaillée</h2>
             {finalResult.correction.map((c: any, i: number) => (
-              <Card key={i} className={cn(
-                "border-l-4",
-                c.correct ? "border-l-green-500" : "border-l-destructive"
-              )}>
+              <Card key={i} className={cn("border-l-4", c.correct ? "border-l-green-500" : "border-l-destructive")}>
                 <CardContent className="py-3 px-4 space-y-1">
                   <div className="flex items-start gap-2">
                     {c.correct ? (
@@ -271,8 +357,8 @@ const DevoirPassation = () => {
                       <p className="text-sm font-medium">{c.question}</p>
                       {!c.correct && (
                         <>
-                       <p className="text-xs text-destructive">Ta réponse : {c.reponse_eleve || "—"}</p>
-                       <p className="text-xs text-green-600">Bonne réponse : {c.bonne_reponse}</p>
+                          <p className="text-xs text-destructive">Ta réponse : {c.reponse_eleve || "—"}</p>
+                          <p className="text-xs text-green-600">Bonne réponse : {c.bonne_reponse}</p>
                         </>
                       )}
                       {c.explication && (
@@ -286,7 +372,6 @@ const DevoirPassation = () => {
           </div>
         )}
 
-        {/* Link to bilan if generated */}
         {(result as any)?.bilanId && (
           <Button variant="outline" className="w-full gap-2" onClick={() => navigate(`/eleve/bilan-devoirs/${(result as any).bilanId}`)}>
             <FileText className="h-4 w-4" />Voir mon bilan détaillé
@@ -320,16 +405,67 @@ const DevoirPassation = () => {
         </CardHeader>
       </Card>
 
-      {contenu?.texte && (
+      {/* TTS player for CO exercises */}
+      {isCompetenceCO && scriptAudio && (
         <Card className="border-primary/20 bg-primary/5">
           <CardContent className="pt-4 pb-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-primary mb-2">Support de l'exercice :</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-primary mb-2">🔊 Écoute audio</p>
+            <TTSAudioPlayer text={scriptAudio} className="mb-0" />
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Text support for CE or non-CO with texte */}
+      {!isCompetenceCO && contenu?.texte && (
+        <Card className="border-primary/20 bg-primary/5">
+          <CardContent className="pt-4 pb-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-primary mb-2">📄 Support de l'exercice</p>
             <p className="text-sm whitespace-pre-wrap leading-relaxed">{contenu.texte}</p>
           </CardContent>
         </Card>
       )}
 
-      {items.length > 0 ? (
+      {/* EO: Oral recording interface */}
+      {isCompetenceEO ? (
+        <Card>
+          <CardContent className="pt-4 space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Enregistrez votre réponse orale en cliquant sur le microphone ci-dessous.
+            </p>
+
+            <div className="flex items-center gap-3">
+              {isRecording ? (
+                <Button variant="destructive" onClick={stopRecording} className="gap-2">
+                  <Square className="h-4 w-4" /> Arrêter l'enregistrement
+                </Button>
+              ) : (
+                <Button variant="outline" onClick={startRecording} className="gap-2">
+                  <Mic className="h-4 w-4" /> {audioBlob ? "Réenregistrer" : "Enregistrer ma réponse"}
+                </Button>
+              )}
+              {audioBlob && !isRecording && (
+                <Badge variant="secondary" className="gap-1">
+                  <CheckCircle2 className="h-3 w-3" /> Audio enregistré
+                </Badge>
+              )}
+            </div>
+
+            {audioBlob && (
+              <audio controls src={URL.createObjectURL(audioBlob)} className="w-full mt-2" />
+            )}
+
+            <Button
+              onClick={handleSubmitOral}
+              disabled={submitting || !audioBlob}
+              className="w-full gap-2"
+              size="lg"
+            >
+              {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              Soumettre ma réponse orale
+            </Button>
+          </CardContent>
+        </Card>
+      ) : items.length > 0 ? (
         <div className="space-y-4">
           {items.map((item: any, idx: number) => (
             <Card key={idx}>
@@ -364,6 +500,11 @@ const DevoirPassation = () => {
               </CardContent>
             </Card>
           ))}
+
+          <Button onClick={handleSubmit} disabled={submitting} className="w-full gap-2" size="lg">
+            {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+            Soumettre mes réponses
+          </Button>
         </div>
       ) : (
         <Card className="border-dashed">
@@ -371,13 +512,6 @@ const DevoirPassation = () => {
             Aucune question dans cet exercice.
           </CardContent>
         </Card>
-      )}
-
-      {items.length > 0 && (
-        <Button onClick={handleSubmit} disabled={submitting} className="w-full gap-2" size="lg">
-          {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-          Soumettre mes réponses
-        </Button>
       )}
     </div>
   );
