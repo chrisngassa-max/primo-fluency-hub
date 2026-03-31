@@ -37,26 +37,39 @@ Tu génères des devoirs ciblés sur les lacunes identifiées lors d'un test de 
 SYSTÈME MULTIMÉDIA ACTIF :
 L'application dispose d'un lecteur vocal (Text-to-Speech) et d'un enregistreur vocal (Speech-to-Text) côté élève.
 
+═══════════════════════════════════════════════════
+CARTOGRAPHIE DES EXERCICES TCF IRN — NIVEAU A1
+Chaque exercice DOIT porter un code et des métadonnées issus de cette cartographie.
+═══════════════════════════════════════════════════
+
+### CO — TTS obligatoire
+CO1 (Identifier situation, 45s), CO2 (Sujet global, 50s), CO3 (Consignes/Règles, 45s), CO4 (Info chiffrée, 50s)
+→ "script_audio" OBLIGATOIRE dans contenu. "question" = consigne d'écoute.
+
+### CE — texte support obligatoire
+CE1 (Signalétique, 80s), CE2 (Messages familiers, 80s), CE3 (Recherche d'info, 80s), CE4 (Texte admin, 100s)
+→ "texte" OBLIGATOIRE dans contenu.
+
+### EO — production_orale + type_reponse "oral"
+EO1 (Se présenter, 120s), EO2 (Interaction, 180s), EO3 (Survie, 120s), EO4 (Demande d'info, 120s)
+→ format "production_orale", "criteres_evaluation" + "mots_cles_attendus".
+
+### EE — production_ecrite
+EE1 (Remplir/Saisir, 300s), EE2 (Informer par écrit, 600s), EE3 (Décrire/Raconter, 600s)
+
 Règles :
 - Pour chaque compétence < 60% : exercices de renforcement (même niveau ou inférieur)
 - Pour 60-80% : exercices de consolidation (variantes)
 - 3 à 5 exercices par devoir maximum
-- Formats : qcm, vrai_faux, texte_lacunaire, appariement, production_orale, production_ecrite
 - Contexte IRN obligatoire
-- Chaque exercice doit avoir des items avec question, options, bonne_reponse et explication
-
-RÈGLES PAR COMPÉTENCE :
-- **CO** : Inclure un champ "script_audio" dans les items — texte lu par la voix de synthèse, non affiché à l'élève. La question sert de consigne ("Écoutez et répondez").
-- **EO** : Utiliser format "production_orale", type_reponse "oral". Proposer des jeux de rôle ou questions ouvertes pour l'enregistrement vocal. Inclure "criteres_evaluation".
-- **CE** : Inclure un champ "texte" support obligatoire.
-- **EE** : Utiliser format "production_ecrite" avec consigne de rédaction libre.`;
+- Chaque exercice doit avoir un metadata avec code, skill, sub_skill, time_limit_seconds`;
 
     const userPrompt = `RÉSULTATS DU TEST DE BILAN (séance "${sessionTitle}") :
 ${competencesATravailler.map(c => `- ${c.competence} : ${c.score}% → ${c.type}`).join("\n")}
 
 NIVEAU CIBLE : ${niveauCible || "A1"}
 
-Génère les devoirs ciblés pour chaque compétence en difficulté.`;
+Génère les devoirs ciblés pour chaque compétence en difficulté. Attribue un code TCF IRN à chaque exercice.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -74,7 +87,7 @@ Génère les devoirs ciblés pour chaque compétence en difficulté.`;
           type: "function",
           function: {
             name: "generate_devoirs",
-            description: "Génère les devoirs ciblés sur les lacunes",
+            description: "Génère les devoirs ciblés sur les lacunes avec codes TCF IRN",
             parameters: {
               type: "object",
               properties: {
@@ -89,9 +102,20 @@ Génère les devoirs ciblés pour chaque compétence en difficulté.`;
                       consigne: { type: "string" },
                       format: { type: "string", enum: ["qcm", "vrai_faux", "texte_lacunaire", "appariement", "production_orale", "production_ecrite"] },
                       niveau_vise: { type: "string" },
-                      type_reponse: { type: "string", enum: ["ecrit", "oral"], description: "Type de réponse (oral pour EO)" },
-                      script_audio: { type: "string", description: "Script audio pour CO" },
-                      criteres_evaluation: { type: "object", description: "Critères d'évaluation pour productions orales/écrites" },
+                      type_reponse: { type: "string", enum: ["ecrit", "oral"] },
+                      script_audio: { type: "string" },
+                      criteres_evaluation: { type: "object" },
+                      mots_cles_attendus: { type: "array", items: { type: "string" } },
+                      metadata: {
+                        type: "object",
+                        properties: {
+                          code: { type: "string" },
+                          skill: { type: "string" },
+                          sub_skill: { type: "string" },
+                          time_limit_seconds: { type: "number" },
+                        },
+                        required: ["code", "skill", "sub_skill", "time_limit_seconds"],
+                      },
                       items: {
                         type: "array",
                         items: {
@@ -107,7 +131,7 @@ Génère les devoirs ciblés pour chaque compétence en difficulté.`;
                         },
                       },
                     },
-                    required: ["competence", "type_devoir", "titre", "consigne", "format", "niveau_vise", "items"],
+                    required: ["competence", "type_devoir", "titre", "consigne", "format", "niveau_vise", "metadata", "items"],
                     additionalProperties: false,
                   },
                 },
