@@ -1668,6 +1668,15 @@ ${Array.isArray(item.options) && item.options.length > 0
       )}
 
       <style>{`@media print { nav, header, .print\\:hidden { display: none !important; } body { font-size: 12pt; } }`}</style>
+
+      {/* ─── Generate Daily Homework Dialog ─── */}
+      <GenerateDailyHomeworkDialog
+        open={dailyHomeworkOpen}
+        onOpenChange={setDailyHomeworkOpen}
+        currentSessionDate={session?.date_seance || new Date().toISOString()}
+        nextSessions={futureSessions ?? []}
+        onGenerate={handleGenerateDailyHomework}
+      />
     </div>
   );
 };
