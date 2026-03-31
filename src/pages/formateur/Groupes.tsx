@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,6 +15,8 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Accordion, AccordionContent, AccordionItem, AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter,
 } from "@/components/ui/dialog";
@@ -43,6 +45,13 @@ const GroupesPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "groupes");
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    setSearchParams(value === "groupes" ? {} : { tab: value }, { replace: true });
+  };
 
   // Create group dialog
   const [createOpen, setCreateOpen] = useState(false);
@@ -131,6 +140,14 @@ const GroupesPage = () => {
     const p = (allProfils ?? []).find((p: any) => p.eleve_id === eleveId);
     return p ? Math.round(Number(p.taux_reussite_global)) : 0;
   };
+
+  const sortedStudents = useMemo(() => {
+    return [...(allMembers ?? [])].sort((a: any, b: any) => {
+      const nomA = (a.eleve?.nom || "").toLowerCase();
+      const nomB = (b.eleve?.nom || "").toLowerCase();
+      return nomA.localeCompare(nomB);
+    });
+  }, [allMembers]);
 
   const handleCreate = async () => {
     if (!nom.trim()) { toast.error("Le nom est obligatoire."); return; }
@@ -311,170 +328,243 @@ const GroupesPage = () => {
         </Dialog>
       </div>
 
-      {/* Empty state */}
-      {groups && groups.length === 0 && (
-        <Card className="border-dashed">
-          <CardContent className="py-12 text-center">
-            <Users className="h-12 w-12 mx-auto text-muted-foreground/40 mb-3" />
-            <p className="text-muted-foreground font-medium">Aucun groupe</p>
-            <p className="text-sm text-muted-foreground/70 mt-1">Créez votre premier groupe pour commencer.</p>
-            <Button onClick={() => setCreateOpen(true)} className="mt-4"><Plus className="h-4 w-4 mr-2" />Créer mon premier groupe</Button>
-          </CardContent>
-        </Card>
-      )}
+      <Tabs value={activeTab} onValueChange={handleTabChange}>
+        <TabsList>
+          <TabsTrigger value="groupes">Vue par Groupes</TabsTrigger>
+          <TabsTrigger value="eleves">Vue par Élèves</TabsTrigger>
+        </TabsList>
 
-      {/* Accordion groups */}
-      <Accordion
-        type="multiple"
-        value={expandedGroups}
-        onValueChange={setExpandedGroups}
-        className="space-y-3"
-      >
-        {(groups ?? []).map((g) => {
-          const members = getMembersForGroup(g.id);
-          return (
-            <AccordionItem key={g.id} value={g.id} className="border rounded-lg overflow-hidden">
-              <div className="flex items-center">
-                <AccordionTrigger className="flex-1 px-4 py-3 hover:no-underline">
-                  <div className="flex items-center gap-3 w-full">
-                    <div className="flex items-center justify-center h-10 w-10 rounded-lg bg-primary/10 shrink-0">
-                      <Users className="h-5 w-5 text-primary" />
-                    </div>
-                    <div className="text-left min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-semibold text-sm">{g.nom}</span>
-                        <Badge variant="outline">{g.niveau}</Badge>
-                        <span className="text-xs text-muted-foreground">
-                          {members.length === 0 ? "Aucun élève" : members.length === 1 ? "1 élève" : `${members.length} élèves`}
-                        </span>
+        <TabsContent value="groupes">
+          {/* Empty state */}
+          {groups && groups.length === 0 && (
+            <Card className="border-dashed">
+              <CardContent className="py-12 text-center">
+                <Users className="h-12 w-12 mx-auto text-muted-foreground/40 mb-3" />
+                <p className="text-muted-foreground font-medium">Aucun groupe</p>
+                <p className="text-sm text-muted-foreground/70 mt-1">Créez votre premier groupe pour commencer.</p>
+                <Button onClick={() => setCreateOpen(true)} className="mt-4"><Plus className="h-4 w-4 mr-2" />Créer mon premier groupe</Button>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Accordion groups */}
+          <Accordion
+            type="multiple"
+            value={expandedGroups}
+            onValueChange={setExpandedGroups}
+            className="space-y-3"
+          >
+            {(groups ?? []).map((g) => {
+              const members = getMembersForGroup(g.id);
+              return (
+                <AccordionItem key={g.id} value={g.id} className="border rounded-lg overflow-hidden">
+                  <div className="flex items-center">
+                    <AccordionTrigger className="flex-1 px-4 py-3 hover:no-underline">
+                      <div className="flex items-center gap-3 w-full">
+                        <div className="flex items-center justify-center h-10 w-10 rounded-lg bg-primary/10 shrink-0">
+                          <Users className="h-5 w-5 text-primary" />
+                        </div>
+                        <div className="text-left min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-semibold text-sm">{g.nom}</span>
+                            <Badge variant="outline">{g.niveau}</Badge>
+                            <span className="text-xs text-muted-foreground">
+                              {members.length === 0 ? "Aucun élève" : members.length === 1 ? "1 élève" : `${members.length} élèves`}
+                            </span>
+                          </div>
+                          {g.description && (
+                            <p className="text-xs text-muted-foreground truncate mt-0.5">{g.description}</p>
+                          )}
+                        </div>
                       </div>
-                      {g.description && (
-                        <p className="text-xs text-muted-foreground truncate mt-0.5">{g.description}</p>
-                      )}
+                    </AccordionTrigger>
+                    <div className="flex items-center gap-1 pr-2 shrink-0">
+                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => { e.stopPropagation(); openEdit(g); }}>
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={(e) => e.stopPropagation()}>
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Supprimer le groupe ?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Cette action est irréversible. Les membres seront retirés.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Annuler</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleDelete(g.id)}>Supprimer</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   </div>
-                </AccordionTrigger>
-                <div className="flex items-center gap-1 pr-2 shrink-0">
-                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => { e.stopPropagation(); openEdit(g); }}>
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={(e) => e.stopPropagation()}>
-                        <Trash2 className="h-4 w-4" />
+
+                  <AccordionContent className="px-4 pb-4 pt-0">
+                    {/* Action buttons */}
+                    <div className="flex justify-end gap-2 mb-3">
+                      <Button size="sm" variant="outline" onClick={() => openInvite(g.id, g.nom)}>
+                        <Ticket className="h-4 w-4 mr-2" />Inviter un élève
                       </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Supprimer le groupe ?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Cette action est irréversible. Les membres seront retirés.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Annuler</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => handleDelete(g.id)}>Supprimer</AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </div>
-              </div>
+                      <Button size="sm" variant="outline" onClick={() => openAddStudent(g.id)}>
+                        <UserPlus className="h-4 w-4 mr-2" />Créer un compte élève
+                      </Button>
+                    </div>
 
-              <AccordionContent className="px-4 pb-4 pt-0">
-                {/* Action buttons */}
-                <div className="flex justify-end gap-2 mb-3">
-                  <Button size="sm" variant="outline" onClick={() => openInvite(g.id, g.nom)}>
-                    <Ticket className="h-4 w-4 mr-2" />Inviter un élève
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={() => openAddStudent(g.id)}>
-                    <UserPlus className="h-4 w-4 mr-2" />Créer un compte élève
-                  </Button>
-                </div>
+                    {members.length === 0 ? (
+                      <div className="text-center py-6 text-muted-foreground text-sm">
+                        Aucun élève dans ce groupe. Ajoutez-en un !
+                      </div>
+                    ) : (
+                      <div className="overflow-x-auto max-h-[360px] overflow-y-auto border rounded-lg">
+                        <table className="w-full text-sm">
+                          <thead className="sticky top-0 bg-muted/80 backdrop-blur-sm">
+                             <tr className="border-b">
+                               <th className="text-left py-2.5 px-3 font-medium text-muted-foreground">Prénom & Nom</th>
+                               <th className="text-left py-2.5 px-3 font-medium text-muted-foreground">Identifiant</th>
+                               <th className="text-center py-2.5 px-3 font-medium text-muted-foreground">Progression</th>
+                               <th className="text-center py-2.5 px-3 font-medium text-muted-foreground w-24">Actions</th>
+                             </tr>
+                          </thead>
+                          <tbody>
+                            {members.map((m: any) => {
+                              const prog = getProgress(m.eleve_id);
+                              const eleve = m.eleve;
+                              return (
+                                <tr
+                                  key={m.id}
+                                  className="border-b last:border-0 hover:bg-muted/50 transition-colors cursor-pointer"
+                                  onClick={() => navigate(`/formateur/eleves/${m.eleve_id}`)}
+                                >
+                                  <td className="py-2.5 px-3 font-medium">
+                                    {eleve?.prenom} {eleve?.nom}
+                                  </td>
+                                  <td className="py-2.5 px-3">
+                                    <div className="flex items-center gap-1">
+                                      <code className="text-xs bg-muted px-1.5 py-0.5 rounded max-w-[180px] truncate block">
+                                        {eleve?.email || "—"}
+                                      </code>
+                                      {eleve?.email && (
+                                        <Button
+                                          variant="ghost" size="icon" className="h-6 w-6 shrink-0"
+                                          onClick={(e) => { e.stopPropagation(); copyToClipboard(eleve.email, `email-${m.id}`); }}
+                                        >
+                                          {copiedField === `email-${m.id}` ? <Check className="h-3 w-3 text-primary" /> : <Copy className="h-3 w-3" />}
+                                        </Button>
+                                      )}
+                                    </div>
+                                  </td>
+                                  <td className="py-2.5 px-3 text-center">
+                                    <div className="flex items-center gap-2 justify-center">
+                                      <div className="w-16 h-2 rounded-full bg-muted overflow-hidden">
+                                        <div
+                                          className={`h-full rounded-full transition-all ${progressColor(prog)}`}
+                                          style={{ width: `${Math.max(prog, 4)}%` }}
+                                        />
+                                      </div>
+                                      <span className="text-xs text-muted-foreground w-8">{prog}%</span>
+                                    </div>
+                                  </td>
+                                  <td className="py-2.5 px-3 text-center">
+                                    <div className="flex items-center justify-center gap-1">
+                                      <Button
+                                        variant="ghost" size="icon" className="h-7 w-7"
+                                        onClick={(e) => { e.stopPropagation(); navigate(`/formateur/eleves/${m.eleve_id}`); }}
+                                        title="Voir le dossier"
+                                      >
+                                        <Eye className="h-4 w-4" />
+                                      </Button>
+                                      <Button
+                                        variant="ghost" size="icon" className="h-7 w-7 text-destructive"
+                                        onClick={(e) => { e.stopPropagation(); handleRemoveMember(m.id); }}
+                                        title="Retirer du groupe"
+                                      >
+                                        <UserMinus className="h-4 w-4" />
+                                      </Button>
+                                    </div>
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </AccordionContent>
+                </AccordionItem>
+              );
+            })}
+          </Accordion>
+        </TabsContent>
 
-                {members.length === 0 ? (
-                  <div className="text-center py-6 text-muted-foreground text-sm">
-                    Aucun élève dans ce groupe. Ajoutez-en un !
-                  </div>
-                ) : (
-                  <div className="overflow-x-auto max-h-[360px] overflow-y-auto border rounded-lg">
-                    <table className="w-full text-sm">
-                      <thead className="sticky top-0 bg-muted/80 backdrop-blur-sm">
-                         <tr className="border-b">
-                           <th className="text-left py-2.5 px-3 font-medium text-muted-foreground">Prénom & Nom</th>
-                           <th className="text-left py-2.5 px-3 font-medium text-muted-foreground">Identifiant</th>
-                           <th className="text-center py-2.5 px-3 font-medium text-muted-foreground">Progression</th>
-                           <th className="text-center py-2.5 px-3 font-medium text-muted-foreground w-24">Actions</th>
-                         </tr>
-                      </thead>
-                      <tbody>
-                        {members.map((m: any) => {
-                          const prog = getProgress(m.eleve_id);
-                          const eleve = m.eleve;
-                          return (
-                            <tr
-                              key={m.id}
-                              className="border-b last:border-0 hover:bg-muted/50 transition-colors cursor-pointer"
-                              onClick={() => navigate(`/formateur/eleves/${m.eleve_id}`)}
-                            >
-                              <td className="py-2.5 px-3 font-medium">
-                                {eleve?.prenom} {eleve?.nom}
-                              </td>
-                              <td className="py-2.5 px-3">
-                                <div className="flex items-center gap-1">
-                                  <code className="text-xs bg-muted px-1.5 py-0.5 rounded max-w-[180px] truncate block">
-                                    {eleve?.email || "—"}
-                                  </code>
-                                  {eleve?.email && (
-                                    <Button
-                                      variant="ghost" size="icon" className="h-6 w-6 shrink-0"
-                                      onClick={(e) => { e.stopPropagation(); copyToClipboard(eleve.email, `email-${m.id}`); }}
-                                    >
-                                      {copiedField === `email-${m.id}` ? <Check className="h-3 w-3 text-primary" /> : <Copy className="h-3 w-3" />}
-                                    </Button>
-                                  )}
-                                </div>
-                              </td>
-                              <td className="py-2.5 px-3 text-center">
-                                <div className="flex items-center gap-2 justify-center">
-                                  <div className="w-16 h-2 rounded-full bg-muted overflow-hidden">
-                                    <div
-                                      className={`h-full rounded-full transition-all ${progressColor(prog)}`}
-                                      style={{ width: `${Math.max(prog, 4)}%` }}
-                                    />
-                                  </div>
-                                  <span className="text-xs text-muted-foreground w-8">{prog}%</span>
-                                </div>
-                              </td>
-                              <td className="py-2.5 px-3 text-center">
-                                <div className="flex items-center justify-center gap-1">
-                                  <Button
-                                    variant="ghost" size="icon" className="h-7 w-7"
-                                    onClick={(e) => { e.stopPropagation(); navigate(`/formateur/eleves/${m.eleve_id}`); }}
-                                    title="Voir le dossier"
-                                  >
-                                    <Eye className="h-4 w-4" />
-                                  </Button>
-                                  <Button
-                                    variant="ghost" size="icon" className="h-7 w-7 text-destructive"
-                                    onClick={(e) => { e.stopPropagation(); handleRemoveMember(m.id); }}
-                                    title="Retirer du groupe"
-                                  >
-                                    <UserMinus className="h-4 w-4" />
-                                  </Button>
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </AccordionContent>
-            </AccordionItem>
-          );
-        })}
-      </Accordion>
+        <TabsContent value="eleves">
+          {sortedStudents.length === 0 ? (
+            <Card className="border-dashed">
+              <CardContent className="py-12 text-center">
+                <Users className="h-12 w-12 mx-auto text-muted-foreground/40 mb-3" />
+                <p className="text-muted-foreground font-medium">Aucun élève inscrit</p>
+                <p className="text-sm text-muted-foreground/70 mt-1">Ajoutez des élèves à vos groupes pour les voir ici.</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="border rounded-lg overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Prénom & Nom</TableHead>
+                    <TableHead>Identifiant</TableHead>
+                    <TableHead>Groupe</TableHead>
+                    <TableHead className="text-center">Progression</TableHead>
+                    <TableHead className="text-center w-20">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {sortedStudents.map((m: any) => {
+                    const eleve = m.eleve;
+                    const group = (groups ?? []).find((g) => g.id === m.group_id);
+                    const prog = getProgress(m.eleve_id);
+                    return (
+                      <TableRow key={m.id}>
+                        <TableCell className="font-medium">{eleve?.prenom} {eleve?.nom}</TableCell>
+                        <TableCell>
+                          <code className="text-xs bg-muted px-1.5 py-0.5 rounded">{eleve?.email || "—"}</code>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{group?.nom || "—"}</Badge>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center gap-2 justify-center">
+                            <div className="w-16 h-2 rounded-full bg-muted overflow-hidden">
+                              <div
+                                className={`h-full rounded-full transition-all ${progressColor(prog)}`}
+                                style={{ width: `${Math.max(prog, 4)}%` }}
+                              />
+                            </div>
+                            <span className="text-xs text-muted-foreground w-8">{prog}%</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Button
+                            variant="ghost" size="icon" className="h-7 w-7"
+                            onClick={() => navigate(`/formateur/eleves/${m.eleve_id}`)}
+                            title="Voir le dossier"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
 
       {/* Edit Dialog */}
       <Dialog open={editOpen} onOpenChange={setEditOpen}>
