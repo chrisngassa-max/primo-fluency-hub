@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import CompetenceLabel from "@/components/CompetenceLabel";
+import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
 
 const BilanTestPassation = () => {
   const { testId } = useParams<{ testId: string }>();
@@ -303,6 +304,12 @@ const BilanTestPassation = () => {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
+            {currentQ.competence === "CO" && (
+              <TTSAudioPlayer
+                text={currentQ.script_audio || currentQ.question}
+                className="mb-2"
+              />
+            )}
             <p className="font-medium">{currentQ.question}</p>
 
             {currentQ.format === "texte_lacunaire" || !currentQ.options?.length ? (
