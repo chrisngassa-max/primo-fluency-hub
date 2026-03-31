@@ -87,8 +87,11 @@ Génère les devoirs ciblés pour chaque compétence en difficulté.`;
                       type_devoir: { type: "string", enum: ["renforcement", "consolidation", "confirmation"] },
                       titre: { type: "string" },
                       consigne: { type: "string" },
-                      format: { type: "string", enum: ["qcm", "vrai_faux", "texte_lacunaire", "appariement"] },
+                      format: { type: "string", enum: ["qcm", "vrai_faux", "texte_lacunaire", "appariement", "production_orale", "production_ecrite"] },
                       niveau_vise: { type: "string" },
+                      type_reponse: { type: "string", enum: ["ecrit", "oral"], description: "Type de réponse (oral pour EO)" },
+                      script_audio: { type: "string", description: "Script audio pour CO" },
+                      criteres_evaluation: { type: "object", description: "Critères d'évaluation pour productions orales/écrites" },
                       items: {
                         type: "array",
                         items: {

@@ -131,12 +131,15 @@ Tu DOIS utiliser le tool "generate_exercises" pour retourner le résultat.${gaba
                       properties: {
                         titre: { type: "string", description: "Titre court de l'exercice" },
                         consigne: { type: "string", description: "Consigne pour l'élève" },
-                        format: { type: "string", enum: ["qcm", "vrai_faux", "texte_lacunaire", "appariement", "transformation"] },
+                         format: { type: "string", enum: ["qcm", "vrai_faux", "texte_lacunaire", "appariement", "transformation", "production_ecrite", "production_orale"] },
                         difficulte: { type: "number", minimum: 0, maximum: 10, description: "Niveau de difficulté sur l'échelle 0-10" },
                         contenu: {
                           type: "object",
                           properties: {
-                            texte: { type: "string", description: "Texte support / paragraphe à lire avant les questions (OBLIGATOIRE pour CE, recommandé pour CO)" },
+                            texte: { type: "string", description: "Texte support / paragraphe à lire avant les questions (OBLIGATOIRE pour CE)" },
+                            script_audio: { type: "string", description: "Script audio pour CO : texte lu par la synthèse vocale (OBLIGATOIRE pour CO, NE PAS afficher à l'élève)" },
+                            type_reponse: { type: "string", enum: ["ecrit", "oral"], description: "Type de réponse attendu (oral pour EO)" },
+                            criteres_evaluation: { type: "object", description: "Critères d'évaluation pour les productions orales/écrites (prononciation, vocabulaire, grammaire, cohérence)" },
                             items: {
                               type: "array",
                               items: {
