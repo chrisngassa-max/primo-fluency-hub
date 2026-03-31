@@ -78,7 +78,8 @@ export function getProfilMessage(profil: string): string {
  */
 export async function evaluerReponseIA(
   question: { criteres_evaluation: unknown },
-  reponseApprenant: string
+  reponseApprenant: string,
+  metadata?: { code?: string; type_reponse?: string; mots_cles_attendus?: string[] }
 ): Promise<{ score: number; justification: string }> {
   const { data, error } = await supabase.functions.invoke(
     "evaluate-test-response",
@@ -86,6 +87,7 @@ export async function evaluerReponseIA(
       body: {
         criteres_evaluation: question.criteres_evaluation,
         reponse_apprenant: reponseApprenant,
+        metadata: metadata || {},
       },
     }
   );

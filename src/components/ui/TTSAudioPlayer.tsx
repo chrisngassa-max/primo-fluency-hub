@@ -7,9 +7,10 @@ import { toast } from "sonner";
 interface TTSAudioPlayerProps {
   text: string;
   className?: string;
+  onPlayComplete?: () => void;
 }
 
-const TTSAudioPlayer = ({ text, className = "" }: TTSAudioPlayerProps) => {
+const TTSAudioPlayer = ({ text, className = "", onPlayComplete }: TTSAudioPlayerProps) => {
   const [loading, setLoading] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [playing, setPlaying] = useState(false);
@@ -47,7 +48,10 @@ const TTSAudioPlayer = ({ text, className = "" }: TTSAudioPlayerProps) => {
 
       const audio = new Audio(url);
       audioRef.current = audio;
-      audio.onended = () => setPlaying(false);
+      audio.onended = () => {
+        setPlaying(false);
+        onPlayComplete?.();
+      };
       audio.onerror = () => {
         setPlaying(false);
         toast.error("Erreur de lecture audio");

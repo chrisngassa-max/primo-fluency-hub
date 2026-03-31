@@ -18,21 +18,18 @@ serve(async (req) => {
     const body = await req.json();
     const {
       mode, // "theme" | "import"
-      // Theme mode fields
       theme,
       competence,
       niveau,
       format,
-      // Import mode fields
       sourceText,
       sourceUrl,
       treatment, // "extract" | "reconfigure"
-      targetFormat, // only when treatment === "reconfigure"
+      targetFormat,
     } = body;
 
     if (!mode) throw new Error("Le champ 'mode' est requis");
 
-    // Build user prompt based on mode
     let userPrompt = "";
 
     if (mode === "theme") {
@@ -45,7 +42,8 @@ Format demandé : ${format}
 
 Invente un support textuel réaliste (dialogue, document administratif, annonce, etc.) ancré dans un contexte IRN (Préfecture, CAF, Emploi, Logement, Médical, Transport, Citoyenneté, Commerce).
 Puis génère entre 5 et 10 questions/items correspondant exactement au format demandé et à la difficulté du niveau ${niveau}.
-Chaque item doit avoir une question, des options (si applicable), la bonne réponse et une explication pédagogique.`;
+Chaque item doit avoir une question, des options (si applicable), la bonne réponse et une explication pédagogique.
+Choisis le code le plus adapté dans la cartographie TCF IRN (CO1-CO4, CE1-CE4, EO1-EO4, EE1-EE3).`;
     } else if (mode === "import") {
       const source = sourceText || sourceUrl || "";
       if (!source) throw new Error("Aucune source fournie pour l'import");
@@ -56,7 +54,7 @@ Chaque item doit avoir une question, des options (si applicable), la bonne répo
 ${source}
 ---
 
-Extrais l'exercice tel quel de ce document. Restructure-le au format standard avec titre, consigne et items (question, options, bonne_reponse, explication).`;
+Extrais l'exercice tel quel de ce document. Restructure-le au format standard avec titre, consigne et items (question, options, bonne_reponse, explication). Attribue le code TCF IRN approprié.`;
       } else {
         if (!targetFormat) throw new Error("Format cible requis pour la reconfiguration");
         userPrompt = `Voici un document source :
@@ -66,7 +64,8 @@ ${source}
 
 Reconfigure entièrement ce contenu pour créer un exercice au format "${targetFormat}" pour le TCF IRN.
 Conserve le thème et le vocabulaire du document original mais restructure tout le contenu pour qu'il corresponde parfaitement au format demandé.
-Génère entre 5 et 10 items avec question, options (si applicable), bonne_reponse et explication.`;
+Génère entre 5 et 10 items avec question, options (si applicable), bonne_reponse et explication.
+Attribue le code TCF IRN le plus pertinent.`;
       }
     } else {
       throw new Error("Mode inconnu : " + mode);
@@ -78,20 +77,55 @@ Ton rôle est de concevoir ou reformater des exercices viables pour la réussite
 SYSTÈME MULTIMÉDIA ACTIF :
 L'application dispose d'un lecteur vocal (Text-to-Speech) et d'un enregistreur vocal (Speech-to-Text) côté élève.
 
+═══════════════════════════════════════════════════
+CARTOGRAPHIE DES EXERCICES TCF IRN — NIVEAU A1
+Chaque exercice DOIT porter un code et des métadonnées issus de cette cartographie.
+═══════════════════════════════════════════════════
+
+### CO (Compréhension Orale) — TTS obligatoire
+| Code | Sous-compétence         | Type                                                        | time_limit |
+|------|-------------------------|--------------------------------------------------------------|------------|
+| CO1  | Identifier la situation | Micro-scène : dialogue court (boulangerie, guichet CAF…)     | 45         |
+| CO2  | Sujet global            | Message répondeur : annulation cours, décalage RDV           | 50         |
+| CO3  | Consignes / Règles      | Instruction directe : "Veuillez patienter…"                  | 45         |
+| CO4  | Info chiffrée           | Annonce micro : horaires, prix, numéros                      | 50         |
+
+### CE (Compréhension Écrite) — texte support obligatoire
+| Code | Sous-compétence       | Type                                                        | time_limit |
+|------|-----------------------|--------------------------------------------------------------|------------|
+| CE1  | Signalétique          | Panneau urbain / picto                                       | 80         |
+| CE2  | Messages familiers    | SMS / Post-it / Email                                        | 80         |
+| CE3  | Recherche d'info      | Emploi du temps / Menu                                       | 80         |
+| CE4  | Texte administratif   | Notice simple / Courrier                                     | 100        |
+
+### EO (Expression Orale) — format production_orale + type_reponse "oral"
+| Code | Sous-compétence       | Type                                                        | time_limit |
+|------|-----------------------|--------------------------------------------------------------|------------|
+| EO1  | Se présenter          | Monologue guidé (Nom, Pays, Ville, Métier)                   | 120        |
+| EO2  | Interaction basique   | Interview (5 questions → réponses courtes)                   | 180        |
+| EO3  | Situation survie      | Jeu de rôle Médecin (mots-clés: mal, douleur, rdv)          | 120        |
+| EO4  | Demande d'info        | Simulation Marché (structure interrogative)                  | 120        |
+
+### EE (Expression Écrite)
+| Code | Sous-compétence       | Type                                                        | time_limit |
+|------|-----------------------|--------------------------------------------------------------|------------|
+| EE1  | Remplir / Saisir      | Formulaire d'inscription                                     | 300        |
+| EE2  | Informer par écrit    | SMS d'excuse (30-50 mots + politesse)                        | 600        |
+| EE3  | Décrire / Raconter    | Réponse à annonce (1 question + 1 info)                      | 600        |
+
+RÈGLES PAR COMPÉTENCE :
+- **CO** : OBLIGATOIRE — "script_audio" dans contenu (texte lu par TTS, NON affiché). "question" = consigne.
+- **EO** : format "production_orale", "type_reponse": "oral". Jeux de rôle, questions ouvertes. "criteres_evaluation" + "mots_cles_attendus".
+- **CE** : OBLIGATOIRE — "texte" dans contenu (document support).
+- **EE** : format "production_ecrite", consigne de rédaction libre.
+
 Tes exercices doivent être :
-- Ancrés dans des situations réelles de la vie quotidienne en France (démarches administratives, emploi, santé, logement, transport, etc.)
-- Adaptés au niveau CECRL demandé (A1 = très simple, C1 = complexe)
+- Ancrés dans des situations réelles (démarches administratives, emploi, santé, logement, transport)
+- Adaptés au niveau CECRL demandé
 - Pédagogiquement rigoureux avec des distracteurs plausibles
 - Originaux (jamais copiés d'épreuves officielles)
 
-RÈGLES PAR COMPÉTENCE :
-- **CO (Compréhension Orale)** : OBLIGATOIRE — inclure un champ "script_audio" dans contenu avec le texte lu par la synthèse vocale (dialogue, annonce...). Ce script ne sera PAS affiché à l'élève. Le champ "question" sert de consigne ("Écoutez l'audio et répondez...").
-- **EO (Expression Orale)** : Utiliser format "production_orale" et "type_reponse": "oral" dans contenu. Proposer jeux de rôle, questions ouvertes. Inclure "criteres_evaluation" (prononciation, vocabulaire, grammaire, cohérence).
-- **CE (Compréhension Écrite)** : OBLIGATOIRE — inclure un champ "texte" dans contenu avec le document support.
-- **EE (Expression Écrite)** : Format "production_ecrite" avec consigne de rédaction libre.
-
-Formats possibles :
-- qcm, vrai_faux, texte_lacunaire, appariement, transformation, production_ecrite, production_orale
+Formats possibles : qcm, vrai_faux, texte_lacunaire, appariement, transformation, production_ecrite, production_orale
 
 Pour chaque item, fournis TOUJOURS : question, options (tableau de chaînes, vide si production libre), bonne_reponse, explication.`;
 
@@ -115,105 +149,58 @@ Pour chaque item, fournis TOUJOURS : question, options (tableau de chaînes, vid
               function: {
                 name: "generate_exercise",
                 description:
-                  "Retourne un exercice TCF IRN structuré avec titre, consigne, format, difficulté et contenu.",
+                  "Retourne un exercice TCF IRN structuré avec métadonnées de code.",
                 parameters: {
                   type: "object",
                   properties: {
-                    titre: {
-                      type: "string",
-                      description: "Titre court et descriptif de l'exercice",
-                    },
-                    consigne: {
-                      type: "string",
-                      description:
-                        "Consigne complète pour l'apprenant, incluant le support textuel si applicable",
-                    },
+                    titre: { type: "string" },
+                    consigne: { type: "string" },
                     competence: {
                       type: "string",
                       enum: ["CO", "CE", "EE", "EO", "Structures"],
-                      description: "Compétence TCF visée",
                     },
-                      format: {
+                    format: {
                       type: "string",
-                      enum: [
-                        "qcm",
-                        "vrai_faux",
-                        "texte_lacunaire",
-                        "appariement",
-                        "transformation",
-                        "production_ecrite",
-                        "production_orale",
-                      ],
-                      description: "Format de l'exercice",
+                      enum: ["qcm", "vrai_faux", "texte_lacunaire", "appariement", "transformation", "production_ecrite", "production_orale"],
                     },
-                    difficulte: {
-                      type: "integer",
-                      minimum: 1,
-                      maximum: 5,
-                      description: "Difficulté de 1 (très facile) à 5 (très difficile)",
-                    },
-                    niveau_vise: {
-                      type: "string",
-                      enum: ["A0", "A1", "A2", "B1", "B2", "C1"],
-                      description: "Niveau CECRL visé",
+                    difficulte: { type: "integer", minimum: 1, maximum: 5 },
+                    niveau_vise: { type: "string", enum: ["A0", "A1", "A2", "B1", "B2", "C1"] },
+                    metadata: {
+                      type: "object",
+                      properties: {
+                        code: { type: "string" },
+                        skill: { type: "string" },
+                        sub_skill: { type: "string" },
+                        time_limit_seconds: { type: "number" },
+                      },
+                      required: ["code", "skill", "sub_skill", "time_limit_seconds"],
                     },
                     contenu: {
                       type: "object",
                       properties: {
-                         script_audio: {
-                          type: "string",
-                          description:
-                            "Script audio pour CO : texte lu par la synthèse vocale (OBLIGATOIRE pour CO, NE PAS afficher à l'élève)",
-                        },
-                        type_reponse: {
-                          type: "string",
-                          enum: ["ecrit", "oral"],
-                          description: "Type de réponse attendu (oral pour EO)",
-                        },
-                        criteres_evaluation: {
-                          type: "object",
-                          description:
-                            "Critères d'évaluation pour productions orales/écrites",
-                        },
-                        texte: {
-                          type: "string",
-                          description:
-                            "Support textuel (dialogue, document, texte) sur lequel portent les questions",
-                        },
+                        script_audio: { type: "string" },
+                        type_reponse: { type: "string", enum: ["ecrit", "oral"] },
+                        criteres_evaluation: { type: "object" },
+                        mots_cles_attendus: { type: "array", items: { type: "string" } },
+                        texte: { type: "string" },
                         items: {
                           type: "array",
                           items: {
                             type: "object",
                             properties: {
                               question: { type: "string" },
-                              options: {
-                                type: "array",
-                                items: { type: "string" },
-                              },
+                              options: { type: "array", items: { type: "string" } },
                               bonne_reponse: { type: "string" },
                               explication: { type: "string" },
                             },
-                            required: [
-                              "question",
-                              "options",
-                              "bonne_reponse",
-                              "explication",
-                            ],
+                            required: ["question", "options", "bonne_reponse", "explication"],
                           },
                         },
                       },
                       required: ["items"],
                     },
                   },
-                  required: [
-                    "titre",
-                    "consigne",
-                    "competence",
-                    "format",
-                    "difficulte",
-                    "niveau_vise",
-                    "contenu",
-                  ],
+                  required: ["titre", "consigne", "competence", "format", "difficulte", "niveau_vise", "metadata", "contenu"],
                   additionalProperties: false,
                 },
               },

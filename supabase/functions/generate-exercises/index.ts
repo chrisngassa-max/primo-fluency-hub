@@ -75,25 +75,71 @@ Le champ "difficulte" de chaque exercice DOIT être exactement ${diffLevel}.
 SYSTÈME MULTIMÉDIA ACTIF :
 L'application dispose d'un lecteur vocal (Text-to-Speech) et d'un enregistreur vocal (Speech-to-Text) côté élève.
 
-RÈGLES PAR COMPÉTENCE :
-- **CO (Compréhension Orale)** : Tu DOIS OBLIGATOIREMENT inclure un champ "script_audio" dans contenu avec le texte qui sera lu à voix haute par la synthèse vocale (dialogue, annonce, présentation...). Ce script ne sera PAS affiché à l'élève — il l'écoutera via le lecteur audio. Le champ "question" de chaque item servira uniquement de consigne ("Écoutez l'audio et répondez...").
-- **EO (Expression Orale)** : Tu DOIS utiliser le format "production_orale" et inclure un champ "type_reponse": "oral" dans contenu. Propose des mises en situation de jeu de rôle, des questions ouvertes ou des tâches de description propices à l'enregistrement vocal. Fournis des critères d'évaluation dans "criteres_evaluation" (prononciation, vocabulaire, grammaire, cohérence).
-- **CE (Compréhension Écrite)** : Tu DOIS OBLIGATOIREMENT inclure un champ "texte" dans contenu avec le paragraphe/document support à lire AVANT les questions.
-- **EE (Expression Écrite)** : Utilise le format "production_ecrite" avec des consignes de rédaction libre.
-- **Structures** : Exercices de grammaire/vocabulaire classiques.
+═══════════════════════════════════════════════════
+CARTOGRAPHIE DES EXERCICES TCF IRN — NIVEAU A1
+Chaque exercice DOIT porter un code et des métadonnées issus de cette cartographie.
+═══════════════════════════════════════════════════
 
-RÈGLES STRICTES :
-- Chaque exercice doit être ORIGINAL (jamais copié d'épreuves officielles TV5Monde)
+### COMPRÉHENSION ORALE (CO) — TTS obligatoire
+Le champ "script_audio" est OBLIGATOIRE. Il contient le texte lu par la synthèse vocale (NON affiché à l'élève).
+La "question" de chaque item sert uniquement de consigne ("Écoutez l'audio et répondez…").
+
+| Code | Sous-compétence         | Type de script_audio                                        | Durée max |
+|------|-------------------------|--------------------------------------------------------------|-----------|
+| CO1  | Identifier la situation | Micro-scène : dialogue court (boulangerie, guichet CAF…)     | 45 s      |
+| CO2  | Sujet global            | Message répondeur : annulation cours, décalage RDV médical   | 50 s      |
+| CO3  | Consignes / Règles      | Instruction directe : "Veuillez patienter…", "Signez le…"   | 45 s      |
+| CO4  | Info chiffrée           | Annonce micro : horaires train, prix au marché, n° de quai  | 50 s      |
+
+### COMPRÉHENSION ÉCRITE (CE) — texte support obligatoire
+Le champ "texte" est OBLIGATOIRE : panneau, SMS, emploi du temps, courrier…
+
+| Code | Sous-compétence       | Type de document                                            | Durée max |
+|------|-----------------------|--------------------------------------------------------------|-----------|
+| CE1  | Signalétique          | Panneau urbain / picto : "Où fumer ?", "Où est la sortie ?" | 1 min 20  |
+| CE2  | Messages familiers    | SMS / Post-it / Email : "Qui invite ?", "À quelle heure ?"  | 1 min 20  |
+| CE3  | Recherche d'info      | Emploi du temps / Menu : "Plat du jour ?", "Cours le lundi?"| 1 min 20  |
+| CE4  | Texte administratif   | Notice simple / Courrier : "Combien de jours ?", "Quel doc?"| 1 min 40  |
+
+### EXPRESSION ORALE (EO) — format production_orale + type_reponse "oral"
+L'élève enregistre sa voix. Le STT transcrit → l'IA évalue avec haute tolérance phonétique.
+
+| Code | Sous-compétence       | Type de tâche                                               | Durée max |
+|------|-----------------------|--------------------------------------------------------------|-----------|
+| EO1  | Se présenter          | Monologue guidé : IA vérifie Nom, Pays, Ville, Métier       | 2 min     |
+| EO2  | Interaction basique   | Interview : 5 questions → réponses courtes Oui/Non + info   | 3 min     |
+| EO3  | Situation survie      | Jeu de rôle (Médecin) : mots-clés "mal", "douleur", "rdv"   | 2 min     |
+| EO4  | Demande d'info        | Simulation (Marché) : structure interrogative "Combien ?"    | 2 min     |
+
+### EXPRESSION ÉCRITE (EE) — format production_ecrite
+L'élève écrit. L'IA corrige orthographe/grammaire/longueur.
+
+| Code | Sous-compétence       | Type de tâche                                               | Durée max |
+|------|-----------------------|--------------------------------------------------------------|-----------|
+| EE1  | Remplir / Saisir      | Formulaire d'inscription : vérif format (date, CP, majusc.) | 5 min     |
+| EE2  | Informer par écrit    | SMS d'excuse (absence) : 30-50 mots + formule de politesse  | 10 min    |
+| EE3  | Décrire / Raconter    | Réponse à annonce : poser 1 question + donner 1 info        | 10 min    |
+
+═══════════════════════════════════════════════════
+
+RÈGLES DE GÉNÉRATION :
+- Chaque exercice doit recevoir un champ "metadata" avec : { "code": "CO1", "skill": "Compréhension Orale", "sub_skill": "Identifier situation", "time_limit_seconds": 45 }
+- Le code doit correspondre à la compétence et à la sous-compétence les plus pertinentes.
 - Contexte : situations réelles de la vie en France (préfecture, CAF, emploi, logement, transport, santé, citoyenneté)
 - Public : adultes primo-arrivants, niveau ${niveauVise}
 - Formats possibles : qcm, vrai_faux, texte_lacunaire, appariement, transformation, production_ecrite, production_orale
-- Langue simple et claire
+- Langue simple et claire. Chaque exercice doit être ORIGINAL.
+
+CORRECTION AUTOMATIQUE & TOLÉRANCE :
+- QCM/CO/CE : correspondance exacte avec bonne_reponse
+- EE : L'IA vérifie (1) nombre de mots, (2) mots-clés liés au code, (3) structures grammaticales A1
+- EO : HAUTE TOLÉRANCE pour homophones, anomalies phonétiques et erreurs STT. Reconnaître les mots phonétiquement proches (ex: "doctère" → "docteur", "mal e dent" → "mal de dent").
 
 IMPORTANT — Pour CHAQUE exercice, tu dois aussi proposer un "animation_guide" :
 - scenario : une mise en situation simple et concrète liée à l'exercice
-- jeu : une règle de jeu ludique adaptée au niveau (jeu de rôle, mime, jeu de cartes, Jacques a dit, etc.)
-- materiel : ce qu'il faut préparer (jetons, images, cartes, etc.)
-- objectif_oral : la structure de phrase que les élèves doivent réussir à prononcer
+- jeu : une règle de jeu ludique adaptée au niveau
+- materiel : ce qu'il faut préparer
+- objectif_oral : la structure de phrase cible
 
 Tu DOIS utiliser le tool "generate_exercises" pour retourner le résultat.${gabaritPrompt}`;
 
@@ -101,7 +147,9 @@ Tu DOIS utiliser le tool "generate_exercises" pour retourner le résultat.${gaba
 - Point à maîtriser : "${pointName}"
 - Compétence : ${competence}
 - Niveau visé : ${niveauVise}
-- Difficulté calibrée : ${diffLevel}/10${gabarit ? `\n- Gabarit séance : ${gabarit.titre} (n°${gabarit.numero})` : ""}`;
+- Difficulté calibrée : ${diffLevel}/10${gabarit ? `\n- Gabarit séance : ${gabarit.titre} (n°${gabarit.numero})` : ""}
+
+Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO2/CO3/CO4, varier les codes).`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -120,7 +168,7 @@ Tu DOIS utiliser le tool "generate_exercises" pour retourner le résultat.${gaba
             type: "function",
             function: {
               name: "generate_exercises",
-              description: "Return generated exercises with animation guides",
+              description: "Return generated exercises with animation guides and metadata codes",
               parameters: {
                 type: "object",
                 properties: {
@@ -131,15 +179,31 @@ Tu DOIS utiliser le tool "generate_exercises" pour retourner le résultat.${gaba
                       properties: {
                         titre: { type: "string", description: "Titre court de l'exercice" },
                         consigne: { type: "string", description: "Consigne pour l'élève" },
-                         format: { type: "string", enum: ["qcm", "vrai_faux", "texte_lacunaire", "appariement", "transformation", "production_ecrite", "production_orale"] },
+                        format: { type: "string", enum: ["qcm", "vrai_faux", "texte_lacunaire", "appariement", "transformation", "production_ecrite", "production_orale"] },
                         difficulte: { type: "number", minimum: 0, maximum: 10, description: "Niveau de difficulté sur l'échelle 0-10" },
+                        metadata: {
+                          type: "object",
+                          description: "Métadonnées pédagogiques de l'exercice",
+                          properties: {
+                            code: { type: "string", description: "Code de l'exercice (CO1, CO2, CE1, EO1, EE1, etc.)" },
+                            skill: { type: "string", description: "Compétence (Compréhension Orale, Expression Écrite, etc.)" },
+                            sub_skill: { type: "string", description: "Sous-compétence (Identifier situation, Se présenter, etc.)" },
+                            time_limit_seconds: { type: "number", description: "Durée maximale en secondes" },
+                          },
+                          required: ["code", "skill", "sub_skill", "time_limit_seconds"],
+                        },
                         contenu: {
                           type: "object",
                           properties: {
                             texte: { type: "string", description: "Texte support / paragraphe à lire avant les questions (OBLIGATOIRE pour CE)" },
                             script_audio: { type: "string", description: "Script audio pour CO : texte lu par la synthèse vocale (OBLIGATOIRE pour CO, NE PAS afficher à l'élève)" },
                             type_reponse: { type: "string", enum: ["ecrit", "oral"], description: "Type de réponse attendu (oral pour EO)" },
-                            criteres_evaluation: { type: "object", description: "Critères d'évaluation pour les productions orales/écrites (prononciation, vocabulaire, grammaire, cohérence)" },
+                            criteres_evaluation: { type: "object", description: "Critères d'évaluation pour les productions orales/écrites" },
+                            mots_cles_attendus: {
+                              type: "array",
+                              items: { type: "string" },
+                              description: "Mots-clés que l'élève doit prononcer/écrire pour valider la tâche (EO/EE)",
+                            },
                             items: {
                               type: "array",
                               items: {
@@ -168,7 +232,7 @@ Tu DOIS utiliser le tool "generate_exercises" pour retourner le résultat.${gaba
                           required: ["scenario", "jeu", "materiel", "objectif_oral"],
                         },
                       },
-                      required: ["titre", "consigne", "format", "difficulte", "contenu", "animation_guide"],
+                      required: ["titre", "consigne", "format", "difficulte", "metadata", "contenu", "animation_guide"],
                     },
                   },
                 },
