@@ -794,6 +794,148 @@ Rédige une "Synthèse de Veille" concise pour le formateur :
               )}
             </>
           )}
+        {/* ─── VUE QUOTIDIENNE ─── */}
+        <TabsContent value="quotidien" className="space-y-6 mt-4">
+          {!activeGroup ? (
+            <Card className="border-dashed">
+              <CardContent className="py-12 text-center text-muted-foreground">
+                Sélectionnez un groupe pour voir le suivi quotidien.
+              </CardContent>
+            </Card>
+          ) : dailyLoading ? (
+            <div className="space-y-3"><Skeleton className="h-24 w-full" /><Skeleton className="h-24 w-full" /></div>
+          ) : dailyData.days.length === 0 ? (
+            <Card className="border-dashed">
+              <CardContent className="py-12 text-center">
+                <Calendar className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
+                <p className="text-muted-foreground font-medium">Aucun devoir quotidien</p>
+                <p className="text-sm text-muted-foreground/70 mt-1">
+                  Utilisez "Générer devoirs" depuis le pilote de séance pour créer un programme jour par jour.
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            <>
+              {/* Daily completion table */}
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-primary" />
+                    Complétion jour par jour
+                  </CardTitle>
+                  <CardDescription>{dailyData.days.length} jour(s) · {dailyData.studentRows.length} élève(s)</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Élève</TableHead>
+                          {dailyData.days.map((d) => (
+                            <TableHead key={d} className="text-center w-20">
+                              {d.replace("jour_", "J")}
+                            </TableHead>
+                          ))}
+                          <TableHead className="text-center w-24">Global</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {dailyData.studentRows.map((row) => (
+                          <TableRow key={row.eleveId}>
+                            <TableCell className="font-medium">{row.nom}</TableCell>
+                            {dailyData.days.map((d) => {
+                              const s = row.dayStatus[d];
+                              const pct = s && s.total > 0 ? Math.round((s.done / s.total) * 100) : 0;
+                              return (
+                                <TableCell key={d} className="text-center">
+                                  {s && s.total > 0 ? (
+                                    <span className={cn("text-sm font-bold",
+                                      pct >= 80 ? "text-green-600" : pct >= 50 ? "text-orange-600" : pct > 0 ? "text-destructive" : "text-muted-foreground"
+                                    )}>
+                                      {s.done}/{s.total}
+                                    </span>
+                                  ) : (
+                                    <span className="text-muted-foreground">—</span>
+                                  )}
+                                </TableCell>
+                              );
+                            })}
+                            <TableCell className="text-center">
+                              <Badge className={cn(
+                                row.completionPct >= 80 ? "bg-green-100 text-green-700 hover:bg-green-100" :
+                                row.completionPct >= 50 ? "bg-orange-100 text-orange-700 hover:bg-orange-100" :
+                                "bg-red-100 text-red-700 hover:bg-red-100"
+                              )}>
+                                {row.completionPct}%
+                              </Badge>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Daily completion chart */}
+              {dailyData.days.length > 1 && (
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <BarChart2 className="h-4 w-4 text-primary" />
+                      Taux de complétion par jour
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-56">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={dailyData.days.map((d) => {
+                          const totalDone = dailyData.studentRows.reduce((s, r) => s + (r.dayStatus[d]?.done || 0), 0);
+                          const totalAll = dailyData.studentRows.reduce((s, r) => s + (r.dayStatus[d]?.total || 0), 0);
+                          return { jour: d.replace("jour_", "J"), pct: totalAll > 0 ? Math.round((totalDone / totalAll) * 100) : 0 };
+                        })}>
+                          <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                          <XAxis dataKey="jour" className="text-xs" />
+                          <YAxis domain={[0, 100]} className="text-xs" />
+                          <RechartsTooltip contentStyle={{ borderRadius: "8px", border: "1px solid hsl(var(--border))", background: "hsl(var(--card))" }} />
+                          <Bar dataKey="pct" name="Complétion %" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Synthèse de Veille */}
+              <Card className="border-primary/20">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Brain className="h-4 w-4 text-primary" />
+                    Synthèse de Veille
+                  </CardTitle>
+                  <CardDescription>
+                    Bilan IA de ce que les élèves ont accompli entre les séances
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {veilleSynthesis ? (
+                    <div className="bg-muted/30 rounded-lg p-4 text-sm whitespace-pre-wrap">{veilleSynthesis}</div>
+                  ) : (
+                    <div className="text-center py-4">
+                      <Button onClick={generateVeilleSynthesis} disabled={veilleSynthesizing || dailyData.studentRows.length === 0} className="gap-2">
+                        {veilleSynthesizing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                        Générer la synthèse de veille
+                      </Button>
+                      {dailyData.studentRows.length === 0 && (
+                        <p className="text-xs text-muted-foreground mt-2">Aucune donnée quotidienne disponible.</p>
+                      )}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </>
+          )}
+        </TabsContent>
         </TabsContent>
       </Tabs>
     </div>
