@@ -72,14 +72,22 @@ ${difficultyDescription}
 Chaque exercice ET chaque item doit être calibré au niveau de difficulté ${diffLevel}/10.
 Le champ "difficulte" de chaque exercice DOIT être exactement ${diffLevel}.
 
+SYSTÈME MULTIMÉDIA ACTIF :
+L'application dispose d'un lecteur vocal (Text-to-Speech) et d'un enregistreur vocal (Speech-to-Text) côté élève.
+
+RÈGLES PAR COMPÉTENCE :
+- **CO (Compréhension Orale)** : Tu DOIS OBLIGATOIREMENT inclure un champ "script_audio" dans contenu avec le texte qui sera lu à voix haute par la synthèse vocale (dialogue, annonce, présentation...). Ce script ne sera PAS affiché à l'élève — il l'écoutera via le lecteur audio. Le champ "question" de chaque item servira uniquement de consigne ("Écoutez l'audio et répondez...").
+- **EO (Expression Orale)** : Tu DOIS utiliser le format "production_orale" et inclure un champ "type_reponse": "oral" dans contenu. Propose des mises en situation de jeu de rôle, des questions ouvertes ou des tâches de description propices à l'enregistrement vocal. Fournis des critères d'évaluation dans "criteres_evaluation" (prononciation, vocabulaire, grammaire, cohérence).
+- **CE (Compréhension Écrite)** : Tu DOIS OBLIGATOIREMENT inclure un champ "texte" dans contenu avec le paragraphe/document support à lire AVANT les questions.
+- **EE (Expression Écrite)** : Utilise le format "production_ecrite" avec des consignes de rédaction libre.
+- **Structures** : Exercices de grammaire/vocabulaire classiques.
+
 RÈGLES STRICTES :
 - Chaque exercice doit être ORIGINAL (jamais copié d'épreuves officielles TV5Monde)
 - Contexte : situations réelles de la vie en France (préfecture, CAF, emploi, logement, transport, santé, citoyenneté)
 - Public : adultes primo-arrivants, niveau ${niveauVise}
-- Formats possibles : qcm, vrai_faux, texte_lacunaire, appariement, transformation
+- Formats possibles : qcm, vrai_faux, texte_lacunaire, appariement, transformation, production_ecrite, production_orale
 - Langue simple et claire
-- IMPORTANT : pour les exercices de CE (compréhension écrite), tu DOIS OBLIGATOIREMENT inclure un champ "texte" dans contenu avec le paragraphe/document support à lire AVANT les questions. Sans ce texte, l'exercice est inutilisable pour l'élève.
-- Pour les exercices de CO, inclus aussi un champ "texte" avec le script audio/dialogue.
 
 IMPORTANT — Pour CHAQUE exercice, tu dois aussi proposer un "animation_guide" :
 - scenario : une mise en situation simple et concrète liée à l'exercice
@@ -123,12 +131,15 @@ Tu DOIS utiliser le tool "generate_exercises" pour retourner le résultat.${gaba
                       properties: {
                         titre: { type: "string", description: "Titre court de l'exercice" },
                         consigne: { type: "string", description: "Consigne pour l'élève" },
-                        format: { type: "string", enum: ["qcm", "vrai_faux", "texte_lacunaire", "appariement", "transformation"] },
+                         format: { type: "string", enum: ["qcm", "vrai_faux", "texte_lacunaire", "appariement", "transformation", "production_ecrite", "production_orale"] },
                         difficulte: { type: "number", minimum: 0, maximum: 10, description: "Niveau de difficulté sur l'échelle 0-10" },
                         contenu: {
                           type: "object",
                           properties: {
-                            texte: { type: "string", description: "Texte support / paragraphe à lire avant les questions (OBLIGATOIRE pour CE, recommandé pour CO)" },
+                            texte: { type: "string", description: "Texte support / paragraphe à lire avant les questions (OBLIGATOIRE pour CE)" },
+                            script_audio: { type: "string", description: "Script audio pour CO : texte lu par la synthèse vocale (OBLIGATOIRE pour CO, NE PAS afficher à l'élève)" },
+                            type_reponse: { type: "string", enum: ["ecrit", "oral"], description: "Type de réponse attendu (oral pour EO)" },
+                            criteres_evaluation: { type: "object", description: "Critères d'évaluation pour les productions orales/écrites (prononciation, vocabulaire, grammaire, cohérence)" },
                             items: {
                               type: "array",
                               items: {

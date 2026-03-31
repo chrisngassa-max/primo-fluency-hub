@@ -74,20 +74,24 @@ Génère entre 5 et 10 items avec question, options (si applicable), bonne_repon
 
     const systemPrompt = `Tu es un expert pédagogique du TCF IRN (Test de Connaissance du Français — Intégration et Résidence en France).
 Ton rôle est de concevoir ou reformater des exercices viables pour la réussite du TCF.
+
+SYSTÈME MULTIMÉDIA ACTIF :
+L'application dispose d'un lecteur vocal (Text-to-Speech) et d'un enregistreur vocal (Speech-to-Text) côté élève.
+
 Tes exercices doivent être :
 - Ancrés dans des situations réelles de la vie quotidienne en France (démarches administratives, emploi, santé, logement, transport, etc.)
 - Adaptés au niveau CECRL demandé (A1 = très simple, C1 = complexe)
 - Pédagogiquement rigoureux avec des distracteurs plausibles
 - Originaux (jamais copiés d'épreuves officielles)
-- Toujours accompagnés d'un support textuel (texte, dialogue, document) quand la compétence est CE ou CO
+
+RÈGLES PAR COMPÉTENCE :
+- **CO (Compréhension Orale)** : OBLIGATOIRE — inclure un champ "script_audio" dans contenu avec le texte lu par la synthèse vocale (dialogue, annonce...). Ce script ne sera PAS affiché à l'élève. Le champ "question" sert de consigne ("Écoutez l'audio et répondez...").
+- **EO (Expression Orale)** : Utiliser format "production_orale" et "type_reponse": "oral" dans contenu. Proposer jeux de rôle, questions ouvertes. Inclure "criteres_evaluation" (prononciation, vocabulaire, grammaire, cohérence).
+- **CE (Compréhension Écrite)** : OBLIGATOIRE — inclure un champ "texte" dans contenu avec le document support.
+- **EE (Expression Écrite)** : Format "production_ecrite" avec consigne de rédaction libre.
 
 Formats possibles :
-- qcm : Questions à choix multiples (3-4 options)
-- vrai_faux : Affirmations vrai/faux
-- texte_lacunaire : Texte à trous avec options
-- appariement : Associer des éléments entre eux
-- transformation : Transformer des phrases (conjugaison, reformulation)
-- production_ecrite : Consigne de rédaction libre
+- qcm, vrai_faux, texte_lacunaire, appariement, transformation, production_ecrite, production_orale
 
 Pour chaque item, fournis TOUJOURS : question, options (tableau de chaînes, vide si production libre), bonne_reponse, explication.`;
 
@@ -129,7 +133,7 @@ Pour chaque item, fournis TOUJOURS : question, options (tableau de chaînes, vid
                       enum: ["CO", "CE", "EE", "EO", "Structures"],
                       description: "Compétence TCF visée",
                     },
-                    format: {
+                      format: {
                       type: "string",
                       enum: [
                         "qcm",
@@ -138,6 +142,7 @@ Pour chaque item, fournis TOUJOURS : question, options (tableau de chaînes, vid
                         "appariement",
                         "transformation",
                         "production_ecrite",
+                        "production_orale",
                       ],
                       description: "Format de l'exercice",
                     },
@@ -155,6 +160,21 @@ Pour chaque item, fournis TOUJOURS : question, options (tableau de chaînes, vid
                     contenu: {
                       type: "object",
                       properties: {
+                         script_audio: {
+                          type: "string",
+                          description:
+                            "Script audio pour CO : texte lu par la synthèse vocale (OBLIGATOIRE pour CO, NE PAS afficher à l'élève)",
+                        },
+                        type_reponse: {
+                          type: "string",
+                          enum: ["ecrit", "oral"],
+                          description: "Type de réponse attendu (oral pour EO)",
+                        },
+                        criteres_evaluation: {
+                          type: "object",
+                          description:
+                            "Critères d'évaluation pour productions orales/écrites",
+                        },
                         texte: {
                           type: "string",
                           description:
