@@ -186,6 +186,75 @@ const SuiviDevoirsPage = () => {
   // AI synthesis
   const [synthesizing, setSynthesizing] = useState(false);
   const [synthesis, setSynthesis] = useState<string | null>(null);
+  const [veilleSynthesizing, setVeilleSynthesizing] = useState(false);
+  const [veilleSynthesis, setVeilleSynthesis] = useState<string | null>(null);
+
+  // Fetch daily homework data
+  const { data: dailyDevoirsRaw, isLoading: dailyLoading } = useQuery({
+    queryKey: ["suivi-daily-devoirs", user?.id, activeGroup],
+    queryFn: async () => {
+      // Get group members
+      const { data: members } = await supabase
+        .from("group_members")
+        .select("eleve_id, eleve:profiles!group_members_eleve_id_fkey(prenom, nom)")
+        .eq("group_id", activeGroup);
+
+      // Get devoirs with source_label (jour_X)
+      const { data: devoirs } = await supabase
+        .from("devoirs")
+        .select("*, exercice:exercices(titre, competence)")
+        .eq("formateur_id", user!.id)
+        .not("source_label", "is", null)
+        .order("date_echeance", { ascending: true });
+
+      // Filter devoirs to only those belonging to group members
+      const memberIds = new Set((members ?? []).map((m: any) => m.eleve_id));
+      const groupDevoirs = (devoirs ?? []).filter((d: any) => memberIds.has(d.eleve_id));
+
+      return { members: members ?? [], devoirs: groupDevoirs };
+    },
+    enabled: !!activeGroup && !!user?.id,
+  });
+
+  // Process daily data for the table
+  const dailyData = useMemo(() => {
+    if (!dailyDevoirsRaw) return { days: [], studentRows: [] };
+    const { members, devoirs } = dailyDevoirsRaw;
+
+    // Extract unique days
+    const daysSet = new Set<string>();
+    devoirs.forEach((d: any) => {
+      if (d.source_label?.startsWith("jour_")) daysSet.add(d.source_label);
+    });
+    const days = [...daysSet].sort((a, b) => {
+      const na = parseInt(a.replace("jour_", ""));
+      const nb = parseInt(b.replace("jour_", ""));
+      return na - nb;
+    });
+
+    // Build per-student, per-day completion
+    const studentRows = members.map((m: any) => {
+      const studentDevoirs = devoirs.filter((d: any) => d.eleve_id === m.eleve_id);
+      const dayStatus: Record<string, { total: number; done: number }> = {};
+      days.forEach((day) => {
+        const dayDevoirs = studentDevoirs.filter((d: any) => d.source_label === day);
+        dayStatus[day] = {
+          total: dayDevoirs.length,
+          done: dayDevoirs.filter((d: any) => d.statut === "fait" || d.statut === "arrete").length,
+        };
+      });
+      const totalDone = studentDevoirs.filter((d: any) => d.statut === "fait" || d.statut === "arrete").length;
+      const totalAll = studentDevoirs.length;
+      return {
+        eleveId: m.eleve_id,
+        nom: `${m.eleve?.prenom || ""} ${m.eleve?.nom || ""}`.trim(),
+        dayStatus,
+        completionPct: totalAll > 0 ? Math.round((totalDone / totalAll) * 100) : 0,
+      };
+    });
+
+    return { days, studentRows };
+  }, [dailyDevoirsRaw]);
 
   const generateSynthesis = async () => {
     setSynthesizing(true);
