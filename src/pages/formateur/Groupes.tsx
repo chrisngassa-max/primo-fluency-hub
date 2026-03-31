@@ -85,6 +85,7 @@ const GroupesPage = () => {
 
   // Track expanded groups to fetch members
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Fetch groups
   const { data: groups, isLoading } = useQuery({
