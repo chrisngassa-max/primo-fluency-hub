@@ -290,6 +290,55 @@ const SuiviDevoirsPage = () => {
     }
   };
 
+  // Synthèse de Veille generator
+  const generateVeilleSynthesis = async () => {
+    setVeilleSynthesizing(true);
+    try {
+      const groupName = groups?.find((g) => g.id === activeGroup)?.nom || "Groupe";
+      const { days, studentRows } = dailyData;
+      
+      const studentSummaries = studentRows.map((s) => {
+        const dayDetails = days.map((d) => {
+          const status = s.dayStatus[d];
+          return `${d.replace("jour_", "J")}: ${status?.done || 0}/${status?.total || 0}`;
+        }).join(", ");
+        return `${s.nom}: ${s.completionPct}% global (${dayDetails})`;
+      }).join("\n");
+
+      const { data, error } = await supabase.functions.invoke("analyze-trajectory", {
+        body: {
+          groupNom: groupName,
+          trajectoryData: [{
+            seance: 1,
+            titre: "Synthèse de veille inter-séances",
+            date: null,
+            cible: 80,
+            groupe: studentRows.length > 0 ? Math.round(studentRows.reduce((s, r) => s + r.completionPct, 0) / studentRows.length) : 0,
+            competences: [],
+            eleves: studentRows.reduce((acc: any, el) => { acc[el.nom] = el.completionPct; return acc; }, {}),
+          }],
+          totalSeances: 1,
+          customPrompt: `Tu es un expert FLE. Voici le suivi jour par jour des devoirs inter-séances du groupe "${groupName}" :
+${studentSummaries}
+
+Rédige une "Synthèse de Veille" concise pour le formateur :
+1. Taux de complétion global et tendance
+2. Élèves ayant bien travaillé (à féliciter)
+3. Élèves en retard (à relancer)
+4. Compétences faibles persistantes à reprendre en séance
+5. Recommandation d'ouverture pour la prochaine séance`,
+        },
+      });
+      if (error) throw error;
+      setVeilleSynthesis(data?.analysis || data?.message || "Analyse indisponible.");
+      toast.success("Synthèse de veille générée");
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    } finally {
+      setVeilleSynthesizing(false);
+    }
+  };
+
   // Integrate bilan to next session
   const integrateBilan = async (bilanId: string, sessionId: string | null) => {
     if (!sessionId) {
