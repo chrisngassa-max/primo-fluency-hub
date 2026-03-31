@@ -79,6 +79,8 @@ const SessionPilot = () => {
   const [generating, setGenerating] = useState(false);
   const [generatingHomework, setGeneratingHomework] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [deleteSeId, setDeleteSeId] = useState<string | null>(null);
+  const [clearConfirm, setClearConfirm] = useState(false);
   const [rappelChecked, setRappelChecked] = useState<Record<string, boolean>>({});
   const [rappelDismissed, setRappelDismissed] = useState(false);
   const [validatingRappel, setValidatingRappel] = useState(false);
@@ -714,6 +716,33 @@ ${Array.isArray(item.options) && item.options.length > 0
 
   const handlePrint = () => window.print();
 
+  // ─── Delete single exercise from session ───
+  const handleDeleteExercise = async (seId: string) => {
+    try {
+      const { error } = await supabase.from("session_exercices").delete().eq("id", seId);
+      if (error) throw error;
+      qc.invalidateQueries({ queryKey: ["session-exercices", id] });
+      setDeleteSeId(null);
+      toast.success("Exercice retiré de la séance.");
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    }
+  };
+
+  // ─── Clear all exercises from session ───
+  const handleClearExercises = async () => {
+    try {
+      const { error } = await supabase.from("session_exercices").delete().eq("session_id", id!);
+      if (error) throw error;
+      qc.invalidateQueries({ queryKey: ["session-exercices", id] });
+      setClearConfirm(false);
+      setChecked({});
+      toast.success("Tous les exercices ont été retirés de la séance.");
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="space-y-4 max-w-3xl mx-auto">
@@ -753,6 +782,10 @@ ${Array.isArray(item.options) && item.options.length > 0
           <Button onClick={handleGenerateHomework} disabled={generatingHomework} variant="outline" className="gap-2">
             {generatingHomework ? <Loader2 className="h-4 w-4 animate-spin" /> : <ClipboardCheck className="h-4 w-4" />}
             Générer devoirs
+          </Button>
+          <Button variant="outline" className="gap-2 text-destructive border-destructive/30 hover:bg-destructive/10" disabled={exercises.length === 0} onClick={() => setClearConfirm(true)}>
+            <Trash2 className="h-4 w-4" />
+            Vider
           </Button>
         </div>
       </div>
@@ -1197,6 +1230,9 @@ ${Array.isArray(item.options) && item.options.length > 0
                         <Button variant="outline" size="sm" className="gap-1" onClick={() => openEditor(se)}>
                           <Pencil className="h-3.5 w-3.5" />Modifier
                         </Button>
+                        <Button variant="outline" size="sm" className="gap-1 text-destructive border-destructive/30 hover:bg-destructive/10" onClick={() => setDeleteSeId(se.id)}>
+                          <Trash2 className="h-3.5 w-3.5" />Supprimer
+                        </Button>
                       </div>
                     </div>
                   </AccordionContent>
@@ -1487,6 +1523,42 @@ ${Array.isArray(item.options) && item.options.length > 0
             <AlertDialogCancel>Annuler</AlertDialogCancel>
             <AlertDialogAction onClick={() => deleteConfirm && handleDeleteReported(deleteConfirm)}>
               Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete single exercise confirmation */}
+      <AlertDialog open={!!deleteSeId} onOpenChange={(open) => { if (!open) setDeleteSeId(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Supprimer cet exercice ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              L'exercice sera retiré de cette séance. Cette action est irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={() => deleteSeId && handleDeleteExercise(deleteSeId)}>
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Clear all exercises confirmation */}
+      <AlertDialog open={clearConfirm} onOpenChange={setClearConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Vider tous les exercices ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tous les exercices seront retirés de cette séance. Cette action est irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={handleClearExercises}>
+              Vider la séance
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
