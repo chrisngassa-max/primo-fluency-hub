@@ -592,16 +592,11 @@ const TestPositionnement = () => {
 
         <Card>
           <CardContent className="pt-6 space-y-4">
-            {/* Support / script_audio for CO */}
+            {/* TTS audio player for CO */}
             {currentQuestion.script_audio && (
-              <div className="rounded-lg border bg-muted/50 p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <Volume2 className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-medium text-muted-foreground">
-                    Texte lu par le formateur
-                  </span>
-                </div>
-                <p className="text-base">{currentQuestion.script_audio}</p>
+              <div className="rounded-lg border bg-primary/5 border-primary/20 p-4">
+                <p className="text-xs text-primary mb-2 uppercase tracking-wide font-semibold">🔊 Écoute audio</p>
+                <TTSAudioPlayer text={currentQuestion.script_audio} />
               </div>
             )}
 
