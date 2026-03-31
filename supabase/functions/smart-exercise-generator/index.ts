@@ -160,6 +160,21 @@ Pour chaque item, fournis TOUJOURS : question, options (tableau de chaînes, vid
                     contenu: {
                       type: "object",
                       properties: {
+                         script_audio: {
+                          type: "string",
+                          description:
+                            "Script audio pour CO : texte lu par la synthèse vocale (OBLIGATOIRE pour CO, NE PAS afficher à l'élève)",
+                        },
+                        type_reponse: {
+                          type: "string",
+                          enum: ["ecrit", "oral"],
+                          description: "Type de réponse attendu (oral pour EO)",
+                        },
+                        criteres_evaluation: {
+                          type: "object",
+                          description:
+                            "Critères d'évaluation pour productions orales/écrites",
+                        },
                         texte: {
                           type: "string",
                           description:
