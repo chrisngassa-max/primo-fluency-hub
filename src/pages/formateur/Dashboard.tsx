@@ -785,7 +785,7 @@ ${sessionExercises.map((ex: any, i: number) => `
           ) : null}
         </CardContent>
       </Card>
-      <Tabs defaultValue="seance-du-jour">
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
           <TabsTrigger value="seance-du-jour">🎯 Ma Séance du Jour</TabsTrigger>
           <TabsTrigger value="groupes">Mes Groupes</TabsTrigger>
