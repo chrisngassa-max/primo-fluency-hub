@@ -783,6 +783,10 @@ ${Array.isArray(item.options) && item.options.length > 0
             {generatingHomework ? <Loader2 className="h-4 w-4 animate-spin" /> : <ClipboardCheck className="h-4 w-4" />}
             Générer devoirs
           </Button>
+          <Button variant="outline" className="gap-2 text-destructive border-destructive/30 hover:bg-destructive/10" disabled={exercises.length === 0} onClick={() => setClearConfirm(true)}>
+            <Trash2 className="h-4 w-4" />
+            Vider
+          </Button>
         </div>
       </div>
 
