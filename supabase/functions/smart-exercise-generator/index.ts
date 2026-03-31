@@ -133,7 +133,7 @@ Pour chaque item, fournis TOUJOURS : question, options (tableau de chaînes, vid
                       enum: ["CO", "CE", "EE", "EO", "Structures"],
                       description: "Compétence TCF visée",
                     },
-                    format: {
+                      format: {
                       type: "string",
                       enum: [
                         "qcm",
@@ -142,6 +142,7 @@ Pour chaque item, fournis TOUJOURS : question, options (tableau de chaînes, vid
                         "appariement",
                         "transformation",
                         "production_ecrite",
+                        "production_orale",
                       ],
                       description: "Format de l'exercice",
                     },
