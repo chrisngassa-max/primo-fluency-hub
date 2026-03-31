@@ -48,7 +48,10 @@ const TTSAudioPlayer = ({ text, className = "", onPlayComplete }: TTSAudioPlayer
 
       const audio = new Audio(url);
       audioRef.current = audio;
-      audio.onended = () => setPlaying(false);
+      audio.onended = () => {
+        setPlaying(false);
+        onPlayComplete?.();
+      };
       audio.onerror = () => {
         setPlaying(false);
         toast.error("Erreur de lecture audio");
