@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { updateProfilEleve } from "@/lib/updateProfilEleve";
@@ -10,14 +10,14 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import {
-  ArrowLeft, CheckCircle2, XCircle, Loader2, Send, FileText, Mic, Square,
+  ArrowLeft, CheckCircle2, XCircle, Loader2, Send, FileText, Mic, Square, Clock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
 import { evaluerReponseIA } from "@/lib/testPositionnement";
+import { Progress } from "@/components/ui/progress";
 
 const DevoirPassation = () => {
   const { devoirId } = useParams<{ devoirId: string }>();
@@ -33,6 +33,15 @@ const DevoirPassation = () => {
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+
+  // Forced-listen state for CO
+  const [hasListened, setHasListened] = useState(false);
+
+  // Timer state
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [timerWarning, setTimerWarning] = useState(false);
+  const [autoSubmitted, setAutoSubmitted] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const { data: devoir, isLoading } = useQuery({
     queryKey: ["devoir-detail", devoirId],
@@ -70,10 +79,42 @@ const DevoirPassation = () => {
   const contenu = ex?.contenu as any;
   const items: any[] = contenu?.items ?? [];
   const isDone = devoir?.statut === "fait" || devoir?.statut === "arrete";
+  const metadata = contenu?.metadata;
+  const timeLimit = metadata?.time_limit_seconds || contenu?.time_limit_seconds || 0;
 
   const isCompetenceCO = ex?.competence === "CO";
   const isCompetenceEO = ex?.competence === "EO" || contenu?.type_reponse === "oral" || ex?.format === "production_orale";
   const scriptAudio = contenu?.script_audio;
+
+  // Timer logic
+  useEffect(() => {
+    if (!devoir || isDone || result || !timeLimit) return;
+    timerRef.current = setInterval(() => {
+      setElapsedSeconds((prev) => prev + 1);
+    }, 1000);
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [devoir, isDone, result, timeLimit]);
+
+  // Warning at time_limit, auto-submit at time_limit + 10
+  useEffect(() => {
+    if (!timeLimit) return;
+    if (elapsedSeconds >= timeLimit && !timerWarning) {
+      setTimerWarning(true);
+      toast.warning("⏰ Temps écoulé ! Vous avez 10 secondes supplémentaires.");
+    }
+    if (elapsedSeconds >= timeLimit + 10 && !autoSubmitted && !result) {
+      setAutoSubmitted(true);
+      if (timerRef.current) clearInterval(timerRef.current);
+      toast.info("Soumission automatique des réponses.");
+      if (isCompetenceEO) {
+        if (audioBlob) handleSubmitOral();
+      } else {
+        handleSubmit();
+      }
+    }
+  }, [elapsedSeconds, timeLimit, timerWarning, autoSubmitted, result]);
 
   // Audio recording helpers
   const startRecording = async () => {
@@ -163,7 +204,7 @@ const DevoirPassation = () => {
     }
   };
 
-  const handleSubmitOral = async () => {
+  const handleSubmitOral = useCallback(async () => {
     if (!devoir || !ex || !user || !audioBlob) return;
     setSubmitting(true);
     try {
@@ -185,10 +226,15 @@ const DevoirPassation = () => {
         console.error("STT error:", sttErr);
       }
 
-      // AI evaluation
+      // AI evaluation with metadata for high tolerance
       const evaluation = await evaluerReponseIA(
         { criteres_evaluation: contenu?.criteres_evaluation || { prononciation: "clarté", vocabulaire: "pertinence", grammaire: "correction", coherence: "logique" } },
-        transcription
+        transcription,
+        {
+          code: metadata?.code,
+          type_reponse: "oral",
+          mots_cles_attendus: contenu?.mots_cles_attendus,
+        }
       );
 
       const score = Math.round((evaluation.score / 3) * 100);
@@ -232,9 +278,9 @@ const DevoirPassation = () => {
     } finally {
       setSubmitting(false);
     }
-  };
+  }, [devoir, ex, user, audioBlob, devoirId, contenu, metadata]);
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     if (!devoir || !ex || !user) return;
     setSubmitting(true);
     try {
@@ -286,7 +332,16 @@ const DevoirPassation = () => {
     } finally {
       setSubmitting(false);
     }
+  }, [devoir, ex, user, items, answers, devoirId]);
+
+  // Format timer display
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, "0")}`;
   };
+
+  const timerProgress = timeLimit ? Math.min(100, (elapsedSeconds / timeLimit) * 100) : 0;
 
   if (isLoading) {
     return (
@@ -385,6 +440,9 @@ const DevoirPassation = () => {
     );
   }
 
+  // Check if CO questions are locked behind listening
+  const coLocked = isCompetenceCO && scriptAudio && !hasListened;
+
   // ─── Exercise Passation ───
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
@@ -392,11 +450,42 @@ const DevoirPassation = () => {
         <Button variant="ghost" size="sm" onClick={() => navigate("/eleve/devoirs")} className="gap-1.5">
           <ArrowLeft className="h-4 w-4" /> Retour
         </Button>
-        <div>
+        <div className="flex-1">
           <h1 className="text-xl font-bold">{ex?.titre}</h1>
-          <p className="text-sm text-muted-foreground">{ex?.competence} · {ex?.format?.replace(/_/g, " ")}</p>
+          <div className="flex items-center gap-2">
+            <p className="text-sm text-muted-foreground">{ex?.competence} · {ex?.format?.replace(/_/g, " ")}</p>
+            {metadata?.code && (
+              <Badge variant="outline" className="text-xs">{metadata.code}</Badge>
+            )}
+          </div>
         </div>
       </div>
+
+      {/* Timer bar */}
+      {timeLimit > 0 && (
+        <Card className={cn(
+          "transition-all duration-300",
+          timerWarning ? "border-orange-500 animate-pulse" : "border-muted"
+        )}>
+          <CardContent className="py-3 px-4">
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-2">
+                <Clock className={cn("h-4 w-4", timerWarning ? "text-orange-500" : "text-muted-foreground")} />
+                <span className={cn("text-sm font-mono font-bold", timerWarning ? "text-orange-500" : "text-foreground")}>
+                  {formatTime(elapsedSeconds)}
+                </span>
+              </div>
+              <span className={cn("text-xs", timerWarning ? "text-orange-500 font-semibold" : "text-muted-foreground")}>
+                {timerWarning ? "⚠️ Temps dépassé !" : `Limite : ${formatTime(timeLimit)}`}
+              </span>
+            </div>
+            <Progress
+              value={timerProgress}
+              className={cn("h-2", timerWarning ? "[&>div]:bg-orange-500" : "")}
+            />
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader className="pb-3">
@@ -405,12 +494,21 @@ const DevoirPassation = () => {
         </CardHeader>
       </Card>
 
-      {/* TTS player for CO exercises */}
+      {/* TTS player for CO exercises — forced listen */}
       {isCompetenceCO && scriptAudio && (
         <Card className="border-primary/20 bg-primary/5">
           <CardContent className="pt-4 pb-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-primary mb-2">🔊 Écoute audio</p>
-            <TTSAudioPlayer text={scriptAudio} className="mb-0" />
+            <TTSAudioPlayer
+              text={scriptAudio}
+              className="mb-0"
+              onPlayComplete={() => setHasListened(true)}
+            />
+            {!hasListened && (
+              <p className="text-xs text-orange-600 mt-2 font-medium">
+                ⚠️ Vous devez écouter l'audio au moins une fois avant de répondre.
+              </p>
+            )}
           </CardContent>
         </Card>
       )}
@@ -461,12 +559,12 @@ const DevoirPassation = () => {
               size="lg"
             >
               {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-              Soumettre ma réponse orale
+              {submitting ? "Transcription et évaluation en cours…" : "Soumettre ma réponse orale"}
             </Button>
           </CardContent>
         </Card>
       ) : items.length > 0 ? (
-        <div className="space-y-4">
+        <div className={cn("space-y-4", coLocked && "opacity-50 pointer-events-none")}>
           {items.map((item: any, idx: number) => (
             <Card key={idx}>
               <CardContent className="pt-4 space-y-3">
@@ -501,7 +599,7 @@ const DevoirPassation = () => {
             </Card>
           ))}
 
-          <Button onClick={handleSubmit} disabled={submitting} className="w-full gap-2" size="lg">
+          <Button onClick={handleSubmit} disabled={submitting || coLocked} className="w-full gap-2" size="lg">
             {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             Soumettre mes réponses
           </Button>
