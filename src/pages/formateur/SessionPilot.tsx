@@ -82,6 +82,8 @@ const SessionPilot = () => {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [deleteSeId, setDeleteSeId] = useState<string | null>(null);
   const [clearConfirm, setClearConfirm] = useState(false);
+  const [dailyHomeworkOpen, setDailyHomeworkOpen] = useState(false);
+  const [purgingHomework, setPurgingHomework] = useState(false);
   const [rappelChecked, setRappelChecked] = useState<Record<string, boolean>>({});
   const [rappelDismissed, setRappelDismissed] = useState(false);
   const [validatingRappel, setValidatingRappel] = useState(false);
