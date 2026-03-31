@@ -648,7 +648,7 @@ ${sessionExercises.map((ex: any, i: number) => `
             </div>
           </CardContent>
         </Card>
-        <Card className="cursor-pointer hover:shadow-md transition-shadow border-l-4 border-l-green-500" onClick={() => navigate("/formateur/groupes")}>
+        <Card className="cursor-pointer hover:shadow-md transition-shadow border-l-4 border-l-green-500" onClick={() => navigate("/formateur/groupes?tab=eleves")}>
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
