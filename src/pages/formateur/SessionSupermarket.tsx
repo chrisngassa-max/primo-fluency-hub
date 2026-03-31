@@ -255,7 +255,7 @@ const SessionSupermarket = () => {
         difficulte: ex.difficulte,
         niveau_vise: sessionInfo?.niveau_cible || "A1",
         contenu: ex.contenu,
-        animation_guide: ex.atelier_ludique,
+        animation_guide: ex.atelier_ludique as any,
         point_a_maitriser_id: defaultPoint.id,
         is_ai_generated: true,
         collectif: true,
