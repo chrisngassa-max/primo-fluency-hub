@@ -521,7 +521,7 @@ const SessionBilan = () => {
       </div>
 
       {/* Compact exercise list */}
-      <div className="border rounded-lg divide-y overflow-hidden">
+      <div className="border rounded-lg divide-y overflow-hidden overflow-y-auto max-h-[50vh] md:max-h-[400px]">
         {exercises.map((se, i) => {
           const ex = (se as any).exercice;
           const isChecked = checkedIds.has(se.id);
