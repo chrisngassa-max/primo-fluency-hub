@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import CompetenceLabel from "@/components/CompetenceLabel";
+import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
 
 const STORAGE_KEY_PREFIX = "bilan-seance-progress-";
 
