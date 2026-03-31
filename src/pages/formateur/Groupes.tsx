@@ -28,7 +28,7 @@ import {
 import { toast } from "sonner";
 import {
   Plus, Users, Trash2, Edit, UserPlus, UserMinus, Loader2,
-  Copy, Check, Eye, ChevronRight, Ticket, Mail,
+  Copy, Check, Eye, ChevronRight, Ticket, Mail, Search,
 } from "lucide-react";
 import InviteStudentDialog from "@/components/InviteStudentDialog";
 
