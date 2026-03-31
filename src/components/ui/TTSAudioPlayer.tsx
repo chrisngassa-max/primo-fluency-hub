@@ -7,6 +7,7 @@ import { toast } from "sonner";
 interface TTSAudioPlayerProps {
   text: string;
   className?: string;
+  onPlayComplete?: () => void;
 }
 
 const TTSAudioPlayer = ({ text, className = "" }: TTSAudioPlayerProps) => {
