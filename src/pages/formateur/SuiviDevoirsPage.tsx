@@ -454,6 +454,9 @@ Rédige une "Synthèse de Veille" concise pour le formateur :
           <TabsTrigger value="individuel" className="gap-1.5">
             <User className="h-4 w-4" />Vue individuelle
           </TabsTrigger>
+          <TabsTrigger value="quotidien" className="gap-1.5">
+            <Calendar className="h-4 w-4" />Vue quotidienne
+          </TabsTrigger>
           <TabsTrigger value="groupe" className="gap-1.5">
             <Users className="h-4 w-4" />Vue groupe
           </TabsTrigger>
