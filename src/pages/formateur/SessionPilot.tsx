@@ -716,6 +716,33 @@ ${Array.isArray(item.options) && item.options.length > 0
 
   const handlePrint = () => window.print();
 
+  // ─── Delete single exercise from session ───
+  const handleDeleteExercise = async (seId: string) => {
+    try {
+      const { error } = await supabase.from("session_exercices").delete().eq("id", seId);
+      if (error) throw error;
+      qc.invalidateQueries({ queryKey: ["session-exercices", id] });
+      setDeleteSeId(null);
+      toast.success("Exercice retiré de la séance.");
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    }
+  };
+
+  // ─── Clear all exercises from session ───
+  const handleClearExercises = async () => {
+    try {
+      const { error } = await supabase.from("session_exercices").delete().eq("session_id", id!);
+      if (error) throw error;
+      qc.invalidateQueries({ queryKey: ["session-exercices", id] });
+      setClearConfirm(false);
+      setChecked({});
+      toast.success("Tous les exercices ont été retirés de la séance.");
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="space-y-4 max-w-3xl mx-auto">
