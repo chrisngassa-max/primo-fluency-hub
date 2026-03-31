@@ -739,7 +739,11 @@ ${(doc.fiches_eleves || [])
             </Button>
             <Button variant="outline" onClick={handlePrint} disabled={selected.size === 0}>
               <Printer className="h-4 w-4 mr-2" />
-              Imprimer PDF
+              Exercices
+            </Button>
+            <Button variant="outline" onClick={handlePrintMateriel} disabled={selected.size === 0}>
+              <Printer className="h-4 w-4 mr-2" />
+              🖨️ Matériel
             </Button>
           </div>
         </div>
