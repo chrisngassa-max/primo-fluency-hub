@@ -845,10 +845,22 @@ ${Array.isArray(item.options) && item.options.length > 0
             {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Rocket className="h-4 w-4" />}
             Envoyer aux élèves ({checkedCount})
           </Button>
-          <Button onClick={handleGenerateExercises} disabled={generating} variant="outline" className="gap-2">
-            {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-            ✨ Générer IA
-          </Button>
+          <div className="flex items-center gap-1">
+            <Select value={String(generateCount)} onValueChange={(v) => setGenerateCount(Number(v))}>
+              <SelectTrigger className="w-[70px] h-9">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {[1,2,3,5,8,10,15,20].map(n => (
+                  <SelectItem key={n} value={String(n)}>{n}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button onClick={handleGenerateExercises} disabled={generating} variant="outline" className="gap-2">
+              {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+              ✨ Générer IA
+            </Button>
+          </div>
           <Button onClick={() => setDailyHomeworkOpen(true)} disabled={generatingHomework || exercises.length === 0} variant="outline" className="gap-2">
             {generatingHomework ? <Loader2 className="h-4 w-4 animate-spin" /> : <ClipboardCheck className="h-4 w-4" />}
             Générer devoirs
