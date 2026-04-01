@@ -793,7 +793,8 @@ Rédige une "Synthèse de Veille" concise pour le formateur :
                 </Card>
               )}
             </>
-          )}
+        </TabsContent>
+
         {/* ─── VUE QUOTIDIENNE ─── */}
         <TabsContent value="quotidien" className="space-y-6 mt-4">
           {!activeGroup ? (
@@ -816,7 +817,6 @@ Rédige une "Synthèse de Veille" concise pour le formateur :
             </Card>
           ) : (
             <>
-              {/* Daily completion table */}
               <Card>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-base flex items-center gap-2">
@@ -832,9 +832,7 @@ Rédige une "Synthèse de Veille" concise pour le formateur :
                         <TableRow>
                           <TableHead>Élève</TableHead>
                           {dailyData.days.map((d) => (
-                            <TableHead key={d} className="text-center w-20">
-                              {d.replace("jour_", "J")}
-                            </TableHead>
+                            <TableHead key={d} className="text-center w-20">{d.replace("jour_", "J")}</TableHead>
                           ))}
                           <TableHead className="text-center w-24">Global</TableHead>
                         </TableRow>
@@ -851,12 +849,8 @@ Rédige une "Synthèse de Veille" concise pour le formateur :
                                   {s && s.total > 0 ? (
                                     <span className={cn("text-sm font-bold",
                                       pct >= 80 ? "text-green-600" : pct >= 50 ? "text-orange-600" : pct > 0 ? "text-destructive" : "text-muted-foreground"
-                                    )}>
-                                      {s.done}/{s.total}
-                                    </span>
-                                  ) : (
-                                    <span className="text-muted-foreground">—</span>
-                                  )}
+                                    )}>{s.done}/{s.total}</span>
+                                  ) : <span className="text-muted-foreground">—</span>}
                                 </TableCell>
                               );
                             })}
@@ -865,9 +859,7 @@ Rédige une "Synthèse de Veille" concise pour le formateur :
                                 row.completionPct >= 80 ? "bg-green-100 text-green-700 hover:bg-green-100" :
                                 row.completionPct >= 50 ? "bg-orange-100 text-orange-700 hover:bg-orange-100" :
                                 "bg-red-100 text-red-700 hover:bg-red-100"
-                              )}>
-                                {row.completionPct}%
-                              </Badge>
+                              )}>{row.completionPct}%</Badge>
                             </TableCell>
                           </TableRow>
                         ))}
@@ -877,7 +869,6 @@ Rédige une "Synthèse de Veille" concise pour le formateur :
                 </CardContent>
               </Card>
 
-              {/* Daily completion chart */}
               {dailyData.days.length > 1 && (
                 <Card>
                   <CardHeader className="pb-2">
@@ -906,16 +897,13 @@ Rédige une "Synthèse de Veille" concise pour le formateur :
                 </Card>
               )}
 
-              {/* Synthèse de Veille */}
               <Card className="border-primary/20">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-base flex items-center gap-2">
                     <Brain className="h-4 w-4 text-primary" />
                     Synthèse de Veille
                   </CardTitle>
-                  <CardDescription>
-                    Bilan IA de ce que les élèves ont accompli entre les séances
-                  </CardDescription>
+                  <CardDescription>Bilan IA de ce que les élèves ont accompli entre les séances</CardDescription>
                 </CardHeader>
                 <CardContent>
                   {veilleSynthesis ? (
@@ -926,16 +914,12 @@ Rédige une "Synthèse de Veille" concise pour le formateur :
                         {veilleSynthesizing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
                         Générer la synthèse de veille
                       </Button>
-                      {dailyData.studentRows.length === 0 && (
-                        <p className="text-xs text-muted-foreground mt-2">Aucune donnée quotidienne disponible.</p>
-                      )}
                     </div>
                   )}
                 </CardContent>
               </Card>
             </>
           )}
-        </TabsContent>
         </TabsContent>
       </Tabs>
     </div>
