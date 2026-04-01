@@ -198,6 +198,56 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
       {/* 60-hour pacing tracker */}
       {targetId && <StudentPacingCard eleveId={targetId} />}
 
+      {/* Student credentials (formateur view only) */}
+      {eleveId && studentProfile && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Identifiants de connexion</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <div className="flex items-center gap-2 text-sm">
+              <Mail className="h-4 w-4 text-muted-foreground shrink-0" />
+              <span className="font-medium">Email :</span>
+              <span className="text-muted-foreground">{studentProfile.email}</span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6"
+                onClick={() => {
+                  navigator.clipboard.writeText(studentProfile.email ?? "");
+                  toast.success("Email copié");
+                }}
+              >
+                <Copy className="h-3 w-3" />
+              </Button>
+            </div>
+            {studentProfile.mot_de_passe_initial && (
+              <div className="flex items-center gap-2 text-sm">
+                <KeyRound className="h-4 w-4 text-muted-foreground shrink-0" />
+                <span className="font-medium">Mot de passe initial :</span>
+                <code className="bg-muted px-2 py-0.5 rounded text-xs">{studentProfile.mot_de_passe_initial}</code>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6"
+                  onClick={() => {
+                    navigator.clipboard.writeText(studentProfile.mot_de_passe_initial ?? "");
+                    toast.success("Mot de passe copié");
+                  }}
+                >
+                  <Copy className="h-3 w-3" />
+                </Button>
+              </div>
+            )}
+            {!studentProfile.mot_de_passe_initial && (
+              <p className="text-xs text-muted-foreground italic">
+                Mot de passe initial non disponible (l'élève s'est inscrit lui-même).
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
       {/* Global progress bar */}
       <Card>
         <CardContent className="pt-6 pb-4">
