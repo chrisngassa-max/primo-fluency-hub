@@ -793,6 +793,7 @@ Rédige une "Synthèse de Veille" concise pour le formateur :
                 </Card>
               )}
             </>
+          )}
         </TabsContent>
 
         {/* ─── VUE QUOTIDIENNE ─── */}
