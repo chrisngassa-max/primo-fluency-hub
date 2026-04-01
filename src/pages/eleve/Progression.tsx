@@ -16,6 +16,7 @@ import { TrendingUp, BookOpen, Award, CalendarCheck } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import CompetenceLabel from "@/components/CompetenceLabel";
+import { StudentPacingCard } from "@/components/PacingTracker";
 
 const COMPETENCES = ["CO", "CE", "EE", "EO", "Structures"] as const;
 
