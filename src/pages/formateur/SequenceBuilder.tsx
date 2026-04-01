@@ -88,7 +88,7 @@ const SequenceBuilder = () => {
           pointName: selectedPoint.nom,
           competence,
           niveauVise,
-          count: 10,
+          count: generateCount,
         },
       });
       if (error) throw error;
