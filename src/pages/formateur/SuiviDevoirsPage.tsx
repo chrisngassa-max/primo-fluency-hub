@@ -31,6 +31,7 @@ import {
   ResponsiveContainer, Legend, BarChart, Bar,
 } from "recharts";
 import CompetenceLabel from "@/components/CompetenceLabel";
+import PacingTracker from "@/components/PacingTracker";
 
 const COMPETENCES = ["CO", "CE", "EE", "EO", "Structures"] as const;
 
