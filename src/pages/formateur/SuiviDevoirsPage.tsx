@@ -31,6 +31,7 @@ import {
   ResponsiveContainer, Legend, BarChart, Bar,
 } from "recharts";
 import CompetenceLabel from "@/components/CompetenceLabel";
+import PacingTracker from "@/components/PacingTracker";
 
 const COMPETENCES = ["CO", "CE", "EE", "EO", "Structures"] as const;
 
@@ -448,6 +449,9 @@ Rédige une "Synthèse de Veille" concise pour le formateur :
           </SelectContent>
         </Select>
       </div>
+
+      {/* Pacing Tracker — 60h goal */}
+      <PacingTracker />
 
       <Tabs defaultValue="individuel">
         <TabsList>

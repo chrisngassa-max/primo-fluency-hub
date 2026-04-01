@@ -16,6 +16,7 @@ import { TrendingUp, BookOpen, Award, CalendarCheck } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import CompetenceLabel from "@/components/CompetenceLabel";
+import { StudentPacingCard } from "@/components/PacingTracker";
 
 const COMPETENCES = ["CO", "CE", "EE", "EO", "Structures"] as const;
 
@@ -192,6 +193,9 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
           Suivi de ton parcours vers le TCF IRN
         </p>
       </div>
+
+      {/* 60-hour pacing tracker */}
+      {targetId && <StudentPacingCard eleveId={targetId} />}
 
       {/* Global progress bar */}
       <Card>
