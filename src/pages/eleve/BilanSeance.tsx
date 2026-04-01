@@ -23,6 +23,16 @@ import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
 const STORAGE_KEY_PREFIX = "bilan-seance-progress-";
 
 const SUPPORT_KEYS = ["texte", "paragraphe", "document", "contexte", "texte_support", "script_audio"] as const;
+const IMAGE_KEYS = ["image", "image_url", "visual", "support_visuel", "illustration", "media_url"] as const;
+
+const getImageUrl = (source?: Record<string, unknown> | null): string => {
+  if (!source) return "";
+  for (const key of IMAGE_KEYS) {
+    const value = getStringValue(source[key]);
+    if (value) return value;
+  }
+  return "";
+};
 
 const getStringValue = (value: unknown) => {
   if (typeof value !== "string") return "";
