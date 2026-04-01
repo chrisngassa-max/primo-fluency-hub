@@ -472,6 +472,16 @@ const BilanSeance = () => {
               <TTSAudioPlayer text={(currentEx.contenu as any).script_audio} />
             </div>
           )}
+          {/* Image support for CE exercises */}
+          {(() => {
+            const imageUrl = getImageUrl(currentEx?.contenu as Record<string, unknown> | undefined);
+            return imageUrl ? (
+              <div className="p-4 rounded-lg bg-muted/50 border border-border/50">
+                <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide font-semibold">🖼️ Document visuel</p>
+                <img src={imageUrl} alt="Support visuel de l'exercice" className="max-w-full rounded-lg mx-auto" />
+              </div>
+            ) : null;
+          })()}
           {exerciseSupportText && currentEx?.competence !== "CO" && (
             <div className="p-4 rounded-lg bg-muted/50 text-sm whitespace-pre-line border border-border/50 leading-relaxed">
               <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide font-semibold">📄 Document</p>

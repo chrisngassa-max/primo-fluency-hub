@@ -199,7 +199,7 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
                         contenu: {
                           type: "object",
                           properties: {
-                            texte: { type: "string", description: "Texte support / paragraphe à lire avant les questions (OBLIGATOIRE pour CE)" },
+                            texte: { type: "string", description: "Texte support / document à lire avant les questions (OBLIGATOIRE pour CE). Doit reproduire fidèlement le document (badge, panneau, courrier, SMS, etc.) avec TOUTES les informations nécessaires pour répondre." },
                             script_audio: { type: "string", description: "Script audio pour CO : texte lu par la synthèse vocale (OBLIGATOIRE pour CO, NE PAS afficher à l'élève)" },
                             type_reponse: { type: "string", enum: ["ecrit", "oral"], description: "Type de réponse attendu (oral pour EO)" },
                             criteres_evaluation: { type: "object", description: "Critères d'évaluation pour les productions orales/écrites" },

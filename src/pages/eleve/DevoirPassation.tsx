@@ -513,6 +513,19 @@ const DevoirPassation = () => {
         </Card>
       )}
 
+      {/* Image support for CE exercises */}
+      {(() => {
+        const imageUrl = contenu?.image || contenu?.image_url || contenu?.visual || contenu?.support_visuel || contenu?.illustration || contenu?.media_url;
+        return imageUrl ? (
+          <Card className="border-primary/20 bg-primary/5">
+            <CardContent className="pt-4 pb-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-primary mb-2">🖼️ Document visuel</p>
+              <img src={String(imageUrl)} alt="Support visuel de l'exercice" className="max-w-full rounded-lg mx-auto" />
+            </CardContent>
+          </Card>
+        ) : null;
+      })()}
+
       {/* Text support for CE or non-CO with texte */}
       {!isCompetenceCO && contenu?.texte && (
         <Card className="border-primary/20 bg-primary/5">
