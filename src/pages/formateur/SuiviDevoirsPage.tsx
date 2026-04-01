@@ -450,6 +450,9 @@ Rédige une "Synthèse de Veille" concise pour le formateur :
         </Select>
       </div>
 
+      {/* Pacing Tracker — 60h goal */}
+      <PacingTracker />
+
       <Tabs defaultValue="individuel">
         <TabsList>
           <TabsTrigger value="individuel" className="gap-1.5">
