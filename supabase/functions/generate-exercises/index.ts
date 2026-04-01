@@ -126,8 +126,22 @@ L'élève écrit. L'IA corrige orthographe/grammaire/longueur.
 
 ═══════════════════════════════════════════════════
 
+DURÉE CIBLE PAR EXERCICE : 10 À 15 MINUTES
+Chaque exercice doit être conçu pour occuper l'élève entre 10 et 15 minutes.
+Adapte le NOMBRE D'ITEMS selon la compétence pour atteindre cette durée :
+
+| Compétence  | Temps moyen par item | Nb items pour 10-15 min | time_limit_seconds |
+|-------------|----------------------|-------------------------|--------------------|
+| CO          | ~45 secondes         | 12 à 18 items           | 720 (12 min)       |
+| CE          | ~80 secondes         | 8 à 12 items            | 780 (13 min)       |
+| Structures  | ~90 secondes         | 7 à 10 items            | 780 (13 min)       |
+| EE          | ~5-10 min par tâche  | 2 à 3 tâches            | 900 (15 min)       |
+| EO          | ~3-5 min par tâche   | 2 à 4 tâches            | 900 (15 min)       |
+
+Le champ "time_limit_seconds" dans metadata DOIT refléter la durée totale de l'exercice (entre 600 et 900 secondes).
+
 RÈGLES DE GÉNÉRATION :
-- Chaque exercice doit recevoir un champ "metadata" avec : { "code": "CO1", "skill": "Compréhension Orale", "sub_skill": "Identifier situation", "time_limit_seconds": 45 }
+- Chaque exercice doit recevoir un champ "metadata" avec : { "code": "CO1", "skill": "Compréhension Orale", "sub_skill": "Identifier situation", "time_limit_seconds": 720 }
 - Le code doit correspondre à la compétence et à la sous-compétence les plus pertinentes.
 - Contexte : situations réelles de la vie en France (préfecture, CAF, emploi, logement, transport, santé, citoyenneté)
 - Public : adultes primo-arrivants, niveau ${niveauVise}
