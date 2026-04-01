@@ -193,6 +193,9 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
         </p>
       </div>
 
+      {/* 60-hour pacing tracker */}
+      {targetId && <StudentPacingCard eleveId={targetId} />}
+
       {/* Global progress bar */}
       <Card>
         <CardContent className="pt-6 pb-4">
