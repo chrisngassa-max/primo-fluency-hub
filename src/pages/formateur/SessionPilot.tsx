@@ -1128,10 +1128,22 @@ ${Array.isArray(item.options) && item.options.length > 0
             <p className="text-sm text-muted-foreground/70 mt-1 mb-4">
               Générez des exercices IA ou rattachez-en depuis la page Séances.
             </p>
-            <Button onClick={handleGenerateExercises} disabled={generating} variant="outline" className="gap-2">
-              {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-              Générer des exercices IA
-            </Button>
+            <div className="flex items-center gap-2 justify-center">
+              <Select value={String(generateCount)} onValueChange={(v) => setGenerateCount(Number(v))}>
+                <SelectTrigger className="w-[70px] h-9">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {[1,2,3,5,8,10,15,20].map(n => (
+                    <SelectItem key={n} value={String(n)}>{n}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button onClick={handleGenerateExercises} disabled={generating} variant="outline" className="gap-2">
+                {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                Générer des exercices IA
+              </Button>
+            </div>
           </CardContent>
         </Card>
       ) : exercises.length > 0 && (

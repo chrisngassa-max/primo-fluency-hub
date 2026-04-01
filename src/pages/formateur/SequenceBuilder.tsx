@@ -339,23 +339,35 @@ const SequenceBuilder = () => {
                 </Select>
               </div>
             )}
-            <Button
-              onClick={handleGenerate}
-              disabled={generating || !selectedPointId}
-              className="w-full"
-            >
-              {generating ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Génération...
-                </>
-              ) : (
-                <>
-                  <Sparkles className="h-4 w-4 mr-2" />
-                  Générer 10 exercices
-                </>
-              )}
-            </Button>
+            <div className="flex items-center gap-2">
+              <Select value={String(generateCount)} onValueChange={(v) => setGenerateCount(Number(v))}>
+                <SelectTrigger className="w-[80px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {[1,2,3,5,8,10,15,20].map(n => (
+                    <SelectItem key={n} value={String(n)}>{n}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button
+                onClick={handleGenerate}
+                disabled={generating || !selectedPointId}
+                className="flex-1"
+              >
+                {generating ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Génération...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    Générer {generateCount} exercice{generateCount > 1 ? "s" : ""}
+                  </>
+                )}
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
