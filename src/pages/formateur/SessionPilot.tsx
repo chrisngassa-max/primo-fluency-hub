@@ -412,8 +412,15 @@ const SessionPilot = () => {
     setGenerating(true);
     try {
       const niveauVise = session.niveau_cible || (parcoursSeance as any)?.parcours?.niveau_cible || "A1";
-      const competences = (parcoursSeance as any)?.competences_cibles;
-      const competence = competences?.length > 0 ? competences[0] : "CE";
+      // Priority: session competences_cibles > parcours competences_cibles > fallback CE
+      const sessionComps = (session as any)?.competences_cibles;
+      const parcoursComps = (parcoursSeance as any)?.competences_cibles;
+      const competences = (sessionComps && sessionComps.length > 0)
+        ? sessionComps
+        : (parcoursComps && parcoursComps.length > 0)
+          ? parcoursComps
+          : ["CE"];
+      const competence = competences[0];
       const objectif = (parcoursSeance as any)?.objectif_principal || session.objectifs || "Exercice de séance";
       const count = generateCount;
 
