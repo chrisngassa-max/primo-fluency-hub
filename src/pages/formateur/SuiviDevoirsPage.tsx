@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
@@ -21,14 +21,14 @@ import { toast } from "sonner";
 import {
   User, Users, BookOpen, ClipboardCheck, BarChart2, TrendingUp,
   ChevronDown, ChevronRight, CheckCircle2, AlertTriangle, FileText,
-  Download, ArrowRight, Loader2, Bell,
+  Download, ArrowRight, Loader2, Bell, Calendar, Brain, Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip,
-  ResponsiveContainer, Legend,
+  ResponsiveContainer, Legend, BarChart, Bar,
 } from "recharts";
 import CompetenceLabel from "@/components/CompetenceLabel";
 
@@ -186,6 +186,75 @@ const SuiviDevoirsPage = () => {
   // AI synthesis
   const [synthesizing, setSynthesizing] = useState(false);
   const [synthesis, setSynthesis] = useState<string | null>(null);
+  const [veilleSynthesizing, setVeilleSynthesizing] = useState(false);
+  const [veilleSynthesis, setVeilleSynthesis] = useState<string | null>(null);
+
+  // Fetch daily homework data
+  const { data: dailyDevoirsRaw, isLoading: dailyLoading } = useQuery({
+    queryKey: ["suivi-daily-devoirs", user?.id, activeGroup],
+    queryFn: async () => {
+      // Get group members
+      const { data: members } = await supabase
+        .from("group_members")
+        .select("eleve_id, eleve:profiles!group_members_eleve_id_fkey(prenom, nom)")
+        .eq("group_id", activeGroup);
+
+      // Get devoirs with source_label (jour_X)
+      const { data: devoirs } = await supabase
+        .from("devoirs")
+        .select("*, exercice:exercices(titre, competence)")
+        .eq("formateur_id", user!.id)
+        .not("source_label", "is", null)
+        .order("date_echeance", { ascending: true });
+
+      // Filter devoirs to only those belonging to group members
+      const memberIds = new Set((members ?? []).map((m: any) => m.eleve_id));
+      const groupDevoirs = (devoirs ?? []).filter((d: any) => memberIds.has(d.eleve_id));
+
+      return { members: members ?? [], devoirs: groupDevoirs };
+    },
+    enabled: !!activeGroup && !!user?.id,
+  });
+
+  // Process daily data for the table
+  const dailyData = useMemo(() => {
+    if (!dailyDevoirsRaw) return { days: [], studentRows: [] };
+    const { members, devoirs } = dailyDevoirsRaw;
+
+    // Extract unique days
+    const daysSet = new Set<string>();
+    devoirs.forEach((d: any) => {
+      if (d.source_label?.startsWith("jour_")) daysSet.add(d.source_label);
+    });
+    const days = [...daysSet].sort((a, b) => {
+      const na = parseInt(a.replace("jour_", ""));
+      const nb = parseInt(b.replace("jour_", ""));
+      return na - nb;
+    });
+
+    // Build per-student, per-day completion
+    const studentRows = members.map((m: any) => {
+      const studentDevoirs = devoirs.filter((d: any) => d.eleve_id === m.eleve_id);
+      const dayStatus: Record<string, { total: number; done: number }> = {};
+      days.forEach((day) => {
+        const dayDevoirs = studentDevoirs.filter((d: any) => d.source_label === day);
+        dayStatus[day] = {
+          total: dayDevoirs.length,
+          done: dayDevoirs.filter((d: any) => d.statut === "fait" || d.statut === "arrete").length,
+        };
+      });
+      const totalDone = studentDevoirs.filter((d: any) => d.statut === "fait" || d.statut === "arrete").length;
+      const totalAll = studentDevoirs.length;
+      return {
+        eleveId: m.eleve_id,
+        nom: `${m.eleve?.prenom || ""} ${m.eleve?.nom || ""}`.trim(),
+        dayStatus,
+        completionPct: totalAll > 0 ? Math.round((totalDone / totalAll) * 100) : 0,
+      };
+    });
+
+    return { days, studentRows };
+  }, [dailyDevoirsRaw]);
 
   const generateSynthesis = async () => {
     setSynthesizing(true);
@@ -218,6 +287,55 @@ const SuiviDevoirsPage = () => {
       toast.error("Erreur de synthèse", { description: e.message });
     } finally {
       setSynthesizing(false);
+    }
+  };
+
+  // Synthèse de Veille generator
+  const generateVeilleSynthesis = async () => {
+    setVeilleSynthesizing(true);
+    try {
+      const groupName = groups?.find((g) => g.id === activeGroup)?.nom || "Groupe";
+      const { days, studentRows } = dailyData;
+      
+      const studentSummaries = studentRows.map((s) => {
+        const dayDetails = days.map((d) => {
+          const status = s.dayStatus[d];
+          return `${d.replace("jour_", "J")}: ${status?.done || 0}/${status?.total || 0}`;
+        }).join(", ");
+        return `${s.nom}: ${s.completionPct}% global (${dayDetails})`;
+      }).join("\n");
+
+      const { data, error } = await supabase.functions.invoke("analyze-trajectory", {
+        body: {
+          groupNom: groupName,
+          trajectoryData: [{
+            seance: 1,
+            titre: "Synthèse de veille inter-séances",
+            date: null,
+            cible: 80,
+            groupe: studentRows.length > 0 ? Math.round(studentRows.reduce((s, r) => s + r.completionPct, 0) / studentRows.length) : 0,
+            competences: [],
+            eleves: studentRows.reduce((acc: any, el) => { acc[el.nom] = el.completionPct; return acc; }, {}),
+          }],
+          totalSeances: 1,
+          customPrompt: `Tu es un expert FLE. Voici le suivi jour par jour des devoirs inter-séances du groupe "${groupName}" :
+${studentSummaries}
+
+Rédige une "Synthèse de Veille" concise pour le formateur :
+1. Taux de complétion global et tendance
+2. Élèves ayant bien travaillé (à féliciter)
+3. Élèves en retard (à relancer)
+4. Compétences faibles persistantes à reprendre en séance
+5. Recommandation d'ouverture pour la prochaine séance`,
+        },
+      });
+      if (error) throw error;
+      setVeilleSynthesis(data?.analysis || data?.message || "Analyse indisponible.");
+      toast.success("Synthèse de veille générée");
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    } finally {
+      setVeilleSynthesizing(false);
     }
   };
 
@@ -335,6 +453,9 @@ const SuiviDevoirsPage = () => {
         <TabsList>
           <TabsTrigger value="individuel" className="gap-1.5">
             <User className="h-4 w-4" />Vue individuelle
+          </TabsTrigger>
+          <TabsTrigger value="quotidien" className="gap-1.5">
+            <Calendar className="h-4 w-4" />Vue quotidienne
           </TabsTrigger>
           <TabsTrigger value="groupe" className="gap-1.5">
             <Users className="h-4 w-4" />Vue groupe
@@ -671,6 +792,133 @@ const SuiviDevoirsPage = () => {
                   </CardContent>
                 </Card>
               )}
+            </>
+          )}
+        </TabsContent>
+
+        {/* ─── VUE QUOTIDIENNE ─── */}
+        <TabsContent value="quotidien" className="space-y-6 mt-4">
+          {!activeGroup ? (
+            <Card className="border-dashed">
+              <CardContent className="py-12 text-center text-muted-foreground">
+                Sélectionnez un groupe pour voir le suivi quotidien.
+              </CardContent>
+            </Card>
+          ) : dailyLoading ? (
+            <div className="space-y-3"><Skeleton className="h-24 w-full" /><Skeleton className="h-24 w-full" /></div>
+          ) : dailyData.days.length === 0 ? (
+            <Card className="border-dashed">
+              <CardContent className="py-12 text-center">
+                <Calendar className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
+                <p className="text-muted-foreground font-medium">Aucun devoir quotidien</p>
+                <p className="text-sm text-muted-foreground/70 mt-1">
+                  Utilisez "Générer devoirs" depuis le pilote de séance pour créer un programme jour par jour.
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            <>
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-primary" />
+                    Complétion jour par jour
+                  </CardTitle>
+                  <CardDescription>{dailyData.days.length} jour(s) · {dailyData.studentRows.length} élève(s)</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Élève</TableHead>
+                          {dailyData.days.map((d) => (
+                            <TableHead key={d} className="text-center w-20">{d.replace("jour_", "J")}</TableHead>
+                          ))}
+                          <TableHead className="text-center w-24">Global</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {dailyData.studentRows.map((row) => (
+                          <TableRow key={row.eleveId}>
+                            <TableCell className="font-medium">{row.nom}</TableCell>
+                            {dailyData.days.map((d) => {
+                              const s = row.dayStatus[d];
+                              const pct = s && s.total > 0 ? Math.round((s.done / s.total) * 100) : 0;
+                              return (
+                                <TableCell key={d} className="text-center">
+                                  {s && s.total > 0 ? (
+                                    <span className={cn("text-sm font-bold",
+                                      pct >= 80 ? "text-green-600" : pct >= 50 ? "text-orange-600" : pct > 0 ? "text-destructive" : "text-muted-foreground"
+                                    )}>{s.done}/{s.total}</span>
+                                  ) : <span className="text-muted-foreground">—</span>}
+                                </TableCell>
+                              );
+                            })}
+                            <TableCell className="text-center">
+                              <Badge className={cn(
+                                row.completionPct >= 80 ? "bg-green-100 text-green-700 hover:bg-green-100" :
+                                row.completionPct >= 50 ? "bg-orange-100 text-orange-700 hover:bg-orange-100" :
+                                "bg-red-100 text-red-700 hover:bg-red-100"
+                              )}>{row.completionPct}%</Badge>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {dailyData.days.length > 1 && (
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <BarChart2 className="h-4 w-4 text-primary" />
+                      Taux de complétion par jour
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-56">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={dailyData.days.map((d) => {
+                          const totalDone = dailyData.studentRows.reduce((s, r) => s + (r.dayStatus[d]?.done || 0), 0);
+                          const totalAll = dailyData.studentRows.reduce((s, r) => s + (r.dayStatus[d]?.total || 0), 0);
+                          return { jour: d.replace("jour_", "J"), pct: totalAll > 0 ? Math.round((totalDone / totalAll) * 100) : 0 };
+                        })}>
+                          <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                          <XAxis dataKey="jour" className="text-xs" />
+                          <YAxis domain={[0, 100]} className="text-xs" />
+                          <RechartsTooltip contentStyle={{ borderRadius: "8px", border: "1px solid hsl(var(--border))", background: "hsl(var(--card))" }} />
+                          <Bar dataKey="pct" name="Complétion %" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              <Card className="border-primary/20">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Brain className="h-4 w-4 text-primary" />
+                    Synthèse de Veille
+                  </CardTitle>
+                  <CardDescription>Bilan IA de ce que les élèves ont accompli entre les séances</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {veilleSynthesis ? (
+                    <div className="bg-muted/30 rounded-lg p-4 text-sm whitespace-pre-wrap">{veilleSynthesis}</div>
+                  ) : (
+                    <div className="text-center py-4">
+                      <Button onClick={generateVeilleSynthesis} disabled={veilleSynthesizing || dailyData.studentRows.length === 0} className="gap-2">
+                        {veilleSynthesizing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                        Générer la synthèse de veille
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             </>
           )}
         </TabsContent>

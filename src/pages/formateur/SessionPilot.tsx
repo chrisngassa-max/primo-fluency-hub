@@ -59,6 +59,7 @@ import { cn } from "@/lib/utils";
 import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/DifficultyBadge";
 import FeuilleAppel from "@/components/FeuilleAppel";
 import { COMPETENCE_COLORS, resolveSessionCompetences, sortCompetences } from "@/lib/competences";
+import GenerateDailyHomeworkDialog from "@/components/GenerateDailyHomeworkDialog";
 
 type ExerciseStatus = "traite_en_classe" | "reporte" | "planifie";
 
@@ -81,6 +82,8 @@ const SessionPilot = () => {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [deleteSeId, setDeleteSeId] = useState<string | null>(null);
   const [clearConfirm, setClearConfirm] = useState(false);
+  const [dailyHomeworkOpen, setDailyHomeworkOpen] = useState(false);
+  const [purgingHomework, setPurgingHomework] = useState(false);
   const [rappelChecked, setRappelChecked] = useState<Record<string, boolean>>({});
   const [rappelDismissed, setRappelDismissed] = useState(false);
   const [validatingRappel, setValidatingRappel] = useState(false);
@@ -257,6 +260,24 @@ const SessionPilot = () => {
       return count || 0;
     },
     enabled: !!nextSession,
+  });
+
+  // Fetch all future sessions for daily homework dialog
+  const { data: futureSessions } = useQuery({
+    queryKey: ["future-sessions", session?.group_id, session?.date_seance],
+    queryFn: async () => {
+      if (!session) return [];
+      const groupId = (session as any)?.group?.id || session.group_id;
+      const { data } = await supabase
+        .from("sessions")
+        .select("id, titre, date_seance")
+        .eq("group_id", groupId)
+        .gt("date_seance", session.date_seance)
+        .order("date_seance", { ascending: true })
+        .limit(10);
+      return data ?? [];
+    },
+    enabled: !!session,
   });
 
   const exercises = sessionExercices ?? [];
@@ -545,6 +566,54 @@ const SessionPilot = () => {
     }
   };
 
+  // ─── Purge pending homework for this session ───
+  const handlePurgeHomework = async () => {
+    setPurgingHomework(true);
+    try {
+      const { error } = await supabase
+        .from("devoirs")
+        .delete()
+        .eq("session_id", id!)
+        .eq("statut", "en_attente");
+      if (error) throw error;
+      toast.success("Devoirs en attente purgés pour cette séance.");
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    } finally {
+      setPurgingHomework(false);
+    }
+  };
+
+  // ─── Generate Daily Homework via AI ───
+  const handleGenerateDailyHomework = async (params: {
+    targetSessionId: string;
+    dailyDuration: number;
+    targetDays: number;
+    targetWeaknesses: boolean;
+  }) => {
+    if (!user) return;
+    try {
+      const { data, error } = await supabase.functions.invoke("generate-daily-homework", {
+        body: {
+          sessionId: id,
+          dailyDuration: params.dailyDuration,
+          targetDays: params.targetDays,
+          targetWeaknesses: params.targetWeaknesses,
+          formateurId: user.id,
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast.success(
+        `${data.totalExercices} exercice(s) répartis sur ${data.totalJours} jour(s) !`,
+        { description: `${data.totalDevoirs} devoirs créés au total.` }
+      );
+    } catch (e: any) {
+      toast.error("Erreur de génération", { description: e.message });
+      throw e;
+    }
+  };
+
   // ─── Inline Editor ───
   const openEditor = (se: any) => {
     const ex = se.exercice;
@@ -779,9 +848,13 @@ ${Array.isArray(item.options) && item.options.length > 0
             {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
             ✨ Générer IA
           </Button>
-          <Button onClick={handleGenerateHomework} disabled={generatingHomework} variant="outline" className="gap-2">
+          <Button onClick={() => setDailyHomeworkOpen(true)} disabled={generatingHomework || exercises.length === 0} variant="outline" className="gap-2">
             {generatingHomework ? <Loader2 className="h-4 w-4 animate-spin" /> : <ClipboardCheck className="h-4 w-4" />}
             Générer devoirs
+          </Button>
+          <Button variant="outline" className="gap-2 text-destructive border-destructive/30 hover:bg-destructive/10" disabled={purgingHomework} onClick={handlePurgeHomework}>
+            {purgingHomework ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+            Purger devoirs
           </Button>
           <Button variant="outline" className="gap-2 text-destructive border-destructive/30 hover:bg-destructive/10" disabled={exercises.length === 0} onClick={() => setClearConfirm(true)}>
             <Trash2 className="h-4 w-4" />
@@ -1595,6 +1668,15 @@ ${Array.isArray(item.options) && item.options.length > 0
       )}
 
       <style>{`@media print { nav, header, .print\\:hidden { display: none !important; } body { font-size: 12pt; } }`}</style>
+
+      {/* ─── Generate Daily Homework Dialog ─── */}
+      <GenerateDailyHomeworkDialog
+        open={dailyHomeworkOpen}
+        onOpenChange={setDailyHomeworkOpen}
+        currentSessionDate={session?.date_seance || new Date().toISOString()}
+        nextSessions={futureSessions ?? []}
+        onGenerate={handleGenerateDailyHomework}
+      />
     </div>
   );
 };
