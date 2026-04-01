@@ -93,6 +93,10 @@ La "question" de chaque item sert uniquement de consigne ("Écoutez l'audio et r
 
 ### COMPRÉHENSION ÉCRITE (CE) — texte support obligatoire
 Le champ "texte" est OBLIGATOIRE : panneau, SMS, emploi du temps, courrier…
+Le texte doit reproduire fidèlement le document (badge, panneau, courrier, SMS, menu, etc.) avec un formatage clair.
+Par exemple pour un badge : "NOM : TRAORÉ | PRÉNOM : Moussa | NATIONALITÉ : Malienne | VILLE : Lyon"
+Pour un panneau : "🚫 INTERDIT DE FUMER | Zone non-fumeur"
+Le texte est le SEUL support visible par l'élève — il DOIT contenir TOUTES les informations nécessaires pour répondre aux questions.
 
 | Code | Sous-compétence       | Type de document                                            | Durée max |
 |------|-----------------------|--------------------------------------------------------------|-----------|
