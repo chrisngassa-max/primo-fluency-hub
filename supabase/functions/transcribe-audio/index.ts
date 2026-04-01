@@ -10,10 +10,10 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const apiKey = Deno.env.get("GOOGLE_TTS_API_KEY");
+    const apiKey = Deno.env.get("GOOGLE_STT_API_KEY");
     if (!apiKey) {
       return new Response(
-        JSON.stringify({ error: "GOOGLE_TTS_API_KEY not configured" }),
+        JSON.stringify({ error: "GOOGLE_STT_API_KEY not configured" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
