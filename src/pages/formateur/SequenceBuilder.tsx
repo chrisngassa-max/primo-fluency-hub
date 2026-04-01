@@ -52,6 +52,7 @@ const SequenceBuilder = () => {
   const [niveauVise, setNiveauVise] = useState("A2");
   const [exercises, setExercises] = useState<ExerciseDraft[]>([]);
   const [generating, setGenerating] = useState(false);
+  const [generateCount, setGenerateCount] = useState(10);
   const [saving, setSaving] = useState(false);
 
   // AI generation state — cascading selects
