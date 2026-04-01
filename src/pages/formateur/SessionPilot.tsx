@@ -60,6 +60,13 @@ import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/Difficulty
 import FeuilleAppel from "@/components/FeuilleAppel";
 import { COMPETENCE_COLORS, resolveSessionCompetences, sortCompetences } from "@/lib/competences";
 import GenerateDailyHomeworkDialog from "@/components/GenerateDailyHomeworkDialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type ExerciseStatus = "traite_en_classe" | "reporte" | "planifie";
 
@@ -78,6 +85,7 @@ const SessionPilot = () => {
   const [saving, setSaving] = useState(false);
   const [sending, setSending] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [generateCount, setGenerateCount] = useState(5);
   const [generatingHomework, setGeneratingHomework] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [deleteSeId, setDeleteSeId] = useState<string | null>(null);
@@ -407,7 +415,7 @@ const SessionPilot = () => {
       const competences = (parcoursSeance as any)?.competences_cibles;
       const competence = competences?.length > 0 ? competences[0] : "CE";
       const objectif = (parcoursSeance as any)?.objectif_principal || session.objectifs || "Exercice de séance";
-      const count = (parcoursSeance as any)?.nb_exercices_suggeres || 10;
+      const count = generateCount;
 
       const { data: defaultPoint } = await supabase
         .from("points_a_maitriser")
@@ -844,10 +852,22 @@ ${Array.isArray(item.options) && item.options.length > 0
             {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Rocket className="h-4 w-4" />}
             Envoyer aux élèves ({checkedCount})
           </Button>
-          <Button onClick={handleGenerateExercises} disabled={generating} variant="outline" className="gap-2">
-            {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-            ✨ Générer IA
-          </Button>
+          <div className="flex items-center gap-1">
+            <Select value={String(generateCount)} onValueChange={(v) => setGenerateCount(Number(v))}>
+              <SelectTrigger className="w-[70px] h-9">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {[1,2,3,5,8,10,15,20].map(n => (
+                  <SelectItem key={n} value={String(n)}>{n}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button onClick={handleGenerateExercises} disabled={generating} variant="outline" className="gap-2">
+              {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+              ✨ Générer IA
+            </Button>
+          </div>
           <Button onClick={() => setDailyHomeworkOpen(true)} disabled={generatingHomework || exercises.length === 0} variant="outline" className="gap-2">
             {generatingHomework ? <Loader2 className="h-4 w-4 animate-spin" /> : <ClipboardCheck className="h-4 w-4" />}
             Générer devoirs
@@ -1115,10 +1135,22 @@ ${Array.isArray(item.options) && item.options.length > 0
             <p className="text-sm text-muted-foreground/70 mt-1 mb-4">
               Générez des exercices IA ou rattachez-en depuis la page Séances.
             </p>
-            <Button onClick={handleGenerateExercises} disabled={generating} variant="outline" className="gap-2">
-              {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-              Générer des exercices IA
-            </Button>
+            <div className="flex items-center gap-2 justify-center">
+              <Select value={String(generateCount)} onValueChange={(v) => setGenerateCount(Number(v))}>
+                <SelectTrigger className="w-[70px] h-9">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {[1,2,3,5,8,10,15,20].map(n => (
+                    <SelectItem key={n} value={String(n)}>{n}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button onClick={handleGenerateExercises} disabled={generating} variant="outline" className="gap-2">
+                {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                Générer des exercices IA
+              </Button>
+            </div>
           </CardContent>
         </Card>
       ) : exercises.length > 0 && (
