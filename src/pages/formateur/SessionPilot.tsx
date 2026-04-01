@@ -60,6 +60,13 @@ import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/Difficulty
 import FeuilleAppel from "@/components/FeuilleAppel";
 import { COMPETENCE_COLORS, resolveSessionCompetences, sortCompetences } from "@/lib/competences";
 import GenerateDailyHomeworkDialog from "@/components/GenerateDailyHomeworkDialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type ExerciseStatus = "traite_en_classe" | "reporte" | "planifie";
 
