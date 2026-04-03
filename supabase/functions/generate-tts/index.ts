@@ -50,8 +50,17 @@ Deno.serve(async (req) => {
     if (!ttsResponse.ok) {
       const errBody = await ttsResponse.text();
       console.error("Google TTS error:", ttsResponse.status, errBody);
+      // Return full Google error details to help debug
+      let parsedErr: any = {};
+      try { parsedErr = JSON.parse(errBody); } catch {}
+      const googleMsg = parsedErr?.error?.message || errBody;
+      const googleStatus = parsedErr?.error?.status || "UNKNOWN";
       return new Response(
-        JSON.stringify({ error: "Erreur Google TTS", details: errBody }),
+        JSON.stringify({ 
+          error: `Google TTS: ${googleStatus} — ${googleMsg}`,
+          httpStatus: ttsResponse.status,
+          details: errBody 
+        }),
         { status: ttsResponse.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
