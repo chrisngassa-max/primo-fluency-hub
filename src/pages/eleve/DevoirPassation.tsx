@@ -89,13 +89,14 @@ const DevoirPassation = () => {
   // Timer logic
   useEffect(() => {
     if (!devoir || isDone || result || !timeLimit) return;
+    if (isCompetenceCO && !hasListened) return;
     timerRef.current = setInterval(() => {
       setElapsedSeconds((prev) => prev + 1);
     }, 1000);
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [devoir, isDone, result, timeLimit]);
+  }, [devoir, isDone, result, timeLimit, isCompetenceCO, hasListened]);
 
   // Warning at time_limit, auto-submit at time_limit + 10
   useEffect(() => {

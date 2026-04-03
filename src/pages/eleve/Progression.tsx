@@ -225,7 +225,7 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
               <div className="flex items-center gap-2 text-sm">
                 <KeyRound className="h-4 w-4 text-muted-foreground shrink-0" />
                 <span className="font-medium">Mot de passe initial :</span>
-                <code className="bg-muted px-2 py-0.5 rounded text-xs">{studentProfile.mot_de_passe_initial}</code>
+                <code className="bg-muted px-2 py-0.5 rounded text-xs">••••••••</code>
                 <Button
                   variant="ghost"
                   size="icon"

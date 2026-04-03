@@ -120,13 +120,6 @@ const EleveOnboarding = ({ onComplete }: EleveOnboardingProps) => {
             )}
           </div>
 
-          {/* Skip */}
-          <button
-            onClick={handleFinish}
-            className="block mx-auto text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Passer l'introduction
-          </button>
         </CardContent>
       </Card>
     </div>
