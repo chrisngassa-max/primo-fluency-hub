@@ -47,7 +47,7 @@ const LoginFormateur = () => {
 
   if (showForgot) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-indigo-50 dark:bg-indigo-950/20 p-4">
+      <div className="min-h-[100dvh] flex items-center justify-center bg-indigo-50 dark:bg-indigo-950/20 p-4 overflow-y-auto">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">Mot de passe oublié</CardTitle>
@@ -69,7 +69,7 @@ const LoginFormateur = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-indigo-50 dark:bg-indigo-950/20 p-4">
+    <div className="min-h-[100dvh] flex flex-col items-center justify-start sm:justify-center bg-indigo-50 dark:bg-indigo-950/20 p-4 pt-8 sm:pt-4 overflow-y-auto">
       <div className="w-full max-w-md space-y-6">
         <Button variant="ghost" onClick={() => navigate("/")} className="gap-2">
           <ArrowLeft className="h-4 w-4" /> Retour à l'accueil
