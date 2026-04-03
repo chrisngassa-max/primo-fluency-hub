@@ -178,7 +178,8 @@ const EleveDashboard = () => {
       });
 
       // Get session_exercices with statut traite_en_classe
-      const sessionIds = sessions.map((s) => s.id);
+      if (!filteredSessions.length) return [];
+      const sessionIds = filteredSessions.map((s: any) => s.id);
       const { data: seLinks } = await supabase
         .from("session_exercices")
         .select("session_id, exercice_id")
@@ -196,7 +197,7 @@ const EleveDashboard = () => {
       const doneExIds = new Set((resultats ?? []).map((r) => r.exercice_id));
 
       // Build per-session summary
-      const sessionMap = new Map(sessions.map((s) => [s.id, s]));
+      const sessionMap = new Map(filteredSessions.map((s: any) => [s.id, s]));
       const grouped: Record<string, { total: number; done: number }> = {};
       for (const se of seLinks) {
         if (!grouped[se.session_id]) grouped[se.session_id] = { total: 0, done: 0 };
