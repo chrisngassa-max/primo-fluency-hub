@@ -1067,10 +1067,15 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
               <p className="text-[11px] text-muted-foreground">Par exercice</p>
             </div>
           </div>
-          <div className="flex gap-2 mt-3">
+          <div className="flex gap-2 mt-3 flex-wrap">
             <Button variant="outline" className="gap-2" onClick={handlePrintAll}>
               <Printer className="h-4 w-4" />Tout imprimer pour la classe
             </Button>
+            {exercises.some((se: any) => se.exercice?.animation_guide?.documentation_fournie) && (
+              <Button variant="outline" className="gap-2 text-amber-700 border-amber-300 hover:bg-amber-50 dark:text-amber-400 dark:border-amber-700 dark:hover:bg-amber-950" onClick={handlePrintMateriel}>
+                <Drama className="h-4 w-4" />🖨️ Imprimer matériel ateliers
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>
