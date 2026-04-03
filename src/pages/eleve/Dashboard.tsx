@@ -151,23 +151,31 @@ const EleveDashboard = () => {
   const { data: sessionExercises, isLoading: loadingSessionEx } = useQuery({
     queryKey: ["eleve-session-exercises", user?.id],
     queryFn: async () => {
-      // Get student's groups
+      // Get student's groups with join dates
       const { data: memberships } = await supabase
         .from("group_members")
-        .select("group_id")
+        .select("group_id, joined_at")
         .eq("eleve_id", user!.id);
       if (!memberships?.length) return [];
       const groupIds = memberships.map((m) => m.group_id);
+      const joinMap = new Map(memberships.map((m) => [m.group_id, m.joined_at]));
 
-      // Get sessions for those groups
+      // Get sessions for those groups, only those created after the student joined
       const { data: sessions } = await supabase
         .from("sessions")
-        .select("id, titre, date_seance, group:groups(nom)")
+        .select("id, titre, date_seance, group_id, group:groups(nom)")
         .in("group_id", groupIds)
         .in("statut", ["planifiee", "en_cours", "terminee"])
         .order("date_seance", { ascending: false })
         .limit(20);
       if (!sessions?.length) return [];
+
+      // Filter sessions to only those scheduled after the student joined the group
+      const filteredSessions = (sessions as any[]).filter((s: any) => {
+        const joinDate = joinMap.get(s.group_id);
+        if (!joinDate) return false;
+        return new Date(s.date_seance) >= new Date(joinDate);
+      });
 
       // Get session_exercices with statut traite_en_classe
       const sessionIds = sessions.map((s) => s.id);
