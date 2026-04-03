@@ -156,12 +156,10 @@ const LoginEleve = () => {
     setBusy(false);
   };
 
-  const PasswordInput = ({
-    id, value, onChange, show, onToggle, minLength,
-  }: {
-    id: string; value: string; onChange: (v: string) => void;
-    show: boolean; onToggle: () => void; minLength?: number;
-  }) => (
+  const renderPasswordInput = (
+    id: string, value: string, onChange: (v: string) => void,
+    show: boolean, onToggle: () => void, minLength?: number,
+  ) => (
     <div className="relative">
       <Input
         id={id}
@@ -248,7 +246,7 @@ const LoginEleve = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="eleve-login-password">Mot de passe</Label>
-                    <PasswordInput id="eleve-login-password" value={loginPassword} onChange={setLoginPassword} show={showLoginPw} onToggle={() => setShowLoginPw(!showLoginPw)} />
+                    {renderPasswordInput("eleve-login-password", loginPassword, setLoginPassword, showLoginPw, () => setShowLoginPw(!showLoginPw))}
                   </div>
                   <Button type="submit" className="w-full text-lg py-6" disabled={busy}>
                     {busy ? "Connexion…" : "Se connecter"}
@@ -277,7 +275,7 @@ const LoginEleve = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="eleve-signup-password">Mot de passe</Label>
-                    <PasswordInput id="eleve-signup-password" value={signupPassword} onChange={setSignupPassword} show={showSignupPw} onToggle={() => setShowSignupPw(!showSignupPw)} minLength={6} />
+                    {renderPasswordInput("eleve-signup-password", signupPassword, setSignupPassword, showSignupPw, () => setShowSignupPw(!showSignupPw), 6)}
                   </div>
                   <Button type="submit" className="w-full text-lg py-6" disabled={busy}>
                     {busy ? "Inscription…" : "S'inscrire"}
