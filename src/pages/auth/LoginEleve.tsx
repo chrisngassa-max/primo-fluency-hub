@@ -275,7 +275,7 @@ const LoginEleve = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="eleve-signup-password">Mot de passe</Label>
-                    <PasswordInput id="eleve-signup-password" value={signupPassword} onChange={setSignupPassword} show={showSignupPw} onToggle={() => setShowSignupPw(!showSignupPw)} minLength={6} />
+                    {renderPasswordInput("eleve-signup-password", signupPassword, setSignupPassword, showSignupPw, () => setShowSignupPw(!showSignupPw), 6)}
                   </div>
                   <Button type="submit" className="w-full text-lg py-6" disabled={busy}>
                     {busy ? "Inscription…" : "S'inscrire"}
