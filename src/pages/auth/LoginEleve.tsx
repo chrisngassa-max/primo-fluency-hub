@@ -156,12 +156,10 @@ const LoginEleve = () => {
     setBusy(false);
   };
 
-  const PasswordInput = ({
-    id, value, onChange, show, onToggle, minLength,
-  }: {
-    id: string; value: string; onChange: (v: string) => void;
-    show: boolean; onToggle: () => void; minLength?: number;
-  }) => (
+  const renderPasswordInput = (
+    id: string, value: string, onChange: (v: string) => void,
+    show: boolean, onToggle: () => void, minLength?: number,
+  ) => (
     <div className="relative">
       <Input
         id={id}
