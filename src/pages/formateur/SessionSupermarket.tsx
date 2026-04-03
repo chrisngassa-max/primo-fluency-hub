@@ -281,6 +281,14 @@ const SessionSupermarket = () => {
         .insert(sessionExercicesToInsert);
       if (linkErr) throw linkErr;
 
+      // Propagate competences_cibles to the target session if available
+      if (sessionInfo?.competences_cibles && sessionInfo.competences_cibles.length > 0) {
+        await supabase
+          .from("sessions")
+          .update({ competences_cibles: sessionInfo.competences_cibles } as any)
+          .eq("id", targetSessionId);
+      }
+
       qc.invalidateQueries({ queryKey: ["formateur-sessions"] });
       toast.success(`${selectedExercices.length} exercices ajoutés à la séance !`);
       navigate("/formateur/seances");
