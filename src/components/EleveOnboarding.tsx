@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ClipboardList, BookOpen, TrendingUp, ArrowRight } from "lucide-react";
+import { ClipboardList, BookOpen, TrendingUp, ArrowRight, X } from "lucide-react";
 
 const ONBOARDING_KEY = "tcf-eleve-onboarding-done";
 
@@ -11,19 +11,19 @@ const steps = [
     icon: ClipboardList,
     emoji: "📝",
     title: "Passe ton test d'entrée",
-    description: "Le test évalue ton niveau en français pour adapter les exercices à ton profil.",
+    description: "Le test évalue ton niveau.",
   },
   {
     icon: BookOpen,
     emoji: "📚",
     title: "Fais tes exercices et devoirs",
-    description: "Ton formateur t'assigne des exercices adaptés à ton niveau. Fais-les régulièrement.",
+    description: "Fais tes exercices.",
   },
   {
     icon: TrendingUp,
     emoji: "📈",
     title: "Suis ta progression",
-    description: "Regarde tes résultats par compétence : écouter, lire, écrire, parler.",
+    description: "Regarde tes résultats.",
   },
 ];
 
@@ -48,7 +48,14 @@ const EleveOnboarding = ({ onComplete }: EleveOnboardingProps) => {
 
   return (
     <div className="fixed inset-0 z-[100] bg-background/95 backdrop-blur-sm flex items-center justify-center p-4">
-      <Card className="w-full max-w-md border-primary/20 shadow-xl">
+      <Card className="w-full max-w-md border-primary/20 shadow-xl relative">
+        <button
+          onClick={handleFinish}
+          className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
+          aria-label="Fermer"
+        >
+          <X className="h-5 w-5" />
+        </button>
         <CardContent className="pt-8 pb-6 px-6 space-y-6">
           {/* Progress dots */}
           <div className="flex justify-center gap-2">
@@ -113,13 +120,6 @@ const EleveOnboarding = ({ onComplete }: EleveOnboardingProps) => {
             )}
           </div>
 
-          {/* Skip */}
-          <button
-            onClick={handleFinish}
-            className="block mx-auto text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Passer l'introduction
-          </button>
         </CardContent>
       </Card>
     </div>

@@ -323,11 +323,25 @@ const TestPositionnement = () => {
         { body: { audioBase64: base64Data } }
       );
 
-      if (!sttError && sttData?.transcript) {
-        transcription = sttData.transcript;
+      if (sttError || !sttData?.transcript) {
+        toast({
+          title: "Serveur vocal indisponible",
+          description: "Veuillez réessayer.",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
       }
+      transcription = sttData.transcript;
     } catch (sttErr) {
       console.error("STT error:", sttErr);
+      toast({
+        title: "Serveur vocal indisponible",
+        description: "Veuillez réessayer.",
+        variant: "destructive",
+      });
+      setIsSubmitting(false);
+      return;
     }
 
     // AI evaluation with real transcription

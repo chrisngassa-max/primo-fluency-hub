@@ -89,13 +89,14 @@ const DevoirPassation = () => {
   // Timer logic
   useEffect(() => {
     if (!devoir || isDone || result || !timeLimit) return;
+    if (isCompetenceCO && !hasListened) return;
     timerRef.current = setInterval(() => {
       setElapsedSeconds((prev) => prev + 1);
     }, 1000);
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [devoir, isDone, result, timeLimit]);
+  }, [devoir, isDone, result, timeLimit, isCompetenceCO, hasListened]);
 
   // Warning at time_limit, auto-submit at time_limit + 10
   useEffect(() => {
@@ -219,11 +220,17 @@ const DevoirPassation = () => {
         const { data: sttData, error: sttError } = await supabase.functions.invoke("transcribe-audio", {
           body: { audioBase64: base64Data },
         });
-        if (!sttError && sttData?.transcript) {
-          transcription = sttData.transcript;
+        if (sttError || !sttData?.transcript) {
+          toast.error("Serveur vocal indisponible", { description: "Veuillez réessayer." });
+          setSubmitting(false);
+          return;
         }
+        transcription = sttData.transcript;
       } catch (sttErr) {
         console.error("STT error:", sttErr);
+        toast.error("Serveur vocal indisponible", { description: "Veuillez réessayer." });
+        setSubmitting(false);
+        return;
       }
 
       // AI evaluation with metadata for high tolerance
