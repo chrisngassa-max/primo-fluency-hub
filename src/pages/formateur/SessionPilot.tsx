@@ -1610,8 +1610,8 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
                   <Button className="w-full gap-2" variant="outline" onClick={() => {
                     const ex = exercises.find((se: any) => se.exercice?.titre === animationGuide.titre)?.exercice;
                     if (!ex) { handlePrintMateriel(); return; }
-                    const ag = ex.animation_guide;
-                    const doc = ag.documentation_fournie;
+                    const ag = ex.animation_guide as any;
+                    const doc = (ag as any).documentation_fournie;
                     const printWindow = window.open("", "_blank");
                     if (!printWindow) { toast.error("Pop-up bloqué."); return; }
                     const ficheHtml = Array.isArray(doc.fiches_eleves) ? doc.fiches_eleves.map((f: any, fi: number) => `
@@ -1622,7 +1622,7 @@ ${Array.isArray(f.lexique_cles) && f.lexique_cles.length > 0 ? `<div class="lexi
                     const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><title>Matériel — ${ex.titre}</title>
 <style>body{font-family:'Segoe UI',sans-serif;padding:24px;font-size:13pt;color:#222}h1{font-size:18pt;border-bottom:2px solid #333;padding-bottom:8px;margin-bottom:20px}.guide{background:#fffbeb;border:1px solid #fbbf24;border-radius:8px;padding:16px;margin-bottom:20px;white-space:pre-line;font-size:12pt}.guide-label{font-weight:700;color:#92400e;margin-bottom:8px;display:block}.atelier-info{background:#fef3c7;border-radius:6px;padding:12px;margin-bottom:16px;font-size:11pt}.atelier-info strong{display:inline-block;min-width:120px}.fiche{border:1px solid #ddd;border-radius:8px;padding:16px;margin-bottom:16px;page-break-inside:avoid}.fiche h3{font-size:16pt;margin:0 0 8px}.fiche .contenu{white-space:pre-line;font-size:14pt;line-height:1.7}.lexique{margin-top:12px;padding:10px;background:#f0f9ff;border-radius:6px}.lexique span{font-weight:700;color:#1e40af}@media print{body{padding:0}}</style></head><body>
 <h1>📦 ${ex.titre}</h1>
-<div class="atelier-info"><strong>🎭 Scénario :</strong> ${ag.scenario || ""}<br/><strong>🎲 Jeu :</strong> ${ag.jeu || ""}<br/><strong>📦 Matériel :</strong> ${ag.materiel || ""}<br/><strong>🗣️ Objectif :</strong> ${ag.objectif_oral || ""}</div>
+<div class="atelier-info"><strong>🎭 Scénario :</strong> ${(ag as any).scenario || ""}<br/><strong>🎲 Jeu :</strong> ${(ag as any).jeu || ""}<br/><strong>📦 Matériel :</strong> ${(ag as any).materiel || ""}<br/><strong>🗣️ Objectif :</strong> ${(ag as any).objectif_oral || ""}</div>
 <div class="guide"><span class="guide-label">📋 Guide formateur :</span>${doc.guide_formateur || ""}</div>
 ${ficheHtml}</body></html>`;
                     printWindow.document.write(html);
