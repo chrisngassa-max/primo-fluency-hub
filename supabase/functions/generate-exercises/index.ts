@@ -158,6 +158,9 @@ IMPORTANT — Pour CHAQUE exercice, tu dois aussi proposer un "animation_guide" 
 - jeu : une règle de jeu ludique adaptée au niveau
 - materiel : ce qu'il faut préparer
 - objectif_oral : la structure de phrase cible
+- documentation_fournie : un objet OBLIGATOIRE contenant :
+  - guide_formateur : instructions pas-à-pas détaillées pour animer l'activité (étapes numérotées, timing, consignes de gestion de classe)
+  - fiches_eleves : tableau de fiches à imprimer pour les élèves. Chaque fiche contient titre_fiche (ex: "Fiche A — Le Client"), contenu_fiche (rôle, mission, vocabulaire imposé, données concrètes — texte complet prêt à distribuer), lexique_cles (5-10 mots/phrases du niveau à utiliser)
 
 Tu DOIS utiliser le tool "generate_exercises" pour retourner le résultat.${gabaritPrompt}`;
 
