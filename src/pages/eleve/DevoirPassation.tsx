@@ -117,22 +117,17 @@ const DevoirPassation = () => {
     }
   }, [elapsedSeconds, timeLimit, timerWarning, autoSubmitted, result]);
 
-  // Audio recording helpers
+  // Audio recording helpers (WAV for cross-browser compatibility)
+  const wavRecorderRef = useRef<{ stop: () => void } | null>(null);
+
   const startRecording = async () => {
     try {
+      const { startWavRecording } = await import("@/lib/audioRecorder");
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream, { mimeType: "audio/webm" });
-      chunksRef.current = [];
-      recorder.ondataavailable = (e) => {
-        if (e.data.size > 0) chunksRef.current.push(e.data);
-      };
-      recorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+      const recorder = startWavRecording(stream, (blob) => {
         setAudioBlob(blob);
-        stream.getTracks().forEach((t) => t.stop());
-      };
-      mediaRecorderRef.current = recorder;
-      recorder.start();
+      });
+      wavRecorderRef.current = recorder;
       setIsRecording(true);
     } catch {
       toast.error("Impossible d'accéder au microphone.");
@@ -140,7 +135,8 @@ const DevoirPassation = () => {
   };
 
   const stopRecording = () => {
-    mediaRecorderRef.current?.stop();
+    wavRecorderRef.current?.stop();
+    wavRecorderRef.current = null;
     setIsRecording(false);
   };
 
@@ -210,8 +206,8 @@ const DevoirPassation = () => {
     setSubmitting(true);
     try {
       // Upload audio to storage
-      const path = `devoirs/${devoirId}/${user.id}.webm`;
-      await supabase.storage.from("test-audio").upload(path, audioBlob, { contentType: "audio/webm", upsert: true });
+      const path = `devoirs/${devoirId}/${user.id}.wav`;
+      await supabase.storage.from("test-audio").upload(path, audioBlob, { contentType: "audio/wav", upsert: true });
 
       // Transcribe
       let transcription = "(Transcription échouée - Audio illisible)";

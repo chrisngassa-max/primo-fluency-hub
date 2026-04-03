@@ -34,7 +34,8 @@ Deno.serve(async (req) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         config: {
-          encoding: "WEBM_OPUS",
+          encoding: "LINEAR16",
+          sampleRateHertz: 16000,
           languageCode: "fr-FR",
         },
         audio: {
