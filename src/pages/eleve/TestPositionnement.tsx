@@ -226,23 +226,16 @@ const TestPositionnement = () => {
     : "CO";
   const currentQuestion = questions[sessionState?.questionIndex ?? 0];
 
+  const wavRecorderRef = useRef<{ stop: () => void } | null>(null);
+
   const startRecording = async () => {
     try {
+      const { startWavRecording } = await import("@/lib/audioRecorder");
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream, {
-        mimeType: "audio/webm",
-      });
-      chunksRef.current = [];
-      recorder.ondataavailable = (e) => {
-        if (e.data.size > 0) chunksRef.current.push(e.data);
-      };
-      recorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+      const recorder = startWavRecording(stream, (blob) => {
         setAudioBlob(blob);
-        stream.getTracks().forEach((t) => t.stop());
-      };
-      mediaRecorderRef.current = recorder;
-      recorder.start();
+      });
+      wavRecorderRef.current = recorder;
       setIsRecording(true);
     } catch {
       toast({
@@ -254,7 +247,8 @@ const TestPositionnement = () => {
   };
 
   const stopRecording = () => {
-    mediaRecorderRef.current?.stop();
+    wavRecorderRef.current?.stop();
+    wavRecorderRef.current = null;
     setIsRecording(false);
   };
 
