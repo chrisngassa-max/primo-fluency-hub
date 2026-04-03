@@ -104,21 +104,39 @@ const EleveDashboard = () => {
   const { data: pendingTests } = useQuery({
     queryKey: ["eleve-bilans-tests", user?.id],
     queryFn: async () => {
+      // Get student's group join dates to filter out pre-existing content
+      const { data: memberships } = await supabase
+        .from("group_members")
+        .select("group_id, joined_at")
+        .eq("eleve_id", user!.id);
+      if (!memberships?.length) return [];
+      const joinMap = new Map(memberships.map((m) => [m.group_id, m.joined_at]));
+      const groupIds = memberships.map((m) => m.group_id);
+
       const { data: tests, error } = await supabase
         .from("bilan_tests")
-        .select("id, nb_questions, competences_couvertes, session:sessions(titre, date_seance)")
+        .select("id, nb_questions, competences_couvertes, created_at, session:sessions(titre, date_seance, group_id)")
         .eq("statut", "envoye")
         .order("created_at", { ascending: false });
       if (error) throw error;
       if (!tests || tests.length === 0) return [];
-      const testIds = (tests as any[]).map((t: any) => t.id);
+
+      // Filter: only tests from groups the student belongs to AND created after joining
+      const filtered = (tests as any[]).filter((t: any) => {
+        const gid = t.session?.group_id;
+        if (!gid || !joinMap.has(gid)) return false;
+        return new Date(t.created_at) >= new Date(joinMap.get(gid)!);
+      });
+      if (filtered.length === 0) return [];
+
+      const testIds = filtered.map((t: any) => t.id);
       const { data: done } = await supabase
         .from("bilan_test_results")
         .select("bilan_test_id, score_global")
         .eq("eleve_id", user!.id)
         .in("bilan_test_id", testIds);
       const doneMap = new Map((done ?? []).map((d: any) => [d.bilan_test_id, d.score_global]));
-      return (tests as any[]).map((t: any) => ({
+      return filtered.map((t: any) => ({
         ...t,
         completed: doneMap.has(t.id),
         score: doneMap.get(t.id),
@@ -133,26 +151,35 @@ const EleveDashboard = () => {
   const { data: sessionExercises, isLoading: loadingSessionEx } = useQuery({
     queryKey: ["eleve-session-exercises", user?.id],
     queryFn: async () => {
-      // Get student's groups
+      // Get student's groups with join dates
       const { data: memberships } = await supabase
         .from("group_members")
-        .select("group_id")
+        .select("group_id, joined_at")
         .eq("eleve_id", user!.id);
       if (!memberships?.length) return [];
       const groupIds = memberships.map((m) => m.group_id);
+      const joinMap = new Map(memberships.map((m) => [m.group_id, m.joined_at]));
 
-      // Get sessions for those groups
+      // Get sessions for those groups, only those created after the student joined
       const { data: sessions } = await supabase
         .from("sessions")
-        .select("id, titre, date_seance, group:groups(nom)")
+        .select("id, titre, date_seance, group_id, group:groups(nom)")
         .in("group_id", groupIds)
         .in("statut", ["planifiee", "en_cours", "terminee"])
         .order("date_seance", { ascending: false })
         .limit(20);
       if (!sessions?.length) return [];
 
+      // Filter sessions to only those scheduled after the student joined the group
+      const filteredSessions = (sessions as any[]).filter((s: any) => {
+        const joinDate = joinMap.get(s.group_id);
+        if (!joinDate) return false;
+        return new Date(s.date_seance) >= new Date(joinDate);
+      });
+
       // Get session_exercices with statut traite_en_classe
-      const sessionIds = sessions.map((s) => s.id);
+      if (!filteredSessions.length) return [];
+      const sessionIds = filteredSessions.map((s: any) => s.id);
       const { data: seLinks } = await supabase
         .from("session_exercices")
         .select("session_id, exercice_id")
@@ -170,7 +197,7 @@ const EleveDashboard = () => {
       const doneExIds = new Set((resultats ?? []).map((r) => r.exercice_id));
 
       // Build per-session summary
-      const sessionMap = new Map(sessions.map((s) => [s.id, s]));
+      const sessionMap = new Map(filteredSessions.map((s: any) => [s.id, s]));
       const grouped: Record<string, { total: number; done: number }> = {};
       for (const se of seLinks) {
         if (!grouped[se.session_id]) grouped[se.session_id] = { total: 0, done: 0 };
