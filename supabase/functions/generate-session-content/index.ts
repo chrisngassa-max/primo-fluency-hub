@@ -219,7 +219,16 @@ Utilise le tool fourni pour retourner le résultat.`;
 
     const parsed = JSON.parse(toolCall.function.arguments);
 
-    return new Response(JSON.stringify({ exercices: parsed.exercices || [] }), {
+    // Remap atelier_ludique → animation_guide for DB column compatibility
+    const exercices = (parsed.exercices || []).map((ex: any) => {
+      if (ex.atelier_ludique) {
+        ex.animation_guide = ex.atelier_ludique;
+        delete ex.atelier_ludique;
+      }
+      return ex;
+    });
+
+    return new Response(JSON.stringify({ exercices }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
