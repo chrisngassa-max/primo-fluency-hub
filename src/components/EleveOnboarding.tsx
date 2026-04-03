@@ -48,7 +48,14 @@ const EleveOnboarding = ({ onComplete }: EleveOnboardingProps) => {
 
   return (
     <div className="fixed inset-0 z-[100] bg-background/95 backdrop-blur-sm flex items-center justify-center p-4">
-      <Card className="w-full max-w-md border-primary/20 shadow-xl">
+      <Card className="w-full max-w-md border-primary/20 shadow-xl relative">
+        <button
+          onClick={handleFinish}
+          className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
+          aria-label="Fermer"
+        >
+          <X className="h-5 w-5" />
+        </button>
         <CardContent className="pt-8 pb-6 px-6 space-y-6">
           {/* Progress dots */}
           <div className="flex justify-center gap-2">
