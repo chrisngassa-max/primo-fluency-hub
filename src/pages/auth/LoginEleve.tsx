@@ -246,7 +246,7 @@ const LoginEleve = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="eleve-login-password">Mot de passe</Label>
-                    <PasswordInput id="eleve-login-password" value={loginPassword} onChange={setLoginPassword} show={showLoginPw} onToggle={() => setShowLoginPw(!showLoginPw)} />
+                    {renderPasswordInput("eleve-login-password", loginPassword, setLoginPassword, showLoginPw, () => setShowLoginPw(!showLoginPw))}
                   </div>
                   <Button type="submit" className="w-full text-lg py-6" disabled={busy}>
                     {busy ? "Connexion…" : "Se connecter"}
