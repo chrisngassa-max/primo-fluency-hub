@@ -243,14 +243,35 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
                         },
                         animation_guide: {
                           type: "object",
-                          description: "Guide d'animation ludique pour le formateur",
+                          description: "Guide d'animation ludique pour le formateur avec matériel imprimable",
                           properties: {
                             scenario: { type: "string", description: "Mise en situation concrète" },
                             jeu: { type: "string", description: "Règle de jeu ludique" },
                             materiel: { type: "string", description: "Matériel à préparer" },
                             objectif_oral: { type: "string", description: "Structure de phrase cible" },
+                            documentation_fournie: {
+                              type: "object",
+                              description: "Matériel pédagogique complet imprimable",
+                              properties: {
+                                guide_formateur: { type: "string", description: "Instructions pas-à-pas détaillées pour animer l'activité" },
+                                fiches_eleves: {
+                                  type: "array",
+                                  description: "Fiches physiques à distribuer aux élèves",
+                                  items: {
+                                    type: "object",
+                                    properties: {
+                                      titre_fiche: { type: "string", description: "Ex: Fiche A — Le Client" },
+                                      contenu_fiche: { type: "string", description: "Rôle, mission, vocabulaire imposé, données concrètes" },
+                                      lexique_cles: { type: "array", items: { type: "string" }, description: "5-10 mots/phrases à utiliser" },
+                                    },
+                                    required: ["titre_fiche", "contenu_fiche", "lexique_cles"],
+                                  },
+                                },
+                              },
+                              required: ["guide_formateur", "fiches_eleves"],
+                            },
                           },
-                          required: ["scenario", "jeu", "materiel", "objectif_oral"],
+                          required: ["scenario", "jeu", "materiel", "objectif_oral", "documentation_fournie"],
                         },
                       },
                       required: ["titre", "consigne", "format", "difficulte", "metadata", "contenu", "animation_guide"],
