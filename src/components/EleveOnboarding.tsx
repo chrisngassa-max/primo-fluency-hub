@@ -11,19 +11,19 @@ const steps = [
     icon: ClipboardList,
     emoji: "📝",
     title: "Passe ton test d'entrée",
-    description: "Le test évalue ton niveau en français pour adapter les exercices à ton profil.",
+    description: "Le test évalue ton niveau.",
   },
   {
     icon: BookOpen,
     emoji: "📚",
     title: "Fais tes exercices et devoirs",
-    description: "Ton formateur t'assigne des exercices adaptés à ton niveau. Fais-les régulièrement.",
+    description: "Fais tes exercices.",
   },
   {
     icon: TrendingUp,
     emoji: "📈",
     title: "Suis ta progression",
-    description: "Regarde tes résultats par compétence : écouter, lire, écrire, parler.",
+    description: "Regarde tes résultats.",
   },
 ];
 
