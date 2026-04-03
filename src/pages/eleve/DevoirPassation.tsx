@@ -219,11 +219,17 @@ const DevoirPassation = () => {
         const { data: sttData, error: sttError } = await supabase.functions.invoke("transcribe-audio", {
           body: { audioBase64: base64Data },
         });
-        if (!sttError && sttData?.transcript) {
-          transcription = sttData.transcript;
+        if (sttError || !sttData?.transcript) {
+          toast.error("Serveur vocal indisponible", { description: "Veuillez réessayer." });
+          setSubmitting(false);
+          return;
         }
+        transcription = sttData.transcript;
       } catch (sttErr) {
         console.error("STT error:", sttErr);
+        toast.error("Serveur vocal indisponible", { description: "Veuillez réessayer." });
+        setSubmitting(false);
+        return;
       }
 
       // AI evaluation with metadata for high tolerance
