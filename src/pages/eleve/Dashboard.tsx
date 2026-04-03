@@ -104,21 +104,39 @@ const EleveDashboard = () => {
   const { data: pendingTests } = useQuery({
     queryKey: ["eleve-bilans-tests", user?.id],
     queryFn: async () => {
+      // Get student's group join dates to filter out pre-existing content
+      const { data: memberships } = await supabase
+        .from("group_members")
+        .select("group_id, joined_at")
+        .eq("eleve_id", user!.id);
+      if (!memberships?.length) return [];
+      const joinMap = new Map(memberships.map((m) => [m.group_id, m.joined_at]));
+      const groupIds = memberships.map((m) => m.group_id);
+
       const { data: tests, error } = await supabase
         .from("bilan_tests")
-        .select("id, nb_questions, competences_couvertes, session:sessions(titre, date_seance)")
+        .select("id, nb_questions, competences_couvertes, created_at, session:sessions(titre, date_seance, group_id)")
         .eq("statut", "envoye")
         .order("created_at", { ascending: false });
       if (error) throw error;
       if (!tests || tests.length === 0) return [];
-      const testIds = (tests as any[]).map((t: any) => t.id);
+
+      // Filter: only tests from groups the student belongs to AND created after joining
+      const filtered = (tests as any[]).filter((t: any) => {
+        const gid = t.session?.group_id;
+        if (!gid || !joinMap.has(gid)) return false;
+        return new Date(t.created_at) >= new Date(joinMap.get(gid)!);
+      });
+      if (filtered.length === 0) return [];
+
+      const testIds = filtered.map((t: any) => t.id);
       const { data: done } = await supabase
         .from("bilan_test_results")
         .select("bilan_test_id, score_global")
         .eq("eleve_id", user!.id)
         .in("bilan_test_id", testIds);
       const doneMap = new Map((done ?? []).map((d: any) => [d.bilan_test_id, d.score_global]));
-      return (tests as any[]).map((t: any) => ({
+      return filtered.map((t: any) => ({
         ...t,
         completed: doneMap.has(t.id),
         score: doneMap.get(t.id),
