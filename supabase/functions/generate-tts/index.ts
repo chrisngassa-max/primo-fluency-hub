@@ -17,7 +17,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    const { text, languageCode = "fr-FR", voiceName = "fr-FR-Standard-A" } = await req.json();
+    const { text, languageCode = "fr-FR", voiceName = "fr-FR-Standard-F" } = await req.json();
 
     if (!text || typeof text !== "string" || text.trim().length === 0) {
       return new Response(
