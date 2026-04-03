@@ -1394,6 +1394,74 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
                           )}
                         </div>
                       )}
+                      {/* 📦 Matériel Pédagogique & Jeux — inline in accordion */}
+                      {ex?.animation_guide?.documentation_fournie && (
+                        <div className="mt-3 p-4 rounded-lg bg-sky-50/60 dark:bg-sky-950/20 border border-sky-200 dark:border-sky-800 space-y-3">
+                          <div className="flex items-center gap-2">
+                            <Package className="h-4 w-4 text-sky-600 dark:text-sky-400" />
+                            <p className="text-sm font-bold text-sky-800 dark:text-sky-300">📦 Matériel Pédagogique & Jeux</p>
+                          </div>
+                          <div className="p-3 rounded-md bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-xs space-y-2">
+                            <p className="font-bold text-amber-800 dark:text-amber-300">📋 Guide formateur</p>
+                            <p className="whitespace-pre-line text-sm leading-relaxed">{ex.animation_guide.documentation_fournie.guide_formateur}</p>
+                          </div>
+                          {Array.isArray(ex.animation_guide.documentation_fournie.fiches_eleves) && ex.animation_guide.documentation_fournie.fiches_eleves.length > 0 && (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                              {ex.animation_guide.documentation_fournie.fiches_eleves.map((fiche: any, fi: number) => (
+                                <Card key={fi} className="border bg-white dark:bg-card shadow-sm">
+                                  <CardContent className="p-3 space-y-2">
+                                    <p className="font-bold text-sm text-primary">{fiche.titre_fiche}</p>
+                                    <p className="text-sm whitespace-pre-line leading-relaxed">{fiche.contenu_fiche}</p>
+                                    {Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 && (
+                                      <div className="p-2 rounded bg-sky-50 dark:bg-sky-950/30 border border-sky-100 dark:border-sky-800">
+                                        <span className="font-bold text-sky-700 dark:text-sky-400 text-xs">📝 Lexique : </span>
+                                        <span className="text-xs">{fiche.lexique_cles.join(" · ")}</span>
+                                      </div>
+                                    )}
+                                  </CardContent>
+                                </Card>
+                              ))}
+                            </div>
+                          )}
+                          <Button variant="outline" size="sm" className="gap-1 text-sky-700 border-sky-300 hover:bg-sky-50 dark:text-sky-400 dark:border-sky-700"
+                            onClick={() => {
+                              const ag = ex.animation_guide;
+                              const doc = ag.documentation_fournie;
+                              const printWindow = window.open("", "_blank");
+                              if (!printWindow) { toast.error("Pop-up bloqué."); return; }
+                              const ficheHtml = Array.isArray(doc.fiches_eleves) ? doc.fiches_eleves.map((f: any, fi: number) => `
+<div class="fiche"><h3>📄 Fiche Élève ${fi + 1} — ${f.titre_fiche || ""}</h3>
+<div class="contenu">${f.contenu_fiche || ""}</div>
+${Array.isArray(f.lexique_cles) && f.lexique_cles.length > 0 ? `<div class="lexique"><span>📝 Lexique :</span> ${f.lexique_cles.join(" · ")}</div>` : ""}
+</div>`).join("") : "";
+                              const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><title>Matériel — ${ex.titre}</title>
+<style>
+body{font-family:'Segoe UI',sans-serif;padding:24px;font-size:13pt;color:#222;max-width:210mm;margin:0 auto}
+h1{font-size:18pt;border-bottom:2px solid #333;padding-bottom:8px;margin-bottom:20px}
+.guide{background:#fffbeb;border:1px solid #fbbf24;border-radius:8px;padding:16px;margin-bottom:20px;white-space:pre-line;font-size:12pt}
+.guide-label{font-weight:700;color:#92400e;margin-bottom:8px;display:block}
+.atelier-info{background:#fef3c7;border-radius:6px;padding:12px;margin-bottom:16px;font-size:11pt}
+.atelier-info strong{display:inline-block;min-width:120px}
+.fiche{border:2px solid #333;border-radius:8px;padding:20px;margin-bottom:16px;page-break-before:always;page-break-inside:avoid}
+.fiche h3{font-size:16pt;margin:0 0 12px;border-bottom:1px solid #ccc;padding-bottom:8px}
+.fiche .contenu{white-space:pre-line;font-size:14pt;line-height:1.8}
+.lexique{margin-top:16px;padding:12px;background:#f0f9ff;border-radius:6px;border:1px solid #bae6fd}
+.lexique span{font-weight:700;color:#1e40af}
+@media print{body{padding:0;margin:0}.fiche{page-break-before:always}}
+</style></head><body>
+<h1>📦 ${ex.titre}</h1>
+<div class="atelier-info"><strong>🎭 Scénario :</strong> ${ag.scenario || ""}<br/><strong>🎲 Jeu :</strong> ${ag.jeu || ""}<br/><strong>📦 Matériel :</strong> ${ag.materiel || ""}<br/><strong>🗣️ Objectif :</strong> ${ag.objectif_oral || ""}</div>
+<div class="guide"><span class="guide-label">📋 Guide formateur :</span>${doc.guide_formateur || ""}</div>
+${ficheHtml}</body></html>`;
+                              printWindow.document.write(html);
+                              printWindow.document.close();
+                              printWindow.focus();
+                              setTimeout(() => printWindow.print(), 300);
+                            }}>
+                            <Printer className="h-3.5 w-3.5" />🖨️ Imprimer ce matériel
+                          </Button>
+                        </div>
+                      )}
                       <div className="flex gap-2 print:hidden">
                         <Button variant="outline" size="sm" className="gap-1" onClick={() => { setPreviewExercise(ex); setPreviewPage(0); }}>
                           <Eye className="h-3.5 w-3.5" />Aperçu Élève
