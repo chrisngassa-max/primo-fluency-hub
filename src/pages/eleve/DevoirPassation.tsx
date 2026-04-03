@@ -206,8 +206,8 @@ const DevoirPassation = () => {
     setSubmitting(true);
     try {
       // Upload audio to storage
-      const path = `devoirs/${devoirId}/${user.id}.webm`;
-      await supabase.storage.from("test-audio").upload(path, audioBlob, { contentType: "audio/webm", upsert: true });
+      const path = `devoirs/${devoirId}/${user.id}.wav`;
+      await supabase.storage.from("test-audio").upload(path, audioBlob, { contentType: "audio/wav", upsert: true });
 
       // Transcribe
       let transcription = "(Transcription échouée - Audio illisible)";

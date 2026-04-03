@@ -284,10 +284,10 @@ const TestPositionnement = () => {
     setIsSubmitting(true);
 
     // Upload audio to storage (kept for formateur playback)
-    const path = `${sessionState.sessionId}/${currentQuestion.id}.webm`;
+    const path = `${sessionState.sessionId}/${currentQuestion.id}.wav`;
     const { error: uploadError } = await supabase.storage
       .from("test-audio")
-      .upload(path, audioBlob, { contentType: "audio/webm" });
+      .upload(path, audioBlob, { contentType: "audio/wav" });
 
     if (uploadError) {
       console.error("Upload error:", uploadError);
