@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ClipboardList, BookOpen, TrendingUp, ArrowRight } from "lucide-react";
+import { ClipboardList, BookOpen, TrendingUp, ArrowRight, X } from "lucide-react";
 
 const ONBOARDING_KEY = "tcf-eleve-onboarding-done";
 
