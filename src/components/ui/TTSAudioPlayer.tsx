@@ -33,13 +33,17 @@ const TTSAudioPlayer = ({ text, className = "", onPlayComplete }: TTSAudioPlayer
 
       if (error) throw error;
 
-      // data is an ArrayBuffer or Blob from the edge function
+      // data may be base64 JSON, Blob, or ArrayBuffer
       let blob: Blob;
-      if (data instanceof Blob) {
+      if (data?.audioContent) {
+        const bytes = Uint8Array.from(atob(data.audioContent), c => c.charCodeAt(0));
+        blob = new Blob([bytes], { type: "audio/mpeg" });
+      } else if (data instanceof Blob) {
         blob = data;
       } else if (data instanceof ArrayBuffer) {
         blob = new Blob([data], { type: "audio/mpeg" });
       } else {
+        console.error("Format audio inattendu:", data);
         throw new Error("Format audio inattendu");
       }
 
