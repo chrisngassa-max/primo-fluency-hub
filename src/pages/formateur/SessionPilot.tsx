@@ -800,6 +800,66 @@ ${Array.isArray(item.options) && item.options.length > 0
 
   const handlePrint = () => window.print();
 
+  const handlePrintMateriel = () => {
+    const allExs = exercises.map((se: any) => se.exercice).filter(Boolean);
+    const exsWithDocs = allExs.filter((ex: any) => ex.animation_guide?.documentation_fournie);
+    if (exsWithDocs.length === 0) {
+      toast.warning("Aucun atelier ludique avec documentation à imprimer.");
+      return;
+    }
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) { toast.error("Pop-up bloqué."); return; }
+    const html = `<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8"><title>Matériel Ateliers — ${session?.titre || "Séance"}</title>
+<style>
+body { font-family: 'Segoe UI', sans-serif; padding: 24px; font-size: 13pt; color: #222; }
+h1 { font-size: 18pt; border-bottom: 2px solid #333; padding-bottom: 8px; margin-bottom: 20px; }
+h2 { font-size: 15pt; margin: 24px 0 8px; color: #333; page-break-before: always; }
+h2:first-of-type { page-break-before: auto; }
+.guide { background: #fffbeb; border: 1px solid #fbbf24; border-radius: 8px; padding: 16px; margin-bottom: 20px; white-space: pre-line; font-size: 12pt; }
+.guide-label { font-weight: 700; color: #92400e; margin-bottom: 8px; display: block; }
+.atelier-info { background: #fef3c7; border-radius: 6px; padding: 12px; margin-bottom: 16px; font-size: 11pt; }
+.atelier-info strong { display: inline-block; min-width: 120px; }
+.fiche { border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin-bottom: 16px; page-break-inside: avoid; }
+.fiche h3 { font-size: 16pt; margin: 0 0 8px; }
+.fiche .contenu { white-space: pre-line; font-size: 14pt; line-height: 1.7; }
+.lexique { margin-top: 12px; padding: 10px; background: #f0f9ff; border-radius: 6px; }
+.lexique span { font-weight: 700; color: #1e40af; }
+@media print { body { padding: 0; } h2 { page-break-before: always; } h2:first-of-type { page-break-before: auto; } }
+</style></head><body>
+<h1>📦 Matériel Ateliers — ${session?.titre || "Séance"}</h1>
+<p style="font-size:10pt;color:#666;">${(session as any)?.group?.nom || ""} · ${new Date().toLocaleDateString("fr-FR")} — CAP TCF</p>
+${exsWithDocs.map((ex: any, i: number) => {
+      const ag = ex.animation_guide;
+      const doc = ag.documentation_fournie;
+      return `
+<h2>${i + 1}. ${ex.titre} — Guide Formateur</h2>
+<div class="atelier-info">
+<strong>🎭 Scénario :</strong> ${ag.scenario || ""}<br/>
+<strong>🎲 Jeu :</strong> ${ag.jeu || ""}<br/>
+<strong>📦 Matériel :</strong> ${ag.materiel || ""}<br/>
+<strong>🗣️ Objectif oral :</strong> ${ag.objectif_oral || ""}
+${ag.variante ? `<br/><strong>💡 Variante :</strong> ${ag.variante}` : ""}
+</div>
+<div class="guide">
+<span class="guide-label">📋 Guide formateur détaillé :</span>
+${doc.guide_formateur || ""}
+</div>
+${Array.isArray(doc.fiches_eleves) ? doc.fiches_eleves.map((fiche: any, fi: number) => `
+<div class="fiche">
+<h3>📄 Fiche Élève ${fi + 1} — ${fiche.titre_fiche || ""}</h3>
+<div class="contenu">${fiche.contenu_fiche || ""}</div>
+${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
+<div class="lexique"><span>📝 Lexique clé :</span> ${fiche.lexique_cles.join(" · ")}</div>` : ""}
+</div>`).join("") : ""}`;
+    }).join("")}
+</body></html>`;
+    printWindow.document.write(html);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => printWindow.print(), 300);
+  };
+
   // ─── Delete single exercise from session ───
   const handleDeleteExercise = async (seId: string) => {
     try {
