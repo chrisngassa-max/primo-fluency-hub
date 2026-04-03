@@ -619,9 +619,13 @@ const TestPositionnement = () => {
             {currentQuestion.support && (
               <Card className="bg-muted/30">
                 <CardContent className="pt-4">
-                  <p className="text-base whitespace-pre-wrap">
-                    {currentQuestion.support}
-                  </p>
+                  {currentQuestion.support.startsWith("http") ? (
+                    <img src={currentQuestion.support} alt="Document de support" className="max-w-full rounded-lg mx-auto" />
+                  ) : (
+                    <p className="text-base whitespace-pre-wrap">
+                      {currentQuestion.support}
+                    </p>
+                  )}
                 </CardContent>
               </Card>
             )}
