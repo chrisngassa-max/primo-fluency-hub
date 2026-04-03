@@ -211,7 +211,7 @@ const LoginEleve = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-sky-50/50 dark:bg-background p-4">
+    <div className="min-h-[100dvh] flex flex-col items-center justify-start sm:justify-center bg-sky-50/50 dark:bg-background p-4 pt-8 sm:pt-4 overflow-y-auto">
       <div className="w-full max-w-md space-y-6">
         <Button variant="ghost" onClick={() => navigate("/")} className="gap-2">
           <ArrowLeft className="h-4 w-4" /> Retour à l'accueil
