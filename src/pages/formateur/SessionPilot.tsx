@@ -812,7 +812,7 @@ ${Array.isArray(item.options) && item.options.length > 0
     const html = `<!DOCTYPE html>
 <html lang="fr"><head><meta charset="utf-8"><title>Matériel Ateliers — ${session?.titre || "Séance"}</title>
 <style>
-body { font-family: 'Segoe UI', sans-serif; padding: 24px; font-size: 13pt; color: #222; }
+body { font-family: 'Segoe UI', sans-serif; padding: 24px; font-size: 13pt; color: #222; max-width: 210mm; margin: 0 auto; }
 h1 { font-size: 18pt; border-bottom: 2px solid #333; padding-bottom: 8px; margin-bottom: 20px; }
 h2 { font-size: 15pt; margin: 24px 0 8px; color: #333; page-break-before: always; }
 h2:first-of-type { page-break-before: auto; }
@@ -820,12 +820,12 @@ h2:first-of-type { page-break-before: auto; }
 .guide-label { font-weight: 700; color: #92400e; margin-bottom: 8px; display: block; }
 .atelier-info { background: #fef3c7; border-radius: 6px; padding: 12px; margin-bottom: 16px; font-size: 11pt; }
 .atelier-info strong { display: inline-block; min-width: 120px; }
-.fiche { border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin-bottom: 16px; page-break-inside: avoid; }
-.fiche h3 { font-size: 16pt; margin: 0 0 8px; }
-.fiche .contenu { white-space: pre-line; font-size: 14pt; line-height: 1.7; }
-.lexique { margin-top: 12px; padding: 10px; background: #f0f9ff; border-radius: 6px; }
+.fiche { border: 2px solid #333; border-radius: 8px; padding: 20px; margin-bottom: 16px; page-break-before: always; page-break-inside: avoid; }
+.fiche h3 { font-size: 16pt; margin: 0 0 12px; border-bottom: 1px solid #ccc; padding-bottom: 8px; }
+.fiche .contenu { white-space: pre-line; font-size: 14pt; line-height: 1.8; }
+.lexique { margin-top: 16px; padding: 12px; background: #f0f9ff; border-radius: 6px; border: 1px solid #bae6fd; }
 .lexique span { font-weight: 700; color: #1e40af; }
-@media print { body { padding: 0; } h2 { page-break-before: always; } h2:first-of-type { page-break-before: auto; } }
+@media print { body { padding: 0; margin: 0; } .fiche { page-break-before: always; } h2 { page-break-before: always; } h2:first-of-type { page-break-before: auto; } }
 </style></head><body>
 <h1>📦 Matériel Ateliers — ${session?.titre || "Séance"}</h1>
 <p style="font-size:10pt;color:#666;">${(session as any)?.group?.nom || ""} · ${new Date().toLocaleDateString("fr-FR")} — CAP TCF</p>
