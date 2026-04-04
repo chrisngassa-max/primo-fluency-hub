@@ -237,7 +237,7 @@ const FormateurDashboard = () => {
       // Fallback: most recent past session
       const { data: recent } = await supabase
         .from("sessions")
-        .select("id, titre, date_seance, duree_minutes, niveau_cible, objectifs, statut, group_id")
+        .select("id, titre, date_seance, duree_minutes, niveau_cible, objectifs, statut, group_id, competences_cibles")
         .in("group_id", groupIds)
         .lt("date_seance", new Date().toISOString())
         .order("date_seance", { ascending: false })
