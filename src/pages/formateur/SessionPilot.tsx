@@ -86,6 +86,7 @@ const SessionPilot = () => {
   const [sending, setSending] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [generateCount, setGenerateCount] = useState(5);
+  const [selectedGenCompetences, setSelectedGenCompetences] = useState<string[]>([]);
   const [generatingHomework, setGeneratingHomework] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [deleteSeId, setDeleteSeId] = useState<string | null>(null);
