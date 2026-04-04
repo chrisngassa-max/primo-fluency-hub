@@ -14,6 +14,50 @@ export type Database = {
   }
   public: {
     Tables: {
+      activites_sauvegardees: {
+        Row: {
+          contenu_genere: Json
+          created_at: string
+          duree_minutes: number | null
+          formateur_id: string
+          id: string
+          niveau: string | null
+          seance_numero: number | null
+          titre: string
+          type_activite: string
+        }
+        Insert: {
+          contenu_genere?: Json
+          created_at?: string
+          duree_minutes?: number | null
+          formateur_id: string
+          id?: string
+          niveau?: string | null
+          seance_numero?: number | null
+          titre: string
+          type_activite: string
+        }
+        Update: {
+          contenu_genere?: Json
+          created_at?: string
+          duree_minutes?: number | null
+          formateur_id?: string
+          id?: string
+          niveau?: string | null
+          seance_numero?: number | null
+          titre?: string
+          type_activite?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activites_sauvegardees_formateur_id_fkey"
+            columns: ["formateur_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       activity_logs: {
         Row: {
           action: string
