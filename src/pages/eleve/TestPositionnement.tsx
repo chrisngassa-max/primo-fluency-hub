@@ -64,6 +64,8 @@ const TestPositionnement = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [recordingCount, setRecordingCount] = useState(0);
+  const MAX_RECORDINGS = 2;
   const [aiEvaluation, setAiEvaluation] = useState<{
     score: number;
     justification: string;
