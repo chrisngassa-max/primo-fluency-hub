@@ -16,7 +16,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Plus, Calendar, Loader2, BookOpen, Pencil, Copy, Rocket, Trash2 } from "lucide-react";
+import { Plus, Calendar, Loader2, BookOpen, Pencil, Copy, Rocket, Trash2, Route, ArrowRight, Target, Clock } from "lucide-react";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
@@ -115,7 +115,92 @@ const SeancesPage = () => {
     enabled: !!user,
   });
 
-  // Fetch sessions with exercise competences for fallback
+  // Fetch planned seances from parcours (not yet linked to a real session)
+  const { data: parcoursSeances, isLoading: loadingParcours } = useQuery({
+    queryKey: ["parcours-seances-available", user?.id],
+    queryFn: async () => {
+      // Get all parcours for this formateur
+      const { data: parcoursList, error: pErr } = await supabase
+        .from("parcours")
+        .select("id, titre, group_id, niveau_cible")
+        .eq("formateur_id", user!.id)
+        .in("statut", ["actif", "brouillon"]);
+      if (pErr) throw pErr;
+      if (!parcoursList || parcoursList.length === 0) return [];
+
+      const parcoursIds = parcoursList.map((p) => p.id);
+      const { data: seances, error: sErr } = await supabase
+        .from("parcours_seances")
+        .select("*")
+        .in("parcours_id", parcoursIds)
+        .is("session_id", null)
+        .neq("statut", "termine")
+        .order("ordre");
+      if (sErr) throw sErr;
+
+      return (seances ?? []).map((s: any) => {
+        const parcours = parcoursList.find((p) => p.id === s.parcours_id);
+        return { ...s, _parcours: parcours };
+      });
+    },
+    enabled: !!user,
+  });
+
+  // State for scheduling a parcours seance
+  const [scheduleSeance, setScheduleSeance] = useState<any>(null);
+  const [scheduleGroupId, setScheduleGroupId] = useState("");
+  const [scheduleDate, setScheduleDate] = useState("");
+  const [scheduleLieu, setScheduleLieu] = useState("");
+  const [scheduleSaving, setScheduleSaving] = useState(false);
+
+  const handleScheduleFromParcours = async () => {
+    if (!scheduleSeance) return;
+    if (!scheduleGroupId) { toast.error("Sélectionnez un groupe."); return; }
+    if (!scheduleDate) { toast.error("Choisissez une date."); return; }
+
+    setScheduleSaving(true);
+    try {
+      // Create the real session
+      const { data: newSession, error: sErr } = await supabase
+        .from("sessions")
+        .insert({
+          titre: scheduleSeance.titre,
+          group_id: scheduleGroupId,
+          date_seance: new Date(scheduleDate).toISOString(),
+          niveau_cible: scheduleSeance._parcours?.niveau_cible || "A2",
+          objectifs: scheduleSeance.objectif_principal || null,
+          duree_minutes: scheduleSeance.duree_minutes || 90,
+          lieu: scheduleLieu || null,
+          competences_cibles: scheduleSeance.competences_cibles?.length > 0 ? scheduleSeance.competences_cibles : null,
+        } as any)
+        .select()
+        .single();
+      if (sErr) throw sErr;
+
+      // Link the parcours_seance to this new session
+      const { error: linkErr } = await supabase
+        .from("parcours_seances")
+        .update({ session_id: newSession.id, statut: "planifie" })
+        .eq("id", scheduleSeance.id);
+      if (linkErr) throw linkErr;
+
+      toast.success("Séance planifiée depuis le plan de formation !", {
+        description: `« ${scheduleSeance.titre} » est prête.`,
+      });
+      setScheduleSeance(null);
+      setScheduleGroupId("");
+      setScheduleDate("");
+      setScheduleLieu("");
+      qc.invalidateQueries({ queryKey: ["formateur-sessions"] });
+      qc.invalidateQueries({ queryKey: ["parcours-seances-available"] });
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    } finally {
+      setScheduleSaving(false);
+    }
+  };
+
+
   const { data: sessions, isLoading } = useQuery({
     queryKey: ["formateur-sessions", user?.id],
     queryFn: async () => {
@@ -631,8 +716,119 @@ const SeancesPage = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Schedule from parcours dialog */}
+      <Dialog open={!!scheduleSeance} onOpenChange={(v) => { if (!v) setScheduleSeance(null); }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Planifier depuis le plan de formation</DialogTitle>
+          </DialogHeader>
+          {scheduleSeance && (
+            <div className="space-y-4">
+              <div className="rounded-lg bg-muted/50 p-3 space-y-1">
+                <p className="font-medium text-sm">{scheduleSeance.titre}</p>
+                {scheduleSeance.objectif_principal && (
+                  <p className="text-xs text-muted-foreground flex items-start gap-1.5">
+                    <Target className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+                    {scheduleSeance.objectif_principal}
+                  </p>
+                )}
+                <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{scheduleSeance.duree_minutes} min</span>
+                  {scheduleSeance.competences_cibles?.length > 0 && (
+                    <div className="flex gap-1">
+                      {scheduleSeance.competences_cibles.map((c: string) => (
+                        <span key={c} className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${COMPETENCE_COLORS[c] || ""}`}>{c}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Groupe</Label>
+                <Select value={scheduleGroupId} onValueChange={setScheduleGroupId}>
+                  <SelectTrigger><SelectValue placeholder="Choisir un groupe..." /></SelectTrigger>
+                  <SelectContent>
+                    {(groups ?? []).map((g) => (
+                      <SelectItem key={g.id} value={g.id}>{g.nom} ({g.niveau})</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label>Date et heure</Label>
+                  <Input type="datetime-local" value={scheduleDate} onChange={(e) => setScheduleDate(e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Lieu (optionnel)</Label>
+                  <Input value={scheduleLieu} onChange={(e) => setScheduleLieu(e.target.value)} placeholder="Salle A3" />
+                </div>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setScheduleSeance(null)}>Annuler</Button>
+            <Button onClick={handleScheduleFromParcours} disabled={scheduleSaving}>
+              {scheduleSaving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              Planifier
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Parcours seances suggestions */}
+      {parcoursSeances && parcoursSeances.length > 0 && (
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <Route className="h-5 w-5 text-primary" />
+            <h2 className="text-lg font-semibold">Séances du plan de formation</h2>
+            <Badge variant="secondary" className="text-xs">{parcoursSeances.length} à planifier</Badge>
+          </div>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {parcoursSeances.slice(0, 6).map((ps: any) => (
+              <Card key={ps.id} className="border-primary/20 bg-primary/[0.02] hover:border-primary/40 transition-colors">
+                <CardContent className="py-3 px-4">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 space-y-1">
+                      <p className="font-medium text-sm truncate">{ps.titre}</p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {ps._parcours?.titre}
+                      </p>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-xs text-muted-foreground flex items-center gap-1">
+                          <Clock className="h-3 w-3" />{ps.duree_minutes} min
+                        </span>
+                        {ps.competences_cibles?.map((c: string) => (
+                          <span key={c} className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${COMPETENCE_COLORS[c] || ""}`}>{c}</span>
+                        ))}
+                      </div>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="shrink-0 gap-1 text-xs h-7"
+                      onClick={() => {
+                        setScheduleSeance(ps);
+                        setScheduleGroupId(ps._parcours?.group_id || "");
+                      }}
+                    >
+                      Planifier <ArrowRight className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          {parcoursSeances.length > 6 && (
+            <p className="text-xs text-muted-foreground text-center">
+              + {parcoursSeances.length - 6} autre(s) séance(s) disponible(s) dans vos plans de formation
+            </p>
+          )}
+        </div>
+      )}
+
       {/* Sessions list */}
-      {sessions && sessions.length === 0 && (
+      {sessions && sessions.length === 0 && !parcoursSeances?.length && (
         <Card className="border-dashed">
           <CardContent className="py-12 text-center">
             <Calendar className="h-12 w-12 mx-auto text-muted-foreground/40 mb-3" />
