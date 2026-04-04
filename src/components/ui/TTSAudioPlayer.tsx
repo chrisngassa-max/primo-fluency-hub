@@ -27,25 +27,25 @@ const TTSAudioPlayer = ({ text, className = "", onPlayComplete }: TTSAudioPlayer
 
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("generate-tts", {
-        body: { text },
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-tts`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+            "Authorization": `Bearer ${(await supabase.auth.getSession()).data.session?.access_token ?? import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({ text }),
+        }
+      );
 
-      if (error) throw error;
-
-      // data may be base64 JSON, Blob, or ArrayBuffer
-      let blob: Blob;
-      if (data?.audioContent) {
-        const bytes = Uint8Array.from(atob(data.audioContent), c => c.charCodeAt(0));
-        blob = new Blob([bytes], { type: "audio/mpeg" });
-      } else if (data instanceof Blob) {
-        blob = data;
-      } else if (data instanceof ArrayBuffer) {
-        blob = new Blob([data], { type: "audio/mpeg" });
-      } else {
-        console.error("Format audio inattendu:", data);
-        throw new Error("Format audio inattendu");
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(errText || `Erreur ${response.status}`);
       }
+
+      const blob = await response.blob();
 
       const url = URL.createObjectURL(blob);
       setAudioUrl(url);
