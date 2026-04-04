@@ -104,6 +104,11 @@ const SessionPilot = () => {
   const [previewPage, setPreviewPage] = useState(0);
   const [animationGuide, setAnimationGuide] = useState<any>(null);
 
+  // Duplicate & send to individual students
+  const [duplicateExercise, setDuplicateExercise] = useState<any>(null);
+  const [duplicateStudentIds, setDuplicateStudentIds] = useState<string[]>([]);
+  const [duplicating, setDuplicating] = useState(false);
+
   const { data: session } = useQuery({
     queryKey: ["session-info", id],
     queryFn: async () => {
