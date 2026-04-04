@@ -62,26 +62,44 @@ export async function requestMicrophoneStream(
     throw new Error("microphone-unsupported");
   }
 
-  const safeConstraints = getSupportedAudioConstraints(constraints);
+  const isIframe = window.self !== window.top;
+  const policyBlocked = isMicrophoneBlockedByPolicy();
+
+  console.log("[Mic] Requesting microphone access", {
+    isIframe,
+    policyBlocked,
+    protocol: location.protocol,
+    host: location.host,
+    ua: navigator.userAgent.substring(0, 140),
+  });
+
+  if (policyBlocked) {
+    console.error("[Mic] Blocked by Permissions-Policy header or iframe allow attribute");
+    throw new Error("microphone-policy-blocked");
+  }
+
+  // On mobile, try basic constraints first to maximize compatibility
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const safeConstraints = isMobile ? true : getSupportedAudioConstraints(constraints);
 
   try {
     return await navigator.mediaDevices.getUserMedia({ audio: safeConstraints });
   } catch (error) {
     const errorName = error instanceof DOMException ? error.name : "";
+    console.error("[Mic] getUserMedia failed:", {
+      errorName,
+      message: (error as Error)?.message,
+      isIframe,
+      policyBlocked,
+    });
 
     if (
       errorName === "OverconstrainedError" ||
       errorName === "TypeError" ||
       errorName === "ConstraintNotSatisfiedError"
     ) {
+      console.log("[Mic] Retrying with basic audio: true");
       return navigator.mediaDevices.getUserMedia({ audio: true });
-    }
-
-    if (
-      (errorName === "NotAllowedError" || errorName === "PermissionDeniedError") &&
-      isMicrophoneBlockedByPolicy()
-    ) {
-      throw new Error("microphone-policy-blocked");
     }
 
     throw error;
@@ -101,13 +119,13 @@ export function getMicrophoneErrorMessage(error: unknown): string {
   }
 
   if (errorName === "microphone-policy-blocked") {
-    return "Le micro est bloqué par la page d’intégration. Ouvrez l’application directement dans Chrome ou Safari, ou autorisez l’iframe avec ‘microphone’.";
+    return "Le micro est bloqué par la page d'intégration. Ouvrez l'application directement dans Chrome ou Safari.";
   }
 
   if (errorName === "NotAllowedError" || errorName === "PermissionDeniedError") {
     return window.self !== window.top
-      ? "Le navigateur a bloqué le micro dans cette vue intégrée. Autorisez le microphone pour ce site ou ouvrez l’application directement dans Chrome ou Safari."
-      : "Le navigateur a bloqué le micro. Autorisez le microphone pour ce site dans les réglages du navigateur puis rechargez la page.";
+      ? "Le navigateur a bloqué le micro dans cette vue intégrée. Ouvrez l'application directement dans Chrome ou Safari."
+      : "Le navigateur a bloqué le micro. Appuyez sur le cadenas 🔒 à côté de l'adresse → Autorisations du site → Micro → Autoriser, puis rechargez la page. Si ça ne marche pas, fermez tous les onglets du site et réessayez.";
   }
 
   if (errorName === "NotFoundError") {
