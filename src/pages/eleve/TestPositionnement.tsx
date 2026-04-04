@@ -84,6 +84,21 @@ const TestPositionnement = () => {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
 
+  // Prevent accidental exit during test
+  const isTestInProgress = screen === "question";
+
+  useEffect(() => {
+    if (!isTestInProgress) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [isTestInProgress]);
+
+  const blocker = useBlocker(isTestInProgress);
+
   // Check existing session
   const { data: existingSession, isLoading } = useQuery({
     queryKey: ["test-positionnement-session", user?.id],
