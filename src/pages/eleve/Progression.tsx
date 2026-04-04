@@ -136,6 +136,78 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
     enabled: !!targetId,
   });
 
+  // Fetch student's current groups (formateur view)
+  const { data: studentGroups } = useQuery({
+    queryKey: ["student-groups", targetId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("group_members")
+        .select("id, group_id, groups(id, nom, niveau)")
+        .eq("eleve_id", targetId!);
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!targetId && !!eleveId,
+  });
+
+  // Fetch all formateur groups (for reassignment)
+  const { data: allGroups } = useQuery({
+    queryKey: ["formateur-groups-for-reassign"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("groups")
+        .select("id, nom, niveau")
+        .eq("is_active", true)
+        .order("nom");
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!eleveId,
+  });
+
+  const handleReassignGroup = async (membershipId: string, newGroupId: string) => {
+    const { error } = await supabase
+      .from("group_members")
+      .update({ group_id: newGroupId })
+      .eq("id", membershipId);
+    if (error) {
+      toast.error("Erreur lors du transfert");
+      return;
+    }
+    toast.success("Élève transféré avec succès");
+    queryClient.invalidateQueries({ queryKey: ["student-groups", targetId] });
+  };
+
+  const handleAddToGroup = async (groupId: string) => {
+    const alreadyIn = (studentGroups ?? []).some((sg: any) => sg.group_id === groupId);
+    if (alreadyIn) {
+      toast.error("L'élève est déjà dans ce groupe");
+      return;
+    }
+    const { error } = await supabase
+      .from("group_members")
+      .insert({ eleve_id: targetId!, group_id: groupId });
+    if (error) {
+      toast.error("Erreur lors de l'ajout");
+      return;
+    }
+    toast.success("Élève ajouté au groupe");
+    queryClient.invalidateQueries({ queryKey: ["student-groups", targetId] });
+  };
+
+  const handleRemoveFromGroup = async (membershipId: string) => {
+    const { error } = await supabase
+      .from("group_members")
+      .delete()
+      .eq("id", membershipId);
+    if (error) {
+      toast.error("Erreur lors du retrait");
+      return;
+    }
+    toast.success("Élève retiré du groupe");
+    queryClient.invalidateQueries({ queryKey: ["student-groups", targetId] });
+  };
+
   const isLoading = compLoading || profilLoading || resLoading;
 
   // Build competency map
