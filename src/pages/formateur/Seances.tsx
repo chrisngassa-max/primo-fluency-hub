@@ -491,15 +491,34 @@ const SeancesPage = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-2xl font-bold">Séances</h1>
           <p className="text-sm text-muted-foreground">Planifiez et gérez vos séances.</p>
         </div>
-        <Dialog open={createOpen} onOpenChange={(v) => { setCreateOpen(v); if (!v) resetForm(); }}>
-          <DialogTrigger asChild>
-            <Button><Plus className="h-4 w-4 mr-2" />Nouvelle séance</Button>
-          </DialogTrigger>
+        <div className="flex items-center gap-2">
+          {/* Quick "next session" button */}
+          {parcoursSeances && parcoursSeances.length > 0 && (
+            <Button
+              variant="default"
+              className="gap-2"
+              onClick={() => {
+                const next = parcoursSeances[0];
+                setScheduleSeance(next);
+                setScheduleGroupId(next._parcours?.group_id || "");
+              }}
+            >
+              <ArrowRight className="h-4 w-4" />
+              Séance suivante
+              <Badge variant="secondary" className="ml-1 bg-primary-foreground/20 text-primary-foreground text-[10px]">
+                {parcoursSeances[0]?.titre?.length > 25 ? parcoursSeances[0]?.titre?.slice(0, 25) + "…" : parcoursSeances[0]?.titre}
+              </Badge>
+            </Button>
+          )}
+          <Dialog open={createOpen} onOpenChange={(v) => { setCreateOpen(v); if (!v) resetForm(); }}>
+            <DialogTrigger asChild>
+              <Button variant="outline"><Plus className="h-4 w-4 mr-2" />Nouvelle séance</Button>
+            </DialogTrigger>
           <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
             <DialogHeader><DialogTitle>Planifier une séance</DialogTitle></DialogHeader>
             <div className="space-y-4">
