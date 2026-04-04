@@ -1,17 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
-import { useNavigate, useBlocker } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import type { TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -98,8 +88,6 @@ const TestPositionnement = () => {
     window.addEventListener("beforeunload", handler);
     return () => window.removeEventListener("beforeunload", handler);
   }, [isTestInProgress]);
-
-  const blocker = useBlocker(isTestInProgress);
 
   const getPreferredSession = useCallback(async () => {
     if (!user?.id) return null;
@@ -891,27 +879,6 @@ const TestPositionnement = () => {
     }
   };
 
-  const leaveConfirmDialog = (
-    <AlertDialog open={blocker.state === "blocked"}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Êtes-vous sûr de vouloir quitter ?</AlertDialogTitle>
-          <AlertDialogDescription>
-            Votre test est en cours. Si vous quittez maintenant, vous pourrez le reprendre plus tard, mais votre progression actuelle sur cette question sera perdue.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel onClick={() => blocker.reset?.()}>
-            Rester sur le test
-          </AlertDialogCancel>
-          <AlertDialogAction onClick={() => blocker.proceed?.()}>
-            Quitter quand même
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
-
   if (isLoading) {
     return (
       <div className="max-w-2xl mx-auto space-y-4 p-4">
@@ -983,7 +950,6 @@ const TestPositionnement = () => {
 
     return (
       <>
-        {leaveConfirmDialog}
         <div className="max-w-2xl mx-auto space-y-4 p-4">
         {/* Header */}
         <div className="space-y-2">
