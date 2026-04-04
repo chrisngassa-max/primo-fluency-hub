@@ -72,6 +72,7 @@ const FormateurDashboard = () => {
   const [editedItems, setEditedItems] = useState<any[]>([]);
   const [savingEdit, setSavingEdit] = useState(false);
   const [progGroupId, setProgGroupId] = useState<string>("");
+  const microCompConfigRef = useRef<MicroCompetence[]>([]);
   const [progViewId, setProgViewId] = useState<string>("moyenne");
 
   // ─── Progression: fetch real groups with members, test scores, and profiles ───
