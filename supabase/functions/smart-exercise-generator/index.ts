@@ -90,13 +90,19 @@ Chaque exercice DOIT porter un code et des métadonnées issus de cette cartogra
 | CO3  | Consignes / Règles      | Instruction directe : "Veuillez patienter…"                  | 45         |
 | CO4  | Info chiffrée           | Annonce micro : horaires, prix, numéros                      | 50         |
 
-### CE (Compréhension Écrite) — texte support obligatoire
+### CE (Compréhension Écrite) — texte support + image OBLIGATOIRES
 | Code | Sous-compétence       | Type                                                        | time_limit |
 |------|-----------------------|--------------------------------------------------------------|------------|
 | CE1  | Signalétique          | Panneau urbain / picto                                       | 80         |
 | CE2  | Messages familiers    | SMS / Post-it / Email                                        | 80         |
 | CE3  | Recherche d'info      | Emploi du temps / Menu                                       | 80         |
 | CE4  | Texte administratif   | Notice simple / Courrier                                     | 100        |
+
+⚠️ CHAMP "image_description" OBLIGATOIRE POUR TOUT EXERCICE CE ET EO ⚠️
+Tu DOIS fournir un champ "image_description" dans contenu décrivant précisément le document visuel.
+Exemples CE : "Une carte de résident française avec photo, nom et nationalité", "Un panneau de signalisation urbain en France"
+Exemples EO : "Un cabinet médical en France avec un médecin et un patient", "Un marché en plein air en France"
+L'image sera récupérée automatiquement via une banque d'images.
 
 ### EO (Expression Orale) — format production_orale + type_reponse "oral"
 | Code | Sous-compétence       | Type                                                        | time_limit |
@@ -183,6 +189,7 @@ Pour chaque item, fournis TOUJOURS : question, options (tableau de chaînes, vid
                         criteres_evaluation: { type: "object" },
                         mots_cles_attendus: { type: "array", items: { type: "string" } },
                         texte: { type: "string" },
+                        image_description: { type: "string", description: "Description de l'image à rechercher (OBLIGATOIRE pour CE et EO). Ex: 'Une carte de résident française officielle avec photo d'identité'" },
                         items: {
                           type: "array",
                           items: {
@@ -240,6 +247,37 @@ Pour chaque item, fournis TOUJOURS : question, options (tableau de chaînes, vid
     }
 
     const exercise = JSON.parse(toolCall.function.arguments);
+
+    // Post-processing: fetch photos from Pexels for exercises that have image_description
+    const PEXELS_API_KEY = Deno.env.get("PEXELS_API_KEY");
+    const desc = exercise.contenu?.image_description;
+    if (desc && typeof desc === "string" && desc.trim().length > 0 && PEXELS_API_KEY) {
+      try {
+        const query = encodeURIComponent(desc.slice(0, 100));
+        const pexelsResponse = await fetch(
+          `https://api.pexels.com/v1/search?query=${query}&per_page=5&orientation=landscape&size=medium`,
+          { headers: { Authorization: PEXELS_API_KEY } }
+        );
+        if (pexelsResponse.ok) {
+          const pexelsData = await pexelsResponse.json();
+          const photos = pexelsData.photos;
+          if (photos && photos.length > 0) {
+            const photo = photos[Math.floor(Math.random() * photos.length)];
+            exercise.contenu.image_url = photo.src.medium;
+            exercise.contenu.image_credit = {
+              photographer: photo.photographer,
+              photographer_url: photo.photographer_url,
+              pexels_url: photo.url,
+            };
+            console.log("Pexels photo found for smart-generator:", photo.src.medium);
+          } else {
+            console.warn("No Pexels results for:", desc.slice(0, 50));
+          }
+        }
+      } catch (imgErr) {
+        console.error("Pexels search error:", imgErr);
+      }
+    }
 
     return new Response(JSON.stringify({ exercise }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
