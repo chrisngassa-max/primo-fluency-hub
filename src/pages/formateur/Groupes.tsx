@@ -684,7 +684,6 @@ const GroupesPage = () => {
                         });
                     })()}
                 </TableBody>
-                </TableBody>
               </Table>
               </div>
             </div>
