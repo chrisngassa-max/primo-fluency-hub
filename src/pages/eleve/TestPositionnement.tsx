@@ -220,6 +220,7 @@ const TestPositionnement = () => {
         competenceIndex: 4,
         palier: 1,
         questionIndex: 0,
+        currentResponseId: null,
         palierScores: [],
         paliersFinal: {
           co: existingResults.palier_final_co ?? 1,
