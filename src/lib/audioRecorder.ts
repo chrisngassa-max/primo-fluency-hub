@@ -12,6 +12,45 @@ const DEFAULT_AUDIO_CONSTRAINTS: MediaTrackConstraints = {
   autoGainControl: true,
 };
 
+type ExtendedDocument = Document & {
+  featurePolicy?: {
+    allowsFeature?: (feature: string) => boolean;
+  };
+  permissionsPolicy?: {
+    allowsFeature?: (feature: string) => boolean;
+  };
+};
+
+function getSupportedAudioConstraints(
+  constraints: MediaTrackConstraints
+): MediaTrackConstraints | true {
+  const supported = navigator.mediaDevices.getSupportedConstraints?.() ?? {};
+
+  const filtered = Object.fromEntries(
+    Object.entries(constraints).filter(([key]) => {
+      const supportKey = key as keyof MediaTrackSupportedConstraints;
+      return supported[supportKey] === true;
+    })
+  ) as MediaTrackConstraints;
+
+  return Object.keys(filtered).length > 0 ? filtered : true;
+}
+
+function isMicrophoneBlockedByPolicy(): boolean {
+  const doc = document as ExtendedDocument;
+  const allowsFeature =
+    doc.permissionsPolicy?.allowsFeature?.bind(doc.permissionsPolicy) ??
+    doc.featurePolicy?.allowsFeature?.bind(doc.featurePolicy);
+
+  if (!allowsFeature) return false;
+
+  try {
+    return allowsFeature("microphone") === false;
+  } catch {
+    return false;
+  }
+}
+
 export interface WavRecorder {
   stop: () => void;
 }
@@ -23,13 +62,26 @@ export async function requestMicrophoneStream(
     throw new Error("microphone-unsupported");
   }
 
+  const safeConstraints = getSupportedAudioConstraints(constraints);
+
   try {
-    return await navigator.mediaDevices.getUserMedia({ audio: constraints });
+    return await navigator.mediaDevices.getUserMedia({ audio: safeConstraints });
   } catch (error) {
     const errorName = error instanceof DOMException ? error.name : "";
 
-    if (errorName === "OverconstrainedError") {
+    if (
+      errorName === "OverconstrainedError" ||
+      errorName === "TypeError" ||
+      errorName === "ConstraintNotSatisfiedError"
+    ) {
       return navigator.mediaDevices.getUserMedia({ audio: true });
+    }
+
+    if (
+      (errorName === "NotAllowedError" || errorName === "PermissionDeniedError") &&
+      isMicrophoneBlockedByPolicy()
+    ) {
+      throw new Error("microphone-policy-blocked");
     }
 
     throw error;
@@ -46,6 +98,10 @@ export function getMicrophoneErrorMessage(error: unknown): string {
 
   if (errorName === "microphone-unsupported") {
     return "Votre navigateur ne permet pas l'enregistrement audio sur cette page.";
+  }
+
+  if (errorName === "microphone-policy-blocked") {
+    return "Le micro est bloqué par la page d’intégration. Ouvrez l’application directement dans Chrome ou Safari, ou autorisez l’iframe avec ‘microphone’.";
   }
 
   if (errorName === "NotAllowedError" || errorName === "PermissionDeniedError") {
