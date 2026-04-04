@@ -248,6 +248,37 @@ Pour chaque item, fournis TOUJOURS : question, options (tableau de chaînes, vid
 
     const exercise = JSON.parse(toolCall.function.arguments);
 
+    // Post-processing: fetch photos from Pexels for exercises that have image_description
+    const PEXELS_API_KEY = Deno.env.get("PEXELS_API_KEY");
+    const desc = exercise.contenu?.image_description;
+    if (desc && typeof desc === "string" && desc.trim().length > 0 && PEXELS_API_KEY) {
+      try {
+        const query = encodeURIComponent(desc.slice(0, 100));
+        const pexelsResponse = await fetch(
+          `https://api.pexels.com/v1/search?query=${query}&per_page=5&orientation=landscape&size=medium`,
+          { headers: { Authorization: PEXELS_API_KEY } }
+        );
+        if (pexelsResponse.ok) {
+          const pexelsData = await pexelsResponse.json();
+          const photos = pexelsData.photos;
+          if (photos && photos.length > 0) {
+            const photo = photos[Math.floor(Math.random() * photos.length)];
+            exercise.contenu.image_url = photo.src.medium;
+            exercise.contenu.image_credit = {
+              photographer: photo.photographer,
+              photographer_url: photo.photographer_url,
+              pexels_url: photo.url,
+            };
+            console.log("Pexels photo found for smart-generator:", photo.src.medium);
+          } else {
+            console.warn("No Pexels results for:", desc.slice(0, 50));
+          }
+        }
+      } catch (imgErr) {
+        console.error("Pexels search error:", imgErr);
+      }
+    }
+
     return new Response(JSON.stringify({ exercise }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
