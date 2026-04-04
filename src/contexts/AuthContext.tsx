@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session, User } from "@supabase/supabase-js";
 
@@ -30,53 +30,74 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [role, setRole] = useState<AppRole | null>(null);
   const [profileStatus, setProfileStatus] = useState<ProfileStatus | null>(null);
   const [loading, setLoading] = useState(true);
+  const syncRequestRef = useRef(0);
 
   const fetchRole = async (userId: string) => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("user_roles")
       .select("role")
       .eq("user_id", userId)
       .maybeSingle();
-    setRole((data?.role as AppRole) ?? null);
+
+    if (error) {
+      console.error("Failed to fetch user role", error);
+      return null;
+    }
+
+    return (data?.role as AppRole) ?? null;
   };
 
   const fetchProfileStatus = async (userId: string) => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("profiles")
       .select("status")
       .eq("id", userId)
       .maybeSingle();
-    setProfileStatus((data?.status as ProfileStatus) ?? null);
+
+    if (error) {
+      console.error("Failed to fetch profile status", error);
+      return null;
+    }
+
+    return (data?.status as ProfileStatus) ?? null;
+  };
+
+  const syncAuthState = async (nextSession: Session | null) => {
+    const requestId = ++syncRequestRef.current;
+
+    setLoading(true);
+    setSession(nextSession);
+    setUser(nextSession?.user ?? null);
+
+    if (!nextSession?.user) {
+      if (syncRequestRef.current !== requestId) return;
+      setRole(null);
+      setProfileStatus(null);
+      setLoading(false);
+      return;
+    }
+
+    const [nextRole, nextProfileStatus] = await Promise.all([
+      fetchRole(nextSession.user.id),
+      fetchProfileStatus(nextSession.user.id),
+    ]);
+
+    if (syncRequestRef.current !== requestId) return;
+
+    setRole(nextRole);
+    setProfileStatus(nextProfileStatus);
+    setLoading(false);
   };
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          setTimeout(() => {
-            fetchRole(session.user.id);
-            fetchProfileStatus(session.user.id);
-          }, 0);
-        } else {
-          setRole(null);
-          setProfileStatus(null);
-        }
-        setLoading(false);
+      (_event, nextSession) => {
+        void syncAuthState(nextSession);
       }
     );
 
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        await Promise.all([
-          fetchRole(session.user.id),
-          fetchProfileStatus(session.user.id),
-        ]);
-      }
-      setLoading(false);
+    void supabase.auth.getSession().then(({ data: { session } }) => {
+      void syncAuthState(session);
     });
 
     return () => subscription.unsubscribe();
