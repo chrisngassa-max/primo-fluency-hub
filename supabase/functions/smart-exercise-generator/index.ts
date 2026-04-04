@@ -90,13 +90,19 @@ Chaque exercice DOIT porter un code et des métadonnées issus de cette cartogra
 | CO3  | Consignes / Règles      | Instruction directe : "Veuillez patienter…"                  | 45         |
 | CO4  | Info chiffrée           | Annonce micro : horaires, prix, numéros                      | 50         |
 
-### CE (Compréhension Écrite) — texte support obligatoire
+### CE (Compréhension Écrite) — texte support + image OBLIGATOIRES
 | Code | Sous-compétence       | Type                                                        | time_limit |
 |------|-----------------------|--------------------------------------------------------------|------------|
 | CE1  | Signalétique          | Panneau urbain / picto                                       | 80         |
 | CE2  | Messages familiers    | SMS / Post-it / Email                                        | 80         |
 | CE3  | Recherche d'info      | Emploi du temps / Menu                                       | 80         |
 | CE4  | Texte administratif   | Notice simple / Courrier                                     | 100        |
+
+⚠️ CHAMP "image_description" OBLIGATOIRE POUR TOUT EXERCICE CE ET EO ⚠️
+Tu DOIS fournir un champ "image_description" dans contenu décrivant précisément le document visuel.
+Exemples CE : "Une carte de résident française avec photo, nom et nationalité", "Un panneau de signalisation urbain en France"
+Exemples EO : "Un cabinet médical en France avec un médecin et un patient", "Un marché en plein air en France"
+L'image sera récupérée automatiquement via une banque d'images.
 
 ### EO (Expression Orale) — format production_orale + type_reponse "oral"
 | Code | Sous-compétence       | Type                                                        | time_limit |
