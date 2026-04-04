@@ -18,6 +18,11 @@ import { cn } from "@/lib/utils";
 import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
 import { evaluerReponseIA } from "@/lib/testPositionnement";
 import { Progress } from "@/components/ui/progress";
+import {
+  getMicrophoneErrorMessage,
+  requestMicrophoneStream,
+  startWavRecording,
+} from "@/lib/audioRecorder";
 
 const DevoirPassation = () => {
   const { devoirId } = useParams<{ devoirId: string }>();
@@ -122,15 +127,15 @@ const DevoirPassation = () => {
 
   const startRecording = async () => {
     try {
-      const { startWavRecording } = await import("@/lib/audioRecorder");
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const stream = await requestMicrophoneStream();
       const recorder = startWavRecording(stream, (blob) => {
         setAudioBlob(blob);
       });
       wavRecorderRef.current = recorder;
       setIsRecording(true);
-    } catch {
-      toast.error("Impossible d'accéder au microphone.");
+    } catch (error) {
+      console.error("Microphone access error:", error);
+      toast.error(getMicrophoneErrorMessage(error));
     }
   };
 
