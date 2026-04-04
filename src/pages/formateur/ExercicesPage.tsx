@@ -835,6 +835,30 @@ ${Array.isArray(item.options) && item.options.length > 0
                   <CardTitle className="text-base">Consigne</CardTitle>
                   <p className="text-sm text-muted-foreground">{getEditableField(previewExercise, "consigne")}</p>
                 </CardHeader></Card>
+
+                {/* Image support */}
+                {(() => {
+                  const imgUrl = (pc as any)?.image_url || (pc as any)?.image || (pc as any)?.visual || (pc as any)?.support_visuel;
+                  return imgUrl && typeof imgUrl === "string" && imgUrl.startsWith("http") ? (
+                    <Card className="border-primary/20 bg-primary/5">
+                      <CardContent className="pt-4 pb-4">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-primary mb-2">🖼️ Document visuel</p>
+                        <img src={imgUrl} alt="Support visuel" className="max-w-full rounded-lg mx-auto" />
+                      </CardContent>
+                    </Card>
+                  ) : null;
+                })()}
+
+                {/* Text support for CE */}
+                {previewExercise.competence === "CE" && (pc as any)?.texte && (
+                  <Card className="border-primary/20 bg-primary/5">
+                    <CardContent className="pt-4 pb-4">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-primary mb-2">📄 Document à lire</p>
+                      <p className="text-sm whitespace-pre-wrap">{(pc as any).texte}</p>
+                    </CardContent>
+                  </Card>
+                )}
+
                 <div className="flex gap-2 flex-wrap">
                   <Badge>{previewExercise.competence}</Badge>
                   <Badge variant="outline">{previewExercise.format?.replace(/_/g, " ")}</Badge>
