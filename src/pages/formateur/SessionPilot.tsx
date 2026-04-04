@@ -53,7 +53,7 @@ import {
   BookOpen, Minus, Plus, Loader2, Sparkles, Pencil, Trash2, CirclePlus, Circle,
   AlertTriangle, RotateCcw, ClipboardCheck, FileText, Users, Brain, Target,
   Eye, Volume2, ChevronDown, ChevronLeft, ChevronRight, Drama, Package, MessageCircle, Wand2,
-  Rocket,
+  Rocket, Copy, Send, UserCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/DifficultyBadge";
