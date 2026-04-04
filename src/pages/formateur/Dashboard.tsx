@@ -98,10 +98,10 @@ const FormateurDashboard = () => {
 
       const eleveIds = [...new Set(members.map((m) => m.eleve_id))];
 
-      // 3. Fetch profiles, tests_entree, profils_eleves, and session counts in parallel
+      // 3. Fetch profiles, test_resultats_apprenants, profils_eleves, and session counts in parallel
       const [profilesRes, testsRes, profilsRes, sessionsRes] = await Promise.all([
         supabase.from("profiles").select("id, nom, prenom").in("id", eleveIds),
-        supabase.from("tests_entree").select("eleve_id, score_co, score_ce, score_ee, score_structures, completed_at, en_cours").in("eleve_id", eleveIds),
+        supabase.from("test_resultats_apprenants").select("apprenant_id, score_co, score_ce, score_ee, score_eo").in("apprenant_id", eleveIds),
         supabase.from("profils_eleves").select("eleve_id, taux_reussite_co, taux_reussite_ce, taux_reussite_ee, taux_reussite_structures").in("eleve_id", eleveIds),
         supabase.from("sessions").select("id, statut, group_id").in("group_id", groupIds),
       ]);
@@ -110,7 +110,7 @@ const FormateurDashboard = () => {
       for (const p of profilesRes.data ?? []) profilesMap[p.id] = p;
 
       const testsMap: Record<string, any> = {};
-      for (const t of testsRes.data ?? []) if (t.completed_at && !t.en_cours) testsMap[t.eleve_id] = t;
+      for (const t of testsRes.data ?? []) testsMap[t.apprenant_id] = t;
 
       const profilsMap: Record<string, any> = {};
       for (const p of profilsRes.data ?? []) profilsMap[p.eleve_id] = p;
@@ -140,7 +140,7 @@ const FormateurDashboard = () => {
               co: { initial: Math.round(Number(test?.score_co ?? 0)), current: Math.round(Number(profil?.taux_reussite_co ?? test?.score_co ?? 0)) },
               ce: { initial: Math.round(Number(test?.score_ce ?? 0)), current: Math.round(Number(profil?.taux_reussite_ce ?? test?.score_ce ?? 0)) },
               ee: { initial: Math.round(Number(test?.score_ee ?? 0)), current: Math.round(Number(profil?.taux_reussite_ee ?? test?.score_ee ?? 0)) },
-              structures: { initial: Math.round(Number(test?.score_structures ?? 0)), current: Math.round(Number(profil?.taux_reussite_structures ?? test?.score_structures ?? 0)) },
+              structures: { initial: 0, current: Math.round(Number(profil?.taux_reussite_structures ?? 0)) },
               completed: sc.completed,
               total: sc.total,
             };
