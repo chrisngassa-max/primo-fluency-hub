@@ -19,8 +19,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { Loader2, Calendar, Clock, Target } from "lucide-react";
-import { format, differenceInDays } from "date-fns";
+import { format, differenceInDays, addDays } from "date-fns";
 import { fr } from "date-fns/locale";
 
 interface NextSessionOption {
@@ -57,21 +58,33 @@ const GenerateDailyHomeworkDialog = ({
   onGenerate,
 }: GenerateDailyHomeworkDialogProps) => {
   const [selectedSession, setSelectedSession] = useState<string>("");
+  const [manualDate, setManualDate] = useState<string>("");
   const [dailyDuration, setDailyDuration] = useState<number>(15);
   const [targetWeaknesses, setTargetWeaknesses] = useState(false);
   const [generating, setGenerating] = useState(false);
 
-  const selectedNext = nextSessions.find((s) => s.id === selectedSession);
-  const targetDays = selectedNext
-    ? Math.max(1, differenceInDays(new Date(selectedNext.date_seance), new Date(currentSessionDate)))
+  const useManualDate = nextSessions.length === 0 || selectedSession === "__manual__";
+
+  const effectiveTargetDate = useManualDate && manualDate
+    ? manualDate
+    : nextSessions.find((s) => s.id === selectedSession)?.date_seance;
+
+  const targetDays = effectiveTargetDate
+    ? Math.max(1, differenceInDays(new Date(effectiveTargetDate), new Date(currentSessionDate)))
     : 0;
 
+  const canGenerate = targetDays > 0 && (useManualDate ? !!manualDate : !!selectedSession);
+
+  // Default manual date suggestion: 7 days from current session
+  const defaultManualDate = format(addDays(new Date(currentSessionDate), 7), "yyyy-MM-dd");
+  const minDate = format(addDays(new Date(currentSessionDate), 1), "yyyy-MM-dd");
+
   const handleGenerate = async () => {
-    if (!selectedSession || targetDays === 0) return;
+    if (!canGenerate) return;
     setGenerating(true);
     try {
       await onGenerate({
-        targetSessionId: selectedSession,
+        targetSessionId: useManualDate ? "__manual__" : selectedSession,
         dailyDuration,
         targetDays,
         targetWeaknesses,
@@ -99,18 +112,41 @@ const GenerateDailyHomeworkDialog = ({
           {/* Target session selector */}
           <div className="space-y-2">
             <Label className="text-sm font-semibold">Séance cible</Label>
-            <Select value={selectedSession} onValueChange={setSelectedSession}>
-              <SelectTrigger>
-                <SelectValue placeholder="Sélectionner la prochaine séance" />
-              </SelectTrigger>
-              <SelectContent>
-                {nextSessions.map((s) => (
-                  <SelectItem key={s.id} value={s.id}>
-                    {s.titre} — {format(new Date(s.date_seance), "EEEE d MMMM", { locale: fr })}
+            {nextSessions.length > 0 ? (
+              <Select value={selectedSession} onValueChange={setSelectedSession}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionner la prochaine séance" />
+                </SelectTrigger>
+                <SelectContent>
+                  {nextSessions.map((s) => (
+                    <SelectItem key={s.id} value={s.id}>
+                      {s.titre} — {format(new Date(s.date_seance), "EEEE d MMMM", { locale: fr })}
+                    </SelectItem>
+                  ))}
+                  <SelectItem value="__manual__">
+                    📅 Saisir une date manuellement
                   </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                </SelectContent>
+              </Select>
+            ) : (
+              <p className="text-xs text-muted-foreground italic">
+                Aucune séance future planifiée — saisissez une date cible ci-dessous.
+              </p>
+            )}
+
+            {/* Manual date input */}
+            {useManualDate && (
+              <div className="space-y-1 pt-1">
+                <Label className="text-xs text-muted-foreground">Date cible des devoirs</Label>
+                <Input
+                  type="date"
+                  value={manualDate || defaultManualDate}
+                  min={minDate}
+                  onChange={(e) => setManualDate(e.target.value)}
+                />
+              </div>
+            )}
+
             {targetDays > 0 && (
               <p className="text-xs text-muted-foreground flex items-center gap-1">
                 <Clock className="h-3 w-3" />
@@ -185,7 +221,7 @@ const GenerateDailyHomeworkDialog = ({
           </Button>
           <Button
             onClick={handleGenerate}
-            disabled={generating || !selectedSession || targetDays === 0}
+            disabled={generating || !canGenerate}
             className="gap-2"
           >
             {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Calendar className="h-4 w-4" />}
