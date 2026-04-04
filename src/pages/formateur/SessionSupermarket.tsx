@@ -222,6 +222,21 @@ const SessionSupermarket = () => {
     setSelected(new Set());
     try {
       const useGabarit = detectedGabarit && !gabaritIgnored;
+
+      // Load micro-competences config if a target session is selected
+      let microComps: any[] | undefined;
+      if (targetSessionId && user?.id) {
+        const { data: mcData } = await supabase
+          .from("formateur_competences_config")
+          .select("competences_ordonnees")
+          .eq("seance_id", targetSessionId)
+          .eq("formateur_id", user.id)
+          .maybeSingle();
+        if (mcData?.competences_ordonnees && Array.isArray(mcData.competences_ordonnees) && mcData.competences_ordonnees.length > 0) {
+          microComps = mcData.competences_ordonnees as any[];
+        }
+      }
+
       const body: any = {
         titre: sessionInfo.titre,
         objectifs: sessionInfo.objectifs,
@@ -233,6 +248,7 @@ const SessionSupermarket = () => {
         activite_duree_minutes: parseInt(activiteDuree),
         format_groupe: formatGroupe,
       };
+      if (microComps) body.micro_competences = microComps;
       if (useGabarit) {
         body.gabaritNumero = detectedGabarit.numero;
       }

@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useRef } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import CompetencyGauge from "@/components/CompetencyGauge";
 import { useAuth } from "@/contexts/AuthContext";
@@ -22,6 +22,7 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toast } from "sonner";
 import { DifficultyBadge } from "@/components/DifficultyBadge";
+import MicroCompetencesPanel, { type MicroCompetence } from "@/components/MicroCompetencesPanel";
 
 
 const COMPETENCE_LABELS: Record<string, string> = {
@@ -71,6 +72,7 @@ const FormateurDashboard = () => {
   const [editedItems, setEditedItems] = useState<any[]>([]);
   const [savingEdit, setSavingEdit] = useState(false);
   const [progGroupId, setProgGroupId] = useState<string>("");
+  const microCompConfigRef = useRef<MicroCompetence[]>([]);
   const [progViewId, setProgViewId] = useState<string>("moyenne");
 
   // ─── Progression: fetch real groups with members, test scores, and profiles ───
@@ -224,7 +226,7 @@ const FormateurDashboard = () => {
       // Try upcoming first
       const { data: upcoming } = await supabase
         .from("sessions")
-        .select("id, titre, date_seance, duree_minutes, niveau_cible, objectifs, statut, group_id")
+        .select("id, titre, date_seance, duree_minutes, niveau_cible, objectifs, statut, group_id, competences_cibles")
         .in("group_id", groupIds)
         .gte("date_seance", new Date().toISOString())
         .order("date_seance", { ascending: true })
@@ -235,7 +237,7 @@ const FormateurDashboard = () => {
       // Fallback: most recent past session
       const { data: recent } = await supabase
         .from("sessions")
-        .select("id, titre, date_seance, duree_minutes, niveau_cible, objectifs, statut, group_id")
+        .select("id, titre, date_seance, duree_minutes, niveau_cible, objectifs, statut, group_id, competences_cibles")
         .in("group_id", groupIds)
         .lt("date_seance", new Date().toISOString())
         .order("date_seance", { ascending: false })
@@ -846,6 +848,14 @@ ${sessionExercises.map((ex: any, i: number) => `
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Micro-compétences ciblées */}
+              <MicroCompetencesPanel
+                sessionId={nextSession.id}
+                competencesCibles={nextSession.competences_cibles || []}
+                formateurId={user!.id}
+                onConfigChange={(config) => { microCompConfigRef.current = config; }}
+              />
 
               {/* Progress bar */}
               {sessionExercises.length > 0 && (

@@ -11,7 +11,7 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { titre, objectifs, competences_cibles, niveau_cible, duree_minutes, exercices_suggeres, gabaritNumero } = await req.json();
+    const { titre, objectifs, competences_cibles, niveau_cible, duree_minutes, exercices_suggeres, gabaritNumero, micro_competences } = await req.json();
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
@@ -92,6 +92,18 @@ DOCUMENTATION_FOURNIE (OBLIGATOIRE pour chaque atelier ludique) :
 - Si c'est une simulation médicale, génère les symptômes, le vocabulaire du corps, les phrases types.
 ${objectifs ? `- Objectifs de la séance : ${objectifs}` : ""}
 ${exercices_suggeres?.length ? `- Types d'exercices suggérés : ${exercices_suggeres.join(", ")}` : ""}
+${(() => {
+  if (!micro_competences || !Array.isArray(micro_competences) || micro_competences.length === 0) return "";
+  const lines = micro_competences.map((mc: any, i: number) => `${i + 1}. ${mc.texte} — statut : ${mc.statut === "a_renforcer" ? "à_renforcer" : "normal"} (${mc.competence_globale})`).join("\n");
+  return `
+MICRO-COMPÉTENCES CIBLÉES (ordre de priorité du formateur) :
+${lines}
+
+Instructions de pondération :
+- Compétences marquées 'à_renforcer' : générer 40% de questions supplémentaires sur ces points, ou augmenter la difficulté d'un palier.
+- Compétences en position 1 et 2 : priorité maximale dans la génération.
+- Compétences en position 3 et suivantes : volume standard.`;
+})()}
 ${gabaritBlock}
 
 Utilise le tool fourni pour retourner le résultat.`;

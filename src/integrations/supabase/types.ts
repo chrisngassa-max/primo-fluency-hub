@@ -641,6 +641,38 @@ export type Database = {
           },
         ]
       }
+      formateur_competences_config: {
+        Row: {
+          competences_ordonnees: Json
+          formateur_id: string
+          id: string
+          seance_id: string
+          updated_at: string
+        }
+        Insert: {
+          competences_ordonnees?: Json
+          formateur_id: string
+          id?: string
+          seance_id: string
+          updated_at?: string
+        }
+        Update: {
+          competences_ordonnees?: Json
+          formateur_id?: string
+          id?: string
+          seance_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "formateur_competences_config_formateur_id_fkey"
+            columns: ["formateur_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       gabarits_pedagogiques: {
         Row: {
           bloc: string | null
