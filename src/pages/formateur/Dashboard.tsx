@@ -226,7 +226,7 @@ const FormateurDashboard = () => {
       // Try upcoming first
       const { data: upcoming } = await supabase
         .from("sessions")
-        .select("id, titre, date_seance, duree_minutes, niveau_cible, objectifs, statut, group_id")
+        .select("id, titre, date_seance, duree_minutes, niveau_cible, objectifs, statut, group_id, competences_cibles")
         .in("group_id", groupIds)
         .gte("date_seance", new Date().toISOString())
         .order("date_seance", { ascending: true })
