@@ -252,6 +252,7 @@ const TestPositionnement = () => {
     wavRecorderRef.current?.stop();
     wavRecorderRef.current = null;
     setIsRecording(false);
+    setRecordingCount((c) => c + 1);
   };
 
   const handleValidateQCM = async () => {
