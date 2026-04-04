@@ -79,38 +79,59 @@ const TTSAudioPlayer = ({ text, className = "", onPlayComplete }: TTSAudioPlayer
     }
   }, [text, audioUrl, hasReachedLimit]);
 
+  const remainingPlays = MAX_PLAYS - playCount;
+
   return (
-    <div className={`flex items-center gap-2 ${className}`}>
-      <Button
-        type="button"
-        variant={playing ? "default" : "outline"}
-        size="sm"
-        onClick={generateAndPlay}
-        disabled={loading}
-        className="gap-2"
-      >
-        {loading ? (
-          <>
-            <Loader2 className="h-4 w-4 animate-spin" />
-            Chargement…
-          </>
-        ) : playing ? (
-          <>
-            <Volume2 className="h-4 w-4 animate-pulse" />
-            Lecture en cours…
-          </>
-        ) : audioUrl ? (
-          <>
-            <RotateCcw className="h-4 w-4" />
-            Réécouter
-          </>
-        ) : (
-          <>
-            <Volume2 className="h-4 w-4" />
-            Écouter la question
-          </>
-        )}
-      </Button>
+    <div className={`flex flex-col gap-1.5 ${className}`}>
+      <div className="flex items-center gap-2">
+        <Button
+          type="button"
+          variant={playing ? "default" : "outline"}
+          size="sm"
+          onClick={generateAndPlay}
+          disabled={loading || hasReachedLimit}
+          className="gap-2"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Chargement…
+            </>
+          ) : playing ? (
+            <>
+              <Volume2 className="h-4 w-4 animate-pulse" />
+              Lecture en cours…
+            </>
+          ) : hasReachedLimit ? (
+            <>
+              <Volume2 className="h-4 w-4 opacity-50" />
+              Écoutes épuisées
+            </>
+          ) : audioUrl ? (
+            <>
+              <RotateCcw className="h-4 w-4" />
+              Réécouter
+            </>
+          ) : (
+            <>
+              <Volume2 className="h-4 w-4" />
+              Écouter
+            </>
+          )}
+        </Button>
+      </div>
+      {!hasReachedLimit && (
+        <p className="text-xs text-muted-foreground">
+          {playCount === 0
+            ? `Vous pouvez écouter ${MAX_PLAYS} fois`
+            : `Il vous reste ${remainingPlays} écoute${remainingPlays > 1 ? "s" : ""}`}
+        </p>
+      )}
+      {hasReachedLimit && (
+        <p className="text-xs text-destructive">
+          Vous avez utilisé vos {MAX_PLAYS} écoutes
+        </p>
+      )}
     </div>
   );
 };
