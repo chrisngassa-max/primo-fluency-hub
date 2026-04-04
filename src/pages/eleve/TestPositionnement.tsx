@@ -808,36 +808,5 @@ const TestPositionnement = () => {
 };
 
 export default TestPositionnement;
-    <div className="max-w-2xl mx-auto space-y-6 p-4">
-      <h1 className="text-2xl font-bold text-foreground">
-        Test de positionnement
-      </h1>
-      <Card>
-        <CardContent className="pt-6 space-y-4">
-          <p className="text-base text-muted-foreground">
-            Ce test permet de connaître votre niveau de français. Il dure environ
-            20 minutes.
-          </p>
-          <p className="text-sm text-muted-foreground">
-            Vous passerez 4 épreuves : Compréhension orale, Compréhension
-            écrite, Expression orale et Expression écrite.
-          </p>
-          <Button
-            className="w-full"
-            size="lg"
-            onClick={handleStart}
-            disabled={existingSession?.statut === "termine"}
-          >
-            {existingSession?.statut === "en_cours"
-              ? "Reprendre le test"
-              : existingSession?.statut === "termine"
-              ? "Test déjà terminé"
-              : "Commencer le test"}
-          </Button>
-        </CardContent>
-      </Card>
-    </div>
-  );
-};
 
 export default TestPositionnement;
