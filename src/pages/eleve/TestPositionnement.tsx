@@ -381,7 +381,10 @@ const TestPositionnement = () => {
         { body: { audioBase64: base64Data } }
       );
 
-      if (sttError || !sttData?.transcript) {
+      console.log("STT response:", { sttData, sttError });
+
+      if (sttError) {
+        console.error("STT invocation error:", sttError);
         toast({
           title: "Serveur vocal indisponible",
           description: "Veuillez réessayer.",
@@ -390,7 +393,9 @@ const TestPositionnement = () => {
         setIsSubmitting(false);
         return;
       }
-      transcription = sttData.transcript;
+
+      // Empty transcript is OK — it means no speech was detected
+      transcription = sttData?.transcript || "(Aucune parole détectée)";
     } catch (sttErr) {
       console.error("STT error:", sttErr);
       toast({
