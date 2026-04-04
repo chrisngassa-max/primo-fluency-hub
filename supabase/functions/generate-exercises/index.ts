@@ -91,12 +91,22 @@ La "question" de chaque item sert uniquement de consigne ("Écoutez l'audio et r
 | CO3  | Consignes / Règles      | Instruction directe : "Veuillez patienter…", "Signez le…"   | 45 s      |
 | CO4  | Info chiffrée           | Annonce micro : horaires train, prix au marché, n° de quai  | 50 s      |
 
-### COMPRÉHENSION ÉCRITE (CE) — texte support obligatoire
+### COMPRÉHENSION ÉCRITE (CE) — texte support + image OBLIGATOIRES
 Le champ "texte" est OBLIGATOIRE : panneau, SMS, emploi du temps, courrier…
 Le texte doit reproduire fidèlement le document (badge, panneau, courrier, SMS, menu, etc.) avec un formatage clair.
 Par exemple pour un badge : "NOM : TRAORÉ | PRÉNOM : Moussa | NATIONALITÉ : Malienne | VILLE : Lyon"
 Pour un panneau : "🚫 INTERDIT DE FUMER | Zone non-fumeur"
 Le texte est le SEUL support visible par l'élève — il DOIT contenir TOUTES les informations nécessaires pour répondre aux questions.
+
+⚠️ CHAMP "image_description" OBLIGATOIRE POUR TOUT EXERCICE CE ⚠️
+Tu DOIS fournir un champ "image_description" décrivant précisément le document visuel correspondant au texte support.
+Exemples :
+- CE1 (Signalétique) : "Un panneau de signalisation urbain indiquant une zone non-fumeur à l'entrée d'un bâtiment public en France"
+- CE2 (Messages) : "Un écran de téléphone portable montrant une conversation SMS en français entre deux amis"
+- CE3 (Recherche info) : "Un menu de restaurant français affiché sur un tableau noir avec les plats du jour et les prix"
+- CE4 (Administratif) : "Un courrier officiel de la préfecture française avec en-tête et tampon administratif, concernant un titre de séjour"
+- Carte de résident : "Une carte de résident française officielle avec photo d'identité, nom, prénom, nationalité et date de validité"
+L'image sera automatiquement récupérée via une banque d'images. La description doit être SPÉCIFIQUE au document mentionné dans l'exercice.
 
 | Code | Sous-compétence       | Type de document                                            | Durée max |
 |------|-----------------------|--------------------------------------------------------------|-----------|
