@@ -67,12 +67,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     );
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        fetchRole(session.user.id);
-        fetchProfileStatus(session.user.id);
+        await Promise.all([
+          fetchRole(session.user.id),
+          fetchProfileStatus(session.user.id),
+        ]);
       }
       setLoading(false);
     });
