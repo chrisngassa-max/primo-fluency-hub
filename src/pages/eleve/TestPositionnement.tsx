@@ -179,12 +179,85 @@ const TestPositionnement = () => {
   const handleStart = async () => {
     if (!user?.id) return;
 
-    // If there's an in-progress session, resume
+    // If there's an in-progress session, resume at exact position
     if (existingSession && existingSession.statut === "en_cours") {
+      // Fetch all existing responses to determine exact position
+      const { data: existingResponses } = await supabase
+        .from("test_reponses")
+        .select("question_id, competence, palier")
+        .eq("session_id", existingSession.id);
+
+      const answeredIds = new Set((existingResponses ?? []).map(r => r.question_id));
+
+      // Determine which competence/palier the student was on from the session
+      const sessionPaliers = {
+        co: existingSession.palier_co ?? 1,
+        ce: existingSession.palier_ce ?? 1,
+        eo: existingSession.palier_eo ?? 1,
+        ee: existingSession.palier_ee ?? 1,
+      };
+
+      // Find the first competence that isn't fully done
+      let resumeCompIndex = 0;
+      let resumePalier = 1;
+      let resumeQuestionIndex = 0;
+      let resumeQuestions: TestQuestion[] = [];
+
+      for (let ci = 0; ci < COMPETENCE_ORDER.length; ci++) {
+        const comp = COMPETENCE_ORDER[ci];
+        const compKey = comp.toLowerCase() as "co" | "ce" | "eo" | "ee";
+        const palier = sessionPaliers[compKey];
+
+        // Load questions for this competence/palier
+        const qs = await loadQuestions(comp, palier);
+
+        // Find first unanswered question in this set
+        const firstUnanswered = qs.findIndex(q => !answeredIds.has(q.id));
+
+        if (firstUnanswered !== -1) {
+          // Found where to resume
+          resumeCompIndex = ci;
+          resumePalier = palier;
+          resumeQuestionIndex = firstUnanswered;
+          resumeQuestions = qs;
+
+          // Rebuild palierScores from already-answered questions in this palier
+          const palierResponses = (existingResponses ?? []).filter(
+            r => r.competence === comp && r.palier === palier
+          );
+
+          const state: SessionState = {
+            sessionId: existingSession.id,
+            competenceIndex: resumeCompIndex,
+            palier: resumePalier,
+            questionIndex: resumeQuestionIndex,
+            palierScores: Array(palierResponses.length).fill(0), // placeholder scores
+            paliersFinal: { co: 1, ce: 1, eo: 1, ee: 1 },
+            scores: {
+              co: existingSession.score_co ?? 0,
+              ce: existingSession.score_ce ?? 0,
+              eo: existingSession.score_eo ?? 0,
+              ee: existingSession.score_ee ?? 0,
+            },
+          };
+          setSessionState(state);
+          setQuestions(resumeQuestions);
+          setScreen("question");
+          return;
+        }
+        // All questions answered for this competence/palier — check if competence was finished
+        // (the palier in the session might have advanced already, so continue to next competence)
+      }
+
+      // If we get here, all questions are answered — the test might be effectively done
+      // but the session wasn't marked as complete. Start from the last competence.
+      const lastComp = COMPETENCE_ORDER[COMPETENCE_ORDER.length - 1];
+      const lastKey = lastComp.toLowerCase() as "co" | "ce" | "eo" | "ee";
+      const qs = await loadQuestions(lastComp, sessionPaliers[lastKey]);
       const state: SessionState = {
         sessionId: existingSession.id,
-        competenceIndex: 0,
-        palier: existingSession.palier_co ?? 1,
+        competenceIndex: COMPETENCE_ORDER.length - 1,
+        palier: sessionPaliers[lastKey],
         questionIndex: 0,
         palierScores: [],
         paliersFinal: { co: 1, ce: 1, eo: 1, ee: 1 },
@@ -196,18 +269,8 @@ const TestPositionnement = () => {
         },
       };
       setSessionState(state);
-      const qs = await loadQuestions("CO", state.palier);
       setQuestions(qs);
-      if (qs.length > 0) {
-        setScreen("question");
-      } else {
-        toast({
-          title: "Aucune question disponible",
-          description:
-            "Les questions du test n'ont pas encore été ajoutées.",
-          variant: "destructive",
-        });
-      }
+      if (qs.length > 0) setScreen("question");
       return;
     }
 
