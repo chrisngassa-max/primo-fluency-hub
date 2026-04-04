@@ -605,7 +605,7 @@ const TestPositionnement = () => {
             {currentQuestion.script_audio && (
               <div className="rounded-lg border bg-primary/5 border-primary/20 p-4">
                 <p className="text-xs text-primary mb-2 uppercase tracking-wide font-semibold">🔊 Écoute audio</p>
-                <TTSAudioPlayer text={currentQuestion.script_audio} />
+                <TTSAudioPlayer key={currentQuestion.id} text={currentQuestion.script_audio} />
               </div>
             )}
 
