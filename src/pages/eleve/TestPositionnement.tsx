@@ -244,17 +244,41 @@ const TestPositionnement = () => {
 
   const startRecording = async () => {
     try {
+      if (!navigator.mediaDevices?.getUserMedia) {
+        throw new Error("unsupported");
+      }
+
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+        },
+      });
+
       const { startWavRecording } = await import("@/lib/audioRecorder");
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const recorder = startWavRecording(stream, (blob) => {
         setAudioBlob(blob);
       });
+
       wavRecorderRef.current = recorder;
       setIsRecording(true);
-    } catch {
+    } catch (error) {
+      console.error("Microphone access error:", error);
+
+      const errorName = error instanceof DOMException ? error.name : "";
+      const description =
+        errorName === "NotAllowedError"
+          ? "L'accès au micro a été refusé. Sur iPhone, autorisez le microphone dans Safari puis réessayez."
+          : errorName === "NotFoundError"
+            ? "Aucun microphone n'a été détecté sur cet appareil."
+            : errorName === "NotReadableError"
+              ? "Le microphone est déjà utilisé par une autre application."
+              : "Impossible d'accéder au microphone sur cet appareil.";
+
       toast({
         title: "Microphone",
-        description: "Impossible d'accéder au microphone.",
+        description,
         variant: "destructive",
       });
     }
