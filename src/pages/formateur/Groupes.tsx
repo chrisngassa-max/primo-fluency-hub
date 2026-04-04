@@ -28,8 +28,12 @@ import {
 import { toast } from "sonner";
 import {
   Plus, Users, Trash2, Edit, UserPlus, UserMinus, Loader2,
-  Copy, Check, Eye, ChevronRight, Ticket, Mail, Search,
+  Copy, Check, Eye, ChevronRight, Ticket, Mail, Search, ArrowRightLeft, PlusCircle,
 } from "lucide-react";
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem,
+  DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuLabel,
+} from "@/components/ui/dropdown-menu";
 import InviteStudentDialog from "@/components/InviteStudentDialog";
 
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
@@ -259,6 +263,53 @@ const GroupesPage = () => {
     } catch (e: any) {
       toast.error("Erreur", { description: e.message });
     }
+  };
+
+  // Reassign student: move from current group to new group
+  const handleReassign = async (membershipId: string, eleveId: string, newGroupId: string) => {
+    try {
+      const { error } = await supabase
+        .from("group_members")
+        .update({ group_id: newGroupId })
+        .eq("id", membershipId);
+      if (error) throw error;
+      toast.success("Élève réassigné au nouveau groupe !");
+      qc.invalidateQueries({ queryKey: ["all-group-members"] });
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    }
+  };
+
+  // Add student to an additional group
+  const handleAddToGroup = async (eleveId: string, newGroupId: string) => {
+    try {
+      // Check if already in that group
+      const existing = (allMembers ?? []).find((m: any) => m.eleve_id === eleveId && m.group_id === newGroupId);
+      if (existing) {
+        toast.warning("L'élève est déjà dans ce groupe.");
+        return;
+      }
+      const { error } = await supabase.from("group_members").insert({
+        eleve_id: eleveId,
+        group_id: newGroupId,
+      });
+      if (error) throw error;
+      toast.success("Élève ajouté au groupe !");
+      qc.invalidateQueries({ queryKey: ["all-group-members"] });
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    }
+  };
+
+  // Get all groups for a specific student
+  const getStudentGroups = (eleveId: string) => {
+    return (allMembers ?? [])
+      .filter((m: any) => m.eleve_id === eleveId)
+      .map((m: any) => ({
+        membershipId: m.id,
+        groupId: m.group_id,
+        group: (groups ?? []).find((g) => g.id === m.group_id),
+      }));
   };
 
   const copyToClipboard = async (text: string, field: string) => {
@@ -534,48 +585,104 @@ const GroupesPage = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {sortedStudents
-                      .filter((m: any) => {
-                        if (!searchQuery.trim()) return true;
-                        const q = searchQuery.toLowerCase();
-                        return (m.eleve?.prenom || "").toLowerCase().includes(q) || (m.eleve?.nom || "").toLowerCase().includes(q);
-                      })
-                      .map((m: any) => {
-                    const eleve = m.eleve;
-                    const group = (groups ?? []).find((g) => g.id === m.group_id);
-                    const prog = getProgress(m.eleve_id);
-                    return (
-                      <TableRow key={m.id}>
-                        <TableCell className="font-medium">{eleve?.prenom} {eleve?.nom}</TableCell>
-                        <TableCell>
-                          <code className="text-xs bg-muted px-1.5 py-0.5 rounded">{eleve?.email || "—"}</code>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{group?.nom || "—"}</Badge>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <div className="flex items-center gap-2 justify-center">
-                            <div className="w-16 h-2 rounded-full bg-muted overflow-hidden">
-                              <div
-                                className={`h-full rounded-full transition-all ${progressColor(prog)}`}
-                                style={{ width: `${Math.max(prog, 4)}%` }}
-                              />
-                            </div>
-                            <span className="text-xs text-muted-foreground w-8">{prog}%</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Button
-                            variant="ghost" size="icon" className="h-7 w-7"
-                            onClick={() => navigate(`/formateur/eleves/${m.eleve_id}`)}
-                            title="Voir le dossier"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
+                    {(() => {
+                      // Deduplicate students (they may appear in multiple groups)
+                      const seen = new Set<string>();
+                      return sortedStudents
+                        .filter((m: any) => {
+                          if (seen.has(m.eleve_id)) return false;
+                          seen.add(m.eleve_id);
+                          if (!searchQuery.trim()) return true;
+                          const q = searchQuery.toLowerCase();
+                          return (m.eleve?.prenom || "").toLowerCase().includes(q) || (m.eleve?.nom || "").toLowerCase().includes(q);
+                        })
+                        .map((m: any) => {
+                          const eleve = m.eleve;
+                          const studentGroups = getStudentGroups(m.eleve_id);
+                          const otherGroups = (groups ?? []).filter(
+                            (g) => !studentGroups.some((sg) => sg.groupId === g.id)
+                          );
+                          const prog = getProgress(m.eleve_id);
+                          return (
+                            <TableRow key={m.eleve_id}>
+                              <TableCell className="font-medium">{eleve?.prenom} {eleve?.nom}</TableCell>
+                              <TableCell>
+                                <code className="text-xs bg-muted px-1.5 py-0.5 rounded">{eleve?.email || "—"}</code>
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex flex-wrap items-center gap-1">
+                                  {studentGroups.map((sg) => (
+                                    <DropdownMenu key={sg.membershipId}>
+                                      <DropdownMenuTrigger asChild>
+                                        <button className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md border text-xs font-medium hover:bg-muted transition-colors cursor-pointer">
+                                          {sg.group?.nom || "—"}
+                                          <ArrowRightLeft className="h-3 w-3 text-muted-foreground" />
+                                        </button>
+                                      </DropdownMenuTrigger>
+                                      <DropdownMenuContent align="start" className="min-w-[180px]">
+                                        <DropdownMenuLabel className="text-xs">Réassigner vers...</DropdownMenuLabel>
+                                        <DropdownMenuSeparator />
+                                        {(groups ?? []).filter((g) => g.id !== sg.groupId).map((g) => (
+                                          <DropdownMenuItem key={g.id} onClick={() => handleReassign(sg.membershipId, m.eleve_id, g.id)}>
+                                            <ArrowRightLeft className="h-3.5 w-3.5 mr-2 text-muted-foreground" />
+                                            {g.nom} <Badge variant="secondary" className="ml-auto text-[10px]">{g.niveau}</Badge>
+                                          </DropdownMenuItem>
+                                        ))}
+                                        {(groups ?? []).filter((g) => g.id !== sg.groupId).length === 0 && (
+                                          <DropdownMenuItem disabled className="text-xs text-muted-foreground">Aucun autre groupe</DropdownMenuItem>
+                                        )}
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem className="text-destructive" onClick={() => handleRemoveMember(sg.membershipId)}>
+                                          <UserMinus className="h-3.5 w-3.5 mr-2" />Retirer de {sg.group?.nom}
+                                        </DropdownMenuItem>
+                                      </DropdownMenuContent>
+                                    </DropdownMenu>
+                                  ))}
+                                  {otherGroups.length > 0 && (
+                                    <DropdownMenu>
+                                      <DropdownMenuTrigger asChild>
+                                        <button className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md border border-dashed text-xs text-muted-foreground hover:bg-muted transition-colors cursor-pointer" title="Ajouter à un groupe">
+                                          <PlusCircle className="h-3 w-3" />
+                                        </button>
+                                      </DropdownMenuTrigger>
+                                      <DropdownMenuContent align="start" className="min-w-[180px]">
+                                        <DropdownMenuLabel className="text-xs">Ajouter au groupe...</DropdownMenuLabel>
+                                        <DropdownMenuSeparator />
+                                        {otherGroups.map((g) => (
+                                          <DropdownMenuItem key={g.id} onClick={() => handleAddToGroup(m.eleve_id, g.id)}>
+                                            <PlusCircle className="h-3.5 w-3.5 mr-2 text-muted-foreground" />
+                                            {g.nom} <Badge variant="secondary" className="ml-auto text-[10px]">{g.niveau}</Badge>
+                                          </DropdownMenuItem>
+                                        ))}
+                                      </DropdownMenuContent>
+                                    </DropdownMenu>
+                                  )}
+                                </div>
+                              </TableCell>
+                              <TableCell className="text-center">
+                                <div className="flex items-center gap-2 justify-center">
+                                  <div className="w-16 h-2 rounded-full bg-muted overflow-hidden">
+                                    <div
+                                      className={`h-full rounded-full transition-all ${progressColor(prog)}`}
+                                      style={{ width: `${Math.max(prog, 4)}%` }}
+                                    />
+                                  </div>
+                                  <span className="text-xs text-muted-foreground w-8">{prog}%</span>
+                                </div>
+                              </TableCell>
+                              <TableCell className="text-center">
+                                <Button
+                                  variant="ghost" size="icon" className="h-7 w-7"
+                                  onClick={() => navigate(`/formateur/eleves/${m.eleve_id}`)}
+                                  title="Voir le dossier"
+                                >
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        });
+                    })()}
                 </TableBody>
               </Table>
               </div>
