@@ -53,7 +53,7 @@ import {
   BookOpen, Minus, Plus, Loader2, Sparkles, Pencil, Trash2, CirclePlus, Circle,
   AlertTriangle, RotateCcw, ClipboardCheck, FileText, Users, Brain, Target,
   Eye, Volume2, ChevronDown, ChevronLeft, ChevronRight, Drama, Package, MessageCircle, Wand2,
-  Rocket,
+  Rocket, Copy, Send, UserCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/DifficultyBadge";
@@ -103,6 +103,11 @@ const SessionPilot = () => {
   const [previewExercise, setPreviewExercise] = useState<any>(null);
   const [previewPage, setPreviewPage] = useState(0);
   const [animationGuide, setAnimationGuide] = useState<any>(null);
+
+  // Duplicate & send to individual students
+  const [duplicateExercise, setDuplicateExercise] = useState<any>(null);
+  const [duplicateStudentIds, setDuplicateStudentIds] = useState<string[]>([]);
+  const [duplicating, setDuplicating] = useState(false);
 
   const { data: session } = useQuery({
     queryKey: ["session-info", id],
@@ -283,6 +288,21 @@ const SessionPilot = () => {
         .gt("date_seance", session.date_seance)
         .order("date_seance", { ascending: true })
         .limit(10);
+      return data ?? [];
+    },
+    enabled: !!session,
+  });
+
+  // Fetch group members for duplicate & send
+  const { data: groupMembers } = useQuery({
+    queryKey: ["group-members-for-dup", session?.group_id],
+    queryFn: async () => {
+      const groupId = (session as any)?.group?.id || session!.group_id;
+      const { data, error } = await supabase
+        .from("group_members")
+        .select("eleve_id, eleve:profiles(id, nom, prenom)")
+        .eq("group_id", groupId);
+      if (error) throw error;
       return data ?? [];
     },
     enabled: !!session,
@@ -626,6 +646,81 @@ const SessionPilot = () => {
     } catch (e: any) {
       toast.error("Erreur de génération", { description: e.message });
       throw e;
+    }
+  };
+
+  // ─── Duplicate exercise & send to individual students ───
+  const handleDuplicateAndSend = async () => {
+    if (!duplicateExercise || duplicateStudentIds.length === 0 || !user || !session) return;
+    setDuplicating(true);
+    try {
+      const ex = duplicateExercise;
+      // Generate new exercise with same params but fresh items
+      const { data: genData, error: genError } = await supabase.functions.invoke("generate-exercises", {
+        body: {
+          pointName: ex.titre || "Exercice individuel",
+          competence: ex.competence,
+          niveauVise: ex.niveau_vise || session.niveau_cible || "A1",
+          count: 1,
+        },
+      });
+      if (genError) throw genError;
+      if (genData?.error) throw new Error(genData.error);
+
+      const generated = genData?.exercises?.[0];
+      if (!generated) throw new Error("Aucun exercice généré");
+
+      // Create one exercise per student with fresh items
+      const { data: defaultPoint } = await supabase
+        .from("points_a_maitriser")
+        .select("id")
+        .limit(1)
+        .single();
+
+      for (const studentId of duplicateStudentIds) {
+        // Insert a new exercise specifically for this student
+        const { data: newEx, error: exErr } = await supabase
+          .from("exercices")
+          .insert({
+            titre: `${generated.titre || ex.titre} (individuel)`,
+            consigne: generated.consigne || ex.consigne,
+            competence: ex.competence,
+            format: (generated.format || ex.format || "qcm") as any,
+            difficulte: generated.difficulte || ex.difficulte || 3,
+            contenu: generated.contenu || {},
+            animation_guide: generated.animation_guide || null,
+            niveau_vise: ex.niveau_vise || session.niveau_cible || "A1",
+            formateur_id: user.id,
+            point_a_maitriser_id: ex.point_a_maitriser_id || defaultPoint?.id,
+            is_ai_generated: true,
+            is_template: false,
+            is_devoir: true,
+            eleve_id: studentId,
+          })
+          .select("id")
+          .single();
+        if (exErr) throw exErr;
+
+        // Create a devoir for this student
+        const { error: devErr } = await supabase.from("devoirs").insert({
+          eleve_id: studentId,
+          exercice_id: newEx!.id,
+          formateur_id: user.id,
+          raison: "consolidation" as const,
+          statut: "en_attente" as const,
+          session_id: id,
+        });
+        if (devErr) throw devErr;
+      }
+
+      toast.success(`Exercice dupliqué et envoyé à ${duplicateStudentIds.length} élève(s) !`);
+      setDuplicateExercise(null);
+      setDuplicateStudentIds([]);
+    } catch (e: any) {
+      console.error(e);
+      toast.error("Erreur de duplication", { description: e.message });
+    } finally {
+      setDuplicating(false);
     }
   };
 
@@ -1478,6 +1573,10 @@ ${ficheHtml}</body></html>`;
                         <Button variant="outline" size="sm" className="gap-1 text-destructive border-destructive/30 hover:bg-destructive/10" onClick={() => setDeleteSeId(se.id)}>
                           <Trash2 className="h-3.5 w-3.5" />Supprimer
                         </Button>
+                        <Button variant="outline" size="sm" className="gap-1 text-primary border-primary/30 hover:bg-primary/10"
+                          onClick={() => { setDuplicateExercise(ex); setDuplicateStudentIds([]); }}>
+                          <Copy className="h-3.5 w-3.5" />Dupliquer & Envoyer
+                        </Button>
                       </div>
                     </div>
                   </AccordionContent>
@@ -1725,6 +1824,72 @@ ${ficheHtml}</body></html>`;
                   </Button>
                 </div>
               )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* ─── Duplicate & Send Dialog ─── */}
+      <Dialog open={!!duplicateExercise} onOpenChange={(open) => { if (!open) { setDuplicateExercise(null); setDuplicateStudentIds([]); } }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Copy className="h-4 w-4 text-primary" />
+              Dupliquer & Envoyer
+            </DialogTitle>
+            <DialogDescription>
+              L'IA va générer un exercice similaire avec des items différents et l'envoyer comme devoir individuel aux élèves sélectionnés.
+            </DialogDescription>
+          </DialogHeader>
+          {duplicateExercise && (
+            <div className="space-y-4 pt-2">
+              <Card className="bg-muted/30">
+                <CardContent className="pt-3 pb-3">
+                  <p className="text-sm font-medium">{duplicateExercise.titre}</p>
+                  <div className="flex gap-2 mt-1">
+                    <Badge variant="secondary" className="text-xs">{duplicateExercise.competence}</Badge>
+                    <Badge variant="outline" className="text-xs">{duplicateExercise.format}</Badge>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-semibold">Sélectionnez les élèves :</Label>
+                <div className="flex items-center gap-2 mb-2">
+                  <Button variant="ghost" size="sm" className="text-xs"
+                    onClick={() => {
+                      const allIds = (groupMembers ?? []).map((m: any) => m.eleve_id);
+                      setDuplicateStudentIds(duplicateStudentIds.length === allIds.length ? [] : allIds);
+                    }}>
+                    <UserCheck className="h-3 w-3 mr-1" />
+                    {duplicateStudentIds.length === (groupMembers ?? []).length ? "Tout désélectionner" : "Tout sélectionner"}
+                  </Button>
+                </div>
+                <div className="max-h-48 overflow-y-auto space-y-1 border rounded-md p-2">
+                  {(groupMembers ?? []).map((m: any) => (
+                    <label key={m.eleve_id} className="flex items-center gap-2 p-1.5 rounded hover:bg-muted/50 cursor-pointer">
+                      <Checkbox
+                        checked={duplicateStudentIds.includes(m.eleve_id)}
+                        onCheckedChange={(checked) => {
+                          setDuplicateStudentIds(prev =>
+                            checked ? [...prev, m.eleve_id] : prev.filter(id => id !== m.eleve_id)
+                          );
+                        }}
+                      />
+                      <span className="text-sm">{m.eleve?.prenom} {m.eleve?.nom}</span>
+                    </label>
+                  ))}
+                  {(!groupMembers || groupMembers.length === 0) && (
+                    <p className="text-sm text-muted-foreground text-center py-4">Aucun élève dans ce groupe.</p>
+                  )}
+                </div>
+              </div>
+
+              <Button className="w-full gap-2" disabled={duplicateStudentIds.length === 0 || duplicating}
+                onClick={handleDuplicateAndSend}>
+                {duplicating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                {duplicating ? "Génération en cours…" : `Envoyer à ${duplicateStudentIds.length} élève(s)`}
+              </Button>
             </div>
           )}
         </DialogContent>
