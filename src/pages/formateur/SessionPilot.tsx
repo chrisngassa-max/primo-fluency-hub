@@ -1573,6 +1573,10 @@ ${ficheHtml}</body></html>`;
                         <Button variant="outline" size="sm" className="gap-1 text-destructive border-destructive/30 hover:bg-destructive/10" onClick={() => setDeleteSeId(se.id)}>
                           <Trash2 className="h-3.5 w-3.5" />Supprimer
                         </Button>
+                        <Button variant="outline" size="sm" className="gap-1 text-primary border-primary/30 hover:bg-primary/10"
+                          onClick={() => { setDuplicateExercise(ex); setDuplicateStudentIds([]); }}>
+                          <Copy className="h-3.5 w-3.5" />Dupliquer & Envoyer
+                        </Button>
                       </div>
                     </div>
                   </AccordionContent>
