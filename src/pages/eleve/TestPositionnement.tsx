@@ -580,6 +580,27 @@ const TestPositionnement = () => {
     }
   };
 
+  const leaveConfirmDialog = (
+    <AlertDialog open={blocker.state === "blocked"}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Êtes-vous sûr de vouloir quitter ?</AlertDialogTitle>
+          <AlertDialogDescription>
+            Votre test est en cours. Si vous quittez maintenant, vous pourrez le reprendre plus tard, mais votre progression actuelle sur cette question sera perdue.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel onClick={() => blocker.reset?.()}>
+            Rester sur le test
+          </AlertDialogCancel>
+          <AlertDialogAction onClick={() => blocker.proceed?.()}>
+            Quitter quand même
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+
   if (isLoading) {
     return (
       <div className="max-w-2xl mx-auto space-y-4 p-4">
