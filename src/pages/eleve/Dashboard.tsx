@@ -318,7 +318,7 @@ const EleveDashboard = () => {
                   Commence par évaluer ton niveau
                 </h3>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Passe le test de positionnement (~60-90 min · 80 questions) pour que CAP TCF adapte ton
+                  Passe le test de positionnement adaptatif (~20 min · 4 compétences) pour que CAP TCF adapte ton
                   programme à ton niveau réel.
                 </p>
                 <Button

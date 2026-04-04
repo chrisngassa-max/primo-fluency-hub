@@ -133,6 +133,15 @@ const TestPositionnement = () => {
     }
   }, [existingResults]);
 
+  // Auto-start: skip accueil screen and go directly to questions
+  useEffect(() => {
+    if (autoStartRef.current || isLoading) return;
+    if (existingResults) return; // already completed → show results
+    if (screen !== "accueil") return; // already advanced
+    autoStartRef.current = true;
+    handleStart();
+  }, [isLoading, existingResults, existingSession]);
+
   const loadQuestions = useCallback(
     async (competence: string, palier: number) => {
       const { data, error } = await supabase
