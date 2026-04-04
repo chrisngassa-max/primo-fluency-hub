@@ -16,7 +16,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Plus, Calendar, Loader2, BookOpen, Pencil, Copy, Rocket, Trash2 } from "lucide-react";
+import { Plus, Calendar, Loader2, BookOpen, Pencil, Copy, Rocket, Trash2, Route, ArrowRight, Target, Clock } from "lucide-react";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
