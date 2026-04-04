@@ -849,6 +849,14 @@ ${sessionExercises.map((ex: any, i: number) => `
                 </CardContent>
               </Card>
 
+              {/* Micro-compétences ciblées */}
+              <MicroCompetencesPanel
+                sessionId={nextSession.id}
+                competencesCibles={nextSession.competences_cibles || []}
+                formateurId={user!.id}
+                onConfigChange={(config) => { microCompConfigRef.current = config; }}
+              />
+
               {/* Progress bar */}
               {sessionExercises.length > 0 && (
                 <Card>
