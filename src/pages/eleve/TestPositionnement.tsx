@@ -366,6 +366,7 @@ const TestPositionnement = () => {
     await advanceToNext(evaluation.score);
     setAudioBlob(null);
     setAiEvaluation(null);
+    setRecordingCount(0);
     setIsSubmitting(false);
   };
 
