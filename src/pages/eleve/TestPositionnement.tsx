@@ -58,6 +58,7 @@ const TestPositionnement = () => {
   const navigate = useNavigate();
   const [screen, setScreen] = useState<Screen>("accueil");
   const [sessionState, setSessionState] = useState<SessionState | null>(null);
+  const autoStartRef = useRef(false);
   const [questions, setQuestions] = useState<TestQuestion[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState("");
   const [writtenAnswer, setWrittenAnswer] = useState("");
