@@ -12,12 +12,20 @@ import {
   RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,
   ResponsiveContainer,
 } from "recharts";
-import { TrendingUp, BookOpen, Award, CalendarCheck, Mail, KeyRound, Copy } from "lucide-react";
+import { TrendingUp, BookOpen, Award, CalendarCheck, Mail, KeyRound, Copy, Users, ArrowRightLeft, PlusCircle, X } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 import CompetenceLabel from "@/components/CompetenceLabel";
 import { StudentPacingCard } from "@/components/PacingTracker";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 const COMPETENCES = ["CO", "CE", "EE", "EO", "Structures"] as const;
 
