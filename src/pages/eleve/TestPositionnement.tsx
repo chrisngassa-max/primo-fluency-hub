@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useNavigate, useBlocker } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import type { TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -58,6 +59,7 @@ interface SessionState {
   competenceIndex: number;
   palier: number;
   questionIndex: number;
+  currentResponseId: string | null;
   palierScores: number[];
   paliersFinal: { co: number; ce: number; eo: number; ee: number };
   scores: { co: number; ce: number; eo: number; ee: number };
@@ -99,20 +101,97 @@ const TestPositionnement = () => {
 
   const blocker = useBlocker(isTestInProgress);
 
+  const getPreferredSession = useCallback(async () => {
+    if (!user?.id) return null;
+
+    const { data: sessions, error } = await supabase
+      .from("test_sessions")
+      .select("*")
+      .eq("apprenant_id", user.id)
+      .order("date_debut", { ascending: false });
+
+    if (error || !sessions?.length) return null;
+
+    const sessionIds = sessions.map((session) => session.id);
+    const { data: responses } = await supabase
+      .from("test_reponses")
+      .select("session_id, date_reponse, score_obtenu")
+      .in("session_id", sessionIds)
+      .order("date_reponse", { ascending: false });
+
+    const activityBySession = new Map<
+      string,
+      {
+        answeredCount: number;
+        draftCount: number;
+        latestResponseAt: string | null;
+      }
+    >();
+
+    sessions.forEach((session) => {
+      activityBySession.set(session.id, {
+        answeredCount: 0,
+        draftCount: 0,
+        latestResponseAt: null,
+      });
+    });
+
+    (responses ?? []).forEach((response) => {
+      const entry = activityBySession.get(response.session_id);
+      if (!entry) return;
+
+      if (response.score_obtenu === null) {
+        entry.draftCount += 1;
+      } else {
+        entry.answeredCount += 1;
+      }
+
+      if (
+        response.date_reponse &&
+        (!entry.latestResponseAt ||
+          new Date(response.date_reponse).getTime() >
+            new Date(entry.latestResponseAt).getTime())
+      ) {
+        entry.latestResponseAt = response.date_reponse;
+      }
+    });
+
+    return [...sessions].sort((a, b) => {
+      const aStats = activityBySession.get(a.id);
+      const bStats = activityBySession.get(b.id);
+      const aInProgress = a.statut === "en_cours" ? 1 : 0;
+      const bInProgress = b.statut === "en_cours" ? 1 : 0;
+
+      if (aInProgress !== bInProgress) return bInProgress - aInProgress;
+
+      const aHasProgress =
+        (aStats?.answeredCount ?? 0) + (aStats?.draftCount ?? 0) > 0 ? 1 : 0;
+      const bHasProgress =
+        (bStats?.answeredCount ?? 0) + (bStats?.draftCount ?? 0) > 0 ? 1 : 0;
+
+      if (aHasProgress !== bHasProgress) return bHasProgress - aHasProgress;
+
+      if ((aStats?.answeredCount ?? 0) !== (bStats?.answeredCount ?? 0)) {
+        return (bStats?.answeredCount ?? 0) - (aStats?.answeredCount ?? 0);
+      }
+
+      const aActivity = new Date(
+        aStats?.latestResponseAt ?? a.date_debut ?? 0
+      ).getTime();
+      const bActivity = new Date(
+        bStats?.latestResponseAt ?? b.date_debut ?? 0
+      ).getTime();
+
+      if (aActivity !== bActivity) return bActivity - aActivity;
+
+      return new Date(b.date_debut ?? 0).getTime() - new Date(a.date_debut ?? 0).getTime();
+    })[0] ?? null;
+  }, [user?.id]);
+
   // Check existing session
   const { data: existingSession, isLoading } = useQuery({
     queryKey: ["test-positionnement-session", user?.id],
-    queryFn: async () => {
-      if (!user?.id) return null;
-      const { data } = await supabase
-        .from("test_sessions")
-        .select("*")
-        .eq("apprenant_id", user.id)
-        .order("date_debut", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      return data;
-    },
+    queryFn: getPreferredSession,
     enabled: !!user?.id,
   });
 
@@ -179,29 +258,39 @@ const TestPositionnement = () => {
   const handleStart = async () => {
     if (!user?.id) return;
 
+    const resumableSession = await getPreferredSession();
+
     // If there's an in-progress session, resume at exact position
-    if (existingSession && existingSession.statut === "en_cours") {
+    if (resumableSession && resumableSession.statut === "en_cours") {
       // Fetch all existing responses to determine exact position
       const { data: existingResponses } = await supabase
         .from("test_reponses")
-        .select("question_id, competence, palier")
-        .eq("session_id", existingSession.id);
+        .select("id, question_id, competence, palier, score_obtenu, date_reponse")
+        .eq("session_id", resumableSession.id)
+        .order("date_reponse", { ascending: true });
 
-      const answeredIds = new Set((existingResponses ?? []).map(r => r.question_id));
+      const answeredScores = new Map<string, number>();
+      const draftIds = new Map<string, string>();
+
+      (existingResponses ?? []).forEach((response) => {
+        if (response.score_obtenu === null) {
+          if (!draftIds.has(response.question_id)) {
+            draftIds.set(response.question_id, response.id);
+          }
+          return;
+        }
+
+        answeredScores.set(response.question_id, response.score_obtenu);
+        draftIds.delete(response.question_id);
+      });
 
       // Determine which competence/palier the student was on from the session
       const sessionPaliers = {
-        co: existingSession.palier_co ?? 1,
-        ce: existingSession.palier_ce ?? 1,
-        eo: existingSession.palier_eo ?? 1,
-        ee: existingSession.palier_ee ?? 1,
+        co: resumableSession.palier_co ?? 1,
+        ce: resumableSession.palier_ce ?? 1,
+        eo: resumableSession.palier_eo ?? 1,
+        ee: resumableSession.palier_ee ?? 1,
       };
-
-      // Find the first competence that isn't fully done
-      let resumeCompIndex = 0;
-      let resumePalier = 1;
-      let resumeQuestionIndex = 0;
-      let resumeQuestions: TestQuestion[] = [];
 
       for (let ci = 0; ci < COMPETENCE_ORDER.length; ci++) {
         const comp = COMPETENCE_ORDER[ci];
@@ -211,42 +300,58 @@ const TestPositionnement = () => {
         // Load questions for this competence/palier
         const qs = await loadQuestions(comp, palier);
 
-        // Find first unanswered question in this set
-        const firstUnanswered = qs.findIndex(q => !answeredIds.has(q.id));
+        let resumeQuestionIndex = -1;
+        let resumeResponseId: string | null = null;
 
-        if (firstUnanswered !== -1) {
+        for (let qi = 0; qi < qs.length; qi++) {
+          const questionId = qs[qi].id;
+
+          if (draftIds.has(questionId)) {
+            resumeQuestionIndex = qi;
+            resumeResponseId = draftIds.get(questionId) ?? null;
+            break;
+          }
+
+          if (!answeredScores.has(questionId)) {
+            resumeQuestionIndex = qi;
+            break;
+          }
+        }
+
+        if (resumeQuestionIndex !== -1) {
           // Found where to resume
-          resumeCompIndex = ci;
-          resumePalier = palier;
-          resumeQuestionIndex = firstUnanswered;
-          resumeQuestions = qs;
+          const restoredPaliersFinal = { co: 1, ce: 1, eo: 1, ee: 1 };
+          for (let completedIndex = 0; completedIndex < ci; completedIndex++) {
+            const completedComp = COMPETENCE_ORDER[completedIndex];
+            const completedKey = completedComp.toLowerCase() as "co" | "ce" | "eo" | "ee";
+            restoredPaliersFinal[completedKey] = sessionPaliers[completedKey];
+          }
 
-          // Rebuild palierScores from already-answered questions in this palier
-          const palierResponses = (existingResponses ?? []).filter(
-            r => r.competence === comp && r.palier === palier
-          );
+          const palierScores = qs
+            .slice(0, resumeQuestionIndex)
+            .map((question) => answeredScores.get(question.id))
+            .filter((score): score is number => typeof score === "number");
 
           const state: SessionState = {
-            sessionId: existingSession.id,
-            competenceIndex: resumeCompIndex,
-            palier: resumePalier,
+            sessionId: resumableSession.id,
+            competenceIndex: ci,
+            palier,
             questionIndex: resumeQuestionIndex,
-            palierScores: Array(palierResponses.length).fill(0), // placeholder scores
-            paliersFinal: { co: 1, ce: 1, eo: 1, ee: 1 },
+            currentResponseId: resumeResponseId,
+            palierScores,
+            paliersFinal: restoredPaliersFinal,
             scores: {
-              co: existingSession.score_co ?? 0,
-              ce: existingSession.score_ce ?? 0,
-              eo: existingSession.score_eo ?? 0,
-              ee: existingSession.score_ee ?? 0,
+              co: resumableSession.score_co ?? 0,
+              ce: resumableSession.score_ce ?? 0,
+              eo: resumableSession.score_eo ?? 0,
+              ee: resumableSession.score_ee ?? 0,
             },
           };
           setSessionState(state);
-          setQuestions(resumeQuestions);
+          setQuestions(qs);
           setScreen("question");
           return;
         }
-        // All questions answered for this competence/palier — check if competence was finished
-        // (the palier in the session might have advanced already, so continue to next competence)
       }
 
       // If we get here, all questions are answered — the test might be effectively done
@@ -255,17 +360,18 @@ const TestPositionnement = () => {
       const lastKey = lastComp.toLowerCase() as "co" | "ce" | "eo" | "ee";
       const qs = await loadQuestions(lastComp, sessionPaliers[lastKey]);
       const state: SessionState = {
-        sessionId: existingSession.id,
+        sessionId: resumableSession.id,
         competenceIndex: COMPETENCE_ORDER.length - 1,
         palier: sessionPaliers[lastKey],
         questionIndex: 0,
+        currentResponseId: null,
         palierScores: [],
         paliersFinal: { co: 1, ce: 1, eo: 1, ee: 1 },
         scores: {
-          co: existingSession.score_co ?? 0,
-          ce: existingSession.score_ce ?? 0,
-          eo: existingSession.score_eo ?? 0,
-          ee: existingSession.score_ee ?? 0,
+          co: resumableSession.score_co ?? 0,
+          ce: resumableSession.score_ce ?? 0,
+          eo: resumableSession.score_eo ?? 0,
+          ee: resumableSession.score_ee ?? 0,
         },
       };
       setSessionState(state);
@@ -294,6 +400,7 @@ const TestPositionnement = () => {
       competenceIndex: 0,
       palier: 1,
       questionIndex: 0,
+      currentResponseId: null,
       palierScores: [],
       paliersFinal: { co: 1, ce: 1, eo: 1, ee: 1 },
       scores: { co: 0, ce: 0, eo: 0, ee: 0 },
@@ -328,7 +435,150 @@ const TestPositionnement = () => {
     : "CO";
   const currentQuestion = questions[sessionState?.questionIndex ?? 0];
 
+  useEffect(() => {
+    if (!sessionState || !currentQuestion || screen !== "question") return;
+
+    let cancelled = false;
+
+    const ensureDraftExists = async () => {
+      const { data: existingRows } = await supabase
+        .from("test_reponses")
+        .select("id, score_obtenu")
+        .eq("session_id", sessionState.sessionId)
+        .eq("question_id", currentQuestion.id)
+        .order("date_reponse", { ascending: false });
+
+      if (cancelled) return;
+
+      const answeredRow = (existingRows ?? []).find(
+        (row) => row.score_obtenu !== null
+      );
+      if (answeredRow) return;
+
+      const draftRow = (existingRows ?? []).find(
+        (row) => row.score_obtenu === null
+      );
+
+      if (draftRow?.id) {
+        setSessionState((prev) => {
+          if (
+            !prev ||
+            prev.sessionId !== sessionState.sessionId ||
+            prev.questionIndex !== sessionState.questionIndex ||
+            prev.currentResponseId === draftRow.id
+          ) {
+            return prev;
+          }
+
+          return { ...prev, currentResponseId: draftRow.id };
+        });
+        return;
+      }
+
+      const draftPayload: TablesInsert<"test_reponses"> = {
+        session_id: sessionState.sessionId,
+        question_id: currentQuestion.id,
+        competence: currentCompetence,
+        palier: sessionState.palier,
+      };
+
+      const { data: insertedDraft } = await supabase
+        .from("test_reponses")
+        .insert(draftPayload)
+        .select("id")
+        .single();
+
+      if (cancelled || !insertedDraft?.id) return;
+
+      setSessionState((prev) => {
+        if (
+          !prev ||
+          prev.sessionId !== sessionState.sessionId ||
+          prev.questionIndex !== sessionState.questionIndex
+        ) {
+          return prev;
+        }
+
+        return { ...prev, currentResponseId: insertedDraft.id };
+      });
+    };
+
+    void ensureDraftExists();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    currentCompetence,
+    currentQuestion,
+    screen,
+    sessionState?.competenceIndex,
+    sessionState?.palier,
+    sessionState?.questionIndex,
+    sessionState?.sessionId,
+  ]);
+
   const wavRecorderRef = useRef<{ stop: () => void } | null>(null);
+
+  const persistCurrentResponse = useCallback(
+    async (payload: TablesUpdate<"test_reponses">) => {
+      if (!sessionState || !currentQuestion) {
+        return { error: new Error("missing-session") };
+      }
+
+      const basePayload: TablesInsert<"test_reponses"> = {
+        session_id: sessionState.sessionId,
+        question_id: currentQuestion.id,
+        competence: currentCompetence,
+        palier: sessionState.palier,
+        ...payload,
+      };
+
+      let responseId = sessionState.currentResponseId;
+
+      if (!responseId) {
+        const { data: existingRows } = await supabase
+          .from("test_reponses")
+          .select("id, score_obtenu")
+          .eq("session_id", sessionState.sessionId)
+          .eq("question_id", currentQuestion.id)
+          .order("date_reponse", { ascending: false });
+
+        responseId =
+          (existingRows ?? []).find((row) => row.score_obtenu === null)?.id ?? null;
+      }
+
+      if (responseId) {
+        const { error } = await supabase
+          .from("test_reponses")
+          .update(basePayload)
+          .eq("id", responseId);
+
+        if (!error) {
+          setSessionState((prev) =>
+            prev ? { ...prev, currentResponseId: responseId } : prev
+          );
+        }
+
+        return { error };
+      }
+
+      const { data, error } = await supabase
+        .from("test_reponses")
+        .insert(basePayload)
+        .select("id")
+        .single();
+
+      if (!error && data?.id) {
+        setSessionState((prev) =>
+          prev ? { ...prev, currentResponseId: data.id } : prev
+        );
+      }
+
+      return { error };
+    },
+    [currentCompetence, currentQuestion, sessionState]
+  );
 
   const startRecording = async () => {
     try {
@@ -387,11 +637,7 @@ const TestPositionnement = () => {
       selectedAnswer === currentQuestion.reponse_correcte;
     const scoreObtenu = estCorrect ? 1 : 0;
 
-    await supabase.from("test_reponses").insert({
-      session_id: sessionState.sessionId,
-      question_id: currentQuestion.id,
-      competence: currentCompetence,
-      palier: sessionState.palier,
+    await persistCurrentResponse({
       reponse_apprenant: selectedAnswer,
       est_correct: estCorrect,
       score_obtenu: scoreObtenu,
@@ -480,11 +726,7 @@ const TestPositionnement = () => {
       setAiEvaluation(evaluation);
     }
 
-    await supabase.from("test_reponses").insert({
-      session_id: sessionState.sessionId,
-      question_id: currentQuestion.id,
-      competence: currentCompetence,
-      palier: sessionState.palier,
+    await persistCurrentResponse({
       reponse_audio_url: publicUrl,
       reponse_apprenant: transcription,
       score_ia: evaluation.score,
@@ -509,11 +751,7 @@ const TestPositionnement = () => {
       writtenAnswer
     );
 
-    await supabase.from("test_reponses").insert({
-      session_id: sessionState.sessionId,
-      question_id: currentQuestion.id,
-      competence: currentCompetence,
-      palier: sessionState.palier,
+    await persistCurrentResponse({
       reponse_apprenant: writtenAnswer,
       score_ia: evaluation.score,
       justification_ia: evaluation.justification,
@@ -537,6 +775,7 @@ const TestPositionnement = () => {
       setSessionState({
         ...sessionState,
         questionIndex: newQuestionIndex,
+        currentResponseId: null,
         palierScores: newPalierScores,
       });
       return;
@@ -569,6 +808,7 @@ const TestPositionnement = () => {
         ...sessionState,
         palier: nextPalier,
         questionIndex: 0,
+        currentResponseId: null,
         palierScores: [],
         scores: newScores,
         paliersFinal: {
@@ -602,6 +842,7 @@ const TestPositionnement = () => {
         competenceIndex: nextCompIndex,
         palier: 1,
         questionIndex: 0,
+        currentResponseId: null,
         palierScores: [],
         paliersFinal: newPaliersFinal,
         scores: newScores,
@@ -641,6 +882,7 @@ const TestPositionnement = () => {
       setSessionState({
         ...sessionState,
         competenceIndex: 4,
+        currentResponseId: null,
         paliersFinal: newPaliersFinal,
         scores: newScores,
       });
