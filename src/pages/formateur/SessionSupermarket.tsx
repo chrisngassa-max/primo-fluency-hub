@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import {
   ArrowLeft,
@@ -26,6 +27,10 @@ import {
   EyeOff,
   ClipboardList,
   X,
+  Save,
+  Users,
+  Timer,
+  Palette,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -47,6 +52,8 @@ interface SessionExercice {
   competence: string;
   difficulte: number;
   contenu: any;
+  scenario_detaille?: string;
+  descriptions_visuelles?: string[];
   atelier_ludique: {
     scenario: string;
     jeu: string;
@@ -83,7 +90,34 @@ const formatLabels: Record<string, string> = {
   texte_lacunaire: "Texte lacunaire",
   appariement: "Appariement",
   transformation: "Transformation",
+  production_ecrite: "Production écrite",
+  production_orale: "Production orale",
 };
+
+const TYPE_ACTIVITE_OPTIONS = [
+  { value: "ia_choix", label: "IA choisit le meilleur type" },
+  { value: "jeu_de_role", label: "🎭 Jeu de rôle / Simulation" },
+  { value: "jeu_plateau_cartes", label: "🃏 Jeu de plateau / Cartes" },
+  { value: "activite_physique", label: "🏃 Activité physique / Mouvement" },
+  { value: "creation_artistique", label: "🎨 Création artistique" },
+  { value: "enquete_mission", label: "🔎 Enquête / Mission" },
+  { value: "numerique_interactif", label: "💻 Numérique interactif" },
+];
+
+const DUREE_OPTIONS = [
+  { value: "15", label: "15 min — Échauffement" },
+  { value: "25", label: "25 min — Activité standard" },
+  { value: "40", label: "40 min — Activité approfondie" },
+  { value: "60", label: "60 min — Séquence complète" },
+];
+
+const FORMAT_GROUPE_OPTIONS = [
+  { value: "ia_choix", label: "IA choisit" },
+  { value: "individuel", label: "👤 Individuel" },
+  { value: "binomes", label: "👥 Binômes" },
+  { value: "petits_groupes", label: "👥👥 Petits groupes (3-4)" },
+  { value: "classe_entiere", label: "🏫 Classe entière" },
+];
 
 const SessionSupermarket = () => {
   const location = useLocation();
@@ -100,6 +134,12 @@ const SessionSupermarket = () => {
   const [targetSessionId, setTargetSessionId] = useState("");
   const [showAteliers, setShowAteliers] = useState(true);
   const [gabaritIgnored, setGabaritIgnored] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  // Configuration selectors state
+  const [typeActivite, setTypeActivite] = useState("ia_choix");
+  const [activiteDuree, setActiviteDuree] = useState("25");
+  const [formatGroupe, setFormatGroupe] = useState("ia_choix");
 
   // Fetch today's sessions for dispatch target
   const { data: todaySessions } = useQuery({
@@ -157,11 +197,8 @@ const SessionSupermarket = () => {
     queryKey: ["detected-gabarit", sessionInfo?.titre],
     queryFn: async () => {
       if (!sessionInfo?.titre) return null;
-      // Try exact-ish match via ilike
       const words = sessionInfo.titre.split(/\s+/).filter(w => w.length > 3).slice(0, 3);
       if (words.length === 0) return null;
-      
-      // Try matching with the longest keyword
       const keyword = words.reduce((a, b) => a.length > b.length ? a : b);
       const { data, error } = await supabase
         .from("gabarits_pedagogiques")
@@ -192,6 +229,9 @@ const SessionSupermarket = () => {
         niveau_cible: sessionInfo.niveau_cible,
         duree_minutes: sessionInfo.duree_minutes,
         exercices_suggeres: sessionInfo.exercices_suggeres,
+        type_activite: typeActivite,
+        activite_duree_minutes: parseInt(activiteDuree),
+        format_groupe: formatGroupe,
       };
       if (useGabarit) {
         body.gabaritNumero = detectedGabarit.numero;
@@ -245,7 +285,6 @@ const SessionSupermarket = () => {
 
     setDispatching(true);
     try {
-      // Insert exercises into exercices table
       const exercicesToInsert = selectedExercices.map((ex) => ({
         formateur_id: user!.id,
         titre: ex.titre,
@@ -268,7 +307,6 @@ const SessionSupermarket = () => {
         .select("id");
       if (insErr) throw insErr;
 
-      // Link to session via session_exercices
       const sessionExercicesToInsert = (inserted || []).map((ex, i) => ({
         session_id: targetSessionId,
         exercice_id: ex.id,
@@ -281,7 +319,6 @@ const SessionSupermarket = () => {
         .insert(sessionExercicesToInsert);
       if (linkErr) throw linkErr;
 
-      // Propagate competences_cibles to the target session if available
       if (sessionInfo?.competences_cibles && sessionInfo.competences_cibles.length > 0) {
         await supabase
           .from("sessions")
@@ -300,6 +337,33 @@ const SessionSupermarket = () => {
     }
   };
 
+  const handleSaveActivite = async (ex: SessionExercice, index: number) => {
+    if (!user) return;
+    setSaving(true);
+    try {
+      const { error } = await supabase.from("activites_sauvegardees").insert({
+        formateur_id: user.id,
+        titre: ex.titre,
+        type_activite: typeActivite,
+        niveau: sessionInfo?.niveau_cible || "A1",
+        duree_minutes: parseInt(activiteDuree),
+        contenu_genere: {
+          exercice: { titre: ex.titre, consigne: ex.consigne, format: ex.format, competence: ex.competence, difficulte: ex.difficulte, contenu: ex.contenu },
+          atelier_ludique: ex.atelier_ludique,
+          scenario_detaille: ex.scenario_detaille,
+          descriptions_visuelles: ex.descriptions_visuelles,
+        } as any,
+      });
+      if (error) throw error;
+      toast.success(`"${ex.titre}" sauvegardé dans vos activités`);
+    } catch (e: any) {
+      console.error(e);
+      toast.error("Erreur de sauvegarde", { description: e.message });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handlePrint = () => {
     if (selectedExercices.length === 0) {
       toast.error("Sélectionnez au moins un exercice.");
@@ -312,37 +376,51 @@ const SessionSupermarket = () => {
     const html = `<!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>${sessionInfo?.titre || "Fiche exercices"}</title>
 <style>
-body { font-family: Arial, sans-serif; margin: 2cm; font-size: 14px; color: #333; }
-h1 { font-size: 20px; border-bottom: 2px solid #333; padding-bottom: 8px; }
-.exercise { page-break-inside: avoid; margin-bottom: 24px; border: 1px solid #ddd; padding: 16px; border-radius: 8px; }
-.exercise h2 { font-size: 16px; margin: 0 0 4px 0; }
-.badge { display: inline-block; background: #eee; padding: 2px 8px; border-radius: 4px; font-size: 11px; margin-right: 4px; }
-.consigne { font-style: italic; margin: 8px 0; }
-.item { margin: 8px 0 8px 16px; }
-.options { margin-left: 16px; }
-.option { margin: 2px 0; }
-.write-zone { border: 1px dashed #ccc; min-height: 60px; margin-top: 8px; border-radius: 4px; }
-@media print { body { margin: 1cm; } .no-print { display: none !important; } }
+* { box-sizing: border-box; }
+body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 1.5cm; font-size: 16px; color: #222; line-height: 1.6; }
+h1 { font-size: 22px; border-bottom: 3px solid #2563eb; padding-bottom: 8px; color: #1e40af; margin-bottom: 16px; }
+.meta { color: #666; font-size: 13px; margin-bottom: 24px; }
+.exercise { page-break-inside: avoid; margin-bottom: 28px; border: 2px solid #e5e7eb; padding: 20px; border-radius: 12px; background: #fafafa; }
+.exercise h2 { font-size: 18px; margin: 0 0 6px 0; color: #1e40af; }
+.badges { display: flex; gap: 6px; margin-bottom: 10px; }
+.badge { display: inline-block; background: #dbeafe; color: #1e40af; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+.badge-format { background: #f3e8ff; color: #7c3aed; }
+.consigne { font-style: italic; margin: 10px 0; padding: 10px; background: #eff6ff; border-left: 4px solid #2563eb; border-radius: 4px; font-size: 15px; }
+.item { margin: 12px 0 12px 8px; padding: 8px 0; border-bottom: 1px dotted #ddd; }
+.item:last-child { border-bottom: none; }
+.item strong { color: #1e40af; }
+.options { margin-left: 20px; margin-top: 6px; }
+.option { margin: 4px 0; font-size: 15px; }
+.option::before { content: "☐ "; font-size: 18px; }
+.write-zone { border: 2px dashed #94a3b8; min-height: 80px; margin-top: 10px; border-radius: 8px; background: #fff; }
+.write-lines { min-height: 80px; margin-top: 10px; background: repeating-linear-gradient(transparent, transparent 28px, #d1d5db 28px, #d1d5db 29px); }
+@media print {
+  body { margin: 1cm; padding: 0; }
+  .exercise { break-inside: avoid; border-color: #ccc; background: #fff; }
+  .no-print { display: none !important; }
+}
 </style></head><body>
-<h1>${sessionInfo?.titre || "Exercices"}</h1>
-<p style="color:#666;font-size:12px;">Niveau : ${sessionInfo?.niveau_cible || ""} · ${selectedExercices.length} exercices · ${sessionInfo?.duree_minutes || 0} min</p>
+<h1>📝 ${sessionInfo?.titre || "Exercices"}</h1>
+<div class="meta">Niveau : ${sessionInfo?.niveau_cible || ""} · ${selectedExercices.length} exercice(s) · ${sessionInfo?.duree_minutes || 0} min</div>
 ${selectedExercices
   .map(
     (ex, i) => `
 <div class="exercise">
   <h2>${i + 1}. ${ex.titre}</h2>
-  <span class="badge">${ex.competence}</span>
-  <span class="badge">${formatLabels[ex.format] || ex.format}</span>
-  <p class="consigne">${ex.consigne}</p>
+  <div class="badges">
+    <span class="badge">${ex.competence}</span>
+    <span class="badge badge-format">${formatLabels[ex.format] || ex.format}</span>
+  </div>
+  <div class="consigne">${ex.consigne}</div>
   ${(ex.contenu?.items || [])
     .map(
       (item: any, j: number) => `
     <div class="item">
-      <strong>${j + 1}.</strong> ${item.question}
+      <strong>${j + 1}.</strong> ${item.question || item.texte || ""}
       ${
         item.options?.length
-          ? `<div class="options">${item.options.map((o: string) => `<div class="option">☐ ${o}</div>`).join("")}</div>`
-          : '<div class="write-zone"></div>'
+          ? `<div class="options">${item.options.map((o: string) => `<div class="option">${o}</div>`).join("")}</div>`
+          : '<div class="write-lines"></div>'
       }
     </div>`
     )
@@ -372,42 +450,57 @@ ${selectedExercices
     const html = `<!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>Matériel — ${sessionInfo?.titre || "Séance"}</title>
 <style>
-body { font-family: Arial, sans-serif; margin: 1.5cm; font-size: 16px; color: #000; background: #fff; }
-h1 { font-size: 22px; border-bottom: 3px solid #000; padding-bottom: 8px; margin-bottom: 24px; }
-h2 { font-size: 18px; margin: 24px 0 8px 0; }
-.guide { border: 2px solid #333; padding: 16px; border-radius: 8px; margin-bottom: 16px; page-break-inside: avoid; }
-.guide-title { font-weight: bold; font-size: 14px; margin-bottom: 8px; }
-.guide-body { white-space: pre-line; font-size: 14px; line-height: 1.6; }
-.fiche { page-break-before: always; border: 2px solid #000; padding: 24px; border-radius: 8px; }
-.fiche-titre { font-size: 20px; font-weight: bold; text-align: center; margin-bottom: 16px; border-bottom: 2px dashed #666; padding-bottom: 12px; }
-.fiche-contenu { font-size: 16px; line-height: 1.8; white-space: pre-line; margin-bottom: 16px; }
-.lexique { display: flex; flex-wrap: wrap; gap: 8px; }
-.lexique-mot { border: 1px solid #000; padding: 4px 12px; border-radius: 4px; font-size: 14px; font-weight: bold; }
-.lexique-titre { font-weight: bold; font-size: 14px; margin-bottom: 6px; }
-@media print { body { margin: 1cm; } .fiche { page-break-before: always; } }
+* { box-sizing: border-box; }
+body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 1.5cm; font-size: 16px; color: #000; background: #fff; line-height: 1.7; }
+h1 { font-size: 24px; border-bottom: 3px solid #f59e0b; padding-bottom: 10px; margin-bottom: 24px; color: #92400e; }
+h2 { font-size: 20px; margin: 28px 0 12px 0; color: #92400e; border-left: 4px solid #f59e0b; padding-left: 12px; }
+.meta { color: #666; font-size: 13px; margin-bottom: 24px; }
+.guide { border: 2px solid #fbbf24; padding: 20px; border-radius: 12px; margin-bottom: 20px; page-break-inside: avoid; background: #fffbeb; }
+.guide-title { font-weight: bold; font-size: 16px; margin-bottom: 12px; color: #92400e; }
+.guide-body { white-space: pre-line; font-size: 15px; line-height: 1.8; }
+.fiche { page-break-before: always; border: 3px solid #000; padding: 28px; border-radius: 12px; }
+.fiche-titre { font-size: 24px; font-weight: bold; text-align: center; margin-bottom: 20px; border-bottom: 3px dashed #666; padding-bottom: 16px; }
+.fiche-contenu { font-size: 18px; line-height: 2; white-space: pre-line; margin-bottom: 20px; }
+.lexique { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.lexique-mot { border: 2px solid #000; padding: 6px 16px; border-radius: 8px; font-size: 16px; font-weight: bold; background: #fef3c7; }
+.lexique-titre { font-weight: bold; font-size: 16px; margin-bottom: 8px; }
+.scenario-block { background: #f0fdf4; border: 2px solid #22c55e; padding: 16px; border-radius: 10px; margin-bottom: 16px; page-break-inside: avoid; }
+.scenario-block h3 { color: #166534; font-size: 16px; margin: 0 0 8px 0; }
+.scenario-body { white-space: pre-line; font-size: 14px; line-height: 1.7; }
+@media print {
+  body { margin: 1cm; padding: 0; }
+  .fiche { break-before: page; }
+  .guide { break-inside: avoid; }
+}
 </style></head><body>
 <h1>📦 Matériel Pédagogique — ${sessionInfo?.titre || ""}</h1>
-<p style="color:#666;font-size:12px;">Niveau : ${sessionInfo?.niveau_cible || ""} · ${exsWithDocs.length} activité(s)</p>
+<div class="meta">Niveau : ${sessionInfo?.niveau_cible || ""} · ${exsWithDocs.length} activité(s) avec matériel</div>
 ${exsWithDocs
   .map(
     (ex, i) => {
       const doc = ex.atelier_ludique.documentation_fournie!;
       return `
-<h2>${i + 1}. ${ex.titre} — Guide Formateur</h2>
+<h2>${i + 1}. ${ex.titre}</h2>
+${ex.scenario_detaille ? `
+<div class="scenario-block">
+  <h3>🎬 Scénario détaillé</h3>
+  <div class="scenario-body">${ex.scenario_detaille}</div>
+</div>` : ""}
 <div class="guide">
-  <div class="guide-title">📋 Instructions pas-à-pas</div>
+  <div class="guide-title">📋 Guide Formateur — Instructions pas-à-pas</div>
   <div class="guide-body">${doc.guide_formateur}</div>
 </div>
 ${(doc.fiches_eleves || [])
   .map(
     (fiche) => `
 <div class="fiche">
-  <div class="fiche-titre">${fiche.titre_fiche}</div>
+  <div class="fiche-titre">📄 ${fiche.titre_fiche}</div>
   <div class="fiche-contenu">${fiche.contenu_fiche}</div>
+  ${fiche.lexique_cles?.length ? `
   <div class="lexique-titre">📝 Lexique clé :</div>
   <div class="lexique">
-    ${(fiche.lexique_cles || []).map((m: string) => `<span class="lexique-mot">${m}</span>`).join("")}
-  </div>
+    ${fiche.lexique_cles.map((m: string) => `<span class="lexique-mot">${m}</span>`).join("")}
+  </div>` : ""}
 </div>`
   )
   .join("")}`;
@@ -496,9 +589,86 @@ ${(doc.fiches_eleves || [])
         </CardContent>
       </Card>
 
-      {/* Gabarit detection + Generate button */}
+      {/* Configuration panel + Gabarit + Generate */}
       {exercices.length === 0 && !generating && (
-        <div className="space-y-3">
+        <div className="space-y-4">
+          {/* Configuration selectors */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Palette className="h-4 w-4 text-primary" />
+                Configuration de la génération
+              </CardTitle>
+              <CardDescription className="text-xs">
+                Personnalisez le type d'activité, la durée et le format de groupe avant de générer
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Type d'activité */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium flex items-center gap-1.5">
+                    <Gamepad2 className="h-3.5 w-3.5" />
+                    Type d'activité
+                  </Label>
+                  <Select value={typeActivite} onValueChange={setTypeActivite}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {TYPE_ACTIVITE_OPTIONS.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Durée activité */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium flex items-center gap-1.5">
+                    <Timer className="h-3.5 w-3.5" />
+                    Durée de l'activité
+                  </Label>
+                  <Select value={activiteDuree} onValueChange={setActiviteDuree}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {DUREE_OPTIONS.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Format groupe */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium flex items-center gap-1.5">
+                    <Users className="h-3.5 w-3.5" />
+                    Format de groupe
+                  </Label>
+                  <Select value={formatGroupe} onValueChange={setFormatGroupe}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {FORMAT_GROUPE_OPTIONS.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Gabarit detection */}
           {detectedGabarit && !gabaritIgnored && (
             <Card className="border-primary/40 bg-primary/5">
               <CardContent className="py-4 px-5 space-y-2">
@@ -541,6 +711,8 @@ ${(doc.fiches_eleves || [])
               </CardContent>
             </Card>
           )}
+
+          {/* Generate button (no gabarit) */}
           {(!detectedGabarit || gabaritIgnored) && (
             <Button onClick={handleGenerate} size="lg" className="w-full">
               <Sparkles className="h-4 w-4 mr-2" />
@@ -556,7 +728,7 @@ ${(doc.fiches_eleves || [])
             <Loader2 className="h-8 w-8 mx-auto animate-spin text-primary mb-3" />
             <p className="font-medium">L'IA génère le contenu de la séance...</p>
             <p className="text-sm text-muted-foreground mt-1">
-              Exercices numériques + ateliers ludiques pour {sessionInfo.duree_minutes} min
+              {TYPE_ACTIVITE_OPTIONS.find(o => o.value === typeActivite)?.label || "Activité"} · {activiteDuree} min · {FORMAT_GROUPE_OPTIONS.find(o => o.value === formatGroupe)?.label || ""}
             </p>
           </CardContent>
         </Card>
@@ -617,8 +789,22 @@ ${(doc.fiches_eleves || [])
                           </Badge>
                         </div>
                         <p className="text-sm text-muted-foreground italic">{ex.consigne}</p>
-                        <div className="text-xs text-muted-foreground">
-                          {ex.contenu?.items?.length || 0} item(s)
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <span>{ex.contenu?.items?.length || 0} item(s)</span>
+                          {/* Save button */}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-6 px-2 text-xs gap-1 ml-auto"
+                            disabled={saving}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleSaveActivite(ex, i);
+                            }}
+                          >
+                            <Save className="h-3 w-3" />
+                            Sauvegarder
+                          </Button>
                         </div>
                       </div>
 
@@ -653,18 +839,24 @@ ${(doc.fiches_eleves || [])
                             </p>
                           )}
 
+                          {/* Scenario détaillé */}
+                          {ex.scenario_detaille && (
+                            <div className="p-3 rounded-md bg-green-50 dark:bg-green-900/20 text-xs whitespace-pre-line border border-green-200 dark:border-green-800">
+                              <span className="font-semibold block mb-1 text-green-700 dark:text-green-400">🎬 Scénario détaillé :</span>
+                              {ex.scenario_detaille}
+                            </div>
+                          )}
+
                           {/* Documentation Fournie */}
                           {ex.atelier_ludique.documentation_fournie && (
                             <div className="mt-3 space-y-2">
                               <div className="flex items-center gap-2 text-sm font-medium text-primary">
                                 📦 Matériel Pédagogique & Jeux
                               </div>
-                              {/* Guide Formateur */}
                               <div className="p-3 rounded-md bg-muted/60 text-xs whitespace-pre-line">
                                 <span className="font-semibold block mb-1">📋 Guide formateur :</span>
                                 {ex.atelier_ludique.documentation_fournie.guide_formateur}
                               </div>
-                              {/* Fiches Eleves */}
                               {ex.atelier_ludique.documentation_fournie.fiches_eleves?.length > 0 && (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                   {ex.atelier_ludique.documentation_fournie.fiches_eleves.map((fiche, fi) => (
@@ -700,7 +892,7 @@ ${(doc.fiches_eleves || [])
       {/* Floating dispatch bar */}
       {exercices.length > 0 && (
         <div className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background/95 backdrop-blur-sm shadow-lg">
-          <div className="max-w-4xl mx-auto flex items-center gap-3 px-6 py-3">
+          <div className="max-w-4xl mx-auto flex items-center gap-3 px-6 py-3 flex-wrap">
             <div className="text-sm font-medium shrink-0">
               <Badge variant="default" className="mr-1">{selected.size}</Badge>
               sélectionné(s)
@@ -743,7 +935,7 @@ ${(doc.fiches_eleves || [])
               ) : (
                 <Send className="h-4 w-4 mr-2" />
               )}
-              Ajouter à la séance
+              Ajouter
             </Button>
             <Button variant="outline" onClick={handlePrint} disabled={selected.size === 0}>
               <Printer className="h-4 w-4 mr-2" />
@@ -751,7 +943,7 @@ ${(doc.fiches_eleves || [])
             </Button>
             <Button variant="outline" onClick={handlePrintMateriel} disabled={selected.size === 0}>
               <Printer className="h-4 w-4 mr-2" />
-              🖨️ Matériel
+              Matériel
             </Button>
           </div>
         </div>
