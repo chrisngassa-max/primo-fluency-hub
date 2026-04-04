@@ -160,7 +160,6 @@ const EleveDashboard = () => {
       const groupIds = memberships.map((m) => m.group_id);
       const joinMap = new Map(memberships.map((m) => [m.group_id, m.joined_at]));
 
-      // Get sessions for those groups, only those created after the student joined
       const { data: sessions } = await supabase
         .from("sessions")
         .select("id, titre, date_seance, group_id, group:groups(nom)")
@@ -170,25 +169,30 @@ const EleveDashboard = () => {
         .limit(20);
       if (!sessions?.length) return [];
 
-      // Filter sessions to only those scheduled after the student joined the group
-      const filteredSessions = (sessions as any[]).filter((s: any) => {
-        const joinDate = joinMap.get(s.group_id);
-        if (!joinDate) return false;
-        return new Date(s.date_seance) >= new Date(joinDate);
-      });
+      const sessionMap = new Map((sessions as any[]).map((s: any) => [s.id, s]));
+      const sessionIds = (sessions as any[]).map((s: any) => s.id);
 
-      // Get session_exercices with statut traite_en_classe
-      if (!filteredSessions.length) return [];
-      const sessionIds = filteredSessions.map((s: any) => s.id);
+      // Get sent session exercises and keep only those actually sent after group join
       const { data: seLinks } = await supabase
         .from("session_exercices")
-        .select("session_id, exercice_id")
+        .select("session_id, exercice_id, updated_at")
         .in("session_id", sessionIds)
         .eq("statut", "traite_en_classe" as any);
       if (!seLinks?.length) return [];
 
+      const visibleSessionExercises = (seLinks as any[]).filter((se: any) => {
+        const session = sessionMap.get(se.session_id);
+        if (!session) return false;
+
+        const joinDate = joinMap.get(session.group_id);
+        if (!joinDate) return false;
+
+        return new Date(se.updated_at) >= new Date(joinDate);
+      });
+      if (!visibleSessionExercises.length) return [];
+
       // Check which exercises student already completed
-      const exerciceIds = [...new Set(seLinks.map((se) => se.exercice_id))];
+      const exerciceIds = [...new Set(visibleSessionExercises.map((se: any) => se.exercice_id))];
       const { data: resultats } = await supabase
         .from("resultats")
         .select("exercice_id")
@@ -197,9 +201,8 @@ const EleveDashboard = () => {
       const doneExIds = new Set((resultats ?? []).map((r) => r.exercice_id));
 
       // Build per-session summary
-      const sessionMap = new Map(filteredSessions.map((s: any) => [s.id, s]));
       const grouped: Record<string, { total: number; done: number }> = {};
-      for (const se of seLinks) {
+      for (const se of visibleSessionExercises) {
         if (!grouped[se.session_id]) grouped[se.session_id] = { total: 0, done: 0 };
         grouped[se.session_id].total++;
         if (doneExIds.has(se.exercice_id)) grouped[se.session_id].done++;
