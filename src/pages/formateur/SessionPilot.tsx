@@ -1829,6 +1829,72 @@ ${ficheHtml}</body></html>`;
         </DialogContent>
       </Dialog>
 
+      {/* ─── Duplicate & Send Dialog ─── */}
+      <Dialog open={!!duplicateExercise} onOpenChange={(open) => { if (!open) { setDuplicateExercise(null); setDuplicateStudentIds([]); } }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Copy className="h-4 w-4 text-primary" />
+              Dupliquer & Envoyer
+            </DialogTitle>
+            <DialogDescription>
+              L'IA va générer un exercice similaire avec des items différents et l'envoyer comme devoir individuel aux élèves sélectionnés.
+            </DialogDescription>
+          </DialogHeader>
+          {duplicateExercise && (
+            <div className="space-y-4 pt-2">
+              <Card className="bg-muted/30">
+                <CardContent className="pt-3 pb-3">
+                  <p className="text-sm font-medium">{duplicateExercise.titre}</p>
+                  <div className="flex gap-2 mt-1">
+                    <Badge variant="secondary" className="text-xs">{duplicateExercise.competence}</Badge>
+                    <Badge variant="outline" className="text-xs">{duplicateExercise.format}</Badge>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-semibold">Sélectionnez les élèves :</Label>
+                <div className="flex items-center gap-2 mb-2">
+                  <Button variant="ghost" size="sm" className="text-xs"
+                    onClick={() => {
+                      const allIds = (groupMembers ?? []).map((m: any) => m.eleve_id);
+                      setDuplicateStudentIds(duplicateStudentIds.length === allIds.length ? [] : allIds);
+                    }}>
+                    <UserCheck className="h-3 w-3 mr-1" />
+                    {duplicateStudentIds.length === (groupMembers ?? []).length ? "Tout désélectionner" : "Tout sélectionner"}
+                  </Button>
+                </div>
+                <div className="max-h-48 overflow-y-auto space-y-1 border rounded-md p-2">
+                  {(groupMembers ?? []).map((m: any) => (
+                    <label key={m.eleve_id} className="flex items-center gap-2 p-1.5 rounded hover:bg-muted/50 cursor-pointer">
+                      <Checkbox
+                        checked={duplicateStudentIds.includes(m.eleve_id)}
+                        onCheckedChange={(checked) => {
+                          setDuplicateStudentIds(prev =>
+                            checked ? [...prev, m.eleve_id] : prev.filter(id => id !== m.eleve_id)
+                          );
+                        }}
+                      />
+                      <span className="text-sm">{m.eleve?.prenom} {m.eleve?.nom}</span>
+                    </label>
+                  ))}
+                  {(!groupMembers || groupMembers.length === 0) && (
+                    <p className="text-sm text-muted-foreground text-center py-4">Aucun élève dans ce groupe.</p>
+                  )}
+                </div>
+              </div>
+
+              <Button className="w-full gap-2" disabled={duplicateStudentIds.length === 0 || duplicating}
+                onClick={handleDuplicateAndSend}>
+                {duplicating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                {duplicating ? "Génération en cours…" : `Envoyer à ${duplicateStudentIds.length} élève(s)`}
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
       {/* Editor Sheet */}
       <Sheet open={!!editingExercise} onOpenChange={(open) => { if (!open) setEditingExercise(null); }}>
         <SheetContent className="sm:max-w-lg overflow-y-auto">
