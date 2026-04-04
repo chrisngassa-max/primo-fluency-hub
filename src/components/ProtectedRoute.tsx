@@ -10,8 +10,9 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
   const { session, role, profileStatus, loading } = useAuth();
+  const isAuthResolved = !loading && (!session || (role !== null && profileStatus !== null));
 
-  if (loading) {
+  if (!isAuthResolved) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="space-y-4 w-full max-w-md p-8">
