@@ -293,6 +293,21 @@ const SessionPilot = () => {
     enabled: !!session,
   });
 
+  // Fetch group members for duplicate & send
+  const { data: groupMembers } = useQuery({
+    queryKey: ["group-members-for-dup", session?.group_id],
+    queryFn: async () => {
+      const groupId = (session as any)?.group?.id || session!.group_id;
+      const { data, error } = await supabase
+        .from("group_members")
+        .select("eleve_id, eleve:profiles(id, nom, prenom)")
+        .eq("group_id", groupId);
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: !!session,
+  });
+
   const exercises = sessionExercices ?? [];
   const reported = reportedExercises ?? [];
 
