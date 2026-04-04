@@ -6,8 +6,67 @@
 
 const TARGET_SAMPLE_RATE = 16000;
 
+const DEFAULT_AUDIO_CONSTRAINTS: MediaTrackConstraints = {
+  echoCancellation: true,
+  noiseSuppression: true,
+  autoGainControl: true,
+};
+
 export interface WavRecorder {
   stop: () => void;
+}
+
+export async function requestMicrophoneStream(
+  constraints: MediaTrackConstraints = DEFAULT_AUDIO_CONSTRAINTS
+): Promise<MediaStream> {
+  if (!navigator.mediaDevices?.getUserMedia) {
+    throw new Error("microphone-unsupported");
+  }
+
+  try {
+    return await navigator.mediaDevices.getUserMedia({ audio: constraints });
+  } catch (error) {
+    const errorName = error instanceof DOMException ? error.name : "";
+
+    if (errorName === "OverconstrainedError") {
+      return navigator.mediaDevices.getUserMedia({ audio: true });
+    }
+
+    throw error;
+  }
+}
+
+export function getMicrophoneErrorMessage(error: unknown): string {
+  const errorName =
+    error instanceof DOMException
+      ? error.name
+      : error instanceof Error
+        ? error.message
+        : "";
+
+  if (errorName === "microphone-unsupported") {
+    return "Votre navigateur ne permet pas l'enregistrement audio sur cette page.";
+  }
+
+  if (errorName === "NotAllowedError" || errorName === "PermissionDeniedError") {
+    return window.self !== window.top
+      ? "Le navigateur a bloqué le micro dans cette vue intégrée. Autorisez le microphone pour ce site ou ouvrez l’application directement dans Chrome ou Safari."
+      : "Le navigateur a bloqué le micro. Autorisez le microphone pour ce site dans les réglages du navigateur puis rechargez la page.";
+  }
+
+  if (errorName === "NotFoundError") {
+    return "Aucun microphone n'a été détecté sur cet appareil.";
+  }
+
+  if (errorName === "NotReadableError" || errorName === "TrackStartError") {
+    return "Le microphone est déjà utilisé par une autre application.";
+  }
+
+  if (errorName === "SecurityError") {
+    return "Le microphone est bloqué par les réglages de sécurité du navigateur.";
+  }
+
+  return "Impossible d'accéder au microphone sur cet appareil.";
 }
 
 function writeString(view: DataView, offset: number, str: string) {

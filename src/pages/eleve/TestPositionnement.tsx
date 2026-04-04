@@ -14,6 +14,11 @@ import { toast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
 import {
+  getMicrophoneErrorMessage,
+  requestMicrophoneStream,
+  startWavRecording,
+} from "@/lib/audioRecorder";
+import {
   getPalierSuivant,
   calculerProfilFinal,
   suggererGroupe,
@@ -571,19 +576,7 @@ const TestPositionnement = () => {
 
   const startRecording = async () => {
     try {
-      if (!navigator.mediaDevices?.getUserMedia) {
-        throw new Error("unsupported");
-      }
-
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true,
-        },
-      });
-
-      const { startWavRecording } = await import("@/lib/audioRecorder");
+      const stream = await requestMicrophoneStream();
       const recorder = startWavRecording(stream, (blob) => {
         setAudioBlob(blob);
       });
@@ -593,19 +586,9 @@ const TestPositionnement = () => {
     } catch (error) {
       console.error("Microphone access error:", error);
 
-      const errorName = error instanceof DOMException ? error.name : "";
-      const description =
-        errorName === "NotAllowedError"
-          ? "L'accès au micro a été refusé. Sur iPhone, autorisez le microphone dans Safari puis réessayez."
-          : errorName === "NotFoundError"
-            ? "Aucun microphone n'a été détecté sur cet appareil."
-            : errorName === "NotReadableError"
-              ? "Le microphone est déjà utilisé par une autre application."
-              : "Impossible d'accéder au microphone sur cet appareil.";
-
       toast({
         title: "Microphone",
-        description,
+        description: getMicrophoneErrorMessage(error),
         variant: "destructive",
       });
     }
