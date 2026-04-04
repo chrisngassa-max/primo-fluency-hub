@@ -631,10 +631,22 @@ const TestPositionnement = () => {
                 <CardContent className="pt-4">
                   {currentQuestion.support.startsWith("http") ? (
                     <img src={currentQuestion.support} alt="Document de support" className="max-w-full rounded-lg mx-auto" />
+                  ) : currentQuestion.support.length <= 30 ? (
+                    /* Short text = sign/panel rendering */
+                    <div className="flex justify-center">
+                      <div className="bg-primary text-primary-foreground rounded-lg px-8 py-6 text-center shadow-md border-4 border-primary/70 min-w-[120px]">
+                        <span className="text-2xl sm:text-3xl font-bold tracking-wide">
+                          {currentQuestion.support}
+                        </span>
+                      </div>
+                    </div>
                   ) : (
-                    <p className="text-base whitespace-pre-wrap">
-                      {currentQuestion.support}
-                    </p>
+                    /* Longer text = document/notice rendering */
+                    <div className="bg-background border-2 border-border rounded-lg p-4 shadow-sm">
+                      <p className="text-base whitespace-pre-wrap leading-relaxed">
+                        {currentQuestion.support}
+                      </p>
+                    </div>
                   )}
                 </CardContent>
               </Card>
