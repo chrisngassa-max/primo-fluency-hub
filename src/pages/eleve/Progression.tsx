@@ -330,6 +330,100 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
         </Card>
       )}
 
+      {/* Group management (formateur view only) */}
+      {eleveId && studentGroups && allGroups && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              Groupes
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {studentGroups.length === 0 ? (
+              <p className="text-sm text-muted-foreground italic">Aucun groupe assigné.</p>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {studentGroups.map((sg: any) => {
+                  const group = sg.groups as any;
+                  const otherGroups = (allGroups ?? []).filter(
+                    (g: any) => g.id !== sg.group_id
+                  );
+                  return (
+                    <DropdownMenu key={sg.id}>
+                      <DropdownMenuTrigger asChild>
+                        <Badge
+                          variant="secondary"
+                          className="cursor-pointer hover:bg-secondary/80 gap-1.5 text-sm py-1 px-3"
+                        >
+                          {group?.nom ?? "Groupe"} — {group?.niveau ?? ""}
+                          <ArrowRightLeft className="h-3 w-3 ml-1 opacity-60" />
+                        </Badge>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start">
+                        <p className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
+                          Transférer vers…
+                        </p>
+                        <DropdownMenuSeparator />
+                        {otherGroups.map((g: any) => (
+                          <DropdownMenuItem
+                            key={g.id}
+                            onClick={() => handleReassignGroup(sg.id, g.id)}
+                          >
+                            {g.nom} ({g.niveau})
+                          </DropdownMenuItem>
+                        ))}
+                        {otherGroups.length === 0 && (
+                          <p className="px-2 py-1.5 text-xs text-muted-foreground">
+                            Aucun autre groupe
+                          </p>
+                        )}
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          className="text-destructive focus:text-destructive"
+                          onClick={() => handleRemoveFromGroup(sg.id)}
+                        >
+                          <X className="h-3 w-3 mr-1" />
+                          Retirer de ce groupe
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Add to another group */}
+            {(() => {
+              const availableGroups = (allGroups ?? []).filter(
+                (g: any) => !(studentGroups ?? []).some((sg: any) => sg.group_id === g.id)
+              );
+              if (availableGroups.length === 0) return null;
+              return (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="gap-1.5">
+                      <PlusCircle className="h-3.5 w-3.5" />
+                      Ajouter à un groupe
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start">
+                    {availableGroups.map((g: any) => (
+                      <DropdownMenuItem
+                        key={g.id}
+                        onClick={() => handleAddToGroup(g.id)}
+                      >
+                        {g.nom} ({g.niveau})
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              );
+            })()}
+          </CardContent>
+        </Card>
+      )}
+
       {/* Global progress bar */}
       <Card>
         <CardContent className="pt-6 pb-4">
