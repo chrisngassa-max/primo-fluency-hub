@@ -92,6 +92,18 @@ DOCUMENTATION_FOURNIE (OBLIGATOIRE pour chaque atelier ludique) :
 - Si c'est une simulation médicale, génère les symptômes, le vocabulaire du corps, les phrases types.
 ${objectifs ? `- Objectifs de la séance : ${objectifs}` : ""}
 ${exercices_suggeres?.length ? `- Types d'exercices suggérés : ${exercices_suggeres.join(", ")}` : ""}
+${(() => {
+  if (!micro_competences || !Array.isArray(micro_competences) || micro_competences.length === 0) return "";
+  const lines = micro_competences.map((mc: any, i: number) => `${i + 1}. ${mc.texte} — statut : ${mc.statut === "a_renforcer" ? "à_renforcer" : "normal"} (${mc.competence_globale})`).join("\n");
+  return `
+MICRO-COMPÉTENCES CIBLÉES (ordre de priorité du formateur) :
+${lines}
+
+Instructions de pondération :
+- Compétences marquées 'à_renforcer' : générer 40% de questions supplémentaires sur ces points, ou augmenter la difficulté d'un palier.
+- Compétences en position 1 et 2 : priorité maximale dans la génération.
+- Compétences en position 3 et suivantes : volume standard.`;
+})()}
 ${gabaritBlock}
 
 Utilise le tool fourni pour retourner le résultat.`;
