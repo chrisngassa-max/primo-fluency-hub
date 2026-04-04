@@ -140,7 +140,7 @@ const FormateurDashboard = () => {
               co: { initial: Math.round(Number(test?.score_co ?? 0)), current: Math.round(Number(profil?.taux_reussite_co ?? test?.score_co ?? 0)) },
               ce: { initial: Math.round(Number(test?.score_ce ?? 0)), current: Math.round(Number(profil?.taux_reussite_ce ?? test?.score_ce ?? 0)) },
               ee: { initial: Math.round(Number(test?.score_ee ?? 0)), current: Math.round(Number(profil?.taux_reussite_ee ?? test?.score_ee ?? 0)) },
-              structures: { initial: Math.round(Number(test?.score_structures ?? 0)), current: Math.round(Number(profil?.taux_reussite_structures ?? test?.score_structures ?? 0)) },
+              structures: { initial: 0, current: Math.round(Number(profil?.taux_reussite_structures ?? 0)) },
               completed: sc.completed,
               total: sc.total,
             };
