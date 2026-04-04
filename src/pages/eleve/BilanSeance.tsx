@@ -29,7 +29,7 @@ const getImageUrl = (source?: Record<string, unknown> | null): string => {
   if (!source) return "";
   for (const key of IMAGE_KEYS) {
     const value = getStringValue(source[key]);
-    if (value) return value;
+    if (value && (value.startsWith("http://") || value.startsWith("https://"))) return value;
   }
   return "";
 };
