@@ -58,6 +58,7 @@ const TestPositionnement = () => {
   const navigate = useNavigate();
   const [screen, setScreen] = useState<Screen>("accueil");
   const [sessionState, setSessionState] = useState<SessionState | null>(null);
+  const autoStartRef = useRef(false);
   const [questions, setQuestions] = useState<TestQuestion[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState("");
   const [writtenAnswer, setWrittenAnswer] = useState("");
@@ -131,6 +132,7 @@ const TestPositionnement = () => {
       });
     }
   }, [existingResults]);
+
 
   const loadQuestions = useCallback(
     async (competence: string, palier: number) => {
@@ -222,6 +224,16 @@ const TestPositionnement = () => {
       });
     }
   };
+
+  // Auto-start: skip accueil screen and go directly to questions
+  useEffect(() => {
+    if (autoStartRef.current || isLoading) return;
+    if (existingResults) return;
+    if (screen !== "accueil") return;
+    autoStartRef.current = true;
+    handleStart();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading, existingResults, existingSession]);
 
   const currentCompetence = sessionState
     ? COMPETENCE_ORDER[sessionState.competenceIndex]
@@ -761,7 +773,7 @@ const TestPositionnement = () => {
     );
   }
 
-  // SCREEN: ACCUEIL
+  // SCREEN: ACCUEIL (fallback — normally auto-started)
   return (
     <div className="max-w-2xl mx-auto space-y-6 p-4">
       <h1 className="text-2xl font-bold text-foreground">
@@ -770,11 +782,11 @@ const TestPositionnement = () => {
       <Card>
         <CardContent className="pt-6 space-y-4">
           <p className="text-base text-muted-foreground">
-            Ce test permet de connaître votre niveau de français. Il dure environ
-            20 minutes.
+            Ce test adaptatif permet de connaître ton niveau de français. Il dure environ
+            20 minutes et couvre 4 compétences.
           </p>
           <p className="text-sm text-muted-foreground">
-            Vous passerez 4 épreuves : Compréhension orale, Compréhension
+            Tu passeras 4 épreuves : Compréhension orale, Compréhension
             écrite, Expression orale et Expression écrite.
           </p>
           <Button
