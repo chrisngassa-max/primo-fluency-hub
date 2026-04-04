@@ -49,7 +49,7 @@ Deno.serve(async (req) => {
       console.error("Google STT error:", sttResponse.status, errBody);
       return new Response(
         JSON.stringify({ error: "Erreur Google STT", details: errBody, transcript: "" }),
-        { status: sttResponse.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
