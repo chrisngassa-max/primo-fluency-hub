@@ -155,7 +155,7 @@ Nb_Resultats_Periode: ${resultats.length}
 Nb_Devoirs_Actifs: ${devoirs.filter((d: any) => d.statut === "en_attente").length}
 Nb_Devoirs_Expires: ${devoirs.filter((d: any) => d.statut === "expire").length}
 Score_Risque: ${profil?.score_risque ?? "N/A"}/100
-Niveau_Actuel_Estime: ${profil?.niveau_actuel || testEntree?.niveau_estime || "N/A"}
+Niveau_Actuel_Estime: ${profil?.niveau_actuel || testEntree?.profil || "N/A"}
 
 ================================================================`;
   };

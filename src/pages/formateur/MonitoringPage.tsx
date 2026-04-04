@@ -287,9 +287,9 @@ const MonitoringPage = () => {
             score: r.score, competence: r.exercices?.competence, titre: r.exercices?.titre, difficulte: r.exercices?.difficulte,
           })),
           testEntree: eleveDetail.testEntree ? {
-            score_global: eleveDetail.testEntree.score_global, score_co: eleveDetail.testEntree.score_co,
+            score_global: eleveDetail.testEntree.score_total, score_co: eleveDetail.testEntree.score_co,
             score_ce: eleveDetail.testEntree.score_ce, score_ee: eleveDetail.testEntree.score_ee,
-            niveau_estime: eleveDetail.testEntree.niveau_estime,
+            niveau_estime: eleveDetail.testEntree.profil,
           } : null,
           failures: eleveDetail.failures,
         },
