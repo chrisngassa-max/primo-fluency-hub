@@ -649,6 +649,81 @@ const SessionPilot = () => {
     }
   };
 
+  // ─── Duplicate exercise & send to individual students ───
+  const handleDuplicateAndSend = async () => {
+    if (!duplicateExercise || duplicateStudentIds.length === 0 || !user || !session) return;
+    setDuplicating(true);
+    try {
+      const ex = duplicateExercise;
+      // Generate new exercise with same params but fresh items
+      const { data: genData, error: genError } = await supabase.functions.invoke("generate-exercises", {
+        body: {
+          pointName: ex.titre || "Exercice individuel",
+          competence: ex.competence,
+          niveauVise: ex.niveau_vise || session.niveau_cible || "A1",
+          count: 1,
+        },
+      });
+      if (genError) throw genError;
+      if (genData?.error) throw new Error(genData.error);
+
+      const generated = genData?.exercises?.[0];
+      if (!generated) throw new Error("Aucun exercice généré");
+
+      // Create one exercise per student with fresh items
+      const { data: defaultPoint } = await supabase
+        .from("points_a_maitriser")
+        .select("id")
+        .limit(1)
+        .single();
+
+      for (const studentId of duplicateStudentIds) {
+        // Insert a new exercise specifically for this student
+        const { data: newEx, error: exErr } = await supabase
+          .from("exercices")
+          .insert({
+            titre: `${generated.titre || ex.titre} (individuel)`,
+            consigne: generated.consigne || ex.consigne,
+            competence: ex.competence,
+            format: (generated.format || ex.format || "qcm") as any,
+            difficulte: generated.difficulte || ex.difficulte || 3,
+            contenu: generated.contenu || {},
+            animation_guide: generated.animation_guide || null,
+            niveau_vise: ex.niveau_vise || session.niveau_cible || "A1",
+            formateur_id: user.id,
+            point_a_maitriser_id: ex.point_a_maitriser_id || defaultPoint?.id,
+            is_ai_generated: true,
+            is_template: false,
+            is_devoir: true,
+            eleve_id: studentId,
+          })
+          .select("id")
+          .single();
+        if (exErr) throw exErr;
+
+        // Create a devoir for this student
+        const { error: devErr } = await supabase.from("devoirs").insert({
+          eleve_id: studentId,
+          exercice_id: newEx!.id,
+          formateur_id: user.id,
+          raison: "consolidation" as const,
+          statut: "en_attente" as const,
+          session_id: id,
+        });
+        if (devErr) throw devErr;
+      }
+
+      toast.success(`Exercice dupliqué et envoyé à ${duplicateStudentIds.length} élève(s) !`);
+      setDuplicateExercise(null);
+      setDuplicateStudentIds([]);
+    } catch (e: any) {
+      console.error(e);
+      toast.error("Erreur de duplication", { description: e.message });
+    } finally {
+      setDuplicating(false);
+    }
+  };
+
   // ─── Inline Editor ───
   const openEditor = (se: any) => {
     const ex = se.exercice;
