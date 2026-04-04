@@ -107,6 +107,8 @@ Le texte est le SEUL support visible par l'élève — il DOIT contenir TOUTES l
 
 ### EXPRESSION ORALE (EO) — format production_orale + type_reponse "oral"
 L'élève enregistre sa voix. Le STT transcrit → l'IA évalue avec haute tolérance phonétique.
+Pour les exercices de description d'image (EO3, EO4), tu DOIS fournir un champ "image_description" décrivant la scène à illustrer.
+Exemple : "Une famille multiculturelle à table, partageant un repas dans un appartement français moderne" — une image sera générée automatiquement.
 
 | Code | Sous-compétence       | Type de tâche                                               | Durée max |
 |------|-----------------------|--------------------------------------------------------------|-----------|
@@ -218,6 +220,7 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
                           properties: {
                             texte: { type: "string", description: "Texte support / document à lire avant les questions (OBLIGATOIRE pour CE). Doit reproduire fidèlement le document (badge, panneau, courrier, SMS, etc.) avec TOUTES les informations nécessaires pour répondre." },
                             script_audio: { type: "string", description: "Script audio pour CO : texte lu par la synthèse vocale (OBLIGATOIRE pour CO, NE PAS afficher à l'élève)" },
+                            image_description: { type: "string", description: "Description de l'image à générer automatiquement (pour EO quand l'exercice demande de décrire une image). Ex: 'Une famille à table en train de manger dans un appartement'. NE PAS mettre d'URL, seulement une description textuelle détaillée de la scène." },
                             type_reponse: { type: "string", enum: ["ecrit", "oral"], description: "Type de réponse attendu (oral pour EO)" },
                             criteres_evaluation: { type: "object", description: "Critères d'évaluation pour les productions orales/écrites" },
                             mots_cles_attendus: {
@@ -309,6 +312,79 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
     if (!toolCall) throw new Error("No tool call in AI response");
 
     const exercises = JSON.parse(toolCall.function.arguments);
+
+    // Post-processing: generate images for exercises that have image_description
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    for (const ex of exercises.exercises || []) {
+      const desc = ex.contenu?.image_description;
+      if (!desc || typeof desc !== "string" || desc.trim().length === 0) continue;
+
+      try {
+        const imgResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "google/gemini-3-pro-image-preview",
+            messages: [
+              { role: "user", content: `Generate a simple, clear, realistic illustration for a French language learning exercise. The image should be easy to describe for beginner French learners (A1 level). Scene: ${desc}. Style: clean, colorful, realistic illustration suitable for adult education. No text in the image.` },
+            ],
+            modalities: ["image", "text"],
+          }),
+        });
+
+        if (!imgResponse.ok) {
+          console.error("Image generation failed:", imgResponse.status);
+          continue;
+        }
+
+        const imgData = await imgResponse.json();
+        // Extract base64 image from response
+        const content = imgData.choices?.[0]?.message?.content;
+        let imageBase64: string | null = null;
+        if (Array.isArray(content)) {
+          for (const part of content) {
+            if (part.type === "image" && part.image?.data) {
+              imageBase64 = part.image.data;
+              break;
+            }
+          }
+        }
+
+        if (imageBase64) {
+          // Decode and upload to Supabase Storage
+          const binaryStr = atob(imageBase64);
+          const bytes = new Uint8Array(binaryStr.length);
+          for (let i = 0; i < binaryStr.length; i++) {
+            bytes[i] = binaryStr.charCodeAt(i);
+          }
+
+          const fileName = `exercise-${crypto.randomUUID()}.png`;
+          const { error: uploadError } = await supabase.storage
+            .from("exercise-images")
+            .upload(fileName, bytes, { contentType: "image/png", upsert: true });
+
+          if (uploadError) {
+            console.error("Upload error:", uploadError);
+            continue;
+          }
+
+          const { data: publicUrl } = supabase.storage
+            .from("exercise-images")
+            .getPublicUrl(fileName);
+
+          ex.contenu.image_url = publicUrl.publicUrl;
+          console.log("Image generated and uploaded:", fileName);
+        }
+      } catch (imgErr) {
+        console.error("Image generation error for exercise:", imgErr);
+      }
+    }
 
     return new Response(JSON.stringify(exercises), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

@@ -518,7 +518,8 @@ const DevoirPassation = () => {
 
       {/* Image support for CE exercises */}
       {(() => {
-        const imageUrl = contenu?.image || contenu?.image_url || contenu?.visual || contenu?.support_visuel || contenu?.illustration || contenu?.media_url;
+        const raw = contenu?.image || contenu?.image_url || contenu?.visual || contenu?.support_visuel || contenu?.illustration || contenu?.media_url;
+        const imageUrl = raw && typeof raw === "string" && (raw.startsWith("http://") || raw.startsWith("https://")) ? raw : null;
         return imageUrl ? (
           <Card className="border-primary/20 bg-primary/5">
             <CardContent className="pt-4 pb-4">
