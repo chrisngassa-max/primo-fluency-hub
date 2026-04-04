@@ -225,6 +225,16 @@ const TestPositionnement = () => {
     }
   };
 
+  // Auto-start: skip accueil screen and go directly to questions
+  useEffect(() => {
+    if (autoStartRef.current || isLoading) return;
+    if (existingResults) return;
+    if (screen !== "accueil") return;
+    autoStartRef.current = true;
+    handleStart();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading, existingResults, existingSession]);
+
   const currentCompetence = sessionState
     ? COMPETENCE_ORDER[sessionState.competenceIndex]
     : "CO";
