@@ -115,88 +115,90 @@ const SeancesPage = () => {
     enabled: !!user,
   });
 
-  // Fetch planned seances from parcours (not yet linked to a real session)
-  const { data: parcoursSeances, isLoading: loadingParcours } = useQuery({
-    queryKey: ["parcours-seances-available", user?.id],
-    queryFn: async () => {
-      // Get all parcours for this formateur
-      const { data: parcoursList, error: pErr } = await supabase
-        .from("parcours")
-        .select("id, titre, group_id, niveau_cible")
-        .eq("formateur_id", user!.id)
-        .in("statut", ["actif", "brouillon"]);
-      if (pErr) throw pErr;
-      if (!parcoursList || parcoursList.length === 0) return [];
+  // ── Built-in 20-session curriculum for "Séance suivante" ──
+  const CURRICULUM: { numero: number; titre: string; objectif: string; competences: string[]; duree: number }[] = [
+    { numero: 1, titre: "Séance 1 : Faire connaissance et épeler son nom", objectif: "Se présenter, épeler son nom", competences: ["CO", "EO"], duree: 180 },
+    { numero: 2, titre: "Séance 2 : L'identité et les documents officiels", objectif: "Comprendre et remplir un formulaire d'identité", competences: ["CE", "EE"], duree: 180 },
+    { numero: 3, titre: "Séance 3 : Les chiffres, les dates et les horaires", objectif: "Maîtriser les nombres, dates et heures", competences: ["CO", "CE"], duree: 180 },
+    { numero: 4, titre: "Séance 4 : La famille et l'état civil", objectif: "Parler de sa famille, comprendre un acte d'état civil", competences: ["EO", "CE"], duree: 180 },
+    { numero: 5, titre: "Séance 5 : Révision Bloc 1 — Identité et bases", objectif: "Consolider les acquis du bloc 1", competences: ["CO", "CE", "EO", "EE"], duree: 180 },
+    { numero: 6, titre: "Séance 6 : Le logement et l'adresse", objectif: "Décrire son logement, comprendre une annonce", competences: ["CE", "EE"], duree: 180 },
+    { numero: 7, titre: "Séance 7 : Les courses et les commerces", objectif: "Faire ses courses, comprendre les prix", competences: ["CO", "EO"], duree: 180 },
+    { numero: 8, titre: "Séance 8 : Les transports au quotidien", objectif: "Se déplacer, lire un plan de transport", competences: ["CE", "CO"], duree: 180 },
+    { numero: 9, titre: "Séance 9 : Le temps et la météo", objectif: "Parler du temps, comprendre une météo", competences: ["CO", "EO"], duree: 180 },
+    { numero: 10, titre: "Séance 10 : Révision Bloc 2 — Environnement", objectif: "Consolider les acquis du bloc 2", competences: ["CO", "CE", "EO", "EE"], duree: 180 },
+    { numero: 11, titre: "Séance 11 : La santé et le corps", objectif: "Prendre un RDV médical, décrire des symptômes", competences: ["EO", "CE"], duree: 180 },
+    { numero: 12, titre: "Séance 12 : La pharmacie et les médicaments", objectif: "Comprendre une ordonnance, acheter en pharmacie", competences: ["CE", "CO"], duree: 180 },
+    { numero: 13, titre: "Séance 13 : Les démarches administratives", objectif: "Comprendre un courrier officiel, remplir un formulaire", competences: ["CE", "EE"], duree: 180 },
+    { numero: 14, titre: "Séance 14 : La CAF et les aides sociales", objectif: "Comprendre ses droits, remplir une demande", competences: ["CE", "EE"], duree: 180 },
+    { numero: 15, titre: "Séance 15 : Révision Bloc 3 — Vie pratique", objectif: "Consolider les acquis du bloc 3", competences: ["CO", "CE", "EO", "EE"], duree: 180 },
+    { numero: 16, titre: "Séance 16 : Chercher un emploi", objectif: "Lire une offre d'emploi, rédiger un CV simple", competences: ["CE", "EE"], duree: 180 },
+    { numero: 17, titre: "Séance 17 : L'entretien d'embauche", objectif: "Se préparer à un entretien", competences: ["EO", "CO"], duree: 180 },
+    { numero: 18, titre: "Séance 18 : La citoyenneté et les valeurs", objectif: "Connaître les valeurs de la République", competences: ["CE", "EO"], duree: 180 },
+    { numero: 19, titre: "Séance 19 : Entraînement TCF IRN complet", objectif: "Simulation complète du test", competences: ["CO", "CE", "EO", "EE"], duree: 180 },
+    { numero: 20, titre: "Séance 20 : Bilan final et préparation au jour J", objectif: "Révision finale et stratégies d'examen", competences: ["CO", "CE", "EO", "EE"], duree: 180 },
+  ];
 
-      const parcoursIds = parcoursList.map((p) => p.id);
-      const { data: seances, error: sErr } = await supabase
-        .from("parcours_seances")
-        .select("*")
-        .in("parcours_id", parcoursIds)
-        .is("session_id", null)
-        .neq("statut", "termine")
-        .order("ordre");
-      if (sErr) throw sErr;
+  // Detect the highest session number already created for this formateur
+  const getNextSessionNumber = (): number => {
+    if (!sessions || sessions.length === 0) return 1;
+    let maxNum = 0;
+    for (const s of sessions as any[]) {
+      const match = s.titre?.match(/S[ée]ance\s*(\d+)/i);
+      if (match) maxNum = Math.max(maxNum, parseInt(match[1]));
+    }
+    return Math.min(maxNum + 1, 20);
+  };
 
-      return (seances ?? []).map((s: any) => {
-        const parcours = parcoursList.find((p) => p.id === s.parcours_id);
-        return { ...s, _parcours: parcours };
-      });
-    },
-    enabled: !!user,
-  });
+  // State for "next session" dialog
+  const [nextSessionOpen, setNextSessionOpen] = useState(false);
+  const [selectedCurriculumNum, setSelectedCurriculumNum] = useState<number>(0);
+  const [nextGroupId, setNextGroupId] = useState("");
+  const [nextDate, setNextDate] = useState("");
+  const [nextLieu, setNextLieu] = useState("");
+  const [nextSaving, setNextSaving] = useState(false);
 
-  // State for scheduling a parcours seance
-  const [scheduleSeance, setScheduleSeance] = useState<any>(null);
-  const [scheduleGroupId, setScheduleGroupId] = useState("");
-  const [scheduleDate, setScheduleDate] = useState("");
-  const [scheduleLieu, setScheduleLieu] = useState("");
-  const [scheduleSaving, setScheduleSaving] = useState(false);
+  const openNextSession = (num?: number) => {
+    const n = num ?? getNextSessionNumber();
+    setSelectedCurriculumNum(n);
+    setNextGroupId("");
+    setNextDate("");
+    setNextLieu("");
+    setNextSessionOpen(true);
+  };
 
-  const handleScheduleFromParcours = async () => {
-    if (!scheduleSeance) return;
-    if (!scheduleGroupId) { toast.error("Sélectionnez un groupe."); return; }
-    if (!scheduleDate) { toast.error("Choisissez une date."); return; }
+  const selectedCurriculum = CURRICULUM.find((c) => c.numero === selectedCurriculumNum);
 
-    setScheduleSaving(true);
+  const handleCreateFromCurriculum = async () => {
+    if (!selectedCurriculum) return;
+    if (!nextGroupId) { toast.error("Sélectionnez un groupe."); return; }
+    if (!nextDate) { toast.error("Choisissez une date."); return; }
+
+    setNextSaving(true);
     try {
-      // Create the real session
-      const { data: newSession, error: sErr } = await supabase
+      const { error } = await supabase
         .from("sessions")
         .insert({
-          titre: scheduleSeance.titre,
-          group_id: scheduleGroupId,
-          date_seance: new Date(scheduleDate).toISOString(),
-          niveau_cible: scheduleSeance._parcours?.niveau_cible || "A2",
-          objectifs: scheduleSeance.objectif_principal || null,
-          duree_minutes: scheduleSeance.duree_minutes || 90,
-          lieu: scheduleLieu || null,
-          competences_cibles: scheduleSeance.competences_cibles?.length > 0 ? scheduleSeance.competences_cibles : null,
-        } as any)
-        .select()
-        .single();
-      if (sErr) throw sErr;
+          titre: selectedCurriculum.titre,
+          group_id: nextGroupId,
+          date_seance: new Date(nextDate).toISOString(),
+          niveau_cible: "A1",
+          objectifs: selectedCurriculum.objectif,
+          duree_minutes: selectedCurriculum.duree,
+          lieu: nextLieu || null,
+          competences_cibles: selectedCurriculum.competences,
+        } as any);
+      if (error) throw error;
 
-      // Link the parcours_seance to this new session
-      const { error: linkErr } = await supabase
-        .from("parcours_seances")
-        .update({ session_id: newSession.id, statut: "planifie" })
-        .eq("id", scheduleSeance.id);
-      if (linkErr) throw linkErr;
-
-      toast.success("Séance planifiée depuis le plan de formation !", {
-        description: `« ${scheduleSeance.titre} » est prête.`,
+      toast.success("Séance créée !", {
+        description: `« ${selectedCurriculum.titre} » est prête.`,
       });
-      setScheduleSeance(null);
-      setScheduleGroupId("");
-      setScheduleDate("");
-      setScheduleLieu("");
+      setNextSessionOpen(false);
       qc.invalidateQueries({ queryKey: ["formateur-sessions"] });
-      qc.invalidateQueries({ queryKey: ["parcours-seances-available"] });
     } catch (e: any) {
       toast.error("Erreur", { description: e.message });
     } finally {
-      setScheduleSaving(false);
+      setNextSaving(false);
     }
   };
 
@@ -497,24 +499,15 @@ const SeancesPage = () => {
           <p className="text-sm text-muted-foreground">Planifiez et gérez vos séances.</p>
         </div>
         <div className="flex items-center gap-2">
-          {/* Quick "next session" button */}
-          {parcoursSeances && parcoursSeances.length > 0 && (
-            <Button
-              variant="default"
-              className="gap-2"
-              onClick={() => {
-                const next = parcoursSeances[0];
-                setScheduleSeance(next);
-                setScheduleGroupId(next._parcours?.group_id || "");
-              }}
-            >
-              <ArrowRight className="h-4 w-4" />
-              Séance suivante
-              <Badge variant="secondary" className="ml-1 bg-primary-foreground/20 text-primary-foreground text-[10px]">
-                {parcoursSeances[0]?.titre?.length > 25 ? parcoursSeances[0]?.titre?.slice(0, 25) + "…" : parcoursSeances[0]?.titre}
-              </Badge>
-            </Button>
-          )}
+          {/* Quick "next session" button — always visible */}
+          <Button
+            variant="default"
+            className="gap-2"
+            onClick={() => openNextSession()}
+          >
+            <ArrowRight className="h-4 w-4" />
+            Séance suivante
+          </Button>
           <Dialog open={createOpen} onOpenChange={(v) => { setCreateOpen(v); if (!v) resetForm(); }}>
             <DialogTrigger asChild>
               <Button variant="outline"><Plus className="h-4 w-4 mr-2" />Nouvelle séance</Button>
@@ -736,119 +729,80 @@ const SeancesPage = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Schedule from parcours dialog */}
-      <Dialog open={!!scheduleSeance} onOpenChange={(v) => { if (!v) setScheduleSeance(null); }}>
+      {/* Next session from curriculum dialog */}
+      <Dialog open={nextSessionOpen} onOpenChange={setNextSessionOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Planifier depuis le plan de formation</DialogTitle>
+            <DialogTitle>Planifier une séance du programme</DialogTitle>
           </DialogHeader>
-          {scheduleSeance && (
-            <div className="space-y-4">
+          <div className="space-y-4">
+            {/* Session picker */}
+            <div className="space-y-2">
+              <Label>Séance</Label>
+              <Select value={String(selectedCurriculumNum)} onValueChange={(v) => setSelectedCurriculumNum(parseInt(v))}>
+                <SelectTrigger><SelectValue placeholder="Choisir une séance..." /></SelectTrigger>
+                <SelectContent>
+                  {CURRICULUM.map((c) => (
+                    <SelectItem key={c.numero} value={String(c.numero)}>
+                      {c.titre}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Preview */}
+            {selectedCurriculum && (
               <div className="rounded-lg bg-muted/50 p-3 space-y-1">
-                <p className="font-medium text-sm">{scheduleSeance.titre}</p>
-                {scheduleSeance.objectif_principal && (
-                  <p className="text-xs text-muted-foreground flex items-start gap-1.5">
-                    <Target className="h-3.5 w-3.5 mt-0.5 shrink-0" />
-                    {scheduleSeance.objectif_principal}
-                  </p>
-                )}
-                <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{scheduleSeance.duree_minutes} min</span>
-                  {scheduleSeance.competences_cibles?.length > 0 && (
-                    <div className="flex gap-1">
-                      {scheduleSeance.competences_cibles.map((c: string) => (
-                        <span key={c} className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${COMPETENCE_COLORS[c] || ""}`}>{c}</span>
-                      ))}
-                    </div>
-                  )}
+                <p className="text-xs text-muted-foreground flex items-start gap-1.5">
+                  <Target className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+                  {selectedCurriculum.objectif}
+                </p>
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{selectedCurriculum.duree} min</span>
+                  <div className="flex gap-1">
+                    {selectedCurriculum.competences.map((c) => (
+                      <span key={c} className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${COMPETENCE_COLORS[c] || ""}`}>{c}</span>
+                    ))}
+                  </div>
                 </div>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <Label>Groupe</Label>
+              <Select value={nextGroupId} onValueChange={setNextGroupId}>
+                <SelectTrigger><SelectValue placeholder="Choisir un groupe..." /></SelectTrigger>
+                <SelectContent>
+                  {(groups ?? []).map((g) => (
+                    <SelectItem key={g.id} value={g.id}>{g.nom} ({g.niveau})</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label>Date et heure</Label>
+                <Input type="datetime-local" value={nextDate} onChange={(e) => setNextDate(e.target.value)} />
               </div>
               <div className="space-y-2">
-                <Label>Groupe</Label>
-                <Select value={scheduleGroupId} onValueChange={setScheduleGroupId}>
-                  <SelectTrigger><SelectValue placeholder="Choisir un groupe..." /></SelectTrigger>
-                  <SelectContent>
-                    {(groups ?? []).map((g) => (
-                      <SelectItem key={g.id} value={g.id}>{g.nom} ({g.niveau})</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-2">
-                  <Label>Date et heure</Label>
-                  <Input type="datetime-local" value={scheduleDate} onChange={(e) => setScheduleDate(e.target.value)} />
-                </div>
-                <div className="space-y-2">
-                  <Label>Lieu (optionnel)</Label>
-                  <Input value={scheduleLieu} onChange={(e) => setScheduleLieu(e.target.value)} placeholder="Salle A3" />
-                </div>
+                <Label>Lieu (optionnel)</Label>
+                <Input value={nextLieu} onChange={(e) => setNextLieu(e.target.value)} placeholder="Salle A3" />
               </div>
             </div>
-          )}
+          </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setScheduleSeance(null)}>Annuler</Button>
-            <Button onClick={handleScheduleFromParcours} disabled={scheduleSaving}>
-              {scheduleSaving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-              Planifier
+            <Button variant="outline" onClick={() => setNextSessionOpen(false)}>Annuler</Button>
+            <Button onClick={handleCreateFromCurriculum} disabled={nextSaving}>
+              {nextSaving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              Créer la séance
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Parcours seances suggestions */}
-      {parcoursSeances && parcoursSeances.length > 0 && (
-        <div className="space-y-3">
-          <div className="flex items-center gap-2">
-            <Route className="h-5 w-5 text-primary" />
-            <h2 className="text-lg font-semibold">Séances du plan de formation</h2>
-            <Badge variant="secondary" className="text-xs">{parcoursSeances.length} à planifier</Badge>
-          </div>
-          <div className="grid gap-2 sm:grid-cols-2">
-            {parcoursSeances.slice(0, 6).map((ps: any) => (
-              <Card key={ps.id} className="border-primary/20 bg-primary/[0.02] hover:border-primary/40 transition-colors">
-                <CardContent className="py-3 px-4">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0 space-y-1">
-                      <p className="font-medium text-sm truncate">{ps.titre}</p>
-                      <p className="text-xs text-muted-foreground truncate">
-                        {ps._parcours?.titre}
-                      </p>
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-xs text-muted-foreground flex items-center gap-1">
-                          <Clock className="h-3 w-3" />{ps.duree_minutes} min
-                        </span>
-                        {ps.competences_cibles?.map((c: string) => (
-                          <span key={c} className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${COMPETENCE_COLORS[c] || ""}`}>{c}</span>
-                        ))}
-                      </div>
-                    </div>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="shrink-0 gap-1 text-xs h-7"
-                      onClick={() => {
-                        setScheduleSeance(ps);
-                        setScheduleGroupId(ps._parcours?.group_id || "");
-                      }}
-                    >
-                      Planifier <ArrowRight className="h-3 w-3" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          {parcoursSeances.length > 6 && (
-            <p className="text-xs text-muted-foreground text-center">
-              + {parcoursSeances.length - 6} autre(s) séance(s) disponible(s) dans vos plans de formation
-            </p>
-          )}
-        </div>
-      )}
-
       {/* Sessions list */}
-      {sessions && sessions.length === 0 && !parcoursSeances?.length && (
+      {sessions && sessions.length === 0 && (
         <Card className="border-dashed">
           <CardContent className="py-12 text-center">
             <Calendar className="h-12 w-12 mx-auto text-muted-foreground/40 mb-3" />
