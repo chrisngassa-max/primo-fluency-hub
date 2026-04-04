@@ -265,6 +265,53 @@ const GroupesPage = () => {
     }
   };
 
+  // Reassign student: move from current group to new group
+  const handleReassign = async (membershipId: string, eleveId: string, newGroupId: string) => {
+    try {
+      const { error } = await supabase
+        .from("group_members")
+        .update({ group_id: newGroupId })
+        .eq("id", membershipId);
+      if (error) throw error;
+      toast.success("Élève réassigné au nouveau groupe !");
+      qc.invalidateQueries({ queryKey: ["all-group-members"] });
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    }
+  };
+
+  // Add student to an additional group
+  const handleAddToGroup = async (eleveId: string, newGroupId: string) => {
+    try {
+      // Check if already in that group
+      const existing = (allMembers ?? []).find((m: any) => m.eleve_id === eleveId && m.group_id === newGroupId);
+      if (existing) {
+        toast.warning("L'élève est déjà dans ce groupe.");
+        return;
+      }
+      const { error } = await supabase.from("group_members").insert({
+        eleve_id: eleveId,
+        group_id: newGroupId,
+      });
+      if (error) throw error;
+      toast.success("Élève ajouté au groupe !");
+      qc.invalidateQueries({ queryKey: ["all-group-members"] });
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    }
+  };
+
+  // Get all groups for a specific student
+  const getStudentGroups = (eleveId: string) => {
+    return (allMembers ?? [])
+      .filter((m: any) => m.eleve_id === eleveId)
+      .map((m: any) => ({
+        membershipId: m.id,
+        groupId: m.group_id,
+        group: (groups ?? []).find((g) => g.id === m.group_id),
+      }));
+  };
+
   const copyToClipboard = async (text: string, field: string) => {
     await navigator.clipboard.writeText(text);
     setCopiedField(field);
