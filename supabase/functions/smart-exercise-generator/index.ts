@@ -189,6 +189,7 @@ Pour chaque item, fournis TOUJOURS : question, options (tableau de chaînes, vid
                         criteres_evaluation: { type: "object" },
                         mots_cles_attendus: { type: "array", items: { type: "string" } },
                         texte: { type: "string" },
+                        image_description: { type: "string", description: "Description de l'image à rechercher (OBLIGATOIRE pour CE et EO). Ex: 'Une carte de résident française officielle avec photo d'identité'" },
                         items: {
                           type: "array",
                           items: {
