@@ -623,6 +623,7 @@ const SeancesPage = () => {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
 
       {/* Edit session dialog */}
