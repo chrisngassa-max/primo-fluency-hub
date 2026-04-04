@@ -159,7 +159,25 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
     enabled: !!targetId && !eleveId, // only for student view
   });
 
-  const testCompleted = !eleveId && testEntree && !testEntree.en_cours && !!testEntree.completed_at;
+  // Also check test de positionnement (test_sessions) completion
+  const { data: testPositionnement } = useQuery({
+    queryKey: ["eleve-test-positionnement-progression", targetId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("test_sessions")
+        .select("statut")
+        .eq("apprenant_id", targetId!)
+        .eq("statut", "termine")
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!targetId && !eleveId,
+  });
+
+  const testEntreeCompleted = testEntree && !testEntree.en_cours && !!testEntree.completed_at;
+  const testPositionnementCompleted = testPositionnement?.statut === "termine";
+  const testCompleted = !eleveId && (testEntreeCompleted || testPositionnementCompleted);
 
   // Global progress: compute from profil or average competencies
   const globalProgress = profil?.taux_reussite_global ?? 0;
