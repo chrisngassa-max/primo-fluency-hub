@@ -773,8 +773,41 @@ const TestPositionnement = () => {
     );
   }
 
-  // SCREEN: ACCUEIL
+  // SCREEN: ACCUEIL (fallback — normally auto-started)
   return (
+    <div className="max-w-2xl mx-auto space-y-6 p-4">
+      <h1 className="text-2xl font-bold text-foreground">
+        Test de positionnement
+      </h1>
+      <Card>
+        <CardContent className="pt-6 space-y-4">
+          <p className="text-base text-muted-foreground">
+            Ce test adaptatif permet de connaître ton niveau de français. Il dure environ
+            20 minutes et couvre 4 compétences.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Tu passeras 4 épreuves : Compréhension orale, Compréhension
+            écrite, Expression orale et Expression écrite.
+          </p>
+          <Button
+            className="w-full"
+            size="lg"
+            onClick={handleStart}
+            disabled={existingSession?.statut === "termine"}
+          >
+            {existingSession?.statut === "en_cours"
+              ? "Reprendre le test"
+              : existingSession?.statut === "termine"
+              ? "Test déjà terminé"
+              : "Commencer le test"}
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default TestPositionnement;
     <div className="max-w-2xl mx-auto space-y-6 p-4">
       <h1 className="text-2xl font-bold text-foreground">
         Test de positionnement
