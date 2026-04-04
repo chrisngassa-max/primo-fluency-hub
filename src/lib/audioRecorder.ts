@@ -61,7 +61,20 @@ export function startWavRecording(
   stream: MediaStream,
   onComplete: (blob: Blob) => void
 ): WavRecorder {
-  const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+  const AudioContextClass =
+    window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+
+  if (!AudioContextClass) {
+    throw new Error("audio-context-unsupported");
+  }
+
+  const audioContext = new AudioContextClass();
+  if (audioContext.state === "suspended") {
+    void audioContext.resume().catch((error) => {
+      console.warn("Unable to resume audio context:", error);
+    });
+  }
+
   const source = audioContext.createMediaStreamSource(stream);
   const inputSampleRate = audioContext.sampleRate;
 
