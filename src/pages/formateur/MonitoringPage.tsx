@@ -256,7 +256,7 @@ const MonitoringPage = () => {
       const { data: profil } = await supabase.from("profils_eleves").select("*").eq("eleve_id", selectedEleveId!).maybeSingle();
       const { data: levels } = await supabase.from("student_competency_levels").select("*").eq("eleve_id", selectedEleveId!);
       const { data: results } = await supabase.from("resultats").select("*, exercices(titre, competence, difficulte, contenu)").eq("eleve_id", selectedEleveId!).order("created_at", { ascending: false }).limit(30);
-      const { data: testEntree } = await supabase.from("tests_entree").select("*").eq("eleve_id", selectedEleveId!).maybeSingle();
+      const { data: testEntree } = await supabase.from("test_resultats_apprenants").select("*").eq("apprenant_id", selectedEleveId!).order("date_test", { ascending: false }).limit(1).maybeSingle();
       const failures: { titre: string; competence: string; score: number; count: number }[] = [];
       const failMap: Record<string, { titre: string; competence: string; totalScore: number; count: number }> = {};
       (results ?? []).forEach((r: any) => {

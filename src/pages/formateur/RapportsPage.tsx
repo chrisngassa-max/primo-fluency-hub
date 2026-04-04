@@ -85,7 +85,7 @@ export default function RapportsPage() {
       supabase.from("profils_eleves").select("*").eq("eleve_id", selectedEleve).maybeSingle(),
       supabase.from("resultats").select("*, exercices(competence, titre, format)").eq("eleve_id", selectedEleve).gte("created_at", dateDebutStr).order("created_at", { ascending: true }),
       supabase.from("devoirs").select("*, exercices(competence, titre)").eq("eleve_id", selectedEleve).gte("created_at", dateDebutStr),
-      supabase.from("tests_entree").select("*").eq("eleve_id", selectedEleve).maybeSingle(),
+      supabase.from("test_resultats_apprenants").select("*").eq("apprenant_id", selectedEleve).order("date_test", { ascending: false }).limit(1).maybeSingle(),
       supabase.from("profiles").select("prenom, nom").eq("id", selectedEleve).single(),
     ]);
 

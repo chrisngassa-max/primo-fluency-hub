@@ -144,22 +144,7 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
 
   const hasRadarData = radarData.some((d) => d.value > 0);
 
-  // Fetch test d'entrée status
-  const { data: testEntree } = useQuery({
-    queryKey: ["eleve-test-entree-progression", targetId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("tests_entree")
-        .select("completed_at, en_cours")
-        .eq("eleve_id", targetId!)
-        .maybeSingle();
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!targetId && !eleveId, // only for student view
-  });
-
-  // Also check test de positionnement (test_sessions) completion
+  // Check test de positionnement completion
   const { data: testPositionnement } = useQuery({
     queryKey: ["eleve-test-positionnement-progression", targetId],
     queryFn: async () => {
@@ -175,9 +160,7 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
     enabled: !!targetId && !eleveId,
   });
 
-  const testEntreeCompleted = testEntree && !testEntree.en_cours && !!testEntree.completed_at;
-  const testPositionnementCompleted = testPositionnement?.statut === "termine";
-  const testCompleted = !eleveId && (testEntreeCompleted || testPositionnementCompleted);
+  const testCompleted = !eleveId && testPositionnement?.statut === "termine";
 
   // Global progress: compute from profil or average competencies
   const globalProgress = profil?.taux_reussite_global ?? 0;
