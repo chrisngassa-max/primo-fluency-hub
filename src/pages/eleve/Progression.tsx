@@ -12,12 +12,20 @@ import {
   RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,
   ResponsiveContainer,
 } from "recharts";
-import { TrendingUp, BookOpen, Award, CalendarCheck, Mail, KeyRound, Copy } from "lucide-react";
+import { TrendingUp, BookOpen, Award, CalendarCheck, Mail, KeyRound, Copy, Users, ArrowRightLeft, PlusCircle, X } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 import CompetenceLabel from "@/components/CompetenceLabel";
 import { StudentPacingCard } from "@/components/PacingTracker";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 const COMPETENCES = ["CO", "CE", "EE", "EO", "Structures"] as const;
 
@@ -47,6 +55,7 @@ interface EleveProgressionProps {
 const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const targetId = eleveId || user?.id;
 
   // Fetch competency status
@@ -126,6 +135,78 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
     },
     enabled: !!targetId,
   });
+
+  // Fetch student's current groups (formateur view)
+  const { data: studentGroups } = useQuery({
+    queryKey: ["student-groups", targetId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("group_members")
+        .select("id, group_id, groups(id, nom, niveau)")
+        .eq("eleve_id", targetId!);
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!targetId && !!eleveId,
+  });
+
+  // Fetch all formateur groups (for reassignment)
+  const { data: allGroups } = useQuery({
+    queryKey: ["formateur-groups-for-reassign"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("groups")
+        .select("id, nom, niveau")
+        .eq("is_active", true)
+        .order("nom");
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!eleveId,
+  });
+
+  const handleReassignGroup = async (membershipId: string, newGroupId: string) => {
+    const { error } = await supabase
+      .from("group_members")
+      .update({ group_id: newGroupId })
+      .eq("id", membershipId);
+    if (error) {
+      toast.error("Erreur lors du transfert");
+      return;
+    }
+    toast.success("Élève transféré avec succès");
+    queryClient.invalidateQueries({ queryKey: ["student-groups", targetId] });
+  };
+
+  const handleAddToGroup = async (groupId: string) => {
+    const alreadyIn = (studentGroups ?? []).some((sg: any) => sg.group_id === groupId);
+    if (alreadyIn) {
+      toast.error("L'élève est déjà dans ce groupe");
+      return;
+    }
+    const { error } = await supabase
+      .from("group_members")
+      .insert({ eleve_id: targetId!, group_id: groupId });
+    if (error) {
+      toast.error("Erreur lors de l'ajout");
+      return;
+    }
+    toast.success("Élève ajouté au groupe");
+    queryClient.invalidateQueries({ queryKey: ["student-groups", targetId] });
+  };
+
+  const handleRemoveFromGroup = async (membershipId: string) => {
+    const { error } = await supabase
+      .from("group_members")
+      .delete()
+      .eq("id", membershipId);
+    if (error) {
+      toast.error("Erreur lors du retrait");
+      return;
+    }
+    toast.success("Élève retiré du groupe");
+    queryClient.invalidateQueries({ queryKey: ["student-groups", targetId] });
+  };
 
   const isLoading = compLoading || profilLoading || resLoading;
 
@@ -245,6 +326,100 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
                 Mot de passe initial non disponible (l'élève s'est inscrit lui-même).
               </p>
             )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Group management (formateur view only) */}
+      {eleveId && studentGroups && allGroups && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              Groupes
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {studentGroups.length === 0 ? (
+              <p className="text-sm text-muted-foreground italic">Aucun groupe assigné.</p>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {studentGroups.map((sg: any) => {
+                  const group = sg.groups as any;
+                  const otherGroups = (allGroups ?? []).filter(
+                    (g: any) => g.id !== sg.group_id
+                  );
+                  return (
+                    <DropdownMenu key={sg.id}>
+                      <DropdownMenuTrigger asChild>
+                        <Badge
+                          variant="secondary"
+                          className="cursor-pointer hover:bg-secondary/80 gap-1.5 text-sm py-1 px-3"
+                        >
+                          {group?.nom ?? "Groupe"} — {group?.niveau ?? ""}
+                          <ArrowRightLeft className="h-3 w-3 ml-1 opacity-60" />
+                        </Badge>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start">
+                        <p className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
+                          Transférer vers…
+                        </p>
+                        <DropdownMenuSeparator />
+                        {otherGroups.map((g: any) => (
+                          <DropdownMenuItem
+                            key={g.id}
+                            onClick={() => handleReassignGroup(sg.id, g.id)}
+                          >
+                            {g.nom} ({g.niveau})
+                          </DropdownMenuItem>
+                        ))}
+                        {otherGroups.length === 0 && (
+                          <p className="px-2 py-1.5 text-xs text-muted-foreground">
+                            Aucun autre groupe
+                          </p>
+                        )}
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          className="text-destructive focus:text-destructive"
+                          onClick={() => handleRemoveFromGroup(sg.id)}
+                        >
+                          <X className="h-3 w-3 mr-1" />
+                          Retirer de ce groupe
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Add to another group */}
+            {(() => {
+              const availableGroups = (allGroups ?? []).filter(
+                (g: any) => !(studentGroups ?? []).some((sg: any) => sg.group_id === g.id)
+              );
+              if (availableGroups.length === 0) return null;
+              return (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="gap-1.5">
+                      <PlusCircle className="h-3.5 w-3.5" />
+                      Ajouter à un groupe
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start">
+                    {availableGroups.map((g: any) => (
+                      <DropdownMenuItem
+                        key={g.id}
+                        onClick={() => handleAddToGroup(g.id)}
+                      >
+                        {g.nom} ({g.niveau})
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              );
+            })()}
           </CardContent>
         </Card>
       )}
