@@ -1345,6 +1345,30 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
             <p className="text-sm text-muted-foreground/70 mt-1 mb-4">
               Générez des exercices IA ou rattachez-en depuis la page Séances.
             </p>
+            <div className="flex items-center gap-1 mb-3 justify-center flex-wrap">
+              {(["CO","CE","EE","EO","Structures"] as const).map((comp) => {
+                const sessionComps = (session as any)?.competences_cibles ?? [];
+                const isSessionComp = sessionComps.includes(comp);
+                const isSelected = selectedGenCompetences.includes(comp);
+                return (
+                  <Button
+                    key={comp}
+                    size="sm"
+                    variant={isSelected ? "default" : "outline"}
+                    className={cn(
+                      "h-7 px-2 text-xs font-medium",
+                      !isSelected && isSessionComp && "border-primary/50 text-primary",
+                      !isSelected && !isSessionComp && "opacity-50"
+                    )}
+                    onClick={() => setSelectedGenCompetences((prev) =>
+                      prev.includes(comp) ? prev.filter((c) => c !== comp) : [...prev, comp]
+                    )}
+                  >
+                    {comp}
+                  </Button>
+                );
+              })}
+            </div>
             <div className="flex items-center gap-2 justify-center">
               <Select value={String(generateCount)} onValueChange={(v) => setGenerateCount(Number(v))}>
                 <SelectTrigger className="w-[70px] h-9">
