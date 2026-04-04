@@ -671,7 +671,9 @@ const TestPositionnement = () => {
       ((sessionState.questionIndex + 1) / totalQInPalier) * 100;
 
     return (
-      <div className="max-w-2xl mx-auto space-y-4 p-4">
+      <>
+        {leaveConfirmDialog}
+        <div className="max-w-2xl mx-auto space-y-4 p-4">
         {/* Header */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
