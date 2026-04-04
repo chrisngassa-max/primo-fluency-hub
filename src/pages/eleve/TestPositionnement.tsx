@@ -640,8 +640,13 @@ const TestPositionnement = () => {
               </Card>
             )}
 
-            {/* Consigne */}
-            <p className="text-lg font-medium">{currentQuestion.consigne}</p>
+            {/* Consigne + TTS */}
+            <div className="space-y-2">
+              <p className="text-lg font-medium">{currentQuestion.consigne}</p>
+              {!currentQuestion.script_audio && (
+                <TTSAudioPlayer key={`consigne-${currentQuestion.id}`} text={currentQuestion.consigne} />
+              )}
+            </div>
 
             {/* QCM */}
             {currentQuestion.type_reponse === "qcm" && (
