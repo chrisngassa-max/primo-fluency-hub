@@ -64,6 +64,8 @@ const TestPositionnement = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [recordingCount, setRecordingCount] = useState(0);
+  const MAX_RECORDINGS = 2;
   const [aiEvaluation, setAiEvaluation] = useState<{
     score: number;
     justification: string;
@@ -250,6 +252,7 @@ const TestPositionnement = () => {
     wavRecorderRef.current?.stop();
     wavRecorderRef.current = null;
     setIsRecording(false);
+    setRecordingCount((c) => c + 1);
   };
 
   const handleValidateQCM = async () => {
@@ -364,6 +367,7 @@ const TestPositionnement = () => {
     await advanceToNext(evaluation.score);
     setAudioBlob(null);
     setAiEvaluation(null);
+    setRecordingCount(0);
     setIsSubmitting(false);
   };
 
@@ -672,16 +676,28 @@ const TestPositionnement = () => {
             {/* Oral */}
             {currentQuestion.type_reponse === "oral" && (
               <div className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Vous pouvez vous enregistrer {MAX_RECORDINGS} fois avant de valider.
+                  {recordingCount > 0 && !isRecording && (
+                    <span className="font-medium">
+                      {" "}— Enregistrement {recordingCount}/{MAX_RECORDINGS} utilisé{recordingCount > 1 ? "s" : ""}
+                    </span>
+                  )}
+                </p>
                 <div className="flex gap-3">
                   {!isRecording ? (
                     <Button
-                      onClick={startRecording}
+                      onClick={() => {
+                        setAudioBlob(null);
+                        startRecording();
+                      }}
                       variant="outline"
                       size="lg"
                       className="flex-1 gap-2"
+                      disabled={recordingCount >= MAX_RECORDINGS && audioBlob !== null}
                     >
                       <Mic className="h-5 w-5" />
-                      Enregistrer
+                      {recordingCount === 0 ? "Enregistrer" : "Réenregistrer"}
                     </Button>
                   ) : (
                     <Button
@@ -696,11 +712,18 @@ const TestPositionnement = () => {
                   )}
                 </div>
                 {audioBlob && (
-                  <audio
-                    controls
-                    src={URL.createObjectURL(audioBlob)}
-                    className="w-full"
-                  />
+                  <>
+                    <audio
+                      controls
+                      src={URL.createObjectURL(audioBlob)}
+                      className="w-full"
+                    />
+                    {recordingCount < MAX_RECORDINGS && (
+                      <p className="text-xs text-muted-foreground text-center">
+                        Pas satisfait ? Cliquez sur « Réenregistrer » ({MAX_RECORDINGS - recordingCount} essai{MAX_RECORDINGS - recordingCount > 1 ? "s" : ""} restant{MAX_RECORDINGS - recordingCount > 1 ? "s" : ""})
+                      </p>
+                    )}
+                  </>
                 )}
                 <Button
                   className="w-full"
@@ -708,7 +731,7 @@ const TestPositionnement = () => {
                   disabled={!audioBlob || isSubmitting}
                   onClick={handleValidateOral}
                 >
-                  {isSubmitting ? "Évaluation en cours…" : "Valider"}
+                  {isSubmitting ? "Évaluation en cours…" : "Valider ma réponse"}
                 </Button>
               </div>
             )}
