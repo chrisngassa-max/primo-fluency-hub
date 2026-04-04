@@ -808,5 +808,3 @@ const TestPositionnement = () => {
 };
 
 export default TestPositionnement;
-
-export default TestPositionnement;
