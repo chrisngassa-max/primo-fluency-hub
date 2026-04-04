@@ -115,7 +115,92 @@ const SeancesPage = () => {
     enabled: !!user,
   });
 
-  // Fetch sessions with exercise competences for fallback
+  // Fetch planned seances from parcours (not yet linked to a real session)
+  const { data: parcoursSeances, isLoading: loadingParcours } = useQuery({
+    queryKey: ["parcours-seances-available", user?.id],
+    queryFn: async () => {
+      // Get all parcours for this formateur
+      const { data: parcoursList, error: pErr } = await supabase
+        .from("parcours")
+        .select("id, titre, group_id, niveau_cible")
+        .eq("formateur_id", user!.id)
+        .in("statut", ["actif", "brouillon"]);
+      if (pErr) throw pErr;
+      if (!parcoursList || parcoursList.length === 0) return [];
+
+      const parcoursIds = parcoursList.map((p) => p.id);
+      const { data: seances, error: sErr } = await supabase
+        .from("parcours_seances")
+        .select("*")
+        .in("parcours_id", parcoursIds)
+        .is("session_id", null)
+        .neq("statut", "termine")
+        .order("ordre");
+      if (sErr) throw sErr;
+
+      return (seances ?? []).map((s: any) => {
+        const parcours = parcoursList.find((p) => p.id === s.parcours_id);
+        return { ...s, _parcours: parcours };
+      });
+    },
+    enabled: !!user,
+  });
+
+  // State for scheduling a parcours seance
+  const [scheduleSeance, setScheduleSeance] = useState<any>(null);
+  const [scheduleGroupId, setScheduleGroupId] = useState("");
+  const [scheduleDate, setScheduleDate] = useState("");
+  const [scheduleLieu, setScheduleLieu] = useState("");
+  const [scheduleSaving, setScheduleSaving] = useState(false);
+
+  const handleScheduleFromParcours = async () => {
+    if (!scheduleSeance) return;
+    if (!scheduleGroupId) { toast.error("Sélectionnez un groupe."); return; }
+    if (!scheduleDate) { toast.error("Choisissez une date."); return; }
+
+    setScheduleSaving(true);
+    try {
+      // Create the real session
+      const { data: newSession, error: sErr } = await supabase
+        .from("sessions")
+        .insert({
+          titre: scheduleSeance.titre,
+          group_id: scheduleGroupId,
+          date_seance: new Date(scheduleDate).toISOString(),
+          niveau_cible: scheduleSeance._parcours?.niveau_cible || "A2",
+          objectifs: scheduleSeance.objectif_principal || null,
+          duree_minutes: scheduleSeance.duree_minutes || 90,
+          lieu: scheduleLieu || null,
+          competences_cibles: scheduleSeance.competences_cibles?.length > 0 ? scheduleSeance.competences_cibles : null,
+        } as any)
+        .select()
+        .single();
+      if (sErr) throw sErr;
+
+      // Link the parcours_seance to this new session
+      const { error: linkErr } = await supabase
+        .from("parcours_seances")
+        .update({ session_id: newSession.id, statut: "planifie" })
+        .eq("id", scheduleSeance.id);
+      if (linkErr) throw linkErr;
+
+      toast.success("Séance planifiée depuis le plan de formation !", {
+        description: `« ${scheduleSeance.titre} » est prête.`,
+      });
+      setScheduleSeance(null);
+      setScheduleGroupId("");
+      setScheduleDate("");
+      setScheduleLieu("");
+      qc.invalidateQueries({ queryKey: ["formateur-sessions"] });
+      qc.invalidateQueries({ queryKey: ["parcours-seances-available"] });
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    } finally {
+      setScheduleSaving(false);
+    }
+  };
+
+
   const { data: sessions, isLoading } = useQuery({
     queryKey: ["formateur-sessions", user?.id],
     queryFn: async () => {
