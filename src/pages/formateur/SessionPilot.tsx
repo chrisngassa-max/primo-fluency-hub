@@ -86,6 +86,7 @@ const SessionPilot = () => {
   const [sending, setSending] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [generateCount, setGenerateCount] = useState(5);
+  const [selectedGenCompetences, setSelectedGenCompetences] = useState<string[]>([]);
   const [generatingHomework, setGeneratingHomework] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [deleteSeId, setDeleteSeId] = useState<string | null>(null);
@@ -432,15 +433,18 @@ const SessionPilot = () => {
     setGenerating(true);
     try {
       const niveauVise = session.niveau_cible || (parcoursSeance as any)?.parcours?.niveau_cible || "A1";
-      // Priority: session competences_cibles > parcours competences_cibles > fallback CE
+      // Use explicitly selected competences, or fallback to session/parcours/CE
       const sessionComps = (session as any)?.competences_cibles;
       const parcoursComps = (parcoursSeance as any)?.competences_cibles;
-      const competences = (sessionComps && sessionComps.length > 0)
+      const fallbackComps = (sessionComps && sessionComps.length > 0)
         ? sessionComps
         : (parcoursComps && parcoursComps.length > 0)
           ? parcoursComps
           : ["CE"];
-      const competence = competences[0];
+      const competences: string[] = selectedGenCompetences.length > 0
+        ? selectedGenCompetences
+        : fallbackComps;
+
       const objectif = (parcoursSeance as any)?.objectif_principal || session.objectifs || "Exercice de séance";
       const count = generateCount;
 
@@ -455,43 +459,57 @@ const SessionPilot = () => {
         return;
       }
 
-      const { data, error } = await supabase.functions.invoke("generate-exercises", {
-        body: { pointName: objectif, competence, niveauVise, count },
-      });
+      // Distribute count across selected competences
+      const perComp = Math.max(1, Math.floor(count / competences.length));
+      const remainder = count - perComp * competences.length;
 
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
+      let allInserted: any[] = [];
+      for (let ci = 0; ci < competences.length; ci++) {
+        const comp = competences[ci];
+        const compCount = perComp + (ci < remainder ? 1 : 0);
+        if (compCount <= 0) continue;
 
-      const generated = data?.exercises ?? [];
-      if (generated.length === 0) {
+        const { data, error } = await supabase.functions.invoke("generate-exercises", {
+          body: { pointName: objectif, competence: comp, niveauVise, count: compCount },
+        });
+
+        if (error) throw error;
+        if (data?.error) throw new Error(data.error);
+
+        const generated = data?.exercises ?? [];
+        if (generated.length === 0) continue;
+
+        const exercisesToInsert = generated.map((ex: any) => ({
+          titre: ex.titre,
+          consigne: ex.consigne,
+          competence: comp as any,
+          format: (ex.format || "qcm") as any,
+          difficulte: ex.difficulte || 3,
+          contenu: ex.contenu || {},
+          animation_guide: ex.animation_guide || null,
+          niveau_vise: niveauVise,
+          formateur_id: user.id,
+          point_a_maitriser_id: defaultPoint.id,
+          is_ai_generated: true,
+          is_template: false,
+          is_devoir: false,
+        }));
+
+        const { data: inserted, error: insertErr } = await supabase
+          .from("exercices")
+          .insert(exercisesToInsert)
+          .select("id");
+        if (insertErr) throw insertErr;
+        allInserted.push(...(inserted ?? []));
+      }
+
+      if (allInserted.length === 0) {
         toast.warning("Aucun exercice généré.");
         return;
       }
 
       const currentMax = exercises.length;
-      const exercisesToInsert = generated.map((ex: any) => ({
-        titre: ex.titre,
-        consigne: ex.consigne,
-        competence: competence as any,
-        format: (ex.format || "qcm") as any,
-        difficulte: ex.difficulte || 3,
-        contenu: ex.contenu || {},
-        animation_guide: ex.animation_guide || null,
-        niveau_vise: niveauVise,
-        formateur_id: user.id,
-        point_a_maitriser_id: defaultPoint.id,
-        is_ai_generated: true,
-        is_template: false,
-        is_devoir: false,
-      }));
-
-      const { data: inserted, error: insertErr } = await supabase
-        .from("exercices")
-        .insert(exercisesToInsert)
-        .select("id");
-      if (insertErr) throw insertErr;
-
-      const sessionExLinks = (inserted ?? []).map((ex: any, i: number) => ({
+      const sessionExLinks = allInserted.map((ex: any, i: number) => ({
         session_id: id!,
         exercice_id: ex.id,
         ordre: currentMax + i + 1,
@@ -502,7 +520,8 @@ const SessionPilot = () => {
       if (linkErr) throw linkErr;
 
       qc.invalidateQueries({ queryKey: ["session-exercices", id] });
-      toast.success(`${inserted?.length} exercice(s) généré(s) et publiés !`);
+      const compLabel = competences.length === 1 ? competences[0] : competences.join(", ");
+      toast.success(`${allInserted.length} exercice(s) généré(s) (${compLabel}) !`);
     } catch (e: any) {
       console.error(e);
       toast.error("Erreur de génération", { description: e.message });
@@ -1014,7 +1033,31 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
             {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Rocket className="h-4 w-4" />}
             Envoyer aux élèves ({checkedCount})
           </Button>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 flex-wrap">
+            <div className="flex items-center gap-0.5">
+              {(["CO","CE","EE","EO","Structures"] as const).map((comp) => {
+                const sessionComps = (session as any)?.competences_cibles ?? [];
+                const isSessionComp = sessionComps.includes(comp);
+                const isSelected = selectedGenCompetences.includes(comp);
+                return (
+                  <Button
+                    key={comp}
+                    size="sm"
+                    variant={isSelected ? "default" : "outline"}
+                    className={cn(
+                      "h-7 px-2 text-xs font-medium",
+                      !isSelected && isSessionComp && "border-primary/50 text-primary",
+                      !isSelected && !isSessionComp && "opacity-50"
+                    )}
+                    onClick={() => setSelectedGenCompetences((prev) =>
+                      prev.includes(comp) ? prev.filter((c) => c !== comp) : [...prev, comp]
+                    )}
+                  >
+                    {comp}
+                  </Button>
+                );
+              })}
+            </div>
             <Select value={String(generateCount)} onValueChange={(v) => setGenerateCount(Number(v))}>
               <SelectTrigger className="w-[70px] h-9">
                 <SelectValue />
@@ -1302,6 +1345,30 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
             <p className="text-sm text-muted-foreground/70 mt-1 mb-4">
               Générez des exercices IA ou rattachez-en depuis la page Séances.
             </p>
+            <div className="flex items-center gap-1 mb-3 justify-center flex-wrap">
+              {(["CO","CE","EE","EO","Structures"] as const).map((comp) => {
+                const sessionComps = (session as any)?.competences_cibles ?? [];
+                const isSessionComp = sessionComps.includes(comp);
+                const isSelected = selectedGenCompetences.includes(comp);
+                return (
+                  <Button
+                    key={comp}
+                    size="sm"
+                    variant={isSelected ? "default" : "outline"}
+                    className={cn(
+                      "h-7 px-2 text-xs font-medium",
+                      !isSelected && isSessionComp && "border-primary/50 text-primary",
+                      !isSelected && !isSessionComp && "opacity-50"
+                    )}
+                    onClick={() => setSelectedGenCompetences((prev) =>
+                      prev.includes(comp) ? prev.filter((c) => c !== comp) : [...prev, comp]
+                    )}
+                  >
+                    {comp}
+                  </Button>
+                );
+              })}
+            </div>
             <div className="flex items-center gap-2 justify-center">
               <Select value={String(generateCount)} onValueChange={(v) => setGenerateCount(Number(v))}>
                 <SelectTrigger className="w-[70px] h-9">
