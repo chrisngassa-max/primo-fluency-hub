@@ -9,14 +9,15 @@ import AppFooter from "@/components/AppFooter";
 const Index = () => {
   const { session, role, loading } = useAuth();
   const navigate = useNavigate();
+  const isAuthResolved = !loading && (!session || role !== null);
 
-  if (!loading && session && role) {
+  if (isAuthResolved && session && role) {
     if (role === "formateur") return <Navigate to="/formateur" replace />;
     if (role === "eleve") return <Navigate to="/eleve" replace />;
     if (role === "admin") return <Navigate to="/formateur" replace />;
   }
 
-  if (loading) {
+  if (!isAuthResolved) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="space-y-4 w-full max-w-md p-8">
