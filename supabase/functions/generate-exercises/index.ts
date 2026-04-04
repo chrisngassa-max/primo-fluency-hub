@@ -313,76 +313,50 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
 
     const exercises = JSON.parse(toolCall.function.arguments);
 
-    // Post-processing: generate images for exercises that have image_description
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    // Post-processing: fetch photos from Pexels for exercises that have image_description
+    const PEXELS_API_KEY = Deno.env.get("PEXELS_API_KEY");
 
     for (const ex of exercises.exercises || []) {
       const desc = ex.contenu?.image_description;
       if (!desc || typeof desc !== "string" || desc.trim().length === 0) continue;
+      if (!PEXELS_API_KEY) {
+        console.warn("PEXELS_API_KEY not configured, skipping image search");
+        continue;
+      }
 
       try {
-        const imgResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${LOVABLE_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "google/gemini-3-pro-image-preview",
-            messages: [
-              { role: "user", content: `Generate a simple, clear, realistic illustration for a French language learning exercise. The image should be easy to describe for beginner French learners (A1 level). Scene: ${desc}. Style: clean, colorful, realistic illustration suitable for adult education. No text in the image.` },
-            ],
-            modalities: ["image", "text"],
-          }),
-        });
+        // Search Pexels with the image description as query
+        const query = encodeURIComponent(desc.slice(0, 100));
+        const pexelsResponse = await fetch(
+          `https://api.pexels.com/v1/search?query=${query}&per_page=5&orientation=landscape&size=medium`,
+          {
+            headers: { Authorization: PEXELS_API_KEY },
+          }
+        );
 
-        if (!imgResponse.ok) {
-          console.error("Image generation failed:", imgResponse.status);
+        if (!pexelsResponse.ok) {
+          console.error("Pexels API error:", pexelsResponse.status);
           continue;
         }
 
-        const imgData = await imgResponse.json();
-        // Extract base64 image from response
-        const content = imgData.choices?.[0]?.message?.content;
-        let imageBase64: string | null = null;
-        if (Array.isArray(content)) {
-          for (const part of content) {
-            if (part.type === "image" && part.image?.data) {
-              imageBase64 = part.image.data;
-              break;
-            }
-          }
+        const pexelsData = await pexelsResponse.json();
+        const photos = pexelsData.photos;
+        if (!photos || photos.length === 0) {
+          console.warn("No Pexels results for:", desc.slice(0, 50));
+          continue;
         }
 
-        if (imageBase64) {
-          // Decode and upload to Supabase Storage
-          const binaryStr = atob(imageBase64);
-          const bytes = new Uint8Array(binaryStr.length);
-          for (let i = 0; i < binaryStr.length; i++) {
-            bytes[i] = binaryStr.charCodeAt(i);
-          }
-
-          const fileName = `exercise-${crypto.randomUUID()}.png`;
-          const { error: uploadError } = await supabase.storage
-            .from("exercise-images")
-            .upload(fileName, bytes, { contentType: "image/png", upsert: true });
-
-          if (uploadError) {
-            console.error("Upload error:", uploadError);
-            continue;
-          }
-
-          const { data: publicUrl } = supabase.storage
-            .from("exercise-images")
-            .getPublicUrl(fileName);
-
-          ex.contenu.image_url = publicUrl.publicUrl;
-          console.log("Image generated and uploaded:", fileName);
-        }
+        // Pick a random photo from results for variety
+        const photo = photos[Math.floor(Math.random() * photos.length)];
+        ex.contenu.image_url = photo.src.medium;
+        ex.contenu.image_credit = {
+          photographer: photo.photographer,
+          photographer_url: photo.photographer_url,
+          pexels_url: photo.url,
+        };
+        console.log("Pexels photo found:", photo.src.medium);
       } catch (imgErr) {
-        console.error("Image generation error for exercise:", imgErr);
+        console.error("Pexels search error for exercise:", imgErr);
       }
     }
 
