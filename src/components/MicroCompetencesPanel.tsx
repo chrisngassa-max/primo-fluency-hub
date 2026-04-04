@@ -99,7 +99,7 @@ const MicroCompetencesPanel = ({
         .maybeSingle();
 
       if (data?.competences_ordonnees && Array.isArray(data.competences_ordonnees) && data.competences_ordonnees.length > 0) {
-        setItems(data.competences_ordonnees as MicroCompetence[]);
+        setItems(data.competences_ordonnees as unknown as MicroCompetence[]);
       } else {
         setItems(buildDefaults());
       }
