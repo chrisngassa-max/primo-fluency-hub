@@ -716,8 +716,119 @@ const SeancesPage = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Schedule from parcours dialog */}
+      <Dialog open={!!scheduleSeance} onOpenChange={(v) => { if (!v) setScheduleSeance(null); }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Planifier depuis le plan de formation</DialogTitle>
+          </DialogHeader>
+          {scheduleSeance && (
+            <div className="space-y-4">
+              <div className="rounded-lg bg-muted/50 p-3 space-y-1">
+                <p className="font-medium text-sm">{scheduleSeance.titre}</p>
+                {scheduleSeance.objectif_principal && (
+                  <p className="text-xs text-muted-foreground flex items-start gap-1.5">
+                    <Target className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+                    {scheduleSeance.objectif_principal}
+                  </p>
+                )}
+                <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{scheduleSeance.duree_minutes} min</span>
+                  {scheduleSeance.competences_cibles?.length > 0 && (
+                    <div className="flex gap-1">
+                      {scheduleSeance.competences_cibles.map((c: string) => (
+                        <span key={c} className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${COMPETENCE_COLORS[c] || ""}`}>{c}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Groupe</Label>
+                <Select value={scheduleGroupId} onValueChange={setScheduleGroupId}>
+                  <SelectTrigger><SelectValue placeholder="Choisir un groupe..." /></SelectTrigger>
+                  <SelectContent>
+                    {(groups ?? []).map((g) => (
+                      <SelectItem key={g.id} value={g.id}>{g.nom} ({g.niveau})</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label>Date et heure</Label>
+                  <Input type="datetime-local" value={scheduleDate} onChange={(e) => setScheduleDate(e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Lieu (optionnel)</Label>
+                  <Input value={scheduleLieu} onChange={(e) => setScheduleLieu(e.target.value)} placeholder="Salle A3" />
+                </div>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setScheduleSeance(null)}>Annuler</Button>
+            <Button onClick={handleScheduleFromParcours} disabled={scheduleSaving}>
+              {scheduleSaving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              Planifier
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Parcours seances suggestions */}
+      {parcoursSeances && parcoursSeances.length > 0 && (
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <Route className="h-5 w-5 text-primary" />
+            <h2 className="text-lg font-semibold">Séances du plan de formation</h2>
+            <Badge variant="secondary" className="text-xs">{parcoursSeances.length} à planifier</Badge>
+          </div>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {parcoursSeances.slice(0, 6).map((ps: any) => (
+              <Card key={ps.id} className="border-primary/20 bg-primary/[0.02] hover:border-primary/40 transition-colors">
+                <CardContent className="py-3 px-4">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 space-y-1">
+                      <p className="font-medium text-sm truncate">{ps.titre}</p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {ps._parcours?.titre}
+                      </p>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-xs text-muted-foreground flex items-center gap-1">
+                          <Clock className="h-3 w-3" />{ps.duree_minutes} min
+                        </span>
+                        {ps.competences_cibles?.map((c: string) => (
+                          <span key={c} className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${COMPETENCE_COLORS[c] || ""}`}>{c}</span>
+                        ))}
+                      </div>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="shrink-0 gap-1 text-xs h-7"
+                      onClick={() => {
+                        setScheduleSeance(ps);
+                        setScheduleGroupId(ps._parcours?.group_id || "");
+                      }}
+                    >
+                      Planifier <ArrowRight className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          {parcoursSeances.length > 6 && (
+            <p className="text-xs text-muted-foreground text-center">
+              + {parcoursSeances.length - 6} autre(s) séance(s) disponible(s) dans vos plans de formation
+            </p>
+          )}
+        </div>
+      )}
+
       {/* Sessions list */}
-      {sessions && sessions.length === 0 && (
+      {sessions && sessions.length === 0 && !parcoursSeances?.length && (
         <Card className="border-dashed">
           <CardContent className="py-12 text-center">
             <Calendar className="h-12 w-12 mx-auto text-muted-foreground/40 mb-3" />
