@@ -10,18 +10,26 @@ interface TTSAudioPlayerProps {
   onPlayComplete?: () => void;
 }
 
+const MAX_PLAYS = 2;
+
 const TTSAudioPlayer = ({ text, className = "", onPlayComplete }: TTSAudioPlayerProps) => {
   const [loading, setLoading] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [playing, setPlaying] = useState(false);
+  const [playCount, setPlayCount] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  const hasReachedLimit = playCount >= MAX_PLAYS;
+
   const generateAndPlay = useCallback(async () => {
+    if (hasReachedLimit) return;
+
     // If audio already generated, just replay
     if (audioUrl && audioRef.current) {
       audioRef.current.currentTime = 0;
       audioRef.current.play();
       setPlaying(true);
+      setPlayCount((c) => c + 1);
       return;
     }
 
@@ -62,13 +70,14 @@ const TTSAudioPlayer = ({ text, className = "", onPlayComplete }: TTSAudioPlayer
       };
       await audio.play();
       setPlaying(true);
+      setPlayCount((c) => c + 1);
     } catch (err: any) {
       console.error("TTS error:", err);
       toast.error("Impossible de générer l'audio", { description: err.message });
     } finally {
       setLoading(false);
     }
-  }, [text, audioUrl]);
+  }, [text, audioUrl, hasReachedLimit]);
 
   return (
     <div className={`flex items-center gap-2 ${className}`}>
