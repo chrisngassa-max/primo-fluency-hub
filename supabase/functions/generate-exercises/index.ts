@@ -117,8 +117,8 @@ L'image sera automatiquement récupérée via une banque d'images. La descriptio
 
 ### EXPRESSION ORALE (EO) — format production_orale + type_reponse "oral"
 L'élève enregistre sa voix. Le STT transcrit → l'IA évalue avec haute tolérance phonétique.
-Pour les exercices de description d'image (EO3, EO4), tu DOIS fournir un champ "image_description" décrivant la scène à illustrer.
-Exemple : "Une famille multiculturelle à table, partageant un repas dans un appartement français moderne" — une image sera générée automatiquement.
+Pour TOUS les exercices EO, tu DOIS fournir un champ "image_description" décrivant la scène à illustrer.
+Exemple : "Une famille multiculturelle à table, partageant un repas dans un appartement français moderne" — une image sera récupérée automatiquement.
 
 | Code | Sous-compétence       | Type de tâche                                               | Durée max |
 |------|-----------------------|--------------------------------------------------------------|-----------|
