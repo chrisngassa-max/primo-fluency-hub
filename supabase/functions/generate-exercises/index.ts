@@ -220,6 +220,7 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
                           properties: {
                             texte: { type: "string", description: "Texte support / document à lire avant les questions (OBLIGATOIRE pour CE). Doit reproduire fidèlement le document (badge, panneau, courrier, SMS, etc.) avec TOUTES les informations nécessaires pour répondre." },
                             script_audio: { type: "string", description: "Script audio pour CO : texte lu par la synthèse vocale (OBLIGATOIRE pour CO, NE PAS afficher à l'élève)" },
+                            image_description: { type: "string", description: "Description de l'image à générer automatiquement (pour EO quand l'exercice demande de décrire une image). Ex: 'Une famille à table en train de manger dans un appartement'. NE PAS mettre d'URL, seulement une description textuelle détaillée de la scène." },
                             type_reponse: { type: "string", enum: ["ecrit", "oral"], description: "Type de réponse attendu (oral pour EO)" },
                             criteres_evaluation: { type: "object", description: "Critères d'évaluation pour les productions orales/écrites" },
                             mots_cles_attendus: {
