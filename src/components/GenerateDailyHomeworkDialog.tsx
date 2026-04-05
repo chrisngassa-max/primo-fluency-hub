@@ -21,7 +21,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Loader2, Calendar, Clock, Target } from "lucide-react";
-import { format, differenceInDays, addDays } from "date-fns";
+import { format, differenceInCalendarDays, addDays } from "date-fns";
 import { fr } from "date-fns/locale";
 
 interface NextSessionOption {
@@ -63,21 +63,23 @@ const GenerateDailyHomeworkDialog = ({
   const [targetWeaknesses, setTargetWeaknesses] = useState(false);
   const [generating, setGenerating] = useState(false);
 
-  const useManualDate = nextSessions.length === 0 || selectedSession === "__manual__";
-
-  const effectiveTargetDate = useManualDate && manualDate
-    ? manualDate
-    : nextSessions.find((s) => s.id === selectedSession)?.date_seance;
-
-  const targetDays = effectiveTargetDate
-    ? Math.max(1, differenceInDays(new Date(effectiveTargetDate), new Date(currentSessionDate)))
-    : 0;
-
-  const canGenerate = targetDays > 0 && (useManualDate ? !!manualDate : !!selectedSession);
-
   // Default manual date suggestion: 7 days from current session
   const defaultManualDate = format(addDays(new Date(currentSessionDate), 7), "yyyy-MM-dd");
   const minDate = format(addDays(new Date(currentSessionDate), 1), "yyyy-MM-dd");
+  const resolvedManualDate = manualDate || defaultManualDate;
+
+  const useManualDate = nextSessions.length === 0 || selectedSession === "__manual__";
+
+  const effectiveTargetDate = useManualDate
+    ? resolvedManualDate
+    : nextSessions.find((s) => s.id === selectedSession)?.date_seance;
+
+  const rawTargetDays = effectiveTargetDate
+    ? differenceInCalendarDays(new Date(effectiveTargetDate), new Date(currentSessionDate))
+    : 0;
+
+  const targetDays = rawTargetDays > 0 ? rawTargetDays : 0;
+  const canGenerate = targetDays > 0 && (useManualDate ? !!resolvedManualDate : !!selectedSession);
 
   const handleGenerate = async () => {
     if (!canGenerate) return;
@@ -140,7 +142,7 @@ const GenerateDailyHomeworkDialog = ({
                 <Label className="text-xs text-muted-foreground">Date cible des devoirs</Label>
                 <Input
                   type="date"
-                  value={manualDate || defaultManualDate}
+                  value={resolvedManualDate}
                   min={minDate}
                   onChange={(e) => setManualDate(e.target.value)}
                 />
