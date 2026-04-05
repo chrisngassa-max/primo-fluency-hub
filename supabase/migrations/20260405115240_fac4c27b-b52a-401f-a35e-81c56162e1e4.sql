@@ -1,0 +1,2 @@
+-- RLS policy for public sequences: allow all authenticated users to read public sequences
+CREATE POLICY "Auth users read public sequences" ON public.sequences_pedagogiques FOR SELECT TO authenticated USING (is_public = true);
