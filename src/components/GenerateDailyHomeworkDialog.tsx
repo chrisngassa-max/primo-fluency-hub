@@ -195,10 +195,10 @@ const GenerateDailyHomeworkDialog = ({
             <label htmlFor="target-weaknesses" className="cursor-pointer">
               <p className="text-sm font-medium flex items-center gap-1.5">
                 <Target className="h-3.5 w-3.5 text-primary" />
-                Cibler les faiblesses du test de séance
+                Inclure le bilan de séance
               </p>
               <p className="text-[11px] text-muted-foreground mt-0.5">
-                L'IA priorisera les compétences où l'élève a obtenu moins de 60%
+                Intègre aussi les résultats du test de bilan en plus de l'historique individuel
               </p>
             </label>
           </div>
