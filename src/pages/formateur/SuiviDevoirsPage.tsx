@@ -46,6 +46,49 @@ const SuiviDevoirsPage = () => {
   const [selectedGroup, setSelectedGroup] = useState<string>("");
   const [expandedBilan, setExpandedBilan] = useState<string | null>(null);
   const [integratingId, setIntegratingId] = useState<string | null>(null);
+  const [reassigning, setReassigning] = useState<string | null>(null);
+
+  // ─── Fetch expired devoirs ───
+  const { data: expiredDevoirs = [], refetch: refetchExpired } = useQuery({
+    queryKey: ["expired-devoirs", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("devoirs")
+        .select("*, exercice:exercices(titre, competence), eleve:profiles!devoirs_eleve_id_fkey(prenom, nom)")
+        .eq("formateur_id", user!.id)
+        .eq("statut", "expire")
+        .order("updated_at", { ascending: false })
+        .limit(50);
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: !!user?.id,
+  });
+
+  const handleReassign = async (devoir: any) => {
+    setReassigning(devoir.id);
+    try {
+      const newDeadline = new Date();
+      newDeadline.setDate(newDeadline.getDate() + 7);
+      const { error } = await supabase.from("devoirs").insert({
+        eleve_id: devoir.eleve_id,
+        exercice_id: devoir.exercice_id,
+        formateur_id: user!.id,
+        statut: "en_attente" as const,
+        raison: devoir.raison,
+        date_echeance: newDeadline.toISOString(),
+        source_label: devoir.source_label,
+        session_id: devoir.session_id,
+      });
+      if (error) throw error;
+      toast.success("Devoir ré-assigné avec une nouvelle échéance de 7 jours");
+      refetchExpired();
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    } finally {
+      setReassigning(null);
+    }
+  };
 
   // Fetch groups
   const { data: groups } = useQuery({
@@ -449,6 +492,42 @@ Rédige une "Synthèse de Veille" concise pour le formateur :
           </SelectContent>
         </Select>
       </div>
+
+      {/* Expired devoirs banner */}
+      {expiredDevoirs.length > 0 && (
+        <Card className="border-destructive/30 bg-destructive/5">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-destructive" />
+              Devoirs expirés
+              <Badge variant="destructive" className="ml-1">{expiredDevoirs.length}</Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2 max-h-60 overflow-y-auto">
+              {expiredDevoirs.map((d: any) => (
+                <div key={d.id} className="flex items-center justify-between gap-2 p-2 rounded-lg border bg-background">
+                  <div className="flex-1 min-w-0">
+                    <span className="text-sm font-medium">{d.eleve?.prenom} {d.eleve?.nom}</span>
+                    <span className="text-xs text-muted-foreground ml-2">— {d.exercice?.titre || "Exercice"}</span>
+                    <Badge variant="outline" className="ml-2 text-[10px]">{d.exercice?.competence}</Badge>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={reassigning === d.id}
+                    onClick={() => handleReassign(d)}
+                    className="shrink-0"
+                  >
+                    {reassigning === d.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <ArrowRight className="h-3 w-3 mr-1" />}
+                    Ré-assigner
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Pacing Tracker — 60h goal */}
       <PacingTracker />
