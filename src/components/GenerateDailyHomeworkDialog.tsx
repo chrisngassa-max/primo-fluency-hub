@@ -106,7 +106,7 @@ const GenerateDailyHomeworkDialog = ({
             Devoirs quotidiens IA
           </DialogTitle>
           <DialogDescription>
-            Générez un programme de devoirs étalé jour par jour jusqu'à la prochaine séance.
+            Programme personnalisé par élève : l'IA cible les lacunes individuelles, les exercices non traités en classe et l'historique d'erreurs.
           </DialogDescription>
         </DialogHeader>
 
