@@ -40,10 +40,10 @@ serve(async (req) => {
     const groupId = session.group_id;
     const niveauCible = session.niveau_cible || "A1";
 
-    // 2. Fetch group members
+    // 2. Fetch group members with profiles
     const { data: members } = await supabase
       .from("group_members")
-      .select("eleve_id")
+      .select("eleve_id, profiles:profiles(nom, prenom)")
       .eq("group_id", groupId);
     if (!members?.length) throw new Error("No students in group");
 
@@ -52,15 +52,29 @@ serve(async (req) => {
     // 3. Fetch session exercises (what was taught)
     const { data: sessionExercices } = await supabase
       .from("session_exercices")
-      .select("exercice:exercices(id, competence, format, difficulte, titre, contenu)")
+      .select("statut, exercice:exercices(id, competence, format, difficulte, titre, contenu)")
       .eq("session_id", sessionId);
 
-    const taughtExercises = (sessionExercices ?? [])
-      .map((se: any) => se.exercice)
-      .filter(Boolean);
+    const allSessionExercises = (sessionExercices ?? []).filter((se: any) => se.exercice);
+    const taughtExercises = allSessionExercises.filter((se: any) => se.statut === "traite_en_classe").map((se: any) => se.exercice);
+    const untreatedExercises = allSessionExercises.filter((se: any) => se.statut === "planifie" || se.statut === "reporte").map((se: any) => se.exercice);
 
-    // 4. If targeting weaknesses, fetch bilan test results
-    let studentWeaknesses: Record<string, Record<string, number>> = {};
+    // 4. Fetch individual student results (last 15 results per student for error analysis)
+    const { data: studentResults } = await supabase
+      .from("resultats")
+      .select("eleve_id, exercice_id, score, correction_detaillee, created_at, exercice:exercices(competence, format, titre, sous_competence)")
+      .in("eleve_id", eleveIds)
+      .order("created_at", { ascending: false })
+      .limit(eleveIds.length * 15);
+
+    // 5. Fetch student profiles (taux de réussite par compétence)
+    const { data: studentProfiles } = await supabase
+      .from("profils_eleves")
+      .select("eleve_id, niveau_actuel, taux_reussite_co, taux_reussite_ce, taux_reussite_ee, taux_reussite_eo, taux_reussite_structures, priorites_pedagogiques")
+      .in("eleve_id", eleveIds);
+
+    // 6. Fetch bilan test results if targeting weaknesses
+    let bilanWeaknesses: Record<string, Record<string, number>> = {};
     if (targetWeaknesses) {
       const { data: bilanTests } = await supabase
         .from("bilan_tests")
@@ -82,12 +96,12 @@ serve(async (req) => {
               scores[comp] = info.pct ?? 0;
             }
           }
-          studentWeaknesses[r.eleve_id] = scores;
+          bilanWeaknesses[r.eleve_id] = scores;
         });
       }
     }
 
-    // 5. Fetch student competency levels
+    // 7. Fetch student competency levels
     const { data: studentLevels } = await supabase
       .from("student_competency_levels")
       .select("eleve_id, competence, niveau_actuel")
@@ -99,7 +113,7 @@ serve(async (req) => {
       levelMap[sl.eleve_id][sl.competence] = sl.niveau_actuel;
     });
 
-    // 6. Fetch a default point_a_maitriser for exercise creation
+    // 8. Fetch a default point_a_maitriser for exercise creation
     const { data: defaultPoint } = await supabase
       .from("points_a_maitriser")
       .select("id")
@@ -107,60 +121,150 @@ serve(async (req) => {
       .single();
     if (!defaultPoint) throw new Error("No points_a_maitriser found");
 
-    // 7. Build AI prompt for daily homework plan
+    // ── Build per-student error profiles ──
+    const studentErrorProfiles: Record<string, any> = {};
+    for (const m of members) {
+      const eleveId = m.eleve_id;
+      const name = m.profiles ? `${(m.profiles as any).prenom} ${(m.profiles as any).nom}`.trim() : eleveId.slice(0, 8);
+      
+      // Individual results
+      const myResults = (studentResults ?? []).filter((r: any) => r.eleve_id === eleveId);
+      
+      // Identify failed competences from recent exercises
+      const failedByCompetence: Record<string, { count: number; avgScore: number; examples: string[] }> = {};
+      for (const r of myResults) {
+        const comp = r.exercice?.competence;
+        if (!comp) continue;
+        if (!failedByCompetence[comp]) failedByCompetence[comp] = { count: 0, avgScore: 0, examples: [] };
+        failedByCompetence[comp].count++;
+        failedByCompetence[comp].avgScore += r.score;
+        if (r.score < 70 && failedByCompetence[comp].examples.length < 3) {
+          // Extract specific errors from correction_detaillee
+          const details = r.correction_detaillee;
+          if (details && typeof details === "object") {
+            const items = Array.isArray(details) ? details : (details as any).items || [];
+            const wrongItems = items.filter((item: any) => !item.correct && !item.est_correct).slice(0, 2);
+            for (const wi of wrongItems) {
+              failedByCompetence[comp].examples.push(
+                wi.question || wi.consigne || r.exercice?.titre || "Exercice raté"
+              );
+            }
+          }
+        }
+      }
+      // Compute averages
+      for (const comp of Object.keys(failedByCompetence)) {
+        failedByCompetence[comp].avgScore = Math.round(failedByCompetence[comp].avgScore / failedByCompetence[comp].count);
+      }
+
+      // Profile data
+      const profile = (studentProfiles ?? []).find((p: any) => p.eleve_id === eleveId);
+
+      // Bilan weaknesses
+      const bilan = bilanWeaknesses[eleveId];
+
+      studentErrorProfiles[eleveId] = {
+        name,
+        levels: levelMap[eleveId] || {},
+        profile: profile ? {
+          niveau: profile.niveau_actuel,
+          CO: profile.taux_reussite_co,
+          CE: profile.taux_reussite_ce,
+          EE: profile.taux_reussite_ee,
+          EO: profile.taux_reussite_eo,
+          Structures: profile.taux_reussite_structures,
+          priorites: profile.priorites_pedagogiques,
+        } : null,
+        recentErrors: failedByCompetence,
+        bilanScores: bilan || null,
+        nbResultats: myResults.length,
+      };
+    }
+
+    // ── Build AI prompt ──
     const competencesUsed = [...new Set(taughtExercises.map((e: any) => e.competence))];
     const exerciseSummary = taughtExercises.map((e: any) =>
       `- ${e.titre} (${e.competence}, ${e.format}, diff ${e.difficulte}/5)`
     ).join("\n");
+    const untreatedSummary = untreatedExercises.map((e: any) =>
+      `- ${e.titre} (${e.competence}, ${e.format}, diff ${e.difficulte}/5)`
+    ).join("\n");
+
+    const studentProfilesBlock = Object.entries(studentErrorProfiles).map(([eleveId, p]: [string, any]) => {
+      const lines = [`ÉLÈVE "${p.name}" (id: ${eleveId.slice(0, 8)})`];
+      if (p.profile) {
+        lines.push(`  Niveau actuel: ${p.profile.niveau} | Taux réussite: CO=${p.profile.CO}% CE=${p.profile.CE}% EE=${p.profile.EE}% EO=${p.profile.EO}% Struct=${p.profile.Structures}%`);
+      }
+      if (p.bilanScores) {
+        const weakComps = Object.entries(p.bilanScores).filter(([, pct]) => (pct as number) < 70);
+        if (weakComps.length > 0) {
+          lines.push(`  Faiblesses bilan séance: ${weakComps.map(([c, pct]) => `${c}=${pct}%`).join(", ")}`);
+        }
+      }
+      const weakCompetences = Object.entries(p.recentErrors)
+        .filter(([, data]: [string, any]) => data.avgScore < 70)
+        .sort(([, a]: [string, any], [, b]: [string, any]) => a.avgScore - b.avgScore);
+      if (weakCompetences.length > 0) {
+        lines.push(`  Lacunes persistantes:`);
+        for (const [comp, data] of weakCompetences as [string, any][]) {
+          lines.push(`    - ${comp}: ${data.avgScore}% moy (${data.count} exercices)`);
+          if (data.examples.length > 0) {
+            lines.push(`      Erreurs types: ${data.examples.slice(0, 3).join(" | ")}`);
+          }
+        }
+      }
+      if (p.profile?.priorites && Array.isArray(p.profile.priorites) && p.profile.priorites.length > 0) {
+        lines.push(`  Priorités pédagogiques: ${p.profile.priorites.join(", ")}`);
+      }
+      return lines.join("\n");
+    }).join("\n\n");
 
     const systemPrompt = `Tu es un expert en didactique du FLE spécialisé dans la préparation au TCF IRN.
-Tu dois concevoir un programme de devoirs quotidiens étalé sur ${targetDays} jour(s).
+Tu dois concevoir un programme de devoirs quotidiens PERSONNALISÉ par élève, étalé sur ${targetDays} jour(s).
+
+DIFFÉRENCIATION INDIVIDUELLE OBLIGATOIRE :
+- Chaque élève reçoit des exercices adaptés à SES lacunes spécifiques
+- Les erreurs récentes de chaque élève doivent être ciblées en priorité
+- Les compétences faibles persistantes doivent être travaillées en spiralaire
+- Un élève fort en CO mais faible en EE doit avoir plus d'EE et moins de CO
 
 CONTRAINTES TEMPORELLES STRICTES :
-- Budget quotidien : ${dailyDuration} minutes par jour
+- Budget quotidien PAR ÉLÈVE : ${dailyDuration} minutes par jour
 - Durées estimées par type d'exercice :
-  * CO (compréhension orale) : 45 secondes par item + 30s de lecture
-  * CE (compréhension écrite) : 3 minutes par exercice
-  * EE (expression écrite) : 3 minutes par exercice  
-  * EO (expression orale) : 2 minutes par exercice
-  * Structures (grammaire) : 1.5 minutes par exercice
-  * QCM/vrai_faux : 30 secondes par item
-  * Appariement : 2 minutes par exercice
-  * Texte lacunaire : 2 minutes par exercice
+  * CO : 45s par item + 30s de lecture | CE : 3 min | EE : 3 min
+  * EO : 2 min | Structures : 1.5 min | QCM/vrai_faux : 30s par item
+  * Appariement/texte lacunaire : 2 min
 
-Tu dois calculer le nombre d'exercices pour atteindre exactement ${dailyDuration} minutes.
+STRATÉGIE DE GÉNÉRATION :
+1. Exercices non traités en classe → tronc commun pour tous
+2. Exercices ratés individuellement → remédiation ciblée par élève
+3. Lacunes persistantes (historique < 70%) → renforcement spiralaire
+4. Compétences du bilan de séance < 70% → consolidation immédiate
+5. Progression : jour 1 = consolidation, jour 2+ = variation et remédiation approfondie
 
-RÈGLES PÉDAGOGIQUES :
-- Varier les compétences chaque jour (ne pas faire que du CE)
-- Jour 1-2 : reprendre les exercices vus en classe (consolidation)
-- Jour 3+ : introduire de nouvelles variations (remédiation)
-- Progression spiralaire : revenir sur les points faibles
-- Respecter le niveau CECRL ${niveauCible}
+FORMATS SUPPORTÉS : qcm, vrai_faux, appariement, texte_lacunaire, transformation
+Pour CO : ajouter "script_audio" | Pour EO : format "production_orale"
 
-FORMATS D'EXERCICE SUPPORTÉS : qcm, vrai_faux, appariement, texte_lacunaire, transformation
-Pour CO : ajouter un champ "script_audio" (texte que le TTS lira)
-Pour EO : utiliser le format "production_orale" avec consigne orale
-
-STRUCTURE DE SORTIE (JSON via tool calling) :
-Un tableau "jours" où chaque jour contient un tableau "exercices".
-Chaque exercice : { titre, consigne, competence, format, difficulte (1-5), contenu: { items: [{ question, options?, bonne_reponse, explication, script_audio? }] }, duree_estimee_minutes }`;
-
-    const weaknessInfo = targetWeaknesses && Object.keys(studentWeaknesses).length > 0
-      ? `\n\nFAIBLESSES DÉTECTÉES AU TEST DE SÉANCE :\n${Object.entries(studentWeaknesses).map(([_, scores]) =>
-          Object.entries(scores).filter(([, pct]) => pct < 60).map(([comp, pct]) => `${comp}: ${pct}%`).join(", ")
-        ).filter(Boolean).join("\n")}\nPriorise ces compétences dans le programme.`
-      : "";
+STRUCTURE DE SORTIE :
+Un tableau "eleves" contenant pour chaque élève un objet avec son id et ses jours de devoirs.
+Chaque jour contient les exercices personnalisés.`;
 
     const userPrompt = `Séance "${session.titre}" — Niveau ${niveauCible}
 Compétences travaillées : ${competencesUsed.join(", ")}
-Exercices faits en classe :
-${exerciseSummary}
-${weaknessInfo}
 
-Génère un programme de ${targetDays} jour(s) à ${dailyDuration} min/jour.
-Calcule précisément le temps total pour chaque jour.`;
+EXERCICES TRAITÉS EN CLASSE :
+${exerciseSummary || "(aucun)"}
 
-    // 8. Call AI
+EXERCICES NON TRAITÉS (à donner en tronc commun) :
+${untreatedSummary || "(aucun)"}
+
+PROFILS INDIVIDUELS DES ÉLÈVES :
+${studentProfilesBlock}
+
+Génère un programme PERSONNALISÉ de ${targetDays} jour(s) à ${dailyDuration} min/jour/élève.
+Pour chaque élève, cible ses faiblesses spécifiques. Les exercices de tronc commun (non traités en classe) sont les mêmes pour tous, les exercices de remédiation sont individualisés.`;
+
+    // 9. Call AI
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -177,78 +281,87 @@ Calcule précisément le temps total pour chaque jour.`;
           {
             type: "function",
             function: {
-              name: "generate_daily_plan",
-              description: "Generate a daily homework plan with exercises for each day",
+              name: "generate_personalized_plan",
+              description: "Generate personalized daily homework for each student based on their individual weaknesses",
               parameters: {
                 type: "object",
                 properties: {
-                  jours: {
+                  eleves: {
                     type: "array",
                     items: {
                       type: "object",
                       properties: {
-                        jour: { type: "integer" },
-                        duree_totale_minutes: { type: "number" },
-                        exercices: {
+                        eleve_id: { type: "string", description: "First 8 chars of student UUID" },
+                        jours: {
                           type: "array",
                           items: {
                             type: "object",
                             properties: {
-                              titre: { type: "string" },
-                              consigne: { type: "string" },
-                              competence: { type: "string", enum: ["CO", "CE", "EE", "EO", "Structures"] },
-                              format: { type: "string", enum: ["qcm", "vrai_faux", "appariement", "texte_lacunaire", "transformation", "production_ecrite", "production_orale"] },
-                              difficulte: { type: "integer", minimum: 1, maximum: 5 },
-                              duree_estimee_minutes: { type: "number" },
-                              contenu: {
-                                type: "object",
-                                properties: {
-                                  items: {
-                                    type: "array",
-                                    items: {
+                              jour: { type: "integer" },
+                              duree_totale_minutes: { type: "number" },
+                              exercices: {
+                                type: "array",
+                                items: {
+                                  type: "object",
+                                  properties: {
+                                    titre: { type: "string" },
+                                    consigne: { type: "string" },
+                                    competence: { type: "string", enum: ["CO", "CE", "EE", "EO", "Structures"] },
+                                    format: { type: "string", enum: ["qcm", "vrai_faux", "appariement", "texte_lacunaire", "transformation", "production_ecrite", "production_orale"] },
+                                    difficulte: { type: "integer", minimum: 1, maximum: 5 },
+                                    duree_estimee_minutes: { type: "number" },
+                                    raison: { type: "string", enum: ["tronc_commun", "remediation", "consolidation"], description: "Why this exercise is assigned" },
+                                    contenu: {
                                       type: "object",
                                       properties: {
-                                        question: { type: "string" },
-                                        options: { type: "array", items: { type: "string" } },
-                                        bonne_reponse: { type: "string" },
-                                        explication: { type: "string" },
-                                        script_audio: { type: "string" },
+                                        items: {
+                                          type: "array",
+                                          items: {
+                                            type: "object",
+                                            properties: {
+                                              question: { type: "string" },
+                                              options: { type: "array", items: { type: "string" } },
+                                              bonne_reponse: { type: "string" },
+                                              explication: { type: "string" },
+                                              script_audio: { type: "string" },
+                                            },
+                                            required: ["question", "bonne_reponse"],
+                                          },
+                                        },
                                       },
-                                      required: ["question", "bonne_reponse"],
+                                      required: ["items"],
                                     },
                                   },
+                                  required: ["titre", "consigne", "competence", "format", "difficulte", "contenu", "raison"],
                                 },
-                                required: ["items"],
                               },
                             },
-                            required: ["titre", "consigne", "competence", "format", "difficulte", "contenu"],
+                            required: ["jour", "exercices"],
                           },
                         },
                       },
-                      required: ["jour", "exercices"],
+                      required: ["eleve_id", "jours"],
                     },
                   },
                 },
-                required: ["jours"],
+                required: ["eleves"],
               },
             },
           },
         ],
-        tool_choice: { type: "function", function: { name: "generate_daily_plan" } },
+        tool_choice: { type: "function", function: { name: "generate_personalized_plan" } },
       }),
     });
 
     if (!aiResponse.ok) {
       if (aiResponse.status === 429) {
         return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again later." }), {
-          status: 429,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
       if (aiResponse.status === 402) {
         return new Response(JSON.stringify({ error: "Credits exhausted. Please add funds." }), {
-          status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
       const errText = await aiResponse.text();
@@ -261,75 +374,108 @@ Calcule précisément le temps total pour chaque jour.`;
     if (!toolCall) throw new Error("No tool call in AI response");
 
     const plan = JSON.parse(toolCall.function.arguments);
-    const jours = plan.jours || [];
+    const aiEleves = plan.eleves || [];
 
-    // 9. Insert exercises and devoirs with staggered deadlines
+    // Build a map from short ID to full UUID
+    const shortToFull: Record<string, string> = {};
+    for (const eid of eleveIds) {
+      shortToFull[eid.slice(0, 8)] = eid;
+    }
+
+    // 10. Insert exercises and devoirs per student
     const sessionDate = new Date(session.date_seance);
     let totalDevoirs = 0;
+    let totalExercices = 0;
 
-    for (const jour of jours) {
-      const dayOffset = jour.jour || 1;
-      const deadline = new Date(sessionDate);
-      deadline.setDate(deadline.getDate() + dayOffset);
-      deadline.setHours(23, 59, 59, 0);
+    // Cache for tronc commun exercises (same content → share exercise row)
+    const troncCommunCache: Record<string, string> = {}; // key = jour_titre → exercice_id
 
-      for (const ex of jour.exercices || []) {
-        // Create exercise in DB
-        const { data: inserted, error: insertErr } = await supabase
-          .from("exercices")
-          .insert({
-            titre: ex.titre,
-            consigne: ex.consigne,
-            competence: ex.competence,
-            format: ex.format || "qcm",
-            difficulte: ex.difficulte || 3,
-            contenu: ex.contenu || { items: [] },
-            niveau_vise: niveauCible,
+    for (const aiEleve of aiEleves) {
+      const fullEleveId = shortToFull[aiEleve.eleve_id];
+      if (!fullEleveId) {
+        console.error("Unknown student short ID:", aiEleve.eleve_id);
+        continue;
+      }
+
+      for (const jour of aiEleve.jours || []) {
+        const dayOffset = jour.jour || 1;
+        const deadline = new Date(sessionDate);
+        deadline.setDate(deadline.getDate() + dayOffset);
+        deadline.setHours(23, 59, 59, 0);
+
+        for (const ex of jour.exercices || []) {
+          const raison = ex.raison === "tronc_commun" ? "consolidation" : (ex.raison === "remediation" ? "remediation" : "consolidation");
+          const sourceLabel = ex.raison === "tronc_commun" ? "tronc_commun" : "individualise";
+          const cacheKey = ex.raison === "tronc_commun" ? `j${dayOffset}_${ex.titre}` : "";
+
+          let exerciceId: string;
+
+          // Reuse tronc commun exercises across students
+          if (cacheKey && troncCommunCache[cacheKey]) {
+            exerciceId = troncCommunCache[cacheKey];
+          } else {
+            const { data: inserted, error: insertErr } = await supabase
+              .from("exercices")
+              .insert({
+                titre: ex.titre,
+                consigne: ex.consigne,
+                competence: ex.competence,
+                format: ex.format || "qcm",
+                difficulte: ex.difficulte || 3,
+                contenu: ex.contenu || { items: [] },
+                niveau_vise: niveauCible,
+                formateur_id: formateurId,
+                point_a_maitriser_id: defaultPoint.id,
+                is_ai_generated: true,
+                is_template: false,
+                is_devoir: true,
+                eleve_id: sourceLabel === "individualise" ? fullEleveId : null,
+              })
+              .select("id")
+              .single();
+
+            if (insertErr) {
+              console.error("Insert exercise error:", insertErr);
+              continue;
+            }
+            exerciceId = inserted.id;
+            totalExercices++;
+            if (cacheKey) troncCommunCache[cacheKey] = exerciceId;
+          }
+
+          // Create devoir for this student
+          const { error: devoirErr } = await supabase.from("devoirs").insert({
+            eleve_id: fullEleveId,
+            exercice_id: exerciceId,
             formateur_id: formateurId,
-            point_a_maitriser_id: defaultPoint.id,
-            is_ai_generated: true,
-            is_template: false,
-            is_devoir: true,
-          })
-          .select("id")
-          .single();
-
-        if (insertErr) {
-          console.error("Insert exercise error:", insertErr);
-          continue;
+            raison,
+            statut: "en_attente",
+            session_id: sessionId,
+            source_label: `${sourceLabel}_jour_${dayOffset}`,
+            date_echeance: deadline.toISOString(),
+          });
+          if (devoirErr) {
+            console.error("Insert devoir error:", devoirErr);
+            continue;
+          }
+          totalDevoirs++;
         }
-
-        // Create devoirs for each student
-        const devoirInserts = eleveIds.map((eleveId: string) => ({
-          eleve_id: eleveId,
-          exercice_id: inserted.id,
-          formateur_id: formateurId,
-          raison: "consolidation" as const,
-          statut: "en_attente" as const,
-          session_id: sessionId,
-          source_label: `jour_${dayOffset}`,
-          date_echeance: deadline.toISOString(),
-        }));
-
-        const { error: devoirErr } = await supabase.from("devoirs").insert(devoirInserts);
-        if (devoirErr) {
-          console.error("Insert devoir error:", devoirErr);
-          continue;
-        }
-        totalDevoirs += devoirInserts.length;
       }
     }
 
     return new Response(
       JSON.stringify({
         success: true,
-        totalJours: jours.length,
-        totalExercices: jours.reduce((sum: number, j: any) => sum + (j.exercices?.length || 0), 0),
+        totalEleves: aiEleves.length,
+        totalExercices,
         totalDevoirs,
-        plan: jours.map((j: any) => ({
-          jour: j.jour,
-          duree: j.duree_totale_minutes,
-          exercices: (j.exercices || []).length,
+        plan: aiEleves.map((e: any) => ({
+          eleve_id: shortToFull[e.eleve_id] || e.eleve_id,
+          jours: (e.jours || []).map((j: any) => ({
+            jour: j.jour,
+            duree: j.duree_totale_minutes,
+            exercices: (j.exercices || []).length,
+          })),
         })),
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
