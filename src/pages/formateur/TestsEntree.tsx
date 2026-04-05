@@ -556,25 +556,44 @@ function DiagnosticSousItems() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   PASSATION TEST (preserved from original)
+   PASSATION TEST (loads questions from database)
    ═══════════════════════════════════════════════════════════════ */
+type TCFQuestionRow = { id: string; competence: string; enonce: string; choix: { label: string; emoji?: string }[]; bonne_reponse: string; audio?: string | null; visual?: string | null };
+type MappedQ = { section: string; question: string; options: { label: string; emoji?: string }[]; correct: number; audio?: string; visual?: string };
+
+function mapDbQuestions(rows: TCFQuestionRow[]): MappedQ[] {
+  const order = ["CO", "Structures", "CE"];
+  const sorted = [...rows].sort((a, b) => order.indexOf(a.competence) - order.indexOf(b.competence));
+  return sorted.map((r) => {
+    const choix = (r.choix ?? []) as { label: string; emoji?: string }[];
+    const correctIdx = choix.findIndex((c) => c.label === r.bonne_reponse);
+    return { section: r.competence, question: r.enonce, options: choix, correct: correctIdx >= 0 ? correctIdx : 0, audio: r.audio ?? undefined, visual: r.visual ?? undefined };
+  });
+}
+
 function PassationTest() {
+  const { data: dbRows, isLoading: loadingQ } = useQuery({
+    queryKey: ["tcf-questions-all"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("tcf_questions").select("*");
+      if (error) throw error;
+      return data as unknown as TCFQuestionRow[];
+    },
+  });
+
+  const questions = useMemo(() => (dbRows ? mapDbQuestions(dbRows) : []), [dbRows]);
+  const totalCount = questions.length;
+
   const [current, setCurrent] = useState(0);
-  const [answers, setAnswers] = useState<(number | null)[]>(Array(TCF_QUESTIONS.length).fill(null));
+  const [answers, setAnswers] = useState<(number | null)[]>([]);
   const [submitted, setSubmitted] = useState(false);
   const [sectionIntro, setSectionIntro] = useState(true);
   const [started, setStarted] = useState(false);
   const [timeLeft, setTimeLeft] = useState(EXAM_DURATION_SECONDS);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const q = TCF_QUESTIONS[current];
-  const prevSection = current > 0 ? TCF_QUESTIONS[current - 1].section : null;
-  const isNewSection = q.section !== prevSection;
-  const meta = SECTIONS_META[q.section];
-
-  const sectionStart = TCF_QUESTIONS.findIndex((qq) => qq.section === q.section);
-  const sectionTotal = meta.total;
-  const sectionIndex = current - sectionStart + 1;
+  // Reset answers when questions load
+  useEffect(() => { if (totalCount > 0 && answers.length !== totalCount) setAnswers(Array(totalCount).fill(null)); }, [totalCount]);
 
   useEffect(() => {
     if (started && !submitted) {
@@ -588,17 +607,17 @@ function PassationTest() {
     }
   }, [started, submitted]);
 
-  useEffect(() => {
-    if (timeLeft === 0 && started && !submitted) doSubmit();
-  }, [timeLeft, started, submitted]);
-
   const doSubmit = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
     setSubmitted(true);
-    const score = answers.reduce<number>((acc, a, i) => acc + (a === TCF_QUESTIONS[i].correct ? 1 : 0), 0);
+    const score = answers.reduce<number>((acc, a, i) => acc + (a === questions[i]?.correct ? 1 : 0), 0);
     if (timeLeft === 0) toast.error("Temps écoulé ! Le test est terminé automatiquement.");
-    else toast.success(`Test terminé ! Score : ${score}/${TCF_QUESTIONS.length}`);
-  }, [answers, timeLeft]);
+    else toast.success(`Test terminé ! Score : ${score}/${totalCount}`);
+  }, [answers, timeLeft, questions, totalCount]);
+
+  useEffect(() => {
+    if (timeLeft === 0 && started && !submitted) doSubmit();
+  }, [timeLeft, started, submitted, doSubmit]);
 
   const handleAnswer = (idx: number) => {
     if (submitted) return;
@@ -606,18 +625,30 @@ function PassationTest() {
   };
 
   const handleNext = () => {
-    if (current < TCF_QUESTIONS.length - 1) {
-      const nextQ = TCF_QUESTIONS[current + 1];
-      if (nextQ.section !== q.section) setSectionIntro(true);
+    if (current < totalCount - 1) {
+      const nextQ = questions[current + 1];
+      const currentQ = questions[current];
+      if (nextQ.section !== currentQ.section) setSectionIntro(true);
       setCurrent((c) => c + 1);
     }
   };
 
   const isUrgent = timeLeft <= 600;
-  const totalScore = submitted ? answers.reduce<number>((acc, a, i) => acc + (a === TCF_QUESTIONS[i].correct ? 1 : 0), 0) : null;
-  const scoreCO = submitted ? TCF_QUESTIONS.reduce((acc, qq, i) => acc + (qq.section === "CO" && answers[i] === qq.correct ? 1 : 0), 0) : 0;
-  const scoreStr = submitted ? TCF_QUESTIONS.reduce((acc, qq, i) => acc + (qq.section === "Structures" && answers[i] === qq.correct ? 1 : 0), 0) : 0;
-  const scoreCE = submitted ? TCF_QUESTIONS.reduce((acc, qq, i) => acc + (qq.section === "CE" && answers[i] === qq.correct ? 1 : 0), 0) : 0;
+  const totalScore = submitted ? answers.reduce<number>((acc, a, i) => acc + (a === questions[i]?.correct ? 1 : 0), 0) : null;
+  const scoreCO = submitted ? questions.reduce((acc, qq, i) => acc + (qq.section === "CO" && answers[i] === qq.correct ? 1 : 0), 0) : 0;
+  const scoreStr = submitted ? questions.reduce((acc, qq, i) => acc + (qq.section === "Structures" && answers[i] === qq.correct ? 1 : 0), 0) : 0;
+  const scoreCE = submitted ? questions.reduce((acc, qq, i) => acc + (qq.section === "CE" && answers[i] === qq.correct ? 1 : 0), 0) : 0;
+
+  if (loadingQ || totalCount === 0) return <Skeleton className="h-64 w-full rounded-xl" />;
+
+  const q = questions[current];
+  const prevSection = current > 0 ? questions[current - 1].section : null;
+  const isNewSection = q.section !== prevSection;
+  const meta = SECTIONS_META[q.section];
+  const sectionQuestions = questions.filter((qq) => qq.section === q.section);
+  const sectionStart = questions.findIndex((qq) => qq.section === q.section);
+  const sectionTotal = sectionQuestions.length;
+  const sectionIndex = current - sectionStart + 1;
 
   if (!started) {
     return (
@@ -690,7 +721,7 @@ function PassationTest() {
               <span className="text-sm text-muted-foreground">—</span>
               <span className="font-bold text-sm">Question {sectionIndex} / {sectionTotal}</span>
             </div>
-            <Badge variant="secondary" className="text-xs">{current + 1}/{TCF_QUESTIONS.length} total</Badge>
+            <Badge variant="secondary" className="text-xs">{current + 1}/{questions.length} total</Badge>
           </div>
           <div className="flex gap-0.5">
             {Array.from({ length: sectionTotal }).map((_, i) => {
@@ -700,7 +731,7 @@ function PassationTest() {
                   globalIdx === current ? "bg-primary"
                     : answers[globalIdx] !== null
                       ? submitted
-                        ? answers[globalIdx] === TCF_QUESTIONS[globalIdx].correct ? "bg-emerald-500" : "bg-destructive"
+                        ? answers[globalIdx] === questions[globalIdx].correct ? "bg-emerald-500" : "bg-destructive"
                         : "bg-primary/40"
                       : "bg-muted"
                 }`} />
@@ -795,7 +826,7 @@ function PassationTest() {
         <Button variant="outline" onClick={() => setCurrent((c) => Math.max(0, c - 1))} disabled={current === 0}>
           <ChevronLeft className="h-4 w-4 mr-1" /> Précédent
         </Button>
-        {current === TCF_QUESTIONS.length - 1 && !submitted ? (
+        {current === questions.length - 1 && !submitted ? (
           <Button onClick={doSubmit} disabled={answers[current] === null}>
             <CheckCircle2 className="h-4 w-4 mr-1" /> Soumettre le test
           </Button>
@@ -809,7 +840,7 @@ function PassationTest() {
       {submitted && totalScore !== null && (
         <Card>
           <CardContent className="pt-6 space-y-4">
-            <p className="text-2xl font-bold text-center">Score global : {totalScore}/{TCF_QUESTIONS.length}</p>
+            <p className="text-2xl font-bold text-center">Score global : {totalScore}/{questions.length}</p>
             <div className="grid grid-cols-3 gap-4 text-center">
               <div className="p-3 rounded-lg bg-muted/50">
                 <p className="text-sm text-muted-foreground">🎧 CO</p>
