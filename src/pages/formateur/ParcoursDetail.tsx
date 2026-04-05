@@ -90,11 +90,84 @@ const ParcoursDetail = () => {
     enabled: !!parcoursId,
   });
 
+  // Fetch student profiles for the group to detect gaps
+  const { data: groupProfiles } = useQuery({
+    queryKey: ["parcours-group-profiles", parcours?.group_id],
+    queryFn: async () => {
+      if (!parcours?.group_id) return null;
+      const { data: members } = await supabase.from("group_members").select("eleve_id").eq("group_id", parcours.group_id);
+      if (!members?.length) return null;
+      const ids = members.map(m => m.eleve_id);
+      const { data: profils } = await supabase.from("profils_eleves").select("*").in("eleve_id", ids);
+      if (!profils?.length) return null;
+      const avg = (arr: number[]) => arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
+      return {
+        CO: avg(profils.map(p => Number(p.taux_reussite_co))),
+        CE: avg(profils.map(p => Number(p.taux_reussite_ce))),
+        EE: avg(profils.map(p => Number(p.taux_reussite_ee))),
+        EO: avg(profils.map(p => Number(p.taux_reussite_eo))),
+        Structures: avg(profils.map(p => Number(p.taux_reussite_structures))),
+        global: avg(profils.map(p => Number(p.taux_reussite_global))),
+      };
+    },
+    enabled: !!parcours?.group_id,
+  });
+
+  const [readjusting, setReadjusting] = useState(false);
+
   const allSeances = seances || [];
   const completedSeances = allSeances.filter((s) => s.statut === "termine");
   const currentSeance = allSeances.find((s) => s.statut === "en_cours") || allSeances.find((s) => s.statut === "prevu");
   const remainingSeances = allSeances.filter((s) => s.statut === "prevu");
   const progressPercent = allSeances.length > 0 ? Math.round((completedSeances.length / allSeances.length) * 100) : 0;
+
+  // Compute gap: expected progress vs real
+  const expectedProgress = allSeances.length > 0 ? (completedSeances.length / allSeances.length) * 100 : 0;
+  const realProgress = groupProfiles?.global ?? 0;
+  const competenceGaps = groupProfiles ? (["CO", "CE", "EE", "EO", "Structures"] as const).filter(c => {
+    const target = expectedProgress; // simplified target
+    const actual = groupProfiles[c];
+    return target > 0 && actual < target * 0.8; // 20% behind
+  }) : [];
+
+  const handleReadjust = async () => {
+    if (!parcours || remainingSeances.length === 0) return;
+    setReadjusting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("adapt-parcours", {
+        body: {
+          mode: "garder_exigence",
+          parcoursTitle: parcours.titre,
+          niveauDepart: parcours.niveau_depart,
+          niveauCible: parcours.niveau_cible,
+          heuresTotalesPrevues: parcours.heures_totales_prevues,
+          seancesRestantes: remainingSeances.map((s: any) => ({
+            titre: s.titre,
+            objectif_principal: s.objectif_principal,
+            competences_cibles: s.competences_cibles,
+            duree_minutes: s.duree_minutes,
+            nb_exercices_suggeres: s.nb_exercices_suggeres,
+          })),
+          retard: {
+            exercicesNonFaits: 0,
+            minutesRetard: 0,
+            competencesEnRetard: competenceGaps,
+            progressionReelle: groupProfiles,
+          },
+          seanceActuelle: null,
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      setAdaptationResult({ ...data.adaptation, mode: "garder_exigence" });
+      setShowAdaptResult(true);
+      toast.success("Réajustement généré !");
+    } catch (e: any) {
+      toast.error("Erreur IA", { description: e.message });
+    } finally {
+      setReadjusting(false);
+    }
+  };
 
   const startBilan = (seance: any) => {
     setBilanSeanceId(seance.id);
@@ -286,6 +359,29 @@ const ParcoursDetail = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Dynamic adjustment banner */}
+      {competenceGaps.length > 0 && remainingSeances.length > 0 && (
+        <Card className="border-orange-500/30 bg-orange-50/30 dark:bg-orange-950/10">
+          <CardContent className="py-4 px-5">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="h-5 w-5 text-orange-500 shrink-0" />
+                <div>
+                  <p className="font-semibold text-sm">Réajustement suggéré</p>
+                  <p className="text-xs text-muted-foreground">
+                    Retard &gt;20% sur : {competenceGaps.join(", ")}
+                  </p>
+                </div>
+              </div>
+              <Button size="sm" onClick={handleReadjust} disabled={readjusting}>
+                {readjusting ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Sparkles className="h-4 w-4 mr-1" />}
+                Réajuster par l'IA
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Adapting overlay */}
       {adapting && (

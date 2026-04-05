@@ -17,7 +17,13 @@ import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer,
 } from "recharts";
 import { Sparkles, Volume2, ChevronLeft, ChevronRight, CheckCircle2, Users, Clock, AlertTriangle, Save, BarChart3, ChevronDown, TrendingUp, Minus as TrendingFlat } from "lucide-react";
-import { TCF_QUESTIONS, SECTIONS_META, EXAM_DURATION_SECONDS } from "@/data/tcfQuestions";
+// TCF questions now loaded from database (tcf_questions table)
+const SECTIONS_META: Record<string, { title: string; icon: string; color: string; description: string }> = {
+  CO: { title: "Compréhension Orale", icon: "🎧", color: "bg-primary", description: "Écoutez l'audio puis choisissez la bonne image ou réponse." },
+  Structures: { title: "Structures de la langue", icon: "📝", color: "bg-accent", description: "Complétez la phrase avec le mot correct." },
+  CE: { title: "Compréhension Écrite", icon: "📖", color: "bg-success", description: "Lisez le document puis répondez à la question." },
+};
+const EXAM_DURATION_SECONDS = 90 * 60;
 
 /* ───────── Sub-items definition ───────── */
 const DIAGNOSTIC_SOUS_ITEMS: Record<string, string[]> = {
