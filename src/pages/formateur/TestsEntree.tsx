@@ -577,7 +577,7 @@ function PassationTest() {
     queryFn: async () => {
       const { data, error } = await supabase.from("tcf_questions").select("*");
       if (error) throw error;
-      return data as TCFQuestionRow[];
+      return data as unknown as TCFQuestionRow[];
     },
   });
 
@@ -594,6 +594,50 @@ function PassationTest() {
 
   // Reset answers when questions load
   useEffect(() => { if (totalCount > 0 && answers.length !== totalCount) setAnswers(Array(totalCount).fill(null)); }, [totalCount]);
+
+  useEffect(() => {
+    if (started && !submitted) {
+      timerRef.current = setInterval(() => {
+        setTimeLeft((t) => {
+          if (t <= 1) { clearInterval(timerRef.current!); return 0; }
+          return t - 1;
+        });
+      }, 1000);
+      return () => { if (timerRef.current) clearInterval(timerRef.current); };
+    }
+  }, [started, submitted]);
+
+  const doSubmit = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    setSubmitted(true);
+    const score = answers.reduce<number>((acc, a, i) => acc + (a === questions[i]?.correct ? 1 : 0), 0);
+    if (timeLeft === 0) toast.error("Temps écoulé ! Le test est terminé automatiquement.");
+    else toast.success(`Test terminé ! Score : ${score}/${totalCount}`);
+  }, [answers, timeLeft, questions, totalCount]);
+
+  useEffect(() => {
+    if (timeLeft === 0 && started && !submitted) doSubmit();
+  }, [timeLeft, started, submitted, doSubmit]);
+
+  const handleAnswer = (idx: number) => {
+    if (submitted) return;
+    setAnswers((prev) => { const copy = [...prev]; copy[current] = idx; return copy; });
+  };
+
+  const handleNext = () => {
+    if (current < totalCount - 1) {
+      const nextQ = questions[current + 1];
+      const currentQ = questions[current];
+      if (nextQ.section !== currentQ.section) setSectionIntro(true);
+      setCurrent((c) => c + 1);
+    }
+  };
+
+  const isUrgent = timeLeft <= 600;
+  const totalScore = submitted ? answers.reduce<number>((acc, a, i) => acc + (a === questions[i]?.correct ? 1 : 0), 0) : null;
+  const scoreCO = submitted ? questions.reduce((acc, qq, i) => acc + (qq.section === "CO" && answers[i] === qq.correct ? 1 : 0), 0) : 0;
+  const scoreStr = submitted ? questions.reduce((acc, qq, i) => acc + (qq.section === "Structures" && answers[i] === qq.correct ? 1 : 0), 0) : 0;
+  const scoreCE = submitted ? questions.reduce((acc, qq, i) => acc + (qq.section === "CE" && answers[i] === qq.correct ? 1 : 0), 0) : 0;
 
   if (loadingQ || totalCount === 0) return <Skeleton className="h-64 w-full rounded-xl" />;
 
