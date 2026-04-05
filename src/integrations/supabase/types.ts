@@ -1315,6 +1315,7 @@ export type Database = {
           formateur_id: string
           id: string
           is_ai_generated: boolean
+          is_public: boolean
           niveau: string
           titre: string
           updated_at: string
@@ -1325,6 +1326,7 @@ export type Database = {
           formateur_id: string
           id?: string
           is_ai_generated?: boolean
+          is_public?: boolean
           niveau: string
           titre: string
           updated_at?: string
@@ -1335,6 +1337,7 @@ export type Database = {
           formateur_id?: string
           id?: string
           is_ai_generated?: boolean
+          is_public?: boolean
           niveau?: string
           titre?: string
           updated_at?: string
@@ -1589,6 +1592,45 @@ export type Database = {
           id?: string
           metadata?: Json | null
           reason?: string
+        }
+        Relationships: []
+      }
+      tcf_questions: {
+        Row: {
+          audio: string | null
+          bonne_reponse: string
+          choix: Json
+          competence: string
+          created_at: string
+          enonce: string
+          id: string
+          palier: number
+          type: string
+          visual: string | null
+        }
+        Insert: {
+          audio?: string | null
+          bonne_reponse: string
+          choix?: Json
+          competence: string
+          created_at?: string
+          enonce: string
+          id?: string
+          palier?: number
+          type?: string
+          visual?: string | null
+        }
+        Update: {
+          audio?: string | null
+          bonne_reponse?: string
+          choix?: Json
+          competence?: string
+          created_at?: string
+          enonce?: string
+          id?: string
+          palier?: number
+          type?: string
+          visual?: string | null
         }
         Relationships: []
       }
