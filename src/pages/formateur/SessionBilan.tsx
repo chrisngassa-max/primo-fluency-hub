@@ -283,6 +283,24 @@ const SessionBilan = () => {
         .update({ statut: "terminee" as any, updated_at: new Date().toISOString() })
         .eq("id", id!);
 
+      // Upsert bilan scores into student_competency_status for all group members
+      if (session?.group_id) {
+        const { data: members } = await supabase
+          .from("group_members").select("eleve_id").eq("group_id", session.group_id);
+        if (members && members.length > 0) {
+          for (const comp of COMPETENCES) {
+            const score = bilanScores[comp];
+            const statut = score >= 80 ? "acquis_provisoire" : score >= 60 ? "consolide" : "non_acquis";
+            for (const m of members) {
+              await supabase.from("student_competency_status").upsert(
+                { eleve_id: m.eleve_id, competence: comp as any, statut: statut as any, updated_at: new Date().toISOString() },
+                { onConflict: "eleve_id,competence" }
+              );
+            }
+          }
+        }
+      }
+
       toast.success("Bilan de séance validé !", {
         description: `${checkedIds.size} traité(s), ${uncheckedExercises.length} ${action === "devoir" ? "en devoirs" : action === "reporter" ? "reporté(s)" : ""}`.trim(),
       });
