@@ -721,7 +721,7 @@ function PassationTest() {
               <span className="text-sm text-muted-foreground">—</span>
               <span className="font-bold text-sm">Question {sectionIndex} / {sectionTotal}</span>
             </div>
-            <Badge variant="secondary" className="text-xs">{current + 1}/{TCF_QUESTIONS.length} total</Badge>
+            <Badge variant="secondary" className="text-xs">{current + 1}/{questions.length} total</Badge>
           </div>
           <div className="flex gap-0.5">
             {Array.from({ length: sectionTotal }).map((_, i) => {
@@ -731,7 +731,7 @@ function PassationTest() {
                   globalIdx === current ? "bg-primary"
                     : answers[globalIdx] !== null
                       ? submitted
-                        ? answers[globalIdx] === TCF_QUESTIONS[globalIdx].correct ? "bg-emerald-500" : "bg-destructive"
+                        ? answers[globalIdx] === questions[globalIdx].correct ? "bg-emerald-500" : "bg-destructive"
                         : "bg-primary/40"
                       : "bg-muted"
                 }`} />
@@ -826,7 +826,7 @@ function PassationTest() {
         <Button variant="outline" onClick={() => setCurrent((c) => Math.max(0, c - 1))} disabled={current === 0}>
           <ChevronLeft className="h-4 w-4 mr-1" /> Précédent
         </Button>
-        {current === TCF_QUESTIONS.length - 1 && !submitted ? (
+        {current === questions.length - 1 && !submitted ? (
           <Button onClick={doSubmit} disabled={answers[current] === null}>
             <CheckCircle2 className="h-4 w-4 mr-1" /> Soumettre le test
           </Button>
@@ -840,7 +840,7 @@ function PassationTest() {
       {submitted && totalScore !== null && (
         <Card>
           <CardContent className="pt-6 space-y-4">
-            <p className="text-2xl font-bold text-center">Score global : {totalScore}/{TCF_QUESTIONS.length}</p>
+            <p className="text-2xl font-bold text-center">Score global : {totalScore}/{questions.length}</p>
             <div className="grid grid-cols-3 gap-4 text-center">
               <div className="p-3 rounded-lg bg-muted/50">
                 <p className="text-sm text-muted-foreground">🎧 CO</p>
