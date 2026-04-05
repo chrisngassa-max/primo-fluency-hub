@@ -90,6 +90,65 @@ const MonitoringPage = () => {
     enabled: !!user,
   });
 
+  // ─── Stagnation alerts ───
+  const { data: stagnationAlerts = [] } = useQuery({
+    queryKey: ["monitoring-stagnation", user?.id],
+    queryFn: async () => {
+      const { data: grps } = await supabase.from("groups").select("id").eq("formateur_id", user!.id);
+      if (!grps?.length) return [];
+      const { data: members } = await supabase.from("group_members")
+        .select("eleve_id, group_id").in("group_id", grps.map(g => g.id));
+      if (!members?.length) return [];
+      const eleveIds = [...new Set(members.map(m => m.eleve_id))];
+
+      // Get competency statuses that are stuck
+      const { data: statuses } = await supabase.from("student_competency_status")
+        .select("eleve_id, competence, statut")
+        .in("eleve_id", eleveIds)
+        .in("statut", ["non_acquis", "non_evalue"]);
+      if (!statuses?.length) return [];
+
+      // Get last 3 sessions per group
+      const allGroupIds = [...new Set(members.map(m => m.group_id))];
+      const { data: recentSessions } = await supabase.from("sessions")
+        .select("id, group_id, date_seance")
+        .in("group_id", allGroupIds)
+        .eq("statut", "terminee")
+        .order("date_seance", { ascending: false })
+        .limit(50);
+
+      // Group sessions by group, take last 3 each
+      const sessionsByGroup: Record<string, string[]> = {};
+      (recentSessions ?? []).forEach(s => {
+        if (!sessionsByGroup[s.group_id]) sessionsByGroup[s.group_id] = [];
+        if (sessionsByGroup[s.group_id].length < 3) sessionsByGroup[s.group_id].push(s.id);
+      });
+
+      // Only keep students whose groups have ≥3 completed sessions
+      const eleveGroupMap: Record<string, string[]> = {};
+      members.forEach(m => { (eleveGroupMap[m.eleve_id] = eleveGroupMap[m.eleve_id] || []).push(m.group_id); });
+
+      const stagnating: { eleve_id: string; competence: string }[] = [];
+      statuses.forEach(s => {
+        const groups = eleveGroupMap[s.eleve_id] || [];
+        const hasEnoughSessions = groups.some(gid => (sessionsByGroup[gid]?.length ?? 0) >= 3);
+        if (hasEnoughSessions) {
+          stagnating.push({ eleve_id: s.eleve_id, competence: s.competence });
+        }
+      });
+
+      if (!stagnating.length) return [];
+
+      const { data: profiles } = await supabase.from("profiles")
+        .select("id, nom, prenom")
+        .in("id", [...new Set(stagnating.map(s => s.eleve_id))]);
+      const nameMap = Object.fromEntries((profiles ?? []).map(p => [p.id, `${p.prenom} ${p.nom}`]));
+
+      return stagnating.map(s => ({ ...s, nom: nameMap[s.eleve_id] || "Élève" }));
+    },
+    enabled: !!user,
+  });
+
   // ─── All students (for search + "Vue Élèves") with fallback score from resultats ───
   const { data: allEleves = [], isLoading: loadingAllEleves } = useQuery({
     queryKey: ["monitoring-all-eleves", user?.id],
@@ -864,6 +923,36 @@ const MonitoringPage = () => {
 
         {/* ─── HUB ─── */}
         <TabsContent value="hub" className="space-y-6">
+          {/* Stagnation alerts */}
+          {stagnationAlerts.length > 0 && (
+            <Card className="border-destructive/30 bg-destructive/5">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center gap-2 text-destructive">
+                  <AlertTriangle className="h-4 w-4" />
+                  Alertes stagnation ({stagnationAlerts.length})
+                </CardTitle>
+                <CardDescription>Élèves bloqués sur une compétence depuis 3+ séances</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-wrap gap-2">
+                  {stagnationAlerts.slice(0, 12).map((a, i) => (
+                    <Badge
+                      key={i}
+                      variant="destructive"
+                      className="cursor-pointer"
+                      onClick={() => goToEleveDetail(a.eleve_id)}
+                    >
+                      {a.nom} — {a.competence}
+                    </Badge>
+                  ))}
+                  {stagnationAlerts.length > 12 && (
+                    <Badge variant="outline">+{stagnationAlerts.length - 12} autres</Badge>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <Card className="cursor-pointer hover:border-primary/50 transition-all hover:shadow-md group" onClick={() => setViewMode("groupes")}>
               <CardContent className="pt-8 pb-8 flex flex-col items-center text-center gap-4">

@@ -19,6 +19,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ArrowLeft,
   Sparkles,
@@ -28,6 +30,8 @@ import {
   ArrowDown,
   Save,
   Loader2,
+  Library,
+  Copy,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -73,6 +77,81 @@ const SequenceBuilder = () => {
   const [manualConsigne, setManualConsigne] = useState("");
   const [manualFormat, setManualFormat] = useState("qcm");
   const [manualCompetence, setManualCompetence] = useState("CE");
+  const [activeTab, setActiveTab] = useState("create");
+  const [cloning, setCloning] = useState(false);
+  const qc = useQueryClient();
+
+  // Public library
+  const { data: publicSequences = [], isLoading: loadingPublic } = useQuery({
+    queryKey: ["public-sequences"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("sequences_pedagogiques")
+        .select("id, titre, description, niveau, is_ai_generated, formateur_id, created_at, profiles!sequences_pedagogiques_formateur_id_fkey(prenom, nom)")
+        .eq("is_public", true)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const handleClone = async (seqId: string) => {
+    if (!user) return;
+    setCloning(true);
+    try {
+      // Fetch the sequence
+      const { data: seq, error: seqErr } = await supabase
+        .from("sequences_pedagogiques")
+        .select("*")
+        .eq("id", seqId)
+        .single();
+      if (seqErr) throw seqErr;
+
+      // Clone sequence
+      const { data: cloned, error: cloneErr } = await supabase
+        .from("sequences_pedagogiques")
+        .insert({
+          titre: `${seq.titre} (copie)`,
+          description: seq.description,
+          niveau: seq.niveau,
+          formateur_id: user.id,
+          is_ai_generated: seq.is_ai_generated,
+          is_public: false,
+        })
+        .select()
+        .single();
+      if (cloneErr) throw cloneErr;
+
+      // Clone exercises
+      const { data: exs } = await supabase
+        .from("exercices")
+        .select("*")
+        .eq("sequence_id", seqId);
+      if (exs && exs.length > 0) {
+        const clonedExs = exs.map((ex: any) => ({
+          titre: ex.titre,
+          consigne: ex.consigne,
+          format: ex.format,
+          difficulte: ex.difficulte,
+          competence: ex.competence,
+          contenu: ex.contenu,
+          formateur_id: user.id,
+          sequence_id: cloned.id,
+          point_a_maitriser_id: ex.point_a_maitriser_id,
+          is_ai_generated: ex.is_ai_generated,
+          niveau_vise: ex.niveau_vise,
+        }));
+        await supabase.from("exercices").insert(clonedExs);
+      }
+
+      qc.invalidateQueries({ queryKey: ["public-sequences"] });
+      toast.success("Séquence clonée !", { description: "La copie est dans vos séquences privées." });
+    } catch (e: any) {
+      toast.error("Erreur de clonage", { description: e.message });
+    } finally {
+      setCloning(false);
+    }
+  };
 
 
   const handleGenerate = async () => {
@@ -224,12 +303,57 @@ const SequenceBuilder = () => {
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold">Nouvelle Séquence</h1>
+          <h1 className="text-2xl font-bold">Séquences</h1>
           <p className="text-sm text-muted-foreground">
-            Créez une séquence d'exercices hybride (IA + manuel)
+            Créez ou clonez des séquences d'exercices
           </p>
         </div>
       </div>
+
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList>
+          <TabsTrigger value="create" className="gap-1.5"><Plus className="h-4 w-4" /> Créer</TabsTrigger>
+          <TabsTrigger value="library" className="gap-1.5"><Library className="h-4 w-4" /> Bibliothèque</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="library" className="space-y-4">
+          {loadingPublic ? (
+            <div className="space-y-3">{[1,2,3].map(i => <Skeleton key={i} className="h-20 w-full" />)}</div>
+          ) : publicSequences.length === 0 ? (
+            <Card className="border-dashed">
+              <CardContent className="py-12 text-center">
+                <Library className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
+                <p className="text-muted-foreground">Aucune séquence publique pour le moment.</p>
+              </CardContent>
+            </Card>
+          ) : publicSequences.map((seq: any) => (
+            <Card key={seq.id} className="hover:border-primary/30 transition-colors">
+              <CardContent className="py-4 px-5">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-medium">{seq.titre}</span>
+                      <Badge variant="secondary" className="text-[10px]">{seq.niveau}</Badge>
+                      {seq.is_ai_generated && (
+                        <Badge variant="outline" className="text-[10px] border-primary/30 text-primary">IA</Badge>
+                      )}
+                    </div>
+                    {seq.description && <p className="text-xs text-muted-foreground">{seq.description}</p>}
+                    <p className="text-[10px] text-muted-foreground">
+                      Par {(seq as any).profiles?.prenom} {(seq as any).profiles?.nom}
+                    </p>
+                  </div>
+                  <Button size="sm" variant="outline" onClick={() => handleClone(seq.id)} disabled={cloning}>
+                    {cloning ? <Loader2 className="h-4 w-4 animate-spin" /> : <Copy className="h-4 w-4 mr-1" />}
+                    Cloner
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </TabsContent>
+
+        <TabsContent value="create" className="space-y-6">
 
       {/* Sequence metadata */}
       <Card>
@@ -495,6 +619,8 @@ const SequenceBuilder = () => {
           </CardContent>
         </Card>
       )}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
