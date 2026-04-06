@@ -1336,9 +1336,18 @@ ${sessionExercises.map((ex: any, i: number) => `
           </Card>
         </TabsContent>
       </Tabs>
+      {/* Daily Homework Dialog from alerts */}
+      {dailyHomeworkOpen && selectedAlertEleve && (
+        <GenerateDailyHomeworkDialog
+          open={dailyHomeworkOpen}
+          onOpenChange={(open) => { setDailyHomeworkOpen(open); if (!open) setSelectedAlertEleve(null); }}
+          currentSessionDate={new Date().toISOString()}
+          nextSessions={upcomingSessions.map((s: any) => ({ id: s.id, titre: s.titre, date_seance: s.date_seance }))}
+          onGenerate={async () => { toast.success("Devoirs générés !"); setDailyHomeworkOpen(false); setSelectedAlertEleve(null); }}
+        />
+      )}
     </div>
   );
 };
 
 export default FormateurDashboard;
-
