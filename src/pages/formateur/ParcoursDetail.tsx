@@ -335,6 +335,7 @@ const ParcoursDetail = () => {
             {parcours?.niveau_depart} → {parcours?.niveau_cible}
             {parcours?.group?.nom && ` · ${parcours.group.nom}`}
             {` · ${parcours?.heures_totales_prevues}h prévues`}
+            {parcours?.date_examen_cible && ` · Examen : ${parcours.date_examen_cible}`}
           </p>
         </div>
       </div>
