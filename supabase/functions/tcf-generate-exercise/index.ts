@@ -69,6 +69,19 @@ FORMAT DE SORTIE OBLIGATOIRE (JSON) :
   }
 }`;
 
+function validateExercise(ex: any): string[] {
+  const required = ["titre", "consigne", "epreuve", "niveau_cecrl", "type", "contenu"];
+  const missing = required.filter(f => !ex[f]);
+  if (!["CO", "CE", "EE", "EO"].includes(ex.epreuve)) missing.push("epreuve_invalide");
+  if (ex.type === "QCM" && ex.contenu?.items) {
+    for (const item of ex.contenu.items) {
+      if (!item.options || item.options.length < 4) { missing.push("qcm_moins_4_options"); break; }
+      if (!item.bonne_reponse) { missing.push("bonne_reponse_manquante"); break; }
+    }
+  }
+  return missing;
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
 
@@ -155,6 +168,16 @@ Produis un JSON complet avec tous les champs du format de sortie, y compris just
     const content = data.choices?.[0]?.message?.content;
     const exercise = JSON.parse(content);
     exercise.source = "genere";
+
+    // --- Validate AI output ---
+    const validationErrors = validateExercise(exercise);
+    if (validationErrors.length > 0) {
+      console.error("AI output validation failed:", validationErrors);
+      return new Response(
+        JSON.stringify({ error: "L'IA a produit un exercice incomplet", details: validationErrors }),
+        { status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     // Fetch illustration from Pexels using mot_cle_image
     const pexelsKey = Deno.env.get('PEXELS_API_KEY');
