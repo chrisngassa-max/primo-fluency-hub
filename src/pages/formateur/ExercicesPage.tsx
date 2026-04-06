@@ -81,7 +81,7 @@ const ExercicesPage = () => {
     setRagTestOpen(true);
     try {
       const { data, error } = await supabase.functions.invoke("tcf-generate-exercise", {
-        body: { theme: "préfecture", level: "B1" },
+        body: { theme: "préfecture", level: "B1", type_demarche: typeDemarche },
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
@@ -248,8 +248,8 @@ const ExercicesPage = () => {
     },
     enabled: !!user,
   });
-
-  const typeDemarche = formateurGroupe?.type_demarche || "titre_sejour";
+  const defaultDemarche = formateurGroupe?.type_demarche || "titre_sejour";
+  const [typeDemarche, setTypeDemarche] = useState(defaultDemarche);
 
   const { data: exercices, isLoading } = useQuery({
     queryKey: ["formateur-all-exercices", user?.id],
@@ -1179,6 +1179,17 @@ ${Array.isArray(item.options) && item.options.length > 0
                 <SelectTrigger><SelectValue placeholder="Choisir…" /></SelectTrigger>
                 <SelectContent>
                   {FORMATS_TCF.map((f) => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label>Démarche IRN</Label>
+              <Select value={typeDemarche} onValueChange={setTypeDemarche}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="titre_sejour">Titre de séjour (CO + CE)</SelectItem>
+                  <SelectItem value="residency">Résidence (CO + CE)</SelectItem>
+                  <SelectItem value="naturalisation">Naturalisation (CO + CE + EE + EO)</SelectItem>
                 </SelectContent>
               </Select>
             </div>

@@ -140,6 +140,7 @@ const SessionSupermarket = () => {
   const [typeActivite, setTypeActivite] = useState("ia_choix");
   const [activiteDuree, setActiviteDuree] = useState("25");
   const [formatGroupe, setFormatGroupe] = useState("ia_choix");
+  const [typeDemarcheSm, setTypeDemarcheSm] = useState((sessionInfo as any)?.type_demarche || "titre_sejour");
 
   // Fetch today's sessions for dispatch target
   const { data: todaySessions } = useQuery({
@@ -249,7 +250,7 @@ const SessionSupermarket = () => {
         format_groupe: formatGroupe,
       };
       if (microComps) body.micro_competences = microComps;
-      body.type_demarche = (sessionInfo as any)?.type_demarche || "titre_sejour";
+      body.type_demarche = typeDemarcheSm;
       if (useGabarit) {
         body.gabaritNumero = detectedGabarit.numero;
       }
@@ -678,6 +679,24 @@ ${(doc.fiches_eleves || [])
                           {opt.label}
                         </SelectItem>
                       ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Démarche IRN */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium flex items-center gap-1.5">
+                    <Target className="h-3.5 w-3.5" />
+                    Démarche IRN
+                  </Label>
+                  <Select value={typeDemarcheSm} onValueChange={setTypeDemarcheSm}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="titre_sejour">Titre de séjour (CO + CE)</SelectItem>
+                      <SelectItem value="residency">Résidence (CO + CE)</SelectItem>
+                      <SelectItem value="naturalisation">Naturalisation (CO + CE + EE + EO)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
