@@ -23,7 +23,7 @@ import { fr } from "date-fns/locale";
 import { toast } from "sonner";
 import { DifficultyBadge } from "@/components/DifficultyBadge";
 import MicroCompetencesPanel, { type MicroCompetence } from "@/components/MicroCompetencesPanel";
-
+import { cn } from "@/lib/utils";
 
 const COMPETENCE_LABELS: Record<string, string> = {
   CO: "Compréhension Orale",
