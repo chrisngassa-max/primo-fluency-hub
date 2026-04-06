@@ -46,11 +46,20 @@ FORMAT DE SORTIE OBLIGATOIRE (JSON) :
     "adequation_tache": "Critère concis",
     "coherence_cohesion": "Critère concis",
     "competence_linguistique": "Critère concis",
-    "competence_phonologique": "Critère concis — EO uniquement, vide sinon"
+  "competence_phonologique": "Critère concis — EO uniquement, vide sinon"
   },
   "duree_estimee_secondes": 90,
   "note_differentiation": "Calibrage selon le profil apprenant (1 ligne)",
   "type_distracteurs": "sonorité_proche | confusion_date | piège_contexte | synonyme_trompeur",
+  "variante_niveau_bas": {
+    "consigne": "Version simplifiée avec aide ou amorce fournie",
+    "aide": "Mot ou phrase donnée pour démarrer",
+    "nb_items_reduit": 2
+  },
+  "variante_niveau_haut": {
+    "consigne": "Version avec contrainte supplémentaire ou tâche de transfert",
+    "extension": "Question ouverte ou production additionnelle demandée"
+  },
   "contenu": {
     "items": [
       {

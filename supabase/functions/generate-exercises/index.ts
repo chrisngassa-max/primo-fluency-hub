@@ -178,6 +178,10 @@ IMPORTANT — Pour CHAQUE exercice, tu dois aussi proposer un "animation_guide" 
   - guide_formateur : instructions pas-à-pas détaillées pour animer l'activité (étapes numérotées, timing, consignes de gestion de classe)
   - fiches_eleves : tableau de fiches à imprimer pour les élèves. Chaque fiche contient titre_fiche (ex: "Fiche A — Le Client"), contenu_fiche (rôle, mission, vocabulaire imposé, données concrètes — texte complet prêt à distribuer), lexique_cles (5-10 mots/phrases du niveau à utiliser)
 
+IMPORTANT — Pour CHAQUE exercice, tu dois aussi proposer des VARIANTES DE DIFFÉRENCIATION :
+- "variante_niveau_bas" : version simplifiée pour les élèves en difficulté. Contient : consigne (reformulée plus simplement, avec aide ou amorce), aide (mot ou phrase de démarrage), nb_items_reduit (nombre d'items réduit, ex: 2).
+- "variante_niveau_haut" : version enrichie pour les élèves avancés. Contient : consigne (avec contrainte supplémentaire ou tâche de transfert), extension (question ouverte ou production additionnelle).
+
 Tu DOIS utiliser le tool "generate_exercises" pour retourner le résultat.${gabaritPrompt}`;
 
     const userPrompt = `Génère ${count} exercices pour :
@@ -258,6 +262,25 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
                           },
                           required: ["items"],
                         },
+                        variante_niveau_bas: {
+                          type: "object",
+                          description: "Version simplifiée de l'exercice pour les élèves en difficulté",
+                          properties: {
+                            consigne: { type: "string", description: "Consigne simplifiée avec aide ou amorce fournie" },
+                            aide: { type: "string", description: "Mot ou phrase donnée pour démarrer" },
+                            nb_items_reduit: { type: "number", description: "Nombre d'items réduit" },
+                          },
+                          required: ["consigne", "aide", "nb_items_reduit"],
+                        },
+                        variante_niveau_haut: {
+                          type: "object",
+                          description: "Version enrichie de l'exercice pour les élèves avancés",
+                          properties: {
+                            consigne: { type: "string", description: "Consigne avec contrainte supplémentaire ou tâche de transfert" },
+                            extension: { type: "string", description: "Question ouverte ou production additionnelle demandée" },
+                          },
+                          required: ["consigne", "extension"],
+                        },
                         animation_guide: {
                           type: "object",
                           description: "Guide d'animation ludique pour le formateur avec matériel imprimable",
@@ -291,7 +314,7 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
                           required: ["scenario", "jeu", "materiel", "objectif_oral", "documentation_fournie"],
                         },
                       },
-                      required: ["titre", "consigne", "format", "difficulte", "metadata", "contenu", "animation_guide"],
+                      required: ["titre", "consigne", "format", "difficulte", "metadata", "contenu", "animation_guide", "variante_niveau_bas", "variante_niveau_haut"],
                     },
                   },
                 },
