@@ -27,7 +27,7 @@ import {
   getProfilMessage,
   COMPETENCE_ORDER,
 } from "@/lib/testPositionnement";
-import { Mic, Square } from "lucide-react";
+import { Mic, Square, ArrowRight } from "lucide-react";
 import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
 
 type Screen = "accueil" | "question" | "resultats";
@@ -1115,36 +1115,33 @@ const TestPositionnement = () => {
     );
   }
 
-  // SCREEN: ACCUEIL (fallback — normally auto-started)
+  // SCREEN: ACCUEIL — preparation screen
   return (
-    <div className="max-w-2xl mx-auto space-y-6 p-4">
-      <h1 className="text-2xl font-bold text-foreground">
-        Test de positionnement
-      </h1>
+    <div className="space-y-6 max-w-lg mx-auto py-8">
+      <div className="text-center space-y-3">
+        <span className="text-5xl">📋</span>
+        <h1 className="text-2xl font-bold">Test de positionnement TCF</h1>
+        <p className="text-muted-foreground">
+          Ce test évalue ton niveau sur 4 compétences : Compréhension Orale, Compréhension Écrite,
+          Expression Orale et Expression Écrite. Il dure environ 20 minutes.
+        </p>
+      </div>
+
       <Card>
-        <CardContent className="pt-6 space-y-4">
-          <p className="text-base text-muted-foreground">
-            Ce test adaptatif permet de connaître ton niveau de français. Il dure environ
-            20 minutes et couvre 4 compétences.
-          </p>
-          <p className="text-sm text-muted-foreground">
-            Tu passeras 4 épreuves : Compréhension orale, Compréhension
-            écrite, Expression orale et Expression écrite.
-          </p>
-          <Button
-            className="w-full"
-            size="lg"
-            onClick={handleStart}
-            disabled={existingSession?.statut === "termine"}
-          >
-            {existingSession?.statut === "en_cours"
-              ? "Reprendre le test"
-              : existingSession?.statut === "termine"
-              ? "Test déjà terminé"
-              : "Commencer le test"}
-          </Button>
+        <CardContent className="pt-5 space-y-3 text-sm text-muted-foreground">
+          <p>✅ Mets-toi dans un endroit calme</p>
+          <p>✅ Si tu as des exercices oraux, assure-toi que ton micro fonctionne</p>
+          <p>✅ Ne quitte pas la page pendant le test</p>
+          <p>✅ Réponds honnêtement — le test adapte le programme à ton vrai niveau</p>
         </CardContent>
       </Card>
+
+      <Button size="lg" className="w-full text-lg py-6" onClick={handleStart}>
+        {existingSession?.statut === "en_cours"
+          ? "Reprendre le test"
+          : "Je suis prêt — Commencer le test"}
+        <ArrowRight className="ml-2 h-5 w-5" />
+      </Button>
     </div>
   );
 };
