@@ -13,7 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Progress } from "@/components/ui/progress";
-import { Users, GraduationCap, Calendar, Bell, Clock, TrendingUp, CheckCircle2, Pause, ArrowUpCircle, Play, Printer, Eye, UserPlus, AlertTriangle, Send, Gamepad2, BookOpen, ChevronRight, Rocket, ClipboardCheck, ListChecks, FileCheck, Pencil, Trash2, Plus, Save, X } from "lucide-react";
+import { Users, GraduationCap, Calendar, Bell, Clock, TrendingUp, CheckCircle2, Pause, ArrowUpCircle, Play, Printer, Eye, UserPlus, AlertTriangle, Send, Gamepad2, BookOpen, ChevronRight, Rocket, ClipboardCheck, ListChecks, FileCheck, Pencil, Trash2, Plus, Save, X, Target } from "lucide-react";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,7 +23,7 @@ import { fr } from "date-fns/locale";
 import { toast } from "sonner";
 import { DifficultyBadge } from "@/components/DifficultyBadge";
 import MicroCompetencesPanel, { type MicroCompetence } from "@/components/MicroCompetencesPanel";
-
+import { cn } from "@/lib/utils";
 
 const COMPETENCE_LABELS: Record<string, string> = {
   CO: "Compréhension Orale",
@@ -55,6 +55,21 @@ const formatLabels: Record<string, string> = {
 interface ExerciseTrackingState {
   isCompleted: boolean;
   isIncludedInTest: boolean;
+}
+
+function calculerProjection(parcours: any) {
+  if (!parcours.date_examen_cible) return null;
+  const joursRestants = Math.ceil((new Date(parcours.date_examen_cible).getTime() - Date.now()) / 86400000);
+  if (joursRestants <= 0) return null;
+  const seancesRestantes = (parcours.nb_seances_prevues || 1) - (parcours.nb_seances_realisees || 0);
+  const semainesRestantes = joursRestants / 7;
+  const cadence = semainesRestantes > 0 ? seancesRestantes / semainesRestantes : Infinity;
+  return {
+    joursRestants,
+    seancesRestantes,
+    cadenceNecessaire: Math.round(cadence * 10) / 10,
+    risque: cadence > 5 ? "critique" as const : cadence > 3 ? "élevé" as const : "faible" as const,
+  };
 }
 
 const FormateurDashboard = () => {
@@ -361,6 +376,22 @@ const FormateurDashboard = () => {
           niveau_propose: Number.isFinite(niveauProposeRaw) ? niveauProposeRaw : 4,
         };
       });
+    },
+    enabled: !!user,
+  });
+
+  // ─── Active parcours for projection ───
+  const { data: activeParcours = [] } = useQuery({
+    queryKey: ["dashboard-active-parcours", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("parcours")
+        .select("id, titre, nb_seances_prevues, nb_seances_realisees, date_examen_cible")
+        .eq("formateur_id", user!.id)
+        .eq("statut", "actif")
+        .not("date_examen_cible", "is", null);
+      if (error) throw error;
+      return (data ?? []) as any[];
     },
     enabled: !!user,
   });
@@ -731,6 +762,33 @@ ${sessionExercises.map((ex: any, i: number) => `
         </Card>
       )}
 
+      {/* ─── Parcours Projection Banners ─── */}
+      {activeParcours && activeParcours.length > 0 && activeParcours.map((p: any) => {
+        const proj = calculerProjection(p);
+        if (!proj) return null;
+        const colors = proj.risque === "critique"
+          ? "border-destructive/40 bg-destructive/5 text-destructive"
+          : proj.risque === "élevé"
+          ? "border-orange-400/40 bg-orange-50/30 dark:bg-orange-950/10 text-orange-700 dark:text-orange-400"
+          : "border-green-400/40 bg-green-50/30 dark:bg-green-950/10 text-green-700 dark:text-green-400";
+        const label = proj.risque === "critique" ? "critique" : proj.risque === "élevé" ? "à risque" : "atteignable";
+        return (
+          <Card key={p.id} className={cn("border", colors)}>
+            <CardContent className="py-3 px-5 flex items-center gap-3">
+              <Target className="h-5 w-5 shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium">{p.titre}</p>
+                <p className="text-xs">
+                  {proj.seancesRestantes} séance{proj.seancesRestantes > 1 ? "s" : ""} restante{proj.seancesRestantes > 1 ? "s" : ""} — objectif <strong>{label}</strong> (cadence nécessaire : {proj.cadenceNecessaire} séances/semaine)
+                </p>
+              </div>
+              <Badge variant="outline" className="shrink-0 text-xs">
+                J-{proj.joursRestants}
+              </Badge>
+            </CardContent>
+          </Card>
+        );
+      })}
 
 
 

@@ -12,7 +12,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { toast } from "sonner";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
+import { cn } from "@/lib/utils";
 import {
   Plus,
   Sparkles,
@@ -26,6 +31,7 @@ import {
   Trash2,
   Eye,
   GraduationCap,
+  CalendarIcon,
 } from "lucide-react";
 
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
@@ -62,6 +68,7 @@ const ParcoursPage = () => {
   const [dureeSeance, setDureeSeance] = useState(90);
   const [typeDemarche, setTypeDemarche] = useState<"titre_sejour" | "naturalisation">("titre_sejour");
   const [isTemplate, setIsTemplate] = useState(false);
+  const [dateExamenCible, setDateExamenCible] = useState<Date | undefined>(undefined);
 
   // Generation state
   const [generating, setGenerating] = useState(false);
@@ -138,6 +145,7 @@ const ParcoursPage = () => {
           is_template: isTemplate,
           statut: isTemplate ? "template" : "actif",
           type_demarche: typeDemarche,
+          date_examen_cible: dateExamenCible ? format(dateExamenCible, "yyyy-MM-dd") : null,
         } as any)
         .select()
         .single();
@@ -250,6 +258,7 @@ const ParcoursPage = () => {
     setDureeSeance(90);
     setIsTemplate(false);
     setTypeDemarche("titre_sejour");
+    setDateExamenCible(undefined);
     setGeneratedSeances(null);
   };
 
@@ -356,6 +365,34 @@ const ParcoursPage = () => {
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Date d'examen cible (optionnel)</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full md:w-[280px] justify-start text-left font-normal",
+                      !dateExamenCible && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {dateExamenCible ? format(dateExamenCible, "PPP", { locale: fr }) : "Choisir une date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={dateExamenCible}
+                    onSelect={setDateExamenCible}
+                    disabled={(date) => date < new Date()}
+                    initialFocus
+                    className="p-3 pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
 
             <div className="flex items-center gap-3">

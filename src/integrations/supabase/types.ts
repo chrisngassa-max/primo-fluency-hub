@@ -937,6 +937,7 @@ export type Database = {
       parcours: {
         Row: {
           created_at: string
+          date_examen_cible: string | null
           description: string | null
           formateur_id: string
           group_id: string | null
@@ -945,6 +946,7 @@ export type Database = {
           id: string
           is_template: boolean
           nb_seances_prevues: number
+          nb_seances_realisees: number
           niveau_cible: string
           niveau_depart: string
           statut: string
@@ -954,6 +956,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          date_examen_cible?: string | null
           description?: string | null
           formateur_id: string
           group_id?: string | null
@@ -962,6 +965,7 @@ export type Database = {
           id?: string
           is_template?: boolean
           nb_seances_prevues?: number
+          nb_seances_realisees?: number
           niveau_cible?: string
           niveau_depart?: string
           statut?: string
@@ -971,6 +975,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          date_examen_cible?: string | null
           description?: string | null
           formateur_id?: string
           group_id?: string | null
@@ -979,6 +984,7 @@ export type Database = {
           id?: string
           is_template?: boolean
           nb_seances_prevues?: number
+          nb_seances_realisees?: number
           niveau_cible?: string
           niveau_depart?: string
           statut?: string
