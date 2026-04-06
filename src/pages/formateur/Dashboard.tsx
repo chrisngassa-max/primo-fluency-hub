@@ -57,6 +57,21 @@ interface ExerciseTrackingState {
   isIncludedInTest: boolean;
 }
 
+function calculerProjection(parcours: any) {
+  if (!parcours.date_examen_cible) return null;
+  const joursRestants = Math.ceil((new Date(parcours.date_examen_cible).getTime() - Date.now()) / 86400000);
+  if (joursRestants <= 0) return null;
+  const seancesRestantes = (parcours.nb_seances_prevues || 1) - (parcours.nb_seances_realisees || 0);
+  const semainesRestantes = joursRestants / 7;
+  const cadence = semainesRestantes > 0 ? seancesRestantes / semainesRestantes : Infinity;
+  return {
+    joursRestants,
+    seancesRestantes,
+    cadenceNecessaire: Math.round(cadence * 10) / 10,
+    risque: cadence > 5 ? "critique" as const : cadence > 3 ? "élevé" as const : "faible" as const,
+  };
+}
+
 const FormateurDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
