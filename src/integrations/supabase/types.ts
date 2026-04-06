@@ -949,6 +949,7 @@ export type Database = {
           niveau_depart: string
           statut: string
           titre: string
+          type_demarche: string | null
           updated_at: string
         }
         Insert: {
@@ -965,6 +966,7 @@ export type Database = {
           niveau_depart?: string
           statut?: string
           titre: string
+          type_demarche?: string | null
           updated_at?: string
         }
         Update: {
@@ -981,6 +983,7 @@ export type Database = {
           niveau_depart?: string
           statut?: string
           titre?: string
+          type_demarche?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -1210,6 +1213,7 @@ export type Database = {
           taux_reussite_eo: number
           taux_reussite_global: number
           taux_reussite_structures: number
+          type_demarche: string | null
           updated_at: string
         }
         Insert: {
@@ -1224,6 +1228,7 @@ export type Database = {
           taux_reussite_eo?: number
           taux_reussite_global?: number
           taux_reussite_structures?: number
+          type_demarche?: string | null
           updated_at?: string
         }
         Update: {
@@ -1238,6 +1243,7 @@ export type Database = {
           taux_reussite_eo?: number
           taux_reussite_global?: number
           taux_reussite_structures?: number
+          type_demarche?: string | null
           updated_at?: string
         }
         Relationships: [

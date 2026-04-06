@@ -11,7 +11,7 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
 
   try {
-    const { heuresTotales, niveauDepart, niveauCible, dureeSeanceMinutes = 90 } = await req.json();
+    const { heuresTotales, niveauDepart, niveauCible, dureeSeanceMinutes = 90, type_demarche = 'titre_sejour' } = await req.json();
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
@@ -42,11 +42,16 @@ Règles :
 - Prévoir des séances de révision/évaluation intermédiaires
 - Le nombre d'exercices doit être proportionnel à la durée de la séance`;
 
+    const demarcheLabel = type_demarche === 'naturalisation'
+      ? 'Naturalisation (B1 obligatoire sur les 4 épreuves)'
+      : 'Titre de séjour / Résidence (seuil A2/B1 OFII)';
+
     const userPrompt = `Génère un parcours de formation FLE/TCF IRN :
 - Volume total : ${heuresTotales} heures
 - Niveau de départ : ${niveauDepart}
 - Niveau cible : ${niveauCible}
 - Durée type d'une séance : ${dureeSeanceMinutes} minutes
+- Type de démarche : ${demarcheLabel}
 
 Propose le découpage complet en séances.`;
 

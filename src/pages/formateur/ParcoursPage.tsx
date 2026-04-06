@@ -60,6 +60,7 @@ const ParcoursPage = () => {
   const [niveauCible, setNiveauCible] = useState("A1");
   const [heuresTotales, setHeuresTotales] = useState(50);
   const [dureeSeance, setDureeSeance] = useState(90);
+  const [typeDemarche, setTypeDemarche] = useState<"titre_sejour" | "naturalisation">("titre_sejour");
   const [isTemplate, setIsTemplate] = useState(false);
 
   // Generation state
@@ -104,7 +105,7 @@ const ParcoursPage = () => {
     setGeneratedSeances(null);
     try {
       const { data, error } = await supabase.functions.invoke("generate-parcours", {
-        body: { heuresTotales, niveauDepart, niveauCible, dureeSeanceMinutes: dureeSeance },
+        body: { heuresTotales, niveauDepart, niveauCible, dureeSeanceMinutes: dureeSeance, type_demarche: typeDemarche },
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
@@ -136,6 +137,7 @@ const ParcoursPage = () => {
           nb_seances_prevues: generatedSeances.length,
           is_template: isTemplate,
           statut: isTemplate ? "template" : "actif",
+          type_demarche: typeDemarche,
         } as any)
         .select()
         .single();
@@ -247,6 +249,7 @@ const ParcoursPage = () => {
     setHeuresTotales(50);
     setDureeSeance(90);
     setIsTemplate(false);
+    setTypeDemarche("titre_sejour");
     setGeneratedSeances(null);
   };
 
@@ -338,9 +341,21 @@ const ParcoursPage = () => {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label>Description (optionnel)</Label>
-              <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Notes, contexte, objectifs spécifiques..." className="min-h-[60px]" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Description (optionnel)</Label>
+                <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Notes, contexte, objectifs spécifiques..." className="min-h-[60px]" />
+              </div>
+              <div className="space-y-2">
+                <Label>Type de démarche</Label>
+                <Select value={typeDemarche} onValueChange={(v) => setTypeDemarche(v as "titre_sejour" | "naturalisation")}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="titre_sejour">Titre de séjour / Résidence</SelectItem>
+                    <SelectItem value="naturalisation">Naturalisation</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             <div className="flex items-center gap-3">
