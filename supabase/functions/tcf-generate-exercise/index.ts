@@ -69,6 +69,19 @@ FORMAT DE SORTIE OBLIGATOIRE (JSON) :
   }
 }`;
 
+function validateExercise(ex: any): string[] {
+  const required = ["titre", "consigne", "epreuve", "niveau_cecrl", "type", "contenu"];
+  const missing = required.filter(f => !ex[f]);
+  if (!["CO", "CE", "EE", "EO"].includes(ex.epreuve)) missing.push("epreuve_invalide");
+  if (ex.type === "QCM" && ex.contenu?.items) {
+    for (const item of ex.contenu.items) {
+      if (!item.options || item.options.length < 4) { missing.push("qcm_moins_4_options"); break; }
+      if (!item.bonne_reponse) { missing.push("bonne_reponse_manquante"); break; }
+    }
+  }
+  return missing;
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
 
