@@ -22,7 +22,7 @@ import { toast } from "sonner";
 import {
   BookOpen, Printer, Search, Eye, Volume2, Circle, Filter, Drama, Package, MessageCircle, Wand2,
   Pencil, Trash2, Plus, CirclePlus, CheckCircle2, Loader2, ChevronLeft, ChevronRight, Save,
-  Brain, FileText, Upload,
+  Brain, FileText, Upload, Clock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/DifficultyBadge";
@@ -124,20 +124,26 @@ const ExercicesPage = () => {
         const pointId = points?.[0]?.id;
         if (!pointId) throw new Error("Aucun point à maîtriser trouvé en base");
 
-        // Build contenu with image if available
+        // Build contenu with image and new pedagogical fields
         const contenu = ex.contenu && typeof ex.contenu === "object" ? ex.contenu : { items: [] };
         if (ex.image_url) contenu.image_url = ex.image_url;
         if (ex.image_credit) contenu.image_credit = ex.image_credit;
         if (ex.mot_cle_image) contenu.mot_cle_image = ex.mot_cle_image;
+        // Store new pedagogical metadata inside contenu for display
+        if (ex.justification_pedagogique) contenu.justification_pedagogique = ex.justification_pedagogique;
+        if (ex.criteres_correction) contenu.criteres_correction = ex.criteres_correction;
+        if (ex.note_differentiation) contenu.note_differentiation = ex.note_differentiation;
+        if (ex.duree_estimee_secondes) contenu.duree_estimee_secondes = ex.duree_estimee_secondes;
+        if (ex.type_distracteurs) contenu.type_distracteurs = ex.type_distracteurs;
 
         const { error: insertError } = await supabase.from("exercices").insert({
           formateur_id: user.id,
           titre: ex.titre,
           consigne: ex.consigne || "",
-          competence: aiCompetence as any,
-          format: (aiFormat || "qcm") as any,
+          competence: (ex.epreuve || aiCompetence) as any,
+          format: (aiFormat || ex.type === "QCM" ? "qcm" : aiFormat || "qcm") as any,
           difficulte: 3,
-          niveau_vise: aiNiveau,
+          niveau_vise: ex.niveau_cecrl || aiNiveau,
           contenu: contenu,
           point_a_maitriser_id: pointId,
           is_ai_generated: true,
@@ -953,7 +959,44 @@ ${Array.isArray(item.options) && item.options.length > 0
                   <Badge>{previewExercise.competence}</Badge>
                   <Badge variant="outline">{previewExercise.format?.replace(/_/g, " ")}</Badge>
                   <Badge variant="secondary">Niveau {previewExercise.niveau_vise}</Badge>
+                  {(pc as any)?.duree_estimee_secondes && (
+                    <Badge variant="outline" className="gap-1">
+                      <Clock className="h-3 w-3" />{Math.round((pc as any).duree_estimee_secondes / 60)} min
+                    </Badge>
+                  )}
                 </div>
+
+                {/* Pedagogical info in preview */}
+                {(() => {
+                  const noteDiff = (pc as any)?.note_differentiation;
+                  const justif = (pc as any)?.justification_pedagogique;
+                  const criteres = (pc as any)?.criteres_correction;
+                  if (!noteDiff && !justif && !criteres) return null;
+                  return (
+                    <Card className="border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-950/20">
+                      <CardContent className="py-3 px-4 space-y-2">
+                        {noteDiff && (
+                          <p className="text-xs"><span className="font-semibold text-blue-700 dark:text-blue-300">🎯 Différenciation :</span> {noteDiff}</p>
+                        )}
+                        {justif && (
+                          <p className="text-xs"><span className="font-semibold text-blue-700 dark:text-blue-300">📘 Justification :</span> {justif}</p>
+                        )}
+                        {criteres && typeof criteres === "object" && (
+                          <div>
+                            <p className="text-xs font-semibold text-blue-700 dark:text-blue-300 mb-1">📋 Critères de notation :</p>
+                            <div className="grid grid-cols-2 gap-1">
+                              {Object.entries(criteres).filter(([_, v]) => v).map(([key, val]) => (
+                                <p key={key} className="text-[11px] text-muted-foreground">
+                                  <span className="font-medium">{key.replace(/_/g, " ")}</span> : {val as string}
+                                </p>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  );
+                })()}
 
                 {totalPages > 0 ? (
                   <>

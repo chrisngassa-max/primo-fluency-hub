@@ -416,7 +416,7 @@ const DevoirPassation = () => {
                     ) : (
                       <XCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
                     )}
-                    <div className="space-y-1">
+                    <div className="space-y-1 flex-1">
                       <p className="text-sm font-medium">{c.question}</p>
                       {!c.correct && (
                         <>
@@ -427,8 +427,57 @@ const DevoirPassation = () => {
                       {c.explication && (
                         <p className="text-xs text-muted-foreground italic">{c.explication}</p>
                       )}
+                      {c.justification_pedagogique && (
+                        <p className="text-xs text-blue-600 dark:text-blue-400">📘 {c.justification_pedagogique}</p>
+                      )}
+                      {c.reformulation_modele && (
+                        <p className="text-xs text-emerald-600 dark:text-emerald-400">✏️ Modèle : « {c.reformulation_modele} »</p>
+                      )}
+                      {c.encouragement && (
+                        <p className="text-xs text-amber-600 dark:text-amber-400 font-medium">💪 {c.encouragement}</p>
+                      )}
                     </div>
                   </div>
+
+                  {/* Critères de correction détaillés */}
+                  {c.criteres_correction && typeof c.criteres_correction === "object" && (
+                    <div className="mt-2 p-2 rounded bg-muted/50 space-y-1">
+                      <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Critères TCF</p>
+                      <div className="grid grid-cols-2 gap-1">
+                        {Object.entries(c.criteres_correction).filter(([_, v]) => v).map(([key, val]) => (
+                          <p key={key} className="text-[11px]">
+                            <span className="font-medium">{key.replace(/_/g, " ")}</span> : {val as string}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Points forts / amélioration */}
+                  {(c.points_forts?.length > 0 || c.points_amelioration?.length > 0) && (
+                    <div className="mt-2 grid grid-cols-2 gap-2">
+                      {c.points_forts?.length > 0 && (
+                        <div className="text-[11px]">
+                          <p className="font-semibold text-green-600">✅ Points forts</p>
+                          <ul className="list-disc list-inside space-y-0.5 text-muted-foreground">
+                            {c.points_forts.map((p: string, j: number) => <li key={j}>{p}</li>)}
+                          </ul>
+                        </div>
+                      )}
+                      {c.points_amelioration?.length > 0 && (
+                        <div className="text-[11px]">
+                          <p className="font-semibold text-orange-600">🔧 À améliorer</p>
+                          <ul className="list-disc list-inside space-y-0.5 text-muted-foreground">
+                            {c.points_amelioration.map((p: string, j: number) => <li key={j}>{p}</li>)}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {c.priorite_remediation && (
+                    <p className="text-[11px] text-destructive/80 mt-1">🎯 Priorité : {c.priorite_remediation}</p>
+                  )}
                 </CardContent>
               </Card>
             ))}
