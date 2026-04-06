@@ -59,7 +59,6 @@ async function moveToDlq(
   msg: { msg_id: number; message: Record<string, unknown> },
   reason: string
 ): Promise<void> {
-): Promise<void> {
   const payload = msg.message
   await supabase.from('email_send_log').insert({
     message_id: payload.message_id,
