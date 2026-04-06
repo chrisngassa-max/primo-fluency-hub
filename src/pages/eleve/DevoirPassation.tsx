@@ -276,13 +276,12 @@ const DevoirPassation = () => {
 
       try { await updateProfilEleve(user.id, ex?.niveau_vise || "A1"); } catch {}
 
-      // Update priorités pédagogiques if AI flagged a remediation priority
-      const correctionFirst = correction[0];
-      if (correctionFirst?.priorite_remediation) {
+      const oralPriorite = (correction[0] as any)?.priorite_remediation;
+      if (oralPriorite) {
         try {
           await supabase.rpc("update_priorites_pedagogiques", {
             p_eleve_id: user.id,
-            p_nouvelle_priorite: correctionFirst.priorite_remediation,
+            p_nouvelle_priorite: oralPriorite,
           });
         } catch (e) { console.error("Priority update error:", e); }
       }
@@ -342,13 +341,12 @@ const DevoirPassation = () => {
 
       try { await updateProfilEleve(user.id, ex?.niveau_vise || "A1"); } catch {}
 
-      // Update priorités pédagogiques if AI flagged a remediation priority
-      const lastCorrection = correction[correction.length - 1];
-      if (lastCorrection?.priorite_remediation) {
+      const qcmPriorite = (correction[correction.length - 1] as any)?.priorite_remediation;
+      if (qcmPriorite) {
         try {
           await supabase.rpc("update_priorites_pedagogiques", {
             p_eleve_id: user.id,
-            p_nouvelle_priorite: lastCorrection.priorite_remediation,
+            p_nouvelle_priorite: qcmPriorite,
           });
         } catch (e) { console.error("Priority update error:", e); }
       }
