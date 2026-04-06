@@ -213,8 +213,16 @@ serve(async (req) => {
           }
         }
       }
-      if (p.profile?.priorites && Array.isArray(p.profile.priorites) && p.profile.priorites.length > 0) {
-        lines.push(`  Priorités pédagogiques: ${p.profile.priorites.join(", ")}`);
+      if (p.profile?.priorites) {
+        const prio = p.profile.priorites;
+        if (Array.isArray(prio) && prio.length > 0) {
+          lines.push(`  Priorités pédagogiques: ${prio.join(", ")}`);
+        } else if (typeof prio === "object" && prio !== null) {
+          const parts: string[] = [];
+          if (prio.vitesse_progression) parts.push(`vitesse=${prio.vitesse_progression}`);
+          if (prio.score_progression_delta != null) parts.push(`delta=${prio.score_progression_delta > 0 ? "+" : ""}${Math.round(prio.score_progression_delta)}%`);
+          if (parts.length > 0) lines.push(`  Progression: ${parts.join(", ")}`);
+        }
       }
       return lines.join("\n");
     }).join("\n\n");

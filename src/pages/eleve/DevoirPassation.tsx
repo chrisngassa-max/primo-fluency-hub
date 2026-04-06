@@ -275,6 +275,17 @@ const DevoirPassation = () => {
       }).eq("id", devoirId!);
 
       try { await updateProfilEleve(user.id, ex?.niveau_vise || "A1"); } catch {}
+
+      const oralPriorite = (correction[0] as any)?.priorite_remediation;
+      if (oralPriorite) {
+        try {
+          await supabase.rpc("update_priorites_pedagogiques", {
+            p_eleve_id: user.id,
+            p_nouvelle_priorite: oralPriorite,
+          });
+        } catch (e) { console.error("Priority update error:", e); }
+      }
+
       const bilanId = await triggerBilanGeneration(score, correction);
 
       setResult({ score, correction, bilanId });
@@ -329,6 +340,17 @@ const DevoirPassation = () => {
       if (devErr) throw devErr;
 
       try { await updateProfilEleve(user.id, ex?.niveau_vise || "A1"); } catch {}
+
+      const qcmPriorite = (correction[correction.length - 1] as any)?.priorite_remediation;
+      if (qcmPriorite) {
+        try {
+          await supabase.rpc("update_priorites_pedagogiques", {
+            p_eleve_id: user.id,
+            p_nouvelle_priorite: qcmPriorite,
+          });
+        } catch (e) { console.error("Priority update error:", e); }
+      }
+
       const bilanId = await triggerBilanGeneration(score, correction);
 
       setResult({ score, correction, bilanId });
