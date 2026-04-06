@@ -46,15 +46,6 @@ const ExercicesPage = () => {
   const [filterSession, setFilterSession] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Reset filters when leaving the page
-  useEffect(() => {
-    return () => {
-      setFilterCompetence("all");
-      setFilterNiveau("all");
-      setFilterSession("all");
-      setSearchTerm("");
-    };
-  }, []);
 
   const hasActiveFilters = filterCompetence !== "all" || filterNiveau !== "all" || filterSession !== "all" || searchTerm !== "";
 

@@ -30,7 +30,10 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { useLocation } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const mainNav = [
   { title: "Tableau de bord", url: "/formateur", icon: LayoutDashboard },
@@ -43,10 +46,10 @@ const mainNav = [
 ];
 
 const monitorNav = [
-  { title: "Monitoring", url: "/formateur/monitoring", icon: Activity },
+  { title: "Suivi des élèves", url: "/formateur/monitoring", icon: Activity },
   { title: "Suivi des devoirs", url: "/formateur/suivi-devoirs", icon: ClipboardCheck },
   { title: "Tests d'entrée", url: "/formateur/tests", icon: ClipboardList },
-  { title: "Test positionnement", url: "/formateur/test-resultats", icon: GraduationCap },
+  { title: "Résultats positionnement", url: "/formateur/test-resultats", icon: GraduationCap },
   { title: "Rapports IA", url: "/formateur/rapports", icon: FileText },
 ];
 
@@ -60,6 +63,18 @@ export function FormateurSidebar({ onNavigate }: FormateurSidebarProps) {
   const collapsed = state === "collapsed";
   const location = useLocation();
   const currentPath = location.pathname;
+
+  const { data: pendingCount = 0 } = useQuery({
+    queryKey: ["pending-access-count"],
+    queryFn: async () => {
+      const { count } = await supabase
+        .from("profiles")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "pending");
+      return count ?? 0;
+    },
+    refetchInterval: 30000,
+  });
 
   const isActive = (path: string) =>
     path === "/formateur" ? currentPath === path : currentPath.startsWith(path);
@@ -84,7 +99,7 @@ export function FormateurSidebar({ onNavigate }: FormateurSidebarProps) {
             <SidebarMenu>
               {mainNav.map((item) => (
                 <SidebarMenuItem key={item.url}>
-                  <SidebarMenuButton asChild isActive={isActive(item.url)}>
+                  <SidebarMenuButton asChild isActive={isActive(item.url)} title={item.title}>
                     <NavLink
                       to={item.url}
                       end={item.url === "/formateur"}
@@ -94,6 +109,9 @@ export function FormateurSidebar({ onNavigate }: FormateurSidebarProps) {
                     >
                       <item.icon className="mr-2 h-4 w-4 shrink-0" />
                       {!collapsed && <span>{item.title}</span>}
+                      {item.url === "/formateur/demandes" && pendingCount > 0 && !collapsed && (
+                        <Badge className="ml-auto bg-destructive text-destructive-foreground text-[10px] px-1.5 h-4 min-w-4">{pendingCount}</Badge>
+                      )}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -108,7 +126,7 @@ export function FormateurSidebar({ onNavigate }: FormateurSidebarProps) {
             <SidebarMenu>
               {monitorNav.map((item) => (
                 <SidebarMenuItem key={item.url}>
-                  <SidebarMenuButton asChild isActive={isActive(item.url)}>
+                  <SidebarMenuButton asChild isActive={isActive(item.url)} title={item.title}>
                     <NavLink
                       to={item.url}
                       className="hover:bg-sidebar-accent/60"
