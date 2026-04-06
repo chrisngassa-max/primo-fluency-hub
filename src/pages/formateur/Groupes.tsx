@@ -372,6 +372,16 @@ const GroupesPage = () => {
                 <Label>Description (optionnel)</Label>
                 <Textarea value={desc} onChange={(e) => setDesc(e.target.value)} placeholder="Notes..." rows={2} />
               </div>
+              <div className="space-y-2">
+                <Label>Type de démarche IRN</Label>
+                <Select value={typeDemarche} onValueChange={(v) => setTypeDemarche(v as any)}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="titre_sejour">Titre de séjour / Résidence (CO + CE)</SelectItem>
+                    <SelectItem value="naturalisation">Naturalisation (CO + CE + EE + EO)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             <DialogFooter>
               <Button onClick={handleCreate} disabled={saving}>
@@ -714,6 +724,16 @@ const GroupesPage = () => {
             <div className="space-y-2">
               <Label>Description</Label>
               <Textarea value={editDesc} onChange={(e) => setEditDesc(e.target.value)} rows={2} />
+            </div>
+            <div className="space-y-2">
+              <Label>Type de démarche IRN</Label>
+              <Select value={editTypeDemarche} onValueChange={(v) => setEditTypeDemarche(v as any)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="titre_sejour">Titre de séjour / Résidence (CO + CE)</SelectItem>
+                  <SelectItem value="naturalisation">Naturalisation (CO + CE + EE + EO)</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <DialogFooter>
