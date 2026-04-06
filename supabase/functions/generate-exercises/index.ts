@@ -127,14 +127,18 @@ Exemple : "Une famille multiculturelle à table, partageant un repas dans un app
 | EO3  | Situation survie      | Jeu de rôle (Médecin) : mots-clés "mal", "douleur", "rdv"   | 2 min     |
 | EO4  | Demande d'info        | Simulation (Marché) : structure interrogative "Combien ?"    | 2 min     |
 
-### EXPRESSION ÉCRITE (EE) — format production_ecrite
+### EXPRESSION ÉCRITE (EE) — format production_ecrite — 3 tâches progressives
 L'élève écrit. L'IA corrige orthographe/grammaire/longueur.
+EE1 : Compléter/Corriger — 20 à 40 mots. Ex : remplir un formulaire, corriger un message court.
+EE2 : Décrire/Expliquer — 60 à 80 mots. Ex : décrire une situation, expliquer un problème à un voisin.
+EE3 : Argumenter/Raconter — 100 à 120 mots. Ex : rédiger un mail à la mairie, raconter un incident.
+RÈGLE ABSOLUE : La consigne DOIT mentionner explicitement le nombre de mots attendus. Ex : "Écrivez un message d'environ 60 mots pour..."
 
-| Code | Sous-compétence       | Type de tâche                                               | Durée max |
-|------|-----------------------|--------------------------------------------------------------|-----------|
-| EE1  | Remplir / Saisir      | Formulaire d'inscription : vérif format (date, CP, majusc.) | 5 min     |
-| EE2  | Informer par écrit    | SMS d'excuse (absence) : 30-50 mots + formule de politesse  | 10 min    |
-| EE3  | Décrire / Raconter    | Réponse à annonce : poser 1 question + donner 1 info        | 10 min    |
+| Code | Sous-compétence       | Type de tâche                                               | Volume     | Durée max |
+|------|-----------------------|--------------------------------------------------------------|------------|-----------|
+| EE1  | Compléter / Corriger  | Formulaire, correction message court                         | 20-40 mots | 5 min     |
+| EE2  | Décrire / Expliquer   | Décrire situation, expliquer problème                        | 60-80 mots | 10 min    |
+| EE3  | Argumenter / Raconter | Mail mairie, récit incident, réponse annonce                 | 100-120 mots | 10 min  |
 
 ═══════════════════════════════════════════════════
 
