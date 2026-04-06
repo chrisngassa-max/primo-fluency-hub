@@ -105,7 +105,7 @@ const ParcoursPage = () => {
     setGeneratedSeances(null);
     try {
       const { data, error } = await supabase.functions.invoke("generate-parcours", {
-        body: { heuresTotales, niveauDepart, niveauCible, dureeSeanceMinutes: dureeSeance },
+        body: { heuresTotales, niveauDepart, niveauCible, dureeSeanceMinutes: dureeSeance, type_demarche: typeDemarche },
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
@@ -137,6 +137,7 @@ const ParcoursPage = () => {
           nb_seances_prevues: generatedSeances.length,
           is_template: isTemplate,
           statut: isTemplate ? "template" : "actif",
+          type_demarche: typeDemarche,
         } as any)
         .select()
         .single();
