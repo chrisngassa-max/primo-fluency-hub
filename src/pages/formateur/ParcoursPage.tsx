@@ -60,6 +60,7 @@ const ParcoursPage = () => {
   const [niveauCible, setNiveauCible] = useState("A1");
   const [heuresTotales, setHeuresTotales] = useState(50);
   const [dureeSeance, setDureeSeance] = useState(90);
+  const [typeDemarche, setTypeDemarche] = useState<"titre_sejour" | "naturalisation">("titre_sejour");
   const [isTemplate, setIsTemplate] = useState(false);
 
   // Generation state
