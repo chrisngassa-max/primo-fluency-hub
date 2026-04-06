@@ -156,6 +156,16 @@ Produis un JSON complet avec tous les champs du format de sortie, y compris just
     const exercise = JSON.parse(content);
     exercise.source = "genere";
 
+    // --- Validate AI output ---
+    const validationErrors = validateExercise(exercise);
+    if (validationErrors.length > 0) {
+      console.error("AI output validation failed:", validationErrors);
+      return new Response(
+        JSON.stringify({ error: "L'IA a produit un exercice incomplet", details: validationErrors }),
+        { status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // Fetch illustration from Pexels using mot_cle_image
     const pexelsKey = Deno.env.get('PEXELS_API_KEY');
     const imageKeyword = exercise.mot_cle_image || exercise.contenu?.image_description;
