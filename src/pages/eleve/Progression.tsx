@@ -12,7 +12,7 @@ import {
   RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,
   ResponsiveContainer,
 } from "recharts";
-import { TrendingUp, BookOpen, Award, CalendarCheck, Mail, KeyRound, Copy, Users, ArrowRightLeft, PlusCircle, X } from "lucide-react";
+import { TrendingUp, BookOpen, Award, CalendarCheck, Mail, KeyRound, Copy, Users, ArrowRightLeft, PlusCircle, X, Target } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toast } from "sonner";
@@ -564,6 +564,70 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Objectif TCF IRN */}
+      {(() => {
+        const demarche = profil?.type_demarche || "titre_sejour";
+        const epreuvesRequises: string[] = demarche === "naturalisation"
+          ? ["CO", "CE", "EE", "EO"]
+          : ["CO", "CE"];
+        const epreuvesNonValidees = epreuvesRequises.filter(
+          (comp) => compMap[comp] !== "acquis_provisoire"
+        );
+        const nbRestant = epreuvesNonValidees.length;
+
+        return (
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Target className="h-5 w-5 text-primary" />
+                Ton objectif TCF IRN
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <p className="text-sm text-muted-foreground">
+                Démarche : <span className="font-medium text-foreground">
+                  {demarche === "naturalisation" ? "Naturalisation (B1 requis sur 4 épreuves)" : "Titre de séjour (A2/B1 sur CO + CE)"}
+                </span>
+              </p>
+
+              {nbRestant === 0 ? (
+                <div className="flex items-center gap-2 text-green-700 dark:text-green-400 font-medium text-sm">
+                  <Award className="h-4 w-4" />
+                  Toutes les épreuves sont validées — bravo ! 🎉
+                </div>
+              ) : (
+                <>
+                  <p className="text-sm font-medium">
+                    Il te reste <span className="text-destructive font-bold">{nbRestant} épreuve{nbRestant > 1 ? "s" : ""}</span> à valider pour atteindre le niveau B1 requis.
+                  </p>
+                  <div className="space-y-2">
+                    {epreuvesRequises.map((comp) => {
+                      const statut = compMap[comp] || "non_evalue";
+                      const valide = statut === "acquis_provisoire";
+                      const info = statutLabel[statut] || statutLabel.non_evalue;
+                      return (
+                        <div key={comp} className="flex items-center justify-between p-2.5 rounded-lg border">
+                          <CompetenceLabel code={comp} showFull className="text-sm font-medium" />
+                          {valide ? (
+                            <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                              ✅ Validé
+                            </span>
+                          ) : (
+                            <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-destructive/10 text-destructive">
+                              🔴 {info.label}
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        );
+      })()}
 
       {/* History table */}
       <Card>
