@@ -102,26 +102,64 @@ const ExercicesPage = () => {
     if (!user) return;
     setAiLoading(true);
     try {
-      const payload: any = { mode };
       if (mode === "theme") {
-        if (!aiTheme || !aiCompetence || !aiNiveau || !aiFormat) {
+        if (!aiTheme || !aiCompetence || !aiNiveau) {
           toast.error("Veuillez remplir tous les champs");
           setAiLoading(false);
           return;
         }
-        payload.theme = aiTheme;
-        payload.competence = aiCompetence;
-        payload.niveau = aiNiveau;
-        payload.format = aiFormat;
+
+        // Use tcf-generate-exercise (Gemini + Pexels)
+        const { data, error } = await supabase.functions.invoke("tcf-generate-exercise", {
+          body: { theme: aiTheme, level: aiNiveau },
+        });
+        if (error) throw error;
+        if (data?.error) throw new Error(data.error);
+
+        const ex = data;
+        if (!ex?.titre) throw new Error("Aucun exercice retourné par l'IA");
+
+        // Find a default point_a_maitriser_id
+        const { data: points } = await supabase.from("points_a_maitriser").select("id").limit(1);
+        const pointId = points?.[0]?.id;
+        if (!pointId) throw new Error("Aucun point à maîtriser trouvé en base");
+
+        // Build contenu with image if available
+        const contenu = ex.contenu && typeof ex.contenu === "object" ? ex.contenu : { items: [] };
+        if (ex.image_url) contenu.image_url = ex.image_url;
+        if (ex.image_credit) contenu.image_credit = ex.image_credit;
+        if (ex.mot_cle_image) contenu.mot_cle_image = ex.mot_cle_image;
+
+        const { error: insertError } = await supabase.from("exercices").insert({
+          formateur_id: user.id,
+          titre: ex.titre,
+          consigne: ex.consigne || "",
+          competence: aiCompetence as any,
+          format: (aiFormat || "qcm") as any,
+          difficulte: 3,
+          niveau_vise: aiNiveau,
+          contenu: contenu,
+          point_a_maitriser_id: pointId,
+          is_ai_generated: true,
+        });
+        if (insertError) throw insertError;
+
+        toast.success("Exercice créé par Gemini !", {
+          description: ex.image_url ? "Illustration Pexels incluse." : undefined,
+        });
       } else {
+        // Import mode — keep using smart-exercise-generator
         const source = importText.trim() || importUrl.trim();
         if (!source) {
           toast.error("Veuillez fournir un texte ou une URL");
           setAiLoading(false);
           return;
         }
-        payload.sourceText = source;
-        payload.treatment = importTreatment;
+        const payload: any = {
+          mode: "import",
+          sourceText: source,
+          treatment: importTreatment,
+        };
         if (importTreatment === "reconfigure") {
           if (!importTargetFormat) {
             toast.error("Veuillez choisir un format cible");
@@ -130,35 +168,34 @@ const ExercicesPage = () => {
           }
           payload.targetFormat = importTargetFormat;
         }
+
+        const { data, error } = await supabase.functions.invoke("smart-exercise-generator", { body: payload });
+        if (error) throw error;
+        if (data?.error) throw new Error(data.error);
+
+        const ex = data.exercise;
+        if (!ex) throw new Error("Aucun exercice retourné par l'IA");
+
+        const { data: points } = await supabase.from("points_a_maitriser").select("id").limit(1);
+        const pointId = points?.[0]?.id;
+        if (!pointId) throw new Error("Aucun point à maîtriser trouvé en base");
+
+        const { error: insertError } = await supabase.from("exercices").insert({
+          formateur_id: user.id,
+          titre: ex.titre,
+          consigne: ex.consigne,
+          competence: ex.competence || "CE",
+          format: ex.format || "qcm",
+          difficulte: ex.difficulte || 3,
+          niveau_vise: ex.niveau_vise || "A1",
+          contenu: ex.contenu || { items: [] },
+          point_a_maitriser_id: pointId,
+          is_ai_generated: true,
+        });
+        if (insertError) throw insertError;
+        toast.success("Exercice importé par l'IA !");
       }
 
-      const { data, error } = await supabase.functions.invoke("smart-exercise-generator", { body: payload });
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
-
-      const ex = data.exercise;
-      if (!ex) throw new Error("Aucun exercice retourné par l'IA");
-
-      // Find a default point_a_maitriser_id
-      const { data: points } = await supabase.from("points_a_maitriser").select("id").limit(1);
-      const pointId = points?.[0]?.id;
-      if (!pointId) throw new Error("Aucun point à maîtriser trouvé en base");
-
-      const { error: insertError } = await supabase.from("exercices").insert({
-        formateur_id: user.id,
-        titre: ex.titre,
-        consigne: ex.consigne,
-        competence: ex.competence || aiCompetence || "CE",
-        format: ex.format || aiFormat || "qcm",
-        difficulte: ex.difficulte || 3,
-        niveau_vise: ex.niveau_vise || aiNiveau || "A1",
-        contenu: ex.contenu || { items: [] },
-        point_a_maitriser_id: pointId,
-        is_ai_generated: true,
-      });
-      if (insertError) throw insertError;
-
-      toast.success("Exercice créé par l'IA !");
       qc.invalidateQueries({ queryKey: ["formateur-all-exercices", user.id] });
       setThemeDialogOpen(false);
       setImportDialogOpen(false);

@@ -1,4 +1,4 @@
-import "@supabase/functions-js/edge-runtime.d.ts"
+/// <reference types="@supabase/functions-js/edge-runtime.d.ts" />
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -18,7 +18,7 @@ Deno.serve(async (req) => {
     Renvoie UNIQUEMENT un objet JSON avec : 
     - "titre": Titre de l'exercice
     - "consigne": Ce que l'étudiant doit faire
-    - "contenu": Le corps de l'exercice
+    - "contenu": Le corps de l'exercice (objet JSON avec "items" contenant les questions/options)
     - "mot_cle_image": Un mot clé simple EN ANGLAIS (ex: "coffee") décrivant l'exercice pour requêter une image gratuite sur les banques photo.`;
 
     const response = await fetch(
@@ -33,8 +33,34 @@ Deno.serve(async (req) => {
       }
     );
 
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`Gemini API error ${response.status}: ${errText}`);
+    }
+
     const data = await response.json();
     const exercise = JSON.parse(data.candidates[0].content.parts[0].text);
+
+    // Fetch illustration from Pexels using mot_cle_image
+    const pexelsKey = Deno.env.get('PEXELS_API_KEY');
+    if (pexelsKey && exercise.mot_cle_image) {
+      try {
+        const pexelsResp = await fetch(
+          `https://api.pexels.com/v1/search?query=${encodeURIComponent(exercise.mot_cle_image)}&per_page=1&orientation=landscape`,
+          { headers: { Authorization: pexelsKey } }
+        );
+        if (pexelsResp.ok) {
+          const pexelsData = await pexelsResp.json();
+          if (pexelsData.photos?.length > 0) {
+            exercise.image_url = pexelsData.photos[0].src.medium;
+            exercise.image_credit = `Photo by ${pexelsData.photos[0].photographer} on Pexels`;
+          }
+        }
+      } catch (imgErr) {
+        console.error("Pexels image fetch error:", imgErr);
+        // Non-blocking: exercise works fine without image
+      }
+    }
 
     return new Response(JSON.stringify(exercise), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

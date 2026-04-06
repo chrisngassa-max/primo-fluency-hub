@@ -1,4 +1,4 @@
-import "@supabase/functions-js/edge-runtime.d.ts"
+/// <reference types="@supabase/functions-js/edge-runtime.d.ts" />
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',

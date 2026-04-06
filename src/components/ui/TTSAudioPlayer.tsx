@@ -27,25 +27,22 @@ const TTSAudioPlayer = ({ text, className = "", onPlayComplete }: TTSAudioPlayer
 
     setLoading(true);
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-tts`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-            "Authorization": `Bearer ${(await supabase.auth.getSession()).data.session?.access_token ?? import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-          },
-          body: JSON.stringify({ text }),
-        }
-      );
+      const { data, error } = await supabase.functions.invoke("tcf-process-audio", {
+        body: { action: "tts", text },
+      });
 
-      if (!response.ok) {
-        const errText = await response.text();
-        throw new Error(errText || `Erreur ${response.status}`);
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      if (!data?.audioBase64) throw new Error("Aucun audio retourné");
+
+      // Convert base64 to blob
+      const byteCharacters = atob(data.audioBase64);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
       }
-
-      const blob = await response.blob();
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: "audio/mp3" });
 
       const url = URL.createObjectURL(blob);
       setAudioUrl(url);

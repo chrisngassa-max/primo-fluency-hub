@@ -218,8 +218,8 @@ const DevoirPassation = () => {
       let transcription = "(Transcription échouée - Audio illisible)";
       try {
         const base64Data = await blobToBase64(audioBlob);
-        const { data: sttData, error: sttError } = await supabase.functions.invoke("transcribe-audio", {
-          body: { audioBase64: base64Data },
+        const { data: sttData, error: sttError } = await supabase.functions.invoke("tcf-process-audio", {
+          body: { action: "stt", audioBase64: base64Data },
         });
         if (sttError || !sttData?.transcript) {
           toast.error("Serveur vocal indisponible", { description: "Veuillez réessayer." });
