@@ -1315,6 +1315,11 @@ ${sessionExercises.map((ex: any, i: number) => `
                         </p>
                       </div>
                       <div className="flex gap-1.5 shrink-0">
+                        {(alert.type === "score_risque" || alert.type === "tendance_baisse" || alert.type === "devoir_expire") && (
+                          <Button size="sm" variant="outline" className="shrink-0 gap-1 text-xs h-8" onClick={() => { setSelectedAlertEleve(alert.eleve_id); setDailyHomeworkOpen(true); }}>
+                            Créer devoir <ArrowRight className="h-3 w-3"/>
+                          </Button>
+                        )}
                         <Button variant="ghost" size="sm" className="h-8 text-xs gap-1" onClick={() => navigate(`/formateur/eleves/${alert.eleve_id}`)}>
                           <Eye className="h-3.5 w-3.5" /> Voir
                         </Button>
