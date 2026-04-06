@@ -249,6 +249,7 @@ const ParcoursPage = () => {
     setHeuresTotales(50);
     setDureeSeance(90);
     setIsTemplate(false);
+    setTypeDemarche("titre_sejour");
     setGeneratedSeances(null);
   };
 
@@ -340,9 +341,21 @@ const ParcoursPage = () => {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label>Description (optionnel)</Label>
-              <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Notes, contexte, objectifs spécifiques..." className="min-h-[60px]" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Description (optionnel)</Label>
+                <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Notes, contexte, objectifs spécifiques..." className="min-h-[60px]" />
+              </div>
+              <div className="space-y-2">
+                <Label>Type de démarche</Label>
+                <Select value={typeDemarche} onValueChange={(v) => setTypeDemarche(v as "titre_sejour" | "naturalisation")}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="titre_sejour">Titre de séjour / Résidence</SelectItem>
+                    <SelectItem value="naturalisation">Naturalisation</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             <div className="flex items-center gap-3">
