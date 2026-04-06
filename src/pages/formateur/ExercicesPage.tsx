@@ -68,6 +68,31 @@ const ExercicesPage = () => {
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
 
+  // RAG Test state
+  const [ragTestOpen, setRagTestOpen] = useState(false);
+  const [ragTestLoading, setRagTestLoading] = useState(false);
+  const [ragTestResult, setRagTestResult] = useState<any>(null);
+  const [ragTestError, setRagTestError] = useState<string | null>(null);
+
+  const handleRagTest = async () => {
+    setRagTestLoading(true);
+    setRagTestResult(null);
+    setRagTestError(null);
+    setRagTestOpen(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("tcf-generate-exercise", {
+        body: { theme: "préfecture", level: "B1" },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      setRagTestResult(data);
+    } catch (err: any) {
+      setRagTestError(err.message || "Erreur inconnue");
+    } finally {
+      setRagTestLoading(false);
+    }
+  };
+
   // Theme dialog fields
   const [aiTheme, setAiTheme] = useState("");
   const [aiCompetence, setAiCompetence] = useState("");
@@ -549,6 +574,10 @@ ${Array.isArray(item.options) && item.options.length > 0
           <Button size="lg" variant="secondary" className="gap-2" onClick={() => setImportDialogOpen(true)}>
             <FileText className="h-5 w-5" />
             📄 Importer &amp; Transformer
+          </Button>
+          <Button size="lg" variant="outline" className="gap-2" onClick={handleRagTest} disabled={ragTestLoading}>
+            {ragTestLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Search className="h-5 w-5" />}
+            🧪 Tester le RAG
           </Button>
         </div>
       </div>
@@ -1206,6 +1235,41 @@ ${Array.isArray(item.options) && item.options.length > 0
               {aiLoading ? "Transformation en cours…" : "Lancer la transformation"}
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* RAG Test Dialog */}
+      <Dialog open={ragTestOpen} onOpenChange={setRagTestOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>🧪 Test RAG — tcf-generate-exercise</DialogTitle>
+            <DialogDescription>
+              Body envoyé : <code className="text-xs bg-muted px-1 py-0.5 rounded">{`{ "theme": "préfecture", "level": "B1" }`}</code>
+            </DialogDescription>
+          </DialogHeader>
+          {ragTestLoading && (
+            <div className="flex items-center justify-center py-8 gap-2 text-muted-foreground">
+              <Loader2 className="h-5 w-5 animate-spin" /> Appel en cours…
+            </div>
+          )}
+          {ragTestError && (
+            <div className="p-3 rounded-md bg-destructive/10 text-destructive text-sm">
+              ❌ Erreur : {ragTestError}
+            </div>
+          )}
+          {ragTestResult && (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium">Champ source :</span>
+                <Badge variant={ragTestResult.source === "banque_adapte" ? "default" : "secondary"} className="text-sm">
+                  {ragTestResult.source === "banque_adapte" ? "✅ banque_adapte (RAG actif)" : ragTestResult.source === "banque" ? "✅ banque (RAG direct)" : `⚠️ ${ragTestResult.source || "absent"} (pas de RAG)`}
+                </Badge>
+              </div>
+              <pre className="text-xs bg-muted p-3 rounded-md overflow-x-auto whitespace-pre-wrap max-h-[50vh]">
+                {JSON.stringify(ragTestResult, null, 2)}
+              </pre>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
