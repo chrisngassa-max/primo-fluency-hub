@@ -365,6 +365,22 @@ const FormateurDashboard = () => {
     enabled: !!user,
   });
 
+  // ─── Active parcours for projection ───
+  const { data: activeParcours = [] } = useQuery({
+    queryKey: ["dashboard-active-parcours", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("parcours")
+        .select("id, titre, nb_seances_prevues, nb_seances_realisees, date_examen_cible")
+        .eq("formateur_id", user!.id)
+        .eq("statut", "actif")
+        .not("date_examen_cible", "is", null);
+      if (error) throw error;
+      return (data ?? []) as any[];
+    },
+    enabled: !!user,
+  });
+
   // ─── Actions ───
   const handleValidateProgression = async (alertId: string, eleveId: string, competence: string, niveauPropose: number) => {
     try {
