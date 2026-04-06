@@ -20,7 +20,7 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const { sessionId, dailyDuration, targetDays, targetWeaknesses, formateurId } = await req.json();
+    const { sessionId, dailyDuration, targetDays, targetWeaknesses, formateurId, type_demarche } = await req.json();
 
     if (!sessionId || !dailyDuration || !targetDays || !formateurId) {
       return new Response(JSON.stringify({ error: "Missing required fields" }), {
@@ -39,6 +39,13 @@ serve(async (req) => {
 
     const groupId = session.group_id;
     const niveauCible = session.niveau_cible || "A1";
+    // type_demarche : depuis la requête ou depuis le groupe
+    let demarche = type_demarche;
+    if (!demarche) {
+      const { data: grp } = await supabase.from("groups").select("type_demarche").eq("id", groupId).maybeSingle();
+      demarche = grp?.type_demarche || "titre_sejour";
+    }
+    const epreuvesOblgatoires = demarche === "naturalisation" ? "CO, CE, EE, EO" : "CO, CE";
 
     // 2. Fetch group members with profiles
     const { data: members } = await supabase
@@ -258,6 +265,7 @@ Un tableau "eleves" contenant pour chaque élève un objet avec son id et ses jo
 Chaque jour contient les exercices personnalisés.`;
 
     const userPrompt = `Séance "${session.titre}" — Niveau ${niveauCible}
+Démarche IRN : ${demarche} — Épreuves obligatoires : ${epreuvesOblgatoires}
 Compétences travaillées : ${competencesUsed.join(", ")}
 
 EXERCICES TRAITÉS EN CLASSE :

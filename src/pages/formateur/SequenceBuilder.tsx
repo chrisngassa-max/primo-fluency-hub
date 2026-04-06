@@ -54,6 +54,27 @@ const SequenceBuilder = () => {
   const [titre, setTitre] = useState("");
   const [description, setDescription] = useState("");
   const [niveauVise, setNiveauVise] = useState("A2");
+  const [typeDemarcheSeq, setTypeDemarcheSeq] = useState("titre_sejour");
+
+  // Récupérer le type_demarche du groupe actif du formateur
+  const { data: formateurGroupeSeq } = useQuery({
+    queryKey: ["formateur-groupe-demarche-seq", user?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("groups")
+        .select("type_demarche")
+        .eq("formateur_id", user!.id)
+        .eq("is_active", true)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!user,
+    onSuccess: (data: any) => {
+      if (data?.type_demarche) setTypeDemarcheSeq(data.type_demarche);
+    },
+  });
   const [exercises, setExercises] = useState<ExerciseDraft[]>([]);
   const [generating, setGenerating] = useState(false);
   const [generateCount, setGenerateCount] = useState(10);
@@ -168,7 +189,7 @@ const SequenceBuilder = () => {
           competence,
           niveauVise,
           count: generateCount,
-          type_demarche: "titre_sejour",
+          type_demarche: typeDemarcheSeq,
         },
       });
       if (error) throw error;

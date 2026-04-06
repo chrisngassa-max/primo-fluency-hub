@@ -102,7 +102,7 @@ const ExercicesPage = () => {
 
         // Use tcf-generate-exercise (Gemini + Pexels)
         const { data, error } = await supabase.functions.invoke("tcf-generate-exercise", {
-          body: { theme: aiTheme, level: aiNiveau, type_demarche: "titre_sejour" },
+          body: { theme: aiTheme, level: aiNiveau, type_demarche: typeDemarche },
         });
         if (error) throw error;
         if (data?.error) throw new Error(data.error);
@@ -207,6 +207,25 @@ const ExercicesPage = () => {
   };
 
   // Fetch all exercises for this formateur
+  // Récupérer le premier groupe actif du formateur pour lire son type_demarche
+  const { data: formateurGroupe } = useQuery({
+    queryKey: ["formateur-groupe-demarche", user?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("groups")
+        .select("id, type_demarche")
+        .eq("formateur_id", user!.id)
+        .eq("is_active", true)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  const typeDemarche = formateurGroupe?.type_demarche || "titre_sejour";
+
   const { data: exercices, isLoading } = useQuery({
     queryKey: ["formateur-all-exercices", user?.id],
     queryFn: async () => {
