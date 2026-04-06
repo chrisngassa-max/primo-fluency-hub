@@ -805,6 +805,31 @@ ${(doc.fiches_eleves || [])
                           </Badge>
                         </div>
                         <p className="text-sm text-muted-foreground italic">{ex.consigne}</p>
+
+                        {/* New pedagogical metadata */}
+                        {(ex.contenu?.note_differentiation || ex.contenu?.justification_pedagogique || ex.contenu?.duree_estimee_secondes) && (
+                          <div className="space-y-1 p-2 rounded bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 text-xs">
+                            {ex.contenu?.duree_estimee_secondes && (
+                              <p className="text-blue-700 dark:text-blue-300">⏱️ Durée estimée : {Math.round(ex.contenu.duree_estimee_secondes / 60)} min</p>
+                            )}
+                            {ex.contenu?.note_differentiation && (
+                              <p className="text-blue-700 dark:text-blue-300">🎯 {ex.contenu.note_differentiation}</p>
+                            )}
+                            {ex.contenu?.justification_pedagogique && (
+                              <p className="text-blue-700 dark:text-blue-300">📘 {ex.contenu.justification_pedagogique}</p>
+                            )}
+                            {ex.contenu?.criteres_correction && typeof ex.contenu.criteres_correction === "object" && (
+                              <div className="grid grid-cols-2 gap-1 mt-1">
+                                {Object.entries(ex.contenu.criteres_correction).filter(([_, v]) => v).map(([key, val]) => (
+                                  <p key={key} className="text-[11px] text-blue-600 dark:text-blue-400">
+                                    <span className="font-medium">{key.replace(/_/g, " ")}</span> : {val as string}
+                                  </p>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        )}
+
                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
                           <span>{ex.contenu?.items?.length || 0} item(s)</span>
                           {/* Save button */}
