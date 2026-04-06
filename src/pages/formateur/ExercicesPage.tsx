@@ -68,6 +68,31 @@ const ExercicesPage = () => {
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
 
+  // RAG Test state
+  const [ragTestOpen, setRagTestOpen] = useState(false);
+  const [ragTestLoading, setRagTestLoading] = useState(false);
+  const [ragTestResult, setRagTestResult] = useState<any>(null);
+  const [ragTestError, setRagTestError] = useState<string | null>(null);
+
+  const handleRagTest = async () => {
+    setRagTestLoading(true);
+    setRagTestResult(null);
+    setRagTestError(null);
+    setRagTestOpen(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("tcf-generate-exercise", {
+        body: { theme: "préfecture", level: "B1" },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      setRagTestResult(data);
+    } catch (err: any) {
+      setRagTestError(err.message || "Erreur inconnue");
+    } finally {
+      setRagTestLoading(false);
+    }
+  };
+
   // Theme dialog fields
   const [aiTheme, setAiTheme] = useState("");
   const [aiCompetence, setAiCompetence] = useState("");
@@ -549,6 +574,10 @@ ${Array.isArray(item.options) && item.options.length > 0
           <Button size="lg" variant="secondary" className="gap-2" onClick={() => setImportDialogOpen(true)}>
             <FileText className="h-5 w-5" />
             📄 Importer &amp; Transformer
+          </Button>
+          <Button size="lg" variant="outline" className="gap-2" onClick={handleRagTest} disabled={ragTestLoading}>
+            {ragTestLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Search className="h-5 w-5" />}
+            🧪 Tester le RAG
           </Button>
         </div>
       </div>
