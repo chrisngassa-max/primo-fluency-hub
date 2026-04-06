@@ -561,6 +561,8 @@ export type Database = {
           sous_competence: string | null
           titre: string
           updated_at: string
+          variante_niveau_bas: Json | null
+          variante_niveau_haut: Json | null
         }
         Insert: {
           animation_guide?: Json | null
@@ -585,6 +587,8 @@ export type Database = {
           sous_competence?: string | null
           titre: string
           updated_at?: string
+          variante_niveau_bas?: Json | null
+          variante_niveau_haut?: Json | null
         }
         Update: {
           animation_guide?: Json | null
@@ -609,6 +613,8 @@ export type Database = {
           sous_competence?: string | null
           titre?: string
           updated_at?: string
+          variante_niveau_bas?: Json | null
+          variante_niveau_haut?: Json | null
         }
         Relationships: [
           {
