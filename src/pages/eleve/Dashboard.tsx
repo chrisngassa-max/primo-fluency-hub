@@ -501,14 +501,14 @@ const EleveDashboard = () => {
                         {isUrgent ? (
                           <Badge variant="destructive" className="text-xs gap-1">
                             <AlertCircle className="h-3 w-3" />
-                            Remédiation
+                            ⚠️ À retravailler
                           </Badge>
                         ) : (
                           <Badge
                             variant="secondary"
                             className="text-xs border-orange-500/30 text-orange-600"
                           >
-                            Consolidation
+                            À renforcer
                           </Badge>
                         )}
                       </div>

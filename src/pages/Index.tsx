@@ -34,7 +34,7 @@ const Index = () => {
       {/* HEADER PUBLIC */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-          <span className="font-bold text-lg text-foreground tracking-tight">TCF Pro</span>
+          <span className="font-bold text-lg text-foreground tracking-tight">CAP TCF</span>
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
@@ -59,11 +59,11 @@ const Index = () => {
       {/* BLOC 1 — Hero */}
       <section className="flex flex-col items-center justify-center text-center px-4 pt-12 pb-12 md:pt-16 md:pb-16">
         <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-foreground max-w-3xl leading-tight">
-          Préparez votre TCF IRN avec un programme personnalisé
+          Vous préparez votre titre de séjour ou votre naturalisation ?
         </h1>
         <p className="mt-4 text-base md:text-lg text-muted-foreground max-w-2xl">
-          CAP TCF accompagne les primo-arrivants vers la réussite à la certification TCF IRN
-          grâce à des séances adaptatives, un suivi par formateur et une IA pédagogique.
+          CAP TCF vous aide à réussir le test TCF IRN — le test de français obligatoire pour votre dossier.
+          Programme personnalisé, exercices adaptés à votre niveau, suivi par un formateur.
         </p>
         <div className="mt-8 flex flex-col sm:flex-row gap-3">
           <Button size="lg" onClick={() => navigate("/eleve/login")} className="text-base px-8">
@@ -88,7 +88,7 @@ const Index = () => {
               <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
                 <GraduationCap className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="text-lg font-bold text-foreground">Programme structuré A0→B2</h3>
+              <h3 className="text-lg font-bold text-foreground">Des exercices au format exact du TCF</h3>
               <p className="text-sm text-muted-foreground">
                 20 séances progressives couvrant les 5 compétences TCF : Compréhension Orale,
                 Compréhension Écrite, Expression Écrite, Expression Orale et Structures de la
@@ -102,7 +102,7 @@ const Index = () => {
               <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
                 <Bot className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="text-lg font-bold text-foreground">IA pédagogique adaptative</h3>
+              <h3 className="text-lg font-bold text-foreground">Un programme qui s'adapte à votre niveau</h3>
               <p className="text-sm text-muted-foreground">
                 Le moteur IA génère des exercices ciblés sur vos lacunes et ajuste
                 automatiquement le rythme de progression selon vos résultats.
@@ -115,7 +115,7 @@ const Index = () => {
               <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
                 <Users className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="text-lg font-bold text-foreground">Suivi formateur personnalisé</h3>
+              <h3 className="text-lg font-bold text-foreground">Votre formateur vous suit à chaque étape</h3>
               <p className="text-sm text-muted-foreground">
                 Votre formateur pilote votre parcours, assigne des devoirs, monitore votre
                 progression et génère des rapports de préparation.
@@ -128,13 +128,13 @@ const Index = () => {
       {/* BLOC 3 — CTA final */}
       <section className="px-4 pb-16 text-center">
         <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-          Rejoignez CAP TCF dès aujourd'hui
+          Commencez votre préparation aujourd'hui
         </h2>
         <p className="mt-2 text-muted-foreground">
           Commencez dès maintenant · Résultats visibles en quelques séances
         </p>
         <Button size="lg" className="mt-6 text-base px-8" onClick={() => navigate("/eleve/login")}>
-          Créer mon compte
+          Créer mon compte gratuitement
         </Button>
       </section>
 

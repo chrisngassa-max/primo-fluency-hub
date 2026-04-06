@@ -10,20 +10,20 @@ const steps = [
   {
     icon: ClipboardList,
     emoji: "📝",
-    title: "Passe ton test d'entrée",
-    description: "Le test évalue ton niveau.",
+    title: "Évalue ton niveau réel",
+    description: "Passe le test de positionnement. Il analyse tes 4 compétences TCF et adapte ton programme. C'est la première étape pour réussir ton TCF IRN.",
   },
   {
     icon: BookOpen,
     emoji: "📚",
-    title: "Fais tes exercices et devoirs",
-    description: "Fais tes exercices.",
+    title: "Fais tes exercices chaque semaine",
+    description: "Tu reçois des exercices adaptés à ton niveau, formatés exactement comme l'examen TCF. Plus tu pratiques, plus tu gagnes des points.",
   },
   {
     icon: TrendingUp,
     emoji: "📈",
-    title: "Suis ta progression",
-    description: "Regarde tes résultats.",
+    title: "Suis ta progression vers B1",
+    description: "Ton tableau de bord montre ta progression compétence par compétence. L'objectif : atteindre le niveau B1 avant ton examen.",
   },
 ];
 

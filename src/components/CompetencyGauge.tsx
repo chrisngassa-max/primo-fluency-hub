@@ -1,5 +1,12 @@
 import { Badge } from "@/components/ui/badge";
 
+function scoreToCECRL(score: number): string {
+  if (score >= 80) return "B1";
+  if (score >= 60) return "A2";
+  if (score >= 35) return "A1";
+  return "A0";
+}
+
 interface CompetencyGaugeProps {
   label: string;
   initialScore: number;
@@ -60,10 +67,12 @@ const CompetencyGauge = ({
       </div>
 
       {/* Legend */}
-      <div className="flex justify-between text-[11px] text-muted-foreground">
-        <span>▲ Initial ({initialScore}%)</span>
-        <span>┆ Objectif ({Math.round(expectedScore)}%)</span>
-        <span className="font-medium text-foreground">Actuel : {currentScore}%</span>
+      <div className="flex justify-between text-xs text-muted-foreground">
+        <span>Départ : {initialScore}%</span>
+        <span>Objectif : {Math.round(expectedScore)}%</span>
+        <span className="font-semibold text-foreground">
+          Maintenant : {currentScore}% — <span className="text-primary">{scoreToCECRL(currentScore)}</span>
+        </span>
       </div>
     </div>
   );
