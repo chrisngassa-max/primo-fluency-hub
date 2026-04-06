@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Sécurité — ne jamais committer les secrets
+.env
+.env.local
+.env.production
