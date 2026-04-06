@@ -401,6 +401,13 @@ const BilanSeance = () => {
                         {c.explication && (
                           <p className="text-xs text-muted-foreground/70 mt-0.5 italic">{c.explication}</p>
                         )}
+                        {c.reformulation_modele && (
+                          <div className="mt-1.5 p-2 rounded-md bg-blue-50 border border-blue-200 dark:bg-blue-950/30 dark:border-blue-800 text-xs">
+                            <p className="text-blue-800 dark:text-blue-300">
+                              💡 <strong>Ce que tu aurais pu dire :</strong> « {c.reformulation_modele} »
+                            </p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}

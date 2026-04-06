@@ -59,6 +59,15 @@ function CorrectionAccordion({ correction }: { correction: any[] }) {
               )}
             </div>
 
+            {/* Reformulation modèle — toujours visible pour EO */}
+            {c.reformulation_modele && (
+              <div className="mt-2 p-2.5 rounded-md bg-blue-50 border border-blue-200 dark:bg-blue-950/30 dark:border-blue-800 text-sm">
+                <p className="text-blue-800 dark:text-blue-300">
+                  💡 <strong>Ce que tu aurais pu dire :</strong> « {c.reformulation_modele} »
+                </p>
+              </div>
+            )}
+
             {/* NIVEAU 2 — accordéon */}
             {openItems.includes(i) && (
               <div className="mt-3 pt-3 border-t space-y-2 text-sm">
