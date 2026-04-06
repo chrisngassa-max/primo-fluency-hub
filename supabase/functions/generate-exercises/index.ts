@@ -12,18 +12,19 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { pointName, competence, niveauVise, count = 10, difficultyLevel, gabaritNumero, type_demarche, niveau_depart, niveau_arrivee } = await req.json();
+    const { pointName, competence, niveauVise, count = 10, difficultyLevel, gabaritNumero, type_demarche, niveau_depart, niveau_arrivee, groupId } = await req.json();
     const demarche = type_demarche || "titre_sejour";
     const epreuvesAutorisees = demarche === "naturalisation" ? "CO, CE, EE, EO" : "CO, CE";
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
     // If gabaritNumero provided, load gabarit from DB
     let gabarit: any = null;
     if (gabaritNumero != null) {
-      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-      const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-      const supabase = createClient(supabaseUrl, supabaseKey);
       const { data, error } = await supabase
         .from("gabarits_pedagogiques")
         .select("*")
@@ -31,6 +32,90 @@ serve(async (req) => {
         .maybeSingle();
       if (error) console.error("Error loading gabarit:", error);
       gabarit = data;
+    }
+
+    // === ENRICHISSEMENT : Récupérer les données élèves si groupId fourni ===
+    let studentContextPrompt = "";
+    if (groupId) {
+      try {
+        // 1. Membres du groupe
+        const { data: members } = await supabase
+          .from("group_members")
+          .select("eleve_id, profiles:profiles(nom, prenom)")
+          .eq("group_id", groupId);
+
+        if (members?.length) {
+          const eleveIds = members.map((m: any) => m.eleve_id);
+
+          // 2. Résultats récents (15 derniers par élève)
+          const { data: resultats } = await supabase
+            .from("resultats")
+            .select("eleve_id, score, correction_detaillee, created_at, exercice:exercices(competence, format, titre, sous_competence)")
+            .in("eleve_id", eleveIds)
+            .order("created_at", { ascending: false })
+            .limit(eleveIds.length * 15);
+
+          // 3. Profils élèves (taux de réussite)
+          const { data: profils } = await supabase
+            .from("profils_eleves")
+            .select("eleve_id, niveau_actuel, taux_reussite_co, taux_reussite_ce, taux_reussite_ee, taux_reussite_eo, taux_reussite_structures, priorites_pedagogiques")
+            .in("eleve_id", eleveIds);
+
+          // 4. Tests de positionnement
+          const { data: testSessions } = await supabase
+            .from("test_sessions")
+            .select("apprenant_id, score_co, score_ce, score_ee, score_eo, palier_co, palier_ce, palier_ee, palier_eo, profil_final, statut")
+            .in("apprenant_id", eleveIds)
+            .eq("statut", "termine");
+
+          // 5. Niveaux de compétence validés
+          const { data: compLevels } = await supabase
+            .from("student_competency_levels")
+            .select("eleve_id, competence, niveau_actuel")
+            .in("eleve_id", eleveIds);
+
+          // Construire le contexte par élève
+          const studentProfiles = members.map((m: any) => {
+            const id = m.eleve_id;
+            const nom = `${m.profiles?.prenom || ""} ${m.profiles?.nom || ""}`.trim() || "Anonyme";
+            const profil = profils?.find((p: any) => p.eleve_id === id);
+            const test = testSessions?.find((t: any) => t.apprenant_id === id);
+            const results = (resultats || []).filter((r: any) => r.eleve_id === id);
+            const levels = (compLevels || []).filter((l: any) => l.eleve_id === id);
+
+            const recentErrors = results
+              .filter((r: any) => r.score < 60)
+              .slice(0, 5)
+              .map((r: any) => `${r.exercice?.competence}/${r.exercice?.sous_competence}: ${r.score}%`);
+
+            return {
+              nom,
+              niveau: profil?.niveau_actuel || "A0",
+              taux: profil ? { CO: profil.taux_reussite_co, CE: profil.taux_reussite_ce, EE: profil.taux_reussite_ee, EO: profil.taux_reussite_eo, Structures: profil.taux_reussite_structures } : null,
+              test_positionnement: test ? { CO: test.score_co, CE: test.score_ce, EE: test.score_ee, EO: test.score_eo, profil: test.profil_final } : null,
+              niveaux_competences: levels.reduce((acc: any, l: any) => { acc[l.competence] = l.niveau_actuel; return acc; }, {}),
+              erreurs_recentes: recentErrors,
+              priorites: profil?.priorites_pedagogiques || [],
+            };
+          });
+
+          studentContextPrompt = `
+
+═══ PROFILS DES APPRENANTS DU GROUPE ═══
+Les exercices DOIVENT être calibrés pour ce groupe. Adapte la difficulté, les thèmes et les pièges en fonction de leurs lacunes réelles.
+
+${JSON.stringify(studentProfiles, null, 2)}
+
+RÈGLES D'ADAPTATION :
+- Si un élève a un taux < 50% sur une compétence, inclure des exercices de remédiation ciblée
+- Si des erreurs récurrentes apparaissent (ex: confusion chiffres, dates), créer des pièges similaires avec feedback
+- Varier les contextes IRN en fonction des priorités pédagogiques identifiées
+- Respecter le niveau moyen du groupe tout en proposant des variantes (niveau_bas / niveau_haut)
+═══════════════════════════════════════════`;
+        }
+      } catch (ctxErr) {
+        console.error("Error fetching student context:", ctxErr);
+      }
     }
 
     // Determine difficulty range description
@@ -192,7 +277,7 @@ Tu DOIS utiliser le tool "generate_exercises" pour retourner le résultat.${gaba
 - Compétence : ${competence}
 - Niveau visé : ${niveauVise}
 - Difficulté calibrée : ${diffLevel}/10${gabarit ? `\n- Gabarit séance : ${gabarit.titre} (n°${gabarit.numero})` : ""}
-
+${studentContextPrompt}
 Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO2/CO3/CO4, varier les codes).`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {

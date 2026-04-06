@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -11,7 +12,7 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
 
   try {
-    const { heuresTotales, niveauDepart, niveauCible, dureeSeanceMinutes = 90, type_demarche = 'titre_sejour' } = await req.json();
+    const { heuresTotales, niveauDepart, niveauCible, dureeSeanceMinutes = 90, type_demarche = 'titre_sejour', groupId } = await req.json();
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
@@ -23,6 +24,133 @@ serve(async (req) => {
       );
     }
 
+    // === ENRICHISSEMENT : Récupérer l'historique du groupe ===
+    let studentHistoryPrompt = "";
+    if (groupId) {
+      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+      const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+      const supabase = createClient(supabaseUrl, supabaseKey);
+
+      try {
+        // 1. Membres du groupe
+        const { data: members } = await supabase
+          .from("group_members")
+          .select("eleve_id, profiles:profiles(nom, prenom)")
+          .eq("group_id", groupId);
+
+        if (members?.length) {
+          const eleveIds = members.map((m: any) => m.eleve_id);
+
+          // 2. Séances déjà réalisées pour ce groupe
+          const { data: sessions } = await supabase
+            .from("sessions")
+            .select("titre, date_seance, statut, competences_cibles, duree_minutes, niveau_cible")
+            .eq("group_id", groupId)
+            .in("statut", ["terminee", "en_cours"])
+            .order("date_seance", { ascending: true });
+
+          // 3. Profils élèves
+          const { data: profils } = await supabase
+            .from("profils_eleves")
+            .select("eleve_id, niveau_actuel, taux_reussite_co, taux_reussite_ce, taux_reussite_ee, taux_reussite_eo, taux_reussite_structures, score_risque, priorites_pedagogiques")
+            .in("eleve_id", eleveIds);
+
+          // 4. Tests de positionnement
+          const { data: testSessions } = await supabase
+            .from("test_sessions")
+            .select("apprenant_id, score_co, score_ce, score_ee, score_eo, palier_co, palier_ce, palier_ee, palier_eo, profil_final")
+            .in("apprenant_id", eleveIds)
+            .eq("statut", "termine");
+
+          // 5. Résultats récents (moyennes par compétence)
+          const { data: resultats } = await supabase
+            .from("resultats")
+            .select("eleve_id, score, exercice:exercices(competence)")
+            .in("eleve_id", eleveIds)
+            .order("created_at", { ascending: false })
+            .limit(eleveIds.length * 20);
+
+          // 6. Niveaux de compétence validés
+          const { data: compLevels } = await supabase
+            .from("student_competency_levels")
+            .select("eleve_id, competence, niveau_actuel")
+            .in("eleve_id", eleveIds);
+
+          // Construire le résumé du groupe
+          const studentSummaries = members.map((m: any) => {
+            const id = m.eleve_id;
+            const nom = `${m.profiles?.prenom || ""} ${m.profiles?.nom || ""}`.trim() || "Anonyme";
+            const profil = profils?.find((p: any) => p.eleve_id === id);
+            const test = testSessions?.find((t: any) => t.apprenant_id === id);
+            const results = (resultats || []).filter((r: any) => r.eleve_id === id);
+            const levels = (compLevels || []).filter((l: any) => l.eleve_id === id);
+
+            // Moyennes par compétence
+            const scoresByComp: Record<string, number[]> = {};
+            results.forEach((r: any) => {
+              const comp = r.exercice?.competence;
+              if (comp) {
+                if (!scoresByComp[comp]) scoresByComp[comp] = [];
+                scoresByComp[comp].push(r.score);
+              }
+            });
+            const avgByComp: Record<string, number> = {};
+            for (const [comp, scores] of Object.entries(scoresByComp)) {
+              avgByComp[comp] = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+            }
+
+            return {
+              nom,
+              niveau: profil?.niveau_actuel || "A0",
+              score_risque: profil?.score_risque || 0,
+              taux: profil ? {
+                CO: profil.taux_reussite_co, CE: profil.taux_reussite_ce,
+                EE: profil.taux_reussite_ee, EO: profil.taux_reussite_eo,
+                Structures: profil.taux_reussite_structures
+              } : null,
+              test_positionnement: test ? {
+                CO: test.score_co, CE: test.score_ce, EE: test.score_ee, EO: test.score_eo,
+                paliers: { CO: test.palier_co, CE: test.palier_ce, EE: test.palier_ee, EO: test.palier_eo },
+                profil: test.profil_final
+              } : null,
+              moyennes_exercices: avgByComp,
+              niveaux_valides: levels.reduce((acc: any, l: any) => { acc[l.competence] = l.niveau_actuel; return acc; }, {}),
+              priorites: profil?.priorites_pedagogiques || [],
+            };
+          });
+
+          const sessionsRealisees = (sessions || []).map((s: any) => ({
+            titre: s.titre,
+            date: s.date_seance,
+            competences: s.competences_cibles,
+            duree: s.duree_minutes,
+          }));
+
+          studentHistoryPrompt = `
+
+═══ HISTORIQUE DU GROUPE — DONNÉES RÉELLES ═══
+Ce groupe a déjà réalisé ${sessionsRealisees.length} séance(s). Le parcours doit CONTINUER à partir de là, pas repartir de zéro.
+
+SÉANCES DÉJÀ RÉALISÉES :
+${JSON.stringify(sessionsRealisees, null, 2)}
+
+PROFILS DES APPRENANTS :
+${JSON.stringify(studentSummaries, null, 2)}
+
+RÈGLES D'ADAPTATION DU PARCOURS :
+1. NE PAS répéter les compétences déjà bien couvertes dans les séances passées
+2. Renforcer les compétences où les taux de réussite sont faibles (< 60%)
+3. Si des élèves ont un score_risque élevé (> 60), prévoir des séances de remédiation
+4. Tenir compte des paliers du test de positionnement pour calibrer la progression
+5. Le parcours DOIT s'appuyer sur les acquis : ne pas re-faire ce qui est maîtrisé
+6. Intégrer les priorités pédagogiques identifiées par l'IA
+═══════════════════════════════════════════════════`;
+        }
+      } catch (ctxErr) {
+        console.error("Error fetching group history:", ctxErr);
+      }
+    }
+
     const systemPrompt = `Tu es un expert en ingénierie pédagogique FLE/TCF IRN.
 Tu conçois des parcours de formation pour adultes primo-arrivants.
 
@@ -30,6 +158,7 @@ On te donne :
 - Le volume horaire total disponible
 - Le niveau de départ et le niveau cible (CECRL)
 - La durée type d'une séance
+- ÉVENTUELLEMENT l'historique des séances déjà réalisées et les profils des apprenants
 
 Tu dois découper ce volume en séances cohérentes avec une progression pédagogique logique.
 
@@ -40,7 +169,8 @@ Règles :
 - Commencer par CO et CE (réception) avant EE et EO (production)
 - Les Structures doivent être réparties tout au long du parcours
 - Prévoir des séances de révision/évaluation intermédiaires
-- Le nombre d'exercices doit être proportionnel à la durée de la séance`;
+- Le nombre d'exercices doit être proportionnel à la durée de la séance
+- Si un historique de groupe est fourni, ADAPTER la progression en conséquence (ne pas recommencer ce qui est acquis)`;
 
     const demarcheLabel = type_demarche === 'naturalisation'
       ? 'Naturalisation (B1 obligatoire sur les 4 épreuves)'
@@ -53,7 +183,8 @@ Règles :
 - Durée type d'une séance : ${dureeSeanceMinutes} minutes
 - Type de démarche : ${demarcheLabel}
 
-Propose le découpage complet en séances.`;
+Propose le découpage complet en séances.
+${studentHistoryPrompt}`;
 
     const response = await fetch(
       "https://ai.gateway.lovable.dev/v1/chat/completions",

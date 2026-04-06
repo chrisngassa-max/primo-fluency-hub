@@ -112,7 +112,7 @@ const ParcoursPage = () => {
     setGeneratedSeances(null);
     try {
       const { data, error } = await supabase.functions.invoke("generate-parcours", {
-        body: { heuresTotales, niveauDepart, niveauCible, dureeSeanceMinutes: dureeSeance, type_demarche: typeDemarche },
+        body: { heuresTotales, niveauDepart, niveauCible, dureeSeanceMinutes: dureeSeance, type_demarche: typeDemarche, groupId: groupId || undefined },
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);

@@ -470,7 +470,7 @@ const SessionPilot = () => {
         if (compCount <= 0) continue;
 
         const { data, error } = await supabase.functions.invoke("generate-exercises", {
-          body: { pointName: objectif, competence: comp, niveauVise, count: compCount, type_demarche: (session as any)?.group?.type_demarche || "titre_sejour" },
+          body: { pointName: objectif, competence: comp, niveauVise, count: compCount, type_demarche: (session as any)?.group?.type_demarche || "titre_sejour", groupId: (session as any)?.group_id },
         });
 
         if (error) throw error;
