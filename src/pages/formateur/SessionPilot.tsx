@@ -1331,6 +1331,34 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
         </div>
       )}
 
+      {/* ─── Couverture des épreuves ─── */}
+      {exercises.length > 0 && (() => {
+        const compCounts: Record<string, number> = { CO: 0, CE: 0, EE: 0, EO: 0 };
+        exercises.forEach((se: any) => {
+          const comp = se.exercice?.competence;
+          if (comp && comp in compCounts) compCounts[comp]++;
+        });
+        return (
+          <div className="flex items-center gap-2 mb-3 flex-wrap">
+            <span className="text-xs font-medium text-muted-foreground mr-1">Couverture :</span>
+            {Object.entries(compCounts).map(([comp, count]) => (
+              <Badge
+                key={comp}
+                variant="outline"
+                className={cn(
+                  "text-xs font-medium",
+                  count > 0
+                    ? "bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800"
+                    : "bg-muted text-muted-foreground border-border"
+                )}
+              >
+                {comp} ({count})
+              </Badge>
+            ))}
+          </div>
+        );
+      })()}
+
       {/* ─── Séance du jour label ─── */}
       {exercises.length > 0 && (
         <h3 className="text-sm font-semibold text-muted-foreground flex items-center gap-1.5 mb-2">
