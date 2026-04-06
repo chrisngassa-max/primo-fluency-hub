@@ -74,20 +74,28 @@ export function getProfilMessage(profil: string): string {
 }
 
 /**
- * Evaluates an EO or EE response using the existing AI engine via edge function.
+ * Evaluates an EO or EE response using Gemini via tcf-evaluate-answer edge function.
  */
 export async function evaluerReponseIA(
   question: { criteres_evaluation: unknown },
   reponseApprenant: string,
   metadata?: { code?: string; type_reponse?: string; mots_cles_attendus?: string[] }
 ): Promise<{ score: number; justification: string }> {
+  const rule = metadata?.type_reponse === "oral"
+    ? "Évaluation orale FLE : prononciation, vocabulaire, grammaire, cohérence"
+    : "Grammaire et compréhension FLE";
+
+  const exerciseContent = typeof question.criteres_evaluation === "object"
+    ? JSON.stringify(question.criteres_evaluation)
+    : String(question.criteres_evaluation ?? "Exercice FLE");
+
   const { data, error } = await supabase.functions.invoke(
-    "evaluate-test-response",
+    "tcf-evaluate-answer",
     {
       body: {
-        criteres_evaluation: question.criteres_evaluation,
-        reponse_apprenant: reponseApprenant,
-        metadata: metadata || {},
+        studentAnswer: reponseApprenant,
+        exerciseContent,
+        rule,
       },
     }
   );
@@ -97,9 +105,13 @@ export async function evaluerReponseIA(
     return { score: 0, justification: "Évaluation IA indisponible." };
   }
 
+  // Map score from /10 to /3 for backward compatibility
+  const rawScore = data?.score ?? 0;
+  const normalizedScore = Math.round((rawScore / 10) * 3);
+
   return {
-    score: data?.score ?? 0,
-    justification: data?.justification ?? "Pas de justification disponible.",
+    score: normalizedScore,
+    justification: data?.correction_text ?? "Pas de justification disponible.",
   };
 }
 
