@@ -168,6 +168,7 @@ const SequenceBuilder = () => {
           competence,
           niveauVise,
           count: generateCount,
+          type_demarche: "titre_sejour",
         },
       });
       if (error) throw error;

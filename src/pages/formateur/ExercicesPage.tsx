@@ -102,7 +102,7 @@ const ExercicesPage = () => {
 
         // Use tcf-generate-exercise (Gemini + Pexels)
         const { data, error } = await supabase.functions.invoke("tcf-generate-exercise", {
-          body: { theme: aiTheme, level: aiNiveau },
+          body: { theme: aiTheme, level: aiNiveau, type_demarche: "titre_sejour" },
         });
         if (error) throw error;
         if (data?.error) throw new Error(data.error);
