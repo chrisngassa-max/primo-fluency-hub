@@ -22,6 +22,7 @@ import { fr } from "date-fns/locale";
 import { toast } from "sonner";
 import { DifficultyBadge } from "@/components/DifficultyBadge";
 import MicroCompetencesPanel, { type MicroCompetence } from "@/components/MicroCompetencesPanel";
+import GenerateDailyHomeworkDialog from "@/components/GenerateDailyHomeworkDialog";
 import { cn } from "@/lib/utils";
 
 const COMPETENCE_LABELS: Record<string, string> = {
@@ -88,7 +89,8 @@ const FormateurDashboard = () => {
   const [progGroupId, setProgGroupId] = useState<string>("");
   const microCompConfigRef = useRef<MicroCompetence[]>([]);
   const [progViewId, setProgViewId] = useState<string>("moyenne");
-
+  const [dailyHomeworkOpen, setDailyHomeworkOpen] = useState(false);
+  const [selectedAlertEleve, setSelectedAlertEleve] = useState<string | null>(null);
   // ─── Progression: fetch real groups with members, test scores, and profiles ───
   const { data: progGroups } = useQuery({
     queryKey: ["prog-groups-detail", user?.id],
