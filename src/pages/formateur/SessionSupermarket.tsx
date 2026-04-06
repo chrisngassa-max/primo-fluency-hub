@@ -249,6 +249,7 @@ const SessionSupermarket = () => {
         format_groupe: formatGroupe,
       };
       if (microComps) body.micro_competences = microComps;
+      body.type_demarche = (sessionInfo as any)?.type_demarche || "titre_sejour";
       if (useGabarit) {
         body.gabaritNumero = detectedGabarit.numero;
       }
