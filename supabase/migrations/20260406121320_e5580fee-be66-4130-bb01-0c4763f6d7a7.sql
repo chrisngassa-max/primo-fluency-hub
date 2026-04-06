@@ -1,0 +1,2 @@
+ALTER TABLE public.parcours ADD COLUMN IF NOT EXISTS type_demarche TEXT DEFAULT 'titre_sejour' CHECK (type_demarche IN ('titre_sejour', 'naturalisation'));
+ALTER TABLE public.profils_eleves ADD COLUMN IF NOT EXISTS type_demarche TEXT DEFAULT 'titre_sejour' CHECK (type_demarche IN ('titre_sejour', 'naturalisation'));

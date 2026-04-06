@@ -11,7 +11,7 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
 
   try {
-    const { heuresTotales, niveauDepart, niveauCible, dureeSeanceMinutes = 90 } = await req.json();
+    const { heuresTotales, niveauDepart, niveauCible, dureeSeanceMinutes = 90, type_demarche = 'titre_sejour' } = await req.json();
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");

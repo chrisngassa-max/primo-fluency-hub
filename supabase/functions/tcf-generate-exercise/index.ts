@@ -1,9 +1,11 @@
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-const SYSTEM_PROMPT = `Tu es le moteur pédagogique de captcf.fr, application dédiée à la préparation intensive au TCF IRN.
+const SYSTEM_PROMPT_BASE = `Tu es le moteur pédagogique de captcf.fr, application dédiée à la préparation intensive au TCF IRN.
 Tu es un coach TCF IRN de haut niveau. Tout ce que tu produis est calibré sur les grilles d'évaluation officielles du TCF IRN.
 
 CONTRAINTE TECHNIQUE ABSOLUE : Tu réponds exclusivement en JSON valide et complet. Tu ne tronques jamais un bloc JSON.
@@ -71,9 +73,42 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
 
   try {
-    const { theme, level, competence, apprenant } = await req.json()
+    const { theme, level, competence, apprenant, type_demarche } = await req.json()
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY')
     if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY non configurée')
+
+    // --- CORRECTION 2: Banque lookup before AI ---
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const searchWord = theme?.split(" ")[0] || "";
+    if (searchWord && competence) {
+      const { data: existing } = await supabase
+        .from("exercices")
+        .select("*")
+        .eq("competence", competence)
+        .eq("niveau_vise", level || "A1")
+        .ilike("titre", `%${searchWord}%`)
+        .limit(1)
+        .maybeSingle();
+
+      if (existing?.contenu && typeof existing.contenu === "object" && Object.keys(existing.contenu as Record<string, unknown>).length > 0) {
+        return new Response(JSON.stringify({ ...(existing.contenu as Record<string, unknown>), source: "banque", id: existing.id }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
+
+    // --- CORRECTION 1: type_demarche injection ---
+    let demarcheBlock = "";
+    if (type_demarche === "naturalisation") {
+      demarcheBlock = `\n\nDÉMARCHE : Naturalisation — Seuil OBLIGATOIRE B1 sur toutes les épreuves. Syntaxe complexe, connecteurs logiques, argumentation simple, vocabulaire administratif enrichi.`;
+    } else {
+      demarcheBlock = `\n\nDÉMARCHE : Titre de séjour/Résidence — Seuil cible A2/B1 OFII. Priorité compréhension orale et écrite de la vie quotidienne et administrative.`;
+    }
+
+    const SYSTEM_PROMPT = SYSTEM_PROMPT_BASE + demarcheBlock;
 
     let apprenantBlock = "";
     if (apprenant) {
@@ -119,6 +154,7 @@ Produis un JSON complet avec tous les champs du format de sortie, y compris just
     const data = await response.json();
     const content = data.choices?.[0]?.message?.content;
     const exercise = JSON.parse(content);
+    exercise.source = "genere";
 
     // Fetch illustration from Pexels using mot_cle_image
     const pexelsKey = Deno.env.get('PEXELS_API_KEY');
