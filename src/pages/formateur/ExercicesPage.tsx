@@ -720,11 +720,64 @@ ${Array.isArray(item.options) && item.options.length > 0
                           </div>
                         )}
 
-                        <div className="grid grid-cols-3 gap-3 text-xs">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
                           <div><span className="text-muted-foreground">Niveau</span><p className="font-medium">{ex.niveau_vise}</p></div>
                           <div><span className="text-muted-foreground">Difficulté</span><p className="font-medium">{ex.difficulte}/5</p></div>
                           <div><span className="text-muted-foreground">Questions</span><p className="font-medium">{items.length}</p></div>
+                          {(() => {
+                            const c = typeof ex.contenu === "object" && ex.contenu !== null ? ex.contenu : {};
+                            const duree = (c as any)?.duree_estimee_secondes;
+                            return duree ? (
+                              <div><span className="text-muted-foreground">Durée estimée</span><p className="font-medium">{Math.round(duree / 60)} min</p></div>
+                            ) : null;
+                          })()}
                         </div>
+
+                        {/* Pedagogical metadata from new prompt */}
+                        {(() => {
+                          const c = typeof ex.contenu === "object" && ex.contenu !== null ? ex.contenu : {};
+                          const justif = (c as any)?.justification_pedagogique;
+                          const noteDiff = (c as any)?.note_differentiation;
+                          const criteres = (c as any)?.criteres_correction;
+                          if (!justif && !noteDiff && !criteres) return null;
+                          return (
+                            <div className="space-y-2 p-3 rounded-lg bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800">
+                              {noteDiff && (
+                                <div className="flex items-start gap-2">
+                                  <span className="text-blue-600 dark:text-blue-400 text-xs">🎯</span>
+                                  <div>
+                                    <p className="text-[11px] font-bold text-blue-700 dark:text-blue-300 uppercase tracking-wide">Différenciation</p>
+                                    <p className="text-xs text-blue-900 dark:text-blue-200">{noteDiff}</p>
+                                  </div>
+                                </div>
+                              )}
+                              {justif && (
+                                <div className="flex items-start gap-2">
+                                  <span className="text-blue-600 dark:text-blue-400 text-xs">📘</span>
+                                  <div>
+                                    <p className="text-[11px] font-bold text-blue-700 dark:text-blue-300 uppercase tracking-wide">Justification pédagogique</p>
+                                    <p className="text-xs text-blue-900 dark:text-blue-200">{justif}</p>
+                                  </div>
+                                </div>
+                              )}
+                              {criteres && typeof criteres === "object" && (
+                                <div className="flex items-start gap-2">
+                                  <span className="text-blue-600 dark:text-blue-400 text-xs">📋</span>
+                                  <div>
+                                    <p className="text-[11px] font-bold text-blue-700 dark:text-blue-300 uppercase tracking-wide">Critères de notation</p>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 mt-1">
+                                      {Object.entries(criteres).filter(([_, v]) => v).map(([key, val]) => (
+                                        <p key={key} className="text-[11px] text-blue-800 dark:text-blue-300">
+                                          <span className="font-semibold">{key.replace(/_/g, " ")} :</span> {val as string}
+                                        </p>
+                                      ))}
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })()}
 
                         {/* ─── Full item list (editable or readonly) ─── */}
                         <div className="space-y-3">
