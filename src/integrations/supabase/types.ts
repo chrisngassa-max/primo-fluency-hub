@@ -2041,6 +2041,10 @@ export type Database = {
           read_ct: number
         }[]
       }
+      update_priorites_pedagogiques: {
+        Args: { p_eleve_id: string; p_nouvelle_priorite: string }
+        Returns: undefined
+      }
     }
     Enums: {
       alerte_type:
