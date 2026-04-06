@@ -30,6 +30,27 @@ export async function updateProfilEleve(eleveId: string, niveauActuel?: string):
 
   const globalAvg = avg(allScores);
 
+  // Fetch previous profile to compute progression speed
+  const { data: previous } = await supabase
+    .from("profils_eleves")
+    .select("taux_reussite_global, updated_at")
+    .eq("eleve_id", eleveId)
+    .maybeSingle();
+
+  let vitesse_progression: "rapide" | "normale" | "lente" = "normale";
+  let score_progression_delta = 0;
+
+  if (previous?.taux_reussite_global != null) {
+    const delta = globalAvg - Number(previous.taux_reussite_global);
+    score_progression_delta = delta;
+    const daysSince = previous.updated_at
+      ? (Date.now() - new Date(previous.updated_at).getTime()) / 86400000
+      : 7;
+    const deltaPerDay = daysSince > 0 ? delta / daysSince : 0;
+    if (deltaPerDay > 1.5) vitesse_progression = "rapide";
+    else if (deltaPerDay < 0.3) vitesse_progression = "lente";
+  }
+
   // Determine niveau
   let niveau = niveauActuel;
   if (!niveau) {
@@ -48,6 +69,10 @@ export async function updateProfilEleve(eleveId: string, niveauActuel?: string):
     taux_reussite_eo: avg(byCompetence["EO"] ?? []),
     taux_reussite_structures: avg(byCompetence["Structures"] ?? []),
     niveau_actuel: niveau,
+    priorites_pedagogiques: JSON.parse(JSON.stringify({
+      vitesse_progression,
+      score_progression_delta,
+    })),
     updated_at: new Date().toISOString(),
-  }, { onConflict: "eleve_id" });
+  } as any, { onConflict: "eleve_id" });
 }
