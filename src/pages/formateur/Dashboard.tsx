@@ -731,6 +731,33 @@ ${sessionExercises.map((ex: any, i: number) => `
         </Card>
       )}
 
+      {/* ─── Parcours Projection Banners ─── */}
+      {activeParcours && activeParcours.length > 0 && activeParcours.map((p: any) => {
+        const proj = calculerProjection(p);
+        if (!proj) return null;
+        const colors = proj.risque === "critique"
+          ? "border-destructive/40 bg-destructive/5 text-destructive"
+          : proj.risque === "élevé"
+          ? "border-orange-400/40 bg-orange-50/30 dark:bg-orange-950/10 text-orange-700 dark:text-orange-400"
+          : "border-green-400/40 bg-green-50/30 dark:bg-green-950/10 text-green-700 dark:text-green-400";
+        const label = proj.risque === "critique" ? "critique" : proj.risque === "élevé" ? "à risque" : "atteignable";
+        return (
+          <Card key={p.id} className={cn("border", colors)}>
+            <CardContent className="py-3 px-5 flex items-center gap-3">
+              <Target className="h-5 w-5 shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium">{p.titre}</p>
+                <p className="text-xs">
+                  {proj.seancesRestantes} séance{proj.seancesRestantes > 1 ? "s" : ""} restante{proj.seancesRestantes > 1 ? "s" : ""} — objectif <strong>{label}</strong> (cadence nécessaire : {proj.cadenceNecessaire} séances/semaine)
+                </p>
+              </div>
+              <Badge variant="outline" className="shrink-0 text-xs">
+                J-{proj.joursRestants}
+              </Badge>
+            </CardContent>
+          </Card>
+        );
+      })}
 
 
 
