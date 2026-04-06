@@ -81,7 +81,7 @@ const ExercicesPage = () => {
     setRagTestOpen(true);
     try {
       const { data, error } = await supabase.functions.invoke("tcf-generate-exercise", {
-        body: { theme: "préfecture", level: "B1" },
+        body: { theme: "préfecture", level: "B1", type_demarche: typeDemarche },
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
