@@ -1,0 +1,1 @@
+ALTER TABLE public.groups ADD COLUMN type_demarche text DEFAULT 'titre_sejour';

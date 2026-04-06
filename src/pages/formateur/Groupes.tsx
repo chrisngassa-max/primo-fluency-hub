@@ -62,6 +62,7 @@ const GroupesPage = () => {
   const [nom, setNom] = useState("");
   const [niveau, setNiveau] = useState("A1");
   const [desc, setDesc] = useState("");
+  const [typeDemarche, setTypeDemarche] = useState<"titre_sejour" | "naturalisation">("titre_sejour");
   const [saving, setSaving] = useState(false);
 
   // Edit dialog
@@ -70,6 +71,7 @@ const GroupesPage = () => {
   const [editNom, setEditNom] = useState("");
   const [editNiveau, setEditNiveau] = useState("A1");
   const [editDesc, setEditDesc] = useState("");
+  const [editTypeDemarche, setEditTypeDemarche] = useState<"titre_sejour" | "naturalisation">("titre_sejour");
 
   // Add student dialog
   const [addOpen, setAddOpen] = useState(false);
@@ -159,8 +161,8 @@ const GroupesPage = () => {
     setSaving(true);
     try {
       const { error } = await supabase.from("groups").insert({
-        nom, niveau: niveau as any, description: desc || null, formateur_id: user!.id,
-      });
+        nom, niveau: niveau as any, description: desc || null, formateur_id: user!.id, type_demarche: typeDemarche,
+      } as any);
       if (error) throw error;
       toast.success("Groupe créé !");
       setCreateOpen(false);
@@ -175,8 +177,8 @@ const GroupesPage = () => {
     setSaving(true);
     try {
       const { error } = await supabase.from("groups").update({
-        nom: editNom, niveau: editNiveau as any, description: editDesc || null,
-      }).eq("id", editId);
+        nom: editNom, niveau: editNiveau as any, description: editDesc || null, type_demarche: editTypeDemarche,
+      } as any).eq("id", editId);
       if (error) throw error;
       toast.success("Groupe modifié !");
       setEditOpen(false);
@@ -319,7 +321,7 @@ const GroupesPage = () => {
   };
 
   const openEdit = (g: any) => {
-    setEditId(g.id); setEditNom(g.nom); setEditNiveau(g.niveau); setEditDesc(g.description || "");
+    setEditId(g.id); setEditNom(g.nom); setEditNiveau(g.niveau); setEditDesc(g.description || ""); setEditTypeDemarche(g.type_demarche || "titre_sejour");
     setEditOpen(true);
   };
 
@@ -369,6 +371,16 @@ const GroupesPage = () => {
               <div className="space-y-2">
                 <Label>Description (optionnel)</Label>
                 <Textarea value={desc} onChange={(e) => setDesc(e.target.value)} placeholder="Notes..." rows={2} />
+              </div>
+              <div className="space-y-2">
+                <Label>Type de démarche IRN</Label>
+                <Select value={typeDemarche} onValueChange={(v) => setTypeDemarche(v as any)}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="titre_sejour">Titre de séjour / Résidence (CO + CE)</SelectItem>
+                    <SelectItem value="naturalisation">Naturalisation (CO + CE + EE + EO)</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <DialogFooter>
@@ -712,6 +724,16 @@ const GroupesPage = () => {
             <div className="space-y-2">
               <Label>Description</Label>
               <Textarea value={editDesc} onChange={(e) => setEditDesc(e.target.value)} rows={2} />
+            </div>
+            <div className="space-y-2">
+              <Label>Type de démarche IRN</Label>
+              <Select value={editTypeDemarche} onValueChange={(v) => setEditTypeDemarche(v as any)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="titre_sejour">Titre de séjour / Résidence (CO + CE)</SelectItem>
+                  <SelectItem value="naturalisation">Naturalisation (CO + CE + EE + EO)</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <DialogFooter>
