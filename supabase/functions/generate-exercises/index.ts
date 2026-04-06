@@ -178,6 +178,10 @@ IMPORTANT — Pour CHAQUE exercice, tu dois aussi proposer un "animation_guide" 
   - guide_formateur : instructions pas-à-pas détaillées pour animer l'activité (étapes numérotées, timing, consignes de gestion de classe)
   - fiches_eleves : tableau de fiches à imprimer pour les élèves. Chaque fiche contient titre_fiche (ex: "Fiche A — Le Client"), contenu_fiche (rôle, mission, vocabulaire imposé, données concrètes — texte complet prêt à distribuer), lexique_cles (5-10 mots/phrases du niveau à utiliser)
 
+IMPORTANT — Pour CHAQUE exercice, tu dois aussi proposer des VARIANTES DE DIFFÉRENCIATION :
+- "variante_niveau_bas" : version simplifiée pour les élèves en difficulté. Contient : consigne (reformulée plus simplement, avec aide ou amorce), aide (mot ou phrase de démarrage), nb_items_reduit (nombre d'items réduit, ex: 2).
+- "variante_niveau_haut" : version enrichie pour les élèves avancés. Contient : consigne (avec contrainte supplémentaire ou tâche de transfert), extension (question ouverte ou production additionnelle).
+
 Tu DOIS utiliser le tool "generate_exercises" pour retourner le résultat.${gabaritPrompt}`;
 
     const userPrompt = `Génère ${count} exercices pour :
