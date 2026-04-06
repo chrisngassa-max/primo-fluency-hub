@@ -167,7 +167,6 @@ const DevoirPassation = () => {
       toast.warning("⏰ Temps dépassé !", {
         description: "Vous avez 10 secondes pour soumettre vos réponses. Le devoir va se fermer automatiquement.",
         duration: 10000,
-        important: true,
       });
     }
     if (elapsedSeconds >= timeLimit + 10 && !autoSubmitted && !result) {
