@@ -1,6 +1,5 @@
 import { useState, useMemo, useCallback, useRef } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import CompetencyGauge from "@/components/CompetencyGauge";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -13,16 +12,17 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Progress } from "@/components/ui/progress";
-import { Users, GraduationCap, Calendar, Bell, Clock, TrendingUp, CheckCircle2, Pause, ArrowUpCircle, Play, Printer, Eye, UserPlus, AlertTriangle, Send, Gamepad2, BookOpen, ChevronRight, Rocket, ClipboardCheck, ListChecks, FileCheck, Pencil, Trash2, Plus, Save, X, Target } from "lucide-react";
+import { Users, GraduationCap, Calendar, Bell, Clock, TrendingUp, CheckCircle2, Pause, ArrowUpCircle, Play, Printer, Eye, UserPlus, AlertTriangle, Send, Gamepad2, BookOpen, ChevronRight, Rocket, ClipboardCheck, ListChecks, FileCheck, Pencil, Trash2, Plus, Save, X, Target, Activity, ArrowRight } from "lucide-react";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toast } from "sonner";
 import { DifficultyBadge } from "@/components/DifficultyBadge";
 import MicroCompetencesPanel, { type MicroCompetence } from "@/components/MicroCompetencesPanel";
+import GenerateDailyHomeworkDialog from "@/components/GenerateDailyHomeworkDialog";
 import { cn } from "@/lib/utils";
 
 const COMPETENCE_LABELS: Record<string, string> = {
@@ -89,7 +89,8 @@ const FormateurDashboard = () => {
   const [progGroupId, setProgGroupId] = useState<string>("");
   const microCompConfigRef = useRef<MicroCompetence[]>([]);
   const [progViewId, setProgViewId] = useState<string>("moyenne");
-
+  const [dailyHomeworkOpen, setDailyHomeworkOpen] = useState(false);
+  const [selectedAlertEleve, setSelectedAlertEleve] = useState<string | null>(null);
   // ─── Progression: fetch real groups with members, test scores, and profiles ───
   const { data: progGroups } = useQuery({
     queryKey: ["prog-groups-detail", user?.id],
@@ -692,19 +693,21 @@ ${sessionExercises.map((ex: any, i: number) => `
             </div>
           </CardContent>
         </Card>
-        <Card className="border-l-4 border-l-accent">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">{nextSession?.isPast ? "Dernière séance" : "Prochaine séance"}</p>
-                {loadingSessions ? <Skeleton className="h-5 w-32 mt-1" /> : nextSession ? (
-                  <p className="text-sm font-medium mt-1 line-clamp-1">{format(new Date(nextSession.date_seance), "d MMM · HH:mm", { locale: fr })}</p>
-                ) : <p className="text-sm text-muted-foreground mt-1">Aucune</p>}
+        <Link to={nextSession ? `/formateur/seances/${nextSession.id}/pilote` : "/formateur/seances"}>
+          <Card className="cursor-pointer hover:ring-2 hover:ring-primary/30 transition border-l-4 border-l-accent">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">{nextSession?.isPast ? "Dernière séance" : "Prochaine séance"}</p>
+                  {loadingSessions ? <Skeleton className="h-5 w-32 mt-1" /> : nextSession ? (
+                    <p className="text-sm font-medium mt-1 line-clamp-1">{format(new Date(nextSession.date_seance), "d MMM · HH:mm", { locale: fr })}</p>
+                  ) : <p className="text-sm text-muted-foreground mt-1">Aucune</p>}
+                </div>
+                <Calendar className="h-8 w-8 text-accent opacity-80" />
               </div>
-              <Calendar className="h-8 w-8 text-accent opacity-80" />
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </Link>
         <Card className="cursor-pointer hover:shadow-md transition-shadow border-l-4 border-l-destructive relative" onClick={() => setActiveTab("alertes")}>
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
@@ -792,57 +795,15 @@ ${sessionExercises.map((ex: any, i: number) => `
 
 
 
-      {/* ─── Suivi de progression détaillée ─── */}
       <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-primary" />
-            Suivi de progression détaillé
-          </CardTitle>
-          <div className="flex items-center gap-3 mt-3">
-            <Select value={effectiveProgGroupId} onValueChange={(v) => { setProgGroupId(v); setProgViewId("moyenne"); }}>
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Choisir un groupe" />
-              </SelectTrigger>
-              <SelectContent>
-                {progGroupsList.map((g: any) => (
-                  <SelectItem key={g.id} value={g.id}>{g.nom}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {selectedProgGroup && (
-              <Select value={progViewId} onValueChange={setProgViewId}>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="moyenne">Moyenne du groupe</SelectItem>
-                  {(selectedProgGroup.eleves ?? []).map((e: any) => (
-                    <SelectItem key={e.id} value={e.id}>{e.nom}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
+        <CardContent className="py-3 px-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Activity className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm text-muted-foreground">Progression des élèves</span>
           </div>
-        </CardHeader>
-        <CardContent>
-          {!selectedProgGroup ? (
-            <p className="text-sm text-muted-foreground py-4">Sélectionnez un groupe pour voir la progression.</p>
-          ) : selectedProgGroup.eleves.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-8 text-center">
-              <Users className="h-10 w-10 text-muted-foreground/40 mb-3" />
-              <p className="text-muted-foreground font-medium">Aucun élève inscrit dans ce groupe pour le moment.</p>
-              <p className="text-sm text-muted-foreground/70 mt-1">
-                Invitez des élèves depuis la page Groupes & Élèves.
-              </p>
-            </div>
-          ) : progGaugeData ? (
-            <div className="space-y-5">
-              {progGaugeData.map((comp) => (
-                <CompetencyGauge key={comp.label} {...comp} />
-              ))}
-            </div>
-          ) : null}
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/formateur/monitoring">Voir le suivi détaillé <ChevronRight className="h-3.5 w-3.5 ml-1"/></Link>
+          </Button>
         </CardContent>
       </Card>
       <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -1354,6 +1315,11 @@ ${sessionExercises.map((ex: any, i: number) => `
                         </p>
                       </div>
                       <div className="flex gap-1.5 shrink-0">
+                        {(alert.type === "score_risque" || alert.type === "tendance_baisse" || alert.type === "devoir_expire") && (
+                          <Button size="sm" variant="outline" className="shrink-0 gap-1 text-xs h-8" onClick={() => { setSelectedAlertEleve(alert.eleve_id); setDailyHomeworkOpen(true); }}>
+                            Créer devoir <ArrowRight className="h-3 w-3"/>
+                          </Button>
+                        )}
                         <Button variant="ghost" size="sm" className="h-8 text-xs gap-1" onClick={() => navigate(`/formateur/eleves/${alert.eleve_id}`)}>
                           <Eye className="h-3.5 w-3.5" /> Voir
                         </Button>
@@ -1370,9 +1336,18 @@ ${sessionExercises.map((ex: any, i: number) => `
           </Card>
         </TabsContent>
       </Tabs>
+      {/* Daily Homework Dialog from alerts */}
+      {dailyHomeworkOpen && selectedAlertEleve && (
+        <GenerateDailyHomeworkDialog
+          open={dailyHomeworkOpen}
+          onOpenChange={(open) => { setDailyHomeworkOpen(open); if (!open) setSelectedAlertEleve(null); }}
+          currentSessionDate={new Date().toISOString()}
+          nextSessions={upcomingSessions.map((s: any) => ({ id: s.id, titre: s.titre, date_seance: s.date_seance }))}
+          onGenerate={async () => { toast.success("Devoirs générés !"); setDailyHomeworkOpen(false); setSelectedAlertEleve(null); }}
+        />
+      )}
     </div>
   );
 };
 
 export default FormateurDashboard;
-

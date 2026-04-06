@@ -1277,64 +1277,65 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
 
       {/* ─── Bloc 0: Rappel — Exercices reportés (séance N-1) ─── */}
       {reported.length > 0 && !rappelDismissed && (
-        <Card className="border-2 border-blue-300 dark:border-blue-700 bg-blue-50/30 dark:bg-blue-950/10 print:hidden">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2 text-blue-700 dark:text-blue-400">
-              <RotateCcw className="h-5 w-5" />
-              🔁 RAPPEL — Exercices reportés (séance N-1)
-            </CardTitle>
-            <CardDescription>Ces exercices n'ont pas pu être traités lors de la séance précédente.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="space-y-1">
-              {reported.map((se: any) => {
-                const ex = se.exercice;
-                return (
-                  <label key={se.id} className="flex items-center gap-3 p-2.5 rounded-lg border bg-card hover:bg-muted/30 cursor-pointer transition-colors">
-                    <Checkbox
-                      checked={!!rappelChecked[se.id]}
-                      onCheckedChange={() => setRappelChecked((prev) => ({ ...prev, [se.id]: !prev[se.id] }))}
-                    />
-                    <span className="text-sm flex-1 truncate font-medium">{ex?.titre || "Exercice"}</span>
-                    <Badge variant="secondary" className="text-[10px] shrink-0">{ex?.competence}</Badge>
-                  </label>
-                );
-              })}
-            </div>
-            <div className="flex gap-2 pt-1">
-              <Button
-                className="flex-1 gap-2"
-                disabled={validatingRappel || !Object.values(rappelChecked).some(Boolean)}
-                onClick={async () => {
-                  setValidatingRappel(true);
-                  try {
-                    const toValidate = reported.filter((se: any) => rappelChecked[se.id]).map((se: any) => se.id);
-                    if (toValidate.length > 0) {
-                      const { error } = await supabase
-                        .from("session_exercices")
-                        .update({ statut: "traite_en_classe" as any, updated_at: new Date().toISOString() })
-                        .in("id", toValidate);
-                      if (error) throw error;
-                      qc.invalidateQueries({ queryKey: ["reported-exercises"] });
-                      toast.success(`${toValidate.length} exercice(s) validé(s) !`);
-                      setRappelChecked({});
-                    }
-                  } catch (e: any) {
-                    toast.error("Erreur", { description: e.message });
-                  } finally {
-                    setValidatingRappel(false);
+        <div className="rounded-lg border border-amber-200 bg-amber-50/40 dark:bg-amber-950/20 dark:border-amber-800 p-3 mb-4 print:hidden">
+          <h3 className="text-sm font-semibold text-amber-700 dark:text-amber-300 mb-2 flex items-center gap-1.5">
+            <RotateCcw className="h-3.5 w-3.5"/>Révision — séance précédente
+          </h3>
+          <div className="space-y-1">
+            {reported.map((se: any) => {
+              const ex = se.exercice;
+              return (
+                <label key={se.id} className="flex items-center gap-3 p-2.5 rounded-lg border bg-card hover:bg-muted/30 cursor-pointer transition-colors">
+                  <Checkbox
+                    checked={!!rappelChecked[se.id]}
+                    onCheckedChange={() => setRappelChecked((prev) => ({ ...prev, [se.id]: !prev[se.id] }))}
+                  />
+                  <span className="text-sm flex-1 truncate font-medium">{ex?.titre || "Exercice"}</span>
+                  <Badge variant="secondary" className="text-[10px] shrink-0">{ex?.competence}</Badge>
+                </label>
+              );
+            })}
+          </div>
+          <div className="flex gap-2 pt-2">
+            <Button
+              className="flex-1 gap-2"
+              disabled={validatingRappel || !Object.values(rappelChecked).some(Boolean)}
+              onClick={async () => {
+                setValidatingRappel(true);
+                try {
+                  const toValidate = reported.filter((se: any) => rappelChecked[se.id]).map((se: any) => se.id);
+                  if (toValidate.length > 0) {
+                    const { error } = await supabase
+                      .from("session_exercices")
+                      .update({ statut: "traite_en_classe" as any, updated_at: new Date().toISOString() })
+                      .in("id", toValidate);
+                    if (error) throw error;
+                    qc.invalidateQueries({ queryKey: ["reported-exercises"] });
+                    toast.success(`${toValidate.length} exercice(s) validé(s) !`);
+                    setRappelChecked({});
                   }
-                }}
-              >
-                {validatingRappel ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
-                Valider le rappel
-              </Button>
-              <Button variant="outline" className="flex-1 gap-2" onClick={() => setRappelDismissed(true)}>
-                <ArrowRight className="h-4 w-4" />Garder en devoirs
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+                } catch (e: any) {
+                  toast.error("Erreur", { description: e.message });
+                } finally {
+                  setValidatingRappel(false);
+                }
+              }}
+            >
+              {validatingRappel ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
+              Valider le rappel
+            </Button>
+            <Button variant="outline" className="flex-1 gap-2" onClick={() => setRappelDismissed(true)}>
+              <ArrowRight className="h-4 w-4" />Garder en devoirs
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* ─── Séance du jour label ─── */}
+      {exercises.length > 0 && (
+        <h3 className="text-sm font-semibold text-muted-foreground flex items-center gap-1.5 mb-2">
+          📅 Séance du jour
+        </h3>
       )}
 
       {exercises.length === 0 && reported.length === 0 ? (
