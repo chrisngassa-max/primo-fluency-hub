@@ -54,8 +54,6 @@ const SequenceBuilder = () => {
   const [titre, setTitre] = useState("");
   const [description, setDescription] = useState("");
   const [niveauVise, setNiveauVise] = useState("A2");
-  const [typeDemarcheSeq, setTypeDemarcheSeq] = useState("titre_sejour");
-
   // Récupérer le type_demarche du groupe actif du formateur
   const { data: formateurGroupeSeq } = useQuery({
     queryKey: ["formateur-groupe-demarche-seq", user?.id],
@@ -71,10 +69,9 @@ const SequenceBuilder = () => {
       return data;
     },
     enabled: !!user,
-    onSuccess: (data: any) => {
-      if (data?.type_demarche) setTypeDemarcheSeq(data.type_demarche);
-    },
   });
+
+  const typeDemarcheSeq = formateurGroupeSeq?.type_demarche || "titre_sejour";
   const [exercises, setExercises] = useState<ExerciseDraft[]>([]);
   const [generating, setGenerating] = useState(false);
   const [generateCount, setGenerateCount] = useState(10);
