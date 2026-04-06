@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { TCF_SYSTEM_PROMPT, MODEL, AI_GATEWAY } from "../_shared/system-prompt.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -26,7 +27,15 @@ serve(async (req) => {
       sourceUrl,
       treatment, // "extract" | "reconfigure"
       targetFormat,
+      type_demarche,
+      niveau_depart,
+      niveau_arrivee,
     } = body;
+
+    const demarche = type_demarche || "titre_sejour";
+    const epreuvesAutorisees = demarche === "naturalisation"
+      ? "CO, CE, EE, EO (les 4 épreuves)"
+      : "CO et CE uniquement (titre de séjour)";
 
     if (!mode) throw new Error("Le champ 'mode' est requis");
 
@@ -35,9 +44,12 @@ serve(async (req) => {
     if (mode === "theme") {
       if (!theme || !competence || !niveau || !format)
         throw new Error("Champs manquants pour le mode thème");
-      userPrompt = `Crée un exercice complet sur le thème "${theme}".
+      userPrompt = `Action : generer_exercice
+Thème : "${theme}"
 Compétence TCF : ${competence}
-Niveau CECRL : ${niveau}
+Niveau départ : ${niveau_depart || niveau}
+Niveau arrivée : ${niveau_arrivee || "A1"}
+Démarche IRN : ${demarche} → Épreuves autorisées : ${epreuvesAutorisees}
 Format demandé : ${format}
 
 Invente un support textuel réaliste (dialogue, document administratif, annonce, etc.) ancré dans un contexte IRN (Préfecture, CAF, Emploi, Logement, Médical, Transport, Citoyenneté, Commerce).
@@ -71,8 +83,9 @@ Attribue le code TCF IRN le plus pertinent.`;
       throw new Error("Mode inconnu : " + mode);
     }
 
-    const systemPrompt = `Tu es un expert pédagogique du TCF IRN (Test de Connaissance du Français — Intégration et Résidence en France).
-Ton rôle est de concevoir ou reformater des exercices viables pour la réussite du TCF.
+    const systemPrompt = TCF_SYSTEM_PROMPT + `
+
+// Contexte spécifique smart-exercise-generator : mode import/reconfiguration activé.
 
 SYSTÈME MULTIMÉDIA ACTIF :
 L'application dispose d'un lecteur vocal (Text-to-Speech) et d'un enregistreur vocal (Speech-to-Text) côté élève.
@@ -144,7 +157,7 @@ Pour chaque item, fournis TOUJOURS : question, options (tableau de chaînes, vid
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "google/gemini-3-flash-preview",
+          model: MODEL,
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: userPrompt },

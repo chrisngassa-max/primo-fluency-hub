@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { MODEL } from "../_shared/system-prompt.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -11,7 +12,9 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { pointName, competence, niveauVise, count = 10, difficultyLevel, gabaritNumero } = await req.json();
+    const { pointName, competence, niveauVise, count = 10, difficultyLevel, gabaritNumero, type_demarche, niveau_depart, niveau_arrivee } = await req.json();
+    const demarche = type_demarche || "titre_sejour";
+    const epreuvesAutorisees = demarche === "naturalisation" ? "CO, CE, EE, EO" : "CO, CE";
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
@@ -199,7 +202,7 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model: MODEL,
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
