@@ -788,9 +788,11 @@ const TestPositionnement = () => {
       [compKey]: sessionState.palier,
     };
 
+    const scoreUpdate: Record<string, number> = {};
+    scoreUpdate[`score_${compKey}`] = newScores[compKey];
     await supabase
       .from("test_sessions")
-      .update({ [`score_${compKey}`]: newScores[compKey] })
+      .update(scoreUpdate as any)
       .eq("id", sessionState.sessionId);
 
     const nextCompIndex = sessionState.competenceIndex + 1;
