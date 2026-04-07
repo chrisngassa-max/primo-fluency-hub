@@ -757,13 +757,12 @@ const TestPositionnement = () => {
 
     if (nextPalier) {
       // Advance palier in same competence
-      const palierField = `palier_${compKey}`;
+      const updateData: Record<string, number> = {};
+      updateData[`palier_${compKey}`] = nextPalier;
+      updateData[`score_${compKey}`] = newScores[compKey];
       await supabase
         .from("test_sessions")
-        .update({
-          [palierField]: nextPalier,
-          [`score_${compKey}`]: newScores[compKey],
-        })
+        .update(updateData as any)
         .eq("id", sessionState.sessionId);
 
       const qs = await loadQuestions(currentCompetence, nextPalier);
@@ -789,9 +788,11 @@ const TestPositionnement = () => {
       [compKey]: sessionState.palier,
     };
 
+    const scoreUpdate: Record<string, number> = {};
+    scoreUpdate[`score_${compKey}`] = newScores[compKey];
     await supabase
       .from("test_sessions")
-      .update({ [`score_${compKey}`]: newScores[compKey] })
+      .update(scoreUpdate as any)
       .eq("id", sessionState.sessionId);
 
     const nextCompIndex = sessionState.competenceIndex + 1;
