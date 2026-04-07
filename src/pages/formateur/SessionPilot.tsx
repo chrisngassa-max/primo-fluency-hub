@@ -58,6 +58,7 @@ import {
 import { cn } from "@/lib/utils";
 import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/DifficultyBadge";
 import FeuilleAppel from "@/components/FeuilleAppel";
+import LivePilotingSection from "@/components/LivePilotingSection";
 import { COMPETENCE_COLORS, resolveSessionCompetences, sortCompetences } from "@/lib/competences";
 import GenerateDailyHomeworkDialog from "@/components/GenerateDailyHomeworkDialog";
 import {
@@ -1275,6 +1276,17 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
         <div className="print:hidden">
           <FeuilleAppel sessionId={id!} session={session as any} />
         </div>
+      )}
+
+      {/* ─── Pilotage en direct ─── */}
+      {session && user && (
+        <LivePilotingSection
+          sessionId={id!}
+          session={session}
+          exercises={exercises}
+          groupMembers={groupMembers ?? []}
+          userId={user.id}
+        />
       )}
 
       {/* ─── Bloc 0: Rappel — Exercices reportés (séance N-1) ─── */}

@@ -1279,6 +1279,7 @@ export type Database = {
           eleve_id: string
           exercice_id: string
           id: string
+          is_bonus: boolean
           reponses_eleve: Json
           score: number
           tentative: number
@@ -1290,6 +1291,7 @@ export type Database = {
           eleve_id: string
           exercice_id: string
           id?: string
+          is_bonus?: boolean
           reponses_eleve?: Json
           score: number
           tentative?: number
@@ -1301,6 +1303,7 @@ export type Database = {
           eleve_id?: string
           exercice_id?: string
           id?: string
+          is_bonus?: boolean
           reponses_eleve?: Json
           score?: number
           tentative?: number
@@ -1376,8 +1379,10 @@ export type Database = {
       session_exercices: {
         Row: {
           created_at: string
+          eleve_id: string | null
           exercice_id: string
           id: string
+          is_bonus: boolean
           notes: string | null
           ordre: number
           session_id: string
@@ -1386,8 +1391,10 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          eleve_id?: string | null
           exercice_id: string
           id?: string
+          is_bonus?: boolean
           notes?: string | null
           ordre?: number
           session_id: string
@@ -1396,8 +1403,10 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          eleve_id?: string | null
           exercice_id?: string
           id?: string
+          is_bonus?: boolean
           notes?: string | null
           ordre?: number
           session_id?: string
@@ -1405,6 +1414,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "session_exercices_eleve_id_fkey"
+            columns: ["eleve_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "session_exercices_exercice_id_fkey"
             columns: ["exercice_id"]
