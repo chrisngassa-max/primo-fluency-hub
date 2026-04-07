@@ -1278,6 +1278,17 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
         </div>
       )}
 
+      {/* ─── Pilotage en direct ─── */}
+      {session && user && (
+        <LivePilotingSection
+          sessionId={id!}
+          session={session}
+          exercises={exercises}
+          groupMembers={groupMembers ?? []}
+          userId={user.id}
+        />
+      )}
+
       {/* ─── Bloc 0: Rappel — Exercices reportés (séance N-1) ─── */}
       {reported.length > 0 && !rappelDismissed && (
         <div className="rounded-lg border border-amber-200 bg-amber-50/40 dark:bg-amber-950/20 dark:border-amber-800 p-3 mb-4 print:hidden">
