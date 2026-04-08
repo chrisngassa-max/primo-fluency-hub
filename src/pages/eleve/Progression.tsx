@@ -303,29 +303,29 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
                 <Copy className="h-3 w-3" />
               </Button>
             </div>
-            {studentProfile.mot_de_passe_initial && (
-              <div className="flex items-center gap-2 text-sm">
-                <KeyRound className="h-4 w-4 text-muted-foreground shrink-0" />
-                <span className="font-medium">Mot de passe initial :</span>
-                <code className="bg-muted px-2 py-0.5 rounded text-xs">••••••••</code>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6"
-                  onClick={() => {
-                    navigator.clipboard.writeText(studentProfile.mot_de_passe_initial ?? "");
-                    toast.success("Mot de passe copié");
-                  }}
-                >
-                  <Copy className="h-3 w-3" />
-                </Button>
-              </div>
-            )}
-            {!studentProfile.mot_de_passe_initial && (
-              <p className="text-xs text-muted-foreground italic">
-                Mot de passe initial non disponible (l'élève s'est inscrit lui-même).
-              </p>
-            )}
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5"
+              onClick={async () => {
+                if (!studentProfile?.email) {
+                  toast.error("Cet élève n'a pas d'email configuré.");
+                  return;
+                }
+                try {
+                  const { error } = await supabase.auth.resetPasswordForEmail(studentProfile.email, {
+                    redirectTo: window.location.origin,
+                  });
+                  if (error) throw error;
+                  toast.success("Lien de réinitialisation envoyé à " + studentProfile.email);
+                } catch (err: any) {
+                  toast.error("Erreur : " + err.message);
+                }
+              }}
+            >
+              <KeyRound className="h-3.5 w-3.5" />
+              Réinitialiser le mot de passe
+            </Button>
           </CardContent>
         </Card>
       )}
