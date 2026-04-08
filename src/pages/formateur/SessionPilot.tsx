@@ -384,7 +384,8 @@ const SessionPilot = () => {
   }, [session, id, sessionExercices, isLoading, reconciled, reconciling, qc]);
 
   // Trigger reconciliation when data is ready
-  useMemo(() => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  React.useEffect(() => {
     if (session && !isLoading && (sessionExercices ?? []).length === 0 && !reconciled) {
       reconcile();
     }
