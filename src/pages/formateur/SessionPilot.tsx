@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -309,6 +309,87 @@ const SessionPilot = () => {
     },
     enabled: !!session,
   });
+
+  // === Reconciliation: auto-link parcours_seance → session if exercises are missing ===
+  const [reconciling, setReconciling] = useState(false);
+  const [reconciled, setReconciled] = useState(false);
+
+  const reconcile = useCallback(async () => {
+    if (!session || !id || reconciled || reconciling) return;
+    if ((sessionExercices ?? []).length > 0) return; // already has exercises
+    if (isLoading) return; // still loading
+
+    setReconciling(true);
+    try {
+      const groupId = (session as any)?.group?.id || session.group_id;
+
+      // Step 1: Check if parcours_seances already linked to this session but exercises missing
+      const { data: linkedPS } = await supabase
+        .from("parcours_seances")
+        .select("id, parcours_id")
+        .eq("session_id", id)
+        .maybeSingle();
+
+      if (linkedPS) {
+        // parcours_seance linked but no exercises — nothing more to reconcile
+        setReconciled(true);
+        setReconciling(false);
+        return;
+      }
+
+      // Step 2: Find parcours for this group, then match by title pattern
+      const { data: parcours } = await supabase
+        .from("parcours")
+        .select("id")
+        .eq("group_id", groupId)
+        .limit(1)
+        .maybeSingle();
+
+      if (!parcours) { setReconciled(true); setReconciling(false); return; }
+
+      // Try to find a parcours_seance with no session_id whose title appears in the session title
+      const { data: candidates } = await supabase
+        .from("parcours_seances")
+        .select("id, titre, ordre, session_id")
+        .eq("parcours_id", parcours.id)
+        .is("session_id", null)
+        .order("ordre");
+
+      if (!candidates || candidates.length === 0) { setReconciled(true); setReconciling(false); return; }
+
+      // Match: session.titre typically is "S{ordre} : {titre}"
+      const match = candidates.find((c) => {
+        const pattern = `S${c.ordre}`;
+        return session.titre?.includes(pattern) && session.titre?.includes(c.titre);
+      });
+
+      if (match) {
+        // Link it
+        await supabase
+          .from("parcours_seances")
+          .update({ session_id: id })
+          .eq("id", match.id);
+
+        // Refetch
+        qc.invalidateQueries({ queryKey: ["session-exercices", id] });
+        qc.invalidateQueries({ queryKey: ["parcours-seance-for-session", id] });
+        toast.success("Séance reliée au parcours automatiquement.");
+      }
+    } catch (err) {
+      console.error("Reconciliation error:", err);
+    } finally {
+      setReconciled(true);
+      setReconciling(false);
+    }
+  }, [session, id, sessionExercices, isLoading, reconciled, reconciling, qc]);
+
+  // Trigger reconciliation when data is ready
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  React.useEffect(() => {
+    if (session && !isLoading && (sessionExercices ?? []).length === 0 && !reconciled) {
+      reconcile();
+    }
+  }, [session, isLoading, sessionExercices, reconciled, reconcile]);
 
   const exercises = sessionExercices ?? [];
   const reported = reportedExercises ?? [];
@@ -1382,14 +1463,24 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
         </h3>
       )}
 
-      {exercises.length === 0 && reported.length === 0 ? (
+      {reconciling ? (
+        <Card className="border-dashed">
+          <CardContent className="py-12 text-center">
+            <Loader2 className="h-8 w-8 mx-auto text-muted-foreground/40 mb-3 animate-spin" />
+            <p className="text-muted-foreground font-medium">Recherche d'exercices liés…</p>
+          </CardContent>
+        </Card>
+      ) : exercises.length === 0 && reported.length === 0 ? (
         <Card className="border-dashed">
           <CardContent className="py-12 text-center">
             <BookOpen className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
-            <p className="text-muted-foreground font-medium">Aucun exercice rattaché</p>
+            <p className="text-muted-foreground font-medium">Aucun exercice trouvé pour cette séance</p>
             <p className="text-sm text-muted-foreground/70 mt-1 mb-4">
-              Générez des exercices IA ou rattachez-en depuis la page Séances.
+              Générez-les depuis le tableau de bord → Prochaine séance, ou utilisez le générateur ci-dessous.
             </p>
+            <Button variant="outline" size="sm" className="mb-4" onClick={() => navigate("/formateur")}>
+              <ArrowLeft className="h-4 w-4 mr-1" /> Aller au tableau de bord
+            </Button>
             <div className="flex items-center gap-1 mb-3 justify-center flex-wrap">
               {(["CO","CE","EE","EO","Structures"] as const).map((comp) => {
                 const sessionComps = (session as any)?.competences_cibles ?? [];
