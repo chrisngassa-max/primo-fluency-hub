@@ -976,6 +976,15 @@ ${sessionExercises.map((ex: any, i: number) => `
                                     <p className="text-sm text-muted-foreground italic mt-1">{ex.consigne}</p>
                                     <p className="text-xs text-muted-foreground mt-0.5">{`${ex.contenu?.items?.length || 0} ${(ex.contenu?.items?.length || 0) === 1 ? "item" : "items"}`} · <DifficultyBadge level={ex.difficulte} /></p>
                                   </div>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="shrink-0 h-8 w-8"
+                                    title="Imprimer cet exercice"
+                                    onClick={(e) => { e.stopPropagation(); handlePrintSingleExercise(ex, i); }}
+                                  >
+                                    <Printer className="h-4 w-4" />
+                                  </Button>
                                 </div>
 
                                 {guide && (
