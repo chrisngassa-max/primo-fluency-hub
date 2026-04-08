@@ -506,85 +506,144 @@ ${sessionExercises.map((ex: any, i: number) => `
     printWindow.print();
   };
 
-  const handlePrintSingleExercise = (ex: any, index: number) => {
-    const guide = ex.animation_guide as any;
-    const docFournie = ex.contenu?.documentation_fournie || guide?.documentation_fournie;
-    const guideHtml = guide ? `
-      <div class="guide-section">
-        <h3>🎲 Atelier ludique — Guide formateur</h3>
-        ${guide.scenario ? `<p><strong>🎭 Scénario :</strong> ${guide.scenario}</p>` : ""}
-        ${guide.jeu ? `<p><strong>🎲 Jeu :</strong> ${guide.jeu}</p>` : ""}
-        ${guide.materiel ? `<p><strong>📦 Matériel :</strong> ${guide.materiel}</p>` : ""}
-        ${guide.objectif_oral ? `<p><strong>🗣️ Objectif oral :</strong> ${guide.objectif_oral}</p>` : ""}
-        ${guide.consignes_formateur ? `<p><strong>📋 Consignes :</strong> ${guide.consignes_formateur}</p>` : ""}
-        ${guide.deroulement ? `<p><strong>⏱️ Déroulement :</strong> ${guide.deroulement}</p>` : ""}
-      </div>` : "";
-    const docHtml = docFournie ? `
-      <div class="doc-section">
-        <h3>📄 Matériel pédagogique</h3>
-        ${docFournie.guide_formateur ? `<div class="doc-block"><h4>Guide formateur</h4><div>${typeof docFournie.guide_formateur === "string" ? docFournie.guide_formateur : JSON.stringify(docFournie.guide_formateur, null, 2)}</div></div>` : ""}
-        ${Array.isArray(docFournie.fiches_eleves) ? docFournie.fiches_eleves.map((f: any, fi: number) => `
-          <div class="doc-block fiche-eleve">
-            <h4>Fiche élève ${fi + 1}${f.titre ? ` — ${f.titre}` : ""}${f.role ? ` (${f.role})` : ""}</h4>
-            ${f.contenu ? `<div>${typeof f.contenu === "string" ? f.contenu : JSON.stringify(f.contenu, null, 2)}</div>` : ""}
-            ${f.mission ? `<p><strong>Mission :</strong> ${f.mission}</p>` : ""}
-            ${f.lexique ? `<p><strong>Lexique :</strong> ${Array.isArray(f.lexique) ? f.lexique.join(", ") : f.lexique}</p>` : ""}
-          </div>`).join("") : ""}
-      </div>` : "";
-    const html = `<!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>${ex.titre}</title>
-<style>
-body { font-family: Arial, sans-serif; margin: 2cm; font-size: 16px; color: #333; }
-h1 { font-size: 22px; border-bottom: 2px solid #333; padding-bottom: 8px; }
-.header-info { color: #666; font-size: 13px; margin-bottom: 20px; }
-.exercise { margin-bottom: 28px; border: 1px solid #ddd; padding: 18px; border-radius: 8px; }
-.exercise h2 { font-size: 18px; margin: 0 0 6px 0; }
-.badge { display: inline-block; background: #eee; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-right: 4px; }
-.consigne { font-style: italic; margin: 10px 0; font-size: 15px; }
-.item { margin: 10px 0 10px 16px; }
-.options { margin-left: 16px; }
-.option { margin: 4px 0; font-size: 15px; }
-.write-zone { border: 1px dashed #ccc; min-height: 80px; margin-top: 10px; border-radius: 4px; }
-.nom-zone { border-bottom: 1px solid #333; width: 200px; display: inline-block; margin-left: 8px; }
-.guide-section { margin-top: 20px; padding: 14px; background: #fff8f0; border: 1px solid #f0d8b0; border-radius: 8px; }
-.guide-section h3 { font-size: 16px; margin: 0 0 10px 0; color: #c2660a; }
-.guide-section p { margin: 6px 0; font-size: 14px; }
-.doc-section { margin-top: 20px; page-break-before: auto; }
-.doc-section h3 { font-size: 16px; margin: 0 0 12px 0; }
-.doc-block { padding: 14px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 12px; }
-.doc-block h4 { font-size: 15px; margin: 0 0 8px 0; }
-.fiche-eleve { page-break-inside: avoid; border: 2px dashed #999; }
-@media print { body { margin: 1cm; } .guide-section { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
-</style></head><body>
-<h1>${ex.titre}</h1>
-<p class="header-info">Nom : <span class="nom-zone">&nbsp;</span> &nbsp;&nbsp; Date : ${format(new Date(), "d MMMM yyyy", { locale: fr })} &nbsp;&nbsp; Groupe : ${nextSession?.group_nom || ""} &nbsp;&nbsp; Niveau : ${nextSession?.niveau_cible || ""}</p>
-<div class="exercise">
-  <span class="badge">${ex.competence}</span>
-  <span class="badge">${formatLabels[ex.format] || ex.format}</span>
-  <p class="consigne">${ex.consigne}</p>
-  ${(ex.contenu?.items || []).map((item: any, j: number) => `
-    <div class="item">
-      <strong>${j + 1}.</strong> ${item.question}
-      ${item.options?.length
-        ? `<div class="options">${item.options.map((o: string) => `<div class="option">☐ ${o}</div>`).join("")}</div>`
-        : '<div class="write-zone"></div>'}
-    </div>`).join("")}
-</div>
-${guideHtml}
-${docHtml}
-</body></html>`;
+  const handlePrintSingleExercise = async (ex: any, index: number) => {
+    const loadingToast = toast.loading("Génération du PDF...");
+    let container: HTMLDivElement | null = null;
 
-    const printWindow = window.open("", "_blank");
-    if (!printWindow) {
-      toast.error("Impossible d'ouvrir la fenêtre — autorisez les pop-ups pour ce site");
-      return;
+    try {
+      const [{ jsPDF }, html2canvasModule] = await Promise.all([
+        import("jspdf"),
+        import("html2canvas"),
+      ]);
+
+      const html2canvas = html2canvasModule.default;
+      const guide = ex.animation_guide as any;
+      const docFournie = ex.contenu?.documentation_fournie || guide?.documentation_fournie;
+      const guideHtml = guide ? `
+        <div class="guide-section">
+          <h3>🎲 Atelier ludique — Guide formateur</h3>
+          ${guide.scenario ? `<p><strong>🎭 Scénario :</strong> ${guide.scenario}</p>` : ""}
+          ${guide.jeu ? `<p><strong>🎲 Jeu :</strong> ${guide.jeu}</p>` : ""}
+          ${guide.materiel ? `<p><strong>📦 Matériel :</strong> ${guide.materiel}</p>` : ""}
+          ${guide.objectif_oral ? `<p><strong>🗣️ Objectif oral :</strong> ${guide.objectif_oral}</p>` : ""}
+          ${guide.consignes_formateur ? `<p><strong>📋 Consignes :</strong> ${guide.consignes_formateur}</p>` : ""}
+          ${guide.deroulement ? `<p><strong>⏱️ Déroulement :</strong> ${guide.deroulement}</p>` : ""}
+        </div>` : "";
+      const docHtml = docFournie ? `
+        <div class="doc-section">
+          <h3>📄 Matériel pédagogique</h3>
+          ${docFournie.guide_formateur ? `<div class="doc-block"><h4>Guide formateur</h4><div class="preserve-lines">${typeof docFournie.guide_formateur === "string" ? docFournie.guide_formateur : JSON.stringify(docFournie.guide_formateur, null, 2)}</div></div>` : ""}
+          ${Array.isArray(docFournie.fiches_eleves) ? docFournie.fiches_eleves.map((f: any, fi: number) => `
+            <div class="doc-block fiche-eleve">
+              <h4>Fiche élève ${fi + 1}${f.titre ? ` — ${f.titre}` : ""}${f.role ? ` (${f.role})` : ""}</h4>
+              ${f.contenu ? `<div class="preserve-lines">${typeof f.contenu === "string" ? f.contenu : JSON.stringify(f.contenu, null, 2)}</div>` : ""}
+              ${f.mission ? `<p><strong>Mission :</strong> ${f.mission}</p>` : ""}
+              ${f.lexique ? `<p><strong>Lexique :</strong> ${Array.isArray(f.lexique) ? f.lexique.join(", ") : f.lexique}</p>` : ""}
+            </div>`).join("") : ""}
+        </div>` : "";
+
+      container = document.createElement("div");
+      container.style.position = "fixed";
+      container.style.left = "-10000px";
+      container.style.top = "0";
+      container.style.width = "794px";
+      container.style.background = "#ffffff";
+      container.style.zIndex = "-1";
+      container.innerHTML = `
+        <style>
+          .pdf-root { font-family: Arial, sans-serif; color: #333; font-size: 16px; line-height: 1.45; background: #fff; }
+          .pdf-page { width: 794px; min-height: 1123px; box-sizing: border-box; padding: 48px 42px; background: #fff; }
+          .pdf-page + .pdf-page { border-top: 1px solid #e5e7eb; }
+          h1 { font-size: 22px; border-bottom: 2px solid #333; padding-bottom: 8px; margin: 0 0 14px 0; }
+          h3 { font-size: 16px; margin: 0 0 12px 0; }
+          h4 { font-size: 15px; margin: 0 0 8px 0; }
+          p { margin: 6px 0; }
+          .header-info { color: #666; font-size: 13px; margin-bottom: 20px; }
+          .exercise { margin-bottom: 28px; border: 1px solid #ddd; padding: 18px; border-radius: 8px; }
+          .badge { display: inline-block; background: #eee; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-right: 4px; margin-bottom: 8px; }
+          .consigne { font-style: italic; margin: 10px 0; font-size: 15px; }
+          .item { margin: 10px 0 10px 16px; }
+          .options { margin-left: 16px; }
+          .option { margin: 4px 0; font-size: 15px; }
+          .write-zone { border: 1px dashed #ccc; min-height: 80px; margin-top: 10px; border-radius: 4px; }
+          .nom-zone { border-bottom: 1px solid #333; width: 200px; display: inline-block; margin-left: 8px; }
+          .guide-section { margin-top: 20px; padding: 14px; background: #fff8f0; border: 1px solid #f0d8b0; border-radius: 8px; }
+          .guide-section h3 { color: #c2660a; }
+          .doc-section { margin-top: 20px; }
+          .doc-block { padding: 14px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 12px; }
+          .fiche-eleve { border: 2px dashed #999; break-inside: avoid; }
+          .preserve-lines { white-space: pre-wrap; }
+        </style>
+        <div class="pdf-root">
+          <section class="pdf-page">
+            <h1>${ex.titre}</h1>
+            <p class="header-info">Nom : <span class="nom-zone">&nbsp;</span> &nbsp;&nbsp; Date : ${format(new Date(), "d MMMM yyyy", { locale: fr })} &nbsp;&nbsp; Groupe : ${nextSession?.group_nom || ""} &nbsp;&nbsp; Niveau : ${nextSession?.niveau_cible || ""}</p>
+            <div class="exercise">
+              <span class="badge">${ex.competence}</span>
+              <span class="badge">${formatLabels[ex.format] || ex.format}</span>
+              <p class="consigne">${ex.consigne}</p>
+              ${(ex.contenu?.items || []).map((item: any, j: number) => `
+                <div class="item">
+                  <strong>${j + 1}.</strong> ${item.question}
+                  ${item.options?.length
+                    ? `<div class="options">${item.options.map((o: string) => `<div class="option">☐ ${o}</div>`).join("")}</div>`
+                    : '<div class="write-zone"></div>'}
+                </div>`).join("")}
+            </div>
+            ${guideHtml}
+          </section>
+          <section class="pdf-page">
+            ${docHtml || '<div class="doc-section"><h3>📄 Matériel pédagogique</h3><div class="doc-block">Aucun matériel complémentaire disponible pour cet exercice.</div></div>'}
+          </section>
+        </div>`;
+
+      document.body.appendChild(container);
+
+      const pages = Array.from(container.querySelectorAll(".pdf-page")) as HTMLElement[];
+      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 8;
+      const printableWidth = pageWidth - margin * 2;
+      const printableHeight = pageHeight - margin * 2;
+
+      for (let pageIndex = 0; pageIndex < pages.length; pageIndex += 1) {
+        const page = pages[pageIndex];
+        const canvas = await html2canvas(page, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: "#ffffff",
+          logging: false,
+        });
+
+        const imageData = canvas.toDataURL("image/jpeg", 0.95);
+        const renderedHeight = Math.min((canvas.height * printableWidth) / canvas.width, printableHeight);
+
+        if (pageIndex > 0) {
+          pdf.addPage();
+        }
+
+        pdf.addImage(imageData, "JPEG", margin, margin, printableWidth, renderedHeight, undefined, "FAST");
+      }
+
+      const safeTitle = (ex.titre || `exercice_${index + 1}`)
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-zA-Z0-9\s-]/g, "")
+        .trim()
+        .replace(/\s+/g, "_") || `exercice_${index + 1}`;
+
+      pdf.save(`${safeTitle}.pdf`);
+      toast.success("PDF téléchargé");
+    } catch (error) {
+      console.error(error);
+      toast.error("Impossible de générer le PDF");
+    } finally {
+      if (container?.parentNode) {
+        container.parentNode.removeChild(container);
+      }
+      toast.dismiss(loadingToast);
     }
-    printWindow.document.write(html);
-    printWindow.document.close();
-    // Auto-trigger the print/save-as-PDF dialog
-    printWindow.onload = () => printWindow.print();
-    printWindow.print();
-    toast.success("Utilisez « Enregistrer au format PDF » pour partager le fichier");
   };
 
   // ─── Exercise tracking helpers ───
