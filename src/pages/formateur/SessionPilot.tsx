@@ -1463,14 +1463,24 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
         </h3>
       )}
 
-      {exercises.length === 0 && reported.length === 0 ? (
+      {reconciling ? (
+        <Card className="border-dashed">
+          <CardContent className="py-12 text-center">
+            <Loader2 className="h-8 w-8 mx-auto text-muted-foreground/40 mb-3 animate-spin" />
+            <p className="text-muted-foreground font-medium">Recherche d'exercices liés…</p>
+          </CardContent>
+        </Card>
+      ) : exercises.length === 0 && reported.length === 0 ? (
         <Card className="border-dashed">
           <CardContent className="py-12 text-center">
             <BookOpen className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
-            <p className="text-muted-foreground font-medium">Aucun exercice rattaché</p>
+            <p className="text-muted-foreground font-medium">Aucun exercice trouvé pour cette séance</p>
             <p className="text-sm text-muted-foreground/70 mt-1 mb-4">
-              Générez des exercices IA ou rattachez-en depuis la page Séances.
+              Générez-les depuis le tableau de bord → Prochaine séance, ou utilisez le générateur ci-dessous.
             </p>
+            <Button variant="outline" size="sm" className="mb-4" onClick={() => navigate("/formateur")}>
+              <ArrowLeft className="h-4 w-4 mr-1" /> Aller au tableau de bord
+            </Button>
             <div className="flex items-center gap-1 mb-3 justify-center flex-wrap">
               {(["CO","CE","EE","EO","Structures"] as const).map((comp) => {
                 const sessionComps = (session as any)?.competences_cibles ?? [];
