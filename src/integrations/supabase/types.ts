@@ -1183,7 +1183,6 @@ export type Database = {
           id: string
           is_active: boolean
           last_login: string | null
-          mot_de_passe_initial: string | null
           nom: string
           prenom: string
           status: string
@@ -1195,7 +1194,6 @@ export type Database = {
           id: string
           is_active?: boolean
           last_login?: string | null
-          mot_de_passe_initial?: string | null
           nom?: string
           prenom?: string
           status?: string
@@ -1207,7 +1205,6 @@ export type Database = {
           id?: string
           is_active?: boolean
           last_login?: string | null
-          mot_de_passe_initial?: string | null
           nom?: string
           prenom?: string
           status?: string
