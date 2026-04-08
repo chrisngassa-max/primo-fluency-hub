@@ -109,7 +109,7 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("prenom, nom, email, mot_de_passe_initial")
+        .select("prenom, nom, email")
         .eq("id", targetId!)
         .single();
       if (error) throw error;

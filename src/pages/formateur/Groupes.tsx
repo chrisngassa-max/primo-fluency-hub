@@ -116,7 +116,7 @@ const GroupesPage = () => {
       const groupIds = groups.map((g) => g.id);
       const { data, error } = await supabase
         .from("group_members")
-        .select("*, eleve:profiles(id, nom, prenom, email, mot_de_passe_initial)")
+        .select("*, eleve:profiles(id, nom, prenom, email)")
         .in("group_id", groupIds);
       if (error) throw error;
       return data;
