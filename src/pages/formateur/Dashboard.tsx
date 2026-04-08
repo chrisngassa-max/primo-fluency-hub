@@ -506,6 +506,80 @@ ${sessionExercises.map((ex: any, i: number) => `
     printWindow.print();
   };
 
+  const handlePrintSingleExercise = (ex: any, index: number) => {
+    const guide = ex.animation_guide as any;
+    const docFournie = ex.contenu?.documentation_fournie || guide?.documentation_fournie;
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+    const guideHtml = guide ? `
+      <div class="guide-section">
+        <h3>🎲 Atelier ludique — Guide formateur</h3>
+        ${guide.scenario ? `<p><strong>🎭 Scénario :</strong> ${guide.scenario}</p>` : ""}
+        ${guide.jeu ? `<p><strong>🎲 Jeu :</strong> ${guide.jeu}</p>` : ""}
+        ${guide.materiel ? `<p><strong>📦 Matériel :</strong> ${guide.materiel}</p>` : ""}
+        ${guide.objectif_oral ? `<p><strong>🗣️ Objectif oral :</strong> ${guide.objectif_oral}</p>` : ""}
+        ${guide.consignes_formateur ? `<p><strong>📋 Consignes :</strong> ${guide.consignes_formateur}</p>` : ""}
+        ${guide.deroulement ? `<p><strong>⏱️ Déroulement :</strong> ${guide.deroulement}</p>` : ""}
+      </div>` : "";
+    const docHtml = docFournie ? `
+      <div class="doc-section">
+        <h3>📄 Matériel pédagogique</h3>
+        ${docFournie.guide_formateur ? `<div class="doc-block"><h4>Guide formateur</h4><div>${typeof docFournie.guide_formateur === "string" ? docFournie.guide_formateur : JSON.stringify(docFournie.guide_formateur, null, 2)}</div></div>` : ""}
+        ${Array.isArray(docFournie.fiches_eleves) ? docFournie.fiches_eleves.map((f: any, fi: number) => `
+          <div class="doc-block fiche-eleve">
+            <h4>Fiche élève ${fi + 1}${f.titre ? ` — ${f.titre}` : ""}${f.role ? ` (${f.role})` : ""}</h4>
+            ${f.contenu ? `<div>${typeof f.contenu === "string" ? f.contenu : JSON.stringify(f.contenu, null, 2)}</div>` : ""}
+            ${f.mission ? `<p><strong>Mission :</strong> ${f.mission}</p>` : ""}
+            ${f.lexique ? `<p><strong>Lexique :</strong> ${Array.isArray(f.lexique) ? f.lexique.join(", ") : f.lexique}</p>` : ""}
+          </div>`).join("") : ""}
+      </div>` : "";
+    const html = `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>${ex.titre}</title>
+<style>
+body { font-family: Arial, sans-serif; margin: 2cm; font-size: 16px; color: #333; }
+h1 { font-size: 22px; border-bottom: 2px solid #333; padding-bottom: 8px; }
+.header-info { color: #666; font-size: 13px; margin-bottom: 20px; }
+.exercise { margin-bottom: 28px; border: 1px solid #ddd; padding: 18px; border-radius: 8px; }
+.exercise h2 { font-size: 18px; margin: 0 0 6px 0; }
+.badge { display: inline-block; background: #eee; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-right: 4px; }
+.consigne { font-style: italic; margin: 10px 0; font-size: 15px; }
+.item { margin: 10px 0 10px 16px; }
+.options { margin-left: 16px; }
+.option { margin: 4px 0; font-size: 15px; }
+.write-zone { border: 1px dashed #ccc; min-height: 80px; margin-top: 10px; border-radius: 4px; }
+.nom-zone { border-bottom: 1px solid #333; width: 200px; display: inline-block; margin-left: 8px; }
+.guide-section { margin-top: 20px; padding: 14px; background: #fff8f0; border: 1px solid #f0d8b0; border-radius: 8px; }
+.guide-section h3 { font-size: 16px; margin: 0 0 10px 0; color: #c2660a; }
+.guide-section p { margin: 6px 0; font-size: 14px; }
+.doc-section { margin-top: 20px; page-break-before: auto; }
+.doc-section h3 { font-size: 16px; margin: 0 0 12px 0; }
+.doc-block { padding: 14px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 12px; }
+.doc-block h4 { font-size: 15px; margin: 0 0 8px 0; }
+.fiche-eleve { page-break-inside: avoid; border: 2px dashed #999; }
+@media print { body { margin: 1cm; } .guide-section { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+</style></head><body>
+<h1>${ex.titre}</h1>
+<p class="header-info">Nom : <span class="nom-zone">&nbsp;</span> &nbsp;&nbsp; Date : ${format(new Date(), "d MMMM yyyy", { locale: fr })} &nbsp;&nbsp; Groupe : ${nextSession?.group_nom || ""} &nbsp;&nbsp; Niveau : ${nextSession?.niveau_cible || ""}</p>
+<div class="exercise">
+  <span class="badge">${ex.competence}</span>
+  <span class="badge">${formatLabels[ex.format] || ex.format}</span>
+  <p class="consigne">${ex.consigne}</p>
+  ${(ex.contenu?.items || []).map((item: any, j: number) => `
+    <div class="item">
+      <strong>${j + 1}.</strong> ${item.question}
+      ${item.options?.length
+        ? `<div class="options">${item.options.map((o: string) => `<div class="option">☐ ${o}</div>`).join("")}</div>`
+        : '<div class="write-zone"></div>'}
+    </div>`).join("")}
+</div>
+${guideHtml}
+${docHtml}
+</body></html>`;
+    printWindow.document.write(html);
+    printWindow.document.close();
+    printWindow.print();
+  };
+
   // ─── Exercise tracking helpers ───
   const getTracking = (id: string): ExerciseTrackingState => exerciseTracking[id] || { isCompleted: false, isIncludedInTest: false };
 
@@ -976,6 +1050,15 @@ ${sessionExercises.map((ex: any, i: number) => `
                                     <p className="text-sm text-muted-foreground italic mt-1">{ex.consigne}</p>
                                     <p className="text-xs text-muted-foreground mt-0.5">{`${ex.contenu?.items?.length || 0} ${(ex.contenu?.items?.length || 0) === 1 ? "item" : "items"}`} · <DifficultyBadge level={ex.difficulte} /></p>
                                   </div>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="shrink-0 h-8 w-8"
+                                    title="Imprimer cet exercice"
+                                    onClick={(e) => { e.stopPropagation(); handlePrintSingleExercise(ex, i); }}
+                                  >
+                                    <Printer className="h-4 w-4" />
+                                  </Button>
                                 </div>
 
                                 {guide && (
