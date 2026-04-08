@@ -578,6 +578,7 @@ ${docHtml}
     printWindow.document.write(html);
     printWindow.document.close();
     printWindow.print();
+  };
 
   // ─── Exercise tracking helpers ───
   const getTracking = (id: string): ExerciseTrackingState => exerciseTracking[id] || { isCompleted: false, isIncludedInTest: false };
