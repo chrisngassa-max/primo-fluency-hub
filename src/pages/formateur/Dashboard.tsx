@@ -574,17 +574,17 @@ ${guideHtml}
 ${docHtml}
 </body></html>`;
 
-    // Generate a downloadable PDF via an invisible iframe print-to-PDF
-    const blob = new Blob([html], { type: "text/html" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${ex.titre.replace(/[^a-zA-Z0-9àâéèêëïîôùûüçÀÂÉÈÊËÏÎÔÙÛÜÇ\s-]/g, "").replace(/\s+/g, "_")}.html`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    toast.success("Fichier téléchargé — ouvrez-le et utilisez Ctrl+P / Cmd+P pour l'enregistrer en PDF");
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) {
+      toast.error("Impossible d'ouvrir la fenêtre — autorisez les pop-ups pour ce site");
+      return;
+    }
+    printWindow.document.write(html);
+    printWindow.document.close();
+    // Auto-trigger the print/save-as-PDF dialog
+    printWindow.onload = () => printWindow.print();
+    printWindow.print();
+    toast.success("Utilisez « Enregistrer au format PDF » pour partager le fichier");
   };
 
   // ─── Exercise tracking helpers ───
