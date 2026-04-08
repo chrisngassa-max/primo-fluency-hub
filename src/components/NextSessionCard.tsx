@@ -345,17 +345,19 @@ export default function NextSessionCard({ groupId, groupName }: NextSessionCardP
               </button>
             </CollapsibleTrigger>
             <CollapsibleContent>
-              <VigilanceDrawer
-                pointVigilance={notes.point_vigilance}
-                theme={notes?.themes?.[0]}
-                competence={competences[0]}
-                niveauDepart={nextSeance?.parcours?.niveau_depart}
-                typeDemarche={nextSeance?.parcours?.type_demarche}
-                seanceId={nextSeance.id}
-                seanceNotes={nextSeance.notes}
-                groupId={groupId}
-                sessionId={nextSeance.session_id}
-              />
+              <div className="max-h-[60vh] overflow-y-auto overscroll-contain">
+                <VigilanceDrawer
+                  pointVigilance={notes.point_vigilance}
+                  theme={notes?.themes?.[0]}
+                  competence={competences[0]}
+                  niveauDepart={nextSeance?.parcours?.niveau_depart}
+                  typeDemarche={nextSeance?.parcours?.type_demarche}
+                  seanceId={nextSeance.id}
+                  seanceNotes={nextSeance.notes}
+                  groupId={groupId}
+                  sessionId={nextSeance.session_id}
+                />
+              </div>
             </CollapsibleContent>
           </Collapsible>
         )}
