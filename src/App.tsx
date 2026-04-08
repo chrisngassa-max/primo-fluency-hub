@@ -61,12 +61,12 @@ const App = () => (
         <Sonner />
         <HashRouter>
           <Routes>
-            {/* Public */}
+            {/* Public routes */}
             <Route path="/" element={<Index />} />
             <Route path="/legal" element={<Legal />} />
             <Route path="/eleve/login" element={<LoginEleve />} />
             <Route path="/formateur/login" element={<LoginFormateur />} />
-            {/* Admin route removed — no admin dashboard */}
+            {/* Admin route intentionally omitted until a dashboard exists */}
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/unsubscribe" element={<Unsubscribe />} />
 
