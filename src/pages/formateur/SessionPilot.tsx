@@ -390,7 +390,7 @@ const SessionPilot = () => {
     }
   }, [session, isLoading, sessionExercices, reconciled, reconcile]);
 
-  const exercises = sessionExercises ?? [];
+  const exercises = sessionExercices ?? [];
   const reported = reportedExercises ?? [];
 
   const checkedCount = useMemo(
