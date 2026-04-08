@@ -336,10 +336,28 @@ export default function NextSessionCard({ groupId, groupName }: NextSessionCardP
 
         {/* Point de vigilance */}
         {notes?.point_vigilance && (
-          <div className="flex items-start gap-2 p-3 rounded-lg bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-800">
-            <AlertTriangle className="h-4 w-4 text-orange-600 dark:text-orange-400 mt-0.5 shrink-0" />
-            <p className="text-xs text-orange-700 dark:text-orange-400">{notes.point_vigilance}</p>
-          </div>
+          <Collapsible open={vigilanceOpen} onOpenChange={setVigilanceOpen}>
+            <CollapsibleTrigger asChild>
+              <button className="w-full flex items-center gap-2 p-3 rounded-lg bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-800 cursor-pointer hover:bg-orange-100 dark:hover:bg-orange-950/30 transition-colors text-left">
+                <AlertTriangle className="h-4 w-4 text-orange-600 dark:text-orange-400 shrink-0" />
+                <p className="text-xs text-orange-700 dark:text-orange-400 flex-1">{notes.point_vigilance}</p>
+                <ChevronRight className={cn("h-4 w-4 text-orange-500 shrink-0 transition-transform", vigilanceOpen && "rotate-90")} />
+              </button>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <VigilanceDrawer
+                pointVigilance={notes.point_vigilance}
+                theme={notes?.themes?.[0]}
+                competence={competences[0]}
+                niveauDepart={nextSeance?.parcours?.niveau_depart}
+                typeDemarche={nextSeance?.parcours?.type_demarche}
+                seanceId={nextSeance.id}
+                seanceNotes={nextSeance.notes}
+                groupId={groupId}
+                sessionId={nextSeance.session_id}
+              />
+            </CollapsibleContent>
+          </Collapsible>
         )}
 
         {/* Generation progress */}
