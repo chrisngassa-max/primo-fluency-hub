@@ -5,13 +5,15 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Calendar, BookOpen, Target, AlertTriangle, ArrowRight, Loader2, Sparkles } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Calendar, BookOpen, Target, AlertTriangle, ArrowRight, Loader2, Sparkles, ChevronRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import VigilanceDrawer from "@/components/VigilanceDrawer";
 
 const COMP_COLORS: Record<string, string> = {
   CO: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
