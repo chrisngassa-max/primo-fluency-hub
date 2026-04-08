@@ -1361,8 +1361,10 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
                 variant="outline"
                 className={cn(
                   "text-xs font-medium",
-                  count > 0
+                  count >= 3
                     ? "bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800"
+                    : count > 0
+                    ? "bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/30 dark:text-orange-400 dark:border-orange-800"
                     : "bg-muted text-muted-foreground border-border"
                 )}
               >
