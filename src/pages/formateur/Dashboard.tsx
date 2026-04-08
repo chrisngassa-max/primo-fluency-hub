@@ -23,6 +23,7 @@ import { toast } from "sonner";
 import { DifficultyBadge } from "@/components/DifficultyBadge";
 import MicroCompetencesPanel, { type MicroCompetence } from "@/components/MicroCompetencesPanel";
 import GenerateDailyHomeworkDialog from "@/components/GenerateDailyHomeworkDialog";
+import NextSessionCard from "@/components/NextSessionCard";
 import { cn } from "@/lib/utils";
 
 const COMPETENCE_LABELS: Record<string, string> = {
