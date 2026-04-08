@@ -280,7 +280,7 @@ export default function VigilanceDrawer({
         <div
           key={resource.id}
           className={cn(
-            "flex items-center gap-2 p-2.5 rounded-lg border text-xs transition-colors",
+            "flex flex-wrap sm:flex-nowrap items-start sm:items-center gap-2 p-2.5 rounded-lg border text-xs transition-colors",
             resource.checked
               ? "bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800"
               : "bg-background border-border"
