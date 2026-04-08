@@ -310,7 +310,87 @@ const SessionPilot = () => {
     enabled: !!session,
   });
 
-  const exercises = sessionExercices ?? [];
+  // === Reconciliation: auto-link parcours_seance → session if exercises are missing ===
+  const [reconciling, setReconciling] = useState(false);
+  const [reconciled, setReconciled] = useState(false);
+
+  const reconcile = useCallback(async () => {
+    if (!session || !id || reconciled || reconciling) return;
+    if ((sessionExercices ?? []).length > 0) return; // already has exercises
+    if (isLoading) return; // still loading
+
+    setReconciling(true);
+    try {
+      const groupId = (session as any)?.group?.id || session.group_id;
+
+      // Step 1: Check if parcours_seances already linked to this session but exercises missing
+      const { data: linkedPS } = await supabase
+        .from("parcours_seances")
+        .select("id, parcours_id")
+        .eq("session_id", id)
+        .maybeSingle();
+
+      if (linkedPS) {
+        // parcours_seance linked but no exercises — nothing more to reconcile
+        setReconciled(true);
+        setReconciling(false);
+        return;
+      }
+
+      // Step 2: Find parcours for this group, then match by title pattern
+      const { data: parcours } = await supabase
+        .from("parcours")
+        .select("id")
+        .eq("group_id", groupId)
+        .limit(1)
+        .maybeSingle();
+
+      if (!parcours) { setReconciled(true); setReconciling(false); return; }
+
+      // Try to find a parcours_seance with no session_id whose title appears in the session title
+      const { data: candidates } = await supabase
+        .from("parcours_seances")
+        .select("id, titre, ordre, session_id")
+        .eq("parcours_id", parcours.id)
+        .is("session_id", null)
+        .order("ordre");
+
+      if (!candidates || candidates.length === 0) { setReconciled(true); setReconciling(false); return; }
+
+      // Match: session.titre typically is "S{ordre} : {titre}"
+      const match = candidates.find((c) => {
+        const pattern = `S${c.ordre}`;
+        return session.titre?.includes(pattern) && session.titre?.includes(c.titre);
+      });
+
+      if (match) {
+        // Link it
+        await supabase
+          .from("parcours_seances")
+          .update({ session_id: id })
+          .eq("id", match.id);
+
+        // Refetch
+        qc.invalidateQueries({ queryKey: ["session-exercices", id] });
+        qc.invalidateQueries({ queryKey: ["parcours-seance-for-session", id] });
+        toast.success("Séance reliée au parcours automatiquement.");
+      }
+    } catch (err) {
+      console.error("Reconciliation error:", err);
+    } finally {
+      setReconciled(true);
+      setReconciling(false);
+    }
+  }, [session, id, sessionExercices, isLoading, reconciled, reconciling, qc]);
+
+  // Trigger reconciliation when data is ready
+  useMemo(() => {
+    if (session && !isLoading && (sessionExercices ?? []).length === 0 && !reconciled) {
+      reconcile();
+    }
+  }, [session, isLoading, sessionExercices, reconciled, reconcile]);
+
+  const exercises = sessionExercises ?? [];
   const reported = reportedExercises ?? [];
 
   const checkedCount = useMemo(
