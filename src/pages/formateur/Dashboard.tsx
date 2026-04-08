@@ -729,7 +729,15 @@ ${sessionExercises.map((ex: any, i: number) => `
         </Card>
       </div>
 
-      {/* ─── Progression Alerts Widget ─── */}
+      {/* ─── Prochaine séance par groupe ─── */}
+      {groupsList.length > 0 && (
+        <div className="space-y-3">
+          {groupsList.map((g: any) => (
+            <NextSessionCard key={g.id} groupId={g.id} groupName={g.nom} />
+          ))}
+        </div>
+      )}
+
       {progressionAlerts.length > 0 && (
         <Card className="border-green-200 dark:border-green-800 bg-green-50/30 dark:bg-green-950/10">
           <CardHeader className="pb-3">
