@@ -5,13 +5,15 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Calendar, BookOpen, Target, AlertTriangle, ArrowRight, Loader2, Sparkles } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Calendar, BookOpen, Target, AlertTriangle, ArrowRight, Loader2, Sparkles, ChevronRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import VigilanceDrawer from "@/components/VigilanceDrawer";
 
 const COMP_COLORS: Record<string, string> = {
   CO: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
@@ -32,6 +34,7 @@ export default function NextSessionCard({ groupId, groupName }: NextSessionCardP
   const [selectedComps, setSelectedComps] = useState<string[] | null>(null);
   const [generating, setGenerating] = useState(false);
   const [genProgress, setGenProgress] = useState(0);
+  const [vigilanceOpen, setVigilanceOpen] = useState(false);
 
   // Fetch next planned seance from parcours for this group
   const { data: nextSeance, isLoading } = useQuery({
@@ -333,10 +336,28 @@ export default function NextSessionCard({ groupId, groupName }: NextSessionCardP
 
         {/* Point de vigilance */}
         {notes?.point_vigilance && (
-          <div className="flex items-start gap-2 p-3 rounded-lg bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-800">
-            <AlertTriangle className="h-4 w-4 text-orange-600 dark:text-orange-400 mt-0.5 shrink-0" />
-            <p className="text-xs text-orange-700 dark:text-orange-400">{notes.point_vigilance}</p>
-          </div>
+          <Collapsible open={vigilanceOpen} onOpenChange={setVigilanceOpen}>
+            <CollapsibleTrigger asChild>
+              <button className="w-full flex items-center gap-2 p-3 rounded-lg bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-800 cursor-pointer hover:bg-orange-100 dark:hover:bg-orange-950/30 transition-colors text-left">
+                <AlertTriangle className="h-4 w-4 text-orange-600 dark:text-orange-400 shrink-0" />
+                <p className="text-xs text-orange-700 dark:text-orange-400 flex-1">{notes.point_vigilance}</p>
+                <ChevronRight className={cn("h-4 w-4 text-orange-500 shrink-0 transition-transform", vigilanceOpen && "rotate-90")} />
+              </button>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <VigilanceDrawer
+                pointVigilance={notes.point_vigilance}
+                theme={notes?.themes?.[0]}
+                competence={competences[0]}
+                niveauDepart={nextSeance?.parcours?.niveau_depart}
+                typeDemarche={nextSeance?.parcours?.type_demarche}
+                seanceId={nextSeance.id}
+                seanceNotes={nextSeance.notes}
+                groupId={groupId}
+                sessionId={nextSeance.session_id}
+              />
+            </CollapsibleContent>
+          </Collapsible>
         )}
 
         {/* Generation progress */}
