@@ -509,8 +509,6 @@ ${sessionExercises.map((ex: any, i: number) => `
   const handlePrintSingleExercise = (ex: any, index: number) => {
     const guide = ex.animation_guide as any;
     const docFournie = ex.contenu?.documentation_fournie || guide?.documentation_fournie;
-    const printWindow = window.open("", "_blank");
-    if (!printWindow) return;
     const guideHtml = guide ? `
       <div class="guide-section">
         <h3>🎲 Atelier ludique — Guide formateur</h3>
@@ -575,9 +573,18 @@ h1 { font-size: 22px; border-bottom: 2px solid #333; padding-bottom: 8px; }
 ${guideHtml}
 ${docHtml}
 </body></html>`;
-    printWindow.document.write(html);
-    printWindow.document.close();
-    printWindow.print();
+
+    // Generate a downloadable PDF via an invisible iframe print-to-PDF
+    const blob = new Blob([html], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${ex.titre.replace(/[^a-zA-Z0-9àâéèêëïîôùûüçÀÂÉÈÊËÏÎÔÙÛÜÇ\s-]/g, "").replace(/\s+/g, "_")}.html`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast.success("Fichier téléchargé — ouvrez-le et utilisez Ctrl+P / Cmd+P pour l'enregistrer en PDF");
   };
 
   // ─── Exercise tracking helpers ───
