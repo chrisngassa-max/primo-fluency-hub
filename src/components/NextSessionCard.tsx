@@ -137,8 +137,7 @@ export default function NextSessionCard({ groupId, groupName }: NextSessionCardP
 
       setGenProgress(5);
 
-      // 2. Call generate-exercises with the competences
-      const count = 15;
+      // 2. Call generate-exercises per competence and save exercises
       const { data: defaultPoint } = await supabase
         .from("points_a_maitriser")
         .select("id")
@@ -150,9 +149,8 @@ export default function NextSessionCard({ groupId, groupName }: NextSessionCardP
         return;
       }
 
-      // Distribute exercises across competences
+      const count = 15;
       const distribution = distributeExercises(effectiveComps, count);
-
       let totalGenerated = 0;
       const allExerciseIds: string[] = [];
 
@@ -176,8 +174,38 @@ export default function NextSessionCard({ groupId, groupName }: NextSessionCardP
 
         if (genErr) throw genErr;
 
-        const exerciseIds = result?.exerciseIds || [];
-        allExerciseIds.push(...exerciseIds);
+        // Save exercises to DB
+        const exercises = result?.exercises || [];
+        for (const ex of exercises) {
+          const { data: saved, error: saveErr } = await supabase
+            .from("exercices")
+            .insert({
+              titre: ex.titre,
+              consigne: ex.consigne,
+              format: ex.format || "qcm",
+              competence: comp as any,
+              difficulte: ex.difficulte || 5,
+              niveau_vise: nextSeance.parcours?.niveau_cible || "A1",
+              contenu: ex.contenu || {},
+              animation_guide: ex.animation_guide || null,
+              variante_niveau_bas: ex.variante_niveau_bas || null,
+              variante_niveau_haut: ex.variante_niveau_haut || null,
+              formateur_id: user.id,
+              point_a_maitriser_id: defaultPoint.id,
+              is_ai_generated: true,
+              collectif: true,
+              mode: "en_ligne" as any,
+            })
+            .select("id")
+            .single();
+
+          if (saveErr) {
+            console.error("Save exercise error:", saveErr);
+            continue;
+          }
+          if (saved) allExerciseIds.push(saved.id);
+        }
+
         totalGenerated += compCount;
         setGenProgress(Math.round((totalGenerated / count) * 90) + 5);
       }
