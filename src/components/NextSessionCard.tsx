@@ -34,6 +34,7 @@ export default function NextSessionCard({ groupId, groupName }: NextSessionCardP
   const [selectedComps, setSelectedComps] = useState<string[] | null>(null);
   const [generating, setGenerating] = useState(false);
   const [genProgress, setGenProgress] = useState(0);
+  const [vigilanceOpen, setVigilanceOpen] = useState(false);
 
   // Fetch next planned seance from parcours for this group
   const { data: nextSeance, isLoading } = useQuery({
