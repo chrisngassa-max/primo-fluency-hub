@@ -23,6 +23,7 @@ import { toast } from "sonner";
 import { DifficultyBadge } from "@/components/DifficultyBadge";
 import MicroCompetencesPanel, { type MicroCompetence } from "@/components/MicroCompetencesPanel";
 import GenerateDailyHomeworkDialog from "@/components/GenerateDailyHomeworkDialog";
+import NextSessionCard from "@/components/NextSessionCard";
 import { cn } from "@/lib/utils";
 
 const COMPETENCE_LABELS: Record<string, string> = {
@@ -728,7 +729,15 @@ ${sessionExercises.map((ex: any, i: number) => `
         </Card>
       </div>
 
-      {/* ─── Progression Alerts Widget ─── */}
+      {/* ─── Prochaine séance par groupe ─── */}
+      {groupsList.length > 0 && (
+        <div className="space-y-3">
+          {groupsList.map((g: any) => (
+            <NextSessionCard key={g.id} groupId={g.id} groupName={g.nom} />
+          ))}
+        </div>
+      )}
+
       {progressionAlerts.length > 0 && (
         <Card className="border-green-200 dark:border-green-800 bg-green-50/30 dark:bg-green-950/10">
           <CardHeader className="pb-3">
