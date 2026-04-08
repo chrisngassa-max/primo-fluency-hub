@@ -48,6 +48,8 @@ import {
   RadioGroup,
   RadioGroupItem,
 } from "@/components/ui/radio-group";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 import {
   CheckCircle2, Clock, ArrowRight, Printer, ArrowLeft,
   BookOpen, Minus, Plus, Loader2, Sparkles, Pencil, Trash2, CirclePlus, Circle,
@@ -1722,39 +1724,90 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
                             </div>
                           )}
                           <Button variant="outline" size="sm" className="gap-1 text-sky-700 border-sky-300 hover:bg-sky-50 dark:text-sky-400 dark:border-sky-700"
-                            onClick={() => {
+                            onClick={async () => {
                               const ag = ex.animation_guide;
                               const doc = ag.documentation_fournie;
-                              const printWindow = window.open("", "_blank");
-                              if (!printWindow) { toast.error("Pop-up bloqué."); return; }
-                              const ficheHtml = Array.isArray(doc.fiches_eleves) ? doc.fiches_eleves.map((f: any, fi: number) => `
+                              const loadingToast = toast.loading("Génération du PDF...");
+                              let container: HTMLDivElement | null = null;
+
+                              try {
+                                const ficheHtml = Array.isArray(doc.fiches_eleves)
+                                  ? doc.fiches_eleves.map((f: any, fi: number) => `
 <div class="fiche"><h3>📄 Fiche Élève ${fi + 1} — ${f.titre_fiche || ""}</h3>
 <div class="contenu">${f.contenu_fiche || ""}</div>
 ${Array.isArray(f.lexique_cles) && f.lexique_cles.length > 0 ? `<div class="lexique"><span>📝 Lexique :</span> ${f.lexique_cles.join(" · ")}</div>` : ""}
-</div>`).join("") : "";
-                              const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><title>Matériel — ${ex.titre}</title>
+</div>`).join("")
+                                  : "";
+
+                                container = document.createElement("div");
+                                container.style.position = "fixed";
+                                container.style.left = "-10000px";
+                                container.style.top = "0";
+                                container.style.width = "794px";
+                                container.style.background = "#ffffff";
+                                container.innerHTML = `<!DOCTYPE html><div class="pdf-root">
 <style>
-body{font-family:'Segoe UI',sans-serif;padding:24px;font-size:13pt;color:#222;max-width:210mm;margin:0 auto}
+.pdf-page{width:794px;min-height:1123px;box-sizing:border-box;padding:48px 42px;background:#fff;font-family:'Segoe UI',sans-serif;color:#222}
+.pdf-page + .pdf-page{border-top:1px solid #e5e7eb}
 h1{font-size:18pt;border-bottom:2px solid #333;padding-bottom:8px;margin-bottom:20px}
 .guide{background:#fffbeb;border:1px solid #fbbf24;border-radius:8px;padding:16px;margin-bottom:20px;white-space:pre-line;font-size:12pt}
 .guide-label{font-weight:700;color:#92400e;margin-bottom:8px;display:block}
 .atelier-info{background:#fef3c7;border-radius:6px;padding:12px;margin-bottom:16px;font-size:11pt}
 .atelier-info strong{display:inline-block;min-width:120px}
-.fiche{border:2px solid #333;border-radius:8px;padding:20px;margin-bottom:16px;page-break-before:always;page-break-inside:avoid}
+.fiche{border:2px solid #333;border-radius:8px;padding:20px;margin-bottom:16px;page-break-inside:avoid}
 .fiche h3{font-size:16pt;margin:0 0 12px;border-bottom:1px solid #ccc;padding-bottom:8px}
 .fiche .contenu{white-space:pre-line;font-size:14pt;line-height:1.8}
 .lexique{margin-top:16px;padding:12px;background:#f0f9ff;border-radius:6px;border:1px solid #bae6fd}
 .lexique span{font-weight:700;color:#1e40af}
-@media print{body{padding:0;margin:0}.fiche{page-break-before:always}}
-</style></head><body>
+</style>
+<section class="pdf-page">
 <h1>📦 ${ex.titre}</h1>
 <div class="atelier-info"><strong>🎭 Scénario :</strong> ${ag.scenario || ""}<br/><strong>🎲 Jeu :</strong> ${ag.jeu || ""}<br/><strong>📦 Matériel :</strong> ${ag.materiel || ""}<br/><strong>🗣️ Objectif :</strong> ${ag.objectif_oral || ""}</div>
 <div class="guide"><span class="guide-label">📋 Guide formateur :</span>${doc.guide_formateur || ""}</div>
-${ficheHtml}</body></html>`;
-                              printWindow.document.write(html);
-                              printWindow.document.close();
-                              printWindow.focus();
-                              setTimeout(() => printWindow.print(), 300);
+</section>
+<section class="pdf-page">
+${ficheHtml || '<div class="fiche"><h3>📄 Matériel pédagogique</h3><div class="contenu">Aucune fiche élève disponible.</div></div>'}
+</section>
+</div>`;
+
+                                document.body.appendChild(container);
+                                const pages = Array.from(container.querySelectorAll(".pdf-page")) as HTMLElement[];
+                                const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+                                const pageWidth = pdf.internal.pageSize.getWidth();
+                                const pageHeight = pdf.internal.pageSize.getHeight();
+                                const margin = 8;
+                                const printableWidth = pageWidth - margin * 2;
+                                const printableHeight = pageHeight - margin * 2;
+
+                                for (let pageIndex = 0; pageIndex < pages.length; pageIndex += 1) {
+                                  const canvas = await html2canvas(pages[pageIndex], {
+                                    scale: 2,
+                                    useCORS: true,
+                                    backgroundColor: "#ffffff",
+                                    logging: false,
+                                  });
+                                  const imageData = canvas.toDataURL("image/jpeg", 0.95);
+                                  const renderedHeight = Math.min((canvas.height * printableWidth) / canvas.width, printableHeight);
+                                  if (pageIndex > 0) pdf.addPage();
+                                  pdf.addImage(imageData, "JPEG", margin, margin, printableWidth, renderedHeight, undefined, "FAST");
+                                }
+
+                                const safeTitle = (ex.titre || "materiel")
+                                  .normalize("NFD")
+                                  .replace(/[\u0300-\u036f]/g, "")
+                                  .replace(/[^a-zA-Z0-9\s-]/g, "")
+                                  .trim()
+                                  .replace(/\s+/g, "_") || "materiel";
+
+                                pdf.save(`${safeTitle}_materiel.pdf`);
+                                toast.success("PDF téléchargé");
+                              } catch (error) {
+                                console.error(error);
+                                toast.error("Impossible de générer le PDF");
+                              } finally {
+                                if (container?.parentNode) container.parentNode.removeChild(container);
+                                toast.dismiss(loadingToast);
+                              }
                             }}>
                             <Printer className="h-3.5 w-3.5" />🖨️ Imprimer ce matériel
                           </Button>
