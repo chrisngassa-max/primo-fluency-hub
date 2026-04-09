@@ -1523,7 +1523,20 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
                 );
               })}
             </div>
-            <div className="flex items-center gap-2 justify-center">
+            <div className="flex items-center gap-2 justify-center flex-wrap">
+              <div className="flex items-center gap-2">
+                <Label className="text-xs whitespace-nowrap">Difficulté :</Label>
+                <Select value={String(generateDifficulty)} onValueChange={(v) => setGenerateDifficulty(Number(v))}>
+                  <SelectTrigger className="w-[80px] h-9">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from({ length: 11 }, (_, i) => (
+                      <SelectItem key={i} value={String(i)}>{i}/10</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <Select value={String(generateCount)} onValueChange={(v) => setGenerateCount(Number(v))}>
                 <SelectTrigger className="w-[70px] h-9">
                   <SelectValue />
