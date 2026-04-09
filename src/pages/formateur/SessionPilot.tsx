@@ -1145,20 +1145,35 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
                 );
               })}
             </div>
-            <Select value={String(generateCount)} onValueChange={(v) => setGenerateCount(Number(v))}>
-              <SelectTrigger className="w-[70px] h-9">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {[1,2,3,5,8,10,15,20].map(n => (
-                  <SelectItem key={n} value={String(n)}>{n}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Button onClick={handleGenerateExercises} disabled={generating} variant="outline" className="gap-2">
-              {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-              ✨ Générer IA
-            </Button>
+            <div className="flex items-center gap-3 flex-wrap">
+              <div className="flex items-center gap-2">
+                <Label className="text-xs whitespace-nowrap">Difficulté :</Label>
+                <Select value={String(generateDifficulty)} onValueChange={(v) => setGenerateDifficulty(Number(v))}>
+                  <SelectTrigger className="w-[80px] h-9">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from({ length: 11 }, (_, i) => (
+                      <SelectItem key={i} value={String(i)}>{i}/10</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <Select value={String(generateCount)} onValueChange={(v) => setGenerateCount(Number(v))}>
+                <SelectTrigger className="w-[70px] h-9">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {[1,2,3,5,8,10,15,20].map(n => (
+                    <SelectItem key={n} value={String(n)}>{n}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button onClick={handleGenerateExercises} disabled={generating} variant="outline" className="gap-2">
+                {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                ✨ Générer IA
+              </Button>
+            </div>
           </div>
           <Button onClick={() => setDailyHomeworkOpen(true)} disabled={generatingHomework || exercises.length === 0} variant="outline" className="gap-2">
             {generatingHomework ? <Loader2 className="h-4 w-4 animate-spin" /> : <ClipboardCheck className="h-4 w-4" />}
