@@ -89,7 +89,9 @@ const SessionPilot = () => {
   const [sending, setSending] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [generateCount, setGenerateCount] = useState(5);
-  const [generateDifficulty, setGenerateDifficulty] = useState(5);
+  const [generateDifficulty, setGenerateDifficulty] = useState(() => {
+    return Number(localStorage.getItem('pref_difficulty') ?? '5');
+  });
   const [selectedGenCompetences, setSelectedGenCompetences] = useState<string[]>([]);
   const [generatingHomework, setGeneratingHomework] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
@@ -1148,7 +1150,7 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
             <div className="flex items-center gap-3 flex-wrap">
               <div className="flex items-center gap-2">
                 <Label className="text-xs whitespace-nowrap">Difficulté :</Label>
-                <Select value={String(generateDifficulty)} onValueChange={(v) => setGenerateDifficulty(Number(v))}>
+                <Select value={String(generateDifficulty)} onValueChange={(v) => { const val = Number(v); setGenerateDifficulty(val); localStorage.setItem('pref_difficulty', String(val)); }}>
                   <SelectTrigger className="w-[80px] h-9">
                     <SelectValue />
                   </SelectTrigger>
@@ -1526,7 +1528,7 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
             <div className="flex items-center gap-2 justify-center flex-wrap">
               <div className="flex items-center gap-2">
                 <Label className="text-xs whitespace-nowrap">Difficulté :</Label>
-                <Select value={String(generateDifficulty)} onValueChange={(v) => setGenerateDifficulty(Number(v))}>
+                <Select value={String(generateDifficulty)} onValueChange={(v) => { const val = Number(v); setGenerateDifficulty(val); localStorage.setItem('pref_difficulty', String(val)); }}>
                   <SelectTrigger className="w-[80px] h-9">
                     <SelectValue />
                   </SelectTrigger>
@@ -1800,6 +1802,7 @@ ${ficheHtml || '<div class="fiche"><h3>📄 Matériel pédagogique</h3><div clas
 </div>`;
 
                                 document.body.appendChild(container);
+                                await new Promise(resolve => setTimeout(resolve, 300));
                                 const pages = Array.from(container.querySelectorAll(".pdf-page")) as HTMLElement[];
                                 const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
                                 const pageWidth = pdf.internal.pageSize.getWidth();
@@ -1814,6 +1817,7 @@ ${ficheHtml || '<div class="fiche"><h3>📄 Matériel pédagogique</h3><div clas
                                     useCORS: true,
                                     backgroundColor: "#ffffff",
                                     logging: false,
+                                    windowWidth: 800,
                                   });
                                   const imageData = canvas.toDataURL("image/jpeg", 0.95);
                                   const renderedHeight = Math.min((canvas.height * printableWidth) / canvas.width, printableHeight);
