@@ -1276,9 +1276,28 @@ ${Array.isArray(item.options) && item.options.length > 0
                   {ragTestResult.source === "banque_adapte" ? "✅ banque_adapte (RAG actif)" : ragTestResult.source === "banque" ? "✅ banque (RAG direct)" : `⚠️ ${ragTestResult.source || "absent"} (pas de RAG)`}
                 </Badge>
               </div>
-              <pre className="text-xs bg-muted p-3 rounded-md overflow-x-auto whitespace-pre-wrap max-h-[50vh]">
-                {JSON.stringify(ragTestResult, null, 2)}
-              </pre>
+              {ragTestResult.titre && (
+                <Card>
+                  <CardContent className="py-3 space-y-2">
+                    <p className="font-semibold text-sm">{ragTestResult.titre}</p>
+                    {ragTestResult.epreuve && <Badge className="text-xs">{ragTestResult.epreuve}</Badge>}
+                    {ragTestResult.niveau_cecrl && <Badge variant="outline" className="text-xs ml-1">{ragTestResult.niveau_cecrl}</Badge>}
+                    {ragTestResult.consigne && <p className="text-xs text-muted-foreground italic mt-1">{ragTestResult.consigne}</p>}
+                    {ragTestResult.justification_pedagogique && (
+                      <p className="text-xs text-muted-foreground mt-1">💡 {ragTestResult.justification_pedagogique}</p>
+                    )}
+                    {ragTestResult.image_url && (
+                      <img src={ragTestResult.image_url} alt="Illustration" className="rounded-md max-h-40 object-cover mt-2" />
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+              <details className="text-xs">
+                <summary className="cursor-pointer text-muted-foreground hover:text-foreground">Voir le JSON brut</summary>
+                <pre className="bg-muted p-3 rounded-md overflow-x-auto whitespace-pre-wrap max-h-[30vh] mt-2">
+                  {JSON.stringify(ragTestResult, null, 2)}
+                </pre>
+              </details>
             </div>
           )}
         </DialogContent>
