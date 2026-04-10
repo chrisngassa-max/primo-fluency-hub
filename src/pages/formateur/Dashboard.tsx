@@ -973,6 +973,15 @@ ${sessionExercises.map((ex: any, i: number) => `
             <div className="space-y-3">
               {[1, 2, 3].map((i) => <Skeleton key={i} className="h-20 w-full" />)}
             </div>
+          ) : groupsList.length === 0 ? (
+            <Card>
+              <CardContent className="py-12 text-center">
+                <Users className="h-12 w-12 text-muted-foreground/40 mb-3 mx-auto" />
+                <p className="text-muted-foreground font-medium">Vous n'avez pas encore de groupe actif</p>
+                <p className="text-sm text-muted-foreground/70 mt-1">Créez un groupe pour commencer à organiser vos séances.</p>
+                <Button className="mt-4" onClick={() => navigate("/formateur/groupes")}>Créer un groupe</Button>
+              </CardContent>
+            </Card>
           ) : !nextSession ? (
             <Card>
               <CardContent className="py-12 text-center">
