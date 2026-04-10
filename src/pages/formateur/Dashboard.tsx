@@ -598,6 +598,7 @@ ${sessionExercises.map((ex: any, i: number) => `
         </div>`;
 
       document.body.appendChild(container);
+      await new Promise(resolve => setTimeout(resolve, 300));
 
       const pages = Array.from(container.querySelectorAll(".pdf-page")) as HTMLElement[];
       const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
@@ -614,6 +615,7 @@ ${sessionExercises.map((ex: any, i: number) => `
           useCORS: true,
           backgroundColor: "#ffffff",
           logging: false,
+          windowWidth: 800,
         });
 
         const imageData = canvas.toDataURL("image/jpeg", 0.95);
