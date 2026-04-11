@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -17,10 +17,11 @@ import {
 } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import {
   BookOpen, CheckCircle2, Clock, Square, Send, Loader2, Filter,
-  TrendingUp, TrendingDown, Minus,
+  TrendingUp, TrendingDown, Minus, Radio, Circle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -36,7 +37,22 @@ const DevoirsFormateur = () => {
   const [resendDevoir, setResendDevoir] = useState<any>(null);
   const [difficultyChoice, setDifficultyChoice] = useState<DifficultyChoice>("same");
   const [resending, setResending] = useState(false);
+  const [activeTab, setActiveTab] = useState("historique");
 
+  // Realtime: subscribe to devoirs + resultats changes
+  useEffect(() => {
+    if (!user?.id) return;
+    const channel = supabase
+      .channel("devoirs-live-" + user.id)
+      .on("postgres_changes", { event: "*", schema: "public", table: "devoirs" }, () => {
+        qc.invalidateQueries({ queryKey: ["devoirs-formateur-all", user.id] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "resultats" }, () => {
+        qc.invalidateQueries({ queryKey: ["devoirs-resultats"] });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [user?.id, qc]);
   // Fetch all devoirs for this formateur with related data
   const { data: devoirs, isLoading } = useQuery({
     queryKey: ["devoirs-formateur-all", user?.id],
@@ -262,6 +278,15 @@ const DevoirsFormateur = () => {
         </p>
       </div>
 
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList>
+          <TabsTrigger value="historique">Historique</TabsTrigger>
+          <TabsTrigger value="live" className="gap-1.5">
+            <Radio className="h-3.5 w-3.5" /> Live
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="historique" className="space-y-6 mt-4">
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card>
@@ -408,6 +433,120 @@ const DevoirsFormateur = () => {
           </CardContent>
         </Card>
       )}
+
+        </TabsContent>
+
+        {/* Live Tab */}
+        <TabsContent value="live" className="space-y-4 mt-4">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Radio className="h-4 w-4 text-primary animate-pulse" />
+                Suivi en temps réel
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {(() => {
+                const activeDevoirs = (devoirs || []).filter((d: any) => d.statut === "en_attente" || d.statut === "fait");
+                if (activeDevoirs.length === 0) {
+                  return (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <BookOpen className="h-10 w-10 mx-auto mb-2 opacity-30" />
+                      <p className="text-sm">Aucun devoir actif à suivre en temps réel.</p>
+                    </div>
+                  );
+                }
+
+                // Group by student
+                const byStudent: Record<string, any[]> = {};
+                activeDevoirs.forEach((d: any) => {
+                  const key = d.eleve_id;
+                  if (!byStudent[key]) byStudent[key] = [];
+                  byStudent[key].push(d);
+                });
+
+                return (
+                  <div className="space-y-3">
+                    {Object.entries(byStudent).map(([eleveId, studentDevoirs]) => {
+                      const eleve = (studentDevoirs[0] as any)?.eleve;
+                      const allDone = studentDevoirs.every((d: any) => d.statut === "fait");
+                      const anyInProgress = studentDevoirs.some((d: any) => {
+                        const result = resultatMap[d.id];
+                        return d.statut === "en_attente" && result;
+                      });
+                      const currentDevoir = studentDevoirs.find((d: any) => {
+                        return d.statut === "en_attente" && !resultatMap[d.id];
+                      });
+
+                      // Compute overall status
+                      let status: "done" | "in_progress" | "not_started" = "not_started";
+                      if (allDone) status = "done";
+                      else if (anyInProgress || studentDevoirs.some((d: any) => d.statut === "fait")) status = "in_progress";
+
+                      // Compute score for done devoirs
+                      const doneDevoirs = studentDevoirs.filter((d: any) => d.statut === "fait");
+                      const scores = doneDevoirs.map((d: any) => resultatMap[d.id]?.score).filter((s: any) => s != null);
+                      const avgScore = scores.length > 0 ? Math.round(scores.reduce((a: number, b: number) => a + b, 0) / scores.length) : null;
+                      const totalTimeMs = doneDevoirs.reduce((sum: number, d: any) => sum + (resultatMap[d.id]?.correction_detaillee?.temps_ms || 0), 0);
+
+                      return (
+                        <div key={eleveId} className={cn(
+                          "flex items-center gap-3 p-3 rounded-lg border transition-colors",
+                          status === "done" ? "bg-green-50/50 dark:bg-green-950/20 border-green-200 dark:border-green-800" :
+                          status === "in_progress" ? "bg-orange-50/50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-800" :
+                          "bg-muted/30"
+                        )}>
+                          {/* Status icon */}
+                          <div className="shrink-0">
+                            {status === "done" ? (
+                              <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />
+                            ) : status === "in_progress" ? (
+                              <Circle className="h-5 w-5 text-orange-500 dark:text-orange-400 animate-pulse" />
+                            ) : (
+                              <Square className="h-5 w-5 text-muted-foreground" />
+                            )}
+                          </div>
+
+                          {/* Student info */}
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-sm">
+                              {eleve?.prenom} {eleve?.nom}
+                            </p>
+                            {status === "not_started" && (
+                              <p className="text-xs text-muted-foreground">Non commencé</p>
+                            )}
+                            {status === "in_progress" && currentDevoir && (
+                              <p className="text-xs text-orange-600 dark:text-orange-400">
+                                En cours : {(currentDevoir as any)?.exercice?.titre || "Exercice"}
+                              </p>
+                            )}
+                            {status === "in_progress" && !currentDevoir && (
+                              <p className="text-xs text-orange-600 dark:text-orange-400">En cours…</p>
+                            )}
+                            {status === "done" && (
+                              <p className="text-xs text-green-600 dark:text-green-400">
+                                Terminé — Score moyen : {avgScore != null ? `${avgScore}%` : "—"}
+                                {totalTimeMs > 0 && ` · ${Math.round(totalTimeMs / 60000)} min`}
+                              </p>
+                            )}
+                          </div>
+
+                          {/* Progress */}
+                          <div className="text-right shrink-0">
+                            <p className="text-xs text-muted-foreground">
+                              {doneDevoirs.length}/{studentDevoirs.length}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
 
       {/* Resend Dialog */}
       <Dialog open={!!resendDevoir} onOpenChange={(open) => { if (!open) setResendDevoir(null); }}>

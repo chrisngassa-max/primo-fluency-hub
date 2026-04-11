@@ -64,6 +64,7 @@ import LivePilotingSection from "@/components/LivePilotingSection";
 import { COMPETENCE_COLORS, resolveSessionCompetences, sortCompetences } from "@/lib/competences";
 import GenerateDailyHomeworkDialog from "@/components/GenerateDailyHomeworkDialog";
 import ImportFromUrlDialog from "@/components/ImportFromUrlDialog";
+import EndOfSessionSection from "@/components/EndOfSessionSection";
 import {
   Select,
   SelectContent,
@@ -2360,6 +2361,21 @@ ${ficheHtml}</body></html>`;
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* ─── End of Session Section ─── */}
+      {session && user && (
+        <EndOfSessionSection
+          sessionId={id!}
+          userId={user.id}
+          sessionStatut={session.statut}
+          groupId={(session as any)?.group?.id || session.group_id}
+          onHomeworkSent={() => qc.invalidateQueries({ queryKey: ["devoirs-formateur-all"] })}
+          onCloseSession={() => {
+            qc.invalidateQueries({ queryKey: ["session-info", id] });
+            navigate(`/formateur/seances/${id}/bilan`);
+          }}
+        />
+      )}
 
       {/* ─── Next Session Preview ─── */}
       {nextSession && (
