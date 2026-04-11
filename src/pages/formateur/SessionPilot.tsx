@@ -55,7 +55,7 @@ import {
   BookOpen, Minus, Plus, Loader2, Sparkles, Pencil, Trash2, CirclePlus, Circle,
   AlertTriangle, RotateCcw, ClipboardCheck, FileText, Users, Brain, Target,
   Eye, Volume2, ChevronDown, ChevronLeft, ChevronRight, Drama, Package, MessageCircle, Wand2,
-  Rocket, Copy, Send, UserCheck,
+  Rocket, Copy, Send, UserCheck, Link2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/DifficultyBadge";
@@ -63,6 +63,7 @@ import FeuilleAppel from "@/components/FeuilleAppel";
 import LivePilotingSection from "@/components/LivePilotingSection";
 import { COMPETENCE_COLORS, resolveSessionCompetences, sortCompetences } from "@/lib/competences";
 import GenerateDailyHomeworkDialog from "@/components/GenerateDailyHomeworkDialog";
+import ImportFromUrlDialog from "@/components/ImportFromUrlDialog";
 import {
   Select,
   SelectContent,
@@ -98,6 +99,7 @@ const SessionPilot = () => {
   const [deleteSeId, setDeleteSeId] = useState<string | null>(null);
   const [clearConfirm, setClearConfirm] = useState(false);
   const [dailyHomeworkOpen, setDailyHomeworkOpen] = useState(false);
+  const [importUrlOpen, setImportUrlOpen] = useState(false);
   const [purgingHomework, setPurgingHomework] = useState(false);
   const [rappelChecked, setRappelChecked] = useState<Record<string, boolean>>({});
   const [rappelDismissed, setRappelDismissed] = useState(false);
@@ -1175,6 +1177,9 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
                 {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
                 ✨ Générer IA
               </Button>
+              <Button variant="outline" size="sm" onClick={() => setImportUrlOpen(true)} className="gap-2">
+                <Link2 className="h-4 w-4" /> Importer depuis un lien
+              </Button>
             </div>
           </div>
           <Button onClick={() => setDailyHomeworkOpen(true)} disabled={generatingHomework || exercises.length === 0} variant="outline" className="gap-2">
@@ -1552,6 +1557,9 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
               <Button onClick={handleGenerateExercises} disabled={generating} variant="outline" className="gap-2">
                 {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
                 Générer des exercices IA
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => setImportUrlOpen(true)} className="gap-2">
+                <Link2 className="h-4 w-4" /> Importer depuis un lien
               </Button>
             </div>
           </CardContent>
@@ -2374,6 +2382,14 @@ ${ficheHtml}</body></html>`;
         currentSessionDate={session?.date_seance || new Date().toISOString()}
         nextSessions={futureSessions ?? []}
         onGenerate={handleGenerateDailyHomework}
+      />
+
+      {/* ─── Import from URL Dialog ─── */}
+      <ImportFromUrlDialog
+        open={importUrlOpen}
+        onClose={() => setImportUrlOpen(false)}
+        sessionId={id}
+        onExerciseCreated={() => qc.invalidateQueries({ queryKey: ["session-exercices", id] })}
       />
     </div>
   );

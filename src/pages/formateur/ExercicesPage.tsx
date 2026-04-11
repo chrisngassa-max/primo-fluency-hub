@@ -22,10 +22,11 @@ import { toast } from "sonner";
 import {
   BookOpen, Printer, Search, Eye, Volume2, Circle, Filter, Drama, Package, MessageCircle, Wand2,
   Pencil, Trash2, Plus, CirclePlus, CheckCircle2, Loader2, ChevronLeft, ChevronRight, Save,
-  Brain, FileText, Upload, Clock,
+  Brain, FileText, Upload, Clock, Link2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/DifficultyBadge";
+import ImportFromUrlDialog from "@/components/ImportFromUrlDialog";
 
 const COMPETENCES = ["CO", "CE", "EE", "EO", "Structures"] as const;
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
@@ -66,6 +67,7 @@ const ExercicesPage = () => {
   // ─── AI Generation State ───
   const [themeDialogOpen, setThemeDialogOpen] = useState(false);
   const [importDialogOpen, setImportDialogOpen] = useState(false);
+  const [importUrlOpen, setImportUrlOpen] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
 
   // RAG Test state
@@ -574,6 +576,10 @@ ${Array.isArray(item.options) && item.options.length > 0
           <Button size="lg" variant="secondary" className="gap-2" onClick={() => setImportDialogOpen(true)}>
             <FileText className="h-5 w-5" />
             📄 Importer &amp; Transformer
+          </Button>
+          <Button size="lg" variant="outline" className="gap-2" onClick={() => setImportUrlOpen(true)}>
+            <Link2 className="h-5 w-5" />
+            🔗 Depuis un lien
           </Button>
           <Button size="lg" variant="outline" className="gap-2" onClick={handleRagTest} disabled={ragTestLoading}>
             {ragTestLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Search className="h-5 w-5" />}
@@ -1302,6 +1308,13 @@ ${Array.isArray(item.options) && item.options.length > 0
           )}
         </DialogContent>
       </Dialog>
+
+      {/* ─── Import from URL Dialog ─── */}
+      <ImportFromUrlDialog
+        open={importUrlOpen}
+        onClose={() => setImportUrlOpen(false)}
+        onExerciseCreated={() => qc.invalidateQueries({ queryKey: ["formateur-all-exercices", user?.id] })}
+      />
     </div>
   );
 };

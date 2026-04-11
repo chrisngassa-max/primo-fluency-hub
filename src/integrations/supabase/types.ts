@@ -558,6 +558,7 @@ export type Database = {
           niveau_vise: string
           point_a_maitriser_id: string
           sequence_id: string | null
+          source_url: string | null
           sous_competence: string | null
           titre: string
           updated_at: string
@@ -584,6 +585,7 @@ export type Database = {
           niveau_vise: string
           point_a_maitriser_id: string
           sequence_id?: string | null
+          source_url?: string | null
           sous_competence?: string | null
           titre: string
           updated_at?: string
@@ -610,6 +612,7 @@ export type Database = {
           niveau_vise?: string
           point_a_maitriser_id?: string
           sequence_id?: string | null
+          source_url?: string | null
           sous_competence?: string | null
           titre?: string
           updated_at?: string
