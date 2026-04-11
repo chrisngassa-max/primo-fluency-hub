@@ -1,0 +1,1 @@
+ALTER TABLE public.session_exercices ADD COLUMN IF NOT EXISTS is_sent boolean NOT NULL DEFAULT false;

@@ -440,7 +440,7 @@ const SessionPilot = () => {
     try {
       const { error } = await supabase
         .from("session_exercices")
-        .update({ statut: "traite_en_classe" as any, updated_at: new Date().toISOString() })
+        .update({ statut: "traite_en_classe" as any, is_sent: true, updated_at: new Date().toISOString() } as any)
         .in("id", checkedIds);
       if (error) throw error;
       qc.invalidateQueries({ queryKey: ["session-exercices", id] });
@@ -1645,11 +1645,14 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
               const contenu = typeof ex?.contenu === "object" && ex?.contenu !== null ? ex.contenu : { items: [] };
               const items: any[] = Array.isArray((contenu as any).items) ? (contenu as any).items : [];
 
+              const isSent = !!(se as any).is_sent;
+
               return (
                 <AccordionItem key={se.id} value={se.id} className={cn(
                   "border rounded-lg transition-all print:break-inside-avoid",
                   isChecked && "border-green-200 bg-green-50/30 dark:border-green-800 dark:bg-green-950/30",
-                  !isChecked && checkedCount > 0 && "opacity-60"
+                  !isChecked && checkedCount > 0 && "opacity-60",
+                  isSent && "opacity-60"
                 )}>
                   <div className="flex items-center gap-3 px-4 py-3">
                     <div className="pt-0.5 print:hidden">
@@ -1661,7 +1664,12 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
                     </div>
                     <AccordionTrigger className="flex-1 min-w-0 py-0 hover:no-underline">
                       <div className="flex items-center gap-2 flex-wrap text-left">
-                        <h3 className="font-semibold text-sm">{ex?.titre || "Exercice"}</h3>
+                        <h3 className={cn("font-semibold text-sm", isSent && "line-through")}>{ex?.titre || "Exercice"}</h3>
+                        {isSent && (
+                          <Badge variant="outline" className="text-[10px] bg-muted/50 gap-1">
+                            <Send className="h-2.5 w-2.5" /> Envoyé
+                          </Badge>
+                        )}
                         <Badge variant="secondary" className="text-[10px]">{ex?.competence}</Badge>
                         <Badge variant="outline" className="text-[10px]">{ex?.format?.replace(/_/g, " ")}</Badge>
                         <DifficultyBadge level={mapDifficultyToScale10(ex?.difficulte || 3)} />
@@ -1680,6 +1688,16 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
                       </div>
                     </AccordionTrigger>
                     <div className="flex gap-1 shrink-0 print:hidden">
+                      {isSent && (
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" title="Retirer le barré"
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            await supabase.from("session_exercices").update({ is_sent: false } as any).eq("id", se.id);
+                            qc.invalidateQueries({ queryKey: ["session-exercices", id] });
+                          }}>
+                          <RotateCcw className="h-4 w-4" />
+                        </Button>
+                      )}
                       {ex?.animation_guide && (
                         <Button variant="outline" size="icon" className="h-8 w-8 text-amber-600 border-amber-200 hover:bg-amber-50 dark:border-amber-800 dark:hover:bg-amber-950"
                           onClick={(e) => { e.stopPropagation(); setAnimationGuide({ ...ex.animation_guide, titre: ex.titre }); }}>
