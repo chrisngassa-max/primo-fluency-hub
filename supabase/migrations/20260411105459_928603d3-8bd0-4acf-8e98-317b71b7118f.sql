@@ -1,0 +1,1 @@
+ALTER TABLE public.devoirs ADD COLUMN IF NOT EXISTS contexte text NOT NULL DEFAULT 'devoir';

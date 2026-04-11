@@ -300,6 +300,7 @@ export type Database = {
       }
       devoirs: {
         Row: {
+          contexte: string
           created_at: string
           date_echeance: string
           eleve_id: string
@@ -314,6 +315,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          contexte?: string
           created_at?: string
           date_echeance?: string
           eleve_id: string
@@ -328,6 +330,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          contexte?: string
           created_at?: string
           date_echeance?: string
           eleve_id?: string
