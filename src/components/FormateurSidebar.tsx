@@ -41,6 +41,7 @@ const mainNav = [
   { title: "Groupes & Élèves", url: "/formateur/groupes", icon: Users },
   { title: "Séances", url: "/formateur/seances", icon: Calendar },
   { title: "Exercices", url: "/formateur/exercices", icon: BookOpen },
+  { title: "Devoirs", url: "/formateur/devoirs", icon: ClipboardCheck },
   { title: "Importer programme", url: "/formateur/import-programme", icon: Upload },
   { title: "Plans de formation", url: "/formateur/parcours", icon: Route },
 ];
