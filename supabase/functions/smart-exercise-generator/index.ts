@@ -30,6 +30,9 @@ serve(async (req) => {
       type_demarche,
       niveau_depart,
       niveau_arrivee,
+      difficultyAdjust,   // "easier" | "harder" | null
+      lengthAdjust,       // "shorter" | "longer" | null
+      duplicateFrom,      // exercise source JSON for duplication
     } = body;
 
     const demarche = type_demarche || "titre_sejour";
@@ -41,7 +44,96 @@ serve(async (req) => {
 
     let userPrompt = "";
 
-    if (mode === "theme") {
+    // ─── Fetch URL and detect media ───
+    let resolvedSource = sourceText || "";
+    let detectedMedia: { type: "image" | "audio" | "video"; url: string; alt?: string }[] = [];
+
+    if (sourceUrl && !sourceText) {
+      try {
+        const pageRes = await fetch(sourceUrl, {
+          headers: {
+            "User-Agent": "Mozilla/5.0 (compatible; TCF-Bot/1.0)",
+            "Accept": "text/html,text/plain"
+          },
+          signal: AbortSignal.timeout(8000)
+        });
+        if (!pageRes.ok) throw new Error(`HTTP ${pageRes.status}`);
+        const rawHtml = await pageRes.text();
+
+        const baseUrl = new URL(sourceUrl).origin;
+
+        // Images
+        const imgRegex = /<img[^>]+src=["']([^"']+)["'][^>]*(?:alt=["']([^"']*)["'])?[^>]*>/gi;
+        let imgMatch;
+        while ((imgMatch = imgRegex.exec(rawHtml)) !== null) {
+          const src = imgMatch[1];
+          const alt = imgMatch[2] || "";
+          if (!src.includes("icon") && !src.includes("logo") && !src.includes("avatar") && src.length > 10) {
+            const fullUrl = src.startsWith("http") ? src : `${baseUrl}${src.startsWith("/") ? "" : "/"}${src}`;
+            detectedMedia.push({ type: "image", url: fullUrl, alt });
+          }
+        }
+
+        // Audio
+        const audioRegex = /<(?:audio|source)[^>]+src=["']([^"']+\.(?:mp3|ogg|wav|m4a|aac))["'][^>]*>/gi;
+        let audioMatch;
+        while ((audioMatch = audioRegex.exec(rawHtml)) !== null) {
+          const src = audioMatch[1];
+          const fullUrl = src.startsWith("http") ? src : `${baseUrl}${src.startsWith("/") ? "" : "/"}${src}`;
+          detectedMedia.push({ type: "audio", url: fullUrl });
+        }
+
+        // Video (YouTube embeds, video tags)
+        const videoRegex = /<(?:iframe|video|source)[^>]+(?:src|data-src)=["']([^"']*(?:youtube|youtu\.be|vimeo|video)[^"']*)["'][^>]*>/gi;
+        let videoMatch;
+        while ((videoMatch = videoRegex.exec(rawHtml)) !== null) {
+          detectedMedia.push({ type: "video", url: videoMatch[1] });
+        }
+
+        // Clean text
+        resolvedSource = rawHtml
+          .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
+          .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
+          .replace(/<[^>]+>/g, " ")
+          .replace(/\s{2,}/g, " ")
+          .trim()
+          .slice(0, 8000);
+      } catch (fetchErr) {
+        throw new Error(`Impossible de récupérer la page : ${(fetchErr as Error).message}`);
+      }
+    }
+
+    // Media context for AI prompt
+    const mediaContext = detectedMedia.length > 0
+      ? `\n\nMÉDIAS DÉTECTÉS SUR LA PAGE :\n${detectedMedia.map(m =>
+          `- ${m.type.toUpperCase()} : ${m.url}${m.alt ? ` (description: "${m.alt}")` : ""}`
+        ).join("\n")}\n\nSi un audio est présent et que la compétence est CO, utilise son URL directement dans contenu.script_audio_url.\nSi une image pertinente est présente pour CE ou EO, utilise son URL dans contenu.image_url.`
+      : "";
+
+    // ─── Build user prompt based on mode ───
+
+    if (duplicateFrom) {
+      // Duplication mode
+      userPrompt = `Voici un exercice existant à dupliquer :
+---
+Titre : ${duplicateFrom.titre}
+Compétence : ${duplicateFrom.competence}
+Format : ${duplicateFrom.format}
+Niveau : ${duplicateFrom.niveau_vise}
+Consigne : ${duplicateFrom.consigne}
+Nombre d'items : ${duplicateFrom.contenu?.items?.length ?? 5}
+---
+
+Crée un NOUVEL exercice avec :
+- La même compétence TCF (${duplicateFrom.competence})
+- Le même format (${duplicateFrom.format})
+- ${difficultyAdjust === "easier" ? "Un niveau de difficulté INFÉRIEUR (–1 cran)" : difficultyAdjust === "harder" ? "Un niveau de difficulté SUPÉRIEUR (+1 cran)" : "Le même niveau de difficulté"}
+- ${lengthAdjust === "shorter" ? "Moins d'items (2-3 items)" : lengthAdjust === "longer" ? "Plus d'items (8-10 items)" : "Le même nombre d'items"}
+- Un TEXTE SUPPORT et des QUESTIONS entièrement différents
+- Ancré dans un contexte IRN différent (autre situation de la vie quotidienne en France)
+
+Ne réutilise AUCUN contenu de l'exercice original. Même structure, autre contenu.`;
+    } else if (mode === "theme") {
       if (!theme || !competence || !niveau || !format)
         throw new Error("Champs manquants pour le mode thème");
       userPrompt = `Action : generer_exercice
@@ -55,9 +147,9 @@ Format demandé : ${format}
 Invente un support textuel réaliste (dialogue, document administratif, annonce, etc.) ancré dans un contexte IRN (Préfecture, CAF, Emploi, Logement, Médical, Transport, Citoyenneté, Commerce).
 Puis génère entre 5 et 10 questions/items correspondant exactement au format demandé et à la difficulté du niveau ${niveau}.
 Chaque item doit avoir une question, des options (si applicable), la bonne réponse et une explication pédagogique.
-Choisis le code le plus adapté dans la cartographie TCF IRN (CO1-CO4, CE1-CE4, EO1-EO4, EE1-EE3).`;
+Choisis le code le plus adapté dans la cartographie TCF IRN (CO1-CO4, CE1-CE4, EO1-EO4, EE1-EE3).${mediaContext}`;
     } else if (mode === "import") {
-      const source = sourceText || sourceUrl || "";
+      const source = resolvedSource || sourceText || sourceUrl || "";
       if (!source) throw new Error("Aucune source fournie pour l'import");
 
       if (treatment === "extract") {
@@ -66,7 +158,7 @@ Choisis le code le plus adapté dans la cartographie TCF IRN (CO1-CO4, CE1-CE4, 
 ${source}
 ---
 
-Extrais l'exercice tel quel de ce document. Restructure-le au format standard avec titre, consigne et items (question, options, bonne_reponse, explication). Attribue le code TCF IRN approprié.`;
+Extrais l'exercice tel quel de ce document. Restructure-le au format standard avec titre, consigne et items (question, options, bonne_reponse, explication). Attribue le code TCF IRN approprié.${mediaContext}`;
       } else {
         if (!targetFormat) throw new Error("Format cible requis pour la reconfiguration");
         userPrompt = `Voici un document source :
@@ -77,7 +169,7 @@ ${source}
 Reconfigure entièrement ce contenu pour créer un exercice au format "${targetFormat}" pour le TCF IRN.
 Conserve le thème et le vocabulaire du document original mais restructure tout le contenu pour qu'il corresponde parfaitement au format demandé.
 Génère entre 5 et 10 items avec question, options (si applicable), bonne_reponse et explication.
-Attribue le code TCF IRN le plus pertinent.`;
+Attribue le code TCF IRN le plus pertinent.${mediaContext}`;
       }
     } else {
       throw new Error("Mode inconnu : " + mode);
@@ -198,6 +290,8 @@ Pour chaque item, fournis TOUJOURS : question, options (tableau de chaînes, vid
                       type: "object",
                       properties: {
                         script_audio: { type: "string" },
+                        script_audio_url: { type: "string" },
+                        image_url: { type: "string" },
                         type_reponse: { type: "string", enum: ["ecrit", "oral"] },
                         criteres_evaluation: { type: "object" },
                         mots_cles_attendus: { type: "array", items: { type: "string" } },
@@ -292,7 +386,7 @@ Pour chaque item, fournis TOUJOURS : question, options (tableau de chaînes, vid
       }
     }
 
-    return new Response(JSON.stringify({ exercise }), {
+    return new Response(JSON.stringify({ exercise, detectedMedia }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
