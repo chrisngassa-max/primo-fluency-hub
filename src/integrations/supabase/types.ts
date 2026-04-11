@@ -1383,6 +1383,7 @@ export type Database = {
           exercice_id: string
           id: string
           is_bonus: boolean
+          is_sent: boolean
           notes: string | null
           ordre: number
           session_id: string
@@ -1395,6 +1396,7 @@ export type Database = {
           exercice_id: string
           id?: string
           is_bonus?: boolean
+          is_sent?: boolean
           notes?: string | null
           ordre?: number
           session_id: string
@@ -1407,6 +1409,7 @@ export type Database = {
           exercice_id?: string
           id?: string
           is_bonus?: boolean
+          is_sent?: boolean
           notes?: string | null
           ordre?: number
           session_id?: string
