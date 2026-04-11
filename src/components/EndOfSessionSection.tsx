@@ -14,9 +14,10 @@ import {
 } from "@/components/ui/tooltip";
 import { toast } from "sonner";
 import {
-  BookOpen, Send, Loader2, CheckCircle2, Lock, AlertTriangle,
+  BookOpen, Send, Loader2, CheckCircle2, Lock, AlertTriangle, Sparkles, Clock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import AutoHomeworkPreviewDialog from "@/components/AutoHomeworkPreviewDialog";
 
 interface EndOfSessionSectionProps {
   sessionId: string;
@@ -27,6 +28,8 @@ interface EndOfSessionSectionProps {
   onCloseSession?: () => void;
 }
 
+const DURATION_OPTIONS = [15, 30, 45, 60] as const;
+
 export default function EndOfSessionSection({
   sessionId, userId, sessionStatut, groupId, onHomeworkSent, onCloseSession,
 }: EndOfSessionSectionProps) {
@@ -35,6 +38,8 @@ export default function EndOfSessionSection({
   const [selectedExIds, setSelectedExIds] = useState<Record<string, boolean>>({});
   const [sending, setSending] = useState(false);
   const [closing, setClosing] = useState(false);
+  const [selectedDuration, setSelectedDuration] = useState<number>(30);
+  const [autoGenOpen, setAutoGenOpen] = useState(false);
 
   // Check if homework was already sent for this session
   const { data: sentHomework, isLoading: loadingSent } = useQuery({
@@ -128,8 +133,14 @@ export default function EndOfSessionSection({
     }
   };
 
-  const handleCloseSession = async () => {
+  const handleCloseSession = () => {
     if (!homeworkSent) return;
+    // Open auto-generation dialog instead of closing directly
+    setAutoGenOpen(true);
+  };
+
+  const handleAutoHomeworkSent = async () => {
+    // After auto homework is sent, close the session
     setClosing(true);
     try {
       const { error } = await supabase
@@ -173,8 +184,29 @@ export default function EndOfSessionSection({
             </div>
           )}
 
+          {/* Duration selector for auto-generation */}
+          <div className="space-y-2">
+            <p className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+              <Clock className="h-3 w-3" />
+              Temps de devoirs par élève
+            </p>
+            <div className="flex gap-2">
+              {DURATION_OPTIONS.map((d) => (
+                <Button
+                  key={d}
+                  variant={selectedDuration === d ? "default" : "outline"}
+                  size="sm"
+                  className="gap-1"
+                  onClick={() => setSelectedDuration(d)}
+                >
+                  ⏱ {d} min
+                </Button>
+              ))}
+            </div>
+          </div>
+
           <div className="flex flex-wrap gap-3">
-            {/* Send homework button */}
+            {/* Send homework button (manual) */}
             <Button
               variant={homeworkSent ? "outline" : "default"}
               className="gap-2"
@@ -184,7 +216,7 @@ export default function EndOfSessionSection({
               {homeworkSent ? "Envoyer d'autres devoirs" : "Envoyer les devoirs"}
             </Button>
 
-            {/* Close session button */}
+            {/* Close session button → triggers auto-generation */}
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -200,7 +232,7 @@ export default function EndOfSessionSection({
                       ) : !homeworkSent ? (
                         <Lock className="h-4 w-4 text-muted-foreground" />
                       ) : (
-                        <CheckCircle2 className="h-4 w-4" />
+                        <Sparkles className="h-4 w-4" />
                       )}
                       Clôturer la séance
                     </Button>
@@ -217,7 +249,7 @@ export default function EndOfSessionSection({
         </CardContent>
       </Card>
 
-      {/* Exercise selection dialog */}
+      {/* Manual exercise selection dialog */}
       <Dialog open={selectOpen} onOpenChange={setSelectOpen}>
         <DialogContent className="sm:max-w-2xl max-h-[80vh] flex flex-col">
           <DialogHeader>
@@ -281,6 +313,17 @@ export default function EndOfSessionSection({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Auto-generation preview dialog */}
+      <AutoHomeworkPreviewDialog
+        open={autoGenOpen}
+        onOpenChange={setAutoGenOpen}
+        sessionId={sessionId}
+        groupId={groupId}
+        userId={userId}
+        durationMinutes={selectedDuration}
+        onSent={handleAutoHomeworkSent}
+      />
     </>
   );
 }
