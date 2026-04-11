@@ -37,7 +37,22 @@ const DevoirsFormateur = () => {
   const [resendDevoir, setResendDevoir] = useState<any>(null);
   const [difficultyChoice, setDifficultyChoice] = useState<DifficultyChoice>("same");
   const [resending, setResending] = useState(false);
+  const [activeTab, setActiveTab] = useState("historique");
 
+  // Realtime: subscribe to devoirs + resultats changes
+  useEffect(() => {
+    if (!user?.id) return;
+    const channel = supabase
+      .channel("devoirs-live-" + user.id)
+      .on("postgres_changes", { event: "*", schema: "public", table: "devoirs" }, () => {
+        qc.invalidateQueries({ queryKey: ["devoirs-formateur-all", user.id] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "resultats" }, () => {
+        qc.invalidateQueries({ queryKey: ["devoirs-resultats"] });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [user?.id, qc]);
   // Fetch all devoirs for this formateur with related data
   const { data: devoirs, isLoading } = useQuery({
     queryKey: ["devoirs-formateur-all", user?.id],
