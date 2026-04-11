@@ -278,6 +278,15 @@ const DevoirsFormateur = () => {
         </p>
       </div>
 
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList>
+          <TabsTrigger value="historique">Historique</TabsTrigger>
+          <TabsTrigger value="live" className="gap-1.5">
+            <Radio className="h-3.5 w-3.5" /> Live
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="historique" className="space-y-6 mt-4">
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card>
