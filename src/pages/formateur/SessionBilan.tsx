@@ -987,8 +987,8 @@ const SessionBilan = () => {
               Sélectionnez les élèves à qui envoyer le test.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-2 py-2 max-h-60 overflow-y-auto">
-            <div className="flex items-center justify-between mb-2">
+          <div className="space-y-2 py-2">
+            <div className="flex items-center gap-2 mb-2 flex-wrap">
               <Button
                 variant="ghost"
                 size="sm"
@@ -1003,23 +1003,39 @@ const SessionBilan = () => {
               >
                 {selectedStudentIds.size === groupMembers.length ? "Tout désélectionner" : "Tout sélectionner"}
               </Button>
-              <span className="text-xs text-muted-foreground">{selectedStudentIds.size}/{groupMembers.length}</span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setSelectedStudentIds(new Set(groupMembers.filter((m) => m.present !== false).map((m) => m.eleve_id)));
+                }}
+                className="text-xs gap-1"
+              >
+                <Users className="h-3 w-3" />
+                Présents uniquement
+              </Button>
+              <span className="text-xs text-muted-foreground ml-auto">{selectedStudentIds.size}/{groupMembers.length}</span>
             </div>
-            {groupMembers.map((m) => (
-              <label key={m.eleve_id} className="flex items-center gap-2 p-2 rounded-md hover:bg-muted/50 cursor-pointer">
-                <Checkbox
-                  checked={selectedStudentIds.has(m.eleve_id)}
-                  onCheckedChange={(checked) => {
-                    setSelectedStudentIds((prev) => {
-                      const next = new Set(prev);
-                      if (checked) next.add(m.eleve_id); else next.delete(m.eleve_id);
-                      return next;
-                    });
-                  }}
-                />
-                <span className="text-sm">{m.prenom} {m.nom}</span>
-              </label>
-            ))}
+            <div className="max-h-60 overflow-y-auto space-y-1">
+              {groupMembers.map((m) => (
+                <label key={m.eleve_id} className="flex items-center gap-2 p-2 rounded-md hover:bg-muted/50 cursor-pointer">
+                  <Checkbox
+                    checked={selectedStudentIds.has(m.eleve_id)}
+                    onCheckedChange={(checked) => {
+                      setSelectedStudentIds((prev) => {
+                        const next = new Set(prev);
+                        if (checked) next.add(m.eleve_id); else next.delete(m.eleve_id);
+                        return next;
+                      });
+                    }}
+                  />
+                  <span className="text-sm">{m.prenom} {m.nom}</span>
+                  {m.present === false && (
+                    <Badge variant="outline" className="text-[10px] ml-auto">Absent</Badge>
+                  )}
+                </label>
+              ))}
+            </div>
           </div>
           <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => setConfirmSendOpen(false)}>Annuler</Button>
