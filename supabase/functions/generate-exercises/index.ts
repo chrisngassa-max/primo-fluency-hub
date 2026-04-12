@@ -272,12 +272,39 @@ IMPORTANT — Pour CHAQUE exercice, tu dois aussi proposer des VARIANTES DE DIFF
 
 Tu DOIS utiliser le tool "generate_exercises" pour retourner le résultat.${gabaritPrompt}`;
 
+    // ═══ Anti-redundancy context ═══
+    let antiRedundancyPrompt = "";
+    if (existingExercises && Array.isArray(existingExercises) && existingExercises.length > 0) {
+      const usedContexts = existingExercises.map((e: any) => e.contexte_irn).filter(Boolean);
+      const usedFormats = existingExercises.map((e: any) => e.format).filter(Boolean);
+      const usedTitles = existingExercises.map((e: any) => e.titre).filter(Boolean);
+      const usedCodes = existingExercises.map((e: any) => e.metadata?.code).filter(Boolean);
+
+      antiRedundancyPrompt = `
+
+═══ ANTI-REDONDANCE — EXERCICES DÉJÀ PRÉVUS DANS CETTE SÉANCE ═══
+La séance contient déjà ${existingExercises.length} exercice(s). Tu DOIS éviter toute redondance.
+
+Titres existants : ${usedTitles.join(" | ") || "aucun"}
+Codes TCF utilisés : ${usedCodes.join(", ") || "aucun"}
+Formats déjà utilisés : ${[...new Set(usedFormats)].join(", ") || "aucun"}
+Contextes IRN déjà utilisés : ${[...new Set(usedContexts)].join(", ") || "aucun"}
+
+RÈGLES ANTI-REDONDANCE STRICTES :
+1. NE RÉUTILISE PAS les mêmes contextes IRN — choisis parmi : Préfecture, Titre de séjour, Emploi, CAF, Médical, Logement, Transport, Citoyenneté, Commerce
+2. VARIE les formats d'exercice pour une même compétence (si QCM existe déjà, privilégie appariement, texte_lacunaire, vrai_faux, etc.)
+3. VARIE les codes TCF (si CO1 existe, utilise CO2/CO3/CO4)
+4. NE RÉPÈTE PAS les mêmes thèmes, supports textuels ou situations
+5. Chaque exercice doit apporter un contexte de vie quotidienne DIFFÉRENT
+═══════════════════════════════════════════════════════════════════`;
+    }
+
     const userPrompt = `Génère ${count} exercices pour :
 - Point à maîtriser : "${pointName}"
 - Compétence : ${competence}
 - Niveau visé : ${niveauVise}
 - Difficulté calibrée : ${diffLevel}/10${gabarit ? `\n- Gabarit séance : ${gabarit.titre} (n°${gabarit.numero})` : ""}
-${studentContextPrompt}
+${studentContextPrompt}${antiRedundancyPrompt}
 Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO2/CO3/CO4, varier les codes).`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
