@@ -99,6 +99,16 @@ export default function EndOfSessionSection({
     setSelectedExIds((prev) => ({ ...prev, [exId]: !prev[exId] }));
   };
 
+  const openSelectDialog = () => {
+    // Pre-check exercises that were marked as done in the session pilot
+    if (checkedExerciseIds.length > 0) {
+      const preSelected: Record<string, boolean> = {};
+      checkedExerciseIds.forEach((id) => { preSelected[id] = true; });
+      setSelectedExIds(preSelected);
+    }
+    setSelectOpen(true);
+  };
+
   const handleSendHomework = async () => {
     const exIds = Object.entries(selectedExIds).filter(([, v]) => v).map(([k]) => k);
     if (exIds.length === 0) { toast.warning("Sélectionnez au moins un exercice."); return; }
