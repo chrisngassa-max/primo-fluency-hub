@@ -1277,6 +1277,69 @@ export type Database = {
           },
         ]
       }
+      ressources_pedagogiques: {
+        Row: {
+          competence: Database["public"]["Enums"]["competence_type"]
+          contenu: Json
+          created_at: string
+          exercice_id: string | null
+          formateur_id: string
+          id: string
+          niveau: string
+          session_id: string | null
+          source: Database["public"]["Enums"]["ressource_source"]
+          statut: Database["public"]["Enums"]["ressource_statut"]
+          titre: string
+          type: Database["public"]["Enums"]["ressource_type"]
+          updated_at: string
+        }
+        Insert: {
+          competence: Database["public"]["Enums"]["competence_type"]
+          contenu?: Json
+          created_at?: string
+          exercice_id?: string | null
+          formateur_id: string
+          id?: string
+          niveau?: string
+          session_id?: string | null
+          source?: Database["public"]["Enums"]["ressource_source"]
+          statut?: Database["public"]["Enums"]["ressource_statut"]
+          titre: string
+          type: Database["public"]["Enums"]["ressource_type"]
+          updated_at?: string
+        }
+        Update: {
+          competence?: Database["public"]["Enums"]["competence_type"]
+          contenu?: Json
+          created_at?: string
+          exercice_id?: string | null
+          formateur_id?: string
+          id?: string
+          niveau?: string
+          session_id?: string | null
+          source?: Database["public"]["Enums"]["ressource_source"]
+          statut?: Database["public"]["Enums"]["ressource_statut"]
+          titre?: string
+          type?: Database["public"]["Enums"]["ressource_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ressources_pedagogiques_exercice_id_fkey"
+            columns: ["exercice_id"]
+            isOneToOne: false
+            referencedRelation: "exercices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ressources_pedagogiques_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       resultats: {
         Row: {
           correction_detaillee: Json
@@ -2111,6 +2174,13 @@ export type Database = {
         | "texte_lacunaire"
         | "transformation"
       exercice_mode: "papier" | "en_ligne" | "les_deux"
+      ressource_source: "auto" | "manuel"
+      ressource_statut: "draft" | "published"
+      ressource_type:
+        | "lecon"
+        | "vocabulaire"
+        | "rappel_methodo"
+        | "rappel_visuel"
       session_exercice_statut:
         | "planifie"
         | "traite_en_classe"
@@ -2272,6 +2342,14 @@ export const Constants = {
         "transformation",
       ],
       exercice_mode: ["papier", "en_ligne", "les_deux"],
+      ressource_source: ["auto", "manuel"],
+      ressource_statut: ["draft", "published"],
+      ressource_type: [
+        "lecon",
+        "vocabulaire",
+        "rappel_methodo",
+        "rappel_visuel",
+      ],
       session_exercice_statut: [
         "planifie",
         "traite_en_classe",
