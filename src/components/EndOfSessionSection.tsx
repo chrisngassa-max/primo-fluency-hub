@@ -24,6 +24,7 @@ interface EndOfSessionSectionProps {
   userId: string;
   sessionStatut: string;
   groupId: string;
+  checkedExerciseIds?: string[];
   onHomeworkSent?: () => void;
   onCloseSession?: () => void;
 }
@@ -31,7 +32,7 @@ interface EndOfSessionSectionProps {
 const DURATION_OPTIONS = [15, 30, 45, 60] as const;
 
 export default function EndOfSessionSection({
-  sessionId, userId, sessionStatut, groupId, onHomeworkSent, onCloseSession,
+  sessionId, userId, sessionStatut, groupId, checkedExerciseIds = [], onHomeworkSent, onCloseSession,
 }: EndOfSessionSectionProps) {
   const qc = useQueryClient();
   const [selectOpen, setSelectOpen] = useState(false);
@@ -96,6 +97,16 @@ export default function EndOfSessionSection({
 
   const toggleEx = (exId: string) => {
     setSelectedExIds((prev) => ({ ...prev, [exId]: !prev[exId] }));
+  };
+
+  const openSelectDialog = () => {
+    // Pre-check exercises that were marked as done in the session pilot
+    if (checkedExerciseIds.length > 0) {
+      const preSelected: Record<string, boolean> = {};
+      checkedExerciseIds.forEach((id) => { preSelected[id] = true; });
+      setSelectedExIds(preSelected);
+    }
+    setSelectOpen(true);
   };
 
   const handleSendHomework = async () => {
@@ -210,7 +221,7 @@ export default function EndOfSessionSection({
             <Button
               variant={homeworkSent ? "outline" : "default"}
               className="gap-2"
-              onClick={() => setSelectOpen(true)}
+              onClick={openSelectDialog}
             >
               <Send className="h-4 w-4" />
               {homeworkSent ? "Envoyer d'autres devoirs" : "Envoyer les devoirs"}

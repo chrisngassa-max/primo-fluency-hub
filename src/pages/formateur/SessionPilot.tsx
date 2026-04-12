@@ -2413,6 +2413,7 @@ ${ficheHtml}</body></html>`;
           userId={user.id}
           sessionStatut={session.statut}
           groupId={(session as any)?.group?.id || session.group_id}
+          checkedExerciseIds={exercises.filter((ex) => checked[ex.id]).map((ex) => (ex as any).exercice?.id || ex.exercice_id).filter(Boolean)}
           onHomeworkSent={() => qc.invalidateQueries({ queryKey: ["devoirs-formateur-all"] })}
           onCloseSession={() => {
             qc.invalidateQueries({ queryKey: ["session-info", id] });
