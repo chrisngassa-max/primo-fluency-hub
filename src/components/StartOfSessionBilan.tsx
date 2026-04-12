@@ -380,23 +380,28 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
           </Button>
         </div>
         <CardDescription>
-          Rétrospective de « {prevData.prevSessionTitre} » — Devoirs, résultats de séance et bilan
+          {noPrevSession || !hasAnyData
+            ? "Aucune séance précédente — lancez un diagnostic pré-séance pour évaluer vos élèves"
+            : `Rétrospective de « ${prevData.prevSessionTitre} » — Devoirs, résultats de séance et bilan`}
         </CardDescription>
       </CardHeader>
 
       {!collapsed && (
         <CardContent className="space-y-4">
-          <Tabs defaultValue="retrospective">
+          <Tabs defaultValue={noPrevSession || !hasAnyData ? "diagnostic" : "retrospective"}>
             <TabsList className="w-full">
-              <TabsTrigger value="retrospective" className="flex-1 text-xs">
-                📋 Rétrospective
-              </TabsTrigger>
+              {hasAnyData && (
+                <TabsTrigger value="retrospective" className="flex-1 text-xs">
+                  📋 Rétrospective
+                </TabsTrigger>
+              )}
               <TabsTrigger value="diagnostic" className="flex-1 text-xs">
                 🎯 Diagnostic pré-séance
               </TabsTrigger>
             </TabsList>
 
             {/* ─── TAB: Rétrospective ─── */}
+            {hasAnyData && (
             <TabsContent value="retrospective" className="space-y-4 mt-3">
               {/* Global synthesis */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
