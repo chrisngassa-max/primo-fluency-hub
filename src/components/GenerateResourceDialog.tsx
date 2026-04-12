@@ -16,7 +16,8 @@ import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { BookOpen, FileText, RotateCcw, Image, Loader2, Save, Printer, Eye } from "lucide-react";
+import { BookOpen, FileText, RotateCcw, Image, Loader2, Save, Printer, Eye, Check, ExternalLink } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 type ResourceType = "lecon" | "vocabulaire" | "rappel_methodo" | "rappel_visuel";
 
@@ -283,20 +284,38 @@ export default function GenerateResourceDialog({
             </ScrollArea>
 
             <div className="flex gap-2 flex-wrap">
-              <Button variant="outline" size="sm" onClick={() => setStep("select")}>
-                ← Modifier le type
-              </Button>
+              {!saved && (
+                <Button variant="outline" size="sm" onClick={() => setStep("select")}>
+                  ← Modifier le type
+                </Button>
+              )}
               <Button variant="outline" size="sm" onClick={handlePrint}>
                 <Printer className="mr-1 h-3.5 w-3.5" /> Imprimer
               </Button>
               <div className="flex-1" />
-              <Button variant="outline" size="sm" onClick={() => handleSave("draft")} disabled={saving}>
-                <Save className="mr-1 h-3.5 w-3.5" /> Brouillon
-              </Button>
-              <Button size="sm" onClick={() => handleSave("published")} disabled={saving}>
-                {saving ? <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" /> : <Eye className="mr-1 h-3.5 w-3.5" />}
-                Publier
-              </Button>
+              {saved ? (
+                <>
+                  <Badge variant="outline" className="flex items-center gap-1 text-green-600 border-green-300 bg-green-50 dark:bg-green-950/30">
+                    <Check className="h-3 w-3" /> Sauvegardée
+                  </Badge>
+                  <Button variant="outline" size="sm" onClick={() => { onOpenChange(false); resetState(); navigate("/formateur/ressources"); }}>
+                    <ExternalLink className="mr-1 h-3.5 w-3.5" /> Banque de ressources
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => { onOpenChange(false); resetState(); }}>
+                    Fermer
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button variant="outline" size="sm" onClick={() => handleSave("draft")} disabled={saving}>
+                    <Save className="mr-1 h-3.5 w-3.5" /> Brouillon
+                  </Button>
+                  <Button size="sm" onClick={() => handleSave("published")} disabled={saving}>
+                    {saving ? <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" /> : <Eye className="mr-1 h-3.5 w-3.5" />}
+                    Publier
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         ) : null}
