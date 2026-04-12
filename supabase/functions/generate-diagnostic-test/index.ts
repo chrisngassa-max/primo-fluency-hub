@@ -172,12 +172,13 @@ EXPLICATION PÉDAGOGIQUE : Pour chaque question, fournir :
     const diagnostic = JSON.parse(toolCall.function.arguments);
 
     // Validate: at least 3 questions with 4 choices each
-    if (!diagnostic.questions || diagnostic.questions.length < 3) {
-      throw new Error("Le diagnostic doit contenir au moins 3 questions");
+    if (!diagnostic.questions || diagnostic.questions.length < 8) {
+      throw new Error("Le diagnostic doit contenir au moins 8 questions pour une évaluation exhaustive");
     }
 
     for (const q of diagnostic.questions) {
-      if (q.choix && q.choix.length !== 4) {
+      // QCM questions (CO, CE, Structures) must have 4 choices; EE/EO may not have choices
+      if (q.choix && q.choix.length > 0 && q.choix.length !== 4) {
         throw new Error(`QCM invalide : ${q.competence} doit avoir 4 choix`);
       }
     }
