@@ -21,6 +21,7 @@ import {
   Upload,
   Route,
   Inbox,
+  Library,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -33,6 +34,7 @@ const mainNav = [
   { title: "Exercices", url: "/formateur/exercices", icon: BookOpen },
   { title: "Importer programme", url: "/formateur/import-programme", icon: Upload },
   { title: "Plans de formation", url: "/formateur/parcours", icon: Route },
+  { title: "Ressources", url: "/formateur/ressources", icon: Library },
 ];
 
 const monitorNav = [
