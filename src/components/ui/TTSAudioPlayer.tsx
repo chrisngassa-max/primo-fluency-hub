@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Volume2, Loader2, RotateCcw } from "lucide-react";
@@ -15,13 +15,52 @@ const TTSAudioPlayer = ({ text, className = "", onPlayComplete }: TTSAudioPlayer
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const objectUrlRef = useRef<string | null>(null);
+
+  const ensureAudioElement = useCallback(() => {
+    if (audioRef.current) return audioRef.current;
+
+    const audio = new Audio();
+    audio.preload = "auto";
+    audio.onended = () => {
+      setPlaying(false);
+      onPlayComplete?.();
+    };
+    audio.onerror = () => {
+      setPlaying(false);
+      toast.error("Erreur de lecture audio");
+    };
+
+    audioRef.current = audio;
+    return audio;
+  }, [onPlayComplete]);
+
+  useEffect(() => {
+    return () => {
+      audioRef.current?.pause();
+      if (audioRef.current) {
+        audioRef.current.src = "";
+      }
+      if (objectUrlRef.current) {
+        URL.revokeObjectURL(objectUrlRef.current);
+      }
+    };
+  }, []);
 
   const generateAndPlay = useCallback(async () => {
-    // If audio already generated, just replay
-    if (audioUrl && audioRef.current) {
-      audioRef.current.currentTime = 0;
-      audioRef.current.play();
-      setPlaying(true);
+    const audio = ensureAudioElement();
+
+    if (audioUrl) {
+      try {
+        audio.currentTime = 0;
+        await audio.play();
+        setPlaying(true);
+      } catch (err: any) {
+        console.error("Audio replay error:", err);
+        toast.error("Lecture audio bloquée", {
+          description: "Appuyez de nouveau sur le bouton pour relancer l'audio.",
+        });
+      }
       return;
     }
 
@@ -35,37 +74,41 @@ const TTSAudioPlayer = ({ text, className = "", onPlayComplete }: TTSAudioPlayer
       if (data?.error) throw new Error(data.error);
       if (!data?.audioBase64) throw new Error("Aucun audio retourné");
 
-      // Convert base64 to blob
       const byteCharacters = atob(data.audioBase64);
       const byteNumbers = new Array(byteCharacters.length);
       for (let i = 0; i < byteCharacters.length; i++) {
         byteNumbers[i] = byteCharacters.charCodeAt(i);
       }
       const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: "audio/mp3" });
+      const blob = new Blob([byteArray], { type: "audio/mpeg" });
+
+      if (objectUrlRef.current) {
+        URL.revokeObjectURL(objectUrlRef.current);
+      }
 
       const url = URL.createObjectURL(blob);
+      objectUrlRef.current = url;
+      audio.src = url;
+      audio.load();
       setAudioUrl(url);
 
-      const audio = new Audio(url);
-      audioRef.current = audio;
-      audio.onended = () => {
-        setPlaying(false);
-        onPlayComplete?.();
-      };
-      audio.onerror = () => {
-        setPlaying(false);
-        toast.error("Erreur de lecture audio");
-      };
-      await audio.play();
-      setPlaying(true);
+      try {
+        audio.currentTime = 0;
+        await audio.play();
+        setPlaying(true);
+      } catch (playErr: any) {
+        console.error("Audio play error:", playErr);
+        toast.error("Lecture audio bloquée", {
+          description: "Le son a bien été généré. Appuyez à nouveau sur Écouter pour lancer la lecture.",
+        });
+      }
     } catch (err: any) {
       console.error("TTS error:", err);
       toast.error("Impossible de générer l'audio", { description: err.message });
     } finally {
       setLoading(false);
     }
-  }, [text, audioUrl]);
+  }, [audioUrl, ensureAudioElement, text]);
 
   return (
     <div className={`flex items-center gap-2 ${className}`}>
