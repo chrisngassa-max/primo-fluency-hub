@@ -79,7 +79,7 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
       // 1. Find previous session
       const { data: prevSessions } = await supabase
         .from("sessions")
-        .select("id, titre")
+        .select("id, titre, date_seance")
         .eq("group_id", groupId)
         .lt("date_seance", session.date_seance)
         .order("date_seance", { ascending: false })
