@@ -68,6 +68,7 @@ export default function GenerateResourceDialog({
   session,
 }: GenerateResourceDialogProps) {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [selectedType, setSelectedType] = useState<ResourceType>("lecon");
   const [generating, setGenerating] = useState(false);
   const [saving, setSaving] = useState(false);
