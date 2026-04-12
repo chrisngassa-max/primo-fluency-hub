@@ -30,6 +30,7 @@ serve(async (req) => {
       niveau,      // e.g. "A1"
       weakPoints,  // optional: [{ competence, exercice, score }]
       previousSessionScores, // optional: Record<string, { avg, count }>
+      statut: requestedStatut, // optional: "pret" | "envoye" (default "envoye")
     } = body;
 
     if (!sessionId || !groupId || !competences || !niveau) {
@@ -210,7 +211,7 @@ EXPLICATION PÉDAGOGIQUE : Pour chaque question, fournir :
         contenu: diagnostic.questions,
         competences_couvertes: competencesCouvertes,
         nb_questions: diagnostic.questions.length,
-        statut: "envoye",
+        statut: requestedStatut === "pret" ? "pret" : "envoye",
       })
       .select("id")
       .single();
