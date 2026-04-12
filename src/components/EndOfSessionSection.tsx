@@ -32,7 +32,7 @@ interface EndOfSessionSectionProps {
 const DURATION_OPTIONS = [15, 30, 45, 60] as const;
 
 export default function EndOfSessionSection({
-  sessionId, userId, sessionStatut, groupId, onHomeworkSent, onCloseSession,
+  sessionId, userId, sessionStatut, groupId, checkedExerciseIds = [], onHomeworkSent, onCloseSession,
 }: EndOfSessionSectionProps) {
   const qc = useQueryClient();
   const [selectOpen, setSelectOpen] = useState(false);
