@@ -348,14 +348,11 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
     );
   }
 
-  if (!prevData) return null;
-
-  const hasHomework = prevData.homeworkTotal > 0;
-  const hasSessionResults = prevData.sessionResultsCount > 0;
-  const hasBilanTest = !!prevData.bilanTestId;
+  const noPrevSession = !prevData;
+  const hasHomework = prevData ? prevData.homeworkTotal > 0 : false;
+  const hasSessionResults = prevData ? prevData.sessionResultsCount > 0 : false;
+  const hasBilanTest = prevData ? !!prevData.bilanTestId : false;
   const hasAnyData = hasHomework || hasSessionResults || hasBilanTest;
-
-  if (!hasAnyData) return null;
 
   const scoreColor = (score: number) =>
     score >= 80 ? "text-green-600 dark:text-green-400" :
