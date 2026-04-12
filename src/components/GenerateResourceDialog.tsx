@@ -70,6 +70,7 @@ export default function GenerateResourceDialog({
   const [selectedType, setSelectedType] = useState<ResourceType>("lecon");
   const [generating, setGenerating] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [generatedResource, setGeneratedResource] = useState<GeneratedResource | null>(null);
   const [step, setStep] = useState<"select" | "preview">("select");
 
@@ -119,9 +120,11 @@ export default function GenerateResourceDialog({
         statut,
       });
       if (error) throw error;
-      toast.success(statut === "published" ? "Ressource publiée !" : "Ressource sauvegardée en brouillon.");
-      onOpenChange(false);
-      resetState();
+      setSaved(true);
+      toast.success(
+        statut === "published" ? "Ressource publiée !" : "Ressource sauvegardée !",
+        { description: "Vous pouvez l'imprimer ou la retrouver dans la banque de ressources." }
+      );
     } catch (e: any) {
       toast.error("Erreur de sauvegarde", { description: e.message });
     } finally {
@@ -133,6 +136,7 @@ export default function GenerateResourceDialog({
     setStep("select");
     setGeneratedResource(null);
     setSelectedType("lecon");
+    setSaved(false);
   };
 
   const handleClose = (open: boolean) => {
