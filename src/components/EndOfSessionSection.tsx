@@ -24,6 +24,7 @@ interface EndOfSessionSectionProps {
   userId: string;
   sessionStatut: string;
   groupId: string;
+  checkedExerciseIds?: string[];
   onHomeworkSent?: () => void;
   onCloseSession?: () => void;
 }
