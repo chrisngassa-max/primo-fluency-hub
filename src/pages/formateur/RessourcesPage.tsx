@@ -52,6 +52,7 @@ export default function RessourcesPage() {
   const [filterType, setFilterType] = useState<string>("all");
   const [filterCompetence, setFilterCompetence] = useState<string>("all");
   const [filterNiveau, setFilterNiveau] = useState<string>("all");
+  const [filterSession, setFilterSession] = useState<string>("all");
   const [previewResource, setPreviewResource] = useState<any>(null);
 
   const { data: resources, isLoading } = useQuery({
@@ -68,10 +69,21 @@ export default function RessourcesPage() {
     enabled: !!user,
   });
 
+  // Extract unique sessions for filter
+  const sessionOptions = React.useMemo(() => {
+    if (!resources) return [];
+    const map = new Map<string, string>();
+    resources.forEach((r: any) => {
+      if (r.session_id && r.sessions?.titre) map.set(r.session_id, r.sessions.titre);
+    });
+    return Array.from(map, ([id, titre]) => ({ id, titre }));
+  }, [resources]);
+
   const filtered = resources?.filter((r: any) => {
     if (filterType !== "all" && r.type !== filterType) return false;
     if (filterCompetence !== "all" && r.competence !== filterCompetence) return false;
     if (filterNiveau !== "all" && r.niveau !== filterNiveau) return false;
+    if (filterSession !== "all" && r.session_id !== filterSession) return false;
     if (search) {
       const q = search.toLowerCase();
       return r.titre?.toLowerCase().includes(q) || r.contenu?.resume?.toLowerCase().includes(q);
@@ -190,6 +202,17 @@ export default function RessourcesPage() {
                 <SelectItem value="CE">CE</SelectItem>
                 <SelectItem value="EE">EE</SelectItem>
                 <SelectItem value="EO">EO</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={filterSession} onValueChange={setFilterSession}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Séance" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Toutes les séances</SelectItem>
+                {sessionOptions.map((s) => (
+                  <SelectItem key={s.id} value={s.id}>{s.titre}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
             <Select value={filterNiveau} onValueChange={setFilterNiveau}>
