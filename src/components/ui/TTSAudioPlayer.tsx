@@ -35,6 +35,30 @@ const TTSAudioPlayer = ({ text, className = "", onPlayComplete }: TTSAudioPlayer
     return audio;
   }, [onPlayComplete]);
 
+  const speakWithBrowserFallback = useCallback((utterance: SpeechSynthesisUtterance | null, message?: string) => {
+    if (!utterance || !("speechSynthesis" in window)) return false;
+
+    utterance.text = message || text;
+    if (!utterance.text.trim()) return false;
+
+    utterance.lang = "fr-FR";
+    utterance.rate = 0.95;
+    utterance.pitch = 1;
+    utterance.onstart = () => setPlaying(true);
+    utterance.onend = () => {
+      setPlaying(false);
+      onPlayComplete?.();
+    };
+    utterance.onerror = () => {
+      setPlaying(false);
+      toast.error("Lecture audio impossible");
+    };
+
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+    return true;
+  }, [onPlayComplete, text]);
+
   useEffect(() => {
     return () => {
       audioRef.current?.pause();
@@ -44,22 +68,34 @@ const TTSAudioPlayer = ({ text, className = "", onPlayComplete }: TTSAudioPlayer
       if (objectUrlRef.current) {
         URL.revokeObjectURL(objectUrlRef.current);
       }
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
     };
   }, []);
 
   const generateAndPlay = useCallback(async () => {
     const audio = ensureAudioElement();
+    const browserUtterance = typeof window !== "undefined" && "SpeechSynthesisUtterance" in window
+      ? new SpeechSynthesisUtterance("")
+      : null;
 
     if (audioUrl) {
       try {
+        if (typeof window !== "undefined" && "speechSynthesis" in window) {
+          window.speechSynthesis.cancel();
+        }
         audio.currentTime = 0;
         await audio.play();
         setPlaying(true);
       } catch (err: any) {
         console.error("Audio replay error:", err);
-        toast.error("Lecture audio bloquée", {
-          description: "Appuyez de nouveau sur le bouton pour relancer l'audio.",
-        });
+        const didFallback = speakWithBrowserFallback(browserUtterance);
+        if (!didFallback) {
+          toast.error("Lecture audio bloquée", {
+            description: "Appuyez de nouveau sur le bouton pour relancer l'audio.",
+          });
+        }
       }
       return;
     }
@@ -93,22 +129,31 @@ const TTSAudioPlayer = ({ text, className = "", onPlayComplete }: TTSAudioPlayer
       setAudioUrl(url);
 
       try {
+        if (typeof window !== "undefined" && "speechSynthesis" in window) {
+          window.speechSynthesis.cancel();
+        }
         audio.currentTime = 0;
         await audio.play();
         setPlaying(true);
       } catch (playErr: any) {
         console.error("Audio play error:", playErr);
-        toast.error("Lecture audio bloquée", {
-          description: "Le son a bien été généré. Appuyez à nouveau sur Écouter pour lancer la lecture.",
-        });
+        const didFallback = speakWithBrowserFallback(browserUtterance);
+        if (!didFallback) {
+          toast.error("Lecture audio bloquée", {
+            description: "Le son a bien été généré. Appuyez à nouveau sur Écouter pour lancer la lecture.",
+          });
+        }
       }
     } catch (err: any) {
       console.error("TTS error:", err);
-      toast.error("Impossible de générer l'audio", { description: err.message });
+      const didFallback = speakWithBrowserFallback(browserUtterance);
+      if (!didFallback) {
+        toast.error("Impossible de générer l'audio", { description: err.message });
+      }
     } finally {
       setLoading(false);
     }
-  }, [audioUrl, ensureAudioElement, text]);
+  }, [audioUrl, ensureAudioElement, speakWithBrowserFallback, text]);
 
   return (
     <div className={`flex items-center gap-2 ${className}`}>
