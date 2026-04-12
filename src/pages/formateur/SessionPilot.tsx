@@ -2433,6 +2433,14 @@ ${ficheHtml}</body></html>`;
         sessionId={id}
         onExerciseCreated={() => qc.invalidateQueries({ queryKey: ["session-exercices", id] })}
       />
+
+      {/* ─── Generate Resource Dialog ─── */}
+      <GenerateResourceDialog
+        open={!!resourceExercise}
+        onOpenChange={(o) => !o && setResourceExercise(null)}
+        exercise={resourceExercise || undefined}
+        session={session ? { id: session.id, titre: session.titre, objectifs: session.objectifs, niveau_cible: session.niveau_cible } : undefined}
+      />
     </div>
   );
 };
