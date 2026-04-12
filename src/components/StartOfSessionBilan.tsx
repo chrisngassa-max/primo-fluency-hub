@@ -348,14 +348,11 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
     );
   }
 
-  if (!prevData) return null;
-
-  const hasHomework = prevData.homeworkTotal > 0;
-  const hasSessionResults = prevData.sessionResultsCount > 0;
-  const hasBilanTest = !!prevData.bilanTestId;
+  const noPrevSession = !prevData;
+  const hasHomework = prevData ? prevData.homeworkTotal > 0 : false;
+  const hasSessionResults = prevData ? prevData.sessionResultsCount > 0 : false;
+  const hasBilanTest = prevData ? !!prevData.bilanTestId : false;
   const hasAnyData = hasHomework || hasSessionResults || hasBilanTest;
-
-  if (!hasAnyData) return null;
 
   const scoreColor = (score: number) =>
     score >= 80 ? "text-green-600 dark:text-green-400" :
@@ -383,23 +380,28 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
           </Button>
         </div>
         <CardDescription>
-          Rétrospective de « {prevData.prevSessionTitre} » — Devoirs, résultats de séance et bilan
+          {noPrevSession || !hasAnyData
+            ? "Aucune séance précédente — lancez un diagnostic pré-séance pour évaluer vos élèves"
+            : `Rétrospective de « ${prevData.prevSessionTitre} » — Devoirs, résultats de séance et bilan`}
         </CardDescription>
       </CardHeader>
 
       {!collapsed && (
         <CardContent className="space-y-4">
-          <Tabs defaultValue="retrospective">
+          <Tabs defaultValue={noPrevSession || !hasAnyData ? "diagnostic" : "retrospective"}>
             <TabsList className="w-full">
-              <TabsTrigger value="retrospective" className="flex-1 text-xs">
-                📋 Rétrospective
-              </TabsTrigger>
+              {hasAnyData && (
+                <TabsTrigger value="retrospective" className="flex-1 text-xs">
+                  📋 Rétrospective
+                </TabsTrigger>
+              )}
               <TabsTrigger value="diagnostic" className="flex-1 text-xs">
                 🎯 Diagnostic pré-séance
               </TabsTrigger>
             </TabsList>
 
             {/* ─── TAB: Rétrospective ─── */}
+            {hasAnyData && (
             <TabsContent value="retrospective" className="space-y-4 mt-3">
               {/* Global synthesis */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
@@ -617,6 +619,7 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
                 )}
               </Accordion>
             </TabsContent>
+            )}
 
             {/* ─── TAB: Diagnostic pré-séance ─── */}
             <TabsContent value="diagnostic" className="space-y-4 mt-3">
@@ -624,10 +627,10 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
                 <div className="flex items-start gap-3">
                   <Target className="h-5 w-5 text-primary mt-0.5 shrink-0" />
                   <div>
-                    <p className="text-sm font-medium">Test diagnostique rapide</p>
+                    <p className="text-sm font-medium">Test diagnostique exhaustif (~5 min)</p>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      Génère un mini-test QCM (3-5 questions, format TCF IRN) basé sur les compétences ciblées
-                      de cette séance{prevData.weakCompetences.length > 0 && ` et les points faibles détectés (${prevData.weakCompetences.join(", ")})`}.
+                      Génère un test QCM de 8-15 questions (format TCF IRN) basé sur les compétences ciblées
+                      de cette séance{prevData?.weakCompetences && prevData.weakCompetences.length > 0 && ` et les points faibles détectés (${prevData.weakCompetences.join(", ")})`}.
                       Les résultats calibrent automatiquement le générateur d'exercices.
                     </p>
                   </div>
@@ -638,7 +641,7 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
                   <span className="text-xs text-muted-foreground">Compétences testées :</span>
                   {(session.competences_cibles?.length
                     ? session.competences_cibles
-                    : prevData.weakCompetences.length
+                    : prevData?.weakCompetences?.length
                       ? prevData.weakCompetences.slice(0, 2)
                       : ["CE"]
                   ).map((comp) => (
