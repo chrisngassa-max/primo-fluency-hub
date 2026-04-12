@@ -459,13 +459,27 @@ const SessionPilot = () => {
     return "planifie";
   };
 
-  // ─── Send checked exercises to students ───
-  const handleSendToStudents = async () => {
+  // ─── Open send dialog ───
+  const handleOpenSendDialog = () => {
     const checkedIds = exercises.filter((ex) => checked[ex.id]).map((ex) => ex.id);
     if (checkedIds.length === 0) {
       toast.warning("Cochez au moins un exercice à envoyer.");
       return;
     }
+    // Pre-select present students
+    const presentIds = new Set<string>();
+    (groupMembers ?? []).forEach((m: any) => {
+      const isPresent = presenceMap.get(m.eleve_id);
+      if (isPresent !== false) presentIds.add(m.eleve_id);
+    });
+    setSendSelectedIds(presentIds);
+    setSendDialogOpen(true);
+  };
+
+  // ─── Send checked exercises to selected students ───
+  const handleConfirmSendToStudents = async () => {
+    const checkedIds = exercises.filter((ex) => checked[ex.id]).map((ex) => ex.id);
+    if (checkedIds.length === 0 || sendSelectedIds.size === 0) return;
     setSending(true);
     try {
       const { error } = await supabase
@@ -474,7 +488,8 @@ const SessionPilot = () => {
         .in("id", checkedIds);
       if (error) throw error;
       qc.invalidateQueries({ queryKey: ["session-exercices", id] });
-      toast.success(`${checkedIds.length} exercice(s) envoyé(s) aux élèves du groupe !`);
+      setSendDialogOpen(false);
+      toast.success(`${checkedIds.length} exercice(s) envoyé(s) à ${sendSelectedIds.size} élève(s) !`);
     } catch (e: any) {
       toast.error("Erreur d'envoi", { description: e.message });
     } finally {
