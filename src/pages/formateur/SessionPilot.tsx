@@ -1335,6 +1335,15 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
         </CardContent>
       </Card>
 
+      {/* ─── Rappel de clôture de séance précédente ─── */}
+      {session && (
+        <SessionClosureReminder
+          currentSessionId={id!}
+          groupId={(session as any)?.group?.id || session.group_id}
+          currentSessionDate={session.date_seance}
+        />
+      )}
+
       {/* ─── Bilan de début de séance (rétrospective + diagnostic) ─── */}
       {session && user && (
         <StartOfSessionBilan
