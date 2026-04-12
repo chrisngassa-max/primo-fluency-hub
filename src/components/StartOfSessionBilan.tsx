@@ -13,11 +13,15 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
+} from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import {
   Brain, BookOpen, AlertTriangle, TrendingUp, TrendingDown, Minus,
   CheckCircle2, XCircle, Clock, Users, BarChart3, Target, Loader2,
-  Sparkles, ChevronDown, ChevronUp,
+  Sparkles, ChevronDown, ChevronUp, Send, UserCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { COMPETENCE_COLORS } from "@/lib/competences";
