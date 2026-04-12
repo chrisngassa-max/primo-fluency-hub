@@ -619,6 +619,7 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
                 )}
               </Accordion>
             </TabsContent>
+            )}
 
             {/* ─── TAB: Diagnostic pré-séance ─── */}
             <TabsContent value="diagnostic" className="space-y-4 mt-3">
