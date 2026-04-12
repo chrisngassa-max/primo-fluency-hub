@@ -360,10 +360,19 @@ const SessionBilan = () => {
         .from("group_members")
         .select("eleve_id, profile:profiles(nom, prenom)")
         .eq("group_id", session.group_id);
+
+      const { data: presences } = await supabase
+        .from("presences")
+        .select("eleve_id, present")
+        .eq("session_id", id!);
+
+      const presenceMap = new Map((presences ?? []).map((p: any) => [p.eleve_id, p.present]));
+
       const mapped = (members || []).map((m: any) => ({
         eleve_id: m.eleve_id,
         nom: m.profile?.nom || "",
         prenom: m.profile?.prenom || "",
+        present: presenceMap.get(m.eleve_id) ?? true,
       }));
       setGroupMembers(mapped);
       setSelectedStudentIds(new Set(mapped.map((m: any) => m.eleve_id)));
