@@ -68,6 +68,7 @@ import EndOfSessionSection from "@/components/EndOfSessionSection";
 import GenerateResourceDialog from "@/components/GenerateResourceDialog";
 import AutoResourceSuggestions from "@/components/AutoResourceSuggestions";
 import StartOfSessionBilan from "@/components/StartOfSessionBilan";
+import SessionClosureReminder from "@/components/SessionClosureReminder";
 import {
   Select,
   SelectContent,
@@ -1333,6 +1334,15 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
           </div>
         </CardContent>
       </Card>
+
+      {/* ─── Rappel de clôture de séance précédente ─── */}
+      {session && (
+        <SessionClosureReminder
+          currentSessionId={id!}
+          groupId={(session as any)?.group?.id || session.group_id}
+          currentSessionDate={session.date_seance}
+        />
+      )}
 
       {/* ─── Bilan de début de séance (rétrospective + diagnostic) ─── */}
       {session && user && (

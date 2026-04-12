@@ -79,7 +79,7 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
       // 1. Find previous session
       const { data: prevSessions } = await supabase
         .from("sessions")
-        .select("id, titre")
+        .select("id, titre, date_seance")
         .eq("group_id", groupId)
         .lt("date_seance", session.date_seance)
         .order("date_seance", { ascending: false })
@@ -102,13 +102,24 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
         memberMap.set(m.eleve_id, `${m.eleve?.prenom || ""} ${m.eleve?.nom || ""}`);
       });
 
-      // 3. Homework from previous session
+      // 3. Homework: ALL devoirs for group members between prev and current session
       const { data: devoirs } = await supabase
+        .from("devoirs")
+        .select("*, exercice:exercices(titre, competence)")
+        .in("eleve_id", memberIds)
+        .gte("created_at", prevSessions[0].date_seance || "2000-01-01")
+        .lt("created_at", session.date_seance);
+
+      // Also include devoirs explicitly linked to the previous session
+      const { data: sessionDevoirs } = await supabase
         .from("devoirs")
         .select("*, exercice:exercices(titre, competence)")
         .eq("session_id", prevSessionId);
 
-      const hw = devoirs ?? [];
+      // Merge and deduplicate
+      const allDevoirsMap = new Map<string, any>();
+      [...(devoirs ?? []), ...(sessionDevoirs ?? [])].forEach((d: any) => allDevoirsMap.set(d.id, d));
+      const hw = Array.from(allDevoirsMap.values());
       const homeworkTotal = hw.length;
       const homeworkDone = hw.filter((d: any) => d.statut === "fait" || d.statut === "arrete").length;
       const homeworkExpired = hw.filter((d: any) => d.statut === "expire").length;
@@ -141,12 +152,11 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
         }
       }
 
-      // 4. Previous session exercise results (séance en classe)
+      // 4. Previous session exercise results (ALL exercises, not just treated)
       const { data: prevSeExercices } = await supabase
         .from("session_exercices")
         .select("exercice_id, exercice:exercices(titre, competence)")
-        .eq("session_id", prevSessionId)
-        .eq("statut", "traite_en_classe");
+        .eq("session_id", prevSessionId);
 
       const prevExIds = (prevSeExercices ?? []).map((se: any) => se.exercice_id);
       let sessionResultsCount = 0;
