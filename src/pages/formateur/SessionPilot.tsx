@@ -66,6 +66,7 @@ import GenerateDailyHomeworkDialog from "@/components/GenerateDailyHomeworkDialo
 import ImportFromUrlDialog from "@/components/ImportFromUrlDialog";
 import EndOfSessionSection from "@/components/EndOfSessionSection";
 import GenerateResourceDialog from "@/components/GenerateResourceDialog";
+import AutoResourceSuggestions from "@/components/AutoResourceSuggestions";
 import {
   Select,
   SelectContent,
@@ -2369,6 +2370,16 @@ ${ficheHtml}</body></html>`;
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* ─── Auto Resource Suggestions (Part 1) ─── */}
+      {session && exercises.length > 0 && (
+        <AutoResourceSuggestions
+          sessionId={id!}
+          session={{ id: session.id, titre: session.titre, objectifs: session.objectifs, niveau_cible: session.niveau_cible }}
+          exercises={exercises.map((se: any) => ({ id: se.id, exercice: se.exercice, statut: se.statut }))}
+          checkedExercises={checked}
+        />
+      )}
 
       {/* ─── End of Session Section ─── */}
       {session && user && (
