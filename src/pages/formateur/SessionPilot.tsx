@@ -93,6 +93,8 @@ const SessionPilot = () => {
   const [checked, setChecked] = useState<Record<string, boolean>>({});
   const [saving, setSaving] = useState(false);
   const [sending, setSending] = useState(false);
+  const [sendDialogOpen, setSendDialogOpen] = useState(false);
+  const [sendSelectedIds, setSendSelectedIds] = useState<Set<string>>(new Set());
   const [generating, setGenerating] = useState(false);
   const [generateCount, setGenerateCount] = useState(5);
   const [generateDifficulty, setGenerateDifficulty] = useState(() => {
