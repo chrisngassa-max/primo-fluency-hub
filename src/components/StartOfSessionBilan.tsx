@@ -75,6 +75,12 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
 }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [generatingDiag, setGeneratingDiag] = useState(false);
+  const [diagGenerated, setDiagGenerated] = useState(false);
+  const [diagSendOpen, setDiagSendOpen] = useState(false);
+  const [diagSending, setDiagSending] = useState(false);
+  const [diagSelectedIds, setDiagSelectedIds] = useState<Set<string>>(new Set());
+  const [diagMembers, setDiagMembers] = useState<{ eleve_id: string; nom: string; prenom: string; present?: boolean }[]>([]);
+  const [diagBilanTestId, setDiagBilanTestId] = useState<string | null>(null);
 
   // ─── Fetch comprehensive previous session data ───
   const { data: prevData, isLoading } = useQuery<PrevSessionData | null>({
