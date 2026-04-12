@@ -68,6 +68,7 @@ import EndOfSessionSection from "@/components/EndOfSessionSection";
 import GenerateResourceDialog from "@/components/GenerateResourceDialog";
 import AutoResourceSuggestions from "@/components/AutoResourceSuggestions";
 import StartOfSessionBilan from "@/components/StartOfSessionBilan";
+import SessionClosureReminder from "@/components/SessionClosureReminder";
 import {
   Select,
   SelectContent,
