@@ -68,7 +68,13 @@ const BilanTestPassation = () => {
     enabled: !!testId && !!user?.id,
   });
 
-  const questions: any[] = bilanTest?.contenu || [];
+  // Normalize question fields (generator uses consigne/support/choix, legacy uses question/script_audio/options)
+  const questions: any[] = (bilanTest?.contenu || []).map((q: any) => ({
+    ...q,
+    question: q.question || q.consigne || "",
+    script_audio: q.script_audio || q.support || "",
+    options: q.options || q.choix || [],
+  }));
   const currentQ = questions[currentIdx];
   const answeredCount = Object.keys(answers).length;
 
