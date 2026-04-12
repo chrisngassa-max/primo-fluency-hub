@@ -641,7 +641,7 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
                   <span className="text-xs text-muted-foreground">Compétences testées :</span>
                   {(session.competences_cibles?.length
                     ? session.competences_cibles
-                    : prevData.weakCompetences.length
+                    : prevData?.weakCompetences?.length
                       ? prevData.weakCompetences.slice(0, 2)
                       : ["CE"]
                   ).map((comp) => (
