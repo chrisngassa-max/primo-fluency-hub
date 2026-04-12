@@ -67,6 +67,7 @@ import ImportFromUrlDialog from "@/components/ImportFromUrlDialog";
 import EndOfSessionSection from "@/components/EndOfSessionSection";
 import GenerateResourceDialog from "@/components/GenerateResourceDialog";
 import AutoResourceSuggestions from "@/components/AutoResourceSuggestions";
+import StartOfSessionBilan from "@/components/StartOfSessionBilan";
 import {
   Select,
   SelectContent,
@@ -1333,54 +1334,22 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
         </CardContent>
       </Card>
 
-      {homeworkStats && homeworkStats.total > 0 && (
-        <Card className="border-primary/20 print:hidden">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Brain className="h-5 w-5 text-primary" />
-              Bilan des devoirs (séance précédente)
-            </CardTitle>
-            <CardDescription>Débriefing de début de cours — 5 à 10 minutes suggérées</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <div className="text-center p-3 rounded-lg bg-muted/50">
-                <p className="text-2xl font-bold text-primary">{homeworkStats.completionRate}%</p>
-                <p className="text-[11px] text-muted-foreground">Complétion</p>
-              </div>
-              <div className="text-center p-3 rounded-lg bg-muted/50">
-                <p className="text-2xl font-bold text-green-600">{homeworkStats.done}</p>
-                <p className="text-[11px] text-muted-foreground">Faits</p>
-              </div>
-              <div className="text-center p-3 rounded-lg bg-muted/50">
-                <p className="text-2xl font-bold text-orange-600">{homeworkStats.pending}</p>
-                <p className="text-[11px] text-muted-foreground">En attente</p>
-              </div>
-              <div className="text-center p-3 rounded-lg bg-muted/50">
-                <p className="text-2xl font-bold">{homeworkStats.avgScore > 0 ? `${homeworkStats.avgScore}%` : "—"}</p>
-                <p className="text-[11px] text-muted-foreground">Score moyen</p>
-              </div>
-            </div>
-            <Progress value={homeworkStats.completionRate} className="h-2" />
-            {homeworkStats.lowScoreItems.length > 0 && (
-              <div className="space-y-2">
-                <p className="text-xs font-semibold text-destructive flex items-center gap-1">
-                  <AlertTriangle className="h-3.5 w-3.5" />
-                  Points de blocage détectés
-                </p>
-                <div className="space-y-1">
-                  {homeworkStats.lowScoreItems.slice(0, 5).map((item, i) => (
-                    <div key={i} className="flex items-center justify-between text-xs p-2 rounded-md bg-destructive/5 border border-destructive/10">
-                      <span className="font-medium">{item.eleve}</span>
-                      <span className="text-muted-foreground">{item.exercice}</span>
-                      <Badge variant="destructive" className="text-[10px]">{item.score}%</Badge>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+      {/* ─── Bilan de début de séance (rétrospective + diagnostic) ─── */}
+      {session && user && (
+        <StartOfSessionBilan
+          sessionId={id!}
+          userId={user.id}
+          groupId={(session as any)?.group?.id || session.group_id}
+          session={{
+            id: session.id,
+            titre: session.titre,
+            objectifs: session.objectifs,
+            niveau_cible: session.niveau_cible,
+            date_seance: session.date_seance,
+            group_id: (session as any)?.group?.id || session.group_id,
+            competences_cibles: (session as any)?.competences_cibles,
+          }}
+        />
       )}
 
       {/* ─── Feuille d'appel ─── */}
