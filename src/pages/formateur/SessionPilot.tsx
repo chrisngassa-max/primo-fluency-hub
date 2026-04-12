@@ -1162,7 +1162,7 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
         </div>
         <div className="flex flex-wrap gap-2">
           <Button
-            onClick={handleSendToStudents}
+            onClick={handleOpenSendDialog}
             disabled={sending || checkedCount === 0}
             className="gap-2 bg-green-600 hover:bg-green-700 text-white"
           >
