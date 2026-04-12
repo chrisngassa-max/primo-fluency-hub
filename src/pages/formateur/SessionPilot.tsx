@@ -65,6 +65,7 @@ import { COMPETENCE_COLORS, resolveSessionCompetences, sortCompetences } from "@
 import GenerateDailyHomeworkDialog from "@/components/GenerateDailyHomeworkDialog";
 import ImportFromUrlDialog from "@/components/ImportFromUrlDialog";
 import EndOfSessionSection from "@/components/EndOfSessionSection";
+import GenerateResourceDialog from "@/components/GenerateResourceDialog";
 import {
   Select,
   SelectContent,
@@ -118,6 +119,9 @@ const SessionPilot = () => {
   const [duplicateExercise, setDuplicateExercise] = useState<any>(null);
   const [duplicateStudentIds, setDuplicateStudentIds] = useState<string[]>([]);
   const [duplicating, setDuplicating] = useState(false);
+
+  // Resource generation
+  const [resourceExercise, setResourceExercise] = useState<any>(null);
 
   const { data: session } = useQuery({
     queryKey: ["session-info", id],
@@ -1892,6 +1896,10 @@ ${ficheHtml || '<div class="fiche"><h3>📄 Matériel pédagogique</h3><div clas
                         <Button variant="outline" size="sm" className="gap-1 text-primary border-primary/30 hover:bg-primary/10"
                           onClick={() => { setDuplicateExercise(ex); setDuplicateStudentIds([]); }}>
                           <Copy className="h-3.5 w-3.5" />Dupliquer & Envoyer
+                        </Button>
+                        <Button variant="outline" size="sm" className="gap-1"
+                          onClick={() => setResourceExercise(ex)}>
+                          <BookOpen className="h-3.5 w-3.5" />Ressource
                         </Button>
                       </div>
                     </div>
