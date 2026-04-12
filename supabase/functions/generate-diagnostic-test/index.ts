@@ -87,7 +87,7 @@ EXPLICATION PÉDAGOGIQUE : Pour chaque question, fournir :
 
     const systemPrompt = TCF_SYSTEM_PROMPT + `
 
-// Mode diagnostic pré-séance — Génère un test QCM rapide pour évaluer le niveau avant la séance.
+// Mode diagnostic pré-séance EXHAUSTIF — Génère un test complet (8-15 questions, ~5-8 min) pour évaluer précisément le niveau avant la séance.
 // La sortie DOIT être un JSON structuré via l'outil generate_diagnostic.`;
 
     const response = await fetch(AI_GATEWAY, {
