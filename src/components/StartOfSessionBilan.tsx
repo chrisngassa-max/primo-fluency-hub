@@ -318,7 +318,7 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
     enabled: !!groupId && !!session?.date_seance,
   });
 
-  // ─── Generate diagnostic test ───
+  // ─── Generate diagnostic test (without sending) ───
   const handleGenerateDiagnostic = async () => {
     setGeneratingDiag(true);
     try {
@@ -334,6 +334,7 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
           groupId,
           competences,
           niveau: session.niveau_cible,
+          statut: "pret",
           weakPoints: prevData?.homeworkLowScores?.slice(0, 3).map((ls) => ({
             competence: ls.competence,
             exercice: ls.exercice,
@@ -346,14 +347,75 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
 
+      setDiagBilanTestId(data.bilanTestId);
+      setDiagGenerated(true);
+
+      // Fetch group members with presence info
+      const { data: members } = await supabase
+        .from("group_members")
+        .select("eleve_id, profile:profiles(nom, prenom)")
+        .eq("group_id", groupId);
+
+      const { data: presences } = await supabase
+        .from("presences")
+        .select("eleve_id, present")
+        .eq("session_id", sessionId);
+
+      const presenceMap = new Map((presences ?? []).map((p: any) => [p.eleve_id, p.present]));
+
+      const mapped = (members || []).map((m: any) => ({
+        eleve_id: m.eleve_id,
+        nom: m.profile?.nom || "",
+        prenom: m.profile?.prenom || "",
+        present: presenceMap.get(m.eleve_id) ?? true,
+      }));
+
+      setDiagMembers(mapped);
+      setDiagSelectedIds(new Set(mapped.map((m) => m.eleve_id)));
+      setDiagSendOpen(true);
+
       toast.success(`Test diagnostique généré (${data.nbQuestions} questions) !`, {
-        description: "Envoyé aux élèves du groupe.",
+        description: "Choisissez les élèves destinataires.",
       });
     } catch (e: any) {
       toast.error("Erreur de génération", { description: e.message });
     } finally {
       setGeneratingDiag(false);
     }
+  };
+
+  // ─── Send diagnostic to selected students ───
+  const handleSendDiagnostic = async () => {
+    if (!diagBilanTestId || diagSelectedIds.size === 0) return;
+    setDiagSending(true);
+    try {
+      // Update statut to "envoye"
+      const { error } = await supabase
+        .from("bilan_tests")
+        .update({ statut: "envoye" })
+        .eq("id", diagBilanTestId);
+      if (error) throw error;
+
+      // Notify selected students
+      const notifs = Array.from(diagSelectedIds).map((eleveId) => ({
+        user_id: eleveId,
+        titre: "Diagnostic pré-séance disponible",
+        message: `Un test diagnostique pour la séance "${session.titre}" est prêt.`,
+        link: "/eleve",
+      }));
+      await supabase.from("notifications").insert(notifs);
+
+      toast.success(`Diagnostic envoyé à ${diagSelectedIds.size} élève(s) !`);
+      setDiagSendOpen(false);
+    } catch (e: any) {
+      toast.error("Erreur d'envoi", { description: e.message });
+    } finally {
+      setDiagSending(false);
+    }
+  };
+
+  const selectPresentOnly = () => {
+    setDiagSelectedIds(new Set(diagMembers.filter((m) => m.present).map((m) => m.eleve_id)));
   };
 
   if (isLoading) {
