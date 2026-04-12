@@ -327,6 +327,26 @@ const SessionPilot = () => {
     enabled: !!session,
   });
 
+  // Fetch presences for this session
+  const { data: presences } = useQuery({
+    queryKey: ["presences-pilot", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("presences")
+        .select("eleve_id, present")
+        .eq("session_id", id!);
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: !!id,
+  });
+
+  const presenceMap = useMemo(() => {
+    const map = new Map<string, boolean>();
+    (presences ?? []).forEach((p: any) => map.set(p.eleve_id, p.present));
+    return map;
+  }, [presences]);
+
   // === Reconciliation: auto-link parcours_seance → session if exercises are missing ===
   const [reconciling, setReconciling] = useState(false);
   const [reconciled, setReconciled] = useState(false);
