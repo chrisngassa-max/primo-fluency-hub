@@ -76,7 +76,7 @@ const SessionBilan = () => {
   const [sendingTest, setSendingTest] = useState(false);
   const [devoirDeadline, setDevoirDeadline] = useState<Date | undefined>(undefined);
   const [confirmSendOpen, setConfirmSendOpen] = useState(false);
-  const [groupMembers, setGroupMembers] = useState<{ eleve_id: string; nom: string; prenom: string }[]>([]);
+  const [groupMembers, setGroupMembers] = useState<{ eleve_id: string; nom: string; prenom: string; present?: boolean }[]>([]);
   const [selectedStudentIds, setSelectedStudentIds] = useState<Set<string>>(new Set());
   const [editingQuestionIdx, setEditingQuestionIdx] = useState<number | null>(null);
 
