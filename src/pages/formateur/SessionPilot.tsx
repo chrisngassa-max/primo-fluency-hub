@@ -603,8 +603,17 @@ const SessionPilot = () => {
         const compCount = perComp + (ci < remainder ? 1 : 0);
         if (compCount <= 0) continue;
 
+        // Build anti-redundancy context from existing + already generated exercises
+        const existingContext = [...exercises, ...allInserted].map((ex: any) => ({
+          titre: ex.titre || (ex as any)?.exercice?.titre,
+          format: ex.format || (ex as any)?.exercice?.format,
+          contexte_irn: ex.contexte_irn || (ex as any)?.exercice?.contexte_irn,
+          competence: ex.competence || (ex as any)?.exercice?.competence,
+          metadata: ex.contenu?.metadata || (ex as any)?.exercice?.contenu?.metadata,
+        }));
+
         const { data, error } = await supabase.functions.invoke("generate-exercises", {
-          body: { pointName: objectif, competence: comp, niveauVise, count: compCount, difficultyLevel: generateDifficulty, type_demarche: (session as any)?.group?.type_demarche || "titre_sejour", groupId: (session as any)?.group_id },
+          body: { pointName: objectif, competence: comp, niveauVise, count: compCount, difficultyLevel: generateDifficulty, type_demarche: (session as any)?.group?.type_demarche || "titre_sejour", groupId: (session as any)?.group_id, existingExercises: existingContext },
         });
 
         if (error) throw error;
