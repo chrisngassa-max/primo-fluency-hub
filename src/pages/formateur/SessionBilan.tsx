@@ -19,7 +19,7 @@ import {
 import { toast } from "sonner";
 import {
   CheckCircle2, ArrowRight, ArrowLeft, Printer, Save, BookOpen, Loader2, Sparkles,
-  AlertTriangle, Brain, X, ClipboardCheck, Send, Clock, CalendarIcon,
+  AlertTriangle, Brain, X, ClipboardCheck, Send, Clock, CalendarIcon, Users,
   Pencil, Trash2, Plus, ChevronDown, ChevronUp, Eye, EyeOff,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
