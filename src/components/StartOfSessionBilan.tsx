@@ -627,10 +627,10 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
                 <div className="flex items-start gap-3">
                   <Target className="h-5 w-5 text-primary mt-0.5 shrink-0" />
                   <div>
-                    <p className="text-sm font-medium">Test diagnostique rapide</p>
+                    <p className="text-sm font-medium">Test diagnostique exhaustif (~5 min)</p>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      Génère un mini-test QCM (3-5 questions, format TCF IRN) basé sur les compétences ciblées
-                      de cette séance{prevData.weakCompetences.length > 0 && ` et les points faibles détectés (${prevData.weakCompetences.join(", ")})`}.
+                      Génère un test QCM de 8-15 questions (format TCF IRN) basé sur les compétences ciblées
+                      de cette séance{prevData?.weakCompetences && prevData.weakCompetences.length > 0 && ` et les points faibles détectés (${prevData.weakCompetences.join(", ")})`}.
                       Les résultats calibrent automatiquement le générateur d'exercices.
                     </p>
                   </div>
