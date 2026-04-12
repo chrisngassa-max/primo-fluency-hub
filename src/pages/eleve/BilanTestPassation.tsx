@@ -69,12 +69,29 @@ const BilanTestPassation = () => {
   });
 
   // Normalize question fields (generator uses consigne/support/choix, legacy uses question/script_audio/options)
-  const questions: any[] = (bilanTest?.contenu || []).map((q: any) => ({
-    ...q,
-    question: q.question || q.consigne || "",
-    script_audio: q.script_audio || q.support || "",
-    options: q.options || q.choix || [],
-  }));
+  const questions: any[] = (bilanTest?.contenu || []).map((q: any) => {
+    // Determine the display question text
+    let questionText = q.question || q.consigne || "";
+    // Determine the audio script for CO questions
+    let scriptAudio = q.script_audio || q.support || "";
+    
+    // If question contains "(Audio)" prefix pattern, extract the audio part
+    if (!scriptAudio && questionText && q.competence === "CO") {
+      const audioMatch = questionText.match(/^\(Audio\)\s*:\s*"([^"]+)"/i);
+      if (audioMatch) {
+        scriptAudio = audioMatch[1];
+        // Clean up the question to show only the actual question part
+        questionText = questionText.replace(/^\(Audio\)\s*:\s*"[^"]+"\s*/i, "").trim();
+      }
+    }
+
+    return {
+      ...q,
+      question: questionText,
+      script_audio: scriptAudio,
+      options: q.options || q.choix || [],
+    };
+  });
   const currentQ = questions[currentIdx];
   const answeredCount = Object.keys(answers).length;
 
