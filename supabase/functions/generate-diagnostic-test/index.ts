@@ -37,20 +37,39 @@ serve(async (req) => {
     }
 
     // Build prompt for diagnostic test generation
-    let userPrompt = `Action : générer un TEST DIAGNOSTIQUE rapide pré-séance au format TCF IRN.
+    let userPrompt = `Action : générer un TEST DIAGNOSTIQUE EXHAUSTIF pré-séance au format TCF IRN.
+Durée cible : 5 à 8 minutes de passation.
 
-Objectif : évaluer en 3-5 questions QCM (4 choix, 1 bonne réponse) le niveau actuel des élèves sur les compétences suivantes : ${competences.join(", ")}
+Objectif : évaluer de manière PRÉCISE et EXHAUSTIVE le niveau actuel des élèves sur les compétences suivantes : ${competences.join(", ")}
 Niveau cible : ${niveau}
 
-CONTRAINTE TCF IRN ABSOLUE : Chaque question doit respecter le format officiel du TCF.
-- CO : QCM 4 choix basé sur un script audio (fournir le script avec balises [pause])
-- CE : QCM 4 choix basé sur un texte/document
-- EE : Tâche de production écrite calibrée
-- EO : Tâche de production orale calibrée
-- Structures : QCM 4 choix sur la grammaire/vocabulaire
+NOMBRE DE QUESTIONS : Générer entre 8 et 15 questions au total.
+- Minimum 2-3 questions PAR compétence demandée pour une évaluation fiable
+- Varier les sous-compétences testées au sein de chaque compétence
+- Couvrir différents aspects : vocabulaire, syntaxe, pragmatique, phonologie selon la compétence
 
-Répartir les questions équitablement entre les compétences demandées.
-Difficulté : calibrer au niveau ${niveau} avec une question légèrement au-dessus pour détecter les élèves avancés.`;
+CONTRAINTE TCF IRN ABSOLUE : Chaque question doit respecter le format officiel du TCF.
+- CO : QCM 4 choix basé sur un script audio réaliste (fournir le script complet avec balises [pause], contexte IRN : préfecture, CAF, médecin, logement, transport)
+- CE : QCM 4 choix basé sur un document authentique (courrier administratif, formulaire, affiche, panneau, SMS, email) — fournir le texte intégral du support
+- EE : Tâche de production écrite calibrée (remplir un formulaire, écrire un message court, répondre à une annonce)
+- EO : Tâche de production orale calibrée (se présenter, décrire une situation, laisser un message vocal)
+- Structures : QCM 4 choix sur la grammaire/vocabulaire en contexte IRN (conjugaison, articles, prépositions, négation, vocabulaire administratif)
+
+CALIBRATION DE LA DIFFICULTÉ :
+- 60% des questions au niveau ${niveau} (consolidation)
+- 25% des questions un demi-niveau en dessous (vérification des acquis de base)
+- 15% des questions un demi-niveau au-dessus (détection des élèves avancés)
+
+QUALITÉ DES DISTRACTEURS (choix incorrects) :
+- Les distracteurs doivent être PLAUSIBLES (erreurs typiques des apprenants de ce niveau)
+- Pas de distracteurs absurdes ou évidents
+- Chaque distracteur doit correspondre à une erreur identifiable (confusion phonétique, interférence L1, surgénéralisation)
+
+EXPLICATION PÉDAGOGIQUE : Pour chaque question, fournir :
+- La bonne réponse avec une explication claire
+- Le type d'erreur que chaque distracteur représente
+- Le micro-objectif pédagogique évalué`;
+
 
     if (weakPoints && weakPoints.length > 0) {
       userPrompt += `\n\nPOINTS FAIBLES DÉTECTÉS (à tester en priorité) :`;
