@@ -2468,6 +2468,90 @@ ${ficheHtml}</body></html>`;
         exercise={resourceExercise || undefined}
         session={session ? { id: session.id, titre: session.titre, objectifs: session.objectifs, niveau_cible: session.niveau_cible } : undefined}
       />
+      {/* ─── Send to Students Selection Dialog ─── */}
+      <Dialog open={sendDialogOpen} onOpenChange={setSendDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Send className="h-4 w-4 text-primary" />
+              Envoyer aux élèves
+            </DialogTitle>
+            <DialogDescription>
+              Sélectionnez les élèves qui recevront les exercices cochés.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 max-h-[50vh] overflow-y-auto">
+            <div className="flex flex-wrap gap-2">
+              <Button size="sm" variant="outline" onClick={() => {
+                const all = new Set<string>();
+                (groupMembers ?? []).forEach((m: any) => all.add(m.eleve_id));
+                setSendSelectedIds(all);
+              }}>
+                <Users className="h-3.5 w-3.5 mr-1" /> Tous
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => {
+                const present = new Set<string>();
+                (groupMembers ?? []).forEach((m: any) => {
+                  if (presenceMap.get(m.eleve_id) !== false) present.add(m.eleve_id);
+                });
+                setSendSelectedIds(present);
+              }}>
+                <UserCheck className="h-3.5 w-3.5 mr-1" /> Présents uniquement
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => setSendSelectedIds(new Set())}>
+                Aucun
+              </Button>
+            </div>
+            <div className="space-y-1">
+              {(groupMembers ?? []).map((m: any) => {
+                const eleve = m.eleve || {};
+                const isPresent = presenceMap.get(m.eleve_id);
+                const isAbsent = isPresent === false;
+                const isSelected = sendSelectedIds.has(m.eleve_id);
+                return (
+                  <label key={m.eleve_id} className={cn(
+                    "flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors",
+                    isSelected ? "bg-primary/10" : "hover:bg-muted"
+                  )}>
+                    <Checkbox
+                      checked={isSelected}
+                      onCheckedChange={(v) => {
+                        const next = new Set(sendSelectedIds);
+                        if (v) next.add(m.eleve_id); else next.delete(m.eleve_id);
+                        setSendSelectedIds(next);
+                      }}
+                    />
+                    <span className="flex-1 text-sm font-medium">
+                      {eleve.prenom} {eleve.nom}
+                    </span>
+                    {isAbsent && (
+                      <Badge variant="outline" className="text-xs text-orange-600 border-orange-300 bg-orange-50">
+                        Absent
+                      </Badge>
+                    )}
+                    {isPresent === true && (
+                      <Badge variant="outline" className="text-xs text-green-600 border-green-300 bg-green-50">
+                        Présent
+                      </Badge>
+                    )}
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+          <div className="flex justify-end gap-2 pt-2">
+            <Button variant="outline" onClick={() => setSendDialogOpen(false)}>Annuler</Button>
+            <Button
+              disabled={sendSelectedIds.size === 0 || sending}
+              onClick={handleConfirmSendToStudents}
+              className="gap-2"
+            >
+              {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              Envoyer à {sendSelectedIds.size} élève(s)
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
