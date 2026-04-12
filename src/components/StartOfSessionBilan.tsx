@@ -13,11 +13,15 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
+} from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import {
   Brain, BookOpen, AlertTriangle, TrendingUp, TrendingDown, Minus,
   CheckCircle2, XCircle, Clock, Users, BarChart3, Target, Loader2,
-  Sparkles, ChevronDown, ChevronUp,
+  Sparkles, ChevronDown, ChevronUp, Send, UserCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { COMPETENCE_COLORS } from "@/lib/competences";
@@ -71,6 +75,12 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
 }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [generatingDiag, setGeneratingDiag] = useState(false);
+  const [diagGenerated, setDiagGenerated] = useState(false);
+  const [diagSendOpen, setDiagSendOpen] = useState(false);
+  const [diagSending, setDiagSending] = useState(false);
+  const [diagSelectedIds, setDiagSelectedIds] = useState<Set<string>>(new Set());
+  const [diagMembers, setDiagMembers] = useState<{ eleve_id: string; nom: string; prenom: string; present?: boolean }[]>([]);
+  const [diagBilanTestId, setDiagBilanTestId] = useState<string | null>(null);
 
   // ─── Fetch comprehensive previous session data ───
   const { data: prevData, isLoading } = useQuery<PrevSessionData | null>({
@@ -308,7 +318,7 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
     enabled: !!groupId && !!session?.date_seance,
   });
 
-  // ─── Generate diagnostic test ───
+  // ─── Generate diagnostic test (without sending) ───
   const handleGenerateDiagnostic = async () => {
     setGeneratingDiag(true);
     try {
@@ -324,6 +334,7 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
           groupId,
           competences,
           niveau: session.niveau_cible,
+          statut: "pret",
           weakPoints: prevData?.homeworkLowScores?.slice(0, 3).map((ls) => ({
             competence: ls.competence,
             exercice: ls.exercice,
@@ -336,14 +347,75 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
 
+      setDiagBilanTestId(data.bilanTestId);
+      setDiagGenerated(true);
+
+      // Fetch group members with presence info
+      const { data: members } = await supabase
+        .from("group_members")
+        .select("eleve_id, profile:profiles(nom, prenom)")
+        .eq("group_id", groupId);
+
+      const { data: presences } = await supabase
+        .from("presences")
+        .select("eleve_id, present")
+        .eq("session_id", sessionId);
+
+      const presenceMap = new Map((presences ?? []).map((p: any) => [p.eleve_id, p.present]));
+
+      const mapped = (members || []).map((m: any) => ({
+        eleve_id: m.eleve_id,
+        nom: m.profile?.nom || "",
+        prenom: m.profile?.prenom || "",
+        present: presenceMap.get(m.eleve_id) ?? true,
+      }));
+
+      setDiagMembers(mapped);
+      setDiagSelectedIds(new Set(mapped.map((m) => m.eleve_id)));
+      setDiagSendOpen(true);
+
       toast.success(`Test diagnostique généré (${data.nbQuestions} questions) !`, {
-        description: "Envoyé aux élèves du groupe.",
+        description: "Choisissez les élèves destinataires.",
       });
     } catch (e: any) {
       toast.error("Erreur de génération", { description: e.message });
     } finally {
       setGeneratingDiag(false);
     }
+  };
+
+  // ─── Send diagnostic to selected students ───
+  const handleSendDiagnostic = async () => {
+    if (!diagBilanTestId || diagSelectedIds.size === 0) return;
+    setDiagSending(true);
+    try {
+      // Update statut to "envoye"
+      const { error } = await supabase
+        .from("bilan_tests")
+        .update({ statut: "envoye" })
+        .eq("id", diagBilanTestId);
+      if (error) throw error;
+
+      // Notify selected students
+      const notifs = Array.from(diagSelectedIds).map((eleveId) => ({
+        user_id: eleveId,
+        titre: "Diagnostic pré-séance disponible",
+        message: `Un test diagnostique pour la séance "${session.titre}" est prêt.`,
+        link: "/eleve",
+      }));
+      await supabase.from("notifications").insert(notifs);
+
+      toast.success(`Diagnostic envoyé à ${diagSelectedIds.size} élève(s) !`);
+      setDiagSendOpen(false);
+    } catch (e: any) {
+      toast.error("Erreur d'envoi", { description: e.message });
+    } finally {
+      setDiagSending(false);
+    }
+  };
+
+  const selectPresentOnly = () => {
+    setDiagSelectedIds(new Set(diagMembers.filter((m) => m.present).map((m) => m.eleve_id)));
   };
 
   if (isLoading) {
@@ -663,21 +735,100 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
 
                 <Button
                   onClick={handleGenerateDiagnostic}
-                  disabled={generatingDiag}
+                  disabled={generatingDiag || diagGenerated}
                   className="w-full gap-2"
                 >
                   {generatingDiag ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : diagGenerated ? (
+                    <CheckCircle2 className="h-4 w-4" />
                   ) : (
                     <Sparkles className="h-4 w-4" />
                   )}
-                  Générer et envoyer le diagnostic
+                  {diagGenerated ? "Diagnostic généré — en attente d'envoi" : "Générer le diagnostic"}
                 </Button>
+                {diagGenerated && (
+                  <Button
+                    onClick={() => setDiagSendOpen(true)}
+                    className="w-full gap-2"
+                    variant="outline"
+                  >
+                    <Send className="h-4 w-4" />
+                    Choisir les destinataires et envoyer
+                  </Button>
+                )}
               </div>
             </TabsContent>
           </Tabs>
         </CardContent>
       )}
+
+      {/* ─── Send diagnostic dialog ─── */}
+      <Dialog open={diagSendOpen} onOpenChange={setDiagSendOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Envoyer le diagnostic</DialogTitle>
+            <DialogDescription>
+              Sélectionnez les élèves à qui envoyer le test diagnostique.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2 py-2">
+            <div className="flex items-center gap-2 mb-2 flex-wrap">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  if (diagSelectedIds.size === diagMembers.length) {
+                    setDiagSelectedIds(new Set());
+                  } else {
+                    setDiagSelectedIds(new Set(diagMembers.map((m) => m.eleve_id)));
+                  }
+                }}
+                className="text-xs"
+              >
+                {diagSelectedIds.size === diagMembers.length ? "Tout désélectionner" : "Tout sélectionner"}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={selectPresentOnly}
+                className="text-xs gap-1"
+              >
+                <UserCheck className="h-3 w-3" />
+                Présents uniquement
+              </Button>
+              <span className="text-xs text-muted-foreground ml-auto">{diagSelectedIds.size}/{diagMembers.length}</span>
+            </div>
+            <div className="max-h-60 overflow-y-auto space-y-1">
+              {diagMembers.map((m) => (
+                <label key={m.eleve_id} className="flex items-center gap-2 p-2 rounded-md hover:bg-muted/50 cursor-pointer">
+                  <Checkbox
+                    checked={diagSelectedIds.has(m.eleve_id)}
+                    onCheckedChange={(checked) => {
+                      setDiagSelectedIds((prev) => {
+                        const next = new Set(prev);
+                        if (checked) next.add(m.eleve_id); else next.delete(m.eleve_id);
+                        return next;
+                      });
+                    }}
+                  />
+                  <span className="text-sm">{m.prenom} {m.nom}</span>
+                  {!m.present && (
+                    <Badge variant="outline" className="text-[10px] ml-auto">Absent</Badge>
+                  )}
+                </label>
+              ))}
+            </div>
+          </div>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setDiagSendOpen(false)}>Annuler</Button>
+            <Button onClick={handleSendDiagnostic} disabled={diagSending || diagSelectedIds.size === 0} className="gap-1.5">
+              {diagSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              Envoyer ({diagSelectedIds.size})
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };

@@ -19,7 +19,7 @@ import {
 import { toast } from "sonner";
 import {
   CheckCircle2, ArrowRight, ArrowLeft, Printer, Save, BookOpen, Loader2, Sparkles,
-  AlertTriangle, Brain, X, ClipboardCheck, Send, Clock, CalendarIcon,
+  AlertTriangle, Brain, X, ClipboardCheck, Send, Clock, CalendarIcon, Users,
   Pencil, Trash2, Plus, ChevronDown, ChevronUp, Eye, EyeOff,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -76,7 +76,7 @@ const SessionBilan = () => {
   const [sendingTest, setSendingTest] = useState(false);
   const [devoirDeadline, setDevoirDeadline] = useState<Date | undefined>(undefined);
   const [confirmSendOpen, setConfirmSendOpen] = useState(false);
-  const [groupMembers, setGroupMembers] = useState<{ eleve_id: string; nom: string; prenom: string }[]>([]);
+  const [groupMembers, setGroupMembers] = useState<{ eleve_id: string; nom: string; prenom: string; present?: boolean }[]>([]);
   const [selectedStudentIds, setSelectedStudentIds] = useState<Set<string>>(new Set());
   const [editingQuestionIdx, setEditingQuestionIdx] = useState<number | null>(null);
 
@@ -360,10 +360,19 @@ const SessionBilan = () => {
         .from("group_members")
         .select("eleve_id, profile:profiles(nom, prenom)")
         .eq("group_id", session.group_id);
+
+      const { data: presences } = await supabase
+        .from("presences")
+        .select("eleve_id, present")
+        .eq("session_id", id!);
+
+      const presenceMap = new Map((presences ?? []).map((p: any) => [p.eleve_id, p.present]));
+
       const mapped = (members || []).map((m: any) => ({
         eleve_id: m.eleve_id,
         nom: m.profile?.nom || "",
         prenom: m.profile?.prenom || "",
+        present: presenceMap.get(m.eleve_id) ?? true,
       }));
       setGroupMembers(mapped);
       setSelectedStudentIds(new Set(mapped.map((m: any) => m.eleve_id)));
@@ -978,8 +987,8 @@ const SessionBilan = () => {
               Sélectionnez les élèves à qui envoyer le test.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-2 py-2 max-h-60 overflow-y-auto">
-            <div className="flex items-center justify-between mb-2">
+          <div className="space-y-2 py-2">
+            <div className="flex items-center gap-2 mb-2 flex-wrap">
               <Button
                 variant="ghost"
                 size="sm"
@@ -994,23 +1003,39 @@ const SessionBilan = () => {
               >
                 {selectedStudentIds.size === groupMembers.length ? "Tout désélectionner" : "Tout sélectionner"}
               </Button>
-              <span className="text-xs text-muted-foreground">{selectedStudentIds.size}/{groupMembers.length}</span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setSelectedStudentIds(new Set(groupMembers.filter((m) => m.present !== false).map((m) => m.eleve_id)));
+                }}
+                className="text-xs gap-1"
+              >
+                <Users className="h-3 w-3" />
+                Présents uniquement
+              </Button>
+              <span className="text-xs text-muted-foreground ml-auto">{selectedStudentIds.size}/{groupMembers.length}</span>
             </div>
-            {groupMembers.map((m) => (
-              <label key={m.eleve_id} className="flex items-center gap-2 p-2 rounded-md hover:bg-muted/50 cursor-pointer">
-                <Checkbox
-                  checked={selectedStudentIds.has(m.eleve_id)}
-                  onCheckedChange={(checked) => {
-                    setSelectedStudentIds((prev) => {
-                      const next = new Set(prev);
-                      if (checked) next.add(m.eleve_id); else next.delete(m.eleve_id);
-                      return next;
-                    });
-                  }}
-                />
-                <span className="text-sm">{m.prenom} {m.nom}</span>
-              </label>
-            ))}
+            <div className="max-h-60 overflow-y-auto space-y-1">
+              {groupMembers.map((m) => (
+                <label key={m.eleve_id} className="flex items-center gap-2 p-2 rounded-md hover:bg-muted/50 cursor-pointer">
+                  <Checkbox
+                    checked={selectedStudentIds.has(m.eleve_id)}
+                    onCheckedChange={(checked) => {
+                      setSelectedStudentIds((prev) => {
+                        const next = new Set(prev);
+                        if (checked) next.add(m.eleve_id); else next.delete(m.eleve_id);
+                        return next;
+                      });
+                    }}
+                  />
+                  <span className="text-sm">{m.prenom} {m.nom}</span>
+                  {m.present === false && (
+                    <Badge variant="outline" className="text-[10px] ml-auto">Absent</Badge>
+                  )}
+                </label>
+              ))}
+            </div>
           </div>
           <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => setConfirmSendOpen(false)}>Annuler</Button>
