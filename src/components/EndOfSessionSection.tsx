@@ -221,7 +221,7 @@ export default function EndOfSessionSection({
             <Button
               variant={homeworkSent ? "outline" : "default"}
               className="gap-2"
-              onClick={() => setSelectOpen(true)}
+              onClick={openSelectDialog}
             >
               <Send className="h-4 w-4" />
               {homeworkSent ? "Envoyer d'autres devoirs" : "Envoyer les devoirs"}
