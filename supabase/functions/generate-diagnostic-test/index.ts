@@ -37,20 +37,39 @@ serve(async (req) => {
     }
 
     // Build prompt for diagnostic test generation
-    let userPrompt = `Action : générer un TEST DIAGNOSTIQUE rapide pré-séance au format TCF IRN.
+    let userPrompt = `Action : générer un TEST DIAGNOSTIQUE EXHAUSTIF pré-séance au format TCF IRN.
+Durée cible : 5 à 8 minutes de passation.
 
-Objectif : évaluer en 3-5 questions QCM (4 choix, 1 bonne réponse) le niveau actuel des élèves sur les compétences suivantes : ${competences.join(", ")}
+Objectif : évaluer de manière PRÉCISE et EXHAUSTIVE le niveau actuel des élèves sur les compétences suivantes : ${competences.join(", ")}
 Niveau cible : ${niveau}
 
-CONTRAINTE TCF IRN ABSOLUE : Chaque question doit respecter le format officiel du TCF.
-- CO : QCM 4 choix basé sur un script audio (fournir le script avec balises [pause])
-- CE : QCM 4 choix basé sur un texte/document
-- EE : Tâche de production écrite calibrée
-- EO : Tâche de production orale calibrée
-- Structures : QCM 4 choix sur la grammaire/vocabulaire
+NOMBRE DE QUESTIONS : Générer entre 8 et 15 questions au total.
+- Minimum 2-3 questions PAR compétence demandée pour une évaluation fiable
+- Varier les sous-compétences testées au sein de chaque compétence
+- Couvrir différents aspects : vocabulaire, syntaxe, pragmatique, phonologie selon la compétence
 
-Répartir les questions équitablement entre les compétences demandées.
-Difficulté : calibrer au niveau ${niveau} avec une question légèrement au-dessus pour détecter les élèves avancés.`;
+CONTRAINTE TCF IRN ABSOLUE : Chaque question doit respecter le format officiel du TCF.
+- CO : QCM 4 choix basé sur un script audio réaliste (fournir le script complet avec balises [pause], contexte IRN : préfecture, CAF, médecin, logement, transport)
+- CE : QCM 4 choix basé sur un document authentique (courrier administratif, formulaire, affiche, panneau, SMS, email) — fournir le texte intégral du support
+- EE : Tâche de production écrite calibrée (remplir un formulaire, écrire un message court, répondre à une annonce)
+- EO : Tâche de production orale calibrée (se présenter, décrire une situation, laisser un message vocal)
+- Structures : QCM 4 choix sur la grammaire/vocabulaire en contexte IRN (conjugaison, articles, prépositions, négation, vocabulaire administratif)
+
+CALIBRATION DE LA DIFFICULTÉ :
+- 60% des questions au niveau ${niveau} (consolidation)
+- 25% des questions un demi-niveau en dessous (vérification des acquis de base)
+- 15% des questions un demi-niveau au-dessus (détection des élèves avancés)
+
+QUALITÉ DES DISTRACTEURS (choix incorrects) :
+- Les distracteurs doivent être PLAUSIBLES (erreurs typiques des apprenants de ce niveau)
+- Pas de distracteurs absurdes ou évidents
+- Chaque distracteur doit correspondre à une erreur identifiable (confusion phonétique, interférence L1, surgénéralisation)
+
+EXPLICATION PÉDAGOGIQUE : Pour chaque question, fournir :
+- La bonne réponse avec une explication claire
+- Le type d'erreur que chaque distracteur représente
+- Le micro-objectif pédagogique évalué`;
+
 
     if (weakPoints && weakPoints.length > 0) {
       userPrompt += `\n\nPOINTS FAIBLES DÉTECTÉS (à tester en priorité) :`;
@@ -68,7 +87,7 @@ Difficulté : calibrer au niveau ${niveau} avec une question légèrement au-des
 
     const systemPrompt = TCF_SYSTEM_PROMPT + `
 
-// Mode diagnostic pré-séance — Génère un test QCM rapide pour évaluer le niveau avant la séance.
+// Mode diagnostic pré-séance EXHAUSTIF — Génère un test complet (8-15 questions, ~5-8 min) pour évaluer précisément le niveau avant la séance.
 // La sortie DOIT être un JSON structuré via l'outil generate_diagnostic.`;
 
     const response = await fetch(AI_GATEWAY, {
@@ -88,34 +107,37 @@ Difficulté : calibrer au niveau ${niveau} avec une question légèrement au-des
             type: "function",
             function: {
               name: "generate_diagnostic",
-              description: "Retourne un test diagnostique pré-séance au format TCF IRN.",
+              description: "Retourne un test diagnostique exhaustif pré-séance au format TCF IRN (8-15 questions, ~5 min).",
               parameters: {
                 type: "object",
                 properties: {
                   titre: { type: "string", description: "Titre du test diagnostique" },
+                  duree_estimee_minutes: { type: "number", description: "Durée estimée en minutes (cible : 5-8)" },
                   questions: {
                     type: "array",
-                    description: "Questions du test diagnostique (3-5 questions)",
+                    description: "Questions du test diagnostique (8-15 questions)",
                     items: {
                       type: "object",
                       properties: {
                         competence: { type: "string", enum: ["CO", "CE", "EE", "EO", "Structures"] },
+                        sous_competence: { type: "string", description: "Micro-objectif évalué (ex: vocabulaire administratif, conjugaison présent, compréhension globale)" },
                         consigne: { type: "string", description: "Consigne de la question" },
-                        support: { type: "string", description: "Texte support, script audio ou description visuelle" },
+                        support: { type: "string", description: "Texte support complet, script audio avec [pause] ou description de la tâche" },
                         choix: {
                           type: "array",
                           items: { type: "string" },
-                          description: "4 choix de réponse (QCM uniquement)",
+                          description: "4 choix de réponse (QCM uniquement, null pour EE/EO)",
                         },
-                        bonne_reponse: { type: "string", description: "La bonne réponse" },
-                        explication: { type: "string", description: "Explication de la bonne réponse" },
-                        niveau: { type: "string", description: "Niveau CECRL de la question" },
+                        bonne_reponse: { type: "string", description: "La bonne réponse ou la production attendue" },
+                        explication: { type: "string", description: "Explication pédagogique détaillée incluant le type d'erreur de chaque distracteur" },
+                        niveau: { type: "string", description: "Niveau CECRL précis de la question (A1, A1+, A2, A2+, B1)" },
+                        difficulte: { type: "number", description: "Difficulté 1-5 (1=très facile, 5=difficile)" },
                       },
-                      required: ["competence", "consigne", "choix", "bonne_reponse", "explication", "niveau"],
+                      required: ["competence", "sous_competence", "consigne", "bonne_reponse", "explication", "niveau", "difficulte"],
                     },
                   },
                 },
-                required: ["titre", "questions"],
+                required: ["titre", "duree_estimee_minutes", "questions"],
                 additionalProperties: false,
               },
             },
@@ -150,12 +172,13 @@ Difficulté : calibrer au niveau ${niveau} avec une question légèrement au-des
     const diagnostic = JSON.parse(toolCall.function.arguments);
 
     // Validate: at least 3 questions with 4 choices each
-    if (!diagnostic.questions || diagnostic.questions.length < 3) {
-      throw new Error("Le diagnostic doit contenir au moins 3 questions");
+    if (!diagnostic.questions || diagnostic.questions.length < 8) {
+      throw new Error("Le diagnostic doit contenir au moins 8 questions pour une évaluation exhaustive");
     }
 
     for (const q of diagnostic.questions) {
-      if (q.choix && q.choix.length !== 4) {
+      // QCM questions (CO, CE, Structures) must have 4 choices; EE/EO may not have choices
+      if (q.choix && q.choix.length > 0 && q.choix.length !== 4) {
         throw new Error(`QCM invalide : ${q.competence} doit avoir 4 choix`);
       }
     }
