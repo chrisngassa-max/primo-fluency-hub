@@ -654,7 +654,7 @@ ${sessionExercises.map((ex: any, i: number) => `
   const toggleCompleted = (id: string, checked: boolean) => {
     setExerciseTracking((prev) => ({
       ...prev,
-      [id]: { ...getTracking(id), isCompleted: checked, ...(checked ? {} : { isIncludedInTest: false }) },
+      [id]: { ...getTracking(id), isCompleted: checked, isIncludedInTest: checked },
     }));
   };
 
