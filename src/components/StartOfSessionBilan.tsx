@@ -735,21 +735,100 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
 
                 <Button
                   onClick={handleGenerateDiagnostic}
-                  disabled={generatingDiag}
+                  disabled={generatingDiag || diagGenerated}
                   className="w-full gap-2"
                 >
                   {generatingDiag ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : diagGenerated ? (
+                    <CheckCircle2 className="h-4 w-4" />
                   ) : (
                     <Sparkles className="h-4 w-4" />
                   )}
-                  Générer et envoyer le diagnostic
+                  {diagGenerated ? "Diagnostic généré — en attente d'envoi" : "Générer le diagnostic"}
                 </Button>
+                {diagGenerated && (
+                  <Button
+                    onClick={() => setDiagSendOpen(true)}
+                    className="w-full gap-2"
+                    variant="outline"
+                  >
+                    <Send className="h-4 w-4" />
+                    Choisir les destinataires et envoyer
+                  </Button>
+                )}
               </div>
             </TabsContent>
           </Tabs>
         </CardContent>
       )}
+
+      {/* ─── Send diagnostic dialog ─── */}
+      <Dialog open={diagSendOpen} onOpenChange={setDiagSendOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Envoyer le diagnostic</DialogTitle>
+            <DialogDescription>
+              Sélectionnez les élèves à qui envoyer le test diagnostique.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2 py-2">
+            <div className="flex items-center gap-2 mb-2 flex-wrap">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  if (diagSelectedIds.size === diagMembers.length) {
+                    setDiagSelectedIds(new Set());
+                  } else {
+                    setDiagSelectedIds(new Set(diagMembers.map((m) => m.eleve_id)));
+                  }
+                }}
+                className="text-xs"
+              >
+                {diagSelectedIds.size === diagMembers.length ? "Tout désélectionner" : "Tout sélectionner"}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={selectPresentOnly}
+                className="text-xs gap-1"
+              >
+                <UserCheck className="h-3 w-3" />
+                Présents uniquement
+              </Button>
+              <span className="text-xs text-muted-foreground ml-auto">{diagSelectedIds.size}/{diagMembers.length}</span>
+            </div>
+            <div className="max-h-60 overflow-y-auto space-y-1">
+              {diagMembers.map((m) => (
+                <label key={m.eleve_id} className="flex items-center gap-2 p-2 rounded-md hover:bg-muted/50 cursor-pointer">
+                  <Checkbox
+                    checked={diagSelectedIds.has(m.eleve_id)}
+                    onCheckedChange={(checked) => {
+                      setDiagSelectedIds((prev) => {
+                        const next = new Set(prev);
+                        if (checked) next.add(m.eleve_id); else next.delete(m.eleve_id);
+                        return next;
+                      });
+                    }}
+                  />
+                  <span className="text-sm">{m.prenom} {m.nom}</span>
+                  {!m.present && (
+                    <Badge variant="outline" className="text-[10px] ml-auto">Absent</Badge>
+                  )}
+                </label>
+              ))}
+            </div>
+          </div>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setDiagSendOpen(false)}>Annuler</Button>
+            <Button onClick={handleSendDiagnostic} disabled={diagSending || diagSelectedIds.size === 0} className="gap-1.5">
+              {diagSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              Envoyer ({diagSelectedIds.size})
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };
