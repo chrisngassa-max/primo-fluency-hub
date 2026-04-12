@@ -102,51 +102,24 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
         memberMap.set(m.eleve_id, `${m.eleve?.prenom || ""} ${m.eleve?.nom || ""}`);
       });
 
-      // 3. Homework from previous session
+      // 3. Homework: ALL devoirs for group members between prev and current session
       const { data: devoirs } = await supabase
+        .from("devoirs")
+        .select("*, exercice:exercices(titre, competence)")
+        .in("eleve_id", memberIds)
+        .gte("created_at", prevSessions[0].date_seance || "2000-01-01")
+        .lt("created_at", session.date_seance);
+
+      // Also include devoirs explicitly linked to the previous session
+      const { data: sessionDevoirs } = await supabase
         .from("devoirs")
         .select("*, exercice:exercices(titre, competence)")
         .eq("session_id", prevSessionId);
 
-      const hw = devoirs ?? [];
-      const homeworkTotal = hw.length;
-      const homeworkDone = hw.filter((d: any) => d.statut === "fait" || d.statut === "arrete").length;
-      const homeworkExpired = hw.filter((d: any) => d.statut === "expire").length;
-      const homeworkPending = hw.filter((d: any) => d.statut === "en_attente").length;
-      const homeworkCompletionRate = homeworkTotal > 0 ? Math.round((homeworkDone / homeworkTotal) * 100) : 0;
-
-      // Get homework scores
-      const hwDoneIds = hw.filter((d: any) => d.statut === "fait").map((d: any) => d.id);
-      let homeworkAvgScore = 0;
-      const homeworkLowScores: PrevSessionData["homeworkLowScores"] = [];
-      if (hwDoneIds.length > 0) {
-        const { data: hwResults } = await supabase
-          .from("resultats")
-          .select("score, eleve_id, exercice_id")
-          .in("devoir_id", hwDoneIds);
-
-        if (hwResults && hwResults.length > 0) {
-          homeworkAvgScore = Math.round(hwResults.reduce((s: number, r: any) => s + Number(r.score), 0) / hwResults.length);
-          hwResults
-            .filter((r: any) => Number(r.score) < 60)
-            .forEach((r: any) => {
-              const devoir = hw.find((d: any) => d.exercice_id === r.exercice_id && d.eleve_id === r.eleve_id);
-              homeworkLowScores.push({
-                eleve: memberMap.get(r.eleve_id) || "Élève",
-                exercice: (devoir as any)?.exercice?.titre || "Exercice",
-                score: Number(r.score),
-                competence: (devoir as any)?.exercice?.competence || "?",
-              });
-            });
-        }
-      }
-
-      // 4. Previous session exercise results (séance en classe)
-      const { data: prevSeExercices } = await supabase
-        .from("session_exercices")
-        .select("exercice_id, exercice:exercices(titre, competence)")
-        .eq("session_id", prevSessionId)
-        .eq("statut", "traite_en_classe");
+      // Merge and deduplicate
+      const allDevoirsMap = new Map<string, any>();
+      [...(devoirs ?? []), ...(sessionDevoirs ?? [])].forEach((d: any) => allDevoirsMap.set(d.id, d));
+      const hw = Array.from(allDevoirsMap.values());
 
       const prevExIds = (prevSeExercices ?? []).map((se: any) => se.exercice_id);
       let sessionResultsCount = 0;
