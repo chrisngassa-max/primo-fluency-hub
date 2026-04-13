@@ -19,6 +19,8 @@ import {
 import { cn } from "@/lib/utils";
 import CompetenceLabel from "@/components/CompetenceLabel";
 import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
+import SessionFeedbackForm from "@/components/SessionFeedbackForm";
+import { logEvent } from "@/lib/analytics";
 
 const STORAGE_KEY_PREFIX = "bilan-seance-progress-";
 
@@ -284,6 +286,17 @@ const BilanSeance = () => {
         console.error("Profile update failed:", profileErr);
       }
 
+      logEvent({
+        actorId: user.id,
+        actorType: 'eleve',
+        verb: 'completed',
+        objectId: sessionId,
+        objectType: 'session',
+        context: 'seance',
+        sessionId: sessionId,
+        result: { globalScore, exercicesCount: pendingExercices.length },
+      });
+
       // Clear saved progress after successful submission
       try { localStorage.removeItem(storageKey); } catch { /* ignore */ }
       setResults({ scores, globalScore, devoirsCreated });
@@ -416,6 +429,10 @@ const BilanSeance = () => {
             </Card>
           ))}
         </div>
+
+        {sessionId && user?.id && (
+          <SessionFeedbackForm sessionId={sessionId} eleveId={user.id} />
+        )}
 
         <div className="grid grid-cols-2 gap-3">
           <Button variant="outline" onClick={() => navigate("/eleve")}>
