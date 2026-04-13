@@ -19,6 +19,8 @@ import {
 import { cn } from "@/lib/utils";
 import CompetenceLabel from "@/components/CompetenceLabel";
 import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
+import SessionFeedbackForm from "@/components/SessionFeedbackForm";
+import { logEvent } from "@/lib/analytics";
 
 const STORAGE_KEY_PREFIX = "bilan-seance-progress-";
 
