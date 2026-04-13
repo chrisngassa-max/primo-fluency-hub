@@ -1566,6 +1566,47 @@ export type Database = {
           },
         ]
       }
+      session_feedback: {
+        Row: {
+          commentaire_libre: string | null
+          confiance: number
+          created_at: string
+          difficulte_percue: number
+          eleve_id: string
+          id: string
+          session_id: string
+          utilite_percue: number
+        }
+        Insert: {
+          commentaire_libre?: string | null
+          confiance: number
+          created_at?: string
+          difficulte_percue: number
+          eleve_id: string
+          id?: string
+          session_id: string
+          utilite_percue: number
+        }
+        Update: {
+          commentaire_libre?: string | null
+          confiance?: number
+          created_at?: string
+          difficulte_percue?: number
+          eleve_id?: string
+          id?: string
+          session_id?: string
+          utilite_percue?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_feedback_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sessions: {
         Row: {
           competences_cibles: string[] | null
