@@ -147,6 +147,63 @@ export type Database = {
           },
         ]
       }
+      analytics_events: {
+        Row: {
+          actor_id: string
+          actor_type: string
+          competence: string | null
+          context: string | null
+          created_at: string
+          gabarit_id: string | null
+          group_id: string | null
+          id: string
+          micro_competence_id: string | null
+          object_id: string | null
+          object_type: string | null
+          result: Json | null
+          seance_numero: number | null
+          session_id: string | null
+          source_app: string | null
+          verb: string
+        }
+        Insert: {
+          actor_id: string
+          actor_type: string
+          competence?: string | null
+          context?: string | null
+          created_at?: string
+          gabarit_id?: string | null
+          group_id?: string | null
+          id?: string
+          micro_competence_id?: string | null
+          object_id?: string | null
+          object_type?: string | null
+          result?: Json | null
+          seance_numero?: number | null
+          session_id?: string | null
+          source_app?: string | null
+          verb: string
+        }
+        Update: {
+          actor_id?: string
+          actor_type?: string
+          competence?: string | null
+          context?: string | null
+          created_at?: string
+          gabarit_id?: string | null
+          group_id?: string | null
+          id?: string
+          micro_competence_id?: string | null
+          object_id?: string | null
+          object_type?: string | null
+          result?: Json | null
+          seance_numero?: number | null
+          session_id?: string | null
+          source_app?: string | null
+          verb?: string
+        }
+        Relationships: []
+      }
       bilan_post_devoirs: {
         Row: {
           analyse_data: Json
