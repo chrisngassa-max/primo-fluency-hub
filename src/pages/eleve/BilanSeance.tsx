@@ -430,6 +430,10 @@ const BilanSeance = () => {
           ))}
         </div>
 
+        {sessionId && user?.id && (
+          <SessionFeedbackForm sessionId={sessionId} eleveId={user.id} />
+        )}
+
         <div className="grid grid-cols-2 gap-3">
           <Button variant="outline" onClick={() => navigate("/eleve")}>
             <ArrowLeft className="h-4 w-4 mr-2" /> Dashboard
