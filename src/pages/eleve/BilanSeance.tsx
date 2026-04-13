@@ -286,6 +286,17 @@ const BilanSeance = () => {
         console.error("Profile update failed:", profileErr);
       }
 
+      logEvent({
+        actorId: user.id,
+        actorType: 'eleve',
+        verb: 'completed',
+        objectId: sessionId,
+        objectType: 'session',
+        context: 'seance',
+        sessionId: sessionId,
+        result: { globalScore, exercicesCount: pendingExercices.length },
+      });
+
       // Clear saved progress after successful submission
       try { localStorage.removeItem(storageKey); } catch { /* ignore */ }
       setResults({ scores, globalScore, devoirsCreated });
