@@ -59,7 +59,7 @@ serve(async (req) => {
     if (!ANTHROPIC_API_KEY) throw new Error("ANTHROPIC_API_KEY is not configured");
 
     const body = await req.json();
-    const { type, competence, niveau, exerciseContext, sessionContext, mode } = body;
+    const { type, competence, niveau, exerciseContext, exercisesContext, sessionContext, mode } = body;
 
     if (!type || !competence || !niveau) {
       throw new Error("Champs requis : type, competence, niveau");
@@ -82,6 +82,15 @@ CONTEXTE DE L'EXERCICE SOURCE :
 - Compétence : ${exerciseContext.competence || competence}
 - Format : ${exerciseContext.format || "qcm"}
 La ressource doit être directement liée à cet exercice et couvrir les notions nécessaires pour le réussir.`;
+    }
+
+    if (exercisesContext && Array.isArray(exercisesContext) && exercisesContext.length > 0) {
+      userPrompt += `
+
+CONTEXTE DES ${exercisesContext.length} EXERCICES SOURCES :
+${exercisesContext.map((ex: any, i: number) => `${i + 1}. "${ex.titre}" (${ex.competence}, ${ex.format}) — ${ex.consigne || ""}`).join("\n")}
+
+La ressource doit couvrir les notions nécessaires pour réussir l'ensemble de ces exercices. Identifie les points communs et les compétences transversales.`;
     }
 
     if (sessionContext) {

@@ -21,6 +21,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { BookOpen, FileText, RotateCcw, Image, Loader2, Save, Printer, Eye, Check, ExternalLink, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 type ResourceType = "lecon" | "vocabulaire" | "rappel_methodo" | "rappel_visuel";
 
@@ -37,18 +38,21 @@ interface GeneratedResource {
   resume: string;
 }
 
+interface ExerciseContext {
+  id: string;
+  titre: string;
+  consigne: string;
+  competence: string;
+  format: string;
+  niveau_vise: string;
+  contenu: any;
+}
+
 interface GenerateResourceDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  exercise?: {
-    id: string;
-    titre: string;
-    consigne: string;
-    competence: string;
-    format: string;
-    niveau_vise: string;
-    contenu: any;
-  };
+  exercise?: ExerciseContext;
+  exercises?: ExerciseContext[];
   session?: {
     id: string;
     titre: string;
@@ -68,8 +72,14 @@ export default function GenerateResourceDialog({
   open,
   onOpenChange,
   exercise,
+  exercises: exercisesProp,
   session,
 }: GenerateResourceDialogProps) {
+  // Consolidate: if exercises array provided, use it; otherwise wrap single exercise
+  const allExercises = exercisesProp && exercisesProp.length > 0
+    ? exercisesProp
+    : exercise ? [exercise] : [];
+  const primaryExercise = allExercises[0] || undefined;
   const { user } = useAuth();
   const navigate = useNavigate();
   const [selectedType, setSelectedType] = useState<ResourceType>("lecon");
@@ -118,11 +128,14 @@ export default function GenerateResourceDialog({
       const { data, error } = await supabase.functions.invoke("generate-resource", {
         body: {
           type: selectedType,
-          competence: exercise?.competence || "CE",
-          niveau: exercise?.niveau_vise || session?.niveau_cible || "A1",
+          competence: primaryExercise?.competence || "CE",
+          niveau: primaryExercise?.niveau_vise || session?.niveau_cible || "A1",
           mode: "manual",
-          exerciseContext: exercise
-            ? { titre: exercise.titre, consigne: exercise.consigne, competence: exercise.competence, format: exercise.format }
+          exerciseContext: primaryExercise
+            ? { titre: primaryExercise.titre, consigne: primaryExercise.consigne, competence: primaryExercise.competence, format: primaryExercise.format }
+            : undefined,
+          exercisesContext: allExercises.length > 1
+            ? allExercises.map(ex => ({ titre: ex.titre, consigne: ex.consigne, competence: ex.competence, format: ex.format }))
             : undefined,
           sessionContext: session
             ? { titre: session.titre, objectifs: session.objectifs, niveau_cible: session.niveau_cible }
@@ -148,10 +161,10 @@ export default function GenerateResourceDialog({
       const { data: savedRow, error } = await supabase.from("ressources_pedagogiques" as any).insert({
         formateur_id: user.id,
         session_id: session?.id || null,
-        exercice_id: exercise?.id || null,
+        exercice_id: primaryExercise?.id || null,
         type: selectedType,
-        competence: exercise?.competence || "CE",
-        niveau: exercise?.niveau_vise || session?.niveau_cible || "A1",
+        competence: primaryExercise?.competence || "CE",
+        niveau: primaryExercise?.niveau_vise || session?.niveau_cible || "A1",
         titre: generatedResource.titre,
         contenu: generatedResource as any,
         source: "manuel",
@@ -246,8 +259,8 @@ export default function GenerateResourceDialog({
     const printWindow = window.open("", "_blank");
     if (!printWindow || !generatedResource) return;
     
-    const competenceLabel = exercise?.competence || "CE";
-    const niveau = exercise?.niveau_vise || session?.niveau_cible || "A1";
+    const competenceLabel = primaryExercise?.competence || "CE";
+    const niveau = primaryExercise?.niveau_vise || session?.niveau_cible || "A1";
     
     printWindow.document.write(`
       <html><head><title>${generatedResource.titre}</title>
@@ -299,7 +312,7 @@ export default function GenerateResourceDialog({
           </DialogTitle>
           <DialogDescription>
             {step === "select"
-              ? "Choisissez le type de ressource à générer pour cet exercice."
+              ? `Choisissez le type de ressource à générer${allExercises.length > 1 ? ` pour ces ${allExercises.length} exercices` : " pour cet exercice"}.`
               : step === "assign"
               ? `La leçon « ${generatedResource?.titre} » sera visible dans l'espace élève.`
               : "Prévisualisez la ressource avant de la sauvegarder."}
@@ -308,14 +321,16 @@ export default function GenerateResourceDialog({
 
         {step === "select" ? (
           <div className="space-y-4">
-            {exercise && (
+            {allExercises.length > 0 && (
               <Card className="bg-muted/50">
-                <CardContent className="p-3">
-                  <p className="text-sm font-medium">{exercise.titre}</p>
-                  <div className="flex gap-1 mt-1">
-                    <Badge variant="outline" className="text-xs">{exercise.competence}</Badge>
-                    <Badge variant="outline" className="text-xs">{exercise.niveau_vise}</Badge>
-                  </div>
+                <CardContent className="p-3 space-y-1">
+                  {allExercises.map((ex, i) => (
+                    <div key={ex.id} className={cn("flex items-center gap-2", i > 0 && "border-t pt-1")}>
+                      <p className="text-sm font-medium flex-1">{ex.titre}</p>
+                      <Badge variant="outline" className="text-xs">{ex.competence}</Badge>
+                      <Badge variant="outline" className="text-xs">{ex.niveau_vise}</Badge>
+                    </div>
+                  ))}
                 </CardContent>
               </Card>
             )}
