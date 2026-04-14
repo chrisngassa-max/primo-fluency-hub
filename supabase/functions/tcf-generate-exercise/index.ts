@@ -74,44 +74,56 @@ Deno.serve(async (req) => {
     const apiKey = Deno.env.get('GEMINI_API_KEY')
     if (!apiKey) throw new Error('La clé GEMINI_API_KEY n\'est pas configurée')
 
-    // === RAG : Recherche dans la banque pédagogique Supabase ===
+    // === RAG : Recherche dans la banque d'exercices existants (327 exercices scannés) ===
     let basePedagogique = banque_donnees || [];
 
     if (!banque_donnees || banque_donnees.length === 0) {
       const supabaseUrl = Deno.env.get('SUPABASE_URL')
-      const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')
+      const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || Deno.env.get('SUPABASE_ANON_KEY')
 
       if (supabaseUrl && supabaseKey) {
         const supabase = createClient(supabaseUrl, supabaseKey)
         const targetLevel = level || 'B1'
+        const selectFields = 'titre, competence, niveau_vise, consigne, format, contexte_irn, contenu, sous_competence'
 
-        // Tentative 1 : par thème
+        // Tentative 1 : par thème + compétence
         if (theme) {
           const { data: byTheme } = await supabase
-            .from('pedagogical_activities')
-            .select('title, category, level_min, objective, instructions, tags')
-            .or(`category.ilike.%${theme}%,tags.ilike.%${theme}%,objective.ilike.%${theme}%`)
-            .limit(4)
+            .from('exercices')
+            .select(selectFields)
+            .or(`titre.ilike.%${theme}%,consigne.ilike.%${theme}%,contexte_irn.ilike.%${theme}%,sous_competence.ilike.%${theme}%`)
+            .limit(5)
           if (byTheme && byTheme.length > 0) basePedagogique = byTheme
         }
 
-        // Tentative 2 : par niveau
+        // Tentative 2 : par niveau + compétence (si dispositif contient une épreuve)
+        if (basePedagogique.length === 0 && dispositif?.epreuve) {
+          const { data: byComp } = await supabase
+            .from('exercices')
+            .select(selectFields)
+            .eq('competence', dispositif.epreuve)
+            .eq('niveau_vise', targetLevel)
+            .limit(5)
+          if (byComp && byComp.length > 0) basePedagogique = byComp
+        }
+
+        // Tentative 3 : par niveau seul
         if (basePedagogique.length === 0) {
           const { data: byLevel } = await supabase
-            .from('pedagogical_activities')
-            .select('title, category, level_min, objective, instructions, tags')
-            .eq('level_min', targetLevel)
-            .limit(4)
+            .from('exercices')
+            .select(selectFields)
+            .eq('niveau_vise', targetLevel)
+            .limit(5)
           if (byLevel && byLevel.length > 0) basePedagogique = byLevel
         }
 
-        // Tentative 3 : fallback total
+        // Tentative 4 : fallback — exercices aléatoires
         if (basePedagogique.length === 0) {
-          const { data: any4 } = await supabase
-            .from('pedagogical_activities')
-            .select('title, category, level_min, objective, instructions, tags')
-            .limit(4)
-          if (any4 && any4.length > 0) basePedagogique = any4
+          const { data: fallback } = await supabase
+            .from('exercices')
+            .select(selectFields)
+            .limit(5)
+          if (fallback && fallback.length > 0) basePedagogique = fallback
         }
       }
     }
