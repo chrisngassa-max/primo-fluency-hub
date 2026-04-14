@@ -328,6 +328,7 @@ const EleveDashboard = () => {
           <FileText className="inline h-4 w-4 mr-1.5 -mt-0.5" />
           Mes fiches
         </button>
+
       </div>
 
       {activeTab === "fiches" ? (

@@ -115,3 +115,10 @@ div[id*="lovable"],
 a[aria-label*="Lovable"] {
   display: none !important;
 }
+
+/* Print utilities */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
