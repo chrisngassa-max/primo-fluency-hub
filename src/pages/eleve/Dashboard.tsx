@@ -13,6 +13,7 @@ import CompetenceLabel from "@/components/CompetenceLabel";
 import EleveOnboarding, { useShowOnboarding } from "@/components/EleveOnboarding";
 import JoinGroupCard from "@/components/JoinGroupCard";
 import CompetencyGauge from "@/components/CompetencyGauge";
+import TrajectoireTCF from "@/components/TrajectoireTCF";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toast } from "sonner";
@@ -337,7 +338,8 @@ const EleveDashboard = () => {
         </Card>
       )}
 
-      {/* Pending AI bilan tests from formateur */}
+      {user?.id && <TrajectoireTCF eleveId={user.id} />}
+
       {uncompletedTests.length > 0 && (
         <Card className="border-primary/30 bg-primary/5">
           <CardHeader className="pb-2">
