@@ -71,8 +71,14 @@ export default function GenerateResourceDialog({
   open,
   onOpenChange,
   exercise,
+  exercises: exercisesProp,
   session,
 }: GenerateResourceDialogProps) {
+  // Consolidate: if exercises array provided, use it; otherwise wrap single exercise
+  const allExercises = exercisesProp && exercisesProp.length > 0
+    ? exercisesProp
+    : exercise ? [exercise] : [];
+  const primaryExercise = allExercises[0] || undefined;
   const { user } = useAuth();
   const navigate = useNavigate();
   const [selectedType, setSelectedType] = useState<ResourceType>("lecon");
