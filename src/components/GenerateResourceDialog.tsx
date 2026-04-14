@@ -37,18 +37,21 @@ interface GeneratedResource {
   resume: string;
 }
 
+interface ExerciseContext {
+  id: string;
+  titre: string;
+  consigne: string;
+  competence: string;
+  format: string;
+  niveau_vise: string;
+  contenu: any;
+}
+
 interface GenerateResourceDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  exercise?: {
-    id: string;
-    titre: string;
-    consigne: string;
-    competence: string;
-    format: string;
-    niveau_vise: string;
-    contenu: any;
-  };
+  exercise?: ExerciseContext;
+  exercises?: ExerciseContext[];
   session?: {
     id: string;
     titre: string;
