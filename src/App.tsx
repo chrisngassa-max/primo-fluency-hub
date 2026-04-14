@@ -104,6 +104,7 @@ const App = () => (
               <Route path="test-resultats/groupes" element={<TestResultatGroupes />} />
               <Route path="test-resultats/:apprenantId" element={<TestResultatDetail />} />
               <Route path="ressources" element={<RessourcesPage />} />
+              <Route path="intervention" element={<InterventionRapidePage />} />
               <Route path="parametres" element={<Parametres />} />
             </Route>
 
