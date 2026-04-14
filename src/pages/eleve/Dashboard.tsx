@@ -23,6 +23,7 @@ const EleveDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [showOnboarding, dismissOnboarding] = useShowOnboarding();
+  const [activeTab, setActiveTab] = useState<"dashboard" | "fiches">("dashboard");
   const qc = useQueryClient();
   const autoJoinRef = useRef(false);
 
