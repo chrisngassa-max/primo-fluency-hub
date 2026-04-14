@@ -59,7 +59,7 @@ serve(async (req) => {
     if (!ANTHROPIC_API_KEY) throw new Error("ANTHROPIC_API_KEY is not configured");
 
     const body = await req.json();
-    const { type, competence, niveau, exerciseContext, sessionContext, mode } = body;
+    const { type, competence, niveau, exerciseContext, exercisesContext, sessionContext, mode } = body;
 
     if (!type || !competence || !niveau) {
       throw new Error("Champs requis : type, competence, niveau");
