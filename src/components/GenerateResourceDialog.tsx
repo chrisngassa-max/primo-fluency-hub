@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,10 +14,12 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { BookOpen, FileText, RotateCcw, Image, Loader2, Save, Printer, Eye, Check, ExternalLink } from "lucide-react";
+import { BookOpen, FileText, RotateCcw, Image, Loader2, Save, Printer, Eye, Check, ExternalLink, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 type ResourceType = "lecon" | "vocabulaire" | "rappel_methodo" | "rappel_visuel";
@@ -73,8 +76,41 @@ export default function GenerateResourceDialog({
   const [generating, setGenerating] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [savedResourceId, setSavedResourceId] = useState<string | null>(null);
   const [generatedResource, setGeneratedResource] = useState<GeneratedResource | null>(null);
-  const [step, setStep] = useState<"select" | "preview">("select");
+  const [step, setStep] = useState<"select" | "preview" | "assign">("select");
+
+  // Assignment state
+  const [assignMode, setAssignMode] = useState<"individuel" | "groupe">("individuel");
+  const [assignEleveId, setAssignEleveId] = useState<string>("");
+  const [assignGroupId, setAssignGroupId] = useState<string>("");
+  const [assignDueDate, setAssignDueDate] = useState<string>("");
+  const [assigning, setAssigning] = useState(false);
+  const [eleves, setEleves] = useState<any[]>([]);
+  const [groupes, setGroupes] = useState<any[]>([]);
+
+  // Load eleves and groupes when needed
+  useEffect(() => {
+    if (!user || step !== "assign") return;
+    (async () => {
+      const [{ data: g }, { data: gm }] = await Promise.all([
+        supabase.from("groups").select("id, nom, niveau").eq("formateur_id", user.id),
+        supabase
+          .from("group_members")
+          .select("eleve_id, group_id, eleve:profiles(id, nom, prenom)")
+          .in(
+            "group_id",
+            (await supabase.from("groups").select("id").eq("formateur_id", user.id)).data?.map((x: any) => x.id) || []
+          ),
+      ]);
+      setGroupes(g || []);
+      const uniqueEleves = new Map<string, any>();
+      (gm || []).forEach((m: any) => {
+        if (m.eleve) uniqueEleves.set(m.eleve.id, m.eleve);
+      });
+      setEleves([...uniqueEleves.values()]);
+    })();
+  }, [user, step]);
 
   const handleGenerate = async () => {
     setGenerating(true);
@@ -109,7 +145,7 @@ export default function GenerateResourceDialog({
     if (!generatedResource || !user) return;
     setSaving(true);
     try {
-      const { error } = await supabase.from("ressources_pedagogiques" as any).insert({
+      const { data: savedRow, error } = await supabase.from("ressources_pedagogiques" as any).insert({
         formateur_id: user.id,
         session_id: session?.id || null,
         exercice_id: exercise?.id || null,
@@ -120,9 +156,10 @@ export default function GenerateResourceDialog({
         contenu: generatedResource as any,
         source: "manuel",
         statut,
-      });
+      }).select("id").single();
       if (error) throw error;
       setSaved(true);
+      setSavedResourceId((savedRow as any)?.id || null);
       toast.success(
         statut === "published" ? "Ressource publiée !" : "Ressource sauvegardée !",
         { description: "Vous pouvez l'imprimer ou la retrouver dans la banque de ressources." }
@@ -134,11 +171,70 @@ export default function GenerateResourceDialog({
     }
   };
 
+  const handleAssign = async () => {
+    if (!savedResourceId || !user) return;
+    setAssigning(true);
+    try {
+      if (assignMode === "individuel" && !assignEleveId) {
+        toast.error("Sélectionnez un élève");
+        setAssigning(false);
+        return;
+      }
+      if (assignMode === "groupe" && !assignGroupId) {
+        toast.error("Sélectionnez un groupe");
+        setAssigning(false);
+        return;
+      }
+
+      if (assignMode === "groupe") {
+        // Get all members of the group and create one assignment per learner
+        const { data: members } = await supabase
+          .from("group_members")
+          .select("eleve_id")
+          .eq("group_id", assignGroupId);
+        const rows = (members || []).map((m: any) => ({
+          resource_id: savedResourceId,
+          learner_id: m.eleve_id,
+          group_id: assignGroupId,
+          assigned_by: user.id,
+          due_date: assignDueDate || null,
+        }));
+        if (rows.length === 0) {
+          toast.error("Ce groupe n'a aucun élève");
+          setAssigning(false);
+          return;
+        }
+        const { error } = await supabase.from("resource_assignments" as any).insert(rows);
+        if (error) throw error;
+        toast.success(`Leçon assignée à ${rows.length} élève(s) du groupe`);
+      } else {
+        const { error } = await supabase.from("resource_assignments" as any).insert({
+          resource_id: savedResourceId,
+          learner_id: assignEleveId,
+          assigned_by: user.id,
+          due_date: assignDueDate || null,
+        });
+        if (error) throw error;
+        toast.success("Leçon assignée à l'élève");
+      }
+      setStep("preview");
+    } catch (e: any) {
+      toast.error("Erreur d'assignation", { description: e.message });
+    } finally {
+      setAssigning(false);
+    }
+  };
+
   const resetState = () => {
     setStep("select");
     setGeneratedResource(null);
     setSelectedType("lecon");
     setSaved(false);
+    setSavedResourceId(null);
+    setAssignMode("individuel");
+    setAssignEleveId("");
+    setAssignGroupId("");
+    setAssignDueDate("");
   };
 
   const handleClose = (open: boolean) => {
@@ -199,11 +295,13 @@ export default function GenerateResourceDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <BookOpen className="h-5 w-5 text-primary" />
-            Générer une ressource pédagogique
+            {step === "assign" ? "Assigner la ressource" : "Générer une ressource pédagogique"}
           </DialogTitle>
           <DialogDescription>
             {step === "select"
               ? "Choisissez le type de ressource à générer pour cet exercice."
+              : step === "assign"
+              ? `La leçon « ${generatedResource?.titre} » sera visible dans l'espace élève.`
               : "Prévisualisez la ressource avant de la sauvegarder."}
           </DialogDescription>
         </DialogHeader>
@@ -254,6 +352,61 @@ export default function GenerateResourceDialog({
               )}
             </Button>
           </div>
+        ) : step === "assign" ? (
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Mode d'assignation</Label>
+              <RadioGroup value={assignMode} onValueChange={(v) => setAssignMode(v as any)} className="flex gap-4">
+                <Label htmlFor="assign-ind" className="flex items-center gap-2 cursor-pointer">
+                  <RadioGroupItem value="individuel" id="assign-ind" />
+                  Individuel
+                </Label>
+                <Label htmlFor="assign-grp" className="flex items-center gap-2 cursor-pointer">
+                  <RadioGroupItem value="groupe" id="assign-grp" />
+                  Groupe entier
+                </Label>
+              </RadioGroup>
+            </div>
+
+            {assignMode === "individuel" ? (
+              <div className="space-y-1">
+                <Label>Élève</Label>
+                <Select value={assignEleveId} onValueChange={setAssignEleveId}>
+                  <SelectTrigger><SelectValue placeholder="Sélectionner un élève" /></SelectTrigger>
+                  <SelectContent>
+                    {eleves.map((e) => (
+                      <SelectItem key={e.id} value={e.id}>{e.prenom} {e.nom}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            ) : (
+              <div className="space-y-1">
+                <Label>Groupe</Label>
+                <Select value={assignGroupId} onValueChange={setAssignGroupId}>
+                  <SelectTrigger><SelectValue placeholder="Sélectionner un groupe" /></SelectTrigger>
+                  <SelectContent>
+                    {groupes.map((g) => (
+                      <SelectItem key={g.id} value={g.id}>{g.nom} ({g.niveau})</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            <div className="space-y-1">
+              <Label>Date limite (optionnel)</Label>
+              <Input type="date" value={assignDueDate} onChange={(e) => setAssignDueDate(e.target.value)} />
+            </div>
+
+            <div className="flex gap-2 justify-end">
+              <Button variant="outline" onClick={() => setStep("preview")}>Retour</Button>
+              <Button onClick={handleAssign} disabled={assigning}>
+                {assigning ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Users className="mr-2 h-4 w-4" />}
+                Assigner
+              </Button>
+            </div>
+          </div>
         ) : generatedResource ? (
           <div className="flex flex-col gap-3 flex-1 min-h-0">
             <ScrollArea className="flex-1 border rounded-lg p-4">
@@ -265,20 +418,45 @@ export default function GenerateResourceDialog({
                   section.type === "encadre" ? "border-l-4 border-primary bg-primary/5 p-3 rounded-r-md" :
                   section.type === "astuce" ? "border-l-4 border-green-500 bg-green-50 dark:bg-green-950/30 p-3 rounded-r-md" :
                   section.type === "attention" ? "border-l-4 border-orange-500 bg-orange-50 dark:bg-orange-950/30 p-3 rounded-r-md" :
+                  section.type === "exemple" ? "bg-emerald-50 dark:bg-emerald-950/20 p-3 rounded-md" :
                   ""
                 }`}>
-                  <h3 className="font-semibold text-sm mb-1">{section.titre}</h3>
+                  <h3 className="font-semibold text-sm mb-1">
+                    {section.type === "astuce" ? "💡 " : section.type === "attention" ? "⚠️ " : section.type === "exemple" ? "Exemple : " : ""}
+                    {section.titre}
+                  </h3>
                   <p className="text-sm whitespace-pre-wrap">{section.contenu}</p>
                   {section.items && section.items.length > 0 && (
-                    <div className="mt-2 space-y-1">
-                      {section.items.map((item, j) => (
-                        <div key={j} className="flex gap-2 text-sm bg-background/50 rounded p-2">
-                          {item.terme && <span className="font-medium min-w-[80px]">{item.terme}</span>}
-                          {item.definition && <span className="text-muted-foreground">— {item.definition}</span>}
-                          {item.exemple && <span className="italic text-xs text-muted-foreground ml-auto">Ex: {item.exemple}</span>}
-                        </div>
-                      ))}
-                    </div>
+                    section.type === "tableau" ? (
+                      <table className="mt-2 w-full text-sm border-collapse">
+                        <thead>
+                          <tr className="border-b">
+                            <th className="text-left p-2 font-semibold">Terme</th>
+                            <th className="text-left p-2 font-semibold">Définition</th>
+                            <th className="text-left p-2 font-semibold">Exemple</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {section.items.map((item, j) => (
+                            <tr key={j} className="border-b border-border/50">
+                              <td className="p-2 font-medium">{item.terme || ""}</td>
+                              <td className="p-2 text-muted-foreground">{item.definition || ""}</td>
+                              <td className="p-2 italic text-muted-foreground">{item.exemple || ""}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    ) : (
+                      <ul className="mt-2 space-y-1 list-disc list-inside text-sm">
+                        {section.items.map((item, j) => (
+                          <li key={j}>
+                            {item.terme && <span className="font-medium">{item.terme}</span>}
+                            {item.definition && <span className="text-muted-foreground"> — {item.definition}</span>}
+                            {item.exemple && <span className="italic text-xs text-muted-foreground ml-1">(Ex: {item.exemple})</span>}
+                          </li>
+                        ))}
+                      </ul>
+                    )
                   )}
                 </div>
               ))}
@@ -293,6 +471,11 @@ export default function GenerateResourceDialog({
               <Button variant="outline" size="sm" onClick={handlePrint}>
                 <Printer className="mr-1 h-3.5 w-3.5" /> Imprimer
               </Button>
+              {saved && savedResourceId && (
+                <Button variant="outline" size="sm" onClick={() => setStep("assign")}>
+                  <Users className="mr-1 h-3.5 w-3.5" /> Assigner aux élèves
+                </Button>
+              )}
               <div className="flex-1" />
               {saved ? (
                 <>

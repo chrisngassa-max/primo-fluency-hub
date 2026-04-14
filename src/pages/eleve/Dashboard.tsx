@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,8 +8,9 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BookOpen, TrendingUp, AlertCircle, ArrowRight, Target, ClipboardCheck, Calendar, BarChart2, Pencil } from "lucide-react";
+import { BookOpen, TrendingUp, AlertCircle, ArrowRight, Target, ClipboardCheck, Calendar, BarChart2, Pencil, FileText } from "lucide-react";
 import CompetenceLabel from "@/components/CompetenceLabel";
+import MesFichesTab from "@/components/MesFichesTab";
 import EleveOnboarding, { useShowOnboarding } from "@/components/EleveOnboarding";
 import JoinGroupCard from "@/components/JoinGroupCard";
 import CompetencyGauge from "@/components/CompetencyGauge";
@@ -22,6 +23,7 @@ const EleveDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [showOnboarding, dismissOnboarding] = useShowOnboarding();
+  const [activeTab, setActiveTab] = useState<"dashboard" | "fiches">("dashboard");
   const qc = useQueryClient();
   const autoJoinRef = useRef(false);
 
@@ -302,6 +304,37 @@ const EleveDashboard = () => {
     <div className="space-y-6 max-w-2xl mx-auto">
       {showOnboarding && <EleveOnboarding onComplete={dismissOnboarding} />}
 
+      {/* Tab navigation */}
+      <div className="flex gap-2 border-b pb-0">
+        <button
+          onClick={() => setActiveTab("dashboard")}
+          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+            activeTab === "dashboard"
+              ? "border-primary text-primary"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <BookOpen className="inline h-4 w-4 mr-1.5 -mt-0.5" />
+          Mon espace
+        </button>
+        <button
+          onClick={() => setActiveTab("fiches")}
+          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+            activeTab === "fiches"
+              ? "border-primary text-primary"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <FileText className="inline h-4 w-4 mr-1.5 -mt-0.5" />
+          Mes fiches
+        </button>
+      </div>
+
+      {activeTab === "fiches" ? (
+        <MesFichesTab />
+      ) : (
+      <>
+
       <div>
       <h1 className="text-2xl font-bold text-foreground">
           Bienvenue{user?.user_metadata?.prenom ? `, ${user.user_metadata.prenom}` : ""} 👋
@@ -556,6 +589,8 @@ const EleveDashboard = () => {
 
       {/* Join group */}
       <JoinGroupCard />
+      </>
+      )}
     </div>
   );
 };
