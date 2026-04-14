@@ -84,6 +84,15 @@ CONTEXTE DE L'EXERCICE SOURCE :
 La ressource doit être directement liée à cet exercice et couvrir les notions nécessaires pour le réussir.`;
     }
 
+    if (exercisesContext && Array.isArray(exercisesContext) && exercisesContext.length > 0) {
+      userPrompt += `
+
+CONTEXTE DES ${exercisesContext.length} EXERCICES SOURCES :
+${exercisesContext.map((ex: any, i: number) => `${i + 1}. "${ex.titre}" (${ex.competence}, ${ex.format}) — ${ex.consigne || ""}`).join("\n")}
+
+La ressource doit couvrir les notions nécessaires pour réussir l'ensemble de ces exercices. Identifie les points communs et les compétences transversales.`;
+    }
+
     if (sessionContext) {
       userPrompt += `
 
