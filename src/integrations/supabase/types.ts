@@ -1484,6 +1484,65 @@ export type Database = {
           },
         ]
       }
+      resource_assignments: {
+        Row: {
+          assigned_by: string | null
+          created_at: string | null
+          due_date: string | null
+          group_id: string | null
+          id: string
+          learner_id: string | null
+          resource_id: string | null
+        }
+        Insert: {
+          assigned_by?: string | null
+          created_at?: string | null
+          due_date?: string | null
+          group_id?: string | null
+          id?: string
+          learner_id?: string | null
+          resource_id?: string | null
+        }
+        Update: {
+          assigned_by?: string | null
+          created_at?: string | null
+          due_date?: string | null
+          group_id?: string | null
+          id?: string
+          learner_id?: string | null
+          resource_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resource_assignments_assigned_by_fkey"
+            columns: ["assigned_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resource_assignments_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resource_assignments_learner_id_fkey"
+            columns: ["learner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resource_assignments_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "ressources_pedagogiques"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ressources_pedagogiques: {
         Row: {
           competence: Database["public"]["Enums"]["competence_type"]
