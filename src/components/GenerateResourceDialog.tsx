@@ -127,11 +127,14 @@ export default function GenerateResourceDialog({
       const { data, error } = await supabase.functions.invoke("generate-resource", {
         body: {
           type: selectedType,
-          competence: exercise?.competence || "CE",
-          niveau: exercise?.niveau_vise || session?.niveau_cible || "A1",
+          competence: primaryExercise?.competence || "CE",
+          niveau: primaryExercise?.niveau_vise || session?.niveau_cible || "A1",
           mode: "manual",
-          exerciseContext: exercise
-            ? { titre: exercise.titre, consigne: exercise.consigne, competence: exercise.competence, format: exercise.format }
+          exerciseContext: primaryExercise
+            ? { titre: primaryExercise.titre, consigne: primaryExercise.consigne, competence: primaryExercise.competence, format: primaryExercise.format }
+            : undefined,
+          exercisesContext: allExercises.length > 1
+            ? allExercises.map(ex => ({ titre: ex.titre, consigne: ex.consigne, competence: ex.competence, format: ex.format }))
             : undefined,
           sessionContext: session
             ? { titre: session.titre, objectifs: session.objectifs, niveau_cible: session.niveau_cible }
