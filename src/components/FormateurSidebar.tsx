@@ -14,6 +14,7 @@ import {
   ClipboardCheck,
   Inbox,
   Library,
+  Flame,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
@@ -46,6 +47,7 @@ const mainNav = [
   { title: "Importer programme", url: "/formateur/import-programme", icon: Upload },
   { title: "Plans de formation", url: "/formateur/parcours", icon: Route },
   { title: "Ressources", url: "/formateur/ressources", icon: Library },
+  { title: "Intervention rapide", url: "/formateur/intervention", icon: Flame },
 ];
 
 const monitorNav = [
