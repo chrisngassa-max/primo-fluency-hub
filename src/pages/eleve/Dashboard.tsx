@@ -589,6 +589,8 @@ const EleveDashboard = () => {
 
       {/* Join group */}
       <JoinGroupCard />
+      </>
+      )}
     </div>
   );
 };
