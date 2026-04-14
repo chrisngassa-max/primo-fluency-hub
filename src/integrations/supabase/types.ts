@@ -616,13 +616,16 @@ export type Database = {
           id: string
           is_ai_generated: boolean
           is_devoir: boolean
+          is_live_ready: boolean | null
           is_template: boolean
           mode: Database["public"]["Enums"]["exercice_mode"]
           niveau_vise: string
+          play_token: string | null
           point_a_maitriser_id: string
           sequence_id: string | null
           source_url: string | null
           sous_competence: string | null
+          statut: string | null
           titre: string
           updated_at: string
           variante_niveau_bas: Json | null
@@ -643,13 +646,16 @@ export type Database = {
           id?: string
           is_ai_generated?: boolean
           is_devoir?: boolean
+          is_live_ready?: boolean | null
           is_template?: boolean
           mode?: Database["public"]["Enums"]["exercice_mode"]
           niveau_vise: string
+          play_token?: string | null
           point_a_maitriser_id: string
           sequence_id?: string | null
           source_url?: string | null
           sous_competence?: string | null
+          statut?: string | null
           titre: string
           updated_at?: string
           variante_niveau_bas?: Json | null
@@ -670,13 +676,16 @@ export type Database = {
           id?: string
           is_ai_generated?: boolean
           is_devoir?: boolean
+          is_live_ready?: boolean | null
           is_template?: boolean
           mode?: Database["public"]["Enums"]["exercice_mode"]
           niveau_vise?: string
+          play_token?: string | null
           point_a_maitriser_id?: string
           sequence_id?: string | null
           source_url?: string | null
           sous_competence?: string | null
+          statut?: string | null
           titre?: string
           updated_at?: string
           variante_niveau_bas?: Json | null
@@ -709,6 +718,147 @@ export type Database = {
             columns: ["sequence_id"]
             isOneToOne: false
             referencedRelation: "sequences_pedagogiques"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exercise_assignments: {
+        Row: {
+          assigned_by: string | null
+          context: string | null
+          created_at: string | null
+          due_date: string | null
+          exercise_id: string | null
+          group_id: string | null
+          id: string
+          learner_id: string | null
+          sync_status: string | null
+        }
+        Insert: {
+          assigned_by?: string | null
+          context?: string | null
+          created_at?: string | null
+          due_date?: string | null
+          exercise_id?: string | null
+          group_id?: string | null
+          id?: string
+          learner_id?: string | null
+          sync_status?: string | null
+        }
+        Update: {
+          assigned_by?: string | null
+          context?: string | null
+          created_at?: string | null
+          due_date?: string | null
+          exercise_id?: string | null
+          group_id?: string | null
+          id?: string
+          learner_id?: string | null
+          sync_status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercise_assignments_assigned_by_fkey"
+            columns: ["assigned_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercise_assignments_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercise_assignments_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercise_assignments_learner_id_fkey"
+            columns: ["learner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exercise_attempts: {
+        Row: {
+          answers: Json | null
+          assignment_id: string | null
+          completed_at: string | null
+          created_at: string | null
+          exercise_id: string | null
+          feedback_text: string | null
+          id: string
+          item_results: Json | null
+          learner_id: string | null
+          score_normalized: number | null
+          score_raw: number | null
+          source_app: string | null
+          started_at: string | null
+          status: string | null
+          time_spent_seconds: number | null
+        }
+        Insert: {
+          answers?: Json | null
+          assignment_id?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          exercise_id?: string | null
+          feedback_text?: string | null
+          id?: string
+          item_results?: Json | null
+          learner_id?: string | null
+          score_normalized?: number | null
+          score_raw?: number | null
+          source_app?: string | null
+          started_at?: string | null
+          status?: string | null
+          time_spent_seconds?: number | null
+        }
+        Update: {
+          answers?: Json | null
+          assignment_id?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          exercise_id?: string | null
+          feedback_text?: string | null
+          id?: string
+          item_results?: Json | null
+          learner_id?: string | null
+          score_normalized?: number | null
+          score_raw?: number | null
+          source_app?: string | null
+          started_at?: string | null
+          status?: string | null
+          time_spent_seconds?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercise_attempts_assignment_id_fkey"
+            columns: ["assignment_id"]
+            isOneToOne: false
+            referencedRelation: "exercise_assignments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercise_attempts_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercise_attempts_learner_id_fkey"
+            columns: ["learner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
