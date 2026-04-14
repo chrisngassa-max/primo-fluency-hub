@@ -2488,11 +2488,18 @@ ${ficheHtml}</body></html>`;
         onExerciseCreated={() => qc.invalidateQueries({ queryKey: ["session-exercices", id] })}
       />
 
-      {/* ─── Generate Resource Dialog ─── */}
+      {/* ─── Generate Resource Dialog (single exercise) ─── */}
       <GenerateResourceDialog
-        open={!!resourceExercise}
+        open={!!resourceExercise && !resourceExercises}
         onOpenChange={(o) => !o && setResourceExercise(null)}
         exercise={resourceExercise || undefined}
+        session={session ? { id: session.id, titre: session.titre, objectifs: session.objectifs, niveau_cible: session.niveau_cible } : undefined}
+      />
+      {/* ─── Generate Resource Dialog (multiple exercises) ─── */}
+      <GenerateResourceDialog
+        open={!!resourceExercises && resourceExercises.length > 0}
+        onOpenChange={(o) => !o && setResourceExercises(null)}
+        exercises={resourceExercises || undefined}
         session={session ? { id: session.id, titre: session.titre, objectifs: session.objectifs, niveau_cible: session.niveau_cible } : undefined}
       />
       {/* ─── Send to Students Selection Dialog ─── */}
