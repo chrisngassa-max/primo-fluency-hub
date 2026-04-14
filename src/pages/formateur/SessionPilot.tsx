@@ -127,6 +127,7 @@ const SessionPilot = () => {
 
   // Resource generation
   const [resourceExercise, setResourceExercise] = useState<any>(null);
+  const [resourceExercises, setResourceExercises] = useState<any[] | null>(null);
 
   const { data: session } = useQuery({
     queryKey: ["session-info", id],
