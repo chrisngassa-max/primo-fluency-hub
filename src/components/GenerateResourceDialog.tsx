@@ -160,10 +160,10 @@ export default function GenerateResourceDialog({
       const { data: savedRow, error } = await supabase.from("ressources_pedagogiques" as any).insert({
         formateur_id: user.id,
         session_id: session?.id || null,
-        exercice_id: exercise?.id || null,
+        exercice_id: primaryExercise?.id || null,
         type: selectedType,
-        competence: exercise?.competence || "CE",
-        niveau: exercise?.niveau_vise || session?.niveau_cible || "A1",
+        competence: primaryExercise?.competence || "CE",
+        niveau: primaryExercise?.niveau_vise || session?.niveau_cible || "A1",
         titre: generatedResource.titre,
         contenu: generatedResource as any,
         source: "manuel",
@@ -258,8 +258,8 @@ export default function GenerateResourceDialog({
     const printWindow = window.open("", "_blank");
     if (!printWindow || !generatedResource) return;
     
-    const competenceLabel = exercise?.competence || "CE";
-    const niveau = exercise?.niveau_vise || session?.niveau_cible || "A1";
+    const competenceLabel = primaryExercise?.competence || "CE";
+    const niveau = primaryExercise?.niveau_vise || session?.niveau_cible || "A1";
     
     printWindow.document.write(`
       <html><head><title>${generatedResource.titre}</title>
@@ -311,7 +311,7 @@ export default function GenerateResourceDialog({
           </DialogTitle>
           <DialogDescription>
             {step === "select"
-              ? "Choisissez le type de ressource à générer pour cet exercice."
+              ? `Choisissez le type de ressource à générer${allExercises.length > 1 ? ` pour ces ${allExercises.length} exercices` : " pour cet exercice"}.`
               : step === "assign"
               ? `La leçon « ${generatedResource?.titre} » sera visible dans l'espace élève.`
               : "Prévisualisez la ressource avant de la sauvegarder."}
@@ -320,14 +320,16 @@ export default function GenerateResourceDialog({
 
         {step === "select" ? (
           <div className="space-y-4">
-            {exercise && (
+            {allExercises.length > 0 && (
               <Card className="bg-muted/50">
-                <CardContent className="p-3">
-                  <p className="text-sm font-medium">{exercise.titre}</p>
-                  <div className="flex gap-1 mt-1">
-                    <Badge variant="outline" className="text-xs">{exercise.competence}</Badge>
-                    <Badge variant="outline" className="text-xs">{exercise.niveau_vise}</Badge>
-                  </div>
+                <CardContent className="p-3 space-y-1">
+                  {allExercises.map((ex, i) => (
+                    <div key={ex.id} className={cn("flex items-center gap-2", i > 0 && "border-t pt-1")}>
+                      <p className="text-sm font-medium flex-1">{ex.titre}</p>
+                      <Badge variant="outline" className="text-xs">{ex.competence}</Badge>
+                      <Badge variant="outline" className="text-xs">{ex.niveau_vise}</Badge>
+                    </div>
+                  ))}
                 </CardContent>
               </Card>
             )}
