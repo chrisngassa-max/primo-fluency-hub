@@ -1654,15 +1654,31 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
                 </button>
               </div>
 
-              <div className="flex gap-2">
-                <Button onClick={handleSave} className="flex-1" disabled={saving}>
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
-                  Valider et passer au bilan
-                </Button>
-                <Button variant="outline" onClick={handlePrint}>
-                  <Printer className="h-4 w-4 mr-2" />Imprimer
-                </Button>
-              </div>
+               <div className="flex gap-2 flex-wrap">
+                 <Button onClick={handleSave} className="flex-1" disabled={saving}>
+                   {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
+                   Valider et passer au bilan
+                 </Button>
+                 <Button variant="outline" onClick={handlePrint}>
+                   <Printer className="h-4 w-4 mr-2" />Imprimer
+                 </Button>
+                 {checkedCount > 0 && (
+                   <Button
+                     variant="outline"
+                     className="gap-1 text-primary border-primary/30 hover:bg-primary/10"
+                     onClick={() => {
+                       const selectedExercises = exercises
+                         .filter(se => checked[se.id])
+                         .map(se => (se as any).exercice)
+                         .filter(Boolean);
+                       setResourceExercises(selectedExercises);
+                     }}
+                   >
+                     <BookOpen className="h-4 w-4" />
+                     Générer une ressource ({checkedCount})
+                   </Button>
+                 )}
+               </div>
             </CardContent>
           </Card>
 
