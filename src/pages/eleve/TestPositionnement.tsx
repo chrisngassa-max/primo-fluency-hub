@@ -985,7 +985,7 @@ const TestPositionnement = () => {
                   key={`consigne-${currentQuestion.id}`}
                   text={currentQuestion.consigne}
                   label="🔊 Écouter la consigne"
-                  autoPlay={true}
+                  autoPlay={false}
                 />
               )}
             </div>
