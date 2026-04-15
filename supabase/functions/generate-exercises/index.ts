@@ -122,7 +122,12 @@ RÈGLES D'ADAPTATION :
     const diffLevel = difficultyLevel ?? 5;
     let difficultyDescription = "";
     if (diffLevel <= 2) {
-      difficultyDescription = `Niveau de difficulté ${diffLevel}/10 — LITTÉRATIE/ALPHA : reconnaissance de lettres, sons de base, chiffres simples, vocabulaire ultra-basique (bonjour, merci, oui/non). Questions très courtes avec support visuel.`;
+      difficultyDescription = `Niveau de difficulté ${diffLevel}/10 — LITTÉRATIE/ALPHA : reconnaissance de lettres, sons de base, chiffres simples, vocabulaire ultra-basique (bonjour, merci, oui/non). Questions très courtes avec support visuel.
+  Niveau A0 (difficulté 1-2/10) :
+  - Consignes en 1 mot si possible : "Choisissez.", "Écoutez.", "Regardez."
+  - Accompagner chaque consigne d'une icône ou emoji explicatif
+  - Questions de 5 mots maximum
+  - Options de réponse : maximum 3 mots`;
     } else if (diffLevel <= 7) {
       difficultyDescription = `Niveau de difficulté ${diffLevel}/10 — PROGRESSION VERS A1 : phrases courtes, vocabulaire quotidien, situations simples de la vie courante. Complexité progressive des structures grammaticales.`;
     } else {
@@ -269,6 +274,45 @@ IMPORTANT — Pour CHAQUE exercice, tu dois aussi proposer un "animation_guide" 
 IMPORTANT — Pour CHAQUE exercice, tu dois aussi proposer des VARIANTES DE DIFFÉRENCIATION :
 - "variante_niveau_bas" : version simplifiée pour les élèves en difficulté. Contient : consigne (reformulée plus simplement, avec aide ou amorce), aide (mot ou phrase de démarrage), nb_items_reduit (nombre d'items réduit, ex: 2).
 - "variante_niveau_haut" : version enrichie pour les élèves avancés. Contient : consigne (avec contrainte supplémentaire ou tâche de transfert), extension (question ouverte ou production additionnelle).
+
+
+═══════════════════════════════════════════════════
+RÈGLES ABSOLUES SUR LA LANGUE — PUBLIC A0/A1 ALLOPHONE
+Ces règles s'appliquent à TOUS les textes générés sans exception.
+═══════════════════════════════════════════════════
+
+CONSIGNES (instructions données à l'élève) :
+✅ Maximum 12 mots par consigne
+✅ Structure imposée : Verbe à l'impératif + complément court
+✅ Valide : "Écoutez et choisissez.", "Lisez et répondez.", "Regardez l'image."
+✅ Valide : "Choisissez la bonne réponse.", "Cochez vrai ou faux."
+❌ Interdit : subordonnées relatives ou causales
+❌ Interdit : double négation ("ne... pas... sans...")
+❌ Interdit : plus de 2 actions dans une même consigne
+❌ Interdit : "En vous appuyant sur...", "Après avoir lu...", "En tenant compte de..."
+
+QUESTIONS ET ITEMS :
+✅ Phrases courtes : Sujet + Verbe + Complément
+✅ Vocabulaire du quotidien : les mots utilisés dans la vie réelle A0
+✅ Maximum 20 mots par question
+❌ Interdit : vocabulaire abstrait (intégration, démarche administrative complexe...)
+❌ Interdit : phrases imbriquées
+
+OPTIONS DE RÉPONSE QCM :
+✅ Maximum 6 mots par option
+✅ Cohérentes entre elles (même type grammatical)
+✅ Les 3 options doivent être plausibles (pas d'option absurde évidente)
+
+EXPLICATIONS (feedback après erreur) :
+✅ Maximum 20 mots
+✅ Structure : "La bonne réponse est [X] parce que [raison courte]."
+✅ Exemple : "La bonne réponse est 'lundi' parce que le texte dit 'cours le lundi'."
+❌ Interdit : explications grammaticales techniques pour A0
+
+AVANT de finaliser ta réponse, vérifie chaque consigne générée :
+- Compte les mots → si > 12, reformule
+- Vérifie la structure impérative → sinon, reformule
+- Vérifie qu'il n'y a qu'une seule action demandée → sinon, coupe en 2
 
 Tu DOIS utiliser le tool "generate_exercises" pour retourner le résultat.${gabaritPrompt}`;
 

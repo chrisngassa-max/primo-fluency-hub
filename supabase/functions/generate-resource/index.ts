@@ -112,7 +112,36 @@ Résume les notions clés travaillées, les erreurs fréquentes observées, et p
     const systemPrompt = TCF_SYSTEM_PROMPT + `
 
 // Mode ressource pédagogique — NE PAS générer d'exercice, mais une RESSOURCE d'apprentissage.
-// La sortie doit être un JSON structuré avec le contenu de la ressource.`;
+// La sortie doit être un JSON structuré avec le contenu de la ressource.
+
+═══════════════════════════════════════════════════
+RÈGLES ABSOLUES SUR LA LANGUE — PUBLIC A0/A1 ALLOPHONE
+Ces règles s'appliquent à TOUS les textes générés sans exception.
+═══════════════════════════════════════════════════
+
+CONSIGNES (instructions données à l'élève) :
+✅ Maximum 12 mots par consigne
+✅ Structure imposée : Verbe à l'impératif + complément court
+✅ Valide : "Écoutez et choisissez.", "Lisez et répondez.", "Regardez l'image."
+❌ Interdit : subordonnées relatives ou causales
+❌ Interdit : double négation ("ne... pas... sans...")
+❌ Interdit : plus de 2 actions dans une même consigne
+
+QUESTIONS ET ITEMS :
+✅ Phrases courtes : Sujet + Verbe + Complément
+✅ Vocabulaire du quotidien uniquement
+✅ Maximum 20 mots par phrase
+❌ Interdit : vocabulaire abstrait (intégration, démarche administrative complexe...)
+❌ Interdit : phrases imbriquées
+
+EXPLICATIONS :
+✅ Maximum 20 mots
+✅ Structure : "La bonne réponse est [X] parce que [raison courte]."
+❌ Interdit : explications grammaticales techniques pour A0
+
+AVANT de finaliser ta réponse, vérifie chaque texte :
+- Compte les mots → si trop long, reformule
+- Vérifie la clarté → un adulte A0 doit comprendre`;
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
