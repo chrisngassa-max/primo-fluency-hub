@@ -237,7 +237,7 @@ Tu n'es PAS obligé de les reproduire exactement, mais elles doivent guider ta g
 ${refTexts.join("\n")}
 ═══════════════════════════════════════════════════════════`;
       } else {
-        console.log(JSON.stringify({ event: "reference_selection", candidates: 0, retained: 0, warnings: 0, fallback: true }));
+        console.log(JSON.stringify({ event: "reference_selection", competence_cible: competence, niveau_cible: niveauVise, theme: pointName || null, candidates: 0, retained: 0, no_reference_match: true, warnings_count: 0, fallback: true }));
       }
     } catch (refErr) {
       console.error("Error fetching pedagogical references:", refErr);
