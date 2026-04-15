@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
+import CorrectionDetaillee from "@/components/CorrectionDetaillee";
 import { evaluerReponseIA } from "@/lib/testPositionnement";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -477,26 +478,10 @@ const DevoirPassation = () => {
           </div>
         </div>
 
-        <Card className={cn(
-          "text-center",
-          finalResult.score >= 80 ? "border-green-500/30" : finalResult.score >= 60 ? "border-orange-500/30" : "border-destructive/30"
-        )}>
-          <CardContent className="pt-6 pb-4">
-            <p className={cn(
-              "text-5xl font-black",
-              finalResult.score >= 80 ? "text-green-600" : finalResult.score >= 60 ? "text-orange-600" : "text-destructive"
-            )}>
-              {finalResult.score}%
-            </p>
-            <p className="text-sm text-muted-foreground mt-2">
-              {finalResult.score >= 80 ? "Excellent travail ! 🎉" : finalResult.score >= 60 ? "Bien joué, tu progresses vers ton objectif TCF !" : "Continue, chaque exercice te rapproche du TCF ! 💪"}
-            </p>
-          </CardContent>
-        </Card>
-
-        {Array.isArray(finalResult.correction) && finalResult.correction.length > 0 && (
-          <CorrectionAccordion correction={finalResult.correction} />
-        )}
+        <CorrectionDetaillee
+          itemResults={finalResult.correction}
+          scoreNormalized={finalResult.score}
+        />
 
         {(result as any)?.bilanId && (
           <Button variant="outline" className="w-full gap-2" onClick={() => navigate(`/eleve/bilan-devoirs/${(result as any).bilanId}`)}>
