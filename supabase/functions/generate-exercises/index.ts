@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { MODEL } from "../_shared/system-prompt.ts";
+import { callAI, AIError } from "../_shared/ai-client.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -15,8 +16,7 @@ serve(async (req) => {
     const { pointName, competence, niveauVise, count = 10, difficultyLevel, gabaritNumero, type_demarche, niveau_depart, niveau_arrivee, groupId, existingExercises } = await req.json();
     const demarche = type_demarche || "titre_sejour";
     const epreuvesAutorisees = demarche === "naturalisation" ? "CO, CE, EE, EO" : "CO, CE";
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+    // AI key check moved to shared ai-client
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -351,159 +351,125 @@ RÈGLES ANTI-REDONDANCE STRICTES :
 ${studentContextPrompt}${antiRedundancyPrompt}
 Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO2/CO3/CO4, varier les codes).`;
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt },
-        ],
-        tools: [
-          {
-            type: "function",
-            function: {
-              name: "generate_exercises",
-              description: "Return generated exercises with animation guides and metadata codes",
-              parameters: {
-                type: "object",
-                properties: {
-                  exercises: {
-                    type: "array",
-                    items: {
-                      type: "object",
-                      properties: {
-                        titre: { type: "string", description: "Titre court de l'exercice" },
-                        consigne: { type: "string", description: "Consigne pour l'élève" },
-                        format: { type: "string", enum: ["qcm", "vrai_faux", "texte_lacunaire", "appariement", "transformation", "production_ecrite", "production_orale"] },
-                        difficulte: { type: "number", minimum: 0, maximum: 10, description: "Niveau de difficulté sur l'échelle 0-10" },
-                        metadata: {
-                          type: "object",
-                          description: "Métadonnées pédagogiques de l'exercice",
-                          properties: {
-                            code: { type: "string", description: "Code de l'exercice (CO1, CO2, CE1, EO1, EE1, etc.)" },
-                            skill: { type: "string", description: "Compétence (Compréhension Orale, Expression Écrite, etc.)" },
-                            sub_skill: { type: "string", description: "Sous-compétence (Identifier situation, Se présenter, etc.)" },
-                            time_limit_seconds: { type: "number", description: "Durée maximale en secondes" },
-                          },
-                          required: ["code", "skill", "sub_skill", "time_limit_seconds"],
+    const data = await callAI({
+      model: MODEL,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+      ],
+      tools: [
+        {
+          type: "function",
+          function: {
+            name: "generate_exercises",
+            description: "Return generated exercises with animation guides and metadata codes",
+            parameters: {
+              type: "object",
+              properties: {
+                exercises: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      titre: { type: "string", description: "Titre court de l'exercice" },
+                      consigne: { type: "string", description: "Consigne pour l'élève" },
+                      format: { type: "string", enum: ["qcm", "vrai_faux", "texte_lacunaire", "appariement", "transformation", "production_ecrite", "production_orale"] },
+                      difficulte: { type: "number", minimum: 0, maximum: 10, description: "Niveau de difficulté sur l'échelle 0-10" },
+                      metadata: {
+                        type: "object",
+                        description: "Métadonnées pédagogiques de l'exercice",
+                        properties: {
+                          code: { type: "string", description: "Code de l'exercice (CO1, CO2, CE1, EO1, EE1, etc.)" },
+                          skill: { type: "string", description: "Compétence (Compréhension Orale, Expression Écrite, etc.)" },
+                          sub_skill: { type: "string", description: "Sous-compétence (Identifier situation, Se présenter, etc.)" },
+                          time_limit_seconds: { type: "number", description: "Durée maximale en secondes" },
                         },
-                        contenu: {
-                          type: "object",
-                          properties: {
-                            texte: { type: "string", description: "Texte support / document à lire avant les questions (OBLIGATOIRE pour CE). Doit reproduire fidèlement le document (badge, panneau, courrier, SMS, etc.) avec TOUTES les informations nécessaires pour répondre." },
-                            script_audio: { type: "string", description: "Script audio pour CO : texte lu par la synthèse vocale (OBLIGATOIRE pour CO, NE PAS afficher à l'élève)" },
-                            image_description: { type: "string", description: "Description de l'image à générer automatiquement (pour EO quand l'exercice demande de décrire une image). Ex: 'Une famille à table en train de manger dans un appartement'. NE PAS mettre d'URL, seulement une description textuelle détaillée de la scène." },
-                            type_reponse: { type: "string", enum: ["ecrit", "oral"], description: "Type de réponse attendu (oral pour EO)" },
-                            criteres_evaluation: { type: "object", description: "Critères d'évaluation pour les productions orales/écrites" },
-                            mots_cles_attendus: {
-                              type: "array",
-                              items: { type: "string" },
-                              description: "Mots-clés que l'élève doit prononcer/écrire pour valider la tâche (EO/EE)",
-                            },
-                            items: {
-                              type: "array",
-                              items: {
-                                type: "object",
-                                properties: {
-                                  question: { type: "string" },
-                                  options: { type: "array", items: { type: "string" } },
-                                  bonne_reponse: { type: "string" },
-                                  explication: { type: "string" },
-                                },
-                                required: ["question", "bonne_reponse"],
-                              },
-                            },
-                          },
-                          required: ["items"],
-                        },
-                        variante_niveau_bas: {
-                          type: "object",
-                          description: "Version simplifiée de l'exercice pour les élèves en difficulté",
-                          properties: {
-                            consigne: { type: "string", description: "Consigne simplifiée avec aide ou amorce fournie" },
-                            aide: { type: "string", description: "Mot ou phrase donnée pour démarrer" },
-                            nb_items_reduit: { type: "number", description: "Nombre d'items réduit" },
-                          },
-                          required: ["consigne", "aide", "nb_items_reduit"],
-                        },
-                        variante_niveau_haut: {
-                          type: "object",
-                          description: "Version enrichie de l'exercice pour les élèves avancés",
-                          properties: {
-                            consigne: { type: "string", description: "Consigne avec contrainte supplémentaire ou tâche de transfert" },
-                            extension: { type: "string", description: "Question ouverte ou production additionnelle demandée" },
-                          },
-                          required: ["consigne", "extension"],
-                        },
-                        animation_guide: {
-                          type: "object",
-                          description: "Guide d'animation ludique pour le formateur avec matériel imprimable",
-                          properties: {
-                            scenario: { type: "string", description: "Mise en situation concrète" },
-                            jeu: { type: "string", description: "Règle de jeu ludique" },
-                            materiel: { type: "string", description: "Matériel à préparer" },
-                            objectif_oral: { type: "string", description: "Structure de phrase cible" },
-                            documentation_fournie: {
-                              type: "object",
-                              description: "Matériel pédagogique complet imprimable",
-                              properties: {
-                                guide_formateur: { type: "string", description: "Instructions pas-à-pas détaillées pour animer l'activité" },
-                                fiches_eleves: {
-                                  type: "array",
-                                  description: "Fiches physiques à distribuer aux élèves",
-                                  items: {
-                                    type: "object",
-                                    properties: {
-                                      titre_fiche: { type: "string", description: "Ex: Fiche A — Le Client" },
-                                      contenu_fiche: { type: "string", description: "Rôle, mission, vocabulaire imposé, données concrètes" },
-                                      lexique_cles: { type: "array", items: { type: "string" }, description: "5-10 mots/phrases à utiliser" },
-                                    },
-                                    required: ["titre_fiche", "contenu_fiche", "lexique_cles"],
-                                  },
-                                },
-                              },
-                              required: ["guide_formateur", "fiches_eleves"],
-                            },
-                          },
-                          required: ["scenario", "jeu", "materiel", "objectif_oral", "documentation_fournie"],
-                        },
+                        required: ["code", "skill", "sub_skill", "time_limit_seconds"],
                       },
-                      required: ["titre", "consigne", "format", "difficulte", "metadata", "contenu", "animation_guide", "variante_niveau_bas", "variante_niveau_haut"],
+                      contenu: {
+                        type: "object",
+                        properties: {
+                          texte: { type: "string", description: "Texte support / document à lire avant les questions (OBLIGATOIRE pour CE)." },
+                          script_audio: { type: "string", description: "Script audio pour CO (OBLIGATOIRE pour CO)" },
+                          image_description: { type: "string", description: "Description de l'image à générer automatiquement (pour EO)" },
+                          type_reponse: { type: "string", enum: ["ecrit", "oral"] },
+                          criteres_evaluation: { type: "object", description: "Critères d'évaluation pour les productions orales/écrites" },
+                          mots_cles_attendus: { type: "array", items: { type: "string" } },
+                          items: {
+                            type: "array",
+                            items: {
+                              type: "object",
+                              properties: {
+                                question: { type: "string" },
+                                options: { type: "array", items: { type: "string" } },
+                                bonne_reponse: { type: "string" },
+                                explication: { type: "string" },
+                              },
+                              required: ["question", "bonne_reponse"],
+                            },
+                          },
+                        },
+                        required: ["items"],
+                      },
+                      variante_niveau_bas: {
+                        type: "object",
+                        properties: {
+                          consigne: { type: "string" },
+                          aide: { type: "string" },
+                          nb_items_reduit: { type: "number" },
+                        },
+                        required: ["consigne", "aide", "nb_items_reduit"],
+                      },
+                      variante_niveau_haut: {
+                        type: "object",
+                        properties: {
+                          consigne: { type: "string" },
+                          extension: { type: "string" },
+                        },
+                        required: ["consigne", "extension"],
+                      },
+                      animation_guide: {
+                        type: "object",
+                        properties: {
+                          scenario: { type: "string" },
+                          jeu: { type: "string" },
+                          materiel: { type: "string" },
+                          objectif_oral: { type: "string" },
+                          documentation_fournie: {
+                            type: "object",
+                            properties: {
+                              guide_formateur: { type: "string" },
+                              fiches_eleves: {
+                                type: "array",
+                                items: {
+                                  type: "object",
+                                  properties: {
+                                    titre_fiche: { type: "string" },
+                                    contenu_fiche: { type: "string" },
+                                    lexique_cles: { type: "array", items: { type: "string" } },
+                                  },
+                                  required: ["titre_fiche", "contenu_fiche", "lexique_cles"],
+                                },
+                              },
+                            },
+                            required: ["guide_formateur", "fiches_eleves"],
+                          },
+                        },
+                        required: ["scenario", "jeu", "materiel", "objectif_oral", "documentation_fournie"],
+                      },
                     },
+                    required: ["titre", "consigne", "format", "difficulte", "metadata", "contenu", "animation_guide", "variante_niveau_bas", "variante_niveau_haut"],
                   },
                 },
-                required: ["exercises"],
               },
+              required: ["exercises"],
             },
           },
-        ],
-        tool_choice: { type: "function", function: { name: "generate_exercises" } },
-      }),
+        },
+      ],
+      tool_choice: { type: "function", function: { name: "generate_exercises" } },
     });
 
-    if (!response.ok) {
-      const status = response.status;
-      if (status === 429) {
-        return new Response(JSON.stringify({ error: "Trop de requêtes, réessayez dans quelques instants." }), {
-          status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      if (status === 402) {
-        return new Response(JSON.stringify({ error: "Crédits IA insuffisants." }), {
-          status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      const t = await response.text();
-      console.error("AI error:", status, t);
-      throw new Error("AI generation failed");
-    }
-
-    const data = await response.json();
     const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
     if (!toolCall) throw new Error("No tool call in AI response");
 
