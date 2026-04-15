@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { TCF_SYSTEM_PROMPT, MODEL, AI_GATEWAY } from "../_shared/system-prompt.ts";
+import { TCF_SYSTEM_PROMPT, MODEL } from "../_shared/system-prompt.ts";
+import { callAI, AIError } from "../_shared/ai-client.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,8 +14,7 @@ serve(async (req) => {
   }
 
   try {
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+    // AI key check moved to shared ai-client
 
     const body = await req.json();
     const {
@@ -240,115 +240,75 @@ Formats possibles : qcm, vrai_faux, texte_lacunaire, appariement, transformation
 
 Pour chaque item, fournis TOUJOURS : question, options (tableau de chaînes, vide si production libre), bonne_reponse, explication.`;
 
-    const response = await fetch(
-      "https://ai.gateway.lovable.dev/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: MODEL,
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: userPrompt },
-          ],
-          tools: [
-            {
-              type: "function",
-              function: {
-                name: "generate_exercise",
-                description:
-                  "Retourne un exercice TCF IRN structuré avec métadonnées de code.",
-                parameters: {
+    const aiResult = await callAI({
+      model: MODEL,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+      ],
+      tools: [
+        {
+          type: "function",
+          function: {
+            name: "generate_exercise",
+            description: "Retourne un exercice TCF IRN structuré avec métadonnées de code.",
+            parameters: {
+              type: "object",
+              properties: {
+                titre: { type: "string" },
+                consigne: { type: "string" },
+                competence: { type: "string", enum: ["CO", "CE", "EE", "EO", "Structures"] },
+                format: { type: "string", enum: ["qcm", "vrai_faux", "texte_lacunaire", "appariement", "transformation", "production_ecrite", "production_orale"] },
+                difficulte: { type: "integer", minimum: 1, maximum: 5 },
+                niveau_vise: { type: "string", enum: ["A0", "A1", "A2", "B1", "B2", "C1"] },
+                metadata: {
                   type: "object",
                   properties: {
-                    titre: { type: "string" },
-                    consigne: { type: "string" },
-                    competence: {
-                      type: "string",
-                      enum: ["CO", "CE", "EE", "EO", "Structures"],
-                    },
-                    format: {
-                      type: "string",
-                      enum: ["qcm", "vrai_faux", "texte_lacunaire", "appariement", "transformation", "production_ecrite", "production_orale"],
-                    },
-                    difficulte: { type: "integer", minimum: 1, maximum: 5 },
-                    niveau_vise: { type: "string", enum: ["A0", "A1", "A2", "B1", "B2", "C1"] },
-                    metadata: {
-                      type: "object",
-                      properties: {
-                        code: { type: "string" },
-                        skill: { type: "string" },
-                        sub_skill: { type: "string" },
-                        time_limit_seconds: { type: "number" },
-                      },
-                      required: ["code", "skill", "sub_skill", "time_limit_seconds"],
-                    },
-                    contenu: {
-                      type: "object",
-                      properties: {
-                        script_audio: { type: "string" },
-                        script_audio_url: { type: "string" },
-                        image_url: { type: "string" },
-                        type_reponse: { type: "string", enum: ["ecrit", "oral"] },
-                        criteres_evaluation: { type: "object" },
-                        mots_cles_attendus: { type: "array", items: { type: "string" } },
-                        texte: { type: "string" },
-                        image_description: { type: "string", description: "Description de l'image à rechercher (OBLIGATOIRE pour CE et EO). Ex: 'Une carte de résident française officielle avec photo d'identité'" },
-                        items: {
-                          type: "array",
-                          items: {
-                            type: "object",
-                            properties: {
-                              question: { type: "string" },
-                              options: { type: "array", items: { type: "string" } },
-                              bonne_reponse: { type: "string" },
-                              explication: { type: "string" },
-                            },
-                            required: ["question", "options", "bonne_reponse", "explication"],
-                          },
+                    code: { type: "string" },
+                    skill: { type: "string" },
+                    sub_skill: { type: "string" },
+                    time_limit_seconds: { type: "number" },
+                  },
+                  required: ["code", "skill", "sub_skill", "time_limit_seconds"],
+                },
+                contenu: {
+                  type: "object",
+                  properties: {
+                    script_audio: { type: "string" },
+                    script_audio_url: { type: "string" },
+                    image_url: { type: "string" },
+                    type_reponse: { type: "string", enum: ["ecrit", "oral"] },
+                    criteres_evaluation: { type: "object" },
+                    mots_cles_attendus: { type: "array", items: { type: "string" } },
+                    texte: { type: "string" },
+                    image_description: { type: "string", description: "Description de l'image à rechercher (OBLIGATOIRE pour CE et EO)." },
+                    items: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          question: { type: "string" },
+                          options: { type: "array", items: { type: "string" } },
+                          bonne_reponse: { type: "string" },
+                          explication: { type: "string" },
                         },
+                        required: ["question", "options", "bonne_reponse", "explication"],
                       },
-                      required: ["items"],
                     },
                   },
-                  required: ["titre", "consigne", "competence", "format", "difficulte", "niveau_vise", "metadata", "contenu"],
-                  additionalProperties: false,
+                  required: ["items"],
                 },
               },
+              required: ["titre", "consigne", "competence", "format", "difficulte", "niveau_vise", "metadata", "contenu"],
+              additionalProperties: false,
             },
-          ],
-          tool_choice: {
-            type: "function",
-            function: { name: "generate_exercise" },
           },
-        }),
-      }
-    );
+        },
+      ],
+      tool_choice: { type: "function", function: { name: "generate_exercise" } },
+    });
 
-    if (!response.ok) {
-      if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ error: "Limite de requêtes atteinte. Réessayez dans quelques instants." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      if (response.status === 402) {
-        return new Response(
-          JSON.stringify({ error: "Crédits IA épuisés. Ajoutez des crédits dans les paramètres." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      const errText = await response.text();
-      console.error("AI gateway error:", response.status, errText);
-      throw new Error("Erreur du service IA");
-    }
-
-    const aiResult = await response.json();
     const toolCall = aiResult.choices?.[0]?.message?.tool_calls?.[0];
-
     if (!toolCall?.function?.arguments) {
       throw new Error("L'IA n'a pas retourné de résultat structuré");
     }

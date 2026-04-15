@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { callAI, AIError } from "../_shared/ai-client.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -13,8 +14,7 @@ serve(async (req) => {
   }
 
   try {
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+    // AI key check moved to shared ai-client
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -298,13 +298,7 @@ Génère un programme PERSONNALISÉ de ${targetDays} jour(s) à ${dailyDuration}
 Pour chaque élève, cible ses faiblesses spécifiques. Les exercices de tronc commun (non traités en classe) sont les mêmes pour tous, les exercices de remédiation sont individualisés.`;
 
     // 9. Call AI
-    const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    const data = await callAI({
         model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: systemPrompt },
@@ -383,8 +377,7 @@ Pour chaque élève, cible ses faiblesses spécifiques. Les exercices de tronc c
           },
         ],
         tool_choice: { type: "function", function: { name: "generate_personalized_plan" } },
-      }),
-    });
+      });
 
     if (!aiResponse.ok) {
       if (aiResponse.status === 429) {
