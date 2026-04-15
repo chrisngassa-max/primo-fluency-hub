@@ -109,10 +109,36 @@ serve(async (req) => {
             score += 15; // no level specified = neutral
           }
 
-          // 3. Theme match via tags/title (0-20 pts)
-          const themeTokens = (pointName || "").toLowerCase().split(/\s+/).filter((t: string) => t.length > 2);
+          // 3. Theme match via tags/title + IRN synonyms (0-20 pts)
+          const IRN_SYNONYMS: Record<string, string[]> = {
+            "préfecture": ["sous-préfecture", "guichet", "administration", "rendez-vous préfecture", "dossier préfecture"],
+            "titre de séjour": ["carte de séjour", "récépissé", "autorisation de séjour", "renouvellement titre", "premier titre"],
+            "ofii": ["contrat d'intégration", "cir", "parcours d'intégration", "office français"],
+            "caf": ["allocation", "aide au logement", "apl", "prime d'activité", "caisse d'allocations"],
+            "cpam": ["sécurité sociale", "carte vitale", "assurance maladie", "remboursement", "médecin traitant"],
+            "médical": ["santé", "docteur", "médecin", "hôpital", "pharmacie", "ordonnance", "consultation", "urgences"],
+            "logement": ["bail", "loyer", "appartement", "hlm", "hébergement", "propriétaire", "locataire", "état des lieux"],
+            "transport": ["bus", "métro", "train", "ticket", "abonnement", "navigo", "gare", "trajet", "itinéraire"],
+            "emploi": ["travail", "cv", "lettre de motivation", "pôle emploi", "france travail", "contrat", "salaire", "embauche", "entretien"],
+            "citoyenneté": ["nationalité", "naturalisation", "droits", "devoirs", "élections", "république", "valeurs"],
+            "école": ["inscription scolaire", "cantine", "périscolaire", "bulletin", "professeur", "rentrée"],
+            "banque": ["compte bancaire", "rib", "virement", "carte bancaire", "retrait", "guichet automatique"],
+          };
+          const expandTokens = (input: string): string[] => {
+            const base = input.toLowerCase().split(/\s+/).filter((t: string) => t.length > 2);
+            const expanded = new Set(base);
+            for (const [key, syns] of Object.entries(IRN_SYNONYMS)) {
+              const allTerms = [key, ...syns];
+              const inputLower = input.toLowerCase();
+              if (allTerms.some(t => inputLower.includes(t))) {
+                allTerms.forEach(s => s.split(/\s+/).filter(w => w.length > 2).forEach(w => expanded.add(w)));
+              }
+            }
+            return [...expanded];
+          };
+          const themeTokens = expandTokens(pointName || "");
           if (themeTokens.length > 0) {
-            const searchable = `${a.title} ${(a.tags || []).join(" ")} ${a.objective || ""}`.toLowerCase();
+            const searchable = `${a.title} ${(a.tags || []).join(" ")} ${a.objective || ""} ${a.instructions || ""}`.toLowerCase();
             const matches = themeTokens.filter((t: string) => searchable.includes(t)).length;
             const themeScore = Math.min(20, Math.round((matches / themeTokens.length) * 20));
             score += themeScore;
@@ -171,18 +197,24 @@ serve(async (req) => {
           }
         }
 
-        // Structured logs
+        // Structured observability logs
         const scores = topRefs.map((r: any) => r._score);
+        const noRefMatch = topRefs.length === 0 || Math.max(...scores) < 30;
+        const themeMatchCount = topRefs.filter((r: any) => r._reasons.includes("theme_match")).length;
         console.log(JSON.stringify({
           event: "reference_selection",
+          competence_cible: competence,
+          niveau_cible: niveauVise,
+          theme: pointName || null,
           candidates: activities.length,
           retained: topRefs.length,
           score_min: Math.min(...scores),
           score_max: Math.max(...scores),
           score_avg: Math.round(scores.reduce((a: number, b: number) => a + b, 0) / scores.length),
-          warnings: pedagogicalWarnings.length,
-          competence_cible: competence,
-          niveau_cible: niveauVise,
+          theme_match_count: themeMatchCount,
+          no_reference_match: noRefMatch,
+          warnings_count: pedagogicalWarnings.length,
+          warnings: pedagogicalWarnings,
         }));
 
         const refTexts = topRefs.map((a: any, i: number) => {
@@ -205,7 +237,7 @@ Tu n'es PAS obligé de les reproduire exactement, mais elles doivent guider ta g
 ${refTexts.join("\n")}
 ═══════════════════════════════════════════════════════════`;
       } else {
-        console.log(JSON.stringify({ event: "reference_selection", candidates: 0, retained: 0, warnings: 0, fallback: true }));
+        console.log(JSON.stringify({ event: "reference_selection", competence_cible: competence, niveau_cible: niveauVise, theme: pointName || null, candidates: 0, retained: 0, no_reference_match: true, warnings_count: 0, fallback: true }));
       }
     } catch (refErr) {
       console.error("Error fetching pedagogical references:", refErr);
