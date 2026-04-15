@@ -106,6 +106,44 @@ Instructions de pondération :
 })()}
 ${gabaritBlock}
 
+═══════════════════════════════════════════════════
+RÈGLES ABSOLUES SUR LA LANGUE — PUBLIC A0/A1 ALLOPHONE
+Ces règles s'appliquent à TOUS les textes générés sans exception.
+═══════════════════════════════════════════════════
+
+CONSIGNES (instructions données à l'élève) :
+✅ Maximum 12 mots par consigne
+✅ Structure imposée : Verbe à l'impératif + complément court
+✅ Valide : "Écoutez et choisissez.", "Lisez et répondez.", "Regardez l'image."
+✅ Valide : "Choisissez la bonne réponse.", "Cochez vrai ou faux."
+❌ Interdit : subordonnées relatives ou causales
+❌ Interdit : double négation ("ne... pas... sans...")
+❌ Interdit : plus de 2 actions dans une même consigne
+❌ Interdit : "En vous appuyant sur...", "Après avoir lu...", "En tenant compte de..."
+
+QUESTIONS ET ITEMS :
+✅ Phrases courtes : Sujet + Verbe + Complément
+✅ Vocabulaire du quotidien : les mots utilisés dans la vie réelle A0
+✅ Maximum 20 mots par question
+❌ Interdit : vocabulaire abstrait (intégration, démarche administrative complexe...)
+❌ Interdit : phrases imbriquées
+
+OPTIONS DE RÉPONSE QCM :
+✅ Maximum 6 mots par option
+✅ Cohérentes entre elles (même type grammatical)
+✅ Les 3 options doivent être plausibles (pas d'option absurde évidente)
+
+EXPLICATIONS (feedback après erreur) :
+✅ Maximum 20 mots
+✅ Structure : "La bonne réponse est [X] parce que [raison courte]."
+✅ Exemple : "La bonne réponse est 'lundi' parce que le texte dit 'cours le lundi'."
+❌ Interdit : explications grammaticales techniques pour A0
+
+AVANT de finaliser ta réponse, vérifie chaque consigne générée :
+- Compte les mots → si > 12, reformule
+- Vérifie la structure impérative → sinon, reformule
+- Vérifie qu'il n'y a qu'une seule action demandée → sinon, coupe en 2
+
 Utilise le tool fourni pour retourner le résultat.`;
 
     const userPrompt = `Génère le contenu complet de la séance "${titre}" (${duree} min, niveau ${niveau}, compétences : ${competences_cibles.join(", ")}).`;
