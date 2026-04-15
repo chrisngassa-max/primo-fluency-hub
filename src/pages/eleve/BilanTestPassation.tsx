@@ -9,8 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import {
   ArrowLeft, CheckCircle2, XCircle, Loader2, Send, ChevronRight, ChevronLeft,
@@ -352,17 +350,24 @@ const BilanTestPassation = () => {
                 onChange={(e) => setAnswers((prev) => ({ ...prev, [currentIdx]: e.target.value }))}
               />
             ) : (
-              <RadioGroup
-                value={answers[currentIdx] || ""}
-                onValueChange={(val) => setAnswers((prev) => ({ ...prev, [currentIdx]: val }))}
-              >
+              <div className="space-y-2">
                 {currentQ.options.map((opt: string, oi: number) => (
-                  <div key={oi} className="flex items-center space-x-2 p-2 rounded-lg hover:bg-muted/50 transition-colors">
-                    <RadioGroupItem value={opt} id={`q${currentIdx}-o${oi}`} />
-                    <Label htmlFor={`q${currentIdx}-o${oi}`} className="cursor-pointer flex-1 text-sm">{opt}</Label>
-                  </div>
+                  <button
+                    key={oi}
+                    className={cn(
+                      "btn-reponse-eleve",
+                      answers[currentIdx] === opt && "selected"
+                    )}
+                    onClick={() => setAnswers((prev) => ({ ...prev, [currentIdx]: opt }))}
+                  >
+                    <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center text-sm">
+                      {String.fromCharCode(65 + oi)}
+                    </span>
+                    <span className="flex-1">{opt}</span>
+                    <TTSAudioPlayer text={opt} size="icon" />
+                  </button>
                 ))}
-              </RadioGroup>
+              </div>
             )}
           </CardContent>
         </Card>
