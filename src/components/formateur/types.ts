@@ -29,6 +29,16 @@ export interface ExerciceDraft {
   variante_niveau_haut?: any;
 }
 
+export interface PedagogicalReference {
+  id: string;
+  title: string;
+  category?: string;
+  level_min?: string;
+  level_max?: string;
+  objective?: string;
+  format?: string;
+}
+
 export interface WizardState {
   step: 1 | 2 | 3;
   // Step 1
@@ -40,6 +50,7 @@ export interface WizardState {
   difficulte: number;
   // Step 2
   generated: ExerciceDraft[];
+  referencesUtilisees: PedagogicalReference[];
   loadingGenerate: boolean;
   // Step 3
   elevesSelected: string[];
