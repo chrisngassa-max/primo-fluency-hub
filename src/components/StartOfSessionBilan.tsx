@@ -246,14 +246,18 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
             const scores = r.scores_par_competence as Record<string, number>;
             if (scores && typeof scores === "object") {
               Object.entries(scores).forEach(([comp, score]) => {
+                const numScore = Number(score);
+                if (isNaN(numScore)) return;
                 if (!compTotals[comp]) compTotals[comp] = { total: 0, count: 0 };
-                compTotals[comp].total += Number(score);
+                compTotals[comp].total += numScore;
                 compTotals[comp].count++;
               });
             }
           });
           Object.entries(compTotals).forEach(([comp, d]) => {
-            bilanTestScoresByComp[comp] = Math.round(d.total / d.count);
+            if (d.count > 0) {
+              bilanTestScoresByComp[comp] = Math.round(d.total / d.count);
+            }
           });
         }
       }
