@@ -567,6 +567,12 @@ const DevoirPassation = () => {
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base">Consigne</CardTitle>
+          <TTSAudioPlayer
+            text={ex?.consigne || ""}
+            label="🔊 Écouter la consigne"
+            autoPlay={true}
+            className="mb-2"
+          />
           <CardDescription>{ex?.consigne}</CardDescription>
         </CardHeader>
       </Card>
@@ -674,6 +680,7 @@ const DevoirPassation = () => {
                         <Label htmlFor={`q${idx}-o${oi}`} className="cursor-pointer flex-1 text-sm">
                           {opt}
                         </Label>
+                        <TTSAudioPlayer text={opt} size="icon" />
                       </div>
                     ))}
                   </RadioGroup>

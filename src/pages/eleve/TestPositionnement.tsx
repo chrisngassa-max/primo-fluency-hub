@@ -981,7 +981,12 @@ const TestPositionnement = () => {
             <div className="space-y-2">
               <p className="text-lg font-medium">{currentQuestion.consigne}</p>
               {!currentQuestion.script_audio && (
-                <TTSAudioPlayer key={`consigne-${currentQuestion.id}`} text={currentQuestion.consigne} />
+                <TTSAudioPlayer
+                  key={`consigne-${currentQuestion.id}`}
+                  text={currentQuestion.consigne}
+                  label="🔊 Écouter la consigne"
+                  autoPlay={true}
+                />
               )}
             </div>
 
@@ -1012,6 +1017,7 @@ const TestPositionnement = () => {
                         >
                           {text}
                         </Label>
+                        <TTSAudioPlayer text={text} size="icon" />
                       </div>
                     );
                   })}
