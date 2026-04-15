@@ -186,7 +186,7 @@ Banque de données pédagogique (Ressources Officielles TCF certifiées — insp
     const imageKeyword = exercise.mot_cle_image || exercise.contenu?.image_description;
     if (pexelsKey && imageKeyword) {
       try {
-        const searchTerm = exercise.mot_cle_image || imageKeyword.split(' ').slice(0, 3).join(' ');
+        const searchTerm = (exercise.mot_cle_image || imageKeyword).slice(0, 80);
         const pexelsResp = await fetch(
           `https://api.pexels.com/v1/search?query=${encodeURIComponent(searchTerm)}&per_page=1&orientation=landscape`,
           { headers: { Authorization: pexelsKey } }
