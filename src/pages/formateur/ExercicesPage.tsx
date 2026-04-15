@@ -27,6 +27,7 @@ import {
 import { cn } from "@/lib/utils";
 import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/DifficultyBadge";
 import ImportFromUrlDialog from "@/components/ImportFromUrlDialog";
+import GenerateTargetedExerciseWizard from "@/components/formateur/GenerateTargetedExerciseWizard";
 
 const COMPETENCES = ["CO", "CE", "EE", "EO", "Structures"] as const;
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;

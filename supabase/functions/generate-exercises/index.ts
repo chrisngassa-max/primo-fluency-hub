@@ -314,7 +314,20 @@ AVANT de finaliser ta réponse, vérifie chaque consigne générée :
 - Vérifie la structure impérative → sinon, reformule
 - Vérifie qu'il n'y a qu'une seule action demandée → sinon, coupe en 2
 
-Tu DOIS utiliser le tool "generate_exercises" pour retourner le résultat.${gabaritPrompt}`;
+Tu DOIS utiliser le tool "generate_exercises" pour retourner le résultat.
+
+═══════════════════════════════════════════════
+THÈME STRICT (si pointName fourni) :
+═══════════════════════════════════════════════
+Si un "pointName" est passé en paramètre, c'est un THÈME CIBLÉ choisi
+par le formateur pour un besoin pédagogique précis. Dans ce cas :
+1. TOUS les exercices générés DOIVENT porter sur ce thème EXACT
+2. AUCUNE dérive thématique autorisée
+3. Le vocabulaire, les situations, les personnages doivent refléter ce thème
+4. Si le thème est spécifique (ex: "Prendre un RDV à la préfecture"),
+   génère des situations précises : prendre le ticket, attendre son tour,
+   présenter son dossier, reprendre un second RDV, etc.
+═══════════════════════════════════════════════${gabaritPrompt}`;
 
     // ═══ Anti-redundancy context ═══
     let antiRedundancyPrompt = "";
