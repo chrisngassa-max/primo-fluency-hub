@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import { Label } from "@/components/ui/label";
+
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import {
