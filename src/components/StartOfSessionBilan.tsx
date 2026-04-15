@@ -246,14 +246,18 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
             const scores = r.scores_par_competence as Record<string, number>;
             if (scores && typeof scores === "object") {
               Object.entries(scores).forEach(([comp, score]) => {
+                const numScore = Number(score);
+                if (isNaN(numScore)) return;
                 if (!compTotals[comp]) compTotals[comp] = { total: 0, count: 0 };
-                compTotals[comp].total += Number(score);
+                compTotals[comp].total += numScore;
                 compTotals[comp].count++;
               });
             }
           });
           Object.entries(compTotals).forEach(([comp, d]) => {
-            bilanTestScoresByComp[comp] = Math.round(d.total / d.count);
+            if (d.count > 0) {
+              bilanTestScoresByComp[comp] = Math.round(d.total / d.count);
+            }
           });
         }
       }
@@ -543,13 +547,15 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
                   </p>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                     {["CO", "CE", "EE", "EO", "Structures"].map((comp) => {
-                      const sessionScore = prevData.sessionScoresByCompetence[comp]?.avg;
-                      const bilanScore = prevData.bilanTestScoresByComp[comp];
+                      const rawSessionScore = prevData.sessionScoresByCompetence[comp]?.avg;
+                      const rawBilanScore = prevData.bilanTestScoresByComp[comp];
+                      const sessionScore = typeof rawSessionScore === "number" && !isNaN(rawSessionScore) ? rawSessionScore : undefined;
+                      const bilanScore = typeof rawBilanScore === "number" && !isNaN(rawBilanScore) ? rawBilanScore : undefined;
                       const bestScore = sessionScore != null && bilanScore != null
                         ? Math.round((sessionScore + bilanScore) / 2)
                         : sessionScore ?? bilanScore;
 
-                      if (bestScore == null) return null;
+                      if (bestScore == null || isNaN(bestScore)) return null;
                       return (
                         <div key={comp} className={cn("p-2.5 rounded-lg border", scoreBg(bestScore))}>
                           <div className="flex items-center justify-between">
