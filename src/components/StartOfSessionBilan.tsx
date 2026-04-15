@@ -430,6 +430,20 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
     );
   }
 
+  if (isError) {
+    return (
+      <Card className="border-destructive/30 print:hidden">
+        <CardContent className="py-6">
+          <div className="flex items-center gap-2 text-destructive">
+            <AlertTriangle className="h-5 w-5" />
+            <p className="text-sm font-medium">Erreur lors du chargement du bilan de séance précédente</p>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">{queryError?.message || "Erreur inconnue"}</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   const noPrevSession = !prevData;
   const hasHomework = prevData ? prevData.homeworkTotal > 0 : false;
   const hasSessionResults = prevData ? prevData.sessionResultsCount > 0 : false;
