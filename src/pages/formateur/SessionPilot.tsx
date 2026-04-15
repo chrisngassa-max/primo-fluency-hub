@@ -853,7 +853,7 @@ const SessionPilot = () => {
             consigne: generated.consigne || ex.consigne,
             competence: ex.competence,
             format: (generated.format || ex.format || "qcm") as any,
-            difficulte: generated.difficulte || ex.difficulte || 3,
+            difficulte: duplicateDifficulty,
             contenu: generated.contenu || {},
             animation_guide: generated.animation_guide || null,
             niveau_vise: ex.niveau_vise || session.niveau_cible || "A1",
