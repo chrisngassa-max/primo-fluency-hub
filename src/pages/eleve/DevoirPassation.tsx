@@ -555,7 +555,7 @@ const DevoirPassation = () => {
           <TTSAudioPlayer
             text={ex?.consigne || ""}
             label="🔊 Écouter la consigne"
-            autoPlay={true}
+            autoPlay={false}
             className="mb-2"
           />
           <CardDescription>{ex?.consigne}</CardDescription>
