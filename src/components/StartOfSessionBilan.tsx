@@ -83,7 +83,7 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
   const [diagBilanTestId, setDiagBilanTestId] = useState<string | null>(null);
 
   // ─── Fetch comprehensive previous session data ───
-  const { data: prevData, isLoading } = useQuery<PrevSessionData | null>({
+  const { data: prevData, isLoading, isError, error: queryError } = useQuery<PrevSessionData | null>({
     queryKey: ["start-of-session-bilan", groupId, sessionId],
     queryFn: async () => {
       // 1. Find previous session
