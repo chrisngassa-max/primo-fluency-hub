@@ -15,6 +15,7 @@ import {
   Inbox,
   Library,
   Flame,
+  Database,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
@@ -48,6 +49,7 @@ const mainNav = [
   { title: "Plans de formation", url: "/formateur/parcours", icon: Route },
   { title: "Ressources", url: "/formateur/ressources", icon: Library },
   { title: "Intervention rapide", url: "/formateur/intervention", icon: Flame },
+  { title: "Banque d'activités", url: "/formateur/banque-activites", icon: Database },
 ];
 
 const monitorNav = [
