@@ -22,11 +22,12 @@ import { toast } from "sonner";
 import {
   BookOpen, Printer, Search, Eye, Volume2, Circle, Filter, Drama, Package, MessageCircle, Wand2,
   Pencil, Trash2, Plus, CirclePlus, CheckCircle2, Loader2, ChevronLeft, ChevronRight, Save,
-  Brain, FileText, Upload, Clock, Link2,
+  Brain, FileText, Upload, Clock, Link2, Target,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/DifficultyBadge";
 import ImportFromUrlDialog from "@/components/ImportFromUrlDialog";
+import GenerateTargetedExerciseWizard from "@/components/formateur/GenerateTargetedExerciseWizard";
 
 const COMPETENCES = ["CO", "CE", "EE", "EO", "Structures"] as const;
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
@@ -68,6 +69,7 @@ const ExercicesPage = () => {
   const [themeDialogOpen, setThemeDialogOpen] = useState(false);
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [importUrlOpen, setImportUrlOpen] = useState(false);
+  const [targetedWizardOpen, setTargetedWizardOpen] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
 
   // RAG Test state
@@ -568,7 +570,11 @@ ${Array.isArray(item.options) && item.options.length > 0
             {`${exercices?.length || 0} ${(exercices?.length || 0) === 1 ? "exercice" : "exercices"} au total · ${filtered.length} affiché${filtered.length > 1 ? "s" : ""}`}
           </p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-3">
+          <Button size="xl" className="gap-2" onClick={() => setTargetedWizardOpen(true)}>
+            <Target className="h-5 w-5" />
+            🎯 Générer exercice ciblé
+          </Button>
           <Button size="lg" className="gap-2" onClick={() => setThemeDialogOpen(true)}>
             <Brain className="h-5 w-5" />
             🧠 Générer à partir d'un Thème
@@ -1314,6 +1320,13 @@ ${Array.isArray(item.options) && item.options.length > 0
         open={importUrlOpen}
         onClose={() => setImportUrlOpen(false)}
         onExerciseCreated={() => qc.invalidateQueries({ queryKey: ["formateur-all-exercices", user?.id] })}
+      />
+
+      {/* ─── Targeted Exercise Wizard ─── */}
+      <GenerateTargetedExerciseWizard
+        open={targetedWizardOpen}
+        onOpenChange={setTargetedWizardOpen}
+        onSuccess={() => qc.invalidateQueries({ queryKey: ["formateur-all-exercices", user?.id] })}
       />
     </div>
   );
