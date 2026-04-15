@@ -124,6 +124,7 @@ const SessionPilot = () => {
   const [duplicateExercise, setDuplicateExercise] = useState<any>(null);
   const [duplicateStudentIds, setDuplicateStudentIds] = useState<string[]>([]);
   const [duplicating, setDuplicating] = useState(false);
+  const [duplicateDifficulty, setDuplicateDifficulty] = useState<number>(3);
 
   // Resource generation
   const [resourceExercise, setResourceExercise] = useState<any>(null);
