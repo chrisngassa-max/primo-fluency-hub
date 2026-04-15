@@ -54,7 +54,7 @@ Tu respectes les plans de séquences et la banque de données si fournis.
   "duree_estimee_secondes": 90,
   "note_differentiation": "Explication du calibrage par rapport au profil apprenant",
   "seances_restantes_avant_examen": 12,
-  "mot_cle_image": "mot simple en anglais pour illustrer",
+  "mot_cle_image": "phrase descriptive en anglais pour illustrer (DOIT correspondre exactement au contenu du support/script audio — ex: si le script est un dialogue chez le médecin, mettre 'french doctor office consultation patient')",
   "titre": "Titre court de l'exercice",
   "contenu": "Corps de l'exercice (texte, questions, scénario)"
 }
@@ -186,7 +186,7 @@ Banque de données pédagogique (Ressources Officielles TCF certifiées — insp
     const imageKeyword = exercise.mot_cle_image || exercise.contenu?.image_description;
     if (pexelsKey && imageKeyword) {
       try {
-        const searchTerm = exercise.mot_cle_image || imageKeyword.split(' ').slice(0, 3).join(' ');
+        const searchTerm = (exercise.mot_cle_image || imageKeyword).slice(0, 80);
         const pexelsResp = await fetch(
           `https://api.pexels.com/v1/search?query=${encodeURIComponent(searchTerm)}&per_page=1&orientation=landscape`,
           { headers: { Authorization: pexelsKey } }
