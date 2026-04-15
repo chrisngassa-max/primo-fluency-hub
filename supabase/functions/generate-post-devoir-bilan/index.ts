@@ -40,7 +40,7 @@ ${(devoirResults || []).map((d: any) => `- ${d.titre} (${d.competence}) : ${d.sc
 
 Génère les deux bilans.`;
 
-    await callAI({
+    const data = await callAI({
         model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: systemPrompt },
@@ -99,22 +99,6 @@ Génère les deux bilans.`;
         }],
         tool_choice: { type: "function", function: { name: "generate_bilans" } },
       });
-
-    if (!response.ok) {
-      if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "Trop de requêtes." }), {
-          status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "Crédits IA insuffisants." }), {
-          status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      throw new Error("Erreur du service IA");
-    }
-
-    const data = await response.json();
     const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
     if (!toolCall) throw new Error("L'IA n'a pas pu générer le bilan");
 

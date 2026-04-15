@@ -56,31 +56,13 @@ Tu dois :
 4. Le niveau de difficulté recommandé pour démarrer les exercices (0-10)
 5. Des exercices recommandés pour chaque zone critique`;
 
-    await callAI({
+    const data = await callAI({
         model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
         ],
       });
-
-    if (!response.ok) {
-      if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "Trop de requêtes, réessayez dans quelques instants." }), {
-          status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "Crédits IA insuffisants." }), {
-          status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      const t = await response.text();
-      console.error("AI error:", response.status, t);
-      throw new Error("AI analysis failed");
-    }
-
-    const data = await response.json();
     const content = data.choices?.[0]?.message?.content;
     if (!content) throw new Error("No content in AI response");
 

@@ -38,21 +38,13 @@ ${seancesDetail}
 La courbe cible va de 0 (Séance 1) à 10 (Séance ${totalSeances}).
 Identifie les inflexions, les élèves en difficulté, et propose une projection.`;
 
-    await callAI({
+    const data = await callAI({
         model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
         ],
       });
-
-    if (!response.ok) {
-      if (response.status === 429) return new Response(JSON.stringify({ error: "Trop de requêtes, réessayez dans quelques instants." }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-      if (response.status === 402) return new Response(JSON.stringify({ error: "Crédits IA insuffisants." }), { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-      throw new Error(`AI gateway error: ${response.status}`);
-    }
-
-    const data = await response.json();
     const content = data.choices?.[0]?.message?.content || "Analyse indisponible.";
     return new Response(JSON.stringify({ analysis: content }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {

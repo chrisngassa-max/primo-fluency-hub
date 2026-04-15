@@ -55,7 +55,7 @@ ${(seancesRestantes || []).map((s: any, i: number) =>
 
 Propose le nouveau planning adapté.`;
 
-    await callAI({
+    const data = await callAI({
           model: "google/gemini-3-flash-preview",
           messages: [
             { role: "system", content: systemPrompt },
@@ -100,22 +100,6 @@ Propose le nouveau planning adapté.`;
           ],
           tool_choice: { type: "function", function: { name: "adapt_parcours" } },
         });
-
-    if (!response.ok) {
-      if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "Trop de requêtes." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-      }
-      if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "Crédits IA insuffisants." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-      }
-      const t = await response.text();
-      console.error("AI error:", response.status, t);
-      throw new Error("Erreur du service IA");
-    }
-
-    const data = await response.json();
     const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
     if (!toolCall) throw new Error("L'IA n'a pas pu adapter le parcours");
 

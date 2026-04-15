@@ -298,7 +298,7 @@ Génère un programme PERSONNALISÉ de ${targetDays} jour(s) à ${dailyDuration}
 Pour chaque élève, cible ses faiblesses spécifiques. Les exercices de tronc commun (non traités en classe) sont les mêmes pour tous, les exercices de remédiation sont individualisés.`;
 
     // 9. Call AI
-    await callAI({
+    const data = await callAI({
         model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: systemPrompt },

@@ -143,7 +143,7 @@ AVANT de finaliser ta réponse, vérifie chaque texte :
 - Compte les mots → si trop long, reformule
 - Vérifie la clarté → un adulte A0 doit comprendre`;
 
-    await callAI({
+    const data = await callAI({
         model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: systemPrompt },
@@ -194,26 +194,6 @@ AVANT de finaliser ta réponse, vérifie chaque texte :
         ],
         tool_choice: { type: "function", function: { name: "generate_resource" } },
       });
-
-    if (!response.ok) {
-      if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ error: "Limite de requêtes atteinte. Réessayez dans quelques instants." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      if (response.status === 402) {
-        return new Response(
-          JSON.stringify({ error: "Crédits IA épuisés." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      const errText = await response.text();
-      console.error("AI gateway error:", response.status, errText);
-      throw new Error("Erreur du service IA");
-    }
-
-    const data = await response.json();
     const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
 
     if (!toolCall?.function?.arguments) {
