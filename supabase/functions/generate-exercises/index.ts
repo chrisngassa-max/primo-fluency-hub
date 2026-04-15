@@ -51,6 +51,34 @@ serve(async (req) => {
     };
 
     try {
+      // Pre-compute theme tokens for potential supplementary query
+      const IRN_SYNONYMS: Record<string, string[]> = {
+        "préfecture": ["sous-préfecture", "guichet", "administration", "rendez-vous préfecture", "dossier préfecture", "rendez-vous", "dossier", "formulaire", "accueil", "demande", "démarche", "guichet unique"],
+        "titre de séjour": ["carte de séjour", "récépissé", "autorisation de séjour", "renouvellement titre", "premier titre", "titre séjour", "demande séjour"],
+        "ofii": ["contrat d'intégration", "cir", "parcours d'intégration", "office français"],
+        "caf": ["allocation", "aide au logement", "apl", "prime d'activité", "caisse d'allocations"],
+        "cpam": ["sécurité sociale", "carte vitale", "assurance maladie", "remboursement", "médecin traitant"],
+        "médical": ["santé", "docteur", "médecin", "hôpital", "pharmacie", "ordonnance", "consultation", "urgences"],
+        "logement": ["bail", "loyer", "appartement", "hlm", "hébergement", "propriétaire", "locataire", "état des lieux"],
+        "transport": ["bus", "métro", "train", "ticket", "abonnement", "navigo", "gare", "trajet", "itinéraire"],
+        "emploi": ["travail", "cv", "lettre de motivation", "pôle emploi", "france travail", "contrat", "salaire", "embauche", "entretien"],
+        "citoyenneté": ["nationalité", "naturalisation", "droits", "devoirs", "élections", "république", "valeurs"],
+        "école": ["inscription scolaire", "cantine", "périscolaire", "bulletin", "professeur", "rentrée"],
+        "banque": ["compte bancaire", "rib", "virement", "carte bancaire", "retrait", "guichet automatique"],
+      };
+      const expandTokens = (input: string): string[] => {
+        const base = input.toLowerCase().split(/[\s,;]+/).filter((t: string) => t.length > 2);
+        const expanded = new Set(base);
+        for (const [key, syns] of Object.entries(IRN_SYNONYMS)) {
+          const allTerms = [key, ...syns];
+          const inputLower = input.toLowerCase();
+          if (allTerms.some(t => inputLower.includes(t))) {
+            allTerms.forEach(s => s.split(/[\s,;]+/).filter(w => w.length > 2).forEach(w => expanded.add(w)));
+          }
+        }
+        return [...expanded];
+      };
+
       // Fetch a broader set for scoring (up to 50)
       let query = supabase
         .from("pedagogical_activities")
@@ -69,10 +97,37 @@ serve(async (req) => {
         }
       }
 
-      const { data: activities, error: actError } = await query;
+      let { data: activities, error: actError } = await query;
       if (actError) {
         console.error("Error loading pedagogical_activities:", actError);
-      } else if (activities && activities.length > 0) {
+      }
+
+      // Supplementary cross-competence query when theme tokens exist but primary set lacks meaningful theme matches
+      const themeTokensGlobal = expandTokens(pointName || "");
+      // Use only "core" tokens (from original input, not expanded synonyms) to test meaningful match
+      const coreTokens = (pointName || "").toLowerCase().split(/[\s,;]+/).filter((t: string) => t.length > 2);
+      if (activities && activities.length > 0 && coreTokens.length > 0) {
+        const meaningfulMatchCount = activities.filter((a: any) => {
+          const searchable = `${a.title} ${a.category || ""} ${(a.tags || []).join(" ")} ${a.objective || ""} ${a.instructions || ""}`.toLowerCase();
+          return coreTokens.some((t: string) => searchable.includes(t));
+        }).length;
+        if (meaningfulMatchCount < 3) {
+          // Fetch 20 cross-competence activities (theme-oriented, any competence)
+          const { data: crossActivities } = await supabase
+            .from("pedagogical_activities")
+            .select("id, title, category, level_min, level_max, objective, instructions, tags, format, competence")
+            .eq("is_active", true)
+            .limit(30);
+          if (crossActivities) {
+            const existingIds = new Set(activities.map((a: any) => a.id));
+            const newOnes = crossActivities.filter((a: any) => !existingIds.has(a.id));
+            activities = [...activities, ...newOnes];
+            console.log(JSON.stringify({ event: "cross_competence_supplement", added: newOnes.length }));
+          }
+        }
+      }
+
+      if (activities && activities.length > 0) {
         selectionMetadata.nb_candidates = activities.length;
 
         // Score each activity
@@ -110,35 +165,9 @@ serve(async (req) => {
           }
 
           // 3. Theme match via tags/title + IRN synonyms (0-20 pts)
-          const IRN_SYNONYMS: Record<string, string[]> = {
-            "préfecture": ["sous-préfecture", "guichet", "administration", "rendez-vous préfecture", "dossier préfecture"],
-            "titre de séjour": ["carte de séjour", "récépissé", "autorisation de séjour", "renouvellement titre", "premier titre"],
-            "ofii": ["contrat d'intégration", "cir", "parcours d'intégration", "office français"],
-            "caf": ["allocation", "aide au logement", "apl", "prime d'activité", "caisse d'allocations"],
-            "cpam": ["sécurité sociale", "carte vitale", "assurance maladie", "remboursement", "médecin traitant"],
-            "médical": ["santé", "docteur", "médecin", "hôpital", "pharmacie", "ordonnance", "consultation", "urgences"],
-            "logement": ["bail", "loyer", "appartement", "hlm", "hébergement", "propriétaire", "locataire", "état des lieux"],
-            "transport": ["bus", "métro", "train", "ticket", "abonnement", "navigo", "gare", "trajet", "itinéraire"],
-            "emploi": ["travail", "cv", "lettre de motivation", "pôle emploi", "france travail", "contrat", "salaire", "embauche", "entretien"],
-            "citoyenneté": ["nationalité", "naturalisation", "droits", "devoirs", "élections", "république", "valeurs"],
-            "école": ["inscription scolaire", "cantine", "périscolaire", "bulletin", "professeur", "rentrée"],
-            "banque": ["compte bancaire", "rib", "virement", "carte bancaire", "retrait", "guichet automatique"],
-          };
-          const expandTokens = (input: string): string[] => {
-            const base = input.toLowerCase().split(/\s+/).filter((t: string) => t.length > 2);
-            const expanded = new Set(base);
-            for (const [key, syns] of Object.entries(IRN_SYNONYMS)) {
-              const allTerms = [key, ...syns];
-              const inputLower = input.toLowerCase();
-              if (allTerms.some(t => inputLower.includes(t))) {
-                allTerms.forEach(s => s.split(/\s+/).filter(w => w.length > 2).forEach(w => expanded.add(w)));
-              }
-            }
-            return [...expanded];
-          };
           const themeTokens = expandTokens(pointName || "");
           if (themeTokens.length > 0) {
-            const searchable = `${a.title} ${(a.tags || []).join(" ")} ${a.objective || ""} ${a.instructions || ""}`.toLowerCase();
+            const searchable = `${a.title} ${a.category || ""} ${(a.tags || []).join(" ")} ${a.objective || ""} ${a.instructions || ""}`.toLowerCase();
             const matches = themeTokens.filter((t: string) => searchable.includes(t)).length;
             const themeScore = Math.min(20, Math.round((matches / themeTokens.length) * 20));
             score += themeScore;
