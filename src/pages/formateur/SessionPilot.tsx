@@ -2223,6 +2223,26 @@ ${ficheHtml}</body></html>`;
               </Card>
 
               <div className="space-y-2">
+                <Label className="text-sm font-semibold">Difficulté :</Label>
+                <div className="flex gap-1.5">
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((d) => (
+                    <Button
+                      key={d}
+                      size="sm"
+                      variant={duplicateDifficulty === d ? "default" : "outline"}
+                      className={cn("h-8 w-8 p-0 text-xs", duplicateDifficulty === d && "ring-2 ring-primary/30")}
+                      onClick={() => setDuplicateDifficulty(d)}
+                    >
+                      {d}
+                    </Button>
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {duplicateDifficulty <= 3 ? "Facile" : duplicateDifficulty <= 6 ? "Moyen" : "Difficile"}
+                </p>
+              </div>
+
+              <div className="space-y-2">
                 <Label className="text-sm font-semibold">Sélectionnez les élèves :</Label>
                 <div className="flex items-center gap-2 mb-2">
                   <Button variant="ghost" size="sm" className="text-xs"
