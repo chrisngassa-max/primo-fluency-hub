@@ -55,8 +55,8 @@ serve(async (req) => {
   }
 
   try {
-    const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
-    if (!ANTHROPIC_API_KEY) throw new Error("ANTHROPIC_API_KEY is not configured");
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
     const body = await req.json();
     const { type, competence, niveau, exerciseContext, exercisesContext, sessionContext, mode } = body;
@@ -143,58 +143,62 @@ AVANT de finaliser ta réponse, vérifie chaque texte :
 - Compte les mots → si trop long, reformule
 - Vérifie la clarté → un adulte A0 doit comprendre`;
 
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
-        "x-api-key": ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 4096,
-        system: systemPrompt,
-        messages: [{ role: "user", content: userPrompt }],
+        model: "google/gemini-3-flash-preview",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
         tools: [
           {
-            name: "generate_resource",
-            description: "Retourne une ressource pédagogique TCF IRN structurée.",
-            input_schema: {
-              type: "object",
-              properties: {
-                titre: { type: "string", description: "Titre de la ressource" },
-                sections: {
-                  type: "array",
-                  description: "Sections de la ressource",
-                  items: {
-                    type: "object",
-                    properties: {
-                      titre: { type: "string" },
-                      contenu: { type: "string", description: "Contenu textuel de la section (markdown léger autorisé)" },
-                      type: { type: "string", enum: ["texte", "liste", "tableau", "encadre", "exemple", "astuce", "attention"] },
-                      items: {
-                        type: "array",
-                        description: "Éléments de liste ou de tableau",
+            type: "function",
+            function: {
+              name: "generate_resource",
+              description: "Retourne une ressource pédagogique TCF IRN structurée.",
+              parameters: {
+                type: "object",
+                properties: {
+                  titre: { type: "string", description: "Titre de la ressource" },
+                  sections: {
+                    type: "array",
+                    description: "Sections de la ressource",
+                    items: {
+                      type: "object",
+                      properties: {
+                        titre: { type: "string" },
+                        contenu: { type: "string", description: "Contenu textuel de la section (markdown léger autorisé)" },
+                        type: { type: "string", enum: ["texte", "liste", "tableau", "encadre", "exemple", "astuce", "attention"] },
                         items: {
-                          type: "object",
-                          properties: {
-                            terme: { type: "string" },
-                            definition: { type: "string" },
-                            exemple: { type: "string" },
+                          type: "array",
+                          description: "Éléments de liste ou de tableau",
+                          items: {
+                            type: "object",
+                            properties: {
+                              terme: { type: "string" },
+                              definition: { type: "string" },
+                              exemple: { type: "string" },
+                            },
                           },
                         },
                       },
+                      required: ["titre", "contenu", "type"],
                     },
-                    required: ["titre", "contenu", "type"],
                   },
+                  resume: { type: "string", description: "Résumé en 1-2 phrases de la ressource" },
                 },
-                resume: { type: "string", description: "Résumé en 1-2 phrases de la ressource" },
+                required: ["titre", "sections", "resume"],
+                additionalProperties: false,
               },
-              required: ["titre", "sections", "resume"],
             },
           },
         ],
-        tool_choice: { type: "tool", name: "generate_resource" },
+        tool_choice: { type: "function", function: { name: "generate_resource" } },
       }),
     });
 
@@ -212,18 +216,18 @@ AVANT de finaliser ta réponse, vérifie chaque texte :
         );
       }
       const errText = await response.text();
-      console.error("Anthropic API error:", response.status, errText);
+      console.error("AI gateway error:", response.status, errText);
       throw new Error("Erreur du service IA");
     }
 
     const data = await response.json();
-    const toolUse = data.content?.find((c: any) => c.type === "tool_use");
+    const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
 
-    if (!toolUse?.input) {
+    if (!toolCall?.function?.arguments) {
       throw new Error("L'IA n'a pas retourné de résultat structuré");
     }
 
-    const resource = toolUse.input;
+    const resource = JSON.parse(toolCall.function.arguments);
 
     return new Response(JSON.stringify({ resource }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
