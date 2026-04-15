@@ -15,8 +15,7 @@ serve(async (req) => {
   }
 
   try {
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+    // AI key check moved to shared ai-client
 
     const authHeader = req.headers.get("Authorization");
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -92,79 +91,58 @@ EXPLICATION PÉDAGOGIQUE : Pour chaque question, fournir :
 // Mode diagnostic pré-séance EXHAUSTIF — Génère un test complet (8-15 questions, ~5-8 min) pour évaluer précisément le niveau avant la séance.
 // La sortie DOIT être un JSON structuré via l'outil generate_diagnostic.`;
 
-    const response = await fetch(AI_GATEWAY, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt },
-        ],
-        tools: [
-          {
-            type: "function",
-            function: {
-              name: "generate_diagnostic",
-              description: "Retourne un test diagnostique exhaustif pré-séance au format TCF IRN (8-15 questions, ~5 min).",
-              parameters: {
-                type: "object",
-                properties: {
-                  titre: { type: "string", description: "Titre du test diagnostique" },
-                  duree_estimee_minutes: { type: "number", description: "Durée estimée en minutes (cible : 5-8)" },
-                  questions: {
-                    type: "array",
-                    description: "Questions du test diagnostique (8-15 questions)",
-                    items: {
-                      type: "object",
-                      properties: {
-                        competence: { type: "string", enum: ["CO", "CE", "EE", "EO", "Structures"] },
-                        sous_competence: { type: "string", description: "Micro-objectif évalué (ex: vocabulaire administratif, conjugaison présent, compréhension globale)" },
-                        consigne: { type: "string", description: "Consigne de la question" },
-                        support: { type: "string", description: "Texte support complet, script audio avec [pause] ou description de la tâche" },
-                        choix: {
-                          type: "array",
-                          items: { type: "string" },
-                          description: "4 choix de réponse (QCM uniquement, null pour EE/EO)",
-                        },
-                        bonne_reponse: { type: "string", description: "La bonne réponse ou la production attendue" },
-                        explication: { type: "string", description: "Explication pédagogique détaillée incluant le type d'erreur de chaque distracteur" },
-                        niveau: { type: "string", description: "Niveau CECRL précis de la question (A1, A1+, A2, A2+, B1)" },
-                        difficulte: { type: "number", description: "Difficulté 1-5 (1=très facile, 5=difficile)" },
+    const aiResult = await callAI({
+      model: MODEL,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+      ],
+      tools: [
+        {
+          type: "function",
+          function: {
+            name: "generate_diagnostic",
+            description: "Retourne un test diagnostique exhaustif pré-séance au format TCF IRN (8-15 questions, ~5 min).",
+            parameters: {
+              type: "object",
+              properties: {
+                titre: { type: "string", description: "Titre du test diagnostique" },
+                duree_estimee_minutes: { type: "number", description: "Durée estimée en minutes (cible : 5-8)" },
+                questions: {
+                  type: "array",
+                  description: "Questions du test diagnostique (8-15 questions)",
+                  items: {
+                    type: "object",
+                    properties: {
+                      competence: { type: "string", enum: ["CO", "CE", "EE", "EO", "Structures"] },
+                      sous_competence: { type: "string", description: "Micro-objectif évalué (ex: vocabulaire administratif, conjugaison présent, compréhension globale)" },
+                      consigne: { type: "string", description: "Consigne de la question" },
+                      support: { type: "string", description: "Texte support complet, script audio avec [pause] ou description de la tâche" },
+                      choix: {
+                        type: "array",
+                        items: { type: "string" },
+                        description: "4 choix de réponse (QCM uniquement, null pour EE/EO)",
                       },
-                      required: ["competence", "sous_competence", "consigne", "bonne_reponse", "explication", "niveau", "difficulte"],
+                      bonne_reponse: { type: "string", description: "La bonne réponse ou la production attendue" },
+                      explication: { type: "string", description: "Explication pédagogique détaillée incluant le type d'erreur de chaque distracteur" },
+                      niveau: { type: "string", description: "Niveau CECRL précis de la question (A1, A1+, A2, A2+, B1)" },
+                      difficulte: { type: "number", description: "Difficulté 1-5 (1=très facile, 5=difficile)" },
                     },
+                    required: ["competence", "sous_competence", "consigne", "bonne_reponse", "explication", "niveau", "difficulte"],
                   },
                 },
-                required: ["titre", "duree_estimee_minutes", "questions"],
-                additionalProperties: false,
               },
+              required: ["titre", "duree_estimee_minutes", "questions"],
+              additionalProperties: false,
             },
           },
-        ],
-        tool_choice: {
-          type: "function",
-          function: { name: "generate_diagnostic" },
         },
-      }),
+      ],
+      tool_choice: {
+        type: "function",
+        function: { name: "generate_diagnostic" },
+      },
     });
-
-    if (!response.ok) {
-      if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ error: "Limite de requêtes atteinte." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      const errText = await response.text();
-      console.error("AI gateway error:", response.status, errText);
-      throw new Error("Erreur du service IA");
-    }
-
-    const aiResult = await response.json();
     const toolCall = aiResult.choices?.[0]?.message?.tool_calls?.[0];
 
     if (!toolCall?.function?.arguments) {
