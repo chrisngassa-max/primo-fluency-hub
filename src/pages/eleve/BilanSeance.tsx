@@ -481,7 +481,7 @@ const BilanSeance = () => {
                 <ClipboardCheck className="h-4 w-4 text-primary" />
                 {currentEx?.titre}
               </CardTitle>
-              <CardDescription className="mt-1">{currentEx?.consigne}</CardDescription>
+              <CardDescription className="mt-1 text-xl leading-relaxed">{currentEx?.consigne}</CardDescription>
               {currentEx?.consigne && currentEx?.competence !== "CO" && (
                 <TTSAudioPlayer
                   text={currentEx.consigne}
