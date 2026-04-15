@@ -379,12 +379,12 @@ const EleveDashboard = () => {
           <CardHeader className="pb-2">
             <CardTitle className="text-lg flex items-center gap-2">
               <BarChart2 className="h-5 w-5 text-primary" />
-              Tests de bilan à passer
+              Tests de bilan (évaluation de séance)
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             <p className="text-sm text-muted-foreground mb-3">
-              Ton formateur t'a envoyé un test pour valider tes acquis de séance.
+              Ton formateur t'a envoyé un test pour évaluer tes acquis après la séance. Ce test est distinct des exercices.
             </p>
             {uncompletedTests.map((test: any) => (
               <div
@@ -434,7 +434,7 @@ const EleveDashboard = () => {
               <div
                 key={se.sessionId}
                 className="flex items-center gap-3 p-3 rounded-xl border bg-card hover:bg-muted/30 transition-colors cursor-pointer"
-                onClick={() => navigate(`/eleve/bilan/${se.sessionId}`)}
+                onClick={() => navigate(`/eleve/exercices-seance/${se.sessionId}`)}
               >
                 <div className="h-10 w-10 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center shrink-0">
                   <Pencil className="h-5 w-5 text-green-600" />

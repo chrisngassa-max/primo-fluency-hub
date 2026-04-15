@@ -124,6 +124,7 @@ const App = () => (
               <Route path="test-positionnement" element={<TestPositionnement />} />
               <Route path="devoirs" element={<EleveDevoirs />} />
               <Route path="bilan/:sessionId" element={<BilanSeance />} />
+              <Route path="exercices-seance/:sessionId" element={<BilanSeance />} />
               <Route path="bilan-test/:testId" element={<BilanTestPassation />} />
               <Route path="bilan-devoirs/:bilanId" element={<BilanDevoirs />} />
               <Route path="devoirs/:devoirId" element={<DevoirPassation />} />

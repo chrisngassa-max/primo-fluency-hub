@@ -305,7 +305,7 @@ const BilanSeance = () => {
       qc.invalidateQueries({ queryKey: ["bilan-existing"] });
       qc.invalidateQueries({ queryKey: ["profil-eleve"] });
       qc.invalidateQueries({ queryKey: ["eleve-resultats"] });
-      toast.success(`Bilan soumis ! Score moyen : ${globalScore}%`);
+      toast.success(`Exercices soumis ! Score moyen : ${globalScore}%`);
     } catch (e: any) {
       toast.error("Erreur lors de la soumission", { description: e.message });
     } finally {
@@ -328,8 +328,8 @@ const BilanSeance = () => {
     return (
       <div className="max-w-2xl mx-auto text-center py-12 space-y-4">
         <CheckCircle2 className="h-12 w-12 mx-auto text-green-500" />
-        <h2 className="text-xl font-bold">Bilan déjà complété</h2>
-        <p className="text-muted-foreground">Tu as déjà passé le bilan pour cette séance.</p>
+        <h2 className="text-xl font-bold">Exercices déjà complétés</h2>
+        <p className="text-muted-foreground">Tu as déjà fait tous les exercices de cette séance.</p>
         <Button variant="outline" onClick={() => navigate("/eleve")}>
           <ArrowLeft className="h-4 w-4 mr-2" /> Retour au dashboard
         </Button>
@@ -345,7 +345,7 @@ const BilanSeance = () => {
           <Button variant="ghost" size="sm" onClick={() => navigate("/eleve")} className="gap-1.5">
             <ArrowLeft className="h-4 w-4" /> Dashboard
           </Button>
-          <h1 className="text-xl font-bold">Résultats du bilan</h1>
+          <h1 className="text-xl font-bold">Résultats des exercices</h1>
         </div>
 
         <Card className={cn(
@@ -455,10 +455,10 @@ const BilanSeance = () => {
         </Button>
         <div>
           <h1 className="text-xl font-bold">
-            Bilan de séance{session ? ` — ${(session as any).titre}` : ""}
+            Exercices de séance{session ? ` — ${(session as any).titre}` : ""}
           </h1>
           <p className="text-sm text-muted-foreground">
-            {(session as any)?.group?.nom} · {`${pendingExercices.length} ${pendingExercices.length === 1 ? "exercice à évaluer" : "exercices à évaluer"}`}
+            {(session as any)?.group?.nom} · {`${pendingExercices.length} ${pendingExercices.length === 1 ? "exercice à faire" : "exercices à faire"}`}
           </p>
         </div>
       </div>
@@ -605,7 +605,7 @@ const BilanSeance = () => {
             variant="default"
           >
             {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-            Soumettre le bilan
+            Soumettre mes réponses
           </Button>
         )}
       </div>
