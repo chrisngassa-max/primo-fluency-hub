@@ -197,18 +197,24 @@ serve(async (req) => {
           }
         }
 
-        // Structured logs
+        // Structured observability logs
         const scores = topRefs.map((r: any) => r._score);
+        const noRefMatch = topRefs.length === 0 || Math.max(...scores) < 30;
+        const themeMatchCount = topRefs.filter((r: any) => r._reasons.includes("theme_match")).length;
         console.log(JSON.stringify({
           event: "reference_selection",
+          competence_cible: competence,
+          niveau_cible: niveauVise,
+          theme: pointName || null,
           candidates: activities.length,
           retained: topRefs.length,
           score_min: Math.min(...scores),
           score_max: Math.max(...scores),
           score_avg: Math.round(scores.reduce((a: number, b: number) => a + b, 0) / scores.length),
-          warnings: pedagogicalWarnings.length,
-          competence_cible: competence,
-          niveau_cible: niveauVise,
+          theme_match_count: themeMatchCount,
+          no_reference_match: noRefMatch,
+          warnings_count: pedagogicalWarnings.length,
+          warnings: pedagogicalWarnings,
         }));
 
         const refTexts = topRefs.map((a: any, i: number) => {
