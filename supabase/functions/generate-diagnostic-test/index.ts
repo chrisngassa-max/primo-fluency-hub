@@ -208,9 +208,10 @@ EXPLICATION PÉDAGOGIQUE : Pour chaque question, fournir :
     );
   } catch (e) {
     console.error("generate-diagnostic-test error:", e);
+    const status = e instanceof AIError ? e.status : 500;
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "Erreur inconnue" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 });
