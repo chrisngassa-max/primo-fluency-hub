@@ -333,7 +333,7 @@ const BilanTestPassation = () => {
                 className="mb-2"
               />
             )}
-            <p className="font-medium">{currentQ.question}</p>
+            <p className="font-medium text-xl leading-relaxed">{currentQ.question}</p>
             {currentQ.competence !== "CO" && (
               <TTSAudioPlayer
                 text={currentQ.consigne || currentQ.question}

@@ -260,6 +260,23 @@ STRATÉGIE DE GÉNÉRATION :
 FORMATS SUPPORTÉS : qcm, vrai_faux, appariement, texte_lacunaire, transformation
 Pour CO : ajouter "script_audio" | Pour EO : format "production_orale"
 
+RÈGLES LINGUISTIQUES STRICTES POUR APPRENANTS A0/A1 :
+CONSIGNES :
+- Maximum 12 mots par consigne
+- Verbe à l'impératif uniquement (« Choisis », « Écris », « Écoute »)
+- INTERDIT : subordonnées relatives, subjonctif, conditionnel
+- Vocabulaire du quotidien CECRL A1 uniquement
+- Phrases courtes (sujet + verbe + complément)
+EXEMPLES VALIDES :
+✅ « Choisis la bonne réponse. »
+✅ « Écoute et coche la bonne case. »
+✅ « Écris ton nom dans la case. »
+EXEMPLES INTERDITS :
+❌ « Tu choisiras celle qui te semble correcte. »
+❌ « Sélectionne parmi les propositions qui suivent celle qui est la plus adaptée. »
+❌ « Indiquez la réponse que vous jugez appropriée. »
+VÉRIFICATION FINALE : avant de retourner la consigne, compte les mots. Si > 12, réécris-la plus courte.
+
 STRUCTURE DE SORTIE :
 Un tableau "eleves" contenant pour chaque élève un objet avec son id et ses jours de devoirs.
 Chaque jour contient les exercices personnalisés.`;

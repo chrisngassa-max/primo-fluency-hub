@@ -408,7 +408,7 @@ const EleveDashboard = () => {
                     <span>{(test.competences_couvertes || []).join(", ")}</span>
                   </div>
                 </div>
-                <Button size="sm" variant="default" className="gap-1 shrink-0">
+                <Button size="xl" variant="default" className="gap-1 shrink-0">
                   Commencer le test <ArrowRight className="h-3 w-3" />
                 </Button>
               </div>
@@ -449,7 +449,7 @@ const EleveDashboard = () => {
                     <span>{se.remaining <= 0 ? "Aucun exercice restant" : se.remaining === 1 ? "1 exercice restant" : `${se.remaining} exercices restants`}</span>
                   </div>
                 </div>
-                <Button size="sm" variant="default" className="gap-1 shrink-0">
+                <Button size="xl" variant="default" className="gap-1 shrink-0">
                   Faire <ArrowRight className="h-3 w-3" />
                 </Button>
               </div>
