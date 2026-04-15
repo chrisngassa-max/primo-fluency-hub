@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
+import CorrectionDetaillee from "@/components/CorrectionDetaillee";
 import { evaluerReponseIA } from "@/lib/testPositionnement";
 import { Progress } from "@/components/ui/progress";
 import {
