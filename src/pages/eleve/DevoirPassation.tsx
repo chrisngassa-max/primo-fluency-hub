@@ -655,24 +655,28 @@ const DevoirPassation = () => {
                   {item.question}
                 </p>
                 {Array.isArray(item.options) && item.options.length > 0 ? (
-                  <RadioGroup
-                    value={answers[idx] || ""}
-                    onValueChange={(val) => setAnswers((prev) => ({ ...prev, [idx]: val }))}
-                  >
+                  <div className="space-y-2">
                     {item.options.map((opt: string, oi: number) => (
-                      <div key={oi} className="flex items-center space-x-2 p-2 rounded-lg hover:bg-muted/50 transition-colors">
-                        <RadioGroupItem value={opt} id={`q${idx}-o${oi}`} />
-                        <Label htmlFor={`q${idx}-o${oi}`} className="cursor-pointer flex-1 text-sm">
-                          {opt}
-                        </Label>
+                      <button
+                        key={oi}
+                        className={cn(
+                          "btn-reponse-eleve",
+                          answers[idx] === opt && "selected"
+                        )}
+                        onClick={() => setAnswers((prev) => ({ ...prev, [idx]: opt }))}
+                      >
+                        <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center text-sm">
+                          {String.fromCharCode(65 + oi)}
+                        </span>
+                        <span className="flex-1">{opt}</span>
                         <TTSAudioPlayer text={opt} size="icon" />
-                      </div>
+                      </button>
                     ))}
-                  </RadioGroup>
+                  </div>
                 ) : (
                   <input
                     type="text"
-                    className="w-full border rounded-md px-3 py-2 text-sm bg-background"
+                    className="w-full border-2 rounded-2xl px-6 py-4 text-lg bg-background min-h-14"
                     placeholder="Ta réponse..."
                     value={answers[idx] || ""}
                     onChange={(e) => setAnswers((prev) => ({ ...prev, [idx]: e.target.value }))}
