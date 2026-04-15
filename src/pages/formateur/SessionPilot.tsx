@@ -1396,15 +1396,15 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
         <StartOfSessionBilan
           sessionId={id!}
           userId={user.id}
-          groupId={(session as any)?.group?.id || session.group_id}
+          groupId={session.group_id}
           session={{
             id: session.id,
             titre: session.titre,
             objectifs: session.objectifs,
             niveau_cible: session.niveau_cible,
             date_seance: session.date_seance,
-            group_id: (session as any)?.group?.id || session.group_id,
-            competences_cibles: (session as any)?.competences_cibles,
+            group_id: session.group_id,
+            competences_cibles: session.competences_cibles,
           }}
         />
       )}
