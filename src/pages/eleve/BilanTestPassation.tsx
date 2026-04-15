@@ -334,6 +334,14 @@ const BilanTestPassation = () => {
               />
             )}
             <p className="font-medium">{currentQ.question}</p>
+            {currentQ.competence !== "CO" && (
+              <TTSAudioPlayer
+                text={currentQ.consigne || currentQ.question}
+                size="sm"
+                label="🔊 Écouter la question"
+                className="mt-1"
+              />
+            )}
 
             {currentQ.format === "texte_lacunaire" || !currentQ.options?.length ? (
               <input

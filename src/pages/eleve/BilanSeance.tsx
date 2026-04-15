@@ -482,6 +482,14 @@ const BilanSeance = () => {
                 {currentEx?.titre}
               </CardTitle>
               <CardDescription className="mt-1">{currentEx?.consigne}</CardDescription>
+              {currentEx?.consigne && currentEx?.competence !== "CO" && (
+                <TTSAudioPlayer
+                  text={currentEx.consigne}
+                  size="sm"
+                  label="🔊 Écouter la consigne"
+                  className="mt-1"
+                />
+              )}
             </div>
             <Badge variant="outline">
               <CompetenceLabel code={currentEx?.competence} />
