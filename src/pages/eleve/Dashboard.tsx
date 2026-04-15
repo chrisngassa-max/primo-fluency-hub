@@ -434,7 +434,7 @@ const EleveDashboard = () => {
               <div
                 key={se.sessionId}
                 className="flex items-center gap-3 p-3 rounded-xl border bg-card hover:bg-muted/30 transition-colors cursor-pointer"
-                onClick={() => navigate(`/eleve/bilan/${se.sessionId}`)}
+                onClick={() => navigate(`/eleve/exercices-seance/${se.sessionId}`)}
               >
                 <div className="h-10 w-10 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center shrink-0">
                   <Pencil className="h-5 w-5 text-green-600" />
