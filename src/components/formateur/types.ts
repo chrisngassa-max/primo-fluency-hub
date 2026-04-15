@@ -37,6 +37,21 @@ export interface PedagogicalReference {
   level_max?: string;
   objective?: string;
   format?: string;
+  score?: number;
+}
+
+export interface ReferenceScore {
+  id: string;
+  score: number;
+  reasons: string[];
+}
+
+export interface SelectionMetadata {
+  competence_cible?: string;
+  niveau_cible?: string;
+  theme_normalise?: string;
+  nb_candidates: number;
+  nb_retenues: number;
 }
 
 export interface WizardState {
