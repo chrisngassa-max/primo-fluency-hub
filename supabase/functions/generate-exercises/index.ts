@@ -102,14 +102,16 @@ serve(async (req) => {
         console.error("Error loading pedagogical_activities:", actError);
       }
 
-      // Supplementary cross-competence query when theme tokens exist but primary set lacks theme matches
+      // Supplementary cross-competence query when theme tokens exist but primary set lacks meaningful theme matches
       const themeTokensGlobal = expandTokens(pointName || "");
-      if (activities && activities.length > 0 && themeTokensGlobal.length > 0) {
-        const hasThemeMatch = activities.some((a: any) => {
+      // Use only "core" tokens (from original input, not expanded synonyms) to test meaningful match
+      const coreTokens = (pointName || "").toLowerCase().split(/[\s,;]+/).filter((t: string) => t.length > 2);
+      if (activities && activities.length > 0 && coreTokens.length > 0) {
+        const meaningfulMatchCount = activities.filter((a: any) => {
           const searchable = `${a.title} ${a.category || ""} ${(a.tags || []).join(" ")} ${a.objective || ""} ${a.instructions || ""}`.toLowerCase();
-          return themeTokensGlobal.some((t: string) => searchable.includes(t));
-        });
-        if (!hasThemeMatch) {
+          return coreTokens.some((t: string) => searchable.includes(t));
+        }).length;
+        if (meaningfulMatchCount < 3) {
           // Fetch 20 cross-competence activities (theme-oriented, any competence)
           const { data: crossActivities } = await supabase
             .from("pedagogical_activities")
