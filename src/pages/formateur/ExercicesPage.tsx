@@ -69,6 +69,7 @@ const ExercicesPage = () => {
   const [themeDialogOpen, setThemeDialogOpen] = useState(false);
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [importUrlOpen, setImportUrlOpen] = useState(false);
+  const [targetedWizardOpen, setTargetedWizardOpen] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
 
   // RAG Test state
