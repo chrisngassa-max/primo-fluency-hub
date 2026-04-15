@@ -96,7 +96,14 @@ const GenerateTargetedExerciseWizard = ({ open, onOpenChange, onSuccess }: Props
       }));
 
       if (count === 1) return exercises[0];
-      update({ generated: exercises, referencesUtilisees: data.references_utilisees || [], step: 2 });
+      update({
+        generated: exercises,
+        referencesUtilisees: data.references_utilisees || [],
+        referenceScores: data.reference_scores || [],
+        selectionMetadata: data.selection_metadata || undefined,
+        pedagogicalWarnings: data.pedagogical_warnings || [],
+        step: 2,
+      });
     } catch (e: any) {
       toast.error("Erreur de génération", { description: e.message });
     } finally {

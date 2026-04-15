@@ -34,38 +34,111 @@ serve(async (req) => {
       gabarit = data;
     }
 
-    // ═══ ENRICHISSEMENT : Récupérer des références pédagogiques pertinentes ═══
+    // ═══ ENRICHISSEMENT : Récupérer et scorer des références pédagogiques ═══
+    const LEVEL_ORDER = ["A0", "A1", "A2", "B1", "B2"];
+    const TOP_N = 10;
     let referencesUtilisees: any[] = [];
+    let referenceScores: any[] = [];
+    let selectionMetadata: any = { competence_cible: competence || null, niveau_cible: niveauVise || null, theme_normalise: pointName || null, nb_candidates: 0, nb_retenues: 0 };
+    let pedagogicalWarnings: string[] = [];
     let referencesPrompt = "";
+
+    const levelIndex = (l: string | null) => l ? LEVEL_ORDER.indexOf(l) : -1;
+    const levelDistance = (a: string | null, b: string | null) => {
+      const ia = levelIndex(a), ib = levelIndex(b);
+      if (ia < 0 || ib < 0) return 2; // unknown = moderate penalty
+      return Math.abs(ia - ib);
+    };
+
     try {
+      // Fetch a broader set for scoring (up to 50)
       let query = supabase
         .from("pedagogical_activities")
         .select("id, title, category, level_min, level_max, objective, instructions, tags, format, competence")
         .eq("is_active", true)
-        .limit(10);
+        .limit(50);
 
-      // Filter by competence if available
+      // Broad competence filter: include matching + null
       if (competence) {
-        // Match both stored codes (CO/CE/EE/EO) and legacy labels
         const compMap: Record<string, string> = { CO: "compréhension orale", CE: "compréhension écrite", EE: "expression écrite", EO: "expression orale" };
         const compLabel = compMap[competence];
         if (compLabel) {
-          query = query.or(`competence.eq.${competence},competence.ilike.%${compLabel}%`);
+          query = query.or(`competence.eq.${competence},competence.ilike.%${compLabel}%,competence.is.null`);
         } else {
-          query = query.eq("competence", competence);
+          query = query.or(`competence.eq.${competence},competence.is.null`);
         }
-      }
-
-      // Filter by level if available
-      if (niveauVise) {
-        query = query.or(`level_min.is.null,level_min.lte.${niveauVise}`);
       }
 
       const { data: activities, error: actError } = await query;
       if (actError) {
         console.error("Error loading pedagogical_activities:", actError);
       } else if (activities && activities.length > 0) {
-        referencesUtilisees = activities.map((a: any) => ({
+        selectionMetadata.nb_candidates = activities.length;
+
+        // Score each activity
+        const scored = activities.map((a: any) => {
+          let score = 0;
+          const reasons: string[] = [];
+
+          // 1. Competence match (0-40 pts)
+          const compCode = a.competence;
+          const compCat = (a.category || "").toLowerCase();
+          const compMap: Record<string, string> = { CO: "compréhension orale", CE: "compréhension écrite", EE: "expression écrite", EO: "expression orale" };
+          const targetLabel = competence ? (compMap[competence] || "") : "";
+          if (competence && compCode === competence) {
+            score += 40; reasons.push("competence_exacte");
+          } else if (competence && targetLabel && compCat.includes(targetLabel)) {
+            score += 35; reasons.push("competence_categorie");
+          } else if (!compCode) {
+            score += 10; reasons.push("competence_generique");
+          } else {
+            score += 0; reasons.push("competence_differente");
+          }
+
+          // 2. Level proximity (0-30 pts)
+          if (niveauVise) {
+            const distMin = levelDistance(a.level_min, niveauVise);
+            const distMax = levelDistance(a.level_max, niveauVise);
+            const minDist = Math.min(distMin, distMax);
+            const levelScore = Math.max(0, 30 - minDist * 10);
+            score += levelScore;
+            if (levelScore >= 20) reasons.push("niveau_proche");
+            else if (levelScore > 0) reasons.push("niveau_acceptable");
+            else reasons.push("niveau_eloigne");
+          } else {
+            score += 15; // no level specified = neutral
+          }
+
+          // 3. Theme match via tags/title (0-20 pts)
+          const themeTokens = (pointName || "").toLowerCase().split(/\s+/).filter((t: string) => t.length > 2);
+          if (themeTokens.length > 0) {
+            const searchable = `${a.title} ${(a.tags || []).join(" ")} ${a.objective || ""}`.toLowerCase();
+            const matches = themeTokens.filter((t: string) => searchable.includes(t)).length;
+            const themeScore = Math.min(20, Math.round((matches / themeTokens.length) * 20));
+            score += themeScore;
+            if (themeScore > 0) reasons.push("theme_match");
+          }
+
+          // 4. Quality bonus (0-10 pts)
+          if (a.objective && a.objective.length > 10) { score += 5; reasons.push("objectif_present"); }
+          if (a.instructions && a.instructions.length > 20) { score += 5; reasons.push("consigne_exploitable"); }
+
+          return { ...a, _score: score, _reasons: reasons };
+        });
+
+        // Sort by score desc, take top N
+        scored.sort((a: any, b: any) => b._score - a._score);
+        const topRefs = scored.slice(0, TOP_N);
+        selectionMetadata.nb_retenues = topRefs.length;
+
+        // Build reference scores array
+        referenceScores = topRefs.map((a: any) => ({
+          id: a.id,
+          score: a._score,
+          reasons: a._reasons,
+        }));
+
+        referencesUtilisees = topRefs.map((a: any) => ({
           id: a.id,
           title: a.title,
           category: a.category,
@@ -73,10 +146,47 @@ serve(async (req) => {
           level_max: a.level_max,
           objective: a.objective,
           format: a.format,
+          score: a._score,
         }));
 
-        const refTexts = activities.map((a: any, i: number) => {
-          const parts = [`${i + 1}. "${a.title}"`];
+        // ═══ CECR/TCF coherence checks ═══
+        if (niveauVise && topRefs.length > 0) {
+          const avgLevelIdx = topRefs.reduce((sum: number, r: any) => {
+            const idx = levelIndex(r.level_min);
+            return sum + (idx >= 0 ? idx : levelIndex(niveauVise));
+          }, 0) / topRefs.length;
+          const targetIdx = levelIndex(niveauVise);
+          if (targetIdx >= 0 && Math.abs(avgLevelIdx - targetIdx) > 1.5) {
+            pedagogicalWarnings.push(`Écart de niveau : les références sont en moyenne ${LEVEL_ORDER[Math.round(avgLevelIdx)] || "?"} alors que le niveau cible est ${niveauVise}.`);
+          }
+        }
+
+        if (competence && topRefs.length > 0) {
+          const compMatchCount = topRefs.filter((r: any) => {
+            const compMap: Record<string, string> = { CO: "compréhension orale", CE: "compréhension écrite", EE: "expression écrite", EO: "expression orale" };
+            return r.competence === competence || (r.category || "").toLowerCase().includes(compMap[competence] || "___");
+          }).length;
+          if (compMatchCount < topRefs.length * 0.5) {
+            pedagogicalWarnings.push(`Moins de 50% des références correspondent à la compétence ${competence}. Résultats potentiellement moins ciblés.`);
+          }
+        }
+
+        // Structured logs
+        const scores = topRefs.map((r: any) => r._score);
+        console.log(JSON.stringify({
+          event: "reference_selection",
+          candidates: activities.length,
+          retained: topRefs.length,
+          score_min: Math.min(...scores),
+          score_max: Math.max(...scores),
+          score_avg: Math.round(scores.reduce((a: number, b: number) => a + b, 0) / scores.length),
+          warnings: pedagogicalWarnings.length,
+          competence_cible: competence,
+          niveau_cible: niveauVise,
+        }));
+
+        const refTexts = topRefs.map((a: any, i: number) => {
+          const parts = [`${i + 1}. [score:${a._score}] "${a.title}"`];
           if (a.category) parts.push(`Catégorie : ${a.category}`);
           if (a.objective) parts.push(`Objectif : ${a.objective}`);
           if (a.level_min || a.level_max) parts.push(`Niveau : ${a.level_min || "?"} → ${a.level_max || "?"}`);
@@ -88,14 +198,14 @@ serve(async (req) => {
         referencesPrompt = `
 
 ═══ RÉFÉRENCES PÉDAGOGIQUES DE LA BANQUE D'ACTIVITÉS ═══
-Voici ${activities.length} activité(s) pertinente(s) issues de la banque pédagogique.
+Voici ${topRefs.length} activité(s) pertinente(s) issues de la banque pédagogique (triées par pertinence).
 INSPIRE-TOI de ces références pour calibrer la difficulté, les thèmes et les formats.
 Tu n'es PAS obligé de les reproduire exactement, mais elles doivent guider ta génération.
 
 ${refTexts.join("\n")}
 ═══════════════════════════════════════════════════════════`;
       } else {
-        console.log("No pedagogical_activities found for filters, continuing without references.");
+        console.log(JSON.stringify({ event: "reference_selection", candidates: 0, retained: 0, warnings: 0, fallback: true }));
       }
     } catch (refErr) {
       console.error("Error fetching pedagogical references:", refErr);
@@ -602,10 +712,13 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
       }
     }
 
-    // Attach references used to the response
+    // Attach references, scores, metadata, and warnings to the response
     const responsePayload = {
       ...exercises,
       references_utilisees: referencesUtilisees,
+      reference_scores: referenceScores,
+      selection_metadata: selectionMetadata,
+      ...(pedagogicalWarnings.length > 0 ? { pedagogical_warnings: pedagogicalWarnings } : {}),
     };
 
     return new Response(JSON.stringify(responsePayload), {
