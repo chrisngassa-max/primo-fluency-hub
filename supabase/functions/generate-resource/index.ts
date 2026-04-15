@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { callAI, AIError } from "../_shared/ai-client.ts";
 import { TCF_SYSTEM_PROMPT } from "../_shared/system-prompt.ts";
 
 const corsHeaders = {
@@ -55,8 +56,7 @@ serve(async (req) => {
   }
 
   try {
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+    // AI key check moved to shared ai-client
 
     const body = await req.json();
     const { type, competence, niveau, exerciseContext, exercisesContext, sessionContext, mode } = body;
@@ -143,13 +143,7 @@ AVANT de finaliser ta réponse, vérifie chaque texte :
 - Compte les mots → si trop long, reformule
 - Vérifie la clarté → un adulte A0 doit comprendre`;
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    await callAI({
         model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: systemPrompt },
@@ -199,8 +193,7 @@ AVANT de finaliser ta réponse, vérifie chaque texte :
           },
         ],
         tool_choice: { type: "function", function: { name: "generate_resource" } },
-      }),
-    });
+      });
 
     if (!response.ok) {
       if (response.status === 429) {
