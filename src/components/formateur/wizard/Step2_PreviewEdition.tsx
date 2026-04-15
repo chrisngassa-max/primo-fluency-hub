@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { Loader2, RefreshCw, ArrowLeft, ArrowRight } from "lucide-react";
+import { Loader2, RefreshCw, ArrowLeft, ArrowRight, BookOpen } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Badge } from "@/components/ui/badge";
 import ExerciseEditor from "../ExerciseEditor";
 import type { WizardState, ExerciceDraft } from "../types";
 
@@ -38,6 +40,8 @@ const Step2_PreviewEdition = ({
     onChange({ generated });
   };
 
+  const refs = state.referencesUtilisees || [];
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -55,6 +59,33 @@ const Step2_PreviewEdition = ({
           Tout régénérer
         </Button>
       </div>
+
+      {refs.length > 0 && (
+        <Collapsible>
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground w-full justify-start">
+              <BookOpen className="h-4 w-4" />
+              {refs.length} référence(s) pédagogique(s) utilisée(s)
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <div className="rounded-md border bg-muted/30 p-3 mt-1 space-y-2">
+              {refs.map((ref, i) => (
+                <div key={ref.id || i} className="text-sm">
+                  <span className="font-medium">{ref.title}</span>
+                  {ref.category && <Badge variant="outline" className="ml-2 text-xs">{ref.category}</Badge>}
+                  {ref.objective && <p className="text-xs text-muted-foreground mt-0.5">{ref.objective}</p>}
+                  {(ref.level_min || ref.level_max) && (
+                    <span className="text-xs text-muted-foreground ml-2">
+                      ({ref.level_min || "?"} → {ref.level_max || "?"})
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+      )}
 
       <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-1">
         {state.generated.map((ex, i) => (

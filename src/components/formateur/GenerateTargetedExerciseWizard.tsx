@@ -40,6 +40,7 @@ const initialState: WizardState = {
   niveau: "A1",
   difficulte: 4,
   generated: [],
+  referencesUtilisees: [],
   loadingGenerate: false,
   elevesSelected: [],
   creerCommeDevoir: true,
@@ -95,7 +96,7 @@ const GenerateTargetedExerciseWizard = ({ open, onOpenChange, onSuccess }: Props
       }));
 
       if (count === 1) return exercises[0];
-      update({ generated: exercises, step: 2 });
+      update({ generated: exercises, referencesUtilisees: data.references_utilisees || [], step: 2 });
     } catch (e: any) {
       toast.error("Erreur de génération", { description: e.message });
     } finally {

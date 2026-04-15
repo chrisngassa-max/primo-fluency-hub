@@ -34,6 +34,70 @@ serve(async (req) => {
       gabarit = data;
     }
 
+    // ═══ ENRICHISSEMENT : Récupérer des références pédagogiques pertinentes ═══
+    let referencesUtilisees: any[] = [];
+    let referencesPrompt = "";
+    try {
+      let query = supabase
+        .from("pedagogical_activities")
+        .select("id, title, category, level_min, level_max, objective, instructions, tags, format, competence")
+        .eq("is_active", true)
+        .limit(10);
+
+      // Filter by competence if available
+      if (competence) {
+        const compMap: Record<string, string> = { CO: "compréhension orale", CE: "compréhension écrite", EE: "expression écrite", EO: "expression orale" };
+        const compLabel = compMap[competence];
+        if (compLabel) {
+          query = query.ilike("competence", `%${compLabel}%`);
+        }
+      }
+
+      // Filter by level if available
+      if (niveauVise) {
+        query = query.or(`level_min.is.null,level_min.lte.${niveauVise}`);
+      }
+
+      const { data: activities, error: actError } = await query;
+      if (actError) {
+        console.error("Error loading pedagogical_activities:", actError);
+      } else if (activities && activities.length > 0) {
+        referencesUtilisees = activities.map((a: any) => ({
+          id: a.id,
+          title: a.title,
+          category: a.category,
+          level_min: a.level_min,
+          level_max: a.level_max,
+          objective: a.objective,
+          format: a.format,
+        }));
+
+        const refTexts = activities.map((a: any, i: number) => {
+          const parts = [`${i + 1}. "${a.title}"`];
+          if (a.category) parts.push(`Catégorie : ${a.category}`);
+          if (a.objective) parts.push(`Objectif : ${a.objective}`);
+          if (a.level_min || a.level_max) parts.push(`Niveau : ${a.level_min || "?"} → ${a.level_max || "?"}`);
+          if (a.instructions) parts.push(`Instructions : ${a.instructions.slice(0, 200)}`);
+          if (a.tags && Array.isArray(a.tags) && a.tags.length > 0) parts.push(`Tags : ${a.tags.join(", ")}`);
+          return parts.join(" | ");
+        });
+
+        referencesPrompt = `
+
+═══ RÉFÉRENCES PÉDAGOGIQUES DE LA BANQUE D'ACTIVITÉS ═══
+Voici ${activities.length} activité(s) pertinente(s) issues de la banque pédagogique.
+INSPIRE-TOI de ces références pour calibrer la difficulté, les thèmes et les formats.
+Tu n'es PAS obligé de les reproduire exactement, mais elles doivent guider ta génération.
+
+${refTexts.join("\n")}
+═══════════════════════════════════════════════════════════`;
+      } else {
+        console.log("No pedagogical_activities found for filters, continuing without references.");
+      }
+    } catch (refErr) {
+      console.error("Error fetching pedagogical references:", refErr);
+    }
+
     // === ENRICHISSEMENT : Récupérer les données élèves si groupId fourni ===
     let studentContextPrompt = "";
     if (groupId) {
@@ -361,7 +425,7 @@ RÈGLES ANTI-REDONDANCE STRICTES :
 - Compétence : ${competence}
 - Niveau visé : ${niveauVise}
 - Difficulté calibrée : ${diffLevel}/10${gabarit ? `\n- Gabarit séance : ${gabarit.titre} (n°${gabarit.numero})` : ""}
-${studentContextPrompt}${antiRedundancyPrompt}
+${studentContextPrompt}${antiRedundancyPrompt}${referencesPrompt}
 Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO2/CO3/CO4, varier les codes).`;
 
     const data = await callAI({
@@ -535,7 +599,13 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
       }
     }
 
-    return new Response(JSON.stringify(exercises), {
+    // Attach references used to the response
+    const responsePayload = {
+      ...exercises,
+      references_utilisees: referencesUtilisees,
+    };
+
+    return new Response(JSON.stringify(responsePayload), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
