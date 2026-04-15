@@ -827,6 +827,7 @@ const SessionPilot = () => {
           competence: ex.competence,
           niveauVise: ex.niveau_vise || session.niveau_cible || "A1",
           count: 1,
+          difficultyLevel: duplicateDifficulty,
           type_demarche: (session as any)?.group?.type_demarche || "titre_sejour",
         },
       });
@@ -1938,7 +1939,7 @@ ${ficheHtml || '<div class="fiche"><h3>📄 Matériel pédagogique</h3><div clas
                           <Trash2 className="h-3.5 w-3.5" />Supprimer
                         </Button>
                         <Button variant="outline" size="sm" className="gap-1 text-primary border-primary/30 hover:bg-primary/10"
-                          onClick={() => { setDuplicateExercise(ex); setDuplicateStudentIds([]); }}>
+                          onClick={() => { setDuplicateExercise(ex); setDuplicateStudentIds([]); setDuplicateDifficulty(ex.difficulte || 3); }}>
                           <Copy className="h-3.5 w-3.5" />Dupliquer & Envoyer
                         </Button>
                         <Button variant="outline" size="sm" className="gap-1"
