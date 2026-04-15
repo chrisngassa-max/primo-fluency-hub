@@ -1386,7 +1386,7 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
       {session && (
         <SessionClosureReminder
           currentSessionId={id!}
-          groupId={(session as any)?.group?.id || session.group_id}
+          groupId={session.group_id}
           currentSessionDate={session.date_seance}
         />
       )}
