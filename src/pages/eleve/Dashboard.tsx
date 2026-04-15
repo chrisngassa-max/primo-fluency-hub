@@ -379,12 +379,12 @@ const EleveDashboard = () => {
           <CardHeader className="pb-2">
             <CardTitle className="text-lg flex items-center gap-2">
               <BarChart2 className="h-5 w-5 text-primary" />
-              Tests de bilan à passer
+              Tests de bilan (évaluation de séance)
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             <p className="text-sm text-muted-foreground mb-3">
-              Ton formateur t'a envoyé un test pour valider tes acquis de séance.
+              Ton formateur t'a envoyé un test pour évaluer tes acquis après la séance. Ce test est distinct des exercices.
             </p>
             {uncompletedTests.map((test: any) => (
               <div
