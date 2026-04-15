@@ -599,7 +599,13 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
       }
     }
 
-    return new Response(JSON.stringify(exercises), {
+    // Attach references used to the response
+    const responsePayload = {
+      ...exercises,
+      references_utilisees: referencesUtilisees,
+    };
+
+    return new Response(JSON.stringify(responsePayload), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
