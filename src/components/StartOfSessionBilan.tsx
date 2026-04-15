@@ -83,7 +83,7 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
   const [diagBilanTestId, setDiagBilanTestId] = useState<string | null>(null);
 
   // ─── Fetch comprehensive previous session data ───
-  const { data: prevData, isLoading } = useQuery<PrevSessionData | null>({
+  const { data: prevData, isLoading, isError, error: queryError } = useQuery<PrevSessionData | null>({
     queryKey: ["start-of-session-bilan", groupId, sessionId],
     queryFn: async () => {
       // 1. Find previous session
@@ -425,6 +425,20 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
           <Skeleton className="h-5 w-48" />
           <Skeleton className="h-16 w-full" />
           <Skeleton className="h-16 w-full" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Card className="border-destructive/30 print:hidden">
+        <CardContent className="py-6">
+          <div className="flex items-center gap-2 text-destructive">
+            <AlertTriangle className="h-5 w-5" />
+            <p className="text-sm font-medium">Erreur lors du chargement du bilan de séance précédente</p>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">{queryError?.message || "Erreur inconnue"}</p>
         </CardContent>
       </Card>
     );
