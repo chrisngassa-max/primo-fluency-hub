@@ -638,7 +638,7 @@ const DevoirPassation = () => {
               onClick={handleSubmitOral}
               disabled={submitting || !audioBlob}
               className="w-full gap-2"
-              size="lg"
+              size="xxl"
             >
               {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
               {submitting ? "Transcription et évaluation en cours…" : "Soumettre ma réponse orale"}
@@ -686,7 +686,7 @@ const DevoirPassation = () => {
             </Card>
           ))}
 
-          <Button onClick={handleSubmit} disabled={submitting || coLocked} className="w-full gap-2" size="lg">
+          <Button onClick={handleSubmit} disabled={submitting || coLocked} className="w-full gap-2" size="xxl">
             {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             Soumettre mes réponses
           </Button>
