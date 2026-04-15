@@ -7,15 +7,26 @@ import { toast } from "sonner";
 interface TTSAudioPlayerProps {
   text: string;
   className?: string;
+  label?: string;
+  autoPlay?: boolean;
+  size?: "sm" | "icon";
   onPlayComplete?: () => void;
 }
 
-const TTSAudioPlayer = ({ text, className = "", onPlayComplete }: TTSAudioPlayerProps) => {
+const TTSAudioPlayer = ({
+  text,
+  className = "",
+  label,
+  autoPlay = false,
+  size = "sm",
+  onPlayComplete,
+}: TTSAudioPlayerProps) => {
   const [loading, setLoading] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const objectUrlRef = useRef<string | null>(null);
+  const autoPlayTriggered = useRef(false);
 
   const ensureAudioElement = useCallback(() => {
     if (audioRef.current) return audioRef.current;
@@ -155,6 +166,51 @@ const TTSAudioPlayer = ({ text, className = "", onPlayComplete }: TTSAudioPlayer
     }
   }, [audioUrl, ensureAudioElement, speakWithBrowserFallback, text]);
 
+  // Auto-play on mount when autoPlay is true
+  useEffect(() => {
+    if (autoPlay && !autoPlayTriggered.current && text) {
+      autoPlayTriggered.current = true;
+      // Small delay to allow the component to mount and user gesture context
+      const timer = setTimeout(() => {
+        generateAndPlay();
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [autoPlay, text, generateAndPlay]);
+
+  // Reset autoPlay trigger when text changes
+  useEffect(() => {
+    autoPlayTriggered.current = false;
+  }, [text]);
+
+  if (size === "icon") {
+    return (
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        onClick={(e) => {
+          e.stopPropagation();
+          generateAndPlay();
+        }}
+        disabled={loading}
+        className={`h-7 w-7 shrink-0 ${className}`}
+        title="Écouter"
+      >
+        {loading ? (
+          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+        ) : playing ? (
+          <Volume2 className="h-3.5 w-3.5 animate-pulse text-primary" />
+        ) : (
+          <Volume2 className="h-3.5 w-3.5 text-muted-foreground" />
+        )}
+      </Button>
+    );
+  }
+
+  const defaultLabel = audioUrl ? "Réécouter" : "Écouter";
+  const displayLabel = label || defaultLabel;
+
   return (
     <div className={`flex items-center gap-2 ${className}`}>
       <Button
@@ -178,12 +234,12 @@ const TTSAudioPlayer = ({ text, className = "", onPlayComplete }: TTSAudioPlayer
         ) : audioUrl ? (
           <>
             <RotateCcw className="h-4 w-4" />
-            Réécouter
+            {label || "Réécouter"}
           </>
         ) : (
           <>
             <Volume2 className="h-4 w-4" />
-            Écouter
+            {displayLabel}
           </>
         )}
       </Button>
