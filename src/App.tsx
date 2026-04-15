@@ -53,6 +53,7 @@ import TestResultatDetail from "@/pages/formateur/TestResultatDetail";
 import TestResultatGroupes from "@/pages/formateur/TestResultatGroupes";
 import TestPositionnement from "@/pages/eleve/TestPositionnement";
 import RessourcesPage from "@/pages/formateur/RessourcesPage";
+import BanqueActivites from "@/pages/formateur/BanqueActivites";
 
 const queryClient = new QueryClient();
 
@@ -105,6 +106,7 @@ const App = () => (
               <Route path="test-resultats/:apprenantId" element={<TestResultatDetail />} />
               <Route path="ressources" element={<RessourcesPage />} />
               <Route path="intervention" element={<InterventionRapidePage />} />
+              <Route path="banque-activites" element={<BanqueActivites />} />
               <Route path="parametres" element={<Parametres />} />
             </Route>
 

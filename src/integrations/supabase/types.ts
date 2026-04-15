@@ -1306,6 +1306,54 @@ export type Database = {
           },
         ]
       }
+      pedagogical_activities: {
+        Row: {
+          category: string | null
+          competence: string | null
+          created_at: string | null
+          format: string | null
+          id: string
+          instructions: string | null
+          is_active: boolean | null
+          level_max: string | null
+          level_min: string | null
+          objective: string | null
+          source: string | null
+          tags: string[] | null
+          title: string
+        }
+        Insert: {
+          category?: string | null
+          competence?: string | null
+          created_at?: string | null
+          format?: string | null
+          id?: string
+          instructions?: string | null
+          is_active?: boolean | null
+          level_max?: string | null
+          level_min?: string | null
+          objective?: string | null
+          source?: string | null
+          tags?: string[] | null
+          title: string
+        }
+        Update: {
+          category?: string | null
+          competence?: string | null
+          created_at?: string | null
+          format?: string | null
+          id?: string
+          instructions?: string | null
+          is_active?: boolean | null
+          level_max?: string | null
+          level_min?: string | null
+          objective?: string | null
+          source?: string | null
+          tags?: string[] | null
+          title?: string
+        }
+        Relationships: []
+      }
       points_a_maitriser: {
         Row: {
           created_at: string
