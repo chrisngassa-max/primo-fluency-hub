@@ -124,6 +124,7 @@ const SessionPilot = () => {
   const [duplicateExercise, setDuplicateExercise] = useState<any>(null);
   const [duplicateStudentIds, setDuplicateStudentIds] = useState<string[]>([]);
   const [duplicating, setDuplicating] = useState(false);
+  const [duplicateDifficulty, setDuplicateDifficulty] = useState<number>(3);
 
   // Resource generation
   const [resourceExercise, setResourceExercise] = useState<any>(null);
@@ -826,6 +827,7 @@ const SessionPilot = () => {
           competence: ex.competence,
           niveauVise: ex.niveau_vise || session.niveau_cible || "A1",
           count: 1,
+          difficultyLevel: duplicateDifficulty,
           type_demarche: (session as any)?.group?.type_demarche || "titre_sejour",
         },
       });
@@ -851,7 +853,7 @@ const SessionPilot = () => {
             consigne: generated.consigne || ex.consigne,
             competence: ex.competence,
             format: (generated.format || ex.format || "qcm") as any,
-            difficulte: generated.difficulte || ex.difficulte || 3,
+            difficulte: duplicateDifficulty,
             contenu: generated.contenu || {},
             animation_guide: generated.animation_guide || null,
             niveau_vise: ex.niveau_vise || session.niveau_cible || "A1",
@@ -1937,7 +1939,7 @@ ${ficheHtml || '<div class="fiche"><h3>📄 Matériel pédagogique</h3><div clas
                           <Trash2 className="h-3.5 w-3.5" />Supprimer
                         </Button>
                         <Button variant="outline" size="sm" className="gap-1 text-primary border-primary/30 hover:bg-primary/10"
-                          onClick={() => { setDuplicateExercise(ex); setDuplicateStudentIds([]); }}>
+                          onClick={() => { setDuplicateExercise(ex); setDuplicateStudentIds([]); setDuplicateDifficulty(ex.difficulte || 3); }}>
                           <Copy className="h-3.5 w-3.5" />Dupliquer & Envoyer
                         </Button>
                         <Button variant="outline" size="sm" className="gap-1"
@@ -2219,6 +2221,26 @@ ${ficheHtml}</body></html>`;
                   </div>
                 </CardContent>
               </Card>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-semibold">Difficulté :</Label>
+                <div className="flex gap-1.5">
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((d) => (
+                    <Button
+                      key={d}
+                      size="sm"
+                      variant={duplicateDifficulty === d ? "default" : "outline"}
+                      className={cn("h-8 w-8 p-0 text-xs", duplicateDifficulty === d && "ring-2 ring-primary/30")}
+                      onClick={() => setDuplicateDifficulty(d)}
+                    >
+                      {d}
+                    </Button>
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {duplicateDifficulty <= 3 ? "Facile" : duplicateDifficulty <= 6 ? "Moyen" : "Difficile"}
+                </p>
+              </div>
 
               <div className="space-y-2">
                 <Label className="text-sm font-semibold">Sélectionnez les élèves :</Label>
