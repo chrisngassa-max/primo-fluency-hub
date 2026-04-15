@@ -203,8 +203,13 @@ Chaque exercice DOIT porter un code et des métadonnées issus de cette cartogra
 | CE3  | Recherche d'info      | Emploi du temps / Menu                                       | 80         |
 | CE4  | Texte administratif   | Notice simple / Courrier                                     | 100        |
 
-⚠️ CHAMP "image_description" OBLIGATOIRE POUR TOUT EXERCICE CE ET EO ⚠️
-Tu DOIS fournir un champ "image_description" dans contenu décrivant précisément le document visuel.
+⚠️ CHAMP "image_description" OBLIGATOIRE POUR TOUT EXERCICE CE, EO ET CO ⚠️
+Tu DOIS fournir un champ "image_description" dans contenu décrivant précisément le visuel associé.
+RÈGLE CRITIQUE DE COHÉRENCE IMAGE-AUDIO (CO) :
+Pour les exercices CO, le "image_description" DOIT décrire EXACTEMENT la scène du "script_audio".
+Par exemple si le script_audio est un dialogue chez le médecin, image_description = "Un cabinet médical en France avec un médecin parlant à un patient".
+Si le script_audio est une annonce en gare SNCF, image_description = "Un quai de gare SNCF en France avec un panneau d'affichage des trains".
+NE JAMAIS mettre une image générique qui ne correspond pas au contenu audio.
 Exemples CE : "Une carte de résident française avec photo, nom et nationalité", "Un panneau de signalisation urbain en France"
 Exemples EO : "Un cabinet médical en France avec un médecin et un patient", "Un marché en plein air en France"
 L'image sera récupérée automatiquement via une banque d'images.
@@ -225,7 +230,7 @@ L'image sera récupérée automatiquement via une banque d'images.
 | EE3  | Décrire / Raconter    | Réponse à annonce (1 question + 1 info)                      | 600        |
 
 RÈGLES PAR COMPÉTENCE :
-- **CO** : OBLIGATOIRE — "script_audio" dans contenu (texte lu par TTS, NON affiché). "question" = consigne.
+- **CO** : OBLIGATOIRE — "script_audio" dans contenu (texte lu par TTS, NON affiché). "question" = consigne. "image_description" DOIT décrire la scène exacte du script_audio (même lieu, mêmes personnages, même situation).
 - **EO** : format "production_orale", "type_reponse": "oral". Jeux de rôle, questions ouvertes. "criteres_evaluation" + "mots_cles_attendus".
 - **CE** : OBLIGATOIRE — "texte" dans contenu (document support).
 - **EE** : format "production_ecrite", consigne de rédaction libre.

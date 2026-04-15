@@ -54,7 +54,7 @@ Tu respectes les plans de séquences et la banque de données si fournis.
   "duree_estimee_secondes": 90,
   "note_differentiation": "Explication du calibrage par rapport au profil apprenant",
   "seances_restantes_avant_examen": 12,
-  "mot_cle_image": "mot simple en anglais pour illustrer",
+  "mot_cle_image": "phrase descriptive en anglais pour illustrer (DOIT correspondre exactement au contenu du support/script audio — ex: si le script est un dialogue chez le médecin, mettre 'french doctor office consultation patient')",
   "titre": "Titre court de l'exercice",
   "contenu": "Corps de l'exercice (texte, questions, scénario)"
 }
