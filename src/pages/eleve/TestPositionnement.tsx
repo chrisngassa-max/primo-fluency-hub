@@ -1024,7 +1024,7 @@ const TestPositionnement = () => {
                 </RadioGroup>
                 <Button
                   className="w-full"
-                  size="lg"
+                  size="xl"
                   disabled={!selectedAnswer || isSubmitting}
                   onClick={handleValidateQCM}
                 >
@@ -1087,7 +1087,7 @@ const TestPositionnement = () => {
                 )}
                 <Button
                   className="w-full"
-                  size="lg"
+                  size="xl"
                   disabled={!audioBlob || isSubmitting}
                   onClick={handleValidateOral}
                 >
@@ -1107,7 +1107,7 @@ const TestPositionnement = () => {
                 />
                 <Button
                   className="w-full"
-                  size="lg"
+                  size="xl"
                   disabled={!writtenAnswer.trim() || isSubmitting}
                   onClick={handleValidateEcrit}
                 >
@@ -1143,7 +1143,7 @@ const TestPositionnement = () => {
         </CardContent>
       </Card>
 
-      <Button size="lg" className="w-full text-lg py-6" onClick={handleStart}>
+      <Button size="xl" className="w-full" onClick={handleStart}>
         {existingSession?.statut === "en_cours"
           ? "Reprendre le test"
           : "Je suis prêt — Commencer le test"}
