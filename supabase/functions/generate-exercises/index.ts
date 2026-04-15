@@ -712,10 +712,13 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
       }
     }
 
-    // Attach references used to the response
+    // Attach references, scores, metadata, and warnings to the response
     const responsePayload = {
       ...exercises,
       references_utilisees: referencesUtilisees,
+      reference_scores: referenceScores,
+      selection_metadata: selectionMetadata,
+      ...(pedagogicalWarnings.length > 0 ? { pedagogical_warnings: pedagogicalWarnings } : {}),
     };
 
     return new Response(JSON.stringify(responsePayload), {
