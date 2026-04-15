@@ -46,10 +46,13 @@ serve(async (req) => {
 
       // Filter by competence if available
       if (competence) {
+        // Match both stored codes (CO/CE/EE/EO) and legacy labels
         const compMap: Record<string, string> = { CO: "compréhension orale", CE: "compréhension écrite", EE: "expression écrite", EO: "expression orale" };
         const compLabel = compMap[competence];
         if (compLabel) {
-          query = query.ilike("competence", `%${compLabel}%`);
+          query = query.or(`competence.eq.${competence},competence.ilike.%${compLabel}%`);
+        } else {
+          query = query.eq("competence", competence);
         }
       }
 
