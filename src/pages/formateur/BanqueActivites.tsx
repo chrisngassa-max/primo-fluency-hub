@@ -68,7 +68,7 @@ export default function BanqueActivites() {
         });
         return row;
       });
-      const { error } = await supabase.from("pedagogical_activities").insert(rows);
+      const { error } = await supabase.from("pedagogical_activities").insert(rows as any);
       if (error) throw error;
       toast.success(`${rows.length} activités importées`);
       refetch();
@@ -114,7 +114,7 @@ export default function BanqueActivites() {
         </div>
         <div className="flex items-center gap-2">
           {totalCount >= 10 ? (
-            <Badge className="bg-emerald-600 text-white">RAG actif · {totalCount} activités</Badge>
+            <Badge className="bg-primary text-primary-foreground">RAG actif · {totalCount} activités</Badge>
           ) : (
             <Badge variant="outline" className="text-muted-foreground">RAG inactif · {totalCount}/10 min.</Badge>
           )}
