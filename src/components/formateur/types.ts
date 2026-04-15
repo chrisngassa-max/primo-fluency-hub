@@ -66,6 +66,9 @@ export interface WizardState {
   // Step 2
   generated: ExerciceDraft[];
   referencesUtilisees: PedagogicalReference[];
+  referenceScores?: ReferenceScore[];
+  selectionMetadata?: SelectionMetadata;
+  pedagogicalWarnings?: string[];
   loadingGenerate: boolean;
   // Step 3
   elevesSelected: string[];
