@@ -22,6 +22,48 @@
 
   <body>
     <div id="root"></div>
+    <script>
+      // Supabase password recovery: rewrite token-only hash to HashRouter route.
+      // Supabase redirects to /reset-password#access_token=...&type=recovery
+      // but the app uses HashRouter, so we need /#/reset-password?access_token=...
+      (function () {
+        try {
+          var path = window.location.pathname;
+          var hash = window.location.hash || "";
+          var search = window.location.search || "";
+
+          // Case 1: hash contains a recovery token but no router path
+          // e.g. #access_token=...&type=recovery  OR  ?...&type=recovery
+          var tokenInHash = /(?:^#|&)(access_token|refresh_token|code)=/.test(hash);
+          var recoveryInHash = /type=recovery/.test(hash) || /type=recovery/.test(search);
+          var routerHasReset = /^#\/reset-password/.test(hash);
+
+          if ((tokenInHash || recoveryInHash) && !routerHasReset) {
+            var params = hash.startsWith("#") ? hash.slice(1) : hash;
+            // Strip a leading "/" if Supabase produced "#/access_token=..."
+            if (params.startsWith("/")) params = params.slice(1);
+            var newUrl =
+              window.location.origin +
+              (path === "/" ? "/" : path) +
+              "#/reset-password?" + params;
+            window.location.replace(newUrl);
+            return;
+          }
+
+          // Case 2: pathname is /reset-password (no hash routing) — normalize.
+          if (path === "/reset-password" && !routerHasReset) {
+            var qs = search.startsWith("?") ? search.slice(1) : search;
+            var fromHash = hash.startsWith("#") ? hash.slice(1) : hash;
+            if (fromHash.startsWith("/")) fromHash = fromHash.slice(1);
+            var combined = [qs, fromHash].filter(Boolean).join("&");
+            window.location.replace(
+              window.location.origin + "/" + (combined ? "#/reset-password?" + combined : "#/reset-password")
+            );
+            return;
+          }
+        } catch (_) { /* no-op */ }
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
