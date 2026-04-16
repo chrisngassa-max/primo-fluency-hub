@@ -11,25 +11,37 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Use service role: the row filtering is enforced explicitly below
+    // (play_token + is_live_ready). This avoids relying on the anon RLS policy
+    // and makes the public play flow robust.
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_ANON_KEY')!
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
-    const { play_token } = await req.json();
+    const { play_token } = await req.json().catch(() => ({}));
 
-    if (!play_token) {
+    if (!play_token || typeof play_token !== 'string') {
       return new Response(JSON.stringify({ error: 'play_token requis' }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
+    // Only return non-sensitive fields. Never expose formateur_id, eleve_id,
+    // play_token, statut internals, etc.
     const { data: exercice, error } = await supabase
       .from('exercices')
-      .select('id, titre, consigne, competence, format, contenu, niveau_vise, difficulte')
+      .select('id, titre, consigne, competence, format, contenu, niveau_vise, difficulte, is_live_ready')
       .eq('play_token', play_token)
-      .eq('is_live_ready', true)
-      .single();
+      .maybeSingle();
+
+    if (!exercice || !exercice.is_live_ready) {
+      return new Response(JSON.stringify({ error: 'Exercice introuvable ou non disponible' }), {
+        status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    // Strip the gating field from the response.
+    delete (exercice as any).is_live_ready;
 
     if (error || !exercice) {
       return new Response(JSON.stringify({ error: 'Exercice introuvable ou non disponible' }), {
