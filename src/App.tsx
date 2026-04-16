@@ -76,6 +76,7 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/unsubscribe" element={<Unsubscribe />} />
             <Route path="/play/:token" element={<PlayExercise />} />
+            <Route path="/auth/relay-reset" element={<AuthRelayReset />} />
 
             {/* Formateur routes */}
             <Route
