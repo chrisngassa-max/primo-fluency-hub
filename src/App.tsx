@@ -55,6 +55,7 @@ import TestPositionnement from "@/pages/eleve/TestPositionnement";
 import RessourcesPage from "@/pages/formateur/RessourcesPage";
 import BanqueActivites from "@/pages/formateur/BanqueActivites";
 import PlayExercise from "@/pages/PlayExercise";
+import AuthRelayReset from "@/pages/AuthRelayReset";
 
 const queryClient = new QueryClient();
 
@@ -75,6 +76,7 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/unsubscribe" element={<Unsubscribe />} />
             <Route path="/play/:token" element={<PlayExercise />} />
+            <Route path="/auth/relay-reset" element={<AuthRelayReset />} />
 
             {/* Formateur routes */}
             <Route
