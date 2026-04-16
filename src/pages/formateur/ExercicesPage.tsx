@@ -17,12 +17,13 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 import {
   BookOpen, Printer, Search, Eye, Volume2, Circle, Filter, Drama, Package, MessageCircle, Wand2,
   Pencil, Trash2, Plus, CirclePlus, CheckCircle2, Loader2, ChevronLeft, ChevronRight, Save,
-  Brain, FileText, Upload, Clock, Link2, Target,
+  Brain, FileText, Upload, Clock, Link2, Target, Radio, Copy, UserPlus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/DifficultyBadge";
@@ -268,6 +269,63 @@ const ExercicesPage = () => {
     },
     enabled: !!user,
   });
+
+  // Live exercises (is_live_ready = true)
+  const { data: liveExercises, isLoading: liveLoading } = useQuery({
+    queryKey: ["formateur-live-exercices", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("exercices")
+        .select("id, titre, competence, niveau_vise, statut, play_token, created_at")
+        .eq("formateur_id", user!.id)
+        .eq("is_live_ready", true)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: !!user,
+  });
+
+  // Formateur's groups for assignment
+  const { data: formateurGroups } = useQuery({
+    queryKey: ["formateur-groups-list", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("groups")
+        .select("id, nom")
+        .eq("formateur_id", user!.id)
+        .eq("is_active", true)
+        .order("nom");
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: !!user,
+  });
+
+  const handleCopyPlayLink = (token: string) => {
+    const url = `https://captcf.lovable.app/play/${token}`;
+    navigator.clipboard.writeText(url)
+      .then(() => toast.success("Lien copié !", { description: url }))
+      .catch(() => toast.error("Impossible de copier"));
+  };
+
+  const handleAssignLive = async (exerciseId: string, groupId?: string) => {
+    if (!user) return;
+    try {
+      const { error } = await supabase.from("exercise_assignments").insert({
+        exercise_id: exerciseId,
+        group_id: groupId ?? null,
+        learner_id: null,
+        assigned_by: user.id,
+        context: "devoir",
+      });
+      if (error) throw error;
+      toast.success("Exercice assigné !");
+    } catch (e: any) {
+      toast.error("Erreur d'assignation", { description: e.message });
+    }
+  };
+
 
   // Fetch session_exercices to know which exercise belongs to which session
   const { data: sessionExLinks } = useQuery({
@@ -594,6 +652,19 @@ ${Array.isArray(item.options) && item.options.length > 0
         </div>
       </div>
 
+      <Tabs defaultValue="all" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="all">Tous les exercices</TabsTrigger>
+          <TabsTrigger value="live" className="gap-1.5">
+            <Radio className="h-3.5 w-3.5" />
+            Exercices live
+            {liveExercises && liveExercises.length > 0 && (
+              <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-[10px]">{liveExercises.length}</Badge>
+            )}
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="all" className="space-y-6 mt-0">
       {/* Filters */}
       <Card>
         <CardContent className="py-4">
@@ -959,6 +1030,91 @@ ${Array.isArray(item.options) && item.options.length > 0
           </Button>
         </div>
       )}
+        </TabsContent>
+
+        {/* ─── Live Exercises Tab ─── */}
+        <TabsContent value="live" className="space-y-4 mt-0">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Radio className="h-5 w-5 text-primary" />
+                Exercices live
+              </CardTitle>
+              <CardDescription>
+                Exercices marqués comme prêts pour diffusion immédiate via lien public.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {liveLoading ? (
+                <div className="space-y-2">
+                  {[1, 2, 3].map((i) => <Skeleton key={i} className="h-16 w-full" />)}
+                </div>
+              ) : !liveExercises || liveExercises.length === 0 ? (
+                <div className="text-center py-10">
+                  <Radio className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
+                  <p className="text-sm text-muted-foreground">
+                    Aucun exercice marqué <code className="text-xs bg-muted px-1 py-0.5 rounded">is_live_ready</code>.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {liveExercises.map((ex: any) => (
+                    <Card key={ex.id} className="border-l-4 border-l-primary/60">
+                      <CardContent className="py-3 px-4 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+                        <div className="flex-1 min-w-0 space-y-1">
+                          <p className="font-semibold text-sm truncate">{ex.titre}</p>
+                          <div className="flex flex-wrap gap-1.5">
+                            <Badge className={cn("text-[10px]", competenceColor[ex.competence] || "bg-muted")}>
+                              {ex.competence}
+                            </Badge>
+                            <Badge variant="secondary" className="text-[10px]">Niv. {ex.niveau_vise}</Badge>
+                            <Badge variant="outline" className="text-[10px]">{ex.statut || "draft"}</Badge>
+                          </div>
+                        </div>
+                        <div className="flex flex-wrap gap-2 shrink-0">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="gap-1.5"
+                            onClick={() => handleCopyPlayLink(ex.play_token)}
+                            disabled={!ex.play_token}
+                          >
+                            <Copy className="h-3.5 w-3.5" />
+                            Copier le lien
+                          </Button>
+                          {formateurGroups && formateurGroups.length > 0 ? (
+                            <Select onValueChange={(gid) => handleAssignLive(ex.id, gid)}>
+                              <SelectTrigger className="h-9 w-auto gap-1.5">
+                                <UserPlus className="h-3.5 w-3.5" />
+                                <SelectValue placeholder="Assigner…" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {formateurGroups.map((g: any) => (
+                                  <SelectItem key={g.id} value={g.id}>{g.nom}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          ) : (
+                            <Button
+                              variant="default"
+                              size="sm"
+                              className="gap-1.5"
+                              onClick={() => handleAssignLive(ex.id)}
+                            >
+                              <UserPlus className="h-3.5 w-3.5" />
+                              Assigner
+                            </Button>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
 
       {/* ─── Preview Dialog with navigation ─── */}
       <Dialog open={!!previewExercise} onOpenChange={(open) => { if (!open) setPreviewExercise(null); }}>

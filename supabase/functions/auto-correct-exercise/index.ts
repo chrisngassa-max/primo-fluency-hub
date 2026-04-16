@@ -24,6 +24,12 @@ Deno.serve(async (req) => {
 
     const { exercise_id, learner_id, assignment_id, answers } = await req.json();
 
+    if (!exercise_id || !Array.isArray(answers)) {
+      return new Response(JSON.stringify({ error: 'exercise_id et answers requis' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const { data: exercice, error } = await supabase
       .from('exercices')
       .select('contenu')
@@ -60,6 +66,22 @@ Deno.serve(async (req) => {
     const scoreRaw = correctCount;
     const scoreNormalized = items.length > 0 ? Math.round((correctCount / items.length) * 100) : 0;
     const feedbackText = generateFeedback(scoreNormalized);
+
+    // Anonymous play: skip persistence, return result only
+    if (!learner_id) {
+      return new Response(JSON.stringify({
+        attempt_id: null,
+        anonymous: true,
+        score_raw: scoreRaw,
+        score_normalized: scoreNormalized,
+        total_items: items.length,
+        correct_count: correctCount,
+        feedback_text: feedbackText,
+        item_results: itemResults,
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     const { data: attempt, error: insertError } = await supabase
       .from('exercise_attempts')
