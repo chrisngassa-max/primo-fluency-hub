@@ -54,6 +54,7 @@ import TestResultatGroupes from "@/pages/formateur/TestResultatGroupes";
 import TestPositionnement from "@/pages/eleve/TestPositionnement";
 import RessourcesPage from "@/pages/formateur/RessourcesPage";
 import BanqueActivites from "@/pages/formateur/BanqueActivites";
+import PlayExercise from "@/pages/PlayExercise";
 
 const queryClient = new QueryClient();
 
@@ -73,6 +74,7 @@ const App = () => (
             {/* Admin route intentionally omitted until a dashboard exists */}
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/unsubscribe" element={<Unsubscribe />} />
+            <Route path="/play/:token" element={<PlayExercise />} />
 
             {/* Formateur routes */}
             <Route
