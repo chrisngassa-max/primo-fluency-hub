@@ -1030,6 +1030,91 @@ ${Array.isArray(item.options) && item.options.length > 0
           </Button>
         </div>
       )}
+        </TabsContent>
+
+        {/* ─── Live Exercises Tab ─── */}
+        <TabsContent value="live" className="space-y-4 mt-0">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Radio className="h-5 w-5 text-primary" />
+                Exercices live
+              </CardTitle>
+              <CardDescription>
+                Exercices marqués comme prêts pour diffusion immédiate via lien public.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {liveLoading ? (
+                <div className="space-y-2">
+                  {[1, 2, 3].map((i) => <Skeleton key={i} className="h-16 w-full" />)}
+                </div>
+              ) : !liveExercises || liveExercises.length === 0 ? (
+                <div className="text-center py-10">
+                  <Radio className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
+                  <p className="text-sm text-muted-foreground">
+                    Aucun exercice marqué <code className="text-xs bg-muted px-1 py-0.5 rounded">is_live_ready</code>.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {liveExercises.map((ex: any) => (
+                    <Card key={ex.id} className="border-l-4 border-l-primary/60">
+                      <CardContent className="py-3 px-4 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+                        <div className="flex-1 min-w-0 space-y-1">
+                          <p className="font-semibold text-sm truncate">{ex.titre}</p>
+                          <div className="flex flex-wrap gap-1.5">
+                            <Badge className={cn("text-[10px]", competenceColor[ex.competence] || "bg-muted")}>
+                              {ex.competence}
+                            </Badge>
+                            <Badge variant="secondary" className="text-[10px]">Niv. {ex.niveau_vise}</Badge>
+                            <Badge variant="outline" className="text-[10px]">{ex.statut || "draft"}</Badge>
+                          </div>
+                        </div>
+                        <div className="flex flex-wrap gap-2 shrink-0">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="gap-1.5"
+                            onClick={() => handleCopyPlayLink(ex.play_token)}
+                            disabled={!ex.play_token}
+                          >
+                            <Copy className="h-3.5 w-3.5" />
+                            Copier le lien
+                          </Button>
+                          {formateurGroups && formateurGroups.length > 0 ? (
+                            <Select onValueChange={(gid) => handleAssignLive(ex.id, gid)}>
+                              <SelectTrigger className="h-9 w-auto gap-1.5">
+                                <UserPlus className="h-3.5 w-3.5" />
+                                <SelectValue placeholder="Assigner…" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {formateurGroups.map((g: any) => (
+                                  <SelectItem key={g.id} value={g.id}>{g.nom}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          ) : (
+                            <Button
+                              variant="default"
+                              size="sm"
+                              className="gap-1.5"
+                              onClick={() => handleAssignLive(ex.id)}
+                            >
+                              <UserPlus className="h-3.5 w-3.5" />
+                              Assigner
+                            </Button>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
 
       {/* ─── Preview Dialog with navigation ─── */}
       <Dialog open={!!previewExercise} onOpenChange={(open) => { if (!open) setPreviewExercise(null); }}>
