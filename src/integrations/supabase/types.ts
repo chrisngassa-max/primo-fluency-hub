@@ -732,6 +732,7 @@ export type Database = {
           group_id: string | null
           id: string
           learner_id: string | null
+          source_devoir_id: string | null
           sync_status: string | null
         }
         Insert: {
@@ -743,6 +744,7 @@ export type Database = {
           group_id?: string | null
           id?: string
           learner_id?: string | null
+          source_devoir_id?: string | null
           sync_status?: string | null
         }
         Update: {
@@ -754,6 +756,7 @@ export type Database = {
           group_id?: string | null
           id?: string
           learner_id?: string | null
+          source_devoir_id?: string | null
           sync_status?: string | null
         }
         Relationships: [
@@ -801,6 +804,7 @@ export type Database = {
           score_normalized: number | null
           score_raw: number | null
           source_app: string | null
+          source_resultat_id: string | null
           started_at: string | null
           status: string | null
           time_spent_seconds: number | null
@@ -818,6 +822,7 @@ export type Database = {
           score_normalized?: number | null
           score_raw?: number | null
           source_app?: string | null
+          source_resultat_id?: string | null
           started_at?: string | null
           status?: string | null
           time_spent_seconds?: number | null
@@ -835,6 +840,7 @@ export type Database = {
           score_normalized?: number | null
           score_raw?: number | null
           source_app?: string | null
+          source_resultat_id?: string | null
           started_at?: string | null
           status?: string | null
           time_spent_seconds?: number | null
