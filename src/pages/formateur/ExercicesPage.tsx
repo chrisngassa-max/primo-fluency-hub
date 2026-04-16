@@ -652,6 +652,19 @@ ${Array.isArray(item.options) && item.options.length > 0
         </div>
       </div>
 
+      <Tabs defaultValue="all" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="all">Tous les exercices</TabsTrigger>
+          <TabsTrigger value="live" className="gap-1.5">
+            <Radio className="h-3.5 w-3.5" />
+            Exercices live
+            {liveExercises && liveExercises.length > 0 && (
+              <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-[10px]">{liveExercises.length}</Badge>
+            )}
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="all" className="space-y-6 mt-0">
       {/* Filters */}
       <Card>
         <CardContent className="py-4">
