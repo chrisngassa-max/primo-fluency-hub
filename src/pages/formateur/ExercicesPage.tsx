@@ -270,6 +270,63 @@ const ExercicesPage = () => {
     enabled: !!user,
   });
 
+  // Live exercises (is_live_ready = true)
+  const { data: liveExercises, isLoading: liveLoading } = useQuery({
+    queryKey: ["formateur-live-exercices", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("exercices")
+        .select("id, titre, competence, niveau_vise, statut, play_token, created_at")
+        .eq("formateur_id", user!.id)
+        .eq("is_live_ready", true)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: !!user,
+  });
+
+  // Formateur's groups for assignment
+  const { data: formateurGroups } = useQuery({
+    queryKey: ["formateur-groups-list", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("groups")
+        .select("id, nom")
+        .eq("formateur_id", user!.id)
+        .eq("is_active", true)
+        .order("nom");
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: !!user,
+  });
+
+  const handleCopyPlayLink = (token: string) => {
+    const url = `https://captcf.lovable.app/play/${token}`;
+    navigator.clipboard.writeText(url)
+      .then(() => toast.success("Lien copié !", { description: url }))
+      .catch(() => toast.error("Impossible de copier"));
+  };
+
+  const handleAssignLive = async (exerciseId: string, groupId?: string) => {
+    if (!user) return;
+    try {
+      const { error } = await supabase.from("exercise_assignments").insert({
+        exercise_id: exerciseId,
+        group_id: groupId ?? null,
+        learner_id: null,
+        assigned_by: user.id,
+        context: "devoir",
+      });
+      if (error) throw error;
+      toast.success("Exercice assigné !");
+    } catch (e: any) {
+      toast.error("Erreur d'assignation", { description: e.message });
+    }
+  };
+
+
   // Fetch session_exercices to know which exercise belongs to which session
   const { data: sessionExLinks } = useQuery({
     queryKey: ["formateur-session-exercice-links", user?.id],
