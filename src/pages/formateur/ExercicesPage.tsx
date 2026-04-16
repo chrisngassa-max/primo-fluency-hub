@@ -261,7 +261,7 @@ const ExercicesPage = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("exercices")
-        .select("id, titre, consigne, competence, format, contenu, difficulte, niveau_vise, created_at, is_ai_generated, animation_guide")
+        .select("id, titre, consigne, competence, format, contenu, difficulte, niveau_vise, created_at, is_ai_generated, animation_guide, is_live_ready, play_token")
         .eq("formateur_id", user!.id)
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -307,6 +307,21 @@ const ExercicesPage = () => {
     navigator.clipboard.writeText(url)
       .then(() => toast.success("Lien copié !", { description: url }))
       .catch(() => toast.error("Impossible de copier"));
+  };
+
+  const handleToggleLive = async (exerciseId: string, current: boolean) => {
+    const next = !current;
+    const { error } = await supabase
+      .from("exercices")
+      .update({ is_live_ready: next })
+      .eq("id", exerciseId);
+    if (error) {
+      toast.error("Erreur", { description: error.message });
+      return;
+    }
+    toast.success(next ? "Exercice activé en live" : "Live désactivé");
+    qc.invalidateQueries({ queryKey: ["formateur-all-exercices", user?.id] });
+    qc.invalidateQueries({ queryKey: ["formateur-live-exercices", user?.id] });
   };
 
   const handleAssignLive = async (exerciseId: string, groupId?: string) => {
@@ -810,6 +825,17 @@ ${Array.isArray(item.options) && item.options.length > 0
                             <Drama className="h-4 w-4" />
                           </Button>
                         )}
+                        <Button
+                          variant={ex.is_live_ready ? "default" : "outline"}
+                          size="icon"
+                          className={cn(
+                            "h-8 w-8",
+                            ex.is_live_ready && "bg-primary text-primary-foreground"
+                          )}
+                          title={ex.is_live_ready ? "Live activé — cliquer pour désactiver" : "Activer en live (lien public)"}
+                          onClick={(e) => { e.stopPropagation(); handleToggleLive(ex.id, !!ex.is_live_ready); }}>
+                          <Radio className="h-4 w-4" />
+                        </Button>
                         <Button variant="outline" size="icon" className="h-8 w-8"
                           onClick={(e) => { e.stopPropagation(); setPreviewExercise(ex); setPreviewPage(0); }}>
                           <Eye className="h-4 w-4" />
@@ -1050,10 +1076,13 @@ ${Array.isArray(item.options) && item.options.length > 0
                   {[1, 2, 3].map((i) => <Skeleton key={i} className="h-16 w-full" />)}
                 </div>
               ) : !liveExercises || liveExercises.length === 0 ? (
-                <div className="text-center py-10">
-                  <Radio className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
+                <div className="text-center py-10 space-y-2">
+                  <Radio className="h-10 w-10 mx-auto text-muted-foreground/40 mb-1" />
                   <p className="text-sm text-muted-foreground">
-                    Aucun exercice marqué <code className="text-xs bg-muted px-1 py-0.5 rounded">is_live_ready</code>.
+                    Aucun exercice n'est encore activé en live.
+                  </p>
+                  <p className="text-xs text-muted-foreground/80">
+                    Dans l'onglet <strong>Tous les exercices</strong>, cliquez sur l'icône <Radio className="inline h-3 w-3 align-text-bottom" /> pour activer un exercice en live et obtenir un lien public.
                   </p>
                 </div>
               ) : (
