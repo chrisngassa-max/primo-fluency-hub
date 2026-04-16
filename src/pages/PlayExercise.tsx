@@ -109,7 +109,6 @@ const PlayExercise = () => {
     try {
       const payload = {
         exercise_id: exercice.id,
-        learner_id: user?.id ?? null,
         assignment_id: assignmentId,
         answers: items.map((_, idx) => ({
           item_index: idx,
