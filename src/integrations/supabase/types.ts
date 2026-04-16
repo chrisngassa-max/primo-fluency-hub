@@ -2059,6 +2059,33 @@ export type Database = {
         }
         Relationships: []
       }
+      sync_log: {
+        Row: {
+          created_at: string | null
+          direction: string | null
+          error_message: string | null
+          id: string
+          payload: Json | null
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          direction?: string | null
+          error_message?: string | null
+          id?: string
+          payload?: Json | null
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          direction?: string | null
+          error_message?: string | null
+          id?: string
+          payload?: Json | null
+          status?: string | null
+        }
+        Relationships: []
+      }
       tcf_questions: {
         Row: {
           audio: string | null
