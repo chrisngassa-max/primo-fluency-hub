@@ -69,6 +69,7 @@ import GenerateResourceDialog from "@/components/GenerateResourceDialog";
 import AutoResourceSuggestions from "@/components/AutoResourceSuggestions";
 import StartOfSessionBilan from "@/components/StartOfSessionBilan";
 import SessionClosureReminder from "@/components/SessionClosureReminder";
+import PreflightExercises from "@/components/PreflightExercises";
 import {
   Select,
   SelectContent,
@@ -1416,6 +1417,17 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
         <div className="print:hidden">
           <FeuilleAppel sessionId={id!} session={session as any} />
         </div>
+      )}
+
+      {/* ─── Pré-vol exercices (V1 — front-only) ─── */}
+      {session && user && (
+        <PreflightExercises
+          sessionId={id!}
+          session={session}
+          exercises={exercises}
+          formateurId={user.id}
+          parcoursSeance={parcoursSeance}
+        />
       )}
 
       {/* ─── Pilotage en direct ─── */}
