@@ -32,6 +32,9 @@ import {
 } from "recharts";
 import CompetenceLabel from "@/components/CompetenceLabel";
 import PacingTracker from "@/components/PacingTracker";
+import CleanupDevoirsDialog from "@/components/CleanupDevoirsDialog";
+import { Switch } from "@/components/ui/switch";
+import { Trash2 } from "lucide-react";
 
 const COMPETENCES = ["CO", "CE", "EE", "EO", "Structures"] as const;
 
