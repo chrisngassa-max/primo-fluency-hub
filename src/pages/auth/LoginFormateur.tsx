@@ -5,68 +5,67 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { translateAuthError } from "@/lib/authErrors";
 
 const LoginFormateur = () => {
-  const { signIn, session, role, loading } = useAuth();
+  const { session, role, loading } = useAuth();
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
 
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
-  const [showPw, setShowPw] = useState(false);
-
-  const [forgotEmail, setForgotEmail] = useState("");
-  const [showForgot, setShowForgot] = useState(false);
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
+  const [step, setStep] = useState<"email" | "code">("email");
 
   if (!loading && session && role === "formateur") return <Navigate to="/formateur" replace />;
   if (!loading && session && role === "eleve") return <Navigate to="/eleve" replace />;
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSendCode = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
-    const { error } = await signIn(loginEmail, loginPassword);
-    if (error) toast.error("Erreur de connexion", { description: translateAuthError(error.message) });
-    else toast.success("Connexion réussie !");
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: { shouldCreateUser: false },
+    });
+    if (error) {
+      toast.error("Erreur", { description: translateAuthError(error.message) });
+    } else {
+      toast.success("Code envoyé", { description: "Consultez votre boîte mail." });
+      setStep("code");
+    }
     setBusy(false);
   };
 
-  const handleForgot = async (e: React.FormEvent) => {
+  const handleVerifyCode = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (code.length !== 6) return;
     setBusy(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
-      redirectTo: `${window.location.origin}/#/reset-password`,
+    const { error } = await supabase.auth.verifyOtp({
+      email,
+      token: code,
+      type: "email",
+    });
+    if (error) {
+      toast.error("Code invalide", { description: translateAuthError(error.message) });
+    } else {
+      toast.success("Connexion réussie !");
+    }
+    setBusy(false);
+  };
+
+  const handleResend = async () => {
+    setBusy(true);
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: { shouldCreateUser: false },
     });
     if (error) toast.error("Erreur", { description: translateAuthError(error.message) });
-    else toast.success("Email envoyé", { description: "Consultez votre boîte mail." });
+    else toast.success("Nouveau code envoyé");
     setBusy(false);
   };
-
-  if (showForgot) {
-    return (
-      <div className="min-h-[100dvh] flex items-center justify-center bg-indigo-50 dark:bg-indigo-950/20 p-4 overflow-y-auto">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Mot de passe oublié</CardTitle>
-            <CardDescription>Entrez votre email pour recevoir un lien.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleForgot} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="forgot-email">Adresse email</Label>
-                <Input id="forgot-email" type="email" placeholder="votre@email.com" value={forgotEmail} onChange={(e) => setForgotEmail(e.target.value)} required />
-              </div>
-              <Button type="submit" className="w-full" disabled={busy}>{busy ? "Envoi…" : "Envoyer le lien"}</Button>
-              <Button type="button" variant="ghost" className="w-full" onClick={() => setShowForgot(false)}>Retour</Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-[100dvh] flex flex-col items-center justify-start sm:justify-center bg-indigo-50 dark:bg-indigo-950/20 p-4 pt-8 sm:pt-4 overflow-y-auto">
@@ -82,43 +81,61 @@ const LoginFormateur = () => {
         </div>
 
         <Card>
-          <CardContent className="pt-6">
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="form-login-email">Adresse email</Label>
-                <Input id="form-login-email" type="email" placeholder="votre@email.com" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} required />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="form-login-password">Mot de passe</Label>
-                <div className="relative">
+          <CardHeader>
+            <CardTitle>{step === "email" ? "Connexion" : "Entrez votre code"}</CardTitle>
+            <CardDescription>
+              {step === "email"
+                ? "Recevez un code à 6 chiffres par email."
+                : `Code envoyé à ${email}`}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {step === "email" ? (
+              <form onSubmit={handleSendCode} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="form-login-email">Adresse email</Label>
                   <Input
-                    id="form-login-password"
-                    type={showPw ? "text" : "password"}
-                    placeholder="••••••••"
-                    value={loginPassword}
-                    onChange={(e) => setLoginPassword(e.target.value)}
+                    id="form-login-email"
+                    type="email"
+                    placeholder="votre@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="pr-10"
+                    autoComplete="email"
                   />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                    onClick={() => setShowPw(!showPw)}
-                    tabIndex={-1}
-                  >
-                    {showPw ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
+                </div>
+                <Button type="submit" className="w-full" disabled={busy}>
+                  {busy ? "Envoi…" : "Recevoir mon code"}
+                </Button>
+              </form>
+            ) : (
+              <form onSubmit={handleVerifyCode} className="space-y-4">
+                <div className="space-y-2 flex flex-col items-center">
+                  <Label>Code à 6 chiffres</Label>
+                  <InputOTP maxLength={6} value={code} onChange={setCode}>
+                    <InputOTPGroup>
+                      <InputOTPSlot index={0} />
+                      <InputOTPSlot index={1} />
+                      <InputOTPSlot index={2} />
+                      <InputOTPSlot index={3} />
+                      <InputOTPSlot index={4} />
+                      <InputOTPSlot index={5} />
+                    </InputOTPGroup>
+                  </InputOTP>
+                </div>
+                <Button type="submit" className="w-full" disabled={busy || code.length !== 6}>
+                  {busy ? "Vérification…" : "Se connecter"}
+                </Button>
+                <div className="flex justify-between text-sm">
+                  <Button type="button" variant="link" className="px-0" onClick={() => { setStep("email"); setCode(""); }}>
+                    Changer d'email
+                  </Button>
+                  <Button type="button" variant="link" className="px-0" onClick={handleResend} disabled={busy}>
+                    Renvoyer le code
                   </Button>
                 </div>
-              </div>
-              <Button type="submit" className="w-full" disabled={busy}>
-                {busy ? "Connexion…" : "Se connecter"}
-              </Button>
-              <Button type="button" variant="link" className="w-full text-sm" onClick={() => setShowForgot(true)}>
-                Mot de passe oublié ?
-              </Button>
-            </form>
+              </form>
+            )}
             <p className="text-xs text-muted-foreground text-center mt-4">
               Pas encore de compte ? Contactez votre administrateur.
             </p>
