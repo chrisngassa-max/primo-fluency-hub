@@ -114,6 +114,47 @@ const SuiviDevoirsPage = () => {
   // Auto-select first group
   const activeGroup = selectedGroup || groups?.[0]?.id || "";
 
+  // ─── Backlog: stats since last completed session ───
+  const { data: backlogStats, refetch: refetchBacklog } = useQuery({
+    queryKey: ["backlog-stats", user?.id, activeGroup],
+    queryFn: async () => {
+      if (!activeGroup) return null;
+      const { data: members } = await supabase
+        .from("group_members")
+        .select("eleve_id")
+        .eq("group_id", activeGroup);
+      const eleveIds = (members ?? []).map((m: any) => m.eleve_id);
+      if (eleveIds.length === 0) return { assigned: 0, completed: 0, remaining: 0, archived: 0, lastSessionDate: null };
+
+      const { data: lastSess } = await supabase
+        .from("sessions")
+        .select("date_seance")
+        .eq("group_id", activeGroup)
+        .eq("statut", "terminee")
+        .order("date_seance", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      const sinceIso = lastSess?.date_seance ?? null;
+
+      let q = supabase
+        .from("devoirs")
+        .select("id, statut, created_at")
+        .eq("formateur_id", user!.id)
+        .in("eleve_id", eleveIds);
+      if (sinceIso) q = q.gte("created_at", sinceIso);
+      const { data: rows } = await q;
+      const all = rows ?? [];
+      return {
+        assigned: all.length,
+        completed: all.filter((d: any) => d.statut === "fait" || d.statut === "arrete").length,
+        archived: all.filter((d: any) => d.statut === "archive").length,
+        remaining: all.filter((d: any) => d.statut === "en_attente").length,
+        lastSessionDate: sinceIso,
+      };
+    },
+    enabled: !!user?.id && !!activeGroup,
+  });
+
   // Fetch individual bilans (post-devoirs)
   const { data: bilansDevoirsRaw, isLoading: bilansLoading } = useQuery({
     queryKey: ["suivi-bilans-devoirs", user?.id, activeGroup],
