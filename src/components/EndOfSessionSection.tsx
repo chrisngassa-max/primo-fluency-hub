@@ -261,6 +261,16 @@ export default function EndOfSessionSection({
               {homeworkSent ? "Envoyer d'autres devoirs" : "Envoyer les devoirs"}
             </Button>
 
+            {/* Send to absentees as makeup */}
+            <Button
+              variant="outline"
+              className="gap-2"
+              onClick={() => setAbsentMakeupOpen(true)}
+            >
+              <UserX className="h-4 w-4" />
+              Envoyer aux absents en devoir
+            </Button>
+
             {/* Close session button → triggers auto-generation */}
             <TooltipProvider>
               <Tooltip>
@@ -291,8 +301,34 @@ export default function EndOfSessionSection({
               </Tooltip>
             </TooltipProvider>
           </div>
+
+          {/* Absent makeup history */}
+          {makeupByEleve.length > 0 && (
+            <div className="rounded-lg border bg-muted/30 p-3 space-y-2">
+              <p className="text-xs font-semibold flex items-center gap-1.5 text-muted-foreground">
+                <History className="h-3.5 w-3.5" />
+                Devoirs envoyés aux absents ({makeupHistory?.length ?? 0})
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {makeupByEleve.map((m, i) => (
+                  <Badge key={i} variant="secondary" className="text-[11px]">
+                    {m.name} · {m.count} ex. · {format(new Date(m.lastAt), "d MMM HH:mm", { locale: fr })}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
+
+      {/* Absent makeup dialog */}
+      <AbsentMakeupDialog
+        open={absentMakeupOpen}
+        onOpenChange={setAbsentMakeupOpen}
+        sessionId={sessionId}
+        groupId={groupId}
+        userId={userId}
+      />
 
       {/* Manual exercise selection dialog */}
       <Dialog open={selectOpen} onOpenChange={setSelectOpen}>
