@@ -4,7 +4,6 @@ import * as React from 'npm:react@18.3.1'
 
 import {
   Body,
-  Button,
   Container,
   Head,
   Heading,
@@ -14,30 +13,23 @@ import {
 } from 'npm:@react-email/components@0.0.22'
 
 interface RecoveryEmailProps {
-  siteName: string
-  confirmationUrl: string
+  token: string
 }
 
-export const RecoveryEmail = ({
-  siteName,
-  confirmationUrl,
-}: RecoveryEmailProps) => (
+export const RecoveryEmail = ({ token }: RecoveryEmailProps) => (
   <Html lang="fr" dir="ltr">
     <Head />
-    <Preview>Réinitialise ton mot de passe CAP TCF</Preview>
+    <Preview>Ton code de connexion CAP TCF</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>Réinitialise ton mot de passe</Heading>
+        <Heading style={h1}>Ton code de connexion</Heading>
         <Text style={text}>
-          Tu as demandé à réinitialiser ton mot de passe pour CAP TCF.
-          Clique sur le bouton ci-dessous pour choisir un nouveau mot de passe.
+          Saisis le code ci-dessous dans l'application pour te connecter.
+          Ce code expire dans quelques minutes.
         </Text>
-        <Button style={button} href={confirmationUrl}>
-          Réinitialiser mon mot de passe
-        </Button>
+        <Text style={codeStyle}>{token}</Text>
         <Text style={footer}>
-          Si tu n'as pas fait cette demande, ignore simplement cet email.
-          Ton mot de passe ne sera pas modifié.
+          Si tu n'as pas demandé ce code, tu peux ignorer cet email.
         </Text>
       </Container>
     </Body>
@@ -60,12 +52,16 @@ const text = {
   lineHeight: '1.5',
   margin: '0 0 25px',
 }
-const button = {
-  backgroundColor: '#225FA6',
-  color: '#ffffff',
-  fontSize: '14px',
+const codeStyle = {
+  fontFamily: 'Courier, monospace',
+  fontSize: '32px',
+  fontWeight: 'bold' as const,
+  color: '#225FA6',
+  letterSpacing: '4px',
+  textAlign: 'center' as const,
+  margin: '0 0 30px',
+  padding: '16px',
+  backgroundColor: '#F5F7FA',
   borderRadius: '10px',
-  padding: '12px 20px',
-  textDecoration: 'none',
 }
 const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
