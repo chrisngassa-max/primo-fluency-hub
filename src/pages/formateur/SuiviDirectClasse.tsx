@@ -20,25 +20,42 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { AlertTriangle, HandHelping, Lightbulb, Search, Activity } from "lucide-react";
+import {
+  AlertTriangle,
+  HandHelping,
+  Lightbulb,
+  Search,
+  Activity,
+  CheckCircle2,
+  TrendingUp,
+  TrendingDown,
+  RotateCcw,
+  Sparkles,
+} from "lucide-react";
 import { toast } from "sonner";
 import {
   mockLiveStudents,
   mockGroupes,
   mockLecons,
+  mockTempsMoyenClasseS,
   ALERT_THRESHOLDS,
+  classifyAdaptive,
   type LiveStudent,
+  type AdaptiveBadge,
 } from "@/data/mockLiveClass";
+import AdaptiveProposalDialog, {
+  type AdaptiveMode,
+} from "@/components/AdaptiveProposalDialog";
 
-type BadgeKind = "success" | "warning" | "danger";
+type StatusKind = "success" | "warning" | "danger";
 
-function getStatusBadge(taux: number): { label: string; kind: BadgeKind } {
+function getStatusBadge(taux: number): { label: string; kind: StatusKind } {
   if (taux >= 75) return { label: "En réussite", kind: "success" };
   if (taux >= 50) return { label: "À encourager", kind: "warning" };
   return { label: "Besoin d'aide", kind: "danger" };
 }
 
-function badgeClasses(kind: BadgeKind) {
+function badgeClasses(kind: StatusKind) {
   switch (kind) {
     case "success":
       return "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30";
@@ -46,6 +63,26 @@ function badgeClasses(kind: BadgeKind) {
       return "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30";
     case "danger":
       return "bg-red-500/15 text-red-700 dark:text-red-300 border-red-500/30";
+  }
+}
+
+function adaptiveBadge(b: AdaptiveBadge) {
+  switch (b) {
+    case "challenger":
+      return {
+        label: "À challenger",
+        cls: "bg-violet-500/15 text-violet-700 dark:text-violet-300 border-violet-500/30",
+      };
+    case "aider":
+      return {
+        label: "À aider",
+        cls: "bg-red-500/15 text-red-700 dark:text-red-300 border-red-500/30",
+      };
+    default:
+      return {
+        label: "Stable",
+        cls: "bg-muted text-muted-foreground border-border",
+      };
   }
 }
 
@@ -69,6 +106,9 @@ const SuiviDirectClasse = () => {
   const [groupe, setGroupe] = useState<string>("all");
   const [lecon, setLecon] = useState<string>("all");
   const [search, setSearch] = useState("");
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogStudent, setDialogStudent] = useState<LiveStudent | null>(null);
+  const [dialogMode, setDialogMode] = useState<AdaptiveMode>("same");
 
   const filtered = useMemo(() => {
     return mockLiveStudents.filter((s) => {
@@ -80,6 +120,19 @@ const SuiviDirectClasse = () => {
   }, [groupe, lecon, search]);
 
   const alertes = useMemo(() => filtered.filter(isAlert), [filtered]);
+  const counts = useMemo(() => {
+    const c = { challenger: 0, aider: 0, stable: 0 };
+    filtered.forEach((s) => {
+      c[classifyAdaptive(s)]++;
+    });
+    return c;
+  }, [filtered]);
+
+  const openProposal = (s: LiveStudent, mode: AdaptiveMode) => {
+    setDialogStudent(s);
+    setDialogMode(mode);
+    setDialogOpen(true);
+  };
 
   const handleAider = (s: LiveStudent) => {
     toast.success(`Aide envoyée à ${s.nom}`, {
@@ -103,7 +156,7 @@ const SuiviDirectClasse = () => {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Suivi en direct de la classe</h1>
           <p className="text-sm text-muted-foreground">
-            Identifiez en temps réel qui avance, qui bloque, et où intervenir.
+            Pilotage adaptatif : challenger les rapides, aider ceux qui bloquent.
           </p>
         </div>
       </div>
@@ -165,18 +218,29 @@ const SuiviDirectClasse = () => {
 
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-semibold">Vue d'ensemble</CardTitle>
+              <CardTitle className="text-sm font-semibold">Pilotage adaptatif</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 text-sm">
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Élèves affichés</span>
-                <span className="font-semibold">{filtered.length}</span>
+                <span className="text-muted-foreground">À challenger</span>
+                <Badge variant="outline" className={adaptiveBadge("challenger").cls}>
+                  {counts.challenger}
+                </Badge>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Alertes actives</span>
-                <span className="font-semibold text-red-600 dark:text-red-400">
-                  {alertes.length}
-                </span>
+                <span className="text-muted-foreground">À aider</span>
+                <Badge variant="outline" className={adaptiveBadge("aider").cls}>
+                  {counts.aider}
+                </Badge>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">Stable</span>
+                <Badge variant="outline" className={adaptiveBadge("stable").cls}>
+                  {counts.stable}
+                </Badge>
+              </div>
+              <div className="pt-2 mt-2 border-t text-xs text-muted-foreground">
+                Temps moyen classe : {Math.round(mockTempsMoyenClasseS / 60)} min
               </div>
             </CardContent>
           </Card>
@@ -264,6 +328,8 @@ const SuiviDirectClasse = () => {
                 {filtered.map((s) => {
                   const status = getStatusBadge(s.taux_reussite);
                   const alert = isAlert(s);
+                  const adapt = classifyAdaptive(s);
+                  const adaptMeta = adaptiveBadge(adapt);
                   return (
                     <Card
                       key={s.id}
@@ -289,13 +355,33 @@ const SuiviDirectClasse = () => {
                             <p className="text-xs text-muted-foreground mt-0.5 truncate">
                               {s.groupe} · {s.lecon}
                             </p>
+                            <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                              <Badge variant="outline" className={adaptMeta.cls}>
+                                <Sparkles className="h-3 w-3 mr-1" />
+                                {adaptMeta.label}
+                              </Badge>
+                              {s.termine && (
+                                <Badge
+                                  variant="outline"
+                                  className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/30"
+                                >
+                                  <CheckCircle2 className="h-3 w-3 mr-1" />
+                                  Terminé
+                                </Badge>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </CardHeader>
                       <CardContent className="space-y-3">
                         <div>
                           <p className="text-xs text-muted-foreground mb-1">Exercice en cours</p>
-                          <p className="text-sm font-medium truncate">{s.exercice}</p>
+                          <p className="text-sm font-medium truncate">
+                            {s.exercice}{" "}
+                            <span className="text-xs text-muted-foreground font-normal">
+                              · {s.competence} · niveau {s.difficulte}/5
+                            </span>
+                          </p>
                         </div>
 
                         <div>
@@ -306,7 +392,7 @@ const SuiviDirectClasse = () => {
                           <Progress value={s.progression} className="h-2" />
                         </div>
 
-                        <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div className="grid grid-cols-3 gap-2 text-xs">
                           <div className="rounded-md border bg-muted/30 px-2 py-1.5">
                             <p className="text-muted-foreground">Tentatives</p>
                             <p
@@ -331,6 +417,12 @@ const SuiviDirectClasse = () => {
                               {s.temps_inactif_s}s
                             </p>
                           </div>
+                          <div className="rounded-md border bg-muted/30 px-2 py-1.5">
+                            <p className="text-muted-foreground">Temps total</p>
+                            <p className="font-semibold text-sm">
+                              {s.termine ? `${Math.round(s.temps_total_s / 60)}m` : "—"}
+                            </p>
+                          </div>
                         </div>
 
                         {alert && (
@@ -347,7 +439,8 @@ const SuiviDirectClasse = () => {
                           </div>
                         )}
 
-                        <div className="flex gap-2 pt-1">
+                        {/* Actions classiques */}
+                        <div className="flex gap-2">
                           <Button
                             size="sm"
                             variant="default"
@@ -367,6 +460,43 @@ const SuiviDirectClasse = () => {
                             Indice
                           </Button>
                         </div>
+
+                        {/* Actions adaptatives */}
+                        <div className="border-t pt-3">
+                          <p className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1">
+                            <Sparkles className="h-3 w-3" />
+                            Proposer un nouvel exercice
+                          </p>
+                          <div className="grid grid-cols-3 gap-1.5">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => openProposal(s, "harder")}
+                              className="text-xs px-2"
+                            >
+                              <TrendingUp className="h-3.5 w-3.5" />
+                              Plus dur
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => openProposal(s, "easier")}
+                              className="text-xs px-2"
+                            >
+                              <TrendingDown className="h-3.5 w-3.5" />
+                              Plus facile
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => openProposal(s, "same")}
+                              className="text-xs px-2"
+                            >
+                              <RotateCcw className="h-3.5 w-3.5" />
+                              Même
+                            </Button>
+                          </div>
+                        </div>
                       </CardContent>
                     </Card>
                   );
@@ -376,6 +506,13 @@ const SuiviDirectClasse = () => {
           </div>
         </div>
       </div>
+
+      <AdaptiveProposalDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        student={dialogStudent}
+        mode={dialogMode}
+      />
     </div>
   );
 };
