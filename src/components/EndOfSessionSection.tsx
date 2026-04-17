@@ -44,6 +44,37 @@ export default function EndOfSessionSection({
   const [closing, setClosing] = useState(false);
   const [selectedDuration, setSelectedDuration] = useState<number>(30);
   const [autoGenOpen, setAutoGenOpen] = useState(false);
+  const [absentMakeupOpen, setAbsentMakeupOpen] = useState(false);
+
+  // Absent makeup history
+  const { data: makeupHistory } = useQuery({
+    queryKey: ["absent-makeup-history", sessionId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("devoirs")
+        .select("id, eleve_id, exercice_id, created_at, eleve:profiles!devoirs_eleve_id_fkey(prenom, nom)")
+        .eq("session_id", sessionId)
+        .eq("source_label", "session_absent_makeup")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: !!sessionId,
+  });
+
+  const makeupByEleve = useMemo(() => {
+    const map = new Map<string, { name: string; count: number; lastAt: string }>();
+    (makeupHistory ?? []).forEach((d: any) => {
+      const name = `${d.eleve?.prenom ?? ""} ${d.eleve?.nom ?? ""}`.trim() || "Élève";
+      const cur = map.get(d.eleve_id);
+      if (cur) {
+        cur.count += 1;
+      } else {
+        map.set(d.eleve_id, { name, count: 1, lastAt: d.created_at });
+      }
+    });
+    return Array.from(map.values());
+  }, [makeupHistory]);
 
   // Check if homework was already sent for this session
   const { data: sentHomework, isLoading: loadingSent } = useQuery({
