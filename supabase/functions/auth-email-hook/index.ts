@@ -19,7 +19,7 @@ const corsHeaders = {
 const EMAIL_SUBJECTS: Record<string, string> = {
   signup: 'Confirm your email',
   invite: "You've been invited",
-  magiclink: 'Your login link',
+  magiclink: 'Ton code de connexion',
   recovery: 'Reset your password',
   email_change: 'Confirm your new email',
   reauthentication: 'Your verification code',
@@ -56,8 +56,7 @@ const SAMPLE_DATA: Record<string, object> = {
     confirmationUrl: SAMPLE_PROJECT_URL,
   },
   magiclink: {
-    siteName: SITE_NAME,
-    confirmationUrl: SAMPLE_PROJECT_URL,
+    token: '123456',
   },
   recovery: {
     siteName: SITE_NAME,
