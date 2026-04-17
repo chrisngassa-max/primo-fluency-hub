@@ -50,6 +50,8 @@ const SuiviDevoirsPage = () => {
   const [expandedBilan, setExpandedBilan] = useState<string | null>(null);
   const [integratingId, setIntegratingId] = useState<string | null>(null);
   const [reassigning, setReassigning] = useState<string | null>(null);
+  const [cleanupOpen, setCleanupOpen] = useState(false);
+  const [includeArchived, setIncludeArchived] = useState(false);
 
   // ─── Fetch expired devoirs ───
   const { data: expiredDevoirs = [], refetch: refetchExpired } = useQuery({
