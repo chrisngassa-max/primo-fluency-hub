@@ -14,10 +14,13 @@ import {
 } from "@/components/ui/tooltip";
 import { toast } from "sonner";
 import {
-  BookOpen, Send, Loader2, CheckCircle2, Lock, AlertTriangle, Sparkles, Clock,
+  BookOpen, Send, Loader2, CheckCircle2, Lock, AlertTriangle, Sparkles, Clock, UserX, History,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import AutoHomeworkPreviewDialog from "@/components/AutoHomeworkPreviewDialog";
+import AbsentMakeupDialog from "@/components/AbsentMakeupDialog";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 
 interface EndOfSessionSectionProps {
   sessionId: string;
