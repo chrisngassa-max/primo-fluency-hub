@@ -2552,7 +2552,7 @@ export type Database = {
         | "acquis_provisoire"
       competence_type: "CO" | "CE" | "EE" | "EO" | "Structures"
       devoir_raison: "remediation" | "consolidation"
-      devoir_statut: "en_attente" | "fait" | "expire" | "arrete"
+      devoir_statut: "en_attente" | "fait" | "expire" | "arrete" | "archive"
       exercice_format:
         | "qcm"
         | "vrai_faux"
@@ -2719,7 +2719,7 @@ export const Constants = {
       ],
       competence_type: ["CO", "CE", "EE", "EO", "Structures"],
       devoir_raison: ["remediation", "consolidation"],
-      devoir_statut: ["en_attente", "fait", "expire", "arrete"],
+      devoir_statut: ["en_attente", "fait", "expire", "arrete", "archive"],
       exercice_format: [
         "qcm",
         "vrai_faux",
