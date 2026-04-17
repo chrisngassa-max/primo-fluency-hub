@@ -38,6 +38,7 @@ const mainNav = [
 ];
 
 const monitorNav = [
+  { title: "Suivi en direct", url: "/formateur/suivi-direct", icon: Activity },
   { title: "Monitoring", url: "/formateur/monitoring", icon: Activity },
   { title: "Suivi des devoirs", url: "/formateur/suivi-devoirs", icon: BookOpen },
   { title: "Tests d'entrée", url: "/formateur/tests", icon: ClipboardList },
