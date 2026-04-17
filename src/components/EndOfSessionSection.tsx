@@ -14,10 +14,13 @@ import {
 } from "@/components/ui/tooltip";
 import { toast } from "sonner";
 import {
-  BookOpen, Send, Loader2, CheckCircle2, Lock, AlertTriangle, Sparkles, Clock,
+  BookOpen, Send, Loader2, CheckCircle2, Lock, AlertTriangle, Sparkles, Clock, UserX, History,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import AutoHomeworkPreviewDialog from "@/components/AutoHomeworkPreviewDialog";
+import AbsentMakeupDialog from "@/components/AbsentMakeupDialog";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 
 interface EndOfSessionSectionProps {
   sessionId: string;
@@ -41,6 +44,37 @@ export default function EndOfSessionSection({
   const [closing, setClosing] = useState(false);
   const [selectedDuration, setSelectedDuration] = useState<number>(30);
   const [autoGenOpen, setAutoGenOpen] = useState(false);
+  const [absentMakeupOpen, setAbsentMakeupOpen] = useState(false);
+
+  // Absent makeup history
+  const { data: makeupHistory } = useQuery({
+    queryKey: ["absent-makeup-history", sessionId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("devoirs")
+        .select("id, eleve_id, exercice_id, created_at, eleve:profiles!devoirs_eleve_id_fkey(prenom, nom)")
+        .eq("session_id", sessionId)
+        .eq("source_label", "session_absent_makeup")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: !!sessionId,
+  });
+
+  const makeupByEleve = useMemo(() => {
+    const map = new Map<string, { name: string; count: number; lastAt: string }>();
+    (makeupHistory ?? []).forEach((d: any) => {
+      const name = `${d.eleve?.prenom ?? ""} ${d.eleve?.nom ?? ""}`.trim() || "Élève";
+      const cur = map.get(d.eleve_id);
+      if (cur) {
+        cur.count += 1;
+      } else {
+        map.set(d.eleve_id, { name, count: 1, lastAt: d.created_at });
+      }
+    });
+    return Array.from(map.values());
+  }, [makeupHistory]);
 
   // Check if homework was already sent for this session
   const { data: sentHomework, isLoading: loadingSent } = useQuery({
@@ -227,6 +261,16 @@ export default function EndOfSessionSection({
               {homeworkSent ? "Envoyer d'autres devoirs" : "Envoyer les devoirs"}
             </Button>
 
+            {/* Send to absentees as makeup */}
+            <Button
+              variant="outline"
+              className="gap-2"
+              onClick={() => setAbsentMakeupOpen(true)}
+            >
+              <UserX className="h-4 w-4" />
+              Envoyer aux absents en devoir
+            </Button>
+
             {/* Close session button → triggers auto-generation */}
             <TooltipProvider>
               <Tooltip>
@@ -257,8 +301,34 @@ export default function EndOfSessionSection({
               </Tooltip>
             </TooltipProvider>
           </div>
+
+          {/* Absent makeup history */}
+          {makeupByEleve.length > 0 && (
+            <div className="rounded-lg border bg-muted/30 p-3 space-y-2">
+              <p className="text-xs font-semibold flex items-center gap-1.5 text-muted-foreground">
+                <History className="h-3.5 w-3.5" />
+                Devoirs envoyés aux absents ({makeupHistory?.length ?? 0})
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {makeupByEleve.map((m, i) => (
+                  <Badge key={i} variant="secondary" className="text-[11px]">
+                    {m.name} · {m.count} ex. · {format(new Date(m.lastAt), "d MMM HH:mm", { locale: fr })}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
+
+      {/* Absent makeup dialog */}
+      <AbsentMakeupDialog
+        open={absentMakeupOpen}
+        onOpenChange={setAbsentMakeupOpen}
+        sessionId={sessionId}
+        groupId={groupId}
+        userId={userId}
+      />
 
       {/* Manual exercise selection dialog */}
       <Dialog open={selectOpen} onOpenChange={setSelectOpen}>
