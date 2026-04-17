@@ -32,6 +32,9 @@ import {
 } from "recharts";
 import CompetenceLabel from "@/components/CompetenceLabel";
 import PacingTracker from "@/components/PacingTracker";
+import CleanupDevoirsDialog from "@/components/CleanupDevoirsDialog";
+import { Switch } from "@/components/ui/switch";
+import { Trash2 } from "lucide-react";
 
 const COMPETENCES = ["CO", "CE", "EE", "EO", "Structures"] as const;
 
@@ -47,6 +50,8 @@ const SuiviDevoirsPage = () => {
   const [expandedBilan, setExpandedBilan] = useState<string | null>(null);
   const [integratingId, setIntegratingId] = useState<string | null>(null);
   const [reassigning, setReassigning] = useState<string | null>(null);
+  const [cleanupOpen, setCleanupOpen] = useState(false);
+  const [includeArchived, setIncludeArchived] = useState(false);
 
   // ─── Fetch expired devoirs ───
   const { data: expiredDevoirs = [], refetch: refetchExpired } = useQuery({
@@ -108,6 +113,47 @@ const SuiviDevoirsPage = () => {
 
   // Auto-select first group
   const activeGroup = selectedGroup || groups?.[0]?.id || "";
+
+  // ─── Backlog: stats since last completed session ───
+  const { data: backlogStats, refetch: refetchBacklog } = useQuery({
+    queryKey: ["backlog-stats", user?.id, activeGroup],
+    queryFn: async () => {
+      if (!activeGroup) return null;
+      const { data: members } = await supabase
+        .from("group_members")
+        .select("eleve_id")
+        .eq("group_id", activeGroup);
+      const eleveIds = (members ?? []).map((m: any) => m.eleve_id);
+      if (eleveIds.length === 0) return { assigned: 0, completed: 0, remaining: 0, archived: 0, lastSessionDate: null };
+
+      const { data: lastSess } = await supabase
+        .from("sessions")
+        .select("date_seance")
+        .eq("group_id", activeGroup)
+        .eq("statut", "terminee")
+        .order("date_seance", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      const sinceIso = lastSess?.date_seance ?? null;
+
+      let q = supabase
+        .from("devoirs")
+        .select("id, statut, created_at")
+        .eq("formateur_id", user!.id)
+        .in("eleve_id", eleveIds);
+      if (sinceIso) q = q.gte("created_at", sinceIso);
+      const { data: rows } = await q;
+      const all = rows ?? [];
+      return {
+        assigned: all.length,
+        completed: all.filter((d: any) => d.statut === "fait" || d.statut === "arrete").length,
+        archived: all.filter((d: any) => d.statut === "archive").length,
+        remaining: all.filter((d: any) => d.statut === "en_attente").length,
+        lastSessionDate: sinceIso,
+      };
+    },
+    enabled: !!user?.id && !!activeGroup,
+  });
 
   // Fetch individual bilans (post-devoirs)
   const { data: bilansDevoirsRaw, isLoading: bilansLoading } = useQuery({
@@ -531,6 +577,74 @@ Rédige une "Synthèse de Veille" concise pour le formateur :
 
       {/* Pacing Tracker — 60h goal */}
       <PacingTracker />
+
+      {/* Backlog & Nettoyage */}
+      {activeGroup && (
+        <Card>
+          <CardHeader className="pb-2">
+            <div className="flex items-start justify-between flex-wrap gap-3">
+              <div>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <ClipboardCheck className="h-4 w-4 text-primary" />
+                  Backlog des devoirs depuis la dernière séance
+                </CardTitle>
+                <CardDescription>
+                  {backlogStats?.lastSessionDate
+                    ? `Référence : séance du ${format(new Date(backlogStats.lastSessionDate), "d MMMM yyyy", { locale: fr })}`
+                    : "Aucune séance terminée — backlog total affiché."}
+                </CardDescription>
+              </div>
+              <div className="flex items-center gap-3 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <Switch id="include-archived" checked={includeArchived} onCheckedChange={setIncludeArchived} />
+                  <label htmlFor="include-archived" className="text-sm cursor-pointer">Inclure archivés</label>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCleanupOpen(true)}
+                  className="gap-1.5"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  Vider les non faits
+                </Button>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="rounded-lg border p-3">
+                <p className="text-xs text-muted-foreground">Assignés</p>
+                <p className="text-2xl font-bold">{backlogStats?.assigned ?? "—"}</p>
+              </div>
+              <div className="rounded-lg border p-3">
+                <p className="text-xs text-muted-foreground">Terminés</p>
+                <p className="text-2xl font-bold text-green-600">{backlogStats?.completed ?? "—"}</p>
+              </div>
+              <div className="rounded-lg border p-3">
+                <p className="text-xs text-muted-foreground">Restants (non faits)</p>
+                <p className="text-2xl font-bold text-orange-600">{backlogStats?.remaining ?? "—"}</p>
+              </div>
+              {includeArchived && (
+                <div className="rounded-lg border p-3">
+                  <p className="text-xs text-muted-foreground">Archivés</p>
+                  <p className="text-2xl font-bold text-muted-foreground">{backlogStats?.archived ?? "—"}</p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      <CleanupDevoirsDialog
+        open={cleanupOpen}
+        onOpenChange={setCleanupOpen}
+        fixedGroupId={activeGroup || undefined}
+        fixedGroupName={groups?.find((g) => g.id === activeGroup)?.nom}
+        onSuccess={() => {
+          refetchBacklog();
+        }}
+      />
 
       <Tabs defaultValue="individuel">
         <TabsList>

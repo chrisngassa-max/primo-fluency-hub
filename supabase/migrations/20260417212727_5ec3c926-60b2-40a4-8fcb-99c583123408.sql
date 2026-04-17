@@ -1,0 +1,1 @@
+ALTER TYPE public.devoir_statut ADD VALUE IF NOT EXISTS 'archive';
