@@ -14,14 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Progress } from "@/components/ui/progress";
 import {
   Activity,
   CheckCircle2,
@@ -30,6 +23,8 @@ import {
   ClipboardList,
   AlertTriangle,
   RefreshCw,
+  UserX,
+  Hourglass,
 } from "lucide-react";
 
 type Session = {
