@@ -1,10 +1,12 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -21,498 +23,439 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  AlertTriangle,
-  HandHelping,
-  Lightbulb,
-  Search,
   Activity,
   CheckCircle2,
-  TrendingUp,
-  TrendingDown,
-  RotateCcw,
-  Sparkles,
+  Clock,
+  Users,
+  ClipboardList,
+  AlertTriangle,
+  RefreshCw,
 } from "lucide-react";
-import { toast } from "sonner";
-import {
-  mockLiveStudents,
-  mockGroupes,
-  mockLecons,
-  mockTempsMoyenClasseS,
-  ALERT_THRESHOLDS,
-  classifyAdaptive,
-  type LiveStudent,
-  type AdaptiveBadge,
-} from "@/data/mockLiveClass";
-import AdaptiveProposalDialog, {
-  type AdaptiveMode,
-} from "@/components/AdaptiveProposalDialog";
 
-type StatusKind = "success" | "warning" | "danger";
+type Session = {
+  id: string;
+  titre: string;
+  date_seance: string;
+  niveau_cible: string;
+  group_id: string;
+  statut: string;
+  groups?: { nom: string } | null;
+};
 
-function getStatusBadge(taux: number): { label: string; kind: StatusKind } {
-  if (taux >= 75) return { label: "En réussite", kind: "success" };
-  if (taux >= 50) return { label: "À encourager", kind: "warning" };
-  return { label: "Besoin d'aide", kind: "danger" };
+type Member = {
+  eleve_id: string;
+  eleve: { id: string; prenom: string; nom: string } | null;
+};
+
+type BilanTest = {
+  id: string;
+  session_id: string;
+  statut: string;
+  contenu: any;
+  nb_questions: number;
+  competences_couvertes: string[];
+  created_at: string;
+};
+
+type BilanResult = {
+  id: string;
+  bilan_test_id: string;
+  eleve_id: string;
+  score_global: number;
+  scores_par_competence: any;
+  reponses: any;
+  created_at: string;
+};
+
+function initials(prenom?: string, nom?: string) {
+  return `${(prenom?.[0] ?? "").toUpperCase()}${(nom?.[0] ?? "").toUpperCase()}` || "?";
 }
 
-function badgeClasses(kind: StatusKind) {
-  switch (kind) {
-    case "success":
-      return "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30";
-    case "warning":
-      return "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30";
-    case "danger":
-      return "bg-red-500/15 text-red-700 dark:text-red-300 border-red-500/30";
-  }
-}
-
-function adaptiveBadge(b: AdaptiveBadge) {
-  switch (b) {
-    case "challenger":
-      return {
-        label: "À challenger",
-        cls: "bg-violet-500/15 text-violet-700 dark:text-violet-300 border-violet-500/30",
-      };
-    case "aider":
-      return {
-        label: "À aider",
-        cls: "bg-red-500/15 text-red-700 dark:text-red-300 border-red-500/30",
-      };
-    default:
-      return {
-        label: "Stable",
-        cls: "bg-muted text-muted-foreground border-border",
-      };
-  }
-}
-
-function initials(name: string) {
-  return name
-    .split(" ")
-    .map((n) => n[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-}
-
-function isAlert(s: LiveStudent) {
-  return (
-    s.tentatives_question > ALERT_THRESHOLDS.ECHECS_QUESTION ||
-    s.temps_inactif_s > ALERT_THRESHOLDS.INACTIVITE_S
-  );
+function scoreColor(score: number) {
+  if (score >= 80) return "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30";
+  if (score >= 60) return "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30";
+  return "bg-red-500/15 text-red-700 dark:text-red-300 border-red-500/30";
 }
 
 const SuiviDirectClasse = () => {
-  const [groupe, setGroupe] = useState<string>("all");
-  const [lecon, setLecon] = useState<string>("all");
-  const [search, setSearch] = useState("");
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogStudent, setDialogStudent] = useState<LiveStudent | null>(null);
-  const [dialogMode, setDialogMode] = useState<AdaptiveMode>("same");
+  const { user } = useAuth();
+  const [selectedSessionId, setSelectedSessionId] = useState<string>("");
 
-  const filtered = useMemo(() => {
-    return mockLiveStudents.filter((s) => {
-      if (groupe !== "all" && s.groupe !== groupe) return false;
-      if (lecon !== "all" && s.lecon !== lecon) return false;
-      if (search && !s.nom.toLowerCase().includes(search.toLowerCase())) return false;
-      return true;
-    });
-  }, [groupe, lecon, search]);
+  // Sessions en cours (du formateur)
+  const { data: sessions, isLoading: loadingSessions } = useQuery({
+    queryKey: ["live-sessions-en-cours", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      const { data, error } = await supabase
+        .from("sessions")
+        .select("id, titre, date_seance, niveau_cible, group_id, statut, groups:groups!inner(nom, formateur_id)")
+        .eq("groups.formateur_id", user.id)
+        .in("statut", ["en_cours", "planifiee"])
+        .order("date_seance", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as unknown as Session[];
+    },
+    enabled: !!user?.id,
+    refetchInterval: 30000,
+  });
 
-  const alertes = useMemo(() => filtered.filter(isAlert), [filtered]);
-  const counts = useMemo(() => {
-    const c = { challenger: 0, aider: 0, stable: 0 };
-    filtered.forEach((s) => {
-      c[classifyAdaptive(s)]++;
-    });
-    return c;
-  }, [filtered]);
+  // Auto-sélection de la 1re séance en_cours sinon la 1re planifiée
+  useEffect(() => {
+    if (!selectedSessionId && sessions && sessions.length > 0) {
+      const enCours = sessions.find((s) => s.statut === "en_cours");
+      setSelectedSessionId((enCours ?? sessions[0]).id);
+    }
+  }, [sessions, selectedSessionId]);
 
-  const openProposal = (s: LiveStudent, mode: AdaptiveMode) => {
-    setDialogStudent(s);
-    setDialogMode(mode);
-    setDialogOpen(true);
-  };
+  const selectedSession = useMemo(
+    () => sessions?.find((s) => s.id === selectedSessionId) ?? null,
+    [sessions, selectedSessionId],
+  );
 
-  const handleAider = (s: LiveStudent) => {
-    toast.success(`Aide envoyée à ${s.nom}`, {
-      description: `Sur ${s.exercice} — ${s.question_actuelle}`,
-    });
-  };
+  // Membres du groupe
+  const { data: members } = useQuery({
+    queryKey: ["live-members", selectedSession?.group_id],
+    queryFn: async () => {
+      if (!selectedSession?.group_id) return [];
+      const { data, error } = await supabase
+        .from("group_members")
+        .select("eleve_id, eleve:profiles(id, prenom, nom)")
+        .eq("group_id", selectedSession.group_id);
+      if (error) throw error;
+      return (data ?? []) as unknown as Member[];
+    },
+    enabled: !!selectedSession?.group_id,
+  });
 
-  const handleIndice = (s: LiveStudent) => {
-    toast.success(`Indice envoyé à ${s.nom}`, {
-      description: s.question_actuelle,
-    });
-  };
+  // Présences
+  const { data: presences } = useQuery({
+    queryKey: ["live-presences", selectedSessionId],
+    queryFn: async () => {
+      if (!selectedSessionId) return [];
+      const { data } = await supabase
+        .from("presences")
+        .select("eleve_id, present")
+        .eq("session_id", selectedSessionId);
+      return data ?? [];
+    },
+    enabled: !!selectedSessionId,
+    refetchInterval: 15000,
+  });
 
+  // Bilans (tests de début de séance) envoyés pour cette séance
+  const { data: bilans, isLoading: loadingBilans } = useQuery({
+    queryKey: ["live-bilans", selectedSessionId],
+    queryFn: async () => {
+      if (!selectedSessionId) return [];
+      const { data, error } = await supabase
+        .from("bilan_tests")
+        .select("id, session_id, statut, contenu, nb_questions, competences_couvertes, created_at")
+        .eq("session_id", selectedSessionId)
+        .eq("statut", "envoye")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as BilanTest[];
+    },
+    enabled: !!selectedSessionId,
+    refetchInterval: 15000,
+  });
+
+  // Résultats du / des bilans
+  const bilanIds = useMemo(() => bilans?.map((b) => b.id) ?? [], [bilans]);
+  const { data: bilanResults, refetch: refetchResults } = useQuery({
+    queryKey: ["live-bilan-results", bilanIds.join(",")],
+    queryFn: async () => {
+      if (bilanIds.length === 0) return [];
+      const { data, error } = await supabase
+        .from("bilan_test_results")
+        .select("id, bilan_test_id, eleve_id, score_global, scores_par_competence, reponses, created_at")
+        .in("bilan_test_id", bilanIds);
+      if (error) throw error;
+      return (data ?? []) as BilanResult[];
+    },
+    enabled: bilanIds.length > 0,
+    refetchInterval: 10000,
+  });
+
+  // Realtime
+  useEffect(() => {
+    if (bilanIds.length === 0) return;
+    const channel = supabase
+      .channel(`bilan-results-${bilanIds[0]}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "bilan_test_results" },
+        () => refetchResults(),
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [bilanIds, refetchResults]);
+
+  const presenceMap = useMemo(() => {
+    const m = new Map<string, boolean>();
+    (presences ?? []).forEach((p: any) => m.set(p.eleve_id, p.present));
+    return m;
+  }, [presences]);
+
+  const presentMembers = useMemo(
+    () => (members ?? []).filter((m) => presenceMap.get(m.eleve_id) !== false),
+    [members, presenceMap],
+  );
+
+  // Header
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center gap-3">
         <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
           <Activity className="h-5 w-5 text-primary" />
         </div>
-        <div>
+        <div className="flex-1">
           <h1 className="text-2xl font-bold tracking-tight">Suivi en direct de la classe</h1>
           <p className="text-sm text-muted-foreground">
-            Pilotage adaptatif : challenger les rapides, aider ceux qui bloquent.
+            Séance en cours, présences, et réponses au bilan de début de séance.
           </p>
         </div>
+        <Button variant="outline" size="sm" onClick={() => refetchResults()} className="gap-2">
+          <RefreshCw className="h-4 w-4" />
+          Actualiser
+        </Button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6">
-        {/* Sidebar filtres */}
-        <aside className="space-y-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-semibold">Filtres</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-muted-foreground">Groupe</label>
-                <Select value={groupe} onValueChange={setGroupe}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Tous les groupes</SelectItem>
-                    {mockGroupes.map((g) => (
-                      <SelectItem key={g} value={g}>
-                        {g}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-muted-foreground">Leçon</label>
-                <Select value={lecon} onValueChange={setLecon}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Toutes les leçons</SelectItem>
-                    {mockLecons.map((l) => (
-                      <SelectItem key={l} value={l}>
-                        {l}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-muted-foreground">Recherche</label>
-                <div className="relative">
-                  <Search className="h-4 w-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Nom de l'élève…"
-                    className="pl-8"
-                  />
+      {/* Sélecteur de séance */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-semibold">Séance suivie</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {loadingSessions ? (
+            <Skeleton className="h-10 w-full" />
+          ) : !sessions || sessions.length === 0 ? (
+            <p className="text-sm text-muted-foreground py-4 text-center">
+              Aucune séance en cours ou planifiée.
+            </p>
+          ) : (
+            <Select value={selectedSessionId} onValueChange={setSelectedSessionId}>
+              <SelectTrigger>
+                <SelectValue placeholder="Choisir une séance" />
+              </SelectTrigger>
+              <SelectContent>
+                {sessions.map((s) => (
+                  <SelectItem key={s.id} value={s.id}>
+                    <span className="flex items-center gap-2">
+                      <Badge
+                        variant="outline"
+                        className={
+                          s.statut === "en_cours"
+                            ? "bg-green-500/15 text-green-700 dark:text-green-300 border-green-500/30"
+                            : ""
+                        }
+                      >
+                        {s.statut === "en_cours" ? "En cours" : "Planifiée"}
+                      </Badge>
+                      {s.titre} · {s.groups?.nom}
+                    </span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        </CardContent>
+      </Card>
+
+      {selectedSession && (
+        <>
+          {/* KPIs */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1">
+                  <Users className="h-3.5 w-3.5" /> Inscrits
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+                <p className="text-2xl font-bold">{members?.length ?? 0}</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1">
+                  <CheckCircle2 className="h-3.5 w-3.5" /> Présents
+                </div>
+                <p className="text-2xl font-bold">{presentMembers.length}</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1">
+                  <ClipboardList className="h-3.5 w-3.5" /> Bilans envoyés
+                </div>
+                <p className="text-2xl font-bold">{bilans?.length ?? 0}</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1">
+                  <Clock className="h-3.5 w-3.5" /> Réponses reçues
+                </div>
+                <p className="text-2xl font-bold">{bilanResults?.length ?? 0}</p>
+              </CardContent>
+            </Card>
+          </div>
 
+          {/* Bilan(s) de début de séance */}
           <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-semibold">Pilotage adaptatif</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2 text-sm">
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">À challenger</span>
-                <Badge variant="outline" className={adaptiveBadge("challenger").cls}>
-                  {counts.challenger}
-                </Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">À aider</span>
-                <Badge variant="outline" className={adaptiveBadge("aider").cls}>
-                  {counts.aider}
-                </Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Stable</span>
-                <Badge variant="outline" className={adaptiveBadge("stable").cls}>
-                  {counts.stable}
-                </Badge>
-              </div>
-              <div className="pt-2 mt-2 border-t text-xs text-muted-foreground">
-                Temps moyen classe : {Math.round(mockTempsMoyenClasseS / 60)} min
-              </div>
-            </CardContent>
-          </Card>
-        </aside>
-
-        {/* Main */}
-        <div className="space-y-6 min-w-0">
-          {/* Alertes prioritaires */}
-          <Card className="border-red-500/30">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
-                Alertes prioritaires
-                <Badge variant="outline" className="ml-1">
-                  {alertes.length}
-                </Badge>
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <ClipboardList className="h-5 w-5 text-primary" />
+                Bilan de début de séance
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {alertes.length === 0 ? (
-                <p className="text-sm text-muted-foreground py-4 text-center">
-                  Aucune alerte. Tous les élèves progressent normalement. 🎉
-                </p>
+              {loadingBilans ? (
+                <Skeleton className="h-32 w-full" />
+              ) : !bilans || bilans.length === 0 ? (
+                <div className="py-8 text-center space-y-2">
+                  <AlertTriangle className="h-8 w-8 text-muted-foreground mx-auto" />
+                  <p className="text-sm text-muted-foreground">
+                    Aucun bilan de début de séance n'a encore été envoyé pour cette séance.
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Va dans <strong>Piloter la séance</strong> → bloc « Bilan de début de séance » pour le générer.
+                  </p>
+                </div>
               ) : (
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Élève</TableHead>
-                        <TableHead>Exercice</TableHead>
-                        <TableHead>Question</TableHead>
-                        <TableHead className="text-center">Échecs</TableHead>
-                        <TableHead>Dernière erreur</TableHead>
-                        <TableHead className="text-right">Action</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {alertes.map((s) => (
-                        <TableRow key={s.id}>
-                          <TableCell className="font-medium">{s.nom}</TableCell>
-                          <TableCell className="text-sm text-muted-foreground">
-                            {s.exercice}
-                          </TableCell>
-                          <TableCell className="text-sm">{s.question_actuelle}</TableCell>
-                          <TableCell className="text-center">
-                            <Badge
-                              variant="outline"
-                              className={
-                                s.tentatives_question > ALERT_THRESHOLDS.ECHECS_QUESTION
-                                  ? badgeClasses("danger")
-                                  : ""
-                              }
-                            >
-                              {s.tentatives_question}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-sm text-muted-foreground">
-                            {s.derniere_erreur ?? "—"}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <Button size="sm" onClick={() => handleAider(s)}>
-                              Aider
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                <div className="space-y-6">
+                  {bilans.map((bilan) => {
+                    const results = (bilanResults ?? []).filter((r) => r.bilan_test_id === bilan.id);
+                    const resultMap = new Map(results.map((r) => [r.eleve_id, r]));
+                    const totalPresents = presentMembers.length || (members?.length ?? 0);
+                    const repondus = results.length;
+                    const tauxReponse = totalPresents > 0 ? Math.round((repondus / totalPresents) * 100) : 0;
+                    const moyenne =
+                      results.length > 0
+                        ? Math.round(
+                            results.reduce((s, r) => s + Number(r.score_global || 0), 0) / results.length,
+                          )
+                        : 0;
+
+                    return (
+                      <div key={bilan.id} className="space-y-3">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <Badge variant="outline">{bilan.nb_questions} questions</Badge>
+                            {(bilan.competences_couvertes ?? []).map((c) => (
+                              <Badge key={c} variant="outline" className="bg-primary/5">
+                                {c}
+                              </Badge>
+                            ))}
+                          </div>
+                          <div className="flex items-center gap-3 text-sm">
+                            <span className="text-muted-foreground">
+                              {repondus}/{totalPresents} ({tauxReponse}%)
+                            </span>
+                            {results.length > 0 && (
+                              <Badge variant="outline" className={scoreColor(moyenne)}>
+                                Moyenne : {moyenne}%
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="overflow-x-auto">
+                          <Table>
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead>Élève</TableHead>
+                                <TableHead className="text-center">Présence</TableHead>
+                                <TableHead className="text-center">Statut</TableHead>
+                                <TableHead className="text-center">Score</TableHead>
+                                <TableHead>Détails compétences</TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              {(members ?? []).map((m) => {
+                                const r = resultMap.get(m.eleve_id);
+                                const present = presenceMap.get(m.eleve_id) !== false;
+                                const scoresComp = (r?.scores_par_competence ?? {}) as Record<string, number>;
+                                return (
+                                  <TableRow key={m.eleve_id}>
+                                    <TableCell>
+                                      <div className="flex items-center gap-2">
+                                        <Avatar className="h-7 w-7">
+                                          <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                                            {initials(m.eleve?.prenom, m.eleve?.nom)}
+                                          </AvatarFallback>
+                                        </Avatar>
+                                        <span className="text-sm font-medium">
+                                          {m.eleve?.prenom} {m.eleve?.nom}
+                                        </span>
+                                      </div>
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                      {present ? (
+                                        <Badge variant="outline" className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/30">
+                                          Présent
+                                        </Badge>
+                                      ) : (
+                                        <Badge variant="outline" className="bg-muted text-muted-foreground">
+                                          Absent
+                                        </Badge>
+                                      )}
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                      {r ? (
+                                        <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
+                                          <CheckCircle2 className="h-3 w-3 mr-1" />
+                                          Répondu
+                                        </Badge>
+                                      ) : (
+                                        <Badge variant="outline" className="bg-muted text-muted-foreground">
+                                          <Clock className="h-3 w-3 mr-1" />
+                                          En attente
+                                        </Badge>
+                                      )}
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                      {r ? (
+                                        <Badge variant="outline" className={scoreColor(Number(r.score_global))}>
+                                          {Math.round(Number(r.score_global))}%
+                                        </Badge>
+                                      ) : (
+                                        <span className="text-xs text-muted-foreground">—</span>
+                                      )}
+                                    </TableCell>
+                                    <TableCell>
+                                      {r && Object.keys(scoresComp).length > 0 ? (
+                                        <div className="flex flex-wrap gap-1">
+                                          {Object.entries(scoresComp).map(([comp, score]) => (
+                                            <Badge
+                                              key={comp}
+                                              variant="outline"
+                                              className={`text-[10px] ${scoreColor(Number(score))}`}
+                                            >
+                                              {comp} {Math.round(Number(score))}%
+                                            </Badge>
+                                          ))}
+                                        </div>
+                                      ) : (
+                                        <span className="text-xs text-muted-foreground">—</span>
+                                      )}
+                                    </TableCell>
+                                  </TableRow>
+                                );
+                              })}
+                            </TableBody>
+                          </Table>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </CardContent>
           </Card>
-
-          {/* Grille cartes élèves */}
-          <div>
-            <h2 className="text-lg font-semibold mb-3">Élèves en cours</h2>
-            {filtered.length === 0 ? (
-              <Card>
-                <CardContent className="py-10 text-center text-sm text-muted-foreground">
-                  Aucun élève ne correspond aux filtres.
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-                {filtered.map((s) => {
-                  const status = getStatusBadge(s.taux_reussite);
-                  const alert = isAlert(s);
-                  const adapt = classifyAdaptive(s);
-                  const adaptMeta = adaptiveBadge(adapt);
-                  return (
-                    <Card
-                      key={s.id}
-                      className={alert ? "border-red-500/40 shadow-sm" : ""}
-                    >
-                      <CardHeader className="pb-3">
-                        <div className="flex items-start gap-3">
-                          <Avatar>
-                            <AvatarFallback className="bg-primary/10 text-primary font-semibold">
-                              {initials(s.nom)}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-center justify-between gap-2">
-                              <CardTitle className="text-base truncate">{s.nom}</CardTitle>
-                              <Badge
-                                variant="outline"
-                                className={badgeClasses(status.kind)}
-                              >
-                                {status.label}
-                              </Badge>
-                            </div>
-                            <p className="text-xs text-muted-foreground mt-0.5 truncate">
-                              {s.groupe} · {s.lecon}
-                            </p>
-                            <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-                              <Badge variant="outline" className={adaptMeta.cls}>
-                                <Sparkles className="h-3 w-3 mr-1" />
-                                {adaptMeta.label}
-                              </Badge>
-                              {s.termine && (
-                                <Badge
-                                  variant="outline"
-                                  className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/30"
-                                >
-                                  <CheckCircle2 className="h-3 w-3 mr-1" />
-                                  Terminé
-                                </Badge>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="space-y-3">
-                        <div>
-                          <p className="text-xs text-muted-foreground mb-1">Exercice en cours</p>
-                          <p className="text-sm font-medium truncate">
-                            {s.exercice}{" "}
-                            <span className="text-xs text-muted-foreground font-normal">
-                              · {s.competence} · niveau {s.difficulte}/5
-                            </span>
-                          </p>
-                        </div>
-
-                        <div>
-                          <div className="flex items-center justify-between text-xs mb-1.5">
-                            <span className="text-muted-foreground">Progression</span>
-                            <span className="font-semibold">{s.progression}%</span>
-                          </div>
-                          <Progress value={s.progression} className="h-2" />
-                        </div>
-
-                        <div className="grid grid-cols-3 gap-2 text-xs">
-                          <div className="rounded-md border bg-muted/30 px-2 py-1.5">
-                            <p className="text-muted-foreground">Tentatives</p>
-                            <p
-                              className={`font-semibold text-sm ${
-                                s.tentatives_question > ALERT_THRESHOLDS.ECHECS_QUESTION
-                                  ? "text-red-600 dark:text-red-400"
-                                  : ""
-                              }`}
-                            >
-                              {s.tentatives_question}
-                            </p>
-                          </div>
-                          <div className="rounded-md border bg-muted/30 px-2 py-1.5">
-                            <p className="text-muted-foreground">Inactif</p>
-                            <p
-                              className={`font-semibold text-sm ${
-                                s.temps_inactif_s > ALERT_THRESHOLDS.INACTIVITE_S
-                                  ? "text-red-600 dark:text-red-400"
-                                  : ""
-                              }`}
-                            >
-                              {s.temps_inactif_s}s
-                            </p>
-                          </div>
-                          <div className="rounded-md border bg-muted/30 px-2 py-1.5">
-                            <p className="text-muted-foreground">Temps total</p>
-                            <p className="font-semibold text-sm">
-                              {s.termine ? `${Math.round(s.temps_total_s / 60)}m` : "—"}
-                            </p>
-                          </div>
-                        </div>
-
-                        {alert && (
-                          <div className="rounded-md border border-red-500/30 bg-red-500/5 p-2 text-xs">
-                            <p className="font-medium text-red-700 dark:text-red-300 flex items-center gap-1">
-                              <AlertTriangle className="h-3.5 w-3.5" />
-                              Intervention recommandée
-                            </p>
-                            {s.derniere_erreur && (
-                              <p className="text-muted-foreground mt-0.5">
-                                {s.derniere_erreur}
-                              </p>
-                            )}
-                          </div>
-                        )}
-
-                        {/* Actions classiques */}
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            variant="default"
-                            className="flex-1"
-                            onClick={() => handleAider(s)}
-                          >
-                            <HandHelping className="h-4 w-4" />
-                            Aider
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="flex-1"
-                            onClick={() => handleIndice(s)}
-                          >
-                            <Lightbulb className="h-4 w-4" />
-                            Indice
-                          </Button>
-                        </div>
-
-                        {/* Actions adaptatives */}
-                        <div className="border-t pt-3">
-                          <p className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1">
-                            <Sparkles className="h-3 w-3" />
-                            Proposer un nouvel exercice
-                          </p>
-                          <div className="grid grid-cols-3 gap-1.5">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => openProposal(s, "harder")}
-                              className="text-xs px-2"
-                            >
-                              <TrendingUp className="h-3.5 w-3.5" />
-                              Plus dur
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => openProposal(s, "easier")}
-                              className="text-xs px-2"
-                            >
-                              <TrendingDown className="h-3.5 w-3.5" />
-                              Plus facile
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => openProposal(s, "same")}
-                              className="text-xs px-2"
-                            >
-                              <RotateCcw className="h-3.5 w-3.5" />
-                              Même
-                            </Button>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <AdaptiveProposalDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        student={dialogStudent}
-        mode={dialogMode}
-      />
+        </>
+      )}
     </div>
   );
 };
