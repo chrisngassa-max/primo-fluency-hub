@@ -14,14 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Progress } from "@/components/ui/progress";
 import {
   Activity,
   CheckCircle2,
@@ -30,6 +23,8 @@ import {
   ClipboardList,
   AlertTriangle,
   RefreshCw,
+  UserX,
+  Hourglass,
 } from "lucide-react";
 
 type Session = {
@@ -361,91 +356,108 @@ const SuiviDirectClasse = () => {
                           </div>
                         </div>
 
-                        <div className="overflow-x-auto">
-                          <Table>
-                            <TableHeader>
-                              <TableRow>
-                                <TableHead>Élève</TableHead>
-                                <TableHead className="text-center">Présence</TableHead>
-                                <TableHead className="text-center">Statut</TableHead>
-                                <TableHead className="text-center">Score</TableHead>
-                                <TableHead>Détails compétences</TableHead>
-                              </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                              {(members ?? []).map((m) => {
-                                const r = resultMap.get(m.eleve_id);
-                                const present = presenceMap.get(m.eleve_id) !== false;
-                                const scoresComp = (r?.scores_par_competence ?? {}) as Record<string, number>;
-                                return (
-                                  <TableRow key={m.eleve_id}>
-                                    <TableCell>
-                                      <div className="flex items-center gap-2">
-                                        <Avatar className="h-7 w-7">
-                                          <AvatarFallback className="text-xs bg-primary/10 text-primary">
-                                            {initials(m.eleve?.prenom, m.eleve?.nom)}
-                                          </AvatarFallback>
-                                        </Avatar>
-                                        <span className="text-sm font-medium">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+                          {(members ?? []).map((m) => {
+                            const r = resultMap.get(m.eleve_id);
+                            const present = presenceMap.get(m.eleve_id) !== false;
+                            const scoresComp = (r?.scores_par_competence ?? {}) as Record<string, number>;
+                            const score = r ? Math.round(Number(r.score_global)) : null;
+                            const accentBorder = !present
+                              ? "border-l-muted-foreground/40"
+                              : !r
+                                ? "border-l-amber-400"
+                                : score! >= 80
+                                  ? "border-l-emerald-500"
+                                  : score! >= 60
+                                    ? "border-l-amber-500"
+                                    : "border-l-red-500";
+                            const scoreText = !r
+                              ? "text-muted-foreground"
+                              : score! >= 80
+                                ? "text-emerald-600 dark:text-emerald-400"
+                                : score! >= 60
+                                  ? "text-amber-600 dark:text-amber-400"
+                                  : "text-red-600 dark:text-red-400";
+                            return (
+                              <Card
+                                key={m.eleve_id}
+                                className={`border-l-4 ${accentBorder} ${!present ? "opacity-60" : ""} transition-all hover:shadow-md`}
+                              >
+                                <CardContent className="p-4 space-y-3">
+                                  {/* Header: avatar + name + status badge */}
+                                  <div className="flex items-start justify-between gap-2">
+                                    <div className="flex items-center gap-2 min-w-0">
+                                      <Avatar className="h-9 w-9 shrink-0">
+                                        <AvatarFallback className="text-xs bg-primary/10 text-primary font-semibold">
+                                          {initials(m.eleve?.prenom, m.eleve?.nom)}
+                                        </AvatarFallback>
+                                      </Avatar>
+                                      <div className="min-w-0">
+                                        <p className="text-sm font-semibold truncate">
                                           {m.eleve?.prenom} {m.eleve?.nom}
-                                        </span>
+                                        </p>
+                                        {!present ? (
+                                          <span className="text-[11px] text-muted-foreground inline-flex items-center gap-1">
+                                            <UserX className="h-3 w-3" /> Absent
+                                          </span>
+                                        ) : !r ? (
+                                          <span className="text-[11px] text-amber-600 dark:text-amber-400 inline-flex items-center gap-1">
+                                            <Hourglass className="h-3 w-3" /> En attente
+                                          </span>
+                                        ) : (
+                                          <span className="text-[11px] text-emerald-600 dark:text-emerald-400 inline-flex items-center gap-1">
+                                            <CheckCircle2 className="h-3 w-3" /> Répondu
+                                          </span>
+                                        )}
                                       </div>
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                      {present ? (
-                                        <Badge variant="outline" className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/30">
-                                          Présent
-                                        </Badge>
-                                      ) : (
-                                        <Badge variant="outline" className="bg-muted text-muted-foreground">
-                                          Absent
-                                        </Badge>
-                                      )}
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                      {r ? (
-                                        <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
-                                          <CheckCircle2 className="h-3 w-3 mr-1" />
-                                          Répondu
-                                        </Badge>
-                                      ) : (
-                                        <Badge variant="outline" className="bg-muted text-muted-foreground">
-                                          <Clock className="h-3 w-3 mr-1" />
-                                          En attente
-                                        </Badge>
-                                      )}
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                      {r ? (
-                                        <Badge variant="outline" className={scoreColor(Number(r.score_global))}>
-                                          {Math.round(Number(r.score_global))}%
-                                        </Badge>
-                                      ) : (
-                                        <span className="text-xs text-muted-foreground">—</span>
-                                      )}
-                                    </TableCell>
-                                    <TableCell>
-                                      {r && Object.keys(scoresComp).length > 0 ? (
-                                        <div className="flex flex-wrap gap-1">
-                                          {Object.entries(scoresComp).map(([comp, score]) => (
-                                            <Badge
-                                              key={comp}
-                                              variant="outline"
-                                              className={`text-[10px] ${scoreColor(Number(score))}`}
-                                            >
-                                              {comp} {Math.round(Number(score))}%
-                                            </Badge>
-                                          ))}
-                                        </div>
-                                      ) : (
-                                        <span className="text-xs text-muted-foreground">—</span>
-                                      )}
-                                    </TableCell>
-                                  </TableRow>
-                                );
-                              })}
-                            </TableBody>
-                          </Table>
+                                    </div>
+                                    <div className={`text-2xl font-black tabular-nums ${scoreText}`}>
+                                      {score !== null ? `${score}%` : "—"}
+                                    </div>
+                                  </div>
+
+                                  {/* Progress bar du score global */}
+                                  {r && (
+                                    <Progress
+                                      value={score!}
+                                      className="h-1.5"
+                                    />
+                                  )}
+
+                                  {/* Mini gauges par compétence */}
+                                  {r && Object.keys(scoresComp).length > 0 ? (
+                                    <div className="space-y-1.5 pt-1">
+                                      {Object.entries(scoresComp).map(([comp, s]) => {
+                                        const v = Math.round(Number(s));
+                                        return (
+                                          <div key={comp} className="flex items-center gap-2">
+                                            <span className="text-[11px] font-medium w-16 text-muted-foreground">{comp}</span>
+                                            <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+                                              <div
+                                                className={`h-full rounded-full ${
+                                                  v >= 80 ? "bg-emerald-500" : v >= 60 ? "bg-amber-500" : "bg-red-500"
+                                                }`}
+                                                style={{ width: `${Math.min(100, v)}%` }}
+                                              />
+                                            </div>
+                                            <span className={`text-[11px] tabular-nums w-9 text-right font-medium ${
+                                              v >= 80 ? "text-emerald-600 dark:text-emerald-400" : v >= 60 ? "text-amber-600 dark:text-amber-400" : "text-red-600 dark:text-red-400"
+                                            }`}>
+                                              {v}%
+                                            </span>
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  ) : !r && present ? (
+                                    <p className="text-[11px] text-muted-foreground italic pt-1">
+                                      Pas encore de réponse soumise.
+                                    </p>
+                                  ) : null}
+                                </CardContent>
+                              </Card>
+                            );
+                          })}
                         </div>
                       </div>
                     );
