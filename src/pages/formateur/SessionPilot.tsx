@@ -70,6 +70,8 @@ import AutoResourceSuggestions from "@/components/AutoResourceSuggestions";
 import StartOfSessionBilan from "@/components/StartOfSessionBilan";
 import SessionClosureReminder from "@/components/SessionClosureReminder";
 import PreflightExercises from "@/components/PreflightExercises";
+import VigilanceDrawer from "@/components/VigilanceDrawer";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
   Select,
   SelectContent,
