@@ -26,6 +26,7 @@ import {
   UserX,
   Hourglass,
 } from "lucide-react";
+import LiveExercisesPanel from "@/components/LiveExercisesPanel";
 
 type Session = {
   id: string;
@@ -466,6 +467,15 @@ const SuiviDirectClasse = () => {
               )}
             </CardContent>
           </Card>
+
+          {/* Exercices en cours (session_exercices + devoirs) */}
+          <LiveExercisesPanel
+            sessionId={selectedSession.id}
+            groupId={selectedSession.group_id}
+            members={members ?? []}
+            presenceMap={presenceMap}
+            sessionDate={selectedSession.date_seance}
+          />
         </>
       )}
     </div>
