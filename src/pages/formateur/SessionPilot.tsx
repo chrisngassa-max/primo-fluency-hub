@@ -70,6 +70,8 @@ import AutoResourceSuggestions from "@/components/AutoResourceSuggestions";
 import StartOfSessionBilan from "@/components/StartOfSessionBilan";
 import SessionClosureReminder from "@/components/SessionClosureReminder";
 import PreflightExercises from "@/components/PreflightExercises";
+import VigilanceDrawer from "@/components/VigilanceDrawer";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
   Select,
   SelectContent,
@@ -92,6 +94,7 @@ const SessionPilot = () => {
   const { user } = useAuth();
   const qc = useQueryClient();
   const [checked, setChecked] = useState<Record<string, boolean>>({});
+  const [vigilanceOpen, setVigilanceOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [sending, setSending] = useState(false);
   const [sendDialogOpen, setSendDialogOpen] = useState(false);
@@ -1281,7 +1284,44 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
         const hasCibles = cibles.length > 0;
         const uncovered = cibles.filter((c) => !exerciseComps.includes(c));
 
+        // Parse parcours_seance notes for point_vigilance
+        let psNotes: any = null;
+        try {
+          const raw = (parcoursSeance as any)?.notes;
+          psNotes = raw ? (typeof raw === "string" ? JSON.parse(raw) : raw) : null;
+        } catch {
+          psNotes = null;
+        }
+        const pointVigilance = psNotes?.point_vigilance;
+
         return (
+          <>
+          {pointVigilance && (
+            <Collapsible open={vigilanceOpen} onOpenChange={setVigilanceOpen}>
+              <CollapsibleTrigger asChild>
+                <button className="w-full flex items-center gap-2 p-3 rounded-lg bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-800 cursor-pointer hover:bg-orange-100 dark:hover:bg-orange-950/30 transition-colors text-left print:hidden">
+                  <AlertTriangle className="h-4 w-4 text-orange-600 dark:text-orange-400 shrink-0" />
+                  <p className="text-xs text-orange-700 dark:text-orange-400 flex-1 font-medium">{pointVigilance}</p>
+                  <ChevronRight className={cn("h-4 w-4 text-orange-500 shrink-0 transition-transform", vigilanceOpen && "rotate-90")} />
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="max-h-[60vh] overflow-y-auto overscroll-contain mt-2">
+                  <VigilanceDrawer
+                    pointVigilance={pointVigilance}
+                    theme={psNotes?.themes?.[0]}
+                    competence={cibles[0]}
+                    niveauDepart={(parcoursSeance as any)?.parcours?.niveau_depart}
+                    typeDemarche={(parcoursSeance as any)?.parcours?.type_demarche}
+                    seanceId={(parcoursSeance as any)?.id}
+                    seanceNotes={(parcoursSeance as any)?.notes}
+                    groupId={(session as any)?.group?.id || (session as any)?.group_id}
+                    sessionId={id}
+                  />
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+          )}
           <Card className="print:hidden border-primary/20">
             <CardContent className="py-4">
               <div className="space-y-3">
@@ -1348,6 +1388,7 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
               </div>
             </CardContent>
           </Card>
+          </>
         );
       })()}
 
