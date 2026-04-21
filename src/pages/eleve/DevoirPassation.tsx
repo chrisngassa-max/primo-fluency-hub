@@ -195,6 +195,92 @@ const DevoirPassation = () => {
     }
   }, [elapsedSeconds, timeLimit, timerWarning, autoSubmitted, result]);
 
+  // ─── LIVE SYNC: upsert exercise_attempts pendant la passation ───
+  // Permet au formateur de voir en direct l'avancement de l'élève.
+  const syncLiveAttempt = useCallback(async (force = false) => {
+    if (!ex?.id || !user?.id || result || isDone) return;
+    const snapshot = JSON.stringify(answers);
+    if (!force && snapshot === lastSyncedAnswersRef.current) return;
+    lastSyncedAnswersRef.current = snapshot;
+
+    // Calcul score partiel + items répondus (QCM/texte uniquement)
+    let answeredCount = 0;
+    let correctCount = 0;
+    const itemResults = items.map((item: any, idx: number) => {
+      const userAnswer = answers[idx];
+      if (userAnswer !== undefined && userAnswer !== "") {
+        answeredCount++;
+        const isCorrect =
+          (userAnswer || "").trim().toLowerCase() ===
+          (item.bonne_reponse || "").trim().toLowerCase();
+        if (isCorrect) correctCount++;
+        return { idx, answered: true, correct: isCorrect, reponse: userAnswer };
+      }
+      return { idx, answered: false };
+    });
+    const partialScore = items.length > 0 ? correctCount / items.length : 0;
+
+    try {
+      // Try update first (existing in_progress attempt)
+      const { data: updated, error: updErr } = await supabase
+        .from("exercise_attempts")
+        .update({
+          answers: answers as any,
+          item_results: { items: itemResults, answered: answeredCount, total: items.length } as any,
+          score_normalized: partialScore,
+          source_app: "primo-live",
+        })
+        .eq("exercise_id", ex.id)
+        .eq("learner_id", user.id)
+        .eq("status", "in_progress")
+        .select("id")
+        .maybeSingle();
+
+      if (updated?.id) {
+        liveAttemptIdRef.current = updated.id;
+        return;
+      }
+      if (updErr) console.warn("[live-sync] update warn:", updErr.message);
+
+      // No row → insert
+      const { data: inserted, error: insErr } = await supabase
+        .from("exercise_attempts")
+        .insert({
+          exercise_id: ex.id,
+          learner_id: user.id,
+          status: "in_progress",
+          answers: answers as any,
+          item_results: { items: itemResults, answered: answeredCount, total: items.length } as any,
+          score_normalized: partialScore,
+          source_app: "primo-live",
+          started_at: new Date().toISOString(),
+        })
+        .select("id")
+        .maybeSingle();
+      if (inserted?.id) liveAttemptIdRef.current = inserted.id;
+      else if (insErr) console.warn("[live-sync] insert warn:", insErr.message);
+    } catch (e) {
+      console.warn("[live-sync] error", e);
+    }
+  }, [ex?.id, user?.id, answers, items, result, isDone]);
+
+  // Sync immédiat à chaque changement de réponse (debounce léger)
+  useEffect(() => {
+    if (!ex?.id || result || isDone) return;
+    const t = setTimeout(() => syncLiveAttempt(false), 800);
+    return () => clearTimeout(t);
+  }, [answers, ex?.id, result, isDone, syncLiveAttempt]);
+
+  // Sync de sécurité toutes les 10s
+  useEffect(() => {
+    if (!ex?.id || result || isDone) return;
+    const interval = setInterval(() => syncLiveAttempt(true), 10000);
+    return () => clearInterval(interval);
+  }, [ex?.id, result, isDone, syncLiveAttempt]);
+
+  // Marque l'attempt comme completed au démontage si soumission non faite
+  // (le trigger mirror_resultat_to_attempt s'occupe du cas soumission normale)
+
   // Audio recording helpers (WAV for cross-browser compatibility)
   const wavRecorderRef = useRef<{ stop: () => void } | null>(null);
 
