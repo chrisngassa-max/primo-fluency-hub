@@ -1388,6 +1388,7 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
               </div>
             </CardContent>
           </Card>
+          </>
         );
       })()}
 
