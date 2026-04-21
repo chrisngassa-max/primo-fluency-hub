@@ -94,6 +94,7 @@ const SessionPilot = () => {
   const { user } = useAuth();
   const qc = useQueryClient();
   const [checked, setChecked] = useState<Record<string, boolean>>({});
+  const [vigilanceOpen, setVigilanceOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [sending, setSending] = useState(false);
   const [sendDialogOpen, setSendDialogOpen] = useState(false);
