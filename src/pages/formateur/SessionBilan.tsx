@@ -120,7 +120,38 @@ const SessionBilan = () => {
     enabled: !!id,
   });
 
-  const { data: nextSession } = useQuery({
+  // External resource results for this session
+  const { data: externalResultsRows, refetch: refetchExternalResults } = useQuery({
+    queryKey: ["session-bilan-external-results", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("external_resource_results")
+        .select("*, external_resource:external_resources!inner(id, title, provider, session_id), student:profiles(id, prenom, nom)")
+        .eq("external_resource.session_id", id!);
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: !!id,
+  });
+
+  const handleValidateExternalResult = async (resultId: string) => {
+    if (!user) return;
+    const { error } = await supabase
+      .from("external_resource_results")
+      .update({
+        source: "validated",
+        validated_by: user.id,
+        validated_at: new Date().toISOString(),
+      })
+      .eq("id", resultId);
+    if (error) {
+      toast.error("Validation échouée", { description: error.message });
+      return;
+    }
+    toast.success("Résultat validé");
+    refetchExternalResults();
+  };
+
     queryKey: ["next-session-bilan", id],
     queryFn: async () => {
       if (!session) return null;
