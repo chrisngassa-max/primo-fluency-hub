@@ -152,6 +152,7 @@ const SessionBilan = () => {
     refetchExternalResults();
   };
 
+  const { data: nextSession } = useQuery({
     queryKey: ["next-session-bilan", id],
     queryFn: async () => {
       if (!session) return null;
