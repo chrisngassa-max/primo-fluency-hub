@@ -124,6 +124,21 @@ const SessionBilan = () => {
     enabled: !!id,
   });
 
+  // External resources for this session (for CSV import buttons)
+  const { data: externalResourcesList } = useQuery({
+    queryKey: ["session-bilan-external-resources", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("external_resources")
+        .select("id, title, provider")
+        .eq("session_id", id!)
+        .order("ordre");
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: !!id,
+  });
+
   // External resource results for this session
   const { data: externalResultsRows, refetch: refetchExternalResults } = useQuery({
     queryKey: ["session-bilan-external-results", id],
