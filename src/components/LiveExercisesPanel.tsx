@@ -431,5 +431,16 @@ export default function LiveExercisesPanel({
         })}
       </CardContent>
     </Card>
+    {openAnswers && (
+      <StudentAnswersDialog
+        open={!!openAnswers}
+        onOpenChange={(o) => !o && setOpenAnswers(null)}
+        exerciceId={openAnswers.exerciceId}
+        eleveId={openAnswers.eleveId}
+        eleveName={openAnswers.eleveName}
+        exerciceTitre={openAnswers.exerciceTitre}
+      />
+    )}
+    </>
   );
 }
