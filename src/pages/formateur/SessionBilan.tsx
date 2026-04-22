@@ -20,8 +20,9 @@ import { toast } from "sonner";
 import {
   CheckCircle2, ArrowRight, ArrowLeft, Printer, Save, BookOpen, Loader2, Sparkles,
   AlertTriangle, Brain, X, ClipboardCheck, Send, Clock, CalendarIcon, Users,
-  Pencil, Trash2, Plus, ChevronDown, ChevronUp, Eye, EyeOff,
+  Pencil, Trash2, Plus, ChevronDown, ChevronUp, Eye, EyeOff, FileUp,
 } from "lucide-react";
+import { ExternalCsvImportDialog } from "@/components/ExternalCsvImportDialog";
 import { Input } from "@/components/ui/input";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -80,6 +81,9 @@ const SessionBilan = () => {
   const [selectedStudentIds, setSelectedStudentIds] = useState<Set<string>>(new Set());
   const [editingQuestionIdx, setEditingQuestionIdx] = useState<number | null>(null);
 
+  // CSV import dialog state
+  const [csvImportResourceId, setCsvImportResourceId] = useState<string | null>(null);
+
   const { data: formateurParams } = useQuery({
     queryKey: ["formateur-parametres-bilan", user?.id],
     queryFn: async () => {
@@ -112,6 +116,21 @@ const SessionBilan = () => {
       const { data, error } = await supabase
         .from("session_exercices")
         .select("*, exercice:exercices(*)")
+        .eq("session_id", id!)
+        .order("ordre");
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: !!id,
+  });
+
+  // External resources for this session (for CSV import buttons)
+  const { data: externalResourcesList } = useQuery({
+    queryKey: ["session-bilan-external-resources", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("external_resources")
+        .select("id, title, provider")
         .eq("session_id", id!)
         .order("ordre");
       if (error) throw error;
@@ -611,7 +630,42 @@ const SessionBilan = () => {
         </Card>
       )}
 
-      {/* External resource results */}
+      {/* External resources list — with CSV import */}
+      {externalResourcesList && externalResourcesList.length > 0 && (
+        <Card className="print:hidden">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <BookOpen className="h-4 w-4 text-primary" />
+              Ressources externes de la séance
+              <Badge variant="secondary" className="ml-2">{externalResourcesList.length}</Badge>
+            </CardTitle>
+            <CardDescription>
+              Importez les résultats CSV exportés depuis Wordwall, LearningApps, Quizlet, Educaplay…
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="border-t divide-y">
+              {externalResourcesList.map((res: any) => (
+                <div key={res.id} className="flex items-center gap-3 px-3 py-2 text-sm">
+                  <span className="font-medium flex-1 truncate">{res.title}</span>
+                  <Badge variant="outline" className="text-[10px] shrink-0">
+                    {res.provider}
+                  </Badge>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-7 text-xs gap-1 shrink-0"
+                    onClick={() => setCsvImportResourceId(res.id)}
+                  >
+                    <FileUp className="h-3.5 w-3.5" /> Importer CSV
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {externalResultsRows && externalResultsRows.length > 0 && (
         <Card className="print:hidden">
           <CardHeader className="pb-3">
@@ -1191,6 +1245,18 @@ const SessionBilan = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* CSV import dialog */}
+      {csvImportResourceId && session?.group_id && (
+        <ExternalCsvImportDialog
+          open={!!csvImportResourceId}
+          onOpenChange={(o) => !o && setCsvImportResourceId(null)}
+          externalResourceId={csvImportResourceId}
+          sessionId={id!}
+          groupId={session.group_id}
+          onImported={() => refetchExternalResults()}
+        />
+      )}
 
       <style>{`@media print { nav, header, .print\\:hidden { display: none !important; } body { font-size: 12pt; } }`}</style>
     </div>
