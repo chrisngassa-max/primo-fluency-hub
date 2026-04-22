@@ -27,6 +27,15 @@ import {
   Hourglass,
 } from "lucide-react";
 import LiveExercisesPanel from "@/components/LiveExercisesPanel";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import CorrectionDetaillee from "@/components/CorrectionDetaillee";
 
 type Session = {
   id: string;
@@ -76,6 +85,11 @@ function scoreColor(score: number) {
 const SuiviDirectClasse = () => {
   const { user } = useAuth();
   const [selectedSessionId, setSelectedSessionId] = useState<string>("");
+  const [openBilanAnswers, setOpenBilanAnswers] = useState<{
+    bilan: BilanTest;
+    result: BilanResult;
+    eleveName: string;
+  } | null>(null);
 
   // Sessions en cours (du formateur)
   const { data: sessions, isLoading: loadingSessions } = useQuery({
@@ -382,7 +396,16 @@ const SuiviDirectClasse = () => {
                             return (
                               <Card
                                 key={m.eleve_id}
-                                className={`border-l-4 ${accentBorder} ${!present ? "opacity-60" : ""} transition-all hover:shadow-md`}
+                                onClick={() => {
+                                  if (r) {
+                                    setOpenBilanAnswers({
+                                      bilan,
+                                      result: r,
+                                      eleveName: `${m.eleve?.prenom ?? ""} ${m.eleve?.nom ?? ""}`.trim(),
+                                    });
+                                  }
+                                }}
+                                className={`border-l-4 ${accentBorder} ${!present ? "opacity-60" : ""} ${r ? "cursor-pointer hover:shadow-md hover:border-primary/40" : ""} transition-all`}
                               >
                                 <CardContent className="p-4 space-y-3">
                                   {/* Header: avatar + name + status badge */}
@@ -478,6 +501,46 @@ const SuiviDirectClasse = () => {
           />
         </>
       )}
+
+      {/* Dialog réponses bilan */}
+      <Dialog open={!!openBilanAnswers} onOpenChange={(o) => !o && setOpenBilanAnswers(null)}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle>
+              Réponses de {openBilanAnswers?.eleveName}
+            </DialogTitle>
+            <DialogDescription>
+              Bilan de début de séance · {openBilanAnswers?.bilan.nb_questions} questions
+            </DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="flex-1 pr-4 -mr-4">
+            {openBilanAnswers && (() => {
+              const reponses = openBilanAnswers.result.reponses as any;
+              const contenu = openBilanAnswers.bilan.contenu as any;
+              const questions: any[] = Array.isArray(contenu) ? contenu : (contenu?.questions ?? contenu?.items ?? []);
+              const items = questions.map((q: any, idx: number) => {
+                const key = q.id ?? String(idx);
+                const reponseEleve = reponses?.[key] ?? reponses?.[idx] ?? "—";
+                const bonneReponse = q.bonne_reponse ?? q.reponse_correcte ?? q.correct_answer ?? "";
+                const correct = String(reponseEleve).trim().toLowerCase() === String(bonneReponse).trim().toLowerCase();
+                return {
+                  question: q.enonce ?? q.question ?? q.consigne ?? `Question ${idx + 1}`,
+                  reponse_eleve: reponseEleve,
+                  bonne_reponse: bonneReponse,
+                  correct,
+                  explication: q.explication,
+                };
+              });
+              return (
+                <CorrectionDetaillee
+                  itemResults={items}
+                  scoreNormalized={Math.round(Number(openBilanAnswers.result.score_global ?? 0))}
+                />
+              );
+            })()}
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

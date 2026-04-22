@@ -1,5 +1,6 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import StudentAnswersDialog from "@/components/StudentAnswersDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -97,6 +98,13 @@ export default function LiveExercisesPanel({
   presenceMap,
   sessionDate,
 }: Props) {
+  const [openAnswers, setOpenAnswers] = useState<{
+    exerciceId: string;
+    eleveId: string;
+    eleveName: string;
+    exerciceTitre?: string;
+  } | null>(null);
+
   // 1. Exercices envoyés via session_exercices
   const { data: sessionExercices, refetch: refetchSE, isLoading: loadingSE } = useQuery({
     queryKey: ["live-session-exercices", sessionId],
@@ -278,6 +286,7 @@ export default function LiveExercisesPanel({
   }
 
   return (
+    <>
     <Card>
       <CardHeader>
         <CardTitle className="text-base flex items-center gap-2">
@@ -355,7 +364,17 @@ export default function LiveExercisesPanel({
                   return (
                     <Card
                       key={m.eleve_id}
-                      className={`border-l-4 ${accent} ${!present ? "opacity-60" : ""} transition-all hover:shadow-md`}
+                      onClick={() => {
+                        if (status !== "not_started") {
+                          setOpenAnswers({
+                            exerciceId: exo.exercice_id,
+                            eleveId: m.eleve_id,
+                            eleveName: `${m.eleve?.prenom ?? ""} ${m.eleve?.nom ?? ""}`.trim(),
+                            exerciceTitre: exo.exercice?.titre,
+                          });
+                        }
+                      }}
+                      className={`border-l-4 ${accent} ${!present ? "opacity-60" : ""} ${status !== "not_started" ? "cursor-pointer hover:shadow-md hover:border-primary/40" : ""} transition-all`}
                     >
                       <CardContent className="p-4 space-y-3">
                         <div className="flex items-start justify-between gap-2">
@@ -412,5 +431,16 @@ export default function LiveExercisesPanel({
         })}
       </CardContent>
     </Card>
+    {openAnswers && (
+      <StudentAnswersDialog
+        open={!!openAnswers}
+        onOpenChange={(o) => !o && setOpenAnswers(null)}
+        exerciceId={openAnswers.exerciceId}
+        eleveId={openAnswers.eleveId}
+        eleveName={openAnswers.eleveName}
+        exerciceTitre={openAnswers.exerciceTitre}
+      />
+    )}
+    </>
   );
 }
