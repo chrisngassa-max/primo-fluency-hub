@@ -286,6 +286,7 @@ export default function LiveExercisesPanel({
   }
 
   return (
+    <>
     <Card>
       <CardHeader>
         <CardTitle className="text-base flex items-center gap-2">
