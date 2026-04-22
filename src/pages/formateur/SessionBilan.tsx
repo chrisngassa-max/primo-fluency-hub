@@ -81,6 +81,9 @@ const SessionBilan = () => {
   const [selectedStudentIds, setSelectedStudentIds] = useState<Set<string>>(new Set());
   const [editingQuestionIdx, setEditingQuestionIdx] = useState<number | null>(null);
 
+  // CSV import dialog state
+  const [csvImportResourceId, setCsvImportResourceId] = useState<string | null>(null);
+
   const { data: formateurParams } = useQuery({
     queryKey: ["formateur-parametres-bilan", user?.id],
     queryFn: async () => {
