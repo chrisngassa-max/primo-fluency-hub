@@ -396,7 +396,16 @@ const SuiviDirectClasse = () => {
                             return (
                               <Card
                                 key={m.eleve_id}
-                                className={`border-l-4 ${accentBorder} ${!present ? "opacity-60" : ""} transition-all hover:shadow-md`}
+                                onClick={() => {
+                                  if (r) {
+                                    setOpenBilanAnswers({
+                                      bilan,
+                                      result: r,
+                                      eleveName: `${m.eleve?.prenom ?? ""} ${m.eleve?.nom ?? ""}`.trim(),
+                                    });
+                                  }
+                                }}
+                                className={`border-l-4 ${accentBorder} ${!present ? "opacity-60" : ""} ${r ? "cursor-pointer hover:shadow-md hover:border-primary/40" : ""} transition-all`}
                               >
                                 <CardContent className="p-4 space-y-3">
                                   {/* Header: avatar + name + status badge */}
