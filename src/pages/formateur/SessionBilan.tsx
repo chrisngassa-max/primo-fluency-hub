@@ -630,7 +630,42 @@ const SessionBilan = () => {
         </Card>
       )}
 
-      {/* External resource results */}
+      {/* External resources list — with CSV import */}
+      {externalResourcesList && externalResourcesList.length > 0 && (
+        <Card className="print:hidden">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <BookOpen className="h-4 w-4 text-primary" />
+              Ressources externes de la séance
+              <Badge variant="secondary" className="ml-2">{externalResourcesList.length}</Badge>
+            </CardTitle>
+            <CardDescription>
+              Importez les résultats CSV exportés depuis Wordwall, LearningApps, Quizlet, Educaplay…
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="border-t divide-y">
+              {externalResourcesList.map((res: any) => (
+                <div key={res.id} className="flex items-center gap-3 px-3 py-2 text-sm">
+                  <span className="font-medium flex-1 truncate">{res.title}</span>
+                  <Badge variant="outline" className="text-[10px] shrink-0">
+                    {res.provider}
+                  </Badge>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-7 text-xs gap-1 shrink-0"
+                    onClick={() => setCsvImportResourceId(res.id)}
+                  >
+                    <FileUp className="h-3.5 w-3.5" /> Importer CSV
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {externalResultsRows && externalResultsRows.length > 0 && (
         <Card className="print:hidden">
           <CardHeader className="pb-3">
