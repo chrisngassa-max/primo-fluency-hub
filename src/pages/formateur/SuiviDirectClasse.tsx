@@ -27,6 +27,15 @@ import {
   Hourglass,
 } from "lucide-react";
 import LiveExercisesPanel from "@/components/LiveExercisesPanel";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import CorrectionDetaillee from "@/components/CorrectionDetaillee";
 
 type Session = {
   id: string;
