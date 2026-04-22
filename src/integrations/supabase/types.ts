@@ -869,6 +869,140 @@ export type Database = {
           },
         ]
       }
+      external_resource_results: {
+        Row: {
+          comment: string | null
+          created_at: string
+          difficulty_felt: string | null
+          external_resource_id: string
+          id: string
+          score: number | null
+          screenshot_path: string | null
+          source: string
+          student_id: string
+          time_spent_seconds: number | null
+          validated_at: string | null
+          validated_by: string | null
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          difficulty_felt?: string | null
+          external_resource_id: string
+          id?: string
+          score?: number | null
+          screenshot_path?: string | null
+          source?: string
+          student_id: string
+          time_spent_seconds?: number | null
+          validated_at?: string | null
+          validated_by?: string | null
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          difficulty_felt?: string | null
+          external_resource_id?: string
+          id?: string
+          score?: number | null
+          screenshot_path?: string | null
+          source?: string
+          student_id?: string
+          time_spent_seconds?: number | null
+          validated_at?: string | null
+          validated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "external_resource_results_external_resource_id_fkey"
+            columns: ["external_resource_id"]
+            isOneToOne: false
+            referencedRelation: "external_resources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "external_resource_results_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "external_resource_results_validated_by_fkey"
+            columns: ["validated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      external_resources: {
+        Row: {
+          competence_id: string | null
+          created_at: string
+          created_by: string
+          embed_type: string
+          embeddable_checked_at: string | null
+          embeddable_result: boolean | null
+          id: string
+          ordre: number | null
+          provider: string
+          session_id: string
+          title: string
+          url: string
+        }
+        Insert: {
+          competence_id?: string | null
+          created_at?: string
+          created_by: string
+          embed_type: string
+          embeddable_checked_at?: string | null
+          embeddable_result?: boolean | null
+          id?: string
+          ordre?: number | null
+          provider?: string
+          session_id: string
+          title: string
+          url: string
+        }
+        Update: {
+          competence_id?: string | null
+          created_at?: string
+          created_by?: string
+          embed_type?: string
+          embeddable_checked_at?: string | null
+          embeddable_result?: boolean | null
+          id?: string
+          ordre?: number | null
+          provider?: string
+          session_id?: string
+          title?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "external_resources_competence_id_fkey"
+            columns: ["competence_id"]
+            isOneToOne: false
+            referencedRelation: "points_a_maitriser"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "external_resources_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "external_resources_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       formateur_competences_config: {
         Row: {
           competences_ordonnees: Json
