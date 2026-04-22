@@ -611,6 +611,65 @@ const SessionBilan = () => {
         </Card>
       )}
 
+      {/* External resource results */}
+      {externalResultsRows && externalResultsRows.length > 0 && (
+        <Card className="print:hidden">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <BookOpen className="h-4 w-4 text-primary" />
+              Résultats — Ressources externes
+              <Badge variant="secondary" className="ml-2">{externalResultsRows.length}</Badge>
+            </CardTitle>
+            <CardDescription>
+              Scores rapportés par les élèves pour les ressources Wordwall, LearningApps, H5P, etc.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="border-t divide-y">
+              {externalResultsRows.map((r: any) => {
+                const sourceMap: Record<string, { label: string; cls: string }> = {
+                  declared:     { label: "Déclaré",  cls: "border-orange-500/40 text-orange-600" },
+                  auto_captured:{ label: "Auto",     cls: "border-blue-500/40 text-blue-600" },
+                  imported_csv: { label: "CSV",      cls: "border-purple-500/40 text-purple-600" },
+                  validated:    { label: "Validé",   cls: "border-green-500/40 text-green-600" },
+                };
+                const src = sourceMap[r.source] || sourceMap.declared;
+                const canValidate = r.source === "declared" || r.source === "imported_csv";
+                return (
+                  <div key={r.id} className="flex items-center gap-3 px-3 py-2 text-sm">
+                    <span className="font-medium flex-1 truncate">
+                      {r.student?.prenom} {r.student?.nom}
+                    </span>
+                    <span className="text-muted-foreground truncate hidden md:inline max-w-[180px]">
+                      {r.external_resource?.title}
+                    </span>
+                    <Badge variant="outline" className="text-[10px] border-purple-500/40 text-purple-600 shrink-0">
+                      Externe
+                    </Badge>
+                    <Badge variant="outline" className={cn("text-[10px] shrink-0", src.cls)}>
+                      {src.label}
+                    </Badge>
+                    <span className="font-bold w-12 text-right shrink-0">
+                      {r.score != null ? `${Math.round(Number(r.score))}%` : "—"}
+                    </span>
+                    {canValidate && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-7 text-xs gap-1 shrink-0"
+                        onClick={() => handleValidateExternalResult(r.id)}
+                      >
+                        <CheckCircle2 className="h-3.5 w-3.5" /> Valider
+                      </Button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Bilan de fin de cours */}
       <Card className="border-primary/20 print:hidden">
         <CardHeader>
