@@ -33,6 +33,7 @@ import {
   Palette,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ExternalResourcePicker } from "@/components/ExternalResourcePicker";
 
 interface FicheEleve {
   titre_fiche: string;
