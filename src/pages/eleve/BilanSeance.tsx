@@ -364,13 +364,65 @@ const BilanSeance = () => {
     );
   }
 
-  // All done already
-  if (pendingExercices.length === 0 && !results) {
+  // External-resources only flow (no pending exercises but external resources to do)
+  if (pendingExercices.length === 0 && pendingExternal.length > 0 && !results) {
+    const currentExternal = pendingExternal[Math.min(externalIdx, pendingExternal.length - 1)];
+    const handleExternalDone = (autoScore?: number) => {
+      setExternalAutoScore(autoScore);
+      setExternalShowForm(true);
+    };
+    const handleExternalSubmitted = () => {
+      setExternalShowForm(false);
+      setExternalAutoScore(undefined);
+      qc.invalidateQueries({ queryKey: ["bilan-existing-external", sessionId, user?.id] });
+      if (externalIdx < pendingExternal.length - 1) {
+        setExternalIdx((i) => i + 1);
+      } else {
+        toast.success("Toutes les ressources externes sont validées !");
+        navigate("/eleve");
+      }
+    };
+    return (
+      <div className="space-y-6 max-w-2xl mx-auto">
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="sm" onClick={() => navigate("/eleve")} className="gap-1.5">
+            <ArrowLeft className="h-4 w-4" /> Retour
+          </Button>
+          <div>
+            <h1 className="text-xl font-bold flex items-center gap-2">
+              <ExternalLink className="h-5 w-5 text-primary" />
+              Ressources externes
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              {externalIdx + 1} / {pendingExternal.length}
+            </p>
+          </div>
+        </div>
+
+        <Progress value={((externalIdx) / Math.max(pendingExternal.length, 1)) * 100} className="h-2" />
+
+        {!externalShowForm ? (
+          <ExternalResourceViewer resource={currentExternal} onDone={handleExternalDone} />
+        ) : (
+          <ExternalResourceReturnForm
+            resourceId={currentExternal.id}
+            sessionId={sessionId!}
+            initialScore={externalAutoScore}
+            initialSource={externalAutoScore !== undefined ? "auto_captured" : "declared"}
+            onSubmitted={handleExternalSubmitted}
+          />
+        )}
+      </div>
+    );
+  }
+
+  // All done already (exercices + external)
+  if (pendingExercices.length === 0 && pendingExternal.length === 0 && !results) {
     return (
       <div className="max-w-2xl mx-auto text-center py-12 space-y-4">
         <CheckCircle2 className="h-12 w-12 mx-auto text-green-500" />
-        <h2 className="text-xl font-bold">Exercices déjà complétés</h2>
-        <p className="text-muted-foreground">Tu as déjà fait tous les exercices de cette séance.</p>
+        <h2 className="text-xl font-bold">Séance déjà complétée</h2>
+        <p className="text-muted-foreground">Tu as déjà fait tous les exercices et ressources de cette séance.</p>
         <Button variant="outline" onClick={() => navigate("/eleve")}>
           <ArrowLeft className="h-4 w-4 mr-2" /> Retour au dashboard
         </Button>
