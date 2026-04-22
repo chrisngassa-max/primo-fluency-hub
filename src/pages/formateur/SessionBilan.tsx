@@ -120,6 +120,38 @@ const SessionBilan = () => {
     enabled: !!id,
   });
 
+  // External resource results for this session
+  const { data: externalResultsRows, refetch: refetchExternalResults } = useQuery({
+    queryKey: ["session-bilan-external-results", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("external_resource_results")
+        .select("*, external_resource:external_resources!inner(id, title, provider, session_id), student:profiles(id, prenom, nom)")
+        .eq("external_resource.session_id", id!);
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: !!id,
+  });
+
+  const handleValidateExternalResult = async (resultId: string) => {
+    if (!user) return;
+    const { error } = await supabase
+      .from("external_resource_results")
+      .update({
+        source: "validated",
+        validated_by: user.id,
+        validated_at: new Date().toISOString(),
+      })
+      .eq("id", resultId);
+    if (error) {
+      toast.error("Validation échouée", { description: error.message });
+      return;
+    }
+    toast.success("Résultat validé");
+    refetchExternalResults();
+  };
+
   const { data: nextSession } = useQuery({
     queryKey: ["next-session-bilan", id],
     queryFn: async () => {
@@ -575,6 +607,65 @@ const SessionBilan = () => {
           <CardContent className="py-12 text-center">
             <BookOpen className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
             <p className="text-muted-foreground">Aucun exercice rattaché à cette séance.</p>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* External resource results */}
+      {externalResultsRows && externalResultsRows.length > 0 && (
+        <Card className="print:hidden">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <BookOpen className="h-4 w-4 text-primary" />
+              Résultats — Ressources externes
+              <Badge variant="secondary" className="ml-2">{externalResultsRows.length}</Badge>
+            </CardTitle>
+            <CardDescription>
+              Scores rapportés par les élèves pour les ressources Wordwall, LearningApps, H5P, etc.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="border-t divide-y">
+              {externalResultsRows.map((r: any) => {
+                const sourceMap: Record<string, { label: string; cls: string }> = {
+                  declared:     { label: "Déclaré",  cls: "border-orange-500/40 text-orange-600" },
+                  auto_captured:{ label: "Auto",     cls: "border-blue-500/40 text-blue-600" },
+                  imported_csv: { label: "CSV",      cls: "border-purple-500/40 text-purple-600" },
+                  validated:    { label: "Validé",   cls: "border-green-500/40 text-green-600" },
+                };
+                const src = sourceMap[r.source] || sourceMap.declared;
+                const canValidate = r.source === "declared" || r.source === "imported_csv";
+                return (
+                  <div key={r.id} className="flex items-center gap-3 px-3 py-2 text-sm">
+                    <span className="font-medium flex-1 truncate">
+                      {r.student?.prenom} {r.student?.nom}
+                    </span>
+                    <span className="text-muted-foreground truncate hidden md:inline max-w-[180px]">
+                      {r.external_resource?.title}
+                    </span>
+                    <Badge variant="outline" className="text-[10px] border-purple-500/40 text-purple-600 shrink-0">
+                      Externe
+                    </Badge>
+                    <Badge variant="outline" className={cn("text-[10px] shrink-0", src.cls)}>
+                      {src.label}
+                    </Badge>
+                    <span className="font-bold w-12 text-right shrink-0">
+                      {r.score != null ? `${Math.round(Number(r.score))}%` : "—"}
+                    </span>
+                    {canValidate && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-7 text-xs gap-1 shrink-0"
+                        onClick={() => handleValidateExternalResult(r.id)}
+                      >
+                        <CheckCircle2 className="h-3.5 w-3.5" /> Valider
+                      </Button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </CardContent>
         </Card>
       )}

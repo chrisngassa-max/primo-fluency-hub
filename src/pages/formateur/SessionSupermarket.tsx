@@ -33,6 +33,7 @@ import {
   Palette,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ExternalResourcePicker } from "@/components/ExternalResourcePicker";
 
 interface FicheEleve {
   titre_fiche: string;
@@ -998,6 +999,9 @@ ${(doc.fiches_eleves || [])
               )}
               Ajouter
             </Button>
+            {targetSessionId && (
+              <ExternalResourcePicker sessionId={targetSessionId} />
+            )}
             <Button variant="outline" onClick={handlePrint} disabled={selected.size === 0}>
               <Printer className="h-4 w-4 mr-2" />
               Exercices

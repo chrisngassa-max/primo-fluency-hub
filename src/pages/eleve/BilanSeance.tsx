@@ -14,9 +14,11 @@ import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import {
   ArrowLeft, CheckCircle2, XCircle, Loader2, Send, ChevronRight, ChevronLeft,
-  ClipboardCheck, BookOpen, AlertCircle,
+  ClipboardCheck, BookOpen, AlertCircle, ExternalLink,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ExternalResourceViewer, type ExternalResource } from "@/components/ExternalResourceViewer";
+import { ExternalResourceReturnForm } from "@/components/ExternalResourceReturnForm";
 import CompetenceLabel from "@/components/CompetenceLabel";
 import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
 import SessionFeedbackForm from "@/components/SessionFeedbackForm";
@@ -104,6 +106,9 @@ const BilanSeance = () => {
   const [currentExIdx, setCurrentExIdx] = useState(savedProgress?.currentExIdx ?? 0);
   const [answers, setAnswers] = useState<Record<string, Record<number, string>>>(savedProgress?.answers ?? {});
   const [submitting, setSubmitting] = useState(false);
+  const [externalIdx, setExternalIdx] = useState(0);
+  const [externalAutoScore, setExternalAutoScore] = useState<number | undefined>(undefined);
+  const [externalShowForm, setExternalShowForm] = useState(false);
   const [results, setResults] = useState<{
     scores: { exerciceId: string; titre: string; competence: string; score: number; correction: any[] }[];
     globalScore: number;
@@ -158,6 +163,37 @@ const BilanSeance = () => {
     enabled: !!exercices && exercices.length > 0 && !!user?.id,
   });
 
+  // External resources for this session
+  const { data: externalResources } = useQuery({
+    queryKey: ["bilan-external-resources", sessionId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("external_resources")
+        .select("*")
+        .eq("session_id", sessionId!)
+        .order("ordre");
+      if (error) throw error;
+      return (data ?? []) as ExternalResource[];
+    },
+    enabled: !!sessionId,
+  });
+
+  const { data: existingExternalResults } = useQuery({
+    queryKey: ["bilan-existing-external", sessionId, user?.id],
+    queryFn: async () => {
+      const ids = (externalResources ?? []).map((r) => r.id);
+      if (!ids.length) return [];
+      const { data, error } = await supabase
+        .from("external_resource_results")
+        .select("external_resource_id")
+        .eq("student_id", user!.id)
+        .in("external_resource_id", ids);
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: !!externalResources?.length && !!user?.id,
+  });
+
   const validExercices = (exercices ?? []).filter((se: any) => {
     const contenu = se.exercice?.contenu as any;
     return contenu?.items && Array.isArray(contenu.items) && contenu.items.length > 0;
@@ -166,6 +202,11 @@ const BilanSeance = () => {
   // Filter out exercises already answered
   const alreadyDoneIds = new Set((existingResults ?? []).map((r) => r.exercice_id));
   const pendingExercices = validExercices.filter((se: any) => !alreadyDoneIds.has(se.exercice?.id));
+
+  const doneExternalIds = new Set(
+    (existingExternalResults ?? []).map((r) => r.external_resource_id)
+  );
+  const pendingExternal = (externalResources ?? []).filter((r) => !doneExternalIds.has(r.id));
 
   const currentSe = pendingExercices[currentExIdx];
   const currentEx = currentSe?.exercice as any;
@@ -323,13 +364,65 @@ const BilanSeance = () => {
     );
   }
 
-  // All done already
-  if (pendingExercices.length === 0 && !results) {
+  // External-resources only flow (no pending exercises but external resources to do)
+  if (pendingExercices.length === 0 && pendingExternal.length > 0 && !results) {
+    const currentExternal = pendingExternal[Math.min(externalIdx, pendingExternal.length - 1)];
+    const handleExternalDone = (autoScore?: number) => {
+      setExternalAutoScore(autoScore);
+      setExternalShowForm(true);
+    };
+    const handleExternalSubmitted = () => {
+      setExternalShowForm(false);
+      setExternalAutoScore(undefined);
+      qc.invalidateQueries({ queryKey: ["bilan-existing-external", sessionId, user?.id] });
+      if (externalIdx < pendingExternal.length - 1) {
+        setExternalIdx((i) => i + 1);
+      } else {
+        toast.success("Toutes les ressources externes sont validées !");
+        navigate("/eleve");
+      }
+    };
+    return (
+      <div className="space-y-6 max-w-2xl mx-auto">
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="sm" onClick={() => navigate("/eleve")} className="gap-1.5">
+            <ArrowLeft className="h-4 w-4" /> Retour
+          </Button>
+          <div>
+            <h1 className="text-xl font-bold flex items-center gap-2">
+              <ExternalLink className="h-5 w-5 text-primary" />
+              Ressources externes
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              {externalIdx + 1} / {pendingExternal.length}
+            </p>
+          </div>
+        </div>
+
+        <Progress value={((externalIdx) / Math.max(pendingExternal.length, 1)) * 100} className="h-2" />
+
+        {!externalShowForm ? (
+          <ExternalResourceViewer resource={currentExternal} onDone={handleExternalDone} />
+        ) : (
+          <ExternalResourceReturnForm
+            resourceId={currentExternal.id}
+            sessionId={sessionId!}
+            initialScore={externalAutoScore}
+            initialSource={externalAutoScore !== undefined ? "auto_captured" : "declared"}
+            onSubmitted={handleExternalSubmitted}
+          />
+        )}
+      </div>
+    );
+  }
+
+  // All done already (exercices + external)
+  if (pendingExercices.length === 0 && pendingExternal.length === 0 && !results) {
     return (
       <div className="max-w-2xl mx-auto text-center py-12 space-y-4">
         <CheckCircle2 className="h-12 w-12 mx-auto text-green-500" />
-        <h2 className="text-xl font-bold">Exercices déjà complétés</h2>
-        <p className="text-muted-foreground">Tu as déjà fait tous les exercices de cette séance.</p>
+        <h2 className="text-xl font-bold">Séance déjà complétée</h2>
+        <p className="text-muted-foreground">Tu as déjà fait tous les exercices et ressources de cette séance.</p>
         <Button variant="outline" onClick={() => navigate("/eleve")}>
           <ArrowLeft className="h-4 w-4 mr-2" /> Retour au dashboard
         </Button>
