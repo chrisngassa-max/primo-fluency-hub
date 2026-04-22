@@ -999,6 +999,9 @@ ${(doc.fiches_eleves || [])
               )}
               Ajouter
             </Button>
+            {targetSessionId && (
+              <ExternalResourcePicker sessionId={targetSessionId} />
+            )}
             <Button variant="outline" onClick={handlePrint} disabled={selected.size === 0}>
               <Printer className="h-4 w-4 mr-2" />
               Exercices
