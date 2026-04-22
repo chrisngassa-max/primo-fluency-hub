@@ -20,8 +20,9 @@ import { toast } from "sonner";
 import {
   CheckCircle2, ArrowRight, ArrowLeft, Printer, Save, BookOpen, Loader2, Sparkles,
   AlertTriangle, Brain, X, ClipboardCheck, Send, Clock, CalendarIcon, Users,
-  Pencil, Trash2, Plus, ChevronDown, ChevronUp, Eye, EyeOff,
+  Pencil, Trash2, Plus, ChevronDown, ChevronUp, Eye, EyeOff, FileUp,
 } from "lucide-react";
+import { ExternalCsvImportDialog } from "@/components/ExternalCsvImportDialog";
 import { Input } from "@/components/ui/input";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
