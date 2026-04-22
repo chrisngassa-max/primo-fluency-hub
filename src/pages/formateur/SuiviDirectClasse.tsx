@@ -85,6 +85,11 @@ function scoreColor(score: number) {
 const SuiviDirectClasse = () => {
   const { user } = useAuth();
   const [selectedSessionId, setSelectedSessionId] = useState<string>("");
+  const [openBilanAnswers, setOpenBilanAnswers] = useState<{
+    bilan: BilanTest;
+    result: BilanResult;
+    eleveName: string;
+  } | null>(null);
 
   // Sessions en cours (du formateur)
   const { data: sessions, isLoading: loadingSessions } = useQuery({
