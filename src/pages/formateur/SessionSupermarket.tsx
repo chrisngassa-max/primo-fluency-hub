@@ -1000,7 +1000,7 @@ ${(doc.fiches_eleves || [])
               Ajouter
             </Button>
             {targetSessionId && (
-              <ExternalResourcePicker sessionId={targetSessionId} />
+              <ExternalResourcePicker sessionId={targetSessionId} onAdded={() => { /* refresh handled by parent queries */ }} />
             )}
             <Button variant="outline" onClick={handlePrint} disabled={selected.size === 0}>
               <Printer className="h-4 w-4 mr-2" />

@@ -165,27 +165,21 @@ export function ExternalResourceReturnForm({
       const userId = userData.user?.id;
       if (!userId) throw new Error("Non authentifié");
 
-      const payload: Record<string, unknown> = {
+      const v = values as FullValues;
+      const payload = {
         external_resource_id: resourceId,
         student_id: userId,
         difficulty_felt: values.difficulty_felt,
         comment: values.comment || null,
         screenshot_path: screenshotPath,
         source: initialSource ?? "declared",
+        score: isWordwall ? null : Math.max(0, Math.min(100, v.score)),
+        time_spent_seconds: isWordwall ? null : v.minutes * 60 + v.seconds,
       };
-
-      if (!isWordwall) {
-        const v = values as FullValues;
-        payload.score = Math.max(0, Math.min(100, v.score));
-        payload.time_spent_seconds = v.minutes * 60 + v.seconds;
-      } else {
-        payload.score = null;
-        payload.time_spent_seconds = null;
-      }
 
       const { error } = await supabase
         .from("external_resource_results")
-        .upsert(payload, { onConflict: "external_resource_id,student_id" });
+        .upsert(payload as never, { onConflict: "external_resource_id,student_id" });
       if (error) throw error;
       toast({ title: "Résultat enregistré" });
       onSubmitted();
