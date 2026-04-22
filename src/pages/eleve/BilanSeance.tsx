@@ -14,9 +14,11 @@ import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import {
   ArrowLeft, CheckCircle2, XCircle, Loader2, Send, ChevronRight, ChevronLeft,
-  ClipboardCheck, BookOpen, AlertCircle,
+  ClipboardCheck, BookOpen, AlertCircle, ExternalLink,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ExternalResourceViewer, type ExternalResource } from "@/components/ExternalResourceViewer";
+import { ExternalResourceReturnForm } from "@/components/ExternalResourceReturnForm";
 import CompetenceLabel from "@/components/CompetenceLabel";
 import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
 import SessionFeedbackForm from "@/components/SessionFeedbackForm";
