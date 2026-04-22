@@ -1,20 +1,26 @@
-import { useState } from "react";
-import { ExternalLink } from "lucide-react";
+import { useCallback, useRef, useState } from "react";
+import { ExternalLink, HelpCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useExternalResourceEvents } from "@/hooks/useExternalResourceEvents";
+import { useTabReturn } from "@/hooks/useTabReturn";
+
+export type ExternalProvider = "wordwall" | "learningapps" | "h5p" | "generic";
+export type ExternalEmbedType = "iframe" | "link_only";
 
 export interface ExternalResource {
   id: string;
   session_id: string;
   title: string;
   url: string;
-  embed_type: "iframe" | "link_only";
-  provider: "wordwall" | "learningapps" | "h5p" | "generic";
+  embed_type: ExternalEmbedType;
+  provider: ExternalProvider;
+  embeddable_result?: boolean | null;
 }
 
-const PROVIDER_LABEL: Record<ExternalResource["provider"], string> = {
+const PROVIDER_LABEL: Record<ExternalProvider, string> = {
   wordwall: "Wordwall",
   learningapps: "LearningApps",
   h5p: "H5P",
@@ -23,16 +29,53 @@ const PROVIDER_LABEL: Record<ExternalResource["provider"], string> = {
 
 interface Props {
   resource: ExternalResource;
-  onDone: (autoScore?: number) => void;
+  onCompleted: (autoScore?: number) => void;
+  onAutoScore?: (score: number) => void;
 }
 
-export function ExternalResourceViewer({ resource, onDone }: Props) {
-  const [autoScore, setAutoScore] = useState<number | undefined>(undefined);
+export function ExternalResourceViewer({ resource, onCompleted, onAutoScore }: Props) {
+  const canEmbed =
+    resource.embed_type === "iframe" && resource.embeddable_result !== false;
 
+  const [forceLink, setForceLink] = useState(false);
+  const [hasOpened, setHasOpened] = useState(false);
+  const [autoScore, setAutoScore] = useState<number | undefined>(undefined);
+  const windowRef = useRef<Window | null>(null);
+
+  const showIframe = canEmbed && !forceLink;
+
+  // Auto-score via xAPI/H5P postMessage
   useExternalResourceEvents({
-    onScore: (score) => setAutoScore(score),
-    enabled: resource.embed_type === "iframe",
+    enabled: showIframe,
+    onScore: (score) => {
+      setAutoScore(score);
+      onAutoScore?.(score);
+      onCompleted(score);
+    },
   });
+
+  const handleReturn = useCallback(() => {
+    onCompleted(autoScore);
+  }, [onCompleted, autoScore]);
+
+  const { markLeftTab } = useTabReturn({
+    onReturn: handleReturn,
+    enabled: !showIframe,
+  });
+
+  const openExternal = () => {
+    windowRef.current = window.open(resource.url, "_blank", "noopener,noreferrer");
+    setHasOpened(true);
+    markLeftTab();
+  };
+
+  const closeExternal = () => {
+    try {
+      windowRef.current?.close();
+    } catch {
+      /* noop */
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -41,40 +84,65 @@ export function ExternalResourceViewer({ resource, onDone }: Props) {
         <Badge variant="secondary">{PROVIDER_LABEL[resource.provider]}</Badge>
       </div>
 
-      {resource.embed_type === "iframe" ? (
-        <div className="overflow-hidden rounded-md border bg-background">
-          <iframe
-            src={resource.url}
-            title={resource.title}
-            className="w-full"
-            style={{ height: 500 }}
-            allow="fullscreen; autoplay; microphone"
-            referrerPolicy="no-referrer"
-          />
-        </div>
+      {showIframe ? (
+        <>
+          <div className="overflow-hidden rounded-md border bg-background">
+            <iframe
+              src={resource.url}
+              title={resource.title}
+              className="w-full"
+              style={{ minHeight: 500 }}
+              allow="fullscreen; autoplay; microphone"
+              referrerPolicy="no-referrer"
+            />
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setForceLink(true)}
+              className="text-muted-foreground"
+            >
+              <HelpCircle className="mr-1 h-4 w-4" />
+              Ça ne s'affiche pas&nbsp;? Ouvrir dans un nouvel onglet
+            </Button>
+            <Button onClick={() => onCompleted(autoScore)}>J'ai terminé</Button>
+          </div>
+        </>
       ) : (
-        <Card className="p-6 text-center space-y-3">
+        <Card className="space-y-4 p-6">
           <p className="text-sm text-muted-foreground">
-            Cette ressource s'ouvre sur le site externe.
+            Cet exercice s'ouvre dans un autre onglet. Revenez ici quand vous avez terminé.
           </p>
-          <Button asChild>
-            <a href={resource.url} target="_blank" rel="noopener noreferrer">
+          <div className="flex flex-wrap gap-2">
+            <Button size="lg" onClick={openExternal}>
               <ExternalLink className="mr-2 h-4 w-4" />
-              Ouvrir dans un nouvel onglet
-            </a>
-          </Button>
+              Ouvrir l'exercice
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              disabled={!hasOpened}
+              onClick={() => onCompleted()}
+            >
+              J'ai terminé
+            </Button>
+            {hasOpened && (
+              <Button size="lg" variant="ghost" onClick={closeExternal}>
+                <X className="mr-2 h-4 w-4" />
+                Fermer l'onglet et revenir
+              </Button>
+            )}
+          </div>
+          {hasOpened && (
+            <Alert>
+              <AlertDescription className="text-sm">
+                Si rien ne se passe, fermez l'onglet manuellement puis revenez ici.
+              </AlertDescription>
+            </Alert>
+          )}
         </Card>
       )}
-
-      {autoScore !== undefined && (
-        <div className="rounded-md border border-primary/40 bg-primary/5 px-3 py-2 text-sm">
-          Score détecté automatiquement : <strong>{autoScore}/100</strong>
-        </div>
-      )}
-
-      <div className="flex justify-end">
-        <Button onClick={() => onDone(autoScore)}>J'ai terminé</Button>
-      </div>
     </div>
   );
 }
