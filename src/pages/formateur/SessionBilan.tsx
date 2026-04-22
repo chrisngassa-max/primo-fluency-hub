@@ -1246,6 +1246,18 @@ const SessionBilan = () => {
         </DialogContent>
       </Dialog>
 
+      {/* CSV import dialog */}
+      {csvImportResourceId && session?.group_id && (
+        <ExternalCsvImportDialog
+          open={!!csvImportResourceId}
+          onOpenChange={(o) => !o && setCsvImportResourceId(null)}
+          externalResourceId={csvImportResourceId}
+          sessionId={id!}
+          groupId={session.group_id}
+          onImported={() => refetchExternalResults()}
+        />
+      )}
+
       <style>{`@media print { nav, header, .print\\:hidden { display: none !important; } body { font-size: 12pt; } }`}</style>
     </div>
   );
