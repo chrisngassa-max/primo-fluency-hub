@@ -160,6 +160,37 @@ const BilanSeance = () => {
     enabled: !!exercices && exercices.length > 0 && !!user?.id,
   });
 
+  // External resources for this session
+  const { data: externalResources } = useQuery({
+    queryKey: ["bilan-external-resources", sessionId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("external_resources")
+        .select("*")
+        .eq("session_id", sessionId!)
+        .order("ordre");
+      if (error) throw error;
+      return (data ?? []) as ExternalResource[];
+    },
+    enabled: !!sessionId,
+  });
+
+  const { data: existingExternalResults } = useQuery({
+    queryKey: ["bilan-existing-external", sessionId, user?.id],
+    queryFn: async () => {
+      const ids = (externalResources ?? []).map((r) => r.id);
+      if (!ids.length) return [];
+      const { data, error } = await supabase
+        .from("external_resource_results")
+        .select("external_resource_id")
+        .eq("student_id", user!.id)
+        .in("external_resource_id", ids);
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: !!externalResources?.length && !!user?.id,
+  });
+
   const validExercices = (exercices ?? []).filter((se: any) => {
     const contenu = se.exercice?.contenu as any;
     return contenu?.items && Array.isArray(contenu.items) && contenu.items.length > 0;
@@ -168,6 +199,11 @@ const BilanSeance = () => {
   // Filter out exercises already answered
   const alreadyDoneIds = new Set((existingResults ?? []).map((r) => r.exercice_id));
   const pendingExercices = validExercices.filter((se: any) => !alreadyDoneIds.has(se.exercice?.id));
+
+  const doneExternalIds = new Set(
+    (existingExternalResults ?? []).map((r) => r.external_resource_id)
+  );
+  const pendingExternal = (externalResources ?? []).filter((r) => !doneExternalIds.has(r.id));
 
   const currentSe = pendingExercices[currentExIdx];
   const currentEx = currentSe?.exercice as any;
