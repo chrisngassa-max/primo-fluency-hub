@@ -501,6 +501,46 @@ const SuiviDirectClasse = () => {
           />
         </>
       )}
+
+      {/* Dialog réponses bilan */}
+      <Dialog open={!!openBilanAnswers} onOpenChange={(o) => !o && setOpenBilanAnswers(null)}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle>
+              Réponses de {openBilanAnswers?.eleveName}
+            </DialogTitle>
+            <DialogDescription>
+              Bilan de début de séance · {openBilanAnswers?.bilan.nb_questions} questions
+            </DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="flex-1 pr-4 -mr-4">
+            {openBilanAnswers && (() => {
+              const reponses = openBilanAnswers.result.reponses as any;
+              const contenu = openBilanAnswers.bilan.contenu as any;
+              const questions: any[] = Array.isArray(contenu) ? contenu : (contenu?.questions ?? contenu?.items ?? []);
+              const items = questions.map((q: any, idx: number) => {
+                const key = q.id ?? String(idx);
+                const reponseEleve = reponses?.[key] ?? reponses?.[idx] ?? "—";
+                const bonneReponse = q.bonne_reponse ?? q.reponse_correcte ?? q.correct_answer ?? "";
+                const correct = String(reponseEleve).trim().toLowerCase() === String(bonneReponse).trim().toLowerCase();
+                return {
+                  question: q.enonce ?? q.question ?? q.consigne ?? `Question ${idx + 1}`,
+                  reponse_eleve: reponseEleve,
+                  bonne_reponse: bonneReponse,
+                  correct,
+                  explication: q.explication,
+                };
+              });
+              return (
+                <CorrectionDetaillee
+                  itemResults={items}
+                  scoreNormalized={Math.round(Number(openBilanAnswers.result.score_global ?? 0))}
+                />
+              );
+            })()}
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
