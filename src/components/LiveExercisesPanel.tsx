@@ -98,6 +98,13 @@ export default function LiveExercisesPanel({
   presenceMap,
   sessionDate,
 }: Props) {
+  const [openAnswers, setOpenAnswers] = useState<{
+    exerciceId: string;
+    eleveId: string;
+    eleveName: string;
+    exerciceTitre?: string;
+  } | null>(null);
+
   // 1. Exercices envoyés via session_exercices
   const { data: sessionExercices, refetch: refetchSE, isLoading: loadingSE } = useQuery({
     queryKey: ["live-session-exercices", sessionId],
