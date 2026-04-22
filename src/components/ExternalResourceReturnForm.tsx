@@ -12,26 +12,36 @@ import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
 
-const schema = z.object({
+const BUCKET = "external-resource-screenshots";
+
+type Difficulty = "easy" | "medium" | "hard";
+
+const baseSchema = {
+  difficulty_felt: z.enum(["easy", "medium", "hard"]),
+  comment: z.string().max(1000).optional(),
+};
+
+const fullSchema = z.object({
+  ...baseSchema,
   score: z.number().min(0).max(100),
   minutes: z.number().min(0).max(600),
   seconds: z.number().min(0).max(59),
-  difficulty_felt: z.enum(["easy", "medium", "hard"]),
-  comment: z.string().max(1000).optional(),
 });
-type FormValues = z.infer<typeof schema>;
+const wordwallSchema = z.object(baseSchema);
 
-const BUCKET = "external-resource-screenshots";
+type FullValues = z.infer<typeof fullSchema>;
+type WordwallValues = z.infer<typeof wordwallSchema>;
 
 interface Props {
   resourceId: string;
   sessionId: string;
+  provider: "wordwall" | "learningapps" | "h5p" | "generic";
   initialScore?: number;
   initialSource?: "declared" | "auto_captured";
   onSubmitted: () => void;
 }
 
-const DIFFICULTIES: { value: FormValues["difficulty_felt"]; emoji: string; label: string }[] = [
+const DIFFICULTIES: { value: Difficulty; emoji: string; label: string }[] = [
   { value: "easy", emoji: "😊", label: "Facile" },
   { value: "medium", emoji: "😐", label: "Moyen" },
   { value: "hard", emoji: "😣", label: "Difficile" },
@@ -39,18 +49,21 @@ const DIFFICULTIES: { value: FormValues["difficulty_felt"]; emoji: string; label
 
 export function ExternalResourceReturnForm({
   resourceId,
+  provider,
   initialScore,
   initialSource,
   onSubmitted,
 }: Props) {
+  const isWordwall = provider === "wordwall";
+
   const [screenshotPath, setScreenshotPath] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const dropRef = useRef<HTMLDivElement>(null);
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(schema),
+  const form = useForm<FullValues>({
+    resolver: zodResolver(isWordwall ? (wordwallSchema as unknown as typeof fullSchema) : fullSchema),
     defaultValues: {
       score: initialScore ?? 70,
       minutes: 0,
@@ -63,7 +76,6 @@ export function ExternalResourceReturnForm({
   const score = form.watch("score");
   const difficulty = form.watch("difficulty_felt");
 
-  // Upload helper
   const uploadFile = async (file: File) => {
     if (!file.type.startsWith("image/")) {
       toast({ title: "Format invalide", description: "Image uniquement.", variant: "destructive" });
@@ -85,14 +97,14 @@ export function ExternalResourceReturnForm({
       const { data: signed } = await supabase.storage.from(BUCKET).createSignedUrl(path, 3600);
       setScreenshotPath(path);
       setPreviewUrl(signed?.signedUrl ?? null);
-    } catch (e: any) {
-      toast({ title: "Échec de l'upload", description: e.message, variant: "destructive" });
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Erreur inconnue";
+      toast({ title: "Échec de l'upload", description: msg, variant: "destructive" });
     } finally {
       setUploading(false);
     }
   };
 
-  // Paste Ctrl+V
   useEffect(() => {
     const onPaste = (e: ClipboardEvent) => {
       const items = e.clipboardData?.items;
@@ -113,7 +125,6 @@ export function ExternalResourceReturnForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resourceId]);
 
-  // Drag & drop
   useEffect(() => {
     const el = dropRef.current;
     if (!el) return;
@@ -147,31 +158,34 @@ export function ExternalResourceReturnForm({
     setPreviewUrl(null);
   };
 
-  const onSubmit = async (values: FormValues) => {
+  const onSubmit = async (values: FullValues | WordwallValues) => {
     setSubmitting(true);
     try {
       const { data: userData } = await supabase.auth.getUser();
       const userId = userData.user?.id;
       if (!userId) throw new Error("Non authentifié");
-      const time_spent_seconds = values.minutes * 60 + values.seconds;
-      const { error } = await supabase.from("external_resource_results").upsert(
-        {
-          external_resource_id: resourceId,
-          student_id: userId,
-          score: values.score,
-          time_spent_seconds,
-          difficulty_felt: values.difficulty_felt,
-          comment: values.comment || null,
-          screenshot_path: screenshotPath,
-          source: initialSource ?? "declared",
-        },
-        { onConflict: "external_resource_id,student_id" }
-      );
+
+      const v = values as FullValues;
+      const payload = {
+        external_resource_id: resourceId,
+        student_id: userId,
+        difficulty_felt: values.difficulty_felt,
+        comment: values.comment || null,
+        screenshot_path: screenshotPath,
+        source: initialSource ?? "declared",
+        score: isWordwall ? null : Math.max(0, Math.min(100, v.score)),
+        time_spent_seconds: isWordwall ? null : v.minutes * 60 + v.seconds,
+      };
+
+      const { error } = await supabase
+        .from("external_resource_results")
+        .upsert(payload as never, { onConflict: "external_resource_id,student_id" });
       if (error) throw error;
       toast({ title: "Résultat enregistré" });
       onSubmitted();
-    } catch (e: any) {
-      toast({ title: "Erreur", description: e.message, variant: "destructive" });
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Erreur inconnue";
+      toast({ title: "Erreur", description: msg, variant: "destructive" });
     } finally {
       setSubmitting(false);
     }
@@ -179,61 +193,67 @@ export function ExternalResourceReturnForm({
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-      {initialSource === "auto_captured" && (
+      {initialSource === "auto_captured" && !isWordwall && (
         <Badge className="bg-primary/15 text-primary hover:bg-primary/15">
           Score détecté automatiquement
         </Badge>
       )}
 
-      {/* Score */}
-      <div className="space-y-2">
-        <Label htmlFor="score">Score (0–100)</Label>
-        <div className="flex items-center gap-3">
-          <Slider
-            value={[score]}
-            min={0}
-            max={100}
-            step={1}
-            onValueChange={(v) => form.setValue("score", v[0], { shouldValidate: true })}
-            className="flex-1"
-          />
-          <Input
-            id="score"
-            type="number"
-            min={0}
-            max={100}
-            value={score}
-            onChange={(e) =>
-              form.setValue("score", Math.max(0, Math.min(100, Number(e.target.value) || 0)), {
-                shouldValidate: true,
-              })
-            }
-            className="w-20"
-          />
-        </div>
-      </div>
+      {!isWordwall && (
+        <>
+          {/* Score */}
+          <div className="space-y-2">
+            <Label htmlFor="score">Score (0–100)</Label>
+            <div className="flex items-center gap-3">
+              <Slider
+                value={[score]}
+                min={0}
+                max={100}
+                step={1}
+                onValueChange={(v) => form.setValue("score", v[0], { shouldValidate: true })}
+                className="flex-1"
+              />
+              <Input
+                id="score"
+                type="number"
+                min={0}
+                max={100}
+                value={score}
+                onChange={(e) =>
+                  form.setValue(
+                    "score",
+                    Math.max(0, Math.min(100, Number(e.target.value) || 0)),
+                    { shouldValidate: true }
+                  )
+                }
+                className="w-20"
+              />
+            </div>
+          </div>
 
-      {/* Temps */}
-      <div className="space-y-2">
-        <Label>Temps passé</Label>
-        <div className="flex items-center gap-2">
-          <Input
-            type="number"
-            min={0}
-            {...form.register("minutes", { valueAsNumber: true })}
-            className="w-24"
-          />
-          <span className="text-sm text-muted-foreground">min</span>
-          <Input
-            type="number"
-            min={0}
-            max={59}
-            {...form.register("seconds", { valueAsNumber: true })}
-            className="w-24"
-          />
-          <span className="text-sm text-muted-foreground">sec</span>
-        </div>
-      </div>
+          {/* Temps */}
+          <div className="space-y-2">
+            <Label>Temps passé</Label>
+            <div className="flex items-center gap-2">
+              <Input
+                type="number"
+                min={0}
+                {...form.register("minutes", { valueAsNumber: true })}
+                className="w-24"
+              />
+              <span className="text-sm text-muted-foreground">min</span>
+              <Input
+                type="number"
+                min={0}
+                max={59}
+                {...form.register("seconds", { valueAsNumber: true })}
+                className="w-24"
+              />
+              <span className="text-sm text-muted-foreground">sec</span>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Ressenti */}
       <div className="space-y-2">
@@ -268,15 +288,11 @@ export function ExternalResourceReturnForm({
         <Label>Capture d'écran (optionnelle)</Label>
         {previewUrl ? (
           <div className="relative inline-block">
-            <img
-              src={previewUrl}
-              alt="Capture"
-              className="max-h-48 rounded-md border"
-            />
+            <img src={previewUrl} alt="Capture" className="max-h-48 rounded-md border" />
             <button
               type="button"
               onClick={removeScreenshot}
-              className="absolute -top-2 -right-2 rounded-full bg-destructive p-1 text-destructive-foreground"
+              className="absolute -right-2 -top-2 rounded-full bg-destructive p-1 text-destructive-foreground"
               aria-label="Supprimer"
             >
               <X className="h-3 w-3" />
@@ -309,7 +325,7 @@ export function ExternalResourceReturnForm({
       </div>
 
       <div className="flex justify-end">
-        <Button type="submit" disabled={submitting || uploading}>
+        <Button type="submit" size="lg" disabled={submitting || uploading}>
           {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Envoyer mon résultat
         </Button>

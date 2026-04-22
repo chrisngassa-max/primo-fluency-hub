@@ -402,11 +402,12 @@ const BilanSeance = () => {
         <Progress value={((externalIdx) / Math.max(pendingExternal.length, 1)) * 100} className="h-2" />
 
         {!externalShowForm ? (
-          <ExternalResourceViewer resource={currentExternal} onDone={handleExternalDone} />
+          <ExternalResourceViewer resource={currentExternal} onCompleted={handleExternalDone} />
         ) : (
           <ExternalResourceReturnForm
             resourceId={currentExternal.id}
             sessionId={sessionId!}
+            provider={currentExternal.provider}
             initialScore={externalAutoScore}
             initialSource={externalAutoScore !== undefined ? "auto_captured" : "declared"}
             onSubmitted={handleExternalSubmitted}
