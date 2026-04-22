@@ -363,7 +363,17 @@ export default function LiveExercisesPanel({
                   return (
                     <Card
                       key={m.eleve_id}
-                      className={`border-l-4 ${accent} ${!present ? "opacity-60" : ""} transition-all hover:shadow-md`}
+                      onClick={() => {
+                        if (status !== "not_started") {
+                          setOpenAnswers({
+                            exerciceId: exo.exercice_id,
+                            eleveId: m.eleve_id,
+                            eleveName: `${m.eleve?.prenom ?? ""} ${m.eleve?.nom ?? ""}`.trim(),
+                            exerciceTitre: exo.exercice?.titre,
+                          });
+                        }
+                      }}
+                      className={`border-l-4 ${accent} ${!present ? "opacity-60" : ""} ${status !== "not_started" ? "cursor-pointer hover:shadow-md hover:border-primary/40" : ""} transition-all`}
                     >
                       <CardContent className="p-4 space-y-3">
                         <div className="flex items-start justify-between gap-2">
