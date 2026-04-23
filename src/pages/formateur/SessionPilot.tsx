@@ -64,6 +64,7 @@ import LivePilotingSection from "@/components/LivePilotingSection";
 import { COMPETENCE_COLORS, resolveSessionCompetences, sortCompetences } from "@/lib/competences";
 import GenerateDailyHomeworkDialog from "@/components/GenerateDailyHomeworkDialog";
 import ImportFromUrlDialog from "@/components/ImportFromUrlDialog";
+import { ExternalResourcePicker } from "@/components/ExternalResourcePicker";
 import EndOfSessionSection from "@/components/EndOfSessionSection";
 import GenerateResourceDialog from "@/components/GenerateResourceDialog";
 import AutoResourceSuggestions from "@/components/AutoResourceSuggestions";
@@ -1241,6 +1242,10 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
               <Button variant="outline" size="sm" onClick={() => setImportUrlOpen(true)} className="gap-2">
                 <Link2 className="h-4 w-4" /> Importer depuis un lien
               </Button>
+              <ExternalResourcePicker
+                sessionId={id!}
+                onAdded={() => qc.invalidateQueries({ queryKey: ["session-exercices", id] })}
+              />
             </div>
           </div>
           <Button onClick={() => setDailyHomeworkOpen(true)} disabled={generatingHomework || exercises.length === 0} variant="outline" className="gap-2">
