@@ -379,24 +379,7 @@ Pour chaque élève, cible ses faiblesses spécifiques. Les exercices de tronc c
         tool_choice: { type: "function", function: { name: "generate_personalized_plan" } },
       });
 
-    if (!aiResponse.ok) {
-      if (aiResponse.status === 429) {
-        return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again later." }), {
-          status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      if (aiResponse.status === 402) {
-        return new Response(JSON.stringify({ error: "Credits exhausted. Please add funds." }), {
-          status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      const errText = await aiResponse.text();
-      console.error("AI error:", aiResponse.status, errText);
-      throw new Error("AI generation failed");
-    }
-
-    const aiData = await aiResponse.json();
-    const toolCall = aiData.choices?.[0]?.message?.tool_calls?.[0];
+    const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
     if (!toolCall) throw new Error("No tool call in AI response");
 
     const plan = JSON.parse(toolCall.function.arguments);
