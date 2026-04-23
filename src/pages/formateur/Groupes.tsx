@@ -93,6 +93,8 @@ const GroupesPage = () => {
   // Track expanded groups to fetch members
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [shownPasswords, setShownPasswords] = useState<Record<string, boolean>>({});
+  const [resettingPwd, setResettingPwd] = useState<string | null>(null);
 
   // Fetch groups
   const { data: groups, isLoading } = useQuery({
@@ -255,6 +257,25 @@ const GroupesPage = () => {
     } catch (e: any) {
       toast.error("Erreur lors de la création", { description: e.message });
     } finally { setAddingMember(false); }
+  };
+
+  const handleResetPassword = async (eleveId: string, eleveName: string) => {
+    if (!confirm(`Réinitialiser le mot de passe de ${eleveName} ?\n\nUn nouveau mot de passe sera généré et l'ancien ne fonctionnera plus.`)) return;
+    setResettingPwd(eleveId);
+    try {
+      const { data, error } = await supabase.functions.invoke("reset-student-password", {
+        body: { eleve_id: eleveId },
+      });
+      if (error) throw new Error(data?.error || error.message);
+      if (data?.error) throw new Error(data.error);
+      setShownPasswords((s) => ({ ...s, [eleveId]: true }));
+      toast.success(`Nouveau mot de passe : ${data.password}`, { duration: 10000 });
+      qc.invalidateQueries({ queryKey: ["all-group-members"] });
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    } finally {
+      setResettingPwd(null);
+    }
   };
 
   const handleRemoveMember = async (membershipId: string) => {
