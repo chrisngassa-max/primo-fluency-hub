@@ -613,6 +613,7 @@ const GroupesPage = () => {
                     <TableRow>
                       <TableHead>Prénom & Nom</TableHead>
                       <TableHead>Identifiant</TableHead>
+                      <TableHead>Mot de passe</TableHead>
                       <TableHead>Groupe</TableHead>
                       <TableHead className="text-center">Progression</TableHead>
                       <TableHead className="text-center w-20">Actions</TableHead>
