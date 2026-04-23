@@ -13,3 +13,5 @@ project_id = "bqknyiyywhvkdngraazk"
     verify_jwt = false
   [functions.handle-email-suppression]
     verify_jwt = false
+  [functions.reset-student-password]
+    verify_jwt = false
