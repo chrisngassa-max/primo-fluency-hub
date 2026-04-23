@@ -645,6 +645,41 @@ const GroupesPage = () => {
                                 <code className="text-xs bg-muted px-1.5 py-0.5 rounded">{eleve?.email || "—"}</code>
                               </TableCell>
                               <TableCell>
+                                <div className="flex items-center gap-1">
+                                  {eleve?.mot_de_passe_initial ? (
+                                    <>
+                                      <code className="text-xs bg-muted px-1.5 py-0.5 rounded font-mono min-w-[80px] inline-block">
+                                        {shownPasswords[m.eleve_id] ? eleve.mot_de_passe_initial : "••••••••"}
+                                      </code>
+                                      <Button
+                                        variant="ghost" size="icon" className="h-6 w-6"
+                                        onClick={() => setShownPasswords((s) => ({ ...s, [m.eleve_id]: !s[m.eleve_id] }))}
+                                        title={shownPasswords[m.eleve_id] ? "Masquer" : "Afficher"}
+                                      >
+                                        {shownPasswords[m.eleve_id] ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                                      </Button>
+                                      <Button
+                                        variant="ghost" size="icon" className="h-6 w-6"
+                                        onClick={() => copyToClipboard(eleve.mot_de_passe_initial!, `pwd-${m.eleve_id}`)}
+                                        title="Copier"
+                                      >
+                                        {copiedField === `pwd-${m.eleve_id}` ? <Check className="h-3.5 w-3.5 text-green-600" /> : <Copy className="h-3.5 w-3.5" />}
+                                      </Button>
+                                    </>
+                                  ) : (
+                                    <span className="text-xs text-muted-foreground italic">non disponible</span>
+                                  )}
+                                  <Button
+                                    variant="ghost" size="icon" className="h-6 w-6"
+                                    onClick={() => handleResetPassword(m.eleve_id, `${eleve?.prenom} ${eleve?.nom}`)}
+                                    disabled={resettingPwd === m.eleve_id}
+                                    title="Réinitialiser le mot de passe"
+                                  >
+                                    {resettingPwd === m.eleve_id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
+                                  </Button>
+                                </div>
+                              </TableCell>
+                              <TableCell>
                                 <div className="flex flex-wrap items-center gap-1">
                                   {studentGroups.map((sg) => (
                                     <DropdownMenu key={sg.membershipId}>
