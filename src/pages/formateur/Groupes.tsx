@@ -28,7 +28,8 @@ import {
 import { toast } from "sonner";
 import {
   Plus, Users, Trash2, Edit, UserPlus, UserMinus, Loader2,
-  Copy, Check, Eye, ChevronRight, Ticket, Mail, Search, ArrowRightLeft, PlusCircle,
+  Copy, Check, Eye, EyeOff, ChevronRight, Ticket, Mail, Search, ArrowRightLeft, PlusCircle,
+  KeyRound, RefreshCw,
 } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
@@ -116,7 +117,7 @@ const GroupesPage = () => {
       const groupIds = groups.map((g) => g.id);
       const { data, error } = await supabase
         .from("group_members")
-        .select("*, eleve:profiles(id, nom, prenom, email)")
+        .select("*, eleve:profiles(id, nom, prenom, email, mot_de_passe_initial)")
         .in("group_id", groupIds);
       if (error) throw error;
       return data;
