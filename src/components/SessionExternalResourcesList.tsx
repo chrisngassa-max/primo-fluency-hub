@@ -59,6 +59,26 @@ export default function SessionExternalResourcesList({ sessionId }: Props) {
     },
   });
 
+  const resourceIds = useMemo(() => (resources || []).map((r) => r.id), [resources]);
+
+  // Compteurs globaux par ressource (pour badge "X retours")
+  const { data: countsByResource } = useQuery({
+    queryKey: ["external-resources-counts", sessionId, resourceIds.join(",")],
+    enabled: resourceIds.length > 0,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("external_resource_results")
+        .select("external_resource_id")
+        .in("external_resource_id", resourceIds);
+      if (error) throw error;
+      const map: Record<string, number> = {};
+      (data || []).forEach((r: { external_resource_id: string }) => {
+        map[r.external_resource_id] = (map[r.external_resource_id] || 0) + 1;
+      });
+      return map;
+    },
+  });
+
   const { data: results } = useQuery({
     queryKey: ["external-resources-results", sessionId, returnsOpen?.id],
     enabled: !!returnsOpen,
@@ -87,6 +107,32 @@ export default function SessionExternalResourcesList({ sessionId }: Props) {
       })) as ResourceResult[];
     },
   });
+
+  // Sync temps réel : quand un élève soumet un retour, on rafraîchit
+  useEffect(() => {
+    if (resourceIds.length === 0) return;
+    const channel = supabase
+      .channel(`ext-results-${sessionId}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "external_resource_results" },
+        (payload) => {
+          const row = (payload.new ?? payload.old) as { external_resource_id?: string };
+          if (row?.external_resource_id && resourceIds.includes(row.external_resource_id)) {
+            qc.invalidateQueries({ queryKey: ["external-resources-counts", sessionId] });
+            qc.invalidateQueries({ queryKey: ["external-resources-results", sessionId] });
+            if (payload.eventType === "INSERT") {
+              toast.success("Nouveau retour élève reçu");
+            }
+          }
+        }
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [sessionId, resourceIds, qc]);
+
 
   const handleDelete = async (id: string) => {
     if (!confirm("Supprimer cette ressource externe ?")) return;
