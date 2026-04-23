@@ -202,6 +202,11 @@ export default function SessionExternalResourcesList({ sessionId }: Props) {
                   >
                     <Eye className="h-4 w-4" />
                     Retours
+                    {countsByResource?.[r.id] ? (
+                      <Badge variant="secondary" className="ml-1 h-5 px-1.5">
+                        {countsByResource[r.id]}
+                      </Badge>
+                    ) : null}
                   </Button>
                   <Button
                     variant="ghost"
