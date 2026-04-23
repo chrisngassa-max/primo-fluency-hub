@@ -68,6 +68,7 @@ import { ExternalResourcePicker } from "@/components/ExternalResourcePicker";
 import EndOfSessionSection from "@/components/EndOfSessionSection";
 import GenerateResourceDialog from "@/components/GenerateResourceDialog";
 import AutoResourceSuggestions from "@/components/AutoResourceSuggestions";
+import SessionExternalResourcesList from "@/components/SessionExternalResourcesList";
 import StartOfSessionBilan from "@/components/StartOfSessionBilan";
 import SessionClosureReminder from "@/components/SessionClosureReminder";
 import PreflightExercises from "@/components/PreflightExercises";
@@ -1262,6 +1263,9 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
           </Button>
         </div>
       </div>
+
+      {/* Bloc ressources externes ajoutées à la séance */}
+      <SessionExternalResourcesList sessionId={id!} />
 
       {/* Print header */}
       <div className="hidden print:block mb-8">
