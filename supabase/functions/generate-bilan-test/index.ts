@@ -29,7 +29,13 @@ Règles :
 - Les questions doivent être DIFFÉRENTES des exercices originaux mais tester les mêmes compétences
 - Niveau adapté au niveau cible de la séance
 - Contexte IRN (préfecture, emploi, logement, etc.)
-- Chaque question a exactement UNE bonne réponse`;
+- Chaque question a exactement UNE bonne réponse
+
+OBLIGATIONS PAR COMPÉTENCE :
+- CO (Compréhension orale) : fournis OBLIGATOIREMENT "script_audio" = un texte court (30-60 mots) à lire à voix haute. La question porte sur ce script.
+- CE (Compréhension écrite) : fournis OBLIGATOIREMENT "texte_support" = un texte support (40-100 mots) à lire. La question porte sur ce texte.
+- EE / EO / Structures : pas de support audio/texte requis.
+- bonne_reponse DOIT figurer EXACTEMENT dans options (QCM) ; "vrai" ou "faux" pour vrai_faux.`;
 
     const userPrompt = `SÉANCE : "${sessionTitle || "Séance"}"
 NIVEAU CIBLE : ${niveauCible || "A1"}
