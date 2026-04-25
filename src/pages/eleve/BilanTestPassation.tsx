@@ -27,6 +27,7 @@ const BilanTestPassation = () => {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [submitting, setSubmitting] = useState(false);
+  const [reportedIdx, setReportedIdx] = useState<Set<number>>(new Set());
   const [result, setResult] = useState<{
     scoreGlobal: number;
     totalQuestions: number;
