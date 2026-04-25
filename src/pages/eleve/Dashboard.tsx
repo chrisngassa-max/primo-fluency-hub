@@ -478,92 +478,24 @@ const EleveDashboard = () => {
         </CardContent>
       </Card>
 
-      {/* Devoirs */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-accent-foreground" />
-            Mes devoirs du jour
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {devoirsLoading ? (
-            <div className="space-y-3">
-              <Skeleton className="h-16 w-full" />
-              <Skeleton className="h-16 w-full" />
+      {/* Lien rapide vers les devoirs (la liste se trouve sur la page dédiée) */}
+      <Card
+        className="cursor-pointer hover:bg-muted/30 transition-colors"
+        onClick={() => navigate("/eleve/devoirs")}
+      >
+        <CardContent className="flex items-center justify-between gap-3 py-4">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
+              <BookOpen className="h-5 w-5 text-primary" />
             </div>
-          ) : devoirs && devoirs.length > 0 ? (
-            <div className="space-y-3">
-              {devoirs.map((d) => {
-                const ex = d.exercice as any;
-                const isUrgent = d.raison === "remediation";
-                const deadline = new Date(d.date_echeance);
-                const daysLeft = Math.ceil((deadline.getTime() - Date.now()) / 86400000);
-                const isLate = daysLeft < 0;
-                const isUrgentTime = daysLeft <= 2 && daysLeft >= 0;
-                return (
-                  <div
-                    key={d.id}
-                    className="flex items-start gap-3 p-4 rounded-xl border bg-card hover:bg-muted/30 transition-colors cursor-pointer"
-                    onClick={() => navigate(`/eleve/devoirs/${d.id}`)}
-                  >
-                    <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-primary/10 shrink-0">
-                      <BookOpen className="h-6 w-6 text-primary" />
-                    </div>
-                    <div className="flex-1 min-w-0 space-y-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-semibold">{ex?.titre || "Exercice"}</span>
-                        {isUrgent ? (
-                          <Badge variant="destructive" className="text-xs gap-1">
-                            <AlertCircle className="h-3 w-3" />
-                            ⚠️ À retravailler
-                          </Badge>
-                        ) : (
-                          <Badge
-                            variant="secondary"
-                            className="text-xs border-orange-500/30 text-orange-600"
-                          >
-                            À renforcer
-                          </Badge>
-                        )}
-                      </div>
-                      <p className="text-sm text-muted-foreground truncate">{ex?.consigne}</p>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="text-xs">
-                          <CompetenceLabel code={ex?.competence} />
-                        </Badge>
-                      </div>
-                      {/* Deadline display */}
-                      {isLate ? (
-                        <p className="text-sm text-destructive flex items-center gap-1">
-                          <AlertCircle className="h-3 w-3" />
-                          Devoir en retard — attendu le {format(deadline, "d MMMM", { locale: fr })}
-                        </p>
-                      ) : isUrgentTime ? (
-                        <p className="text-sm text-orange-600 flex items-center gap-1">
-                          <AlertCircle className="h-3 w-3" />
-                          {daysLeft === 0 ? "À rendre aujourd'hui !" : daysLeft === 1 ? "À rendre demain" : "À rendre dans 2 jours"}
-                        </p>
-                      ) : (
-                        <p className="text-sm text-muted-foreground flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
-                          À rendre avant le : {format(deadline, "EEEE d MMMM yyyy", { locale: fr })}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center py-8 text-center">
-              <BookOpen className="h-10 w-10 text-muted-foreground/40 mb-3" />
-              <p className="text-muted-foreground font-medium">Aucun devoir pour le moment</p>
-              <p className="text-sm text-muted-foreground/70 mt-1">
-                Réalisez votre première séance pour recevoir vos devoirs !
+            <div>
+              <p className="font-semibold text-sm">Mes devoirs</p>
+              <p className="text-xs text-muted-foreground">
+                Retrouve tous tes devoirs sur la page dédiée
               </p>
             </div>
-          )}
+          </div>
+          <ArrowRight className="h-4 w-4 text-muted-foreground" />
         </CardContent>
       </Card>
 
