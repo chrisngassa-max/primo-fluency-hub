@@ -99,6 +99,8 @@ const DevoirPassation = () => {
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ score: number; correction: any[]; bilanId?: string } | null>(null);
+  const [itemOverrides, setItemOverrides] = useState<Record<number, any>>({});
+  const [reportedItemIdx, setReportedItemIdx] = useState<Set<number>>(new Set());
 
   // Audio recording state for EO
   const [isRecording, setIsRecording] = useState(false);
@@ -153,7 +155,8 @@ const DevoirPassation = () => {
 
   const ex = (devoir as any)?.exercice;
   const contenu = ex?.contenu as any;
-  const items: any[] = contenu?.items ?? [];
+  const rawItems: any[] = contenu?.items ?? [];
+  const items: any[] = rawItems.map((it, idx) => itemOverrides[idx] ? { ...it, ...itemOverrides[idx] } : it);
   const isDone = devoir?.statut === "fait" || devoir?.statut === "arrete";
   const metadata = contenu?.metadata;
   const timeLimit = metadata?.time_limit_seconds || contenu?.time_limit_seconds || 0;
