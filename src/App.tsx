@@ -105,6 +105,7 @@ const App = () => (
               <Route path="parcours/:parcoursId" element={<ParcoursDetail />} />
               <Route path="rapports" element={<RapportsPage />} />
               <Route path="suivi-devoirs" element={<SuiviDevoirsPage />} />
+              <Route path="signalements" element={<SignalementsPage />} />
               <Route path="devoirs" element={<DevoirsFormateur />} />
               <Route path="session-builder" element={<SessionSupermarket />} />
               <Route path="demandes" element={<AccessRequests />} />
