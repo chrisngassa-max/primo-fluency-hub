@@ -101,15 +101,19 @@ const BilanTestPassation = () => {
     setSubmitting(true);
     try {
       let totalCorrect = 0;
+      let countedQuestions = 0;
       const compStats: Record<string, { correct: number; total: number }> = {};
       const correction = questions.map((q: any, idx: number) => {
         const userAnswer = answers[idx] || "";
+        const reported = reportedIdx.has(idx);
         const isCorrect = userAnswer.trim().toLowerCase() === (q.bonne_reponse || "").trim().toLowerCase();
-        if (isCorrect) totalCorrect++;
-
-        if (!compStats[q.competence]) compStats[q.competence] = { correct: 0, total: 0 };
-        compStats[q.competence].total++;
-        if (isCorrect) compStats[q.competence].correct++;
+        if (!reported) {
+          if (isCorrect) totalCorrect++;
+          countedQuestions++;
+          if (!compStats[q.competence]) compStats[q.competence] = { correct: 0, total: 0 };
+          compStats[q.competence].total++;
+          if (isCorrect) compStats[q.competence].correct++;
+        }
 
         return {
           question: q.question,
@@ -118,10 +122,11 @@ const BilanTestPassation = () => {
           bonne_reponse: q.bonne_reponse,
           correct: isCorrect,
           explication: q.explication || "",
+          reported,
         };
       });
 
-      const scoreGlobal = Math.round((totalCorrect / questions.length) * 100);
+      const scoreGlobal = countedQuestions > 0 ? Math.round((totalCorrect / countedQuestions) * 100) : 0;
       const scoresParCompetence: Record<string, { correct: number; total: number; pct: number }> = {};
       for (const [comp, stats] of Object.entries(compStats)) {
         scoresParCompetence[comp] = {
