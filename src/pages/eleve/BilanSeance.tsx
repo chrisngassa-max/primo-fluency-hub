@@ -717,6 +717,50 @@ const BilanSeance = () => {
                   }
                 />
               )}
+              {/* Per-item regenerate */}
+              <div className="flex justify-end pt-1">
+                {reportedItemKeys.has(`${currentEx.id}:${idx}`) ? (
+                  <Badge variant="outline" className="text-xs text-destructive border-destructive/40">
+                    ⚠️ Question neutralisée
+                  </Badge>
+                ) : (
+                  <RegenerateItemButton
+                    competence={currentEx.competence}
+                    format={currentEx.format}
+                    niveau={currentEx.niveau_vise || (session as any)?.niveau_cible || "A1"}
+                    consigne={currentEx.consigne}
+                    currentItem={{
+                      question: item.question,
+                      options: item.options,
+                      bonne_reponse: item.bonne_reponse,
+                      explication: item.explication,
+                    }}
+                    currentSupport={{
+                      texte_support: exerciseSupportText,
+                      script_audio: (currentEx.contenu as any)?.script_audio,
+                    }}
+                    onRegenerated={(newItem) => {
+                      const key = `${currentEx.id}:${idx}`;
+                      setItemOverrides((prev) => ({ ...prev, [key]: newItem }));
+                      setAnswers((prev) => {
+                        const exA = { ...(prev[currentEx.id] ?? {}) };
+                        delete exA[idx];
+                        return { ...prev, [currentEx.id]: exA };
+                      });
+                    }}
+                    onFallback={() => {
+                      const key = `${currentEx.id}:${idx}`;
+                      setReportedItemKeys((prev) => new Set(prev).add(key));
+                    }}
+                    reportContext={{
+                      context: "bilan_seance",
+                      exerciceId: currentEx.id,
+                      formateurId: currentEx.formateur_id,
+                      itemIndex: idx,
+                    }}
+                  />
+                )}
+              </div>
             </div>
             );
           })}
