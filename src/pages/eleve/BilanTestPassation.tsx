@@ -87,6 +87,7 @@ const BilanTestPassation = () => {
       ...q,
       question: questionText,
       script_audio: scriptAudio,
+      texte_support: q.texte_support || q.texte || "",
       options: q.options || q.choix || [],
     };
   });
