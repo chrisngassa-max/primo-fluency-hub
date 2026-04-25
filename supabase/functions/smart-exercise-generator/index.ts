@@ -319,7 +319,17 @@ Pour chaque item, fournis TOUJOURS : question, options (tableau de chaînes, vid
       throw new Error("L'IA n'a pas retourné de résultat structuré");
     }
 
-    const exercise = JSON.parse(toolCall.function.arguments);
+    let exercise = JSON.parse(toolCall.function.arguments);
+
+    // ── Validation + régénération (audio/visuel/pédagogie/TCF) ──
+    const validated = await validateAndFix(exercise, { niveau: exercise.niveau_vise });
+    if (!validated) {
+      return new Response(
+        JSON.stringify({ error: "Exercice rejeté après 3 tentatives de régénération", excluded: true }),
+        { status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    exercise = { ...exercise, ...validated.exercise };
 
     // Post-processing: fetch photos from Pexels for exercises that have image_description
     const PEXELS_API_KEY = Deno.env.get("PEXELS_API_KEY");
