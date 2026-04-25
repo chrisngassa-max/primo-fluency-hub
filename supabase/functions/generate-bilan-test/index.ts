@@ -110,21 +110,29 @@ Génère un test de bilan pour vérifier les acquis de cette séance.`;
         format: q.format,
         difficulte: 3,
         niveau_vise: niveauCible || "A1",
-        contenu: { items: [{ question: q.question, options: q.options, bonne_reponse: q.bonne_reponse, explication: q.explication }] },
+        contenu: {
+          // Audio support pour CO, texte support pour CE — requis par le validator
+          script_audio: q.competence === "CO" ? (q.script_audio || "") : undefined,
+          texte: q.competence === "CE" ? (q.texte_support || q.texte || "") : undefined,
+          items: [{ question: q.question, options: q.options, bonne_reponse: q.bonne_reponse, explication: q.explication }],
+        },
       };
       const validated = await validateAndFix(asExercise, { niveau: niveauCible || "A1" });
       if (!validated) {
         excluded.push({ question: q.question || "?", reason: "validation_failed" });
         continue;
       }
-      // Reconstruire format question original
-      const fixedItem = validated.exercise.contenu?.items?.[0] || {};
+      // Reconstruire format question original — IMPORTANT : préserver script_audio + texte_support
+      const fixedContenu = validated.exercise.contenu || {};
+      const fixedItem = fixedContenu.items?.[0] || {};
       validatedQuestions.push({
         ...q,
         question: fixedItem.question || q.question,
         options: fixedItem.options || q.options,
         bonne_reponse: fixedItem.bonne_reponse ?? q.bonne_reponse,
         explication: fixedItem.explication || q.explication,
+        script_audio: fixedContenu.script_audio || q.script_audio || "",
+        texte_support: fixedContenu.texte || q.texte_support || "",
       });
     }
 
