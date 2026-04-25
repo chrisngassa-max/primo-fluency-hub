@@ -325,11 +325,17 @@ const BilanTestPassation = () => {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            {currentQ.competence === "CO" && (
+            {currentQ.competence === "CO" && currentQ.script_audio && (
               <TTSAudioPlayer
-                text={currentQ.script_audio || currentQ.question}
+                text={currentQ.script_audio}
+                label="🔊 Écouter l'audio"
                 className="mb-2"
               />
+            )}
+            {currentQ.competence === "CE" && (currentQ.texte_support || currentQ.texte) && (
+              <div className="rounded-md border bg-muted/40 p-4 text-base leading-relaxed whitespace-pre-wrap">
+                {currentQ.texte_support || currentQ.texte}
+              </div>
             )}
             <p className="font-medium text-xl leading-relaxed">{currentQ.question}</p>
             {currentQ.competence !== "CO" && (
