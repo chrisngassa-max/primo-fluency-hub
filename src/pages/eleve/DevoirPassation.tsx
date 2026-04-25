@@ -793,6 +793,47 @@ const DevoirPassation = () => {
                     onChange={(e) => setAnswers((prev) => ({ ...prev, [idx]: e.target.value }))}
                   />
                 )}
+                <div className="flex justify-end pt-1">
+                  {reportedItemIdx.has(idx) ? (
+                    <Badge variant="outline" className="text-xs text-destructive border-destructive/40">
+                      ⚠️ Question neutralisée
+                    </Badge>
+                  ) : (
+                    <RegenerateItemButton
+                      competence={ex.competence}
+                      format={ex.format}
+                      niveau={ex.niveau_vise || "A1"}
+                      consigne={ex.consigne}
+                      currentItem={{
+                        question: item.question,
+                        options: item.options,
+                        bonne_reponse: item.bonne_reponse,
+                        explication: item.explication,
+                      }}
+                      currentSupport={{
+                        texte_support: contenu?.texte || contenu?.texte_support,
+                        script_audio: scriptAudio,
+                      }}
+                      onRegenerated={(newItem) => {
+                        setItemOverrides((prev) => ({ ...prev, [idx]: newItem }));
+                        setAnswers((prev) => {
+                          const { [idx]: _, ...rest } = prev;
+                          return rest;
+                        });
+                      }}
+                      onFallback={() => {
+                        setReportedItemIdx((prev) => new Set(prev).add(idx));
+                      }}
+                      reportContext={{
+                        context: "devoir",
+                        devoirId: devoir?.id,
+                        exerciceId: ex?.id,
+                        formateurId: (devoir as any)?.formateur_id,
+                        itemIndex: idx,
+                      }}
+                    />
+                  )}
+                </div>
               </CardContent>
             </Card>
           ))}
