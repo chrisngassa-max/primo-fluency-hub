@@ -17,6 +17,7 @@ import {
 import { cn } from "@/lib/utils";
 import CompetenceLabel from "@/components/CompetenceLabel";
 import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
+import ReportProblemButton from "@/components/ReportProblemButton";
 
 const BilanTestPassation = () => {
   const { testId } = useParams<{ testId: string }>();
@@ -26,6 +27,7 @@ const BilanTestPassation = () => {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [submitting, setSubmitting] = useState(false);
+  const [reportedIdx, setReportedIdx] = useState<Set<number>>(new Set());
   const [result, setResult] = useState<{
     scoreGlobal: number;
     totalQuestions: number;
@@ -99,15 +101,19 @@ const BilanTestPassation = () => {
     setSubmitting(true);
     try {
       let totalCorrect = 0;
+      let countedQuestions = 0;
       const compStats: Record<string, { correct: number; total: number }> = {};
       const correction = questions.map((q: any, idx: number) => {
         const userAnswer = answers[idx] || "";
+        const reported = reportedIdx.has(idx);
         const isCorrect = userAnswer.trim().toLowerCase() === (q.bonne_reponse || "").trim().toLowerCase();
-        if (isCorrect) totalCorrect++;
-
-        if (!compStats[q.competence]) compStats[q.competence] = { correct: 0, total: 0 };
-        compStats[q.competence].total++;
-        if (isCorrect) compStats[q.competence].correct++;
+        if (!reported) {
+          if (isCorrect) totalCorrect++;
+          countedQuestions++;
+          if (!compStats[q.competence]) compStats[q.competence] = { correct: 0, total: 0 };
+          compStats[q.competence].total++;
+          if (isCorrect) compStats[q.competence].correct++;
+        }
 
         return {
           question: q.question,
@@ -116,10 +122,11 @@ const BilanTestPassation = () => {
           bonne_reponse: q.bonne_reponse,
           correct: isCorrect,
           explication: q.explication || "",
+          reported,
         };
       });
 
-      const scoreGlobal = Math.round((totalCorrect / questions.length) * 100);
+      const scoreGlobal = countedQuestions > 0 ? Math.round((totalCorrect / countedQuestions) * 100) : 0;
       const scoresParCompetence: Record<string, { correct: number; total: number; pct: number }> = {};
       for (const [comp, stats] of Object.entries(compStats)) {
         scoresParCompetence[comp] = {
@@ -379,6 +386,28 @@ const BilanTestPassation = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* Signalement */}
+      <div className="flex justify-center">
+        {reportedIdx.has(currentIdx) ? (
+          <Badge variant="outline" className="text-destructive border-destructive/40">
+            ⚠️ Question signalée — non comptée dans le bilan
+          </Badge>
+        ) : (
+          <ReportProblemButton
+            context="bilan_test"
+            bilanTestId={testId}
+            formateurId={(bilanTest as any)?.formateur_id}
+            itemIndex={currentIdx}
+            onReported={() => {
+              setReportedIdx((prev) => new Set(prev).add(currentIdx));
+              if (currentIdx < questions.length - 1) {
+                setCurrentIdx((i) => i + 1);
+              }
+            }}
+          />
+        )}
+      </div>
 
       {/* Navigation */}
       <div className="flex items-center gap-3">

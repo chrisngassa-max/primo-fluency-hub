@@ -47,6 +47,7 @@ import ParcoursDetail from "@/pages/formateur/ParcoursDetail";
 import RapportsPage from "@/pages/formateur/RapportsPage";
 import SessionSupermarket from "@/pages/formateur/SessionSupermarket";
 import SuiviDevoirsPage from "@/pages/formateur/SuiviDevoirsPage";
+import SignalementsPage from "@/pages/formateur/SignalementsPage";
 import DevoirsFormateur from "@/pages/formateur/DevoirsFormateur";
 import AccessRequests from "@/pages/formateur/AccessRequests";
 import TestResultats from "@/pages/formateur/TestResultats";
@@ -104,6 +105,7 @@ const App = () => (
               <Route path="parcours/:parcoursId" element={<ParcoursDetail />} />
               <Route path="rapports" element={<RapportsPage />} />
               <Route path="suivi-devoirs" element={<SuiviDevoirsPage />} />
+              <Route path="signalements" element={<SignalementsPage />} />
               <Route path="devoirs" element={<DevoirsFormateur />} />
               <Route path="session-builder" element={<SessionSupermarket />} />
               <Route path="demandes" element={<AccessRequests />} />

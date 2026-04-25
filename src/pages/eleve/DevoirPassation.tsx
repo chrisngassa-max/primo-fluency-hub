@@ -17,6 +17,7 @@ import {
 import { cn } from "@/lib/utils";
 import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
 import CorrectionDetaillee from "@/components/CorrectionDetaillee";
+import ReportProblemButton from "@/components/ReportProblemButton";
 import { evaluerReponseIA } from "@/lib/testPositionnement";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -733,6 +734,16 @@ const DevoirPassation = () => {
               {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
               {submitting ? "Transcription et évaluation en cours…" : "Soumettre ma réponse orale"}
             </Button>
+
+            <div className="flex justify-center pt-2">
+              <ReportProblemButton
+                context="devoir"
+                devoirId={devoir?.id}
+                exerciceId={ex?.id}
+                formateurId={devoir?.formateur_id}
+                onReported={() => navigate("/eleve/devoirs")}
+              />
+            </div>
           </CardContent>
         </Card>
       ) : items.length > 0 ? (
@@ -780,6 +791,16 @@ const DevoirPassation = () => {
             {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             Soumettre mes réponses
           </Button>
+
+          <div className="flex justify-center pt-2">
+            <ReportProblemButton
+              context="devoir"
+              devoirId={devoir?.id}
+              exerciceId={ex?.id}
+              formateurId={devoir?.formateur_id}
+              onReported={() => navigate("/eleve/devoirs")}
+            />
+          </div>
         </div>
       ) : (
         <Card className="border-dashed">

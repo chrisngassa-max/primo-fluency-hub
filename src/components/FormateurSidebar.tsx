@@ -16,6 +16,7 @@ import {
   Library,
   Flame,
   Database,
+  Flag,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
@@ -59,6 +60,7 @@ const monitorNav = [
   { title: "Tests d'entrée", url: "/formateur/tests", icon: ClipboardList },
   { title: "Résultats positionnement", url: "/formateur/test-resultats", icon: GraduationCap },
   { title: "Rapports IA", url: "/formateur/rapports", icon: FileText },
+  { title: "Signalements", url: "/formateur/signalements", icon: Flag },
 ];
 
 interface FormateurSidebarProps {

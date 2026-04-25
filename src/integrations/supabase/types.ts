@@ -887,6 +887,63 @@ export type Database = {
           },
         ]
       }
+      exercise_reports: {
+        Row: {
+          bilan_test_id: string | null
+          comment: string | null
+          context: string
+          created_at: string
+          devoir_id: string | null
+          eleve_id: string
+          exercice_id: string | null
+          formateur_id: string | null
+          id: string
+          item_index: number | null
+          page_url: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          screenshot_path: string | null
+          status: string
+          user_agent: string | null
+        }
+        Insert: {
+          bilan_test_id?: string | null
+          comment?: string | null
+          context?: string
+          created_at?: string
+          devoir_id?: string | null
+          eleve_id: string
+          exercice_id?: string | null
+          formateur_id?: string | null
+          id?: string
+          item_index?: number | null
+          page_url?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          screenshot_path?: string | null
+          status?: string
+          user_agent?: string | null
+        }
+        Update: {
+          bilan_test_id?: string | null
+          comment?: string | null
+          context?: string
+          created_at?: string
+          devoir_id?: string | null
+          eleve_id?: string
+          exercice_id?: string | null
+          formateur_id?: string | null
+          id?: string
+          item_index?: number | null
+          page_url?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          screenshot_path?: string | null
+          status?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       external_resource_results: {
         Row: {
           comment: string | null

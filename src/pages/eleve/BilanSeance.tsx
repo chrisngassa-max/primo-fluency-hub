@@ -23,6 +23,7 @@ import CompetenceLabel from "@/components/CompetenceLabel";
 import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
 import SessionFeedbackForm from "@/components/SessionFeedbackForm";
 import { logEvent } from "@/lib/analytics";
+import ReportProblemButton from "@/components/ReportProblemButton";
 
 const STORAGE_KEY_PREFIX = "bilan-seance-progress-";
 
@@ -122,6 +123,7 @@ const BilanSeance = () => {
   const [currentExIdx, setCurrentExIdx] = useState(savedProgress?.currentExIdx ?? 0);
   const [answers, setAnswers] = useState<Record<string, Record<number, string>>>(savedProgress?.answers ?? {});
   const [submitting, setSubmitting] = useState(false);
+  const [reportedExIds, setReportedExIds] = useState<Set<string>>(new Set());
   const [externalIdx, setExternalIdx] = useState(0);
   const [externalAutoScore, setExternalAutoScore] = useState<number | undefined>(undefined);
   const [externalShowForm, setExternalShowForm] = useState(false);
@@ -253,8 +255,10 @@ const BilanSeance = () => {
       let totalScore = 0;
       let devoirsCreated = 0;
 
+      let countedExercices = 0;
       for (const se of pendingExercices) {
         const ex = se.exercice as any;
+        if (reportedExIds.has(ex.id)) continue; // exercice signalé : exclu du score
         const items: any[] = ex?.contenu?.items ?? [];
         const exAnswers = answers[ex.id] ?? {};
 
@@ -274,6 +278,7 @@ const BilanSeance = () => {
 
         const score = items.length > 0 ? Math.round((correct / items.length) * 100) : 0;
         totalScore += score;
+        countedExercices++;
 
         // Insert result
         const { error: resErr } = await supabase.from("resultats").insert({
@@ -332,8 +337,8 @@ const BilanSeance = () => {
           );
       }
 
-      const globalScore = pendingExercices.length > 0
-        ? Math.round(totalScore / pendingExercices.length)
+      const globalScore = countedExercices > 0
+        ? Math.round(totalScore / countedExercices)
         : 0;
 
       // Propagate scores to profils_eleves for monitoring visibility
@@ -699,6 +704,29 @@ const BilanSeance = () => {
           })}
         </CardContent>
       </Card>
+
+      {/* Signalement de l'exercice courant */}
+      {currentEx && (
+        <div className="flex justify-center">
+          {reportedExIds.has(currentEx.id) ? (
+            <Badge variant="outline" className="text-destructive border-destructive/40">
+              ⚠️ Exercice signalé — non compté dans le bilan
+            </Badge>
+          ) : (
+            <ReportProblemButton
+              context="bilan_seance"
+              exerciceId={currentEx.id}
+              formateurId={currentEx.formateur_id}
+              onReported={() => {
+                setReportedExIds((prev) => new Set(prev).add(currentEx.id));
+                if (currentExIdx < pendingExercices.length - 1) {
+                  setCurrentExIdx((i) => i + 1);
+                }
+              }}
+            />
+          )}
+        </div>
+      )}
 
       {/* Navigation */}
       <div className="flex items-center gap-3">
