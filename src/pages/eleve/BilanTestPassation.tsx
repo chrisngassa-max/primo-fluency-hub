@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import CompetenceLabel from "@/components/CompetenceLabel";
 import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
 import ReportProblemButton from "@/components/ReportProblemButton";
+import RegenerateItemButton from "@/components/RegenerateItemButton";
 
 const BilanTestPassation = () => {
   const { testId } = useParams<{ testId: string }>();
@@ -28,6 +29,7 @@ const BilanTestPassation = () => {
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [reportedIdx, setReportedIdx] = useState<Set<number>>(new Set());
+  const [overrides, setOverrides] = useState<Record<number, any>>({});
   const [result, setResult] = useState<{
     scoreGlobal: number;
     totalQuestions: number;
