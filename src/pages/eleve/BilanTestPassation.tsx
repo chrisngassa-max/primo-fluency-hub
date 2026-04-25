@@ -387,6 +387,28 @@ const BilanTestPassation = () => {
         </Card>
       )}
 
+      {/* Signalement */}
+      <div className="flex justify-center">
+        {reportedIdx.has(currentIdx) ? (
+          <Badge variant="outline" className="text-destructive border-destructive/40">
+            ⚠️ Question signalée — non comptée dans le bilan
+          </Badge>
+        ) : (
+          <ReportProblemButton
+            context="bilan_test"
+            bilanTestId={testId}
+            formateurId={(bilanTest as any)?.formateur_id}
+            itemIndex={currentIdx}
+            onReported={() => {
+              setReportedIdx((prev) => new Set(prev).add(currentIdx));
+              if (currentIdx < questions.length - 1) {
+                setCurrentIdx((i) => i + 1);
+              }
+            }}
+          />
+        )}
+      </div>
+
       {/* Navigation */}
       <div className="flex items-center gap-3">
         <Button variant="outline" disabled={currentIdx === 0} onClick={() => setCurrentIdx((i) => i - 1)} className="gap-1">
