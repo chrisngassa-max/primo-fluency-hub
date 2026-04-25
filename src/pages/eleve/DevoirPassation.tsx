@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
 import CorrectionDetaillee from "@/components/CorrectionDetaillee";
 import ReportProblemButton from "@/components/ReportProblemButton";
+import RegenerateItemButton from "@/components/RegenerateItemButton";
 import { evaluerReponseIA } from "@/lib/testPositionnement";
 import { Progress } from "@/components/ui/progress";
 import {
