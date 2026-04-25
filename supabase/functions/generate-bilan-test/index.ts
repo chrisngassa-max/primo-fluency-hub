@@ -67,6 +67,8 @@ Génère un test de bilan pour vérifier les acquis de cette séance.`;
                       question: { type: "string", description: "Texte de la question" },
                       competence: { type: "string", enum: ["CO", "CE", "EE", "EO", "Structures"] },
                       format: { type: "string", enum: ["qcm", "vrai_faux", "texte_lacunaire"] },
+                      script_audio: { type: "string", description: "OBLIGATOIRE pour CO : texte (30-60 mots) à lire à voix haute par TTS" },
+                      texte_support: { type: "string", description: "OBLIGATOIRE pour CE : texte support (40-100 mots) à lire par l'apprenant" },
                       options: {
                         type: "array",
                         items: { type: "string" },
