@@ -396,6 +396,8 @@ Pour chaque élève, cible ses faiblesses spécifiques. Les exercices de tronc c
     const sessionDate = new Date(session.date_seance);
     let totalDevoirs = 0;
     let totalExercices = 0;
+    let totalExcluded = 0;
+    const excludedReport: { eleve: string; titre: string; reason: string }[] = [];
 
     // Cache for tronc commun exercises (same content → share exercise row)
     const troncCommunCache: Record<string, string> = {}; // key = jour_titre → exercice_id
@@ -414,9 +416,22 @@ Pour chaque élève, cible ses faiblesses spécifiques. Les exercices de tronc c
         deadline.setHours(23, 59, 59, 0);
 
         for (const ex of jour.exercices || []) {
+          // ── VALIDATION & RÉGÉNÉRATION ──
+          const validated = await validateAndFix(
+            { ...ex, niveau_vise: niveauCible },
+            { niveau: niveauCible, demarche }
+          );
+          if (!validated) {
+            totalExcluded++;
+            excludedReport.push({ eleve: aiEleve.eleve_id, titre: ex.titre || "?", reason: "validation_failed_after_3_attempts" });
+            console.warn(`[homework] Excluded: ${ex.titre} for ${aiEleve.eleve_id}`);
+            continue;
+          }
+          const validEx = validated.exercise;
+
           const raison = ex.raison === "tronc_commun" ? "consolidation" : (ex.raison === "remediation" ? "remediation" : "consolidation");
           const sourceLabel = ex.raison === "tronc_commun" ? "tronc_commun" : "individualise";
-          const cacheKey = ex.raison === "tronc_commun" ? `j${dayOffset}_${ex.titre}` : "";
+          const cacheKey = ex.raison === "tronc_commun" ? `j${dayOffset}_${validEx.titre}` : "";
 
           let exerciceId: string;
 
