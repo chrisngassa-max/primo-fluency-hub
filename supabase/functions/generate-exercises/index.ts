@@ -727,6 +727,24 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
 
     const exercises = JSON.parse(toolCall.function.arguments);
 
+    // ── Validation + régénération de chaque exercice (audio/visuel/pédagogie/TCF) ──
+    const validatedList: any[] = [];
+    const excludedList: { titre: string; reason: string }[] = [];
+    for (const ex of exercises.exercises || []) {
+      const validated = await validateAndFix(ex, { niveau: ex.niveau_vise });
+      if (!validated) {
+        excludedList.push({ titre: ex.titre || "?", reason: "validation_failed_after_3_attempts" });
+        console.warn(`[generate-exercises] Excluded: ${ex.titre}`);
+        continue;
+      }
+      validatedList.push({ ...ex, ...validated.exercise });
+    }
+    exercises.exercises = validatedList;
+    if (excludedList.length > 0) {
+      (exercises as any).excluded = excludedList;
+      (exercises as any).totalExcluded = excludedList.length;
+    }
+
     // Post-processing: fetch photos from Pexels for exercises that have image_description
     const PEXELS_API_KEY = Deno.env.get("PEXELS_API_KEY");
 
