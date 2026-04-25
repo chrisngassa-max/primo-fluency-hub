@@ -255,8 +255,10 @@ const BilanSeance = () => {
       let totalScore = 0;
       let devoirsCreated = 0;
 
+      let countedExercices = 0;
       for (const se of pendingExercices) {
         const ex = se.exercice as any;
+        if (reportedExIds.has(ex.id)) continue; // exercice signalé : exclu du score
         const items: any[] = ex?.contenu?.items ?? [];
         const exAnswers = answers[ex.id] ?? {};
 
