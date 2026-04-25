@@ -86,6 +86,22 @@ const getExerciseSupportText = (exercise: any) => {
   return getSupportText(contenu) || extractSupportFromConsigne(exercise?.consigne);
 };
 
+const SafeImageBlock = ({ url }: { url: string }) => {
+  const [failed, setFailed] = useState(false);
+  if (failed) return null;
+  return (
+    <div className="p-4 rounded-lg bg-muted/50 border border-border/50">
+      <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide font-semibold">🖼️ Document visuel</p>
+      <img
+        src={url}
+        alt="Support visuel de l'exercice"
+        className="max-w-full rounded-lg mx-auto"
+        onError={() => setFailed(true)}
+      />
+    </div>
+  );
+};
+
 const BilanSeance = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
   const navigate = useNavigate();
