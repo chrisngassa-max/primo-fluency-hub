@@ -123,6 +123,7 @@ const BilanSeance = () => {
   const [currentExIdx, setCurrentExIdx] = useState(savedProgress?.currentExIdx ?? 0);
   const [answers, setAnswers] = useState<Record<string, Record<number, string>>>(savedProgress?.answers ?? {});
   const [submitting, setSubmitting] = useState(false);
+  const [reportedExIds, setReportedExIds] = useState<Set<string>>(new Set());
   const [externalIdx, setExternalIdx] = useState(0);
   const [externalAutoScore, setExternalAutoScore] = useState<number | undefined>(undefined);
   const [externalShowForm, setExternalShowForm] = useState(false);
