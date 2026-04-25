@@ -231,7 +231,11 @@ const BilanSeance = () => {
 
   const currentSe = pendingExercices[currentExIdx];
   const currentEx = currentSe?.exercice as any;
-  const currentItems: any[] = currentEx?.contenu?.items ?? [];
+  const rawCurrentItems: any[] = currentEx?.contenu?.items ?? [];
+  const currentItems: any[] = rawCurrentItems.map((it, idx) => {
+    const key = `${currentEx?.id}:${idx}`;
+    return itemOverrides[key] ? { ...it, ...itemOverrides[key] } : it;
+  });
   const exerciseSupportText = getExerciseSupportText(currentEx);
   const currentAnswers = answers[currentEx?.id] ?? {};
   const totalQuestions = pendingExercices.reduce((acc: number, se: any) => {
