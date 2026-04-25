@@ -71,18 +71,18 @@ const BilanTestPassation = () => {
   });
 
   // Normalize question fields (generator uses consigne/support/choix, legacy uses question/script_audio/options)
-  const questions: any[] = (bilanTest?.contenu || []).map((q: any) => {
+  const questions: any[] = (bilanTest?.contenu || []).map((origQ: any, idx: number) => {
+    const q = overrides[idx] ? { ...origQ, ...overrides[idx] } : origQ;
     // Determine the display question text
     let questionText = q.question || q.consigne || "";
     // Determine the audio script for CO questions
     let scriptAudio = q.script_audio || q.support || "";
-    
+
     // If question contains "(Audio)" prefix pattern, extract the audio part
     if (!scriptAudio && questionText && q.competence === "CO") {
       const audioMatch = questionText.match(/^\(Audio\)\s*:\s*"([^"]+)"/i);
       if (audioMatch) {
         scriptAudio = audioMatch[1];
-        // Clean up the question to show only the actual question part
         questionText = questionText.replace(/^\(Audio\)\s*:\s*"[^"]+"\s*/i, "").trim();
       }
     }
