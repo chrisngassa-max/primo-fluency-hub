@@ -278,6 +278,7 @@ const BilanSeance = () => {
 
         const score = items.length > 0 ? Math.round((correct / items.length) * 100) : 0;
         totalScore += score;
+        countedExercices++;
 
         // Insert result
         const { error: resErr } = await supabase.from("resultats").insert({
