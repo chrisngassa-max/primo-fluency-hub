@@ -29,7 +29,13 @@ Règles :
 - Les questions doivent être DIFFÉRENTES des exercices originaux mais tester les mêmes compétences
 - Niveau adapté au niveau cible de la séance
 - Contexte IRN (préfecture, emploi, logement, etc.)
-- Chaque question a exactement UNE bonne réponse`;
+- Chaque question a exactement UNE bonne réponse
+
+OBLIGATIONS PAR COMPÉTENCE :
+- CO (Compréhension orale) : fournis OBLIGATOIREMENT "script_audio" = un texte court (30-60 mots) à lire à voix haute. La question porte sur ce script.
+- CE (Compréhension écrite) : fournis OBLIGATOIREMENT "texte_support" = un texte support (40-100 mots) à lire. La question porte sur ce texte.
+- EE / EO / Structures : pas de support audio/texte requis.
+- bonne_reponse DOIT figurer EXACTEMENT dans options (QCM) ; "vrai" ou "faux" pour vrai_faux.`;
 
     const userPrompt = `SÉANCE : "${sessionTitle || "Séance"}"
 NIVEAU CIBLE : ${niveauCible || "A1"}
@@ -61,6 +67,8 @@ Génère un test de bilan pour vérifier les acquis de cette séance.`;
                       question: { type: "string", description: "Texte de la question" },
                       competence: { type: "string", enum: ["CO", "CE", "EE", "EO", "Structures"] },
                       format: { type: "string", enum: ["qcm", "vrai_faux", "texte_lacunaire"] },
+                      script_audio: { type: "string", description: "OBLIGATOIRE pour CO : texte (30-60 mots) à lire à voix haute par TTS" },
+                      texte_support: { type: "string", description: "OBLIGATOIRE pour CE : texte support (40-100 mots) à lire par l'apprenant" },
                       options: {
                         type: "array",
                         items: { type: "string" },
@@ -102,21 +110,29 @@ Génère un test de bilan pour vérifier les acquis de cette séance.`;
         format: q.format,
         difficulte: 3,
         niveau_vise: niveauCible || "A1",
-        contenu: { items: [{ question: q.question, options: q.options, bonne_reponse: q.bonne_reponse, explication: q.explication }] },
+        contenu: {
+          // Audio support pour CO, texte support pour CE — requis par le validator
+          script_audio: q.competence === "CO" ? (q.script_audio || "") : undefined,
+          texte: q.competence === "CE" ? (q.texte_support || q.texte || "") : undefined,
+          items: [{ question: q.question, options: q.options, bonne_reponse: q.bonne_reponse, explication: q.explication }],
+        },
       };
       const validated = await validateAndFix(asExercise, { niveau: niveauCible || "A1" });
       if (!validated) {
         excluded.push({ question: q.question || "?", reason: "validation_failed" });
         continue;
       }
-      // Reconstruire format question original
-      const fixedItem = validated.exercise.contenu?.items?.[0] || {};
+      // Reconstruire format question original — IMPORTANT : préserver script_audio + texte_support
+      const fixedContenu = validated.exercise.contenu || {};
+      const fixedItem = fixedContenu.items?.[0] || {};
       validatedQuestions.push({
         ...q,
         question: fixedItem.question || q.question,
         options: fixedItem.options || q.options,
         bonne_reponse: fixedItem.bonne_reponse ?? q.bonne_reponse,
         explication: fixedItem.explication || q.explication,
+        script_audio: fixedContenu.script_audio || q.script_audio || "",
+        texte_support: fixedContenu.texte || q.texte_support || "",
       });
     }
 
