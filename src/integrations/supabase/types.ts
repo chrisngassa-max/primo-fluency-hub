@@ -207,6 +207,8 @@ export type Database = {
       bilan_post_devoirs: {
         Row: {
           analyse_data: Json
+          archived_at: string | null
+          archived_reason: string | null
           created_at: string
           eleve_id: string
           formateur_id: string
@@ -217,6 +219,8 @@ export type Database = {
         }
         Insert: {
           analyse_data?: Json
+          archived_at?: string | null
+          archived_reason?: string | null
           created_at?: string
           eleve_id: string
           formateur_id: string
@@ -227,6 +231,8 @@ export type Database = {
         }
         Update: {
           analyse_data?: Json
+          archived_at?: string | null
+          archived_reason?: string | null
           created_at?: string
           eleve_id?: string
           formateur_id?: string
@@ -309,6 +315,8 @@ export type Database = {
       }
       bilan_tests: {
         Row: {
+          archived_at: string | null
+          archived_reason: string | null
           competences_couvertes: string[]
           contenu: Json
           created_at: string
@@ -319,6 +327,8 @@ export type Database = {
           statut: string
         }
         Insert: {
+          archived_at?: string | null
+          archived_reason?: string | null
           competences_couvertes?: string[]
           contenu?: Json
           created_at?: string
@@ -329,6 +339,8 @@ export type Database = {
           statut?: string
         }
         Update: {
+          archived_at?: string | null
+          archived_reason?: string | null
           competences_couvertes?: string[]
           contenu?: Json
           created_at?: string
@@ -357,6 +369,8 @@ export type Database = {
       }
       devoirs: {
         Row: {
+          archived_at: string | null
+          archived_reason: string | null
           contexte: string
           created_at: string
           date_echeance: string
@@ -373,6 +387,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          archived_at?: string | null
+          archived_reason?: string | null
           contexte?: string
           created_at?: string
           date_echeance?: string
@@ -389,6 +405,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          archived_at?: string | null
+          archived_reason?: string | null
           contexte?: string
           created_at?: string
           date_echeance?: string
