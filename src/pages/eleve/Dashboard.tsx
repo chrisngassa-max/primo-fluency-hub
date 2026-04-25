@@ -86,21 +86,6 @@ const EleveDashboard = () => {
 
   const testCompleted = !!testResultat;
 
-  // Fetch active devoirs
-  const { data: devoirs, isLoading: devoirsLoading } = useQuery({
-    queryKey: ["eleve-devoirs", user?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("devoirs")
-        .select("*, exercice:exercices(titre, competence, consigne, format)")
-        .eq("eleve_id", user!.id)
-        .eq("statut", "en_attente")
-        .order("date_echeance", { ascending: true });
-      if (error) throw error;
-      return data ?? [];
-    },
-    enabled: !!user?.id,
-  });
 
 
   // Identifie la séance du jour (date = aujourd'hui, sinon la plus récente "en_cours")
