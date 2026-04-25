@@ -24,6 +24,7 @@ import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
 import SessionFeedbackForm from "@/components/SessionFeedbackForm";
 import { logEvent } from "@/lib/analytics";
 import ReportProblemButton from "@/components/ReportProblemButton";
+import RegenerateItemButton from "@/components/RegenerateItemButton";
 
 const STORAGE_KEY_PREFIX = "bilan-seance-progress-";
 
@@ -124,6 +125,8 @@ const BilanSeance = () => {
   const [answers, setAnswers] = useState<Record<string, Record<number, string>>>(savedProgress?.answers ?? {});
   const [submitting, setSubmitting] = useState(false);
   const [reportedExIds, setReportedExIds] = useState<Set<string>>(new Set());
+  const [reportedItemKeys, setReportedItemKeys] = useState<Set<string>>(new Set());
+  const [itemOverrides, setItemOverrides] = useState<Record<string, any>>({});
   const [externalIdx, setExternalIdx] = useState(0);
   const [externalAutoScore, setExternalAutoScore] = useState<number | undefined>(undefined);
   const [externalShowForm, setExternalShowForm] = useState(false);
