@@ -17,6 +17,7 @@ import {
 import { cn } from "@/lib/utils";
 import CompetenceLabel from "@/components/CompetenceLabel";
 import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
+import ReportProblemButton from "@/components/ReportProblemButton";
 
 const BilanTestPassation = () => {
   const { testId } = useParams<{ testId: string }>();
