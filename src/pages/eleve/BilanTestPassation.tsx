@@ -390,24 +390,59 @@ const BilanTestPassation = () => {
       )}
 
       {/* Signalement */}
-      <div className="flex justify-center">
+      <div className="flex flex-wrap justify-center gap-2">
         {reportedIdx.has(currentIdx) ? (
           <Badge variant="outline" className="text-destructive border-destructive/40">
             ⚠️ Question signalée — non comptée dans le bilan
           </Badge>
         ) : (
-          <ReportProblemButton
-            context="bilan_test"
-            bilanTestId={testId}
-            formateurId={(bilanTest as any)?.formateur_id}
-            itemIndex={currentIdx}
-            onReported={() => {
-              setReportedIdx((prev) => new Set(prev).add(currentIdx));
-              if (currentIdx < questions.length - 1) {
-                setCurrentIdx((i) => i + 1);
-              }
-            }}
-          />
+          <>
+            {currentQ && (
+              <RegenerateItemButton
+                competence={currentQ.competence}
+                format={currentQ.format}
+                niveau={(bilanTest as any)?.session?.niveau_cible || "A1"}
+                consigne={currentQ.consigne}
+                currentItem={{
+                  question: currentQ.question,
+                  options: currentQ.options,
+                  bonne_reponse: currentQ.bonne_reponse,
+                  explication: currentQ.explication,
+                  texte_support: currentQ.texte_support,
+                  script_audio: currentQ.script_audio,
+                }}
+                onRegenerated={(newItem) => {
+                  setOverrides((prev) => ({ ...prev, [currentIdx]: newItem }));
+                  setAnswers((prev) => {
+                    const { [currentIdx]: _, ...rest } = prev;
+                    return rest;
+                  });
+                }}
+                onFallback={() => {
+                  setReportedIdx((prev) => new Set(prev).add(currentIdx));
+                  if (currentIdx < questions.length - 1) setCurrentIdx((i) => i + 1);
+                }}
+                reportContext={{
+                  context: "bilan_test",
+                  bilanTestId: testId,
+                  formateurId: (bilanTest as any)?.formateur_id,
+                  itemIndex: currentIdx,
+                }}
+              />
+            )}
+            <ReportProblemButton
+              context="bilan_test"
+              bilanTestId={testId}
+              formateurId={(bilanTest as any)?.formateur_id}
+              itemIndex={currentIdx}
+              onReported={() => {
+                setReportedIdx((prev) => new Set(prev).add(currentIdx));
+                if (currentIdx < questions.length - 1) {
+                  setCurrentIdx((i) => i + 1);
+                }
+              }}
+            />
+          </>
         )}
       </div>
 
