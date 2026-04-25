@@ -337,8 +337,8 @@ const BilanSeance = () => {
           );
       }
 
-      const globalScore = pendingExercices.length > 0
-        ? Math.round(totalScore / pendingExercices.length)
+      const globalScore = countedExercices > 0
+        ? Math.round(totalScore / countedExercices)
         : 0;
 
       // Propagate scores to profils_eleves for monitoring visibility
