@@ -367,6 +367,45 @@ export type Database = {
           },
         ]
       }
+      daily_reports: {
+        Row: {
+          auto_applied: number
+          created_at: string
+          formateur_id: string
+          id: string
+          is_read: boolean
+          kind: string
+          pending_validation: number
+          report_date: string
+          summary: Json
+          total_reports: number
+        }
+        Insert: {
+          auto_applied?: number
+          created_at?: string
+          formateur_id: string
+          id?: string
+          is_read?: boolean
+          kind?: string
+          pending_validation?: number
+          report_date: string
+          summary?: Json
+          total_reports?: number
+        }
+        Update: {
+          auto_applied?: number
+          created_at?: string
+          formateur_id?: string
+          id?: string
+          is_read?: boolean
+          kind?: string
+          pending_validation?: number
+          report_date?: string
+          summary?: Json
+          total_reports?: number
+        }
+        Relationships: []
+      }
       devoirs: {
         Row: {
           archived_at: string | null
@@ -889,6 +928,13 @@ export type Database = {
       }
       exercise_reports: {
         Row: {
+          ai_analysis: Json | null
+          ai_applied_at: string | null
+          ai_auto_applied: boolean
+          ai_confidence: number | null
+          ai_problem_type: string | null
+          ai_processed_at: string | null
+          ai_proposed_solution: Json | null
           bilan_test_id: string | null
           comment: string | null
           context: string
@@ -896,6 +942,9 @@ export type Database = {
           devoir_id: string | null
           eleve_id: string
           exercice_id: string | null
+          exercice_snapshot: Json | null
+          formateur_decision: string | null
+          formateur_decision_at: string | null
           formateur_id: string | null
           id: string
           item_index: number | null
@@ -907,6 +956,13 @@ export type Database = {
           user_agent: string | null
         }
         Insert: {
+          ai_analysis?: Json | null
+          ai_applied_at?: string | null
+          ai_auto_applied?: boolean
+          ai_confidence?: number | null
+          ai_problem_type?: string | null
+          ai_processed_at?: string | null
+          ai_proposed_solution?: Json | null
           bilan_test_id?: string | null
           comment?: string | null
           context?: string
@@ -914,6 +970,9 @@ export type Database = {
           devoir_id?: string | null
           eleve_id: string
           exercice_id?: string | null
+          exercice_snapshot?: Json | null
+          formateur_decision?: string | null
+          formateur_decision_at?: string | null
           formateur_id?: string | null
           id?: string
           item_index?: number | null
@@ -925,6 +984,13 @@ export type Database = {
           user_agent?: string | null
         }
         Update: {
+          ai_analysis?: Json | null
+          ai_applied_at?: string | null
+          ai_auto_applied?: boolean
+          ai_confidence?: number | null
+          ai_problem_type?: string | null
+          ai_processed_at?: string | null
+          ai_proposed_solution?: Json | null
           bilan_test_id?: string | null
           comment?: string | null
           context?: string
@@ -932,6 +998,9 @@ export type Database = {
           devoir_id?: string | null
           eleve_id?: string
           exercice_id?: string | null
+          exercice_snapshot?: Json | null
+          formateur_decision?: string | null
+          formateur_decision_at?: string | null
           formateur_id?: string | null
           id?: string
           item_index?: number | null
