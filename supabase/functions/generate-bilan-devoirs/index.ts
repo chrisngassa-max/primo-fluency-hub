@@ -142,10 +142,26 @@ Génère les devoirs ciblés pour chaque compétence en difficulté. Attribue un
 
     const result = JSON.parse(toolCall.function.arguments);
 
-    return new Response(JSON.stringify(result), {
-      status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    // ── Validation + régénération de chaque devoir ──
+    const validatedDevoirs: any[] = [];
+    const excludedDevoirs: { titre: string; reason: string }[] = [];
+    for (const devoir of result.devoirs || []) {
+      const validated = await validateAndFix(
+        { ...devoir, niveau_vise: devoir.niveau_vise || niveauCible },
+        { niveau: niveauCible || "A1" }
+      );
+      if (!validated) {
+        excludedDevoirs.push({ titre: devoir.titre || "?", reason: "validation_failed_after_3_attempts" });
+        console.warn(`[bilan-devoirs] Excluded: ${devoir.titre}`);
+        continue;
+      }
+      validatedDevoirs.push({ ...devoir, ...validated.exercise });
+    }
+
+    return new Response(
+      JSON.stringify({ devoirs: validatedDevoirs, excluded: excludedDevoirs, totalExcluded: excludedDevoirs.length }),
+      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
   } catch (e) {
     console.error("generate-bilan-devoirs error:", e);
     return new Response(
