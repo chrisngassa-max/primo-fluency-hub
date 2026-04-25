@@ -91,10 +91,39 @@ Génère un test de bilan pour vérifier les acquis de cette séance.`;
 
     const result = JSON.parse(toolCall.function.arguments);
 
-    return new Response(JSON.stringify(result), {
-      status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    // ── Validation question par question (chaque question = mini exercice à 1 item) ──
+    const validatedQuestions: any[] = [];
+    const excluded: { question: string; reason: string }[] = [];
+    for (const q of result.questions || []) {
+      const asExercise = {
+        titre: q.question?.slice(0, 60) || "Question bilan",
+        consigne: "Réponds à la question.",
+        competence: q.competence,
+        format: q.format,
+        difficulte: 3,
+        niveau_vise: niveauCible || "A1",
+        contenu: { items: [{ question: q.question, options: q.options, bonne_reponse: q.bonne_reponse, explication: q.explication }] },
+      };
+      const validated = await validateAndFix(asExercise, { niveau: niveauCible || "A1" });
+      if (!validated) {
+        excluded.push({ question: q.question || "?", reason: "validation_failed" });
+        continue;
+      }
+      // Reconstruire format question original
+      const fixedItem = validated.exercise.contenu?.items?.[0] || {};
+      validatedQuestions.push({
+        ...q,
+        question: fixedItem.question || q.question,
+        options: fixedItem.options || q.options,
+        bonne_reponse: fixedItem.bonne_reponse ?? q.bonne_reponse,
+        explication: fixedItem.explication || q.explication,
+      });
+    }
+
+    return new Response(
+      JSON.stringify({ ...result, questions: validatedQuestions, excluded, totalExcluded: excluded.length }),
+      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
   } catch (e) {
     console.error("generate-bilan-test error:", e);
     return new Response(
