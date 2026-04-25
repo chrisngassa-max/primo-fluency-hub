@@ -467,20 +467,26 @@ const DevoirPassation = () => {
     setSubmitting(true);
     try {
       let correct = 0;
+      let counted = 0;
       const correction = items.map((item: any, idx: number) => {
         const userAnswer = answers[idx] || "";
+        const reported = reportedItemIdx.has(idx);
         const isCorrect = userAnswer.trim().toLowerCase() === (item.bonne_reponse || "").trim().toLowerCase();
-        if (isCorrect) correct++;
+        if (!reported) {
+          if (isCorrect) correct++;
+          counted++;
+        }
         return {
           question: item.question,
           reponse_eleve: userAnswer,
           bonne_reponse: item.bonne_reponse,
           correct: isCorrect,
           explication: item.explication || "",
+          reported,
         };
       });
 
-      const score = items.length > 0 ? Math.round((correct / items.length) * 100) : 0;
+      const score = counted > 0 ? Math.round((correct / counted) * 100) : 0;
 
       const { error: resErr } = await supabase.from("resultats").insert({
         eleve_id: user.id,
