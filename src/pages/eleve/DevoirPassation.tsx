@@ -781,6 +781,16 @@ const DevoirPassation = () => {
             {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             Soumettre mes réponses
           </Button>
+
+          <div className="flex justify-center pt-2">
+            <ReportProblemButton
+              context="devoir"
+              devoirId={devoir?.id}
+              exerciceId={ex?.id}
+              formateurId={devoir?.formateur_id}
+              onReported={() => navigate("/eleve/devoirs")}
+            />
+          </div>
         </div>
       ) : (
         <Card className="border-dashed">
