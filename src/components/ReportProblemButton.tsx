@@ -82,21 +82,32 @@ export default function ReportProblemButton({
       }
 
       // 2) Insertion du signalement
-      const { error } = await supabase.from("exercise_reports").insert({
-        eleve_id: eleveId,
-        formateur_id: formateurId ?? null,
-        exercice_id: exerciceId ?? null,
-        devoir_id: devoirId ?? null,
-        bilan_test_id: bilanTestId ?? null,
-        context,
-        item_index: itemIndex ?? null,
-        comment: comment.trim() || null,
-        screenshot_path: screenshotPath,
-        page_url: window.location.href,
-        user_agent: navigator.userAgent,
-      });
+      const { data: inserted, error } = await supabase
+        .from("exercise_reports")
+        .insert({
+          eleve_id: eleveId,
+          formateur_id: formateurId ?? null,
+          exercice_id: exerciceId ?? null,
+          devoir_id: devoirId ?? null,
+          bilan_test_id: bilanTestId ?? null,
+          context,
+          item_index: itemIndex ?? null,
+          comment: comment.trim() || null,
+          screenshot_path: screenshotPath,
+          page_url: window.location.href,
+          user_agent: navigator.userAgent,
+        })
+        .select("id")
+        .single();
 
       if (error) throw error;
+
+      // 3) Déclenche l'analyse IA en arrière-plan (non-bloquant)
+      if (inserted?.id) {
+        supabase.functions
+          .invoke("analyze-report", { body: { reportId: inserted.id } })
+          .catch((e) => console.warn("analyze-report failed:", e));
+      }
 
       toast({
         title: "Signalement envoyé ✅",
