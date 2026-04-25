@@ -705,6 +705,29 @@ const BilanSeance = () => {
         </CardContent>
       </Card>
 
+      {/* Signalement de l'exercice courant */}
+      {currentEx && (
+        <div className="flex justify-center">
+          {reportedExIds.has(currentEx.id) ? (
+            <Badge variant="outline" className="text-destructive border-destructive/40">
+              ⚠️ Exercice signalé — non compté dans le bilan
+            </Badge>
+          ) : (
+            <ReportProblemButton
+              context="bilan_seance"
+              exerciceId={currentEx.id}
+              formateurId={currentEx.formateur_id}
+              onReported={() => {
+                setReportedExIds((prev) => new Set(prev).add(currentEx.id));
+                if (currentExIdx < pendingExercices.length - 1) {
+                  setCurrentExIdx((i) => i + 1);
+                }
+              }}
+            />
+          )}
+        </div>
+      )}
+
       {/* Navigation */}
       <div className="flex items-center gap-3">
         <Button
