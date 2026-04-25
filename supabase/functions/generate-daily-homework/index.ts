@@ -494,6 +494,8 @@ Pour chaque élève, cible ses faiblesses spécifiques. Les exercices de tronc c
         totalEleves: aiEleves.length,
         totalExercices,
         totalDevoirs,
+        totalExcluded,
+        excludedReport,
         plan: aiEleves.map((e: any) => ({
           eleve_id: shortToFull[e.eleve_id] || e.eleve_id,
           jours: (e.jours || []).map((j: any) => ({
