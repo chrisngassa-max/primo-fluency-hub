@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { MODEL } from "../_shared/system-prompt.ts";
 import { callAI, AIError } from "../_shared/ai-client.ts";
+import { validateAndFix } from "../_shared/exercise-validator.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -725,6 +726,24 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
     if (!toolCall) throw new Error("No tool call in AI response");
 
     const exercises = JSON.parse(toolCall.function.arguments);
+
+    // ── Validation + régénération de chaque exercice (audio/visuel/pédagogie/TCF) ──
+    const validatedList: any[] = [];
+    const excludedList: { titre: string; reason: string }[] = [];
+    for (const ex of exercises.exercises || []) {
+      const validated = await validateAndFix(ex, { niveau: ex.niveau_vise });
+      if (!validated) {
+        excludedList.push({ titre: ex.titre || "?", reason: "validation_failed_after_3_attempts" });
+        console.warn(`[generate-exercises] Excluded: ${ex.titre}`);
+        continue;
+      }
+      validatedList.push({ ...ex, ...validated.exercise });
+    }
+    exercises.exercises = validatedList;
+    if (excludedList.length > 0) {
+      (exercises as any).excluded = excludedList;
+      (exercises as any).totalExcluded = excludedList.length;
+    }
 
     // Post-processing: fetch photos from Pexels for exercises that have image_description
     const PEXELS_API_KEY = Deno.env.get("PEXELS_API_KEY");
