@@ -86,116 +86,104 @@ const EleveDashboard = () => {
 
   const testCompleted = !!testResultat;
 
-  // Fetch active devoirs
-  const { data: devoirs, isLoading: devoirsLoading } = useQuery({
-    queryKey: ["eleve-devoirs", user?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("devoirs")
-        .select("*, exercice:exercices(titre, competence, consigne, format)")
-        .eq("eleve_id", user!.id)
-        .eq("statut", "en_attente")
-        .order("date_echeance", { ascending: true });
-      if (error) throw error;
-      return data ?? [];
-    },
-    enabled: !!user?.id,
-  });
 
 
-  // Fetch pending bilan tests (AI-generated tests sent by formateur)
-  const { data: pendingTests } = useQuery({
-    queryKey: ["eleve-bilans-tests", user?.id],
+  // Identifie la séance du jour (date = aujourd'hui, sinon la plus récente "en_cours")
+  const { data: todaySession } = useQuery({
+    queryKey: ["eleve-today-session", user?.id],
     queryFn: async () => {
-      // Get student's group join dates to filter out pre-existing content
       const { data: memberships } = await supabase
         .from("group_members")
         .select("group_id, joined_at")
         .eq("eleve_id", user!.id);
-      if (!memberships?.length) return [];
-      const joinMap = new Map(memberships.map((m) => [m.group_id, m.joined_at]));
+      if (!memberships?.length) return null;
       const groupIds = memberships.map((m) => m.group_id);
+      const joinMap = new Map(memberships.map((m) => [m.group_id, m.joined_at]));
 
+      // Bornes du jour (locales)
+      const start = new Date();
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(start);
+      end.setDate(end.getDate() + 1);
+
+      // 1) Une séance dont la date est aujourd'hui
+      const { data: todays } = await supabase
+        .from("sessions")
+        .select("id, titre, date_seance, group_id, statut, group:groups(nom)")
+        .in("group_id", groupIds)
+        .gte("date_seance", start.toISOString())
+        .lt("date_seance", end.toISOString())
+        .order("date_seance", { ascending: true })
+        .limit(1);
+      if (todays && todays.length > 0) {
+        const s = todays[0] as any;
+        const jd = joinMap.get(s.group_id);
+        if (jd && new Date(s.date_seance) >= new Date(jd)) return s;
+      }
+      // 2) Sinon, séance "en_cours" la plus récente
+      const { data: enCours } = await supabase
+        .from("sessions")
+        .select("id, titre, date_seance, group_id, statut, group:groups(nom)")
+        .in("group_id", groupIds)
+        .eq("statut", "en_cours")
+        .order("date_seance", { ascending: false })
+        .limit(1);
+      if (enCours && enCours.length > 0) {
+        const s = enCours[0] as any;
+        const jd = joinMap.get(s.group_id);
+        if (jd && new Date(s.date_seance) >= new Date(jd)) return s;
+      }
+      return null;
+    },
+    enabled: !!user?.id,
+  });
+
+  // Fetch pending bilan tests UNIQUEMENT pour la séance du jour
+  const { data: pendingTests } = useQuery({
+    queryKey: ["eleve-bilans-tests", user?.id, todaySession?.id],
+    queryFn: async () => {
+      if (!todaySession?.id) return [];
       const { data: tests, error } = await supabase
         .from("bilan_tests")
         .select("id, nb_questions, competences_couvertes, created_at, session:sessions(titre, date_seance, group_id)")
         .eq("statut", "envoye")
+        .eq("session_id", todaySession.id)
         .order("created_at", { ascending: false });
       if (error) throw error;
       if (!tests || tests.length === 0) return [];
 
-      // Filter: only tests from groups the student belongs to AND created after joining
-      const filtered = (tests as any[]).filter((t: any) => {
-        const gid = t.session?.group_id;
-        if (!gid || !joinMap.has(gid)) return false;
-        return new Date(t.created_at) >= new Date(joinMap.get(gid)!);
-      });
-      if (filtered.length === 0) return [];
-
-      const testIds = filtered.map((t: any) => t.id);
+      const testIds = (tests as any[]).map((t: any) => t.id);
       const { data: done } = await supabase
         .from("bilan_test_results")
         .select("bilan_test_id, score_global")
         .eq("eleve_id", user!.id)
         .in("bilan_test_id", testIds);
       const doneMap = new Map((done ?? []).map((d: any) => [d.bilan_test_id, d.score_global]));
-      return filtered.map((t: any) => ({
+      return (tests as any[]).map((t: any) => ({
         ...t,
         completed: doneMap.has(t.id),
         score: doneMap.get(t.id),
       }));
     },
-    enabled: !!user?.id,
+    enabled: !!user?.id && !!todaySession?.id,
   });
 
   const uncompletedTests = (pendingTests ?? []).filter((t: any) => !t.completed);
 
-  // Fetch sessions with exercises sent to students (traite_en_classe) that student hasn't completed
+  // Exercices de la séance du jour uniquement
   const { data: sessionExercises, isLoading: loadingSessionEx } = useQuery({
-    queryKey: ["eleve-session-exercises", user?.id],
+    queryKey: ["eleve-session-exercises", user?.id, todaySession?.id],
     queryFn: async () => {
-      // Get student's groups with join dates
-      const { data: memberships } = await supabase
-        .from("group_members")
-        .select("group_id, joined_at")
-        .eq("eleve_id", user!.id);
-      if (!memberships?.length) return [];
-      const groupIds = memberships.map((m) => m.group_id);
-      const joinMap = new Map(memberships.map((m) => [m.group_id, m.joined_at]));
+      if (!todaySession?.id) return [];
 
-      const { data: sessions } = await supabase
-        .from("sessions")
-        .select("id, titre, date_seance, group_id, group:groups(nom)")
-        .in("group_id", groupIds)
-        .in("statut", ["planifiee", "en_cours", "terminee"])
-        .order("date_seance", { ascending: false })
-        .limit(20);
-      if (!sessions?.length) return [];
-
-      const sessionMap = new Map((sessions as any[]).map((s: any) => [s.id, s]));
-      const sessionIds = (sessions as any[]).map((s: any) => s.id);
-
-      // Get sent session exercises and keep only those actually sent after group join
       const { data: seLinks } = await supabase
         .from("session_exercices")
         .select("session_id, exercice_id, updated_at")
-        .in("session_id", sessionIds)
+        .eq("session_id", todaySession.id)
         .eq("statut", "traite_en_classe" as any);
       if (!seLinks?.length) return [];
 
-      const visibleSessionExercises = (seLinks as any[]).filter((se: any) => {
-        const session = sessionMap.get(se.session_id);
-        if (!session) return false;
-
-        const joinDate = joinMap.get(session.group_id);
-        if (!joinDate) return false;
-
-        return new Date(se.updated_at) >= new Date(joinDate);
-      });
-      if (!visibleSessionExercises.length) return [];
-
-      // Check which exercises student already completed
-      const exerciceIds = [...new Set(visibleSessionExercises.map((se: any) => se.exercice_id))];
+      const exerciceIds = [...new Set(seLinks.map((se: any) => se.exercice_id))];
       const { data: resultats } = await supabase
         .from("resultats")
         .select("exercice_id")
@@ -203,31 +191,22 @@ const EleveDashboard = () => {
         .in("exercice_id", exerciceIds);
       const doneExIds = new Set((resultats ?? []).map((r) => r.exercice_id));
 
-      // Build per-session summary
-      const grouped: Record<string, { total: number; done: number }> = {};
-      for (const se of visibleSessionExercises) {
-        if (!grouped[se.session_id]) grouped[se.session_id] = { total: 0, done: 0 };
-        grouped[se.session_id].total++;
-        if (doneExIds.has(se.exercice_id)) grouped[se.session_id].done++;
-      }
+      const total = seLinks.length;
+      const done = seLinks.filter((se: any) => doneExIds.has(se.exercice_id)).length;
+      const remaining = total - done;
+      if (remaining <= 0) return [];
 
-      return Object.entries(grouped)
-        .filter(([, v]) => v.done < v.total) // Only sessions with pending exercises
-        .map(([sessionId, v]) => {
-          const s = sessionMap.get(sessionId)!;
-          return {
-            sessionId,
-            titre: s.titre,
-            date_seance: s.date_seance,
-            group_nom: (s.group as any)?.nom || "",
-            total: v.total,
-            done: v.done,
-            remaining: v.total - v.done,
-          };
-        })
-        .sort((a, b) => new Date(b.date_seance).getTime() - new Date(a.date_seance).getTime());
+      return [{
+        sessionId: todaySession.id,
+        titre: (todaySession as any).titre,
+        date_seance: (todaySession as any).date_seance,
+        group_nom: (todaySession as any).group?.nom || "",
+        total,
+        done,
+        remaining,
+      }];
     },
-    enabled: !!user?.id,
+    enabled: !!user?.id && !!todaySession?.id,
   });
 
   // Fetch profil_eleve for current scores
@@ -499,92 +478,24 @@ const EleveDashboard = () => {
         </CardContent>
       </Card>
 
-      {/* Devoirs */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-accent-foreground" />
-            Mes devoirs du jour
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {devoirsLoading ? (
-            <div className="space-y-3">
-              <Skeleton className="h-16 w-full" />
-              <Skeleton className="h-16 w-full" />
+      {/* Lien rapide vers les devoirs (la liste se trouve sur la page dédiée) */}
+      <Card
+        className="cursor-pointer hover:bg-muted/30 transition-colors"
+        onClick={() => navigate("/eleve/devoirs")}
+      >
+        <CardContent className="flex items-center justify-between gap-3 py-4">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
+              <BookOpen className="h-5 w-5 text-primary" />
             </div>
-          ) : devoirs && devoirs.length > 0 ? (
-            <div className="space-y-3">
-              {devoirs.map((d) => {
-                const ex = d.exercice as any;
-                const isUrgent = d.raison === "remediation";
-                const deadline = new Date(d.date_echeance);
-                const daysLeft = Math.ceil((deadline.getTime() - Date.now()) / 86400000);
-                const isLate = daysLeft < 0;
-                const isUrgentTime = daysLeft <= 2 && daysLeft >= 0;
-                return (
-                  <div
-                    key={d.id}
-                    className="flex items-start gap-3 p-4 rounded-xl border bg-card hover:bg-muted/30 transition-colors cursor-pointer"
-                    onClick={() => navigate(`/eleve/devoirs/${d.id}`)}
-                  >
-                    <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-primary/10 shrink-0">
-                      <BookOpen className="h-6 w-6 text-primary" />
-                    </div>
-                    <div className="flex-1 min-w-0 space-y-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-semibold">{ex?.titre || "Exercice"}</span>
-                        {isUrgent ? (
-                          <Badge variant="destructive" className="text-xs gap-1">
-                            <AlertCircle className="h-3 w-3" />
-                            ⚠️ À retravailler
-                          </Badge>
-                        ) : (
-                          <Badge
-                            variant="secondary"
-                            className="text-xs border-orange-500/30 text-orange-600"
-                          >
-                            À renforcer
-                          </Badge>
-                        )}
-                      </div>
-                      <p className="text-sm text-muted-foreground truncate">{ex?.consigne}</p>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="text-xs">
-                          <CompetenceLabel code={ex?.competence} />
-                        </Badge>
-                      </div>
-                      {/* Deadline display */}
-                      {isLate ? (
-                        <p className="text-sm text-destructive flex items-center gap-1">
-                          <AlertCircle className="h-3 w-3" />
-                          Devoir en retard — attendu le {format(deadline, "d MMMM", { locale: fr })}
-                        </p>
-                      ) : isUrgentTime ? (
-                        <p className="text-sm text-orange-600 flex items-center gap-1">
-                          <AlertCircle className="h-3 w-3" />
-                          {daysLeft === 0 ? "À rendre aujourd'hui !" : daysLeft === 1 ? "À rendre demain" : "À rendre dans 2 jours"}
-                        </p>
-                      ) : (
-                        <p className="text-sm text-muted-foreground flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
-                          À rendre avant le : {format(deadline, "EEEE d MMMM yyyy", { locale: fr })}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center py-8 text-center">
-              <BookOpen className="h-10 w-10 text-muted-foreground/40 mb-3" />
-              <p className="text-muted-foreground font-medium">Aucun devoir pour le moment</p>
-              <p className="text-sm text-muted-foreground/70 mt-1">
-                Réalisez votre première séance pour recevoir vos devoirs !
+            <div>
+              <p className="font-semibold text-sm">Mes devoirs</p>
+              <p className="text-xs text-muted-foreground">
+                Retrouve tous tes devoirs sur la page dédiée
               </p>
             </div>
-          )}
+          </div>
+          <ArrowRight className="h-4 w-4 text-muted-foreground" />
         </CardContent>
       </Card>
 
