@@ -442,12 +442,12 @@ Pour chaque élève, cible ses faiblesses spécifiques. Les exercices de tronc c
             const { data: inserted, error: insertErr } = await supabase
               .from("exercices")
               .insert({
-                titre: ex.titre,
-                consigne: ex.consigne,
-                competence: ex.competence,
-                format: ex.format || "qcm",
-                difficulte: ex.difficulte || 3,
-                contenu: ex.contenu || { items: [] },
+                titre: validEx.titre,
+                consigne: validEx.consigne,
+                competence: validEx.competence,
+                format: validEx.format || "qcm",
+                difficulte: validEx.difficulte || 3,
+                contenu: validEx.contenu || { items: [] },
                 niveau_vise: niveauCible,
                 formateur_id: formateurId,
                 point_a_maitriser_id: defaultPoint.id,
