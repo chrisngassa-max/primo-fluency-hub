@@ -24,6 +24,7 @@ import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
 import SessionFeedbackForm from "@/components/SessionFeedbackForm";
 import { logEvent } from "@/lib/analytics";
 import ReportProblemButton from "@/components/ReportProblemButton";
+import RegenerateItemButton from "@/components/RegenerateItemButton";
 
 const STORAGE_KEY_PREFIX = "bilan-seance-progress-";
 
@@ -124,6 +125,8 @@ const BilanSeance = () => {
   const [answers, setAnswers] = useState<Record<string, Record<number, string>>>(savedProgress?.answers ?? {});
   const [submitting, setSubmitting] = useState(false);
   const [reportedExIds, setReportedExIds] = useState<Set<string>>(new Set());
+  const [reportedItemKeys, setReportedItemKeys] = useState<Set<string>>(new Set());
+  const [itemOverrides, setItemOverrides] = useState<Record<string, any>>({});
   const [externalIdx, setExternalIdx] = useState(0);
   const [externalAutoScore, setExternalAutoScore] = useState<number | undefined>(undefined);
   const [externalShowForm, setExternalShowForm] = useState(false);
@@ -228,7 +231,11 @@ const BilanSeance = () => {
 
   const currentSe = pendingExercices[currentExIdx];
   const currentEx = currentSe?.exercice as any;
-  const currentItems: any[] = currentEx?.contenu?.items ?? [];
+  const rawCurrentItems: any[] = currentEx?.contenu?.items ?? [];
+  const currentItems: any[] = rawCurrentItems.map((it, idx) => {
+    const key = `${currentEx?.id}:${idx}`;
+    return itemOverrides[key] ? { ...it, ...itemOverrides[key] } : it;
+  });
   const exerciseSupportText = getExerciseSupportText(currentEx);
   const currentAnswers = answers[currentEx?.id] ?? {};
   const totalQuestions = pendingExercices.reduce((acc: number, se: any) => {
@@ -259,24 +266,35 @@ const BilanSeance = () => {
       for (const se of pendingExercices) {
         const ex = se.exercice as any;
         if (reportedExIds.has(ex.id)) continue; // exercice signalé : exclu du score
-        const items: any[] = ex?.contenu?.items ?? [];
+        const rawItems: any[] = ex?.contenu?.items ?? [];
+        const items: any[] = rawItems.map((it, idx) => {
+          const key = `${ex.id}:${idx}`;
+          return itemOverrides[key] ? { ...it, ...itemOverrides[key] } : it;
+        });
         const exAnswers = answers[ex.id] ?? {};
 
         let correct = 0;
+        let countedItems = 0;
         const correction = items.map((item: any, idx: number) => {
+          const itemKey = `${ex.id}:${idx}`;
+          const itemReported = reportedItemKeys.has(itemKey);
           const userAnswer = exAnswers[idx] || "";
           const isCorrect = userAnswer.trim().toLowerCase() === (item.bonne_reponse || "").trim().toLowerCase();
-          if (isCorrect) correct++;
+          if (!itemReported) {
+            if (isCorrect) correct++;
+            countedItems++;
+          }
           return {
             question: item.question || item.texte || item.enonce || `Question ${idx + 1}`,
             reponse_eleve: userAnswer,
             bonne_reponse: item.bonne_reponse,
             correct: isCorrect,
             explication: item.explication || "",
+            reported: itemReported,
           };
         });
 
-        const score = items.length > 0 ? Math.round((correct / items.length) * 100) : 0;
+        const score = countedItems > 0 ? Math.round((correct / countedItems) * 100) : 0;
         totalScore += score;
         countedExercices++;
 
@@ -699,6 +717,50 @@ const BilanSeance = () => {
                   }
                 />
               )}
+              {/* Per-item regenerate */}
+              <div className="flex justify-end pt-1">
+                {reportedItemKeys.has(`${currentEx.id}:${idx}`) ? (
+                  <Badge variant="outline" className="text-xs text-destructive border-destructive/40">
+                    ⚠️ Question neutralisée
+                  </Badge>
+                ) : (
+                  <RegenerateItemButton
+                    competence={currentEx.competence}
+                    format={currentEx.format}
+                    niveau={currentEx.niveau_vise || (session as any)?.niveau_cible || "A1"}
+                    consigne={currentEx.consigne}
+                    currentItem={{
+                      question: item.question,
+                      options: item.options,
+                      bonne_reponse: item.bonne_reponse,
+                      explication: item.explication,
+                    }}
+                    currentSupport={{
+                      texte_support: exerciseSupportText,
+                      script_audio: (currentEx.contenu as any)?.script_audio,
+                    }}
+                    onRegenerated={(newItem) => {
+                      const key = `${currentEx.id}:${idx}`;
+                      setItemOverrides((prev) => ({ ...prev, [key]: newItem }));
+                      setAnswers((prev) => {
+                        const exA = { ...(prev[currentEx.id] ?? {}) };
+                        delete exA[idx];
+                        return { ...prev, [currentEx.id]: exA };
+                      });
+                    }}
+                    onFallback={() => {
+                      const key = `${currentEx.id}:${idx}`;
+                      setReportedItemKeys((prev) => new Set(prev).add(key));
+                    }}
+                    reportContext={{
+                      context: "bilan_seance",
+                      exerciceId: currentEx.id,
+                      formateurId: currentEx.formateur_id,
+                      itemIndex: idx,
+                    }}
+                  />
+                )}
+              </div>
             </div>
             );
           })}

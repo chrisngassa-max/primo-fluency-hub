@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
 import CorrectionDetaillee from "@/components/CorrectionDetaillee";
 import ReportProblemButton from "@/components/ReportProblemButton";
+import RegenerateItemButton from "@/components/RegenerateItemButton";
 import { evaluerReponseIA } from "@/lib/testPositionnement";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -99,6 +100,8 @@ const DevoirPassation = () => {
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ score: number; correction: any[]; bilanId?: string } | null>(null);
+  const [itemOverrides, setItemOverrides] = useState<Record<number, any>>({});
+  const [reportedItemIdx, setReportedItemIdx] = useState<Set<number>>(new Set());
 
   // Audio recording state for EO
   const [isRecording, setIsRecording] = useState(false);
@@ -153,7 +156,8 @@ const DevoirPassation = () => {
 
   const ex = (devoir as any)?.exercice;
   const contenu = ex?.contenu as any;
-  const items: any[] = contenu?.items ?? [];
+  const rawItems: any[] = contenu?.items ?? [];
+  const items: any[] = rawItems.map((it, idx) => itemOverrides[idx] ? { ...it, ...itemOverrides[idx] } : it);
   const isDone = devoir?.statut === "fait" || devoir?.statut === "arrete";
   const metadata = contenu?.metadata;
   const timeLimit = metadata?.time_limit_seconds || contenu?.time_limit_seconds || 0;
@@ -464,20 +468,26 @@ const DevoirPassation = () => {
     setSubmitting(true);
     try {
       let correct = 0;
+      let counted = 0;
       const correction = items.map((item: any, idx: number) => {
         const userAnswer = answers[idx] || "";
+        const reported = reportedItemIdx.has(idx);
         const isCorrect = userAnswer.trim().toLowerCase() === (item.bonne_reponse || "").trim().toLowerCase();
-        if (isCorrect) correct++;
+        if (!reported) {
+          if (isCorrect) correct++;
+          counted++;
+        }
         return {
           question: item.question,
           reponse_eleve: userAnswer,
           bonne_reponse: item.bonne_reponse,
           correct: isCorrect,
           explication: item.explication || "",
+          reported,
         };
       });
 
-      const score = items.length > 0 ? Math.round((correct / items.length) * 100) : 0;
+      const score = counted > 0 ? Math.round((correct / counted) * 100) : 0;
 
       const { error: resErr } = await supabase.from("resultats").insert({
         eleve_id: user.id,
@@ -783,6 +793,47 @@ const DevoirPassation = () => {
                     onChange={(e) => setAnswers((prev) => ({ ...prev, [idx]: e.target.value }))}
                   />
                 )}
+                <div className="flex justify-end pt-1">
+                  {reportedItemIdx.has(idx) ? (
+                    <Badge variant="outline" className="text-xs text-destructive border-destructive/40">
+                      ⚠️ Question neutralisée
+                    </Badge>
+                  ) : (
+                    <RegenerateItemButton
+                      competence={ex.competence}
+                      format={ex.format}
+                      niveau={ex.niveau_vise || "A1"}
+                      consigne={ex.consigne}
+                      currentItem={{
+                        question: item.question,
+                        options: item.options,
+                        bonne_reponse: item.bonne_reponse,
+                        explication: item.explication,
+                      }}
+                      currentSupport={{
+                        texte_support: contenu?.texte || contenu?.texte_support,
+                        script_audio: scriptAudio,
+                      }}
+                      onRegenerated={(newItem) => {
+                        setItemOverrides((prev) => ({ ...prev, [idx]: newItem }));
+                        setAnswers((prev) => {
+                          const { [idx]: _, ...rest } = prev;
+                          return rest;
+                        });
+                      }}
+                      onFallback={() => {
+                        setReportedItemIdx((prev) => new Set(prev).add(idx));
+                      }}
+                      reportContext={{
+                        context: "devoir",
+                        devoirId: devoir?.id,
+                        exerciceId: ex?.id,
+                        formateurId: (devoir as any)?.formateur_id,
+                        itemIndex: idx,
+                      }}
+                    />
+                  )}
+                </div>
               </CardContent>
             </Card>
           ))}

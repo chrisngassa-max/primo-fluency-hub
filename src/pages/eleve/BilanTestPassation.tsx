@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import CompetenceLabel from "@/components/CompetenceLabel";
 import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
 import ReportProblemButton from "@/components/ReportProblemButton";
+import RegenerateItemButton from "@/components/RegenerateItemButton";
 
 const BilanTestPassation = () => {
   const { testId } = useParams<{ testId: string }>();
@@ -28,6 +29,7 @@ const BilanTestPassation = () => {
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [reportedIdx, setReportedIdx] = useState<Set<number>>(new Set());
+  const [overrides, setOverrides] = useState<Record<number, any>>({});
   const [result, setResult] = useState<{
     scoreGlobal: number;
     totalQuestions: number;
@@ -69,18 +71,18 @@ const BilanTestPassation = () => {
   });
 
   // Normalize question fields (generator uses consigne/support/choix, legacy uses question/script_audio/options)
-  const questions: any[] = (bilanTest?.contenu || []).map((q: any) => {
+  const questions: any[] = (bilanTest?.contenu || []).map((origQ: any, idx: number) => {
+    const q = overrides[idx] ? { ...origQ, ...overrides[idx] } : origQ;
     // Determine the display question text
     let questionText = q.question || q.consigne || "";
     // Determine the audio script for CO questions
     let scriptAudio = q.script_audio || q.support || "";
-    
+
     // If question contains "(Audio)" prefix pattern, extract the audio part
     if (!scriptAudio && questionText && q.competence === "CO") {
       const audioMatch = questionText.match(/^\(Audio\)\s*:\s*"([^"]+)"/i);
       if (audioMatch) {
         scriptAudio = audioMatch[1];
-        // Clean up the question to show only the actual question part
         questionText = questionText.replace(/^\(Audio\)\s*:\s*"[^"]+"\s*/i, "").trim();
       }
     }
@@ -388,24 +390,59 @@ const BilanTestPassation = () => {
       )}
 
       {/* Signalement */}
-      <div className="flex justify-center">
+      <div className="flex flex-wrap justify-center gap-2">
         {reportedIdx.has(currentIdx) ? (
           <Badge variant="outline" className="text-destructive border-destructive/40">
             ⚠️ Question signalée — non comptée dans le bilan
           </Badge>
         ) : (
-          <ReportProblemButton
-            context="bilan_test"
-            bilanTestId={testId}
-            formateurId={(bilanTest as any)?.formateur_id}
-            itemIndex={currentIdx}
-            onReported={() => {
-              setReportedIdx((prev) => new Set(prev).add(currentIdx));
-              if (currentIdx < questions.length - 1) {
-                setCurrentIdx((i) => i + 1);
-              }
-            }}
-          />
+          <>
+            {currentQ && (
+              <RegenerateItemButton
+                competence={currentQ.competence}
+                format={currentQ.format}
+                niveau={(bilanTest as any)?.session?.niveau_cible || "A1"}
+                consigne={currentQ.consigne}
+                currentItem={{
+                  question: currentQ.question,
+                  options: currentQ.options,
+                  bonne_reponse: currentQ.bonne_reponse,
+                  explication: currentQ.explication,
+                  texte_support: currentQ.texte_support,
+                  script_audio: currentQ.script_audio,
+                }}
+                onRegenerated={(newItem) => {
+                  setOverrides((prev) => ({ ...prev, [currentIdx]: newItem }));
+                  setAnswers((prev) => {
+                    const { [currentIdx]: _, ...rest } = prev;
+                    return rest;
+                  });
+                }}
+                onFallback={() => {
+                  setReportedIdx((prev) => new Set(prev).add(currentIdx));
+                  if (currentIdx < questions.length - 1) setCurrentIdx((i) => i + 1);
+                }}
+                reportContext={{
+                  context: "bilan_test",
+                  bilanTestId: testId,
+                  formateurId: (bilanTest as any)?.formateur_id,
+                  itemIndex: currentIdx,
+                }}
+              />
+            )}
+            <ReportProblemButton
+              context="bilan_test"
+              bilanTestId={testId}
+              formateurId={(bilanTest as any)?.formateur_id}
+              itemIndex={currentIdx}
+              onReported={() => {
+                setReportedIdx((prev) => new Set(prev).add(currentIdx));
+                if (currentIdx < questions.length - 1) {
+                  setCurrentIdx((i) => i + 1);
+                }
+              }}
+            />
+          </>
         )}
       </div>
 
