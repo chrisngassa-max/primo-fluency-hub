@@ -266,24 +266,35 @@ const BilanSeance = () => {
       for (const se of pendingExercices) {
         const ex = se.exercice as any;
         if (reportedExIds.has(ex.id)) continue; // exercice signalé : exclu du score
-        const items: any[] = ex?.contenu?.items ?? [];
+        const rawItems: any[] = ex?.contenu?.items ?? [];
+        const items: any[] = rawItems.map((it, idx) => {
+          const key = `${ex.id}:${idx}`;
+          return itemOverrides[key] ? { ...it, ...itemOverrides[key] } : it;
+        });
         const exAnswers = answers[ex.id] ?? {};
 
         let correct = 0;
+        let countedItems = 0;
         const correction = items.map((item: any, idx: number) => {
+          const itemKey = `${ex.id}:${idx}`;
+          const itemReported = reportedItemKeys.has(itemKey);
           const userAnswer = exAnswers[idx] || "";
           const isCorrect = userAnswer.trim().toLowerCase() === (item.bonne_reponse || "").trim().toLowerCase();
-          if (isCorrect) correct++;
+          if (!itemReported) {
+            if (isCorrect) correct++;
+            countedItems++;
+          }
           return {
             question: item.question || item.texte || item.enonce || `Question ${idx + 1}`,
             reponse_eleve: userAnswer,
             bonne_reponse: item.bonne_reponse,
             correct: isCorrect,
             explication: item.explication || "",
+            reported: itemReported,
           };
         });
 
-        const score = items.length > 0 ? Math.round((correct / items.length) * 100) : 0;
+        const score = countedItems > 0 ? Math.round((correct / countedItems) * 100) : 0;
         totalScore += score;
         countedExercices++;
 
