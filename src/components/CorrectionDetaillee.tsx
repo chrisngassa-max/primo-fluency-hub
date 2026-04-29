@@ -7,8 +7,11 @@ interface ItemResult {
   reponse_donnee?: string | number;
   reponse_eleve?: string | number;
   bonne_reponse: string | number;
+  /** "exemple_attendu" pour les productions libres (IA) — change le libellé. */
+  bonne_reponse_label?: "bonne_reponse" | "exemple_attendu";
   correct: boolean;
   explication?: string;
+  ia_evaluated?: boolean;
 }
 
 interface Props {
@@ -70,7 +73,9 @@ export default function CorrectionDetaillee({ itemResults, scoreNormalized }: Pr
                       Ta réponse : {String(answer)}
                     </p>
                     <p className="text-xs text-green-600 font-medium">
-                      ✅ Bonne réponse : {String(r.bonne_reponse)}
+                      {r.bonne_reponse_label === "exemple_attendu" || r.ia_evaluated
+                        ? `📝 Exemple de réponse attendue : ${String(r.bonne_reponse)}`
+                        : `✅ Bonne réponse : ${String(r.bonne_reponse)}`}
                     </p>
                   </div>
                   {r.explication && (
