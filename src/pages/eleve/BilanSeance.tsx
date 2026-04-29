@@ -294,27 +294,29 @@ const BilanSeance = () => {
           if (reportedItemKeys.has(`${ex.id}:${idx}`)) reportedIdxLocal.add(idx);
         });
 
-        const { correction, score } = await corrigerExercice({
-          format: ex.format,
-          competence: ex.competence,
-          items,
-          answers: exAnswers,
-          reportedItems: reportedIdxLocal,
-          metadata: ex?.contenu?.metadata,
-        });
+        // VAGUE 2 : la correction et l'écriture du résultat sont déléguées au
+        // serveur. Le client envoie uniquement les réponses brutes.
+        const { data: serverResult, error: submitErr } = await supabase.functions.invoke(
+          "submit-devoir-result",
+          {
+            body: {
+              exercice_id: ex.id,
+              session_id: sessionId,
+              answers: exAnswers,
+            },
+          }
+        );
+        if (submitErr || !serverResult) {
+          console.error("Submit error:", submitErr);
+          continue;
+        }
+        const score = serverResult.score as number;
+        const correction = serverResult.correction_detaillee as any[];
+        if (serverResult.ai_failed) {
+          console.warn(`[BilanSeance] IA partielle pour exo ${ex.id}`);
+        }
         totalScore += score;
         countedExercices++;
-
-        // Insert result
-        const { error: resErr } = await supabase.from("resultats").insert({
-          eleve_id: user.id,
-          exercice_id: ex.id,
-          score,
-          reponses_eleve: exAnswers as any,
-          correction_detaillee: correction as any,
-          tentative: 1,
-        });
-        if (resErr) console.error("Result insert error:", resErr);
 
         scores.push({
           exerciceId: ex.id,
