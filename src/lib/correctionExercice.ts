@@ -71,13 +71,34 @@ function normalize(s: string): string {
     .trim();
 }
 
-const PRODUCTION_ECRITE_FORMATS = new Set(["production_ecrite"]);
+const AI_FORMATS = new Set([
+  "production_ecrite",
+  "production_orale",
+  "expression_ecrite",
+  "expression_orale",
+  "redaction",
+  "redaction_libre",
+]);
 
 /** True si la correction de cet exercice nécessite une évaluation IA. */
 export function needsAIEvaluation(format?: string, competence?: string): boolean {
   if (!format && !competence) return false;
-  if (format && PRODUCTION_ECRITE_FORMATS.has(format)) return true;
-  if (competence === "EE") return true;
+  if (format && AI_FORMATS.has(format)) return true;
+  if (competence === "EE" || competence === "EO") return true;
+  return false;
+}
+
+/**
+ * Détecte une "bonne_reponse" qui n'est en réalité pas une chaîne à matcher
+ * mais un template / critère pédagogique (ex: "Je m'appelle [Prénom/Nom]"
+ * ou "Le candidat doit être capable de…"). Pour ces items, la comparaison
+ * de chaînes échouera toujours → on doit router vers l'IA.
+ */
+function looksLikeTemplate(s: string): boolean {
+  if (!s) return false;
+  if (/\[[^\]]+\]/.test(s)) return true; // contient [Placeholder]
+  if (/^(le candidat|l['’]apprenant|l['’]élève|l['’]eleve)\s+(doit|devra)/i.test(s.trim())) return true;
+  if (s.length > 120) return true; // descriptif long, pas une réponse attendue
   return false;
 }
 
