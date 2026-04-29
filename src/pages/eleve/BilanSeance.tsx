@@ -26,6 +26,7 @@ import { logEvent } from "@/lib/analytics";
 import ReportProblemButton from "@/components/ReportProblemButton";
 import RegenerateItemButton from "@/components/RegenerateItemButton";
 import { useLiveAttemptSync } from "@/hooks/useLiveAttemptSync";
+import { corrigerExercice } from "@/lib/correctionExercice";
 
 const STORAGE_KEY_PREFIX = "bilan-seance-progress-";
 
@@ -287,28 +288,20 @@ const BilanSeance = () => {
         });
         const exAnswers = answers[ex.id] ?? {};
 
-        let correct = 0;
-        let countedItems = 0;
-        const correction = items.map((item: any, idx: number) => {
-          const itemKey = `${ex.id}:${idx}`;
-          const itemReported = reportedItemKeys.has(itemKey);
-          const userAnswer = exAnswers[idx] || "";
-          const isCorrect = userAnswer.trim().toLowerCase() === (item.bonne_reponse || "").trim().toLowerCase();
-          if (!itemReported) {
-            if (isCorrect) correct++;
-            countedItems++;
-          }
-          return {
-            question: item.question || item.texte || item.enonce || `Question ${idx + 1}`,
-            reponse_eleve: userAnswer,
-            bonne_reponse: item.bonne_reponse,
-            correct: isCorrect,
-            explication: item.explication || "",
-            reported: itemReported,
-          };
+        // Index local des items signalés (Set<number>) à partir de reportedItemKeys.
+        const reportedIdxLocal = new Set<number>();
+        items.forEach((_, idx) => {
+          if (reportedItemKeys.has(`${ex.id}:${idx}`)) reportedIdxLocal.add(idx);
         });
 
-        const score = countedItems > 0 ? Math.round((correct / countedItems) * 100) : 0;
+        const { correction, score } = await corrigerExercice({
+          format: ex.format,
+          competence: ex.competence,
+          items,
+          answers: exAnswers,
+          reportedItems: reportedIdxLocal,
+          metadata: ex?.contenu?.metadata,
+        });
         totalScore += score;
         countedExercices++;
 
