@@ -119,13 +119,24 @@ export async function corrigerExercice(opts: CorrigerOptions): Promise<CorrigerR
           }
         );
         iaEvaluated = true;
-        // evaluerReponseIA renvoie un score /3, on le ramène /10 pour seuil 60%.
-        iaScoreRaw = Math.round((evalResult.score / 3) * 10);
+        iaScoreRaw = evalResult.scoreRaw10 ?? Math.round((evalResult.score / 3) * 10);
+        // Seuil de validation IA : 6/10. En dessous = incorrect.
         isCorrect = (iaScoreRaw ?? 0) >= 6;
         if (evalResult.justification) {
           explication = explication
             ? `${explication}\n\n${evalResult.justification}`
             : evalResult.justification;
+        }
+        // Pour les productions écrites, "bonne_reponse" doit être lisible par l'élève
+        // et NE DOIT PAS être la description du critère (ex: "L'apprenant doit être
+        // capable de…"). On utilise la reformulation modèle de l'IA si dispo,
+        // sinon un libellé neutre.
+        const looksLikeCriterion = /\bl'?apprenant\b/i.test(bonneReponse) || bonneReponse.length > 200;
+        if (evalResult.reformulationModele) {
+          // surcharge le bonne_reponse renvoyé pour l'affichage
+          (correction as any)._tmp_bonne_reponse = evalResult.reformulationModele;
+        } else if (looksLikeCriterion) {
+          (correction as any)._tmp_bonne_reponse = "(Production libre — il n'y a pas de réponse unique. Voir l'explication pour les critères.)";
         }
       } catch (e) {
         console.error("[corrigerExercice] AI eval failed for item", idx, e);
@@ -142,10 +153,13 @@ export async function corrigerExercice(opts: CorrigerOptions): Promise<CorrigerR
       countedItems++;
     }
 
+    const displayedBonneReponse = (correction as any)._tmp_bonne_reponse ?? bonneReponse;
+    if ((correction as any)._tmp_bonne_reponse) delete (correction as any)._tmp_bonne_reponse;
+
     correction.push({
       question,
       reponse_eleve: userAnswer,
-      bonne_reponse: bonneReponse,
+      bonne_reponse: displayedBonneReponse,
       correct: isCorrect,
       explication,
       reported,
