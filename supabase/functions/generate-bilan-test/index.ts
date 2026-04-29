@@ -1,6 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { callAI, AIError } from "../_shared/ai-client.ts";
 import { validateAndFix } from "../_shared/exercise-validator.ts";
+import { QA_REVIEW_BLOCK, logQaAuto } from "../_shared/qa-prompt.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -35,7 +37,7 @@ OBLIGATIONS PAR COMPÉTENCE :
 - CO (Compréhension orale) : fournis OBLIGATOIREMENT "script_audio" = un texte court (30-60 mots) à lire à voix haute. La question porte sur ce script.
 - CE (Compréhension écrite) : fournis OBLIGATOIREMENT "texte_support" = un texte support (40-100 mots) à lire. La question porte sur ce texte.
 - EE / EO / Structures : pas de support audio/texte requis.
-- bonne_reponse DOIT figurer EXACTEMENT dans options (QCM) ; "vrai" ou "faux" pour vrai_faux.`;
+- bonne_reponse DOIT figurer EXACTEMENT dans options (QCM) ; "vrai" ou "faux" pour vrai_faux.` + QA_REVIEW_BLOCK;
 
     const userPrompt = `SÉANCE : "${sessionTitle || "Séance"}"
 NIVEAU CIBLE : ${niveauCible || "A1"}
