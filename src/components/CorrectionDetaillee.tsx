@@ -7,8 +7,11 @@ interface ItemResult {
   reponse_donnee?: string | number;
   reponse_eleve?: string | number;
   bonne_reponse: string | number;
+  /** "exemple_attendu" pour les productions libres (IA) — change le libellé. */
+  bonne_reponse_label?: "bonne_reponse" | "exemple_attendu";
   correct: boolean;
   explication?: string;
+  ia_evaluated?: boolean;
 }
 
 interface Props {
