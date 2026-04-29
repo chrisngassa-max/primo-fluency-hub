@@ -823,8 +823,10 @@ const TestPositionnement = () => {
       );
       if (finalErr || !finalRes) {
         console.error("Finalize error:", finalErr);
-        toast.error("Erreur lors de la finalisation du test", {
+        toast({
+          title: "Erreur lors de la finalisation du test",
           description: finalErr?.message || "Réessaie dans un instant.",
+          variant: "destructive",
         });
         return;
       }
