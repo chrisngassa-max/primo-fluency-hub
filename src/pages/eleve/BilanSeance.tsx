@@ -25,6 +25,7 @@ import SessionFeedbackForm from "@/components/SessionFeedbackForm";
 import { logEvent } from "@/lib/analytics";
 import ReportProblemButton from "@/components/ReportProblemButton";
 import RegenerateItemButton from "@/components/RegenerateItemButton";
+import { useLiveAttemptSync } from "@/hooks/useLiveAttemptSync";
 
 const STORAGE_KEY_PREFIX = "bilan-seance-progress-";
 
