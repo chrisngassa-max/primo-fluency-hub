@@ -25,6 +25,7 @@ import SessionFeedbackForm from "@/components/SessionFeedbackForm";
 import { logEvent } from "@/lib/analytics";
 import ReportProblemButton from "@/components/ReportProblemButton";
 import RegenerateItemButton from "@/components/RegenerateItemButton";
+import { useLiveAttemptSync } from "@/hooks/useLiveAttemptSync";
 
 const STORAGE_KEY_PREFIX = "bilan-seance-progress-";
 
@@ -238,6 +239,19 @@ const BilanSeance = () => {
   });
   const exerciseSupportText = getExerciseSupportText(currentEx);
   const currentAnswers = answers[currentEx?.id] ?? {};
+
+  // ─── LIVE SYNC: upsert exercise_attempts sur l'exercice courant ───
+  // Permet au formateur de voir l'avancement en direct (Realtime).
+  // La finalisation "completed" est gérée par le trigger mirror_resultat_to_attempt
+  // lors de l'insertion dans `resultats` (handleSubmit ci-dessous).
+  useLiveAttemptSync({
+    exerciseId: currentEx?.id ?? null,
+    learnerId: user?.id ?? null,
+    answers: currentAnswers,
+    items: currentItems,
+    disabled: !!results,
+    sourceApp: "primo-bilan-live",
+  });
   const totalQuestions = pendingExercices.reduce((acc: number, se: any) => {
     const items = se.exercice?.contenu?.items ?? [];
     return acc + items.length;
