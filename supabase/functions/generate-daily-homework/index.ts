@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { callAI, AIError } from "../_shared/ai-client.ts";
 import { validateAndFix } from "../_shared/exercise-validator.ts";
+import { QA_REVIEW_BLOCK, logQaAuto } from "../_shared/qa-prompt.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -280,7 +281,7 @@ VÉRIFICATION FINALE : avant de retourner la consigne, compte les mots. Si > 12,
 
 STRUCTURE DE SORTIE :
 Un tableau "eleves" contenant pour chaque élève un objet avec son id et ses jours de devoirs.
-Chaque jour contient les exercices personnalisés.`;
+Chaque jour contient les exercices personnalisés.` + QA_REVIEW_BLOCK;
 
     const userPrompt = `Séance "${session.titre}" — Niveau ${niveauCible}
 Démarche IRN : ${demarche} — Épreuves obligatoires : ${epreuvesOblgatoires}
