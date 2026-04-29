@@ -80,6 +80,48 @@ Deno.serve(async (req) => {
     const targetEpreuve = epreuve || "CO"
     const targetNiveau = niveau || "A1"
 
+    // === GARDE-FOU PRÉ-IA : salutations / vide / hors-sujet flagrant ===
+    // Évite de payer Gemini pour des cas où le résultat est évident, et
+    // garantit qu'aucune bienveillance excessive ne valorise une non-réponse.
+    const raw = String(studentAnswer ?? "").trim()
+    const normalized = raw
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[.,;:!?'"()«»\-_]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+    const SALUTATIONS = new Set([
+      "", "bonjour", "bonjours", "bonsoir", "salut", "coucou", "hello", "hi",
+      "bonne journee", "bonne soiree", "merci", "ok", "oui", "non",
+    ])
+    const usefulWords = normalized
+      .split(" ")
+      .filter((w) => w.length > 1)
+      .filter((w) => !["le", "la", "les", "un", "une", "des", "et", "de", "du"].includes(w))
+    if (SALUTATIONS.has(normalized) || raw.length < 4 || usefulWords.length < 2) {
+      const justification = raw.length === 0
+        ? "Aucune réponse n'a été fournie."
+        : SALUTATIONS.has(normalized)
+          ? `La réponse "${raw}" est une formule de politesse, pas une production qui répond à la consigne.`
+          : "La réponse est trop courte pour traiter la consigne."
+      return new Response(JSON.stringify({
+        resultat: "incorrect",
+        score: 0,
+        score_estime: 0,
+        correct: false,
+        justification,
+        correction_text: justification,
+        niveau_cecrl_atteint: "A0",
+        points_forts: [],
+        points_amelioration: ["Lis attentivement la consigne", "Donne au moins une information demandée"],
+        reformulation_modele: "",
+        encouragement: "Tu peux y arriver — relis la question et donne une vraie réponse.",
+        priorite_remediation: "Comprendre et traiter la consigne",
+        skipped_ai: true,
+      }), { headers: { ...corsHeaders, "Content-Type": "application/json" } })
+    }
+
     // === RAG : Recherche dans la banque pédagogique Supabase ===
     let banqueReference: any[] = []
     const supabaseUrl = Deno.env.get('SUPABASE_URL')
