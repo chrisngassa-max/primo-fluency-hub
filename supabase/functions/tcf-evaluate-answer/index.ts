@@ -199,7 +199,26 @@ Produis le JSON de correction complet selon le format spécifié.`
     const content = data.candidates[0].content.parts[0].text
     const evaluation = JSON.parse(content)
 
-    return new Response(JSON.stringify(evaluation), {
+    // Normalisation des alias attendus par le frontend (rétro-compatibilité).
+    const score = Number(evaluation.score ?? evaluation.score_estime ?? 0)
+    const safeScore = Math.max(0, Math.min(10, Math.round(isFinite(score) ? score : 0)))
+    const justification = evaluation.justification ?? evaluation.correction_text ?? ""
+    const resultat = evaluation.resultat ?? (safeScore >= 6 ? "correct" : safeScore >= 3 ? "partiellement_correct" : "incorrect")
+    const correct = typeof evaluation.correct === "boolean"
+      ? evaluation.correct
+      : (resultat === "correct" && safeScore >= 6)
+
+    const normalized = {
+      ...evaluation,
+      score: safeScore,
+      score_estime: safeScore,
+      correct,
+      resultat,
+      justification,
+      correction_text: justification,
+    }
+
+    return new Response(JSON.stringify(normalized), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     })
   } catch (error) {
