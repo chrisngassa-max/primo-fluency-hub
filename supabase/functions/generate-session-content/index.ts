@@ -1,6 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { callAI, AIError } from "../_shared/ai-client.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { validateAndFix } from "../_shared/exercise-validator.ts";
+import { QA_REVIEW_BLOCK } from "../_shared/qa-prompt.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -143,7 +145,7 @@ AVANT de finaliser ta réponse, vérifie chaque consigne générée :
 - Vérifie la structure impérative → sinon, reformule
 - Vérifie qu'il n'y a qu'une seule action demandée → sinon, coupe en 2
 
-Utilise le tool fourni pour retourner le résultat.`;
+Utilise le tool fourni pour retourner le résultat.` + QA_REVIEW_BLOCK;
 
     const userPrompt = `Génère le contenu complet de la séance "${titre}" (${duree} min, niveau ${niveau}, compétences : ${competences_cibles.join(", ")}).`;
 
@@ -244,7 +246,7 @@ Utilise le tool fourni pour retourner le résultat.`;
     const parsed = JSON.parse(toolCall.function.arguments);
 
     // Remap atelier_ludique → animation_guide for DB column compatibility
-    const exercices = (parsed.exercices || []).map((ex: any) => {
+    const exercicesRaw = (parsed.exercices || []).map((ex: any) => {
       if (ex.atelier_ludique) {
         ex.animation_guide = ex.atelier_ludique;
         delete ex.atelier_ludique;
@@ -252,7 +254,34 @@ Utilise le tool fourni pour retourner le résultat.`;
       return ex;
     });
 
-    return new Response(JSON.stringify({ exercices }), {
+    // ── Validation item-par-item via validateAndFix ──
+    const exercices: any[] = [];
+    const excluded: { titre: string; reason: string }[] = [];
+    for (const ex of exercicesRaw) {
+      const validated = await validateAndFix(ex, { niveau });
+      if (!validated) {
+        excluded.push({ titre: ex.titre || "?", reason: "validation_failed_after_3_attempts" });
+        console.warn(`[QA_AUTO][session-content] Excluded: ${ex.titre}`);
+        continue;
+      }
+      // Préserve les champs additionnels (animation_guide, etc.) du brut
+      exercices.push({ ...ex, ...validated.exercise });
+    }
+
+    const initial = exercicesRaw.length;
+    const ratio = initial > 0 ? exercices.length / initial : 1;
+    if (initial > 0 && ratio < 0.6) {
+      console.warn(`[QA_AUTO][session-content] Low ratio ${(ratio * 100).toFixed(0)}%`);
+      return new Response(
+        JSON.stringify({
+          error: `QA bloquée : seulement ${exercices.length}/${initial} exercices valides (<60%)`,
+          excluded,
+        }),
+        { status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    return new Response(JSON.stringify({ exercices, excluded, totalExcluded: excluded.length }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

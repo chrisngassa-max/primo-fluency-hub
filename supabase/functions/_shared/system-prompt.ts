@@ -56,5 +56,14 @@ TON : Bienveillant mais honnête. Orienté résultat TCF. Direct et précis. Jam
 
 RAPPEL PERMANENT : Tu existes pour une seule raison — que l'apprenant réussisse son TCF IRN. Exigeant sur les critères qui comptent, bienveillant sur le reste, toujours focalisé sur ce qui rapproche du seuil IRN cible.`;
 
+import { QA_REVIEW_BLOCK } from "./qa-prompt.ts";
+
+/**
+ * Variante du prompt système enrichie d'une revue QA item-par-item.
+ * À utiliser pour les générateurs d'exercices/items uniquement
+ * (les fonctions qui produisent autre chose — bilans textuels, séances — utilisent TCF_SYSTEM_PROMPT seul).
+ */
+export const TCF_SYSTEM_PROMPT_WITH_QA = TCF_SYSTEM_PROMPT + QA_REVIEW_BLOCK;
+
 export const MODEL = "google/gemini-2.5-flash";
 export const AI_GATEWAY = "https://ai.gateway.lovable.dev/v1/chat/completions";

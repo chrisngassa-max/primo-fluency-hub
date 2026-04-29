@@ -1,6 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { callAI, AIError } from "../_shared/ai-client.ts";
 import { validateAndFix } from "../_shared/exercise-validator.ts";
+import { QA_REVIEW_BLOCK, logQaAuto } from "../_shared/qa-prompt.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -35,7 +37,7 @@ OBLIGATIONS PAR COMPÉTENCE :
 - CO (Compréhension orale) : fournis OBLIGATOIREMENT "script_audio" = un texte court (30-60 mots) à lire à voix haute. La question porte sur ce script.
 - CE (Compréhension écrite) : fournis OBLIGATOIREMENT "texte_support" = un texte support (40-100 mots) à lire. La question porte sur ce texte.
 - EE / EO / Structures : pas de support audio/texte requis.
-- bonne_reponse DOIT figurer EXACTEMENT dans options (QCM) ; "vrai" ou "faux" pour vrai_faux.`;
+- bonne_reponse DOIT figurer EXACTEMENT dans options (QCM) ; "vrai" ou "faux" pour vrai_faux.` + QA_REVIEW_BLOCK;
 
     const userPrompt = `SÉANCE : "${sessionTitle || "Séance"}"
 NIVEAU CIBLE : ${niveauCible || "A1"}
@@ -134,6 +136,30 @@ Génère un test de bilan pour vérifier les acquis de cette séance.`;
         script_audio: fixedContenu.script_audio || q.script_audio || "",
         texte_support: fixedContenu.texte || q.texte_support || "",
       });
+    }
+
+    // ── QA gate : ≥60% des questions doivent rester valides pour publier ──
+    const initialCount = (result.questions || []).length;
+    const validRatio = initialCount > 0 ? validatedQuestions.length / initialCount : 1;
+    if (initialCount > 0 && validRatio < 0.6) {
+      // Tentative de signalement (sans eleve_id ici → log seul)
+      const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+      const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+      if (SUPABASE_URL && SERVICE_KEY) {
+        const sb = createClient(SUPABASE_URL, SERVICE_KEY);
+        await logQaAuto(sb, {
+          context: "qa_auto_bilan_test",
+          excluded,
+          action_taken: `blocked_publication_ratio_${(validRatio * 100).toFixed(0)}pct`,
+        });
+      }
+      return new Response(
+        JSON.stringify({
+          error: `QA bloquée : seulement ${validatedQuestions.length}/${initialCount} questions valides (<60%)`,
+          excluded,
+        }),
+        { status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     return new Response(

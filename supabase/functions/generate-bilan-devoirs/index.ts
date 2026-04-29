@@ -1,6 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { callAI, AIError } from "../_shared/ai-client.ts";
 import { validateAndFix } from "../_shared/exercise-validator.ts";
+import { QA_REVIEW_BLOCK, logQaAuto } from "../_shared/qa-prompt.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -62,7 +64,7 @@ Règles :
 - Pour 60-80% : exercices de consolidation (variantes)
 - 3 à 5 exercices par devoir maximum
 - Contexte IRN obligatoire
-- Chaque exercice doit avoir un metadata avec code, skill, sub_skill, time_limit_seconds`;
+- Chaque exercice doit avoir un metadata avec code, skill, sub_skill, time_limit_seconds` + QA_REVIEW_BLOCK;
 
     const userPrompt = `RÉSULTATS DU TEST DE BILAN (séance "${sessionTitle}") :
 ${competencesATravailler.map(c => `- ${c.competence} : ${c.score}% → ${c.type}`).join("\n")}
@@ -156,6 +158,29 @@ Génère les devoirs ciblés pour chaque compétence en difficulté. Attribue un
         continue;
       }
       validatedDevoirs.push({ ...devoir, ...validated.exercise });
+    }
+
+    // ── QA gate : ≥60% des devoirs initiaux doivent rester valides ──
+    const initial = (result.devoirs || []).length;
+    const ratio = initial > 0 ? validatedDevoirs.length / initial : 1;
+    if (initial > 0 && ratio < 0.6) {
+      const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+      const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+      if (SUPABASE_URL && SERVICE_KEY) {
+        const sb = createClient(SUPABASE_URL, SERVICE_KEY);
+        await logQaAuto(sb, {
+          context: "qa_auto_bilan_devoirs",
+          excluded: excludedDevoirs,
+          action_taken: `blocked_publication_ratio_${(ratio * 100).toFixed(0)}pct`,
+        });
+      }
+      return new Response(
+        JSON.stringify({
+          error: `QA bloquée : seulement ${validatedDevoirs.length}/${initial} devoirs valides (<60%)`,
+          excluded: excludedDevoirs,
+        }),
+        { status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     return new Response(

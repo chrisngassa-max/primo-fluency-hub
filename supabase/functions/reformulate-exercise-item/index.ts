@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { callAI } from "../_shared/ai-client.ts";
+import { QA_REVIEW_BLOCK } from "../_shared/qa-prompt.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -30,7 +31,7 @@ serve(async (req) => {
 - Explication ≤ 20 mots
 
 Si le formateur donne une instruction, suis-la strictement.
-Tu DOIS utiliser le tool "reformulate_item" pour retourner le résultat.`;
+Tu DOIS utiliser le tool "reformulate_item" pour retourner le résultat.` + QA_REVIEW_BLOCK;
 
     const userPrompt = `Item à reformuler : ${JSON.stringify(item)}
 

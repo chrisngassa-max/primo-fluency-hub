@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { callAI, AIError } from "../_shared/ai-client.ts";
+import { QA_REVIEW_BLOCK } from "../_shared/qa-prompt.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -28,7 +29,7 @@ BILAN B (pour le formateur) :
 - Scores par compétence avec /10.
 - Erreurs observées citant les exercices spécifiques.
 - Points à développer en séance (actionnables).
-- Conseils de remédiation IA concrets (durée + activité).`;
+- Conseils de remédiation IA concrets (durée + activité).` + QA_REVIEW_BLOCK;
 
     const userPrompt = `ÉLÈVE : ${eleveNom}
 SÉANCE : ${sessionTitle}

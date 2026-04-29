@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { callAI, AIError } from "../_shared/ai-client.ts";
 import { validateAndFix } from "../_shared/exercise-validator.ts";
+import { QA_REVIEW_BLOCK, logQaAuto } from "../_shared/qa-prompt.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -280,7 +281,7 @@ VÉRIFICATION FINALE : avant de retourner la consigne, compte les mots. Si > 12,
 
 STRUCTURE DE SORTIE :
 Un tableau "eleves" contenant pour chaque élève un objet avec son id et ses jours de devoirs.
-Chaque jour contient les exercices personnalisés.`;
+Chaque jour contient les exercices personnalisés.` + QA_REVIEW_BLOCK;
 
     const userPrompt = `Séance "${session.titre}" — Niveau ${niveauCible}
 Démarche IRN : ${demarche} — Épreuves obligatoires : ${epreuvesOblgatoires}
@@ -397,6 +398,7 @@ Pour chaque élève, cible ses faiblesses spécifiques. Les exercices de tronc c
     let totalDevoirs = 0;
     let totalExercices = 0;
     let totalExcluded = 0;
+    let totalInitial = 0;
     const excludedReport: { eleve: string; titre: string; reason: string }[] = [];
 
     // Cache for tronc commun exercises (same content → share exercise row)
@@ -416,6 +418,7 @@ Pour chaque élève, cible ses faiblesses spécifiques. Les exercices de tronc c
         deadline.setHours(23, 59, 59, 0);
 
         for (const ex of jour.exercices || []) {
+          totalInitial++;
           // ── VALIDATION & RÉGÉNÉRATION ──
           const validated = await validateAndFix(
             { ...ex, niveau_vise: niveauCible },
@@ -424,7 +427,7 @@ Pour chaque élève, cible ses faiblesses spécifiques. Les exercices de tronc c
           if (!validated) {
             totalExcluded++;
             excludedReport.push({ eleve: aiEleve.eleve_id, titre: ex.titre || "?", reason: "validation_failed_after_3_attempts" });
-            console.warn(`[homework] Excluded: ${ex.titre} for ${aiEleve.eleve_id}`);
+            console.warn(`[QA_AUTO][homework] Excluded: ${ex.titre} for ${aiEleve.eleve_id}`);
             continue;
           }
           const validEx = validated.exercise;
@@ -486,6 +489,19 @@ Pour chaque élève, cible ses faiblesses spécifiques. Les exercices de tronc c
           totalDevoirs++;
         }
       }
+    }
+
+    // ── QA gate global : ≥60% des exercices initiaux doivent rester valides ──
+    const validRatio = totalInitial > 0 ? (totalInitial - totalExcluded) / totalInitial : 1;
+    if (totalInitial > 0 && validRatio < 0.6) {
+      // Signalement global (formateurId disponible mais pas un eleve_id unique → log seul)
+      await logQaAuto(supabase, {
+        formateur_id: formateurId,
+        context: "qa_auto_daily_homework",
+        excluded: excludedReport,
+        action_taken: `low_quality_ratio_${(validRatio * 100).toFixed(0)}pct`,
+      });
+      console.warn(`[QA_AUTO][homework] Low ratio ${(validRatio * 100).toFixed(0)}% — devoirs déjà insérés mais avertissement remonté`);
     }
 
     return new Response(

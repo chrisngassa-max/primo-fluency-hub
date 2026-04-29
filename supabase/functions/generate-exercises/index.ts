@@ -3,6 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { MODEL } from "../_shared/system-prompt.ts";
 import { callAI, AIError } from "../_shared/ai-client.ts";
 import { validateAndFix } from "../_shared/exercise-validator.ts";
+import { QA_REVIEW_BLOCK } from "../_shared/qa-prompt.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -606,7 +607,7 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
     const data = await callAI({
       model: MODEL,
       messages: [
-        { role: "system", content: systemPrompt },
+        { role: "system", content: systemPrompt + QA_REVIEW_BLOCK },
         { role: "user", content: userPrompt },
       ],
       tools: [
@@ -743,6 +744,13 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
     if (excludedList.length > 0) {
       (exercises as any).excluded = excludedList;
       (exercises as any).totalExcluded = excludedList.length;
+    }
+    // QA gate : avertit si moins de 60% rescapés (laisse le frontend décider)
+    const initial = (validatedList.length + excludedList.length);
+    const ratio = initial > 0 ? validatedList.length / initial : 1;
+    if (initial > 0 && ratio < 0.6) {
+      (exercises as any).qa_warning = `Seulement ${validatedList.length}/${initial} exercices ont passé la QA (<60%)`;
+      console.warn(`[QA_AUTO][generate-exercises] Low ratio ${(ratio * 100).toFixed(0)}%`);
     }
 
     // Post-processing: fetch photos from Pexels for exercises that have image_description
