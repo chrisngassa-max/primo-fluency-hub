@@ -398,6 +398,7 @@ Pour chaque élève, cible ses faiblesses spécifiques. Les exercices de tronc c
     let totalDevoirs = 0;
     let totalExercices = 0;
     let totalExcluded = 0;
+    let totalInitial = 0;
     const excludedReport: { eleve: string; titre: string; reason: string }[] = [];
 
     // Cache for tronc commun exercises (same content → share exercise row)
@@ -417,6 +418,7 @@ Pour chaque élève, cible ses faiblesses spécifiques. Les exercices de tronc c
         deadline.setHours(23, 59, 59, 0);
 
         for (const ex of jour.exercices || []) {
+          totalInitial++;
           // ── VALIDATION & RÉGÉNÉRATION ──
           const validated = await validateAndFix(
             { ...ex, niveau_vise: niveauCible },
@@ -425,7 +427,7 @@ Pour chaque élève, cible ses faiblesses spécifiques. Les exercices de tronc c
           if (!validated) {
             totalExcluded++;
             excludedReport.push({ eleve: aiEleve.eleve_id, titre: ex.titre || "?", reason: "validation_failed_after_3_attempts" });
-            console.warn(`[homework] Excluded: ${ex.titre} for ${aiEleve.eleve_id}`);
+            console.warn(`[QA_AUTO][homework] Excluded: ${ex.titre} for ${aiEleve.eleve_id}`);
             continue;
           }
           const validEx = validated.exercise;
