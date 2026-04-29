@@ -12,42 +12,57 @@ Tu es le correcteur expert du moteur pédagogique captcf.fr, spécialisé TCF IR
 Tu corriges les productions d'apprenants (A0–B2) selon les grilles d'évaluation officielles du TCF.
 Tu n'es pas un assistant généraliste. Ta seule mission : évaluer avec précision et bienveillance.
 
-## CRITÈRES DE CORRECTION OFFICIELS (grilles TCF IRN)
-1. **Adéquation à la tâche** : La réponse correspond-elle précisément à ce qui est demandé ? Le sujet est-il traité ? La consigne est-elle respectée ?
-2. **Cohérence et cohésion** : Le texte/discours est-il logique, organisé, avec des connecteurs appropriés au niveau visé ?
-3. **Compétence linguistique** : Grammaire, vocabulaire, orthographe. Richesse et précision du lexique par rapport au niveau.
-4. **Compétence phonologique** (EO uniquement) : Prononciation, intonation, fluidité, rythme.
+## RÈGLES DE NOTATION ABSOLUES (à appliquer AVANT toute autre considération)
+1. **Adéquation à la consigne d'abord** : si la réponse ne traite PAS le sujet demandé, ou ne contient AUCUN des éléments demandés par la consigne (sujet, nombre d'informations, idées), alors :
+   - resultat = "incorrect"
+   - score = 0 (sur 10)
+   - Tu DOIS l'indiquer clairement dans points_amelioration.
+2. **Une simple salutation** ("Bonjour", "Bonjours", "Salut", "Coucou", etc.) répondue à une consigne demandant une production, est TOUJOURS incorrect, score = 0. Ce n'est pas une production, c'est une formule.
+3. **Une réponse vide ou < 3 mots utiles** (hors salutations) à une consigne de production est incorrect, score = 0.
+4. **Une réponse hors-sujet en français correct** reste incorrect, score ≤ 2. La langue ne sauve pas l'absence de contenu.
+5. **Une réponse partielle** qui aborde le sujet mais oublie des éléments demandés : partiellement_correct, score 3-6 selon la complétude.
+6. **Une réponse complète et compréhensible**, même avec des fautes de français : correct, score 7-10. La tolérance porte sur la FORME (orthographe, grammaire, conjugaison), JAMAIS sur l'absence de CONTENU.
+
+## CRITÈRES DE CORRECTION (dans cet ordre de priorité)
+1. **Adéquation à la tâche** (priorité absolue) : sujet traité, consigne respectée, éléments demandés présents.
+2. **Cohérence et cohésion** : organisation logique, connecteurs au niveau visé.
+3. **Compétence linguistique** : grammaire, vocabulaire, orthographe — tolérante sur la forme, pas sur le fond.
+4. **Compétence phonologique** (EO uniquement) : prononciation, intonation, fluidité.
 
 ## TOLÉRANCE PHONÉTIQUE (réponses orales transcrites par STT)
 - Accepter les homophones et approximations phonétiques dues à la transcription automatique.
 - Ignorer ponctuation, casse, espaces superflus.
 - Reconnaître l'intention communicative même si la forme est imparfaite.
 - Ne JAMAIS pénaliser les artefacts de transcription STT.
+- ATTENTION : ces tolérances ne s'appliquent qu'à la FORME. Une réponse hors-sujet reste hors-sujet.
 
 ## CALIBRAGE PAR DÉMARCHE IRN
 - **Titre de séjour / Résidence** : Seuil B1 sur CO + CE. Tolérance plus large sur EE/EO.
 - **Naturalisation** : Seuil B1 strict sur les 4 épreuves. Exigences syntaxiques et argumentatives plus élevées.
 
 ## BANQUE PÉDAGOGIQUE DE RÉFÉRENCE
-Si une banque de référence est fournie ci-dessous, utilise-la impérativement pour calibrer ta correction :
-- Compare la production de l'apprenant aux standards et modèles de la banque.
-- Ajuste tes attentes au niveau visé dans la banque.
-- Cite les éléments de référence pertinents dans ta justification.
-- Utilise les critères de réussite de la banque comme barème.
+Si une banque de référence est fournie ci-dessous, utilise-la pour calibrer ta correction (standards, niveau visé, critères de réussite).
 
-## FORMAT DE SORTIE JSON STRICT
+## FORMAT DE SORTIE JSON STRICT (champs obligatoires en gras)
 {
   "resultat": "correct | partiellement_correct | incorrect",
-  "score_estime": 7,
-  "niveau_cecrl_atteint": "A1 | A2 | B1 | B2",
-  "points_forts": ["...", "..."],
-  "points_amelioration": ["...", "..."],
-  "reformulation_modele": "Phrase ou texte modèle que l'apprenant aurait pu produire pour obtenir le score maximum",
-  "encouragement": "Message bienveillant, personnalisé et motivant pour l'apprenant",
-  "priorite_remediation": "Le point prioritaire à travailler en premier pour progresser"
+  "score": 0,                    // ENTIER de 0 à 10. 0 = vide/hors-sujet/salutation. 10 = parfait.
+  "score_estime": 0,             // alias rétro-compatibilité, mêmes valeurs que "score"
+  "correct": false,              // true UNIQUEMENT si score >= 6 ET resultat = "correct"
+  "justification": "...",        // 1-2 phrases qui expliquent CONCRÈTEMENT au formateur pourquoi ce score
+  "correction_text": "...",      // alias de justification (rétro-compatibilité)
+  "niveau_cecrl_atteint": "A0 | A1 | A2 | B1 | B2",
+  "points_forts": ["..."],       // [] si rien à valoriser
+  "points_amelioration": ["..."],// précis : ce qui manque par rapport à la consigne
+  "reformulation_modele": "...", // exemple court de réponse attendue, adressé à l'élève en tutoiement
+  "encouragement": "...",        // bienveillant mais HONNÊTE — ne félicite jamais une non-réponse
+  "priorite_remediation": "..."  // un seul axe à travailler en premier
 }
 
-RAPPEL : Sois exigeant sur le fond, bienveillant sur la forme. Objectif B1. Retourne UNIQUEMENT le JSON, rien d'autre.`
+RAPPEL CRITIQUE :
+- "Bonjours" à une consigne "Présentez votre famille" → score: 0, correct: false, resultat: "incorrect", justification: "La réponse est une salutation, pas une présentation. Aucun membre de la famille n'est cité."
+- Sois exigeant sur le fond, bienveillant sur la forme.
+- Retourne UNIQUEMENT le JSON, rien d'autre.`
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -64,6 +79,48 @@ Deno.serve(async (req) => {
     const demarche = type_demarche || "titre_sejour"
     const targetEpreuve = epreuve || "CO"
     const targetNiveau = niveau || "A1"
+
+    // === GARDE-FOU PRÉ-IA : salutations / vide / hors-sujet flagrant ===
+    // Évite de payer Gemini pour des cas où le résultat est évident, et
+    // garantit qu'aucune bienveillance excessive ne valorise une non-réponse.
+    const raw = String(studentAnswer ?? "").trim()
+    const normalized = raw
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[.,;:!?'"()«»\-_]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+    const SALUTATIONS = new Set([
+      "", "bonjour", "bonjours", "bonsoir", "salut", "coucou", "hello", "hi",
+      "bonne journee", "bonne soiree", "merci", "ok", "oui", "non",
+    ])
+    const usefulWords = normalized
+      .split(" ")
+      .filter((w) => w.length > 1)
+      .filter((w) => !["le", "la", "les", "un", "une", "des", "et", "de", "du"].includes(w))
+    if (SALUTATIONS.has(normalized) || raw.length < 4 || usefulWords.length < 2) {
+      const justification = raw.length === 0
+        ? "Aucune réponse n'a été fournie."
+        : SALUTATIONS.has(normalized)
+          ? `La réponse "${raw}" est une formule de politesse, pas une production qui répond à la consigne.`
+          : "La réponse est trop courte pour traiter la consigne."
+      return new Response(JSON.stringify({
+        resultat: "incorrect",
+        score: 0,
+        score_estime: 0,
+        correct: false,
+        justification,
+        correction_text: justification,
+        niveau_cecrl_atteint: "A0",
+        points_forts: [],
+        points_amelioration: ["Lis attentivement la consigne", "Donne au moins une information demandée"],
+        reformulation_modele: "",
+        encouragement: "Tu peux y arriver — relis la question et donne une vraie réponse.",
+        priorite_remediation: "Comprendre et traiter la consigne",
+        skipped_ai: true,
+      }), { headers: { ...corsHeaders, "Content-Type": "application/json" } })
+    }
 
     // === RAG : Recherche dans la banque pédagogique Supabase ===
     let banqueReference: any[] = []
@@ -142,7 +199,26 @@ Produis le JSON de correction complet selon le format spécifié.`
     const content = data.candidates[0].content.parts[0].text
     const evaluation = JSON.parse(content)
 
-    return new Response(JSON.stringify(evaluation), {
+    // Normalisation des alias attendus par le frontend (rétro-compatibilité).
+    const score = Number(evaluation.score ?? evaluation.score_estime ?? 0)
+    const safeScore = Math.max(0, Math.min(10, Math.round(isFinite(score) ? score : 0)))
+    const justification = evaluation.justification ?? evaluation.correction_text ?? ""
+    const resultat = evaluation.resultat ?? (safeScore >= 6 ? "correct" : safeScore >= 3 ? "partiellement_correct" : "incorrect")
+    const correct = typeof evaluation.correct === "boolean"
+      ? evaluation.correct
+      : (resultat === "correct" && safeScore >= 6)
+
+    const normalized = {
+      ...evaluation,
+      score: safeScore,
+      score_estime: safeScore,
+      correct,
+      resultat,
+      justification,
+      correction_text: justification,
+    }
+
+    return new Response(JSON.stringify(normalized), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     })
   } catch (error) {
