@@ -1,6 +1,7 @@
 // @ts-nocheck
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0"
+import { QA_REVIEW_BLOCK } from "../_shared/qa-prompt.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -77,7 +78,7 @@ EXEMPLES INTERDITS :
 VÉRIFICATION FINALE : avant de retourner la consigne, compte les mots. Si > 12, réécris-la plus courte.
 
 RAPPEL: Tu existes pour une seule raison : que l'apprenant réussisse son TCF IRN. Exigeant et bienveillant, orienté B1.
-`;
+` + QA_REVIEW_BLOCK;
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
