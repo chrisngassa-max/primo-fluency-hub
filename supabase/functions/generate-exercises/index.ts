@@ -745,6 +745,13 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
       (exercises as any).excluded = excludedList;
       (exercises as any).totalExcluded = excludedList.length;
     }
+    // QA gate : avertit si moins de 60% rescapés (laisse le frontend décider)
+    const initial = (validatedList.length + excludedList.length);
+    const ratio = initial > 0 ? validatedList.length / initial : 1;
+    if (initial > 0 && ratio < 0.6) {
+      (exercises as any).qa_warning = `Seulement ${validatedList.length}/${initial} exercices ont passé la QA (<60%)`;
+      console.warn(`[QA_AUTO][generate-exercises] Low ratio ${(ratio * 100).toFixed(0)}%`);
+    }
 
     // Post-processing: fetch photos from Pexels for exercises that have image_description
     const PEXELS_API_KEY = Deno.env.get("PEXELS_API_KEY");
