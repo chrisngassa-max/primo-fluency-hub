@@ -46,8 +46,13 @@ export interface CorrigerOptions {
   metadata?: { code?: string };
 }
 
+export interface CorrectionItemDisplay extends CorrectionItem {
+  /** Libellé à utiliser devant `bonne_reponse` ("Bonne réponse" vs "Exemple de réponse attendue"). */
+  bonne_reponse_label?: "bonne_reponse" | "exemple_attendu";
+}
+
 export interface CorrigerResult {
-  correction: CorrectionItem[];
+  correction: CorrectionItemDisplay[];
   /** Score 0-100 calculé sur les items NON signalés. */
   score: number;
   countedItems: number;
@@ -85,7 +90,7 @@ export async function corrigerExercice(opts: CorrigerOptions): Promise<CorrigerR
 
   const useAI = needsAIEvaluation(format, competence);
 
-  const correction: CorrectionItem[] = [];
+  const correction: CorrectionItemDisplay[] = [];
   let correctCount = 0;
   let countedItems = 0;
 
@@ -100,9 +105,11 @@ export async function corrigerExercice(opts: CorrigerOptions): Promise<CorrigerR
     let iaEvaluated = false;
     let iaScoreRaw: number | undefined;
     let explication = (item.explication ?? "") as string;
+    let displayedBonneReponse = bonneReponse;
+    let bonneReponseLabel: "bonne_reponse" | "exemple_attendu" = "bonne_reponse";
 
     if (useAI) {
-      // Évaluation IA pour la production écrite. Pas de comparaison de chaîne.
+      // Évaluation IA pour la production écrite. JAMAIS de comparaison de chaîne.
       try {
         const evalResult = await evaluerReponseIA(
           {
@@ -121,27 +128,25 @@ export async function corrigerExercice(opts: CorrigerOptions): Promise<CorrigerR
         iaEvaluated = true;
         iaScoreRaw = evalResult.scoreRaw10 ?? Math.round((evalResult.score / 3) * 10);
         // Seuil de validation IA : 6/10. En dessous = incorrect.
-        isCorrect = (iaScoreRaw ?? 0) >= 6;
+        // On respecte aussi `resultat` renvoyé par l'IA s'il dit "incorrect".
+        isCorrect = (iaScoreRaw ?? 0) >= 6 && evalResult.resultat !== "incorrect";
         if (evalResult.justification) {
           explication = explication
             ? `${explication}\n\n${evalResult.justification}`
             : evalResult.justification;
         }
-        // Pour les productions écrites, "bonne_reponse" doit être lisible par l'élève
-        // et NE DOIT PAS être la description du critère (ex: "L'apprenant doit être
-        // capable de…"). On utilise la reformulation modèle de l'IA si dispo,
-        // sinon un libellé neutre.
-        const looksLikeCriterion = /\bl'?apprenant\b/i.test(bonneReponse) || bonneReponse.length > 200;
-        if (evalResult.reformulationModele) {
-          // surcharge le bonne_reponse renvoyé pour l'affichage
-          (correction as any)._tmp_bonne_reponse = evalResult.reformulationModele;
-        } else if (looksLikeCriterion) {
-          (correction as any)._tmp_bonne_reponse = "(Production libre — il n'y a pas de réponse unique. Voir l'explication pour les critères.)";
-        }
+        // Production libre : on n'affiche JAMAIS la description du critère
+        // pédagogique sous "Bonne réponse". On préfère la reformulation modèle
+        // de l'IA, sinon un libellé neutre, et on change le label d'affichage.
+        bonneReponseLabel = "exemple_attendu";
+        displayedBonneReponse = evalResult.reformulationModele?.trim()
+          || "Il n'y a pas de réponse unique. Relis les critères dans l'explication ci-dessous.";
       } catch (e) {
         console.error("[corrigerExercice] AI eval failed for item", idx, e);
         // En cas d'échec IA : on note non corrigé (faux) plutôt que de tricher.
         isCorrect = false;
+        bonneReponseLabel = "exemple_attendu";
+        displayedBonneReponse = "Évaluation IA indisponible — réessaie plus tard.";
       }
     } else {
       // Comparaison de chaîne normalisée pour QCM, V/F, lacunaire, transformation, appariement.
@@ -153,13 +158,11 @@ export async function corrigerExercice(opts: CorrigerOptions): Promise<CorrigerR
       countedItems++;
     }
 
-    const displayedBonneReponse = (correction as any)._tmp_bonne_reponse ?? bonneReponse;
-    if ((correction as any)._tmp_bonne_reponse) delete (correction as any)._tmp_bonne_reponse;
-
     correction.push({
       question,
       reponse_eleve: userAnswer,
       bonne_reponse: displayedBonneReponse,
+      bonne_reponse_label: bonneReponseLabel,
       correct: isCorrect,
       explication,
       reported,
