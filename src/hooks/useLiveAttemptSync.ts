@@ -48,22 +48,19 @@ export function useLiveAttemptSync({
       if (!force && snapshot === lastSnapshotRef.current) return;
       lastSnapshotRef.current = snapshot;
 
-      // Calcul progression + score partiel (QCM/texte)
+      // Progression live UNIQUEMENT. Pas de score provisoire :
+      // - la correction fiable se fait à la soumission (table `resultats`)
+      // - certains formats (texte libre, lacunaire, EE, EO, multi) ne sont pas
+      //   auto-corrigeables par simple égalité de chaîne.
       let answeredCount = 0;
-      let correctCount = 0;
       const itemResults = items.map((item, idx) => {
         const userAnswer = (answers as Record<string | number, string>)[idx];
         if (userAnswer !== undefined && userAnswer !== "") {
           answeredCount++;
-          const isCorrect =
-            String(userAnswer).trim().toLowerCase() ===
-            String(item?.bonne_reponse ?? "").trim().toLowerCase();
-          if (isCorrect) correctCount++;
-          return { idx, answered: true, correct: isCorrect, reponse: userAnswer };
+          return { idx, answered: true, reponse: userAnswer };
         }
         return { idx, answered: false };
       });
-      const partialScore = items.length > 0 ? correctCount / items.length : 0;
 
       const payload: Record<string, unknown> = {
         answers: answers as never,
@@ -71,8 +68,11 @@ export function useLiveAttemptSync({
           items: itemResults,
           answered: answeredCount,
           total: items.length,
+          provisional: true,
         } as never,
-        score_normalized: partialScore,
+        // PAS de score_normalized pendant in_progress :
+        // évite que le formateur lise une note provisoire trompeuse.
+        // Le score définitif est posé par le trigger `mirror_resultat_to_attempt`.
         source_app: sourceApp,
       };
 
