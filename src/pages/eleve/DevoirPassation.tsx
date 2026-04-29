@@ -118,10 +118,7 @@ const DevoirPassation = () => {
   const [autoSubmitted, setAutoSubmitted] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Live attempt tracking — pour le suivi en direct du formateur
-  const liveAttemptIdRef = useRef<string | null>(null);
-  const lastSyncedAnswersRef = useRef<string>("");
-
+  // Live attempt tracking — extrait dans useLiveAttemptSync (voir plus bas)
   const { data: devoir, isLoading } = useQuery({
     queryKey: ["devoir-detail", devoirId],
     queryFn: async () => {
