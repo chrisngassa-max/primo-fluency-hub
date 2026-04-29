@@ -65,13 +65,13 @@ export function useLiveAttemptSync({
       });
       const partialScore = items.length > 0 ? correctCount / items.length : 0;
 
-      const payload = {
-        answers: answers as unknown as Record<string, unknown>,
+      const payload: Record<string, unknown> = {
+        answers: answers as never,
         item_results: {
           items: itemResults,
           answered: answeredCount,
           total: items.length,
-        } as unknown as Record<string, unknown>,
+        } as never,
         score_normalized: partialScore,
         source_app: sourceApp,
       };
@@ -80,7 +80,7 @@ export function useLiveAttemptSync({
         // 1) update existant in_progress (cas le plus fréquent)
         const { data: updated, error: updErr } = await supabase
           .from("exercise_attempts")
-          .update(payload)
+          .update(payload as never)
           .eq("exercise_id", exerciseId)
           .eq("learner_id", learnerId)
           .eq("status", "in_progress")
@@ -102,7 +102,7 @@ export function useLiveAttemptSync({
             status: "in_progress",
             started_at: new Date().toISOString(),
             ...payload,
-          })
+          } as never)
           .select("id")
           .maybeSingle();
 
