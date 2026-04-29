@@ -55,32 +55,51 @@ Deno.serve(async (req) => {
   const userId = userData.user.id;
 
   // 2. Parse body
-  let body: { devoir_id?: string; answers?: Record<string, unknown>; transcription?: string; audio_path?: string };
+  // Deux modes :
+  //   - mode "devoir" : { devoir_id, answers, [transcription, audio_path] }
+  //     → écrit resultats(devoir_id) + update devoirs.statut
+  //   - mode "exercice" : { exercice_id, answers, session_id? }
+  //     → écrit resultats sans devoir_id (cas BilanSeance, exos en classe)
+  let body: {
+    devoir_id?: string;
+    exercice_id?: string;
+    session_id?: string;
+    answers?: Record<string, unknown>;
+    transcription?: string;
+    audio_path?: string;
+  };
   try {
     body = await req.json();
   } catch {
     return json(400, { error: "Invalid JSON body" });
   }
   const devoirId = body.devoir_id;
+  const standaloneExerciceId = body.exercice_id;
   const answers = body.answers ?? {};
-  if (!devoirId || typeof devoirId !== "string") {
-    return json(400, { error: "devoir_id required" });
+  if (!devoirId && !standaloneExerciceId) {
+    return json(400, { error: "devoir_id or exercice_id required" });
   }
 
   // 3. Service role pour bypasser RLS et corriger sans risque de tampering
   const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
 
-  // 3a. Charger le devoir + vérifier propriété + statut
-  const { data: devoir, error: devErr } = await admin
-    .from("devoirs")
-    .select("id, eleve_id, exercice_id, statut, nb_reussites_consecutives, formateur_id")
-    .eq("id", devoirId)
-    .maybeSingle();
-  if (devErr) return json(500, { error: "Failed to load devoir", details: devErr.message });
-  if (!devoir) return json(404, { error: "Devoir not found" });
-  if (devoir.eleve_id !== userId) return json(403, { error: "Not your devoir" });
-  if (devoir.statut !== "en_attente") {
-    return json(409, { error: "Devoir already finalized", statut: devoir.statut });
+  // 3a. Charger le devoir + vérifier propriété + statut (mode devoir uniquement)
+  let devoir: { id: string; eleve_id: string; exercice_id: string; statut: string; nb_reussites_consecutives: number } | null = null;
+  let targetExerciceId = standaloneExerciceId!;
+  if (devoirId) {
+    const { data, error: devErr } = await admin
+      .from("devoirs")
+      .select("id, eleve_id, exercice_id, statut, nb_reussites_consecutives, formateur_id")
+      .eq("id", devoirId)
+      .maybeSingle();
+    if (devErr) return json(500, { error: "Failed to load devoir", details: devErr.message });
+    if (!data) return json(404, { error: "Devoir not found" });
+    if (data.eleve_id !== userId) return json(403, { error: "Not your devoir" });
+    if (data.statut !== "en_attente") {
+      return json(409, { error: "Devoir already finalized", statut: data.statut });
+    }
+    devoir = data as typeof devoir;
+    targetExerciceId = data.exercice_id;
   }
 
   // 3b. Charger l'exercice
