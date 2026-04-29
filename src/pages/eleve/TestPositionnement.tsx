@@ -813,36 +813,22 @@ const TestPositionnement = () => {
         scores: newScores,
       });
     } else {
-      // Test finished
-      const profil = calculerProfilFinal(newPaliersFinal);
-      const groupe = suggererGroupe(profil);
-
-      await supabase
-        .from("test_sessions")
-        .update({
-          statut: "termine",
-          date_fin: new Date().toISOString(),
-          profil_final: profil,
-          groupe_suggere: groupe,
-        })
-        .eq("id", sessionState.sessionId);
-
-      await supabase.from("test_resultats_apprenants").insert({
-        apprenant_id: user!.id,
-        session_id: sessionState.sessionId,
-        score_total:
-          newScores.co + newScores.ce + newScores.eo + newScores.ee,
-        score_co: newScores.co,
-        score_ce: newScores.ce,
-        score_eo: newScores.eo,
-        score_ee: newScores.ee,
-        palier_final_co: newPaliersFinal.co,
-        palier_final_ce: newPaliersFinal.ce,
-        palier_final_eo: newPaliersFinal.eo,
-        palier_final_ee: newPaliersFinal.ee,
-        profil,
-        groupe_suggere: groupe,
-      });
+      // VAGUE 2 : la finalisation (calcul scores agrégés, profil, groupe,
+      // statut="termine" + snapshot test_resultats_apprenants) est déléguée
+      // à l'edge function finalize-test-session, qui recalcule depuis
+      // test_reponses (source de vérité non manipulable).
+      const { data: finalRes, error: finalErr } = await supabase.functions.invoke(
+        "finalize-test-session",
+        { body: { session_id: sessionState.sessionId } }
+      );
+      if (finalErr || !finalRes) {
+        console.error("Finalize error:", finalErr);
+        toast.error("Erreur lors de la finalisation du test", {
+          description: finalErr?.message || "Réessaie dans un instant.",
+        });
+        return;
+      }
+      const profil = (finalRes.profil_final as string) || calculerProfilFinal(newPaliersFinal);
 
       setSessionState({
         ...sessionState,
