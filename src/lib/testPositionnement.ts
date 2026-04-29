@@ -80,7 +80,13 @@ export async function evaluerReponseIA(
   question: { criteres_evaluation: unknown },
   reponseApprenant: string,
   metadata?: { code?: string; type_reponse?: string; mots_cles_attendus?: string[] }
-): Promise<{ score: number; justification: string }> {
+): Promise<{
+  score: number;
+  justification: string;
+  reformulationModele?: string;
+  scoreRaw10?: number;
+  resultat?: "correct" | "partiellement_correct" | "incorrect";
+}> {
   const rule = metadata?.type_reponse === "oral"
     ? "Évaluation orale FLE : prononciation, vocabulaire, grammaire, cohérence"
     : "Grammaire et compréhension FLE";
@@ -113,7 +119,10 @@ export async function evaluerReponseIA(
 
   return {
     score: normalizedScore,
+    scoreRaw10: safeRaw,
     justification: data?.justification ?? data?.correction_text ?? "Pas de justification disponible.",
+    reformulationModele: data?.reformulation_modele ?? undefined,
+    resultat: data?.resultat,
   };
 }
 
