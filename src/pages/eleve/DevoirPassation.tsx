@@ -26,6 +26,7 @@ import {
   requestMicrophoneStream,
   startWavRecording,
 } from "@/lib/audioRecorder";
+import { useLiveAttemptSync } from "@/hooks/useLiveAttemptSync";
 
 function CorrectionAccordion({ correction }: { correction: any[] }) {
   const [openItems, setOpenItems] = useState<number[]>([]);
