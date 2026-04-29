@@ -129,46 +129,52 @@ export async function corrigerExercice(opts: CorrigerOptions): Promise<CorrigerR
     let displayedBonneReponse = bonneReponse;
     let bonneReponseLabel: "bonne_reponse" | "exemple_attendu" = "bonne_reponse";
 
-    if (useAI) {
-      // Évaluation IA pour la production écrite. JAMAIS de comparaison de chaîne.
+    // Pas d'options ET bonne_reponse qui ressemble à un template/critère →
+    // c'est une réponse libre, on doit passer par l'IA même si l'exercice
+    // n'est pas globalement marqué "production_*".
+    const hasOptions = Array.isArray((item as { options?: unknown }).options) && ((item as { options: unknown[] }).options).length > 0;
+    const itemNeedsAI = useAI || (!hasOptions && looksLikeTemplate(bonneReponse));
+
+    if (itemNeedsAI && userAnswer.trim() !== "") {
       try {
         const evalResult = await evaluerReponseIA(
           {
             criteres_evaluation:
               item.criteres_evaluation ??
-              bonneReponse ??
-              "Production écrite : évaluer la pertinence, la grammaire et le lexique.",
+              `${question}\n\nAttendu : ${bonneReponse || "réponse pertinente, claire, en français correct."}`,
           },
           userAnswer,
           {
             code: metadata?.code,
-            type_reponse: "ecrit",
+            type_reponse: format === "production_orale" || competence === "EO" ? "oral" : "ecrit",
             mots_cles_attendus: item.mots_cles_attendus,
           }
         );
         iaEvaluated = true;
         iaScoreRaw = evalResult.scoreRaw10 ?? Math.round((evalResult.score / 3) * 10);
-        // Seuil de validation IA : 6/10. En dessous = incorrect.
-        // On respecte aussi `resultat` renvoyé par l'IA s'il dit "incorrect".
         isCorrect = (iaScoreRaw ?? 0) >= 6 && evalResult.resultat !== "incorrect";
         if (evalResult.justification) {
           explication = explication
             ? `${explication}\n\n${evalResult.justification}`
             : evalResult.justification;
         }
-        // Production libre : on n'affiche JAMAIS la description du critère
-        // pédagogique sous "Bonne réponse". On préfère la reformulation modèle
-        // de l'IA, sinon un libellé neutre, et on change le label d'affichage.
         bonneReponseLabel = "exemple_attendu";
         displayedBonneReponse = evalResult.reformulationModele?.trim()
-          || "Il n'y a pas de réponse unique. Relis les critères dans l'explication ci-dessous.";
+          || (looksLikeTemplate(bonneReponse)
+            ? "Il n'y a pas de réponse unique. Relis les critères dans l'explication ci-dessous."
+            : bonneReponse);
       } catch (e) {
         console.error("[corrigerExercice] AI eval failed for item", idx, e);
-        // En cas d'échec IA : on note non corrigé (faux) plutôt que de tricher.
         isCorrect = false;
         bonneReponseLabel = "exemple_attendu";
         displayedBonneReponse = "Évaluation IA indisponible — réessaie plus tard.";
       }
+    } else if (itemNeedsAI && userAnswer.trim() === "") {
+      isCorrect = false;
+      bonneReponseLabel = "exemple_attendu";
+      displayedBonneReponse = looksLikeTemplate(bonneReponse)
+        ? "Réponse libre attendue."
+        : bonneReponse;
     } else {
       // Comparaison de chaîne normalisée pour QCM, V/F, lacunaire, transformation, appariement.
       isCorrect = normalize(userAnswer) === normalize(bonneReponse) && userAnswer !== "";
