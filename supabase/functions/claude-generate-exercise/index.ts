@@ -1,4 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { QA_REVIEW_BLOCK } from '../_shared/qa-prompt.ts';
+import { validateAndFix } from '../_shared/exercise-validator.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -62,7 +64,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const systemPrompt = `Tu es expert TCF IRN. Tu génères des exercices FLE pour apprenants A0/A1. Contextes : préfecture, médecin, CAF, logement. Inspire-toi du gabarit fourni. Évite de reproduire les exercices existants. Retourne uniquement du JSON strict : { titre, consigne, competence, niveau_cecrl, format, contenu: { items: [{question, options[], bonne_reponse, explication}] }, justification_pedagogique, duree_estimee_secondes }`;
+    const systemPrompt = `Tu es expert TCF IRN. Tu génères des exercices FLE pour apprenants A0/A1. Contextes : préfecture, médecin, CAF, logement. Inspire-toi du gabarit fourni. Évite de reproduire les exercices existants. Retourne uniquement du JSON strict : { titre, consigne, competence, niveau_cecrl, format, contenu: { items: [{question, options[], bonne_reponse, explication}] }, justification_pedagogique, duree_estimee_secondes }` + QA_REVIEW_BLOCK;
 
     // [ADAPTATION captcf] Accès direct aux colonnes du gabarit (pas gabarit.structure.*)
     const userMessage = `Gabarit : ${JSON.stringify({
@@ -117,6 +119,19 @@ Exercices existants à ne pas reproduire : ${JSON.stringify(existingContext)}`;
         status: 422, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+
+    // ── Validation déterministe + régénération ──
+    const validated = await validateAndFix(
+      { ...exerciseJson, competence: skill_type, format, niveau_vise: level, difficulte },
+      { niveau: level }
+    );
+    if (!validated) {
+      console.warn('[QA_AUTO][claude-generate-exercise] Excluded after retries');
+      return new Response(JSON.stringify({ error: 'QA bloquée : exercice invalide après régénération' }), {
+        status: 422, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    exerciseJson = { ...exerciseJson, ...validated.exercise };
 
     // 5. Insérer dans exercices
     // [ADAPTATION captcf] statut='draft' (pas 'to_review'), point_a_maitriser_id requis
