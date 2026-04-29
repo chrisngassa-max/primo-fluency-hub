@@ -105,13 +105,15 @@ export async function evaluerReponseIA(
     return { score: 0, justification: "Évaluation IA indisponible." };
   }
 
-  // Map score from /10 to /3 for backward compatibility
-  const rawScore = data?.score ?? 0;
-  const normalizedScore = Math.round((rawScore / 10) * 3);
+  // L'edge tcf-evaluate-answer renvoie maintenant un score 0-10 (champ `score`,
+  // alias `score_estime`). On le convertit en /3 pour la compat historique.
+  const rawScore = Number(data?.score ?? data?.score_estime ?? 0);
+  const safeRaw = Math.max(0, Math.min(10, Math.round(isFinite(rawScore) ? rawScore : 0)));
+  const normalizedScore = Math.round((safeRaw / 10) * 3);
 
   return {
     score: normalizedScore,
-    justification: data?.correction_text ?? "Pas de justification disponible.",
+    justification: data?.justification ?? data?.correction_text ?? "Pas de justification disponible.",
   };
 }
 
