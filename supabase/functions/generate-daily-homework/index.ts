@@ -491,6 +491,19 @@ Pour chaque élève, cible ses faiblesses spécifiques. Les exercices de tronc c
       }
     }
 
+    // ── QA gate global : ≥60% des exercices initiaux doivent rester valides ──
+    const validRatio = totalInitial > 0 ? (totalInitial - totalExcluded) / totalInitial : 1;
+    if (totalInitial > 0 && validRatio < 0.6) {
+      // Signalement global (formateurId disponible mais pas un eleve_id unique → log seul)
+      await logQaAuto(supabase, {
+        formateur_id: formateurId,
+        context: "qa_auto_daily_homework",
+        excluded: excludedReport,
+        action_taken: `low_quality_ratio_${(validRatio * 100).toFixed(0)}pct`,
+      });
+      console.warn(`[QA_AUTO][homework] Low ratio ${(validRatio * 100).toFixed(0)}% — devoirs déjà insérés mais avertissement remonté`);
+    }
+
     return new Response(
       JSON.stringify({
         success: true,
