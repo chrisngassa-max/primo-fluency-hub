@@ -73,7 +73,9 @@ export default function CorrectionDetaillee({ itemResults, scoreNormalized }: Pr
                       Ta réponse : {String(answer)}
                     </p>
                     <p className="text-xs text-green-600 font-medium">
-                      ✅ Bonne réponse : {String(r.bonne_reponse)}
+                      {r.bonne_reponse_label === "exemple_attendu" || r.ia_evaluated
+                        ? `📝 Exemple de réponse attendue : ${String(r.bonne_reponse)}`
+                        : `✅ Bonne réponse : ${String(r.bonne_reponse)}`}
                     </p>
                   </div>
                   {r.explication && (
