@@ -324,45 +324,26 @@ const DevoirPassation = () => {
         return;
       }
 
-      // AI evaluation with metadata for high tolerance
-      const evaluation = await evaluerReponseIA(
-        { criteres_evaluation: contenu?.criteres_evaluation || { prononciation: "clarté", vocabulaire: "pertinence", grammaire: "correction", coherence: "logique" } },
-        transcription,
+      // VAGUE 2 : la correction et l'écriture du score sont déléguées au serveur.
+      // Le client envoie uniquement la transcription brute. La fonction
+      // submit-devoir-result correspond à un seul item production_orale.
+      const { data: serverResult, error: submitErr } = await supabase.functions.invoke(
+        "submit-devoir-result",
         {
-          code: metadata?.code,
-          type_reponse: "oral",
-          mots_cles_attendus: contenu?.mots_cles_attendus,
+          body: {
+            devoir_id: devoirId!,
+            answers: { 0: transcription },
+            transcription,
+            audio_path: path,
+          },
         }
       );
-
-      const score = Math.round((evaluation.score / 3) * 100);
-      const correction = [{
-        question: ex.consigne || "Production orale",
-        reponse_eleve: transcription,
-        bonne_reponse: "(Évaluation IA)",
-        correct: score >= 60,
-        explication: evaluation.justification,
-      }];
-
-      // Insert result
-      await supabase.from("resultats").insert({
-        eleve_id: user.id,
-        exercice_id: ex.id,
-        devoir_id: devoirId!,
-        score,
-        reponses_eleve: { transcription, audio_path: path } as any,
-        correction_detaillee: correction as any,
-        tentative: 1,
-      });
-
-      // Update devoir status
-      const newConsecutive = (devoir.nb_reussites_consecutives || 0) + (score >= 80 ? 1 : 0);
-      const newStatut = newConsecutive >= 2 ? "arrete" : "fait";
-      await supabase.from("devoirs").update({
-        statut: newStatut as any,
-        nb_reussites_consecutives: score >= 80 ? newConsecutive : 0,
-        updated_at: new Date().toISOString(),
-      }).eq("id", devoirId!);
+      if (submitErr || !serverResult) {
+        throw new Error(submitErr?.message || "Soumission serveur échouée");
+      }
+      const score = serverResult.score as number;
+      const correction = serverResult.correction_detaillee as any[];
+      const newStatut = serverResult.devoir_statut as string;
 
       try { await updateProfilEleve(user.id, ex?.niveau_vise || "A1"); } catch {}
 
@@ -393,34 +374,28 @@ const DevoirPassation = () => {
     if (!devoir || !ex || !user) return;
     setSubmitting(true);
     try {
-      const { correction, score } = await corrigerExercice({
-        format: ex.format,
-        competence: ex.competence,
-        items,
-        answers,
-        reportedItems: reportedItemIdx,
-        metadata,
-      });
-
-      const { error: resErr } = await supabase.from("resultats").insert({
-        eleve_id: user.id,
-        exercice_id: ex.id,
-        devoir_id: devoirId!,
-        score,
-        reponses_eleve: answers as any,
-        correction_detaillee: correction as any,
-        tentative: 1,
-      });
-      if (resErr) throw resErr;
-
-      const newConsecutive = (devoir.nb_reussites_consecutives || 0) + (score >= 80 ? 1 : 0);
-      const newStatut = newConsecutive >= 2 ? "arrete" : "fait";
-      const { error: devErr } = await supabase.from("devoirs").update({
-        statut: newStatut as any,
-        nb_reussites_consecutives: score >= 80 ? newConsecutive : 0,
-        updated_at: new Date().toISOString(),
-      }).eq("id", devoirId!);
-      if (devErr) throw devErr;
+      // VAGUE 2 : tout passe par submit-devoir-result. Le client n'écrit plus
+      // ni dans `resultats`, ni dans `devoirs.statut/score`.
+      const { data: serverResult, error: submitErr } = await supabase.functions.invoke(
+        "submit-devoir-result",
+        {
+          body: {
+            devoir_id: devoirId!,
+            answers,
+          },
+        }
+      );
+      if (submitErr || !serverResult) {
+        throw new Error(submitErr?.message || "Soumission serveur échouée");
+      }
+      const score = serverResult.score as number;
+      const correction = serverResult.correction_detaillee as any[];
+      const aiFailed = serverResult.ai_failed as boolean;
+      if (aiFailed) {
+        toast.warning("Évaluation IA partielle", {
+          description: "Certains items seront revus par ton formateur.",
+        });
+      }
 
       try { await updateProfilEleve(user.id, ex?.niveau_vise || "A1"); } catch {}
 
