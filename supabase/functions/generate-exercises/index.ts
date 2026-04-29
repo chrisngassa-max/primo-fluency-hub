@@ -3,6 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { MODEL } from "../_shared/system-prompt.ts";
 import { callAI, AIError } from "../_shared/ai-client.ts";
 import { validateAndFix } from "../_shared/exercise-validator.ts";
+import { QA_REVIEW_BLOCK } from "../_shared/qa-prompt.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -606,7 +607,7 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
     const data = await callAI({
       model: MODEL,
       messages: [
-        { role: "system", content: systemPrompt },
+        { role: "system", content: systemPrompt + QA_REVIEW_BLOCK },
         { role: "user", content: userPrompt },
       ],
       tools: [
