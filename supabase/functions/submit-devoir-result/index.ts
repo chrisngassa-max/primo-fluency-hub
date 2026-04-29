@@ -106,7 +106,7 @@ Deno.serve(async (req) => {
   const { data: ex, error: exErr } = await admin
     .from("exercices")
     .select("id, titre, consigne, contenu, format, competence, niveau_vise, formateur_id")
-    .eq("id", devoir.exercice_id)
+    .eq("id", targetExerciceId)
     .maybeSingle();
   if (exErr || !ex) return json(500, { error: "Failed to load exercice", details: exErr?.message });
 
@@ -141,36 +141,41 @@ Deno.serve(async (req) => {
     ? { ...answers, transcription: body.transcription, audio_path: body.audio_path }
     : answers;
 
-  const { error: insErr } = await admin.from("resultats").insert({
+  const insertPayload: Record<string, unknown> = {
     eleve_id: userId,
     exercice_id: ex.id,
-    devoir_id: devoirId,
     score,
     reponses_eleve,
     correction_detaillee: correction,
     tentative: 1,
-  } as Record<string, unknown>);
+  };
+  if (devoirId) insertPayload.devoir_id = devoirId;
+
+  const { error: insErr } = await admin.from("resultats").insert(insertPayload);
   if (insErr) {
     console.error("[submit-devoir-result] insert resultats failed:", insErr.message);
     return json(500, { error: "Failed to save result", details: insErr.message });
   }
 
-  // 6. Update devoir statut (logique pédagogique inchangée)
-  const passed = score >= 80;
-  const newConsecutive = passed ? (devoir.nb_reussites_consecutives ?? 0) + 1 : 0;
-  const newStatut = newConsecutive >= 2 ? "arrete" : "fait";
+  // 6. Update devoir statut (mode devoir uniquement)
+  let newStatut: string | null = null;
+  if (devoir && devoirId) {
+    const passed = score >= 80;
+    const newConsecutive = passed ? (devoir.nb_reussites_consecutives ?? 0) + 1 : 0;
+    newStatut = newConsecutive >= 2 ? "arrete" : "fait";
 
-  const { error: updErr } = await admin
-    .from("devoirs")
-    .update({
-      statut: newStatut,
-      nb_reussites_consecutives: newConsecutive,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", devoirId);
-  if (updErr) {
-    console.error("[submit-devoir-result] update devoir failed:", updErr.message);
-    // Le résultat est déjà inséré, on ne fait pas échouer le client
+    const { error: updErr } = await admin
+      .from("devoirs")
+      .update({
+        statut: newStatut,
+        nb_reussites_consecutives: newConsecutive,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", devoirId);
+    if (updErr) {
+      console.error("[submit-devoir-result] update devoir failed:", updErr.message);
+      // Le résultat est déjà inséré, on ne fait pas échouer le client
+    }
   }
 
   return json(200, {
