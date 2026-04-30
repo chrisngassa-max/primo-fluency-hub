@@ -206,7 +206,7 @@ Niveau visé : ${targetNiveau}
 Démarche IRN : ${demarche} — ${epreuvesAutorisees}
 Exercice / Support : "${exerciseContent || 'Non fourni'}"
 Règle / Consigne : "${rule || 'Exercice TCF IRN'}"
-Réponse de l'apprenant : "${studentAnswer}"
+Réponse de l'apprenant : "${safeStudentAnswer}"
 ${banqueBlock}
 
 Produis le JSON de correction complet selon le format spécifié.`
