@@ -4,6 +4,7 @@ import { MODEL } from "../_shared/system-prompt.ts";
 import { callAI, AIError } from "../_shared/ai-client.ts";
 import { validateAndFix } from "../_shared/exercise-validator.ts";
 import { QA_REVIEW_BLOCK } from "../_shared/qa-prompt.ts";
+import { ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth } from "../_shared/check-consent.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -15,6 +16,10 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
+    const _triggeredBy = await getUserIdFromAuth(req);
+    const _secretBlock = await ensurePseudonymSecretOrLog("generate-exercises", corsHeaders, null);
+    if (_secretBlock) return _secretBlock;
+    await logAICall({ function_name: "generate-exercises", triggered_by_user_id: _triggeredBy, status: "ok", data_categories: [], pseudonymization_level: "none" });
     const { pointName, competence, niveauVise, count = 10, difficultyLevel, gabaritNumero, type_demarche, niveau_depart, niveau_arrivee, groupId, existingExercises } = await req.json();
     const demarche = type_demarche || "titre_sejour";
     const epreuvesAutorisees = demarche === "naturalisation" ? "CO, CE, EE, EO" : "CO, CE";

@@ -3,6 +3,7 @@ import { callAI, AIError } from "../_shared/ai-client.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { validateAndFix } from "../_shared/exercise-validator.ts";
 import { QA_REVIEW_BLOCK } from "../_shared/qa-prompt.ts";
+import { ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth } from "../_shared/check-consent.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -14,6 +15,10 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
+    const _triggeredBy = await getUserIdFromAuth(req);
+    const _secretBlock = await ensurePseudonymSecretOrLog("generate-session-content", corsHeaders, null);
+    if (_secretBlock) return _secretBlock;
+    await logAICall({ function_name: "generate-session-content", triggered_by_user_id: _triggeredBy, status: "ok", data_categories: [], pseudonymization_level: "none" });
     const { titre, objectifs, competences_cibles, niveau_cible, duree_minutes, exercices_suggeres, gabaritNumero, micro_competences } = await req.json();
     // AI key check moved to shared ai-client
 
