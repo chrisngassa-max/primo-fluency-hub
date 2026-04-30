@@ -15,6 +15,14 @@ serve(async (req) => {
     const triggeredBy = await getUserIdFromAuth(req);
     const secretBlock = await ensurePseudonymSecretOrLog("analyze-trajectory", corsHeaders, null);
     if (secretBlock) return secretBlock;
+
+    // RGPD: si les données contiennent des noms d'élèves nominatifs, eleveIds est requis.
+    const hasNominative = Array.isArray(trajectoryData) && trajectoryData.some((p: any) => p?.eleves && Object.keys(p.eleves).length > 0);
+    if (hasNominative && (!Array.isArray(eleveIds) || eleveIds.length === 0)) {
+      await logAICall({ function_name: "analyze-trajectory", triggered_by_user_id: triggeredBy, status: "blocked_no_consent", data_categories: ["nominative"], pseudonymization_level: "none" });
+      return new Response(JSON.stringify({ error: "missing_subject_ids", message: "eleveIds est requis quand des données nominatives sont envoyées." }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
     let excludedIds: string[] = [];
     if (Array.isArray(eleveIds) && eleveIds.length > 0) {
       const batch = await checkConsentBatch(eleveIds);
@@ -24,7 +32,7 @@ serve(async (req) => {
         return new Response(JSON.stringify({ error: "consent_required", excludedIds, degraded_mode: true, message: "Aucun élève consentant." }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
     }
-    await logAICall({ function_name: "analyze-trajectory", triggered_by_user_id: triggeredBy, status: "ok", data_categories: ["aggregated_results"], pseudonymization_level: "hmac_sha256" });
+    await logAICall({ function_name: "analyze-trajectory", triggered_by_user_id: triggeredBy, status: "ok", data_categories: hasNominative ? ["nominative"] : ["aggregated_results"], pseudonymization_level: hasNominative ? "hmac_sha256" : "none" });
     // AI key check moved to shared ai-client
 
     const systemPrompt = `Tu es un analyste pédagogique expert en FLE (Français Langue Étrangère) spécialisé dans la préparation au TCF IRN.
