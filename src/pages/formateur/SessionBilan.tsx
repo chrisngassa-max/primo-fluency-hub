@@ -23,6 +23,7 @@ import {
   Pencil, Trash2, Plus, ChevronDown, ChevronUp, Eye, EyeOff, FileUp,
 } from "lucide-react";
 import { ExternalCsvImportDialog } from "@/components/ExternalCsvImportDialog";
+import { SessionStudentOutcomesTable } from "@/components/SessionStudentOutcomesTable";
 import { Input } from "@/components/ui/input";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -722,6 +723,14 @@ const SessionBilan = () => {
             </div>
           </CardContent>
         </Card>
+      )}
+
+      {/* Observation par élève (formateur uniquement) */}
+      {id && (
+        <SessionStudentOutcomesTable
+          sessionId={id}
+          groupId={(session as any)?.group?.id ?? (session as any)?.group_id ?? null}
+        />
       )}
 
       {/* Bilan de fin de cours */}
