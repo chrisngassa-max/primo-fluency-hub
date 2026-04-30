@@ -85,6 +85,7 @@ const SessionBilan = () => {
 
   // CSV import dialog state
   const [csvImportResourceId, setCsvImportResourceId] = useState<string | null>(null);
+  const [outcomeDevoirsOpen, setOutcomeDevoirsOpen] = useState(false);
 
   const { data: formateurParams } = useQuery({
     queryKey: ["formateur-parametres-bilan", user?.id],
