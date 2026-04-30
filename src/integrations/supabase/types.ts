@@ -2151,6 +2151,63 @@ export type Database = {
           },
         ]
       }
+      session_student_outcomes: {
+        Row: {
+          besoin_pedagogique:
+            | Database["public"]["Enums"]["session_outcome_besoin"]
+            | null
+          created_at: string
+          decision_formateur: string | null
+          devoir_recommande: string | null
+          eleve_id: string
+          formateur_id: string
+          id: string
+          objectif_status:
+            | Database["public"]["Enums"]["session_outcome_objectif_status"]
+            | null
+          points_forts: string | null
+          points_vigilance: string | null
+          session_id: string
+          updated_at: string
+        }
+        Insert: {
+          besoin_pedagogique?:
+            | Database["public"]["Enums"]["session_outcome_besoin"]
+            | null
+          created_at?: string
+          decision_formateur?: string | null
+          devoir_recommande?: string | null
+          eleve_id: string
+          formateur_id: string
+          id?: string
+          objectif_status?:
+            | Database["public"]["Enums"]["session_outcome_objectif_status"]
+            | null
+          points_forts?: string | null
+          points_vigilance?: string | null
+          session_id: string
+          updated_at?: string
+        }
+        Update: {
+          besoin_pedagogique?:
+            | Database["public"]["Enums"]["session_outcome_besoin"]
+            | null
+          created_at?: string
+          decision_formateur?: string | null
+          devoir_recommande?: string | null
+          eleve_id?: string
+          formateur_id?: string
+          id?: string
+          objectif_status?:
+            | Database["public"]["Enums"]["session_outcome_objectif_status"]
+            | null
+          points_forts?: string | null
+          points_vigilance?: string | null
+          session_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       sessions: {
         Row: {
           competences_cibles: string[] | null
@@ -2856,6 +2913,18 @@ export type Database = {
         | "reporte"
         | "devoir_remediation"
         | "devoir_anticipation"
+      session_outcome_besoin:
+        | "rattrapage"
+        | "remediation"
+        | "consolidation"
+        | "approfondissement"
+        | "aucun"
+      session_outcome_objectif_status:
+        | "absent"
+        | "non_atteint"
+        | "a_consolider"
+        | "atteint"
+        | "au_dela"
       session_statut: "planifiee" | "en_cours" | "terminee" | "annulee"
     }
     CompositeTypes: {
@@ -3025,6 +3094,20 @@ export const Constants = {
         "reporte",
         "devoir_remediation",
         "devoir_anticipation",
+      ],
+      session_outcome_besoin: [
+        "rattrapage",
+        "remediation",
+        "consolidation",
+        "approfondissement",
+        "aucun",
+      ],
+      session_outcome_objectif_status: [
+        "absent",
+        "non_atteint",
+        "a_consolider",
+        "atteint",
+        "au_dela",
       ],
       session_statut: ["planifiee", "en_cours", "terminee", "annulee"],
     },
