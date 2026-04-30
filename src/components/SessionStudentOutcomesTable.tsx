@@ -223,7 +223,10 @@ export function SessionStudentOutcomesTable({ sessionId, groupId }: Props) {
               {rows.map((r) => (
                 <TableRow key={r.eleve_id}>
                   <TableCell className="font-medium align-top">
-                    {r.prenom} {r.nom}
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span>{r.prenom} {r.nom}</span>
+                      <AdvancedStudentBadge signal={advancedMap[r.eleve_id]} compact />
+                    </div>
                   </TableCell>
                   <TableCell className="align-top">
                     {r.present ? (
