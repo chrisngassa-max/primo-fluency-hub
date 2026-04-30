@@ -2,6 +2,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0"
 import { checkConsent, consentBlockedResponse, ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth } from "../_shared/check-consent.ts"
+import { pseudonymizeProductionText } from "../_shared/pseudonymize.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -86,7 +87,7 @@ Deno.serve(async (req) => {
         return consentBlockedResponse(consent.reason || "consent_required", corsHeaders);
       }
     }
-    await logAICall({ function_name: "tcf-evaluate-answer", subject_user_id: subjectId, triggered_by_user_id: triggeredBy, status: "ok", data_categories: isOral ? ["production", "voice"] : ["production"], pseudonymization_level: "none" });
+    await logAICall({ function_name: "tcf-evaluate-answer", subject_user_id: subjectId, triggered_by_user_id: triggeredBy, status: "ok", data_categories: isOral ? ["production", "voice"] : ["production"], pseudonymization_level: "level_b" });
 
     const apiKey = Deno.env.get('GEMINI_API_KEY')
     if (!apiKey) throw new Error('La clé GEMINI_API_KEY n\'est pas configurée')
@@ -94,6 +95,23 @@ Deno.serve(async (req) => {
     const demarche = type_demarche || "titre_sejour"
     const targetEpreuve = epreuve || "CO"
     const targetNiveau = niveau || "A1"
+
+    // === RGPD niveau B : pseudonymisation de la production écrite/orale ===
+    let knownNames: string[] = []
+    if (subjectId) {
+      try {
+        const supaAdmin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!)
+        const { data: prof } = await supaAdmin.from("profiles").select("nom, prenom, email").eq("id", subjectId).maybeSingle()
+        if (prof) knownNames = [prof.prenom, prof.nom, prof.email].filter(Boolean) as string[]
+      } catch (_) { /* best-effort */ }
+    }
+    let safeStudentAnswer: string
+    try {
+      safeStudentAnswer = await pseudonymizeProductionText(String(studentAnswer ?? ""), knownNames)
+    } catch (pseudoErr) {
+      await logAICall({ function_name: "tcf-evaluate-answer", subject_user_id: subjectId, triggered_by_user_id: triggeredBy, status: "error_missing_pseudonym_secret", data_categories: ["production"], pseudonymization_level: "none" })
+      return new Response(JSON.stringify({ error: "pseudonymization_failed", message: "Impossible de pseudonymiser la production avant envoi IA." }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } })
+    }
 
     // === GARDE-FOU PRÉ-IA : salutations / vide / hors-sujet flagrant ===
     // Évite de payer Gemini pour des cas où le résultat est évident, et
