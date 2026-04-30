@@ -57,7 +57,20 @@ serve(async (req) => {
       .eq("group_id", groupId);
     if (!members?.length) throw new Error("No students in group");
 
-    const eleveIds = members.map((m: any) => m.eleve_id);
+    let eleveIds = members.map((m: any) => m.eleve_id);
+
+    // RGPD: bloquer si secret de pseudonymisation absent, puis filtrer les élèves non consentants.
+    const triggeredBy = await getUserIdFromAuth(req);
+    const _secretBlock = await ensurePseudonymSecretOrLog("generate-daily-homework", corsHeaders, null);
+    if (_secretBlock) return _secretBlock;
+    const consentBatch = await checkConsentBatch(eleveIds);
+    const excludedIds = consentBatch.excludedIds;
+    eleveIds = consentBatch.allowedIds;
+    if (eleveIds.length === 0) {
+      await logAICall({ function_name: "generate-daily-homework", triggered_by_user_id: triggeredBy, status: "blocked_no_consent", data_categories: ["profile", "results"], pseudonymization_level: "hmac_sha256" });
+      return new Response(JSON.stringify({ error: "consent_required", excludedIds, degraded_mode: true, message: "Aucun élève consentant dans ce groupe." }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    await logAICall({ function_name: "generate-daily-homework", triggered_by_user_id: triggeredBy, status: "ok", data_categories: ["profile", "results"], pseudonymization_level: "hmac_sha256" });
 
     // 3. Fetch session exercises (what was taught)
     const { data: sessionExercices } = await supabase
