@@ -232,8 +232,26 @@ const BilanSeance = () => {
   );
   const pendingExternal = (externalResources ?? []).filter((r) => !doneExternalIds.has(r.id));
 
+  // Niveau cible pour cette séance (variante adaptée à l'élève)
+  const { data: targetLevel } = useQuery({
+    queryKey: ["bilan-variant-level", sessionId, user?.id],
+    queryFn: async () =>
+      resolveStudentExerciseLevel({
+        eleveId: user!.id,
+        sessionId: sessionId ?? null,
+        sourceLabel: null,
+      }),
+    enabled: !!sessionId && !!user?.id,
+  });
+
   const currentSe = pendingExercices[currentExIdx];
-  const currentEx = currentSe?.exercice as any;
+  const rawCurrentEx = currentSe?.exercice as any;
+  const currentVariant = rawCurrentEx
+    ? applyExerciseVariant(rawCurrentEx, targetLevel ?? "standard")
+    : null;
+  const currentEx = rawCurrentEx
+    ? { ...rawCurrentEx, consigne: currentVariant!.consigne, contenu: currentVariant!.contenu }
+    : rawCurrentEx;
   const rawCurrentItems: any[] = currentEx?.contenu?.items ?? [];
   const currentItems: any[] = rawCurrentItems.map((it, idx) => {
     const key = `${currentEx?.id}:${idx}`;
