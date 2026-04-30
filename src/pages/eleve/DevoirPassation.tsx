@@ -28,6 +28,7 @@ import {
 } from "@/lib/audioRecorder";
 import { useLiveAttemptSync } from "@/hooks/useLiveAttemptSync";
 import { corrigerExercice } from "@/lib/correctionExercice";
+import { applyExerciseVariant, resolveStudentExerciseLevel } from "@/lib/exerciseVariant";
 
 function CorrectionAccordion({ correction }: { correction: any[] }) {
   const [openItems, setOpenItems] = useState<number[]>([]);
@@ -126,7 +127,7 @@ const DevoirPassation = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("devoirs")
-        .select("*, exercice:exercices(id, titre, consigne, competence, format, contenu, niveau_vise)")
+        .select("*, exercice:exercices(id, titre, consigne, competence, format, contenu, niveau_vise, variante_niveau_bas, variante_niveau_haut)")
         .eq("id", devoirId!)
         .eq("eleve_id", user!.id)
         .single();
@@ -153,7 +154,25 @@ const DevoirPassation = () => {
     enabled: !!devoirId && !!user?.id,
   });
 
-  const ex = (devoir as any)?.exercice;
+  // Choix de variante adaptée à l'élève (fallback transparent si absente)
+  const { data: targetLevel } = useQuery({
+    queryKey: ["devoir-variant-level", devoirId, user?.id],
+    queryFn: async () =>
+      resolveStudentExerciseLevel({
+        eleveId: user!.id,
+        sessionId: (devoir as any)?.session_id ?? null,
+        sourceLabel: (devoir as any)?.source_label ?? null,
+      }),
+    enabled: !!devoir && !!user?.id,
+  });
+
+  const rawEx = (devoir as any)?.exercice;
+  const variant = rawEx
+    ? applyExerciseVariant(rawEx, targetLevel ?? "standard")
+    : { consigne: "", contenu: {}, appliedLevel: "standard" as const };
+  const ex = rawEx
+    ? { ...rawEx, consigne: variant.consigne, contenu: variant.contenu }
+    : rawEx;
   const contenu = ex?.contenu as any;
   const rawItems: any[] = contenu?.items ?? [];
   const items: any[] = rawItems.map((it, idx) => itemOverrides[idx] ? { ...it, ...itemOverrides[idx] } : it);
