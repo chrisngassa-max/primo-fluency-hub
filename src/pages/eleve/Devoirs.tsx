@@ -64,7 +64,7 @@ const EleveDevoirs = () => {
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Mes devoirs</h1>
+        <h1 className="text-2xl font-bold text-foreground">Ton travail pour cette semaine</h1>
         <p className="text-muted-foreground mt-1">
           {pendingAll.length === 0 ? "Aucun devoir en attente" : pendingAll.length === 1 ? "1 devoir en attente" : `${pendingAll.length} devoirs en attente`}
         </p>
