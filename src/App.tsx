@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import AIConsentRequiredRoute from "@/components/AIConsentRequiredRoute";
+import AccesLimite from "@/pages/eleve/AccesLimite";
 
 import Index from "@/pages/Index";
 import Legal from "@/pages/Legal";
@@ -127,17 +129,20 @@ const App = () => (
                 </ProtectedRoute>
               }
             >
-              <Route index element={<EleveDashboard />} />
-              
-              <Route path="test-positionnement" element={<TestPositionnement />} />
-              <Route path="devoirs" element={<EleveDevoirs />} />
-              <Route path="bilan/:sessionId" element={<BilanSeance />} />
-              <Route path="exercices-seance/:sessionId" element={<BilanSeance />} />
-              <Route path="bilan-test/:testId" element={<BilanTestPassation />} />
-              <Route path="bilan-devoirs/:bilanId" element={<BilanDevoirs />} />
-              <Route path="devoirs/:devoirId" element={<DevoirPassation />} />
-              <Route path="progression" element={<EleveProgression />} />
+              {/* Routes accessibles sans double consentement IA + voix */}
+              <Route path="acces-limite" element={<AccesLimite />} />
               <Route path="profil" element={<EleveProfil />} />
+
+              {/* Routes pédagogiques : double consentement requis */}
+              <Route index element={<AIConsentRequiredRoute><EleveDashboard /></AIConsentRequiredRoute>} />
+              <Route path="test-positionnement" element={<AIConsentRequiredRoute><TestPositionnement /></AIConsentRequiredRoute>} />
+              <Route path="devoirs" element={<AIConsentRequiredRoute><EleveDevoirs /></AIConsentRequiredRoute>} />
+              <Route path="bilan/:sessionId" element={<AIConsentRequiredRoute><BilanSeance /></AIConsentRequiredRoute>} />
+              <Route path="exercices-seance/:sessionId" element={<AIConsentRequiredRoute><BilanSeance /></AIConsentRequiredRoute>} />
+              <Route path="bilan-test/:testId" element={<AIConsentRequiredRoute><BilanTestPassation /></AIConsentRequiredRoute>} />
+              <Route path="bilan-devoirs/:bilanId" element={<AIConsentRequiredRoute><BilanDevoirs /></AIConsentRequiredRoute>} />
+              <Route path="devoirs/:devoirId" element={<AIConsentRequiredRoute><DevoirPassation /></AIConsentRequiredRoute>} />
+              <Route path="progression" element={<AIConsentRequiredRoute><EleveProgression /></AIConsentRequiredRoute>} />
             </Route>
 
             <Route path="*" element={<NotFound />} />
