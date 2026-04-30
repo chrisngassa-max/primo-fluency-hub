@@ -1,3 +1,5 @@
+import { checkConsent, consentBlockedResponse, getUserIdFromAuth, logAICall } from "../_shared/check-consent.ts";
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -9,6 +11,7 @@ Deno.serve(async (req) => {
     return new Response("ok", { headers: corsHeaders });
   }
 
+  const startedAt = Date.now();
   try {
     const apiKey = Deno.env.get("GOOGLE_STT_API_KEY");
     if (!apiKey) {
@@ -16,6 +19,25 @@ Deno.serve(async (req) => {
         JSON.stringify({ error: "GOOGLE_STT_API_KEY not configured" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
+    }
+
+    const userId = await getUserIdFromAuth(req);
+    if (!userId) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Audio transcription always requires biometric consent
+    const consent = await checkConsent({ userId, requireBiometric: true });
+    if (!consent.ok) {
+      await logAICall({
+        subject_user_id: userId, triggered_by_user_id: userId,
+        function_name: 'transcribe-audio', provider: 'google',
+        data_categories: ['audio', 'voice'], status: 'blocked_no_consent',
+        consent_version: consent.consentVersion,
+      });
+      return consentBlockedResponse(consent.reason ?? 'consent_required', corsHeaders);
     }
 
     const { audioBase64 } = await req.json();
@@ -57,6 +79,14 @@ Deno.serve(async (req) => {
     const transcript =
       sttData?.results?.[0]?.alternatives?.[0]?.transcript || "";
 
+    await logAICall({
+      subject_user_id: userId, triggered_by_user_id: userId,
+      function_name: 'transcribe-audio', provider: 'google', model: 'speech-v1',
+      data_categories: ['audio', 'voice', 'transcript'],
+      status: 'ok', duration_ms: Date.now() - startedAt,
+      consent_version: consent.consentVersion,
+    });
+
     return new Response(
       JSON.stringify({ transcript }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -64,7 +94,7 @@ Deno.serve(async (req) => {
   } catch (err) {
     console.error("transcribe-audio error:", err);
     return new Response(
-      JSON.stringify({ error: err.message, transcript: "" }),
+      JSON.stringify({ error: (err as Error).message, transcript: "" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
