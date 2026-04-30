@@ -80,6 +80,17 @@ export function SessionStudentOutcomesTable({ sessionId, groupId }: Props) {
     },
   });
 
+  const eleveIds = useMemo(
+    () => (data?.members ?? []).map((m: any) => m.eleve_id),
+    [data]
+  );
+  const { data: advancedMap = {} as Record<string, AdvancedSignal> } = useQuery({
+    queryKey: ["session-outcomes-advanced", sessionId, user?.id, eleveIds.join(",")],
+    queryFn: () => detectAdvancedStudentsBatch(eleveIds, user!.id),
+    enabled: !!user?.id && eleveIds.length > 0,
+    staleTime: 60_000,
+  });
+
   useEffect(() => {
     if (!data) return;
     const presenceMap = new Map<string, boolean>(
