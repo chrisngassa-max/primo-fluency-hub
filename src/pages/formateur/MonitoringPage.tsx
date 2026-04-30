@@ -26,6 +26,8 @@ import { DifficultyBadge } from "@/components/DifficultyBadge";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { detectAdvancedStudentsBatch, type AdvancedSignal } from "@/lib/detectAdvancedStudent";
+import { AdvancedStudentBadge } from "@/components/AdvancedStudentBadge";
 
 
 // Simple Markdown renderer (bold, headings, bullet lists)
