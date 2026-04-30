@@ -38,7 +38,7 @@ Réponds en français. Structure ta réponse en 3 sections :
 3. **Exercices recommandés** : Propose 3 à 5 types d'exercices spécifiques (avec format et thème) adaptés au niveau actuel de l'élève.
 Sois concis, bienveillant et pragmatique.`;
 
-    const userPrompt = `Analyse le profil de l'élève "${eleveNom}" :
+    const userPrompt = `Analyse le profil de l'élève "${pseudoNom}" :
 
 **Profil actuel :**
 - Niveau : ${profil?.niveau_actuel || "non évalué"}
