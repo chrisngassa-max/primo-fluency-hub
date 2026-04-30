@@ -3,6 +3,7 @@ import { callAI, AIError } from "../_shared/ai-client.ts";
 import { validateAndFix } from "../_shared/exercise-validator.ts";
 import { QA_REVIEW_BLOCK, logQaAuto } from "../_shared/qa-prompt.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { checkConsentBatch, ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth, consentBlockedResponse } from "../_shared/check-consent.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
