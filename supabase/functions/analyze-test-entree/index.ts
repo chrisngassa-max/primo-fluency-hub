@@ -1,5 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { callAI, AIError } from "../_shared/ai-client.ts";
+import { checkConsent, consentBlockedResponse, ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth } from "../_shared/check-consent.ts";
+import { pseudonymize } from "../_shared/pseudonymize.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -10,7 +12,20 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { scores, eleveNom, detailScores, globalAvg, niveauEstime } = await req.json();
+    const { scores, eleveNom, eleveId, detailScores, globalAvg, niveauEstime } = await req.json();
+    const triggeredBy = await getUserIdFromAuth(req);
+    const subjectId = eleveId || triggeredBy;
+    const secretBlock = await ensurePseudonymSecretOrLog("analyze-test-entree", corsHeaders, subjectId);
+    if (secretBlock) return secretBlock;
+    if (subjectId) {
+      const consent = await checkConsent({ userId: subjectId });
+      if (!consent.ok) {
+        await logAICall({ function_name: "analyze-test-entree", subject_user_id: subjectId, triggered_by_user_id: triggeredBy, status: "blocked_no_consent", data_categories: ["test_results"], pseudonymization_level: "hmac_sha256" });
+        return consentBlockedResponse(consent.reason || "consent_required", corsHeaders);
+      }
+    }
+    const pseudoNom = subjectId ? await pseudonymize(subjectId, "eleve") : "eleve_anon";
+    await logAICall({ function_name: "analyze-test-entree", subject_user_id: subjectId, triggered_by_user_id: triggeredBy, status: "ok", data_categories: ["test_results"], pseudonymization_level: "hmac_sha256" });
     // AI key check moved to shared ai-client
 
     const systemPrompt = `Tu es un expert en FLE spécialisé dans la préparation au TCF IRN.
