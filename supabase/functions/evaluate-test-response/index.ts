@@ -1,6 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { callAI, AIError } from "../_shared/ai-client.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { checkConsent, consentBlockedResponse, ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth } from "../_shared/check-consent.ts";
+import { pseudonymizeProductionText } from "../_shared/pseudonymize.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -26,7 +28,24 @@ serve(async (req) => {
         return consentBlockedResponse(consent.reason || "consent_required", corsHeaders);
       }
     }
-    await logAICall({ function_name: "evaluate-test-response", subject_user_id: subjectId, triggered_by_user_id: triggeredBy, status: "ok", data_categories: isOralCheck ? ["production", "voice"] : ["production"], pseudonymization_level: "none" });
+    await logAICall({ function_name: "evaluate-test-response", subject_user_id: subjectId, triggered_by_user_id: triggeredBy, status: "ok", data_categories: isOralCheck ? ["production", "voice"] : ["production"], pseudonymization_level: "level_b" });
+
+    // === RGPD niveau B : pseudonymisation de la production ===
+    let knownNames: string[] = [];
+    if (subjectId) {
+      try {
+        const supaAdmin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+        const { data: prof } = await supaAdmin.from("profiles").select("nom, prenom, email").eq("id", subjectId).maybeSingle();
+        if (prof) knownNames = [prof.prenom, prof.nom, prof.email].filter(Boolean) as string[];
+      } catch (_) { /* best-effort */ }
+    }
+    let safeReponse: string;
+    try {
+      safeReponse = await pseudonymizeProductionText(String(reponse_apprenant ?? ""), knownNames);
+    } catch (_pseudoErr) {
+      await logAICall({ function_name: "evaluate-test-response", subject_user_id: subjectId, triggered_by_user_id: triggeredBy, status: "error_missing_pseudonym_secret", data_categories: ["production"], pseudonymization_level: "none" });
+      return new Response(JSON.stringify({ error: "pseudonymization_failed", message: "Impossible de pseudonymiser la production." }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
     // AI key check moved to shared ai-client
 
     // Determine if this is an oral response (EO) for high-tolerance mode
@@ -62,7 +81,7 @@ Réponds uniquement en JSON : {"score": number, "justification": string}`;
       model: "google/gemini-3-flash-preview",
       messages: [
         { role: "system", content: systemPrompt },
-        { role: "user", content: reponse_apprenant },
+        { role: "user", content: safeReponse },
       ],
     });
 

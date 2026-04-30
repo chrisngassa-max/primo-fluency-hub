@@ -368,6 +368,7 @@ const SuiviDevoirsPage = () => {
           groupNom: groupName,
           trajectoryData,
           totalSeances: progressionData.length || 10,
+          eleveIds: (groupTableData ?? []).map((el: any) => el.eleveId).filter(Boolean),
         },
       });
       if (error) throw error;
@@ -408,6 +409,7 @@ const SuiviDevoirsPage = () => {
             eleves: studentRows.reduce((acc: any, el) => { acc[el.nom] = el.completionPct; return acc; }, {}),
           }],
           totalSeances: 1,
+          eleveIds: studentRows.map((s: any) => s.eleveId).filter(Boolean),
           customPrompt: `Tu es un expert FLE. Voici le suivi jour par jour des devoirs inter-séances du groupe "${groupName}" :
 ${studentSummaries}
 

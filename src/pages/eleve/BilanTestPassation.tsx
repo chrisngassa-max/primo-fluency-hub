@@ -156,6 +156,7 @@ const BilanTestPassation = () => {
             scoresParCompetence,
             niveauCible: bilanTest.session?.niveau_cible || "A1",
             sessionTitle: bilanTest.session?.titre || "Séance",
+            eleveIds: [user.id],
           },
         });
 
