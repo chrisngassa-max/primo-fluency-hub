@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { TCF_SYSTEM_PROMPT, MODEL } from "../_shared/system-prompt.ts";
 import { callAI, AIError } from "../_shared/ai-client.ts";
 import { validateAndFix } from "../_shared/exercise-validator.ts";
+import { ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth } from "../_shared/check-consent.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -15,6 +16,11 @@ serve(async (req) => {
   }
 
   try {
+    // RGPD: generic generation, no personal data — log only.
+    const _triggeredBy = await getUserIdFromAuth(req);
+    const _secretBlock = await ensurePseudonymSecretOrLog("smart-exercise-generator", corsHeaders, null);
+    if (_secretBlock) return _secretBlock;
+    await logAICall({ function_name: "smart-exercise-generator", triggered_by_user_id: _triggeredBy, status: "ok", data_categories: [], pseudonymization_level: "none" });
     // AI key check moved to shared ai-client
 
     const body = await req.json();

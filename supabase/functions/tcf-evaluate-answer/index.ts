@@ -1,6 +1,7 @@
 // @ts-nocheck
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0"
+import { checkConsent, consentBlockedResponse, ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth } from "../_shared/check-consent.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -71,7 +72,21 @@ Deno.serve(async (req) => {
 
   try {
     const body = await req.json()
-    const { studentAnswer, exerciseContent, rule, epreuve, niveau, type_demarche } = body
+    const { studentAnswer, exerciseContent, rule, epreuve, niveau, type_demarche, eleveId } = body
+
+    const triggeredBy = await getUserIdFromAuth(req);
+    const subjectId = eleveId || triggeredBy;
+    const isOral = (epreuve || "CO") === "EO";
+    const secretBlock = await ensurePseudonymSecretOrLog("tcf-evaluate-answer", corsHeaders, subjectId);
+    if (secretBlock) return secretBlock;
+    if (subjectId) {
+      const consent = await checkConsent({ userId: subjectId, requireBiometric: isOral });
+      if (!consent.ok) {
+        await logAICall({ function_name: "tcf-evaluate-answer", subject_user_id: subjectId, triggered_by_user_id: triggeredBy, status: "blocked_no_consent", data_categories: isOral ? ["production", "voice"] : ["production"], pseudonymization_level: "none" });
+        return consentBlockedResponse(consent.reason || "consent_required", corsHeaders);
+      }
+    }
+    await logAICall({ function_name: "tcf-evaluate-answer", subject_user_id: subjectId, triggered_by_user_id: triggeredBy, status: "ok", data_categories: isOral ? ["production", "voice"] : ["production"], pseudonymization_level: "none" });
 
     const apiKey = Deno.env.get('GEMINI_API_KEY')
     if (!apiKey) throw new Error('La clé GEMINI_API_KEY n\'est pas configurée')

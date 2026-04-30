@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { callAI, AIError } from "../_shared/ai-client.ts";
+import { checkConsentBatch, ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth } from "../_shared/check-consent.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -10,7 +11,20 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { groupNom, trajectoryData, totalSeances } = await req.json();
+    const { groupNom, trajectoryData, totalSeances, eleveIds } = await req.json();
+    const triggeredBy = await getUserIdFromAuth(req);
+    const secretBlock = await ensurePseudonymSecretOrLog("analyze-trajectory", corsHeaders, null);
+    if (secretBlock) return secretBlock;
+    let excludedIds: string[] = [];
+    if (Array.isArray(eleveIds) && eleveIds.length > 0) {
+      const batch = await checkConsentBatch(eleveIds);
+      excludedIds = batch.excludedIds;
+      if (batch.allowedIds.length === 0) {
+        await logAICall({ function_name: "analyze-trajectory", triggered_by_user_id: triggeredBy, status: "blocked_no_consent", data_categories: ["aggregated_results"], pseudonymization_level: "hmac_sha256" });
+        return new Response(JSON.stringify({ error: "consent_required", excludedIds, degraded_mode: true, message: "Aucun élève consentant." }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+    }
+    await logAICall({ function_name: "analyze-trajectory", triggered_by_user_id: triggeredBy, status: "ok", data_categories: ["aggregated_results"], pseudonymization_level: "hmac_sha256" });
     // AI key check moved to shared ai-client
 
     const systemPrompt = `Tu es un analyste pédagogique expert en FLE (Français Langue Étrangère) spécialisé dans la préparation au TCF IRN.

@@ -3,6 +3,7 @@ import { callAI, AIError } from "../_shared/ai-client.ts";
 import { validateAndFix } from "../_shared/exercise-validator.ts";
 import { QA_REVIEW_BLOCK, logQaAuto } from "../_shared/qa-prompt.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { checkConsentBatch, ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth, consentBlockedResponse } from "../_shared/check-consent.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -56,7 +57,20 @@ serve(async (req) => {
       .eq("group_id", groupId);
     if (!members?.length) throw new Error("No students in group");
 
-    const eleveIds = members.map((m: any) => m.eleve_id);
+    let eleveIds = members.map((m: any) => m.eleve_id);
+
+    // RGPD: bloquer si secret de pseudonymisation absent, puis filtrer les élèves non consentants.
+    const triggeredBy = await getUserIdFromAuth(req);
+    const _secretBlock = await ensurePseudonymSecretOrLog("generate-daily-homework", corsHeaders, null);
+    if (_secretBlock) return _secretBlock;
+    const consentBatch = await checkConsentBatch(eleveIds);
+    const excludedIds = consentBatch.excludedIds;
+    eleveIds = consentBatch.allowedIds;
+    if (eleveIds.length === 0) {
+      await logAICall({ function_name: "generate-daily-homework", triggered_by_user_id: triggeredBy, status: "blocked_no_consent", data_categories: ["profile", "results"], pseudonymization_level: "hmac_sha256" });
+      return new Response(JSON.stringify({ error: "consent_required", excludedIds, degraded_mode: true, message: "Aucun élève consentant dans ce groupe." }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    await logAICall({ function_name: "generate-daily-homework", triggered_by_user_id: triggeredBy, status: "ok", data_categories: ["profile", "results"], pseudonymization_level: "hmac_sha256" });
 
     // 3. Fetch session exercises (what was taught)
     const { data: sessionExercices } = await supabase
@@ -512,6 +526,7 @@ Pour chaque élève, cible ses faiblesses spécifiques. Les exercices de tronc c
         totalDevoirs,
         totalExcluded,
         excludedReport,
+        excludedIds, // RGPD: élèves exclus pour absence de consentement IA
         plan: aiEleves.map((e: any) => ({
           eleve_id: shortToFull[e.eleve_id] || e.eleve_id,
           jours: (e.jours || []).map((j: any) => ({
