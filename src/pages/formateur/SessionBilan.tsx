@@ -724,6 +724,14 @@ const SessionBilan = () => {
         </Card>
       )}
 
+      {/* Observation par élève (formateur uniquement) */}
+      {id && (
+        <SessionStudentOutcomesTable
+          sessionId={id}
+          groupId={(session as any)?.group?.id ?? (session as any)?.group_id ?? null}
+        />
+      )}
+
       {/* Bilan de fin de cours */}
       <Card className="border-primary/20 print:hidden">
         <CardHeader>
