@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { callAI, AIError } from "../_shared/ai-client.ts";
+import { checkConsent, consentBlockedResponse, ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth } from "../_shared/check-consent.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,6 +14,19 @@ serve(async (req) => {
 
   try {
     const { criteres_evaluation, reponse_apprenant, metadata } = await req.json();
+    const triggeredBy = await getUserIdFromAuth(req);
+    const subjectId = metadata?.eleveId || triggeredBy;
+    const isOralCheck = (metadata?.code || "").startsWith("EO") || metadata?.type_reponse === "oral";
+    const secretBlock = await ensurePseudonymSecretOrLog("evaluate-test-response", corsHeaders, subjectId);
+    if (secretBlock) return secretBlock;
+    if (subjectId) {
+      const consent = await checkConsent({ userId: subjectId, requireBiometric: isOralCheck });
+      if (!consent.ok) {
+        await logAICall({ function_name: "evaluate-test-response", subject_user_id: subjectId, triggered_by_user_id: triggeredBy, status: "blocked_no_consent", data_categories: isOralCheck ? ["production", "voice"] : ["production"], pseudonymization_level: "none" });
+        return consentBlockedResponse(consent.reason || "consent_required", corsHeaders);
+      }
+    }
+    await logAICall({ function_name: "evaluate-test-response", subject_user_id: subjectId, triggered_by_user_id: triggeredBy, status: "ok", data_categories: isOralCheck ? ["production", "voice"] : ["production"], pseudonymization_level: "none" });
     // AI key check moved to shared ai-client
 
     // Determine if this is an oral response (EO) for high-tolerance mode
