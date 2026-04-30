@@ -391,6 +391,7 @@ const MonitoringPage = () => {
             eleves: Object.fromEntries(trajectoryStudentNames.map(n => [n, p[n] ?? null])),
           })),
           totalSeances: trajectoryData.length,
+          eleveIds: (groupEleves ?? []).map((e: any) => e.id).filter(Boolean),
         },
       });
       if (error) throw error;
