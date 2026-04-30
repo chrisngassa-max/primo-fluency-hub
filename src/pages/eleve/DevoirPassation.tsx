@@ -28,6 +28,7 @@ import {
 } from "@/lib/audioRecorder";
 import { useLiveAttemptSync } from "@/hooks/useLiveAttemptSync";
 import { corrigerExercice } from "@/lib/correctionExercice";
+import { applyExerciseVariant, resolveStudentExerciseLevel } from "@/lib/exerciseVariant";
 
 function CorrectionAccordion({ correction }: { correction: any[] }) {
   const [openItems, setOpenItems] = useState<number[]>([]);
