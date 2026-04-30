@@ -145,6 +145,18 @@ const GroupesPage = () => {
     enabled: !!allMembers && allMembers.length > 0,
   });
 
+  // ─── Détection "élève en avance" (formateur uniquement) ───
+  const advancedEleveIds = useMemo(
+    () => [...new Set((allMembers ?? []).map((m: any) => m.eleve_id))],
+    [allMembers]
+  );
+  const { data: advancedMap = {} as Record<string, AdvancedSignal> } = useQuery({
+    queryKey: ["groupes-advanced", user?.id, advancedEleveIds.join(",")],
+    queryFn: () => detectAdvancedStudentsBatch(advancedEleveIds, user!.id),
+    enabled: !!user?.id && advancedEleveIds.length > 0,
+    staleTime: 60_000,
+  });
+
   const getMembersForGroup = (groupId: string) =>
     (allMembers ?? []).filter((m: any) => m.group_id === groupId);
 
