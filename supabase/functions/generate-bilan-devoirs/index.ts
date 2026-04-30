@@ -3,6 +3,7 @@ import { callAI, AIError } from "../_shared/ai-client.ts";
 import { validateAndFix } from "../_shared/exercise-validator.ts";
 import { QA_REVIEW_BLOCK, logQaAuto } from "../_shared/qa-prompt.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { checkConsentBatch, ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth } from "../_shared/check-consent.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -14,7 +15,20 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { scoresParCompetence, niveauCible, sessionTitle } = await req.json();
+    const { scoresParCompetence, niveauCible, sessionTitle, eleveIds } = await req.json();
+    const triggeredBy = await getUserIdFromAuth(req);
+    const secretBlock = await ensurePseudonymSecretOrLog("generate-bilan-devoirs", corsHeaders, null);
+    if (secretBlock) return secretBlock;
+    let excludedIds: string[] = [];
+    if (Array.isArray(eleveIds) && eleveIds.length > 0) {
+      const batch = await checkConsentBatch(eleveIds);
+      excludedIds = batch.excludedIds;
+      if (batch.allowedIds.length === 0) {
+        await logAICall({ function_name: "generate-bilan-devoirs", triggered_by_user_id: triggeredBy, status: "blocked_no_consent", data_categories: ["aggregated_results"], pseudonymization_level: "hmac_sha256" });
+        return new Response(JSON.stringify({ error: "consent_required", excludedIds, degraded_mode: true, message: "Aucun élève consentant." }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+    }
+    await logAICall({ function_name: "generate-bilan-devoirs", triggered_by_user_id: triggeredBy, status: "ok", data_categories: ["aggregated_results"], pseudonymization_level: "hmac_sha256" });
     // AI key check moved to shared ai-client
 
     // Identify weaknesses
