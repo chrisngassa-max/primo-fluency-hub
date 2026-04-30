@@ -654,7 +654,12 @@ const GroupesPage = () => {
                           const prog = getProgress(m.eleve_id);
                           return (
                             <TableRow key={m.eleve_id}>
-                              <TableCell className="font-medium">{eleve?.prenom} {eleve?.nom}</TableCell>
+                              <TableCell className="font-medium">
+                                <div className="flex items-center gap-2">
+                                  <span>{eleve?.prenom} {eleve?.nom}</span>
+                                  <AdvancedStudentBadge signal={advancedMap[m.eleve_id]} compact />
+                                </div>
+                              </TableCell>
                               <TableCell>
                                 <code className="text-xs bg-muted px-1.5 py-0.5 rounded">{eleve?.email || "—"}</code>
                               </TableCell>
