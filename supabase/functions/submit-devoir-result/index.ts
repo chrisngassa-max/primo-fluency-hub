@@ -136,6 +136,34 @@ Deno.serve(async (req) => {
     return json(500, { error: "Correction server error", details: (e as Error).message });
   }
 
+  // 4b. Détection bonus : la ligne session_exercices(session_id, exercice_id) prime,
+  //     puis fallback sur des marqueurs textuels dans le titre / la consigne.
+  let isBonus = false;
+  if (body.session_id) {
+    const { data: seRow } = await admin
+      .from("session_exercices")
+      .select("is_bonus")
+      .eq("session_id", body.session_id)
+      .eq("exercice_id", ex.id)
+      .maybeSingle();
+    if (seRow?.is_bonus === true) isBonus = true;
+  }
+  if (!isBonus) {
+    const haystack = `${ex.titre ?? ""} ${ex.consigne ?? ""}`.toLowerCase();
+    if (/\bbonus\b|approfondiss/.test(haystack)) isBonus = true;
+  }
+  // Si le devoir provient d'un parcours d'approfondissement (source_label),
+  // on considère également le résultat comme bonus.
+  if (!isBonus && devoir) {
+    const { data: devSrc } = await admin
+      .from("devoirs")
+      .select("source_label")
+      .eq("id", devoir.id)
+      .maybeSingle();
+    const lbl = (devSrc?.source_label ?? "").toLowerCase();
+    if (lbl.includes("approfondissement") || lbl.includes("bonus")) isBonus = true;
+  }
+
   // 5. Insert resultats (en service role → RLS bypass)
   const reponses_eleve = body.transcription
     ? { ...answers, transcription: body.transcription, audio_path: body.audio_path }
@@ -148,6 +176,7 @@ Deno.serve(async (req) => {
     reponses_eleve,
     correction_detaillee: correction,
     tentative: 1,
+    is_bonus: isBonus,
   };
   if (devoirId) insertPayload.devoir_id = devoirId;
 
