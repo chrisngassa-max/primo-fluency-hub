@@ -27,6 +27,7 @@ import ReportProblemButton from "@/components/ReportProblemButton";
 import RegenerateItemButton from "@/components/RegenerateItemButton";
 import { useLiveAttemptSync } from "@/hooks/useLiveAttemptSync";
 import { corrigerExercice } from "@/lib/correctionExercice";
+import { applyExerciseVariant, resolveStudentExerciseLevel } from "@/lib/exerciseVariant";
 
 const STORAGE_KEY_PREFIX = "bilan-seance-progress-";
 
