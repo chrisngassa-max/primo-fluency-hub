@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { ExternalCsvImportDialog } from "@/components/ExternalCsvImportDialog";
 import { SessionStudentOutcomesTable } from "@/components/SessionStudentOutcomesTable";
+import OutcomeDevoirsPreviewDialog from "@/components/OutcomeDevoirsPreviewDialog";
 import { Input } from "@/components/ui/input";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
