@@ -160,7 +160,7 @@ const BilanSeance = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("session_exercices")
-        .select("*, exercice:exercices(id, titre, consigne, competence, format, contenu, niveau_vise, formateur_id)")
+        .select("*, exercice:exercices(id, titre, consigne, competence, format, contenu, niveau_vise, formateur_id, variante_niveau_bas, variante_niveau_haut)")
         .eq("session_id", sessionId!)
         .eq("statut", "traite_en_classe" as any)
         .order("ordre");
