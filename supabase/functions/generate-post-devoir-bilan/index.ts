@@ -46,7 +46,7 @@ BILAN B (pour le formateur) :
 - Points à développer en séance (actionnables).
 - Conseils de remédiation IA concrets (durée + activité).` + QA_REVIEW_BLOCK;
 
-    const userPrompt = `ÉLÈVE : ${eleveNom}
+    const userPrompt = `ÉLÈVE : ${pseudoNom}
 SÉANCE : ${sessionTitle}
 
 SCORE TEST DE BILAN : ${JSON.stringify(bilanTestScore)}
