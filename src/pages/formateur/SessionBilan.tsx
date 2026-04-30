@@ -500,11 +500,20 @@ const SessionBilan = () => {
       const exercicesTraites = exercises.filter((e) => checkedIds.has(e.id)).map((e) => (e as any).exercice?.titre);
       const exercicesNonTraites = uncheckedExercises.map((e) => (e as any).exercice?.titre);
 
+      // RGPD: récupérer les IDs des élèves du groupe pour la vérif consentement batch.
+      let eleveIds: string[] = [];
+      if (session?.group_id) {
+        const { data: groupMembersForConsent } = await supabase
+          .from("group_members").select("eleve_id").eq("group_id", session.group_id);
+        eleveIds = (groupMembersForConsent ?? []).map((m: any) => m.eleve_id).filter(Boolean);
+      }
+
       const { data, error } = await supabase.functions.invoke("adapt-next-session", {
         body: {
           sessionTitle: session?.titre, bilanScores, blockedStudents, exercicesTraites, exercicesNonTraites,
           nextSessionTitle: nextSession?.titre, nextSessionObjectifs: nextSession?.objectifs,
           nextSessionNiveauCible: nextSession?.niveau_cible,
+          eleveIds,
         },
       });
       if (error) throw error;
