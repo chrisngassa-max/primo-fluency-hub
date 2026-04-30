@@ -250,6 +250,24 @@ const MonitoringPage = () => {
     enabled: !!selectedGroupId,
   });
 
+  // ─── Détection "élève en avance" (formateur uniquement) ───
+  const advancedEleveIds = useMemo(() => {
+    const set = new Set<string>();
+    (allEleves ?? []).forEach((e: any) => e?.id && set.add(e.id));
+    (groupEleves ?? []).forEach((e: any) => e?.id && set.add(e.id));
+    return Array.from(set);
+  }, [allEleves, groupEleves]);
+
+  const { data: advancedMap = {} as Record<string, AdvancedSignal> } = useQuery({
+    queryKey: ["monitoring-advanced", user?.id, advancedEleveIds.join(",")],
+    queryFn: () => detectAdvancedStudentsBatch(advancedEleveIds, user!.id),
+    enabled: !!user?.id && advancedEleveIds.length > 0,
+    staleTime: 60_000,
+  });
+
+  // (Trajectory data ↓)
+  });
+
   // ─── Trajectory data ───
   const { data: trajectoryData = [], isLoading: loadingTrajectory } = useQuery({
     queryKey: ["monitoring-trajectory", selectedGroupId],
