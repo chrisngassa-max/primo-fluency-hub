@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { User, Mail, Lock, Save, Users, GraduationCap, TrendingUp } from "lucide-react";
+import AIConsentSettings from "@/components/AIConsentSettings";
 
 const EleveProfil = () => {
   const { user } = useAuth();
@@ -114,6 +115,8 @@ const EleveProfil = () => {
   return (
     <div className="max-w-lg mx-auto space-y-6">
       <h1 className="text-2xl font-bold text-foreground">Mon profil</h1>
+
+      <AIConsentSettings />
 
       {/* Group & Level info */}
       <Card>

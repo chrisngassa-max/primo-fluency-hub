@@ -96,6 +96,93 @@ export type Database = {
           },
         ]
       }
+      ai_processing_consents: {
+        Row: {
+          consent_ai: boolean
+          consent_biometric: boolean
+          consented_at: string | null
+          created_at: string
+          last_reminded_at: string | null
+          reminder_count: number
+          revoked_at: string | null
+          source: string | null
+          updated_at: string
+          user_id: string
+          version: string
+        }
+        Insert: {
+          consent_ai?: boolean
+          consent_biometric?: boolean
+          consented_at?: string | null
+          created_at?: string
+          last_reminded_at?: string | null
+          reminder_count?: number
+          revoked_at?: string | null
+          source?: string | null
+          updated_at?: string
+          user_id: string
+          version?: string
+        }
+        Update: {
+          consent_ai?: boolean
+          consent_biometric?: boolean
+          consented_at?: string | null
+          created_at?: string
+          last_reminded_at?: string | null
+          reminder_count?: number
+          revoked_at?: string | null
+          source?: string | null
+          updated_at?: string
+          user_id?: string
+          version?: string
+        }
+        Relationships: []
+      }
+      ai_processing_logs: {
+        Row: {
+          consent_version: string | null
+          created_at: string
+          data_categories: string[] | null
+          duration_ms: number | null
+          function_name: string
+          id: number
+          model: string | null
+          provider: string | null
+          pseudonymization_level: string | null
+          status: string | null
+          subject_user_id: string | null
+          triggered_by_user_id: string | null
+        }
+        Insert: {
+          consent_version?: string | null
+          created_at?: string
+          data_categories?: string[] | null
+          duration_ms?: number | null
+          function_name: string
+          id?: number
+          model?: string | null
+          provider?: string | null
+          pseudonymization_level?: string | null
+          status?: string | null
+          subject_user_id?: string | null
+          triggered_by_user_id?: string | null
+        }
+        Update: {
+          consent_version?: string | null
+          created_at?: string
+          data_categories?: string[] | null
+          duration_ms?: number | null
+          function_name?: string
+          id?: number
+          model?: string | null
+          provider?: string | null
+          pseudonymization_level?: string | null
+          status?: string | null
+          subject_user_id?: string | null
+          triggered_by_user_id?: string | null
+        }
+        Relationships: []
+      }
       alertes: {
         Row: {
           created_at: string
@@ -2868,6 +2955,10 @@ export type Database = {
         Returns: string
       }
       get_session_formateur: { Args: { _session_id: string }; Returns: string }
+      has_ai_consent: {
+        Args: { _require_biometric?: boolean; _user_id: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
