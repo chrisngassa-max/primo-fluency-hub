@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Loader2, Save, Users } from "lucide-react";
+import { detectAdvancedStudentsBatch, type AdvancedSignal } from "@/lib/detectAdvancedStudent";
+import { AdvancedStudentBadge } from "@/components/AdvancedStudentBadge";
 
 type ObjectifStatus = "absent" | "non_atteint" | "a_consolider" | "atteint" | "au_dela";
 type Besoin = "rattrapage" | "remediation" | "consolidation" | "approfondissement" | "aucun";
