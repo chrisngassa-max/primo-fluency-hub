@@ -265,8 +265,6 @@ const MonitoringPage = () => {
     staleTime: 60_000,
   });
 
-  // (Trajectory data ↓)
-  });
 
   // ─── Trajectory data ───
   const { data: trajectoryData = [], isLoading: loadingTrajectory } = useQuery({
