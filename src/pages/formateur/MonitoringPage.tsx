@@ -880,7 +880,12 @@ const MonitoringPage = () => {
                         const p = e.profil;
                         return (
                           <TableRow key={e.id} className="cursor-pointer hover:bg-muted/50" onClick={() => goToEleveDetail(e.id)}>
-                            <TableCell className="font-medium">{e.prenom} {e.nom}</TableCell>
+                            <TableCell className="font-medium">
+                              <div className="flex items-center gap-2">
+                                <span>{e.prenom} {e.nom}</span>
+                                <AdvancedStudentBadge signal={advancedMap[e.id]} compact />
+                              </div>
+                            </TableCell>
                             <TableCell>{p?.niveau_actuel || "—"}</TableCell>
                             <TableCell>
                               <div className="flex items-center gap-2">
@@ -1122,7 +1127,12 @@ const MonitoringPage = () => {
                       const displayScore = e.computedScore ?? 0;
                       return (
                         <TableRow key={e.id} className="cursor-pointer hover:bg-muted/50" onClick={() => goToEleveDetail(e.id)}>
-                          <TableCell className="font-medium">{e.prenom} {e.nom}</TableCell>
+                          <TableCell className="font-medium">
+                            <div className="flex items-center gap-2">
+                              <span>{e.prenom} {e.nom}</span>
+                              <AdvancedStudentBadge signal={advancedMap[e.id]} />
+                            </div>
+                          </TableCell>
                           <TableCell>
                             <div className="flex flex-wrap gap-1">
                               {e.groupes?.map((g: string, i: number) => g && <Badge key={i} variant="outline" className="text-xs">{g}</Badge>)}
