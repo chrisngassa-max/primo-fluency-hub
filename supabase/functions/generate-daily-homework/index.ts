@@ -526,6 +526,7 @@ Pour chaque élève, cible ses faiblesses spécifiques. Les exercices de tronc c
         totalDevoirs,
         totalExcluded,
         excludedReport,
+        excludedIds, // RGPD: élèves exclus pour absence de consentement IA
         plan: aiEleves.map((e: any) => ({
           eleve_id: shortToFull[e.eleve_id] || e.eleve_id,
           jours: (e.jours || []).map((j: any) => ({
