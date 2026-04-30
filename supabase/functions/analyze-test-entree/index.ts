@@ -44,7 +44,7 @@ Tu dois :
 4. Recommander des exercices spécifiques pour chaque zone critique
 5. Suggérer le niveau de difficulté de départ pour les exercices (échelle 0-10)`;
 
-    let userPrompt = `Voici les scores d'évaluation de l'élève${eleveNom ? ` ${eleveNom}` : ""} :\n\n`;
+    let userPrompt = `Voici les scores d'évaluation de l'élève ${pseudoNom} :\n\n`;
 
     if (detailScores) {
       for (const [comp, data] of Object.entries(detailScores as Record<string, any>)) {
