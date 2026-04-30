@@ -727,10 +727,31 @@ const SessionBilan = () => {
 
       {/* Observation par élève (formateur uniquement) */}
       {id && (
-        <SessionStudentOutcomesTable
-          sessionId={id}
-          groupId={(session as any)?.group?.id ?? (session as any)?.group_id ?? null}
-        />
+        <>
+          <SessionStudentOutcomesTable
+            sessionId={id}
+            groupId={(session as any)?.group?.id ?? (session as any)?.group_id ?? null}
+          />
+          <div className="flex justify-end print:hidden">
+            <Button
+              variant="outline"
+              onClick={() => setOutcomeDevoirsOpen(true)}
+              disabled={!user}
+            >
+              <Sparkles className="h-4 w-4 mr-2" />
+              Proposer les devoirs depuis le bilan
+            </Button>
+          </div>
+          {user && (
+            <OutcomeDevoirsPreviewDialog
+              open={outcomeDevoirsOpen}
+              onOpenChange={setOutcomeDevoirsOpen}
+              sessionId={id}
+              formateurId={user.id}
+              defaultDeadlineDays={defaultDeadlineDays}
+            />
+          )}
+        </>
       )}
 
       {/* Bilan de fin de cours */}
