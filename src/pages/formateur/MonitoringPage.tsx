@@ -26,6 +26,8 @@ import { DifficultyBadge } from "@/components/DifficultyBadge";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { detectAdvancedStudentsBatch, type AdvancedSignal } from "@/lib/detectAdvancedStudent";
+import { AdvancedStudentBadge } from "@/components/AdvancedStudentBadge";
 
 
 // Simple Markdown renderer (bold, headings, bullet lists)
@@ -247,6 +249,22 @@ const MonitoringPage = () => {
     },
     enabled: !!selectedGroupId,
   });
+
+  // ─── Détection "élève en avance" (formateur uniquement) ───
+  const advancedEleveIds = useMemo(() => {
+    const set = new Set<string>();
+    (allEleves ?? []).forEach((e: any) => e?.id && set.add(e.id));
+    (groupEleves ?? []).forEach((e: any) => e?.id && set.add(e.id));
+    return Array.from(set);
+  }, [allEleves, groupEleves]);
+
+  const { data: advancedMap = {} as Record<string, AdvancedSignal> } = useQuery({
+    queryKey: ["monitoring-advanced", user?.id, advancedEleveIds.join(",")],
+    queryFn: () => detectAdvancedStudentsBatch(advancedEleveIds, user!.id),
+    enabled: !!user?.id && advancedEleveIds.length > 0,
+    staleTime: 60_000,
+  });
+
 
   // ─── Trajectory data ───
   const { data: trajectoryData = [], isLoading: loadingTrajectory } = useQuery({
@@ -862,7 +880,12 @@ const MonitoringPage = () => {
                         const p = e.profil;
                         return (
                           <TableRow key={e.id} className="cursor-pointer hover:bg-muted/50" onClick={() => goToEleveDetail(e.id)}>
-                            <TableCell className="font-medium">{e.prenom} {e.nom}</TableCell>
+                            <TableCell className="font-medium">
+                              <div className="flex items-center gap-2">
+                                <span>{e.prenom} {e.nom}</span>
+                                <AdvancedStudentBadge signal={advancedMap[e.id]} compact />
+                              </div>
+                            </TableCell>
                             <TableCell>{p?.niveau_actuel || "—"}</TableCell>
                             <TableCell>
                               <div className="flex items-center gap-2">
@@ -1104,7 +1127,12 @@ const MonitoringPage = () => {
                       const displayScore = e.computedScore ?? 0;
                       return (
                         <TableRow key={e.id} className="cursor-pointer hover:bg-muted/50" onClick={() => goToEleveDetail(e.id)}>
-                          <TableCell className="font-medium">{e.prenom} {e.nom}</TableCell>
+                          <TableCell className="font-medium">
+                            <div className="flex items-center gap-2">
+                              <span>{e.prenom} {e.nom}</span>
+                              <AdvancedStudentBadge signal={advancedMap[e.id]} />
+                            </div>
+                          </TableCell>
                           <TableCell>
                             <div className="flex flex-wrap gap-1">
                               {e.groupes?.map((g: string, i: number) => g && <Badge key={i} variant="outline" className="text-xs">{g}</Badge>)}

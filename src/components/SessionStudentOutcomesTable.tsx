@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Loader2, Save, Users } from "lucide-react";
+import { detectAdvancedStudentsBatch, type AdvancedSignal } from "@/lib/detectAdvancedStudent";
+import { AdvancedStudentBadge } from "@/components/AdvancedStudentBadge";
 
 type ObjectifStatus = "absent" | "non_atteint" | "a_consolider" | "atteint" | "au_dela";
 type Besoin = "rattrapage" | "remediation" | "consolidation" | "approfondissement" | "aucun";
@@ -76,6 +78,17 @@ export function SessionStudentOutcomesTable({ sessionId, groupId }: Props) {
         outcomes: outcomesRes.data ?? [],
       };
     },
+  });
+
+  const eleveIds = useMemo(
+    () => (data?.members ?? []).map((m: any) => m.eleve_id),
+    [data]
+  );
+  const { data: advancedMap = {} as Record<string, AdvancedSignal> } = useQuery({
+    queryKey: ["session-outcomes-advanced", sessionId, user?.id, eleveIds.join(",")],
+    queryFn: () => detectAdvancedStudentsBatch(eleveIds, user!.id),
+    enabled: !!user?.id && eleveIds.length > 0,
+    staleTime: 60_000,
   });
 
   useEffect(() => {
@@ -210,7 +223,10 @@ export function SessionStudentOutcomesTable({ sessionId, groupId }: Props) {
               {rows.map((r) => (
                 <TableRow key={r.eleve_id}>
                   <TableCell className="font-medium align-top">
-                    {r.prenom} {r.nom}
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span>{r.prenom} {r.nom}</span>
+                      <AdvancedStudentBadge signal={advancedMap[r.eleve_id]} compact />
+                    </div>
                   </TableCell>
                   <TableCell className="align-top">
                     {r.present ? (

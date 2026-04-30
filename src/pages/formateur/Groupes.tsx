@@ -36,6 +36,8 @@ import {
   DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import InviteStudentDialog from "@/components/InviteStudentDialog";
+import { detectAdvancedStudentsBatch, type AdvancedSignal } from "@/lib/detectAdvancedStudent";
+import { AdvancedStudentBadge } from "@/components/AdvancedStudentBadge";
 
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
 
@@ -141,6 +143,18 @@ const GroupesPage = () => {
       return data;
     },
     enabled: !!allMembers && allMembers.length > 0,
+  });
+
+  // ─── Détection "élève en avance" (formateur uniquement) ───
+  const advancedEleveIds = useMemo(
+    () => [...new Set((allMembers ?? []).map((m: any) => m.eleve_id))],
+    [allMembers]
+  );
+  const { data: advancedMap = {} as Record<string, AdvancedSignal> } = useQuery({
+    queryKey: ["groupes-advanced", user?.id, advancedEleveIds.join(",")],
+    queryFn: () => detectAdvancedStudentsBatch(advancedEleveIds, user!.id),
+    enabled: !!user?.id && advancedEleveIds.length > 0,
+    staleTime: 60_000,
   });
 
   const getMembersForGroup = (groupId: string) =>
@@ -640,7 +654,12 @@ const GroupesPage = () => {
                           const prog = getProgress(m.eleve_id);
                           return (
                             <TableRow key={m.eleve_id}>
-                              <TableCell className="font-medium">{eleve?.prenom} {eleve?.nom}</TableCell>
+                              <TableCell className="font-medium">
+                                <div className="flex items-center gap-2">
+                                  <span>{eleve?.prenom} {eleve?.nom}</span>
+                                  <AdvancedStudentBadge signal={advancedMap[m.eleve_id]} compact />
+                                </div>
+                              </TableCell>
                               <TableCell>
                                 <code className="text-xs bg-muted px-1.5 py-0.5 rounded">{eleve?.email || "—"}</code>
                               </TableCell>
