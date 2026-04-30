@@ -81,7 +81,7 @@ Réponds uniquement en JSON : {"score": number, "justification": string}`;
       model: "google/gemini-3-flash-preview",
       messages: [
         { role: "system", content: systemPrompt },
-        { role: "user", content: reponse_apprenant },
+        { role: "user", content: safeReponse },
       ],
     });
 
