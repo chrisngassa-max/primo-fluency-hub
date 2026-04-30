@@ -1,4 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth } from '../_shared/check-consent.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -11,6 +12,11 @@ Deno.serve(async (req) => {
   }
 
   try {
+    const _triggeredBy = await getUserIdFromAuth(req);
+    const _secretBlock = await ensurePseudonymSecretOrLog('claude-review-exercise', corsHeaders, null);
+    if (_secretBlock) return _secretBlock;
+    await logAICall({ function_name: 'claude-review-exercise', triggered_by_user_id: _triggeredBy, status: 'ok', data_categories: [], pseudonymization_level: 'none' });
+
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!

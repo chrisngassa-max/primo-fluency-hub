@@ -87,6 +87,10 @@ Deno.serve(async (req) => {
   }
 
   try {
+    const _triggeredBy = await getUserIdFromAuth(req);
+    const _secretBlock = await ensurePseudonymSecretOrLog("tcf-generate-exercise", corsHeaders, null);
+    if (_secretBlock) return _secretBlock;
+    await logAICall({ function_name: "tcf-generate-exercise", triggered_by_user_id: _triggeredBy, status: "ok", data_categories: [], pseudonymization_level: "none" });
     const body = await req.json()
     const { theme, level, dispositif, apprenant, banque_donnees, type_demarche } = body;
 
