@@ -163,7 +163,7 @@ export async function getUserIdFromAuth(req: Request): Promise<string | null> {
     Deno.env.get("SUPABASE_URL")!,
     Deno.env.get("SUPABASE_ANON_KEY")!,
   );
-  const { data, error } = await supa.auth.getClaims(token);
-  if (error || !data?.claims?.sub) return null;
-  return data.claims.sub as string;
+  const { data, error } = await supa.auth.getUser(token);
+  if (error || !data?.user?.id) return null;
+  return data.user.id as string;
 }
