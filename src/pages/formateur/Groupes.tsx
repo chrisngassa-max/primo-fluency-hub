@@ -98,6 +98,46 @@ const GroupesPage = () => {
   const [shownPasswords, setShownPasswords] = useState<Record<string, boolean>>({});
   const [resettingPwd, setResettingPwd] = useState<string | null>(null);
 
+  // Set custom password dialog
+  const [setPwdOpen, setSetPwdOpen] = useState(false);
+  const [setPwdEleveId, setSetPwdEleveId] = useState<string | null>(null);
+  const [setPwdEleveName, setSetPwdEleveName] = useState("");
+  const [customPwd, setCustomPwd] = useState("");
+  const [showCustomPwd, setShowCustomPwd] = useState(false);
+  const [savingCustomPwd, setSavingCustomPwd] = useState(false);
+
+  const openSetPasswordDialog = (eleveId: string, eleveName: string) => {
+    setSetPwdEleveId(eleveId);
+    setSetPwdEleveName(eleveName);
+    setCustomPwd("");
+    setShowCustomPwd(false);
+    setSetPwdOpen(true);
+  };
+
+  const handleSaveCustomPassword = async () => {
+    if (!setPwdEleveId) return;
+    if (customPwd.trim().length < 6) {
+      toast.error("Le mot de passe doit contenir au moins 6 caractères.");
+      return;
+    }
+    setSavingCustomPwd(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("reset-student-password", {
+        body: { eleve_id: setPwdEleveId, new_password: customPwd.trim() },
+      });
+      if (error) throw new Error(data?.error || error.message);
+      if (data?.error) throw new Error(data.error);
+      setShownPasswords((s) => ({ ...s, [setPwdEleveId]: true }));
+      toast.success(`Mot de passe défini pour ${setPwdEleveName}`);
+      qc.invalidateQueries({ queryKey: ["all-group-members"] });
+      setSetPwdOpen(false);
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    } finally {
+      setSavingCustomPwd(false);
+    }
+  };
+
   // Fetch groups
   const { data: groups, isLoading } = useQuery({
     queryKey: ["formateur-groups", user?.id],
