@@ -98,6 +98,46 @@ const GroupesPage = () => {
   const [shownPasswords, setShownPasswords] = useState<Record<string, boolean>>({});
   const [resettingPwd, setResettingPwd] = useState<string | null>(null);
 
+  // Set custom password dialog
+  const [setPwdOpen, setSetPwdOpen] = useState(false);
+  const [setPwdEleveId, setSetPwdEleveId] = useState<string | null>(null);
+  const [setPwdEleveName, setSetPwdEleveName] = useState("");
+  const [customPwd, setCustomPwd] = useState("");
+  const [showCustomPwd, setShowCustomPwd] = useState(false);
+  const [savingCustomPwd, setSavingCustomPwd] = useState(false);
+
+  const openSetPasswordDialog = (eleveId: string, eleveName: string) => {
+    setSetPwdEleveId(eleveId);
+    setSetPwdEleveName(eleveName);
+    setCustomPwd("");
+    setShowCustomPwd(false);
+    setSetPwdOpen(true);
+  };
+
+  const handleSaveCustomPassword = async () => {
+    if (!setPwdEleveId) return;
+    if (customPwd.trim().length < 6) {
+      toast.error("Le mot de passe doit contenir au moins 6 caractères.");
+      return;
+    }
+    setSavingCustomPwd(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("reset-student-password", {
+        body: { eleve_id: setPwdEleveId, new_password: customPwd.trim() },
+      });
+      if (error) throw new Error(data?.error || error.message);
+      if (data?.error) throw new Error(data.error);
+      setShownPasswords((s) => ({ ...s, [setPwdEleveId]: true }));
+      toast.success(`Mot de passe défini pour ${setPwdEleveName}`);
+      qc.invalidateQueries({ queryKey: ["all-group-members"] });
+      setSetPwdOpen(false);
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    } finally {
+      setSavingCustomPwd(false);
+    }
+  };
+
   // Fetch groups
   const { data: groups, isLoading } = useQuery({
     queryKey: ["formateur-groups", user?.id],
@@ -690,9 +730,16 @@ const GroupesPage = () => {
                                   )}
                                   <Button
                                     variant="ghost" size="icon" className="h-6 w-6"
+                                    onClick={() => openSetPasswordDialog(m.eleve_id, `${eleve?.prenom} ${eleve?.nom}`)}
+                                    title="Définir un mot de passe choisi"
+                                  >
+                                    <KeyRound className="h-3.5 w-3.5" />
+                                  </Button>
+                                  <Button
+                                    variant="ghost" size="icon" className="h-6 w-6"
                                     onClick={() => handleResetPassword(m.eleve_id, `${eleve?.prenom} ${eleve?.nom}`)}
                                     disabled={resettingPwd === m.eleve_id}
-                                    title="Réinitialiser le mot de passe"
+                                    title="Générer un nouveau mot de passe aléatoire"
                                   >
                                     {resettingPwd === m.eleve_id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
                                   </Button>
@@ -886,6 +933,51 @@ const GroupesPage = () => {
         open={inviteOpen}
         onOpenChange={setInviteOpen}
       />
+
+      {/* Set custom password dialog */}
+      <Dialog open={setPwdOpen} onOpenChange={setSetPwdOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Définir un mot de passe</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              Choisissez un mot de passe pour <strong>{setPwdEleveName}</strong>. L'ancien mot de passe ne fonctionnera plus.
+            </p>
+            <div className="space-y-2">
+              <Label htmlFor="custom-pwd">Nouveau mot de passe (6 caractères minimum)</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="custom-pwd"
+                  type={showCustomPwd ? "text" : "password"}
+                  value={customPwd}
+                  onChange={(e) => setCustomPwd(e.target.value)}
+                  placeholder="ex: bonjour2026"
+                  autoComplete="new-password"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setShowCustomPwd((v) => !v)}
+                  title={showCustomPwd ? "Masquer" : "Afficher"}
+                >
+                  {showCustomPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </Button>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSetPwdOpen(false)} disabled={savingCustomPwd}>
+              Annuler
+            </Button>
+            <Button onClick={handleSaveCustomPassword} disabled={savingCustomPwd || customPwd.trim().length < 6}>
+              {savingCustomPwd && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              Enregistrer
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
