@@ -43,12 +43,14 @@ interface GenerateDailyHomeworkDialogProps {
   }) => Promise<void>;
 }
 
-const DURATION_OPTIONS = [
-  { value: 15, label: "15 min", description: "Léger — 3-4 exercices/jour" },
-  { value: 30, label: "30 min", description: "Modéré — 6-8 exercices/jour" },
-  { value: 45, label: "45 min", description: "Soutenu — 10-12 exercices/jour" },
-  { value: 60, label: "60 min", description: "Intensif — 14-16 exercices/jour" },
+const VOLUME_OPTIONS = [
+  { value: 3, label: "3 exercices", description: "Série courte (~15 min)" },
+  { value: 5, label: "5 exercices", description: "Série standard (~30 min)" },
+  { value: 8, label: "8 exercices", description: "Série longue (~45 min)" },
 ];
+
+// Conservé pour rétro-compat des appels existants
+const DURATION_OPTIONS = VOLUME_OPTIONS;
 
 const GenerateDailyHomeworkDialog = ({
   open,
