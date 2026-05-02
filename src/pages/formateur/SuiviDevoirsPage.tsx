@@ -653,7 +653,7 @@ Rédige une "Synthèse de Veille" concise pour le formateur :
           <TabsTrigger value="individuel" className="gap-1.5">
             <User className="h-4 w-4" />Vue individuelle
           </TabsTrigger>
-          <TabsTrigger value="quotidien" className="gap-1.5">
+          <TabsTrigger value="serie" className="gap-1.5">
             <Calendar className="h-4 w-4" />Vue par série
           </TabsTrigger>
           <TabsTrigger value="groupe" className="gap-1.5">
@@ -996,7 +996,7 @@ Rédige une "Synthèse de Veille" concise pour le formateur :
         </TabsContent>
 
         {/* ─── VUE PAR SÉRIE ─── */}
-        <TabsContent value="quotidien" className="space-y-6 mt-4">
+        <TabsContent value="serie" className="space-y-6 mt-4">
           {!activeGroup ? (
             <Card className="border-dashed">
               <CardContent className="py-12 text-center text-muted-foreground">
