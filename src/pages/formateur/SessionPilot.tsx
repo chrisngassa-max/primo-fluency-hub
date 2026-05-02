@@ -790,7 +790,7 @@ const SessionPilot = () => {
   };
 
   // ─── Generate Daily Homework via AI ───
-  const handleGenerateDailyHomework = async (params: {
+  const handleGenerateHomeworkSeries = async (params: {
     targetSessionId: string;
     dailyDuration: number; // = volume (nb exercices) dans la nouvelle logique
     targetDays: number;
@@ -2577,7 +2577,7 @@ ${ficheHtml}</body></html>`;
         onOpenChange={setDailyHomeworkOpen}
         currentSessionDate={session?.date_seance || new Date().toISOString()}
         nextSessions={futureSessions ?? []}
-        onGenerate={handleGenerateDailyHomework}
+        onGenerate={handleGenerateHomeworkSeries}
       />
 
       {/* ─── Import from URL Dialog ─── */}
