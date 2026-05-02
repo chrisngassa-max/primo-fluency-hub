@@ -792,27 +792,43 @@ const SessionPilot = () => {
   // ─── Generate Daily Homework via AI ───
   const handleGenerateDailyHomework = async (params: {
     targetSessionId: string;
-    dailyDuration: number;
+    dailyDuration: number; // = volume (nb exercices) dans la nouvelle logique
     targetDays: number;
     targetWeaknesses: boolean;
   }) => {
-    if (!user) return;
+    if (!user || !session) return;
     try {
-      const { data, error } = await supabase.functions.invoke("generate-daily-homework", {
+      // Récupérer les élèves du groupe de la séance
+      const groupId = (session as any).group_id;
+      const { data: members, error: memErr } = await supabase
+        .from("group_members")
+        .select("eleve_id")
+        .eq("group_id", groupId);
+      if (memErr) throw memErr;
+      const eleveIds = (members ?? []).map((m: any) => m.eleve_id);
+      if (eleveIds.length === 0) {
+        toast.error("Aucun élève dans ce groupe");
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke("generate-next-homework-series", {
         body: {
-          sessionId: id,
-          dailyDuration: params.dailyDuration,
-          targetDays: params.targetDays,
-          targetWeaknesses: params.targetWeaknesses,
+          eleveIds,
           formateurId: user.id,
+          sessionId: id,
+          targetCount: params.dailyDuration,
+          estimatedDuration: Math.max(15, params.dailyDuration * 6),
+          force: true, // déclenchement formateur explicite
           type_demarche: (session as any)?.group?.type_demarche || "titre_sejour",
         },
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
+      const skipped = (data?.skippedBecauseActiveHomework ?? []).length;
+      const dups = data?.totalDuplicatesSkipped ?? 0;
       toast.success(
-        `${data.totalExercices} exercice(s) répartis sur ${data.totalJours} jour(s) !`,
-        { description: `${data.totalDevoirs} devoirs créés au total.` }
+        `Série générée : ${data?.totalDevoirs ?? 0} devoir(s) pour ${data?.totalEleves ?? 0} élève(s)`,
+        { description: `Échéance souple. ${dups ? `${dups} doublon(s) évité(s). ` : ""}${skipped ? `${skipped} élève(s) ignoré(s) (devoirs en cours).` : ""}` }
       );
     } catch (e: any) {
       toast.error("Erreur de génération", { description: e.message });

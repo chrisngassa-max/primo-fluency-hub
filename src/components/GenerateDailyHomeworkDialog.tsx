@@ -43,12 +43,14 @@ interface GenerateDailyHomeworkDialogProps {
   }) => Promise<void>;
 }
 
-const DURATION_OPTIONS = [
-  { value: 15, label: "15 min", description: "Léger — 3-4 exercices/jour" },
-  { value: 30, label: "30 min", description: "Modéré — 6-8 exercices/jour" },
-  { value: 45, label: "45 min", description: "Soutenu — 10-12 exercices/jour" },
-  { value: 60, label: "60 min", description: "Intensif — 14-16 exercices/jour" },
+const VOLUME_OPTIONS = [
+  { value: 3, label: "3 exercices", description: "Série courte (~15 min)" },
+  { value: 5, label: "5 exercices", description: "Série standard (~30 min)" },
+  { value: 8, label: "8 exercices", description: "Série longue (~45 min)" },
 ];
+
+// Conservé pour rétro-compat des appels existants
+const DURATION_OPTIONS = VOLUME_OPTIONS;
 
 const GenerateDailyHomeworkDialog = ({
   open,
@@ -59,7 +61,7 @@ const GenerateDailyHomeworkDialog = ({
 }: GenerateDailyHomeworkDialogProps) => {
   const [selectedSession, setSelectedSession] = useState<string>("");
   const [manualDate, setManualDate] = useState<string>("");
-  const [dailyDuration, setDailyDuration] = useState<number>(15);
+  const [dailyDuration, setDailyDuration] = useState<number>(5);
   const [targetWeaknesses, setTargetWeaknesses] = useState(false);
   const [generating, setGenerating] = useState(false);
 
@@ -103,10 +105,10 @@ const GenerateDailyHomeworkDialog = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Calendar className="h-5 w-5 text-primary" />
-            Devoirs quotidiens IA
+            Nouvelle série de devoirs
           </DialogTitle>
           <DialogDescription>
-            Programme personnalisé par élève : l'IA cible les lacunes individuelles, les exercices non traités en classe et l'historique d'erreurs.
+            Série personnalisée par élève. Échéance souple : l'élève avance à son rythme. La série suivante est générée automatiquement quand celle-ci est terminée.
           </DialogDescription>
         </DialogHeader>
 
@@ -159,7 +161,7 @@ const GenerateDailyHomeworkDialog = ({
 
           {/* Daily workload */}
           <div className="space-y-2">
-            <Label className="text-sm font-semibold">Charge quotidienne</Label>
+            <Label className="text-sm font-semibold">Volume estimé</Label>
             <RadioGroup
               value={String(dailyDuration)}
               onValueChange={(v) => setDailyDuration(Number(v))}
@@ -208,9 +210,8 @@ const GenerateDailyHomeworkDialog = ({
             <div className="bg-muted/50 rounded-lg p-3 space-y-1">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Récapitulatif</p>
               <div className="flex flex-wrap gap-1.5">
-                <Badge variant="secondary">{targetDays} jour{targetDays > 1 ? "s" : ""}</Badge>
-                <Badge variant="secondary">{dailyDuration} min/jour</Badge>
-                <Badge variant="secondary">{targetDays * dailyDuration} min total</Badge>
+                <Badge variant="secondary">{dailyDuration} exercices/élève</Badge>
+                <Badge variant="secondary">Échéance estimée souple</Badge>
                 {targetWeaknesses && <Badge variant="outline" className="text-primary border-primary/30">Faiblesses ciblées</Badge>}
               </div>
             </div>
