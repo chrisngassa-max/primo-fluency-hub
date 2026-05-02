@@ -340,7 +340,7 @@ export default function OutcomeDevoirsPreviewDialog({
             </p>
             <p className="text-muted-foreground">
               Ajoute au moins un exercice à la séance pour pouvoir proposer des devoirs ici.
-              Tu peux aussi générer un devoir individuel via la fonction « Devoir du jour »
+              Tu peux aussi générer une série de devoirs individuelle via la fonction « Nouvelle série de devoirs »
               depuis le pilotage de séance.
             </p>
           </div>
