@@ -2571,8 +2571,8 @@ ${ficheHtml}</body></html>`;
 
       <style>{`@media print { nav, header, .print\\:hidden { display: none !important; } body { font-size: 12pt; } }`}</style>
 
-      {/* ─── Generate Daily Homework Dialog ─── */}
-      <GenerateDailyHomeworkDialog
+      {/* ─── Generate Homework Series Dialog ─── */}
+      <GenerateHomeworkSeriesDialog
         open={dailyHomeworkOpen}
         onOpenChange={setDailyHomeworkOpen}
         currentSessionDate={session?.date_seance || new Date().toISOString()}
