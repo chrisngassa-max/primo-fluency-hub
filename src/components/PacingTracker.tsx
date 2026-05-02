@@ -418,7 +418,7 @@ export default function PacingTracker() {
                 Comparateur de Rythme — Objectif {TOTAL_PROGRAM_HOURS}h
               </CardTitle>
               <CardDescription className="mt-1">
-                Séances + devoirs quotidiens comptabilisés vers l'objectif TCF
+                Séances + séries de devoirs comptabilisées vers l'objectif TCF
               </CardDescription>
             </div>
             {groupPacings.length > 1 && (

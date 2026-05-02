@@ -62,7 +62,7 @@ import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/Difficulty
 import FeuilleAppel from "@/components/FeuilleAppel";
 import LivePilotingSection from "@/components/LivePilotingSection";
 import { COMPETENCE_COLORS, resolveSessionCompetences, sortCompetences } from "@/lib/competences";
-import GenerateDailyHomeworkDialog from "@/components/GenerateDailyHomeworkDialog";
+import GenerateHomeworkSeriesDialog from "@/components/GenerateHomeworkSeriesDialog";
 import ImportFromUrlDialog from "@/components/ImportFromUrlDialog";
 import { ExternalResourcePicker } from "@/components/ExternalResourcePicker";
 import EndOfSessionSection from "@/components/EndOfSessionSection";
@@ -790,7 +790,7 @@ const SessionPilot = () => {
   };
 
   // ─── Generate Daily Homework via AI ───
-  const handleGenerateDailyHomework = async (params: {
+  const handleGenerateHomeworkSeries = async (params: {
     targetSessionId: string;
     dailyDuration: number; // = volume (nb exercices) dans la nouvelle logique
     targetDays: number;
@@ -2571,13 +2571,13 @@ ${ficheHtml}</body></html>`;
 
       <style>{`@media print { nav, header, .print\\:hidden { display: none !important; } body { font-size: 12pt; } }`}</style>
 
-      {/* ─── Generate Daily Homework Dialog ─── */}
-      <GenerateDailyHomeworkDialog
+      {/* ─── Generate Homework Series Dialog ─── */}
+      <GenerateHomeworkSeriesDialog
         open={dailyHomeworkOpen}
         onOpenChange={setDailyHomeworkOpen}
         currentSessionDate={session?.date_seance || new Date().toISOString()}
         nextSessions={futureSessions ?? []}
-        onGenerate={handleGenerateDailyHomework}
+        onGenerate={handleGenerateHomeworkSeries}
       />
 
       {/* ─── Import from URL Dialog ─── */}

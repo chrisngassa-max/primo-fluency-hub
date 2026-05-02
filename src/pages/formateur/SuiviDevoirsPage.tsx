@@ -654,7 +654,7 @@ Rédige une "Synthèse de Veille" concise pour le formateur :
             <User className="h-4 w-4" />Vue individuelle
           </TabsTrigger>
           <TabsTrigger value="quotidien" className="gap-1.5">
-            <Calendar className="h-4 w-4" />Vue quotidienne
+            <Calendar className="h-4 w-4" />Vue par série
           </TabsTrigger>
           <TabsTrigger value="groupe" className="gap-1.5">
             <Users className="h-4 w-4" />Vue groupe
@@ -995,12 +995,12 @@ Rédige une "Synthèse de Veille" concise pour le formateur :
           )}
         </TabsContent>
 
-        {/* ─── VUE QUOTIDIENNE ─── */}
+        {/* ─── VUE PAR SÉRIE ─── */}
         <TabsContent value="quotidien" className="space-y-6 mt-4">
           {!activeGroup ? (
             <Card className="border-dashed">
               <CardContent className="py-12 text-center text-muted-foreground">
-                Sélectionnez un groupe pour voir le suivi quotidien.
+                Sélectionnez un groupe pour voir le suivi des séries de devoirs.
               </CardContent>
             </Card>
           ) : dailyLoading ? (
@@ -1009,9 +1009,9 @@ Rédige une "Synthèse de Veille" concise pour le formateur :
             <Card className="border-dashed">
               <CardContent className="py-12 text-center">
                 <Calendar className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
-                <p className="text-muted-foreground font-medium">Aucun devoir quotidien</p>
+                <p className="text-muted-foreground font-medium">Aucune série de devoirs</p>
                 <p className="text-sm text-muted-foreground/70 mt-1">
-                  Utilisez "Générer devoirs" depuis le pilote de séance pour créer un programme jour par jour.
+                  Utilisez "Générer devoirs" depuis le pilote de séance pour créer une nouvelle série adaptée.
                 </p>
               </CardContent>
             </Card>

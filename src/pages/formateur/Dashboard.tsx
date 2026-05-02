@@ -22,7 +22,7 @@ import { fr } from "date-fns/locale";
 import { toast } from "sonner";
 import { DifficultyBadge } from "@/components/DifficultyBadge";
 import MicroCompetencesPanel, { type MicroCompetence } from "@/components/MicroCompetencesPanel";
-import GenerateDailyHomeworkDialog from "@/components/GenerateDailyHomeworkDialog";
+import GenerateHomeworkSeriesDialog from "@/components/GenerateHomeworkSeriesDialog";
 import NextSessionCard from "@/components/NextSessionCard";
 import { cn } from "@/lib/utils";
 
@@ -1505,14 +1505,14 @@ ${sessionExercises.map((ex: any, i: number) => `
           </Card>
         </TabsContent>
       </Tabs>
-      {/* Daily Homework Dialog from alerts */}
+      {/* Homework Series Dialog from alerts */}
       {dailyHomeworkOpen && selectedAlertEleve && (
-        <GenerateDailyHomeworkDialog
+        <GenerateHomeworkSeriesDialog
           open={dailyHomeworkOpen}
           onOpenChange={(open) => { setDailyHomeworkOpen(open); if (!open) setSelectedAlertEleve(null); }}
           currentSessionDate={new Date().toISOString()}
           nextSessions={upcomingSessions.map((s: any) => ({ id: s.id, titre: s.titre, date_seance: s.date_seance }))}
-          onGenerate={async () => { toast.success("Devoirs générés !"); setDailyHomeworkOpen(false); setSelectedAlertEleve(null); }}
+          onGenerate={async () => { toast.success("Série de devoirs générée !"); setDailyHomeworkOpen(false); setSelectedAlertEleve(null); }}
         />
       )}
     </div>

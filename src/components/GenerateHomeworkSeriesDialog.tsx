@@ -30,13 +30,14 @@ interface NextSessionOption {
   date_seance: string;
 }
 
-interface GenerateDailyHomeworkDialogProps {
+export interface GenerateHomeworkSeriesDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   currentSessionDate: string;
   nextSessions: NextSessionOption[];
   onGenerate: (params: {
     targetSessionId: string;
+    /** Volume d'exercices par série (anciennement "dailyDuration") */
     dailyDuration: number;
     targetDays: number;
     targetWeaknesses: boolean;
@@ -49,19 +50,16 @@ const VOLUME_OPTIONS = [
   { value: 8, label: "8 exercices", description: "Série longue (~45 min)" },
 ];
 
-// Conservé pour rétro-compat des appels existants
-const DURATION_OPTIONS = VOLUME_OPTIONS;
-
-const GenerateDailyHomeworkDialog = ({
+const GenerateHomeworkSeriesDialog = ({
   open,
   onOpenChange,
   currentSessionDate,
   nextSessions,
   onGenerate,
-}: GenerateDailyHomeworkDialogProps) => {
+}: GenerateHomeworkSeriesDialogProps) => {
   const [selectedSession, setSelectedSession] = useState<string>("");
   const [manualDate, setManualDate] = useState<string>("");
-  const [dailyDuration, setDailyDuration] = useState<number>(5);
+  const [seriesVolume, setSeriesVolume] = useState<number>(5);
   const [targetWeaknesses, setTargetWeaknesses] = useState(false);
   const [generating, setGenerating] = useState(false);
 
@@ -89,7 +87,7 @@ const GenerateDailyHomeworkDialog = ({
     try {
       await onGenerate({
         targetSessionId: useManualDate ? "__manual__" : selectedSession,
-        dailyDuration,
+        dailyDuration: seriesVolume,
         targetDays,
         targetWeaknesses,
       });
@@ -108,7 +106,7 @@ const GenerateDailyHomeworkDialog = ({
             Nouvelle série de devoirs
           </DialogTitle>
           <DialogDescription>
-            Série personnalisée par élève. Échéance souple : l'élève avance à son rythme. La série suivante est générée automatiquement quand celle-ci est terminée.
+            Série personnalisée par élève. Échéance estimée souple : l'élève avance à son rythme. La série suivante est générée automatiquement quand celle-ci est terminée.
           </DialogDescription>
         </DialogHeader>
 
@@ -141,7 +139,7 @@ const GenerateDailyHomeworkDialog = ({
             {/* Manual date input */}
             {useManualDate && (
               <div className="space-y-1 pt-1">
-                <Label className="text-xs text-muted-foreground">Date cible des devoirs</Label>
+                <Label className="text-xs text-muted-foreground">Échéance estimée :</Label>
                 <Input
                   type="date"
                   value={resolvedManualDate}
@@ -159,19 +157,19 @@ const GenerateDailyHomeworkDialog = ({
             )}
           </div>
 
-          {/* Daily workload */}
+          {/* Series volume */}
           <div className="space-y-2">
-            <Label className="text-sm font-semibold">Volume estimé</Label>
+            <Label className="text-sm font-semibold">Volume de la série</Label>
             <RadioGroup
-              value={String(dailyDuration)}
-              onValueChange={(v) => setDailyDuration(Number(v))}
+              value={String(seriesVolume)}
+              onValueChange={(v) => setSeriesVolume(Number(v))}
               className="grid grid-cols-2 gap-2"
             >
-              {DURATION_OPTIONS.map((opt) => (
+              {VOLUME_OPTIONS.map((opt) => (
                 <label
                   key={opt.value}
                   className={`flex items-center gap-2 p-3 rounded-lg border cursor-pointer transition-colors ${
-                    dailyDuration === opt.value
+                    seriesVolume === opt.value
                       ? "border-primary bg-primary/5"
                       : "border-border hover:border-primary/40"
                   }`}
@@ -210,7 +208,7 @@ const GenerateDailyHomeworkDialog = ({
             <div className="bg-muted/50 rounded-lg p-3 space-y-1">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Récapitulatif</p>
               <div className="flex flex-wrap gap-1.5">
-                <Badge variant="secondary">{dailyDuration} exercices/élève</Badge>
+                <Badge variant="secondary">{seriesVolume} exercices/élève</Badge>
                 <Badge variant="secondary">Échéance estimée souple</Badge>
                 {targetWeaknesses && <Badge variant="outline" className="text-primary border-primary/30">Faiblesses ciblées</Badge>}
               </div>
@@ -228,7 +226,7 @@ const GenerateDailyHomeworkDialog = ({
             className="gap-2"
           >
             {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Calendar className="h-4 w-4" />}
-            Générer les devoirs
+            Générer la série
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -236,4 +234,4 @@ const GenerateDailyHomeworkDialog = ({
   );
 };
 
-export default GenerateDailyHomeworkDialog;
+export default GenerateHomeworkSeriesDialog;
