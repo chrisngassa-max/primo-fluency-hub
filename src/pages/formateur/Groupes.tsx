@@ -730,9 +730,16 @@ const GroupesPage = () => {
                                   )}
                                   <Button
                                     variant="ghost" size="icon" className="h-6 w-6"
+                                    onClick={() => openSetPasswordDialog(m.eleve_id, `${eleve?.prenom} ${eleve?.nom}`)}
+                                    title="Définir un mot de passe choisi"
+                                  >
+                                    <KeyRound className="h-3.5 w-3.5" />
+                                  </Button>
+                                  <Button
+                                    variant="ghost" size="icon" className="h-6 w-6"
                                     onClick={() => handleResetPassword(m.eleve_id, `${eleve?.prenom} ${eleve?.nom}`)}
                                     disabled={resettingPwd === m.eleve_id}
-                                    title="Réinitialiser le mot de passe"
+                                    title="Générer un nouveau mot de passe aléatoire"
                                   >
                                     {resettingPwd === m.eleve_id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
                                   </Button>
