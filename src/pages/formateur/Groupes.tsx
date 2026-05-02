@@ -933,6 +933,51 @@ const GroupesPage = () => {
         open={inviteOpen}
         onOpenChange={setInviteOpen}
       />
+
+      {/* Set custom password dialog */}
+      <Dialog open={setPwdOpen} onOpenChange={setSetPwdOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Définir un mot de passe</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              Choisissez un mot de passe pour <strong>{setPwdEleveName}</strong>. L'ancien mot de passe ne fonctionnera plus.
+            </p>
+            <div className="space-y-2">
+              <Label htmlFor="custom-pwd">Nouveau mot de passe (6 caractères minimum)</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="custom-pwd"
+                  type={showCustomPwd ? "text" : "password"}
+                  value={customPwd}
+                  onChange={(e) => setCustomPwd(e.target.value)}
+                  placeholder="ex: bonjour2026"
+                  autoComplete="new-password"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setShowCustomPwd((v) => !v)}
+                  title={showCustomPwd ? "Masquer" : "Afficher"}
+                >
+                  {showCustomPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </Button>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSetPwdOpen(false)} disabled={savingCustomPwd}>
+              Annuler
+            </Button>
+            <Button onClick={handleSaveCustomPassword} disabled={savingCustomPwd || customPwd.trim().length < 6}>
+              {savingCustomPwd && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              Enregistrer
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
