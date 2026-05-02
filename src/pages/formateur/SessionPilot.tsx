@@ -62,7 +62,7 @@ import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/Difficulty
 import FeuilleAppel from "@/components/FeuilleAppel";
 import LivePilotingSection from "@/components/LivePilotingSection";
 import { COMPETENCE_COLORS, resolveSessionCompetences, sortCompetences } from "@/lib/competences";
-import GenerateDailyHomeworkDialog from "@/components/GenerateDailyHomeworkDialog";
+import GenerateHomeworkSeriesDialog from "@/components/GenerateHomeworkSeriesDialog";
 import ImportFromUrlDialog from "@/components/ImportFromUrlDialog";
 import { ExternalResourcePicker } from "@/components/ExternalResourcePicker";
 import EndOfSessionSection from "@/components/EndOfSessionSection";
