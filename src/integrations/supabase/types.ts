@@ -1439,6 +1439,54 @@ export type Database = {
           },
         ]
       }
+      homework_generation_queue: {
+        Row: {
+          attempts: number
+          completed_serie: number | null
+          created_at: string
+          eleve_id: string
+          error_message: string | null
+          formateur_id: string
+          id: string
+          max_attempts: number
+          next_attempt_at: string
+          processed_at: string | null
+          reason: string
+          session_id: string | null
+          status: string
+        }
+        Insert: {
+          attempts?: number
+          completed_serie?: number | null
+          created_at?: string
+          eleve_id: string
+          error_message?: string | null
+          formateur_id: string
+          id?: string
+          max_attempts?: number
+          next_attempt_at?: string
+          processed_at?: string | null
+          reason?: string
+          session_id?: string | null
+          status?: string
+        }
+        Update: {
+          attempts?: number
+          completed_serie?: number | null
+          created_at?: string
+          eleve_id?: string
+          error_message?: string | null
+          formateur_id?: string
+          id?: string
+          max_attempts?: number
+          next_attempt_at?: string
+          processed_at?: string | null
+          reason?: string
+          session_id?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           created_at: string
