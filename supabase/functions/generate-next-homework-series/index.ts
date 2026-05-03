@@ -21,6 +21,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { callAI, AIError } from "../_shared/ai-client.ts";
 import { validateAndFix } from "../_shared/exercise-validator.ts";
 import { QA_REVIEW_BLOCK } from "../_shared/qa-prompt.ts";
+import { buildPedagogicalDirectives, formatPedagogicalDirectives } from "../_shared/pedagogical-directives.ts";
 import {
   checkConsentBatch,
   ensurePseudonymSecretOrLog,
@@ -171,6 +172,16 @@ serve(async (req) => {
       .select("eleve_id, niveau_actuel, taux_reussite_co, taux_reussite_ce, taux_reussite_ee, taux_reussite_eo, taux_reussite_structures, priorites_pedagogiques")
       .in("eleve_id", eleveIds);
 
+    let outcomesByEleve = new Map<string, any>();
+    if (sessionId) {
+      const { data: outcomes } = await supabase
+        .from("session_student_outcomes")
+        .select("eleve_id, objectif_status, besoin_pedagogique")
+        .eq("session_id", sessionId)
+        .in("eleve_id", eleveIds);
+      outcomesByEleve = new Map((outcomes ?? []).map((outcome: any) => [outcome.eleve_id, outcome]));
+    }
+
     const { data: levels } = await supabase
       .from("student_competency_levels")
       .select("eleve_id, competence, niveau_actuel")
@@ -260,6 +271,13 @@ serve(async (req) => {
       };
 
       const profile = profileById.get(eleveId);
+      const directives = buildPedagogicalDirectives({
+        profile,
+        outcome: outcomesByEleve.get(eleveId),
+        progression,
+        weakCompetences: weakComps.map((w) => w.c),
+        targetCompetence: weakComps[0]?.c ?? null,
+      });
       const lines: string[] = [];
       lines.push(`ÉLÈVE "${name}" (id: ${eleveId.slice(0, 8)})`);
       lines.push(`  Série courante terminée: ${lastSerieByEleve[eleveId]} → nouvelle série: ${newSerie}`);
@@ -267,6 +285,7 @@ serve(async (req) => {
         lines.push(`  Niveau: ${profile.niveau_actuel ?? "?"} | CO=${profile.taux_reussite_co}% CE=${profile.taux_reussite_ce}% EE=${profile.taux_reussite_ee}% EO=${profile.taux_reussite_eo}% Struct=${profile.taux_reussite_structures}%`);
       }
       lines.push(`  Moyenne 5 derniers résultats: ${avg ?? "n/a"}% → adaptation: ${progression}`);
+      lines.push(formatPedagogicalDirectives(directives).split("\n").map((line) => `  ${line}`).join("\n"));
       if (weakComps.length) lines.push(`  Compétences faibles ciblées: ${weakComps.map((w) => `${w.c}=${w.avg}%`).join(", ")}`);
 
       // Historique anti-répétition (30 derniers)
@@ -294,6 +313,13 @@ ADAPTATION :
 - score < 60% → remédiation ciblée avec difficulté adaptée.
 - aucun résultat récent → partir du niveau actuel.
 - Démarche IRN : ${demarche} — Épreuves obligatoires : ${epreuvesObligatoires}.
+
+DIRECTIVES PEDAGOGIQUES PAR ELEVE :
+- Chaque bloc eleve contient des DIRECTIVES PEDAGOGIQUES CONTRAIGNANTES.
+- Elles priment sur les regles generales de volume ou de format.
+- Si une directive interdit redaction_libre, texte_long ou production_ecrite_longue, ne genere pas ce format pour cet eleve.
+- Si descente_competence est presente, travaille d'abord competence_cible avant de revenir a la competence ratee.
+- Respecte supports_obligatoires, limites de consigne/items, feedback_type et formats_autorises.
 
 RÈGLE ANTI-RÉPÉTITION STRICTE :
 - Tu ne reprends PAS les titres listés dans HISTORIQUE DEVOIRS RÉCENTS.

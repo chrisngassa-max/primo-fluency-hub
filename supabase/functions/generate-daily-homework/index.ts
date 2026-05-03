@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { callAI, AIError } from "../_shared/ai-client.ts";
 import { validateAndFix } from "../_shared/exercise-validator.ts";
 import { QA_REVIEW_BLOCK, logQaAuto } from "../_shared/qa-prompt.ts";
+import { buildPedagogicalDirectives, formatPedagogicalDirectives } from "../_shared/pedagogical-directives.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { checkConsentBatch, ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth, consentBlockedResponse } from "../_shared/check-consent.ts";
 
@@ -96,6 +97,15 @@ serve(async (req) => {
       .select("eleve_id, niveau_actuel, taux_reussite_co, taux_reussite_ce, taux_reussite_ee, taux_reussite_eo, taux_reussite_structures, priorites_pedagogiques")
       .in("eleve_id", eleveIds);
 
+    const { data: studentOutcomes } = await supabase
+      .from("session_student_outcomes")
+      .select("eleve_id, objectif_status, besoin_pedagogique")
+      .eq("session_id", sessionId)
+      .in("eleve_id", eleveIds);
+
+    const outcomeByEleve = new Map<string, any>();
+    (studentOutcomes ?? []).forEach((outcome: any) => outcomeByEleve.set(outcome.eleve_id, outcome));
+
     // 6. Fetch bilan test results if targeting weaknesses
     let bilanWeaknesses: Record<string, Record<string, number>> = {};
     if (targetWeaknesses) {
@@ -182,6 +192,16 @@ serve(async (req) => {
 
       // Profile data
       const profile = (studentProfiles ?? []).find((p: any) => p.eleve_id === eleveId);
+      const weakCompetencesForDirectives = Object.entries(failedByCompetence)
+        .filter(([, data]: [string, any]) => data.avgScore < 70)
+        .sort(([, a]: [string, any], [, b]: [string, any]) => a.avgScore - b.avgScore)
+        .map(([comp]) => comp);
+      const directives = buildPedagogicalDirectives({
+        profile,
+        outcome: outcomeByEleve.get(eleveId),
+        weakCompetences: weakCompetencesForDirectives,
+        targetCompetence: weakCompetencesForDirectives[0] ?? null,
+      });
 
       // Bilan weaknesses
       const bilan = bilanWeaknesses[eleveId];
@@ -198,6 +218,7 @@ serve(async (req) => {
           Structures: profile.taux_reussite_structures,
           priorites: profile.priorites_pedagogiques,
         } : null,
+        directives,
         recentErrors: failedByCompetence,
         bilanScores: bilan || null,
         nbResultats: myResults.length,
@@ -217,6 +238,9 @@ serve(async (req) => {
       const lines = [`ÉLÈVE "${p.name}" (id: ${eleveId.slice(0, 8)})`];
       if (p.profile) {
         lines.push(`  Niveau actuel: ${p.profile.niveau} | Taux réussite: CO=${p.profile.CO}% CE=${p.profile.CE}% EE=${p.profile.EE}% EO=${p.profile.EO}% Struct=${p.profile.Structures}%`);
+      }
+      if (p.directives) {
+        lines.push(formatPedagogicalDirectives(p.directives).split("\n").map((line) => `  ${line}`).join("\n"));
       }
       if (p.bilanScores) {
         const weakComps = Object.entries(p.bilanScores).filter(([, pct]) => (pct as number) < 70);
@@ -258,6 +282,12 @@ DIFFÉRENCIATION INDIVIDUELLE OBLIGATOIRE :
 - Les erreurs récentes de chaque élève doivent être ciblées en priorité
 - Les compétences faibles persistantes doivent être travaillées en spiralaire
 - Un élève fort en CO mais faible en EE doit avoir plus d'EE et moins de CO
+
+REGLES DE DIRECTIVES PEDAGOGIQUES :
+- Les DIRECTIVES PEDAGOGIQUES CONTRAIGNANTES de chaque eleve priment sur les preferences generales.
+- Si une directive interdit redaction_libre, texte_long ou production_ecrite_longue, ne genere pas ce format pour cet eleve.
+- Si descente_competence est presente, travaille d'abord la competence_cible avant de revenir a la competence ratee.
+- Respecte les limites consigne/items et les supports_obligatoires indiques pour chaque eleve.
 
 CONTRAINTES TEMPORELLES STRICTES :
 - Budget quotidien PAR ÉLÈVE : ${dailyDuration} minutes par jour

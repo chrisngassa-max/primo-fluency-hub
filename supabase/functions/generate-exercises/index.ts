@@ -4,6 +4,7 @@ import { MODEL } from "../_shared/system-prompt.ts";
 import { callAI, AIError } from "../_shared/ai-client.ts";
 import { validateAndFix } from "../_shared/exercise-validator.ts";
 import { QA_REVIEW_BLOCK } from "../_shared/qa-prompt.ts";
+import { buildPedagogicalDirectives } from "../_shared/pedagogical-directives.ts";
 import { ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth } from "../_shared/check-consent.ts";
 
 const corsHeaders = {
@@ -332,6 +333,11 @@ ${refTexts.join("\n")}
               .filter((r: any) => r.score < 60)
               .slice(0, 5)
               .map((r: any) => `${r.exercice?.competence}/${r.exercice?.sous_competence}: ${r.score}%`);
+            const pedagogicalDirectives = buildPedagogicalDirectives({
+              profile: profil,
+              weakCompetences: recentErrors.map((error: string) => error.split("/")[0]),
+              targetCompetence: competence,
+            });
 
             return {
               nom,
@@ -341,6 +347,7 @@ ${refTexts.join("\n")}
               niveaux_competences: levels.reduce((acc: any, l: any) => { acc[l.competence] = l.niveau_actuel; return acc; }, {}),
               erreurs_recentes: recentErrors,
               priorites: profil?.priorites_pedagogiques || [],
+              directives_pedagogiques: pedagogicalDirectives,
             };
           });
 
@@ -356,6 +363,8 @@ RÈGLES D'ADAPTATION :
 - Si des erreurs récurrentes apparaissent (ex: confusion chiffres, dates), créer des pièges similaires avec feedback
 - Varier les contextes IRN en fonction des priorités pédagogiques identifiées
 - Respecter le niveau moyen du groupe tout en proposant des variantes (niveau_bas / niveau_haut)
+- Les champs directives_pedagogiques sont contraignants: respecte formats_autorises, formats_interdits, supports_obligatoires, limites consigne/items et feedback_type
+- Si une directive contient descente_competence, la variante_niveau_bas doit redescendre vers competence_cible au lieu de demander une production libre
 ═══════════════════════════════════════════`;
         }
       } catch (ctxErr) {
@@ -519,6 +528,9 @@ IMPORTANT — Pour CHAQUE exercice, tu dois aussi proposer un "animation_guide" 
 IMPORTANT — Pour CHAQUE exercice, tu dois aussi proposer des VARIANTES DE DIFFÉRENCIATION :
 - "variante_niveau_bas" : version simplifiée pour les élèves en difficulté. Contient : consigne (reformulée plus simplement, avec aide ou amorce), aide (mot ou phrase de démarrage), nb_items_reduit (nombre d'items réduit, ex: 2).
 - "variante_niveau_haut" : version enrichie pour les élèves avancés. Contient : consigne (avec contrainte supplémentaire ou tâche de transfert), extension (question ouverte ou production additionnelle).
+- Si les profils du groupe contiennent directives_pedagogiques, construis la variante_niveau_bas pour les etayages forts: banque de mots, image/audio, peu d'items, feedback phonologique ou structurel.
+- Si competence_cible vaut Structures apres une faiblesse EE, evite la redaction libre dans la variante_niveau_bas: propose texte_lacunaire, appariement ou transformation simple.
+- Si vitesse_lecture vaut lente, evite les textes longs et reduis la consigne au maximum indique.
 
 
 ═══════════════════════════════════════════════════
