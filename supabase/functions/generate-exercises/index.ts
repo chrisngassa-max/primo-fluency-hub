@@ -306,7 +306,7 @@ ${refTexts.join("\n")}
           // 3. Profils élèves (taux de réussite)
           const { data: profils } = await supabase
             .from("profils_eleves")
-            .select("eleve_id, niveau_actuel, taux_reussite_co, taux_reussite_ce, taux_reussite_ee, taux_reussite_eo, taux_reussite_structures, priorites_pedagogiques")
+            .select("eleve_id, niveau_actuel, taux_reussite_co, taux_reussite_ce, taux_reussite_ee, taux_reussite_eo, taux_reussite_structures, priorites_pedagogiques, vitesse_lecture")
             .in("eleve_id", eleveIds);
 
           // 4. Tests de positionnement

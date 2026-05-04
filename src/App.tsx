@@ -34,6 +34,7 @@ import EleveLayout from "@/layouts/EleveLayout";
 import EleveDashboard from "@/pages/eleve/Dashboard";
 import EleveDevoirs from "@/pages/eleve/Devoirs";
 import DevoirPassation from "@/pages/eleve/DevoirPassation";
+import CarnetMots from "@/pages/eleve/CarnetMots";
 import EleveProgression from "@/pages/eleve/Progression";
 import EleveProfil from "@/pages/eleve/Profil";
 
@@ -137,6 +138,7 @@ const App = () => (
               <Route index element={<AIConsentRequiredRoute><EleveDashboard /></AIConsentRequiredRoute>} />
               <Route path="test-positionnement" element={<AIConsentRequiredRoute><TestPositionnement /></AIConsentRequiredRoute>} />
               <Route path="devoirs" element={<AIConsentRequiredRoute><EleveDevoirs /></AIConsentRequiredRoute>} />
+              <Route path="carnet" element={<AIConsentRequiredRoute><CarnetMots /></AIConsentRequiredRoute>} />
               <Route path="bilan/:sessionId" element={<AIConsentRequiredRoute><BilanSeance /></AIConsentRequiredRoute>} />
               <Route path="exercices-seance/:sessionId" element={<AIConsentRequiredRoute><BilanSeance /></AIConsentRequiredRoute>} />
               <Route path="bilan-test/:testId" element={<AIConsentRequiredRoute><BilanTestPassation /></AIConsentRequiredRoute>} />

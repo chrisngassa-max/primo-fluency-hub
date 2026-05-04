@@ -8,6 +8,7 @@ import {
   LogOut,
   GraduationCap,
   ClipboardList,
+  BookMarked,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ const navItems = [
   { title: "Accueil", path: "/eleve", icon: LayoutDashboard },
   { title: "Test de niveau", path: "/eleve/test-positionnement", icon: ClipboardList },
   { title: "Mes devoirs", path: "/eleve/devoirs", icon: BookOpen },
+  { title: "Mon carnet", path: "/eleve/carnet", icon: BookMarked },
   { title: "Ma progression", path: "/eleve/progression", icon: TrendingUp },
   { title: "Mon profil", path: "/eleve/profil", icon: User },
 ];

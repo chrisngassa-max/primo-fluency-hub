@@ -19,6 +19,7 @@ import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
 import CorrectionDetaillee from "@/components/CorrectionDetaillee";
 import ReportProblemButton from "@/components/ReportProblemButton";
 import RegenerateItemButton from "@/components/RegenerateItemButton";
+import SmartText from "@/components/SmartText";
 import { evaluerReponseIA } from "@/lib/testPositionnement";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -566,7 +567,11 @@ const DevoirPassation = () => {
             autoPlay={false}
             className="mb-2"
           />
-          <CardDescription>{ex?.consigne}</CardDescription>
+          <CardDescription>
+            {user?.id ? (
+              <SmartText text={ex?.consigne || ""} studentId={user.id} />
+            ) : ex?.consigne}
+          </CardDescription>
         </CardHeader>
       </Card>
 
@@ -608,7 +613,11 @@ const DevoirPassation = () => {
         <Card className="border-primary/20 bg-primary/5">
           <CardContent className="pt-4 pb-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-primary mb-2">📄 Support de l'exercice</p>
-            <p className="text-sm whitespace-pre-wrap leading-relaxed">{contenu.texte}</p>
+            <p className="text-sm whitespace-pre-wrap leading-relaxed">
+              {user?.id ? (
+                <SmartText text={contenu.texte} studentId={user.id} contextSentence={contenu.texte} />
+              ) : contenu.texte}
+            </p>
           </CardContent>
         </Card>
       )}
@@ -670,7 +679,9 @@ const DevoirPassation = () => {
               <CardContent className="pt-4 space-y-3">
                 <p className="font-medium text-sm">
                   <span className="text-primary font-bold mr-2">Q{idx + 1}.</span>
-                  {item.question}
+                  {user?.id ? (
+                    <SmartText text={item.question} studentId={user.id} contextSentence={contenu?.texte || item.question} />
+                  ) : item.question}
                 </p>
                 {Array.isArray(item.options) && item.options.length > 0 ? (
                   <div className="space-y-2">

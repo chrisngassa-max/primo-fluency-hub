@@ -15,6 +15,7 @@ import { AdvancedStudentBadge } from "@/components/AdvancedStudentBadge";
 
 type ObjectifStatus = "absent" | "non_atteint" | "a_consolider" | "atteint" | "au_dela";
 type Besoin = "rattrapage" | "remediation" | "consolidation" | "approfondissement" | "aucun";
+type VitesseLecture = "lente" | "fluide";
 
 interface RowState {
   eleve_id: string;
@@ -26,6 +27,7 @@ interface RowState {
   points_vigilance: string;
   points_forts: string;
   besoin_pedagogique: Besoin | "";
+  vitesse_lecture: VitesseLecture | "";
   devoir_recommande: string;
   decision_formateur: string;
   dirty: boolean;
@@ -52,6 +54,11 @@ const BESOIN_OPTIONS: { value: Besoin; label: string }[] = [
   { value: "aucun", label: "Aucun" },
 ];
 
+const VITESSE_LECTURE_OPTIONS: { value: VitesseLecture; label: string }[] = [
+  { value: "lente", label: "Lecture lente" },
+  { value: "fluide", label: "Lecture fluide" },
+];
+
 export function SessionStudentOutcomesTable({ sessionId, groupId }: Props) {
   const { user } = useAuth();
   const [rows, setRows] = useState<RowState[]>([]);
@@ -72,10 +79,16 @@ export function SessionStudentOutcomesTable({ sessionId, groupId }: Props) {
       if (membersRes.error) throw membersRes.error;
       if (presencesRes.error) throw presencesRes.error;
       if (outcomesRes.error) throw outcomesRes.error;
+      const memberIds = (membersRes.data ?? []).map((m: any) => m.eleve_id);
+      const profilsRes = memberIds.length
+        ? await supabase.from("profils_eleves").select("eleve_id, vitesse_lecture").in("eleve_id", memberIds)
+        : { data: [], error: null };
+      if (profilsRes.error) throw profilsRes.error;
       return {
         members: membersRes.data ?? [],
         presences: presencesRes.data ?? [],
         outcomes: outcomesRes.data ?? [],
+        profils: profilsRes.data ?? [],
       };
     },
   });
@@ -99,6 +112,9 @@ export function SessionStudentOutcomesTable({ sessionId, groupId }: Props) {
     const outcomeMap = new Map<string, any>(
       (data.outcomes as any[]).map((o) => [o.eleve_id, o])
     );
+    const profilMap = new Map<string, any>(
+      (data.profils as any[]).map((p) => [p.eleve_id, p])
+    );
     const next: RowState[] = (data.members as any[]).map((m) => {
       const present = presenceMap.get(m.eleve_id) ?? true;
       const existing = outcomeMap.get(m.eleve_id);
@@ -115,6 +131,7 @@ export function SessionStudentOutcomesTable({ sessionId, groupId }: Props) {
         points_vigilance: existing?.points_vigilance ?? "",
         points_forts: existing?.points_forts ?? "",
         besoin_pedagogique: existing?.besoin_pedagogique ?? "",
+        vitesse_lecture: profilMap.get(m.eleve_id)?.vitesse_lecture ?? "",
         devoir_recommande: existing?.devoir_recommande ?? "",
         decision_formateur: existing?.decision_formateur ?? "",
         dirty: false,
@@ -157,6 +174,25 @@ export function SessionStudentOutcomesTable({ sessionId, groupId }: Props) {
         .from("session_student_outcomes")
         .upsert(payload as any, { onConflict: "session_id,eleve_id" });
       if (error) throw error;
+      const profilePayload = dirtyRows
+        .filter((r) => r.vitesse_lecture)
+        .map((r) => ({
+          eleve_id: r.eleve_id,
+          vitesse_lecture: r.vitesse_lecture || null,
+          updated_at: new Date().toISOString(),
+        }));
+      if (profilePayload.length > 0) {
+        for (const profileUpdate of profilePayload) {
+          const { error: profileError } = await supabase
+            .from("profils_eleves")
+            .update({
+              vitesse_lecture: profileUpdate.vitesse_lecture,
+              updated_at: profileUpdate.updated_at,
+            } as any)
+            .eq("eleve_id", profileUpdate.eleve_id);
+          if (profileError) throw profileError;
+        }
+      }
       toast.success(`${dirtyRows.length} observation(s) enregistrée(s)`);
       await refetch();
     } catch (e: any) {
@@ -216,6 +252,7 @@ export function SessionStudentOutcomesTable({ sessionId, groupId }: Props) {
                 <TableHead className="min-w-[160px]">Objectif</TableHead>
                 <TableHead className="min-w-[200px]">Points de vigilance</TableHead>
                 <TableHead className="min-w-[170px]">Besoin</TableHead>
+                <TableHead className="min-w-[170px]">Lecture</TableHead>
                 <TableHead className="min-w-[200px]">Devoir recommandé</TableHead>
               </TableRow>
             </TableHeader>
@@ -268,6 +305,21 @@ export function SessionStudentOutcomesTable({ sessionId, groupId }: Props) {
                       </SelectTrigger>
                       <SelectContent>
                         {BESOIN_OPTIONS.map((o) => (
+                          <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </TableCell>
+                  <TableCell className="align-top">
+                    <Select
+                      value={r.vitesse_lecture || undefined}
+                      onValueChange={(v) => updateRow(r.eleve_id, { vitesse_lecture: v as VitesseLecture })}
+                    >
+                      <SelectTrigger className="h-9">
+                        <SelectValue placeholder="â€”" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {VITESSE_LECTURE_OPTIONS.map((o) => (
                           <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
                         ))}
                       </SelectContent>

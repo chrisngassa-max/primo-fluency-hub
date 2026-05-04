@@ -1913,6 +1913,7 @@ export type Database = {
           taux_reussite_structures: number
           type_demarche: string | null
           updated_at: string
+          vitesse_lecture: string | null
         }
         Insert: {
           eleve_id: string
@@ -1928,6 +1929,7 @@ export type Database = {
           taux_reussite_structures?: number
           type_demarche?: string | null
           updated_at?: string
+          vitesse_lecture?: string | null
         }
         Update: {
           eleve_id?: string
@@ -1943,6 +1945,7 @@ export type Database = {
           taux_reussite_structures?: number
           type_demarche?: string | null
           updated_at?: string
+          vitesse_lecture?: string | null
         }
         Relationships: [
           {
@@ -2282,6 +2285,62 @@ export type Database = {
             columns: ["session_id"]
             isOneToOne: false
             referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      student_vocabulary: {
+        Row: {
+          audio_url: string | null
+          context_sentence: string | null
+          created_at: string
+          id: string
+          last_reviewed_at: string | null
+          normalized_word: string
+          review_count: number
+          simple_definition: string | null
+          student_id: string
+          translation: string | null
+          translation_language: string | null
+          updated_at: string
+          word: string
+        }
+        Insert: {
+          audio_url?: string | null
+          context_sentence?: string | null
+          created_at?: string
+          id?: string
+          last_reviewed_at?: string | null
+          normalized_word: string
+          review_count?: number
+          simple_definition?: string | null
+          student_id: string
+          translation?: string | null
+          translation_language?: string | null
+          updated_at?: string
+          word: string
+        }
+        Update: {
+          audio_url?: string | null
+          context_sentence?: string | null
+          created_at?: string
+          id?: string
+          last_reviewed_at?: string | null
+          normalized_word?: string
+          review_count?: number
+          simple_definition?: string | null
+          student_id?: string
+          translation?: string | null
+          translation_language?: string | null
+          updated_at?: string
+          word?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_vocabulary_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
