@@ -5,6 +5,7 @@ import { callAI, AIError } from "../_shared/ai-client.ts";
 import { validateAndFix } from "../_shared/exercise-validator.ts";
 import { QA_REVIEW_BLOCK } from "../_shared/qa-prompt.ts";
 import { buildPedagogicalDirectives } from "../_shared/pedagogical-directives.ts";
+import { hasBlockingReviewIssue, reviewExercise } from "../_shared/review-exercise.ts";
 import { ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth } from "../_shared/check-consent.ts";
 
 const corsHeaders = {
@@ -282,6 +283,7 @@ ${refTexts.join("\n")}
 
     // === ENRICHISSEMENT : Récupérer les données élèves si groupId fourni ===
     let studentContextPrompt = "";
+    let groupReviewDirectives: any[] = [];
     if (groupId) {
       try {
         // 1. Membres du groupe
@@ -338,6 +340,7 @@ ${refTexts.join("\n")}
               weakCompetences: recentErrors.map((error: string) => error.split("/")[0]),
               targetCompetence: competence,
             });
+            groupReviewDirectives.push(pedagogicalDirectives);
 
             return {
               nom,
@@ -745,9 +748,16 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
 
     const exercises = JSON.parse(toolCall.function.arguments);
 
-    // ── Validation + régénération de chaque exercice (audio/visuel/pédagogie/TCF) ──
+    const defaultReviewDirective = buildPedagogicalDirectives({
+      targetCompetence: competence,
+    });
+    const reviewDirective = groupReviewDirectives.find((d: any) => d?.niveau_etayage === "fort")
+      ?? groupReviewDirectives[0]
+      ?? defaultReviewDirective;
+
+    // ── Validation + relecture pédagogique + régénération de chaque exercice ──
     const validatedList: any[] = [];
-    const excludedList: { titre: string; reason: string }[] = [];
+    const excludedList: { titre: string; reason: string; details?: unknown }[] = [];
     for (const ex of exercises.exercises || []) {
       const validated = await validateAndFix(ex, { niveau: ex.niveau_vise });
       if (!validated) {
@@ -755,7 +765,37 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
         console.warn(`[generate-exercises] Excluded: ${ex.titre}`);
         continue;
       }
-      validatedList.push({ ...ex, ...validated.exercise });
+      const validExercise = { ...ex, ...validated.exercise };
+      const review = await reviewExercise({
+        exercise: validExercise,
+        pedagogicalDirectives: reviewDirective,
+        niveau: validExercise.niveau_vise ?? niveauVise,
+        competence: validExercise.competence ?? competence,
+        contexte: "generate-exercises",
+      });
+      if (hasBlockingReviewIssue(review)) {
+        excludedList.push({
+          titre: validExercise.titre || "?",
+          reason: "pedagogical_review_failed",
+          details: review.issues,
+        });
+        console.warn(`[review-exercise] Excluded: ${validExercise.titre}`, review.issues);
+        continue;
+      }
+      validatedList.push({
+        ...validExercise,
+        metadata: {
+          ...(validExercise.metadata ?? {}),
+          pedagogical_review: {
+            source: review.source,
+            niveau_ok: review.niveau_ok,
+            pedagogie_ok: review.pedagogie_ok,
+            directives_ok: review.directives_ok,
+            warnings: review.issues.filter((issue) => issue.severity === "warning"),
+            suggestions: review.suggestions,
+          },
+        },
+      });
     }
     exercises.exercises = validatedList;
     if (excludedList.length > 0) {
