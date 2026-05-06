@@ -121,12 +121,14 @@ export default function SmartText({
               <button
                 type="button"
                 onClick={() => loadDetails(token)}
-                className="rounded-sm underline decoration-dotted underline-offset-4 hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                className="inline cursor-help rounded-[3px] border-b border-dotted border-primary/60 bg-primary/5 px-0.5 text-left align-baseline text-inherit transition-colors [font:inherit] [line-height:inherit] hover:border-primary hover:bg-primary/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 focus-visible:ring-offset-1"
+                aria-label={`Comprendre le mot ${token}`}
+                title="Écouter, traduire et ajouter au carnet"
               >
                 {token}
               </button>
             </PopoverTrigger>
-            <PopoverContent className="w-80 space-y-3" align="start">
+            <PopoverContent className="w-[min(20rem,calc(100vw-2rem))] space-y-3" align="start">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-lg font-semibold">{token}</p>
                 <TTSAudioPlayer text={token} size="icon" />

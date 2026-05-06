@@ -8,11 +8,12 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { CheckCircle2, XCircle, Loader2, Send, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import SmartText from "@/components/SmartText";
+import SmartTextHint from "@/components/SmartTextHint";
 
 interface Exercice {
   id: string;
@@ -39,6 +40,19 @@ interface CorrectionResult {
     correct: boolean;
     explication: string | null;
   }>;
+}
+
+function getSupportText(contenu: any) {
+  const candidates = [
+    contenu?.texte,
+    contenu?.texte_support,
+    contenu?.support_texte,
+    contenu?.support,
+    contenu?.enonce,
+    contenu?.contexte,
+  ];
+
+  return candidates.find((value): value is string => typeof value === "string" && value.trim().length > 0) ?? "";
 }
 
 const PlayExercise = () => {
@@ -94,6 +108,7 @@ const PlayExercise = () => {
   }, [user, exercice]);
 
   const items: any[] = exercice?.contenu?.items ?? [];
+  const supportText = getSupportText(exercice?.contenu);
 
   const handleAnswer = (idx: number, value: string) => {
     setAnswers((prev) => ({ ...prev, [idx]: value }));
@@ -166,7 +181,11 @@ const PlayExercise = () => {
             <div className="flex items-start justify-between gap-3 flex-wrap">
               <div className="space-y-1">
                 <CardTitle className="text-xl sm:text-2xl">{exercice.titre}</CardTitle>
-                <CardDescription className="text-sm">{exercice.consigne}</CardDescription>
+                <CardDescription className="text-sm leading-relaxed">
+                  {user?.id ? (
+                    <SmartText text={exercice.consigne} studentId={user.id} contextSentence={exercice.consigne} />
+                  ) : exercice.consigne}
+                </CardDescription>
               </div>
               <div className="flex flex-wrap gap-1.5">
                 <Badge variant="secondary">{exercice.competence}</Badge>
@@ -181,6 +200,8 @@ const PlayExercise = () => {
             )}
           </CardHeader>
         </Card>
+
+        {!result && user?.id && <SmartTextHint />}
 
         {/* Result view */}
         {result ? (
@@ -225,7 +246,11 @@ const PlayExercise = () => {
                           ? <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0 mt-0.5" />
                           : <XCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />}
                         <div className="flex-1 space-y-1">
-                          <p className="text-sm font-medium">{r.question}</p>
+                          <p className="text-sm font-medium">
+                            {user?.id ? (
+                              <SmartText text={r.question} studentId={user.id} contextSentence={supportText || r.question} />
+                            ) : r.question}
+                          </p>
                           {!r.correct && (
                             <>
                               <p className="text-xs text-destructive">
@@ -251,6 +276,21 @@ const PlayExercise = () => {
           </>
         ) : (
           <>
+            {supportText && (
+              <Card className="border-primary/20 bg-primary/5">
+                <CardContent className="py-4 space-y-2">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-primary">
+                    Support de l'exercice
+                  </p>
+                  <p className="whitespace-pre-wrap text-sm leading-relaxed">
+                    {user?.id ? (
+                      <SmartText text={supportText} studentId={user.id} contextSentence={supportText} />
+                    ) : supportText}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Question list */}
             {items.map((item: any, idx: number) => (
               <Card key={idx}>
@@ -259,7 +299,11 @@ const PlayExercise = () => {
                     <span className="text-xs font-bold text-primary shrink-0 mt-0.5">
                       Q{idx + 1}
                     </span>
-                    <p className="text-sm font-medium flex-1">{item.question}</p>
+                    <p className="text-sm font-medium flex-1">
+                      {user?.id ? (
+                        <SmartText text={item.question} studentId={user.id} contextSentence={supportText || item.question} />
+                      ) : item.question}
+                    </p>
                   </div>
 
                   {Array.isArray(item.options) && item.options.length > 0 ? (

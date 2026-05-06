@@ -20,6 +20,7 @@ import CorrectionDetaillee from "@/components/CorrectionDetaillee";
 import ReportProblemButton from "@/components/ReportProblemButton";
 import RegenerateItemButton from "@/components/RegenerateItemButton";
 import SmartText from "@/components/SmartText";
+import SmartTextHint from "@/components/SmartTextHint";
 import { evaluerReponseIA } from "@/lib/testPositionnement";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -525,6 +526,8 @@ const DevoirPassation = () => {
           </div>
         </div>
       </div>
+
+      {user?.id && <SmartTextHint />}
 
       {/* Timer bar */}
       {timeLimit > 0 && (
