@@ -54,7 +54,7 @@ export default function SmartTextHint({
       <div className="min-w-0 flex-1 space-y-1">
         <p className="font-semibold text-foreground">Astuce de lecture</p>
         <p className="text-muted-foreground">
-          Appuie sur un mot surligné pour l'écouter, voir une définition simple, le traduire et l'ajouter à ton carnet.
+          Appuie sur un mot surligné pour l'écouter, choisir une langue de traduction, voir une définition simple et l'ajouter à ton carnet.
         </p>
       </div>
       <Button

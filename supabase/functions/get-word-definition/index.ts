@@ -18,6 +18,23 @@ function normalizeWord(word: string) {
     .replace(/[^\p{L}\p{N}'-]/gu, "");
 }
 
+const LANGUAGE_LABELS: Record<string, string> = {
+  fr: "francais tres simple",
+  en: "anglais",
+  ar: "arabe",
+  ta: "tamoul",
+  es: "espagnol",
+  pt: "portugais",
+  tr: "turc",
+  uk: "ukrainien",
+  ru: "russe",
+};
+
+function normalizeLanguage(language: string) {
+  const normalized = language.trim().toLowerCase();
+  return LANGUAGE_LABELS[normalized] ? normalized : normalized || "fr";
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -30,7 +47,10 @@ serve(async (req) => {
     const word = String(body.word ?? "").trim();
     const contextSentence = String(body.context_sentence ?? body.contextSentence ?? "").trim();
     const studentId = String(body.student_id ?? triggeredBy ?? "").trim();
-    const translationLanguage = String(body.translation_language ?? body.translationLanguage ?? "fr").trim() || "fr";
+    const translationLanguage = normalizeLanguage(
+      String(body.translation_language ?? body.translationLanguage ?? "fr"),
+    );
+    const translationLanguageLabel = LANGUAGE_LABELS[translationLanguage] ?? translationLanguage;
 
     if (!word || !studentId) {
       return new Response(JSON.stringify({ error: "missing_word_or_student" }), {
@@ -111,8 +131,9 @@ Utilise le contexte de phrase pour choisir le bon sens du mot.`,
             word,
             context_sentence: contextSentence || null,
             translation_language: translationLanguage,
+            translation_language_label: translationLanguageLabel,
             output: {
-              translation: "traduction courte dans la langue demandee; si fr, donner un synonyme tres simple",
+              translation: "traduction courte dans la langue demandee; si fr, donner un synonyme tres simple. Pour arabe et tamoul, utiliser l'ecriture native.",
               simple_definition: "definition francaise facile A0/A1",
             },
           }),
