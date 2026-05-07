@@ -29,7 +29,7 @@ import { toast } from "sonner";
 import {
   Plus, Users, Trash2, Edit, UserPlus, UserMinus, Loader2,
   Copy, Check, Eye, EyeOff, ChevronRight, Ticket, Mail, Search, ArrowRightLeft, PlusCircle,
-  KeyRound, RefreshCw,
+  KeyRound, RefreshCw, Sparkles, LayoutGrid, UserCheck,
 } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
@@ -408,25 +408,58 @@ const GroupesPage = () => {
     return "bg-muted";
   };
 
+  const uniqueStudentCount = new Set((allMembers ?? []).map((m: any) => m.eleve_id)).size;
+  const averageProgress = allProfils?.length
+    ? Math.round(allProfils.reduce((sum: number, p: any) => sum + Number(p.taux_reussite_global || 0), 0) / allProfils.length)
+    : 0;
+
   if (isLoading) {
     return (
-      <div className="space-y-4">
-        <Skeleton className="h-8 w-48" />
-        {[1, 2, 3].map((i) => <Skeleton key={i} className="h-20 w-full" />)}
+      <div className="space-y-5">
+        <Skeleton className="h-36 w-full rounded-lg" />
+        <div className="grid gap-4 md:grid-cols-3">
+          {[1, 2, 3].map((i) => <Skeleton key={i} className="h-24 w-full rounded-lg" />)}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Groupes & Élèves</h1>
-          <p className="text-sm text-muted-foreground">Cliquez sur un groupe pour voir ses élèves.</p>
+    <div className="space-y-6" data-design-version="formateur-groupes-2026-05-07-v2">
+      <section className="relative overflow-hidden rounded-lg border bg-card shadow-xl">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_15%,hsl(var(--primary)/0.18),transparent_34%),radial-gradient(circle_at_88%_20%,hsl(var(--accent)/0.16),transparent_30%),linear-gradient(135deg,hsl(var(--card)),hsl(var(--secondary)/0.72))]" />
+        <div className="relative flex flex-col gap-6 p-5 md:flex-row md:items-end md:justify-between md:p-7">
+          <div className="max-w-2xl space-y-3">
+            <Badge className="gap-1.5 bg-primary text-primary-foreground shadow-sm">
+              <Sparkles className="h-3.5 w-3.5" />
+              Nouveau design actif
+            </Badge>
+            <div>
+              <h1 className="text-3xl font-bold tracking-normal md:text-4xl">Groupes & Élèves</h1>
+              <p className="mt-2 text-sm text-muted-foreground md:text-base">Pilotez vos cohortes, vos accès élèves et la progression TCF IRN depuis une seule vue.</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-2 md:min-w-[360px]">
+            <div className="rounded-lg border bg-background/80 p-3 shadow-sm backdrop-blur">
+              <LayoutGrid className="mb-2 h-4 w-4 text-primary" />
+              <p className="text-2xl font-bold">{groups?.length ?? 0}</p>
+              <p className="text-xs text-muted-foreground">Groupes</p>
+            </div>
+            <div className="rounded-lg border bg-background/80 p-3 shadow-sm backdrop-blur">
+              <UserCheck className="mb-2 h-4 w-4 text-primary" />
+              <p className="text-2xl font-bold">{uniqueStudentCount}</p>
+              <p className="text-xs text-muted-foreground">Élèves</p>
+            </div>
+            <div className="rounded-lg border bg-background/80 p-3 shadow-sm backdrop-blur">
+              <ChevronRight className="mb-2 h-4 w-4 text-primary" />
+              <p className="text-2xl font-bold">{averageProgress}%</p>
+              <p className="text-xs text-muted-foreground">Moyenne</p>
+            </div>
+          </div>
         </div>
         <Dialog open={createOpen} onOpenChange={setCreateOpen}>
           <DialogTrigger asChild>
-            <Button><Plus className="h-4 w-4 mr-2" />Nouveau groupe</Button>
+            <Button className="absolute bottom-5 right-5 hidden shadow-lg md:inline-flex"><Plus className="h-4 w-4 mr-2" />Nouveau groupe</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader><DialogTitle>Créer un groupe</DialogTitle></DialogHeader>
@@ -466,12 +499,16 @@ const GroupesPage = () => {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+      </section>
+
+      <div className="flex justify-end md:hidden">
+        <Button onClick={() => setCreateOpen(true)}><Plus className="h-4 w-4 mr-2" />Nouveau groupe</Button>
       </div>
 
-      <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <TabsList>
-          <TabsTrigger value="groupes">Vue par Groupes</TabsTrigger>
-          <TabsTrigger value="eleves">Vue par Élèves</TabsTrigger>
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="rounded-lg border bg-card/95 p-3 shadow-lg md:p-4">
+        <TabsList className="grid h-auto w-full grid-cols-2 rounded-lg bg-secondary p-1 md:w-fit">
+          <TabsTrigger value="groupes" className="gap-2 rounded-md data-[state=active]:bg-card data-[state=active]:shadow-sm"><LayoutGrid className="h-4 w-4" />Vue par Groupes</TabsTrigger>
+          <TabsTrigger value="eleves" className="gap-2 rounded-md data-[state=active]:bg-card data-[state=active]:shadow-sm"><Users className="h-4 w-4" />Vue par Élèves</TabsTrigger>
         </TabsList>
 
         <TabsContent value="groupes">
