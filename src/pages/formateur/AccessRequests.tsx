@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { UserCheck, Users, Plus, Inbox } from "lucide-react";
+import { UserCheck, Users, Plus, Inbox, Sparkles } from "lucide-react";
 
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
 
@@ -129,18 +129,30 @@ const AccessRequests = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold flex items-center gap-2">
-          <Inbox className="h-6 w-6 text-primary" />
-          Demandes d'accès
-        </h1>
-        <p className="text-muted-foreground mt-1">
-          Validez les inscriptions des nouveaux élèves et assignez-les à un groupe.
-        </p>
+      <div className="overflow-hidden rounded-lg border bg-card shadow-lg">
+        <div className="flex flex-col gap-4 bg-[linear-gradient(135deg,hsl(var(--primary)),hsl(var(--sidebar-background)))] p-6 text-primary-foreground md:flex-row md:items-center md:justify-between">
+          <div className="space-y-2">
+            <span className="inline-flex items-center gap-2 rounded-full bg-primary-foreground/12 px-3 py-1 text-xs font-semibold">
+              <Sparkles className="h-3.5 w-3.5" />
+              Nouveau design formateur actif
+            </span>
+            <h1 className="flex items-center gap-3 text-3xl font-bold">
+              <Inbox className="h-7 w-7" />
+              Demandes d'accès
+            </h1>
+            <p className="max-w-2xl text-sm text-primary-foreground/80">
+              Validez les inscriptions des nouveaux élèves et assignez-les à un groupe.
+            </p>
+          </div>
+          <div className="rounded-lg bg-primary-foreground/12 px-4 py-3 text-center">
+            <p className="text-3xl font-bold">{pendingStudents?.length ?? 0}</p>
+            <p className="text-xs uppercase tracking-widest text-primary-foreground/70">en attente</p>
+          </div>
+        </div>
       </div>
 
       {!pendingStudents || pendingStudents.length === 0 ? (
-        <Card>
+        <Card className="border-dashed shadow-md">
           <CardContent className="py-12 text-center">
             <UserCheck className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
             <p className="text-lg font-medium text-muted-foreground">Aucune demande en attente</p>
