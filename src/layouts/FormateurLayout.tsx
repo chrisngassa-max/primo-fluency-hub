@@ -46,6 +46,8 @@ const monitorNav = [
   { title: "Rapports IA", url: "/formateur/rapports", icon: FileText },
 ];
 
+const DESIGN_VERSION_LABEL = "Design mis à jour · 07/05";
+
 const FormateurLayout = () => {
   const { user, signOut } = useAuth();
   const isMobile = useIsMobile();
@@ -144,6 +146,9 @@ const FormateurLayout = () => {
           </Sheet>
           <GraduationCap className="h-6 w-6 text-primary" />
           <span className="font-bold text-lg text-primary tracking-tight">CAP TCF</span>
+          <span className="hidden sm:inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+            {DESIGN_VERSION_LABEL}
+          </span>
           <div className="ml-auto flex items-center gap-3">
             <span className="text-sm text-muted-foreground">
               {user?.user_metadata?.prenom}
@@ -168,6 +173,9 @@ const FormateurLayout = () => {
         <div className="flex-1 flex flex-col min-w-0">
           <header className="h-14 flex items-center gap-3 border-b bg-card px-4 shrink-0">
             <SidebarTrigger className="text-muted-foreground" />
+            <span className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+              {DESIGN_VERSION_LABEL}
+            </span>
             <div className="ml-auto text-sm text-muted-foreground">
               {user?.user_metadata?.prenom} {user?.user_metadata?.nom}
             </div>
