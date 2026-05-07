@@ -539,7 +539,7 @@ const GroupesPage = () => {
                     <AccordionTrigger className="flex-1 px-4 py-3 hover:no-underline">
                       <div className="flex items-center gap-3 w-full">
                         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
-                          <Users className="h-5 w-5 text-primary" />
+                          <Users className="h-5 w-5" />
                         </div>
                         <div className="text-left min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
