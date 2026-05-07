@@ -29,7 +29,7 @@ import { toast } from "sonner";
 import {
   Plus, Users, Trash2, Edit, UserPlus, UserMinus, Loader2,
   Copy, Check, Eye, EyeOff, ChevronRight, Ticket, Mail, Search, ArrowRightLeft, PlusCircle,
-  KeyRound, RefreshCw, Sparkles, LayoutGrid, UserCheck,
+  KeyRound, RefreshCw,
 } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
@@ -408,58 +408,25 @@ const GroupesPage = () => {
     return "bg-muted";
   };
 
-  const uniqueStudentCount = new Set((allMembers ?? []).map((m: any) => m.eleve_id)).size;
-  const averageProgress = allProfils?.length
-    ? Math.round(allProfils.reduce((sum: number, p: any) => sum + Number(p.taux_reussite_global || 0), 0) / allProfils.length)
-    : 0;
-
   if (isLoading) {
     return (
-      <div className="space-y-5">
-        <Skeleton className="h-36 w-full rounded-lg" />
-        <div className="grid gap-4 md:grid-cols-3">
-          {[1, 2, 3].map((i) => <Skeleton key={i} className="h-24 w-full rounded-lg" />)}
-        </div>
+      <div className="space-y-4">
+        <Skeleton className="h-8 w-48" />
+        {[1, 2, 3].map((i) => <Skeleton key={i} className="h-20 w-full" />)}
       </div>
     );
   }
 
   return (
-    <div className="space-y-6" data-design-version="formateur-groupes-2026-05-07-v2">
-      <section className="relative overflow-hidden rounded-lg border bg-card shadow-xl">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_15%,hsl(var(--primary)/0.18),transparent_34%),radial-gradient(circle_at_88%_20%,hsl(var(--accent)/0.16),transparent_30%),linear-gradient(135deg,hsl(var(--card)),hsl(var(--secondary)/0.72))]" />
-        <div className="relative flex flex-col gap-6 p-5 md:flex-row md:items-end md:justify-between md:p-7">
-          <div className="max-w-2xl space-y-3">
-            <Badge className="gap-1.5 bg-primary text-primary-foreground shadow-sm">
-              <Sparkles className="h-3.5 w-3.5" />
-              Nouveau design actif
-            </Badge>
-            <div>
-              <h1 className="text-3xl font-bold tracking-normal md:text-4xl">Groupes & Élèves</h1>
-              <p className="mt-2 text-sm text-muted-foreground md:text-base">Pilotez vos cohortes, vos accès élèves et la progression TCF IRN depuis une seule vue.</p>
-            </div>
-          </div>
-          <div className="grid grid-cols-3 gap-2 md:min-w-[360px]">
-            <div className="rounded-lg border bg-background/80 p-3 shadow-sm backdrop-blur">
-              <LayoutGrid className="mb-2 h-4 w-4 text-primary" />
-              <p className="text-2xl font-bold">{groups?.length ?? 0}</p>
-              <p className="text-xs text-muted-foreground">Groupes</p>
-            </div>
-            <div className="rounded-lg border bg-background/80 p-3 shadow-sm backdrop-blur">
-              <UserCheck className="mb-2 h-4 w-4 text-primary" />
-              <p className="text-2xl font-bold">{uniqueStudentCount}</p>
-              <p className="text-xs text-muted-foreground">Élèves</p>
-            </div>
-            <div className="rounded-lg border bg-background/80 p-3 shadow-sm backdrop-blur">
-              <ChevronRight className="mb-2 h-4 w-4 text-primary" />
-              <p className="text-2xl font-bold">{averageProgress}%</p>
-              <p className="text-xs text-muted-foreground">Moyenne</p>
-            </div>
-          </div>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Groupes & Élèves</h1>
+          <p className="text-sm text-muted-foreground">Cliquez sur un groupe pour voir ses élèves.</p>
         </div>
         <Dialog open={createOpen} onOpenChange={setCreateOpen}>
           <DialogTrigger asChild>
-            <Button className="absolute bottom-5 right-5 hidden shadow-lg md:inline-flex"><Plus className="h-4 w-4 mr-2" />Nouveau groupe</Button>
+            <Button><Plus className="h-4 w-4 mr-2" />Nouveau groupe</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader><DialogTitle>Créer un groupe</DialogTitle></DialogHeader>
@@ -499,22 +466,18 @@ const GroupesPage = () => {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-      </section>
-
-      <div className="flex justify-end md:hidden">
-        <Button onClick={() => setCreateOpen(true)}><Plus className="h-4 w-4 mr-2" />Nouveau groupe</Button>
       </div>
 
-      <Tabs value={activeTab} onValueChange={handleTabChange} className="rounded-lg border bg-card/95 p-3 shadow-lg md:p-4">
-        <TabsList className="grid h-auto w-full grid-cols-2 rounded-lg bg-secondary p-1 md:w-fit">
-          <TabsTrigger value="groupes" className="gap-2 rounded-md data-[state=active]:bg-card data-[state=active]:shadow-sm"><LayoutGrid className="h-4 w-4" />Vue par Groupes</TabsTrigger>
-          <TabsTrigger value="eleves" className="gap-2 rounded-md data-[state=active]:bg-card data-[state=active]:shadow-sm"><Users className="h-4 w-4" />Vue par Élèves</TabsTrigger>
+      <Tabs value={activeTab} onValueChange={handleTabChange}>
+        <TabsList>
+          <TabsTrigger value="groupes">Vue par Groupes</TabsTrigger>
+          <TabsTrigger value="eleves">Vue par Élèves</TabsTrigger>
         </TabsList>
 
         <TabsContent value="groupes">
           {/* Empty state */}
           {groups && groups.length === 0 && (
-            <Card className="mt-4 border-dashed bg-secondary/40 shadow-sm">
+            <Card className="border-dashed">
               <CardContent className="py-12 text-center">
                 <Users className="h-12 w-12 mx-auto text-muted-foreground/40 mb-3" />
                 <p className="text-muted-foreground font-medium">Aucun groupe</p>
@@ -529,22 +492,22 @@ const GroupesPage = () => {
             type="multiple"
             value={expandedGroups}
             onValueChange={setExpandedGroups}
-            className="mt-4 space-y-3"
+            className="space-y-3"
           >
             {(groups ?? []).map((g) => {
               const members = getMembersForGroup(g.id);
               return (
-                <AccordionItem key={g.id} value={g.id} className="overflow-hidden rounded-lg border bg-background/80 shadow-sm transition-all hover:border-primary/35 hover:shadow-md">
-                  <div className="flex items-center bg-card/70">
+                <AccordionItem key={g.id} value={g.id} className="border rounded-lg overflow-hidden">
+                  <div className="flex items-center">
                     <AccordionTrigger className="flex-1 px-4 py-3 hover:no-underline">
                       <div className="flex items-center gap-3 w-full">
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
-                          <Users className="h-5 w-5" />
+                        <div className="flex items-center justify-center h-10 w-10 rounded-lg bg-primary/10 shrink-0">
+                          <Users className="h-5 w-5 text-primary" />
                         </div>
                         <div className="text-left min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
                             <span className="font-semibold text-sm">{g.nom}</span>
-                            <Badge className="bg-accent text-accent-foreground">{g.niveau}</Badge>
+                            <Badge variant="outline">{g.niveau}</Badge>
                             <span className="text-xs text-muted-foreground">
                               {members.length === 0 ? "Aucun élève" : members.length === 1 ? "1 élève" : `${members.length} élèves`}
                             </span>
@@ -556,12 +519,12 @@ const GroupesPage = () => {
                       </div>
                     </AccordionTrigger>
                     <div className="flex items-center gap-1 pr-2 shrink-0">
-                      <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-secondary" onClick={(e) => { e.stopPropagation(); openEdit(g); }}>
+                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => { e.stopPropagation(); openEdit(g); }}>
                         <Edit className="h-4 w-4" />
                       </Button>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:bg-destructive/10" onClick={(e) => e.stopPropagation()}>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={(e) => e.stopPropagation()}>
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </AlertDialogTrigger>
@@ -581,7 +544,7 @@ const GroupesPage = () => {
                     </div>
                   </div>
 
-                  <AccordionContent className="px-4 pb-4 pt-4">
+                  <AccordionContent className="px-4 pb-4 pt-0">
                     {/* Action buttons */}
                     <div className="flex justify-end gap-2 mb-3">
                       <Button size="sm" onClick={() => openInvite(g.id, g.nom)}>
@@ -597,9 +560,9 @@ const GroupesPage = () => {
                         Aucun élève dans ce groupe. Ajoutez-en un !
                       </div>
                     ) : (
-                      <div className="overflow-x-auto max-h-[360px] overflow-y-auto rounded-lg border bg-card shadow-sm">
+                      <div className="overflow-x-auto max-h-[360px] overflow-y-auto border rounded-lg">
                         <table className="w-full text-sm">
-                          <thead className="sticky top-0 bg-secondary/90 backdrop-blur-sm">
+                          <thead className="sticky top-0 bg-muted/80 backdrop-blur-sm">
                              <tr className="border-b">
                                <th className="text-left py-2.5 px-3 font-medium text-muted-foreground">Prénom & Nom</th>
                                <th className="text-left py-2.5 px-3 font-medium text-muted-foreground">Identifiant</th>
