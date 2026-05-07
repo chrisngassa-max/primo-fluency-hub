@@ -63,7 +63,6 @@ import PlayExercise from "@/pages/PlayExercise";
 import AuthRelayReset from "@/pages/AuthRelayReset";
 
 const queryClient = new QueryClient();
-const PREVIEW_VERSION_LABEL = "Preview Lovable à jour · formateur · 07/05";
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -71,9 +70,6 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <div className="fixed left-1/2 top-3 z-[9999] -translate-x-1/2 rounded-md border border-border bg-primary px-3 py-1.5 text-sm font-semibold text-primary-foreground shadow-lg">
-          {PREVIEW_VERSION_LABEL}
-        </div>
         <HashRouter>
           <Routes>
             {/* Public routes */}
