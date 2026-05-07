@@ -98,9 +98,9 @@ export function FormateurSidebar({ onNavigate }: FormateurSidebarProps) {
     path === "/formateur" ? currentPath === path : currentPath.startsWith(path);
 
   return (
-    <Sidebar collapsible="icon" className="border-r-0">
-      <SidebarHeader className="p-4">
-        <div className="flex items-center gap-2">
+    <Sidebar collapsible="icon" className="border-r-0 bg-sidebar text-sidebar-foreground shadow-2xl">
+      <SidebarHeader className="p-4 border-b border-sidebar-border/70">
+        <div className="flex items-center gap-2 rounded-lg bg-sidebar-accent/55 px-3 py-2 shadow-inner">
           <GraduationCap className="h-7 w-7 text-sidebar-primary" />
           {!collapsed && (
             <span className="font-bold text-lg text-sidebar-primary tracking-tight">
@@ -110,7 +110,7 @@ export function FormateurSidebar({ onNavigate }: FormateurSidebarProps) {
         </div>
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className="px-2 py-3">
         {[
           { label: "Gestion", items: gestionNav },
           { label: "Pédagogie", items: pedagogieNav },
@@ -118,7 +118,7 @@ export function FormateurSidebar({ onNavigate }: FormateurSidebarProps) {
           { label: "Analyses", items: analysesNav },
         ].map(({ label, items }) => (
           <SidebarGroup key={label}>
-            <SidebarGroupLabel className="text-sidebar-primary/80 uppercase text-[10px] tracking-widest px-3 pt-3 pb-1">
+            <SidebarGroupLabel className="text-sidebar-primary/75 uppercase text-[10px] tracking-widest px-3 pt-4 pb-1">
               {label}
             </SidebarGroupLabel>
             <SidebarGroupContent>
@@ -129,8 +129,8 @@ export function FormateurSidebar({ onNavigate }: FormateurSidebarProps) {
                       <NavLink
                         to={item.url}
                         end={item.url === "/formateur"}
-                        className="relative flex items-center gap-2.5 px-3 py-2 rounded-md hover:bg-sidebar-accent/50 transition-colors"
-                        activeClassName="bg-sidebar-accent/60 font-semibold before:absolute before:left-0 before:top-1 before:bottom-1 before:w-0.5 before:rounded-full before:bg-sidebar-primary"
+                        className="relative flex items-center gap-2.5 px-3 py-2 rounded-md text-sidebar-foreground/85 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground transition-colors"
+                        activeClassName="bg-sidebar-primary text-sidebar-primary-foreground font-semibold shadow-md before:absolute before:left-0 before:top-1 before:bottom-1 before:w-0.5 before:rounded-full before:bg-accent"
                         onClick={onNavigate}
                       >
                         <item.icon className="h-[18px] w-[18px] shrink-0" />
