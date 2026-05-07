@@ -514,7 +514,7 @@ const GroupesPage = () => {
         <TabsContent value="groupes">
           {/* Empty state */}
           {groups && groups.length === 0 && (
-            <Card className="border-dashed">
+            <Card className="mt-4 border-dashed bg-secondary/40 shadow-sm">
               <CardContent className="py-12 text-center">
                 <Users className="h-12 w-12 mx-auto text-muted-foreground/40 mb-3" />
                 <p className="text-muted-foreground font-medium">Aucun groupe</p>
@@ -529,22 +529,22 @@ const GroupesPage = () => {
             type="multiple"
             value={expandedGroups}
             onValueChange={setExpandedGroups}
-            className="space-y-3"
+            className="mt-4 space-y-3"
           >
             {(groups ?? []).map((g) => {
               const members = getMembersForGroup(g.id);
               return (
-                <AccordionItem key={g.id} value={g.id} className="border rounded-lg overflow-hidden">
-                  <div className="flex items-center">
+                <AccordionItem key={g.id} value={g.id} className="overflow-hidden rounded-lg border bg-background/80 shadow-sm transition-all hover:border-primary/35 hover:shadow-md">
+                  <div className="flex items-center bg-card/70">
                     <AccordionTrigger className="flex-1 px-4 py-3 hover:no-underline">
                       <div className="flex items-center gap-3 w-full">
-                        <div className="flex items-center justify-center h-10 w-10 rounded-lg bg-primary/10 shrink-0">
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
                           <Users className="h-5 w-5 text-primary" />
                         </div>
                         <div className="text-left min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
                             <span className="font-semibold text-sm">{g.nom}</span>
-                            <Badge variant="outline">{g.niveau}</Badge>
+                            <Badge className="bg-accent text-accent-foreground">{g.niveau}</Badge>
                             <span className="text-xs text-muted-foreground">
                               {members.length === 0 ? "Aucun élève" : members.length === 1 ? "1 élève" : `${members.length} élèves`}
                             </span>
@@ -556,12 +556,12 @@ const GroupesPage = () => {
                       </div>
                     </AccordionTrigger>
                     <div className="flex items-center gap-1 pr-2 shrink-0">
-                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => { e.stopPropagation(); openEdit(g); }}>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-secondary" onClick={(e) => { e.stopPropagation(); openEdit(g); }}>
                         <Edit className="h-4 w-4" />
                       </Button>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={(e) => e.stopPropagation()}>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:bg-destructive/10" onClick={(e) => e.stopPropagation()}>
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </AlertDialogTrigger>
@@ -581,7 +581,7 @@ const GroupesPage = () => {
                     </div>
                   </div>
 
-                  <AccordionContent className="px-4 pb-4 pt-0">
+                  <AccordionContent className="px-4 pb-4 pt-4">
                     {/* Action buttons */}
                     <div className="flex justify-end gap-2 mb-3">
                       <Button size="sm" onClick={() => openInvite(g.id, g.nom)}>
@@ -597,9 +597,9 @@ const GroupesPage = () => {
                         Aucun élève dans ce groupe. Ajoutez-en un !
                       </div>
                     ) : (
-                      <div className="overflow-x-auto max-h-[360px] overflow-y-auto border rounded-lg">
+                      <div className="overflow-x-auto max-h-[360px] overflow-y-auto rounded-lg border bg-card shadow-sm">
                         <table className="w-full text-sm">
-                          <thead className="sticky top-0 bg-muted/80 backdrop-blur-sm">
+                          <thead className="sticky top-0 bg-secondary/90 backdrop-blur-sm">
                              <tr className="border-b">
                                <th className="text-left py-2.5 px-3 font-medium text-muted-foreground">Prénom & Nom</th>
                                <th className="text-left py-2.5 px-3 font-medium text-muted-foreground">Identifiant</th>
