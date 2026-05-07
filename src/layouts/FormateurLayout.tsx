@@ -168,19 +168,19 @@ const FormateurLayout = () => {
   // Desktop: persistent sidebar
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full">
+      <div className="min-h-screen flex w-full bg-[radial-gradient(circle_at_top_right,hsl(var(--accent)/0.12),transparent_34%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--secondary)/0.45))]">
         <FormateurSidebar />
         <div className="flex-1 flex flex-col min-w-0">
-          <header className="h-14 flex items-center gap-3 border-b bg-card px-4 shrink-0">
+          <header className="h-16 flex items-center gap-3 border-b bg-card/90 backdrop-blur px-5 shrink-0 shadow-sm">
             <SidebarTrigger className="text-muted-foreground" />
-            <span className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+            <span className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-bold text-primary shadow-sm">
               {DESIGN_VERSION_LABEL}
             </span>
             <div className="ml-auto text-sm text-muted-foreground">
               {user?.user_metadata?.prenom} {user?.user_metadata?.nom}
             </div>
           </header>
-          <main className="flex-1 overflow-auto p-4 md:p-6">
+          <main className="flex-1 overflow-auto p-4 md:p-8">
             <Outlet />
           </main>
           <AppFooter />
