@@ -217,20 +217,24 @@ const SuiviDirectClasse = () => {
   // Header
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-          <Activity className="h-5 w-5 text-primary" />
+      <div className="relative overflow-hidden rounded-lg border border-primary/20 bg-gradient-to-br from-primary/10 via-card to-accent/10 p-5 shadow-sm">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
+              <Activity className="h-6 w-6" />
+            </div>
+            <div className="min-w-0">
+              <h1 className="text-2xl font-bold tracking-tight text-primary">Suivi en direct de la classe</h1>
+              <p className="text-sm text-muted-foreground">
+                Séance en cours, présences, et réponses au bilan de début de séance.
+              </p>
+            </div>
+          </div>
+          <Button variant="default" size="sm" onClick={() => refetchResults()} className="gap-2 self-start sm:self-auto">
+            <RefreshCw className="h-4 w-4" />
+            Actualiser
+          </Button>
         </div>
-        <div className="flex-1">
-          <h1 className="text-2xl font-bold tracking-tight">Suivi en direct de la classe</h1>
-          <p className="text-sm text-muted-foreground">
-            Séance en cours, présences, et réponses au bilan de début de séance.
-          </p>
-        </div>
-        <Button variant="outline" size="sm" onClick={() => refetchResults()} className="gap-2">
-          <RefreshCw className="h-4 w-4" />
-          Actualiser
-        </Button>
       </div>
 
       {/* Sélecteur de séance */}
@@ -277,35 +281,35 @@ const SuiviDirectClasse = () => {
       {selectedSession && (
         <>
           {/* KPIs */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <Card>
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+            <Card className="border-primary/15 bg-gradient-to-br from-card to-primary/5 shadow-sm">
               <CardContent className="pt-6">
-                <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1">
-                  <Users className="h-3.5 w-3.5" /> Inscrits
+                <div className="mb-1 flex items-center gap-2 text-xs text-muted-foreground">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary"><Users className="h-3.5 w-3.5" /></span> Inscrits
                 </div>
                 <p className="text-2xl font-bold">{members?.length ?? 0}</p>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="border-primary/15 bg-gradient-to-br from-card to-primary/5 shadow-sm">
               <CardContent className="pt-6">
-                <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1">
-                  <CheckCircle2 className="h-3.5 w-3.5" /> Présents
+                <div className="mb-1 flex items-center gap-2 text-xs text-muted-foreground">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary"><CheckCircle2 className="h-3.5 w-3.5" /></span> Présents
                 </div>
                 <p className="text-2xl font-bold">{presentMembers.length}</p>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="border-primary/15 bg-gradient-to-br from-card to-primary/5 shadow-sm">
               <CardContent className="pt-6">
-                <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1">
-                  <ClipboardList className="h-3.5 w-3.5" /> Bilans envoyés
+                <div className="mb-1 flex items-center gap-2 text-xs text-muted-foreground">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary"><ClipboardList className="h-3.5 w-3.5" /></span> Bilans envoyés
                 </div>
                 <p className="text-2xl font-bold">{bilans?.length ?? 0}</p>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="border-primary/15 bg-gradient-to-br from-card to-primary/5 shadow-sm">
               <CardContent className="pt-6">
-                <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1">
-                  <Clock className="h-3.5 w-3.5" /> Réponses reçues
+                <div className="mb-1 flex items-center gap-2 text-xs text-muted-foreground">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary"><Clock className="h-3.5 w-3.5" /></span> Réponses reçues
                 </div>
                 <p className="text-2xl font-bold">{bilanResults?.length ?? 0}</p>
               </CardContent>
