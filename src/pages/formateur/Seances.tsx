@@ -16,7 +16,9 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Plus, Calendar, Loader2, BookOpen, Pencil, Copy, Rocket, Trash2, Route, ArrowRight, Target, Clock } from "lucide-react";
+import { Plus, Calendar, Loader2, BookOpen, Pencil, Copy, Rocket, Trash2, Route, ArrowRight, Target, Clock, ChevronRight } from "lucide-react";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
@@ -494,15 +496,12 @@ const SeancesPage = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <div>
-          <h1 className="text-2xl font-bold">Séances</h1>
-          <p className="text-sm text-muted-foreground">Planifiez et gérez vos séances.</p>
-        </div>
+        <h1 className="text-2xl font-bold">Mes Séances</h1>
         <div className="flex items-center gap-2">
-          {/* Quick "next session" button — always visible */}
           <Button
-            variant="default"
-            className="gap-2"
+            variant="outline"
+            size="sm"
+            className="gap-2 hidden sm:inline-flex"
             onClick={() => openNextSession()}
           >
             <ArrowRight className="h-4 w-4" />
@@ -510,7 +509,9 @@ const SeancesPage = () => {
           </Button>
           <Dialog open={createOpen} onOpenChange={(v) => { setCreateOpen(v); if (!v) resetForm(); }}>
             <DialogTrigger asChild>
-              <Button variant="outline"><Plus className="h-4 w-4 mr-2" />Nouvelle séance</Button>
+              <Button className="bg-accent hover:bg-accent/90 text-accent-foreground rounded-full px-5">
+                <Plus className="h-4 w-4 mr-2" />Nouvelle séance
+              </Button>
             </DialogTrigger>
           <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
             <DialogHeader><DialogTitle>Planifier une séance</DialogTitle></DialogHeader>
@@ -803,85 +804,117 @@ const SeancesPage = () => {
 
       {/* Sessions list */}
       {sessions && sessions.length === 0 && (
-        <Card className="border-dashed">
-          <CardContent className="py-12 text-center">
-            <Calendar className="h-12 w-12 mx-auto text-muted-foreground/40 mb-3" />
-            <p className="text-muted-foreground font-medium">Aucune séance</p>
-            <p className="text-sm text-muted-foreground/70 mt-1">Créez votre première séance.</p>
-            <Button onClick={() => setCreateOpen(true)} className="mt-4"><Plus className="h-4 w-4 mr-2" />Créer ma première séance</Button>
-          </CardContent>
-        </Card>
+        <div className="flex flex-col items-center justify-center py-14 text-center">
+          <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+            <Calendar className="h-8 w-8 text-primary" />
+          </div>
+          <p className="font-semibold text-foreground">Aucune séance planifiée</p>
+          <p className="text-sm text-muted-foreground mt-1">Créez votre première séance pour commencer.</p>
+          <Button onClick={() => setCreateOpen(true)} className="mt-4 bg-accent hover:bg-accent/90 text-accent-foreground gap-2">
+            <Plus className="h-4 w-4" /> Créer ma première séance
+          </Button>
+        </div>
       )}
 
       <div className="space-y-3">
         {(sessions ?? []).map((s: any) => {
           const badge = getSessionBadge(s.statut, s.date_seance);
-          const comps: string[] = s._resolvedComps || [];
+          const isToday = badge.label === "Aujourd'hui";
+          const isEnCours = s.statut === "en_cours";
+          const isDone = s.statut === "terminee" || (badge.label === "Terminée" && s.statut !== "en_cours");
+          const isCancelled = s.statut === "annulee";
+
+          const startDate = new Date(s.date_seance);
+          const endDate = new Date(startDate.getTime() + (s.duree_minutes || 90) * 60000);
+          const timeRange = `${format(startDate, "HH:mm")} - ${format(endDate, "HH:mm")}`;
+
+          const today = new Date();
+          const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
+          const sDay = startDate.toDateString();
+          const timeLabel = sDay === today.toDateString()
+            ? timeRange
+            : sDay === tomorrow.toDateString()
+            ? `Demain, ${timeRange}`
+            : `${format(startDate, "EEEE d MMMM", { locale: fr })}, ${timeRange}`;
+
           return (
-            <Card key={s.id} className="cursor-pointer hover:border-primary/30 transition-colors"
-              onClick={() => navigate(`/formateur/seances/${s.id}/pilote`)}>
-              <CardContent className="py-4 px-4">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <Calendar className="h-5 w-5 text-muted-foreground shrink-0" />
-                    <div className="min-w-0">
-                      <p className="font-medium text-sm truncate">{s.titre}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {s.group?.nom} · {new Date(s.date_seance).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
-                      </p>
-                      {comps.length > 0 && (
-                        <div className="flex gap-1 flex-wrap mt-1">
-                          {comps.map((c) => (
-                            <span key={c} className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold ${COMPETENCE_COLORS[c] || ""}`}>
-                              {c}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </div>
+            <div
+              key={s.id}
+              className={cn(
+                "rounded-[0.625rem] border p-4 cursor-pointer transition-colors shadow-sm group",
+                isEnCours ? "bg-green-50 border-green-200 hover:bg-green-100/70 border-l-4 border-l-green-500"
+                  : isToday ? "bg-blue-50 border-blue-200 hover:bg-blue-100/70 border-l-4 border-l-primary"
+                  : isDone ? "bg-muted/30 border-border"
+                  : isCancelled ? "bg-destructive/5 border-destructive/20"
+                  : "bg-white border-border hover:border-primary/30"
+              )}
+              onClick={() => navigate(`/formateur/seances/${s.id}/pilote`)}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1 min-w-0 space-y-2">
+                  {/* Status badge */}
+                  <div>
+                    {isEnCours ? (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700 border border-green-200">
+                        Séance en cours
+                        <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                      </span>
+                    ) : isToday ? (
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-primary text-primary-foreground">
+                        Aujourd'hui
+                      </span>
+                    ) : isDone ? (
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-muted text-muted-foreground border border-border">
+                        Terminée
+                      </span>
+                    ) : isCancelled ? (
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-destructive/10 text-destructive border border-destructive/20">
+                        Annulée
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-white text-foreground border border-border">
+                        Planifiée
+                      </span>
+                    )}
                   </div>
-                   <div className="flex items-center gap-1 shrink-0">
-                     <Button
-                       variant="default"
-                       size="sm"
-                       className="gap-1.5 h-8"
-                       onClick={(e) => { e.stopPropagation(); navigate(`/formateur/seances/${s.id}/pilote`); }}
-                       title="Piloter la séance"
-                     >
-                       <Rocket className="h-3.5 w-3.5" /> Piloter
-                     </Button>
-                     <Button
-                       variant="ghost"
-                       size="icon"
-                       className="h-8 w-8"
-                       onClick={(e) => openDuplicate(s, e)}
-                       title="Dupliquer pour un autre groupe"
-                     >
-                       <Copy className="h-4 w-4" />
-                     </Button>
-                     <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={(e) => openEdit(s, e)}
-                        title="Modifier la séance"
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-destructive hover:text-destructive"
-                        onClick={(e) => { e.stopPropagation(); setDeleteSessionId(s.id); }}
-                        title="Supprimer la séance"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                     <Badge variant={badge.variant}>{badge.label}</Badge>
-                   </div>
+
+                  {/* Session info lines */}
+                  <div className="space-y-0.5 text-sm">
+                    <p><span className="font-bold">Titre :</span> {s.titre}</p>
+                    <p><span className="font-bold">Groupe :</span> {s.group?.nom}</p>
+                    <p><span className="font-bold">Horaire :</span> {timeLabel}</p>
+                    {isDone && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        <span className="font-semibold">Actions :</span>{" "}
+                        <button className="underline hover:text-foreground" onClick={(e) => openEdit(s, e)}>Modifier</button>
+                        {" · "}
+                        <button className="underline hover:text-foreground" onClick={(e) => openDuplicate(s, e)}>Dupliquer</button>
+                        {" · "}
+                        <button className="underline text-destructive hover:text-destructive/80" onClick={(e) => { e.stopPropagation(); setDeleteSessionId(s.id); }}>Supprimer</button>
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
+
+                <div className="flex items-center gap-2 shrink-0 pt-1">
+                  {/* Subtle action buttons for non-done sessions */}
+                  {!isDone && (
+                    <div className="hidden group-hover:flex items-center gap-1">
+                      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={(e) => openEdit(s, e)} title="Modifier">
+                        <Pencil className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={(e) => openDuplicate(s, e)} title="Dupliquer">
+                        <Copy className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={(e) => { e.stopPropagation(); setDeleteSessionId(s.id); }} title="Supprimer">
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  )}
+                  <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                </div>
+              </div>
+            </div>
           );
         })}
       </div>

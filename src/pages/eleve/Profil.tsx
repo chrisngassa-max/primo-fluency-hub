@@ -2,26 +2,21 @@ import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { User, Mail, Lock, Save, Users, GraduationCap, TrendingUp } from "lucide-react";
-import AIConsentSettings from "@/components/AIConsentSettings";
+import { Users, TrendingUp, User } from "lucide-react";
 
 const EleveProfil = () => {
   const { user } = useAuth();
 
   const [prenom, setPrenom] = useState(user?.user_metadata?.prenom ?? "");
+  const [nom, setNom] = useState(user?.user_metadata?.nom ?? "");
   const [email, setEmail] = useState(user?.email ?? "");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [saving, setSaving] = useState(false);
 
-  // Fetch group info
   const { data: groupInfo, isLoading: groupLoading } = useQuery({
     queryKey: ["eleve-group-info", user?.id],
     queryFn: async () => {
@@ -32,7 +27,6 @@ const EleveProfil = () => {
       if (!data || data.length === 0) return null;
       const group = (data[0] as any).group;
       if (!group) return null;
-      // Get formateur name
       const { data: formateur } = await supabase
         .from("profiles")
         .select("prenom, nom")
@@ -43,7 +37,6 @@ const EleveProfil = () => {
     enabled: !!user?.id,
   });
 
-  // Fetch student profile (niveau)
   const { data: profilEleve } = useQuery({
     queryKey: ["eleve-profil-niveau", user?.id],
     queryFn: async () => {
@@ -63,8 +56,11 @@ const EleveProfil = () => {
       const updates: Record<string, unknown> = {};
       let metaChanged = false;
 
-      if (prenom !== (user?.user_metadata?.prenom ?? "")) {
-        updates.data = { prenom };
+      if (
+        prenom !== (user?.user_metadata?.prenom ?? "") ||
+        nom !== (user?.user_metadata?.nom ?? "")
+      ) {
+        updates.data = { prenom, nom };
         metaChanged = true;
       }
 
@@ -73,11 +69,6 @@ const EleveProfil = () => {
       }
 
       if (password) {
-        if (password !== confirmPassword) {
-          toast.error("Les mots de passe ne correspondent pas");
-          setSaving(false);
-          return;
-        }
         if (password.length < 6) {
           toast.error("Le mot de passe doit contenir au moins 6 caractères");
           setSaving(false);
@@ -98,12 +89,11 @@ const EleveProfil = () => {
       if (metaChanged && user) {
         await supabase
           .from("profiles")
-          .update({ prenom })
+          .update({ prenom, nom })
           .eq("id", user.id);
       }
 
       setPassword("");
-      setConfirmPassword("");
       toast.success("Profil mis à jour !");
     } catch (err: any) {
       toast.error(err.message || "Erreur lors de la mise à jour");
@@ -112,135 +102,138 @@ const EleveProfil = () => {
     }
   };
 
+  const initiales = [user?.user_metadata?.prenom, user?.user_metadata?.nom]
+    .filter(Boolean).map((s: string) => s[0].toUpperCase()).join("") || "?";
+
+  const fullName = [user?.user_metadata?.prenom, user?.user_metadata?.nom]
+    .filter(Boolean).join(" ") || "—";
+
   return (
-    <div className="max-w-lg mx-auto space-y-6">
-      <h1 className="text-2xl font-bold text-foreground">Mon profil</h1>
+    <div className="max-w-lg mx-auto space-y-5">
+      <h1 className="text-2xl font-bold text-foreground">Profil Élève</h1>
 
-      <AIConsentSettings />
+      {/* Hero */}
+      <div
+        className="rounded-[0.625rem] p-6 flex flex-col items-center gap-2 shadow-sm"
+        style={{ background: "hsl(220 35% 75%)" }}
+      >
+        <div className="h-16 w-16 rounded-full bg-white border-2 border-primary/40 flex items-center justify-center text-xl font-extrabold text-primary shrink-0">
+          {initiales}
+        </div>
+        <p className="text-lg font-bold text-foreground">{fullName}</p>
+        <div className="flex items-center gap-2 flex-wrap justify-center">
+          {profilEleve?.niveau_actuel && (
+            <span className="text-xs font-semibold bg-white/80 text-foreground px-3 py-0.5 rounded-full border border-border">
+              {profilEleve.niveau_actuel}
+            </span>
+          )}
+          {groupInfo && (
+            <span className="text-xs font-medium bg-white/80 text-foreground px-3 py-0.5 rounded-full border border-border">
+              {groupInfo.nom}
+            </span>
+          )}
+        </div>
+      </div>
 
-      {/* Group & Level info */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <GraduationCap className="h-5 w-5 text-primary" />
-            Ma formation
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
+      {/* Ma formation */}
+      <div className="space-y-3">
+        <h2 className="text-base font-bold text-foreground">Ma formation</h2>
+        <div className="rounded-[0.625rem] border bg-card divide-y shadow-sm">
           {groupLoading ? (
-            <div className="space-y-2">
+            <div className="p-4 space-y-2">
               <Skeleton className="h-4 w-48" />
               <Skeleton className="h-4 w-36" />
+              <Skeleton className="h-4 w-40" />
             </div>
           ) : groupInfo ? (
             <>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground flex items-center gap-1.5">
-                  <Users className="h-4 w-4" /> Groupe
-                </span>
-                <span className="font-medium">{groupInfo.nom}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground flex items-center gap-1.5">
-                  <TrendingUp className="h-4 w-4" /> Niveau du groupe
-                </span>
-                <Badge variant="outline">{groupInfo.niveau}</Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground flex items-center gap-1.5">
-                  <User className="h-4 w-4" /> Formateur
-                </span>
-                <span className="font-medium">{groupInfo.formateur}</span>
-              </div>
-              {profilEleve && (
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Mon niveau actuel</span>
-                  <Badge>{profilEleve.niveau_actuel}</Badge>
+              <div className="flex items-center gap-3 px-4 py-3">
+                <div className="h-9 w-9 rounded-xl bg-purple-500 flex items-center justify-center shrink-0">
+                  <Users className="h-5 w-5 text-white" />
                 </div>
-              )}
+                <span className="text-sm font-medium">Groupe : {groupInfo.nom}</span>
+              </div>
+              <div className="flex items-center gap-3 px-4 py-3">
+                <div className="h-9 w-9 rounded-xl bg-orange-500 flex items-center justify-center shrink-0">
+                  <TrendingUp className="h-5 w-5 text-white" />
+                </div>
+                <span className="text-sm font-medium">
+                  Niveau actuel : {profilEleve?.niveau_actuel ?? groupInfo.niveau}
+                </span>
+              </div>
+              <div className="flex items-center gap-3 px-4 py-3">
+                <div className="h-9 w-9 rounded-xl bg-red-500 flex items-center justify-center shrink-0">
+                  <User className="h-5 w-5 text-white" />
+                </div>
+                <span className="text-sm font-medium">Formateur : {groupInfo.formateur}</span>
+              </div>
             </>
           ) : (
-            <p className="text-sm text-muted-foreground">
-              Tu n'es pas encore inscrit dans un groupe. Rejoins un groupe depuis ton tableau de bord.
-            </p>
+            <div className="p-4">
+              <p className="text-sm text-muted-foreground">
+                Tu n'es pas encore inscrit dans un groupe. Rejoins un groupe depuis ton tableau de bord.
+              </p>
+            </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <User className="h-5 w-5 text-primary" />
-            Informations personnelles
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="prenom">Prénom</Label>
+      {/* Informations personnelles */}
+      <div className="space-y-3">
+        <h2 className="text-base font-bold text-foreground">Informations personnelles</h2>
+        <div className="rounded-[0.625rem] border bg-card divide-y shadow-sm">
+          <div className="px-4 py-1">
             <Input
-              id="prenom"
               value={prenom}
               onChange={(e) => setPrenom(e.target.value)}
-              placeholder="Ton prénom"
+              placeholder="Prénom"
+              className="border-0 px-0 shadow-none focus-visible:ring-0 text-sm"
             />
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="email" className="flex items-center gap-1.5">
-              <Mail className="h-4 w-4" /> Email
-            </Label>
+          <div className="px-4 py-1">
             <Input
-              id="email"
+              value={nom}
+              onChange={(e) => setNom(e.target.value)}
+              placeholder="Nom"
+              className="border-0 px-0 shadow-none focus-visible:ring-0 text-sm"
+            />
+          </div>
+          <div className="px-4 py-1">
+            <Input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="ton@email.com"
+              placeholder="Email"
+              className="border-0 px-0 shadow-none focus-visible:ring-0 text-sm"
             />
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Lock className="h-5 w-5 text-primary" />
-            Changer le mot de passe
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="password">Nouveau mot de passe</Label>
+      {/* Sécurité */}
+      <div className="space-y-3">
+        <h2 className="text-base font-bold text-foreground">Sécurité</h2>
+        <div className="rounded-[0.625rem] border bg-card shadow-sm">
+          <div className="px-4 py-1">
             <Input
-              id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
+              placeholder="Mot de passe"
               autoComplete="new-password"
+              className="border-0 px-0 shadow-none focus-visible:ring-0 text-sm"
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirmer le mot de passe</Label>
-            <Input
-              id="confirmPassword"
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="••••••••"
-              autoComplete="new-password"
-            />
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       <Button
         onClick={handleSave}
         disabled={saving}
-        className="w-full text-base py-6"
+        className="w-full text-base py-6 bg-accent hover:bg-accent/90 text-accent-foreground"
         size="lg"
       >
-        <Save className="h-5 w-5 mr-2" />
-        {saving ? "Enregistrement…" : "Enregistrer"}
+        {saving ? "Enregistrement…" : "Enregistrer les modifications"}
       </Button>
     </div>
   );

@@ -3,7 +3,6 @@ import {
   Users,
   Calendar,
   BookOpen,
-  Activity,
   FileText,
   Settings,
   LogOut,
@@ -17,6 +16,9 @@ import {
   Flame,
   Database,
   Flag,
+  Eye,
+  TrendingUp,
+  ListChecks,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
@@ -39,24 +41,30 @@ import { useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-const mainNav = [
+const gestionNav = [
   { title: "Tableau de bord", url: "/formateur", icon: LayoutDashboard },
   { title: "Demandes d'accès", url: "/formateur/demandes", icon: Inbox },
   { title: "Groupes & Élèves", url: "/formateur/groupes", icon: Users },
   { title: "Séances", url: "/formateur/seances", icon: Calendar },
-  { title: "Exercices", url: "/formateur/exercices", icon: BookOpen },
-  { title: "Devoirs", url: "/formateur/devoirs", icon: ClipboardCheck },
-  { title: "Importer programme", url: "/formateur/import-programme", icon: Upload },
-  { title: "Plans de formation", url: "/formateur/parcours", icon: Route },
-  { title: "Ressources", url: "/formateur/ressources", icon: Library },
-  { title: "Intervention rapide", url: "/formateur/intervention", icon: Flame },
-  { title: "Banque d'activités", url: "/formateur/banque-activites", icon: Database },
 ];
 
-const monitorNav = [
-  { title: "Suivi en direct", url: "/formateur/suivi-direct", icon: Activity },
-  { title: "Suivi des élèves", url: "/formateur/monitoring", icon: Activity },
-  { title: "Suivi des devoirs", url: "/formateur/suivi-devoirs", icon: ClipboardCheck },
+const pedagogieNav = [
+  { title: "Exercices", url: "/formateur/exercices", icon: BookOpen },
+  { title: "Devoirs", url: "/formateur/devoirs", icon: ClipboardCheck },
+  { title: "Plans de formation", url: "/formateur/parcours", icon: Route },
+  { title: "Ressources", url: "/formateur/ressources", icon: Library },
+  { title: "Banque d'activités", url: "/formateur/banque-activites", icon: Database },
+  { title: "Importer programme", url: "/formateur/import-programme", icon: Upload },
+];
+
+const pilotageNav = [
+  { title: "Intervention rapide", url: "/formateur/intervention", icon: Flame },
+  { title: "Suivi en direct", url: "/formateur/suivi-direct", icon: Eye },
+  { title: "Suivi des élèves", url: "/formateur/monitoring", icon: TrendingUp },
+  { title: "Suivi des devoirs", url: "/formateur/suivi-devoirs", icon: ListChecks },
+];
+
+const analysesNav = [
   { title: "Tests d'entrée", url: "/formateur/tests", icon: ClipboardList },
   { title: "Résultats positionnement", url: "/formateur/test-resultats", icon: GraduationCap },
   { title: "Rapports IA", url: "/formateur/rapports", icon: FileText },
@@ -103,55 +111,41 @@ export function FormateurSidebar({ onNavigate }: FormateurSidebarProps) {
       </SidebarHeader>
 
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Pédagogie</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {mainNav.map((item) => (
-                <SidebarMenuItem key={item.url}>
-                  <SidebarMenuButton asChild isActive={isActive(item.url)} title={item.title}>
-                    <NavLink
-                      to={item.url}
-                      end={item.url === "/formateur"}
-                      className="hover:bg-sidebar-accent/60"
-                      activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                      onClick={onNavigate}
-                    >
-                      <item.icon className="mr-2 h-4 w-4 shrink-0" />
-                      {!collapsed && <span>{item.title}</span>}
-                      {item.url === "/formateur/demandes" && pendingCount > 0 && !collapsed && (
-                        <Badge className="ml-auto bg-destructive text-destructive-foreground text-[10px] px-1.5 h-4 min-w-4">{pendingCount}</Badge>
-                      )}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarGroup>
-          <SidebarGroupLabel>Suivi</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {monitorNav.map((item) => (
-                <SidebarMenuItem key={item.url}>
-                  <SidebarMenuButton asChild isActive={isActive(item.url)} title={item.title}>
-                    <NavLink
-                      to={item.url}
-                      className="hover:bg-sidebar-accent/60"
-                      activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                      onClick={onNavigate}
-                    >
-                      <item.icon className="mr-2 h-4 w-4 shrink-0" />
-                      {!collapsed && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {[
+          { label: "Gestion", items: gestionNav },
+          { label: "Pédagogie", items: pedagogieNav },
+          { label: "Pilotage", items: pilotageNav },
+          { label: "Analyses", items: analysesNav },
+        ].map(({ label, items }) => (
+          <SidebarGroup key={label}>
+            <SidebarGroupLabel className="text-sidebar-primary/80 uppercase text-[10px] tracking-widest px-3 pt-3 pb-1">
+              {label}
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {items.map((item) => (
+                  <SidebarMenuItem key={item.url}>
+                    <SidebarMenuButton asChild isActive={isActive(item.url)} title={item.title}>
+                      <NavLink
+                        to={item.url}
+                        end={item.url === "/formateur"}
+                        className="relative flex items-center gap-2.5 px-3 py-2 rounded-md hover:bg-sidebar-accent/50 transition-colors"
+                        activeClassName="bg-sidebar-accent/60 font-semibold before:absolute before:left-0 before:top-1 before:bottom-1 before:w-0.5 before:rounded-full before:bg-sidebar-primary"
+                        onClick={onNavigate}
+                      >
+                        <item.icon className="h-[18px] w-[18px] shrink-0" />
+                        {!collapsed && <span className="text-sm">{item.title}</span>}
+                        {item.url === "/formateur/demandes" && pendingCount > 0 && !collapsed && (
+                          <Badge className="ml-auto bg-destructive text-destructive-foreground text-[10px] px-1.5 h-4 min-w-4">{pendingCount}</Badge>
+                        )}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
       </SidebarContent>
 
       <SidebarFooter className="p-3 space-y-2">
@@ -160,12 +154,12 @@ export function FormateurSidebar({ onNavigate }: FormateurSidebarProps) {
             <SidebarMenuButton asChild isActive={isActive("/formateur/parametres")}>
               <NavLink
                 to="/formateur/parametres"
-                className="hover:bg-sidebar-accent/60"
-                activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                className="relative flex items-center gap-2.5 px-3 py-2 rounded-md hover:bg-sidebar-accent/50 transition-colors"
+                activeClassName="bg-sidebar-accent/60 font-semibold before:absolute before:left-0 before:top-1 before:bottom-1 before:w-0.5 before:rounded-full before:bg-sidebar-primary"
                 onClick={onNavigate}
               >
-                <Settings className="mr-2 h-4 w-4 shrink-0" />
-                {!collapsed && <span>Paramètres</span>}
+                <Settings className="h-[18px] w-[18px] shrink-0" />
+                {!collapsed && <span className="text-sm">Paramètres</span>}
               </NavLink>
             </SidebarMenuButton>
           </SidebarMenuItem>

@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { toast } from "sonner";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, GraduationCap } from "lucide-react";
 import { translateAuthError } from "@/lib/authErrors";
 
 const LoginFormateur = () => {
@@ -33,27 +33,32 @@ const LoginFormateur = () => {
   };
 
   return (
-    <div className="min-h-[100dvh] flex flex-col items-center justify-start sm:justify-center bg-indigo-50 dark:bg-indigo-950/20 p-4 pt-8 sm:pt-4 overflow-y-auto">
+    <div className="min-h-[100dvh] flex flex-col items-center justify-start sm:justify-center p-4 pt-8 sm:pt-4 overflow-y-auto" style={{ background: "linear-gradient(160deg, hsl(215 40% 88%) 0%, hsl(40 30% 93%) 100%)" }}>
       <div className="w-full max-w-md space-y-6">
-        <Button variant="ghost" onClick={() => navigate("/")} className="gap-2">
+        <Button variant="ghost" onClick={() => navigate("/")} className="gap-2 text-foreground/60 hover:text-foreground">
           <ArrowLeft className="h-4 w-4" /> Retour à l'accueil
         </Button>
 
-        <div className="text-center space-y-2">
-          <span className="text-5xl" role="img" aria-label="Formateur">💼</span>
-          <h1 className="text-3xl font-bold text-foreground">Espace Formateur</h1>
-          <p className="text-muted-foreground">Gérer mes groupes et mes séances</p>
+        <div className="text-center py-4">
+          <div className="flex items-center justify-center gap-3">
+            <div className="h-16 w-16 rounded-2xl bg-primary flex items-center justify-center shadow-md">
+              <GraduationCap className="h-9 w-9 text-primary-foreground" />
+            </div>
+            <span className="text-4xl font-extrabold tracking-tight text-foreground">
+              CAP <span className="text-accent">TCF</span>
+            </span>
+          </div>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Connexion</CardTitle>
-            <CardDescription>Accédez à votre espace formateur.</CardDescription>
+        <Card className="shadow-md">
+          <CardHeader className="text-center pb-2">
+            <CardTitle className="text-2xl font-bold">Espace Formateur</CardTitle>
+            <CardDescription className="text-sm">Pilotez vos groupes et suivez la progression de vos élèves</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="form-login-email">Adresse email</Label>
+                <Label htmlFor="form-login-email">Email</Label>
                 <Input
                   id="form-login-email"
                   type="email"
@@ -75,7 +80,7 @@ const LoginFormateur = () => {
                   autoComplete="current-password"
                 />
               </div>
-              <Button type="submit" className="w-full" disabled={busy}>
+              <Button type="submit" className="w-full text-lg py-6" disabled={busy}>
                 {busy ? "Connexion…" : "Se connecter"}
               </Button>
               <div className="text-center">

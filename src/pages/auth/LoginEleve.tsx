@@ -187,8 +187,8 @@ const LoginEleve = () => {
 
   if (showForgot) {
     return (
-      <div className="min-h-[100dvh] flex items-center justify-center bg-sky-50/50 dark:bg-background p-4 overflow-y-auto">
-        <Card className="w-full max-w-md">
+      <div className="min-h-[100dvh] flex items-center justify-center p-4 overflow-y-auto" style={{ background: "hsl(40 30% 93%)" }}>
+        <Card className="w-full max-w-md shadow-md">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">Mot de passe oublié</CardTitle>
             <CardDescription>Entrez votre email pour recevoir un lien.</CardDescription>
@@ -209,16 +209,21 @@ const LoginEleve = () => {
   }
 
   return (
-    <div className="min-h-[100dvh] flex flex-col items-center justify-start sm:justify-center bg-sky-50/50 dark:bg-background p-4 pt-8 sm:pt-4 overflow-y-auto">
+    <div className="min-h-[100dvh] flex flex-col items-center justify-start sm:justify-center p-4 pt-8 sm:pt-4 overflow-y-auto" style={{ background: "hsl(40 30% 93%)" }}>
       <div className="w-full max-w-md space-y-6">
-        <Button variant="ghost" onClick={() => navigate("/")} className="gap-2">
-          <ArrowLeft className="h-4 w-4" /> Retour à l'accueil
+        <Button variant="ghost" onClick={() => navigate("/")} className="gap-2 text-foreground/60 hover:text-foreground">
+          <ArrowLeft className="h-4 w-4" /> Retour
         </Button>
 
-        <div className="text-center space-y-2">
-          <span className="text-5xl" role="img" aria-label="Élève">🎓</span>
-          <h1 className="text-3xl font-bold text-foreground">Espace Élève</h1>
-          <p className="text-muted-foreground">Faire mes exercices et mon test</p>
+        <div className="text-center space-y-3 py-4">
+          <div className="flex items-center justify-center gap-3">
+            <div className="h-16 w-16 rounded-2xl bg-primary flex items-center justify-center shadow-md">
+              <GraduationCap className="h-9 w-9 text-primary-foreground" />
+            </div>
+            <span className="text-4xl font-extrabold tracking-tight text-foreground">
+              CAP <span className="text-accent">TCF</span>
+            </span>
+          </div>
         </div>
 
         {inviteCode && (
@@ -230,8 +235,11 @@ const LoginEleve = () => {
           </div>
         )}
 
-        <Card>
-          <CardContent className="pt-6">
+        <Card className="shadow-md">
+          <CardHeader className="text-center pb-2">
+            <CardTitle className="text-2xl font-bold">Connexion élève</CardTitle>
+          </CardHeader>
+          <CardContent className="pt-2">
             <Tabs defaultValue="login">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="login">Connexion</TabsTrigger>
@@ -248,7 +256,7 @@ const LoginEleve = () => {
                     <Label htmlFor="eleve-login-password">Mot de passe</Label>
                     {renderPasswordInput("eleve-login-password", loginPassword, setLoginPassword, showLoginPw, () => setShowLoginPw(!showLoginPw))}
                   </div>
-                  <Button type="submit" className="w-full text-lg py-6" disabled={busy}>
+                  <Button type="submit" className="w-full text-lg py-6 bg-accent hover:bg-accent/90 text-accent-foreground" disabled={busy}>
                     {busy ? "Connexion…" : "Se connecter"}
                   </Button>
                   <Button type="button" variant="link" className="w-full text-sm" onClick={() => setShowForgot(true)}>
@@ -277,7 +285,7 @@ const LoginEleve = () => {
                     <Label htmlFor="eleve-signup-password">Mot de passe</Label>
                     {renderPasswordInput("eleve-signup-password", signupPassword, setSignupPassword, showSignupPw, () => setShowSignupPw(!showSignupPw), 6)}
                   </div>
-                  <Button type="submit" className="w-full text-lg py-6" disabled={busy}>
+                  <Button type="submit" className="w-full text-lg py-6 bg-accent hover:bg-accent/90 text-accent-foreground" disabled={busy}>
                     {busy ? "Inscription…" : "S'inscrire"}
                   </Button>
                 </form>

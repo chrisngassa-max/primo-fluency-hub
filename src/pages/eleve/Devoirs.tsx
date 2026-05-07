@@ -73,24 +73,18 @@ const EleveDevoirs = () => {
       {/* Stats */}
       {all.length > 0 && (
         <div className="grid grid-cols-3 gap-3">
-          <Card className="text-center">
-            <CardContent className="pt-4 pb-3">
-              <p className="text-2xl font-bold text-orange-600">{todo.length}</p>
-              <p className="text-sm text-muted-foreground">À faire</p>
-            </CardContent>
-          </Card>
-          <Card className="text-center">
-            <CardContent className="pt-4 pb-3">
-              <p className="text-2xl font-bold text-blue-600">{inProgress.length}</p>
-              <p className="text-sm text-muted-foreground">En cours</p>
-            </CardContent>
-          </Card>
-          <Card className="text-center">
-            <CardContent className="pt-4 pb-3">
-              <p className="text-2xl font-bold text-green-600">{completed.length}</p>
-              <p className="text-sm text-muted-foreground">Terminés</p>
-            </CardContent>
-          </Card>
+          <div className="rounded-[0.625rem] bg-orange-500 p-4 text-center shadow-sm">
+            <p className="text-3xl font-extrabold text-white">{todo.length}</p>
+            <p className="text-xs font-medium text-white/90 mt-0.5">À faire</p>
+          </div>
+          <div className="rounded-[0.625rem] bg-blue-500 p-4 text-center shadow-sm">
+            <p className="text-3xl font-extrabold text-white">{inProgress.length}</p>
+            <p className="text-xs font-medium text-white/90 mt-0.5">En cours</p>
+          </div>
+          <div className="rounded-[0.625rem] bg-green-500 p-4 text-center shadow-sm">
+            <p className="text-3xl font-extrabold text-white">{completed.length}</p>
+            <p className="text-xs font-medium text-white/90 mt-0.5">Terminés</p>
+          </div>
         </div>
       )}
 
@@ -131,26 +125,24 @@ const EleveDevoirs = () => {
 
           {/* Empty states */}
           {all.length === 0 && (
-            <Card className="border-dashed">
-              <CardContent className="py-12 text-center">
-                <BookOpen className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
-                <p className="text-muted-foreground font-medium">Pas encore de devoirs</p>
-                <p className="text-sm text-muted-foreground/70 mt-1">
-                  Tes devoirs apparaîtront ici après ta première séance.
-                </p>
-              </CardContent>
-            </Card>
+            <div className="flex flex-col items-center justify-center py-14 text-center">
+              <div className="h-16 w-16 rounded-full bg-blue-100 flex items-center justify-center mb-4">
+                <BookOpen className="h-8 w-8 text-primary" />
+              </div>
+              <p className="font-semibold text-foreground">Aucun devoir pour l'instant</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Tes devoirs apparaîtront ici après ta première séance.
+              </p>
+            </div>
           )}
           {all.length > 0 && pendingAll.length === 0 && (
-            <Card className="border-dashed">
-              <CardContent className="py-12 text-center">
-                <CheckCircle2 className="h-10 w-10 mx-auto text-green-500 mb-3" />
-                <p className="text-muted-foreground font-medium">Aucun devoir en attente</p>
-                <p className="text-sm text-muted-foreground/70 mt-1">
-                  Tous tes devoirs sont à jour. Bravo !
-                </p>
-              </CardContent>
-            </Card>
+            <div className="flex flex-col items-center justify-center py-14 text-center">
+              <div className="h-16 w-16 rounded-full bg-green-100 flex items-center justify-center mb-4">
+                <CheckCircle2 className="h-8 w-8 text-green-600" />
+              </div>
+              <p className="font-semibold text-foreground">Tous tes devoirs sont à jour !</p>
+              <p className="text-sm text-muted-foreground mt-1">Bravo, continue comme ça.</p>
+            </div>
           )}
         </>
       )}
@@ -211,21 +203,22 @@ function DevoirCard({ devoir, onOpen, inProgress }: { devoir: any; onOpen: () =>
   const isDone = devoir.statut === "fait" || devoir.statut === "arrete";
 
   return (
-    <Card
+    <div
       className={cn(
-        "cursor-pointer hover:bg-muted/30 transition-colors",
-        isDone && "opacity-70",
+        "flex items-center gap-3 p-4 rounded-[0.625rem] border cursor-pointer transition-colors shadow-sm",
+        isDone ? "bg-green-50 border-green-200 hover:bg-green-100/70 opacity-80"
+          : inProgress ? "bg-blue-50 border-blue-200 hover:bg-blue-100/70"
+          : isUrgent ? "bg-destructive/5 border-destructive/30 hover:bg-destructive/10"
+          : "bg-orange-50 border-orange-200 hover:bg-orange-100/70",
       )}
       onClick={onOpen}
     >
-      <CardContent className="py-3 px-4">
-        <div className="flex items-center gap-3">
           <div className={cn(
             "flex items-center justify-center h-10 w-10 rounded-xl shrink-0",
-            isDone ? "bg-green-100 dark:bg-green-900/30"
-              : inProgress ? "bg-blue-100 dark:bg-blue-900/30"
+            isDone ? "bg-green-100"
+              : inProgress ? "bg-blue-100"
               : isUrgent ? "bg-destructive/10"
-              : "bg-orange-100 dark:bg-orange-900/30"
+              : "bg-orange-100"
           )}>
             {isDone ? (
               <CheckCircle2 className="h-5 w-5 text-green-600" />
@@ -259,9 +252,7 @@ function DevoirCard({ devoir, onOpen, inProgress }: { devoir: any; onOpen: () =>
             <DeadlineDisplay dateEcheance={devoir.date_echeance} isDone={isDone} />
           </div>
           <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
-        </div>
-      </CardContent>
-    </Card>
+    </div>
   );
 }
 

@@ -424,44 +424,40 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
         </Card>
       )}
 
-      {/* Global progress bar */}
-      <Card>
-        <CardContent className="pt-6 pb-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Award className="h-5 w-5 text-primary" />
-              <span className="font-semibold">Niveau actuel</span>
-            </div>
-            <Badge variant="outline" className={cn("text-base px-3 py-1 font-bold", niveauActuel === "Non évalué" && "text-muted-foreground")}>
-              {niveauActuel}
-            </Badge>
+      {/* Hero niveau — badge centré */}
+      <div className="rounded-[0.625rem] p-6 shadow-md text-center space-y-4" style={{ background: "linear-gradient(135deg, hsl(215 65% 22%) 0%, hsl(215 65% 36%) 100%)" }}>
+        <div className="flex justify-center">
+          <div className={cn(
+            "h-20 w-20 rounded-full flex items-center justify-center text-3xl font-extrabold shadow-lg border-4 border-white/30",
+            niveauActuel === "Non évalué" ? "bg-white/20 text-white/60" : "bg-white text-primary"
+          )}>
+            {niveauActuel === "Non évalué" ? "?" : niveauActuel}
           </div>
-          {niveauActuel === "Non évalué" ? (
-            <div className="text-center py-2">
-              <Button
-                variant="link"
-                className="text-sm p-0 h-auto text-primary underline"
-                onClick={() => navigate("/eleve/test-positionnement")}
-              >
-                Passe le test d'entrée pour évaluer ton niveau !
-              </Button>
+        </div>
+        {niveauActuel === "Non évalué" ? (
+          <div className="space-y-3">
+            <p className="text-sm text-white/70">Passe le test d'entrée pour évaluer ton niveau.</p>
+            <Button
+              className="bg-accent hover:bg-accent/90 text-accent-foreground gap-2"
+              onClick={() => navigate("/eleve/test-positionnement")}
+            >
+              Passer le test de niveau
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            <div className="h-3 w-full rounded-full bg-white/20 overflow-hidden">
+              <div
+                className="h-full rounded-full bg-accent transition-all duration-500"
+                style={{ width: `${globalProgress}%` }}
+              />
             </div>
-          ) : (
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm text-muted-foreground">
-                <span>{niveauActuel}</span>
-                <span>Objectif : {niveauTarget}</span>
-              </div>
-              <Progress value={globalProgress} className={cn("h-4", globalProgress === 0 && "[&>div]:bg-muted")} />
-              <p className="text-xs text-muted-foreground text-center">
-                {globalProgress > 0
-                  ? `${Math.round(globalProgress)}% de progression globale`
-                  : "Commence les exercices pour voir ta progression !"}
-              </p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+            <p className="text-sm text-white/80 font-medium">
+              Prochain niveau : <strong>{niveauTarget}</strong>
+            </p>
+          </div>
+        )}
+      </div>
 
       {/* Attendance stats */}
       {presenceStats && presenceStats.total > 0 && (
@@ -481,17 +477,17 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
               </Badge>
             </div>
             <div className="grid grid-cols-3 gap-3 text-center">
-              <div className="p-2 rounded-lg bg-muted/50">
-                <p className="text-xl font-bold">{presenceStats.total}</p>
-                <p className="text-[11px] text-muted-foreground">Séances</p>
+              <div className="p-3 rounded-[0.625rem] bg-muted">
+                <p className="text-2xl font-extrabold text-foreground">{presenceStats.total}</p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">Séances</p>
               </div>
-              <div className="p-2 rounded-lg bg-muted/50">
-                <p className="text-xl font-bold text-green-600">{presenceStats.presents}</p>
-                <p className="text-[11px] text-muted-foreground">Présences</p>
+              <div className="p-3 rounded-[0.625rem] bg-green-500">
+                <p className="text-2xl font-extrabold text-white">{presenceStats.presents}</p>
+                <p className="text-[11px] text-white/90 mt-0.5">Présences</p>
               </div>
-              <div className="p-2 rounded-lg bg-muted/50">
-                <p className="text-xl font-bold text-destructive">{presenceStats.absents}</p>
-                <p className="text-[11px] text-muted-foreground">Absences</p>
+              <div className="p-3 rounded-[0.625rem] bg-destructive">
+                <p className="text-2xl font-extrabold text-white">{presenceStats.absents}</p>
+                <p className="text-[11px] text-white/90 mt-0.5">Absences</p>
               </div>
             </div>
             <Progress

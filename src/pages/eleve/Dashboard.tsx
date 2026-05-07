@@ -283,7 +283,15 @@ const EleveDashboard = () => {
     <div className="space-y-6 max-w-2xl mx-auto">
       {showOnboarding && <EleveOnboarding onComplete={dismissOnboarding} />}
 
-      {/* Tab navigation */}
+      {/* Greeting — au-dessus des tabs */}
+      <div>
+        <h1 className="text-2xl font-bold text-foreground">
+          Bienvenue{user?.user_metadata?.prenom ? `, ${user.user_metadata.prenom}` : ""} 👋
+        </h1>
+        <p className="text-muted-foreground mt-1">Ton espace de préparation au TCF IRN</p>
+      </div>
+
+      {/* Tab navigation — texte seul, sans icônes */}
       <div className="flex gap-2 border-b pb-0">
         <button
           onClick={() => setActiveTab("dashboard")}
@@ -293,7 +301,6 @@ const EleveDashboard = () => {
               : "border-transparent text-muted-foreground hover:text-foreground"
           }`}
         >
-          <BookOpen className="inline h-4 w-4 mr-1.5 -mt-0.5" />
           Mon espace
         </button>
         <button
@@ -304,10 +311,8 @@ const EleveDashboard = () => {
               : "border-transparent text-muted-foreground hover:text-foreground"
           }`}
         >
-          <FileText className="inline h-4 w-4 mr-1.5 -mt-0.5" />
           Mes fiches
         </button>
-
       </div>
 
       {activeTab === "fiches" ? (
@@ -315,189 +320,126 @@ const EleveDashboard = () => {
       ) : (
       <>
 
-      <div>
-      <h1 className="text-2xl font-bold text-foreground">
-          Bienvenue{user?.user_metadata?.prenom ? `, ${user.user_metadata.prenom}` : ""} 👋
-        </h1>
-        <p className="text-muted-foreground mt-1">Ton espace de préparation au TCF IRN.</p>
-      </div>
-
-      {/* Conditional test banner — shown only if test not completed */}
+      {/* CARTE PRIORITAIRE — test non fait — icône centrée */}
       {!testLoading && !testCompleted && (
-        <Card className="border-accent/40 bg-accent/5">
-          <CardContent className="pt-6">
-            <div className="flex items-start gap-4">
-              <div className="h-12 w-12 rounded-xl bg-accent/15 flex items-center justify-center shrink-0">
-                <Target className="h-6 w-6 text-accent-foreground" />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-semibold text-foreground text-lg">
-                  Commence par évaluer ton niveau
-                </h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Passe le test de positionnement adaptatif (~20 min · 4 compétences) pour que CAP TCF adapte ton
-                  programme à ton niveau réel.
-                </p>
-                <Button
-                  className="mt-3 gap-2"
-                  onClick={() => navigate("/eleve/test-positionnement")}
-                >
-                  Commencer le test de niveau
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <div
+          className="rounded-[0.625rem] p-6 text-center space-y-4 shadow-md"
+          style={{ background: "linear-gradient(135deg, hsl(215 65% 28%) 0%, hsl(215 65% 38%) 100%)" }}
+        >
+          <h3 className="font-bold text-white text-xl leading-tight">
+            Évalue ton niveau d'abord
+          </h3>
+          <div className="flex justify-center">
+            <Target className="h-16 w-16 text-accent" />
+          </div>
+          <Button
+            className="w-full text-base py-6 bg-accent hover:bg-accent/90 text-accent-foreground shadow-lg shadow-accent/30"
+            onClick={() => navigate("/eleve/test-positionnement")}
+          >
+            Commencer le test
+          </Button>
+        </div>
       )}
 
       {user?.id && <TrajectoireTCF eleveId={user.id} />}
 
-      {uncompletedTests.length > 0 && (
-        <Card className="border-primary/30 bg-primary/5">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <BarChart2 className="h-5 w-5 text-primary" />
-              Tests de bilan (évaluation de séance)
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <p className="text-sm text-muted-foreground mb-3">
-              Ton formateur t'a envoyé un test pour évaluer tes acquis après la séance. Ce test est distinct des exercices.
-            </p>
+      {/* SECTION AUJOURD'HUI — grille 2 colonnes carrées */}
+      {(uncompletedTests.length > 0 || (sessionExercises && sessionExercises.length > 0)) && (
+        <div className="space-y-3">
+          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground px-1">
+            Aujourd'hui
+          </p>
+          <div className="grid grid-cols-2 gap-3">
             {uncompletedTests.map((test: any) => (
               <div
                 key={test.id}
-                className="flex items-center gap-3 p-3 rounded-xl border bg-card hover:bg-muted/30 transition-colors cursor-pointer"
+                className="flex flex-col items-start gap-3 p-4 rounded-[0.625rem] border border-blue-200 bg-blue-50 dark:bg-blue-950/20 hover:bg-blue-100/70 transition-colors cursor-pointer shadow-sm min-h-[110px]"
                 onClick={() => navigate(`/eleve/bilan-test/${test.id}`)}
               >
-                <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                <div className="h-10 w-10 rounded-xl bg-blue-100 flex items-center justify-center">
                   <ClipboardCheck className="h-5 w-5 text-primary" />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-sm truncate">
-                    Test de bilan — {test.session?.titre || "Séance"}
-                  </p>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <Calendar className="h-3 w-3" />
-                    {test.session?.date_seance ? format(new Date(test.session.date_seance), "d MMMM yyyy", { locale: fr }) : ""}
-                    <span>·</span>
-                    <span>{test.nb_questions} questions</span>
-                    <span>·</span>
-                    <span>{(test.competences_couvertes || []).join(", ")}</span>
-                  </div>
-                </div>
-                <Button size="xl" variant="default" className="gap-1 shrink-0">
-                  Commencer le test <ArrowRight className="h-3 w-3" />
-                </Button>
+                <p className="font-semibold text-sm leading-snug">Test de bilan</p>
               </div>
             ))}
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Exercices de séance envoyés par le formateur */}
-      {sessionExercises && sessionExercises.length > 0 && (
-        <Card className="border-green-500/30 bg-green-50/50 dark:bg-green-950/20">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Pencil className="h-5 w-5 text-green-600" />
-              Exercices de séance à faire
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <p className="text-sm text-muted-foreground mb-3">
-              Ton formateur t'a envoyé des exercices à réaliser.
-            </p>
-            {sessionExercises.map((se: any) => (
+            {sessionExercises && sessionExercises.map((se: any) => (
               <div
                 key={se.sessionId}
-                className="flex items-center gap-3 p-3 rounded-xl border bg-card hover:bg-muted/30 transition-colors cursor-pointer"
+                className="flex flex-col items-start gap-3 p-4 rounded-[0.625rem] border border-green-200 bg-green-50 dark:bg-green-950/20 hover:bg-green-100/70 transition-colors cursor-pointer shadow-sm min-h-[110px]"
                 onClick={() => navigate(`/eleve/exercices-seance/${se.sessionId}`)}
               >
-                <div className="h-10 w-10 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center shrink-0">
+                <div className="h-10 w-10 rounded-xl bg-green-100 flex items-center justify-center">
                   <Pencil className="h-5 w-5 text-green-600" />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-sm truncate">{se.titre}</p>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <Calendar className="h-3 w-3" />
-                    {format(new Date(se.date_seance), "d MMMM yyyy", { locale: fr })}
-                    {se.group_nom && <><span>·</span><span>{se.group_nom}</span></>}
-                    <span>·</span>
-                    <span>{se.remaining <= 0 ? "Aucun exercice restant" : se.remaining === 1 ? "1 exercice restant" : `${se.remaining} exercices restants`}</span>
-                  </div>
-                </div>
-                <Button size="xl" variant="default" className="gap-1 shrink-0">
-                  Faire <ArrowRight className="h-3 w-3" />
-                </Button>
+                <p className="font-semibold text-sm leading-snug">Exercices de séance</p>
               </div>
             ))}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
-      {/* Ma progression détaillée */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-primary" />
-            Ma progression détaillée
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {testLoading ? (
-            <div className="space-y-3">
-              <Skeleton className="h-12 w-full" />
-              <Skeleton className="h-12 w-full" />
-              <Skeleton className="h-12 w-full" />
-              <Skeleton className="h-12 w-full" />
-            </div>
-          ) : progressionData ? (
-            <div className="space-y-5">
-              {progressionData.map((comp) => (
-                <CompetencyGauge key={comp.label} {...comp} />
-              ))}
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center py-8 text-center">
-              <Target className="h-10 w-10 text-muted-foreground/40 mb-3" />
-              <p className="text-muted-foreground font-medium">
-                Bienvenue ! Commencez par réaliser votre Test d'entrée pour initialiser votre suivi de progression.
-              </p>
-              <Button
-                className="mt-4 gap-2"
-                variant="outline"
-                onClick={() => navigate("/eleve/test-positionnement")}
-              >
-                Passer le test de niveau
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      {/* SECTION MA PROGRESSION */}
+      <div className="space-y-3">
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground px-1">
+          Ma progression
+        </p>
+        <Card className="shadow-sm">
+          <CardContent className="pt-5">
+            {testLoading ? (
+              <div className="space-y-3">
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+              </div>
+            ) : progressionData ? (
+              <div className="space-y-5">
+                {progressionData.map((comp) => (
+                  <CompetencyGauge key={comp.label} {...comp} />
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-10 text-center">
+                <div className="h-16 w-16 rounded-full bg-green-100 flex items-center justify-center mb-4">
+                  <TrendingUp className="h-8 w-8 text-success" />
+                </div>
+                <p className="font-semibold text-foreground">Ta progression apparaîtra ici</p>
+                <p className="text-sm text-muted-foreground mt-1">Commence par le test de niveau</p>
+                <Button
+                  className="mt-4 gap-2 bg-accent hover:bg-accent/90 text-accent-foreground"
+                  onClick={() => navigate("/eleve/test-positionnement")}
+                >
+                  Passer le test →
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
-      {/* Lien rapide vers les devoirs (la liste se trouve sur la page dédiée) */}
-      <Card
-        className="cursor-pointer hover:bg-muted/30 transition-colors"
-        onClick={() => navigate("/eleve/devoirs")}
-      >
-        <CardContent className="flex items-center justify-between gap-3 py-4">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-              <BookOpen className="h-5 w-5 text-primary" />
+      {/* SECTION MES OUTILS */}
+      <div className="space-y-3">
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground px-1">
+          Mes outils
+        </p>
+        <Card
+          className="cursor-pointer hover:bg-muted/30 transition-colors shadow-sm"
+          onClick={() => navigate("/eleve/devoirs")}
+        >
+          <CardContent className="flex items-center justify-between gap-3 py-4">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                <BookOpen className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="font-semibold text-sm">Mes devoirs</p>
+                <p className="text-xs text-muted-foreground">Retrouve tous tes devoirs assignés</p>
+              </div>
             </div>
-            <div>
-              <p className="font-semibold text-sm">Mes devoirs</p>
-              <p className="text-xs text-muted-foreground">
-                Retrouve tous tes devoirs sur la page dédiée
-              </p>
-            </div>
-          </div>
-          <ArrowRight className="h-4 w-4 text-muted-foreground" />
-        </CardContent>
-      </Card>
+            <ArrowRight className="h-4 w-4 text-muted-foreground" />
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Join group */}
       <JoinGroupCard />

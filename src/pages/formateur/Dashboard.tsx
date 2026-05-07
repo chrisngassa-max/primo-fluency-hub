@@ -798,23 +798,30 @@ ${sessionExercises.map((ex: any, i: number) => `
     progression: "bg-green-50 text-green-700 border-green-200 dark:bg-green-950/20 dark:text-green-400 dark:border-green-800",
   };
 
+  const hasActiveSession = nextSession && nextSession.statut === "en_cours";
+
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">
-            Bonjour, {user?.user_metadata?.prenom || "Formateur"} 👋
+          <h1 className="text-2xl font-bold text-primary">
+            Bonjour, {user?.user_metadata?.prenom || "Formateur"}
           </h1>
-          <p className="text-muted-foreground mt-1">
-            Voici votre cockpit de séance.
+          <p className="text-muted-foreground mt-0.5 text-sm capitalize">
+            {format(new Date(), "EEEE d MMMM", { locale: fr })}
           </p>
         </div>
-        
+        {hasActiveSession && (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-white text-green-700 px-3 py-1.5 text-xs font-semibold border border-green-300 shadow-sm">
+            Séance en cours
+            <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+          </span>
+        )}
       </div>
 
       {/* ─── KPI Cards ─── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="cursor-pointer hover:shadow-md transition-shadow border-l-4 border-l-primary" onClick={() => navigate("/formateur/groupes")}>
+        <Card className="cursor-pointer hover:shadow-md transition-shadow border-l-4 border-l-primary shadow-sm" onClick={() => navigate("/formateur/groupes")}>
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
@@ -825,7 +832,7 @@ ${sessionExercises.map((ex: any, i: number) => `
             </div>
           </CardContent>
         </Card>
-        <Card className="cursor-pointer hover:shadow-md transition-shadow border-l-4 border-l-green-500" onClick={() => navigate("/formateur/groupes?tab=eleves")}>
+        <Card className="cursor-pointer hover:shadow-md transition-shadow border-l-4 border-l-green-500 shadow-sm" onClick={() => navigate("/formateur/groupes?tab=eleves")}>
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
@@ -837,7 +844,7 @@ ${sessionExercises.map((ex: any, i: number) => `
           </CardContent>
         </Card>
         <Link to={nextSession ? `/formateur/seances/${nextSession.id}/pilote` : "/formateur/seances"}>
-          <Card className="cursor-pointer hover:ring-2 hover:ring-primary/30 transition border-l-4 border-l-accent">
+          <Card className="cursor-pointer hover:ring-2 hover:ring-primary/30 transition border-l-4 border-l-accent shadow-sm">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -851,7 +858,7 @@ ${sessionExercises.map((ex: any, i: number) => `
             </CardContent>
           </Card>
         </Link>
-        <Card className="cursor-pointer hover:shadow-md transition-shadow border-l-4 border-l-destructive relative" onClick={() => setActiveTab("alertes")}>
+        <Card className="cursor-pointer hover:shadow-md transition-shadow border-l-4 border-l-destructive shadow-sm relative" onClick={() => setActiveTab("alertes")}>
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
@@ -958,11 +965,15 @@ ${sessionExercises.map((ex: any, i: number) => `
         </CardContent>
       </Card>
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList>
-          <TabsTrigger value="seance-du-jour">🎯 Ma Séance du Jour</TabsTrigger>
-          <TabsTrigger value="groupes">Mes Groupes</TabsTrigger>
-          <TabsTrigger value="alertes" data-value="alertes">
-            Centre d'Alertes
+        <TabsList className="bg-transparent h-auto p-0 border-b border-border w-full justify-start rounded-none overflow-x-auto flex scrollbar-hide">
+          <TabsTrigger value="seance-du-jour" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none font-medium px-4 py-3 shrink-0">
+            Séance du jour
+          </TabsTrigger>
+          <TabsTrigger value="groupes" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none font-medium px-4 py-3 shrink-0">
+            Progression
+          </TabsTrigger>
+          <TabsTrigger value="alertes" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none font-medium px-4 py-3 shrink-0">
+            Alertes
             {alertCount > 0 && <Badge variant="destructive" className="ml-1.5 h-5 px-1.5 text-[10px]">{alertCount}</Badge>}
           </TabsTrigger>
         </TabsList>
@@ -974,59 +985,55 @@ ${sessionExercises.map((ex: any, i: number) => `
               {[1, 2, 3].map((i) => <Skeleton key={i} className="h-20 w-full" />)}
             </div>
           ) : groupsList.length === 0 ? (
-            <Card>
-              <CardContent className="py-12 text-center">
-                <Users className="h-12 w-12 text-muted-foreground/40 mb-3 mx-auto" />
-                <p className="text-muted-foreground font-medium">Vous n'avez pas encore de groupe actif</p>
-                <p className="text-sm text-muted-foreground/70 mt-1">Créez un groupe pour commencer à organiser vos séances.</p>
-                <Button className="mt-4" onClick={() => navigate("/formateur/groupes")}>Créer un groupe</Button>
-              </CardContent>
-            </Card>
+            <div className="flex flex-col items-center justify-center py-14 text-center">
+              <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                <Users className="h-8 w-8 text-primary" />
+              </div>
+              <p className="font-semibold text-foreground">Aucun groupe actif</p>
+              <p className="text-sm text-muted-foreground mt-1">Créez un groupe pour commencer à organiser vos séances.</p>
+              <Button className="mt-4 bg-accent hover:bg-accent/90 text-accent-foreground" onClick={() => navigate("/formateur/groupes")}>Créer un groupe</Button>
+            </div>
           ) : !nextSession ? (
-            <Card>
-              <CardContent className="py-12 text-center">
-                <Calendar className="h-12 w-12 text-muted-foreground/40 mb-3 mx-auto" />
-                <p className="text-muted-foreground font-medium">Aucune séance planifiée</p>
-                <p className="text-sm text-muted-foreground/70 mt-1">Planifiez votre première séance ou importez un programme.</p>
-                <div className="flex gap-2 justify-center mt-4">
-                  <Button onClick={() => navigate("/formateur/seances")}>Planifier une séance</Button>
-                  <Button variant="outline" onClick={() => navigate("/formateur/import-programme")}>Importer un programme</Button>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="flex flex-col items-center justify-center py-14 text-center">
+              <div className="h-16 w-16 rounded-full bg-blue-100 flex items-center justify-center mb-4">
+                <Calendar className="h-8 w-8 text-primary" />
+              </div>
+              <p className="font-semibold text-foreground">Aucune séance planifiée</p>
+              <p className="text-sm text-muted-foreground mt-1">Planifiez votre première séance ou importez un programme.</p>
+              <div className="flex gap-2 justify-center mt-4">
+                <Button className="bg-accent hover:bg-accent/90 text-accent-foreground" onClick={() => navigate("/formateur/seances")}>Planifier une séance</Button>
+                <Button variant="outline" onClick={() => navigate("/formateur/import-programme")}>Importer un programme</Button>
+              </div>
+            </div>
           ) : (
             <div className="space-y-4">
               {/* Session header */}
-              <Card className="border-primary/20 bg-primary/5">
-                <CardContent className="py-5 px-6">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="space-y-1.5">
-                      <h2 className="text-xl font-bold text-foreground">{nextSession.titre}</h2>
-                      <div className="flex items-center gap-3 text-sm text-muted-foreground flex-wrap">
-                        <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{format(new Date(nextSession.date_seance), "EEEE d MMMM · HH:mm", { locale: fr })}</span>
-                        <span className="flex items-center gap-1"><Users className="h-3.5 w-3.5" />{nextSession.group_nom}</span>
-                      </div>
-                      {nextSession.objectifs && <p className="text-sm text-muted-foreground mt-1">{nextSession.objectifs}</p>}
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <Badge variant="outline">{nextSession.niveau_cible}</Badge>
-                      <Badge variant="secondary">{nextSession.duree_minutes} min</Badge>
-                    </div>
+              <div className="rounded-[0.625rem] shadow-md overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(215 65% 22%) 0%, hsl(215 65% 36%) 100%)" }}>
+                <div className="py-5 px-6 space-y-4">
+                  <div className="space-y-1 text-sm text-white/90">
+                    <p>
+                      <span className="font-bold text-white">Séance active :</span>{" "}
+                      {nextSession.titre}
+                    </p>
+                    <p>
+                      <span className="font-bold text-white">Groupe :</span>{" "}
+                      {nextSession.group_nom}
+                    </p>
+                    <p>
+                      <span className="font-bold text-white">Horaire :</span>{" "}
+                      {format(new Date(nextSession.date_seance), "HH:mm")} – {format(new Date(new Date(nextSession.date_seance).getTime() + (nextSession.duree_minutes || 90) * 60000), "HH:mm")}
+                    </p>
                   </div>
-                  <div className="flex items-center gap-3 mt-4 flex-wrap">
-                    <Button size="lg" className="gap-2" onClick={() => navigate(`/formateur/seances/${nextSession.id}/pilote`)} disabled={nextSession.statut === "terminee" || nextSession.statut === "annulee"}>
-                      <Play className="h-4 w-4" /> {nextSession.statut === "terminee" ? "Séance terminée" : nextSession.statut === "annulee" ? "Séance annulée" : "Lancer la séance"}
-                    </Button>
-                    <Button variant="default" className="gap-2 bg-green-600 hover:bg-green-700 text-white" onClick={handleSendToStudents} disabled={sending || sessionExercises.length === 0}>
-                      {sending ? <Clock className="h-4 w-4 animate-spin" /> : <Rocket className="h-4 w-4" />}
-                      Envoyer aux élèves ({sessionExercises.length})
-                    </Button>
-                    <Button variant="outline" className="gap-2" onClick={handlePrintSession} disabled={sessionExercises.length === 0}>
-                      <Printer className="h-4 w-4" /> Imprimer la séance
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+                  <Button
+                    size="lg"
+                    className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-semibold rounded-full"
+                    onClick={() => navigate(`/formateur/seances/${nextSession.id}/pilote`)}
+                    disabled={nextSession.statut === "terminee" || nextSession.statut === "annulee"}
+                  >
+                    {nextSession.statut === "terminee" ? "Séance terminée" : nextSession.statut === "annulee" ? "Séance annulée" : "Piloter"}
+                  </Button>
+                </div>
+              </div>
 
               {/* Micro-compétences ciblées */}
               <MicroCompetencesPanel
@@ -1077,17 +1084,17 @@ ${sessionExercises.map((ex: any, i: number) => `
                       {[1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-28 w-full" />)}
                     </div>
                   ) : sessionExercises.length === 0 ? (
-                    <Card className="border-dashed">
-                      <CardContent className="py-10 text-center">
-                        <BookOpen className="h-10 w-10 text-muted-foreground/40 mx-auto mb-3" />
-                        <p className="text-muted-foreground font-medium">Aucun exercice prévu</p>
-                        <p className="text-sm text-muted-foreground/70 mt-1">Ajoutez des exercices depuis un plan de formation ou le constructeur de séance.</p>
-                        <div className="flex gap-2 justify-center mt-4">
-                          <Button variant="outline" onClick={() => navigate("/formateur/import-programme")}>Importer un programme</Button>
-                          <Button variant="outline" onClick={() => navigate("/formateur/parcours")}>Plans de formation</Button>
-                        </div>
-                      </CardContent>
-                    </Card>
+                    <div className="flex flex-col items-center justify-center py-14 text-center">
+                      <div className="h-16 w-16 rounded-full bg-orange-100 flex items-center justify-center mb-4">
+                        <BookOpen className="h-8 w-8 text-accent" />
+                      </div>
+                      <p className="font-semibold text-foreground">Aucun exercice prévu</p>
+                      <p className="text-sm text-muted-foreground mt-1">Ajoutez des exercices depuis un plan de formation ou le constructeur de séance.</p>
+                      <div className="flex gap-2 justify-center mt-4">
+                        <Button className="bg-accent hover:bg-accent/90 text-accent-foreground" onClick={() => navigate("/formateur/parcours")}>Plans de formation</Button>
+                        <Button variant="outline" onClick={() => navigate("/formateur/import-programme")}>Importer un programme</Button>
+                      </div>
+                    </div>
                   ) : (
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
@@ -1114,18 +1121,28 @@ ${sessionExercises.map((ex: any, i: number) => `
                                     className="mt-1 h-5 w-5"
                                   />
                                   <div className="flex-1 cursor-pointer hover:bg-muted/30 rounded-lg p-1 -m-1 transition-colors" onClick={() => setSelectedExerciseId(ex.sessionExerciceId)}>
-                                    <div className="flex items-center gap-2 flex-wrap">
-                                      <BookOpen className="h-4 w-4 text-primary shrink-0" />
-                                      <span className={`font-semibold text-sm ${tracking.isCompleted ? "line-through text-muted-foreground" : ""}`}>{i + 1}. {ex.titre}</span>
-                                      <Badge className={`text-[10px] ${competenceColors[ex.competence] || ""}`}>{ex.competence}</Badge>
-                                      <Badge variant="outline" className="text-[10px]">{formatLabels[ex.format] || ex.format}</Badge>
-                                      {tracking.isCompleted && <Badge className="text-[10px] bg-green-600 text-white">✓ Fait</Badge>}
-                                      {tracking.isIncludedInTest && <Badge variant="secondary" className="text-[10px]">📝 Test</Badge>}
-                                      {isSent && !tracking.isCompleted && <Badge className="text-[10px] bg-green-600 text-white">✓ Envoyé</Badge>}
-                                      {ex.is_ai_generated && <span className="inline-flex items-center gap-0.5 rounded-full bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-400 px-1.5 py-0.5 text-[10px] font-semibold">✨ IA</span>}
-                                    </div>
-                                    <p className="text-sm text-muted-foreground italic mt-1">{ex.consigne}</p>
-                                    <p className="text-xs text-muted-foreground mt-0.5">{`${ex.contenu?.items?.length || 0} ${(ex.contenu?.items?.length || 0) === 1 ? "item" : "items"}`} · <DifficultyBadge level={ex.difficulte} /></p>
+                                    <div className="flex items-center justify-between gap-3">
+                                    <span className={`font-medium text-sm ${tracking.isCompleted ? "line-through text-muted-foreground" : ""}`}>
+                                      Exercice {i + 1} : {ex.titre}
+                                    </span>
+                                    {(() => {
+                                      const gradients: Record<string, string> = {
+                                        CO: "linear-gradient(135deg, #f093fb 0%, #f5a623 40%, #4facfe 100%)",
+                                        CE: "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
+                                        EE: "linear-gradient(135deg, #c9a96e 0%, #8b6914 100%)",
+                                        EO: "linear-gradient(135deg, #0acffe 0%, #495aff 100%)",
+                                        Structures: "linear-gradient(135deg, #f5576c 0%, #f093fb 100%)",
+                                      };
+                                      return (
+                                        <div
+                                          className="h-9 w-9 rounded-xl flex items-center justify-center text-white text-xs font-bold shrink-0"
+                                          style={{ background: gradients[ex.competence] || gradients["CO"] }}
+                                        >
+                                          {ex.competence === "Structures" ? "ST" : ex.competence}
+                                        </div>
+                                      );
+                                    })()}
+                                  </div>
                                   </div>
                                   <Button
                                     variant="ghost"
@@ -1157,6 +1174,15 @@ ${sessionExercises.map((ex: any, i: number) => `
                           </Card>
                         );
                       })}
+                      {sessionExercises.length > 0 && (
+                        <Button
+                          size="lg"
+                          className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-semibold rounded-full mt-2"
+                          onClick={() => { setSelectedAlertEleve(user!.id); setDailyHomeworkOpen(true); }}
+                        >
+                          Générer des devoirs automatiques
+                        </Button>
+                      )}
                     </div>
                   )}
                 </TabsContent>
@@ -1400,10 +1426,13 @@ ${sessionExercises.map((ex: any, i: number) => `
               {loadingGroupsList ? (
                 <div className="space-y-3">{[1, 2, 3].map((i) => <Skeleton key={i} className="h-16 w-full" />)}</div>
               ) : groupsList.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <Users className="h-12 w-12 text-muted-foreground/40 mb-3" />
-                  <p className="text-muted-foreground font-medium">Aucun groupe actif</p>
-                  <Button className="mt-4" onClick={() => navigate("/formateur/groupes")}>Créer un groupe</Button>
+                <div className="flex flex-col items-center justify-center py-14 text-center">
+                  <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                    <Users className="h-8 w-8 text-primary" />
+                  </div>
+                  <p className="font-semibold text-foreground">Aucun groupe actif</p>
+                  <p className="text-sm text-muted-foreground mt-1">Créez des groupes pour organiser vos élèves.</p>
+                  <Button className="mt-4 bg-accent hover:bg-accent/90 text-accent-foreground" onClick={() => navigate("/formateur/groupes")}>Créer un groupe</Button>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -1451,25 +1480,34 @@ ${sessionExercises.map((ex: any, i: number) => `
               {loadingAllAlerts ? (
                 <div className="space-y-3">{[1, 2, 3].map((i) => <Skeleton key={i} className="h-14 w-full" />)}</div>
               ) : allAlerts.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <Bell className="h-12 w-12 text-muted-foreground/40 mb-3" />
-                  <p className="text-muted-foreground font-medium">Aucune alerte active</p>
-                  <p className="text-sm text-muted-foreground/70 mt-1">Tous vos élèves progressent normalement. 🎉</p>
+                <div className="flex flex-col items-center justify-center py-14 text-center">
+                  <div className="h-16 w-16 rounded-full bg-green-100 flex items-center justify-center mb-4">
+                    <Bell className="h-8 w-8 text-green-600" />
+                  </div>
+                  <p className="font-semibold text-foreground">Aucune alerte active</p>
+                  <p className="text-sm text-muted-foreground mt-1">Tous vos élèves progressent normalement.</p>
                 </div>
               ) : (
                 <div className="space-y-2">
-                  {allAlerts.map((alert: any) => (
-                    <div key={alert.id} className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${alert.is_read ? "bg-muted/20 opacity-70" : "bg-card"}`}>
-                      <div className={`flex items-center justify-center h-9 w-9 rounded-full shrink-0 ${
-                        alert.type === "progression" ? "bg-green-100 dark:bg-green-900/40" :
-                        alert.type === "score_risque" || alert.type === "tendance_baisse" ? "bg-destructive/10" :
-                        "bg-orange-100 dark:bg-orange-900/40"
-                      }`}>
-                        <AlertTriangle className={`h-4 w-4 ${
-                          alert.type === "progression" ? "text-green-700 dark:text-green-400" :
-                          alert.type === "score_risque" || alert.type === "tendance_baisse" ? "text-destructive" :
-                          "text-orange-600 dark:text-orange-400"
-                        }`} />
+                  {allAlerts.map((alert: any) => {
+                    const isRisk = alert.type === "score_risque" || alert.type === "tendance_baisse";
+                    const isPositive = alert.type === "progression";
+                    return (
+                    <div key={alert.id} className={cn(
+                      "flex items-center gap-3 p-3 rounded-[0.625rem] border-l-4 transition-colors",
+                      alert.is_read ? "opacity-70" : "",
+                      isRisk ? "bg-destructive/5 border-l-destructive border border-destructive/20" :
+                      isPositive ? "bg-green-50 border-l-green-500 border border-green-200" :
+                      "bg-orange-50 border-l-orange-400 border border-orange-200"
+                    )}>
+                      <div className={cn(
+                        "flex items-center justify-center h-9 w-9 rounded-full shrink-0",
+                        isRisk ? "bg-destructive/10" : isPositive ? "bg-green-100" : "bg-orange-100"
+                      )}>
+                        <AlertTriangle className={cn(
+                          "h-4 w-4",
+                          isRisk ? "text-destructive" : isPositive ? "text-green-700" : "text-orange-600"
+                        )} />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
@@ -1498,7 +1536,8 @@ ${sessionExercises.map((ex: any, i: number) => `
                         <Button variant="outline" size="sm" className="h-8 text-xs text-destructive" onClick={() => handleResolveAlert(alert.id)}>Résoudre</Button>
                       </div>
                     </div>
-                  ))}
+                  );
+                  })}
                 </div>
               )}
             </CardContent>
