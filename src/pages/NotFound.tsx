@@ -35,7 +35,7 @@ const NotFound = () => {
 
         {/* Text */}
         <div className="space-y-3 max-w-sm">
-          <h1 className="text-2xl font-extrabold text-foreground">Oups ! Page introuvable</h1>
+          <h1 className="text-2xl font-extrabold text-primary">Oups ! Page introuvable</h1>
           <p className="text-muted-foreground leading-relaxed">
             Désolé, la page que vous recherchez n'existe pas ou a été déplacée.
           </p>
