@@ -144,12 +144,12 @@ export default function FormateurDashboardV2() {
             <TabsContent value="seance-du-jour" className="mt-6 space-y-6 outline-none">
               
               {/* Next Session Highlight */}
-              <Card className="border-indigo-100 dark:border-indigo-900/50 shadow-lg shadow-indigo-100/20 dark:shadow-none overflow-hidden relative">
-                <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500"></div>
+              <Card className="border-primary/20 shadow-lg overflow-hidden relative">
+                <div className="absolute top-0 left-0 w-1 h-full bg-primary"></div>
                 <CardHeader className="pb-4">
                   <div className="flex justify-between items-start">
                     <div>
-                      <Badge variant="secondary" className="mb-2 bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300">
+                      <Badge variant="secondary" className="mb-2 bg-primary/10 text-primary">
                         {nextSessionMock.date}
                       </Badge>
                       <CardTitle className="text-xl">{nextSessionMock.titre}</CardTitle>
@@ -157,7 +157,7 @@ export default function FormateurDashboardV2() {
                         <Clock className="h-4 w-4" /> {nextSessionMock.duree} • <Users className="h-4 w-4 ml-2" /> {nextSessionMock.eleves} élèves
                       </CardDescription>
                     </div>
-                    <Button size="sm" className="gap-2 bg-indigo-600 hover:bg-indigo-700">
+                    <Button size="sm" className="gap-2 bg-accent hover:bg-accent/90 text-accent-foreground">
                       <Play className="h-4 w-4" /> Démarrer
                     </Button>
                   </div>
