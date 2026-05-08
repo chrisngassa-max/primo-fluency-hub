@@ -372,8 +372,13 @@ const EleveDashboard = () => {
               </div>
             ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="rounded-xl border border-dashed border-muted-foreground/20 bg-muted/30 px-4 py-3">
+            <p className="text-sm font-medium text-foreground">Aucune séance aujourd'hui</p>
+            <p className="text-xs text-muted-foreground mt-0.5">Ton prochain contenu apparaîtra ici.</p>
+          </div>
+        )}
+      </div>
 
       {/* SECTION MA PROGRESSION */}
       <div className="space-y-3">
