@@ -74,11 +74,11 @@ export default function FormateurDashboardV2() {
       {/* HEADER SECTION */}
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
-            Bonjour, Formateur <Sparkles className="h-6 w-6 text-amber-500" />
+          <h1 className="text-3xl font-bold tracking-tight text-primary flex items-center gap-2">
+            Bonjour, {user?.user_metadata?.prenom ?? 'Formateur'} <Sparkles className="h-6 w-6 text-accent" />
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">
-            Voici un aperçu de vos groupes et de votre prochaine séance.
+          <p className="text-slate-500 dark:text-slate-400 mt-1 capitalize">
+            {new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -86,7 +86,7 @@ export default function FormateurDashboardV2() {
             <Calendar className="h-4 w-4" />
             Mon Planning
           </Button>
-          <Button className="gap-2 bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-200 dark:shadow-none">
+          <Button className="gap-2 bg-accent hover:bg-accent/90 text-accent-foreground shadow-md">
             <Users className="h-4 w-4" />
             Nouveau Groupe
           </Button>
