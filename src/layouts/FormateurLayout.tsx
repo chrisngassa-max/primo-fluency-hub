@@ -45,7 +45,7 @@ const monitorNav = [
   { title: "Rapports IA", url: "/formateur/rapports", icon: FileText },
 ];
 
-const DESIGN_VERSION_LABEL = "Design mis à jour · 08/05 · v6";
+const DESIGN_VERSION_LABEL = "Design mis à jour · 08/05 · v8";
 
 const FormateurLayout = () => {
   const { user, signOut } = useAuth();
