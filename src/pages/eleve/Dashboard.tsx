@@ -285,19 +285,19 @@ const EleveDashboard = () => {
 
       {/* Greeting — au-dessus des tabs */}
       <div>
-        <h1 className="text-2xl font-bold text-foreground">
+        <h1 className="text-[22px] font-extrabold tracking-tight text-[#0b234a]">
           Bienvenue{user?.user_metadata?.prenom ? `, ${user.user_metadata.prenom}` : ""} 👋
         </h1>
-        <p className="text-muted-foreground mt-1">Ton espace de préparation au TCF IRN</p>
+        <p className="text-sm font-medium text-muted-foreground mt-1">Ton espace de préparation au TCF IRN</p>
       </div>
 
       {/* Tab navigation — texte seul, sans icônes */}
-      <div className="flex gap-2 border-b pb-0">
+      <div className="flex gap-2 border-b border-black/5 pb-0">
         <button
           onClick={() => setActiveTab("dashboard")}
-          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+          className={`px-4 py-2 text-[15px] font-bold border-b-[3px] transition-colors ${
             activeTab === "dashboard"
-              ? "border-primary text-primary"
+              ? "border-[#0b234a] text-[#0b234a]"
               : "border-transparent text-muted-foreground hover:text-foreground"
           }`}
         >
@@ -305,9 +305,9 @@ const EleveDashboard = () => {
         </button>
         <button
           onClick={() => setActiveTab("fiches")}
-          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+          className={`px-4 py-2 text-[15px] font-bold border-b-[3px] transition-colors ${
             activeTab === "fiches"
-              ? "border-primary text-primary"
+              ? "border-[#0b234a] text-[#0b234a]"
               : "border-transparent text-muted-foreground hover:text-foreground"
           }`}
         >
@@ -322,22 +322,19 @@ const EleveDashboard = () => {
 
       {/* CARTE PRIORITAIRE — test non fait — icône centrée */}
       {!testLoading && !testCompleted && (
-        <div
-          className="rounded-[0.625rem] p-6 text-center space-y-4 shadow-md"
-          style={{ background: "linear-gradient(135deg, hsl(215 65% 28%) 0%, hsl(215 65% 38%) 100%)" }}
-        >
+        <div className="cap-card cap-primary-gradient rounded-2xl p-6 text-center space-y-5">
           <h3 className="font-bold text-white text-xl leading-tight">
             Évalue ton niveau d'abord
           </h3>
-          <div className="flex justify-center">
-            <Target className="h-16 w-16 text-accent" />
+          <div className="flex justify-center py-2">
+            <Target className="h-20 w-20 text-[#f47b20]" strokeWidth={2} />
           </div>
-          <Button
-            className="w-full text-base py-6 bg-accent hover:bg-accent/90 text-accent-foreground shadow-lg shadow-accent/30"
+          <button
+            className="w-full cap-orange-button py-4 text-base"
             onClick={() => navigate("/eleve/test-positionnement")}
           >
             Commencer le test
-          </Button>
+          </button>
         </div>
       )}
 
@@ -353,25 +350,25 @@ const EleveDashboard = () => {
             {uncompletedTests.map((test: any) => (
               <div
                 key={test.id}
-                className="flex flex-col items-start gap-3 p-4 rounded-[0.625rem] border border-blue-200 bg-blue-50 dark:bg-blue-950/20 hover:bg-blue-100/70 transition-colors cursor-pointer shadow-sm min-h-[110px]"
+                className="flex flex-col items-start gap-3 p-5 rounded-2xl bg-[#e5edff] hover:bg-[#d6e3ff] transition-colors cursor-pointer min-h-[120px]"
                 onClick={() => navigate(`/eleve/bilan-test/${test.id}`)}
               >
-                <div className="h-10 w-10 rounded-xl bg-blue-100 flex items-center justify-center">
-                  <ClipboardCheck className="h-5 w-5 text-primary" />
+                <div className="h-12 w-12 rounded-full bg-white/60 flex items-center justify-center">
+                  <ClipboardCheck className="h-6 w-6 text-[#2b6cb0]" />
                 </div>
-                <p className="font-semibold text-sm leading-snug">Test de bilan</p>
+                <p className="font-bold text-[15px] leading-snug text-[#0b234a]">Test de bilan</p>
               </div>
             ))}
             {sessionExercises && sessionExercises.map((se: any) => (
               <div
                 key={se.sessionId}
-                className="flex flex-col items-start gap-3 p-4 rounded-[0.625rem] border border-green-200 bg-green-50 dark:bg-green-950/20 hover:bg-green-100/70 transition-colors cursor-pointer shadow-sm min-h-[110px]"
+                className="flex flex-col items-start gap-3 p-5 rounded-2xl bg-[#def5e4] hover:bg-[#cbf0d5] transition-colors cursor-pointer min-h-[120px]"
                 onClick={() => navigate(`/eleve/exercices-seance/${se.sessionId}`)}
               >
-                <div className="h-10 w-10 rounded-xl bg-green-100 flex items-center justify-center">
-                  <Pencil className="h-5 w-5 text-green-600" />
+                <div className="h-12 w-12 rounded-full bg-white/60 flex items-center justify-center">
+                  <Pencil className="h-6 w-6 text-[#2f855a]" />
                 </div>
-                <p className="font-semibold text-sm leading-snug">Exercices de séance</p>
+                <p className="font-bold text-[15px] leading-snug text-[#0b234a]">Exercices de séance</p>
               </div>
             ))}
           </div>

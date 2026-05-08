@@ -266,15 +266,11 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
     <div className="space-y-6 max-w-3xl mx-auto">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold flex items-center gap-2">
-          <TrendingUp className="h-6 w-6 text-primary" />
+        <h1 className="text-[28px] font-extrabold tracking-tight text-[#0b234a] flex items-center gap-2">
           {eleveId && studentProfile
             ? `Progression de ${studentProfile.prenom} ${studentProfile.nom}`
-            : "Ma progression"}
+            : "Progression Élève"}
         </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Suivi de ton parcours vers le TCF IRN
-        </p>
       </div>
 
       {/* 60-hour pacing tracker */}
@@ -425,34 +421,37 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
       )}
 
       {/* Hero niveau — badge centré */}
-      <div className="rounded-[0.625rem] p-6 shadow-md text-center space-y-4" style={{ background: "linear-gradient(135deg, hsl(215 65% 22%) 0%, hsl(215 65% 36%) 100%)" }}>
+      <div className="cap-card cap-primary-gradient p-8 text-center space-y-6">
         <div className="flex justify-center">
           <div className={cn(
-            "h-20 w-20 rounded-full flex items-center justify-center text-3xl font-extrabold shadow-lg border-4 border-white/30",
-            niveauActuel === "Non évalué" ? "bg-white/20 text-white/60" : "bg-white text-primary"
+            "h-24 w-24 rounded-full flex items-center justify-center text-[40px] font-extrabold bg-white text-[#0b234a] shadow-md border-4 border-white",
+            niveauActuel === "Non évalué" && "bg-white/20 text-white/60 border-white/30"
           )}>
             {niveauActuel === "Non évalué" ? "?" : niveauActuel}
           </div>
         </div>
         {niveauActuel === "Non évalué" ? (
-          <div className="space-y-3">
+          <div className="space-y-4">
             <p className="text-sm text-white/70">Passe le test d'entrée pour évaluer ton niveau.</p>
-            <Button
-              className="bg-accent hover:bg-accent/90 text-accent-foreground gap-2"
+            <button
+              className="cap-orange-button px-6 py-3 w-full"
               onClick={() => navigate("/eleve/test-positionnement")}
             >
               Passer le test de niveau
-            </Button>
+            </button>
           </div>
         ) : (
-          <div className="space-y-2">
-            <div className="h-3 w-full rounded-full bg-white/20 overflow-hidden">
-              <div
-                className="h-full rounded-full bg-accent transition-all duration-500"
-                style={{ width: `${globalProgress}%` }}
-              />
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="h-3.5 w-full rounded-full bg-white/20 overflow-hidden shadow-inner">
+                <div
+                  className="h-full rounded-full bg-[#f47b20] transition-all duration-500"
+                  style={{ width: `${globalProgress}%` }}
+                />
+              </div>
+              <span className="text-white font-bold tracking-widest">{niveauTarget}</span>
             </div>
-            <p className="text-sm text-white/80 font-medium">
+            <p className="text-[15px] text-white/90 font-medium">
               Prochain niveau : <strong>{niveauTarget}</strong>
             </p>
           </div>
@@ -461,11 +460,12 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
 
       {/* Attendance stats */}
       {presenceStats && presenceStats.total > 0 && (
-        <Card>
-          <CardContent className="pt-6 pb-4">
-            <div className="flex items-center gap-2 mb-3">
-              <CalendarCheck className="h-5 w-5 text-primary" />
-              <span className="font-semibold">Assiduité</span>
+        <div className="space-y-3">
+          <p className="text-[13px] font-semibold text-muted-foreground uppercase tracking-widest px-1">
+            Assiduité
+          </p>
+          <Card className="border-none shadow-none bg-transparent">
+            <CardContent className="p-0">
               <Badge
                 variant={presenceStats.rate! >= 80 ? "default" : presenceStats.rate! >= 60 ? "outline" : "destructive"}
                 className={cn(
@@ -499,14 +499,12 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
       )}
 
       {/* Competency radar + badges */}
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-primary" />
-            Compétences TCF
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+      <div className="space-y-3">
+        <p className="text-[13px] font-semibold text-muted-foreground uppercase tracking-widest px-1">
+          Mes Compétences
+        </p>
+        <Card className="rounded-2xl shadow-sm border-black/5">
+          <CardContent className="pt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
             {/* Radar chart or empty message */}
             {hasRadarData ? (
@@ -626,11 +624,12 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
       })()}
 
       {/* History table */}
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-lg">Historique des exercices</CardTitle>
-        </CardHeader>
-        <CardContent>
+      <div className="space-y-3">
+        <p className="text-[13px] font-semibold text-muted-foreground uppercase tracking-widest px-1">
+          Historique
+        </p>
+        <Card className="rounded-2xl shadow-sm border-black/5">
+          <CardContent className="pt-4 p-2 sm:p-6">
           {(!resultats || resultats.length === 0) ? (
             <div className="text-center py-8">
               <BookOpen className="h-10 w-10 mx-auto text-muted-foreground/40 mb-2" />

@@ -109,26 +109,23 @@ const EleveProfil = () => {
     .filter(Boolean).join(" ") || "—";
 
   return (
-    <div className="max-w-lg mx-auto space-y-5">
-      <h1 className="text-2xl font-bold text-foreground">Profil Élève</h1>
+    <div className="max-w-lg mx-auto space-y-6">
+      <h1 className="text-[28px] font-extrabold tracking-tight text-[#0b234a]">Profil Élève</h1>
 
       {/* Hero */}
-      <div
-        className="rounded-[0.625rem] p-6 flex flex-col items-center gap-2 shadow-sm"
-        style={{ background: "hsl(220 35% 75%)" }}
-      >
-        <div className="h-16 w-16 rounded-full bg-white border-2 border-primary/40 flex items-center justify-center text-xl font-extrabold text-primary shrink-0">
+      <div className="rounded-2xl p-6 flex flex-col items-center gap-2 shadow-sm bg-[#b4c5e4]">
+        <div className="h-[88px] w-[88px] rounded-full bg-transparent border-2 border-[#0b234a]/30 flex items-center justify-center text-[32px] font-extrabold text-[#0b234a] shrink-0 mb-1">
           {initiales}
         </div>
-        <p className="text-lg font-bold text-foreground">{fullName}</p>
-        <div className="flex items-center gap-2 flex-wrap justify-center">
+        <p className="text-[22px] font-extrabold text-[#0b234a] tracking-tight">{fullName}</p>
+        <div className="flex items-center gap-2 flex-wrap justify-center mt-1">
           {profilEleve?.niveau_actuel && (
-            <span className="text-xs font-semibold bg-white/80 text-foreground px-3 py-0.5 rounded-full border border-border">
+            <span className="text-xs font-bold bg-white/50 text-[#0b234a] px-3 py-1 rounded-md">
               {profilEleve.niveau_actuel}
             </span>
           )}
           {groupInfo && (
-            <span className="text-xs font-medium bg-white/80 text-foreground px-3 py-0.5 rounded-full border border-border">
+            <span className="text-xs font-bold bg-white/50 text-[#0b234a] px-3 py-1 rounded-md">
               {groupInfo.nom}
             </span>
           )}
@@ -227,14 +224,13 @@ const EleveProfil = () => {
         </div>
       </div>
 
-      <Button
+      <button
         onClick={handleSave}
         disabled={saving}
-        className="w-full text-base py-6 bg-accent hover:bg-accent/90 text-accent-foreground"
-        size="lg"
+        className="w-full cap-orange-button py-4 text-[17px]"
       >
         {saving ? "Enregistrement…" : "Enregistrer les modifications"}
-      </Button>
+      </button>
     </div>
   );
 };
