@@ -4,13 +4,13 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Eye, EyeOff, GraduationCap, Users } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, Users } from "lucide-react";
 import { translateAuthError } from "@/lib/authErrors";
-import { Badge } from "@/components/ui/badge";
+import { CapPublicHeader } from "@/components/CapBrand";
+import AppFooter from "@/components/AppFooter";
 
 const LoginEleve = () => {
   const { signIn, signUp, session, role, loading, user } = useAuth();
@@ -20,7 +20,6 @@ const LoginEleve = () => {
   const [busy, setBusy] = useState(false);
   const autoJoinAttempted = useRef(false);
 
-  // Persist invite code across email confirmation redirect
   useEffect(() => {
     if (inviteParam) {
       sessionStorage.setItem("tcf-invite-code", inviteParam);
@@ -42,7 +41,6 @@ const LoginEleve = () => {
   const [forgotEmail, setForgotEmail] = useState("");
   const [showForgot, setShowForgot] = useState(false);
 
-  // Auto-join group when user is logged in and has an invite code
   useEffect(() => {
     if (!session || !user || !inviteCode || autoJoinAttempted.current) return;
     autoJoinAttempted.current = true;
@@ -102,7 +100,6 @@ const LoginEleve = () => {
       toast.error("Erreur d'inscription", { description: translateAuthError(error.message) });
     } else {
       toast.success("Inscription réussie !", { description: "Vous pouvez maintenant vous connecter." });
-      // Notify all formateurs about new student registration
       try {
         const { data: formateurs } = await supabase
           .from("user_roles")
@@ -110,14 +107,12 @@ const LoginEleve = () => {
           .eq("role", "formateur");
         if (formateurs) {
           for (const f of formateurs) {
-            // In-app notification
             await supabase.from("notifications").insert({
               user_id: f.user_id,
               titre: "Nouvel élève inscrit",
               message: `${signupPrenom} ${signupNom} (${signupEmail}) vient de s'inscrire et attend ta validation.`,
               link: "/formateur/demandes",
             });
-            // Email notification
             const { data: profile } = await supabase
               .from("profiles")
               .select("email")
@@ -170,130 +165,127 @@ const LoginEleve = () => {
         minLength={minLength}
         autoComplete="new-password"
         required
-        className="pr-10"
+        className="h-12 pr-10"
       />
-      <Button
+      <button
         type="button"
-        variant="ghost"
-        size="icon"
-        className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
         onClick={onToggle}
         tabIndex={-1}
+        className="absolute right-0 top-0 flex h-full items-center px-3 text-[#0b234a]/60 hover:text-[#0b234a]"
       >
-        {show ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
-      </Button>
+        {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+      </button>
     </div>
   );
 
-  if (showForgot) {
-    return (
-      <div className="min-h-[100dvh] flex items-center justify-center p-4 overflow-y-auto" style={{ background: "hsl(40 30% 93%)" }}>
-        <Card className="w-full max-w-md shadow-md">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Mot de passe oublié</CardTitle>
-            <CardDescription>Entrez votre email pour recevoir un lien.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleForgot} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="forgot-email">Adresse email</Label>
-                <Input id="forgot-email" type="email" placeholder="votre@email.com" value={forgotEmail} onChange={(e) => setForgotEmail(e.target.value)} required />
-              </div>
-              <Button type="submit" className="w-full" disabled={busy}>{busy ? "Envoi…" : "Envoyer le lien"}</Button>
-              <Button type="button" variant="ghost" className="w-full" onClick={() => setShowForgot(false)}>Retour</Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  const orangeBtn =
+    "h-14 w-full rounded-lg bg-[#f47b20] text-base font-bold text-white transition hover:bg-[#e36e15] disabled:opacity-60";
 
   return (
-    <div className="min-h-[100dvh] flex flex-col items-center justify-start sm:justify-center p-4 pt-8 sm:pt-4 overflow-y-auto" style={{ background: "hsl(40 30% 93%)" }}>
-      <div className="w-full max-w-md space-y-6">
-        <Button variant="ghost" onClick={() => navigate("/")} className="gap-2 text-foreground/60 hover:text-foreground">
-          <ArrowLeft className="h-4 w-4" /> Retour
-        </Button>
+    <div className="cap-screen flex min-h-[100dvh] flex-col">
+      <CapPublicHeader showMenu={false} />
 
-        <div className="text-center space-y-3 py-4">
-          <div className="flex items-center justify-center gap-3">
-            <div className="h-16 w-16 rounded-2xl bg-primary flex items-center justify-center shadow-md">
-              <GraduationCap className="h-9 w-9 text-primary-foreground" />
+      <main className="flex flex-1 items-start justify-center px-4 py-8 sm:items-center">
+        <div className="w-full max-w-md space-y-5">
+          <button
+            onClick={() => navigate("/")}
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#0b234a]/70 hover:text-[#0b234a]"
+          >
+            <ArrowLeft className="h-4 w-4" /> Retour à l'accueil
+          </button>
+
+          {inviteCode && (
+            <div className="flex items-center gap-3 rounded-lg border border-[#f47b20]/30 bg-[#f47b20]/10 p-3">
+              <Users className="h-5 w-5 shrink-0 text-[#f47b20]" />
+              <p className="text-sm text-[#0b234a]">
+                Inscrivez-vous ou connectez-vous pour rejoindre automatiquement le groupe de votre formateur.
+              </p>
             </div>
-            <span className="text-4xl font-extrabold tracking-tight text-foreground">
-              CAP <span className="text-accent">TCF</span>
-            </span>
+          )}
+
+          <div className="rounded-2xl border border-black/5 bg-white p-6 shadow-[0_8px_30px_rgba(15,23,42,0.08)] sm:p-8">
+            {showForgot ? (
+              <form onSubmit={handleForgot} className="space-y-5">
+                <div className="text-center">
+                  <h1 className="text-2xl font-black text-[#0b234a]">Mot de passe oublié</h1>
+                  <p className="mt-1 text-sm text-[#0b234a]/70">Entrez votre email pour recevoir un lien.</p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="forgot-email" className="text-[#0b234a]">Adresse email</Label>
+                  <Input id="forgot-email" type="email" placeholder="votre@email.com" value={forgotEmail} onChange={(e) => setForgotEmail(e.target.value)} required className="h-12" />
+                </div>
+                <button type="submit" disabled={busy} className={orangeBtn}>
+                  {busy ? "Envoi…" : "Envoyer le lien"}
+                </button>
+                <button type="button" onClick={() => setShowForgot(false)} className="w-full text-sm font-semibold text-[#0b234a]/70 hover:text-[#0b234a]">
+                  Retour
+                </button>
+              </form>
+            ) : (
+              <>
+                <div className="mb-6 text-center">
+                  <h1 className="text-2xl font-black text-[#0b234a] sm:text-3xl">Espace élève</h1>
+                  <p className="mt-1 text-sm text-[#0b234a]/70">Connecte-toi pour accéder à tes devoirs et ta progression.</p>
+                </div>
+
+                <Tabs defaultValue="login">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="login">Connexion</TabsTrigger>
+                    <TabsTrigger value="signup">Inscription</TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="login">
+                    <form onSubmit={handleLogin} className="mt-5 space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="eleve-login-email" className="text-[#0b234a]">Adresse email</Label>
+                        <Input id="eleve-login-email" type="email" placeholder="votre@email.com" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} required className="h-12" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="eleve-login-password" className="text-[#0b234a]">Mot de passe</Label>
+                        {renderPasswordInput("eleve-login-password", loginPassword, setLoginPassword, showLoginPw, () => setShowLoginPw(!showLoginPw))}
+                      </div>
+                      <button type="submit" disabled={busy} className={orangeBtn}>
+                        {busy ? "Connexion…" : "Se connecter"}
+                      </button>
+                      <button type="button" onClick={() => setShowForgot(true)} className="block w-full text-sm font-semibold text-[#0b234a]/70 hover:text-[#0b234a]">
+                        Mot de passe oublié ?
+                      </button>
+                    </form>
+                  </TabsContent>
+
+                  <TabsContent value="signup">
+                    <form onSubmit={handleSignup} className="mt-5 space-y-4">
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-2">
+                          <Label htmlFor="eleve-signup-prenom" className="text-[#0b234a]">Prénom</Label>
+                          <Input id="eleve-signup-prenom" placeholder="Prénom" value={signupPrenom} onChange={(e) => setSignupPrenom(e.target.value)} required className="h-12" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="eleve-signup-nom" className="text-[#0b234a]">Nom</Label>
+                          <Input id="eleve-signup-nom" placeholder="Nom" value={signupNom} onChange={(e) => setSignupNom(e.target.value)} required className="h-12" />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="eleve-signup-email" className="text-[#0b234a]">Adresse email</Label>
+                        <Input id="eleve-signup-email" type="email" placeholder="votre@email.com" value={signupEmail} onChange={(e) => setSignupEmail(e.target.value)} required className="h-12" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="eleve-signup-password" className="text-[#0b234a]">Mot de passe</Label>
+                        {renderPasswordInput("eleve-signup-password", signupPassword, setSignupPassword, showSignupPw, () => setShowSignupPw(!showSignupPw), 6)}
+                      </div>
+                      <button type="submit" disabled={busy} className={orangeBtn}>
+                        {busy ? "Inscription…" : "S'inscrire"}
+                      </button>
+                    </form>
+                  </TabsContent>
+                </Tabs>
+              </>
+            )}
           </div>
         </div>
+      </main>
 
-        {inviteCode && (
-          <div className="flex items-center gap-3 rounded-lg border border-primary/30 bg-primary/5 p-3">
-            <Users className="h-5 w-5 text-primary shrink-0" />
-            <p className="text-sm text-foreground">
-              Inscrivez-vous ou connectez-vous pour rejoindre automatiquement le groupe de votre formateur.
-            </p>
-          </div>
-        )}
-
-        <Card className="shadow-md">
-          <CardHeader className="text-center pb-2">
-            <CardTitle className="text-2xl font-bold">Connexion élève</CardTitle>
-          </CardHeader>
-          <CardContent className="pt-2">
-            <Tabs defaultValue="login">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="login">Connexion</TabsTrigger>
-                <TabsTrigger value="signup">Inscription</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="login">
-                <form onSubmit={handleLogin} className="space-y-4 mt-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="eleve-login-email">Adresse email</Label>
-                    <Input id="eleve-login-email" type="email" placeholder="votre@email.com" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="eleve-login-password">Mot de passe</Label>
-                    {renderPasswordInput("eleve-login-password", loginPassword, setLoginPassword, showLoginPw, () => setShowLoginPw(!showLoginPw))}
-                  </div>
-                  <Button type="submit" className="w-full text-lg py-6 bg-accent hover:bg-accent/90 text-accent-foreground" disabled={busy}>
-                    {busy ? "Connexion…" : "Se connecter"}
-                  </Button>
-                  <Button type="button" variant="link" className="w-full text-sm" onClick={() => setShowForgot(true)}>
-                    Mot de passe oublié ?
-                  </Button>
-                </form>
-              </TabsContent>
-
-              <TabsContent value="signup">
-                <form onSubmit={handleSignup} className="space-y-4 mt-4">
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-2">
-                      <Label htmlFor="eleve-signup-prenom">Prénom</Label>
-                      <Input id="eleve-signup-prenom" placeholder="Prénom" value={signupPrenom} onChange={(e) => setSignupPrenom(e.target.value)} required />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="eleve-signup-nom">Nom</Label>
-                      <Input id="eleve-signup-nom" placeholder="Nom" value={signupNom} onChange={(e) => setSignupNom(e.target.value)} required />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="eleve-signup-email">Adresse email</Label>
-                    <Input id="eleve-signup-email" type="email" placeholder="votre@email.com" value={signupEmail} onChange={(e) => setSignupEmail(e.target.value)} required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="eleve-signup-password">Mot de passe</Label>
-                    {renderPasswordInput("eleve-signup-password", signupPassword, setSignupPassword, showSignupPw, () => setShowSignupPw(!showSignupPw), 6)}
-                  </div>
-                  <Button type="submit" className="w-full text-lg py-6 bg-accent hover:bg-accent/90 text-accent-foreground" disabled={busy}>
-                    {busy ? "Inscription…" : "S'inscrire"}
-                  </Button>
-                </form>
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
-      </div>
+      <AppFooter />
     </div>
   );
 };

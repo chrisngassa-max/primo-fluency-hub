@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useNavigate, Navigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { toast } from "sonner";
-import { ArrowLeft, GraduationCap } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { translateAuthError } from "@/lib/authErrors";
+import { CapPublicHeader } from "@/components/CapBrand";
+import AppFooter from "@/components/AppFooter";
 
 const LoginFormateur = () => {
   const { session, role, loading, signIn } = useAuth();
@@ -33,32 +33,29 @@ const LoginFormateur = () => {
   };
 
   return (
-    <div className="min-h-[100dvh] flex flex-col items-center justify-start sm:justify-center p-4 pt-8 sm:pt-4 overflow-y-auto" style={{ background: "linear-gradient(160deg, hsl(215 40% 88%) 0%, hsl(40 30% 93%) 100%)" }}>
-      <div className="w-full max-w-md space-y-6">
-        <Button variant="ghost" onClick={() => navigate("/")} className="gap-2 text-foreground/60 hover:text-foreground">
-          <ArrowLeft className="h-4 w-4" /> Retour à l'accueil
-        </Button>
+    <div className="cap-screen flex min-h-[100dvh] flex-col">
+      <CapPublicHeader showMenu={false} />
 
-        <div className="text-center py-4">
-          <div className="flex items-center justify-center gap-3">
-            <div className="h-16 w-16 rounded-2xl bg-primary flex items-center justify-center shadow-md">
-              <GraduationCap className="h-9 w-9 text-primary-foreground" />
+      <main className="flex flex-1 items-start justify-center px-4 py-8 sm:items-center">
+        <div className="w-full max-w-md space-y-5">
+          <button
+            onClick={() => navigate("/")}
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#0b234a]/70 hover:text-[#0b234a]"
+          >
+            <ArrowLeft className="h-4 w-4" /> Retour à l'accueil
+          </button>
+
+          <div className="rounded-2xl border border-black/5 bg-white p-6 shadow-[0_8px_30px_rgba(15,23,42,0.08)] sm:p-8">
+            <div className="mb-6 text-center">
+              <h1 className="text-2xl font-black text-[#0b234a] sm:text-3xl">Espace formateur</h1>
+              <p className="mt-1 text-sm text-[#0b234a]/70">
+                Pilotez vos groupes et suivez la progression de vos élèves.
+              </p>
             </div>
-            <span className="text-4xl font-extrabold tracking-tight text-foreground">
-              CAP <span className="text-accent">TCF</span>
-            </span>
-          </div>
-        </div>
 
-        <Card className="shadow-md">
-          <CardHeader className="text-center pb-2">
-            <CardTitle className="text-2xl font-bold">Espace Formateur</CardTitle>
-            <CardDescription className="text-sm">Pilotez vos groupes et suivez la progression de vos élèves</CardDescription>
-          </CardHeader>
-          <CardContent>
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="form-login-email">Email</Label>
+                <Label htmlFor="form-login-email" className="text-[#0b234a]">Email</Label>
                 <Input
                   id="form-login-email"
                   type="email"
@@ -67,34 +64,44 @@ const LoginFormateur = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   autoComplete="email"
+                  className="h-12"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="form-login-password">Mot de passe</Label>
+                <Label htmlFor="form-login-password" className="text-[#0b234a]">Mot de passe</Label>
                 <Input
                   id="form-login-password"
                   type="password"
+                  placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   autoComplete="current-password"
+                  className="h-12"
                 />
               </div>
-              <Button type="submit" className="w-full text-lg py-6" disabled={busy}>
+              <button
+                type="submit"
+                disabled={busy}
+                className="h-14 w-full rounded-lg bg-[#0b234a] text-base font-bold text-white transition hover:bg-[#0b234a]/90 disabled:opacity-60"
+              >
                 {busy ? "Connexion…" : "Se connecter"}
-              </Button>
+              </button>
               <div className="text-center">
-                <Link to="/reset-password" className="text-sm text-primary hover:underline">
+                <Link to="/reset-password" className="text-sm font-semibold text-[#0b234a]/70 hover:text-[#0b234a]">
                   Mot de passe oublié ?
                 </Link>
               </div>
             </form>
-            <p className="text-xs text-muted-foreground text-center mt-4">
+
+            <p className="mt-6 text-center text-xs text-[#0b234a]/60">
               Pas encore de compte ? Contactez votre administrateur.
             </p>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </div>
+      </main>
+
+      <AppFooter />
     </div>
   );
 };
