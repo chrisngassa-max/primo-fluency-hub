@@ -4,7 +4,7 @@ import { CapLogo } from "@/components/CapBrand";
 
 const AppFooter = React.forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>(
   (props, ref) => (
-    <footer ref={ref} className="mt-auto border-t border-white/10 bg-[#061b3b]" {...props}>
+    <footer ref={ref} className="mt-auto border-t border-white/10 bg-primary" {...props}>
       <div className="mx-auto max-w-4xl space-y-7 px-6 py-8">
         <CapLogo
           className="justify-center"
