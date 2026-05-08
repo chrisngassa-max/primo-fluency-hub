@@ -119,7 +119,7 @@ export function FormateurSidebar({ onNavigate }: FormateurSidebarProps) {
           { label: "Analyses", items: analysesNav },
         ].map(({ label, items }) => (
           <SidebarGroup key={label}>
-            <SidebarGroupLabel className="text-sidebar-primary/75 uppercase text-[10px] tracking-widest px-3 pt-4 pb-1">
+            <SidebarGroupLabel className="text-sidebar-foreground/60 text-xs font-medium px-3 pt-5 pb-2">
               {label}
             </SidebarGroupLabel>
             <SidebarGroupContent>
@@ -130,8 +130,8 @@ export function FormateurSidebar({ onNavigate }: FormateurSidebarProps) {
                       <NavLink
                         to={item.url}
                         end={item.url === "/formateur"}
-                        className="relative flex items-center gap-2.5 px-3 py-2 rounded-md text-sidebar-foreground/85 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground transition-colors"
-                        activeClassName="bg-sidebar-primary text-sidebar-primary-foreground font-semibold shadow-md before:absolute before:left-0 before:top-1 before:bottom-1 before:w-0.5 before:rounded-full before:bg-accent"
+                        className="flex items-center gap-2.5 px-3 py-2 rounded-md text-sidebar-foreground/85 hover:bg-sidebar-accent/40 hover:text-sidebar-accent-foreground transition-colors"
+                        activeClassName="bg-sidebar-accent/70 text-sidebar-accent-foreground font-semibold"
                         onClick={onNavigate}
                       >
                         <item.icon className="h-[18px] w-[18px] shrink-0" />
