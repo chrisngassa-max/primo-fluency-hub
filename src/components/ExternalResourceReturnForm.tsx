@@ -122,7 +122,7 @@ export function ExternalResourceReturnForm({
     };
     window.addEventListener("paste", onPaste);
     return () => window.removeEventListener("paste", onPaste);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [resourceId]);
 
   useEffect(() => {
@@ -147,7 +147,7 @@ export function ExternalResourceReturnForm({
       el.removeEventListener("dragleave", onDragLeave);
       el.removeEventListener("drop", onDrop);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [resourceId]);
 
   const removeScreenshot = async () => {

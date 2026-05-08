@@ -53,7 +53,7 @@ serve(async (req) => {
 
     // ─── Fetch URL and detect media ───
     let resolvedSource = sourceText || "";
-    let detectedMedia: { type: "image" | "audio" | "video"; url: string; alt?: string }[] = [];
+    const detectedMedia: { type: "image" | "audio" | "video"; url: string; alt?: string }[] = [];
 
     if (sourceUrl && !sourceText) {
       try {

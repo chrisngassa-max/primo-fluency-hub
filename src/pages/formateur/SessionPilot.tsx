@@ -429,7 +429,7 @@ const SessionPilot = () => {
   }, [session, id, sessionExercices, isLoading, reconciled, reconciling, qc]);
 
   // Trigger reconciliation when data is ready
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   React.useEffect(() => {
     if (session && !isLoading && (sessionExercices ?? []).length === 0 && !reconciled) {
       reconcile();
@@ -605,7 +605,7 @@ const SessionPilot = () => {
       const perComp = Math.max(1, Math.floor(count / competences.length));
       const remainder = count - perComp * competences.length;
 
-      let allInserted: any[] = [];
+      const allInserted: any[] = [];
       for (let ci = 0; ci < competences.length; ci++) {
         const comp = competences[ci];
         const compCount = perComp + (ci < remainder ? 1 : 0);

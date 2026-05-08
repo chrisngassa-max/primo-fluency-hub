@@ -52,7 +52,7 @@ Deno.serve(async (req) => {
       console.error("Google TTS error:", ttsResponse.status, errBody);
       // Return full Google error details to help debug
       let parsedErr: any = {};
-      try { parsedErr = JSON.parse(errBody); } catch {}
+      try { parsedErr = JSON.parse(errBody); } catch (e) { console.error(e); }
       const googleMsg = parsedErr?.error?.message || errBody;
       const googleStatus = parsedErr?.error?.status || "UNKNOWN";
       return new Response(

@@ -171,7 +171,7 @@ const PreflightExercises = ({ sessionId, session, exercises, formateurId, parcou
 
       const perComp = Math.max(1, Math.floor(batchSize / competences.length));
       const remainder = batchSize - perComp * competences.length;
-      let allInserted: any[] = [];
+      const allInserted: any[] = [];
 
       for (let ci = 0; ci < competences.length; ci++) {
         const comp = competences[ci];

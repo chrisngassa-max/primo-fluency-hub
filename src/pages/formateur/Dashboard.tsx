@@ -322,8 +322,8 @@ const FormateurDashboard = () => {
       const groupIds = groups.map((g) => g.id);
       const { data: members } = await supabase.from("group_members").select("eleve_id, group_id").in("group_id", groupIds);
       const eleveIds = [...new Set((members ?? []).map((m) => m.eleve_id))];
-      let profilesMap: Record<string, { nom: string; prenom: string }> = {};
-      let profilsMap: Record<string, number> = {};
+      const profilesMap: Record<string, { nom: string; prenom: string }> = {};
+      const profilsMap: Record<string, number> = {};
       if (eleveIds.length > 0) {
         const [{ data: profiles }, { data: profils }] = await Promise.all([
           supabase.from("profiles").select("id, nom, prenom").in("id", eleveIds),

@@ -83,7 +83,9 @@ export default function VigilanceDrawer({
         });
         return map;
       }
-    } catch {}
+    } catch (e) {
+      console.error(e);
+    }
     return {};
   };
 

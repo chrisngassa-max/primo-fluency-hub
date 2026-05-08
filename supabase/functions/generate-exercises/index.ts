@@ -48,8 +48,8 @@ serve(async (req) => {
     const TOP_N = 10;
     let referencesUtilisees: any[] = [];
     let referenceScores: any[] = [];
-    let selectionMetadata: any = { competence_cible: competence || null, niveau_cible: niveauVise || null, theme_normalise: pointName || null, nb_candidates: 0, nb_retenues: 0 };
-    let pedagogicalWarnings: string[] = [];
+    const selectionMetadata: any = { competence_cible: competence || null, niveau_cible: niveauVise || null, theme_normalise: pointName || null, nb_candidates: 0, nb_retenues: 0 };
+    const pedagogicalWarnings: string[] = [];
     let referencesPrompt = "";
 
     const levelIndex = (l: string | null) => l ? LEVEL_ORDER.indexOf(l) : -1;
@@ -106,7 +106,9 @@ serve(async (req) => {
         }
       }
 
-      let { data: activities, error: actError } = await query;
+      const queryRes = await query;
+      let activities = queryRes.data;
+      const actError = queryRes.error;
       if (actError) {
         console.error("Error loading pedagogical_activities:", actError);
       }
@@ -283,7 +285,7 @@ ${refTexts.join("\n")}
 
     // === ENRICHISSEMENT : Récupérer les données élèves si groupId fourni ===
     let studentContextPrompt = "";
-    let groupReviewDirectives: any[] = [];
+    const groupReviewDirectives: any[] = [];
     if (groupId) {
       try {
         // 1. Membres du groupe

@@ -107,7 +107,7 @@ serve(async (req) => {
     (studentOutcomes ?? []).forEach((outcome: any) => outcomeByEleve.set(outcome.eleve_id, outcome));
 
     // 6. Fetch bilan test results if targeting weaknesses
-    let bilanWeaknesses: Record<string, Record<string, number>> = {};
+    const bilanWeaknesses: Record<string, Record<string, number>> = {};
     if (targetWeaknesses) {
       const { data: bilanTests } = await supabase
         .from("bilan_tests")

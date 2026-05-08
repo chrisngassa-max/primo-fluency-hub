@@ -274,7 +274,7 @@ const DevoirPassation = () => {
       const { data: profile } = await supabase.from("profiles").select("nom, prenom").eq("id", user.id).single();
       const eleveNom = profile ? `${profile.prenom} ${profile.nom}` : "Élève";
       let sessionTitle = "Séance";
-      let sessionId: string | null = devoir.session_id;
+      const sessionId: string | null = devoir.session_id;
       if (sessionId) {
         const { data: sess } = await supabase.from("sessions").select("titre").eq("id", sessionId).single();
         if (sess) sessionTitle = sess.titre;
@@ -366,7 +366,7 @@ const DevoirPassation = () => {
       const correction = serverResult.correction_detaillee as any[];
       const newStatut = serverResult.devoir_statut as string;
 
-      try { await updateProfilEleve(user.id, ex?.niveau_vise || "A1"); } catch {}
+      try { await updateProfilEleve(user.id, ex?.niveau_vise || "A1"); } catch (e) { console.error(e); }
 
       const oralPriorite = (correction[0] as any)?.priorite_remediation;
       if (oralPriorite) {
@@ -418,7 +418,7 @@ const DevoirPassation = () => {
         });
       }
 
-      try { await updateProfilEleve(user.id, ex?.niveau_vise || "A1"); } catch {}
+      try { await updateProfilEleve(user.id, ex?.niveau_vise || "A1"); } catch (e) { console.error(e); }
 
       const qcmPriorite = (correction[correction.length - 1] as any)?.priorite_remediation;
       if (qcmPriorite) {
