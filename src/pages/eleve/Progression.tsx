@@ -684,7 +684,6 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
       </Card>
       </div>
     </div>
-    </div>
   );
 };
 
