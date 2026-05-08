@@ -93,8 +93,8 @@ const App = () => (
                 </ProtectedRoute>
               }
             >
-              <Route index element={<FormateurDashboard />} />
-              <Route path="dashboard-v2" element={<FormateurDashboardV2 />} />
+              <Route index element={<FormateurDashboardV2 />} />
+              <Route path="dashboard-old" element={<FormateurDashboard />} />
               <Route path="groupes" element={<GroupesPage />} />
               <Route path="seances" element={<SeancesPage />} />
               <Route path="seances/:id/pilote" element={<SessionPilot />} />
