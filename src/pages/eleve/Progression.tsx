@@ -497,6 +497,7 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
             />
           </CardContent>
         </Card>
+        </div>
       )}
 
       {/* Competency radar + badges */}
