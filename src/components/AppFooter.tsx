@@ -1,40 +1,28 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { GraduationCap } from "lucide-react";
+import { CapLogo } from "@/components/CapBrand";
 
 const AppFooter = React.forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>(
   (props, ref) => (
-    <footer
-      ref={ref}
-      className="border-t border-white/10 mt-auto"
-      style={{ backgroundColor: "hsl(215 65% 12%)" }}
-      {...props}
-    >
-      <div className="max-w-6xl mx-auto px-6 py-10 space-y-8">
+    <footer ref={ref} className="mt-auto border-t border-white/10 bg-[#061b3b]" {...props}>
+      <div className="mx-auto max-w-4xl space-y-7 px-6 py-8">
+        <CapLogo
+          className="justify-center"
+          markClassName="h-7 w-7 text-[#f47b20]"
+          textClassName="text-2xl text-white [&_span]:text-white"
+        />
 
-        {/* Logo centré */}
-        <div className="flex items-center justify-center gap-2">
-          <GraduationCap className="h-6 w-6 text-accent" />
-          <span className="font-extrabold text-lg tracking-tight text-white">
-            CAP TCF
-          </span>
-        </div>
-
-        {/* Deux colonnes */}
-        <div className="grid grid-cols-2 gap-6 max-w-sm mx-auto">
+        <div className="mx-auto grid max-w-sm grid-cols-2 gap-10">
           <div className="space-y-2">
-            <p className="font-bold text-sm text-white">Élèves</p>
-            <ul className="space-y-1.5">
+            <p className="text-lg font-bold text-white">Élèves</p>
+            <ul className="space-y-1">
               {[
                 { label: "Se connecter", to: "/eleve/login" },
                 { label: "Créer un compte", to: "/eleve/login" },
                 { label: "Test de niveau", to: "/eleve/login" },
               ].map((link) => (
                 <li key={link.label}>
-                  <Link
-                    to={link.to}
-                    className="text-sm text-white/60 hover:text-white transition-colors"
-                  >
+                  <Link to={link.to} className="text-base leading-tight text-white/60 transition-colors hover:text-white">
                     {link.label}
                   </Link>
                 </li>
@@ -43,17 +31,14 @@ const AppFooter = React.forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement
           </div>
 
           <div className="space-y-2">
-            <p className="font-bold text-sm text-white">Formateurs</p>
-            <ul className="space-y-1.5">
+            <p className="text-lg font-bold text-white">Formateurs</p>
+            <ul className="space-y-1">
               {[
                 { label: "Espace formateur", to: "/formateur/login" },
                 { label: "Contact", to: "/legal" },
               ].map((link) => (
                 <li key={link.label}>
-                  <Link
-                    to={link.to}
-                    className="text-sm text-white/60 hover:text-white transition-colors"
-                  >
+                  <Link to={link.to} className="text-base leading-tight text-white/60 transition-colors hover:text-white">
                     {link.label}
                   </Link>
                 </li>
@@ -62,17 +47,14 @@ const AppFooter = React.forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement
           </div>
         </div>
 
-        {/* Copyright */}
-        <div className="border-t border-white/10 pt-5 text-center">
-          <p className="text-xs text-white/40">
-            © {new Date().getFullYear()} CAP TCF. Tous droits réservés.
-          </p>
+        <div className="border-t border-white/15 pt-5 text-center">
+          <p className="text-sm text-white/55">© 2024 CAP TCF. Tous droits réservés.</p>
         </div>
-
       </div>
     </footer>
   )
 );
+
 AppFooter.displayName = "AppFooter";
 
 export default AppFooter;

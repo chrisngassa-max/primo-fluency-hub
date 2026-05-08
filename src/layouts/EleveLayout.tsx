@@ -1,22 +1,23 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import {
-  LayoutDashboard,
   BookOpen,
+  BookMarked,
+  ClipboardList,
+  Home,
+  NotebookTabs,
   TrendingUp,
   User,
-  GraduationCap,
-  ClipboardList,
-  BookMarked,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import AppFooter from "@/components/AppFooter";
+import { CapPublicHeader } from "@/components/CapBrand";
 
 const navItems = [
-  { title: "Accueil", path: "/eleve", icon: LayoutDashboard },
+  { title: "Accueil", path: "/eleve", icon: Home },
   { title: "Test de niveau", path: "/eleve/test-positionnement", icon: ClipboardList },
   { title: "Mes devoirs", path: "/eleve/devoirs", icon: BookOpen },
-  { title: "Mon carnet", path: "/eleve/carnet", icon: BookMarked },
+  { title: "Mon carnet", path: "/eleve/carnet", icon: NotebookTabs },
   { title: "Ma progression", path: "/eleve/progression", icon: TrendingUp },
   { title: "Mon profil", path: "/eleve/profil", icon: User },
 ];
@@ -30,40 +31,24 @@ const EleveLayout = () => {
     path === "/eleve" ? location.pathname === path : location.pathname.startsWith(path);
 
   const initiales = [user?.user_metadata?.prenom, user?.user_metadata?.nom]
-    .filter(Boolean).map((s: string) => s[0].toUpperCase()).join("") || "?";
+    .filter(Boolean)
+    .map((s: string) => s[0].toUpperCase())
+    .join("") || "ML";
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 h-14 flex items-center gap-3 border-b bg-white shadow-sm px-4">
-        <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center shrink-0">
-          <GraduationCap className="h-5 w-5 text-primary-foreground" />
-        </div>
-        <span className="font-extrabold text-lg tracking-tight text-foreground">
-          CAP <span className="text-accent">TCF</span>
-        </span>
-        <div className="ml-auto flex items-center gap-2">
-          <button
-            onClick={signOut}
-            title="Se déconnecter"
-            className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-sm font-bold text-foreground hover:bg-muted/80 transition-colors"
-          >
-            {initiales}
-          </button>
-        </div>
-      </header>
+    <div className="cap-screen min-h-screen">
+      <CapPublicHeader avatar={initiales.slice(0, 2)} showMenu={false} />
 
-      {/* Nav desktop — pill style */}
-      <nav className="hidden lg:flex sticky top-14 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 px-4 md:px-6">
+      <nav className="hidden border-b bg-white/90 px-4 shadow-sm backdrop-blur lg:flex">
         <div className="mx-auto flex w-full max-w-5xl gap-1 py-2">
           {navItems.map((item) => (
             <button
               key={item.path}
               onClick={() => navigate(item.path)}
               className={cn(
-                "inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors",
+                "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors",
                 isActive(item.path)
-                  ? "bg-primary/10 text-primary"
+                  ? "bg-[#e7e9f1] text-[#0b234a]"
                   : "text-muted-foreground hover:bg-muted hover:text-foreground"
               )}
             >
@@ -71,10 +56,16 @@ const EleveLayout = () => {
               <span>{item.title}</span>
             </button>
           ))}
+          <button
+            onClick={signOut}
+            className="ml-auto rounded-lg px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            Se déconnecter
+          </button>
         </div>
       </nav>
 
-      <main className="p-4 pb-32 md:p-6 md:pb-32 lg:pb-8">
+      <main className="mx-auto w-full max-w-5xl px-5 py-8 pb-32 lg:px-8 lg:pb-8">
         <Outlet />
       </main>
 
@@ -82,25 +73,34 @@ const EleveLayout = () => {
         <AppFooter />
       </div>
 
-      {/* Nav mobile — bottom bar */}
-      <nav className="fixed inset-x-0 bottom-0 z-50 flex justify-around border-t bg-white px-1 py-1.5 shadow-[0_-2px_12px_hsl(var(--foreground)/0.08)] lg:hidden">
-        {navItems.map((item) => (
-          <button
-            key={item.path}
-            onClick={() => navigate(item.path)}
-            className="flex flex-col items-center gap-0.5 px-1 py-1 transition-colors min-w-[52px]"
-          >
-            <div className={cn(
-              "h-9 w-12 rounded-xl flex items-center justify-center transition-colors",
-              isActive(item.path) ? "bg-muted" : ""
-            )}>
-              <item.icon className={cn("h-5 w-5", isActive(item.path) ? "text-foreground" : "text-muted-foreground")} />
-            </div>
-            <span className={cn("text-[10px] leading-tight text-center", isActive(item.path) ? "text-foreground font-bold" : "text-muted-foreground")}>
-              {item.title}
-            </span>
-          </button>
-        ))}
+      <nav className="fixed inset-x-0 bottom-0 z-50 grid grid-cols-6 border-t border-black/10 bg-white/95 px-1 py-2 shadow-[0_-6px_24px_rgba(15,23,42,0.12)] backdrop-blur lg:hidden">
+        {navItems.map((item) => {
+          const active = isActive(item.path);
+          return (
+            <button
+              key={item.path}
+              onClick={() => navigate(item.path)}
+              className="flex min-w-0 flex-col items-center gap-1 px-1 py-1 text-center transition-colors"
+            >
+              <span
+                className={cn(
+                  "flex h-10 w-10 items-center justify-center rounded-lg transition-colors",
+                  active ? "bg-[#e7e9f1] text-[#0b234a]" : "text-zinc-500"
+                )}
+              >
+                <item.icon className="h-7 w-7" strokeWidth={active ? 2.6 : 2.2} />
+              </span>
+              <span
+                className={cn(
+                  "text-[11px] font-medium leading-[1.05]",
+                  active ? "font-extrabold text-[#0b234a]" : "text-zinc-500"
+                )}
+              >
+                {item.title}
+              </span>
+            </button>
+          );
+        })}
       </nav>
     </div>
   );
