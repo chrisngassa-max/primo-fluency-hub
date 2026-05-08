@@ -74,11 +74,11 @@ export default function FormateurDashboardV2() {
       {/* HEADER SECTION */}
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
-            Bonjour, Formateur <Sparkles className="h-6 w-6 text-amber-500" />
+          <h1 className="text-3xl font-bold tracking-tight text-primary flex items-center gap-2">
+            Bonjour, {user?.user_metadata?.prenom ?? 'Formateur'} <Sparkles className="h-6 w-6 text-accent" />
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">
-            Voici un aperçu de vos groupes et de votre prochaine séance.
+          <p className="text-slate-500 dark:text-slate-400 mt-1 capitalize">
+            {new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -86,7 +86,7 @@ export default function FormateurDashboardV2() {
             <Calendar className="h-4 w-4" />
             Mon Planning
           </Button>
-          <Button className="gap-2 bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-200 dark:shadow-none">
+          <Button className="gap-2 bg-accent hover:bg-accent/90 text-accent-foreground shadow-md">
             <Users className="h-4 w-4" />
             Nouveau Groupe
           </Button>
@@ -144,12 +144,12 @@ export default function FormateurDashboardV2() {
             <TabsContent value="seance-du-jour" className="mt-6 space-y-6 outline-none">
               
               {/* Next Session Highlight */}
-              <Card className="border-indigo-100 dark:border-indigo-900/50 shadow-lg shadow-indigo-100/20 dark:shadow-none overflow-hidden relative">
-                <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500"></div>
+              <Card className="border-primary/20 shadow-lg overflow-hidden relative">
+                <div className="absolute top-0 left-0 w-1 h-full bg-primary"></div>
                 <CardHeader className="pb-4">
                   <div className="flex justify-between items-start">
                     <div>
-                      <Badge variant="secondary" className="mb-2 bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300">
+                      <Badge variant="secondary" className="mb-2 bg-primary/10 text-primary">
                         {nextSessionMock.date}
                       </Badge>
                       <CardTitle className="text-xl">{nextSessionMock.titre}</CardTitle>
@@ -157,7 +157,7 @@ export default function FormateurDashboardV2() {
                         <Clock className="h-4 w-4" /> {nextSessionMock.duree} • <Users className="h-4 w-4 ml-2" /> {nextSessionMock.eleves} élèves
                       </CardDescription>
                     </div>
-                    <Button size="sm" className="gap-2 bg-indigo-600 hover:bg-indigo-700">
+                    <Button size="sm" className="gap-2 bg-accent hover:bg-accent/90 text-accent-foreground">
                       <Play className="h-4 w-4" /> Démarrer
                     </Button>
                   </div>
@@ -180,7 +180,7 @@ export default function FormateurDashboardV2() {
 
               {/* Quick Actions */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Card className="hover:border-indigo-300 transition-colors cursor-pointer group">
+                <Card className="hover:border-primary/40 transition-colors cursor-pointer group">
                   <CardContent className="p-5 flex items-start gap-4">
                     <div className="h-10 w-10 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                       <Send className="h-5 w-5 text-blue-600 dark:text-blue-400" />
@@ -191,7 +191,7 @@ export default function FormateurDashboardV2() {
                     </div>
                   </CardContent>
                 </Card>
-                <Card className="hover:border-indigo-300 transition-colors cursor-pointer group">
+                <Card className="hover:border-primary/40 transition-colors cursor-pointer group">
                   <CardContent className="p-5 flex items-start gap-4">
                     <div className="h-10 w-10 rounded-full bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                       <Activity className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
@@ -216,14 +216,14 @@ export default function FormateurDashboardV2() {
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm font-medium">
                         <span>Compréhension Orale</span>
-                        <span className="text-indigo-600">68%</span>
+                        <span className="text-primary">68%</span>
                       </div>
                       <Progress value={68} className="h-2" />
                     </div>
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm font-medium">
                         <span>Compréhension Écrite</span>
-                        <span className="text-indigo-600">75%</span>
+                        <span className="text-primary">75%</span>
                       </div>
                       <Progress value={75} className="h-2" />
                     </div>
