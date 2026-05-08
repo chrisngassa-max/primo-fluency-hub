@@ -20,6 +20,7 @@ import LoginFormateur from "@/pages/auth/LoginFormateur";
 
 import FormateurLayout from "@/layouts/FormateurLayout";
 import FormateurDashboard from "@/pages/formateur/Dashboard";
+import FormateurDashboardV2 from "@/pages/formateur/DashboardV2";
 import MonitoringPage from "@/pages/formateur/MonitoringPage";
 import GroupesPage from "@/pages/formateur/Groupes";
 import SeancesPage from "@/pages/formateur/Seances";
@@ -93,6 +94,7 @@ const App = () => (
               }
             >
               <Route index element={<FormateurDashboard />} />
+              <Route path="dashboard-v2" element={<FormateurDashboardV2 />} />
               <Route path="groupes" element={<GroupesPage />} />
               <Route path="seances" element={<SeancesPage />} />
               <Route path="seances/:id/pilote" element={<SessionPilot />} />
