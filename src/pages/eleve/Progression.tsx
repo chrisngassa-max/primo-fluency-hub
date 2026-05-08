@@ -466,16 +466,17 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
           </p>
           <Card className="border-none shadow-none bg-transparent">
             <CardContent className="p-0">
-              <Badge
-                variant={presenceStats.rate! >= 80 ? "default" : presenceStats.rate! >= 60 ? "outline" : "destructive"}
-                className={cn(
-                  "ml-auto",
-                  presenceStats.rate! >= 80 && "bg-green-600 hover:bg-green-700"
-                )}
-              >
-                {presenceStats.rate}%
-              </Badge>
-            </div>
+              <div className="flex justify-end mb-3">
+                <Badge
+                  variant={presenceStats.rate! >= 80 ? "default" : presenceStats.rate! >= 60 ? "outline" : "destructive"}
+                  className={cn(
+                    "ml-auto",
+                    presenceStats.rate! >= 80 && "bg-green-600 hover:bg-green-700"
+                  )}
+                >
+                  {presenceStats.rate}%
+                </Badge>
+              </div>
             <div className="grid grid-cols-3 gap-3 text-center">
               <div className="p-3 rounded-[0.625rem] bg-muted">
                 <p className="text-2xl font-extrabold text-foreground">{presenceStats.total}</p>
