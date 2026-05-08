@@ -560,6 +560,7 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
           </div>
         </CardContent>
       </Card>
+      </div>
 
       {/* Objectif TCF IRN */}
       {(() => {
@@ -683,7 +684,6 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
         </CardContent>
       </Card>
       </div>
-    </div>
     </div>
   );
 };
