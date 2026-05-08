@@ -341,11 +341,11 @@ const EleveDashboard = () => {
       {user?.id && <TrajectoireTCF eleveId={user.id} />}
 
       {/* SECTION AUJOURD'HUI — grille 2 colonnes carrées */}
-      {(uncompletedTests.length > 0 || (sessionExercises && sessionExercises.length > 0)) && (
-        <div className="space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground px-1">
-            Aujourd'hui
-          </p>
+      <div className="space-y-3">
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground px-1">
+          Aujourd'hui
+        </p>
+        {(uncompletedTests.length > 0 || (sessionExercises && sessionExercises.length > 0)) ? (
           <div className="grid grid-cols-2 gap-3">
             {uncompletedTests.map((test: any) => (
               <div
@@ -372,8 +372,13 @@ const EleveDashboard = () => {
               </div>
             ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="rounded-xl border border-dashed border-muted-foreground/20 bg-muted/30 px-4 py-3">
+            <p className="text-sm font-medium text-foreground">Aucune séance aujourd'hui</p>
+            <p className="text-xs text-muted-foreground mt-0.5">Ton prochain contenu apparaîtra ici.</p>
+          </div>
+        )}
+      </div>
 
       {/* SECTION MA PROGRESSION */}
       <div className="space-y-3">
