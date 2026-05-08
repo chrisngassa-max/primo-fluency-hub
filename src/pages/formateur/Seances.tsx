@@ -497,7 +497,7 @@ const SeancesPage = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <h1 className="text-2xl font-bold">Mes Séances</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-primary">Mes Séances</h1>
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
@@ -842,9 +842,9 @@ const SeancesPage = () => {
             <div
               key={s.id}
               className={cn(
-                "rounded-[0.625rem] border p-4 cursor-pointer transition-colors shadow-sm group",
-                isEnCours ? "bg-green-50 border-green-200 hover:bg-green-100/70 border-l-4 border-l-green-500"
-                  : isToday ? "bg-blue-50 border-blue-200 hover:bg-blue-100/70 border-l-4 border-l-primary"
+                "rounded-2xl border p-5 cursor-pointer transition-colors shadow-md group",
+                isEnCours ? "bg-green-50 border-green-200 hover:bg-green-100/70"
+                  : isToday ? "bg-blue-50 border-blue-200 hover:bg-blue-100/70"
                   : isDone ? "bg-muted/30 border-border"
                   : isCancelled ? "bg-destructive/5 border-destructive/20"
                   : "bg-white border-border hover:border-primary/30"
