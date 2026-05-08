@@ -421,12 +421,12 @@ const GroupesPage = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Groupes & Élèves</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-primary">Groupes & Élèves</h1>
           <p className="text-sm text-muted-foreground">Cliquez sur un groupe pour voir ses élèves.</p>
         </div>
         <Dialog open={createOpen} onOpenChange={setCreateOpen}>
           <DialogTrigger asChild>
-            <Button><Plus className="h-4 w-4 mr-2" />Nouveau groupe</Button>
+            <Button className="bg-accent hover:bg-accent/90 text-accent-foreground rounded-full px-5"><Plus className="h-4 w-4 mr-2" />Nouveau groupe</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader><DialogTitle>Créer un groupe</DialogTitle></DialogHeader>
