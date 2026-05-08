@@ -180,7 +180,7 @@ export default function FormateurDashboardV2() {
 
               {/* Quick Actions */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Card className="hover:border-indigo-300 transition-colors cursor-pointer group">
+                <Card className="hover:border-primary/40 transition-colors cursor-pointer group">
                   <CardContent className="p-5 flex items-start gap-4">
                     <div className="h-10 w-10 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                       <Send className="h-5 w-5 text-blue-600 dark:text-blue-400" />
@@ -191,7 +191,7 @@ export default function FormateurDashboardV2() {
                     </div>
                   </CardContent>
                 </Card>
-                <Card className="hover:border-indigo-300 transition-colors cursor-pointer group">
+                <Card className="hover:border-primary/40 transition-colors cursor-pointer group">
                   <CardContent className="p-5 flex items-start gap-4">
                     <div className="h-10 w-10 rounded-full bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                       <Activity className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
@@ -216,14 +216,14 @@ export default function FormateurDashboardV2() {
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm font-medium">
                         <span>Compréhension Orale</span>
-                        <span className="text-indigo-600">68%</span>
+                        <span className="text-primary">68%</span>
                       </div>
                       <Progress value={68} className="h-2" />
                     </div>
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm font-medium">
                         <span>Compréhension Écrite</span>
-                        <span className="text-indigo-600">75%</span>
+                        <span className="text-primary">75%</span>
                       </div>
                       <Progress value={75} className="h-2" />
                     </div>
