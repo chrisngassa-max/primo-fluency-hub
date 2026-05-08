@@ -99,12 +99,13 @@ export function FormateurSidebar({ onNavigate }: FormateurSidebarProps) {
 
   return (
     <Sidebar collapsible="icon" className="border-r-0 bg-sidebar text-sidebar-foreground shadow-2xl">
-      <SidebarHeader className="p-4 border-b border-sidebar-border/70">
-        <div className="flex items-center gap-2 rounded-lg bg-sidebar-accent/55 px-3 py-2 shadow-inner">
-          <GraduationCap className="h-7 w-7 text-sidebar-primary" />
+      <SidebarHeader className="p-0 border-b border-sidebar-border/70">
+        <div className="flex items-center gap-2 bg-white px-4 py-4">
+          <GraduationCap className="h-7 w-7 text-[#0b234a]" />
           {!collapsed && (
-            <span className="font-bold text-lg text-sidebar-primary tracking-tight">
-              CAP TCF
+            <span className="font-bold text-lg tracking-tight">
+              <span className="text-[#0b234a]">CAP </span>
+              <span className="text-[#f59e0b]">TCF</span>
             </span>
           )}
         </div>
