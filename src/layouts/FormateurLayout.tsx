@@ -1,5 +1,4 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import AppFooter from "@/components/AppFooter";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { FormateurSidebar } from "@/components/FormateurSidebar";
 import { useAuth } from "@/contexts/AuthContext";
@@ -183,7 +182,6 @@ const FormateurLayout = () => {
           <main className="flex-1 overflow-auto p-4 md:p-8">
             <Outlet />
           </main>
-          <AppFooter />
         </div>
       </div>
     </SidebarProvider>
