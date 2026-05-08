@@ -155,8 +155,8 @@ export function FormateurSidebar({ onNavigate }: FormateurSidebarProps) {
             <SidebarMenuButton asChild isActive={isActive("/formateur/parametres")}>
               <NavLink
                 to="/formateur/parametres"
-                className="relative flex items-center gap-2.5 px-3 py-2 rounded-md hover:bg-sidebar-accent/50 transition-colors"
-                activeClassName="bg-sidebar-accent/60 font-semibold before:absolute before:left-0 before:top-1 before:bottom-1 before:w-0.5 before:rounded-full before:bg-sidebar-primary"
+                className="flex items-center gap-2.5 px-3 py-2 rounded-md hover:bg-sidebar-accent/40 transition-colors"
+                activeClassName="bg-sidebar-accent/70 text-sidebar-accent-foreground font-semibold"
                 onClick={onNavigate}
               >
                 <Settings className="h-[18px] w-[18px] shrink-0" />
