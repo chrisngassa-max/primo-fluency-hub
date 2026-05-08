@@ -497,7 +497,7 @@ const SeancesPage = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <h1 className="text-2xl font-bold">Mes Séances</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-primary">Mes Séances</h1>
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
