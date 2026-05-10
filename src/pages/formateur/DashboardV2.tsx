@@ -74,22 +74,27 @@ export default function FormateurDashboardV2() {
       {/* HEADER SECTION */}
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-primary flex items-center gap-2">
-            Bonjour, {user?.user_metadata?.prenom ?? 'Formateur'} <Sparkles className="h-6 w-6 text-accent" />
-          </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1 capitalize">
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-[28px] md:text-3xl font-extrabold tracking-tight text-[#0b234a] flex items-center gap-2">
+              Bonjour, {user?.user_metadata?.prenom ?? 'Claire'}
+            </h1>
+            <Badge className="bg-green-100 text-green-800 hover:bg-green-100 border-green-200 shadow-none font-medium px-3 rounded-full flex items-center gap-1.5">
+              Séance en cours <span className="h-2 w-2 rounded-full bg-green-500 inline-block animate-pulse"></span>
+            </Badge>
+          </div>
+          <p className="text-[#0b234a]/70 font-medium mt-1 capitalize text-lg">
             {new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="hidden md:flex gap-2 bg-white dark:bg-slate-900">
+          <Button variant="outline" className="hidden md:flex gap-2 bg-white cap-card border-none">
             <Calendar className="h-4 w-4" />
             Mon Planning
           </Button>
-          <Button className="gap-2 bg-accent hover:bg-accent/90 text-accent-foreground shadow-md">
+          <button className="cap-orange-button px-5 py-2.5 text-sm flex items-center gap-2">
             <Users className="h-4 w-4" />
             Nouveau Groupe
-          </Button>
+          </button>
         </div>
       </div>
 
@@ -132,51 +137,71 @@ export default function FormateurDashboardV2() {
         {/* LEFT COLUMN: Main Content Tabs */}
         <div className="xl:col-span-2 space-y-6">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full max-w-md grid-cols-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl">
-              <TabsTrigger value="seance-du-jour" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">
+            <TabsList className="flex w-full justify-start gap-4 p-0 bg-transparent h-auto border-b border-black/5 mb-6">
+              <TabsTrigger 
+                value="seance-du-jour" 
+                className="rounded-none bg-transparent px-1 py-3 text-[16px] font-bold text-slate-500 data-[state=active]:border-b-[3px] data-[state=active]:border-[#0b234a] data-[state=active]:text-[#0b234a] data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+              >
                 Séance du jour
               </TabsTrigger>
-              <TabsTrigger value="progression" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">
+              <TabsTrigger 
+                value="progression" 
+                className="rounded-none bg-transparent px-1 py-3 text-[16px] font-bold text-slate-500 data-[state=active]:border-b-[3px] data-[state=active]:border-[#0b234a] data-[state=active]:text-[#0b234a] data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+              >
                 Progression
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="seance-du-jour" className="mt-6 space-y-6 outline-none">
               
-              {/* Next Session Highlight */}
-              <Card className="border-primary/20 shadow-lg overflow-hidden relative">
-                <div className="absolute top-0 left-0 w-1 h-full bg-primary"></div>
-                <CardHeader className="pb-4">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <Badge variant="secondary" className="mb-2 bg-primary/10 text-primary">
-                        {nextSessionMock.date}
-                      </Badge>
-                      <CardTitle className="text-xl">{nextSessionMock.titre}</CardTitle>
-                      <CardDescription className="mt-1 flex items-center gap-2">
-                        <Clock className="h-4 w-4" /> {nextSessionMock.duree} • <Users className="h-4 w-4 ml-2" /> {nextSessionMock.eleves} élèves
-                      </CardDescription>
-                    </div>
-                    <Button size="sm" className="gap-2 bg-accent hover:bg-accent/90 text-accent-foreground">
-                      <Play className="h-4 w-4" /> Démarrer
-                    </Button>
+              {/* Next Session Highlight (Conforme Maquette) */}
+              <div className="cap-card cap-primary-gradient rounded-2xl p-6 text-white mb-6">
+                <h3 className="font-bold text-xl mb-1 flex items-center gap-2">
+                  Séance active: <span className="font-medium opacity-90">{nextSessionMock.titre}</span>
+                </h3>
+                <p className="text-white/80 font-medium mb-1">Group: <span className="font-normal opacity-90">Groupe A</span></p>
+                <p className="text-white/80 font-medium mb-5">Time: <span className="font-normal opacity-90">14:00 - 15:30</span></p>
+                
+                <button className="w-full cap-orange-button py-3 text-lg tracking-wide">
+                  Piloter
+                </button>
+              </div>
+
+              {/* Liste d'exercices (mock) conforme maquette */}
+              <div className="space-y-3 mb-6">
+                <div className="cap-card p-4 flex items-center justify-between cursor-pointer hover:border-primary/30 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="h-5 w-5 rounded border-2 border-slate-300 bg-white"></div>
+                    <span className="font-semibold text-[#0b234a] text-[15px]">Exercice 1: Écoute active</span>
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="bg-slate-50 dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-800 flex flex-col md:flex-row gap-4 justify-between items-center">
-                    <div>
-                      <h4 className="font-medium text-sm text-slate-700 dark:text-slate-300">Objectifs de la séance</h4>
-                      <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                        {nextSessionMock.objectifs}
-                      </p>
-                    </div>
-                    <Button variant="outline" size="sm" className="w-full md:w-auto gap-2">
-                      <FileCheck className="h-4 w-4" />
-                      Voir les exercices
-                    </Button>
+                  <Badge className="bg-purple-500 hover:bg-purple-600 text-white border-none rounded-full px-2.5 font-bold">CO</Badge>
+                </div>
+                <div className="cap-card p-4 flex items-center justify-between cursor-pointer hover:border-primary/30 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="h-5 w-5 rounded border-2 border-slate-300 bg-white"></div>
+                    <span className="font-semibold text-[#0b234a] text-[15px]">Exercice 2: Compréhension orale</span>
                   </div>
-                </CardContent>
-              </Card>
+                  <Badge className="bg-purple-500 hover:bg-purple-600 text-white border-none rounded-full px-2.5 font-bold">CO</Badge>
+                </div>
+                <div className="cap-card p-4 flex items-center justify-between cursor-pointer hover:border-primary/30 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="h-5 w-5 rounded border-2 border-slate-300 bg-white"></div>
+                    <span className="font-semibold text-[#0b234a] text-[15px]">Exercice 3: Expression écrite</span>
+                  </div>
+                  <Badge className="bg-[#a58d60] hover:bg-[#a58d60]/90 text-white border-none rounded-full px-2.5 font-bold">EE</Badge>
+                </div>
+                <div className="cap-card p-4 flex items-center justify-between cursor-pointer hover:border-primary/30 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="h-5 w-5 rounded border-2 border-slate-300 bg-white"></div>
+                    <span className="font-semibold text-[#0b234a] text-[15px]">Exercice 4: Expression orale</span>
+                  </div>
+                  <Badge className="bg-teal-500 hover:bg-teal-600 text-white border-none rounded-full px-2.5 font-bold">EO</Badge>
+                </div>
+              </div>
+              
+              <button className="w-full cap-orange-button py-4 text-lg mb-8">
+                Générer des devoirs automatiques
+              </button>
 
               {/* Quick Actions */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
