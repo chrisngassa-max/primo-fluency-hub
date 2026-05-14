@@ -38,30 +38,40 @@ serve(async (req) => {
 
     if (itemsError) throw itemsError
 
-    // 3. Correction automatique (CE/CO)
-    let totalPoints = 0
-    let maxPossiblePoints = 0
+    // 3. Correction automatique et préparation des données
+    const skillScores: any = { CE: { score: 0, count: 0 }, CO: { score: 0, count: 0 } }
+    const levelStats: any = {
+      A1: { correct: 0, total: 0, time: 0 },
+      A2: { correct: 0, total: 0, time: 0 },
+      B1: { correct: 0, total: 0, time: 0 },
+      B2: { correct: 0, total: 0, time: 0 }
+    }
+    
     const processedAnswers = []
-    const skillScores: any = { CE: { score: 0, max: 0 }, CO: { score: 0, max: 0 }, EE: { score: 0, max: 0 }, EO: { score: 0, max: 0 } }
+    const timestamps = [] // Pour la détection de fatigue
 
     for (const item of items) {
       const studentAnswer = answers.find((a: any) => a.item_id === item.id)
-      const weight = item.difficulty || 1
-      maxPossiblePoints += weight
-      skillScores[item.skill].max += weight
-
+      const timeSpent = studentAnswer?.time_spent || 0
+      
       let isCorrect = null
       let score = 0
 
       if (['CE', 'CO'].includes(item.skill)) {
         isCorrect = studentAnswer?.answer === item.correct_answer
-        score = isCorrect ? weight : 0
-        totalPoints += score
+        score = isCorrect ? 1 : 0
+        
+        const lvl = item.level_cecrl as keyof typeof levelStats
+        if (levelStats[lvl]) {
+          levelStats[lvl].correct += score
+          levelStats[lvl].total += 1
+          levelStats[lvl].time += timeSpent
+        }
+        
         skillScores[item.skill].score += score
-      } else {
-        // EE/EO : pas de correction auto pour le moment
-        isCorrect = null
-        score = 0
+        skillScores[item.skill].count += 1
+        
+        timestamps.push({ temps: timeSpent, correct: isCorrect })
       }
 
       processedAnswers.push({
@@ -69,25 +79,113 @@ serve(async (req) => {
         student_answer: studentAnswer?.answer || '',
         is_correct: isCorrect,
         score: score,
-        time_spent: studentAnswer?.time_spent || 0
+        time_spent: timeSpent
       })
     }
 
-    // 4. Estimation du niveau CECRL
-    const scorePct = (totalPoints / (maxPossiblePoints || 1)) * 100
-    let estimatedLevel = "A0_pre_A1"
-    if (scorePct >= 91) estimatedLevel = "B1_acquis"
-    else if (scorePct >= 83) estimatedLevel = "B1_fragile"
-    else if (scorePct >= 73) estimatedLevel = "A2_acquis"
-    else if (scorePct >= 61) estimatedLevel = "A2_fragile"
-    else if (scorePct >= 46) estimatedLevel = "A1_acquis"
-    else if (scorePct >= 26) estimatedLevel = "A1_fragile"
+    // --- ALGORITHME DE SCORING HARDENED (Portage Python) ---
+    const levels = ["A1", "A2", "B1", "B2"] as const
+    const poids = { A1: 5, A2: 10, B1: 15, B2: 20 }
+    const medianes = { A1: 25, A2: 45, B1: 75, B2: 120 }
+    
+    const fiabilite: Record<string, number> = { A1: 1.0, A2: 1.0, B1: 1.0, B2: 1.0 }
+    const flags = new Set<string>()
 
-    // 5. Recherche de remédiation (exercices de la banque globale)
-    // On cherche des exercices qui correspondent au niveau estimé et à la compétence la plus faible
-    const weakestSkill = Object.keys(skillScores).reduce((a, b) => 
-      (skillScores[a].score / (skillScores[a].max || 1)) < (skillScores[b].score / (skillScores[b].max || 1)) ? a : b
-    )
+    // 1. CALCUL DES TAUX BRUTS PAR NIVEAU
+    const taux: Record<string, number> = {}
+    levels.forEach(niv => {
+      taux[niv] = levelStats[niv].total > 0 ? levelStats[niv].correct / levelStats[niv].total : 0
+    })
+
+    // 2. FIABILITÉ DE BASE (BORNAGE SOUPLE)
+    for (let i = 1; i < levels.length; i++) {
+      const n = levels[i], prev = levels[i-1]
+      if (taux[prev] >= 0.75) fiabilite[n] = 1.0
+      else if (taux[prev] >= 0.58) fiabilite[n] = 0.7
+      else if (taux[prev] >= 0.42) {
+        fiabilite[n] = 0.3
+        flags.add(`FIABILITE_FAIBLE_${n}`)
+      } else {
+        fiabilite[n] = 0.0
+      }
+    }
+
+    // 3. REMONTÉE PAR PREUVE (RÈGLE DES 50% SOCLE)
+    for (let i = 1; i < levels.length; i++) {
+      const n = levels[i], prev = levels[i-1]
+      if (taux[n] >= 0.75 && taux[prev] >= 0.50) {
+        fiabilite[n] = Math.max(fiabilite[n], 1.0)
+        fiabilite[prev] = Math.max(fiabilite[prev], 0.85)
+        flags.add(`SOCLE_${prev}_VALIDE_PAR_PREUVE_${n}`)
+      }
+    }
+
+    // 4. PÉNALITÉ TEMPORELLE (NON-CASCADE)
+    levels.forEach(niv => {
+      const tempsMoyen = levelStats[niv].total > 0 ? levelStats[niv].time / levelStats[niv].total : 0
+      if (tempsMoyen > (medianes[niv] * 2)) {
+        const nextIdx = levels.indexOf(niv) + 1
+        if (nextIdx < levels.length) {
+          fiabilite[levels[nextIdx]] *= 0.7
+          flags.add(`LENTEUR_DETECTEE_EN_${niv}`)
+        }
+      }
+    })
+
+    // 5. INCOHÉRENCE VERTICALE
+    for (let i = 1; i < levels.length; i++) {
+      const n = levels[i], prev = levels[i-1]
+      if (fiabilite[prev] === 0.0 && taux[n] > 0.50) {
+        flags.add("PROFIL_INCOHERENT")
+      }
+    }
+
+    // 6. FLAGS COMPORTEMENTAUX ET ASYMÉTRIE
+    // Alerte Vitesse
+    if ((levelStats.B1.time / (levelStats.B1.total || 1)) < medianes.B1/3 || 
+        (levelStats.B2.time / (levelStats.B2.total || 1)) < medianes.B2/3) {
+      if ((taux.B1 + taux.B2) > 0.80) {
+        flags.add("ALERTE_VITESSE_INCOHERENTE")
+      }
+    }
+
+    // Détection de Fatigue
+    if (timestamps.length >= 9) {
+      const n = timestamps.length
+      const p_tier = timestamps.slice(0, Math.floor(n/3))
+      const d_tier = timestamps.slice(-Math.floor(n/3))
+      
+      const t_p = p_tier.reduce((acc, i) => acc + i.temps, 0) / p_tier.length
+      const t_d = d_tier.reduce((acc, i) => acc + i.temps, 0) / d_tier.length
+      const r_p = p_tier.filter(i => i.correct).length / p_tier.length
+      const r_d = d_tier.filter(i => i.correct).length / d_tier.length
+      
+      if (t_p > 0 && (t_p - t_d) / t_p > 0.60 && (r_p - r_d) > 0.40) {
+        flags.add("FATIGUE_DETECTEE")
+      }
+    }
+
+    // Asymétrie Horizontale
+    const pctCO = skillScores.CO.score / (skillScores.CO.count || 1)
+    const pctCE = skillScores.CE.score / (skillScores.CE.count || 1)
+    if (Math.abs(pctCO - pctCE) > 0.25) {
+      flags.add("PROFIL_ASYMETRIQUE")
+    }
+
+    // 7. CALCUL SCORE ET CLASSIFICATION
+    const scoreFinal = levels.reduce((acc, niv) => {
+      return acc + (levelStats[niv].correct * poids[niv]) * fiabilite[niv]
+    }, 0)
+
+    let niveauEstime = "A0"
+    for (const niv of levels) {
+      if (fiabilite[niv] > 0.5) niveauEstime = niv
+    }
+
+    // --- FIN ALGORITHME ---
+
+    // 8. Recherche de remédiation
+    const weakestSkill = (pctCO < pctCE) ? 'CO' : 'CE'
 
     const { data: remediation } = await supabaseClient
       .from('exercices')
@@ -97,21 +195,24 @@ serve(async (req) => {
       .is('formateur_id', null)
       .limit(5)
 
-    // 6. Analyse pédagogique par Claude
+    // 9. Analyse pédagogique par Claude
     const CLAUDE_API_KEY = Deno.env.get('CLAUDE_API_KEY')
     const analysisPrompt = `Analyse les résultats d'un élève au test "${test.title}".
 Nom: ${student_name}
-Niveau estimé: ${estimatedLevel}
-Score global: ${scorePct.toFixed(1)}%
+Niveau estimé: ${niveauEstime}
+Score pondéré: ${scoreFinal.toFixed(0)}
+Flags de diagnostic: ${Array.from(flags).join(', ')}
 Scores par compétence:
-- CE: ${((skillScores.CE.score / skillScores.CE.max) * 100).toFixed(0)}%
-- CO: ${((skillScores.CO.score / skillScores.CO.max) * 100).toFixed(0)}%
+- CE: ${(pctCE * 100).toFixed(0)}%
+- CO: ${(pctCO * 100).toFixed(0)}%
 
 Produis un bilan pédagogique court (3-4 phrases) avec :
 1. Les points forts (basés sur les compétences réussies)
 2. Les axes d'amélioration
 3. Le groupe conseillé (A1, A2, B1)
 4. Un conseil de parcours (ex: "Focus administratif", "Renforcement oral")
+
+IMPORTANT: Si le flag ALERTE_VITESSE_INCOHERENTE ou PROFIL_INCOHERENT est présent, mentionne qu'un entretien humain est nécessaire pour valider le niveau.
 
 Retourne un JSON :
 {
@@ -139,7 +240,7 @@ Retourne un JSON :
     const claudeData = await response.json()
     const pedagogicalAnalysis = JSON.parse(claudeData.content[0].text)
 
-    // 7. Enregistrement de la tentative
+    // 10. Enregistrement de la tentative
     const { data: attempt, error: attemptError } = await supabaseClient
       .from('placement_test_attempts')
       .insert({
@@ -147,9 +248,9 @@ Retourne un JSON :
         student_id: student_id || null,
         student_name: student_name,
         status: 'completed',
-        total_score: totalPoints,
-        max_score: maxPossiblePoints,
-        estimated_level: estimatedLevel,
+        total_score: scoreFinal,
+        max_score: 100,
+        estimated_level: niveauEstime,
         source: source,
         completed_at: new Date().toISOString()
       })
@@ -158,27 +259,28 @@ Retourne un JSON :
 
     if (attemptError) throw attemptError
 
-    // 8. Enregistrement des réponses
+    // 11. Enregistrement des réponses
     await supabaseClient.from('placement_test_answers').insert(
       processedAnswers.map(a => ({ ...a, attempt_id: attempt.id }))
     )
 
-    // 9. Enregistrement du résultat détaillé
+    // 12. Enregistrement du résultat détaillé
     const resultData = {
       attempt_id: attempt.id,
-      global_level: estimatedLevel,
-      ce_level: estimatedLevel, // Simplifié pour le MVP
-      co_level: estimatedLevel,
-      global_score_pct: scorePct,
-      ce_score_pct: (skillScores.CE.score / skillScores.CE.max) * 100,
-      co_score_pct: (skillScores.CO.score / skillScores.CO.max) * 100,
+      global_level: niveauEstime,
+      ce_level: niveauEstime, 
+      co_level: niveauEstime,
+      global_score_pct: (scoreFinal / 500) * 100, 
+      ce_score_pct: pctCE * 100,
+      co_score_pct: pctCO * 100,
       strengths: pedagogicalAnalysis.strengths,
       weaknesses: pedagogicalAnalysis.weaknesses,
       recommended_group: pedagogicalAnalysis.recommended_group,
       recommended_pathway: pedagogicalAnalysis.recommended_pathway,
       teacher_notes: pedagogicalAnalysis.teacher_notes,
       remediation_exercises: remediation || [],
-      raw_analysis: pedagogicalAnalysis
+      raw_analysis: pedagogicalAnalysis,
+      flags: Array.from(flags)
     }
 
     await supabaseClient.from('placement_test_results').insert(resultData)
