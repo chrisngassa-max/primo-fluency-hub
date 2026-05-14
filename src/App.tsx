@@ -58,8 +58,11 @@ import TestResultats from "@/pages/formateur/TestResultats";
 import TestResultatDetail from "@/pages/formateur/TestResultatDetail";
 import TestResultatGroupes from "@/pages/formateur/TestResultatGroupes";
 import TestPositionnement from "@/pages/eleve/TestPositionnement";
+import PositionnementPassation from "@/pages/eleve/PositionnementPassation";
+import PositionnementResultat from "@/pages/eleve/PositionnementResultat";
 import RessourcesPage from "@/pages/formateur/RessourcesPage";
 import BanqueActivites from "@/pages/formateur/BanqueActivites";
+import PositionnementPage from "@/pages/formateur/PositionnementPage";
 import PlayExercise from "@/pages/PlayExercise";
 import AuthRelayReset from "@/pages/AuthRelayReset";
 
@@ -120,6 +123,7 @@ const App = () => (
               <Route path="ressources" element={<RessourcesPage />} />
               <Route path="intervention" element={<InterventionRapidePage />} />
               <Route path="banque-activites" element={<BanqueActivites />} />
+              <Route path="positionnement" element={<PositionnementPage />} />
               <Route path="parametres" element={<Parametres />} />
             </Route>
 
@@ -139,6 +143,8 @@ const App = () => (
               {/* Routes pédagogiques : double consentement requis */}
               <Route index element={<AIConsentRequiredRoute><EleveDashboard /></AIConsentRequiredRoute>} />
               <Route path="test-positionnement" element={<AIConsentRequiredRoute><TestPositionnement /></AIConsentRequiredRoute>} />
+              <Route path="test-positionnement/passer/:token" element={<PositionnementPassation />} />
+              <Route path="test-positionnement/resultat/:attemptId" element={<PositionnementResultat />} />
               <Route path="devoirs" element={<AIConsentRequiredRoute><EleveDevoirs /></AIConsentRequiredRoute>} />
               <Route path="carnet" element={<AIConsentRequiredRoute><CarnetMots /></AIConsentRequiredRoute>} />
               <Route path="bilan/:sessionId" element={<AIConsentRequiredRoute><BilanSeance /></AIConsentRequiredRoute>} />
