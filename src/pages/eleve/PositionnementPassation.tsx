@@ -89,7 +89,7 @@ export default function PositionnementPassation() {
         {/* Header Disclaimer */}
         <div className="bg-amber-50 border border-amber-200 p-3 rounded-lg flex items-center gap-3 text-amber-800 text-sm font-medium">
           <AlertTriangle className="h-5 w-5 shrink-0" />
-          Test pédagogique non officiel — ne remplace pas un examen officiel TCF IRN.
+          Test pédagogique non officiel — ne remplace pas une certification officielle.
         </div>
 
         {/* Step: Accueil */}
