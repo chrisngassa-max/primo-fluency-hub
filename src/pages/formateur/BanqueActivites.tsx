@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import {
   BookOpen,
@@ -21,6 +22,7 @@ import {
   Search,
   Sparkles,
   Timer,
+  Wand2,
 } from "lucide-react";
 
 type PedagogicalActivity = {
