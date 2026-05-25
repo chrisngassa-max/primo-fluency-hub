@@ -275,6 +275,35 @@ export function FocusEleveSheet({
                 </div>
               )}
             </div>
+
+            {/* Tendance erreurs */}
+            {erreurChartData.length >= 2 && (
+              <div className="space-y-2">
+                <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                  Tendance erreurs
+                </p>
+                <div style={{ width: "100%", height: 120 }}>
+                  <ResponsiveContainer>
+                    <BarChart data={erreurChartData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+                      <XAxis
+                        dataKey="label"
+                        tick={{ fontSize: 10 }}
+                        interval={0}
+                        angle={-25}
+                        textAnchor="end"
+                        height={48}
+                      />
+                      <YAxis allowDecimals={false} tick={{ fontSize: 10 }} width={28} />
+                      <Tooltip
+                        contentStyle={{ fontSize: 11, padding: "4px 8px" }}
+                        labelStyle={{ fontSize: 11 }}
+                      />
+                      <Bar dataKey="count" fill="hsl(var(--primary))" radius={[3, 3, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            )}
           </div>
         </ScrollArea>
       </SheetContent>
