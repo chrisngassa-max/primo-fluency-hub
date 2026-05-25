@@ -466,14 +466,24 @@ export default function BanqueActivites() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between rounded-md border p-3">
-              <div>
-                <p className="text-sm font-medium">{selectedActivities.length} activité(s) sélectionnée(s)</p>
-                <p className="text-xs text-muted-foreground">Conseil : 2 à 4 activités pour une séance lisible.</p>
+            <div className="flex flex-col gap-2 rounded-md border p-3">
+              <div className="flex items-center justify-between gap-2">
+                <div>
+                  <p className="text-sm font-medium">{selectedActivities.length} activité(s) sélectionnée(s)</p>
+                  <p className="text-xs text-muted-foreground">Conseil : 2 à 4 activités pour une séance lisible.</p>
+                </div>
+                <Button size="sm" variant="outline" onClick={copyBrief} disabled={selectedActivities.length === 0}>
+                  <Clipboard className="mr-2 h-4 w-4" />
+                  Copier
+                </Button>
               </div>
-              <Button size="sm" onClick={copyBrief} disabled={selectedActivities.length === 0}>
-                <Clipboard className="mr-2 h-4 w-4" />
-                Copier
+              <Button
+                size="sm"
+                onClick={generateSession}
+                disabled={selectedActivities.length === 0 || generating}
+              >
+                {generating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Wand2 className="mr-2 h-4 w-4" />}
+                Générer une séance avec cette sélection
               </Button>
             </div>
 
@@ -488,6 +498,24 @@ export default function BanqueActivites() {
           </CardContent>
         </Card>
       </div>
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Séance générée</DialogTitle>
+            <DialogDescription>
+              {generatedResult?.exercices?.length ?? 0} exercices générés à partir des activités sélectionnées.
+              {generatedResult?.totalExcluded > 0 && ` (${generatedResult.totalExcluded} exclus par la QA)`}
+            </DialogDescription>
+          </DialogHeader>
+          <Textarea
+            value={JSON.stringify(generatedResult, null, 2)}
+            readOnly
+            rows={28}
+            className="resize-none text-xs leading-relaxed font-mono"
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
