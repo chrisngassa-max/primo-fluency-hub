@@ -258,7 +258,7 @@ export default function PositionnementPage() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-slate-700">{attempt.test?.title}</div>
                         <Badge variant="outline" className="text-[10px] h-4 mt-1 bg-white border-slate-200">
-                          {attempt.source === 'site_externe' ? 'Site Web' : 'App Interne'}
+                          {(attempt as any).source === 'site_externe' ? 'Site Web' : 'App Interne'}
                         </Badge>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
