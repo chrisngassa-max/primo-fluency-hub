@@ -42,6 +42,8 @@ type Recalibration = {
   n_exercices: number;
 };
 
+type Competence = "CO" | "CE" | "EE" | "EO";
+
 type EleveBilan = {
   eleve_id: string;
   prenom: string;
@@ -50,6 +52,8 @@ type EleveBilan = {
   score_moyen: number | null;
   top_erreurs: Array<{ type_erreur_id: string; count: number }>;
   recalibrations: Recalibration[];
+  dominant_error_competence: Competence | null;
+  dominant_niveau: string | null;
 };
 
 // ── Helpers ────────────────────────────────────────────────────────────────
