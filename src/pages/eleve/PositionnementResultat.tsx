@@ -182,7 +182,7 @@ export default function PositionnementResultat() {
               </CardHeader>
               <CardContent className="p-0">
                 <div className="divide-y divide-slate-100">
-                  {result?.remediation_exercises?.map((ex: any) => (
+                  {(result?.remediation_exercises as any[] | null)?.map((ex: any) => (
                     <Link key={ex.id} to={`/eleve/exercices`} className="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors group">
                       <div className="flex items-center gap-3">
                         <Badge variant="outline" className="text-[10px] h-5 bg-slate-50">{ex.competence}</Badge>
