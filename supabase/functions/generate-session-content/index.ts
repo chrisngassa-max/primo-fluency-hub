@@ -147,6 +147,7 @@ Instructions de pondération :
 - Compétences en position 3 et suivantes : volume standard.`;
 })()}
 ${gabaritBlock}
+${banqueBlock}
 
 ═══════════════════════════════════════════════════
 RÈGLES ABSOLUES SUR LA LANGUE — PUBLIC A0/A1 ALLOPHONE
