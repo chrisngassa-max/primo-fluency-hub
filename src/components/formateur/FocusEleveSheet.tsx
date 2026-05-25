@@ -79,6 +79,25 @@ export function FocusEleveSheet({
     .slice()
     .reverse();
 
+  // Tendance erreurs — count per type_erreur_id (incorrect responses)
+  const erreurCounts: Record<string, number> = {};
+  for (const ev of allEvents) {
+    if (
+      ev.eleve_id === eleveId &&
+      ev.event_type === "reponse_incorrecte" &&
+      ev.type_erreur_id
+    ) {
+      erreurCounts[ev.type_erreur_id] = (erreurCounts[ev.type_erreur_id] ?? 0) + 1;
+    }
+  }
+  const erreurChartData = Object.entries(erreurCounts)
+    .map(([id, count]) => ({
+      id,
+      label: ERREUR_LABELS[id] ?? id,
+      count,
+    }))
+    .sort((a, b) => b.count - a.count);
+
   const alertLevel = priorite > 10 ? "alert" : priorite >= 4 ? "suggest" : "ok";
   const mins = state?.derniere_activite ? minutesSince(state.derniere_activite) : null;
 
