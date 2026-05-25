@@ -144,6 +144,25 @@ function computeEleveBilan(
     }
   }
 
+  // Dominant error competence — competence with most reponse_incorrecte
+  const compErrors = new Map<Competence, number>();
+  for (const ev of evts.filter((e) => e.event_type === "reponse_incorrecte")) {
+    const c = ((ev.payload as any)?.competence ?? "").toString().toUpperCase();
+    if (c === "CO" || c === "CE" || c === "EE" || c === "EO") {
+      compErrors.set(c as Competence, (compErrors.get(c as Competence) ?? 0) + 1);
+    }
+  }
+  const dominant_error_competence: Competence | null =
+    compErrors.size > 0
+      ? (Array.from(compErrors.entries()).sort((a, b) => b[1] - a[1])[0][0] as Competence)
+      : null;
+  const dominant_niveau = dominant_error_competence
+    ? ((niveaux?.[`niveau_${dominant_error_competence.toLowerCase()}` as keyof NiveauxEleve] as
+        | string
+        | null
+        | undefined) ?? null)
+    : null;
+
   return {
     eleve_id: member.eleve_id,
     prenom: member.eleve?.prenom ?? "",
@@ -152,6 +171,8 @@ function computeEleveBilan(
     score_moyen,
     top_erreurs,
     recalibrations,
+    dominant_error_competence,
+    dominant_niveau,
   };
 }
 
