@@ -165,15 +165,16 @@ const SuiviDirectClasse = () => {
     enabled: !!user?.id,
   });
 
-  // Niveaux CECRL par élève — Sprint 4 priorité
+  // Niveaux CECRL par élève — Sprint 4 priorité (group_id résolu plus bas via selectedSession)
+  const [niveauGroupId, setNiveauGroupId] = useState<string | null>(null);
   const { data: niveauxData } = useQuery({
-    queryKey: ["live-niveaux", selectedSession?.group_id],
+    queryKey: ["live-niveaux", niveauGroupId],
     queryFn: async () => {
-      if (!selectedSession?.group_id) return [];
+      if (!niveauGroupId) return [];
       const { data: gm } = await supabase
         .from("group_members")
         .select("eleve_id")
-        .eq("group_id", selectedSession.group_id);
+        .eq("group_id", niveauGroupId);
       const ids = (gm ?? []).map((r: any) => r.eleve_id as string);
       if (ids.length === 0) return [];
       const { data } = await supabase
@@ -182,7 +183,7 @@ const SuiviDirectClasse = () => {
         .in("eleve_id", ids);
       return (data ?? []) as Array<{ eleve_id: string } & NiveauxEleve>;
     },
-    enabled: !!selectedSession?.group_id,
+    enabled: !!niveauGroupId,
   });
 
   const niveauxMap = useMemo(() => {
