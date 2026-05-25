@@ -70,6 +70,7 @@ const analysesNav = [
   { title: "Positionnement", url: "/formateur/positionnement", icon: ListChecks },
   { title: "Tests d'entrée", url: "/formateur/tests", icon: ClipboardList },
   { title: "Résultats positionnement", url: "/formateur/test-resultats", icon: GraduationCap },
+  { title: "Bilans d'atelier", url: "/formateur/bilans-atelier", icon: BookMarked },
   { title: "Rapports IA", url: "/formateur/rapports", icon: FileText },
   { title: "Signalements", url: "/formateur/signalements", icon: Flag },
 ];

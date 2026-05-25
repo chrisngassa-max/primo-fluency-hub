@@ -18,6 +18,7 @@ import {
   XCircle,
   Zap,
 } from "lucide-react";
+import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import type { EleveStateLive, LiveEvent, NiveauxEleve } from "@/hooks/useLiveSession";
 
 const NIVEAU_COLORS: Record<string, string> = {
@@ -77,6 +78,25 @@ export function FocusEleveSheet({
     .filter((ev) => ev.eleve_id === eleveId)
     .slice()
     .reverse();
+
+  // Tendance erreurs — count per type_erreur_id (incorrect responses)
+  const erreurCounts: Record<string, number> = {};
+  for (const ev of allEvents) {
+    if (
+      ev.eleve_id === eleveId &&
+      ev.event_type === "reponse_incorrecte" &&
+      ev.type_erreur_id
+    ) {
+      erreurCounts[ev.type_erreur_id] = (erreurCounts[ev.type_erreur_id] ?? 0) + 1;
+    }
+  }
+  const erreurChartData = Object.entries(erreurCounts)
+    .map(([id, count]) => ({
+      id,
+      label: ERREUR_LABELS[id] ?? id,
+      count,
+    }))
+    .sort((a, b) => b.count - a.count);
 
   const alertLevel = priorite > 10 ? "alert" : priorite >= 4 ? "suggest" : "ok";
   const mins = state?.derniere_activite ? minutesSince(state.derniere_activite) : null;
@@ -255,6 +275,35 @@ export function FocusEleveSheet({
                 </div>
               )}
             </div>
+
+            {/* Tendance erreurs */}
+            {erreurChartData.length >= 2 && (
+              <div className="space-y-2">
+                <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                  Tendance erreurs
+                </p>
+                <div style={{ width: "100%", height: 120 }}>
+                  <ResponsiveContainer>
+                    <BarChart data={erreurChartData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+                      <XAxis
+                        dataKey="label"
+                        tick={{ fontSize: 10 }}
+                        interval={0}
+                        angle={-25}
+                        textAnchor="end"
+                        height={48}
+                      />
+                      <YAxis allowDecimals={false} tick={{ fontSize: 10 }} width={28} />
+                      <Tooltip
+                        contentStyle={{ fontSize: 11, padding: "4px 8px" }}
+                        labelStyle={{ fontSize: 11 }}
+                      />
+                      <Bar dataKey="count" fill="hsl(var(--primary))" radius={[3, 3, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            )}
           </div>
         </ScrollArea>
       </SheetContent>

@@ -63,6 +63,7 @@ import PositionnementPassation from "@/pages/eleve/PositionnementPassation";
 import PositionnementResultat from "@/pages/eleve/PositionnementResultat";
 import RessourcesPage from "@/pages/formateur/RessourcesPage";
 import BanqueActivites from "@/pages/formateur/BanqueActivites";
+import BilansAtelierPage from "@/pages/formateur/BilansAtelierPage";
 import PositionnementPage from "@/pages/formateur/PositionnementPage";
 import PlayExercise from "@/pages/PlayExercise";
 import AuthRelayReset from "@/pages/AuthRelayReset";
@@ -125,6 +126,7 @@ const App = () => (
               <Route path="intervention" element={<InterventionRapidePage />} />
               <Route path="bibliotheque-interventions" element={<BibliothequeInterventions />} />
               <Route path="banque-activites" element={<BanqueActivites />} />
+              <Route path="bilans-atelier" element={<BilansAtelierPage />} />
               <Route path="positionnement" element={<PositionnementPage />} />
               <Route path="parametres" element={<Parametres />} />
             </Route>
