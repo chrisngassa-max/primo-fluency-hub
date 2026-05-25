@@ -122,6 +122,9 @@ export default function BanqueActivites() {
   const [category, setCategory] = useState("all");
   const [limit, setLimit] = useState("12");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [generating, setGenerating] = useState(false);
+  const [generatedResult, setGeneratedResult] = useState<any | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const { data: totalCount = 0, isLoading: countLoading } = useQuery({
     queryKey: ["pedagogical-activities-count"],
@@ -197,6 +200,66 @@ export default function BanqueActivites() {
 
     await navigator.clipboard.writeText(brief);
     toast.success("Brief copié pour la génération de séance.");
+  };
+
+  const competencesFromSelection = useMemo(() => {
+    const map: Record<string, string> = {
+      "compréhension orale": "CO",
+      "compréhension écrite": "CE",
+      "production orale": "EO",
+      "production écrite": "EE",
+      "grammaire": "Structures",
+      "lexique / structure": "Structures",
+    };
+    const set = new Set<string>();
+    selectedActivities.forEach((a) => {
+      const c = map[a.category?.toLowerCase()];
+      if (c) set.add(c);
+    });
+    return set.size ? Array.from(set) : ["CO", "CE"];
+  }, [selectedActivities]);
+
+  const generateSession = async () => {
+    if (selectedActivities.length === 0) {
+      toast.error("Sélectionne au moins une activité.");
+      return;
+    }
+    setGenerating(true);
+    setGeneratedResult(null);
+    try {
+      const { data, error: invokeErr } = await supabase.functions.invoke("generate-session-content", {
+        body: {
+          titre: query.trim() || `Séance ${level} — ${new Date().toLocaleDateString("fr-FR")}`,
+          objectifs: query,
+          competences_cibles: competencesFromSelection,
+          niveau_cible: level === "all" ? "A1" : level,
+          duree_minutes: maxDuration ? Number(maxDuration) : 90,
+          selected_activities: selectedActivities.map((a) => ({
+            title: a.title,
+            category: a.category,
+            level_min: a.level_min,
+            level_max: a.level_max,
+            duration_min: a.duration_min,
+            duration_max: a.duration_max,
+            objective: a.objective,
+            instructions: a.instructions,
+            materials_needed: a.materials_needed,
+            tags: a.tags,
+            source_pdf: a.source_pdf,
+            document_id: a.document_id,
+          })),
+        },
+      });
+      if (invokeErr) throw invokeErr;
+      setGeneratedResult(data);
+      setDialogOpen(true);
+      toast.success(`Séance générée : ${data?.exercices?.length ?? 0} exercices`);
+    } catch (err: any) {
+      console.error("[BanqueActivites] generate-session-content error", err);
+      toast.error(err?.message || "Erreur de génération");
+    } finally {
+      setGenerating(false);
+    }
   };
 
   const hasMissingDatabase = error instanceof Error && /search_pedagogical_activities|pedagogical_activities/i.test(error.message);
