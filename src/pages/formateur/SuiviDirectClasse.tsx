@@ -226,6 +226,7 @@ const SuiviDirectClasse = () => {
     () => sessions?.find((s) => s.id === selectedSessionId) ?? null,
     [sessions, selectedSessionId],
   );
+  useEffect(() => { setNiveauGroupId(selectedSession?.group_id ?? null); }, [selectedSession?.group_id]);
 
   // Membres du groupe
   const { data: members } = useQuery({
