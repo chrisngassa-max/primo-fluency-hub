@@ -126,6 +126,7 @@ const App = () => (
               <Route path="intervention" element={<InterventionRapidePage />} />
               <Route path="bibliotheque-interventions" element={<BibliothequeInterventions />} />
               <Route path="banque-activites" element={<BanqueActivites />} />
+              <Route path="bilans-atelier" element={<BilansAtelierPage />} />
               <Route path="positionnement" element={<PositionnementPage />} />
               <Route path="parametres" element={<Parametres />} />
             </Route>
