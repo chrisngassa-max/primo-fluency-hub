@@ -291,6 +291,48 @@ export type Database = {
         }
         Relationships: []
       }
+      atelier_bilans: {
+        Row: {
+          contenu: Json
+          created_at: string
+          formateur_id: string
+          id: string
+          recalibrations_appliquees: boolean
+          session_id: string
+        }
+        Insert: {
+          contenu?: Json
+          created_at?: string
+          formateur_id: string
+          id?: string
+          recalibrations_appliquees?: boolean
+          session_id: string
+        }
+        Update: {
+          contenu?: Json
+          created_at?: string
+          formateur_id?: string
+          id?: string
+          recalibrations_appliquees?: boolean
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "atelier_bilans_formateur_id_fkey"
+            columns: ["formateur_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "atelier_bilans_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bilan_post_devoirs: {
         Row: {
           analyse_data: Json
@@ -1487,6 +1529,66 @@ export type Database = {
         }
         Relationships: []
       }
+      interventions: {
+        Row: {
+          audio_generated_at: string | null
+          audio_url: string | null
+          competence: string | null
+          contenu_texte: string
+          created_at: string
+          formateur_id: string
+          id: string
+          niveau_cible: string | null
+          titre: string
+          type_erreur_id: string | null
+          updated_at: string
+          voix: string
+        }
+        Insert: {
+          audio_generated_at?: string | null
+          audio_url?: string | null
+          competence?: string | null
+          contenu_texte: string
+          created_at?: string
+          formateur_id: string
+          id?: string
+          niveau_cible?: string | null
+          titre: string
+          type_erreur_id?: string | null
+          updated_at?: string
+          voix?: string
+        }
+        Update: {
+          audio_generated_at?: string | null
+          audio_url?: string | null
+          competence?: string | null
+          contenu_texte?: string
+          created_at?: string
+          formateur_id?: string
+          id?: string
+          niveau_cible?: string | null
+          titre?: string
+          type_erreur_id?: string | null
+          updated_at?: string
+          voix?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interventions_formateur_id_fkey"
+            columns: ["formateur_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interventions_type_erreur_id_fkey"
+            columns: ["type_erreur_id"]
+            isOneToOne: false
+            referencedRelation: "types_erreur"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           created_at: string
@@ -2011,7 +2113,15 @@ export type Database = {
           eleve_id: string
           id: string
           niveau_actuel: string
+          niveau_ce: string
+          niveau_co: string
+          niveau_ee: string
+          niveau_eo: string
+          niveau_locked: boolean | null
+          niveau_source: string | null
+          niveau_updated_at: string | null
           priorites_pedagogiques: Json
+          profil_litteratie: string | null
           score_risque: number
           taux_reussite_ce: number
           taux_reussite_co: number
@@ -2027,7 +2137,15 @@ export type Database = {
           eleve_id: string
           id?: string
           niveau_actuel: string
+          niveau_ce?: string
+          niveau_co?: string
+          niveau_ee?: string
+          niveau_eo?: string
+          niveau_locked?: boolean | null
+          niveau_source?: string | null
+          niveau_updated_at?: string | null
           priorites_pedagogiques?: Json
+          profil_litteratie?: string | null
           score_risque?: number
           taux_reussite_ce?: number
           taux_reussite_co?: number
@@ -2043,7 +2161,15 @@ export type Database = {
           eleve_id?: string
           id?: string
           niveau_actuel?: string
+          niveau_ce?: string
+          niveau_co?: string
+          niveau_ee?: string
+          niveau_eo?: string
+          niveau_locked?: boolean | null
+          niveau_source?: string | null
+          niveau_updated_at?: string | null
           priorites_pedagogiques?: Json
+          profil_litteratie?: string | null
           score_risque?: number
           taux_reussite_ce?: number
           taux_reussite_co?: number
@@ -2393,6 +2519,61 @@ export type Database = {
             columns: ["session_id"]
             isOneToOne: false
             referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      session_live_events: {
+        Row: {
+          created_at: string
+          eleve_id: string | null
+          event_type: string
+          id: string
+          payload: Json | null
+          priorite_score: number | null
+          session_id: string
+          type_erreur_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          eleve_id?: string | null
+          event_type: string
+          id?: string
+          payload?: Json | null
+          priorite_score?: number | null
+          session_id: string
+          type_erreur_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          eleve_id?: string | null
+          event_type?: string
+          id?: string
+          payload?: Json | null
+          priorite_score?: number | null
+          session_id?: string
+          type_erreur_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_live_events_eleve_id_fkey"
+            columns: ["eleve_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_live_events_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_live_events_type_erreur_id_fkey"
+            columns: ["type_erreur_id"]
+            isOneToOne: false
+            referencedRelation: "types_erreur"
             referencedColumns: ["id"]
           },
         ]
@@ -3129,6 +3310,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      types_erreur: {
+        Row: {
+          besoin_humain_base: number | null
+          categorie: string
+          competences: string[]
+          created_at: string | null
+          description: string | null
+          gravite_base: number | null
+          id: string
+          libelle_court: string
+        }
+        Insert: {
+          besoin_humain_base?: number | null
+          categorie: string
+          competences?: string[]
+          created_at?: string | null
+          description?: string | null
+          gravite_base?: number | null
+          id: string
+          libelle_court: string
+        }
+        Update: {
+          besoin_humain_base?: number | null
+          categorie?: string
+          competences?: string[]
+          created_at?: string | null
+          description?: string | null
+          gravite_base?: number | null
+          id?: string
+          libelle_court?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
