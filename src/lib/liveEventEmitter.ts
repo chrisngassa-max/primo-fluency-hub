@@ -23,14 +23,15 @@ export async function emitLiveEvent(opts: {
   typeErreurId?: string | null;
   prioriteScore?: number | null;
 }): Promise<void> {
-  const { error } = await supabase.from("session_live_events").insert({
+  const row = {
     session_id: opts.sessionId,
     eleve_id: opts.eleveId,
     event_type: opts.eventType,
-    payload: opts.payload ?? {},
+    payload: (opts.payload ?? {}) as never,
     type_erreur_id: opts.typeErreurId ?? null,
     priorite_score: opts.prioriteScore ?? null,
-  });
+  };
+  const { error } = await supabase.from("session_live_events").insert(row as never);
   if (error) {
     console.warn("[liveEventEmitter]", opts.eventType, error.message);
   }

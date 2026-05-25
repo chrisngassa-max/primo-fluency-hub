@@ -291,6 +291,48 @@ export type Database = {
         }
         Relationships: []
       }
+      atelier_bilans: {
+        Row: {
+          contenu: Json
+          created_at: string
+          formateur_id: string
+          id: string
+          recalibrations_appliquees: boolean
+          session_id: string
+        }
+        Insert: {
+          contenu?: Json
+          created_at?: string
+          formateur_id: string
+          id?: string
+          recalibrations_appliquees?: boolean
+          session_id: string
+        }
+        Update: {
+          contenu?: Json
+          created_at?: string
+          formateur_id?: string
+          id?: string
+          recalibrations_appliquees?: boolean
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "atelier_bilans_formateur_id_fkey"
+            columns: ["formateur_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "atelier_bilans_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bilan_post_devoirs: {
         Row: {
           analyse_data: Json
@@ -1487,6 +1529,66 @@ export type Database = {
         }
         Relationships: []
       }
+      interventions: {
+        Row: {
+          audio_generated_at: string | null
+          audio_url: string | null
+          competence: string | null
+          contenu_texte: string
+          created_at: string
+          formateur_id: string
+          id: string
+          niveau_cible: string | null
+          titre: string
+          type_erreur_id: string | null
+          updated_at: string
+          voix: string
+        }
+        Insert: {
+          audio_generated_at?: string | null
+          audio_url?: string | null
+          competence?: string | null
+          contenu_texte: string
+          created_at?: string
+          formateur_id: string
+          id?: string
+          niveau_cible?: string | null
+          titre: string
+          type_erreur_id?: string | null
+          updated_at?: string
+          voix?: string
+        }
+        Update: {
+          audio_generated_at?: string | null
+          audio_url?: string | null
+          competence?: string | null
+          contenu_texte?: string
+          created_at?: string
+          formateur_id?: string
+          id?: string
+          niveau_cible?: string | null
+          titre?: string
+          type_erreur_id?: string | null
+          updated_at?: string
+          voix?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interventions_formateur_id_fkey"
+            columns: ["formateur_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interventions_type_erreur_id_fkey"
+            columns: ["type_erreur_id"]
+            isOneToOne: false
+            referencedRelation: "types_erreur"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           created_at: string
@@ -1881,6 +1983,380 @@ export type Database = {
         }
         Relationships: []
       }
+      placement_test_answers: {
+        Row: {
+          attempt_id: string | null
+          created_at: string
+          error_tags: string[] | null
+          id: string
+          is_correct: boolean | null
+          item_id: string | null
+          score: number | null
+          student_answer: string | null
+          teacher_feedback: string | null
+          time_spent: number | null
+        }
+        Insert: {
+          attempt_id?: string | null
+          created_at?: string
+          error_tags?: string[] | null
+          id?: string
+          is_correct?: boolean | null
+          item_id?: string | null
+          score?: number | null
+          student_answer?: string | null
+          teacher_feedback?: string | null
+          time_spent?: number | null
+        }
+        Update: {
+          attempt_id?: string | null
+          created_at?: string
+          error_tags?: string[] | null
+          id?: string
+          is_correct?: boolean | null
+          item_id?: string | null
+          score?: number | null
+          student_answer?: string | null
+          teacher_feedback?: string | null
+          time_spent?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "placement_test_answers_attempt_id_fkey"
+            columns: ["attempt_id"]
+            isOneToOne: false
+            referencedRelation: "placement_test_attempts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "placement_test_answers_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "placement_test_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      placement_test_attempts: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          estimated_level: string | null
+          id: string
+          max_score: number | null
+          started_at: string
+          status: string
+          student_id: string | null
+          student_name: string | null
+          test_id: string | null
+          total_score: number | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          estimated_level?: string | null
+          id?: string
+          max_score?: number | null
+          started_at?: string
+          status?: string
+          student_id?: string | null
+          student_name?: string | null
+          test_id?: string | null
+          total_score?: number | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          estimated_level?: string | null
+          id?: string
+          max_score?: number | null
+          started_at?: string
+          status?: string
+          student_id?: string | null
+          student_name?: string | null
+          test_id?: string | null
+          total_score?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "placement_test_attempts_test_id_fkey"
+            columns: ["test_id"]
+            isOneToOne: false
+            referencedRelation: "placement_tests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      placement_test_exports: {
+        Row: {
+          access_token: string | null
+          created_at: string
+          export_format: string | null
+          export_status: string | null
+          export_url: string | null
+          exported_at: string | null
+          id: string
+          last_synced_at: string | null
+          private_answer_key: Json
+          public_payload: Json
+          schema_version: string | null
+          target_site: string | null
+          test_id: string | null
+        }
+        Insert: {
+          access_token?: string | null
+          created_at?: string
+          export_format?: string | null
+          export_status?: string | null
+          export_url?: string | null
+          exported_at?: string | null
+          id?: string
+          last_synced_at?: string | null
+          private_answer_key: Json
+          public_payload: Json
+          schema_version?: string | null
+          target_site?: string | null
+          test_id?: string | null
+        }
+        Update: {
+          access_token?: string | null
+          created_at?: string
+          export_format?: string | null
+          export_status?: string | null
+          export_url?: string | null
+          exported_at?: string | null
+          id?: string
+          last_synced_at?: string | null
+          private_answer_key?: Json
+          public_payload?: Json
+          schema_version?: string | null
+          target_site?: string | null
+          test_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "placement_test_exports_test_id_fkey"
+            columns: ["test_id"]
+            isOneToOne: false
+            referencedRelation: "placement_tests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      placement_test_items: {
+        Row: {
+          audio_script: string | null
+          context: string | null
+          correct_answer: string | null
+          created_at: string
+          difficulty: number | null
+          distractors_analysis: string | null
+          explanation: string | null
+          id: string
+          is_validated: boolean | null
+          level_cecrl: string
+          options: Json | null
+          order_index: number | null
+          prompt: string | null
+          question: string | null
+          score: number | null
+          skill: string
+          support: string | null
+          support_type: string | null
+          tags: string[] | null
+          test_id: string | null
+        }
+        Insert: {
+          audio_script?: string | null
+          context?: string | null
+          correct_answer?: string | null
+          created_at?: string
+          difficulty?: number | null
+          distractors_analysis?: string | null
+          explanation?: string | null
+          id?: string
+          is_validated?: boolean | null
+          level_cecrl: string
+          options?: Json | null
+          order_index?: number | null
+          prompt?: string | null
+          question?: string | null
+          score?: number | null
+          skill: string
+          support?: string | null
+          support_type?: string | null
+          tags?: string[] | null
+          test_id?: string | null
+        }
+        Update: {
+          audio_script?: string | null
+          context?: string | null
+          correct_answer?: string | null
+          created_at?: string
+          difficulty?: number | null
+          distractors_analysis?: string | null
+          explanation?: string | null
+          id?: string
+          is_validated?: boolean | null
+          level_cecrl?: string
+          options?: Json | null
+          order_index?: number | null
+          prompt?: string | null
+          question?: string | null
+          score?: number | null
+          skill?: string
+          support?: string | null
+          support_type?: string | null
+          tags?: string[] | null
+          test_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "placement_test_items_test_id_fkey"
+            columns: ["test_id"]
+            isOneToOne: false
+            referencedRelation: "placement_tests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      placement_test_results: {
+        Row: {
+          attempt_id: string | null
+          ce_level: string | null
+          ce_score_pct: number | null
+          co_level: string | null
+          co_score_pct: number | null
+          created_at: string
+          ee_level: string | null
+          ee_score_pct: number | null
+          eo_level: string | null
+          eo_score_pct: number | null
+          flags: string[] | null
+          global_level: string | null
+          global_score_pct: number | null
+          id: string
+          raw_analysis: Json | null
+          recommended_group: string | null
+          recommended_pathway: string | null
+          remediation_exercises: Json | null
+          strengths: string[] | null
+          teacher_notes: string | null
+          updated_at: string
+          weaknesses: string[] | null
+        }
+        Insert: {
+          attempt_id?: string | null
+          ce_level?: string | null
+          ce_score_pct?: number | null
+          co_level?: string | null
+          co_score_pct?: number | null
+          created_at?: string
+          ee_level?: string | null
+          ee_score_pct?: number | null
+          eo_level?: string | null
+          eo_score_pct?: number | null
+          flags?: string[] | null
+          global_level?: string | null
+          global_score_pct?: number | null
+          id?: string
+          raw_analysis?: Json | null
+          recommended_group?: string | null
+          recommended_pathway?: string | null
+          remediation_exercises?: Json | null
+          strengths?: string[] | null
+          teacher_notes?: string | null
+          updated_at?: string
+          weaknesses?: string[] | null
+        }
+        Update: {
+          attempt_id?: string | null
+          ce_level?: string | null
+          ce_score_pct?: number | null
+          co_level?: string | null
+          co_score_pct?: number | null
+          created_at?: string
+          ee_level?: string | null
+          ee_score_pct?: number | null
+          eo_level?: string | null
+          eo_score_pct?: number | null
+          flags?: string[] | null
+          global_level?: string | null
+          global_score_pct?: number | null
+          id?: string
+          raw_analysis?: Json | null
+          recommended_group?: string | null
+          recommended_pathway?: string | null
+          remediation_exercises?: Json | null
+          strengths?: string[] | null
+          teacher_notes?: string | null
+          updated_at?: string
+          weaknesses?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "placement_test_results_attempt_id_fkey"
+            columns: ["attempt_id"]
+            isOneToOne: true
+            referencedRelation: "placement_test_attempts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      placement_tests: {
+        Row: {
+          competences: string[]
+          contexte: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          niveaux_couverts: string[]
+          play_token: string | null
+          published_at: string | null
+          status: string
+          target_exam: string
+          target_public: string
+          title: string
+          updated_at: string
+          validated_by: string | null
+          version: number
+        }
+        Insert: {
+          competences?: string[]
+          contexte?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          niveaux_couverts?: string[]
+          play_token?: string | null
+          published_at?: string | null
+          status?: string
+          target_exam?: string
+          target_public: string
+          title: string
+          updated_at?: string
+          validated_by?: string | null
+          version?: number
+        }
+        Update: {
+          competences?: string[]
+          contexte?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          niveaux_couverts?: string[]
+          play_token?: string | null
+          published_at?: string | null
+          status?: string
+          target_exam?: string
+          target_public?: string
+          title?: string
+          updated_at?: string
+          validated_by?: string | null
+          version?: number
+        }
+        Relationships: []
+      }
       points_a_maitriser: {
         Row: {
           created_at: string
@@ -2011,7 +2487,15 @@ export type Database = {
           eleve_id: string
           id: string
           niveau_actuel: string
+          niveau_ce: string
+          niveau_co: string
+          niveau_ee: string
+          niveau_eo: string
+          niveau_locked: boolean | null
+          niveau_source: string | null
+          niveau_updated_at: string | null
           priorites_pedagogiques: Json
+          profil_litteratie: string | null
           score_risque: number
           taux_reussite_ce: number
           taux_reussite_co: number
@@ -2027,7 +2511,15 @@ export type Database = {
           eleve_id: string
           id?: string
           niveau_actuel: string
+          niveau_ce?: string
+          niveau_co?: string
+          niveau_ee?: string
+          niveau_eo?: string
+          niveau_locked?: boolean | null
+          niveau_source?: string | null
+          niveau_updated_at?: string | null
           priorites_pedagogiques?: Json
+          profil_litteratie?: string | null
           score_risque?: number
           taux_reussite_ce?: number
           taux_reussite_co?: number
@@ -2043,7 +2535,15 @@ export type Database = {
           eleve_id?: string
           id?: string
           niveau_actuel?: string
+          niveau_ce?: string
+          niveau_co?: string
+          niveau_ee?: string
+          niveau_eo?: string
+          niveau_locked?: boolean | null
+          niveau_source?: string | null
+          niveau_updated_at?: string | null
           priorites_pedagogiques?: Json
+          profil_litteratie?: string | null
           score_risque?: number
           taux_reussite_ce?: number
           taux_reussite_co?: number
@@ -2393,6 +2893,61 @@ export type Database = {
             columns: ["session_id"]
             isOneToOne: false
             referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      session_live_events: {
+        Row: {
+          created_at: string
+          eleve_id: string | null
+          event_type: string
+          id: string
+          payload: Json | null
+          priorite_score: number | null
+          session_id: string
+          type_erreur_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          eleve_id?: string | null
+          event_type: string
+          id?: string
+          payload?: Json | null
+          priorite_score?: number | null
+          session_id: string
+          type_erreur_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          eleve_id?: string | null
+          event_type?: string
+          id?: string
+          payload?: Json | null
+          priorite_score?: number | null
+          session_id?: string
+          type_erreur_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_live_events_eleve_id_fkey"
+            columns: ["eleve_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_live_events_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_live_events_type_erreur_id_fkey"
+            columns: ["type_erreur_id"]
+            isOneToOne: false
+            referencedRelation: "types_erreur"
             referencedColumns: ["id"]
           },
         ]
@@ -3129,6 +3684,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      types_erreur: {
+        Row: {
+          besoin_humain_base: number | null
+          categorie: string
+          competences: string[]
+          created_at: string | null
+          description: string | null
+          gravite_base: number | null
+          id: string
+          libelle_court: string
+        }
+        Insert: {
+          besoin_humain_base?: number | null
+          categorie: string
+          competences?: string[]
+          created_at?: string | null
+          description?: string | null
+          gravite_base?: number | null
+          id: string
+          libelle_court: string
+        }
+        Update: {
+          besoin_humain_base?: number | null
+          categorie?: string
+          competences?: string[]
+          created_at?: string | null
+          description?: string | null
+          gravite_base?: number | null
+          id?: string
+          libelle_court?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {

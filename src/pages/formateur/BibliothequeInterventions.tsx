@@ -129,8 +129,8 @@ export default function BibliothequeInterventions() {
   const { data: typesErreur } = useQuery({
     queryKey: ["types-erreur"],
     queryFn: async () => {
-      const { data } = await supabase.from("types_erreur").select("id, label").order("id");
-      return (data ?? []) as TypeErreur[];
+      const { data } = await supabase.from("types_erreur").select("id, libelle_court").order("id");
+      return (data ?? []).map((d: any) => ({ id: d.id, label: d.libelle_court })) as TypeErreur[];
     },
   });
 
