@@ -1727,49 +1727,157 @@ export type Database = {
       }
       pedagogical_activities: {
         Row: {
-          category: string | null
-          competence: string | null
-          created_at: string | null
-          format: string | null
+          activity_id: string
+          audience: string | null
+          category: string
+          created_at: string
+          document_id: string | null
+          duration_max: number | null
+          duration_min: number | null
           id: string
-          instructions: string | null
-          is_active: boolean | null
-          level_max: string | null
-          level_min: string | null
-          objective: string | null
-          source: string | null
-          tags: string[] | null
+          import_key: string
+          instructions: string
+          level_max: string
+          level_max_rank: number | null
+          level_min: string
+          level_min_rank: number | null
+          materials_needed: string[]
+          objective: string
+          raw: Json
+          source_kind: string
+          source_pdf: string | null
+          tags: string[]
           title: string
+          updated_at: string
         }
         Insert: {
-          category?: string | null
-          competence?: string | null
-          created_at?: string | null
-          format?: string | null
+          activity_id: string
+          audience?: string | null
+          category: string
+          created_at?: string
+          document_id?: string | null
+          duration_max?: number | null
+          duration_min?: number | null
           id?: string
-          instructions?: string | null
-          is_active?: boolean | null
-          level_max?: string | null
-          level_min?: string | null
-          objective?: string | null
-          source?: string | null
-          tags?: string[] | null
+          import_key: string
+          instructions?: string
+          level_max: string
+          level_max_rank?: number | null
+          level_min: string
+          level_min_rank?: number | null
+          materials_needed?: string[]
+          objective?: string
+          raw?: Json
+          source_kind?: string
+          source_pdf?: string | null
+          tags?: string[]
           title: string
+          updated_at?: string
         }
         Update: {
-          category?: string | null
-          competence?: string | null
-          created_at?: string | null
-          format?: string | null
+          activity_id?: string
+          audience?: string | null
+          category?: string
+          created_at?: string
+          document_id?: string | null
+          duration_max?: number | null
+          duration_min?: number | null
           id?: string
-          instructions?: string | null
-          is_active?: boolean | null
-          level_max?: string | null
-          level_min?: string | null
-          objective?: string | null
-          source?: string | null
-          tags?: string[] | null
+          import_key?: string
+          instructions?: string
+          level_max?: string
+          level_max_rank?: number | null
+          level_min?: string
+          level_min_rank?: number | null
+          materials_needed?: string[]
+          objective?: string
+          raw?: Json
+          source_kind?: string
+          source_pdf?: string | null
+          tags?: string[]
           title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      pedagogical_documents: {
+        Row: {
+          activity_count: number
+          audience: string | null
+          created_at: string
+          document_id: string
+          document_type: string | null
+          file_name: string
+          id: string
+          levels: string[]
+          markdown_file: string | null
+          raw: Json
+          short_summary: string
+          source_kind: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          activity_count?: number
+          audience?: string | null
+          created_at?: string
+          document_id: string
+          document_type?: string | null
+          file_name: string
+          id?: string
+          levels?: string[]
+          markdown_file?: string | null
+          raw?: Json
+          short_summary?: string
+          source_kind?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          activity_count?: number
+          audience?: string | null
+          created_at?: string
+          document_id?: string
+          document_type?: string | null
+          file_name?: string
+          id?: string
+          levels?: string[]
+          markdown_file?: string | null
+          raw?: Json
+          short_summary?: string
+          source_kind?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      pedagogical_extraction_errors: {
+        Row: {
+          created_at: string
+          error: string
+          file_name: string
+          id: string
+          raw: Json
+          source_kind: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          error: string
+          file_name: string
+          id?: string
+          raw?: Json
+          source_kind?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          error?: string
+          file_name?: string
+          id?: string
+          raw?: Json
+          source_kind?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -3094,6 +3202,76 @@ export type Database = {
           msg_id: number
           read_ct: number
         }[]
+      }
+      search_pedagogical_activities: {
+        Args: {
+          p_category?: string
+          p_level?: string
+          p_limit?: number
+          p_max_duration?: number
+          p_query?: string
+          p_tags?: string[]
+        }
+        Returns: {
+          activity_id: string
+          audience: string | null
+          category: string
+          created_at: string
+          document_id: string | null
+          duration_max: number | null
+          duration_min: number | null
+          id: string
+          import_key: string
+          instructions: string
+          level_max: string
+          level_max_rank: number | null
+          level_min: string
+          level_min_rank: number | null
+          materials_needed: string[]
+          objective: string
+          raw: Json
+          source_kind: string
+          source_pdf: string | null
+          tags: string[]
+          title: string
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "pedagogical_activities"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      search_pedagogical_documents: {
+        Args: {
+          p_document_type?: string
+          p_level?: string
+          p_limit?: number
+          p_query?: string
+        }
+        Returns: {
+          activity_count: number
+          audience: string | null
+          created_at: string
+          document_id: string
+          document_type: string | null
+          file_name: string
+          id: string
+          levels: string[]
+          markdown_file: string | null
+          raw: Json
+          short_summary: string
+          source_kind: string
+          title: string
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "pedagogical_documents"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       update_priorites_pedagogiques: {
         Args: { p_eleve_id: string; p_nouvelle_priorite: string }
