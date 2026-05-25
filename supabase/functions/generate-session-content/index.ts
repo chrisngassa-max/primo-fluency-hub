@@ -19,7 +19,7 @@ serve(async (req) => {
     const _secretBlock = await ensurePseudonymSecretOrLog("generate-session-content", corsHeaders, null);
     if (_secretBlock) return _secretBlock;
     await logAICall({ function_name: "generate-session-content", triggered_by_user_id: _triggeredBy, status: "ok", data_categories: [], pseudonymization_level: "none" });
-    const { titre, objectifs, competences_cibles, niveau_cible, duree_minutes, exercices_suggeres, gabaritNumero, micro_competences } = await req.json();
+    const { titre, objectifs, competences_cibles, niveau_cible, duree_minutes, exercices_suggeres, gabaritNumero, micro_competences, selected_activities } = await req.json();
     // AI key check moved to shared ai-client
 
     if (!titre || !competences_cibles || competences_cibles.length === 0) {
@@ -67,6 +67,42 @@ RÈGLES DU GABARIT :
 3. Contextes administratifs / vie quotidienne primo-arrivant uniquement
 4. Niveau : ${gabarit.palier_cecrl || niveau} — adapter la complexité
 5. Pas de situations hors contexte IRN`;
+    }
+
+    // ── Banque pédagogique (RAG structuré) ──
+    let banqueBlock = "";
+    if (Array.isArray(selected_activities) && selected_activities.length > 0) {
+      const lignes = selected_activities.map((a: any, i: number) => {
+        const dur = (a.duration_min || a.duration_max)
+          ? `${a.duration_min ?? "?"}–${a.duration_max ?? "?"} min`
+          : "durée libre";
+        const mat = Array.isArray(a.materials_needed) && a.materials_needed.length ? a.materials_needed.join(", ") : "aucun";
+        const tags = Array.isArray(a.tags) && a.tags.length ? a.tags.join(", ") : "—";
+        return `[${i + 1}] ${a.title}
+  - source_pdf: ${a.source_pdf ?? "?"}
+  - document_id: ${a.document_id ?? "?"}
+  - catégorie: ${a.category ?? "?"} | niveau ${a.level_min ?? "?"}→${a.level_max ?? "?"} | ${dur}
+  - objectif: ${a.objective ?? "—"}
+  - matériel: ${mat}
+  - tags: ${tags}
+  - consignes: ${(a.instructions ?? "").slice(0, 500)}`;
+      }).join("\n\n");
+
+      banqueBlock = `
+
+═══════════════════════════════════════════════════
+BANQUE PÉDAGOGIQUE — ACTIVITÉS FOURNIES PAR LE FORMATEUR
+Ces activités sont issues de la base interne (PDF Wilson). Elles sont prioritaires.
+═══════════════════════════════════════════════════
+
+RÈGLES STRICTES :
+1. INTERDICTION d'inventer une nouvelle activité si une activité fournie couvre déjà le besoin pédagogique de l'exercice. Tu DOIS la réutiliser et l'adapter.
+2. Pour chaque exercice généré qui s'inspire d'une activité fournie, ajoute dans son champ "source_reference" : { "source_pdf": "...", "document_id": "...", "activity_index": <N> } repris EXACTEMENT du bloc ci-dessous.
+3. Tu peux compléter avec des exercices originaux uniquement si les activités fournies ne couvrent pas toutes les compétences ciblées.
+4. Conserve les objectifs et le matériel listés dans l'activité source quand tu l'adaptes.
+
+ACTIVITÉS DISPONIBLES :
+${lignes}`;
     }
 
     const systemPrompt = `Tu es un expert FLE spécialisé TCF IRN. Tu dois générer le contenu complet d'une séance de ${duree} minutes pour un cours collectif d'adultes primo-arrivants.
