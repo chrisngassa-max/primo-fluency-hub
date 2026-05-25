@@ -10,6 +10,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
+    "import:pedagogical-activities": "node scripts/import-pedagogical-activities.mjs",
+    "import:pedagogical-documents": "node scripts/import-pedagogical-documents.mjs",
     "test:watch": "vitest"
   },
   "dependencies": {
