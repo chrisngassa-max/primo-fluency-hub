@@ -27,8 +27,8 @@ export default function PositionnementPassation() {
       const { data, error } = await supabase.functions.invoke("get-placement-test", {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
-        queries: token ? { token } : {}
-      });
+        body: token ? { token } : undefined,
+      } as never);
       if (error) throw error;
       return data;
     },
