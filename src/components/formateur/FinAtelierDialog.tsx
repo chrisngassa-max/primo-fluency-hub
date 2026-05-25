@@ -454,6 +454,24 @@ export function FinAtelierDialog({
             </Button>
           ) : null}
 
+          {elevesAvecErreurs > 0 && (
+            <Button
+              variant="secondary"
+              onClick={generateDevoirsCibles}
+              disabled={generatingDevoirs || devoirsGenerated !== null}
+              className="gap-1.5"
+            >
+              {generatingDevoirs ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="h-4 w-4" />
+              )}
+              {devoirsGenerated !== null
+                ? `${devoirsGenerated} devoir${devoirsGenerated > 1 ? "s" : ""} généré${devoirsGenerated > 1 ? "s" : ""}`
+                : "Générer les devoirs ciblés"}
+            </Button>
+          )}
+
           <Button
             variant="outline"
             onClick={saveBilanOnly}
