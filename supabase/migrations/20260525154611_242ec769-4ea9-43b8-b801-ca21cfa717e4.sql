@@ -1,0 +1,1 @@
+GRANT UPDATE ON public.pedagogical_documents TO sandbox_exec; GRANT UPDATE ON public.pedagogical_extraction_errors TO sandbox_exec;
