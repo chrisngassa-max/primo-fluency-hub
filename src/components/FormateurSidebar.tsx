@@ -19,6 +19,7 @@ import {
   Eye,
   TrendingUp,
   ListChecks,
+  BookMarked,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
@@ -59,6 +60,7 @@ const pedagogieNav = [
 
 const pilotageNav = [
   { title: "Intervention rapide", url: "/formateur/intervention", icon: Flame },
+  { title: "Bibliothèque interventions", url: "/formateur/bibliotheque-interventions", icon: BookMarked },
   { title: "Suivi en direct", url: "/formateur/suivi-direct", icon: Eye },
   { title: "Suivi des élèves", url: "/formateur/monitoring", icon: TrendingUp },
   { title: "Suivi des devoirs", url: "/formateur/suivi-devoirs", icon: ListChecks },

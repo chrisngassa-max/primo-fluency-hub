@@ -38,6 +38,7 @@ import {
 import InviteStudentDialog from "@/components/InviteStudentDialog";
 import { detectAdvancedStudentsBatch, type AdvancedSignal } from "@/lib/detectAdvancedStudent";
 import { AdvancedStudentBadge } from "@/components/AdvancedStudentBadge";
+import { GroupeNiveauxMap, type EleveAvecNiveaux } from "@/components/formateur/GroupeNiveauxMap";
 
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
 
@@ -177,7 +178,7 @@ const GroupesPage = () => {
       const eleveIds = [...new Set(allMembers.map((m: any) => m.eleve_id))];
       const { data, error } = await supabase
         .from("profils_eleves")
-        .select("eleve_id, taux_reussite_global")
+        .select("eleve_id, taux_reussite_global, niveau_co, niveau_ce, niveau_ee, niveau_eo, profil_litteratie")
         .in("eleve_id", eleveIds);
       if (error) throw error;
       return data;
@@ -554,6 +555,26 @@ const GroupesPage = () => {
                         Créer un compte directement
                       </Button>
                     </div>
+
+                    {/* Carte des niveaux du groupe */}
+                    {members.length > 0 && (() => {
+                      const elevesAvecNiveaux: EleveAvecNiveaux[] = members
+                        .filter((m: any) => m.eleve)
+                        .map((m: any) => {
+                          const p = (allProfils ?? []).find((p: any) => p.eleve_id === m.eleve_id);
+                          return {
+                            id: m.eleve_id,
+                            prenom: m.eleve.prenom ?? "",
+                            nom: m.eleve.nom ?? "",
+                            niveau_co: (p as any)?.niveau_co ?? "A1",
+                            niveau_ce: (p as any)?.niveau_ce ?? "A1",
+                            niveau_ee: (p as any)?.niveau_ee ?? "A1",
+                            niveau_eo: (p as any)?.niveau_eo ?? "A1",
+                            profil_litteratie: (p as any)?.profil_litteratie ?? "standard",
+                          } satisfies EleveAvecNiveaux;
+                        });
+                      return <div className="mb-4"><GroupeNiveauxMap eleves={elevesAvecNiveaux} /></div>;
+                    })()}
 
                     {members.length === 0 ? (
                       <div className="text-center py-6 text-muted-foreground text-sm">

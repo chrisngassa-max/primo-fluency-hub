@@ -1,5 +1,5 @@
-import { useMemo, useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMemo, useState, useEffect, useCallback } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,8 +25,15 @@ import {
   RefreshCw,
   UserX,
   Hourglass,
+  Zap,
+  Send,
+  Volume2,
 } from "lucide-react";
 import LiveExercisesPanel from "@/components/LiveExercisesPanel";
+import { useLiveSession, type NiveauxEleve } from "@/hooks/useLiveSession";
+import { TuileEleveLive } from "@/components/formateur/TuileEleveLive";
+import { FocusEleveSheet } from "@/components/formateur/FocusEleveSheet";
+import { FinAtelierDialog } from "@/components/formateur/FinAtelierDialog";
 import {
   Dialog,
   DialogContent,
@@ -72,6 +79,44 @@ type BilanResult = {
   created_at: string;
 };
 
+// Sprint 6 — ligne d'intervention dans le dialog de sélection
+function InterventionRow({
+  iv,
+  sending,
+  onSend,
+}: {
+  iv: { id: string; titre: string; contenu_texte: string; type_erreur_id: string | null; audio_url: string | null };
+  sending: boolean;
+  onSend: () => void;
+}) {
+  return (
+    <div className="flex items-start gap-3 rounded-md border bg-card p-3">
+      <div className="flex-1 min-w-0 space-y-0.5">
+        <p className="text-sm font-medium truncate">{iv.titre}</p>
+        <p className="text-[11px] text-muted-foreground line-clamp-2">{iv.contenu_texte}</p>
+        {iv.audio_url && (
+          <span className="inline-flex items-center gap-1 text-[10px] text-emerald-600">
+            <Volume2 className="h-2.5 w-2.5" /> Audio disponible
+          </span>
+        )}
+      </div>
+      <Button
+        size="sm"
+        className="shrink-0 h-8 gap-1.5 text-[11px]"
+        disabled={sending}
+        onClick={onSend}
+      >
+        {sending ? (
+          <span className="h-3 w-3 rounded-full border-2 border-t-transparent border-white animate-spin" />
+        ) : (
+          <Send className="h-3 w-3" />
+        )}
+        Envoyer
+      </Button>
+    </div>
+  );
+}
+
 function initials(prenom?: string, nom?: string) {
   return `${(prenom?.[0] ?? "").toUpperCase()}${(nom?.[0] ?? "").toUpperCase()}` || "?";
 }
@@ -90,6 +135,65 @@ const SuiviDirectClasse = () => {
     result: BilanResult;
     eleveName: string;
   } | null>(null);
+
+  // Sprint 6 — envoi intervention
+  const [interventionTarget, setInterventionTarget] = useState<Member | null>(null);
+  const [sendingInterventionId, setSendingInterventionId] = useState<string | null>(null);
+
+  // Sprint 7 — focus 1-to-1
+  const [focusEleve, setFocusEleve] = useState<Member | null>(null);
+
+  // Sprint 8 — fin d'atelier
+  const [finAtelierOpen, setFinAtelierOpen] = useState(false);
+
+  // Bibliothèque d'interventions — Sprint 6
+  const { data: interventionsLib } = useQuery({
+    queryKey: ["interventions-lib", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      const { data } = await supabase
+        .from("interventions")
+        .select("id, titre, contenu_texte, type_erreur_id, competence, niveau_cible, audio_url")
+        .eq("formateur_id", user.id)
+        .order("created_at", { ascending: false });
+      return (data ?? []) as Array<{
+        id: string; titre: string; contenu_texte: string;
+        type_erreur_id: string | null; competence: string | null;
+        niveau_cible: string | null; audio_url: string | null;
+      }>;
+    },
+    enabled: !!user?.id,
+  });
+
+  // Niveaux CECRL par élève — Sprint 4 priorité
+  const { data: niveauxData } = useQuery({
+    queryKey: ["live-niveaux", selectedSession?.group_id],
+    queryFn: async () => {
+      if (!selectedSession?.group_id) return [];
+      const { data: gm } = await supabase
+        .from("group_members")
+        .select("eleve_id")
+        .eq("group_id", selectedSession.group_id);
+      const ids = (gm ?? []).map((r: any) => r.eleve_id as string);
+      if (ids.length === 0) return [];
+      const { data } = await supabase
+        .from("profils_eleves")
+        .select("eleve_id, niveau_co, niveau_ce, niveau_ee, niveau_eo")
+        .in("eleve_id", ids);
+      return (data ?? []) as Array<{ eleve_id: string } & NiveauxEleve>;
+    },
+    enabled: !!selectedSession?.group_id,
+  });
+
+  const niveauxMap = useMemo(() => {
+    const m = new Map<string, NiveauxEleve>();
+    (niveauxData ?? []).forEach((r) => m.set(r.eleve_id, r));
+    return m;
+  }, [niveauxData]);
+
+  // Live events du Mode Atelier IA
+  const { events: liveEvents, recentFeed, eleveStateMap, prioriteMap, connected: liveConnected } =
+    useLiveSession(selectedSessionId || null, niveauxMap);
 
   // Sessions en cours (du formateur)
   const { data: sessions, isLoading: loadingSessions } = useQuery({
@@ -495,6 +599,181 @@ const SuiviDirectClasse = () => {
             </CardContent>
           </Card>
 
+          {/* Atelier en cours — Sprint 4 dashboard priorisé */}
+          {(recentFeed.length > 0 || liveConnected) && (() => {
+            // Élèves triés par priorité décroissante
+            const alertEleves = presentMembers
+              .filter((m) => (prioriteMap.get(m.eleve_id) ?? 0) > 10)
+              .sort((a, b) => (prioriteMap.get(b.eleve_id) ?? 0) - (prioriteMap.get(a.eleve_id) ?? 0));
+            const suggestEleves = presentMembers
+              .filter((m) => {
+                const p = prioriteMap.get(m.eleve_id) ?? 0;
+                return p >= 4 && p <= 10;
+              })
+              .sort((a, b) => (prioriteMap.get(b.eleve_id) ?? 0) - (prioriteMap.get(a.eleve_id) ?? 0));
+
+            const evLabel: Record<string, string> = {
+              exercice_demarre: "a commencé un exercice",
+              reponse_correcte: "a réussi",
+              reponse_incorrecte: "a eu des difficultés",
+              exercice_termine: "a terminé un exercice",
+              fiche_terminee: "a terminé sa fiche",
+              inactif: "inactif",
+              aide_demandee: "a demandé de l'aide",
+              intervention_recue: "a reçu une aide",
+              erreur_repetee: "répète la même erreur",
+            };
+
+            return (
+              <>
+                {/* Bannière rouge — interventions urgentes */}
+                {alertEleves.length > 0 && (
+                  <div className="rounded-lg border border-red-500/40 bg-red-50/80 dark:bg-red-950/30 p-4 space-y-2">
+                    <div className="flex items-center gap-2 text-red-700 dark:text-red-400 font-semibold text-sm">
+                      <AlertTriangle className="h-4 w-4" />
+                      Intervention recommandée
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {alertEleves.map((m) => {
+                        const state = eleveStateMap.get(m.eleve_id);
+                        const p = prioriteMap.get(m.eleve_id) ?? 0;
+                        return (
+                          <span
+                            key={m.eleve_id}
+                            className="inline-flex items-center gap-1.5 rounded-md bg-red-100 dark:bg-red-900/40 px-2.5 py-1 text-[12px] font-medium text-red-800 dark:text-red-200"
+                          >
+                            {m.eleve?.prenom} {m.eleve?.nom}
+                            <span className="tabular-nums text-red-500 font-bold">{p.toFixed(0)}</span>
+                            {state?.dernier_type_erreur && (
+                              <span className="text-red-600/70 dark:text-red-400/70 text-[10px]">
+                                · {state.dernier_type_erreur}
+                              </span>
+                            )}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <Activity className="h-5 w-5 text-primary" />
+                      Atelier en cours
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="ml-auto h-7 text-[11px] gap-1.5 border-emerald-300 text-emerald-700 hover:bg-emerald-50"
+                        onClick={() => setFinAtelierOpen(true)}
+                      >
+                        <CheckCircle2 className="h-3.5 w-3.5" />
+                        Fin d'atelier
+                      </Button>
+                      <span
+                        className={`inline-flex items-center gap-1 text-[11px] font-normal px-2 py-0.5 rounded-full ${
+                          liveConnected ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
+                        }`}
+                      >
+                        <span
+                          className={`h-1.5 w-1.5 rounded-full ${
+                            liveConnected ? "bg-green-500 animate-pulse" : "bg-gray-400"
+                          }`}
+                        />
+                        {liveConnected ? "En direct" : "Connexion…"}
+                      </span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {/* Grille de tuiles */}
+                    {presentMembers.length > 0 && (
+                      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-4">
+                        {presentMembers.map((m) => (
+                          <TuileEleveLive
+                            key={m.eleve_id}
+                            prenom={m.eleve?.prenom ?? ""}
+                            nom={m.eleve?.nom ?? ""}
+                            state={eleveStateMap.get(m.eleve_id)}
+                            priorite={prioriteMap.get(m.eleve_id) ?? 0}
+                            onIntervenir={() => setInterventionTarget(m)}
+                            onFocus={() => setFocusEleve(m)}
+                          />
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Bannière orange — suggestions groupées */}
+                    {suggestEleves.length > 0 && (
+                      <div className="rounded-md border border-amber-400/40 bg-amber-50/60 dark:bg-amber-950/20 px-3 py-2 space-y-1">
+                        <div className="flex items-center gap-1.5 text-amber-700 dark:text-amber-400 text-[11px] font-semibold">
+                          <Zap className="h-3.5 w-3.5" />
+                          Suivi conseillé
+                        </div>
+                        <div className="flex flex-wrap gap-1.5">
+                          {suggestEleves.map((m) => {
+                            const p = prioriteMap.get(m.eleve_id) ?? 0;
+                            return (
+                              <span
+                                key={m.eleve_id}
+                                className="inline-flex items-center gap-1 rounded bg-amber-100 dark:bg-amber-900/40 px-2 py-0.5 text-[11px] text-amber-800 dark:text-amber-200"
+                              >
+                                {m.eleve?.prenom}
+                                <span className="font-bold tabular-nums">{p.toFixed(0)}</span>
+                              </span>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Feed des derniers événements */}
+                    {recentFeed.length > 0 && (
+                      <div className="space-y-1 max-h-40 overflow-y-auto">
+                        <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">
+                          Activité récente
+                        </p>
+                        {recentFeed.map((ev) => {
+                          const member = (members ?? []).find((m) => m.eleve_id === ev.eleve_id);
+                          const prenom = member?.eleve?.prenom ?? "Élève";
+                          const label = evLabel[ev.event_type] ?? ev.event_type;
+                          const score = (ev.payload as any)?.score;
+                          return (
+                            <div key={ev.id} className="flex items-center gap-2 text-[12px] py-0.5">
+                              <span className="text-muted-foreground shrink-0 tabular-nums">
+                                {new Date(ev.created_at).toLocaleTimeString("fr-FR", {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                  second: "2-digit",
+                                })}
+                              </span>
+                              <span className="font-medium text-foreground">{prenom}</span>
+                              <span className="text-muted-foreground">{label}</span>
+                              {score != null && (
+                                <span
+                                  className={`font-bold tabular-nums ${
+                                    score >= 60 ? "text-emerald-600" : "text-red-500"
+                                  }`}
+                                >
+                                  {score}%
+                                </span>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {recentFeed.length === 0 && liveConnected && (
+                      <p className="text-sm text-muted-foreground text-center py-4">
+                        En attente des premières activités des élèves…
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              </>
+            );
+          })()}
+
           {/* Exercices en cours (session_exercices + devoirs) */}
           <LiveExercisesPanel
             sessionId={selectedSession.id}
@@ -505,6 +784,145 @@ const SuiviDirectClasse = () => {
           />
         </>
       )}
+
+      {/* Dialog fin d'atelier — Sprint 8 */}
+      {finAtelierOpen && selectedSessionId && (
+        <FinAtelierDialog
+          open={finAtelierOpen}
+          onClose={() => setFinAtelierOpen(false)}
+          sessionId={selectedSessionId}
+          formateurId={user!.id}
+          presentMembers={presentMembers}
+          liveEvents={liveEvents}
+          niveauxMap={niveauxMap}
+        />
+      )}
+
+      {/* Sheet focus 1-to-1 — Sprint 7 */}
+      {focusEleve && (
+        <FocusEleveSheet
+          prenom={focusEleve.eleve?.prenom ?? ""}
+          nom={focusEleve.eleve?.nom ?? ""}
+          eleveId={focusEleve.eleve_id}
+          state={eleveStateMap.get(focusEleve.eleve_id)}
+          priorite={prioriteMap.get(focusEleve.eleve_id) ?? 0}
+          niveaux={niveauxMap.get(focusEleve.eleve_id)}
+          allEvents={liveEvents}
+          onClose={() => setFocusEleve(null)}
+          onIntervenir={() => {
+            setInterventionTarget(focusEleve);
+            setFocusEleve(null);
+          }}
+        />
+      )}
+
+      {/* Dialog envoi intervention — Sprint 6 */}
+      {interventionTarget && (() => {
+        const targetState = eleveStateMap.get(interventionTarget.eleve_id);
+        const erreurCible = targetState?.dernier_type_erreur ?? null;
+        const suggested = erreurCible
+          ? (interventionsLib ?? []).filter((iv) => iv.type_erreur_id === erreurCible)
+          : [];
+        const autres = (interventionsLib ?? []).filter(
+          (iv) => !erreurCible || iv.type_erreur_id !== erreurCible,
+        );
+
+        async function sendIntervention(iv: (typeof interventionsLib)[0]) {
+          if (!selectedSessionId || sendingInterventionId) return;
+          setSendingInterventionId(iv.id);
+          try {
+            const { error } = await supabase.from("session_live_events").insert({
+              session_id: selectedSessionId,
+              eleve_id: interventionTarget!.eleve_id,
+              event_type: "intervention_recue",
+              payload: {
+                intervention_id: iv.id,
+                titre: iv.titre,
+                contenu_texte: iv.contenu_texte,
+                audio_url: iv.audio_url ?? null,
+              },
+            });
+            if (error) throw error;
+            setInterventionTarget(null);
+          } catch (e: any) {
+            console.error("sendIntervention failed:", e.message);
+          } finally {
+            setSendingInterventionId(null);
+          }
+        }
+
+        const ErreurLabels: Record<string, string> = {
+          LEX_CONFUSION: "Lexique", CONSIGNE_NC: "Consigne", GRAM_ACCORD: "Accord",
+          GRAM_TEMPS: "Temps verbal", HORS_SUJET: "Hors sujet", INTERPRETATION: "Interprétation",
+          JUSTIFICATION: "Justification", PHONO: "Phonologie", PRODUCTION_COURTE: "Prod. courte",
+          REGISTRE: "Registre", COHERENCE_ADMIN: "Cohérence admin.",
+        };
+
+        return (
+          <Dialog open onOpenChange={(o) => !o && setInterventionTarget(null)}>
+            <DialogContent className="max-w-lg max-h-[80vh] flex flex-col">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <Send className="h-4 w-4 text-primary" />
+                  Envoyer une aide à {interventionTarget.eleve?.prenom} {interventionTarget.eleve?.nom}
+                </DialogTitle>
+                {erreurCible && (
+                  <DialogDescription>
+                    Dernière difficulté : <strong>{ErreurLabels[erreurCible] ?? erreurCible}</strong>
+                  </DialogDescription>
+                )}
+              </DialogHeader>
+
+              <ScrollArea className="flex-1 pr-1">
+                {(interventionsLib ?? []).length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-8">
+                    Aucune intervention dans la bibliothèque.
+                    <br />
+                    <span className="text-xs">
+                      Créez-en depuis <em>Bibliothèque interventions</em>.
+                    </span>
+                  </p>
+                ) : (
+                  <div className="space-y-4">
+                    {suggested.length > 0 && (
+                      <div className="space-y-2">
+                        <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                          Suggérées pour {ErreurLabels[erreurCible!] ?? erreurCible}
+                        </p>
+                        {suggested.map((iv) => (
+                          <InterventionRow
+                            key={iv.id}
+                            iv={iv}
+                            sending={sendingInterventionId === iv.id}
+                            onSend={() => sendIntervention(iv)}
+                          />
+                        ))}
+                      </div>
+                    )}
+                    {autres.length > 0 && (
+                      <div className="space-y-2">
+                        {suggested.length > 0 && (
+                          <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                            Autres
+                          </p>
+                        )}
+                        {autres.map((iv) => (
+                          <InterventionRow
+                            key={iv.id}
+                            iv={iv}
+                            sending={sendingInterventionId === iv.id}
+                            onSend={() => sendIntervention(iv)}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </ScrollArea>
+            </DialogContent>
+          </Dialog>
+        );
+      })()}
 
       {/* Dialog réponses bilan */}
       <Dialog open={!!openBilanAnswers} onOpenChange={(o) => !o && setOpenBilanAnswers(null)}>

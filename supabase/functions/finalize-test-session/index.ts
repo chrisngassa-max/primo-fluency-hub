@@ -152,6 +152,28 @@ Deno.serve(async (req) => {
     console.error("[finalize-test-session] snapshot failed:", snapErr.message);
   }
 
+  // Sprint 1 : mise à jour des 4 niveaux dans profils_eleves
+  // paliersMax contient des entiers (max palier réussi par compétence).
+  // Mapping : 1→A0, 2→A1, 3→A2, 4→B1, 5+→B2
+  const PALIER_TO_NIVEAU: Record<number, string> = { 1: "A0", 2: "A1", 3: "A2", 4: "B1", 5: "B2" };
+  const toNiveau = (n: number) => PALIER_TO_NIVEAU[n] ?? (n >= 5 ? "B2" : "A1");
+
+  const { error: niveauErr } = await admin
+    .from("profils_eleves")
+    .update({
+      niveau_co: toNiveau(paliersMax.co),
+      niveau_ce: toNiveau(paliersMax.ce),
+      niveau_ee: toNiveau(paliersMax.ee),
+      niveau_eo: toNiveau(paliersMax.eo),
+      niveau_source: "placement_test",
+    })
+    .eq("eleve_id", userId)
+    .eq("niveau_locked", false);
+
+  if (niveauErr) {
+    console.error("[finalize-test-session] niveau update failed:", niveauErr.message);
+  }
+
   return json(200, {
     scores,
     paliers_final: paliersMax,

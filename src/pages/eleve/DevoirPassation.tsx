@@ -29,6 +29,7 @@ import {
   startWavRecording,
 } from "@/lib/audioRecorder";
 import { useLiveAttemptSync } from "@/hooks/useLiveAttemptSync";
+import { emitLiveEvent } from "@/lib/liveEventEmitter";
 import { corrigerExercice } from "@/lib/correctionExercice";
 import { applyExerciseVariant, resolveStudentExerciseLevel } from "@/lib/exerciseVariant";
 
@@ -122,6 +123,12 @@ const DevoirPassation = () => {
   const [timerWarning, setTimerWarning] = useState(false);
   const [autoSubmitted, setAutoSubmitted] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Sprint 6 — notification intervention_recue du formateur
+  const [interventionNotif, setInterventionNotif] = useState<{
+    titre: string; contenu_texte: string; audio_url: string | null;
+  } | null>(null);
+  const interventionAudioRef = useRef<HTMLAudioElement | null>(null);
 
   // Live attempt tracking — extrait dans useLiveAttemptSync (voir plus bas)
   const { data: devoir, isLoading } = useQuery({
@@ -222,6 +229,58 @@ const DevoirPassation = () => {
 
   // ─── LIVE SYNC: upsert exercise_attempts pendant la passation ───
   // Permet au formateur de voir en direct l'avancement de l'élève via Realtime.
+  // Emission live : exercice_demarre quand le devoir est chargé et lié à une séance
+  useEffect(() => {
+    const sessionId = (devoir as any)?.session_id as string | null;
+    if (!sessionId || !user?.id || !ex?.id || result || isDone) return;
+    emitLiveEvent({
+      sessionId,
+      eleveId: user.id,
+      eventType: "exercice_demarre",
+      payload: { exercice_id: ex.id, competence: ex.competence },
+    });
+  // Déclenché une seule fois quand ex est disponible
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ex?.id, (devoir as any)?.session_id, user?.id]);
+
+  // Sprint 6 — écoute les intervention_recue du formateur en temps réel
+  useEffect(() => {
+    const sessionId = (devoir as any)?.session_id as string | null;
+    if (!sessionId || !user?.id) return;
+
+    const ch = supabase
+      .channel(`intervention-${sessionId}-${user.id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "session_live_events",
+          filter: `session_id=eq.${sessionId}`,
+        },
+        (ev) => {
+          const row = ev.new as any;
+          if (row.event_type !== "intervention_recue") return;
+          if (row.eleve_id !== user.id) return;
+          const p = row.payload ?? {};
+          setInterventionNotif({
+            titre: p.titre ?? "Message du formateur",
+            contenu_texte: p.contenu_texte ?? "",
+            audio_url: p.audio_url ?? null,
+          });
+          if (p.audio_url) {
+            interventionAudioRef.current?.pause();
+            interventionAudioRef.current = new Audio(p.audio_url);
+            interventionAudioRef.current.play().catch(() => {});
+          }
+        },
+      )
+      .subscribe();
+
+    return () => { supabase.removeChannel(ch); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [(devoir as any)?.session_id, user?.id]);
+
   // La finalisation "completed" est gérée par le trigger mirror_resultat_to_attempt
   // lors de l'insert dans `resultats`.
   useLiveAttemptSync({
@@ -384,6 +443,16 @@ const DevoirPassation = () => {
       qc.invalidateQueries({ queryKey: ["eleve-devoirs"] });
       qc.invalidateQueries({ queryKey: ["devoir-detail", devoirId] });
       toast.success(`Devoir oral soumis ! Score : ${score}%`);
+
+      const sessionId = (devoir as any)?.session_id as string | null;
+      if (sessionId && user?.id) {
+        void emitLiveEvent({
+          sessionId,
+          eleveId: user.id,
+          eventType: "exercice_termine",
+          payload: { score, exercice_id: ex?.id },
+        });
+      }
     } catch (e: any) {
       toast.error("Erreur de soumission", { description: e.message });
     } finally {
@@ -436,6 +505,18 @@ const DevoirPassation = () => {
       qc.invalidateQueries({ queryKey: ["eleve-devoirs"] });
       qc.invalidateQueries({ queryKey: ["devoir-detail", devoirId] });
       toast.success(`Devoir soumis ! Score : ${score}%`);
+
+      // exercice_termine côté client — classification + reponse_incorrecte/correcte
+      // sont désormais émis server-side dans submit-devoir-result (Sprint 3).
+      const sessionId = (devoir as any)?.session_id as string | null;
+      if (sessionId && user?.id) {
+        void emitLiveEvent({
+          sessionId,
+          eleveId: user.id,
+          eventType: "exercice_termine",
+          payload: { score, exercice_id: ex?.id },
+        });
+      }
     } catch (e: any) {
       toast.error("Erreur de soumission", { description: e.message });
     } finally {
@@ -780,6 +861,39 @@ const DevoirPassation = () => {
             Aucune question dans cet exercice.
           </CardContent>
         </Card>
+      )}
+
+      {/* Sprint 6 — notification intervention du formateur */}
+      {interventionNotif && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center p-4 pointer-events-none">
+          <div className="pointer-events-auto w-full max-w-sm rounded-xl border-2 border-primary/30 bg-card shadow-2xl animate-in slide-in-from-bottom-4 duration-300">
+            <div className="flex items-start gap-3 p-4">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-3 3v-3z" />
+                </svg>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-primary">{interventionNotif.titre}</p>
+                <p className="mt-1 text-sm text-foreground leading-relaxed">{interventionNotif.contenu_texte}</p>
+                {interventionNotif.audio_url && (
+                  <p className="mt-1.5 text-[11px] text-muted-foreground">🔊 Audio en cours de lecture…</p>
+                )}
+              </div>
+              <button
+                className="shrink-0 rounded-md p-1 text-muted-foreground hover:text-foreground"
+                onClick={() => {
+                  interventionAudioRef.current?.pause();
+                  setInterventionNotif(null);
+                }}
+              >
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

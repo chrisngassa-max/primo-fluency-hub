@@ -30,6 +30,7 @@ import SequenceBuilder from "@/pages/formateur/SequenceBuilder";
 import ExercicesPage from "@/pages/formateur/ExercicesPage";
 import InterventionRapidePage from "@/pages/formateur/InterventionRapidePage";
 import SuiviDirectClasse from "@/pages/formateur/SuiviDirectClasse";
+import BibliothequeInterventions from "@/pages/formateur/BibliothequeInterventions";
 
 import EleveLayout from "@/layouts/EleveLayout";
 import EleveDashboard from "@/pages/eleve/Dashboard";
@@ -122,6 +123,7 @@ const App = () => (
               <Route path="test-resultats/:apprenantId" element={<TestResultatDetail />} />
               <Route path="ressources" element={<RessourcesPage />} />
               <Route path="intervention" element={<InterventionRapidePage />} />
+              <Route path="bibliotheque-interventions" element={<BibliothequeInterventions />} />
               <Route path="banque-activites" element={<BanqueActivites />} />
               <Route path="positionnement" element={<PositionnementPage />} />
               <Route path="parametres" element={<Parametres />} />

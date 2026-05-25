@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import CompetenceLabel from "@/components/CompetenceLabel";
 import { StudentPacingCard } from "@/components/PacingTracker";
+import { NiveauEleveEditor, type ProfilNiveaux } from "@/components/formateur/NiveauEleveEditor";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -322,6 +323,36 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
               <KeyRound className="h-3.5 w-3.5" />
               Réinitialiser le mot de passe
             </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Niveaux par compétence (formateur view only) */}
+      {eleveId && profil && (
+        <Card>
+          <CardContent className="pt-4">
+            <NiveauEleveEditor
+              profil={{
+                id: profil.id,
+                niveau_co: (profil as any).niveau_co ?? profil.niveau_actuel ?? "A1",
+                niveau_ce: (profil as any).niveau_ce ?? profil.niveau_actuel ?? "A1",
+                niveau_ee: (profil as any).niveau_ee ?? profil.niveau_actuel ?? "A1",
+                niveau_eo: (profil as any).niveau_eo ?? profil.niveau_actuel ?? "A1",
+                niveau_locked: (profil as any).niveau_locked ?? false,
+                profil_litteratie: (profil as any).profil_litteratie ?? "standard",
+              } satisfies ProfilNiveaux}
+              onUpdate={async (patch) => {
+                const { error } = await supabase
+                  .from("profils_eleves")
+                  .update(patch as Record<string, unknown>)
+                  .eq("id", profil.id);
+                if (error) {
+                  toast.error("Erreur lors de la mise à jour du niveau.");
+                } else {
+                  queryClient.invalidateQueries({ queryKey: ["profil-eleve", targetId] });
+                }
+              }}
+            />
           </CardContent>
         </Card>
       )}

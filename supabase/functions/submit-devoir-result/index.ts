@@ -17,6 +17,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { corrigerExerciceServer } from "../_shared/correction-server.ts";
+import { classifyAndEmitErrors } from "../_shared/classifyAndEmitErrors.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -89,7 +90,7 @@ Deno.serve(async (req) => {
   if (devoirId) {
     const { data, error: devErr } = await admin
       .from("devoirs")
-      .select("id, eleve_id, exercice_id, statut, nb_reussites_consecutives, formateur_id")
+      .select("id, eleve_id, exercice_id, statut, nb_reussites_consecutives, formateur_id, session_id")
       .eq("id", devoirId)
       .maybeSingle();
     if (devErr) return json(500, { error: "Failed to load devoir", details: devErr.message });
@@ -205,6 +206,29 @@ Deno.serve(async (req) => {
       console.error("[submit-devoir-result] update devoir failed:", updErr.message);
       // Le résultat est déjà inséré, on ne fait pas échouer le client
     }
+  }
+
+  // Sprint 3 : classification taxonomique + émission live events
+  // Fire-and-forget : on ne bloque pas la réponse si ça échoue.
+  const liveSessionId: string | null =
+    (devoir as any)?.session_id ?? body.session_id ?? null;
+
+  if (liveSessionId) {
+    classifyAndEmitErrors({
+      sessionId: liveSessionId,
+      eleveId: userId,
+      exerciceId: ex.id,
+      competence: ex.competence,
+      consigne: ex.consigne,
+      items,
+      answers,
+      correction,
+      score,
+      supabaseUrl: SUPABASE_URL,
+      serviceRoleKey: SERVICE_ROLE,
+    }).catch((e) =>
+      console.warn("[submit-devoir-result] classifyAndEmitErrors:", (e as Error).message)
+    );
   }
 
   return json(200, {
