@@ -63,6 +63,7 @@ import PositionnementPassation from "@/pages/eleve/PositionnementPassation";
 import PositionnementResultat from "@/pages/eleve/PositionnementResultat";
 import RessourcesPage from "@/pages/formateur/RessourcesPage";
 import BanqueActivites from "@/pages/formateur/BanqueActivites";
+import BilansAtelierPage from "@/pages/formateur/BilansAtelierPage";
 import PositionnementPage from "@/pages/formateur/PositionnementPage";
 import PlayExercise from "@/pages/PlayExercise";
 import AuthRelayReset from "@/pages/AuthRelayReset";
