@@ -344,7 +344,7 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
               onUpdate={async (patch) => {
                 const { error } = await supabase
                   .from("profils_eleves")
-                  .update(patch as Record<string, unknown>)
+                  .update(patch as never)
                   .eq("id", profil.id);
                 if (error) {
                   toast.error("Erreur lors de la mise à jour du niveau.");
