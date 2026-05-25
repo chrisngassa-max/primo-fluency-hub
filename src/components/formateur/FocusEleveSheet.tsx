@@ -18,6 +18,7 @@ import {
   XCircle,
   Zap,
 } from "lucide-react";
+import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import type { EleveStateLive, LiveEvent, NiveauxEleve } from "@/hooks/useLiveSession";
 
 const NIVEAU_COLORS: Record<string, string> = {
