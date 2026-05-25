@@ -17,6 +17,7 @@ import {
   ArrowUp,
   CheckCircle2,
   Loader2,
+  Send,
   TrendingDown,
   TrendingUp,
 } from "lucide-react";
