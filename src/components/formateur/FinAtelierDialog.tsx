@@ -196,6 +196,9 @@ export function FinAtelierDialog({
   const [applying, setApplying] = useState(false);
   const [applied, setApplied] = useState(false);
 
+  const [generatingDevoirs, setGeneratingDevoirs] = useState(false);
+  const [devoirsGenerated, setDevoirsGenerated] = useState<number | null>(null);
+
   const bilans = useMemo(
     () => presentMembers.map((m) => computeEleveBilan(m, liveEvents, niveauxMap.get(m.eleve_id))),
     [presentMembers, liveEvents, niveauxMap],
@@ -203,18 +206,31 @@ export function FinAtelierDialog({
 
   const totalRecalibrations = bilans.reduce((n, b) => n + b.recalibrations.length, 0);
   const elevesActifs = bilans.filter((b) => b.n_exercices > 0).length;
+  const elevesAvecErreurs = bilans.filter((b) => b.top_erreurs.length > 0).length;
+
+  async function emitSessionTermine() {
+    try {
+      await (supabase as any).from("session_live_events").insert({
+        session_id: sessionId,
+        eleve_id: null,
+        event_type: "session_state_change",
+        payload: { state: "atelier_termine" },
+      });
+    } catch (e) {
+      console.warn("emit session_state_change failed", e);
+    }
+  }
 
   async function applyRecalibrations() {
     setApplying(true);
     try {
-      // Batch update profils_eleves
       for (const bilan of bilans) {
         if (bilan.recalibrations.length === 0) continue;
         const patch: Record<string, string> = { niveau_source: "atelier_bilan" };
         for (const r of bilan.recalibrations) {
           patch[`niveau_${r.competence}`] = r.niveau_suggere;
         }
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from("profils_eleves")
           .update(patch)
           .eq("eleve_id", bilan.eleve_id)
@@ -222,13 +238,14 @@ export function FinAtelierDialog({
         if (error) console.warn(`recalibration ${bilan.eleve_id}:`, error.message);
       }
 
-      // Save bilan to atelier_bilans
-      await supabase.from("atelier_bilans").insert({
+      await (supabase as any).from("atelier_bilans").insert({
         session_id: sessionId,
         formateur_id: formateurId,
         contenu: { bilans },
         recalibrations_appliquees: true,
       });
+
+      await emitSessionTermine();
 
       setApplied(true);
       toast({ title: `${totalRecalibrations} recalibration(s) appliquée(s)` });
@@ -240,13 +257,62 @@ export function FinAtelierDialog({
   }
 
   async function saveBilanOnly() {
-    await supabase.from("atelier_bilans").insert({
+    await (supabase as any).from("atelier_bilans").insert({
       session_id: sessionId,
       formateur_id: formateurId,
       contenu: { bilans },
       recalibrations_appliquees: false,
     });
+    await emitSessionTermine();
     onClose();
+  }
+
+  async function generateDevoirsCibles() {
+    setGeneratingDevoirs(true);
+    let created = 0;
+    let skipped = 0;
+    try {
+      for (const bilan of bilans) {
+        if (bilan.top_erreurs.length === 0) continue;
+        if (!bilan.dominant_error_competence || !bilan.dominant_niveau) {
+          skipped++;
+          continue;
+        }
+        const { data: exos, error } = await (supabase as any)
+          .from("exercices")
+          .select("id")
+          .eq("competence", bilan.dominant_error_competence)
+          .eq("niveau_vise", bilan.dominant_niveau)
+          .limit(1);
+        if (error || !exos || exos.length === 0) {
+          skipped++;
+          continue;
+        }
+        const { error: insErr } = await (supabase as any).from("devoirs").insert({
+          eleve_id: bilan.eleve_id,
+          exercice_id: exos[0].id,
+          formateur_id: formateurId,
+          session_id: sessionId,
+          statut: "en_attente",
+          source_label: "atelier_bilan",
+        });
+        if (insErr) {
+          skipped++;
+          console.warn(`devoir ${bilan.eleve_id}:`, insErr.message);
+        } else {
+          created++;
+        }
+      }
+      setDevoirsGenerated(created);
+      toast({
+        title: `${created} devoir${created > 1 ? "s" : ""} généré${created > 1 ? "s" : ""}`,
+        description: skipped > 0 ? `${skipped} élève(s) sans exercice disponible.` : undefined,
+      });
+    } catch (e: any) {
+      toast({ title: "Erreur", description: e.message, variant: "destructive" });
+    } finally {
+      setGeneratingDevoirs(false);
+    }
   }
 
   return (
