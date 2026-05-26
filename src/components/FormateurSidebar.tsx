@@ -20,6 +20,7 @@ import {
   TrendingUp,
   ListChecks,
   BookMarked,
+  BarChart3,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
@@ -72,6 +73,7 @@ const analysesNav = [
   { title: "Résultats positionnement", url: "/formateur/test-resultats", icon: GraduationCap },
   { title: "Bilans d'atelier", url: "/formateur/bilans-atelier", icon: BookMarked },
   { title: "Rapports IA", url: "/formateur/rapports", icon: FileText },
+  { title: "Analytics erreurs", url: "/formateur/analytics-erreurs", icon: BarChart3 },
   { title: "Signalements", url: "/formateur/signalements", icon: Flag },
 ];
 
