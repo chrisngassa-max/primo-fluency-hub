@@ -26,12 +26,15 @@ type Row = {
 const PALETTE = ["#2563eb", "#16a34a", "#f59e0b", "#dc2626", "#7c3aed", "#0891b2", "#db2777", "#65a30d"];
 
 export default function AnalyticsErreursPage() {
+  const { user } = useAuth();
   const [period, setPeriod] = useState<"7" | "30" | "90">("30");
   const [loading, setLoading] = useState(true);
   const [bulkLoading, setBulkLoading] = useState(false);
   const [rows, setRows] = useState<Row[]>([]);
   const [typesErreur, setTypesErreur] = useState<Record<string, string>>({});
   const [systemInterventions, setSystemInterventions] = useState<any[]>([]);
+  const exportRef = useRef<HTMLDivElement>(null);
+  const { exportPDF, isExporting } = useExportPDF(exportRef);
 
   useEffect(() => {
     void load();
