@@ -2568,6 +2568,54 @@ export type Database = {
           },
         ]
       }
+      recalibrages_niveau: {
+        Row: {
+          competence: string
+          created_at: string
+          eleve_id: string
+          id: string
+          niveau_apres: string
+          niveau_avant: string
+          raison: string
+          session_id: string | null
+        }
+        Insert: {
+          competence: string
+          created_at?: string
+          eleve_id: string
+          id?: string
+          niveau_apres: string
+          niveau_avant: string
+          raison?: string
+          session_id?: string | null
+        }
+        Update: {
+          competence?: string
+          created_at?: string
+          eleve_id?: string
+          id?: string
+          niveau_apres?: string
+          niveau_avant?: string
+          raison?: string
+          session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recalibrages_niveau_eleve_id_fkey"
+            columns: ["eleve_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recalibrages_niveau_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       resource_assignments: {
         Row: {
           assigned_by: string | null
@@ -3754,6 +3802,7 @@ export type Database = {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
       }
+      descendre_niveau: { Args: { v_niveau: string }; Returns: string }
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
         Returns: number
