@@ -43,6 +43,7 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import CorrectionDetaillee from "@/components/CorrectionDetaillee";
+import { toast } from "sonner";
 
 type Session = {
   id: string;
