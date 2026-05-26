@@ -32,6 +32,7 @@ import { useLiveAttemptSync } from "@/hooks/useLiveAttemptSync";
 import { emitLiveEvent } from "@/lib/liveEventEmitter";
 import { corrigerExercice } from "@/lib/correctionExercice";
 import { applyExerciseVariant, resolveStudentExerciseLevel } from "@/lib/exerciseVariant";
+import InterventionPlayer from "@/components/eleve/InterventionPlayer";
 
 function CorrectionAccordion({ correction }: { correction: any[] }) {
   const [openItems, setOpenItems] = useState<number[]>([]);
