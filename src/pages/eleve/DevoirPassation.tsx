@@ -594,6 +594,7 @@ const DevoirPassation = () => {
   // ─── Exercise Passation ───
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
+      <InterventionPlayer sessionId={(devoir as any)?.session_id ?? null} />
       <div className="flex items-center gap-3">
         <Button variant="ghost" size="sm" onClick={() => navigate("/eleve/devoirs")} className="gap-1.5">
           <ArrowLeft className="h-4 w-4" /> Retour
