@@ -129,6 +129,7 @@ const App = () => (
               <Route path="banque-activites" element={<BanqueActivites />} />
               <Route path="bilans-atelier" element={<BilansAtelierPage />} />
               <Route path="positionnement" element={<PositionnementPage />} />
+              <Route path="analytics-erreurs" element={<AnalyticsErreursPage />} />
               <Route path="parametres" element={<Parametres />} />
             </Route>
 
