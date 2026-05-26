@@ -1536,8 +1536,9 @@ export type Database = {
           competence: string | null
           contenu_texte: string
           created_at: string
-          formateur_id: string
+          formateur_id: string | null
           id: string
+          is_systeme: boolean
           niveau_cible: string | null
           titre: string
           type_erreur_id: string | null
@@ -1550,8 +1551,9 @@ export type Database = {
           competence?: string | null
           contenu_texte: string
           created_at?: string
-          formateur_id: string
+          formateur_id?: string | null
           id?: string
+          is_systeme?: boolean
           niveau_cible?: string | null
           titre: string
           type_erreur_id?: string | null
@@ -1564,8 +1566,9 @@ export type Database = {
           competence?: string | null
           contenu_texte?: string
           created_at?: string
-          formateur_id?: string
+          formateur_id?: string | null
           id?: string
+          is_systeme?: boolean
           niveau_cible?: string | null
           titre?: string
           type_erreur_id?: string | null
@@ -2899,6 +2902,7 @@ export type Database = {
       }
       session_live_events: {
         Row: {
+          competence: string | null
           created_at: string
           eleve_id: string | null
           event_type: string
@@ -2909,6 +2913,7 @@ export type Database = {
           type_erreur_id: string | null
         }
         Insert: {
+          competence?: string | null
           created_at?: string
           eleve_id?: string | null
           event_type: string
@@ -2919,6 +2924,7 @@ export type Database = {
           type_erreur_id?: string | null
         }
         Update: {
+          competence?: string | null
           created_at?: string
           eleve_id?: string | null
           event_type?: string
