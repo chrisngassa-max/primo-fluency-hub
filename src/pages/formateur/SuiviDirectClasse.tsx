@@ -310,6 +310,37 @@ const SuiviDirectClasse = () => {
     };
   }, [bilanIds, refetchResults]);
 
+  // Sprint 10 — recalibrage automatique : toast + highlight 5s
+  const [recalibratedMap, setRecalibratedMap] = useState<Map<string, { competence: string; avant: string; apres: string }>>(new Map());
+  const seenRecalibrageRef = useRef<Set<string>>(new Set());
+  useEffect(() => {
+    for (const ev of liveEvents) {
+      if (ev.event_type !== "niveau_recalibre") continue;
+      if (seenRecalibrageRef.current.has(ev.id)) continue;
+      seenRecalibrageRef.current.add(ev.id);
+      const p = (ev.payload ?? {}) as Record<string, string>;
+      const eleveId = ev.eleve_id;
+      if (!eleveId) continue;
+      const member = (members ?? []).find((m) => m.eleve_id === eleveId);
+      const nom = member ? `${member.eleve?.prenom ?? ""} ${member.eleve?.nom ?? ""}`.trim() : "Élève";
+      toast(`⬇️ ${nom} — niveau ${p.competence} recalibré : ${p.niveau_avant} → ${p.niveau_apres}`, {
+        duration: 6000,
+      });
+      setRecalibratedMap((prev) => {
+        const next = new Map(prev);
+        next.set(eleveId, { competence: p.competence, avant: p.niveau_avant, apres: p.niveau_apres });
+        return next;
+      });
+      setTimeout(() => {
+        setRecalibratedMap((prev) => {
+          const next = new Map(prev);
+          next.delete(eleveId);
+          return next;
+        });
+      }, 5000);
+    }
+  }, [liveEvents, members]);
+
   const presenceMap = useMemo(() => {
     const m = new Map<string, boolean>();
     (presences ?? []).forEach((p: any) => m.set(p.eleve_id, p.present));
