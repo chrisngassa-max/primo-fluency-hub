@@ -1238,6 +1238,12 @@ ${Array.isArray(item.options) && item.options.length > 0
                             </div>
                           </div>
                         )}
+                        {Array.isArray((pc as any)?.activites_wilson_utilisees) && (pc as any).activites_wilson_utilisees.length > 0 && (
+                          <div className="text-xs text-muted-foreground border-t border-border pt-2 mt-2">
+                            <span className="font-medium">Inspiré de :</span>{' '}
+                            {(pc as any).activites_wilson_utilisees.join(' · ')}
+                          </div>
+                        )}
                       </CardContent>
                     </Card>
                   );
