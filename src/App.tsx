@@ -66,6 +66,7 @@ import BanqueActivites from "@/pages/formateur/BanqueActivites";
 import BilansAtelierPage from "@/pages/formateur/BilansAtelierPage";
 import PositionnementPage from "@/pages/formateur/PositionnementPage";
 import PlayExercise from "@/pages/PlayExercise";
+import AnalyticsErreursPage from "@/pages/formateur/AnalyticsErreursPage";
 import AuthRelayReset from "@/pages/AuthRelayReset";
 
 const queryClient = new QueryClient();
