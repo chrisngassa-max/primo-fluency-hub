@@ -156,6 +156,9 @@ const ExercicesPage = () => {
         if (ex.note_differentiation) contenu.note_differentiation = ex.note_differentiation;
         if (ex.duree_estimee_secondes) contenu.duree_estimee_secondes = ex.duree_estimee_secondes;
         if (ex.type_distracteurs) contenu.type_distracteurs = ex.type_distracteurs;
+        if (Array.isArray(ex.activites_wilson_utilisees) && ex.activites_wilson_utilisees.length > 0) {
+          contenu.activites_wilson_utilisees = ex.activites_wilson_utilisees;
+        }
 
         const { error: insertError } = await supabase.from("exercices").insert({
           formateur_id: user.id,
