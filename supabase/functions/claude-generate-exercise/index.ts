@@ -62,6 +62,25 @@ Deno.serve(async (req) => {
       consigne: e.consigne,
     })) ?? [];
 
+    // 2b. Activités Wilson de référence
+    const { data: activitesWilson } = await supabase
+      .rpc('search_pedagogical_activities', {
+        p_query: theme || null,
+        p_level: level,
+        p_category: null,
+        p_max_duration: null,
+        p_tags: null,
+        p_limit: 4,
+      });
+
+    const wilsonContext = (activitesWilson ?? []).map((a: any) => ({
+      titre: a.title,
+      objectif: a.objective,
+      consigne: a.instructions?.slice(0, 300),
+      tags: a.tags?.join(', '),
+      duree: a.duration_min ? `${a.duration_min}–${a.duration_max} min` : null,
+    }));
+
     // 3. Appeler Claude
     const anthropicKey = Deno.env.get('ANTHROPIC_API_KEY');
     if (!anthropicKey) {
@@ -70,7 +89,11 @@ Deno.serve(async (req) => {
       });
     }
 
-    const systemPrompt = `Tu es expert TCF IRN. Tu génères des exercices FLE pour apprenants A0/A1. Contextes : préfecture, médecin, CAF, logement. Inspire-toi du gabarit fourni. Évite de reproduire les exercices existants. Retourne uniquement du JSON strict : { titre, consigne, competence, niveau_cecrl, format, contenu: { items: [{question, options[], bonne_reponse, explication}] }, justification_pedagogique, duree_estimee_secondes }` + QA_REVIEW_BLOCK;
+    const systemPrompt = `Tu es expert TCF IRN. Tu génères des exercices FLE pour apprenants A0/B2. Contextes : préfecture, médecin, CAF, logement. Inspire-toi du gabarit et des activités Wilson fournies comme référence pédagogique. Ces activités représentent la méthode officielle de formation — aligne tes exercices sur leur approche, leur niveau de langue et leurs objectifs. Évite de reproduire les exercices existants. Retourne uniquement du JSON strict : { titre, consigne, competence, niveau_cecrl, format, contenu: { items: [{question, options[], bonne_reponse, explication}] }, justification_pedagogique, duree_estimee_secondes, activites_wilson_utilisees: [string] }` + QA_REVIEW_BLOCK;
+
+    const wilsonSection = wilsonContext.length > 0
+      ? `\n\nActivités pédagogiques Wilson de référence (inspire-toi de leur structure, leurs objectifs et leur vocabulaire — ne les reproduis pas mot pour mot) :\n${JSON.stringify(wilsonContext, null, 2)}`
+      : '';
 
     // [ADAPTATION captcf] Accès direct aux colonnes du gabarit (pas gabarit.structure.*)
     const userMessage = `Gabarit : ${JSON.stringify({
@@ -81,6 +104,7 @@ Deno.serve(async (req) => {
     })}
 
 Paramètres : compétence=${skill_type}, format=${format}, niveau=${level}, thème=${theme}, difficulté=${difficulte}/5, nombre_items=${nombre_items}
+${wilsonSection}
 
 Exercices existants à ne pas reproduire : ${JSON.stringify(existingContext)}`;
 
