@@ -13,7 +13,8 @@ export type LiveEventType =
   | "inactif"
   | "clic_aleatoire_probable"
   | "session_state_change"
-  | "eleve_state_change";
+  | "eleve_state_change"
+  | "niveau_recalibre";
 
 export async function emitLiveEvent(opts: {
   sessionId: string;
