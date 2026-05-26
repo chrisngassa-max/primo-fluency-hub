@@ -189,7 +189,7 @@ Exercices existants à ne pas reproduire : ${JSON.stringify(existingContext)}`;
       });
     }
 
-    return new Response(JSON.stringify({ ...newExercice, justification_pedagogique: exerciseJson.justification_pedagogique, duree_estimee_secondes: exerciseJson.duree_estimee_secondes }), {
+    return new Response(JSON.stringify({ ...newExercice, justification_pedagogique: exerciseJson.justification_pedagogique, duree_estimee_secondes: exerciseJson.duree_estimee_secondes, activites_wilson_utilisees: exerciseJson.activites_wilson_utilisees ?? [] }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
 
