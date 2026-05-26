@@ -156,6 +156,9 @@ const ExercicesPage = () => {
         if (ex.note_differentiation) contenu.note_differentiation = ex.note_differentiation;
         if (ex.duree_estimee_secondes) contenu.duree_estimee_secondes = ex.duree_estimee_secondes;
         if (ex.type_distracteurs) contenu.type_distracteurs = ex.type_distracteurs;
+        if (Array.isArray(ex.activites_wilson_utilisees) && ex.activites_wilson_utilisees.length > 0) {
+          contenu.activites_wilson_utilisees = ex.activites_wilson_utilisees;
+        }
 
         const { error: insertError } = await supabase.from("exercices").insert({
           formateur_id: user.id,
@@ -929,6 +932,12 @@ ${Array.isArray(item.options) && item.options.length > 0
                                   </div>
                                 </div>
                               )}
+                              {Array.isArray((c as any)?.activites_wilson_utilisees) && (c as any).activites_wilson_utilisees.length > 0 && (
+                                <div className="text-[11px] text-blue-800 dark:text-blue-300 border-t border-blue-200 dark:border-blue-800 pt-2 mt-1">
+                                  <span className="font-semibold">Inspiré de :</span>{' '}
+                                  {(c as any).activites_wilson_utilisees.join(' · ')}
+                                </div>
+                              )}
                             </div>
                           );
                         })()}
@@ -1227,6 +1236,12 @@ ${Array.isArray(item.options) && item.options.length > 0
                                 </p>
                               ))}
                             </div>
+                          </div>
+                        )}
+                        {Array.isArray((pc as any)?.activites_wilson_utilisees) && (pc as any).activites_wilson_utilisees.length > 0 && (
+                          <div className="text-xs text-muted-foreground border-t border-border pt-2 mt-2">
+                            <span className="font-medium">Inspiré de :</span>{' '}
+                            {(pc as any).activites_wilson_utilisees.join(' · ')}
                           </div>
                         )}
                       </CardContent>
