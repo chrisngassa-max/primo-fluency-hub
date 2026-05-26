@@ -3824,6 +3824,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      monter_niveau: { Args: { v_niveau: string }; Returns: string }
       move_to_dlq: {
         Args: {
           dlq_name: string
