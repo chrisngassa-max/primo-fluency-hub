@@ -158,9 +158,18 @@ export default function AnalyticsErreursPage() {
             {bulkLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Volume2 className="h-4 w-4 mr-2" />}
             Générer audio manquant
           </Button>
+          <Button variant="outline" onClick={() => exportPDF({ filename: `analytics-erreurs-${new Date().toISOString().slice(0,10)}.pdf` })} disabled={isExporting}>
+            {isExporting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <FileDown className="h-4 w-4 mr-2" />}
+            Télécharger PDF
+          </Button>
+          <Button variant="outline" onClick={() => exportPDF({ sendByEmail: true, sessionTitre: "Analytics erreurs", sessionDate: new Date().toISOString().slice(0,10), formateurEmail: user?.email })} disabled={isExporting}>
+            <Mail className="h-4 w-4 mr-2" />
+            Envoyer par e-mail
+          </Button>
         </div>
       </div>
 
+      <div ref={exportRef} className="space-y-6">
       {/* KPIs */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <KPI label="Erreurs (période)" value={totalErreurs} />
