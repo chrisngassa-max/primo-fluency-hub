@@ -722,17 +722,29 @@ const SuiviDirectClasse = () => {
                     {/* Grille de tuiles */}
                     {presentMembers.length > 0 && (
                       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-4">
-                        {presentMembers.map((m) => (
-                          <TuileEleveLive
-                            key={m.eleve_id}
-                            prenom={m.eleve?.prenom ?? ""}
-                            nom={m.eleve?.nom ?? ""}
-                            state={eleveStateMap.get(m.eleve_id)}
-                            priorite={prioriteMap.get(m.eleve_id) ?? 0}
-                            onIntervenir={() => setInterventionTarget(m)}
-                            onFocus={() => setFocusEleve(m)}
-                          />
-                        ))}
+                        {presentMembers.map((m) => {
+                          const rec = recalibratedMap.get(m.eleve_id);
+                          return (
+                            <div
+                              key={m.eleve_id}
+                              className={rec ? "relative rounded-md ring-2 ring-orange-500 transition-all" : "relative"}
+                            >
+                              {rec && (
+                                <span className="absolute -top-2 -right-2 z-10 rounded-full bg-orange-500 px-2 py-0.5 text-[10px] font-semibold text-white shadow">
+                                  Recalibré {rec.competence} {rec.avant}→{rec.apres}
+                                </span>
+                              )}
+                              <TuileEleveLive
+                                prenom={m.eleve?.prenom ?? ""}
+                                nom={m.eleve?.nom ?? ""}
+                                state={eleveStateMap.get(m.eleve_id)}
+                                priorite={prioriteMap.get(m.eleve_id) ?? 0}
+                                onIntervenir={() => setInterventionTarget(m)}
+                                onFocus={() => setFocusEleve(m)}
+                              />
+                            </div>
+                          );
+                        })}
                       </div>
                     )}
 
