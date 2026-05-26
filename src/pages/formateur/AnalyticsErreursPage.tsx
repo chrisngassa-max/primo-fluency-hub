@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,9 @@ import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid,
   PieChart, Pie, Cell, Legend,
 } from "recharts";
-import { Loader2, Volume2, RefreshCw } from "lucide-react";
+import { Loader2, Volume2, RefreshCw, FileDown, Mail } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useExportPDF } from "@/hooks/useExportPDF";
 
 type Row = {
   type_erreur_id: string | null;
