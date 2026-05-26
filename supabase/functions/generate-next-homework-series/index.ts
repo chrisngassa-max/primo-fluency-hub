@@ -22,6 +22,7 @@ import { callAI, AIError } from "../_shared/ai-client.ts";
 import { validateAndFix } from "../_shared/exercise-validator.ts";
 import { QA_REVIEW_BLOCK } from "../_shared/qa-prompt.ts";
 import { buildPedagogicalDirectives, formatPedagogicalDirectives } from "../_shared/pedagogical-directives.ts";
+import { computeWeakCompetencesFromResults, deriveProgressionFromResults } from "../_shared/progression.ts";
 import {
   checkConsentBatch,
   ensurePseudonymSecretOrLog,
@@ -241,11 +242,11 @@ serve(async (req) => {
       const myResults = (results ?? []).filter((r: any) => r.eleve_id === eleveId);
       const myDevoirs = (recentDevoirs ?? []).filter((d: any) => d.eleve_id === eleveId);
 
-      // moyenne des 5 derniers
-      const last5 = myResults.slice(0, 5);
-      const avg = last5.length ? Math.round(last5.reduce((s: number, r: any) => s + (r.score ?? 0), 0) / last5.length) : null;
+      const { progression, averageLast5: avg } = deriveProgressionFromResults(myResults);
 
       // compétences faibles
+      const weakComps = computeWeakCompetencesFromResults(myResults);
+      /*
       const compStats: Record<string, { sum: number; n: number }> = {};
       for (const r of myResults) {
         const c = (r as any).exercice?.competence;
@@ -262,6 +263,7 @@ serve(async (req) => {
       else if (avg !== null && avg >= 80) progression = "augmente";
       else if (avg !== null && avg >= 60) progression = "consolide";
       else progression = "remediation";
+      */
 
       const newSerie = (lastSerieByEleve[eleveId] ?? 0) + 1;
       adaptationSummary[eleveId] = {

@@ -3,7 +3,9 @@ import { callAI, AIError } from "../_shared/ai-client.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { validateAndFix } from "../_shared/exercise-validator.ts";
 import { QA_REVIEW_BLOCK } from "../_shared/qa-prompt.ts";
-import { ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth } from "../_shared/check-consent.ts";
+import { checkConsentBatch, ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth } from "../_shared/check-consent.ts";
+import { formatPedagogicalDirectives, type PedagogicalDirectives } from "../_shared/pedagogical-directives.ts";
+import { computeProgressionForEleves, type ProgressionMode } from "../_shared/progression.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -11,15 +13,81 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+interface DifferentiationCluster {
+  key: string;
+  niveau_variante: PedagogicalDirectives["niveau_variante"];
+  niveau_etayage: PedagogicalDirectives["niveau_etayage"];
+  mode_adaptation: ProgressionMode;
+  competence_cible: string | null;
+  directives: PedagogicalDirectives;
+  eleve_ids: string[];
+}
+
+function summarizeExercise(exercise: any): string {
+  return String(exercise?.titre || exercise?.exercice?.consigne || exercise?.consigne || "Variante").slice(0, 140);
+}
+
+function normalizeVariantPayload(exercise: any, commonExercise: any, context: {
+  titre: string;
+  objectifs?: string;
+  competence: string;
+  niveau: string;
+  directives: PedagogicalDirectives;
+}) {
+  if (exercise?.support && exercise?.exercice && exercise?.attendus) {
+    return {
+      ...exercise,
+      tronc_commun: exercise.tronc_commun ?? {
+        objectif: context.objectifs || context.titre,
+        theme: context.titre,
+        competence: context.competence,
+      },
+    };
+  }
+
+  return {
+    tronc_commun: {
+      objectif: context.objectifs || context.titre,
+      theme: context.titre,
+      competence: context.competence,
+    },
+    support: {
+      type: commonExercise?.competence === "CO" ? "script_audio" : "texte",
+      contenu: exercise?.contenu?.texte || exercise?.contenu?.script_audio || commonExercise?.contenu?.texte || "",
+      aides_lexicales: exercise?.support?.aides_lexicales || [],
+      longueur: context.directives.niveau_etayage === "fort" ? "courte" : context.directives.niveau_etayage === "moyen" ? "standard" : "developpee",
+      niveau_lisible: context.niveau,
+    },
+    exercice: {
+      titre: exercise?.titre || commonExercise?.titre || "Exercice adapte",
+      consigne: exercise?.consigne || commonExercise?.consigne || "",
+      format: exercise?.format || commonExercise?.format || "qcm",
+      competence: exercise?.competence || commonExercise?.competence || context.competence,
+      difficulte: exercise?.difficulte || commonExercise?.difficulte || 3,
+      contenu: exercise?.contenu || commonExercise?.contenu || { items: [] },
+      nombre_items: exercise?.contenu?.items?.length ?? commonExercise?.contenu?.items?.length ?? 0,
+      type_questions: exercise?.type_questions || [],
+    },
+    attendus: {
+      production_minimale: exercise?.attendus?.production_minimale || "Reussir les items avec les aides proposees.",
+      niveau_autonomie: context.directives.niveau_etayage === "fort" ? "guide" : context.directives.niveau_etayage === "moyen" ? "semi-guide" : "autonome",
+      criteres_reussite: exercise?.attendus?.criteres_reussite || ["Comprendre la consigne", "Identifier les informations utiles"],
+    },
+  };
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
     const _triggeredBy = await getUserIdFromAuth(req);
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const sb = createClient(supabaseUrl, supabaseKey);
     const _secretBlock = await ensurePseudonymSecretOrLog("generate-session-content", corsHeaders, null);
     if (_secretBlock) return _secretBlock;
     await logAICall({ function_name: "generate-session-content", triggered_by_user_id: _triggeredBy, status: "ok", data_categories: [], pseudonymization_level: "none" });
-    const { titre, objectifs, competences_cibles, niveau_cible, duree_minutes, exercices_suggeres, gabaritNumero, micro_competences, selected_activities } = await req.json();
+    const { titre, objectifs, competences_cibles, niveau_cible, duree_minutes, exercices_suggeres, gabaritNumero, micro_competences, selected_activities, groupId, eleveIds, formateurId, sessionId } = await req.json();
     // AI key check moved to shared ai-client
 
     if (!titre || !competences_cibles || competences_cibles.length === 0) {
@@ -36,9 +104,6 @@ serve(async (req) => {
     // Load gabarit if provided
     let gabarit: any = null;
     if (gabaritNumero != null) {
-      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-      const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-      const sb = createClient(supabaseUrl, supabaseKey);
       const { data } = await sb
         .from("gabarits_pedagogiques")
         .select("*")
@@ -323,7 +388,245 @@ Utilise le tool fourni pour retourner le résultat.` + QA_REVIEW_BLOCK;
       );
     }
 
-    return new Response(JSON.stringify({ exercices, excluded, totalExcluded: excluded.length }), {
+    if (!groupId) {
+      return new Response(JSON.stringify({ exercices, excluded, totalExcluded: excluded.length }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (!sessionId) {
+      return new Response(
+        JSON.stringify({ error: "missing_session_id", message: "sessionId est requis pour enregistrer les variantes de groupe." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
+    let resolvedEleveIds = Array.isArray(eleveIds) ? eleveIds.filter(Boolean) : [];
+    if (resolvedEleveIds.length === 0) {
+      const { data: members, error: membersError } = await sb
+        .from("group_members")
+        .select("eleve_id")
+        .eq("group_id", groupId);
+      if (membersError) throw membersError;
+      resolvedEleveIds = (members ?? []).map((member: any) => member.eleve_id).filter(Boolean);
+    }
+
+    const consent = await checkConsentBatch(resolvedEleveIds);
+    const eligibleEleveIds = consent.allowedIds;
+    const differentiationExcluded = consent.excludedIds.map((eleve_id) => ({ eleve_id, raison: "consent_missing" }));
+
+    if (eligibleEleveIds.length === 0) {
+      await logAICall({
+        function_name: "generate-session-content",
+        triggered_by_user_id: _triggeredBy,
+        status: "blocked_no_consent",
+        data_categories: ["profile", "results"],
+        pseudonymization_level: "hmac_sha256",
+      });
+      return new Response(JSON.stringify({
+        exercices,
+        excluded,
+        totalExcluded: excluded.length,
+        differentiation: {
+          generation_run_id: null,
+          clusters: [],
+          variants_per_eleve: {},
+          excluded: differentiationExcluded,
+        },
+      }), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    await logAICall({
+      function_name: "generate-session-content",
+      triggered_by_user_id: _triggeredBy,
+      status: "ok",
+      data_categories: ["profile", "results"],
+      pseudonymization_level: "hmac_sha256",
+    });
+
+    const targetCompetence = Array.isArray(competences_cibles) ? competences_cibles[0] : null;
+    const progressionProfiles = await computeProgressionForEleves(sb, eligibleEleveIds, {
+      sessionId,
+      targetCompetence,
+    });
+
+    const clusterMap = new Map<string, DifferentiationCluster>();
+    for (const eleveId of eligibleEleveIds) {
+      const profile = progressionProfiles[eleveId];
+      if (!profile) continue;
+      const directives = profile.directives;
+      const key = `${directives.niveau_variante}:${directives.niveau_etayage}:${profile.progression}`;
+      if (!clusterMap.has(key)) {
+        clusterMap.set(key, {
+          key,
+          niveau_variante: directives.niveau_variante,
+          niveau_etayage: directives.niveau_etayage,
+          mode_adaptation: profile.progression,
+          competence_cible: directives.competence_cible,
+          directives,
+          eleve_ids: [],
+        });
+      }
+      clusterMap.get(key)!.eleve_ids.push(eleveId);
+    }
+
+    let clusters = Array.from(clusterMap.values());
+    if (clusters.length > 4) {
+      const merged = new Map<string, DifferentiationCluster>();
+      for (const cluster of clusters) {
+        const key = cluster.niveau_variante;
+        if (!merged.has(key) || cluster.eleve_ids.length > merged.get(key)!.eleve_ids.length) {
+          merged.set(key, { ...cluster, key, eleve_ids: [...cluster.eleve_ids] });
+        } else {
+          merged.get(key)!.eleve_ids.push(...cluster.eleve_ids);
+        }
+      }
+      clusters = Array.from(merged.values());
+    }
+    if (clusters.length > 8) {
+      return new Response(
+        JSON.stringify({ error: "too_many_clusters", clusters: clusters.length }),
+        { status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
+    const generationRunId = crypto.randomUUID();
+    const variantsPerEleve: Record<string, any> = {};
+    const rowsToInsert: any[] = [];
+
+    for (const cluster of clusters) {
+      const directivesBlock = formatPedagogicalDirectives(cluster.directives);
+      const variantPrompt = `Tu produis des variantes pedagogiques d'une seance FLE TCF IRN.
+
+Tu dois conserver le meme objectif, le meme theme, la meme situation de communication et la meme competence.
+Tu dois adapter le support, l'exercice et les attendus selon les directives.
+
+DIRECTIVES DU CLUSTER:
+${directivesBlock}
+
+TRONC COMMUN:
+${JSON.stringify({ titre, objectifs, niveau, competences_cibles, exercices }, null, 2)}
+
+Retourne exactement ${exercices.length} variantes, dans le meme ordre que les exercices du tronc commun.
+Chaque variante doit contenir:
+- tronc_commun: objectif, theme, competence
+- support: type, contenu, aides_lexicales, longueur, niveau_lisible
+- exercice: titre, consigne, format, competence, difficulte, contenu, nombre_items, type_questions
+- attendus: production_minimale, niveau_autonomie, criteres_reussite
+Ne cree pas une activite differente: differencie le chemin d'acces.`;
+
+      const variantData = await callAI({
+        model: "google/gemini-3-flash-preview",
+        messages: [
+          { role: "system", content: variantPrompt + QA_REVIEW_BLOCK },
+          { role: "user", content: `Genere les variantes pour le cluster ${cluster.niveau_variante}/${cluster.niveau_etayage}.` },
+        ],
+        tools: [
+          {
+            type: "function",
+            function: {
+              name: "create_session_variants",
+              description: "Cree les variantes pedagogiques de chaque exercice de la seance",
+              parameters: {
+                type: "object",
+                properties: {
+                  variantes: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        tronc_commun: { type: "object" },
+                        support: { type: "object" },
+                        exercice: { type: "object" },
+                        attendus: { type: "object" },
+                      },
+                      required: ["support", "exercice", "attendus"],
+                    },
+                  },
+                },
+                required: ["variantes"],
+              },
+            },
+          },
+        ],
+        tool_choice: { type: "function", function: { name: "create_session_variants" } },
+      });
+
+      const variantToolCall = variantData.choices?.[0]?.message?.tool_calls?.[0];
+      if (!variantToolCall) throw new Error("L'IA n'a pas pu generer les variantes de seance");
+      const parsedVariants = JSON.parse(variantToolCall.function.arguments);
+      const rawVariants = Array.isArray(parsedVariants.variantes) ? parsedVariants.variantes : [];
+
+      const normalizedVariants: any[] = [];
+      for (let index = 0; index < exercices.length; index++) {
+        const rawVariant = rawVariants[index] ?? exercices[index];
+        const rawExercise = rawVariant.exercice ?? rawVariant;
+        const validated = await validateAndFix(rawExercise, { niveau });
+        const safeExercise = validated?.exercise ? { ...rawExercise, ...validated.exercise } : rawExercise;
+        normalizedVariants.push(normalizeVariantPayload(
+          { ...rawVariant, exercice: safeExercise },
+          exercices[index],
+          {
+            titre,
+            objectifs,
+            competence: exercices[index]?.competence || targetCompetence || "CE",
+            niveau,
+            directives: cluster.directives,
+          },
+        ));
+      }
+
+      for (const eleveId of cluster.eleve_ids) {
+        variantsPerEleve[eleveId] = {
+          niveau_variante: cluster.niveau_variante,
+          niveau_etayage: cluster.niveau_etayage,
+          mode_adaptation: cluster.mode_adaptation,
+          exercices: normalizedVariants,
+        };
+
+        normalizedVariants.forEach((variant, exerciceIndex) => {
+          rowsToInsert.push({
+            session_id: sessionId,
+            eleve_id: eleveId,
+            exercice_index: exerciceIndex,
+            variant_payload: variant,
+            niveau_variante: cluster.niveau_variante,
+            niveau_etayage: cluster.niveau_etayage,
+            mode_adaptation: cluster.mode_adaptation,
+            competence_cible: cluster.competence_cible,
+            generation_run_id: generationRunId,
+            generated_by: formateurId ?? _triggeredBy,
+          });
+        });
+      }
+    }
+
+    if (rowsToInsert.length > 0) {
+      const { error: insertError } = await sb.from("session_exercise_variants").insert(rowsToInsert);
+      if (insertError) throw insertError;
+    }
+
+    return new Response(JSON.stringify({
+      exercices,
+      excluded,
+      totalExcluded: excluded.length,
+      differentiation: {
+        generation_run_id: generationRunId,
+        clusters: clusters.map((cluster) => ({
+          niveau_variante: cluster.niveau_variante,
+          niveau_etayage: cluster.niveau_etayage,
+          mode_adaptation: cluster.mode_adaptation,
+          eleve_ids: cluster.eleve_ids,
+        })),
+        variants_per_eleve: variantsPerEleve,
+        excluded: differentiationExcluded,
+        summaries: Object.fromEntries(Object.entries(variantsPerEleve).map(([eleveId, value]: [string, any]) => [
+          eleveId,
+          value.exercices.map((variant: any) => summarizeExercise(variant)),
+        ])),
+      },
+    }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

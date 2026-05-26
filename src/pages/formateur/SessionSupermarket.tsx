@@ -67,6 +67,8 @@ interface SessionExercice {
 }
 
 interface SessionInfo {
+  id?: string;
+  sessionId?: string;
   titre: string;
   objectifs?: string;
   competences_cibles: string[];
@@ -75,6 +77,20 @@ interface SessionInfo {
   exercices_suggeres?: string[];
   source: "import" | "parcours";
   groupId?: string;
+}
+
+interface DifferentiationState {
+  generation_run_id: string | null;
+  session_id: string;
+  clusters: Array<{
+    niveau_variante: string;
+    niveau_etayage: string;
+    mode_adaptation: string;
+    eleve_ids: string[];
+  }>;
+  variants_per_eleve: Record<string, any>;
+  excluded?: Array<{ eleve_id: string; raison: string }>;
+  summaries?: Record<string, string[]>;
 }
 
 const competenceColors: Record<string, string> = {
@@ -129,9 +145,12 @@ const SessionSupermarket = () => {
   const sessionInfo = location.state as SessionInfo | null;
 
   const [generating, setGenerating] = useState(false);
+  const [generatingDifferentiated, setGeneratingDifferentiated] = useState(false);
   const [exercices, setExercices] = useState<SessionExercice[]>([]);
+  const [differentiation, setDifferentiation] = useState<DifferentiationState | null>(null);
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [dispatching, setDispatching] = useState(false);
+  const [publishingVariants, setPublishingVariants] = useState(false);
   const [targetSessionId, setTargetSessionId] = useState("");
   const [showAteliers, setShowAteliers] = useState(true);
   const [gabaritIgnored, setGabaritIgnored] = useState(false);
@@ -221,6 +240,7 @@ const SessionSupermarket = () => {
     if (!sessionInfo) return;
     setGenerating(true);
     setExercices([]);
+    setDifferentiation(null);
     setSelected(new Set());
     try {
       const useGabarit = detectedGabarit && !gabaritIgnored;
@@ -267,6 +287,84 @@ const SessionSupermarket = () => {
       toast.error("Erreur de génération", { description: e.message });
     } finally {
       setGenerating(false);
+    }
+  };
+
+  const handleGenerateForGroup = async () => {
+    if (!sessionInfo) return;
+    const candidateSessions = [...(todaySessions ?? []), ...(upcomingSessions ?? [])];
+    const selectedTarget = candidateSessions.find((session: any) => session.id === targetSessionId);
+    const sessionId = targetSessionId || sessionInfo.sessionId || sessionInfo.id;
+    const groupId = sessionInfo.groupId || selectedTarget?.group_id;
+
+    if (!sessionId || !groupId) {
+      toast.error("Choisissez une séance cible liée à un groupe avant de générer les variantes.");
+      return;
+    }
+
+    setGeneratingDifferentiated(true);
+    setExercices([]);
+    setDifferentiation(null);
+    setSelected(new Set());
+    try {
+      const useGabarit = detectedGabarit && !gabaritIgnored;
+      const body: any = {
+        titre: sessionInfo.titre,
+        objectifs: sessionInfo.objectifs,
+        competences_cibles: sessionInfo.competences_cibles,
+        niveau_cible: sessionInfo.niveau_cible,
+        duree_minutes: sessionInfo.duree_minutes,
+        exercices_suggeres: sessionInfo.exercices_suggeres,
+        type_activite: typeActivite,
+        activite_duree_minutes: parseInt(activiteDuree),
+        format_groupe: formatGroupe,
+        type_demarche: typeDemarcheSm,
+        groupId,
+        sessionId,
+        formateurId: user?.id,
+      };
+      if (useGabarit) body.gabaritNumero = detectedGabarit.numero;
+
+      const { data, error } = await supabase.functions.invoke("generate-session-content", { body });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      const exs = data.exercices || [];
+      setExercices(exs);
+      setSelected(new Set(exs.map((_: any, i: number) => i)));
+      setDifferentiation(data.differentiation ? { ...data.differentiation, session_id: sessionId } : null);
+      toast.success(`${exs.length} exercices et variantes de groupe générés.`);
+    } catch (e: any) {
+      console.error(e);
+      toast.error("Erreur de génération différenciée", { description: e.message });
+    } finally {
+      setGeneratingDifferentiated(false);
+    }
+  };
+
+  const handlePublishVariants = async () => {
+    if (!differentiation?.generation_run_id) return;
+    setPublishingVariants(true);
+    try {
+      const client = supabase as any;
+      const { error: disableError } = await client
+        .from("session_exercise_variants")
+        .update({ is_active: false })
+        .eq("session_id", differentiation.session_id);
+      if (disableError) throw disableError;
+
+      const { error: enableError } = await client
+        .from("session_exercise_variants")
+        .update({ is_active: true })
+        .eq("generation_run_id", differentiation.generation_run_id);
+      if (enableError) throw enableError;
+
+      toast.success("Variantes publiées pour le groupe.");
+    } catch (e: any) {
+      console.error(e);
+      toast.error("Impossible de publier les variantes", { description: e.message });
+    } finally {
+      setPublishingVariants(false);
     }
   };
 
@@ -558,6 +656,8 @@ ${(doc.fiches_eleves || [])
   }
 
   const allSessions = upcomingSessions || [];
+  const selectedTargetSession = [...(todaySessions ?? []), ...allSessions].find((session: any) => session.id === targetSessionId) as any;
+  const targetGroupId = sessionInfo.groupId || selectedTargetSession?.group_id;
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto pb-28">
@@ -741,6 +841,12 @@ ${(doc.fiches_eleves || [])
                     <Sparkles className="h-4 w-4 mr-2" />
                     Générer selon ce gabarit
                   </Button>
+                  {targetGroupId && (
+                    <Button variant="secondary" onClick={handleGenerateForGroup} disabled={generatingDifferentiated}>
+                      {generatingDifferentiated ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Users className="h-4 w-4 mr-2" />}
+                      GÃ©nÃ©rer pour le groupe
+                    </Button>
+                  )}
                   <Button variant="outline" onClick={() => setGabaritIgnored(true)}>
                     Ignorer le gabarit
                   </Button>
@@ -751,15 +857,28 @@ ${(doc.fiches_eleves || [])
 
           {/* Generate button (no gabarit) */}
           {(!detectedGabarit || gabaritIgnored) && (
+            targetGroupId ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <Button onClick={handleGenerate} size="lg" className="w-full">
               <Sparkles className="h-4 w-4 mr-2" />
               Générer les exercices et ateliers ludiques
             </Button>
+            <Button variant="secondary" onClick={handleGenerateForGroup} size="lg" className="w-full" disabled={generatingDifferentiated}>
+              {generatingDifferentiated ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Users className="h-4 w-4 mr-2" />}
+              GÃ©nÃ©rer pour le groupe
+            </Button>
+            </div>
+            ) : (
+            <Button onClick={handleGenerate} size="lg" className="w-full">
+              <Sparkles className="h-4 w-4 mr-2" />
+              GÃ©nÃ©rer les exercices et ateliers ludiques
+            </Button>
+            )
           )}
         </div>
       )}
 
-      {generating && (
+      {(generating || generatingDifferentiated) && (
         <Card className="border-primary/30 bg-primary/5">
           <CardContent className="py-8 text-center">
             <Loader2 className="h-8 w-8 mx-auto animate-spin text-primary mb-3" />
@@ -767,6 +886,74 @@ ${(doc.fiches_eleves || [])
             <p className="text-sm text-muted-foreground mt-1">
               {TYPE_ACTIVITE_OPTIONS.find(o => o.value === typeActivite)?.label || "Activité"} · {activiteDuree} min · {FORMAT_GROUPE_OPTIONS.find(o => o.value === formatGroupe)?.label || ""}
             </p>
+          </CardContent>
+        </Card>
+      )}
+
+      {differentiation && (
+        <Card className="border-emerald-200 bg-emerald-50/60 dark:border-emerald-900 dark:bg-emerald-950/20">
+          <CardHeader className="pb-3">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Users className="h-4 w-4 text-emerald-700 dark:text-emerald-300" />
+                  Variantes diffÃ©renciÃ©es du groupe
+                </CardTitle>
+                <CardDescription>
+                  {differentiation.clusters.length} cluster(s) gÃ©nÃ©rÃ©(s) sur le mÃªme tronc commun.
+                </CardDescription>
+              </div>
+              <Button onClick={handlePublishVariants} disabled={publishingVariants || !differentiation.generation_run_id}>
+                {publishingVariants ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <CheckSquare className="h-4 w-4 mr-2" />}
+                Valider les variantes
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {differentiation.excluded && differentiation.excluded.length > 0 && (
+              <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+                {differentiation.excluded.length} Ã©lÃ¨ve(s) exclu(s) faute de consentement IA.
+              </div>
+            )}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {differentiation.clusters.map((cluster, index) => (
+                <Card key={`${cluster.niveau_variante}-${index}`} className="bg-background">
+                  <CardContent className="p-3 space-y-2">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Badge>{cluster.niveau_variante}</Badge>
+                      <Badge variant="outline">{cluster.niveau_etayage}</Badge>
+                      <Badge variant="secondary">{cluster.mode_adaptation}</Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {cluster.eleve_ids.length} Ã©lÃ¨ve(s) assignÃ©(s)
+                    </p>
+                    <div className="space-y-1">
+                      {cluster.eleve_ids.slice(0, 4).map((eleveId) => (
+                        <div key={eleveId} className="rounded bg-muted/60 px-2 py-1 text-[11px]">
+                          {eleveId.slice(0, 8)}
+                        </div>
+                      ))}
+                      {cluster.eleve_ids.length > 4 && (
+                        <p className="text-[11px] text-muted-foreground">+{cluster.eleve_ids.length - 4} autre(s)</p>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            {differentiation.summaries && (
+              <div className="rounded-md border bg-background p-3">
+                <p className="text-xs font-semibold mb-2">AperÃ§u rapide des variantes</p>
+                <div className="space-y-2">
+                  {Object.entries(differentiation.summaries).slice(0, 4).map(([eleveId, summaries]) => (
+                    <div key={eleveId} className="text-xs">
+                      <span className="font-medium">{eleveId.slice(0, 8)}</span>
+                      <span className="text-muted-foreground"> â€” {(summaries || []).slice(0, 2).join(" ; ")}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
