@@ -293,6 +293,7 @@ export default function AnalyticsErreursPage() {
           </Card>
         </TabsContent>
       </Tabs>
+      </div>
     </div>
   );
 }
