@@ -2907,6 +2907,76 @@ export type Database = {
           },
         ]
       }
+      session_exercise_variants: {
+        Row: {
+          competence_cible: string | null
+          created_at: string
+          eleve_id: string
+          exercice_index: number
+          generated_by: string | null
+          generation_run_id: string
+          id: string
+          is_active: boolean
+          mode_adaptation: string
+          niveau_etayage: string
+          niveau_variante: string
+          session_id: string
+          variant_payload: Json
+        }
+        Insert: {
+          competence_cible?: string | null
+          created_at?: string
+          eleve_id: string
+          exercice_index: number
+          generated_by?: string | null
+          generation_run_id: string
+          id?: string
+          is_active?: boolean
+          mode_adaptation: string
+          niveau_etayage: string
+          niveau_variante: string
+          session_id: string
+          variant_payload: Json
+        }
+        Update: {
+          competence_cible?: string | null
+          created_at?: string
+          eleve_id?: string
+          exercice_index?: number
+          generated_by?: string | null
+          generation_run_id?: string
+          id?: string
+          is_active?: boolean
+          mode_adaptation?: string
+          niveau_etayage?: string
+          niveau_variante?: string
+          session_id?: string
+          variant_payload?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_exercise_variants_eleve_id_fkey"
+            columns: ["eleve_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_exercise_variants_generated_by_fkey"
+            columns: ["generated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_exercise_variants_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       session_feedback: {
         Row: {
           commentaire_libre: string | null
