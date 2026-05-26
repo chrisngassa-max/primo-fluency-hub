@@ -20,6 +20,7 @@ import {
   TrendingUp,
   ListChecks,
   BookMarked,
+  BarChart3,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
