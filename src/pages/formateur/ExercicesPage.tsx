@@ -932,6 +932,12 @@ ${Array.isArray(item.options) && item.options.length > 0
                                   </div>
                                 </div>
                               )}
+                              {Array.isArray((c as any)?.activites_wilson_utilisees) && (c as any).activites_wilson_utilisees.length > 0 && (
+                                <div className="text-[11px] text-blue-800 dark:text-blue-300 border-t border-blue-200 dark:border-blue-800 pt-2 mt-1">
+                                  <span className="font-semibold">Inspiré de :</span>{' '}
+                                  {(c as any).activites_wilson_utilisees.join(' · ')}
+                                </div>
+                              )}
                             </div>
                           );
                         })()}
