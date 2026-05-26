@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect, useCallback } from "react";
+import { useMemo, useState, useEffect, useCallback, useRef } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -43,6 +43,7 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import CorrectionDetaillee from "@/components/CorrectionDetaillee";
+import { toast } from "sonner";
 
 type Session = {
   id: string;
@@ -308,6 +309,37 @@ const SuiviDirectClasse = () => {
       supabase.removeChannel(channel);
     };
   }, [bilanIds, refetchResults]);
+
+  // Sprint 10 — recalibrage automatique : toast + highlight 5s
+  const [recalibratedMap, setRecalibratedMap] = useState<Map<string, { competence: string; avant: string; apres: string }>>(new Map());
+  const seenRecalibrageRef = useRef<Set<string>>(new Set());
+  useEffect(() => {
+    for (const ev of liveEvents) {
+      if (ev.event_type !== "niveau_recalibre") continue;
+      if (seenRecalibrageRef.current.has(ev.id)) continue;
+      seenRecalibrageRef.current.add(ev.id);
+      const p = (ev.payload ?? {}) as Record<string, string>;
+      const eleveId = ev.eleve_id;
+      if (!eleveId) continue;
+      const member = (members ?? []).find((m) => m.eleve_id === eleveId);
+      const nom = member ? `${member.eleve?.prenom ?? ""} ${member.eleve?.nom ?? ""}`.trim() : "Élève";
+      toast(`⬇️ ${nom} — niveau ${p.competence} recalibré : ${p.niveau_avant} → ${p.niveau_apres}`, {
+        duration: 6000,
+      });
+      setRecalibratedMap((prev) => {
+        const next = new Map(prev);
+        next.set(eleveId, { competence: p.competence, avant: p.niveau_avant, apres: p.niveau_apres });
+        return next;
+      });
+      setTimeout(() => {
+        setRecalibratedMap((prev) => {
+          const next = new Map(prev);
+          next.delete(eleveId);
+          return next;
+        });
+      }, 5000);
+    }
+  }, [liveEvents, members]);
 
   const presenceMap = useMemo(() => {
     const m = new Map<string, boolean>();
@@ -690,17 +722,29 @@ const SuiviDirectClasse = () => {
                     {/* Grille de tuiles */}
                     {presentMembers.length > 0 && (
                       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-4">
-                        {presentMembers.map((m) => (
-                          <TuileEleveLive
-                            key={m.eleve_id}
-                            prenom={m.eleve?.prenom ?? ""}
-                            nom={m.eleve?.nom ?? ""}
-                            state={eleveStateMap.get(m.eleve_id)}
-                            priorite={prioriteMap.get(m.eleve_id) ?? 0}
-                            onIntervenir={() => setInterventionTarget(m)}
-                            onFocus={() => setFocusEleve(m)}
-                          />
-                        ))}
+                        {presentMembers.map((m) => {
+                          const rec = recalibratedMap.get(m.eleve_id);
+                          return (
+                            <div
+                              key={m.eleve_id}
+                              className={rec ? "relative rounded-md ring-2 ring-orange-500 transition-all" : "relative"}
+                            >
+                              {rec && (
+                                <span className="absolute -top-2 -right-2 z-10 rounded-full bg-orange-500 px-2 py-0.5 text-[10px] font-semibold text-white shadow">
+                                  Recalibré {rec.competence} {rec.avant}→{rec.apres}
+                                </span>
+                              )}
+                              <TuileEleveLive
+                                prenom={m.eleve?.prenom ?? ""}
+                                nom={m.eleve?.nom ?? ""}
+                                state={eleveStateMap.get(m.eleve_id)}
+                                priorite={prioriteMap.get(m.eleve_id) ?? 0}
+                                onIntervenir={() => setInterventionTarget(m)}
+                                onFocus={() => setFocusEleve(m)}
+                              />
+                            </div>
+                          );
+                        })}
                       </div>
                     )}
 

@@ -1,5 +1,7 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import {
   BookOpen,
   BookMarked,
@@ -12,6 +14,7 @@ import {
 import { cn } from "@/lib/utils";
 import AppFooter from "@/components/AppFooter";
 import { CapPublicHeader } from "@/components/CapBrand";
+import InterventionPlayer from "@/components/eleve/InterventionPlayer";
 
 const navItems = [
   { title: "Accueil", path: "/eleve", icon: Home },
@@ -35,8 +38,31 @@ const EleveLayout = () => {
     .map((s: string) => s[0].toUpperCase())
     .join("") || "ML";
 
+  // Sprint 10 — fallback : récupère la session active de l'élève (groupes auxquels il appartient)
+  const { data: activeSessionId } = useQuery({
+    queryKey: ["eleve-active-session", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      const { data: gm } = await supabase.from("group_members").select("group_id").eq("eleve_id", user.id);
+      const groupIds = (gm ?? []).map((r) => r.group_id);
+      if (groupIds.length === 0) return null;
+      const { data: s } = await supabase
+        .from("sessions")
+        .select("id")
+        .in("group_id", groupIds)
+        .eq("statut", "en_cours")
+        .order("date_seance", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      return s?.id ?? null;
+    },
+    enabled: !!user?.id,
+    refetchInterval: 60000,
+  });
+
   return (
     <div className="cap-screen min-h-screen">
+      <InterventionPlayer sessionId={activeSessionId ?? null} />
       <CapPublicHeader avatar={initiales.slice(0, 2)} showMenu={false} />
 
       <nav className="hidden border-b bg-white/90 px-4 shadow-sm backdrop-blur lg:flex">

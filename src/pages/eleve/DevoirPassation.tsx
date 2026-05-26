@@ -32,6 +32,7 @@ import { useLiveAttemptSync } from "@/hooks/useLiveAttemptSync";
 import { emitLiveEvent } from "@/lib/liveEventEmitter";
 import { corrigerExercice } from "@/lib/correctionExercice";
 import { applyExerciseVariant, resolveStudentExerciseLevel } from "@/lib/exerciseVariant";
+import InterventionPlayer from "@/components/eleve/InterventionPlayer";
 
 function CorrectionAccordion({ correction }: { correction: any[] }) {
   const [openItems, setOpenItems] = useState<number[]>([]);
@@ -593,6 +594,7 @@ const DevoirPassation = () => {
   // ─── Exercise Passation ───
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
+      <InterventionPlayer sessionId={(devoir as any)?.session_id ?? null} />
       <div className="flex items-center gap-3">
         <Button variant="ghost" size="sm" onClick={() => navigate("/eleve/devoirs")} className="gap-1.5">
           <ArrowLeft className="h-4 w-4" /> Retour

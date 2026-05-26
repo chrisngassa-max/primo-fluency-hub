@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,9 @@ import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid,
   PieChart, Pie, Cell, Legend,
 } from "recharts";
-import { Loader2, Volume2, RefreshCw } from "lucide-react";
+import { Loader2, Volume2, RefreshCw, FileDown, Mail } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useExportPDF } from "@/hooks/useExportPDF";
 
 type Row = {
   type_erreur_id: string | null;
@@ -24,12 +26,15 @@ type Row = {
 const PALETTE = ["#2563eb", "#16a34a", "#f59e0b", "#dc2626", "#7c3aed", "#0891b2", "#db2777", "#65a30d"];
 
 export default function AnalyticsErreursPage() {
+  const { user } = useAuth();
   const [period, setPeriod] = useState<"7" | "30" | "90">("30");
   const [loading, setLoading] = useState(true);
   const [bulkLoading, setBulkLoading] = useState(false);
   const [rows, setRows] = useState<Row[]>([]);
   const [typesErreur, setTypesErreur] = useState<Record<string, string>>({});
   const [systemInterventions, setSystemInterventions] = useState<any[]>([]);
+  const exportRef = useRef<HTMLDivElement>(null);
+  const { exportPDF, isExporting } = useExportPDF(exportRef);
 
   useEffect(() => {
     void load();
@@ -153,9 +158,18 @@ export default function AnalyticsErreursPage() {
             {bulkLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Volume2 className="h-4 w-4 mr-2" />}
             Générer audio manquant
           </Button>
+          <Button variant="outline" onClick={() => exportPDF({ filename: `analytics-erreurs-${new Date().toISOString().slice(0,10)}.pdf` })} disabled={isExporting}>
+            {isExporting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <FileDown className="h-4 w-4 mr-2" />}
+            Télécharger PDF
+          </Button>
+          <Button variant="outline" onClick={() => exportPDF({ sendByEmail: true, sessionTitre: "Analytics erreurs", sessionDate: new Date().toISOString().slice(0,10), formateurEmail: user?.email })} disabled={isExporting}>
+            <Mail className="h-4 w-4 mr-2" />
+            Envoyer par e-mail
+          </Button>
         </div>
       </div>
 
+      <div ref={exportRef} className="space-y-6">
       {/* KPIs */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <KPI label="Erreurs (période)" value={totalErreurs} />
@@ -279,6 +293,7 @@ export default function AnalyticsErreursPage() {
           </Card>
         </TabsContent>
       </Tabs>
+      </div>
     </div>
   );
 }
