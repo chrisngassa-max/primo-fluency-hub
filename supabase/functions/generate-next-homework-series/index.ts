@@ -207,6 +207,14 @@ serve(async (req) => {
       .order("created_at", { ascending: false })
       .limit(eleveIds.length * 30);
 
+    // Météo élève : 5 derniers feedbacks par élève (best-effort, ne bloque pas)
+    const { data: recentFeedback } = await supabase
+      .from("devoir_feedback")
+      .select("eleve_id, devoir_id, difficulty_felt, score, created_at, devoir:devoirs(exercice:exercices(titre, competence))")
+      .in("eleve_id", eleveIds)
+      .order("created_at", { ascending: false })
+      .limit(eleveIds.length * 5);
+
     // Dernière série par élève
     const lastSerieByEleve: Record<string, number> = {};
     for (const eid of eleveIds) lastSerieByEleve[eid] = 0;
@@ -299,6 +307,19 @@ serve(async (req) => {
           lines.push(`    - "${ex.titre}" (${ex.competence}, ${ex.format}, diff ${ex.difficulte}, série ${(d as any).serie ?? 0}, statut ${(d as any).statut})`);
         }
       }
+
+      // METEO ELEVE RECENTE — auto-évaluation du ressenti après devoir
+      const myFeedback = (recentFeedback ?? []).filter((f: any) => f.eleve_id === eleveId);
+      if (myFeedback.length) {
+        lines.push(`  METEO ELEVE RECENTE :`);
+        for (const f of myFeedback.slice(0, 5)) {
+          const ex: any = (f as any).devoir?.exercice;
+          const titre = ex?.titre ?? "exercice";
+          const comp = ex?.competence ?? "?";
+          const score = (f as any).score ?? "?";
+          lines.push(`    - "${titre}" (${comp}) score=${score}% · ressenti=${(f as any).difficulty_felt}`);
+        }
+      }
       studentBlocks.push(lines.join("\n"));
     }
 
@@ -322,6 +343,13 @@ DIRECTIVES PEDAGOGIQUES PAR ELEVE :
 - Si une directive interdit redaction_libre, texte_long ou production_ecrite_longue, ne genere pas ce format pour cet eleve.
 - Si descente_competence est presente, travaille d'abord competence_cible avant de revenir a la competence ratee.
 - Respecte supports_obligatoires, limites de consigne/items, feedback_type et formats_autorises.
+
+METEO ELEVE (ressenti après devoir) :
+- Si le bloc eleve contient une section METEO ELEVE RECENTE, croise score + difficulty_felt :
+  - score bas + "trop_difficile" → remédiation étayée (consigne plus courte, exemple résolu, support visuel).
+  - score bas + "facile" → vérifier la consigne et l'attention : reformuler la consigne, exercice court ciblé.
+  - score bon + "trop_difficile" → consolidation sécurisée (même compétence, même niveau, format rassurant).
+  - score bon + "facile" → augmentation possible (difficulté +1 ou variation de compétence proche).
 
 RÈGLE ANTI-RÉPÉTITION STRICTE :
 - Tu ne reprends PAS les titres listés dans HISTORIQUE DEVOIRS RÉCENTS.

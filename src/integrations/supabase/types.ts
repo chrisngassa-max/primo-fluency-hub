@@ -535,6 +535,61 @@ export type Database = {
         }
         Relationships: []
       }
+      devoir_feedback: {
+        Row: {
+          created_at: string
+          devoir_id: string
+          difficulty_felt: string
+          eleve_id: string
+          exercice_id: string | null
+          id: string
+          score: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          devoir_id: string
+          difficulty_felt: string
+          eleve_id: string
+          exercice_id?: string | null
+          id?: string
+          score?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          devoir_id?: string
+          difficulty_felt?: string
+          eleve_id?: string
+          exercice_id?: string | null
+          id?: string
+          score?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "devoir_feedback_devoir_id_fkey"
+            columns: ["devoir_id"]
+            isOneToOne: false
+            referencedRelation: "devoirs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "devoir_feedback_eleve_id_fkey"
+            columns: ["eleve_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "devoir_feedback_exercice_id_fkey"
+            columns: ["exercice_id"]
+            isOneToOne: false
+            referencedRelation: "exercices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       devoirs: {
         Row: {
           archived_at: string | null
