@@ -344,6 +344,13 @@ DIRECTIVES PEDAGOGIQUES PAR ELEVE :
 - Si descente_competence est presente, travaille d'abord competence_cible avant de revenir a la competence ratee.
 - Respecte supports_obligatoires, limites de consigne/items, feedback_type et formats_autorises.
 
+METEO ELEVE (ressenti après devoir) :
+- Si le bloc eleve contient une section METEO ELEVE RECENTE, croise score + difficulty_felt :
+  - score bas + "trop_difficile" → remédiation étayée (consigne plus courte, exemple résolu, support visuel).
+  - score bas + "facile" → vérifier la consigne et l'attention : reformuler la consigne, exercice court ciblé.
+  - score bon + "trop_difficile" → consolidation sécurisée (même compétence, même niveau, format rassurant).
+  - score bon + "facile" → augmentation possible (difficulté +1 ou variation de compétence proche).
+
 RÈGLE ANTI-RÉPÉTITION STRICTE :
 - Tu ne reprends PAS les titres listés dans HISTORIQUE DEVOIRS RÉCENTS.
 - Tu ne reformules PAS simplement un exercice récent.
