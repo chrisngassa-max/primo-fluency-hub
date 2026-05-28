@@ -306,14 +306,6 @@ serve(async (req) => {
           if (!ex?.titre) continue;
           lines.push(`    - "${ex.titre}" (${ex.competence}, ${ex.format}, diff ${ex.difficulte}, série ${(d as any).serie ?? 0}, statut ${(d as any).statut})`);
         }
-      // Historique anti-répétition (30 derniers)
-      if (myDevoirs.length) {
-        lines.push(`  HISTORIQUE DEVOIRS RÉCENTS À NE PAS REPRODUIRE :`);
-        for (const d of myDevoirs.slice(0, 30)) {
-          const ex: any = (d as any).exercice;
-          if (!ex?.titre) continue;
-          lines.push(`    - "${ex.titre}" (${ex.competence}, ${ex.format}, diff ${ex.difficulte}, série ${(d as any).serie ?? 0}, statut ${(d as any).statut})`);
-        }
       }
 
       // METEO ELEVE RECENTE — auto-évaluation du ressenti après devoir
