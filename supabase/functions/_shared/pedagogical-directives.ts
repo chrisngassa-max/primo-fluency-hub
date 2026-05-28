@@ -1,6 +1,7 @@
 export type ExerciseVariantLevel = "bas" | "standard" | "haut";
 export type ScaffoldingLevel = "fort" | "moyen" | "faible";
 export type CompetenceKey = "CO" | "CE" | "EE" | "EO" | "Structures";
+export type WrittenProfile = "NSA" | "Alpha" | "Post-Alpha" | "FLE" | "inconnu";
 
 export interface StudentProfileSignals {
   niveau_actuel?: string | null;
@@ -25,6 +26,8 @@ export interface PedagogicalDirectives {
   competence_cible: CompetenceKey | null;
   besoin_pedagogique: string;
   vitesse_lecture: "lente" | "fluide" | "inconnue";
+  profil_ecrit: WrittenProfile;
+  alphabet_l1: string | null;
   formats_autorises: string[];
   formats_interdits: string[];
   supports_obligatoires: string[];
@@ -80,6 +83,38 @@ function prioritiesToArray(priorities: unknown): string[] {
       .map(([key, value]) => `${key}:${String(value)}`.toLowerCase());
   }
   return [];
+}
+
+function priorityValue(priorities: unknown, keys: string[]): string | null {
+  if (!priorities || typeof priorities !== "object" || Array.isArray(priorities)) return null;
+  const entries = Object.entries(priorities as Record<string, unknown>);
+  for (const [key, value] of entries) {
+    const normalizedKey = key.toLowerCase();
+    if (!keys.some((candidate) => normalizedKey === candidate || normalizedKey.includes(candidate))) continue;
+    if (value == null || value === false) return null;
+    return String(value);
+  }
+  return null;
+}
+
+function deriveWrittenProfile(profile?: StudentProfileSignals | null): WrittenProfile {
+  const value = priorityValue(profile?.priorites_pedagogiques, ["profil_ecrit", "litteratie", "profil_litteratie"]);
+  const normalized = value?.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  if (!normalized) return "inconnu";
+  if (normalized === "nsa" || normalized.includes("non_scripteur") || normalized.includes("non scripteur")) return "NSA";
+  if (normalized === "alpha" || normalized.includes("alphabetisation")) return "Alpha";
+  if (normalized === "post-alpha" || normalized === "post_alpha" || normalized.includes("post alpha")) return "Post-Alpha";
+  if (normalized === "fle" || normalized.includes("scolarise")) return "FLE";
+  return "inconnu";
+}
+
+function deriveAlphabetL1(profile?: StudentProfileSignals | null): string | null {
+  const value = priorityValue(profile?.priorites_pedagogiques, ["alphabet_l1", "alphabet", "systeme_ecriture"]);
+  return value?.trim() || null;
+}
+
+function unique(values: string[]): string[] {
+  return Array.from(new Set(values.filter(Boolean)));
 }
 
 function deriveVariantLevel(
@@ -163,7 +198,10 @@ export function buildPedagogicalDirectives(input: BuildInput): PedagogicalDirect
   const niveau_variante = deriveVariantLevel(profile, outcome, progression);
   const niveau_etayage = variantToScaffolding(niveau_variante);
   const vitesse_lecture = deriveReadingSpeed(profile);
+  const profil_ecrit = deriveWrittenProfile(profile);
+  const alphabet_l1 = deriveAlphabetL1(profile);
   const competence_blocage = deriveBlockingCompetence(profile, weakCompetences, targetCompetence);
+  const limitedLiteracy = profil_ecrit === "NSA" || profil_ecrit === "Alpha";
 
   const eeScore = asNumber(profile?.taux_reussite_ee);
   const structuresScore = asNumber(profile?.taux_reussite_structures);
@@ -173,25 +211,37 @@ export function buildPedagogicalDirectives(input: BuildInput): PedagogicalDirect
     ? "Structures"
     : competence_blocage;
 
-  const regle_descente = shouldDescendFromWriting && structuresWeak
-    ? "EE faible: ne pas demander de redaction libre. Redescendre vers Structures, lexique en contexte, banque de mots ou texte lacunaire."
-    : null;
+  const regles_descente = [
+    shouldDescendFromWriting && structuresWeak
+      ? "EE faible: ne pas demander de redaction libre. Redescendre vers Structures, lexique en contexte, banque de mots ou texte lacunaire."
+      : null,
+    limitedLiteracy
+      ? `Profil ecrit ${profil_ecrit}: changer la modalite avant de baisser le niveau; proposer consigne audio, image, exemple resolu, manipulation ou appariement.`
+      : null,
+  ].filter(Boolean) as string[];
+  const regle_descente = regles_descente.length ? regles_descente.join(" ") : null;
 
-  const supports_obligatoires = niveau_etayage === "fort" || vitesse_lecture === "lente"
+  const supports_obligatoires = limitedLiteracy
+    ? ["consigne_audio", "image", "banque_de_mots", "exemple_resolu"]
+    : niveau_etayage === "fort" || vitesse_lecture === "lente"
     ? ["audio", "image", "banque_de_mots"]
     : niveau_etayage === "moyen"
       ? ["exemple", "feedback_court"]
       : ["feedback_court"];
 
-  const formats_autorises = niveau_etayage === "fort"
-    ? ["qcm", "vrai_faux", "appariement", "texte_lacunaire", "transformation"]
+  const formats_autorises = limitedLiteracy
+    ? ["qcm", "vrai_faux", "appariement", "selection_image", "texte_lacunaire"]
+    : niveau_etayage === "fort"
+      ? ["qcm", "vrai_faux", "appariement", "texte_lacunaire", "transformation"]
     : niveau_etayage === "moyen"
       ? ["qcm", "vrai_faux", "appariement", "texte_lacunaire", "transformation", "production_orale"]
       : ["qcm", "vrai_faux", "appariement", "texte_lacunaire", "transformation", "production_ecrite", "production_orale"];
 
-  const formats_interdits = niveau_etayage === "fort" || regle_descente
-    ? ["redaction_libre", "texte_long", "production_ecrite_longue"]
-    : ["texte_long"];
+  const formats_interdits = unique([
+    "texte_long",
+    ...(niveau_etayage === "fort" || regle_descente ? ["redaction_libre", "production_ecrite_longue"] : []),
+    ...(limitedLiteracy ? ["production_ecrite_libre", "consigne_ecrite_seule", "copie_longue"] : []),
+  ]);
 
   const feedback_type = competence_cible === "Structures" || competence_blocage === "EE"
     ? "structurel"
@@ -209,10 +259,12 @@ export function buildPedagogicalDirectives(input: BuildInput): PedagogicalDirect
     competence_cible,
     besoin_pedagogique,
     vitesse_lecture,
-    formats_autorises,
+    profil_ecrit,
+    alphabet_l1,
+    formats_autorises: unique(formats_autorises),
     formats_interdits,
-    supports_obligatoires,
-    longueur_max_consigne_mots: niveau_etayage === "fort" || vitesse_lecture === "lente" ? 8 : niveau_etayage === "moyen" ? 12 : 16,
+    supports_obligatoires: unique(supports_obligatoires),
+    longueur_max_consigne_mots: limitedLiteracy ? 6 : niveau_etayage === "fort" || vitesse_lecture === "lente" ? 8 : niveau_etayage === "moyen" ? 12 : 16,
     nombre_items_max: niveau_etayage === "fort" ? 3 : niveau_etayage === "moyen" ? 5 : 8,
     feedback_type,
     strategie: buildStrategy(competence_blocage, competence_cible, niveau_etayage, besoin_pedagogique),
@@ -225,6 +277,7 @@ export function formatPedagogicalDirectives(directives: PedagogicalDirectives): 
     "DIRECTIVES PEDAGOGIQUES CONTRAIGNANTES:",
     `- niveau_variante: ${directives.niveau_variante}; etayage: ${directives.niveau_etayage}`,
     `- besoin_pedagogique: ${directives.besoin_pedagogique}; vitesse_lecture: ${directives.vitesse_lecture}`,
+    `- profil_ecrit: ${directives.profil_ecrit}; alphabet_l1: ${directives.alphabet_l1 ?? "inconnu"}`,
     `- competence_blocage: ${directives.competence_blocage ?? "aucune"}; competence_cible: ${directives.competence_cible ?? "selon objectif"}`,
     `- formats_autorises: ${directives.formats_autorises.join(", ")}`,
     `- formats_interdits: ${directives.formats_interdits.join(", ")}`,

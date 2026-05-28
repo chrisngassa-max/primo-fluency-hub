@@ -500,7 +500,10 @@ Utilise le tool fourni pour retourner le résultat.` + QA_REVIEW_BLOCK;
       const variantPrompt = `Tu produis des variantes pedagogiques d'une seance FLE TCF IRN.
 
 Tu dois conserver le meme objectif, le meme theme, la meme situation de communication et la meme competence.
-Tu dois adapter le support, l'exercice et les attendus selon les directives.
+Tu dois garder le support source du tronc commun comme support commun.
+Tu peux uniquement le segmenter, le simplifier legerement, ajouter des aides lexicales, un exemple, une consigne audio ou une aide visuelle.
+Tu ne dois jamais remplacer le support par un autre document, un autre texte, une autre situation ou un autre scenario.
+Tu dois adapter l'exercice et les attendus selon les directives.
 
 DIRECTIVES DU CLUSTER:
 ${directivesBlock}
@@ -514,7 +517,8 @@ Chaque variante doit contenir:
 - support: type, contenu, aides_lexicales, longueur, niveau_lisible
 - exercice: titre, consigne, format, competence, difficulte, contenu, nombre_items, type_questions
 - attendus: production_minimale, niveau_autonomie, criteres_reussite
-Ne cree pas une activite differente: differencie le chemin d'acces.`;
+Ne cree pas une activite differente: differencie le chemin d'acces.
+Si le support.contenu change, il doit rester une version etayee du support commun, pas un nouveau support.`;
 
       const variantData = await callAI({
         model: "google/gemini-3-flash-preview",

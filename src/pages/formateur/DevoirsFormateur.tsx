@@ -21,13 +21,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import {
   BookOpen, CheckCircle2, Clock, Square, Send, Loader2, Filter,
-  TrendingUp, TrendingDown, Minus, Radio, Circle,
+  TrendingUp, TrendingDown, Minus, Radio, Circle, Smile, Meh, Frown, AlertTriangle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
 type DifficultyChoice = "same" | "harder" | "much_harder";
+type DifficultyFelt = "facile" | "correct" | "trop_difficile";
 
 const DevoirsFormateur = () => {
   const { user } = useAuth();
@@ -49,6 +50,9 @@ const DevoirsFormateur = () => {
       })
       .on("postgres_changes", { event: "*", schema: "public", table: "resultats" }, () => {
         qc.invalidateQueries({ queryKey: ["devoirs-resultats"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "devoir_feedback" }, () => {
+        qc.invalidateQueries({ queryKey: ["devoirs-feedbacks"] });
       })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
@@ -85,6 +89,21 @@ const DevoirsFormateur = () => {
     enabled: devoirIds.length > 0,
   });
 
+  const { data: feedbacks } = useQuery({
+    queryKey: ["devoirs-feedbacks", devoirIds],
+    queryFn: async () => {
+      if (devoirIds.length === 0) return [];
+      const { data, error } = await supabase
+        .from("devoir_feedback")
+        .select("*")
+        .in("devoir_id", devoirIds)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: devoirIds.length > 0,
+  });
+
   // Compute average time from all results for reference
   const avgTimeMs = useMemo(() => {
     if (!resultats || resultats.length === 0) return 0;
@@ -103,6 +122,16 @@ const DevoirsFormateur = () => {
     });
     return map;
   }, [resultats]);
+
+  const feedbackMap = useMemo(() => {
+    const map: Record<string, any> = {};
+    (feedbacks || []).forEach((f: any) => {
+      if (f.devoir_id && (!map[f.devoir_id] || new Date(f.created_at) > new Date(map[f.devoir_id].created_at))) {
+        map[f.devoir_id] = f;
+      }
+    });
+    return map;
+  }, [feedbacks]);
 
   // Filter devoirs
   const filteredDevoirs = useMemo(() => {
@@ -129,8 +158,12 @@ const DevoirsFormateur = () => {
   // Difficulty pre-selection logic
   const computePreselection = (devoir: any): DifficultyChoice => {
     const result = resultatMap[devoir.id];
+    const feedback = feedbackMap[devoir.id];
     if (!result) return "same";
     const score = result.score ?? 0;
+    if (feedback?.difficulty_felt === "trop_difficile") return "same";
+    if (feedback?.difficulty_felt === "facile" && score >= 85) return "much_harder";
+    if (feedback?.difficulty_felt === "facile" && score >= 70) return "harder";
     const timeMs = result.correction_detaillee?.temps_ms ?? 0;
     const isFast = avgTimeMs > 0 && timeMs < avgTimeMs * 0.7;
     const isSlow = avgTimeMs > 0 && timeMs > avgTimeMs * 1.2;
@@ -241,6 +274,34 @@ const DevoirsFormateur = () => {
     return "text-destructive";
   };
 
+  const getFeedbackDisplay = (difficulty?: DifficultyFelt | string | null, score?: number | null) => {
+    if (difficulty === "facile") {
+      return {
+        label: "Facile",
+        icon: Smile,
+        className: "text-green-700 bg-green-50 border-green-200 dark:text-green-400 dark:bg-green-950/30 dark:border-green-800",
+        insight: score != null && score < 60 ? "Score bas, ressenti facile : vérifier consigne ou attention." : null,
+      };
+    }
+    if (difficulty === "correct") {
+      return {
+        label: "Correct",
+        icon: Meh,
+        className: "text-blue-700 bg-blue-50 border-blue-200 dark:text-blue-400 dark:bg-blue-950/30 dark:border-blue-800",
+        insight: null,
+      };
+    }
+    if (difficulty === "trop_difficile") {
+      return {
+        label: "Trop difficile",
+        icon: Frown,
+        className: "text-orange-700 bg-orange-50 border-orange-200 dark:text-orange-400 dark:bg-orange-950/30 dark:border-orange-800",
+        insight: score != null && score >= 70 ? "Réussite fragile : consolider avec aide." : "Remédiation étayée recommandée.",
+      };
+    }
+    return null;
+  };
+
   const formatTime = (ms: number) => {
     if (!ms) return "—";
     const totalSec = Math.round(ms / 1000);
@@ -264,6 +325,8 @@ const DevoirsFormateur = () => {
     done: (devoirs || []).filter((d: any) => d.statut === "fait").length,
     pending: (devoirs || []).filter((d: any) => d.statut === "en_attente").length,
     expired: (devoirs || []).filter((d: any) => d.statut === "expire").length,
+    feedbacks: (feedbacks || []).length,
+    hardFeedbacks: (feedbacks || []).filter((f: any) => f.difficulty_felt === "trop_difficile").length,
   };
 
   return (
@@ -288,7 +351,7 @@ const DevoirsFormateur = () => {
 
         <TabsContent value="historique" className="space-y-6 mt-4">
       {/* KPIs */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
         <Card>
           <CardContent className="p-4 text-center">
             <p className="text-2xl font-bold">{stats.total}</p>
@@ -311,6 +374,18 @@ const DevoirsFormateur = () => {
           <CardContent className="p-4 text-center">
             <p className="text-2xl font-bold text-orange-600">{stats.expired}</p>
             <p className="text-xs text-muted-foreground">Expirés 🟠</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4 text-center">
+            <p className="text-2xl font-bold text-blue-600">{stats.feedbacks}</p>
+            <p className="text-xs text-muted-foreground">Météos reçues</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4 text-center">
+            <p className="text-2xl font-bold text-orange-600">{stats.hardFeedbacks}</p>
+            <p className="text-xs text-muted-foreground">Trop difficiles</p>
           </CardContent>
         </Card>
       </div>
@@ -364,6 +439,7 @@ const DevoirsFormateur = () => {
                     <TableHead>Devoir</TableHead>
                     <TableHead className="text-center">Score</TableHead>
                     <TableHead className="text-center">Temps</TableHead>
+                    <TableHead className="text-center">Météo</TableHead>
                     <TableHead className="text-center">Statut</TableHead>
                     <TableHead className="text-center">Compréhension</TableHead>
                     <TableHead className="text-center">Envoyé le</TableHead>
@@ -373,7 +449,10 @@ const DevoirsFormateur = () => {
                 <TableBody>
                   {filteredDevoirs.map((d: any) => {
                     const result = resultatMap[d.id];
+                    const feedback = feedbackMap[d.id];
                     const score = result?.score;
+                    const feedbackDisplay = getFeedbackDisplay(feedback?.difficulty_felt, score);
+                    const FeedbackIcon = feedbackDisplay?.icon;
                     const timeMs = result?.correction_detaillee?.temps_ms;
                     const statusDisplay = getStatusDisplay(d.statut);
                     const StatusIcon = statusDisplay.icon;
@@ -400,6 +479,24 @@ const DevoirsFormateur = () => {
                         </TableCell>
                         <TableCell className="text-center text-sm text-muted-foreground">
                           {formatTime(timeMs)}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {feedbackDisplay && FeedbackIcon ? (
+                            <div className="flex flex-col items-center gap-1">
+                              <Badge variant="outline" className={cn("gap-1 text-[11px]", feedbackDisplay.className)}>
+                                <FeedbackIcon className="h-3 w-3" />
+                                {feedbackDisplay.label}
+                              </Badge>
+                              {feedbackDisplay.insight && (
+                                <span className="inline-flex max-w-[150px] items-center gap-1 text-[10px] leading-tight text-muted-foreground">
+                                  <AlertTriangle className="h-3 w-3 shrink-0 text-orange-500" />
+                                  {feedbackDisplay.insight}
+                                </span>
+                              )}
+                            </div>
+                          ) : (
+                            <span className="text-muted-foreground">—</span>
+                          )}
                         </TableCell>
                         <TableCell className="text-center">
                           <Badge variant="outline" className={cn("gap-1 text-[11px]", statusDisplay.className)}>

@@ -250,10 +250,11 @@ serve(async (req) => {
       const myResults = (results ?? []).filter((r: any) => r.eleve_id === eleveId);
       const myDevoirs = (recentDevoirs ?? []).filter((d: any) => d.eleve_id === eleveId);
 
-      const { progression, averageLast5: avg } = deriveProgressionFromResults(myResults);
+      const weakComps = computeWeakCompetencesFromResults(myResults);
+      const targetCompetence = weakComps[0]?.c ?? null;
+      const { progression, averageLast5: avg } = deriveProgressionFromResults(myResults, targetCompetence);
 
       // compétences faibles
-      const weakComps = computeWeakCompetencesFromResults(myResults);
       /*
       const compStats: Record<string, { sum: number; n: number }> = {};
       for (const r of myResults) {
@@ -286,7 +287,7 @@ serve(async (req) => {
         outcome: outcomesByEleve.get(eleveId),
         progression,
         weakCompetences: weakComps.map((w) => w.c),
-        targetCompetence: weakComps[0]?.c ?? null,
+        targetCompetence,
       });
       const lines: string[] = [];
       lines.push(`ÉLÈVE "${name}" (id: ${eleveId.slice(0, 8)})`);

@@ -21,16 +21,34 @@ export interface StudentProgressionProfile {
   directives: PedagogicalDirectives;
 }
 
-export function deriveProgressionFromResults(results: any[]): {
+function normalizeCompetence(value?: string | null): string | null {
+  if (!value) return null;
+  const raw = value.toString().trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  if (raw === "co" || raw.includes("comprehension orale")) return "co";
+  if (raw === "ce" || raw.includes("comprehension ecrite") || raw.includes("lecture")) return "ce";
+  if (raw === "ee" || raw.includes("expression ecrite") || raw.includes("production ecrite")) return "ee";
+  if (raw === "eo" || raw.includes("expression orale") || raw.includes("production orale")) return "eo";
+  if (raw.includes("structure") || raw.includes("grammaire") || raw.includes("syntaxe")) return "structures";
+  return raw;
+}
+
+function filterResultsByCompetence(results: any[], targetCompetence?: string | null): any[] {
+  const target = normalizeCompetence(targetCompetence);
+  if (!target) return results ?? [];
+  return (results ?? []).filter((row: any) => normalizeCompetence(row?.exercice?.competence) === target);
+}
+
+export function deriveProgressionFromResults(results: any[], targetCompetence?: string | null): {
   progression: ProgressionMode;
   averageLast5: number | null;
 } {
-  const last5 = (results ?? []).slice(0, 5);
+  const scopedResults = filterResultsByCompetence(results, targetCompetence);
+  const last5 = scopedResults.slice(0, 5);
   const averageLast5 = last5.length
     ? Math.round(last5.reduce((sum: number, row: any) => sum + (row.score ?? 0), 0) / last5.length)
     : null;
 
-  if (!results || results.length === 0) return { progression: "demarrage", averageLast5 };
+  if (scopedResults.length === 0) return { progression: "demarrage", averageLast5 };
   if (averageLast5 !== null && averageLast5 >= 80) return { progression: "augmente", averageLast5 };
   if (averageLast5 !== null && averageLast5 >= 60) return { progression: "consolide", averageLast5 };
   return { progression: "remediation", averageLast5 };
@@ -100,13 +118,13 @@ export async function computeProgressionForEleves(
   const output: Record<string, StudentProgressionProfile> = {};
   for (const eleveId of uniqueIds) {
     const myResults = (results ?? []).filter((row: any) => row.eleve_id === eleveId);
-    const { progression, averageLast5 } = deriveProgressionFromResults(myResults);
     const weakCompetences = computeWeakCompetencesFromResults(myResults);
     const targetCompetence =
       options.targetCompetence ??
       weakCompetences[0]?.c ??
       Object.entries(levelByEleve[eleveId] ?? {}).sort((a, b) => a[1] - b[1])[0]?.[0] ??
       null;
+    const { progression, averageLast5 } = deriveProgressionFromResults(myResults, targetCompetence);
 
     const profile = profileById.get(eleveId) ?? null;
     const outcome = outcomeById.get(eleveId) ?? null;
