@@ -12,7 +12,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import {
-  ArrowLeft, CheckCircle2, XCircle, Loader2, Send, FileText, Mic, Square, Clock,
+  ArrowLeft, CheckCircle2, XCircle, Loader2, Send, FileText, Mic, Square, Clock, Smile, Meh, Frown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
