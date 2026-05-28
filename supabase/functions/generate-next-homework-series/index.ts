@@ -306,6 +306,27 @@ serve(async (req) => {
           if (!ex?.titre) continue;
           lines.push(`    - "${ex.titre}" (${ex.competence}, ${ex.format}, diff ${ex.difficulte}, série ${(d as any).serie ?? 0}, statut ${(d as any).statut})`);
         }
+      // Historique anti-répétition (30 derniers)
+      if (myDevoirs.length) {
+        lines.push(`  HISTORIQUE DEVOIRS RÉCENTS À NE PAS REPRODUIRE :`);
+        for (const d of myDevoirs.slice(0, 30)) {
+          const ex: any = (d as any).exercice;
+          if (!ex?.titre) continue;
+          lines.push(`    - "${ex.titre}" (${ex.competence}, ${ex.format}, diff ${ex.difficulte}, série ${(d as any).serie ?? 0}, statut ${(d as any).statut})`);
+        }
+      }
+
+      // METEO ELEVE RECENTE — auto-évaluation du ressenti après devoir
+      const myFeedback = (recentFeedback ?? []).filter((f: any) => f.eleve_id === eleveId);
+      if (myFeedback.length) {
+        lines.push(`  METEO ELEVE RECENTE :`);
+        for (const f of myFeedback.slice(0, 5)) {
+          const ex: any = (f as any).devoir?.exercice;
+          const titre = ex?.titre ?? "exercice";
+          const comp = ex?.competence ?? "?";
+          const score = (f as any).score ?? "?";
+          lines.push(`    - "${titre}" (${comp}) score=${score}% · ressenti=${(f as any).difficulty_felt}`);
+        }
       }
       studentBlocks.push(lines.join("\n"));
     }
