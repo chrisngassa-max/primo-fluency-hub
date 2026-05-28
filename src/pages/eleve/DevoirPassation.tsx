@@ -670,6 +670,15 @@ const DevoirPassation = () => {
           scoreNormalized={finalResult.score}
         />
 
+        {user?.id && devoirId && (
+          <DevoirFeedbackCard
+            devoirId={devoirId}
+            eleveId={user.id}
+            exerciceId={ex?.id ?? null}
+            score={finalResult.score}
+          />
+        )}
+
         {(result as any)?.bilanId && (
           <Button variant="outline" className="w-full gap-2" onClick={() => navigate(`/eleve/bilan-devoirs/${(result as any).bilanId}`)}>
             <FileText className="h-4 w-4" />Voir mon bilan détaillé
