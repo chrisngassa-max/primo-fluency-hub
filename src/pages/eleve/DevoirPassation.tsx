@@ -99,6 +99,101 @@ function CorrectionAccordion({ correction }: { correction: any[] }) {
   );
 }
 
+type DifficultyFelt = "facile" | "correct" | "trop_difficile";
+
+function DevoirFeedbackCard({
+  devoirId,
+  eleveId,
+  exerciceId,
+  score,
+}: {
+  devoirId: string;
+  eleveId: string;
+  exerciceId: string | null;
+  score: number;
+}) {
+  const qc = useQueryClient();
+  const [saving, setSaving] = useState<DifficultyFelt | null>(null);
+
+  const { data: feedback } = useQuery({
+    queryKey: ["devoir-feedback", devoirId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("devoir_feedback")
+        .select("difficulty_felt")
+        .eq("devoir_id", devoirId)
+        .eq("eleve_id", eleveId)
+        .maybeSingle();
+      if (error) throw error;
+      return data as { difficulty_felt: DifficultyFelt } | null;
+    },
+    enabled: !!devoirId && !!eleveId,
+  });
+
+  const current = feedback?.difficulty_felt ?? null;
+
+  const handleSelect = async (choice: DifficultyFelt) => {
+    setSaving(choice);
+    try {
+      const { error } = await supabase
+        .from("devoir_feedback")
+        .upsert(
+          {
+            devoir_id: devoirId,
+            eleve_id: eleveId,
+            exercice_id: exerciceId,
+            score,
+            difficulty_felt: choice,
+          },
+          { onConflict: "devoir_id,eleve_id" },
+        );
+      if (error) throw error;
+      toast.success("Merci pour ton retour !");
+      qc.invalidateQueries({ queryKey: ["devoir-feedback", devoirId] });
+    } catch (e: any) {
+      toast.error("Erreur d'enregistrement", { description: e.message });
+    } finally {
+      setSaving(null);
+    }
+  };
+
+  const options: { value: DifficultyFelt; label: string; Icon: typeof Smile }[] = [
+    { value: "facile", label: "Facile", Icon: Smile },
+    { value: "correct", label: "Correct", Icon: Meh },
+    { value: "trop_difficile", label: "Trop difficile", Icon: Frown },
+  ];
+
+  return (
+    <Card>
+      <CardHeader className="pb-3">
+        <CardTitle className="text-base">Comment c'était pour toi ?</CardTitle>
+        <CardDescription>Ton retour aide à adapter les prochains devoirs.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-3 gap-2">
+          {options.map(({ value, label, Icon }) => {
+            const selected = current === value;
+            return (
+              <Button
+                key={value}
+                variant={selected ? "default" : "outline"}
+                onClick={() => handleSelect(value)}
+                disabled={saving !== null}
+                className="flex-col h-auto py-3 gap-1.5"
+              >
+                {saving === value
+                  ? <Loader2 className="h-5 w-5 animate-spin" />
+                  : <Icon className="h-5 w-5" />}
+                <span className="text-xs font-medium">{label}</span>
+              </Button>
+            );
+          })}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 const DevoirPassation = () => {
   const { devoirId } = useParams<{ devoirId: string }>();
   const navigate = useNavigate();
