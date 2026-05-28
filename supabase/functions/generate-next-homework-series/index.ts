@@ -207,6 +207,14 @@ serve(async (req) => {
       .order("created_at", { ascending: false })
       .limit(eleveIds.length * 30);
 
+    // Météo élève : 5 derniers feedbacks par élève (best-effort, ne bloque pas)
+    const { data: recentFeedback } = await supabase
+      .from("devoir_feedback")
+      .select("eleve_id, devoir_id, difficulty_felt, score, created_at, devoir:devoirs(exercice:exercices(titre, competence))")
+      .in("eleve_id", eleveIds)
+      .order("created_at", { ascending: false })
+      .limit(eleveIds.length * 5);
+
     // Dernière série par élève
     const lastSerieByEleve: Record<string, number> = {};
     for (const eid of eleveIds) lastSerieByEleve[eid] = 0;
