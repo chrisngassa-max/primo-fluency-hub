@@ -19,7 +19,7 @@ import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import CompetenceLabel from "@/components/CompetenceLabel";
 import { StudentPacingCard } from "@/components/PacingTracker";
-import { NiveauEleveEditor, type ProfilNiveaux } from "@/components/formateur/NiveauEleveEditor";
+import { NiveauEleveEditor, normalizeProfilLitteratie, type ProfilNiveaux } from "@/components/formateur/NiveauEleveEditor";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -339,12 +339,32 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
                 niveau_ee: (profil as any).niveau_ee ?? profil.niveau_actuel ?? "A1",
                 niveau_eo: (profil as any).niveau_eo ?? profil.niveau_actuel ?? "A1",
                 niveau_locked: (profil as any).niveau_locked ?? false,
-                profil_litteratie: (profil as any).profil_litteratie ?? "standard",
+                profil_litteratie: normalizeProfilLitteratie((profil as any).profil_litteratie),
+                alphabet_l1:
+                  ((profil as any).priorites_pedagogiques?.alphabet_l1 as ProfilNiveaux["alphabet_l1"]) ?? null,
               } satisfies ProfilNiveaux}
               onUpdate={async (patch) => {
+                // Synchroniser le JSONB priorites_pedagogiques que le backend lit en
+                // priorité (profil_ecrit, alphabet_l1) sans écraser les autres signaux.
+                const dbPatch: Record<string, unknown> = { ...patch };
+                const needsPriorities =
+                  patch.profil_litteratie !== undefined || patch.alphabet_l1 !== undefined;
+                if (needsPriorities) {
+                  const current = ((profil as any).priorites_pedagogiques ?? {}) as Record<string, unknown>;
+                  const merged = { ...current };
+                  if (patch.profil_litteratie !== undefined) {
+                    merged.profil_ecrit = patch.profil_litteratie;
+                  }
+                  if (patch.alphabet_l1 !== undefined) {
+                    merged.alphabet_l1 = patch.alphabet_l1;
+                  }
+                  dbPatch.priorites_pedagogiques = merged;
+                }
+                // alphabet_l1 n'est pas une colonne de profils_eleves : il vit dans le JSONB.
+                delete dbPatch.alphabet_l1;
                 const { error } = await supabase
                   .from("profils_eleves")
-                  .update(patch as never)
+                  .update(dbPatch as never)
                   .eq("id", profil.id);
                 if (error) {
                   toast.error("Erreur lors de la mise à jour du niveau.");
