@@ -1,4 +1,5 @@
 import type { NiveauCECRL, ProfilLitteratie } from "./NiveauEleveEditor";
+import { normalizeProfilLitteratie } from "./NiveauEleveEditor";
 
 const BADGE_COLORS: Record<NiveauCECRL, string> = {
   A0: "bg-red-100 text-red-800",
@@ -25,8 +26,11 @@ export type EleveAvecNiveaux = {
   niveau_ce: NiveauCECRL;
   niveau_ee: NiveauCECRL;
   niveau_eo: NiveauCECRL;
-  profil_litteratie: ProfilLitteratie;
+  profil_litteratie: ProfilLitteratie | string;
 };
+
+// NSA/Alpha = littératie limitée : seuls ces profils déclenchent le badge.
+const LIMITED_LITERACY: ProfilLitteratie[] = ["NSA", "Alpha"];
 
 const COMPETENCES = ["co", "ce", "ee", "eo"] as const;
 
@@ -35,7 +39,7 @@ export function LigneEleveNiveaux({ eleve }: { eleve: EleveAvecNiveaux }) {
     <div className="flex items-center justify-between px-3 py-2 border-b last:border-0 hover:bg-gray-50 transition-colors">
       <div className="font-medium text-sm flex items-center gap-2">
         {eleve.prenom} {eleve.nom}
-        {eleve.profil_litteratie === "faible_litteratie" && (
+        {LIMITED_LITERACY.includes(normalizeProfilLitteratie(eleve.profil_litteratie)) && (
           <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-100 text-purple-700 font-semibold uppercase tracking-wide">
             Littératie
           </span>

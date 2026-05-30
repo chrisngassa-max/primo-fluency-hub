@@ -6,6 +6,9 @@ import { QA_REVIEW_BLOCK } from "../_shared/qa-prompt.ts";
 import { checkConsentBatch, ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth } from "../_shared/check-consent.ts";
 import { formatPedagogicalDirectives, type PedagogicalDirectives } from "../_shared/pedagogical-directives.ts";
 import { computeProgressionForEleves, type ProgressionMode } from "../_shared/progression.ts";
+import { bigramJaccard } from "../_shared/text-similarity.ts";
+
+const VARIANT_JACCARD_THRESHOLD = 0.3;
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -568,7 +571,7 @@ Si le support.contenu change, il doit rester une version etayee du support commu
         const rawExercise = rawVariant.exercice ?? rawVariant;
         const validated = await validateAndFix(rawExercise, { niveau });
         const safeExercise = validated?.exercise ? { ...rawExercise, ...validated.exercise } : rawExercise;
-        normalizedVariants.push(normalizeVariantPayload(
+        const variant = normalizeVariantPayload(
           { ...rawVariant, exercice: safeExercise },
           exercices[index],
           {
@@ -578,7 +581,35 @@ Si le support.contenu change, il doit rester une version etayee du support commu
             niveau,
             directives: cluster.directives,
           },
-        ));
+        );
+
+        // Garde-fou anti-hallucination : le support de la variante doit rester
+        // proche du support du tronc commun. On logge pour calibrage et on
+        // marque les variantes divergentes SANS bloquer la génération.
+        const troncSupport =
+          exercices[index]?.support?.contenu ??
+          exercices[index]?.contenu?.texte ??
+          exercices[index]?.contenu?.script_audio ??
+          "";
+        const variantSupport = variant?.support?.contenu ?? "";
+        const jaccard = bigramJaccard(troncSupport, variantSupport);
+        console.log("[metric] jaccard", {
+          session_id: sessionId,
+          cluster: cluster.key,
+          exercice_index: index,
+          value: jaccard,
+          threshold: VARIANT_JACCARD_THRESHOLD,
+          status: jaccard === null
+            ? "too_short"
+            : jaccard < VARIANT_JACCARD_THRESHOLD
+              ? "divergent"
+              : "ok",
+        });
+        if (jaccard !== null && jaccard < VARIANT_JACCARD_THRESHOLD) {
+          variant._quality = { jaccard, status: "divergent_support" };
+        }
+
+        normalizedVariants.push(variant);
       }
 
       for (const eleveId of cluster.eleve_ids) {
@@ -609,6 +640,16 @@ Si le support.contenu change, il doit rester une version etayee du support commu
     if (rowsToInsert.length > 0) {
       const { error: insertError } = await sb.from("session_exercise_variants").insert(rowsToInsert);
       if (insertError) throw insertError;
+
+      // Auto-publication du nouveau run (atomique côté DB)
+      const { error: publishError } = await sb.rpc("publish_session_variants_run", {
+        p_session_id: sessionId,
+        p_generation_run_id: generationRunId,
+      });
+      if (publishError) {
+        // Log mais ne fail pas tout : les variantes existent, juste pas actives
+        console.error("[generate-session-content] publish failed", publishError);
+      }
     }
 
     return new Response(JSON.stringify({

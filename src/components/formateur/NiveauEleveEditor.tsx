@@ -3,12 +3,20 @@ import { Lock, Unlock, User } from "lucide-react";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
 export type NiveauCECRL = "A0" | "A1" | "A2" | "B1" | "B2";
-export type ProfilLitteratie = "standard" | "faible_litteratie";
+
+export type ProfilLitteratie =
+  | "FLE"        // anciennement "standard"
+  | "Post-Alpha"
+  | "Alpha"      // anciennement "faible_litteratie"
+  | "NSA"
+  | "inconnu";
+
+export type AlphabetL1 = "Latin" | "Arabe" | "Cyrillique" | "Autre";
 
 export type ProfilNiveaux = {
   id: string;
@@ -18,6 +26,7 @@ export type ProfilNiveaux = {
   niveau_eo: NiveauCECRL;
   niveau_locked: boolean;
   profil_litteratie: ProfilLitteratie;
+  alphabet_l1: AlphabetL1 | null;
 };
 
 type Props = {
@@ -33,6 +42,35 @@ const COMPETENCES: Array<{ key: "co" | "ce" | "ee" | "eo"; label: string }> = [
 ];
 
 const NIVEAUX: NiveauCECRL[] = ["A0", "A1", "A2", "B1", "B2"];
+
+const PROFILS_LITTERATIE: Array<{ value: ProfilLitteratie; label: string }> = [
+  { value: "FLE", label: "FLE scolarisé" },
+  { value: "Post-Alpha", label: "Post-Alpha" },
+  { value: "Alpha", label: "Alpha (en cours)" },
+  { value: "NSA", label: "NSA (non scripteur adulte)" },
+  { value: "inconnu", label: "Inconnu" },
+];
+
+const ALPHABETS_L1: Array<{ value: AlphabetL1; label: string }> = [
+  { value: "Latin", label: "Latin" },
+  { value: "Arabe", label: "Arabe" },
+  { value: "Cyrillique", label: "Cyrillique" },
+  { value: "Autre", label: "Autre / Inconnu" },
+];
+
+// Rétrocompatibilité lecture : les anciens profils binaires sont remappés.
+// La valeur est réécrite vers la nouvelle nomenclature au prochain save.
+export function normalizeProfilLitteratie(raw: unknown): ProfilLitteratie {
+  if (raw === "standard") return "FLE";
+  if (raw === "faible_litteratie") return "Alpha";
+  if (
+    raw === "FLE" || raw === "Post-Alpha" || raw === "Alpha" ||
+    raw === "NSA" || raw === "inconnu"
+  ) {
+    return raw;
+  }
+  return "inconnu";
+}
 
 export function NiveauEleveEditor({ profil, onUpdate }: Props) {
   const [data, setData] = useState<ProfilNiveaux>(profil);
@@ -88,20 +126,47 @@ export function NiveauEleveEditor({ profil, onUpdate }: Props) {
         ))}
       </div>
 
-      <div className="flex items-center justify-between pt-2 border-t">
-        <div className="space-y-0.5">
-          <Label className="text-sm">Faible littératie</Label>
-          <p className="text-[11px] text-gray-500 leading-tight">
-            Consigne audio uniquement, appui visuel synchronisé, sans saisie clavier.
-          </p>
-        </div>
-        <Switch
+      <div className="pt-2 border-t space-y-1">
+        <Label className="text-sm">Profil de littératie</Label>
+        <p className="text-[11px] text-gray-500 leading-tight">
+          Pilote l'étayage, les formats interdits et les supports obligatoires côté génération.
+        </p>
+        <Select
           disabled={locked}
-          checked={data.profil_litteratie === "faible_litteratie"}
-          onCheckedChange={(checked) =>
-            apply("profil_litteratie", checked ? "faible_litteratie" : "standard")
-          }
-        />
+          value={data.profil_litteratie}
+          onValueChange={(val) => apply("profil_litteratie", val as ProfilLitteratie)}
+        >
+          <SelectTrigger className="h-8 text-sm">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {PROFILS_LITTERATIE.map((p) => (
+              <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="pt-2 border-t space-y-2">
+        <Label className="text-sm">Alphabet de la langue première (L1)</Label>
+        <p className="text-[11px] text-gray-500 leading-tight">
+          Système d'écriture d'origine, utile pour adapter le transfert graphique.
+        </p>
+        <RadioGroup
+          disabled={locked}
+          value={data.alphabet_l1 ?? ""}
+          onValueChange={(val) => apply("alphabet_l1", val as AlphabetL1)}
+          className="flex flex-wrap gap-x-4 gap-y-2"
+        >
+          {ALPHABETS_L1.map((a) => (
+            <div key={a.value} className="flex items-center gap-1.5">
+              <RadioGroupItem value={a.value} id={`alphabet-${a.value}`} />
+              <Label htmlFor={`alphabet-${a.value}`} className="text-sm font-normal cursor-pointer">
+                {a.label}
+              </Label>
+            </div>
+          ))}
+        </RadioGroup>
       </div>
     </div>
   );

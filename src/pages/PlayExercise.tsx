@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import SmartText from "@/components/SmartText";
 import SmartTextHint from "@/components/SmartTextHint";
+import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
 
 interface Exercice {
   id: string;
@@ -396,7 +397,12 @@ const PlayExercise = () => {
               <div key={idx} className="space-y-4">
                 {/* Consigne + question */}
                 <div>
-                  <p className="text-sm text-foreground leading-relaxed">{exercice.consigne}</p>
+                  <div className="flex items-start gap-2">
+                    <p className="text-sm text-foreground leading-relaxed flex-1">
+                      {exercice.consigne}
+                    </p>
+                    <TTSAudioPlayer text={exercice.consigne} size="icon" />
+                  </div>
                   <p className="text-base font-bold text-foreground mt-1">
                     {user?.id ? (
                       <SmartText text={item.question} studentId={user.id} contextSentence={supportText || item.question} />

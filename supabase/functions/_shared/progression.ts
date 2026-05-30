@@ -54,6 +54,43 @@ export function deriveProgressionFromResults(results: any[], targetCompetence?: 
   return { progression: "remediation", averageLast5 };
 }
 
+/**
+ * Variante avec historique : empêche les oscillations rapides entre
+ * remediation et consolide en exigeant N résultats consécutifs ≥ seuilSortie
+ * pour quitter le mode remediation.
+ */
+export function deriveProgressionWithHistory(
+  results: any[],
+  targetCompetence?: string | null,
+  options: { seuilSortie?: number; nConsecutifs?: number } = {},
+): { progression: ProgressionMode; averageLast5: number | null; consecutive_successes: number } {
+  const seuilSortie = options.seuilSortie ?? 62;
+  const nConsecutifs = options.nConsecutifs ?? 3;
+
+  const base = deriveProgressionFromResults(results, targetCompetence);
+
+  if (base.progression !== "remediation") {
+    return { ...base, consecutive_successes: 0 };
+  }
+
+  const scoped = filterResultsByCompetence(results, targetCompetence);
+  let consecutive = 0;
+  for (const r of scoped) {
+    if ((r.score ?? 0) >= seuilSortie) consecutive++;
+    else break;
+  }
+
+  if (consecutive >= nConsecutifs) {
+    return {
+      progression: "consolide",
+      averageLast5: base.averageLast5,
+      consecutive_successes: consecutive,
+    };
+  }
+
+  return { ...base, consecutive_successes: consecutive };
+}
+
 export function computeWeakCompetencesFromResults(results: any[], max = 3): WeakCompetence[] {
   const compStats: Record<string, { sum: number; n: number }> = {};
   for (const result of results ?? []) {
@@ -124,7 +161,8 @@ export async function computeProgressionForEleves(
       weakCompetences[0]?.c ??
       Object.entries(levelByEleve[eleveId] ?? {}).sort((a, b) => a[1] - b[1])[0]?.[0] ??
       null;
-    const { progression, averageLast5 } = deriveProgressionFromResults(myResults, targetCompetence);
+    const result = deriveProgressionWithHistory(myResults, targetCompetence);
+    const { progression, averageLast5 } = result;
 
     const profile = profileById.get(eleveId) ?? null;
     const outcome = outcomeById.get(eleveId) ?? null;
