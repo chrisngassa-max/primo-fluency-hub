@@ -1,44 +1,37 @@
+## Objectif
+Sauvegarder localement **tous les fichiers** des 6 buckets Storage de Lovable Cloud avant la migration vers ton Supabase externe.
 
+## Approche
+Pas de modification de code dans l'app. J'exécute un script Python côté sandbox qui :
 
-## Plan : Section "Ma progression détaillée" avec jauges personnalisées
+1. Se connecte à ton backend Cloud avec la `SUPABASE_SERVICE_ROLE_KEY` (déjà disponible dans l'environnement) — nécessaire pour lire les buckets privés.
+2. Pour chaque bucket (`test-audio`, `exercise-images`, `external-resource-screenshots`, `exercise-reports`, `interventions-audio`, `bilans-pdf`) :
+   - Liste récursivement tous les fichiers (avec pagination, pas de limite à 100).
+   - Télécharge chaque fichier en conservant l'arborescence.
+3. Génère un **manifeste CSV** (`manifest.csv`) listant : bucket, chemin, taille, date de création, type MIME — pratique pour vérifier l'intégrité après import dans ton nouveau Supabase.
+4. Compresse le tout dans une archive ZIP unique : `storage-backup-captcf-YYYYMMDD.zip`.
+5. Dépose l'archive dans `/mnt/documents/` et te fournit un bouton de téléchargement direct (`<presentation-artifact>`).
 
-### Résumé
+## Livrables
+- `storage-backup-captcf-YYYYMMDD.zip` contenant :
+  ```
+  test-audio/...
+  exercise-images/...
+  external-resource-screenshots/...
+  exercise-reports/...
+  interventions-audio/...
+  bilans-pdf/...
+  manifest.csv
+  ```
+- Un récapitulatif dans le chat : nombre de fichiers et taille totale par bucket.
 
-Remplacement de la carte "Progression globale" (lignes 275-302 de `Dashboard.tsx`) par une section affichant 4 compétences indépendantes avec jauges à 3 indicateurs et badges dynamiques.
+## Détails techniques
+- Téléchargement parallèle (8 workers) pour aller vite.
+- Gestion d'erreurs : les fichiers en échec sont logués dans `manifest.csv` avec un statut, pas d'arrêt global.
+- Pas d'écriture, pas de migration, pas de changement BDD — opération **strictement lecture seule** sur Storage.
+- Si l'archive dépasse ~500 Mo, je te propose un split par bucket (un ZIP par bucket).
 
-### Fichiers
+## Réutilisation après migration
+Le même script peut être réadapté en mode **upload** vers ton nouveau Supabase pour réimporter les fichiers à l'identique (chemins préservés). On le fera dans un second temps, après que le support Lovable ou toi-même aurez migré la base.
 
-**1. Créer `src/components/CompetencyGauge.tsx`**
-
-Props : `{ label, initialScore, currentScore, completedSessions, totalSessions }`
-
-- Calcul interne : `expectedScore = initialScore + ((80 - initialScore) * (completedSessions / totalSessions))`
-- Barre Tailwind `h-3 rounded-full bg-muted relative` avec :
-  - Fill coloré à `currentScore%`
-  - Trait vertical gris à `initialScore%` (repère de départ)
-  - Trait vertical pointillé à `expectedScore%` (cible du moment)
-- Légende discrète sous la barre (Initial / Objectif)
-- Badge shadcn à droite :
-  - `current >= expected + 5` → vert "En avance"
-  - `current` entre `expected ± 5` → bleu "Dans les temps"
-  - `current < expected - 5` → orange/rouge "À renforcer"
-
-**2. Modifier `src/pages/eleve/Dashboard.tsx` (lignes 275-302)**
-
-Remplacer la carte par une carte "Ma progression détaillée" contenant 4 `CompetencyGauge` avec mock data :
-
-```
-CO:         initial=25, current=55, completed=4, total=8
-CE:         initial=30, current=40, completed=4, total=8
-EE:         initial=15, current=20, completed=4, total=8
-Structures: initial=20, current=50, completed=4, total=8
-```
-
-Calculs attendus (expectedScore) :
-- CO: 25 + (55 * 0.5) = 52.5 → current 55 > 57.5? Non → "Dans les temps"
-- CE: 30 + (50 * 0.5) = 55 → current 40 < 50 → "À renforcer"
-- EE: 15 + (65 * 0.5) = 47.5 → current 20 < 42.5 → "À renforcer"
-- Structures: 20 + (60 * 0.5) = 50 → current 50 ≈ 50 → "Dans les temps" ou "En avance" selon marge
-
-Cela démontre les 3 états de badge.
-
+Valide ce plan et je lance la sauvegarde.
