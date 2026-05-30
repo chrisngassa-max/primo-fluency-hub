@@ -3,6 +3,7 @@ import { callAI, AIError } from "../_shared/ai-client.ts";
 import { validateAndFix } from "../_shared/exercise-validator.ts";
 import { QA_REVIEW_BLOCK, logQaAuto } from "../_shared/qa-prompt.ts";
 import { buildPedagogicalDirectives, formatPedagogicalDirectives } from "../_shared/pedagogical-directives.ts";
+import { computeWeakCompetencesFromResults } from "../_shared/progression.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { checkConsentBatch, ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth, consentBlockedResponse } from "../_shared/check-consent.ts";
 
@@ -192,10 +193,12 @@ serve(async (req) => {
 
       // Profile data
       const profile = (studentProfiles ?? []).find((p: any) => p.eleve_id === eleveId);
-      const weakCompetencesForDirectives = Object.entries(failedByCompetence)
-        .filter(([, data]: [string, any]) => data.avgScore < 70)
-        .sort(([, a]: [string, any], [, b]: [string, any]) => a.avgScore - b.avgScore)
-        .map(([comp]) => comp);
+      // Liste des compétences faibles : module partagé (seuil < 70, tri ascendant).
+      // max non plafonné pour conserver le comportement historique (liste complète).
+      const weakCompetencesForDirectives = computeWeakCompetencesFromResults(
+        myResults,
+        Number.MAX_SAFE_INTEGER,
+      ).map((w) => w.c);
       const directives = buildPedagogicalDirectives({
         profile,
         outcome: outcomeByEleve.get(eleveId),
