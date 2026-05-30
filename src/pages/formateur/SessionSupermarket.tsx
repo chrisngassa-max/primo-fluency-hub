@@ -31,6 +31,8 @@ import {
   Users,
   Timer,
   Palette,
+  RefreshCw,
+  CheckCircle2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ExternalResourcePicker } from "@/components/ExternalResourcePicker";
@@ -150,7 +152,6 @@ const SessionSupermarket = () => {
   const [differentiation, setDifferentiation] = useState<DifferentiationState | null>(null);
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [dispatching, setDispatching] = useState(false);
-  const [publishingVariants, setPublishingVariants] = useState(false);
   const [targetSessionId, setTargetSessionId] = useState("");
   const [showAteliers, setShowAteliers] = useState(true);
   const [gabaritIgnored, setGabaritIgnored] = useState(false);
@@ -339,32 +340,6 @@ const SessionSupermarket = () => {
       toast.error("Erreur de génération différenciée", { description: e.message });
     } finally {
       setGeneratingDifferentiated(false);
-    }
-  };
-
-  const handlePublishVariants = async () => {
-    if (!differentiation?.generation_run_id) return;
-    setPublishingVariants(true);
-    try {
-      const client = supabase as any;
-      const { error: disableError } = await client
-        .from("session_exercise_variants")
-        .update({ is_active: false })
-        .eq("session_id", differentiation.session_id);
-      if (disableError) throw disableError;
-
-      const { error: enableError } = await client
-        .from("session_exercise_variants")
-        .update({ is_active: true })
-        .eq("generation_run_id", differentiation.generation_run_id);
-      if (enableError) throw enableError;
-
-      toast.success("Variantes publiées pour le groupe.");
-    } catch (e: any) {
-      console.error(e);
-      toast.error("Impossible de publier les variantes", { description: e.message });
-    } finally {
-      setPublishingVariants(false);
     }
   };
 
@@ -903,10 +878,22 @@ ${(doc.fiches_eleves || [])
                   {differentiation.clusters.length} cluster(s) gÃ©nÃ©rÃ©(s) sur le mÃªme tronc commun.
                 </CardDescription>
               </div>
-              <Button onClick={handlePublishVariants} disabled={publishingVariants || !differentiation.generation_run_id}>
-                {publishingVariants ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <CheckSquare className="h-4 w-4 mr-2" />}
-                Valider les variantes
-              </Button>
+              <div className="flex items-center gap-2 shrink-0">
+                {differentiation.generation_run_id && (
+                  <Badge className="bg-emerald-600 hover:bg-emerald-600 gap-1">
+                    <CheckCircle2 className="h-3.5 w-3.5" />
+                    Variantes actives pour ce groupe
+                  </Badge>
+                )}
+                <Button
+                  variant="outline"
+                  onClick={handleGenerateForGroup}
+                  disabled={generatingDifferentiated}
+                >
+                  {generatingDifferentiated ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />}
+                  Régénérer
+                </Button>
+              </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-3">

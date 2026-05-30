@@ -609,6 +609,16 @@ Si le support.contenu change, il doit rester une version etayee du support commu
     if (rowsToInsert.length > 0) {
       const { error: insertError } = await sb.from("session_exercise_variants").insert(rowsToInsert);
       if (insertError) throw insertError;
+
+      // Auto-publication du nouveau run (atomique côté DB)
+      const { error: publishError } = await sb.rpc("publish_session_variants_run", {
+        p_session_id: sessionId,
+        p_generation_run_id: generationRunId,
+      });
+      if (publishError) {
+        // Log mais ne fail pas tout : les variantes existent, juste pas actives
+        console.error("[generate-session-content] publish failed", publishError);
+      }
     }
 
     return new Response(JSON.stringify({
