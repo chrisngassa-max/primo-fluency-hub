@@ -5,10 +5,10 @@ import path from "path";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
-  const supabaseUrl = env.VITE_SUPABASE_URL || "https://bqknyiyywhvkdngraazk.supabase.co";
+  const supabaseUrl = env.VITE_SUPABASE_URL || "https://gudcenhmzlcvhgbgklzw.supabase.co";
   const supabasePublishableKey =
     env.VITE_SUPABASE_PUBLISHABLE_KEY ||
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJxa255aXl5d2h2a2RuZ3JhYXprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3NTE4MTMsImV4cCI6MjA4OTMyNzgxM30.3YX2kpfi34laa63PeR92oXp-pQtgEdPox28ZH6W6dQc";
+    "sb_publishable_z1FGsdO6Zql1fcfVud3gZg_YSLzjaHW";
 
   return {
     server: {
