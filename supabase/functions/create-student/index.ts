@@ -112,11 +112,19 @@ Deno.serve(async (req) => {
 
     const userId = newUser.user.id;
 
-    // Store initial password in profile for formateur reference
+    // Store initial password and approve the profile immediately.
+    // These accounts are created by a verified formateur, so students should not
+    // have to confirm an email or wait for manual activation.
     await adminClient
       .from("profiles")
-      .update({ mot_de_passe_initial: cleanPassword })
-      .eq("id", userId);
+      .upsert({
+        id: userId,
+        email: cleanEmail,
+        prenom: cleanPrenom,
+        nom: cleanNom,
+        mot_de_passe_initial: cleanPassword,
+        status: "approved",
+      });
 
     // Add to group
     const { error: memberError } = await adminClient

@@ -29,7 +29,7 @@ import { toast } from "sonner";
 import {
   Plus, Users, Trash2, Edit, UserPlus, UserMinus, Loader2,
   Copy, Check, Eye, EyeOff, ChevronRight, Ticket, Mail, Search, ArrowRightLeft, PlusCircle,
-  KeyRound, RefreshCw,
+  KeyRound, RefreshCw, MessageCircle,
 } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
@@ -45,6 +45,12 @@ const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
 interface CreatedStudent {
   prenom: string;
   nom: string;
+  email: string;
+  password: string;
+}
+
+interface PasswordDelivery {
+  name: string;
   email: string;
   password: string;
 }
@@ -103,16 +109,40 @@ const GroupesPage = () => {
   const [setPwdOpen, setSetPwdOpen] = useState(false);
   const [setPwdEleveId, setSetPwdEleveId] = useState<string | null>(null);
   const [setPwdEleveName, setSetPwdEleveName] = useState("");
+  const [setPwdEleveEmail, setSetPwdEleveEmail] = useState("");
   const [customPwd, setCustomPwd] = useState("");
   const [showCustomPwd, setShowCustomPwd] = useState(false);
   const [savingCustomPwd, setSavingCustomPwd] = useState(false);
+  const [passwordDelivery, setPasswordDelivery] = useState<PasswordDelivery | null>(null);
 
-  const openSetPasswordDialog = (eleveId: string, eleveName: string) => {
+  const buildPasswordMessage = (delivery: PasswordDelivery) =>
+    `Bonjour ${delivery.name},\n\nVoici vos identifiants CAP TCF :\nIdentifiant : ${delivery.email}\nMot de passe : ${delivery.password}\n\nLien : https://captcf.fr/#/eleve/login`;
+
+  const openSetPasswordDialog = (eleveId: string, eleveName: string, eleveEmail = "") => {
     setSetPwdEleveId(eleveId);
     setSetPwdEleveName(eleveName);
+    setSetPwdEleveEmail(eleveEmail);
     setCustomPwd("");
     setShowCustomPwd(false);
+    setPasswordDelivery(null);
     setSetPwdOpen(true);
+  };
+
+  const handleSetPasswordOpenChange = (open: boolean) => {
+    setSetPwdOpen(open);
+    if (!open) {
+      setPasswordDelivery(null);
+      setCustomPwd("");
+      setShowCustomPwd(false);
+    }
+  };
+
+  const copyDeliveryMessage = async () => {
+    if (!passwordDelivery) return;
+    await navigator.clipboard.writeText(buildPasswordMessage(passwordDelivery));
+    setCopiedField("pwd-whatsapp");
+    setTimeout(() => setCopiedField(null), 2000);
+    toast.success("Message pret a envoyer copie.");
   };
 
   const handleSaveCustomPassword = async () => {
@@ -128,10 +158,15 @@ const GroupesPage = () => {
       });
       if (error) throw new Error(data?.error || error.message);
       if (data?.error) throw new Error(data.error);
+      const password = data?.password || customPwd.trim();
       setShownPasswords((s) => ({ ...s, [setPwdEleveId]: true }));
+      setPasswordDelivery({
+        name: setPwdEleveName,
+        email: setPwdEleveEmail,
+        password,
+      });
       toast.success(`Mot de passe défini pour ${setPwdEleveName}`);
       qc.invalidateQueries({ queryKey: ["all-group-members"] });
-      setSetPwdOpen(false);
     } catch (e: any) {
       toast.error("Erreur", { description: e.message });
     } finally {
@@ -640,6 +675,16 @@ const GroupesPage = () => {
                                         <Eye className="h-4 w-4" />
                                       </Button>
                                       <Button
+                                        variant="ghost" size="icon" className="h-7 w-7"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          openSetPasswordDialog(m.eleve_id, `${eleve?.prenom} ${eleve?.nom}`, eleve?.email || "");
+                                        }}
+                                        title="Réinitialiser le mot de passe"
+                                      >
+                                        <KeyRound className="h-4 w-4" />
+                                      </Button>
+                                      <Button
                                         variant="ghost" size="icon" className="h-7 w-7 text-destructive"
                                         onClick={(e) => { e.stopPropagation(); handleRemoveMember(m.id); }}
                                         title="Retirer du groupe"
@@ -750,11 +795,12 @@ const GroupesPage = () => {
                                     <span className="text-xs text-muted-foreground italic">non disponible</span>
                                   )}
                                   <Button
-                                    variant="ghost" size="icon" className="h-6 w-6"
-                                    onClick={() => openSetPasswordDialog(m.eleve_id, `${eleve?.prenom} ${eleve?.nom}`)}
-                                    title="Définir un mot de passe choisi"
+                                    variant="outline" size="sm" className="h-7 px-2 gap-1 text-xs"
+                                    onClick={() => openSetPasswordDialog(m.eleve_id, `${eleve?.prenom} ${eleve?.nom}`, eleve?.email || "")}
+                                    title="Réinitialiser avec un mot de passe choisi"
                                   >
                                     <KeyRound className="h-3.5 w-3.5" />
+                                    Réinitialiser
                                   </Button>
                                   <Button
                                     variant="ghost" size="icon" className="h-6 w-6"
@@ -941,6 +987,23 @@ const GroupesPage = () => {
                     </Button>
                   </div>
                 </div>
+                <Button
+                  onClick={async () => {
+                    await navigator.clipboard.writeText(buildPasswordMessage({
+                      name: `${createdStudent.prenom} ${createdStudent.nom}`.trim(),
+                      email: createdStudent.email,
+                      password: createdStudent.password,
+                    }));
+                    setCopiedField("new-whatsapp");
+                    setTimeout(() => setCopiedField(null), 2000);
+                    toast.success("Message pret a envoyer copie.");
+                  }}
+                  className="w-full gap-2"
+                  variant="secondary"
+                >
+                  {copiedField === "new-whatsapp" ? <Check className="h-4 w-4" /> : <MessageCircle className="h-4 w-4" />}
+                  {copiedField === "new-whatsapp" ? "Message copie" : "Copier le message WhatsApp"}
+                </Button>
               </div>
             )}
           </div>
@@ -956,7 +1019,7 @@ const GroupesPage = () => {
       />
 
       {/* Set custom password dialog */}
-      <Dialog open={setPwdOpen} onOpenChange={setSetPwdOpen}>
+      <Dialog open={setPwdOpen} onOpenChange={handleSetPasswordOpenChange}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Définir un mot de passe</DialogTitle>
@@ -987,10 +1050,47 @@ const GroupesPage = () => {
                 </Button>
               </div>
             </div>
+            {passwordDelivery && (
+              <div className="rounded-lg border-2 border-primary/30 bg-primary/5 p-4 space-y-3">
+                <p className="text-sm font-semibold text-primary">
+                  Mot de passe mis a jour. Identifiants a transmettre :
+                </p>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="truncate"><strong>Identifiant :</strong> {passwordDelivery.email}</span>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 shrink-0"
+                      onClick={() => copyToClipboard(passwordDelivery.email, "reset-email")}
+                      title="Copier l'identifiant"
+                    >
+                      {copiedField === "reset-email" ? <Check className="h-3.5 w-3.5 text-primary" /> : <Copy className="h-3.5 w-3.5" />}
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between gap-2">
+                    <span><strong>Mot de passe :</strong> <code className="bg-muted px-1.5 py-0.5 rounded text-xs">{passwordDelivery.password}</code></span>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 shrink-0"
+                      onClick={() => copyToClipboard(passwordDelivery.password, "reset-pwd")}
+                      title="Copier le mot de passe"
+                    >
+                      {copiedField === "reset-pwd" ? <Check className="h-3.5 w-3.5 text-primary" /> : <Copy className="h-3.5 w-3.5" />}
+                    </Button>
+                  </div>
+                </div>
+                <Button onClick={copyDeliveryMessage} className="w-full gap-2" variant="secondary">
+                  {copiedField === "pwd-whatsapp" ? <Check className="h-4 w-4" /> : <MessageCircle className="h-4 w-4" />}
+                  {copiedField === "pwd-whatsapp" ? "Message copie" : "Copier le message WhatsApp"}
+                </Button>
+              </div>
+            )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setSetPwdOpen(false)} disabled={savingCustomPwd}>
-              Annuler
+            <Button variant="outline" onClick={() => handleSetPasswordOpenChange(false)} disabled={savingCustomPwd}>
+              Fermer
             </Button>
             <Button onClick={handleSaveCustomPassword} disabled={savingCustomPwd || customPwd.trim().length < 6}>
               {savingCustomPwd && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}

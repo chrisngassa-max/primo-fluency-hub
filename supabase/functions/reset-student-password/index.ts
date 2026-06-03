@@ -92,9 +92,14 @@ Deno.serve(async (req) => {
       });
     }
 
-    await admin.from("profiles")
-      .update({ mot_de_passe_initial: new_password })
+    const { error: profileErr } = await admin.from("profiles")
+      .update({ mot_de_passe_initial: new_password, status: "approved" })
       .eq("id", eleve_id);
+    if (profileErr) {
+      return new Response(JSON.stringify({ error: profileErr.message }), {
+        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     return new Response(JSON.stringify({ success: true, password: new_password }), {
       status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
