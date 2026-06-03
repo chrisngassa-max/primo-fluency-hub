@@ -623,7 +623,7 @@ const GroupesPage = () => {
                                <th className="text-left py-2.5 px-3 font-medium text-muted-foreground">Prénom & Nom</th>
                                <th className="text-left py-2.5 px-3 font-medium text-muted-foreground">Identifiant</th>
                                <th className="text-center py-2.5 px-3 font-medium text-muted-foreground">Progression</th>
-                               <th className="text-center py-2.5 px-3 font-medium text-muted-foreground w-24">Actions</th>
+                               <th className="text-right py-2.5 px-3 font-medium text-muted-foreground w-52">Actions</th>
                              </tr>
                           </thead>
                           <tbody>
@@ -665,8 +665,8 @@ const GroupesPage = () => {
                                       <span className="text-xs text-muted-foreground w-8">{prog}%</span>
                                     </div>
                                   </td>
-                                  <td className="py-2.5 px-3 text-center">
-                                    <div className="flex items-center justify-center gap-1">
+                                  <td className="py-2.5 px-3 text-right">
+                                    <div className="flex items-center justify-end gap-1">
                                       <Button
                                         variant="ghost" size="icon" className="h-7 w-7"
                                         onClick={(e) => { e.stopPropagation(); navigate(`/formateur/eleves/${m.eleve_id}`); }}
@@ -675,14 +675,15 @@ const GroupesPage = () => {
                                         <Eye className="h-4 w-4" />
                                       </Button>
                                       <Button
-                                        variant="ghost" size="icon" className="h-7 w-7"
+                                        variant="outline" size="sm" className="h-7 px-2 gap-1 text-xs"
                                         onClick={(e) => {
                                           e.stopPropagation();
                                           openSetPasswordDialog(m.eleve_id, `${eleve?.prenom} ${eleve?.nom}`, eleve?.email || "");
                                         }}
                                         title="Réinitialiser le mot de passe"
                                       >
-                                        <KeyRound className="h-4 w-4" />
+                                        <KeyRound className="h-3.5 w-3.5" />
+                                        Mot de passe
                                       </Button>
                                       <Button
                                         variant="ghost" size="icon" className="h-7 w-7 text-destructive"
