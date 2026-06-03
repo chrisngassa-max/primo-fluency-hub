@@ -110,6 +110,7 @@ const GroupesPage = () => {
   const [setPwdEleveId, setSetPwdEleveId] = useState<string | null>(null);
   const [setPwdEleveName, setSetPwdEleveName] = useState("");
   const [setPwdEleveEmail, setSetPwdEleveEmail] = useState("");
+  const [customEmail, setCustomEmail] = useState("");
   const [customPwd, setCustomPwd] = useState("");
   const [showCustomPwd, setShowCustomPwd] = useState(false);
   const [savingCustomPwd, setSavingCustomPwd] = useState(false);
@@ -122,6 +123,7 @@ const GroupesPage = () => {
     setSetPwdEleveId(eleveId);
     setSetPwdEleveName(eleveName);
     setSetPwdEleveEmail(eleveEmail);
+    setCustomEmail(eleveEmail);
     setCustomPwd("");
     setShowCustomPwd(false);
     setPasswordDelivery(null);
@@ -132,6 +134,7 @@ const GroupesPage = () => {
     setSetPwdOpen(open);
     if (!open) {
       setPasswordDelivery(null);
+      setCustomEmail("");
       setCustomPwd("");
       setShowCustomPwd(false);
     }
@@ -147,26 +150,46 @@ const GroupesPage = () => {
 
   const handleSaveCustomPassword = async () => {
     if (!setPwdEleveId) return;
-    if (customPwd.trim().length < 6) {
+    const email = customEmail.trim().toLowerCase();
+    const password = customPwd.trim();
+    const emailChanged = !!email && email !== setPwdEleveEmail.toLowerCase();
+    if (!emailChanged && !password) {
+      toast.error("Modifiez l'email ou saisissez un nouveau mot de passe.");
+      return;
+    }
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error("Email invalide.");
+      return;
+    }
+    if (password && password.length < 6) {
       toast.error("Le mot de passe doit contenir au moins 6 caractères.");
       return;
     }
     setSavingCustomPwd(true);
     try {
-      const { data, error } = await supabase.functions.invoke("reset-student-password", {
-        body: { eleve_id: setPwdEleveId, new_password: customPwd.trim() },
+      const { data, error } = await supabase.functions.invoke("update-student-credentials", {
+        body: {
+          eleve_id: setPwdEleveId,
+          ...(emailChanged ? { new_email: email } : {}),
+          ...(password ? { new_password: password } : {}),
+        },
       });
       if (error) throw new Error(data?.error || error.message);
       if (data?.error) throw new Error(data.error);
-      const password = data?.password || customPwd.trim();
+      const savedEmail = data?.email || setPwdEleveEmail;
+      const savedPassword = data?.password || password;
       setShownPasswords((s) => ({ ...s, [setPwdEleveId]: true }));
-      setPasswordDelivery({
-        name: setPwdEleveName,
-        email: setPwdEleveEmail,
-        password,
-      });
-      toast.success(`Mot de passe défini pour ${setPwdEleveName}`);
+      setSetPwdEleveEmail(savedEmail);
+      if (savedPassword) {
+        setPasswordDelivery({
+          name: setPwdEleveName,
+          email: savedEmail,
+          password: savedPassword,
+        });
+      }
+      toast.success(`Identifiants mis a jour pour ${setPwdEleveName}`);
       qc.invalidateQueries({ queryKey: ["all-group-members"] });
+      qc.invalidateQueries({ queryKey: ["student-profile-info"] });
     } catch (e: any) {
       toast.error("Erreur", { description: e.message });
     } finally {
@@ -637,7 +660,21 @@ const GroupesPage = () => {
                                   onClick={() => navigate(`/formateur/eleves/${m.eleve_id}`)}
                                 >
                                   <td className="py-2.5 px-3 font-medium">
-                                    {eleve?.prenom} {eleve?.nom}
+                                    <div className="flex flex-col gap-1">
+                                      <span>{eleve?.prenom} {eleve?.nom}</span>
+                                      <Button
+                                        variant="link"
+                                        size="sm"
+                                        className="h-auto w-fit p-0 text-xs font-semibold text-primary"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          openSetPasswordDialog(m.eleve_id, `${eleve?.prenom} ${eleve?.nom}`, eleve?.email || "");
+                                        }}
+                                      >
+                                        <KeyRound className="mr-1 h-3.5 w-3.5" />
+                                        Modifier email / mot de passe
+                                      </Button>
+                                    </div>
                                   </td>
                                   <td className="py-2.5 px-3">
                                     <div className="flex items-center gap-1">
@@ -683,7 +720,7 @@ const GroupesPage = () => {
                                         title="Réinitialiser le mot de passe"
                                       >
                                         <KeyRound className="h-3.5 w-3.5" />
-                                        Mot de passe
+                                        Identifiants
                                       </Button>
                                       <Button
                                         variant="ghost" size="icon" className="h-7 w-7 text-destructive"
@@ -762,9 +799,20 @@ const GroupesPage = () => {
                           return (
                             <TableRow key={m.eleve_id}>
                               <TableCell className="font-medium">
-                                <div className="flex items-center gap-2">
-                                  <span>{eleve?.prenom} {eleve?.nom}</span>
-                                  <AdvancedStudentBadge signal={advancedMap[m.eleve_id]} compact />
+                                <div className="flex flex-col gap-1">
+                                  <div className="flex items-center gap-2">
+                                    <span>{eleve?.prenom} {eleve?.nom}</span>
+                                    <AdvancedStudentBadge signal={advancedMap[m.eleve_id]} compact />
+                                  </div>
+                                  <Button
+                                    variant="link"
+                                    size="sm"
+                                    className="h-auto w-fit p-0 text-xs font-semibold text-primary"
+                                    onClick={() => openSetPasswordDialog(m.eleve_id, `${eleve?.prenom} ${eleve?.nom}`, eleve?.email || "")}
+                                  >
+                                    <KeyRound className="mr-1 h-3.5 w-3.5" />
+                                    Modifier email / mot de passe
+                                  </Button>
                                 </div>
                               </TableCell>
                               <TableCell>
@@ -1023,14 +1071,25 @@ const GroupesPage = () => {
       <Dialog open={setPwdOpen} onOpenChange={handleSetPasswordOpenChange}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Définir un mot de passe</DialogTitle>
+            <DialogTitle>Modifier les identifiants</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <p className="text-sm text-muted-foreground">
-              Choisissez un mot de passe pour <strong>{setPwdEleveName}</strong>. L'ancien mot de passe ne fonctionnera plus.
+              Modifiez l'email ou choisissez un nouveau mot de passe pour <strong>{setPwdEleveName}</strong>.
             </p>
             <div className="space-y-2">
-              <Label htmlFor="custom-pwd">Nouveau mot de passe (6 caractères minimum)</Label>
+              <Label htmlFor="custom-email">Email de connexion</Label>
+              <Input
+                id="custom-email"
+                type="email"
+                value={customEmail}
+                onChange={(e) => setCustomEmail(e.target.value)}
+                placeholder="eleve@email.com"
+                autoComplete="off"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="custom-pwd">Nouveau mot de passe (optionnel, 6 caracteres minimum)</Label>
               <div className="flex gap-2">
                 <Input
                   id="custom-pwd"
@@ -1093,7 +1152,17 @@ const GroupesPage = () => {
             <Button variant="outline" onClick={() => handleSetPasswordOpenChange(false)} disabled={savingCustomPwd}>
               Fermer
             </Button>
-            <Button onClick={handleSaveCustomPassword} disabled={savingCustomPwd || customPwd.trim().length < 6}>
+            <Button
+              onClick={handleSaveCustomPassword}
+              disabled={
+                savingCustomPwd ||
+                (
+                  customEmail.trim().toLowerCase() === setPwdEleveEmail.toLowerCase() &&
+                  customPwd.trim().length === 0
+                ) ||
+                (customPwd.trim().length > 0 && customPwd.trim().length < 6)
+              }
+            >
               {savingCustomPwd && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               Enregistrer
             </Button>

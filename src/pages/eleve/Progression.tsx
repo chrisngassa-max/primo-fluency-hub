@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -5,14 +6,19 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import {
   RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,
   ResponsiveContainer,
 } from "recharts";
-import { TrendingUp, BookOpen, Award, CalendarCheck, Mail, KeyRound, Copy, Users, ArrowRightLeft, PlusCircle, X, Target } from "lucide-react";
+import { TrendingUp, BookOpen, Award, CalendarCheck, Mail, KeyRound, Copy, Users, ArrowRightLeft, PlusCircle, X, Target, Eye, EyeOff, Loader2, MessageCircle } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toast } from "sonner";
@@ -58,6 +64,12 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const targetId = eleveId || user?.id;
+  const [credentialsOpen, setCredentialsOpen] = useState(false);
+  const [credentialsEmail, setCredentialsEmail] = useState("");
+  const [credentialsPassword, setCredentialsPassword] = useState("");
+  const [showCredentialsPassword, setShowCredentialsPassword] = useState(false);
+  const [savingCredentials, setSavingCredentials] = useState(false);
+  const [credentialsDelivery, setCredentialsDelivery] = useState<{ email: string; password: string } | null>(null);
 
   // Fetch competency status
   const { data: competencies, isLoading: compLoading } = useQuery({
@@ -118,6 +130,67 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
     },
     enabled: !!targetId && !!eleveId,
   });
+
+  const openCredentialsDialog = () => {
+    setCredentialsEmail(studentProfile?.email ?? "");
+    setCredentialsPassword("");
+    setShowCredentialsPassword(false);
+    setCredentialsDelivery(null);
+    setCredentialsOpen(true);
+  };
+
+  const closeCredentialsDialog = () => {
+    setCredentialsOpen(false);
+    setCredentialsPassword("");
+    setShowCredentialsPassword(false);
+    setCredentialsDelivery(null);
+  };
+
+  const buildCredentialsMessage = (email: string, password: string) =>
+    `Bonjour ${studentProfile?.prenom ?? ""},\n\nVoici vos identifiants CAP TCF :\nIdentifiant : ${email}\nMot de passe : ${password}\n\nLien : https://captcf.fr/#/eleve/login`;
+
+  const saveCredentials = async () => {
+    if (!targetId || !studentProfile) return;
+    const email = credentialsEmail.trim().toLowerCase();
+    const password = credentialsPassword.trim();
+    const emailChanged = !!email && email !== (studentProfile.email ?? "").toLowerCase();
+
+    if (!emailChanged && !password) {
+      toast.error("Modifiez l'email ou saisissez un nouveau mot de passe.");
+      return;
+    }
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error("Email invalide.");
+      return;
+    }
+    if (password && password.length < 6) {
+      toast.error("Le mot de passe doit contenir au moins 6 caracteres.");
+      return;
+    }
+
+    setSavingCredentials(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("update-student-credentials", {
+        body: {
+          eleve_id: targetId,
+          ...(emailChanged ? { new_email: email } : {}),
+          ...(password ? { new_password: password } : {}),
+        },
+      });
+      if (error) throw new Error(data?.error || error.message);
+      if (data?.error) throw new Error(data.error);
+      const savedEmail = data?.email || studentProfile.email || email;
+      if (data?.password || password) {
+        setCredentialsDelivery({ email: savedEmail, password: data?.password || password });
+      }
+      toast.success("Identifiants mis a jour");
+      queryClient.invalidateQueries({ queryKey: ["student-profile-info", targetId] });
+    } catch (err: any) {
+      toast.error("Erreur : " + err.message);
+    } finally {
+      setSavingCredentials(false);
+    }
+  };
 
   // Fetch attendance stats
   const { data: presenceStats } = useQuery({
@@ -304,24 +377,10 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
               variant="outline"
               size="sm"
               className="gap-1.5"
-              onClick={async () => {
-                if (!studentProfile?.email) {
-                  toast.error("Cet élève n'a pas d'email configuré.");
-                  return;
-                }
-                try {
-                  const { error } = await supabase.auth.resetPasswordForEmail(studentProfile.email, {
-                    redirectTo: window.location.origin,
-                  });
-                  if (error) throw error;
-                  toast.success("Lien de réinitialisation envoyé à " + studentProfile.email);
-                } catch (err: any) {
-                  toast.error("Erreur : " + err.message);
-                }
-              }}
+              onClick={openCredentialsDialog}
             >
               <KeyRound className="h-3.5 w-3.5" />
-              Réinitialiser le mot de passe
+              Modifier email / mot de passe
             </Button>
           </CardContent>
         </Card>
@@ -735,6 +794,88 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
         </CardContent>
       </Card>
       </div>
+      {eleveId && studentProfile && (
+        <Dialog open={credentialsOpen} onOpenChange={(open) => open ? openCredentialsDialog() : closeCredentialsDialog()}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Modifier les identifiants</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="student-email">Email de connexion</Label>
+                <Input
+                  id="student-email"
+                  type="email"
+                  value={credentialsEmail}
+                  onChange={(e) => setCredentialsEmail(e.target.value)}
+                  placeholder="eleve@email.com"
+                  autoComplete="off"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="student-password">Nouveau mot de passe (optionnel)</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="student-password"
+                    type={showCredentialsPassword ? "text" : "password"}
+                    value={credentialsPassword}
+                    onChange={(e) => setCredentialsPassword(e.target.value)}
+                    placeholder="ex: bonjour2026"
+                    autoComplete="new-password"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setShowCredentialsPassword((v) => !v)}
+                  >
+                    {showCredentialsPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </Button>
+                </div>
+              </div>
+              {credentialsDelivery && (
+                <div className="rounded-lg border-2 border-primary/30 bg-primary/5 p-4 space-y-3">
+                  <p className="text-sm font-semibold text-primary">Identifiants a transmettre :</p>
+                  <div className="text-sm space-y-1">
+                    <p><strong>Identifiant :</strong> {credentialsDelivery.email}</p>
+                    <p><strong>Mot de passe :</strong> <code className="bg-muted px-1.5 py-0.5 rounded text-xs">{credentialsDelivery.password}</code></p>
+                  </div>
+                  <Button
+                    className="w-full gap-2"
+                    variant="secondary"
+                    onClick={async () => {
+                      await navigator.clipboard.writeText(buildCredentialsMessage(credentialsDelivery.email, credentialsDelivery.password));
+                      toast.success("Message pret a envoyer copie.");
+                    }}
+                  >
+                    <MessageCircle className="h-4 w-4" />
+                    Copier le message WhatsApp
+                  </Button>
+                </div>
+              )}
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={closeCredentialsDialog} disabled={savingCredentials}>
+                Fermer
+              </Button>
+              <Button
+                onClick={saveCredentials}
+                disabled={
+                  savingCredentials ||
+                  (
+                    credentialsEmail.trim().toLowerCase() === (studentProfile.email ?? "").toLowerCase() &&
+                    credentialsPassword.trim().length === 0
+                  ) ||
+                  (credentialsPassword.trim().length > 0 && credentialsPassword.trim().length < 6)
+                }
+              >
+                {savingCredentials && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                Enregistrer
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 };
