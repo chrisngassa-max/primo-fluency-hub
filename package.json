@@ -12,6 +12,8 @@
     "test": "vitest run",
     "import:pedagogical-activities": "node scripts/import-pedagogical-activities.mjs",
     "import:pedagogical-documents": "node scripts/import-pedagogical-documents.mjs",
+    "import:logement-co-a2-b1": "node scripts/import-logement-co-a2-b2.mjs",
+    "import:logement-co-a2-b2": "node scripts/import-logement-co-a2-b2.mjs",
     "test:watch": "vitest"
   },
   "dependencies": {

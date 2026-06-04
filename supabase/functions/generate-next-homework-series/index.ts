@@ -23,6 +23,7 @@ import { validateAndFix } from "../_shared/exercise-validator.ts";
 import { QA_REVIEW_BLOCK } from "../_shared/qa-prompt.ts";
 import { buildPedagogicalDirectives, formatPedagogicalDirectives } from "../_shared/pedagogical-directives.ts";
 import { computeWeakCompetencesFromResults, deriveProgressionFromResults } from "../_shared/progression.ts";
+import { routeExercise, type CompetenceTCF, type RoutingResult } from "../_shared/exercise-router.ts";
 import {
   checkConsentBatch,
   ensurePseudonymSecretOrLog,
@@ -52,6 +53,33 @@ interface AdaptationEntry {
   progression: "augmente" | "consolide" | "remediation" | "demarrage";
   competencesCiblees: string[];
   serie: number;
+  routing?: {
+    ruleId: string;
+    decision: string;
+    devoirGenere: string;
+    reasonTrainer: string;
+  };
+}
+
+function normalizeCompetence(value: unknown, fallback: CompetenceTCF): CompetenceTCF {
+  return value === "CO" || value === "CE" || value === "EE" || value === "EO" ? value : fallback;
+}
+
+function consecutiveScoresAtLeast(results: any[], competence: string | null, threshold: number): number {
+  let count = 0;
+  for (const result of results) {
+    const resultCompetence = (result as any).exercice?.competence ?? null;
+    if (competence && resultCompetence !== competence) continue;
+    if (Number(result.score) >= threshold) count++;
+    else break;
+  }
+  return count;
+}
+
+function devoirReasonFromRouting(routing: RoutingResult): "remediation" | "consolidation" {
+  return routing.decision === "remediation_prioritaire" || routing.decision === "reproposition_automatique"
+    ? "remediation"
+    : "consolidation";
 }
 
 serve(async (req) => {
@@ -170,7 +198,7 @@ serve(async (req) => {
     // ── Profils & historique par élève ──
     const { data: profils } = await supabase
       .from("profils_eleves")
-      .select("eleve_id, niveau_actuel, taux_reussite_co, taux_reussite_ce, taux_reussite_ee, taux_reussite_eo, taux_reussite_structures, priorites_pedagogiques, vitesse_lecture")
+      .select("eleve_id, niveau_actuel, fragilite_principale, taux_reussite_co, taux_reussite_ce, taux_reussite_ee, taux_reussite_eo, taux_reussite_structures, priorites_pedagogiques, vitesse_lecture")
       .in("eleve_id", eleveIds);
 
     let outcomesByEleve = new Map<string, any>();
@@ -243,6 +271,7 @@ serve(async (req) => {
 
     // Adaptation préliminaire (transmise dans la sortie aussi)
     const adaptationSummary: Record<string, AdaptationEntry> = {};
+    const routingByEleve: Record<string, RoutingResult> = {};
 
     const studentBlocks: string[] = [];
     for (const eleveId of eleveIds) {
@@ -253,6 +282,21 @@ serve(async (req) => {
       const weakComps = computeWeakCompetencesFromResults(myResults);
       const targetCompetence = weakComps[0]?.c ?? null;
       const { progression, averageLast5: avg } = deriveProgressionFromResults(myResults, targetCompetence);
+      const profile = profileById.get(eleveId);
+      const fragilitePrincipale = normalizeCompetence(
+        profile?.fragilite_principale,
+        normalizeCompetence(targetCompetence, "CO"),
+      );
+      const competenceCible = normalizeCompetence(targetCompetence, fragilitePrincipale);
+      const nbReussitesConsecutives = consecutiveScoresAtLeast(myResults, targetCompetence, 80);
+      const routing = routeExercise({
+        profil: { fragilite_principale: fragilitePrincipale },
+        phase: "phase5_devoir",
+        competenceCible,
+        scoreDernierExercice: avg ?? undefined,
+        nbReussitesConsecutives,
+      });
+      routingByEleve[eleveId] = routing;
 
       // compétences faibles
       /*
@@ -279,9 +323,14 @@ serve(async (req) => {
         progression,
         competencesCiblees: weakComps.map((w) => w.c),
         serie: newSerie,
+        routing: {
+          ruleId: routing.ruleId,
+          decision: routing.decision,
+          devoirGenere: routing.devoirGenere,
+          reasonTrainer: routing.reasonTrainer,
+        },
       };
 
-      const profile = profileById.get(eleveId);
       const directives = buildPedagogicalDirectives({
         profile,
         outcome: outcomesByEleve.get(eleveId),
@@ -300,6 +349,10 @@ serve(async (req) => {
       if (weakComps.length) lines.push(`  Compétences faibles ciblées: ${weakComps.map((w) => `${w.c}=${w.avg}%`).join(", ")}`);
 
       // Historique anti-répétition (30 derniers)
+      lines.push(`  DECISION ROUTEUR V4: ${routing.ruleId} | ${routing.decision} | devoir=${routing.devoirGenere}`);
+      lines.push(`  RAISON FORMATEUR: ${routing.reasonTrainer}`);
+      lines.push(`  MESSAGE ELEVE NEUTRE: ${routing.reasonStudent}`);
+
       if (myDevoirs.length) {
         lines.push(`  HISTORIQUE DEVOIRS RÉCENTS À NE PAS REPRODUIRE :`);
         for (const d of myDevoirs.slice(0, 30)) {
@@ -332,6 +385,7 @@ CIBLE :
 - Pas d'obligation quotidienne : la série est faite au rythme de l'élève.
 
 ADAPTATION :
+- La ligne DECISION ROUTEUR V4 est deterministe et prioritaire : respecte son type de devoir et ne la contredis pas.
 - score moyen ≥ 80% → augmenter légèrement la difficulté ou varier vers une compétence proche.
 - score 60-79% → consolider avec un exercice différent.
 - score < 60% → remédiation ciblée avec difficulté adaptée.
@@ -509,7 +563,10 @@ Pour chaque élève, génère ${targetCount} exercices respectant strictement la
           continue;
         }
         const validEx = validated.exercise;
-        const raison = ex.raison === "remediation" ? "remediation" : "consolidation";
+        const routing = routingByEleve[fullEleveId];
+        const raison = routing
+          ? devoirReasonFromRouting(routing)
+          : ex.raison === "remediation" ? "remediation" : "consolidation";
         const sourceLabel = ex.raison === "tronc_commun"
           ? `serie_${newSerie}_tronc_commun`
           : `serie_${newSerie}_individualise`;
@@ -538,7 +595,7 @@ Pour chaque élève, génère ${targetCount} exercices respectant strictement la
         }
         totalExercices++;
 
-        const { error: devErr } = await supabase.from("devoirs").insert({
+        const { data: insertedDevoir, error: devErr } = await supabase.from("devoirs").insert({
           eleve_id: fullEleveId,
           exercice_id: inserted.id,
           formateur_id: formateurId,
@@ -549,10 +606,39 @@ Pour chaque élève, génère ${targetCount} exercices respectant strictement la
           session_id: sessionId,
           source_label: sourceLabel,
           date_echeance: deadline.toISOString(),
-        });
-        if (devErr) {
+        }).select("id").single();
+        if (devErr || !insertedDevoir) {
           console.error("Insert devoir failed", devErr);
           continue;
+        }
+        if (routing) {
+          const fallbackCompetence = normalizeCompetence(
+            adaptationSummary[fullEleveId]?.competencesCiblees?.[0],
+            "CO",
+          );
+          const routingCompetence = normalizeCompetence(validEx.competence, fallbackCompetence);
+          const { error: routingErr } = await supabase.from("routing_decisions").insert({
+            eleve_id: fullEleveId,
+            formateur_id: formateurId,
+            session_id: sessionId,
+            exercice_id: inserted.id,
+            competence: routingCompetence,
+            phase: "phase5_devoir",
+            rule_id: routing.ruleId,
+            decision: routing.decision,
+            devoir_genere: routing.devoirGenere,
+            reason_student: routing.reasonStudent,
+            reason_trainer: routing.reasonTrainer,
+            context_snapshot: {
+              devoir_id: insertedDevoir.id,
+              serie: newSerie,
+              ai_raison: ex.raison ?? null,
+              router_raison: raison,
+              source_label: sourceLabel,
+              condition: routing.conditionLabel,
+            },
+          });
+          if (routingErr) console.warn("Insert routing decision failed", routingErr);
         }
         totalDevoirs++;
       }

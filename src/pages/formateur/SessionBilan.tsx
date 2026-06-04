@@ -513,6 +513,9 @@ const SessionBilan = () => {
           sessionTitle: session?.titre, bilanScores, blockedStudents, exercicesTraites, exercicesNonTraites,
           nextSessionTitle: nextSession?.titre, nextSessionObjectifs: nextSession?.objectifs,
           nextSessionNiveauCible: nextSession?.niveau_cible,
+          sessionId: id,
+          nextSessionId: nextSession?.id,
+          formateurId: user?.id,
           eleveIds,
         },
       });
@@ -520,8 +523,7 @@ const SessionBilan = () => {
       if (data?.error) throw new Error(data.error);
 
       setAdaptationResult(data.adaptation);
-      if (isAutoAdapt && nextSession) await autoApplyAdaptation(data.adaptation);
-      else setShowAdaptation(true);
+      setShowAdaptation(true);
     } catch (e: any) {
       console.error(e);
       toast.error("L'adaptation IA a échoué", { description: e.message });
@@ -531,18 +533,19 @@ const SessionBilan = () => {
     }
   };
 
-  const autoApplyAdaptation = async (adaptation: any) => {
-    if (!nextSession) return;
-    try {
-      await supabase.from("sessions").update({ objectifs: adaptation.objectifs_ajustes, updated_at: new Date().toISOString() }).eq("id", nextSession.id);
-      await supabase.from("notifications").insert({ user_id: user!.id, titre: "Séance auto-adaptée par l'IA", message: adaptation.message_formateur, link: `/formateur/seances/${nextSession.id}/pilote` });
-      qc.invalidateQueries({ queryKey: ["formateur-sessions"] });
-      toast.success("Pilote automatique — Séance N+1 adaptée !", { description: adaptation.message_formateur });
-      navigate("/formateur/seances");
-    } catch (e: any) {
-      toast.error("Erreur d'auto-adaptation", { description: e.message });
-      navigate("/formateur/seances");
-    }
+  const updateRecommendationStatus = async (status: "accepted" | "rejected") => {
+    if (!nextSession || !user) return;
+    await supabase
+      .from("session_recommendations" as any)
+      .update({
+        status,
+        validated_by: user.id,
+        validated_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      } as any)
+      .eq("target_session_id", nextSession.id)
+      .eq("source_session_id", id!)
+      .eq("status", "proposed");
   };
 
   const applyAdaptation = async () => {
@@ -550,6 +553,7 @@ const SessionBilan = () => {
     setSaving(true);
     try {
       await supabase.from("sessions").update({ objectifs: adaptationResult.objectifs_ajustes, updated_at: new Date().toISOString() }).eq("id", nextSession.id);
+      await updateRecommendationStatus("accepted");
       await supabase.from("notifications").insert({ user_id: user!.id, titre: "Séance adaptée par l'IA", message: adaptationResult.message_formateur, link: `/formateur/seances/${nextSession.id}/pilote` });
       qc.invalidateQueries({ queryKey: ["formateur-sessions"] });
       toast.success("Séance N+1 adaptée !", { description: adaptationResult.message_formateur });
@@ -838,7 +842,7 @@ const SessionBilan = () => {
       {nextSession && (
         <p className="text-xs text-muted-foreground text-center print:hidden">
           <Sparkles className="h-3 w-3 inline mr-1" />
-          {isAutoAdapt ? `Pilote auto activé — "${nextSession.titre}" sera adaptée` : `L'IA proposera des suggestions pour "${nextSession.titre}"`}
+          {isAutoAdapt ? `Pilote auto activé — proposition à valider pour "${nextSession.titre}"` : `L'IA proposera des suggestions pour "${nextSession.titre}"`}
         </p>
       )}
 
@@ -1270,6 +1274,27 @@ const SessionBilan = () => {
                   </div>
                 </div>
               )}
+              {adaptationResult.recommandations_formateur?.length > 0 && (
+                <div>
+                  <Label className="text-xs text-muted-foreground">Recommandations à valider</Label>
+                  <div className="space-y-2 mt-2">
+                    {adaptationResult.recommandations_formateur.map((rec: any, i: number) => (
+                      <div key={i} className="p-3 rounded-md border bg-amber-50/70 dark:bg-amber-950/20 space-y-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <Badge variant="secondary" className="text-[10px]">{rec.type}</Badge>
+                          {rec.competence && <Badge variant="outline" className="text-[10px]">{rec.competence}</Badge>}
+                          <span className="text-xs text-muted-foreground">proposée, non appliquée</span>
+                        </div>
+                        <p className="text-sm font-medium">{rec.action_proposee?.titre || "Action proposée"}</p>
+                        <p className="text-xs text-muted-foreground">{rec.raison_formateur}</p>
+                        {rec.action_proposee?.description && (
+                          <p className="text-xs">{rec.action_proposee.description}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
               <div>
                 <Label className="text-xs text-muted-foreground">Objectifs ajustés</Label>
                 <p className="text-sm mt-1">{adaptationResult.objectifs_ajustes}</p>
@@ -1278,9 +1303,9 @@ const SessionBilan = () => {
           )}
           <DialogFooter className="flex-col sm:flex-row gap-2">
             <Button onClick={applyAdaptation} disabled={saving} className="flex-1">
-              {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <CheckCircle2 className="h-4 w-4 mr-2" />}Appliquer les suggestions
+              {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <CheckCircle2 className="h-4 w-4 mr-2" />}Valider et appliquer
             </Button>
-            <Button variant="outline" onClick={() => { setShowAdaptation(false); navigate("/formateur/seances"); }} className="flex-1">
+            <Button variant="outline" onClick={async () => { await updateRecommendationStatus("rejected"); setShowAdaptation(false); navigate("/formateur/seances"); }} className="flex-1">
               Ignorer et continuer
             </Button>
           </DialogFooter>

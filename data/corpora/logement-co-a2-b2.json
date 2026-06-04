@@ -1,0 +1,434 @@
+[
+  {
+    "code": "LOG-CO-A2-001",
+    "titre": "Message d'agence - confirmer une visite",
+    "niveau_vise": "A2",
+    "difficulte": 2,
+    "sous_competence": "reperage_info_pratique",
+    "niveau_guidage": "guide",
+    "outils_aide": ["lexique", "transcription"],
+    "duree_estimee_min": 6,
+    "autonomie_requise": "faible",
+    "objectif_tcf": "comprendre_info_explicite",
+    "contexte_irn": "agence_immo",
+    "situation": "message d'agence",
+    "consigne": "Ecoutez le message et choisissez la bonne reponse.",
+    "script_audio": "Bonjour, c'est l'agence du Centre. Je vous appelle pour confirmer la visite de l'appartement rue Victor Hugo. Le rendez-vous est demain a 14 heures. Merci d'apporter une piece d'identite et vos trois derniers bulletins de salaire.",
+    "items": [
+      {
+        "question": "Quand a lieu la visite ?",
+        "options": ["Aujourd'hui a 14 heures", "Demain a 14 heures", "Demain a 16 heures"],
+        "bonne_reponse": "Demain a 14 heures",
+        "explication": "Le message dit : le rendez-vous est demain a 14 heures."
+      }
+    ]
+  },
+  {
+    "code": "LOG-CO-A2-002",
+    "titre": "Annonce vocale - charges comprises",
+    "niveau_vise": "A2",
+    "difficulte": 2,
+    "sous_competence": "identifier_montant",
+    "niveau_guidage": "guide",
+    "outils_aide": ["lexique", "transcription"],
+    "duree_estimee_min": 6,
+    "autonomie_requise": "faible",
+    "objectif_tcf": "comprendre_info_explicite",
+    "contexte_irn": "annonce_logement",
+    "situation": "annonce vocale",
+    "consigne": "Ecoutez l'annonce et repondez a la question.",
+    "script_audio": "Appartement deux pieces a louer, proche du tramway. Le loyer est de 690 euros par mois, charges comprises. Le chauffage est collectif. Une caution de 690 euros est demandee a l'entree dans le logement.",
+    "items": [
+      {
+        "question": "Quel est le montant du loyer avec les charges ?",
+        "options": ["690 euros", "960 euros", "1 380 euros"],
+        "bonne_reponse": "690 euros",
+        "explication": "L'annonce precise : 690 euros par mois, charges comprises."
+      }
+    ]
+  },
+  {
+    "code": "LOG-CO-A2-003",
+    "titre": "Rendez-vous de visite - changement d'heure",
+    "niveau_vise": "A2",
+    "difficulte": 3,
+    "sous_competence": "repérer_changement",
+    "niveau_guidage": "semi_guide",
+    "outils_aide": ["transcription"],
+    "duree_estimee_min": 7,
+    "autonomie_requise": "moyenne",
+    "objectif_tcf": "comprendre_changement_rdv",
+    "contexte_irn": "agence_immo",
+    "situation": "rendez-vous visite",
+    "consigne": "Ecoutez le message. Quelle information a change ?",
+    "script_audio": "Bonjour Madame, je vous appelle pour la visite de l'appartement. Le proprietaire ne peut plus venir a 10 heures. Nous vous proposons le meme jour, mais a 11 heures 30. L'adresse ne change pas.",
+    "items": [
+      {
+        "question": "Qu'est-ce qui change ?",
+        "options": ["L'adresse", "Le jour", "L'heure"],
+        "bonne_reponse": "L'heure",
+        "explication": "Le message dit : le meme jour, mais a 11 heures 30."
+      }
+    ]
+  },
+  {
+    "code": "LOG-CO-A2-004",
+    "titre": "Dossier logement - document manquant",
+    "niveau_vise": "A2",
+    "difficulte": 3,
+    "sous_competence": "identifier_document",
+    "niveau_guidage": "semi_guide",
+    "outils_aide": ["lexique", "transcription"],
+    "duree_estimee_min": 7,
+    "autonomie_requise": "moyenne",
+    "objectif_tcf": "comprendre_demande_document",
+    "contexte_irn": "dossier_location",
+    "situation": "demande de document",
+    "consigne": "Ecoutez le message et identifiez le document demande.",
+    "script_audio": "Bonjour, votre dossier est presque complet. Il nous manque seulement l'attestation de votre employeur. Vous pouvez nous l'envoyer par mail avant vendredi. Sans ce document, nous ne pourrons pas presenter votre dossier.",
+    "items": [
+      {
+        "question": "Quel document manque ?",
+        "options": ["Une attestation d'employeur", "Une piece d'identite", "Un justificatif de domicile"],
+        "bonne_reponse": "Une attestation d'employeur",
+        "explication": "La personne dit : il nous manque l'attestation de votre employeur."
+      }
+    ]
+  },
+  {
+    "code": "LOG-CO-A2-005",
+    "titre": "Etat des lieux - signaler un probleme",
+    "niveau_vise": "A2",
+    "difficulte": 3,
+    "sous_competence": "identifier_probleme",
+    "niveau_guidage": "semi_guide",
+    "outils_aide": ["lexique"],
+    "duree_estimee_min": 7,
+    "autonomie_requise": "moyenne",
+    "objectif_tcf": "comprendre_probleme_logement",
+    "contexte_irn": "etat_des_lieux",
+    "situation": "etat des lieux",
+    "consigne": "Ecoutez et choisissez le probleme signale.",
+    "script_audio": "Pendant l'etat des lieux, le locataire signale deux problemes. La fenetre de la chambre ferme mal et il y a une petite fuite sous l'evier de la cuisine. Le reste de l'appartement est en bon etat.",
+    "items": [
+      {
+        "question": "Quel probleme est signale ?",
+        "options": ["Une fuite sous l'evier", "Une porte d'entree cassee", "Un chauffage absent"],
+        "bonne_reponse": "Une fuite sous l'evier",
+        "explication": "Le message indique une petite fuite sous l'evier de la cuisine."
+      }
+    ]
+  },
+  {
+    "code": "LOG-CO-A2-006",
+    "titre": "Appel au proprietaire - panne de chauffage",
+    "niveau_vise": "A2",
+    "difficulte": 3,
+    "sous_competence": "comprendre_demande_simple",
+    "niveau_guidage": "semi_guide",
+    "outils_aide": ["modele_phrase"],
+    "duree_estimee_min": 7,
+    "autonomie_requise": "moyenne",
+    "objectif_tcf": "comprendre_demande_intervention",
+    "contexte_irn": "proprietaire",
+    "situation": "demande de document",
+    "consigne": "Ecoutez le message. Que demande la personne ?",
+    "script_audio": "Bonjour Monsieur, je vous appelle parce que le chauffage ne marche plus depuis hier soir. Il fait tres froid dans le salon. Pouvez-vous envoyer quelqu'un cette semaine pour regarder le radiateur ? Merci.",
+    "items": [
+      {
+        "question": "Que demande la personne ?",
+        "options": ["Une intervention pour le chauffage", "Une reduction du loyer", "Une nouvelle cle"],
+        "bonne_reponse": "Une intervention pour le chauffage",
+        "explication": "Elle demande d'envoyer quelqu'un pour regarder le radiateur."
+      }
+    ]
+  },
+  {
+    "code": "LOG-CO-B1-001",
+    "titre": "Agence immobiliere - conditions du dossier",
+    "niveau_vise": "B1",
+    "difficulte": 4,
+    "sous_competence": "comprendre_conditions",
+    "niveau_guidage": "semi_guide",
+    "outils_aide": ["criteres_reussite"],
+    "duree_estimee_min": 9,
+    "autonomie_requise": "moyenne",
+    "objectif_tcf": "comprendre_conditions_exception",
+    "contexte_irn": "agence_immo",
+    "situation": "message d'agence",
+    "consigne": "Ecoutez le message et choisissez la condition principale.",
+    "script_audio": "Pour deposer un dossier, il faut justifier de revenus au moins trois fois superieurs au loyer. Si vous n'avez pas cette condition, un garant peut etre accepte, mais il devra fournir les memes justificatifs que vous.",
+    "items": [
+      {
+        "question": "Quelle solution est proposee si les revenus sont insuffisants ?",
+        "options": ["Presenter un garant", "Payer six mois d'avance", "Changer d'agence"],
+        "bonne_reponse": "Presenter un garant",
+        "explication": "Le message dit qu'un garant peut etre accepte."
+      }
+    ]
+  },
+  {
+    "code": "LOG-CO-B1-002",
+    "titre": "Annonce vocale - comprendre une restriction",
+    "niveau_vise": "B1",
+    "difficulte": 4,
+    "sous_competence": "identifier_restriction",
+    "niveau_guidage": "semi_guide",
+    "outils_aide": ["transcription"],
+    "duree_estimee_min": 9,
+    "autonomie_requise": "moyenne",
+    "objectif_tcf": "inferer_condition",
+    "contexte_irn": "annonce_logement",
+    "situation": "annonce vocale",
+    "consigne": "Ecoutez l'annonce. Quelle restriction est mentionnee ?",
+    "script_audio": "Le studio est disponible immediatement et il est meuble. Il convient a une personne seule ou a un couple sans enfant. Les animaux ne sont pas acceptes, car l'immeuble a deja connu plusieurs problemes de bruit.",
+    "items": [
+      {
+        "question": "Quelle restriction est donnee dans l'annonce ?",
+        "options": ["Les animaux ne sont pas acceptes", "Le logement n'est pas meuble", "Le logement est reserve aux etudiants"],
+        "bonne_reponse": "Les animaux ne sont pas acceptes",
+        "explication": "L'annonce precise que les animaux ne sont pas acceptes."
+      }
+    ]
+  },
+  {
+    "code": "LOG-CO-B1-003",
+    "titre": "Visite de logement - comparer deux informations",
+    "niveau_vise": "B1",
+    "difficulte": 4,
+    "sous_competence": "comparer_informations",
+    "niveau_guidage": "autonome",
+    "outils_aide": ["criteres_reussite"],
+    "duree_estimee_min": 10,
+    "autonomie_requise": "forte",
+    "objectif_tcf": "comparer_infos_orales",
+    "contexte_irn": "visite_logement",
+    "situation": "rendez-vous visite",
+    "consigne": "Ecoutez. Quelle information est correcte ?",
+    "script_audio": "L'appartement fait 48 metres carres. La chambre donne sur la cour, donc elle est calme. En revanche, le salon donne sur l'avenue. Les fenetres sont recentes, mais on entend un peu la circulation aux heures de pointe.",
+    "items": [
+      {
+        "question": "Quelle phrase est correcte ?",
+        "options": ["La chambre est cote cour", "Le salon est tres silencieux", "Les fenetres sont anciennes"],
+        "bonne_reponse": "La chambre est cote cour",
+        "explication": "La chambre donne sur la cour, donc elle est calme."
+      }
+    ]
+  },
+  {
+    "code": "LOG-CO-B1-004",
+    "titre": "Etat des lieux - nuance sur la responsabilite",
+    "niveau_vise": "B1",
+    "difficulte": 4,
+    "sous_competence": "comprendre_responsabilite",
+    "niveau_guidage": "autonome",
+    "outils_aide": ["criteres_reussite"],
+    "duree_estimee_min": 10,
+    "autonomie_requise": "forte",
+    "objectif_tcf": "inferer_responsabilite",
+    "contexte_irn": "etat_des_lieux",
+    "situation": "etat des lieux",
+    "consigne": "Ecoutez et identifiez ce que l'agent va noter.",
+    "script_audio": "La rayure sur le parquet etait deja visible sur les photos de l'annonce. En revanche, la tache sur le mur de l'entree n'apparait pas dans l'ancien etat des lieux. Je vais donc la noter comme nouvelle observation.",
+    "items": [
+      {
+        "question": "Quelle observation sera notee comme nouvelle ?",
+        "options": ["La tache sur le mur", "La rayure sur le parquet", "Les photos de l'annonce"],
+        "bonne_reponse": "La tache sur le mur",
+        "explication": "L'agent dit que la tache n'apparait pas dans l'ancien etat des lieux."
+      }
+    ]
+  },
+  {
+    "code": "LOG-CO-B1-005",
+    "titre": "Dossier incomplet - comprendre la consequence",
+    "niveau_vise": "B1",
+    "difficulte": 4,
+    "sous_competence": "comprendre_consequence",
+    "niveau_guidage": "autonome",
+    "outils_aide": ["transcription"],
+    "duree_estimee_min": 9,
+    "autonomie_requise": "forte",
+    "objectif_tcf": "comprendre_consequence_administrative",
+    "contexte_irn": "dossier_location",
+    "situation": "demande de document",
+    "consigne": "Ecoutez le message. Quelle est la consequence si le document n'est pas envoye ?",
+    "script_audio": "Nous avons bien recu votre dossier, mais il manque encore l'avis d'imposition. Si vous ne nous l'envoyez pas avant lundi midi, votre candidature ne pourra pas etre transmise au proprietaire avec les autres dossiers.",
+    "items": [
+      {
+        "question": "Que se passera-t-il sans le document ?",
+        "options": ["Le dossier ne sera pas transmis", "Le loyer sera augmente", "La visite sera annulee"],
+        "bonne_reponse": "Le dossier ne sera pas transmis",
+        "explication": "Le message indique que la candidature ne pourra pas etre transmise."
+      }
+    ]
+  },
+  {
+    "code": "LOG-CO-B1-006",
+    "titre": "Proprietaire - delai d'intervention",
+    "niveau_vise": "B1",
+    "difficulte": 5,
+    "sous_competence": "comprendre_delai_et_priorite",
+    "niveau_guidage": "autonome",
+    "outils_aide": ["criteres_reussite"],
+    "duree_estimee_min": 10,
+    "autonomie_requise": "forte",
+    "objectif_tcf": "comprendre_priorite_intervention",
+    "contexte_irn": "proprietaire",
+    "situation": "demande de document",
+    "consigne": "Ecoutez. Quelle intervention sera faite en priorite ?",
+    "script_audio": "J'ai bien note vos deux demandes. Pour la peinture du couloir, il faudra attendre le mois prochain. En revanche, pour la fuite dans la salle de bain, j'appelle le plombier aujourd'hui, car cela peut abimer le logement.",
+    "items": [
+      {
+        "question": "Quelle intervention est prioritaire ?",
+        "options": ["La fuite dans la salle de bain", "La peinture du couloir", "Le changement de serrure"],
+        "bonne_reponse": "La fuite dans la salle de bain",
+        "explication": "Le proprietaire appelle le plombier aujourd'hui pour la fuite."
+      }
+    ]
+  },
+  {
+    "code": "LOG-CO-B2-001",
+    "titre": "Commission d'attribution - arbitrer un dossier",
+    "niveau_vise": "B2",
+    "difficulte": 5,
+    "sous_competence": "comprendre_argumentation",
+    "niveau_guidage": "autonome",
+    "outils_aide": ["criteres_reussite"],
+    "duree_estimee_min": 12,
+    "autonomie_requise": "forte",
+    "objectif_tcf": "identifier_argument_decisif",
+    "contexte_irn": "dossier_location",
+    "situation": "commission logement",
+    "consigne": "Ecoutez l'echange et identifiez l'argument decisif.",
+    "script_audio": "Le dossier de Madame Benali est incomplet sur un point administratif, mais ses revenus sont stables depuis trois ans et son employeur a transmis une attestation detaillee. L'autre candidat a un dossier parfaitement classe, cependant son contrat se termine dans deux mois. Pour limiter le risque d'impaye, je recommande de privilegier la stabilite professionnelle.",
+    "items": [
+      {
+        "question": "Quel argument pese le plus dans la decision ?",
+        "options": ["La stabilite professionnelle", "La presentation du dossier", "La date de visite"],
+        "bonne_reponse": "La stabilite professionnelle",
+        "explication": "La recommandation finale privilegie la stabilite professionnelle pour limiter le risque d'impaye."
+      }
+    ]
+  },
+  {
+    "code": "LOG-CO-B2-002",
+    "titre": "Reunion de copropriete - comprendre une position nuancee",
+    "niveau_vise": "B2",
+    "difficulte": 5,
+    "sous_competence": "identifier_position_nuancee",
+    "niveau_guidage": "autonome",
+    "outils_aide": ["criteres_reussite"],
+    "duree_estimee_min": 12,
+    "autonomie_requise": "forte",
+    "objectif_tcf": "comprendre_nuance_opinion",
+    "contexte_irn": "copropriete",
+    "situation": "reunion copropriete",
+    "consigne": "Ecoutez l'intervention. Quelle est la position de la personne ?",
+    "script_audio": "Je ne suis pas opposee au remplacement de la porte d'entree, surtout si cela ameliore la securite de l'immeuble. En revanche, je trouve premature de voter les travaux ce soir, car nous n'avons qu'un seul devis et aucune estimation des frais d'entretien. Je propose de reporter le vote au mois prochain.",
+    "items": [
+      {
+        "question": "Quelle position est exprimee ?",
+        "options": ["Elle accepte le principe mais veut reporter le vote", "Elle refuse tout changement de porte", "Elle veut voter les travaux immediatement"],
+        "bonne_reponse": "Elle accepte le principe mais veut reporter le vote",
+        "explication": "La personne n'est pas opposee au principe, mais demande de reporter le vote faute d'informations."
+      }
+    ]
+  },
+  {
+    "code": "LOG-CO-B2-003",
+    "titre": "Litige locatif - distinguer fait et interpretation",
+    "niveau_vise": "B2",
+    "difficulte": 5,
+    "sous_competence": "distinguer_fait_interpretation",
+    "niveau_guidage": "autonome",
+    "outils_aide": ["criteres_reussite"],
+    "duree_estimee_min": 13,
+    "autonomie_requise": "forte",
+    "objectif_tcf": "identifier_fait_et_consequence",
+    "contexte_irn": "litige_locatif",
+    "situation": "mediation locative",
+    "consigne": "Ecoutez. Quel fait est confirme par les deux parties ?",
+    "script_audio": "Le locataire affirme que l'humidite vient d'un probleme ancien dans le mur, tandis que le proprietaire pense que l'aeration quotidienne n'a pas ete suffisante. En revanche, les deux reconnaissent que les premieres traces sont apparues apres l'installation du nouveau meuble contre la paroi nord.",
+    "items": [
+      {
+        "question": "Quel fait est reconnu par les deux personnes ?",
+        "options": ["Les traces sont apparues apres l'installation du meuble", "Le mur avait deja un defaut ancien", "Le logement n'a jamais ete aere"],
+        "bonne_reponse": "Les traces sont apparues apres l'installation du meuble",
+        "explication": "Les deux parties reconnaissent ce fait, meme si elles interpretent differemment la cause."
+      }
+    ]
+  },
+  {
+    "code": "LOG-CO-B2-004",
+    "titre": "Renegociation de bail - comprendre une concession",
+    "niveau_vise": "B2",
+    "difficulte": 5,
+    "sous_competence": "comprendre_concession",
+    "niveau_guidage": "autonome",
+    "outils_aide": ["criteres_reussite"],
+    "duree_estimee_min": 12,
+    "autonomie_requise": "forte",
+    "objectif_tcf": "identifier_compromis",
+    "contexte_irn": "bail_location",
+    "situation": "negociation bail",
+    "consigne": "Ecoutez. Quel compromis est propose ?",
+    "script_audio": "Je comprends que l'augmentation du loyer vous mette en difficulte. Le proprietaire souhaite toutefois tenir compte des travaux realises dans l'immeuble. Il accepterait de limiter la hausse cette annee, a condition que la revision prevue au bail soit appliquee progressivement sur deux ans.",
+    "items": [
+      {
+        "question": "Quel compromis est propose ?",
+        "options": ["Limiter la hausse cette annee puis l'etaler", "Supprimer definitivement toute hausse", "Appliquer toute la hausse immediatement"],
+        "bonne_reponse": "Limiter la hausse cette annee puis l'etaler",
+        "explication": "La hausse serait limitee cette annee et appliquee progressivement sur deux ans."
+      }
+    ]
+  },
+  {
+    "code": "LOG-CO-B2-005",
+    "titre": "Assurance habitation - reperer une exclusion",
+    "niveau_vise": "B2",
+    "difficulte": 5,
+    "sous_competence": "identifier_exclusion_conditionnelle",
+    "niveau_guidage": "autonome",
+    "outils_aide": ["criteres_reussite"],
+    "duree_estimee_min": 12,
+    "autonomie_requise": "forte",
+    "objectif_tcf": "comprendre_condition_contractuelle",
+    "contexte_irn": "assurance_habitation",
+    "situation": "appel assurance",
+    "consigne": "Ecoutez. Dans quel cas l'assurance peut refuser la prise en charge ?",
+    "script_audio": "Votre contrat couvre les degats des eaux, y compris lorsqu'ils proviennent d'un appartement voisin. En revanche, si l'expert constate que vous avez tarde a declarer le sinistre ou que vous avez laisse la fuite s'aggraver sans intervention, une partie de l'indemnisation peut etre refusee.",
+    "items": [
+      {
+        "question": "Quel motif peut limiter l'indemnisation ?",
+        "options": ["Une declaration tardive ou une aggravation non traitee", "Un degat venant du voisin", "La presence d'un expert"],
+        "bonne_reponse": "Une declaration tardive ou une aggravation non traitee",
+        "explication": "L'assurance peut refuser une partie de l'indemnisation si le sinistre est declare trop tard ou aggrave."
+      }
+    ]
+  },
+  {
+    "code": "LOG-CO-B2-006",
+    "titre": "Priorisation travaux - inferer une decision collective",
+    "niveau_vise": "B2",
+    "difficulte": 5,
+    "sous_competence": "inferer_decision_collective",
+    "niveau_guidage": "autonome",
+    "outils_aide": ["criteres_reussite"],
+    "duree_estimee_min": 13,
+    "autonomie_requise": "forte",
+    "objectif_tcf": "synthese_orale_decision",
+    "contexte_irn": "travaux_logement",
+    "situation": "reunion copropriete",
+    "consigne": "Ecoutez. Quelle decision semble la plus probable ?",
+    "script_audio": "Plusieurs residents souhaitent repeindre les parties communes, mais le syndic rappelle que l'ascenseur a connu trois pannes en deux mois et que le contrat de maintenance arrive a expiration. Comme le budget ne permet pas de financer les deux projets cette annee, la majorite semble vouloir traiter d'abord le probleme de securite.",
+    "items": [
+      {
+        "question": "Quelle decision est la plus probable ?",
+        "options": ["Prioriser l'ascenseur", "Repeindre les parties communes", "Reporter tous les travaux"],
+        "bonne_reponse": "Prioriser l'ascenseur",
+        "explication": "La majorite semble vouloir traiter d'abord le probleme de securite lie a l'ascenseur."
+      }
+    ]
+  }
+]
