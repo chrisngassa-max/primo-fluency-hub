@@ -12,6 +12,7 @@
     "test": "vitest run",
     "import:pedagogical-activities": "node scripts/import-pedagogical-activities.mjs",
     "import:pedagogical-documents": "node scripts/import-pedagogical-documents.mjs",
+    "import:text-documents": "node scripts/import-text-documents.mjs",
     "test:watch": "vitest"
   },
   "dependencies": {
