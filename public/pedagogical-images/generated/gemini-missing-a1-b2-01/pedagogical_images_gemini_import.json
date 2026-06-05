@@ -1,0 +1,660 @@
+{
+  "batch": "gemini-missing-a1-b2-01",
+  "generated_at": "2026-06-05T23:26:48.555Z",
+  "source_plan": "C:\\Users\\Sofiane\\Documents\\New project\\primo-fluency-hub\\scripts\\pedagogical-image-generation-plan.json",
+  "images": [
+    {
+      "import_key": "gemini:convocation-mairie-a1-ce-01",
+      "title": "Convocation fictive a la mairie",
+      "description": "Document fictif simple indiquant un rendez-vous a la mairie avec date, heure et piece a apporter.",
+      "alt_text": "Convocation fictive avec rendez-vous a la mairie lundi a 10 h",
+      "storage_path": "generated/gemini-missing-a1-b2-01/convocation-mairie-a1-ce-01.png",
+      "source": "Gemini / Nano Banana",
+      "license": "Generated image - internal pedagogical use",
+      "attribution": "Generated with Gemini API",
+      "author": "Gemini / Nano Banana",
+      "level_tags": [
+        "A1",
+        "A2"
+      ],
+      "skill_tags": [
+        "CE",
+        "EE"
+      ],
+      "theme_tags": [
+        "administration",
+        "mairie",
+        "rendez-vous",
+        "document"
+      ],
+      "pedagogical_tags": [
+        "document-fictif",
+        "lecture-simple",
+        "date-heure",
+        "TCF-IRN"
+      ],
+      "language_level": "A1",
+      "recommended_exercise_types": [
+        "QCM",
+        "reperage-informations",
+        "message-court"
+      ],
+      "quality_score": 5,
+      "pedagogical_relevance_score": 5,
+      "rejected": false,
+      "generation_model": "gemini-2.5-flash-image",
+      "generation_prompt": "Create a realistic photo of a simple fictitious French administrative letter on a table. The document must be clearly marked \"DOCUMENT FICTIF\". Visible short French text only: \"Convocation\", \"Mairie\", \"Rendez-vous lundi a 10 h\", \"Apportez une piece d'identite\". No real logo, no real personal data, no official emblem, no real address. Documentary realistic style, natural light, horizontal 16:9.\n\nPedagogical constraints:\n- Use realistic documentary photography, suitable for adult FLE / TCF IRN exercises.\n- Avoid brands, watermarks, official emblems, real addresses, real phone numbers, real names, and real personal data.\n- If text is visible, keep it short, simple, and intentionally fictitious.\n- Prefer clear composition, natural light, and a horizontal 16:9 frame unless the scene explicitly requires otherwise."
+    },
+    {
+      "import_key": "gemini:sms-rendez-vous-prefecture-a1-ce-01",
+      "title": "SMS fictif de rendez-vous a la prefecture",
+      "description": "Ecran de telephone avec un SMS fictif confirmant un rendez-vous administratif.",
+      "alt_text": "SMS fictif indiquant un rendez-vous a la prefecture mardi a 14 h",
+      "storage_path": "generated/gemini-missing-a1-b2-01/sms-rendez-vous-prefecture-a1-ce-01.png",
+      "source": "Gemini / Nano Banana",
+      "license": "Generated image - internal pedagogical use",
+      "attribution": "Generated with Gemini API",
+      "author": "Gemini / Nano Banana",
+      "level_tags": [
+        "A1",
+        "A2"
+      ],
+      "skill_tags": [
+        "CE"
+      ],
+      "theme_tags": [
+        "administration",
+        "prefecture",
+        "rendez-vous",
+        "telephone"
+      ],
+      "pedagogical_tags": [
+        "document-fictif",
+        "SMS",
+        "date-heure",
+        "lecture-simple"
+      ],
+      "language_level": "A1",
+      "recommended_exercise_types": [
+        "QCM",
+        "reperage-informations"
+      ],
+      "quality_score": 5,
+      "pedagogical_relevance_score": 5,
+      "rejected": false,
+      "generation_model": "gemini-2.5-flash-image",
+      "generation_prompt": "Create a realistic close-up photo of a smartphone showing a fictitious SMS in French. Text must be short and readable: \"Prefecture: rendez-vous mardi a 14 h. Apportez votre dossier.\" Add \"Message fictif\" small at bottom. No real logo, no real phone number, no personal data. Simple A1 reading support, horizontal 16:9.\n\nPedagogical constraints:\n- Use realistic documentary photography, suitable for adult FLE / TCF IRN exercises.\n- Avoid brands, watermarks, official emblems, real addresses, real phone numbers, real names, and real personal data.\n- If text is visible, keep it short, simple, and intentionally fictitious.\n- Prefer clear composition, natural light, and a horizontal 16:9 frame unless the scene explicitly requires otherwise."
+    },
+    {
+      "import_key": "gemini:horaire-bus-a1-ce-01",
+      "title": "Horaires fictifs de bus",
+      "description": "Panneau d'horaires de bus fictif avec trois departs simples.",
+      "alt_text": "Panneau d'horaires de bus avec departs a 8 h 15, 9 h 00 et 10 h 30",
+      "storage_path": "generated/gemini-missing-a1-b2-01/horaire-bus-a1-ce-01.png",
+      "source": "Gemini / Nano Banana",
+      "license": "Generated image - internal pedagogical use",
+      "attribution": "Generated with Gemini API",
+      "author": "Gemini / Nano Banana",
+      "level_tags": [
+        "A1",
+        "A2"
+      ],
+      "skill_tags": [
+        "CE",
+        "CO"
+      ],
+      "theme_tags": [
+        "transports",
+        "bus",
+        "horaires",
+        "ville"
+      ],
+      "pedagogical_tags": [
+        "document-fictif",
+        "horaire",
+        "lecture-simple",
+        "TCF-IRN"
+      ],
+      "language_level": "A1",
+      "recommended_exercise_types": [
+        "QCM",
+        "reperage-informations"
+      ],
+      "quality_score": 5,
+      "pedagogical_relevance_score": 5,
+      "rejected": false,
+      "generation_model": "gemini-2.5-flash-image",
+      "generation_prompt": "Create a realistic photo of a simple bus stop timetable poster, fictitious. Readable French text: \"Ligne 12\", \"Depart: 8 h 15, 9 h 00, 10 h 30\", \"Direction: Centre-ville\". No real transport logo, no real map. Clean documentary style, horizontal 16:9.\n\nPedagogical constraints:\n- Use realistic documentary photography, suitable for adult FLE / TCF IRN exercises.\n- Avoid brands, watermarks, official emblems, real addresses, real phone numbers, real names, and real personal data.\n- If text is visible, keep it short, simple, and intentionally fictitious.\n- Prefer clear composition, natural light, and a horizontal 16:9 frame unless the scene explicitly requires otherwise."
+    },
+    {
+      "import_key": "gemini:affiche-pharmacie-horaires-a1-ce-01",
+      "title": "Affiche fictive d'horaires de pharmacie",
+      "description": "Affiche simple de pharmacie avec horaires et consigne de venir avec une ordonnance.",
+      "alt_text": "Affiche fictive indiquant les horaires d'une pharmacie",
+      "storage_path": "generated/gemini-missing-a1-b2-01/affiche-pharmacie-horaires-a1-ce-01.png",
+      "source": "Gemini / Nano Banana",
+      "license": "Generated image - internal pedagogical use",
+      "attribution": "Generated with Gemini API",
+      "author": "Gemini / Nano Banana",
+      "level_tags": [
+        "A1",
+        "A2"
+      ],
+      "skill_tags": [
+        "CE"
+      ],
+      "theme_tags": [
+        "sante",
+        "pharmacie",
+        "horaires",
+        "document"
+      ],
+      "pedagogical_tags": [
+        "document-fictif",
+        "horaire",
+        "sante",
+        "lecture-simple"
+      ],
+      "language_level": "A1",
+      "recommended_exercise_types": [
+        "QCM",
+        "reperage-informations"
+      ],
+      "quality_score": 5,
+      "pedagogical_relevance_score": 5,
+      "rejected": false,
+      "generation_model": "gemini-2.5-flash-image",
+      "generation_prompt": "Create a realistic photo of a simple fictitious pharmacy hours sign on a door. Text in French: \"Pharmacie\", \"Ouvert 9 h - 18 h\", \"Ferme dimanche\", \"Ordonnance obligatoire\". No real logo, no real address, no official symbol. Horizontal 16:9.\n\nPedagogical constraints:\n- Use realistic documentary photography, suitable for adult FLE / TCF IRN exercises.\n- Avoid brands, watermarks, official emblems, real addresses, real phone numbers, real names, and real personal data.\n- If text is visible, keep it short, simple, and intentionally fictitious.\n- Prefer clear composition, natural light, and a horizontal 16:9 frame unless the scene explicitly requires otherwise."
+    },
+    {
+      "import_key": "gemini:formulaire-inscription-cours-a2-ee-01",
+      "title": "Formulaire fictif d'inscription a un cours",
+      "description": "Formulaire d'inscription simple pour un cours de francais, avec champs nom, telephone, niveau et disponibilites.",
+      "alt_text": "Formulaire fictif d'inscription a un cours de francais",
+      "storage_path": "generated/gemini-missing-a1-b2-01/formulaire-inscription-cours-a2-ee-01.png",
+      "source": "Gemini / Nano Banana",
+      "license": "Generated image - internal pedagogical use",
+      "attribution": "Generated with Gemini API",
+      "author": "Gemini / Nano Banana",
+      "level_tags": [
+        "A2",
+        "B1"
+      ],
+      "skill_tags": [
+        "EE",
+        "CE"
+      ],
+      "theme_tags": [
+        "formation",
+        "administration",
+        "formulaire"
+      ],
+      "pedagogical_tags": [
+        "document-fictif",
+        "formulaire",
+        "production-ecrite",
+        "TCF-IRN"
+      ],
+      "language_level": "A2",
+      "recommended_exercise_types": [
+        "remplir-formulaire",
+        "production-ecrite-courte"
+      ],
+      "quality_score": 5,
+      "pedagogical_relevance_score": 5,
+      "rejected": false,
+      "generation_model": "gemini-2.5-flash-image",
+      "generation_prompt": "Create a realistic top-down photo of a fictitious French course registration form on a desk, with a pen. Readable fields: \"Inscription cours de francais\", \"Nom\", \"Telephone\", \"Niveau\", \"Disponibilites\". Mark it \"DOCUMENT FICTIF\". No real logo, no personal data. Horizontal 16:9.\n\nPedagogical constraints:\n- Use realistic documentary photography, suitable for adult FLE / TCF IRN exercises.\n- Avoid brands, watermarks, official emblems, real addresses, real phone numbers, real names, and real personal data.\n- If text is visible, keep it short, simple, and intentionally fictitious.\n- Prefer clear composition, natural light, and a horizontal 16:9 frame unless the scene explicitly requires otherwise."
+    },
+    {
+      "import_key": "gemini:mail-annulation-rendez-vous-a2-ce-01",
+      "title": "Mail fictif d'annulation de rendez-vous",
+      "description": "Capture d'un courriel fictif annulant un rendez-vous et proposant une nouvelle date.",
+      "alt_text": "Mail fictif indiquant un rendez-vous annule et une nouvelle date",
+      "storage_path": "generated/gemini-missing-a1-b2-01/mail-annulation-rendez-vous-a2-ce-01.png",
+      "source": "Gemini / Nano Banana",
+      "license": "Generated image - internal pedagogical use",
+      "attribution": "Generated with Gemini API",
+      "author": "Gemini / Nano Banana",
+      "level_tags": [
+        "A2",
+        "B1"
+      ],
+      "skill_tags": [
+        "CE",
+        "EE"
+      ],
+      "theme_tags": [
+        "administration",
+        "email",
+        "rendez-vous"
+      ],
+      "pedagogical_tags": [
+        "document-fictif",
+        "email",
+        "lecture",
+        "production-reponse"
+      ],
+      "language_level": "A2",
+      "recommended_exercise_types": [
+        "QCM",
+        "repondre-a-un-mail",
+        "reperage-informations"
+      ],
+      "quality_score": 5,
+      "pedagogical_relevance_score": 5,
+      "rejected": false,
+      "generation_model": "gemini-2.5-flash-image",
+      "generation_prompt": "Create a realistic laptop screen showing a fictitious email in French. Text: \"Objet: Rendez-vous annule\", \"Bonjour, votre rendez-vous de jeudi est annule. Nouveau rendez-vous: vendredi a 9 h.\" Add \"message fictif\". No real email address, no real logo. Horizontal 16:9.\n\nPedagogical constraints:\n- Use realistic documentary photography, suitable for adult FLE / TCF IRN exercises.\n- Avoid brands, watermarks, official emblems, real addresses, real phone numbers, real names, and real personal data.\n- If text is visible, keep it short, simple, and intentionally fictitious.\n- Prefer clear composition, natural light, and a horizontal 16:9 frame unless the scene explicitly requires otherwise."
+    },
+    {
+      "import_key": "gemini:facture-simple-logement-a2-ce-01",
+      "title": "Facture fictive de logement",
+      "description": "Facture fictive simple avec montant, date limite et objet du paiement.",
+      "alt_text": "Facture fictive avec montant a payer et date limite",
+      "storage_path": "generated/gemini-missing-a1-b2-01/facture-simple-logement-a2-ce-01.png",
+      "source": "Gemini / Nano Banana",
+      "license": "Generated image - internal pedagogical use",
+      "attribution": "Generated with Gemini API",
+      "author": "Gemini / Nano Banana",
+      "level_tags": [
+        "A2",
+        "B1"
+      ],
+      "skill_tags": [
+        "CE",
+        "EE"
+      ],
+      "theme_tags": [
+        "logement",
+        "facture",
+        "document",
+        "budget"
+      ],
+      "pedagogical_tags": [
+        "document-fictif",
+        "lecture",
+        "montant",
+        "date-limite"
+      ],
+      "language_level": "A2",
+      "recommended_exercise_types": [
+        "QCM",
+        "reperage-informations",
+        "message-court"
+      ],
+      "quality_score": 5,
+      "pedagogical_relevance_score": 5,
+      "rejected": false,
+      "generation_model": "gemini-2.5-flash-image",
+      "generation_prompt": "Create a realistic photo of a fictitious housing bill on a kitchen table. Readable French text: \"Facture logement\", \"Montant: 48 euros\", \"A payer avant le 15 juin\", \"DOCUMENT FICTIF\". No real company name, no real address, no logo. Horizontal 16:9.\n\nPedagogical constraints:\n- Use realistic documentary photography, suitable for adult FLE / TCF IRN exercises.\n- Avoid brands, watermarks, official emblems, real addresses, real phone numbers, real names, and real personal data.\n- If text is visible, keep it short, simple, and intentionally fictitious.\n- Prefer clear composition, natural light, and a horizontal 16:9 frame unless the scene explicitly requires otherwise."
+    },
+    {
+      "import_key": "gemini:annonce-emploi-simple-a2-ce-01",
+      "title": "Annonce d'emploi fictive simple",
+      "description": "Annonce d'emploi fictive pour un poste simple avec horaires, lieu et contact.",
+      "alt_text": "Annonce d'emploi fictive pour un poste d'agent de nettoyage",
+      "storage_path": "generated/gemini-missing-a1-b2-01/annonce-emploi-simple-a2-ce-01.png",
+      "source": "Gemini / Nano Banana",
+      "license": "Generated image - internal pedagogical use",
+      "attribution": "Generated with Gemini API",
+      "author": "Gemini / Nano Banana",
+      "level_tags": [
+        "A2",
+        "B1"
+      ],
+      "skill_tags": [
+        "CE",
+        "EE"
+      ],
+      "theme_tags": [
+        "travail",
+        "emploi",
+        "annonce"
+      ],
+      "pedagogical_tags": [
+        "document-fictif",
+        "annonce",
+        "lecture",
+        "emploi"
+      ],
+      "language_level": "A2",
+      "recommended_exercise_types": [
+        "QCM",
+        "repondre-a-une-annonce",
+        "message-court"
+      ],
+      "quality_score": 5,
+      "pedagogical_relevance_score": 5,
+      "rejected": false,
+      "generation_model": "gemini-2.5-flash-image",
+      "generation_prompt": "Create a realistic photo of a simple fictitious job ad on a notice board. Readable French text: \"Offre d'emploi\", \"Agent de nettoyage\", \"Lundi au vendredi\", \"8 h - 12 h\", \"Contact: agence fictive\". No real logo, no real phone number. Horizontal 16:9.\n\nPedagogical constraints:\n- Use realistic documentary photography, suitable for adult FLE / TCF IRN exercises.\n- Avoid brands, watermarks, official emblems, real addresses, real phone numbers, real names, and real personal data.\n- If text is visible, keep it short, simple, and intentionally fictitious.\n- Prefer clear composition, natural light, and a horizontal 16:9 frame unless the scene explicitly requires otherwise."
+    },
+    {
+      "import_key": "gemini:planning-formation-b1-ce-01",
+      "title": "Planning fictif de formation",
+      "description": "Planning hebdomadaire fictif de formation avec seances, horaires et salle.",
+      "alt_text": "Planning de formation avec cours lundi, mercredi et vendredi",
+      "storage_path": "generated/gemini-missing-a1-b2-01/planning-formation-b1-ce-01.png",
+      "source": "Gemini / Nano Banana",
+      "license": "Generated image - internal pedagogical use",
+      "attribution": "Generated with Gemini API",
+      "author": "Gemini / Nano Banana",
+      "level_tags": [
+        "B1",
+        "B2"
+      ],
+      "skill_tags": [
+        "CE",
+        "EE"
+      ],
+      "theme_tags": [
+        "formation",
+        "planning",
+        "organisation"
+      ],
+      "pedagogical_tags": [
+        "document-fictif",
+        "planning",
+        "lecture-detaillee"
+      ],
+      "language_level": "B1",
+      "recommended_exercise_types": [
+        "QCM",
+        "reperage-informations",
+        "synthese-courte"
+      ],
+      "quality_score": 5,
+      "pedagogical_relevance_score": 5,
+      "rejected": false,
+      "generation_model": "gemini-2.5-flash-image",
+      "generation_prompt": "Create a realistic photo of a fictitious weekly training schedule printed on paper. Readable French text: \"Planning formation\", \"Lundi 9 h: francais\", \"Mercredi 14 h: atelier emploi\", \"Vendredi 10 h: rendez-vous individuel\", \"Salle 3\". No real logo. Horizontal 16:9.\n\nPedagogical constraints:\n- Use realistic documentary photography, suitable for adult FLE / TCF IRN exercises.\n- Avoid brands, watermarks, official emblems, real addresses, real phone numbers, real names, and real personal data.\n- If text is visible, keep it short, simple, and intentionally fictitious.\n- Prefer clear composition, natural light, and a horizontal 16:9 frame unless the scene explicitly requires otherwise."
+    },
+    {
+      "import_key": "gemini:courrier-caf-fictif-b1-ce-01",
+      "title": "Courrier fictif d'organisme social",
+      "description": "Courrier administratif fictif demandant des justificatifs avant une date limite.",
+      "alt_text": "Courrier fictif demandant des justificatifs avant le 20 juin",
+      "storage_path": "generated/gemini-missing-a1-b2-01/courrier-caf-fictif-b1-ce-01.png",
+      "source": "Gemini / Nano Banana",
+      "license": "Generated image - internal pedagogical use",
+      "attribution": "Generated with Gemini API",
+      "author": "Gemini / Nano Banana",
+      "level_tags": [
+        "B1",
+        "B2"
+      ],
+      "skill_tags": [
+        "CE",
+        "EE"
+      ],
+      "theme_tags": [
+        "administration",
+        "aides-sociales",
+        "document"
+      ],
+      "pedagogical_tags": [
+        "document-fictif",
+        "justificatifs",
+        "lecture-detaillee"
+      ],
+      "language_level": "B1",
+      "recommended_exercise_types": [
+        "QCM",
+        "repondre-a-un-courrier",
+        "synthese-courte"
+      ],
+      "quality_score": 5,
+      "pedagogical_relevance_score": 5,
+      "rejected": false,
+      "generation_model": "gemini-2.5-flash-image",
+      "generation_prompt": "Create a realistic photo of a fictitious social services letter on a desk. Do not use any real CAF logo or official emblem. Text: \"Organisme social fictif\", \"Merci d'envoyer vos justificatifs avant le 20 juin\", \"DOCUMENT FICTIF\". No real personal data. Horizontal 16:9.\n\nPedagogical constraints:\n- Use realistic documentary photography, suitable for adult FLE / TCF IRN exercises.\n- Avoid brands, watermarks, official emblems, real addresses, real phone numbers, real names, and real personal data.\n- If text is visible, keep it short, simple, and intentionally fictitious.\n- Prefer clear composition, natural light, and a horizontal 16:9 frame unless the scene explicitly requires otherwise."
+    },
+    {
+      "import_key": "gemini:reunion-parents-ecole-b1-eo-01",
+      "title": "Rendez-vous a l'ecole",
+      "description": "Scene realiste d'un rendez-vous entre un parent et un membre de l'equipe scolaire.",
+      "alt_text": "Parent assis avec une enseignante dans une salle de classe",
+      "storage_path": "generated/gemini-missing-a1-b2-01/reunion-parents-ecole-b1-eo-01.png",
+      "source": "Gemini / Nano Banana",
+      "license": "Generated image - internal pedagogical use",
+      "attribution": "Generated with Gemini API",
+      "author": "Gemini / Nano Banana",
+      "level_tags": [
+        "B1",
+        "B2"
+      ],
+      "skill_tags": [
+        "EO",
+        "CO",
+        "EE"
+      ],
+      "theme_tags": [
+        "ecole",
+        "famille",
+        "rendez-vous"
+      ],
+      "pedagogical_tags": [
+        "mise-en-situation",
+        "dialogue",
+        "argumentation-simple"
+      ],
+      "language_level": "B1",
+      "recommended_exercise_types": [
+        "jeu-de-role",
+        "dialogue",
+        "compte-rendu"
+      ],
+      "quality_score": 5,
+      "pedagogical_relevance_score": 5,
+      "rejected": false,
+      "generation_model": "gemini-2.5-flash-image",
+      "generation_prompt": "Create a realistic documentary photo of a parent meeting a teacher in an adult-friendly classroom setting. No children close-up, no school logo, no real names. Natural light, simple scene for French language learning. Horizontal 16:9.\n\nPedagogical constraints:\n- Use realistic documentary photography, suitable for adult FLE / TCF IRN exercises.\n- Avoid brands, watermarks, official emblems, real addresses, real phone numbers, real names, and real personal data.\n- If text is visible, keep it short, simple, and intentionally fictitious.\n- Prefer clear composition, natural light, and a horizontal 16:9 frame unless the scene explicitly requires otherwise."
+    },
+    {
+      "import_key": "gemini:debat-logement-voisinage-b2-eo-01",
+      "title": "Discussion sur un probleme de voisinage",
+      "description": "Deux adultes discutent calmement d'un probleme de bruit ou de logement dans un immeuble.",
+      "alt_text": "Deux adultes discutent dans le hall d'un immeuble",
+      "storage_path": "generated/gemini-missing-a1-b2-01/debat-logement-voisinage-b2-eo-01.png",
+      "source": "Gemini / Nano Banana",
+      "license": "Generated image - internal pedagogical use",
+      "attribution": "Generated with Gemini API",
+      "author": "Gemini / Nano Banana",
+      "level_tags": [
+        "B1",
+        "B2"
+      ],
+      "skill_tags": [
+        "EO",
+        "EE"
+      ],
+      "theme_tags": [
+        "logement",
+        "voisinage",
+        "probleme"
+      ],
+      "pedagogical_tags": [
+        "argumentation",
+        "mise-en-situation",
+        "plainte",
+        "TCF-IRN"
+      ],
+      "language_level": "B2",
+      "recommended_exercise_types": [
+        "argumentation-orale",
+        "lettre-de-reclamation",
+        "jeu-de-role"
+      ],
+      "quality_score": 5,
+      "pedagogical_relevance_score": 5,
+      "rejected": false,
+      "generation_model": "gemini-2.5-flash-image",
+      "generation_prompt": "Create a realistic photo of two adults discussing calmly in the entrance hall of an apartment building, suggesting a neighborhood or noise problem. No aggression, no logos, no identifiable text. Suitable for B2 oral argumentation and written complaint. Horizontal 16:9.\n\nPedagogical constraints:\n- Use realistic documentary photography, suitable for adult FLE / TCF IRN exercises.\n- Avoid brands, watermarks, official emblems, real addresses, real phone numbers, real names, and real personal data.\n- If text is visible, keep it short, simple, and intentionally fictitious.\n- Prefer clear composition, natural light, and a horizontal 16:9 frame unless the scene explicitly requires otherwise."
+    },
+    {
+      "import_key": "gemini:reunion-travail-desaccord-b2-eo-01",
+      "title": "Reunion de travail avec desaccord",
+      "description": "Scene de reunion professionnelle ou deux personnes debattent calmement autour d'un document.",
+      "alt_text": "Deux collegues discutent autour d'un document en reunion",
+      "storage_path": "generated/gemini-missing-a1-b2-01/reunion-travail-desaccord-b2-eo-01.png",
+      "source": "Gemini / Nano Banana",
+      "license": "Generated image - internal pedagogical use",
+      "attribution": "Generated with Gemini API",
+      "author": "Gemini / Nano Banana",
+      "level_tags": [
+        "B1",
+        "B2"
+      ],
+      "skill_tags": [
+        "EO",
+        "EE"
+      ],
+      "theme_tags": [
+        "travail",
+        "reunion",
+        "argumentation"
+      ],
+      "pedagogical_tags": [
+        "argumentation",
+        "debat",
+        "synthese",
+        "vie-professionnelle"
+      ],
+      "language_level": "B2",
+      "recommended_exercise_types": [
+        "argumentation-orale",
+        "mail-professionnel",
+        "synthese-courte"
+      ],
+      "quality_score": 5,
+      "pedagogical_relevance_score": 5,
+      "rejected": false,
+      "generation_model": "gemini-2.5-flash-image",
+      "generation_prompt": "Create a realistic office meeting photo with two adults discussing a document calmly, suggesting a professional disagreement. No company logo, no readable real data. Documentary natural style, horizontal 16:9.\n\nPedagogical constraints:\n- Use realistic documentary photography, suitable for adult FLE / TCF IRN exercises.\n- Avoid brands, watermarks, official emblems, real addresses, real phone numbers, real names, and real personal data.\n- If text is visible, keep it short, simple, and intentionally fictitious.\n- Prefer clear composition, natural light, and a horizontal 16:9 frame unless the scene explicitly requires otherwise."
+    },
+    {
+      "import_key": "gemini:affiche-reunion-quartier-b2-ce-01",
+      "title": "Affiche fictive de reunion de quartier",
+      "description": "Affiche fictive invitant les habitants a une reunion sur les transports et la securite.",
+      "alt_text": "Affiche fictive de reunion de quartier sur les transports",
+      "storage_path": "generated/gemini-missing-a1-b2-01/affiche-reunion-quartier-b2-ce-01.png",
+      "source": "Gemini / Nano Banana",
+      "license": "Generated image - internal pedagogical use",
+      "attribution": "Generated with Gemini API",
+      "author": "Gemini / Nano Banana",
+      "level_tags": [
+        "B1",
+        "B2"
+      ],
+      "skill_tags": [
+        "CE",
+        "EE",
+        "EO"
+      ],
+      "theme_tags": [
+        "ville",
+        "citoyennete",
+        "transports",
+        "reunion"
+      ],
+      "pedagogical_tags": [
+        "document-fictif",
+        "argumentation",
+        "lecture-detaillee"
+      ],
+      "language_level": "B2",
+      "recommended_exercise_types": [
+        "QCM",
+        "argumentation-orale",
+        "mail-d-opinion"
+      ],
+      "quality_score": 5,
+      "pedagogical_relevance_score": 5,
+      "rejected": false,
+      "generation_model": "gemini-2.5-flash-image",
+      "generation_prompt": "Create a realistic photo of a fictitious neighborhood meeting poster on a community board. Text in French: \"Reunion de quartier\", \"Transports et securite\", \"Jeudi 18 h\", \"Salle municipale\", \"Affiche fictive\". No official logo, no real address. Horizontal 16:9.\n\nPedagogical constraints:\n- Use realistic documentary photography, suitable for adult FLE / TCF IRN exercises.\n- Avoid brands, watermarks, official emblems, real addresses, real phone numbers, real names, and real personal data.\n- If text is visible, keep it short, simple, and intentionally fictitious.\n- Prefer clear composition, natural light, and a horizontal 16:9 frame unless the scene explicitly requires otherwise."
+    },
+    {
+      "import_key": "gemini:article-court-ville-b2-ce-01",
+      "title": "Article fictif sur un changement en ville",
+      "description": "Court article fictif sur un changement d'horaires ou une nouvelle organisation dans la ville.",
+      "alt_text": "Article fictif sur une nouvelle organisation des transports",
+      "storage_path": "generated/gemini-missing-a1-b2-01/article-court-ville-b2-ce-01.png",
+      "source": "Gemini / Nano Banana",
+      "license": "Generated image - internal pedagogical use",
+      "attribution": "Generated with Gemini API",
+      "author": "Gemini / Nano Banana",
+      "level_tags": [
+        "B1",
+        "B2"
+      ],
+      "skill_tags": [
+        "CE",
+        "EE"
+      ],
+      "theme_tags": [
+        "ville",
+        "transports",
+        "information"
+      ],
+      "pedagogical_tags": [
+        "document-fictif",
+        "article",
+        "lecture-detaillee",
+        "argumentation"
+      ],
+      "language_level": "B2",
+      "recommended_exercise_types": [
+        "QCM",
+        "resume",
+        "donner-son-avis"
+      ],
+      "quality_score": 5,
+      "pedagogical_relevance_score": 5,
+      "rejected": false,
+      "generation_model": "gemini-2.5-flash-image",
+      "generation_prompt": "Create a realistic photo of a fictitious short local news article printed on paper. Text in French: \"Nouveaux horaires de transport\", \"La ville adapte les lignes de bus\", \"Les habitants donnent leur avis\", \"Article fictif\". No real newspaper logo, no real city name. Horizontal 16:9.\n\nPedagogical constraints:\n- Use realistic documentary photography, suitable for adult FLE / TCF IRN exercises.\n- Avoid brands, watermarks, official emblems, real addresses, real phone numbers, real names, and real personal data.\n- If text is visible, keep it short, simple, and intentionally fictitious.\n- Prefer clear composition, natural light, and a horizontal 16:9 frame unless the scene explicitly requires otherwise."
+    },
+    {
+      "import_key": "gemini:ordonnance-fictive-a2-ce-01",
+      "title": "Ordonnance medicale fictive",
+      "description": "Ordonnance fictive simple avec consignes de prise de medicament.",
+      "alt_text": "Ordonnance fictive avec medicament matin et soir pendant cinq jours",
+      "storage_path": "generated/gemini-missing-a1-b2-01/ordonnance-fictive-a2-ce-01.png",
+      "source": "Gemini / Nano Banana",
+      "license": "Generated image - internal pedagogical use",
+      "attribution": "Generated with Gemini API",
+      "author": "Gemini / Nano Banana",
+      "level_tags": [
+        "A2",
+        "B1"
+      ],
+      "skill_tags": [
+        "CE"
+      ],
+      "theme_tags": [
+        "sante",
+        "medecin",
+        "pharmacie",
+        "document"
+      ],
+      "pedagogical_tags": [
+        "document-fictif",
+        "sante",
+        "consignes",
+        "lecture"
+      ],
+      "language_level": "A2",
+      "recommended_exercise_types": [
+        "QCM",
+        "reperage-informations"
+      ],
+      "quality_score": 5,
+      "pedagogical_relevance_score": 5,
+      "rejected": false,
+      "generation_model": "gemini-2.5-flash-image",
+      "generation_prompt": "Create a realistic photo of a fictitious medical prescription on a desk. Text in French: \"Ordonnance fictive\", \"Prendre 1 comprime matin et soir\", \"Pendant 5 jours\". No real doctor name, no real number, no official logo. Horizontal 16:9.\n\nPedagogical constraints:\n- Use realistic documentary photography, suitable for adult FLE / TCF IRN exercises.\n- Avoid brands, watermarks, official emblems, real addresses, real phone numbers, real names, and real personal data.\n- If text is visible, keep it short, simple, and intentionally fictitious.\n- Prefer clear composition, natural light, and a horizontal 16:9 frame unless the scene explicitly requires otherwise."
+    }
+  ]
+}

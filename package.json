@@ -12,7 +12,9 @@
     "test": "vitest run",
     "import:pedagogical-activities": "node scripts/import-pedagogical-activities.mjs",
     "import:pedagogical-documents": "node scripts/import-pedagogical-documents.mjs",
+    "import:pedagogical-images": "node scripts/import-pedagogical-images.mjs",
     "import:text-documents": "node scripts/import-text-documents.mjs",
+    "generate:pedagogical-images": "node scripts/generate-pedagogical-images-gemini.mjs",
     "test:watch": "vitest"
   },
   "dependencies": {
