@@ -155,7 +155,7 @@ export function validateSessionTemplateV4(template: SessionTemplateV4): string[]
   if (template.phases?.phase2_tronc_commun?.regle_montee?.seuil_score !== 80) errors.push("phase2_upgrade_threshold_invalid");
   if (template.phases?.phase2_tronc_commun?.regle_montee?.nb_seances_consecutives !== 2) errors.push("phase2_upgrade_count_invalid");
 
-  const phase4Elements = template.phases?.phase4_mise_en_commun?.elements_obligatoires ?? [];
+  const phase4Elements = (template.phases?.phase4_mise_en_commun?.elements_obligatoires ?? []) as string[];
   const missingPhase4 = PHASE4_ELEMENTS_OBLIGATOIRES.filter((item) => !phase4Elements.includes(item));
   if (missingPhase4.length) errors.push(`phase4_missing_elements:${missingPhase4.join(",")}`);
 

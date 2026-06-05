@@ -1,6 +1,7 @@
+/// <reference types="node" />
 import { describe, expect, it } from "vitest";
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { readFileSync } from "fs";
+import { resolve } from "path";
 
 const corpus = JSON.parse(
   readFileSync(resolve("data/corpora/logement-co-a2-b2.json"), "utf8"),
