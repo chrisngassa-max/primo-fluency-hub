@@ -76,6 +76,108 @@ function inferDocumentType(relativePath) {
   return 'document texte';
 }
 
+function detectTcfExerciseTemplate(relativePath, title, content) {
+  const source = normalizePathPart(`${relativePath} ${title} ${content.slice(0, 6000)}`);
+
+  if (!source.includes('tcf')) {
+    return null;
+  }
+
+  const competences = new Set();
+  const normalizedPath = normalizePathPart(relativePath);
+
+  if (normalizedPath.includes('comprehension ecrite')) {
+    competences.add('CE');
+  }
+
+  if (normalizedPath.includes('comprehension orale')) {
+    competences.add('CO');
+  }
+
+  if (normalizedPath.includes('expression ecrite') || normalizedPath.includes('production ecrite')) {
+    competences.add('EE');
+  }
+
+  if (normalizedPath.includes('expression orale') || normalizedPath.includes('production orale')) {
+    competences.add('EO');
+  }
+
+  if (source.includes('structures de la langue') || source.includes('tcf grammaire')) {
+    competences.add('Structures');
+  }
+
+  if (source.includes('comprehension ecrite')) {
+    competences.add('CE');
+  }
+
+  if (source.includes('comprehension orale')) {
+    competences.add('CO');
+  }
+
+  if (source.includes('expression ecrite') || source.includes('pro ecrite') || source.includes('production ecrite')) {
+    competences.add('EE');
+  }
+
+  if (source.includes('expression orale') || source.includes('production orale')) {
+    competences.add('EO');
+  }
+
+  const detected = Array.from(competences);
+
+  if (detected.length === 0) {
+    return {
+      primaryDocumentType: 'gabarit exercice TCF',
+      competences: ['Structures'],
+      formats: ['QCM', 'texte lacunaire'],
+    };
+  }
+
+  return {
+    primaryDocumentType: detected.length === 1 ? documentTypeLabel(detected[0]) : 'gabarit exercice TCF',
+    competences: detected,
+    formats: inferTcfFormats(source, detected),
+  };
+}
+
+function documentTypeLabel(competence) {
+  const labels = {
+    CO: 'compr\u00e9hension orale',
+    CE: 'compr\u00e9hension \u00e9crite',
+    EO: 'expression orale',
+    EE: 'expression \u00e9crite',
+    Structures: 'structures de la langue',
+  };
+
+  return labels[competence] ?? 'structures de la langue';
+}
+
+function inferTcfFormats(normalizedSource, competences) {
+  const formats = new Set();
+
+  if (
+    normalizedSource.includes('qcm') ||
+    normalizedSource.includes('choix multiple') ||
+    normalizedSource.includes('corrige') ||
+    normalizedSource.match(/\b[abcd][\).]/)
+  ) {
+    formats.add('QCM');
+  }
+
+  if (normalizedSource.includes('lacunaire') || normalizedSource.includes('completer')) {
+    formats.add('texte lacunaire');
+  }
+
+  if (competences.includes('EE')) {
+    formats.add('tache de production ecrite');
+  }
+
+  if (competences.includes('EO')) {
+    formats.add('tache de production orale');
+  }
+
+  return Array.from(formats.size ? formats : ['gabarit TCF']);
+}
+
 function isStructureDocument(normalizedPath) {
   return (
     normalizedPath.includes('structure') ||
@@ -156,7 +258,8 @@ const rows = await Promise.all(
     const fileStat = await stat(filePath);
     const title = titleFromFile(filePath);
     const levels = inferLevels(relativePath, title);
-    const documentType = inferDocumentType(relativePath);
+    const tcfTemplate = detectTcfExerciseTemplate(relativePath, title, content);
+    const documentType = tcfTemplate?.primaryDocumentType ?? inferDocumentType(relativePath);
     const structureDomain = inferStructureDomain(relativePath);
 
     return {
@@ -169,12 +272,15 @@ const rows = await Promise.all(
       short_summary: buildSearchableSummary(content, documentType, structureDomain),
       activity_count: 0,
       markdown_file: null,
-      source_kind: 'text_file_import',
+      source_kind: tcfTemplate ? 'tcf_exercise_template_import' : 'text_file_import',
       raw: {
-        tcf_irn_competence: documentType === 'structures de la langue' ? 'Structures' : null,
+        tcf_irn_competence:
+          tcfTemplate?.competences?.[0] ?? (documentType === 'structures de la langue' ? 'Structures' : null),
+        tcf_irn_competences: tcfTemplate?.competences ?? [],
+        is_tcf_exercise_template: Boolean(tcfTemplate),
         structure_domain: structureDomain,
         format_recommandes:
-          documentType === 'structures de la langue' ? ['QCM', 'texte lacunaire'] : [],
+          tcfTemplate?.formats ?? (documentType === 'structures de la langue' ? ['QCM', 'texte lacunaire'] : []),
         source_path: filePath.replaceAll('\\', '/'),
         relative_path: relativePath,
         file_size_bytes: fileStat.size,
