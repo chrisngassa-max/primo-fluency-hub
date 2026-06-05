@@ -240,23 +240,26 @@ const FormateurDashboard = () => {
       if (!groups?.length) return [];
       const groupIds = groups.map((g) => g.id);
       const groupMap = Object.fromEntries(groups.map((g) => [g.id, g.nom]));
-      // Try upcoming first
-      const { data: upcoming } = await supabase
+      const now = new Date();
+      // Fenêtre : séances en cours (commencées il y a moins de 6h) ou à venir, hors terminées/annulées
+      const sixHoursAgo = new Date(now.getTime() - 6 * 60 * 60 * 1000).toISOString();
+      const { data: active } = await supabase
         .from("sessions")
         .select("id, titre, date_seance, duree_minutes, niveau_cible, objectifs, statut, group_id, competences_cibles")
         .in("group_id", groupIds)
-        .gte("date_seance", new Date().toISOString())
+        .gte("date_seance", sixHoursAgo)
+        .not("statut", "in", "(terminee,annulee)")
         .order("date_seance", { ascending: true })
         .limit(3);
-      if (upcoming && upcoming.length > 0) {
-        return upcoming.map((s) => ({ ...s, group_nom: groupMap[s.group_id] || "—", isPast: false }));
+      if (active && active.length > 0) {
+        return active.map((s) => ({ ...s, group_nom: groupMap[s.group_id] || "—", isPast: false }));
       }
-      // Fallback: most recent past session
+      // Fallback : dernière séance passée (toutes statuts confondus) pour info
       const { data: recent } = await supabase
         .from("sessions")
         .select("id, titre, date_seance, duree_minutes, niveau_cible, objectifs, statut, group_id, competences_cibles")
         .in("group_id", groupIds)
-        .lt("date_seance", new Date().toISOString())
+        .lt("date_seance", now.toISOString())
         .order("date_seance", { ascending: false })
         .limit(1);
       return (recent ?? []).map((s) => ({ ...s, group_nom: groupMap[s.group_id] || "—", isPast: true }));
