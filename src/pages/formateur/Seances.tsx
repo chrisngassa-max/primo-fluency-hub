@@ -339,6 +339,18 @@ const SeancesPage = () => {
         if (seErr) throw seErr;
       }
 
+      if (user) {
+        prepareSessionKit({
+          sessionId: session.id,
+          groupId,
+          niveauCible,
+          competencesCibles: competencesCibles.length > 0 ? competencesCibles : null,
+          objectifs,
+          titre,
+          formateurId: user.id,
+        });
+      }
+
       toast.success("Séance créée !", {
         description: selectedExerciseIds.size > 0
           ? `${selectedExerciseIds.size} exercice(s) rattaché(s).`
