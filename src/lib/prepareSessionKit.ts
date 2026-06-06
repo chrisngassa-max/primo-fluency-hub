@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { createProceduralDiagnosticTest } from "@/lib/diagnosticFallback";
 
 interface PrepareArgs {
   sessionId: string;
@@ -68,17 +69,13 @@ async function generatePrediagnostic({
   const competences =
     competencesCibles && competencesCibles.length > 0 ? competencesCibles : ["CE", "CO"];
 
-  const { error, data } = await supabase.functions.invoke("generate-diagnostic-test", {
-    body: {
-      sessionId,
-      groupId,
-      competences,
-      niveau: niveauCible || "A1",
-      statut: "pret",
-    },
+  await createProceduralDiagnosticTest({
+    sessionId,
+    groupId,
+    competences,
+    niveau: niveauCible || "A1",
+    statut: "pret",
   });
-  if (error) throw error;
-  if ((data as any)?.error) throw new Error((data as any).error);
 }
 
 async function generateFiveExercises({
