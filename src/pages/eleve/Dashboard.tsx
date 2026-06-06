@@ -171,7 +171,12 @@ const EleveDashboard = () => {
       }));
     },
     enabled: !!user?.id && !!todaySession?.id,
+    staleTime: 0,
+    refetchOnWindowFocus: true,
+    refetchOnMount: "always",
+    refetchInterval: 60_000,
   });
+
 
   const uncompletedTests = (pendingTests ?? []).filter((t: any) => !t.completed);
 
