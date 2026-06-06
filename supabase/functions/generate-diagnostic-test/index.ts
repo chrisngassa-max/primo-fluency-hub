@@ -86,7 +86,6 @@ serve(async (req) => {
   }
 
   try {
-    const authHeader = req.headers.get("Authorization");
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
@@ -97,8 +96,6 @@ serve(async (req) => {
       groupId,
       competences, // string[] e.g. ["CO", "CE"]
       niveau,      // e.g. "A1"
-      weakPoints,  // optional: [{ competence, exercice, score }]
-      previousSessionScores, // optional: Record<string, { avg, count }>
       statut: requestedStatut, // optional: "pret" | "envoye" (default "envoye")
     } = body;
 
