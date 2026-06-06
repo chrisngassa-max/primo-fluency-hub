@@ -226,6 +226,8 @@ const SeancesPage = () => {
       if (error) throw error;
 
       if (createdSession && user) {
+        const previousSession = findPreviousSessionForAutoPrep(nextGroupId, createdSession.date_seance, selectedCurriculum.numero);
+        const targetGroup = (groups ?? []).find((g: any) => g.id === nextGroupId);
         prepareSessionKit({
           sessionId: createdSession.id,
           groupId: nextGroupId,
@@ -234,6 +236,9 @@ const SeancesPage = () => {
           objectifs: selectedCurriculum.objectif,
           titre: selectedCurriculum.titre,
           formateurId: user.id,
+          typeDemarche: (targetGroup as any)?.type_demarche,
+          sessionExercisesTargetId: previousSession?.id,
+          homeworkSourceSessionId: previousSession?.id,
         });
       }
 
@@ -369,6 +374,8 @@ const SeancesPage = () => {
       }
 
       if (user) {
+        const previousSession = findPreviousSessionForAutoPrep(groupId, session.date_seance, extractSessionNumber(titre) ?? undefined);
+        const targetGroup = (groups ?? []).find((g: any) => g.id === groupId);
         prepareSessionKit({
           sessionId: session.id,
           groupId,
@@ -377,6 +384,9 @@ const SeancesPage = () => {
           objectifs,
           titre,
           formateurId: user.id,
+          typeDemarche: (targetGroup as any)?.type_demarche,
+          sessionExercisesTargetId: previousSession?.id,
+          homeworkSourceSessionId: previousSession?.id,
         });
       }
 
