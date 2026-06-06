@@ -205,20 +205,34 @@ export default function FeuilleAppel({ sessionId, session }: FeuilleAppelProps) 
     }
   };
 
-  const handleShare = async () => {
-    await handleSave();
+  const buildShareText = () => {
     const groupName = (session as any)?.group?.nom || "Groupe";
     const dateStr = format(new Date(session.date_seance), "d MMMM yyyy", { locale: fr });
     const absentNames = (members || [])
       .filter((m) => !presenceState[m.eleve_id]?.present)
       .map((m) => `${m.prenom} ${m.nom}`)
       .join(", ");
-
-    const text = `📋 *Feuille d'appel — ${session.titre}*
+    return `📋 Feuille d'appel — ${session.titre}
 📅 ${dateStr} · ${groupName}
 ✅ Présents : ${presentCount}/${totalCount}
 ${totalCount - presentCount > 0 ? `❌ Absents : ${absentNames}` : "🎉 Aucune absence !"}`;
+  };
 
+  const handleShareWhatsApp = async () => {
+    await handleSave();
+    const url = `https://wa.me/?text=${encodeURIComponent(buildShareText())}`;
+    window.open(url, "_blank");
+  };
+
+  const handleShareEmail = async () => {
+    await handleSave();
+    const subject = `Feuille d'appel — ${session.titre}`;
+    window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(buildShareText())}`;
+  };
+
+  const handleShareNative = async () => {
+    await handleSave();
+    const text = buildShareText();
     if (navigator.share) {
       try {
         await navigator.share({ title: `Appel ${session.titre}`, text });
@@ -227,8 +241,13 @@ ${totalCount - presentCount > 0 ? `❌ Absents : ${absentNames}` : "🎉 Aucune 
       }
     } else {
       await navigator.clipboard.writeText(text);
-      toast.success("Récapitulatif copié dans le presse-papier (collez dans WhatsApp)");
+      toast.success("Récapitulatif copié dans le presse-papier");
     }
+  };
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(buildShareText());
+    toast.success("Récapitulatif copié");
   };
 
   if (loadingMembers || loadingPresences) {
