@@ -293,12 +293,26 @@ const EleveDashboard = () => {
       {showOnboarding && <EleveOnboarding onComplete={dismissOnboarding} />}
 
       {/* Greeting — au-dessus des tabs */}
-      <div>
-        <h1 className="text-[22px] font-extrabold tracking-tight text-[#0b234a]">
-          Bienvenue{user?.user_metadata?.prenom ? `, ${user.user_metadata.prenom}` : ""} 👋
-        </h1>
-        <p className="text-sm font-medium text-muted-foreground mt-1">Ton espace de préparation au TCF IRN</p>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h1 className="text-[22px] font-extrabold tracking-tight text-[#0b234a]">
+            Bienvenue{user?.user_metadata?.prenom ? `, ${user.user_metadata.prenom}` : ""} 👋
+          </h1>
+          <p className="text-sm font-medium text-muted-foreground mt-1">Ton espace de préparation au TCF IRN</p>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={async () => {
+            await qc.invalidateQueries();
+            toast.success("Actualisé !");
+          }}
+          className="shrink-0"
+        >
+          🔄 Rafraîchir
+        </Button>
       </div>
+
 
       {/* Tab navigation — texte seul, sans icônes */}
       <div className="flex gap-2 border-b border-black/5 pb-0">
