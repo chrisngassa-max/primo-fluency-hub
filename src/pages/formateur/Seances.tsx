@@ -180,7 +180,7 @@ const SeancesPage = () => {
 
     setNextSaving(true);
     try {
-      const { error } = await supabase
+      const { data: createdSession, error } = await supabase
         .from("sessions")
         .insert({
           titre: selectedCurriculum.titre,
@@ -191,8 +191,22 @@ const SeancesPage = () => {
           duree_minutes: selectedCurriculum.duree,
           lieu: nextLieu || null,
           competences_cibles: selectedCurriculum.competences,
-        } as any);
+        } as any)
+        .select()
+        .single();
       if (error) throw error;
+
+      if (createdSession && user) {
+        prepareSessionKit({
+          sessionId: createdSession.id,
+          groupId: nextGroupId,
+          niveauCible: "A1",
+          competencesCibles: selectedCurriculum.competences as any,
+          objectifs: selectedCurriculum.objectif,
+          titre: selectedCurriculum.titre,
+          formateurId: user.id,
+        });
+      }
 
       toast.success("Séance créée !", {
         description: `« ${selectedCurriculum.titre} » est prête.`,
