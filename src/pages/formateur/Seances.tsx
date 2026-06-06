@@ -155,14 +155,32 @@ const SeancesPage = () => {
   ];
 
   // Detect the highest session number already created for this formateur
+  const extractSessionNumber = (title?: string | null): number | null => {
+    const match = title?.match(/S[ée]ance\s*(\d+)/i);
+    return match ? parseInt(match[1]) : null;
+  };
+
   const getNextSessionNumber = (): number => {
     if (!sessions || sessions.length === 0) return 1;
     let maxNum = 0;
     for (const s of sessions as any[]) {
-      const match = s.titre?.match(/S[ée]ance\s*(\d+)/i);
-      if (match) maxNum = Math.max(maxNum, parseInt(match[1]));
+      const num = extractSessionNumber(s.titre);
+      if (num) maxNum = Math.max(maxNum, num);
     }
     return Math.min(maxNum + 1, 20);
+  };
+
+  const findPreviousSessionForAutoPrep = (targetGroupId: string, targetDate: string, targetSessionNum?: number) => {
+    const groupSessions = (sessions ?? []).filter((s: any) => s.group_id === targetGroupId);
+    if (targetSessionNum && targetSessionNum > 1) {
+      const byNumber = groupSessions.find((s: any) => extractSessionNumber(s.titre) === targetSessionNum - 1);
+      if (byNumber) return byNumber;
+    }
+
+    const targetTime = new Date(targetDate).getTime();
+    return groupSessions
+      .filter((s: any) => new Date(s.date_seance).getTime() < targetTime)
+      .sort((a: any, b: any) => new Date(b.date_seance).getTime() - new Date(a.date_seance).getTime())[0] ?? null;
   };
 
   // State for "next session" dialog
