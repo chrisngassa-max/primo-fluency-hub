@@ -82,6 +82,27 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
   const [diagMembers, setDiagMembers] = useState<{ eleve_id: string; nom: string; prenom: string; present?: boolean }[]>([]);
   const [diagBilanTestId, setDiagBilanTestId] = useState<string | null>(null);
 
+  // ─── Détecte un prédiagnostic déjà pré-généré (statut 'pret') pour cette séance ───
+  React.useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("bilan_tests")
+        .select("id, statut")
+        .eq("session_id", sessionId)
+        .in("statut", ["pret", "envoye"])
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (!cancelled && data) {
+        setDiagBilanTestId(data.id);
+        setDiagGenerated(true);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [sessionId]);
+
+
   // ─── Fetch comprehensive previous session data ───
   const { data: prevData, isLoading, isError, error: queryError } = useQuery<PrevSessionData | null>({
     queryKey: ["start-of-session-bilan", groupId, sessionId],
