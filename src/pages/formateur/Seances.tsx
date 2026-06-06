@@ -121,7 +121,7 @@ const SeancesPage = () => {
     queryKey: ["formateur-groups", user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("groups").select("id, nom, niveau")
+        .from("groups").select("id, nom, niveau, type_demarche")
         .eq("formateur_id", user!.id).eq("is_active", true)
         .order("nom");
       if (error) throw error;
