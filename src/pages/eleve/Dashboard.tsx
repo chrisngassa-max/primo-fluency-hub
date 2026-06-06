@@ -212,6 +212,10 @@ const EleveDashboard = () => {
       }];
     },
     enabled: !!user?.id && !!todaySession?.id,
+    staleTime: 0,
+    refetchOnWindowFocus: true,
+    refetchOnMount: "always",
+    refetchInterval: 60_000,
   });
 
   // Fetch profil_eleve for current scores
