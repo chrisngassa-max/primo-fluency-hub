@@ -333,7 +333,12 @@ const DevoirPassation = () => {
       sessionId,
       eleveId: user.id,
       eventType: "exercice_demarre",
-      payload: { exercice_id: ex.id, competence: ex.competence },
+      payload: {
+        exercice_id: ex.id,
+        exercice_titre: ex.titre,
+        competence: ex.competence,
+        timestamp: new Date().toISOString(),
+      },
     });
   // Déclenché une seule fois quand ex est disponible
   // eslint-disable-next-line react-hooks/exhaustive-deps

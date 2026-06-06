@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -29,6 +29,9 @@ interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess?: () => void;
+  sessionId?: string;
+  eleveId?: string;
+  mode?: "devoir" | "session_live";
 }
 
 const initialState: WizardState = {
@@ -36,6 +39,7 @@ const initialState: WizardState = {
   themePredefini: "",
   themePersonnalise: "",
   competence: "CE",
+  anglePedagogique: "theme",
   count: 2,
   niveau: "A1",
   difficulte: 4,
@@ -47,7 +51,7 @@ const initialState: WizardState = {
   loadingPublish: false,
 };
 
-const GenerateTargetedExerciseWizard = ({ open, onOpenChange, onSuccess }: Props) => {
+const GenerateTargetedExerciseWizard = ({ open, onOpenChange, onSuccess, sessionId, eleveId, mode = "devoir" }: Props) => {
   const { user } = useAuth();
   const [state, setState] = useState<WizardState>({ ...initialState });
   const [confirmClose, setConfirmClose] = useState(false);
@@ -60,6 +64,12 @@ const GenerateTargetedExerciseWizard = ({ open, onOpenChange, onSuccess }: Props
 
   const theme = state.themePredefini || state.themePersonnalise.trim();
 
+  useEffect(() => {
+    if (open && mode === "session_live" && eleveId) {
+      setState((prev) => ({ ...prev, elevesSelected: [eleveId], creerCommeDevoir: false }));
+    }
+  }, [open, mode, eleveId]);
+
   const handleGenerate = async (count?: number) => {
     if (!user || !theme) return;
     update({ loadingGenerate: true });
@@ -71,6 +81,10 @@ const GenerateTargetedExerciseWizard = ({ open, onOpenChange, onSuccess }: Props
           niveauVise: state.niveau,
           count: count ?? state.count,
           difficultyLevel: state.difficulte,
+          focus_pedagogique:
+            state.anglePedagogique === "grammaire" || state.anglePedagogique === "vocabulaire"
+              ? state.anglePedagogique
+              : undefined,
         },
       });
       if (error) throw error;
@@ -199,7 +213,18 @@ const GenerateTargetedExerciseWizard = ({ open, onOpenChange, onSuccess }: Props
 
       if (error) throw error;
 
-      if (state.elevesSelected.length > 0 && state.creerCommeDevoir && insertedExercices) {
+      if (mode === "session_live") {
+        if (!sessionId || !insertedExercices?.length || state.elevesSelected.length === 0) {
+          throw new Error("Séance ou élève cible manquant");
+        }
+        const { error: assignError } = await (supabase as any).rpc("assign_live_session_exercises", {
+          p_session_id: sessionId,
+          p_exercice_ids: insertedExercices.map((ex: any) => ex.id),
+          p_eleve_ids: state.elevesSelected,
+        });
+        if (assignError) throw assignError;
+        toast.success(`${insertedExercices.length} exercice(s) envoyé(s) en direct`);
+      } else if (state.elevesSelected.length > 0 && state.creerCommeDevoir && insertedExercices) {
         const devoirsToInsert = state.elevesSelected.flatMap((eleveId) =>
           insertedExercices.map((ex) => ({
             eleve_id: eleveId,

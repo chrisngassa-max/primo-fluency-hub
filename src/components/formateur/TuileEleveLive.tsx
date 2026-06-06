@@ -116,6 +116,11 @@ export function TuileEleveLive({ prenom, nom, state, priorite, onIntervenir, onF
         {cfg.icon}
         {cfg.label}
       </p>
+      {state?.exercice_en_cours_titre && (
+        <p className="text-[10px] text-muted-foreground truncate">
+          En cours : {state.exercice_en_cours_titre}
+        </p>
+      )}
 
       {/* Score */}
       {scoreValue != null && (

@@ -8,6 +8,11 @@ export type LiveIntervention = {
   audio_url: string | null;
   competence: string | null;
   niveau_cible: string | null;
+  isRecalibrage?: boolean;
+  niveau_avant?: string;
+  niveau_apres?: string;
+  isExercicePersonnalise?: boolean;
+  exerciceId?: string;
 };
 
 /**
@@ -44,10 +49,41 @@ export function useInterventionListener(sessionId: string | null | undefined) {
               eleve_id: string | null;
               payload: Record<string, unknown> | null;
             };
+            if (ev.event_type === "niveau_recalibre") {
+              if (ev.eleve_id !== userId) return;
+              const p = (ev.payload ?? {}) as Record<string, any>;
+              if (p.direction === "montant") {
+                setIntervention({
+                  id: "recalibrage_" + Date.now(),
+                  titre: "Niveau augmenté ! 🎉",
+                  contenu_texte: `Félicitations ! Tes bonnes réponses régulières montrent que tu as progressé. Ton niveau en ${p.competence} passe de ${p.niveau_avant} à ${p.niveau_apres}. Continue comme ça !`,
+                  audio_url: null,
+                  competence: p.competence,
+                  niveau_cible: p.niveau_apres,
+                  isRecalibrage: true,
+                  niveau_avant: p.niveau_avant,
+                  niveau_apres: p.niveau_apres,
+                });
+              }
+              return;
+            }
             if (ev.event_type !== "intervention_recue") return;
             if (ev.eleve_id !== userId) return;
 
             const p = (ev.payload ?? {}) as Record<string, unknown>;
+            if (p.type === "exercice_personnalise" && p.exercice_id) {
+              setIntervention({
+                id: `exercice_${p.exercice_id}`,
+                titre: "Nouvel exercice",
+                contenu_texte: "Votre formateur vous a envoyé un exercice personnalisé.",
+                audio_url: null,
+                competence: null,
+                niveau_cible: null,
+                isExercicePersonnalise: true,
+                exerciceId: p.exercice_id as string,
+              });
+              return;
+            }
             const interventionId = p.intervention_id as string | undefined;
             if (!interventionId) return;
 

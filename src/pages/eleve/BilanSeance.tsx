@@ -163,6 +163,7 @@ const BilanSeance = () => {
         .select("*, exercice:exercices(id, titre, consigne, competence, format, contenu, niveau_vise, formateur_id, variante_niveau_bas, variante_niveau_haut)")
         .eq("session_id", sessionId!)
         .eq("statut", "traite_en_classe" as any)
+        .or(`eleve_id.is.null,eleve_id.eq.${user!.id}`)
         .order("ordre");
       if (error) throw error;
       return data ?? [];

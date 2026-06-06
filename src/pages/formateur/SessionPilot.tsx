@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -149,6 +149,43 @@ const SessionPilot = () => {
     },
     enabled: !!id,
   });
+
+  const { data: sessionBlocks = [] } = useQuery({
+    queryKey: ["session-blocks", id],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from("session_blocks")
+        .select("*")
+        .eq("session_id", id)
+        .order("block_type");
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: !!id && Boolean((session as any)?.generation_automatique_activee),
+  });
+
+  const startPreparation = useCallback(async (blockType?: string) => {
+    if (!id) return;
+    const { error } = await supabase.functions.invoke("prepare-session-start", {
+      body: { session_id: id, ...(blockType ? { block_type: blockType } : {}) },
+    });
+    if (error) toast.error("Préparation impossible", { description: error.message });
+  }, [id]);
+
+  useEffect(() => {
+    if (!id || !(session as any)?.generation_automatique_activee) return;
+    void startPreparation();
+    const channel = supabase
+      .channel(`session-blocks-${id}`)
+      .on("postgres_changes", {
+        event: "*", schema: "public", table: "session_blocks", filter: `session_id=eq.${id}`,
+      }, () => {
+        qc.invalidateQueries({ queryKey: ["session-blocks", id] });
+        qc.invalidateQueries({ queryKey: ["session-exercices", id] });
+      })
+      .subscribe();
+    return () => { void supabase.removeChannel(channel); };
+  }, [id, session, startPreparation, qc]);
 
   const { data: sessionExercices, isLoading } = useQuery({
     queryKey: ["session-exercices", id],
@@ -1279,6 +1316,32 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
           </Button>
         </div>
       </div>
+
+      {(session as any)?.generation_automatique_activee && sessionBlocks.length > 0 && (
+        <div className="print:hidden rounded-md border bg-muted/20 px-3 py-2">
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            <span className="font-semibold">Préparation de la séance</span>
+            {(["retrospective", "diagnostic", "core"] as const).map((blockType) => {
+              const block = sessionBlocks.find((item: any) => item.block_type === blockType);
+              const label = blockType === "retrospective" ? "Rétrospective" : blockType === "diagnostic" ? "Diagnostic" : "Exercices";
+              const status = block?.status ?? "pending";
+              return (
+                <span key={blockType} className="inline-flex items-center gap-1 rounded border bg-background px-2 py-1">
+                  {status === "ready" ? <CheckCircle2 className="h-3 w-3 text-emerald-600" /> :
+                    status === "failed" ? <AlertTriangle className="h-3 w-3 text-red-600" /> :
+                    <Loader2 className="h-3 w-3 animate-spin text-primary" />}
+                  {label}
+                  {status === "failed" && (
+                    <button className="font-semibold text-primary hover:underline" onClick={() => void startPreparation(blockType)}>
+                      Réessayer
+                    </button>
+                  )}
+                </span>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Bloc ressources externes ajoutées à la séance */}
       <SessionExternalResourcesList sessionId={id!} />

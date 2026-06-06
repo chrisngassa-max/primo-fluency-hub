@@ -31,7 +31,10 @@ serve(async (req) => {
       weakPoints,  // optional: [{ competence, exercice, score }]
       previousSessionScores, // optional: Record<string, { avg, count }>
       statut: requestedStatut, // optional: "pret" | "envoye" (default "envoye")
+      nbQuestions: requestedNbQuestions,
+      nb_questions_diagnostic: requestedNbQuestionsSnake,
     } = body;
+    const nbQuestions = Math.max(5, Math.min(30, Number(requestedNbQuestions ?? requestedNbQuestionsSnake ?? 10)));
 
     if (!sessionId || !groupId || !competences || !niveau) {
       throw new Error("Champs requis : sessionId, groupId, competences, niveau");
@@ -44,7 +47,7 @@ Durée cible : 5 à 8 minutes de passation.
 Objectif : évaluer de manière PRÉCISE et EXHAUSTIVE le niveau actuel des élèves sur les compétences suivantes : ${competences.join(", ")}
 Niveau cible : ${niveau}
 
-NOMBRE DE QUESTIONS : Générer entre 8 et 15 questions au total.
+NOMBRE DE QUESTIONS : Générer exactement ${nbQuestions} questions au total.
 - Minimum 2-3 questions PAR compétence demandée pour une évaluation fiable
 - Varier les sous-compétences testées au sein de chaque compétence
 - Couvrir différents aspects : vocabulaire, syntaxe, pragmatique, phonologie selon la compétence
@@ -88,21 +91,23 @@ EXPLICATION PÉDAGOGIQUE : Pour chaque question, fournir :
 
     const systemPrompt = TCF_SYSTEM_PROMPT + `
 
-// Mode diagnostic pré-séance EXHAUSTIF — Génère un test complet (8-15 questions, ~5-8 min) pour évaluer précisément le niveau avant la séance.
+// Mode diagnostic pré-séance EXHAUSTIF — Génère exactement ${nbQuestions} questions.
 // La sortie DOIT être un JSON structuré via l'outil generate_diagnostic.`;
 
-    const aiResult = await callAI({
-      model: MODEL,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
-      ],
-      tools: [
+    let diagnostic: any = null;
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      const aiResult = await callAI({
+        model: MODEL,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        tools: [
         {
           type: "function",
           function: {
             name: "generate_diagnostic",
-            description: "Retourne un test diagnostique exhaustif pré-séance au format TCF IRN (8-15 questions, ~5 min).",
+            description: `Retourne un test diagnostique pré-séance au format TCF IRN avec exactement ${nbQuestions} questions.`,
             parameters: {
               type: "object",
               properties: {
@@ -110,7 +115,7 @@ EXPLICATION PÉDAGOGIQUE : Pour chaque question, fournir :
                 duree_estimee_minutes: { type: "number", description: "Durée estimée en minutes (cible : 5-8)" },
                 questions: {
                   type: "array",
-                  description: "Questions du test diagnostique (8-15 questions)",
+                  description: `Questions du test diagnostique (exactement ${nbQuestions})`,
                   items: {
                     type: "object",
                     properties: {
@@ -137,23 +142,24 @@ EXPLICATION PÉDAGOGIQUE : Pour chaque question, fournir :
             },
           },
         },
-      ],
-      tool_choice: {
-        type: "function",
-        function: { name: "generate_diagnostic" },
-      },
-    });
-    const toolCall = aiResult.choices?.[0]?.message?.tool_calls?.[0];
-
-    if (!toolCall?.function?.arguments) {
-      throw new Error("L'IA n'a pas retourné de résultat structuré");
+        ],
+        tool_choice: {
+          type: "function",
+          function: { name: "generate_diagnostic" },
+        },
+      });
+      const toolCall = aiResult.choices?.[0]?.message?.tool_calls?.[0];
+      if (toolCall?.function?.arguments) {
+        diagnostic = JSON.parse(toolCall.function.arguments);
+      }
+      if (diagnostic?.questions?.length === nbQuestions) break;
+      if (attempt === 2) {
+        throw new Error(`Nombre de questions invalide : ${diagnostic?.questions?.length ?? 0} reçues, ${nbQuestions} attendues.`);
+      }
     }
 
-    const diagnostic = JSON.parse(toolCall.function.arguments);
-
-    // Validate: at least 3 questions with 4 choices each
-    if (!diagnostic.questions || diagnostic.questions.length < 8) {
-      throw new Error("Le diagnostic doit contenir au moins 8 questions pour une évaluation exhaustive");
+    if (!diagnostic?.questions || diagnostic.questions.length !== nbQuestions) {
+      throw new Error(`Le diagnostic doit contenir exactement ${nbQuestions} questions`);
     }
 
     for (const q of diagnostic.questions) {

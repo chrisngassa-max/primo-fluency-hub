@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter,
 } from "@/components/ui/dialog";
@@ -46,6 +47,68 @@ const getSessionBadge = (statut: string, dateSeance: string): { label: string; v
 /** Toggle a competence in a Set-like array */
 const toggleComp = (comps: string[], comp: string): string[] =>
   comps.includes(comp) ? comps.filter((c) => c !== comp) : [...comps, comp];
+
+type AutomationSettings = {
+  enabled: boolean;
+  coreCount: number;
+  retrospectiveCount: number;
+  retrospectiveDuration: number;
+  diagnosticCount: number;
+  difficulty: number;
+  competences: string[];
+};
+
+const defaultAutomation: AutomationSettings = {
+  enabled: true,
+  coreCount: 5,
+  retrospectiveCount: 3,
+  retrospectiveDuration: 10,
+  diagnosticCount: 10,
+  difficulty: 5,
+  competences: ["CO", "CE"],
+};
+
+const AutomationFields = ({ value, onChange }: {
+  value: AutomationSettings;
+  onChange: (value: AutomationSettings) => void;
+}) => (
+  <div className="space-y-3 border-t pt-4">
+    <div className="flex items-center justify-between gap-3">
+      <div>
+        <Label>Préparation automatique</Label>
+        <p className="text-xs text-muted-foreground">Rétrospective, diagnostic et exercices de séance</p>
+      </div>
+      <Switch checked={value.enabled} onCheckedChange={(enabled) => onChange({ ...value, enabled })} />
+    </div>
+    {value.enabled && (
+      <>
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            ["Exercices séance", "coreCount", 1, 30],
+            ["Exercices rétrospectifs", "retrospectiveCount", 1, 30],
+            ["Rétrospective (min)", "retrospectiveDuration", 1, 60],
+            ["Questions diagnostic", "diagnosticCount", 5, 30],
+          ].map(([label, key, min, max]) => (
+            <div className="space-y-1" key={String(key)}>
+              <Label className="text-xs">{label}</Label>
+              <Input type="number" min={Number(min)} max={Number(max)}
+                value={value[key as keyof AutomationSettings] as number}
+                onChange={(e) => onChange({ ...value, [key]: Number(e.target.value) })} />
+            </div>
+          ))}
+        </div>
+        <div className="space-y-1">
+          <Label className="text-xs">Difficulté par défaut</Label>
+          <Select value={String(value.difficulty)} onValueChange={(difficulty) => onChange({ ...value, difficulty: Number(difficulty) })}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>{Array.from({ length: 10 }, (_, i) => <SelectItem key={i + 1} value={String(i + 1)}>{i + 1}/10</SelectItem>)}</SelectContent>
+          </Select>
+        </div>
+        <CompetenceMultiSelect value={value.competences} onChange={(competences) => onChange({ ...value, competences })} label="Compétences autorisées" />
+      </>
+    )}
+  </div>
+);
 
 /** Competence multi-select UI block */
 const CompetenceMultiSelect = ({
@@ -96,6 +159,7 @@ const SeancesPage = () => {
   const [dureeMinutes, setDureeMinutes] = useState("90");
   const [lieu, setLieu] = useState("");
   const [competencesCibles, setCompetencesCibles] = useState<string[]>([]);
+  const [automation, setAutomation] = useState<AutomationSettings>(defaultAutomation);
 
   // Delete state
   const [deleteSessionId, setDeleteSessionId] = useState<string | null>(null);
@@ -309,6 +373,13 @@ const SeancesPage = () => {
           duree_minutes: parseInt(dureeMinutes) || 90,
           lieu: lieu || null,
           competences_cibles: competencesCibles.length > 0 ? competencesCibles : null,
+          nb_exercices_souhaite: automation.coreCount,
+          nb_exercices_retrospective: automation.retrospectiveCount,
+          duree_retrospective: automation.retrospectiveDuration,
+          nb_questions_diagnostic: automation.diagnosticCount,
+          difficulte_par_defaut: automation.difficulty,
+          competences_autorisees: automation.competences,
+          generation_automatique_activee: automation.enabled,
         } as any)
         .select()
         .single();
@@ -342,6 +413,7 @@ const SeancesPage = () => {
     setObjectifs(""); setDureeMinutes("90"); setLieu("");
     setSelectedSequenceId(""); setSelectedExerciseIds(new Set());
     setCompetencesCibles([]);
+    setAutomation(defaultAutomation);
   };
 
   // ── Edit session state ──
@@ -357,6 +429,7 @@ const SeancesPage = () => {
   const [editObjectifs, setEditObjectifs] = useState("");
   const [editStatut, setEditStatut] = useState("planifiee");
   const [editCompetences, setEditCompetences] = useState<string[]>([]);
+  const [editAutomation, setEditAutomation] = useState<AutomationSettings>(defaultAutomation);
 
   // ── Duplicate session state ──
   const [dupOpen, setDupOpen] = useState(false);
@@ -437,6 +510,15 @@ const SeancesPage = () => {
     setEditObjectifs(s.objectifs ?? "");
     setEditStatut(s.statut);
     setEditCompetences((s as any).competences_cibles || []);
+    setEditAutomation({
+      enabled: (s as any).generation_automatique_activee ?? true,
+      coreCount: (s as any).nb_exercices_souhaite ?? 5,
+      retrospectiveCount: (s as any).nb_exercices_retrospective ?? 3,
+      retrospectiveDuration: (s as any).duree_retrospective ?? 10,
+      diagnosticCount: (s as any).nb_questions_diagnostic ?? 10,
+      difficulty: (s as any).difficulte_par_defaut ?? 5,
+      competences: (s as any).competences_autorisees ?? ["CO", "CE"],
+    });
     setEditOpen(true);
   };
 
@@ -459,6 +541,13 @@ const SeancesPage = () => {
           objectifs: editObjectifs || null,
           statut: editStatut as any,
           competences_cibles: editCompetences.length > 0 ? editCompetences : null,
+          nb_exercices_souhaite: editAutomation.coreCount,
+          nb_exercices_retrospective: editAutomation.retrospectiveCount,
+          duree_retrospective: editAutomation.retrospectiveDuration,
+          nb_questions_diagnostic: editAutomation.diagnosticCount,
+          difficulte_par_defaut: editAutomation.difficulty,
+          competences_autorisees: editAutomation.competences,
+          generation_automatique_activee: editAutomation.enabled,
         } as any)
         .eq("id", editSession.id);
       if (error) throw error;
@@ -482,6 +571,15 @@ const SeancesPage = () => {
       toast.error("Erreur", { description: e.message });
     } finally {
       setDeleteSessionId(null);
+    }
+  };
+
+  const openSession = (session: any) => {
+    navigate(`/formateur/seances/${session.id}/pilote`);
+    if (session.generation_automatique_activee) {
+      void supabase.functions.invoke("prepare-session-start", {
+        body: { session_id: session.id },
+      });
     }
   };
 
@@ -565,6 +663,7 @@ const SeancesPage = () => {
                 <Label>Objectifs (optionnel)</Label>
                 <Textarea value={objectifs} onChange={(e) => setObjectifs(e.target.value)} rows={2} placeholder="Ce que les élèves doivent maîtriser..." />
               </div>
+              <AutomationFields value={automation} onChange={setAutomation} />
 
               {/* Exercise attachment */}
               <div className="space-y-3 border-t pt-4">
@@ -686,6 +785,7 @@ const SeancesPage = () => {
                 </SelectContent>
               </Select>
             </div>
+            <AutomationFields value={editAutomation} onChange={setEditAutomation} />
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditOpen(false)}>Annuler</Button>
@@ -849,7 +949,7 @@ const SeancesPage = () => {
                   : isCancelled ? "bg-destructive/5 border-destructive/20"
                   : "bg-white border-border hover:border-primary/30"
               )}
-              onClick={() => navigate(`/formateur/seances/${s.id}/pilote`)}
+              onClick={() => openSession(s)}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0 space-y-2">

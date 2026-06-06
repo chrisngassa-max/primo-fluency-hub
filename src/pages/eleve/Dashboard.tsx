@@ -8,7 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BookOpen, TrendingUp, AlertCircle, ArrowRight, Target, ClipboardCheck, Calendar, BarChart2, Pencil, FileText } from "lucide-react";
+import { BookOpen, TrendingUp, AlertCircle, ArrowRight, Target, ClipboardCheck, Calendar, BarChart2, Pencil, FileText, History } from "lucide-react";
 import CompetenceLabel from "@/components/CompetenceLabel";
 import MesFichesTab from "@/components/MesFichesTab";
 import EleveOnboarding, { useShowOnboarding } from "@/components/EleveOnboarding";
@@ -180,7 +180,8 @@ const EleveDashboard = () => {
         .from("session_exercices")
         .select("session_id, exercice_id, updated_at")
         .eq("session_id", todaySession.id)
-        .eq("statut", "traite_en_classe" as any);
+        .eq("statut", "traite_en_classe" as any)
+        .or(`eleve_id.is.null,eleve_id.eq.${user!.id}`);
       if (!seLinks?.length) return [];
 
       const exerciceIds = [...new Set(seLinks.map((se: any) => se.exercice_id))];
@@ -436,6 +437,23 @@ const EleveDashboard = () => {
               <div>
                 <p className="font-semibold text-sm">Mes devoirs</p>
                 <p className="text-xs text-muted-foreground">Retrouve tous tes devoirs assignés</p>
+              </div>
+            </div>
+            <ArrowRight className="h-4 w-4 text-muted-foreground" />
+          </CardContent>
+        </Card>
+        <Card
+          className="cursor-pointer hover:bg-muted/30 transition-colors shadow-sm"
+          onClick={() => navigate("/eleve/historique")}
+        >
+          <CardContent className="flex items-center justify-between gap-3 py-4">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-orange-100 flex items-center justify-center">
+                <History className="h-5 w-5 text-orange-600" />
+              </div>
+              <div>
+                <p className="font-semibold text-sm">Mon historique</p>
+                <p className="text-xs text-muted-foreground">Interventions reçues et évolution de niveau</p>
               </div>
             </div>
             <ArrowRight className="h-4 w-4 text-muted-foreground" />

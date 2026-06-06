@@ -22,7 +22,7 @@ serve(async (req) => {
     const _secretBlock = await ensurePseudonymSecretOrLog("generate-exercises", corsHeaders, null);
     if (_secretBlock) return _secretBlock;
     await logAICall({ function_name: "generate-exercises", triggered_by_user_id: _triggeredBy, status: "ok", data_categories: [], pseudonymization_level: "none" });
-    const { pointName, competence, niveauVise, count = 10, difficultyLevel, gabaritNumero, type_demarche, niveau_depart, niveau_arrivee, groupId, existingExercises } = await req.json();
+    const { pointName, competence, niveauVise, count = 10, difficultyLevel, gabaritNumero, type_demarche, niveau_depart, niveau_arrivee, groupId, existingExercises, focus_pedagogique } = await req.json();
     const demarche = type_demarche || "titre_sejour";
     const epreuvesAutorisees = demarche === "naturalisation" ? "CO, CE, EE, EO" : "CO, CE";
     // AI key check moved to shared ai-client
@@ -416,8 +416,15 @@ RÈGLES STRICTES :
 5. Ne pas inventer de situations hors du contexte IRN (préfecture, OFII, médecin, école...)`;
     }
 
+    const focusPrompt = competence === "Structures" && focus_pedagogique === "grammaire"
+      ? "\nFOCUS OBLIGATOIRE : GRAMMAIRE. Travaille exclusivement la conjugaison, les accords, les pronoms, la negation ou les prepositions en contexte."
+      : competence === "Structures" && focus_pedagogique === "vocabulaire"
+        ? "\nFOCUS OBLIGATOIRE : VOCABULAIRE. Travaille exclusivement le lexique utile, les definitions, associations, synonymes, antonymes et categories lexicales en contexte."
+        : "";
+
     const systemPrompt = `Tu es un expert en FLE (Français Langue Étrangère) spécialisé dans la préparation au TCF IRN (Intégration et Résidence en France).
 Tu dois générer exactement ${count} exercices pour le point à maîtriser suivant.
+${focusPrompt}
 
 CALIBRAGE DE DIFFICULTÉ (CRITIQUE) :
 ${difficultyDescription}

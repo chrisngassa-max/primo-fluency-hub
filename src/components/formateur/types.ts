@@ -59,7 +59,8 @@ export interface WizardState {
   // Step 1
   themePredefini: string;
   themePersonnalise: string;
-  competence: "CO" | "CE" | "EE" | "EO";
+  competence: "CO" | "CE" | "EE" | "EO" | "Structures";
+  anglePedagogique: "theme" | "CO" | "CE" | "EE" | "EO" | "grammaire" | "vocabulaire";
   count: number;
   niveau: "A0" | "A1" | "A2";
   difficulte: number;

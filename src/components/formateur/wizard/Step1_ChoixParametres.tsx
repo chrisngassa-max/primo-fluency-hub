@@ -69,21 +69,29 @@ const Step1_ChoixParametres = ({ state, onChange, onGenerate }: Props) => {
         )}
       </div>
 
-      {/* Compétence */}
+      {/* Angle pédagogique */}
       <div className="space-y-2">
-        <Label className="text-base font-semibold">Compétence</Label>
-        <RadioGroup
-          value={state.competence}
-          onValueChange={(v) => onChange({ competence: v as WizardState["competence"] })}
-          className="flex flex-wrap gap-4"
+        <Label className="text-base font-semibold">Angle pédagogique</Label>
+        <Select
+          value={state.anglePedagogique}
+          onValueChange={(value) => onChange({
+            anglePedagogique: value as WizardState["anglePedagogique"],
+            competence: value === "grammaire" || value === "vocabulaire"
+              ? "Structures"
+              : value === "theme" ? state.competence : value as WizardState["competence"],
+          })}
         >
-          {(["CO", "CE", "EE", "EO"] as const).map((c) => (
-            <div key={c} className="flex items-center gap-2">
-              <RadioGroupItem value={c} id={`comp-${c}`} />
-              <Label htmlFor={`comp-${c}`} className="text-base cursor-pointer">{c}</Label>
-            </div>
-          ))}
-        </RadioGroup>
+          <SelectTrigger><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="theme">Même thème</SelectItem>
+            <SelectItem value="CO">Compréhension orale</SelectItem>
+            <SelectItem value="CE">Compréhension écrite</SelectItem>
+            <SelectItem value="EO">Expression orale</SelectItem>
+            <SelectItem value="EE">Expression écrite</SelectItem>
+            <SelectItem value="grammaire">Grammaire</SelectItem>
+            <SelectItem value="vocabulaire">Vocabulaire</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Nombre d'exercices */}

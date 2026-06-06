@@ -24,6 +24,8 @@ export type EleveStateLive = {
   derniere_activite: string | null;
   score_dernier_exercice: number | null;
   exercice_id: string | null;
+  exercice_en_cours_id: string | null;
+  exercice_en_cours_titre: string | null;
   dernier_type_erreur: string | null;
 };
 
@@ -130,15 +132,26 @@ export function useLiveSession(
       const prev = map.get(ev.eleve_id);
       const isErreur =
         ev.event_type === "reponse_incorrecte" || ev.event_type === "erreur_repetee";
+      const payload = (ev.payload ?? {}) as Record<string, any>;
+      const started = ev.event_type === "exercice_demarre";
+      const finishedCurrent =
+        ev.event_type === "exercice_termine" &&
+        (!prev?.exercice_en_cours_id || payload.exercice_id === prev.exercice_en_cours_id);
       map.set(ev.eleve_id, {
         eleve_id: ev.eleve_id,
         statut: eventToStatut(ev.event_type),
         dernier_event_type: ev.event_type,
         derniere_activite: ev.created_at,
         score_dernier_exercice:
-          (ev.payload as any)?.score ?? prev?.score_dernier_exercice ?? null,
+          payload.score ?? prev?.score_dernier_exercice ?? null,
         exercice_id:
-          (ev.payload as any)?.exercice_id ?? prev?.exercice_id ?? null,
+          payload.exercice_id ?? prev?.exercice_id ?? null,
+        exercice_en_cours_id: started
+          ? payload.exercice_id ?? null
+          : finishedCurrent ? null : prev?.exercice_en_cours_id ?? null,
+        exercice_en_cours_titre: started
+          ? payload.exercice_titre ?? "Exercice"
+          : finishedCurrent ? null : prev?.exercice_en_cours_titre ?? null,
         dernier_type_erreur: isErreur
           ? (ev.type_erreur_id ?? prev?.dernier_type_erreur ?? null)
           : (prev?.dernier_type_erreur ?? null),
