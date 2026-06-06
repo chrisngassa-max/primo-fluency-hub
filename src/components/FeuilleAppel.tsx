@@ -350,9 +350,27 @@ ${totalCount - presentCount > 0 ? `❌ Absents : ${absentNames}` : "🎉 Aucune 
           <Button variant="outline" onClick={handlePrint} className="gap-2">
             <Printer className="h-4 w-4" /> Imprimer PDF
           </Button>
-          <Button variant="outline" onClick={handleShare} className="gap-2">
-            <Share2 className="h-4 w-4" /> Partager
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="gap-2">
+                <Share2 className="h-4 w-4" /> Partager
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56 bg-popover z-50">
+              <DropdownMenuItem onClick={handleShareWhatsApp}>
+                <MessageCircle className="h-4 w-4 mr-2 text-green-600" /> WhatsApp
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleShareEmail}>
+                <Mail className="h-4 w-4 mr-2" /> E-mail
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleShareNative}>
+                <Share2 className="h-4 w-4 mr-2" /> Partage système
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleCopy}>
+                <Copy className="h-4 w-4 mr-2" /> Copier le texte
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </CardContent>
     </Card>
