@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -85,6 +85,7 @@ const CompetenceMultiSelect = ({
 const SeancesPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const qc = useQueryClient();
 
   const [createOpen, setCreateOpen] = useState(false);
@@ -94,9 +95,19 @@ const SeancesPage = () => {
   const [dateSeance, setDateSeance] = useState("");
   const [niveauCible, setNiveauCible] = useState("A2");
   const [objectifs, setObjectifs] = useState("");
-  const [dureeMinutes, setDureeMinutes] = useState("90");
+  const [dureeMinutes, setDureeMinutes] = useState("180");
   const [lieu, setLieu] = useState("");
   const [competencesCibles, setCompetencesCibles] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (searchParams.get("new") === "1") {
+      setCreateOpen(true);
+      setSearchParams((current) => {
+        current.delete("new");
+        return current;
+      }, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   // Delete state
   const [deleteSessionId, setDeleteSessionId] = useState<string | null>(null);
@@ -321,7 +332,7 @@ const SeancesPage = () => {
           date_seance: new Date(dateSeance).toISOString(),
           niveau_cible: niveauCible as any,
           objectifs: objectifs || null,
-          duree_minutes: parseInt(dureeMinutes) || 90,
+          duree_minutes: parseInt(dureeMinutes) || 180,
           lieu: lieu || null,
           competences_cibles: competencesCibles.length > 0 ? competencesCibles : null,
         } as any)
@@ -366,7 +377,7 @@ const SeancesPage = () => {
 
   const resetForm = () => {
     setTitre(""); setGroupId(""); setDateSeance(""); setNiveauCible("A2");
-    setObjectifs(""); setDureeMinutes("90"); setLieu("");
+    setObjectifs(""); setDureeMinutes("180"); setLieu("");
     setSelectedSequenceId(""); setSelectedExerciseIds(new Set());
     setCompetencesCibles([]);
   };
