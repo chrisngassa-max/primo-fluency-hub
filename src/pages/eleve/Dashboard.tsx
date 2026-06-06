@@ -136,7 +136,12 @@ const EleveDashboard = () => {
       return null;
     },
     enabled: !!user?.id,
+    staleTime: 0,
+    refetchOnWindowFocus: true,
+    refetchOnMount: "always",
+    refetchInterval: 60_000,
   });
+
 
   // Fetch pending bilan tests UNIQUEMENT pour la séance du jour
   const { data: pendingTests } = useQuery({
