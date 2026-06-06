@@ -194,7 +194,7 @@ const EleveDashboard = () => {
         .in("exercice_id", exerciceIds);
       const doneExIds = new Set((resultats ?? []).map((r) => r.exercice_id));
 
-      return activeSessions
+      return (activeSessions ?? [])
         .map((session: any) => {
           const links = seLinks.filter((se: any) => se.session_id === session.id);
           const total = links.length;
