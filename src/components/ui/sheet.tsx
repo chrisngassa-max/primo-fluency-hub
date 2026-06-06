@@ -13,15 +13,21 @@ const clearStaleBodyPointerLock = () => {
   }, 350);
 };
 
-const Sheet = ({ onOpenChange, ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) => (
-  <SheetPrimitive.Root
-    onOpenChange={(open) => {
-      onOpenChange?.(open);
-      if (!open) clearStaleBodyPointerLock();
-    }}
-    {...props}
-  />
-);
+const Sheet = ({ onOpenChange, ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) => {
+  React.useEffect(() => {
+    clearStaleBodyPointerLock();
+  }, []);
+
+  return (
+    <SheetPrimitive.Root
+      onOpenChange={(open) => {
+        onOpenChange?.(open);
+        if (!open) clearStaleBodyPointerLock();
+      }}
+      {...props}
+    />
+  );
+};
 
 const SheetTrigger = SheetPrimitive.Trigger;
 
