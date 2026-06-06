@@ -394,7 +394,17 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        let serverMsg: string | undefined;
+        try {
+          const ctxResp: Response | undefined = (error as any)?.context;
+          if (ctxResp && typeof ctxResp.clone === "function") {
+            const body = await ctxResp.clone().json().catch(() => null);
+            serverMsg = body?.error || body?.message;
+          }
+        } catch {}
+        throw new Error(serverMsg || error.message || "Edge function error");
+      }
       if (data?.error) throw new Error(data.error);
 
       setDiagBilanTestId(data.bilanTestId);
@@ -407,6 +417,7 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
         description: "Choisissez les élèves destinataires.",
       });
     } catch (e: any) {
+      console.error("[handleGenerateDiagnostic]", e);
       toast.error("Erreur de génération", { description: e.message });
     } finally {
       setGeneratingDiag(false);
