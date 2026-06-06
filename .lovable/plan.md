@@ -1,37 +1,62 @@
-## Objectif
-Sauvegarder localement **tous les fichiers** des 6 buckets Storage de Lovable Cloud avant la migration vers ton Supabase externe.
+# Préparation automatique des séances
 
-## Approche
-Pas de modification de code dans l'app. J'exécute un script Python côté sandbox qui :
+Dès qu'une séance est créée (via formulaire, curriculum ou duplication), le système prépare automatiquement trois livrables, visibles sur l'écran « Piloter la séance ».
 
-1. Se connecte à ton backend Cloud avec la `SUPABASE_SERVICE_ROLE_KEY` (déjà disponible dans l'environnement) — nécessaire pour lire les buckets privés.
-2. Pour chaque bucket (`test-audio`, `exercise-images`, `external-resource-screenshots`, `exercise-reports`, `interventions-audio`, `bilans-pdf`) :
-   - Liste récursivement tous les fichiers (avec pagination, pas de limite à 100).
-   - Télécharge chaque fichier en conservant l'arborescence.
-3. Génère un **manifeste CSV** (`manifest.csv`) listant : bucket, chemin, taille, date de création, type MIME — pratique pour vérifier l'intégrité après import dans ton nouveau Supabase.
-4. Compresse le tout dans une archive ZIP unique : `storage-backup-captcf-YYYYMMDD.zip`.
-5. Dépose l'archive dans `/mnt/documents/` et te fournit un bouton de téléchargement direct (`<presentation-artifact>`).
+## 1. Rétrospective de la séance précédente (vue formateur)
 
-## Livrables
-- `storage-backup-captcf-YYYYMMDD.zip` contenant :
-  ```
-  test-audio/...
-  exercise-images/...
-  external-resource-screenshots/...
-  exercise-reports/...
-  interventions-audio/...
-  bilans-pdf/...
-  manifest.csv
-  ```
-- Un récapitulatif dans le chat : nombre de fichiers et taille totale par bucket.
+**Source** : devoirs et résultats de la dernière séance terminée du même groupe.
+
+**Contenu affiché dans un panneau en haut de SessionPilot** :
+- Taux de réussite global du groupe sur les devoirs précédents (% moyen)
+- Liste élève par élève : nom + score moyen + badge (✅ acquis / 🟧 fragile / 🔴 en difficulté)
+- Top 3 des items majoritairement échoués (question + % d'échec + compétence)
+- Bouton « Voir le détail » → ouvre la page bilan complète existante
+
+**Stockage** : nouvelle table `session_retrospectives` (session_id, group_stats jsonb, eleve_stats jsonb, items_echoues jsonb).
+
+## 2. Prédiagnostic élèves (combiné thème + compétences)
+
+**Génération IA** via une nouvelle fonction qui réutilise la logique de `generate-diagnostic-test` :
+- 6 à 8 questions ciblant à la fois le **thème** de la séance (extrait du titre/objectifs) et les **compétences cibles** déclarées
+- Format QCM 4 choix conforme TCF IRN
+- Niveau aligné sur `niveau_cible` de la séance
+
+**Stockage** : enregistré dans la table existante `bilan_tests` avec `statut = 'pret'`, prêt à être envoyé en début de séance par le formateur depuis SessionPilot.
+
+**UX SessionPilot** : carte « Prédiagnostic prêt » avec bouton « Envoyer aux élèves » + aperçu des questions.
+
+## 3. Cinq exercices auto-générés (pool commun)
+
+**Génération IA** via `generate-exercises` (déjà existant) :
+- 5 exercices répartis sur les compétences cibles de la séance
+- Difficulté alignée sur le niveau cible
+- Thème = titre/objectifs de la séance
+
+**Stockage** : insérés dans `exercices` (formateur_id, is_ai_generated=true) + liés via `session_exercices` avec un flag `auto_generated=true`.
+
+**UX SessionPilot** : ils apparaissent dans la liste d'exercices existante, marqués d'un badge « ✨ Auto », le formateur les lance/assigne quand il veut pendant la séance.
 
 ## Détails techniques
-- Téléchargement parallèle (8 workers) pour aller vite.
-- Gestion d'erreurs : les fichiers en échec sont logués dans `manifest.csv` avec un statut, pas d'arrêt global.
-- Pas d'écriture, pas de migration, pas de changement BDD — opération **strictement lecture seule** sur Storage.
-- Si l'archive dépasse ~500 Mo, je te propose un split par bucket (un ZIP par bucket).
 
-## Réutilisation après migration
-Le même script peut être réadapté en mode **upload** vers ton nouveau Supabase pour réimporter les fichiers à l'identique (chemins préservés). On le fera dans un second temps, après que le support Lovable ou toi-même aurez migré la base.
+**Nouvelle edge function** `prepare-session-kit` :
+- Input : `{ session_id }`
+- Étapes (en parallèle quand possible) :
+  1. Calcule la rétrospective (requêtes SQL sur devoirs/resultats de la séance N-1 du groupe)
+  2. Appelle Lovable AI Gateway pour générer le prédiagnostic → insert `bilan_tests`
+  3. Appelle Lovable AI Gateway pour générer 5 exercices → insert `exercices` + `session_exercices`
+  4. Insert `session_retrospectives`
+- Si pas de séance précédente → skip rétrospective (panneau vide avec message)
 
-Valide ce plan et je lance la sauvegarde.
+**Migration SQL** :
+- `CREATE TABLE session_retrospectives` + grants + RLS (formateur du groupe)
+- `ALTER TABLE session_exercices ADD COLUMN auto_generated boolean DEFAULT false`
+
+**Déclenchement côté client** : après chaque `insert sessions` réussi dans `Seances.tsx` (3 endroits : handleCreate, handleCreateFromCurriculum, handleDuplicate), `supabase.functions.invoke('prepare-session-kit', { body: { session_id } })` en fire-and-forget avec toast « Préparation en cours… ».
+
+**SessionPilot** : ajouter en tête une section « Préparation auto » avec 3 sous-blocs (Rétrospective / Prédiagnostic / Exercices prêts), avec skeleton tant que le kit n'est pas prêt et bouton « Régénérer » manuel.
+
+## Hors scope (à confirmer plus tard)
+
+- Notifications email automatiques aux élèves
+- Régénération automatique si la séance est modifiée après création
+- Différenciation par niveau d'élève sur les 5 exercices (actuellement pool commun selon votre choix)

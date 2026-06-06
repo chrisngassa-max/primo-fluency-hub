@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { COMPETENCES_ORDER, COMPETENCE_COLORS, resolveSessionCompetences } from "@/lib/competences";
 import { cn } from "@/lib/utils";
+import { prepareSessionKit } from "@/lib/prepareSessionKit";
 
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
 
@@ -179,7 +180,7 @@ const SeancesPage = () => {
 
     setNextSaving(true);
     try {
-      const { error } = await supabase
+      const { data: createdSession, error } = await supabase
         .from("sessions")
         .insert({
           titre: selectedCurriculum.titre,
@@ -190,8 +191,22 @@ const SeancesPage = () => {
           duree_minutes: selectedCurriculum.duree,
           lieu: nextLieu || null,
           competences_cibles: selectedCurriculum.competences,
-        } as any);
+        } as any)
+        .select()
+        .single();
       if (error) throw error;
+
+      if (createdSession && user) {
+        prepareSessionKit({
+          sessionId: createdSession.id,
+          groupId: nextGroupId,
+          niveauCible: "A1",
+          competencesCibles: selectedCurriculum.competences as any,
+          objectifs: selectedCurriculum.objectif,
+          titre: selectedCurriculum.titre,
+          formateurId: user.id,
+        });
+      }
 
       toast.success("Séance créée !", {
         description: `« ${selectedCurriculum.titre} » est prête.`,
@@ -324,6 +339,18 @@ const SeancesPage = () => {
         if (seErr) throw seErr;
       }
 
+      if (user) {
+        prepareSessionKit({
+          sessionId: session.id,
+          groupId,
+          niveauCible,
+          competencesCibles: competencesCibles.length > 0 ? competencesCibles : null,
+          objectifs,
+          titre,
+          formateurId: user.id,
+        });
+      }
+
       toast.success("Séance créée !", {
         description: selectedExerciseIds.size > 0
           ? `${selectedExerciseIds.size} exercice(s) rattaché(s).`
@@ -410,6 +437,18 @@ const SeancesPage = () => {
         }));
         const { error: seErr } = await supabase.from("session_exercices").insert(newExercises);
         if (seErr) throw seErr;
+      }
+
+      if (user) {
+        prepareSessionKit({
+          sessionId: newSession.id,
+          groupId: dupGroupId,
+          niveauCible: dupSession.niveau_cible,
+          competencesCibles: (dupSession as any).competences_cibles || null,
+          objectifs: dupSession.objectifs,
+          titre: dupSession.titre,
+          formateurId: user.id,
+        });
       }
 
       const targetGroup = (groups ?? []).find((g) => g.id === dupGroupId);
