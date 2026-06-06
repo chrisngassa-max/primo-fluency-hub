@@ -1,30 +1,11 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.99.2";
-import { TCF_SYSTEM_PROMPT, MODEL } from "../_shared/system-prompt.ts";
-import { callAI, AIError } from "../_shared/ai-client.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
-
-function parseJsonObject(raw: string) {
-  const cleaned = raw
-    .trim()
-    .replace(/^```(?:json)?\s*/i, "")
-    .replace(/\s*```$/i, "")
-    .trim();
-
-  try {
-    return JSON.parse(cleaned);
-  } catch {
-    const start = cleaned.indexOf("{");
-    const end = cleaned.lastIndexOf("}");
-    if (start >= 0 && end > start) return JSON.parse(cleaned.slice(start, end + 1));
-    throw new Error("L'IA n'a pas retourné un JSON valide");
-  }
-}
 
 function buildProceduralDiagnostic(competences: string[], niveau: string) {
   const normalized = (competences?.length ? competences : ["CE"]).filter(Boolean);
