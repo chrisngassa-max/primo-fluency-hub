@@ -814,12 +814,20 @@ ${sessionExercises.map((ex: any, i: number) => `
             {format(new Date(), "EEEE d MMMM", { locale: fr })}
           </p>
         </div>
-        {hasActiveSession && (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-white text-green-700 px-3 py-1.5 text-xs font-semibold border border-green-300 shadow-sm">
-            Séance en cours
-            <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-          </span>
-        )}
+        <div className="flex items-center gap-2 flex-wrap justify-end">
+          {hasActiveSession && (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white text-green-700 px-3 py-1.5 text-xs font-semibold border border-green-300 shadow-sm">
+              Séance en cours
+              <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+            </span>
+          )}
+          <Button variant="outline" className="gap-2 rounded-full" onClick={() => navigate("/formateur/seances")}>
+            <Calendar className="h-4 w-4" /> Mon planning
+          </Button>
+          <Button className="gap-2 rounded-full bg-accent hover:bg-accent/90 text-accent-foreground" onClick={() => navigate("/formateur/groupes?new=1")}>
+            <UserPlus className="h-4 w-4" /> Nouveau groupe
+          </Button>
+        </div>
       </div>
 
       {/* ─── KPI Cards ─── */}
@@ -1024,7 +1032,7 @@ ${sessionExercises.map((ex: any, i: number) => `
                     </p>
                     <p>
                       <span className="font-bold text-white">Horaire :</span>{" "}
-                      {format(new Date(nextSession.date_seance), "HH:mm")} – {format(new Date(new Date(nextSession.date_seance).getTime() + (nextSession.duree_minutes || 90) * 60000), "HH:mm")}
+                      {format(new Date(nextSession.date_seance), "HH:mm")} – {format(new Date(new Date(nextSession.date_seance).getTime() + (nextSession.duree_minutes || 180) * 60000), "HH:mm")}
                     </p>
                   </div>
                   <Button
