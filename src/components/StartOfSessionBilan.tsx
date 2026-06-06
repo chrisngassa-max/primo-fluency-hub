@@ -423,7 +423,10 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
         message: `Un test diagnostique pour la séance "${session.titre}" est prêt.`,
         link: "/eleve",
       }));
-      await supabase.from("notifications").insert(notifs);
+      const { error: notifError } = await supabase.from("notifications").insert(notifs);
+      if (notifError) {
+        console.warn("Notifications non créées, diagnostic déjà envoyé", notifError);
+      }
 
       toast.success(`Diagnostic envoyé à ${diagSelectedIds.size} élève(s) !`);
       setDiagSendOpen(false);

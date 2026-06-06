@@ -88,15 +88,15 @@ const EleveDashboard = () => {
 
 
 
-  // Identifie la séance du jour (date = aujourd'hui, sinon la plus récente "en_cours")
-  const { data: todaySession } = useQuery({
-    queryKey: ["eleve-today-session", user?.id],
+  // Identifie toutes les séances accessibles aujourd'hui / en cours pour éviter de masquer un envoi
+  const { data: activeSessions } = useQuery({
+    queryKey: ["eleve-active-sessions", user?.id],
     queryFn: async () => {
       const { data: memberships } = await supabase
         .from("group_members")
         .select("group_id, joined_at")
         .eq("eleve_id", user!.id);
-      if (!memberships?.length) return null;
+      if (!memberships?.length) return [];
       const groupIds = memberships.map((m) => m.group_id);
 
       // Bornes du jour (locales)
@@ -105,30 +105,26 @@ const EleveDashboard = () => {
       const end = new Date(start);
       end.setDate(end.getDate() + 1);
 
-      // 1) Une séance dont la date est aujourd'hui
       const { data: todays } = await supabase
         .from("sessions")
         .select("id, titre, date_seance, group_id, statut, group:groups(nom)")
         .in("group_id", groupIds)
         .gte("date_seance", start.toISOString())
         .lt("date_seance", end.toISOString())
-        .order("date_seance", { ascending: true })
-        .limit(1);
-      if (todays && todays.length > 0) {
-        return todays[0] as any;
-      }
-      // 2) Sinon, séance "en_cours" la plus récente
+        .order("date_seance", { ascending: true });
+
       const { data: enCours } = await supabase
         .from("sessions")
         .select("id, titre, date_seance, group_id, statut, group:groups(nom)")
         .in("group_id", groupIds)
         .eq("statut", "en_cours")
-        .order("date_seance", { ascending: false })
-        .limit(1);
-      if (enCours && enCours.length > 0) {
-        return enCours[0] as any;
-      }
-      return null;
+        .order("date_seance", { ascending: false });
+
+      const byId = new Map<string, any>();
+      [...(todays ?? []), ...(enCours ?? [])].forEach((s: any) => byId.set(s.id, s));
+      return Array.from(byId.values()).sort(
+        (a, b) => new Date(b.date_seance).getTime() - new Date(a.date_seance).getTime()
+      );
     },
     enabled: !!user?.id,
     staleTime: 0,
@@ -138,16 +134,18 @@ const EleveDashboard = () => {
   });
 
 
-  // Fetch pending bilan tests UNIQUEMENT pour la séance du jour
+  const activeSessionIds = (activeSessions ?? []).map((s: any) => s.id);
+
+  // Fetch pending bilan tests pour toutes les séances visibles aujourd'hui / en cours
   const { data: pendingTests } = useQuery({
-    queryKey: ["eleve-bilans-tests", user?.id, todaySession?.id],
+    queryKey: ["eleve-bilans-tests", user?.id, activeSessionIds.join(",")],
     queryFn: async () => {
-      if (!todaySession?.id) return [];
+      if (activeSessionIds.length === 0) return [];
       const { data: tests, error } = await supabase
         .from("bilan_tests")
         .select("id, nb_questions, competences_couvertes, created_at, session:sessions(titre, date_seance, group_id)")
         .eq("statut", "envoye")
-        .eq("session_id", todaySession.id)
+        .in("session_id", activeSessionIds)
         .order("created_at", { ascending: false });
       if (error) throw error;
       if (!tests || tests.length === 0) return [];
@@ -165,7 +163,7 @@ const EleveDashboard = () => {
         score: doneMap.get(t.id),
       }));
     },
-    enabled: !!user?.id && !!todaySession?.id,
+    enabled: !!user?.id && activeSessionIds.length > 0,
     staleTime: 0,
     refetchOnWindowFocus: true,
     refetchOnMount: "always",
@@ -175,16 +173,16 @@ const EleveDashboard = () => {
 
   const uncompletedTests = (pendingTests ?? []).filter((t: any) => !t.completed);
 
-  // Exercices de la séance du jour uniquement
+  // Exercices de toutes les séances visibles aujourd'hui / en cours
   const { data: sessionExercises, isLoading: loadingSessionEx } = useQuery({
-    queryKey: ["eleve-session-exercises", user?.id, todaySession?.id],
+    queryKey: ["eleve-session-exercises", user?.id, activeSessionIds.join(",")],
     queryFn: async () => {
-      if (!todaySession?.id) return [];
+      if (activeSessionIds.length === 0) return [];
 
       const { data: seLinks } = await supabase
         .from("session_exercices")
         .select("session_id, exercice_id, updated_at")
-        .eq("session_id", todaySession.id)
+        .in("session_id", activeSessionIds)
         .eq("statut", "traite_en_classe" as any);
       if (!seLinks?.length) return [];
 
@@ -196,22 +194,24 @@ const EleveDashboard = () => {
         .in("exercice_id", exerciceIds);
       const doneExIds = new Set((resultats ?? []).map((r) => r.exercice_id));
 
-      const total = seLinks.length;
-      const done = seLinks.filter((se: any) => doneExIds.has(se.exercice_id)).length;
-      const remaining = total - done;
-      if (remaining <= 0) return [];
-
-      return [{
-        sessionId: todaySession.id,
-        titre: (todaySession as any).titre,
-        date_seance: (todaySession as any).date_seance,
-        group_nom: (todaySession as any).group?.nom || "",
-        total,
-        done,
-        remaining,
-      }];
+      return (activeSessions ?? [])
+        .map((session: any) => {
+          const links = seLinks.filter((se: any) => se.session_id === session.id);
+          const total = links.length;
+          const done = links.filter((se: any) => doneExIds.has(se.exercice_id)).length;
+          return {
+            sessionId: session.id,
+            titre: session.titre,
+            date_seance: session.date_seance,
+            group_nom: session.group?.nom || "",
+            total,
+            done,
+            remaining: total - done,
+          };
+        })
+        .filter((s: any) => s.remaining > 0);
     },
-    enabled: !!user?.id && !!todaySession?.id,
+    enabled: !!user?.id && activeSessionIds.length > 0,
     staleTime: 0,
     refetchOnWindowFocus: true,
     refetchOnMount: "always",
