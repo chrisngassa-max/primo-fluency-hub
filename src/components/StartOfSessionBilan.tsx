@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { COMPETENCE_COLORS } from "@/lib/competences";
+import { createProceduralDiagnosticTest } from "@/lib/diagnosticFallback";
 
 interface StartOfSessionBilanProps {
   sessionId: string;
@@ -378,34 +379,13 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
           ? prevData.weakCompetences.slice(0, 2)
           : ["CE"];
 
-      const { data, error } = await supabase.functions.invoke("generate-diagnostic-test", {
-        body: {
-          sessionId,
-          groupId,
-          competences,
-          niveau: session.niveau_cible,
-          statut: "pret",
-          weakPoints: prevData?.homeworkLowScores?.slice(0, 3).map((ls) => ({
-            competence: ls.competence,
-            exercice: ls.exercice,
-            score: ls.score,
-          })),
-          previousSessionScores: prevData?.sessionScoresByCompetence,
-        },
+      const data = await createProceduralDiagnosticTest({
+        sessionId,
+        groupId,
+        competences,
+        niveau: session.niveau_cible,
+        statut: "pret",
       });
-
-      if (error) {
-        let serverMsg: string | undefined;
-        try {
-          const ctxResp: Response | undefined = (error as any)?.context;
-          if (ctxResp && typeof ctxResp.clone === "function") {
-            const body = await ctxResp.clone().json().catch(() => null);
-            serverMsg = body?.error || body?.message;
-          }
-        } catch {}
-        throw new Error(serverMsg || error.message || "Edge function error");
-      }
-      if (data?.error) throw new Error(data.error);
 
       setDiagBilanTestId(data.bilanTestId);
       setDiagGenerated(true);
