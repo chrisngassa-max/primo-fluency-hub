@@ -439,6 +439,18 @@ const SeancesPage = () => {
         if (seErr) throw seErr;
       }
 
+      if (user) {
+        prepareSessionKit({
+          sessionId: newSession.id,
+          groupId: dupGroupId,
+          niveauCible: dupSession.niveau_cible,
+          competencesCibles: (dupSession as any).competences_cibles || null,
+          objectifs: dupSession.objectifs,
+          titre: dupSession.titre,
+          formateurId: user.id,
+        });
+      }
+
       const targetGroup = (groups ?? []).find((g) => g.id === dupGroupId);
       toast.success("Séance dupliquée !", {
         description: `Pour le groupe ${targetGroup?.nom || ""} avec ${srcExercises?.length || 0} exercice(s).`,
