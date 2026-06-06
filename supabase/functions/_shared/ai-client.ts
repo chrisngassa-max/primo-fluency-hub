@@ -62,6 +62,10 @@ export async function callAI(options: AICallOptions): Promise<any> {
     const errText = await response.text();
     console.error("Lovable AI gateway error:", response.status, errText);
 
+    if (response.status === 400) {
+      throw new AIError(`Erreur du service IA (400): ${errText.slice(0, 500)}`, 400);
+    }
+
     // Fallback to direct Gemini if gateway fails (e.g. 404 when key not registered on external project)
     if (!GEMINI_API_KEY) {
       throw new AIError(`Erreur du service IA (${response.status})`, response.status);
