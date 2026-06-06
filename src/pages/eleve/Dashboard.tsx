@@ -98,7 +98,6 @@ const EleveDashboard = () => {
         .eq("eleve_id", user!.id);
       if (!memberships?.length) return null;
       const groupIds = memberships.map((m) => m.group_id);
-      const joinMap = new Map(memberships.map((m) => [m.group_id, m.joined_at]));
 
       // Bornes du jour (locales)
       const start = new Date();
@@ -116,9 +115,7 @@ const EleveDashboard = () => {
         .order("date_seance", { ascending: true })
         .limit(1);
       if (todays && todays.length > 0) {
-        const s = todays[0] as any;
-        const jd = joinMap.get(s.group_id);
-        if (jd && new Date(s.date_seance) >= new Date(jd)) return s;
+        return todays[0] as any;
       }
       // 2) Sinon, séance "en_cours" la plus récente
       const { data: enCours } = await supabase
@@ -129,9 +126,7 @@ const EleveDashboard = () => {
         .order("date_seance", { ascending: false })
         .limit(1);
       if (enCours && enCours.length > 0) {
-        const s = enCours[0] as any;
-        const jd = joinMap.get(s.group_id);
-        if (jd && new Date(s.date_seance) >= new Date(jd)) return s;
+        return enCours[0] as any;
       }
       return null;
     },
