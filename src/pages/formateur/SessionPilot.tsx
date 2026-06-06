@@ -1257,7 +1257,7 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
                 ✨ Générer IA
               </Button>
               <Button variant="outline" size="sm" onClick={() => setImportUrlOpen(true)} className="gap-2">
-                <Link2 className="h-4 w-4" /> Importer depuis un lien
+                <Link2 className="h-4 w-4" /> Importer un support
               </Button>
               <ExternalResourcePicker
                 sessionId={id!}
@@ -1671,7 +1671,7 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
                 Générer des exercices IA
               </Button>
               <Button variant="outline" size="sm" onClick={() => setImportUrlOpen(true)} className="gap-2">
-                <Link2 className="h-4 w-4" /> Importer depuis un lien
+                <Link2 className="h-4 w-4" /> Importer un support
               </Button>
             </div>
           </CardContent>

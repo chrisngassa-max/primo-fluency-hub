@@ -1,14 +1,15 @@
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { useMemo, useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Loader2, Link2, Wand2, CheckCircle2, Copy, Volume2, Image, Video, ChevronDown, ChevronUp, Minus, Plus, Save } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { useAuth } from "@/contexts/AuthContext";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CheckCircle2, FileText, Link2, Loader2, Save, Upload, Wand2 } from "lucide-react";
 
 interface ImportFromUrlDialogProps {
   open: boolean;
@@ -17,392 +18,401 @@ interface ImportFromUrlDialogProps {
   onExerciseCreated?: (exercise: any) => void;
 }
 
+type SourceMode = "url" | "pdf";
+type Destination = "bank" | "session" | "diagnostic" | "homework";
+type Step = "form" | "analyzing" | "generating" | "preview" | "saving";
+
 const COMPETENCES = [
-  { value: "CO", label: "CO — Compréhension Orale" },
-  { value: "CE", label: "CE — Compréhension Écrite" },
-  { value: "EE", label: "EE — Expression Écrite" },
-  { value: "EO", label: "EO — Expression Orale" },
+  { value: "auto", label: "Detection automatique" },
+  { value: "CO", label: "CO - Comprehension orale" },
+  { value: "CE", label: "CE - Comprehension ecrite" },
+  { value: "EE", label: "EE - Expression ecrite" },
+  { value: "EO", label: "EO - Expression orale" },
+  { value: "Structures", label: "Structures - Grammaire et vocabulaire" },
 ];
 
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2"];
-
 const FORMATS = [
   { value: "qcm", label: "QCM" },
   { value: "vrai_faux", label: "Vrai / Faux" },
-  { value: "texte_lacunaire", label: "Texte lacunaire" },
+  { value: "texte_lacunaire", label: "Texte a trous" },
   { value: "appariement", label: "Appariement" },
-  { value: "production_ecrite", label: "Production écrite" },
+  { value: "transformation", label: "Transformation" },
+  { value: "production_ecrite", label: "Production ecrite" },
 ];
 
-type Step = "form" | "loading" | "preview" | "duplicate_loading";
-type DifficultyAdjust = "easier" | "harder" | null;
-type LengthAdjust = "shorter" | "longer" | null;
+const readAsBase64 = (file: File) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("Lecture du PDF impossible."));
+    reader.onload = () => resolve(String(reader.result).split(",")[1] || "");
+    reader.readAsDataURL(file);
+  });
 
-export default function ImportFromUrlDialog({ open, onClose, sessionId, onExerciseCreated }: ImportFromUrlDialogProps) {
+export default function ImportFromUrlDialog({
+  open,
+  onClose,
+  sessionId,
+  onExerciseCreated,
+}: ImportFromUrlDialogProps) {
   const { user } = useAuth();
+  const [sourceMode, setSourceMode] = useState<SourceMode>("pdf");
   const [url, setUrl] = useState("");
-  const [competence, setCompetence] = useState("");
+  const [pdf, setPdf] = useState<File | null>(null);
+  const [competence, setCompetence] = useState("auto");
   const [niveau, setNiveau] = useState("A1");
-  const [targetFormat, setTargetFormat] = useState("qcm");
-  const [treatment, setTreatment] = useState<"extract" | "reconfigure">("reconfigure");
+  const [format, setFormat] = useState("qcm");
+  const [count, setCount] = useState(1);
+  const [destination, setDestination] = useState<Destination>(sessionId ? "session" : "bank");
   const [step, setStep] = useState<Step>("form");
-  const [preview, setPreview] = useState<any>(null);
-  const [detectedMedia, setDetectedMedia] = useState<{ type: "image" | "audio" | "video"; url: string; alt?: string }[]>([]);
-  const [saving, setSaving] = useState(false);
-  const [difficultyAdjust, setDifficultyAdjust] = useState<DifficultyAdjust>(null);
-  const [lengthAdjust, setLengthAdjust] = useState<LengthAdjust>(null);
-  const [showMediaDetails, setShowMediaDetails] = useState(false);
+  const [analysis, setAnalysis] = useState<any>(null);
+  const [exercises, setExercises] = useState<any[]>([]);
 
-  const isValidUrl = (str: string) => {
-    try { new URL(str); return true; } catch { return false; }
+  const busy = step === "analyzing" || step === "generating" || step === "saving";
+  const canGenerate = sourceMode === "pdf" ? !!pdf : /^https?:\/\//i.test(url.trim());
+  const sourceLabel = useMemo(
+    () => sourceMode === "pdf" ? pdf?.name : url.trim(),
+    [pdf, sourceMode, url],
+  );
+
+  const reset = () => {
+    setUrl("");
+    setPdf(null);
+    setCompetence("auto");
+    setNiveau("A1");
+    setFormat("qcm");
+    setCount(1);
+    setDestination(sessionId ? "session" : "bank");
+    setStep("form");
+    setAnalysis(null);
+    setExercises([]);
   };
 
-  const handleGenerate = async () => {
-    if (!isValidUrl(url)) { toast.error("L'URL n'est pas valide"); return; }
-    setStep("loading");
-
-    const { data, error } = await supabase.functions.invoke("smart-exercise-generator", {
-      body: {
-        mode: "import",
-        sourceUrl: url,
-        treatment,
-        targetFormat: treatment === "reconfigure" ? targetFormat : undefined,
-        competence: competence || undefined,
-        niveau,
-        niveau_depart: niveau,
-        niveau_arrivee: "B1",
-      },
-    });
-
-    if (error || data?.error) {
-      toast.error(error?.message ?? data?.error ?? "Erreur lors de l'analyse");
-      setStep("form");
-      return;
-    }
-
-    setPreview(data.exercise);
-    setDetectedMedia(data.detectedMedia ?? []);
-    setStep("preview");
-  };
-
-  const handleDuplicate = async () => {
-    if (!preview) return;
-    setStep("duplicate_loading");
-
-    const { data, error } = await supabase.functions.invoke("smart-exercise-generator", {
-      body: {
-        mode: "import",
-        duplicateFrom: preview,
-        difficultyAdjust,
-        lengthAdjust,
-        niveau,
-        niveau_depart: niveau,
-        niveau_arrivee: "B1",
-      },
-    });
-
-    if (error || data?.error) {
-      toast.error(error?.message ?? data?.error ?? "Erreur lors de la duplication");
-      setStep("preview");
-      return;
-    }
-
-    setPreview(data.exercise);
-    setDifficultyAdjust(null);
-    setLengthAdjust(null);
-    setStep("preview");
-    toast.success("Variante générée");
-  };
-
-  const handleSave = async () => {
-    if (!preview || !user) return;
-    setSaving(true);
-
-    // Find a default point_a_maitriser
-    const { data: defaultPoint } = await supabase
-      .from("points_a_maitriser")
-      .select("id")
-      .limit(1)
-      .single();
-
-    if (!defaultPoint) {
-      toast.error("Aucun point à maîtriser trouvé. Importez d'abord un programme.");
-      setSaving(false);
-      return;
-    }
-
-    const { data: ex, error } = await supabase
-      .from("exercices")
-      .insert({
-        titre: preview.titre,
-        consigne: preview.consigne,
-        competence: preview.competence,
-        format: preview.format,
-        niveau_vise: preview.niveau_vise,
-        difficulte: preview.difficulte ?? 2,
-        contenu: preview.contenu,
-        formateur_id: user.id,
-        animation_guide: preview.metadata ?? null,
-        point_a_maitriser_id: defaultPoint.id,
-        is_ai_generated: true,
-      } as any)
-      .select()
-      .single();
-
-    setSaving(false);
-    if (error) { toast.error("Erreur lors de la sauvegarde"); console.error(error); return; }
-
-    if (sessionId && ex) {
-      const { data: existing } = await supabase
-        .from("session_exercices")
-        .select("ordre")
-        .eq("session_id", sessionId)
-        .order("ordre", { ascending: false })
-        .limit(1);
-
-      await supabase.from("session_exercices").insert({
-        session_id: sessionId,
-        exercice_id: ex.id,
-        ordre: (existing?.[0]?.ordre ?? 0) + 1,
-        statut: "planifie",
-      });
-      toast.success("Exercice importé et ajouté à la séance");
-    } else {
-      toast.success("Exercice importé dans la banque");
-    }
-
-    onExerciseCreated?.(ex);
-    handleClose();
-  };
-
-  const handleClose = () => {
-    setUrl(""); setCompetence(""); setNiveau("A1"); setTargetFormat("qcm");
-    setTreatment("reconfigure"); setStep("form"); setPreview(null);
-    setDetectedMedia([]); setDifficultyAdjust(null); setLengthAdjust(null);
+  const close = () => {
+    if (busy) return;
+    reset();
     onClose();
   };
 
-  const mediaIcons: Record<string, typeof Image> = { image: Image, audio: Volume2, video: Video };
+  const buildSourceText = (pdfAnalysis: any) => [
+    `Titre du support : ${pdfAnalysis.title || pdf?.name || "Document PDF"}`,
+    `Theme : ${pdfAnalysis.theme || "Non detecte"}`,
+    `Niveau estime : ${pdfAnalysis.detected_level || "Non detecte"}`,
+    `Synthese fidele : ${pdfAnalysis.summary || ""}`,
+    `Vocabulaire a conserver : ${(pdfAnalysis.vocabulary || []).join(", ")}`,
+    `Points de langue : ${(pdfAnalysis.grammar_points || []).join(", ")}`,
+    `Objectifs : ${(pdfAnalysis.learning_objectives || []).join(", ")}`,
+  ].join("\n");
+
+  const generate = async () => {
+    if (!canGenerate) return;
+    try {
+      let sourceText: string | undefined;
+      let sourceUrl: string | undefined;
+      let pdfAnalysis = null;
+
+      if (sourceMode === "pdf") {
+        if (!pdf) return;
+        if (pdf.size > 10 * 1024 * 1024) throw new Error("Le PDF ne doit pas depasser 10 Mo.");
+        setStep("analyzing");
+        const pdfBase64 = await readAsBase64(pdf);
+        const { data, error } = await supabase.functions.invoke("analyze-pdf-support", {
+          body: { pdfBase64, fileName: pdf.name, targetLevel: niveau },
+        });
+        if (error || data?.error) throw new Error(data?.error || error?.message);
+        pdfAnalysis = data.analysis;
+        setAnalysis(pdfAnalysis);
+        sourceText = buildSourceText(pdfAnalysis);
+      } else {
+        sourceUrl = url.trim();
+      }
+
+      setStep("generating");
+      const generated: any[] = [];
+      for (let index = 0; index < count; index += 1) {
+        const variantInstruction = `\nVariante ${index + 1} sur ${count}. Cree un exercice distinct des autres, tout en conservant strictement le theme et le vocabulaire source.`;
+        const { data, error } = await supabase.functions.invoke("smart-exercise-generator", {
+          body: {
+            mode: "import",
+            sourceText: sourceText ? `${sourceText}${variantInstruction}` : undefined,
+            sourceUrl,
+            treatment: "reconfigure",
+            targetFormat: format,
+            competence: competence === "auto" ? undefined : competence,
+            niveau,
+            niveau_depart: niveau,
+            niveau_arrivee: niveau,
+          },
+        });
+        if (error || data?.error) throw new Error(data?.error || error?.message);
+        generated.push(data.exercise);
+      }
+      setExercises(generated);
+      setStep("preview");
+    } catch (error: any) {
+      toast.error("Generation impossible", { description: error.message });
+      setStep("form");
+    }
+  };
+
+  const save = async () => {
+    if (!user || exercises.length === 0) return;
+    setStep("saving");
+    try {
+      const { data: defaultPoint, error: pointError } = await supabase
+        .from("points_a_maitriser")
+        .select("id")
+        .limit(1)
+        .single();
+      if (pointError || !defaultPoint) throw new Error("Importez d'abord un programme de formation.");
+
+      const payload = exercises.map((exercise) => ({
+        titre: exercise.titre,
+        consigne: exercise.consigne,
+        competence: exercise.competence,
+        format: exercise.format,
+        niveau_vise: exercise.niveau_vise || niveau,
+        difficulte: exercise.difficulte ?? 2,
+        contenu: {
+          ...exercise.contenu,
+          source_support: {
+            type: sourceMode,
+            label: sourceLabel,
+            theme: analysis?.theme || null,
+            vocabulary: analysis?.vocabulary || [],
+          },
+        },
+        formateur_id: user.id,
+        animation_guide: exercise.metadata ?? null,
+        point_a_maitriser_id: defaultPoint.id,
+        is_ai_generated: true,
+      }));
+
+      const { data: created, error } = await supabase
+        .from("exercices")
+        .insert(payload as any)
+        .select();
+      if (error) throw error;
+
+      if (sessionId && destination !== "bank") {
+        const { data: existing } = await supabase
+          .from("session_exercices")
+          .select("ordre")
+          .eq("session_id", sessionId)
+          .order("ordre", { ascending: false })
+          .limit(1);
+        const startOrder = (existing?.[0]?.ordre ?? 0) + 1;
+        const sessionStatus = destination === "diagnostic" ? "devoir_anticipation" : "planifie";
+
+        const { error: linkError } = await supabase.from("session_exercices").insert(
+          (created || []).map((exercise, index) => ({
+            session_id: sessionId,
+            exercice_id: exercise.id,
+            ordre: startOrder + index,
+            statut: sessionStatus,
+          })) as any,
+        );
+        if (linkError) throw linkError;
+
+        if (destination === "homework") {
+          const { data: session } = await supabase
+            .from("sessions")
+            .select("group_id")
+            .eq("id", sessionId)
+            .single();
+          const { data: members } = await supabase
+            .from("group_members")
+            .select("eleve_id")
+            .eq("group_id", session?.group_id || "");
+          const deadline = new Date(Date.now() + 7 * 86400000).toISOString();
+          const devoirs = (members || []).flatMap((member) =>
+            (created || []).map((exercise) => ({
+              eleve_id: member.eleve_id,
+              exercice_id: exercise.id,
+              formateur_id: user.id,
+              session_id: sessionId,
+              date_echeance: deadline,
+              statut: "en_attente",
+              raison: "entrainement",
+            })),
+          );
+          if (devoirs.length) {
+            const { error: homeworkError } = await supabase.from("devoirs").insert(devoirs as any);
+            if (homeworkError) throw homeworkError;
+          }
+        }
+      }
+
+      (created || []).forEach(onExerciseCreated);
+      toast.success(`${created?.length || 0} exercice(s) cree(s)`, {
+        description: destination === "homework"
+          ? "Les exercices ont aussi ete envoyes aux eleves."
+          : destination === "diagnostic"
+            ? "Ils sont places en diagnostic de debut de seance."
+            : destination === "session"
+              ? "Ils sont ajoutes a la seance."
+              : "Ils sont disponibles dans la banque.",
+      });
+      reset();
+      onClose();
+    } catch (error: any) {
+      toast.error("Sauvegarde impossible", { description: error.message });
+      setStep("preview");
+    }
+  };
 
   return (
-    <Dialog open={open} onOpenChange={(v) => { if (!v) handleClose(); }}>
-      <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-y-auto">
+    <Dialog open={open} onOpenChange={(value) => { if (!value) close(); }}>
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Link2 className="h-5 w-5" />
-            Importer depuis un lien
+            <FileText className="h-5 w-5" />
+            Importer un support pedagogique
           </DialogTitle>
           <DialogDescription>
-            Colle le lien d'un exercice en ligne — l'IA détecte le texte, les images et les audios, puis génère un exercice TCF calibré.
+            Genere des exercices sur le meme theme, avec le vocabulaire du support et le niveau choisi.
           </DialogDescription>
         </DialogHeader>
 
-        {/* STEP 1 — Form */}
         {step === "form" && (
-          <div className="space-y-4">
-            <div>
-              <Label>Lien de la page</Label>
-              <Input placeholder="https://exemple.com/exercice-fle" value={url} onChange={(e) => setUrl(e.target.value)} />
-            </div>
+          <div className="space-y-5">
+            <Tabs value={sourceMode} onValueChange={(value) => setSourceMode(value as SourceMode)}>
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="pdf"><FileText className="mr-2 h-4 w-4" />PDF</TabsTrigger>
+                <TabsTrigger value="url"><Link2 className="mr-2 h-4 w-4" />Lien web</TabsTrigger>
+              </TabsList>
+              <TabsContent value="pdf" className="mt-4">
+                <Label htmlFor="support-pdf">Document PDF</Label>
+                <label className="mt-2 flex min-h-28 cursor-pointer flex-col items-center justify-center gap-2 border border-dashed p-4 text-center hover:bg-muted/40">
+                  <Upload className="h-6 w-6 text-primary" />
+                  <span className="text-sm font-medium">{pdf?.name || "Choisir un PDF"}</span>
+                  <span className="text-xs text-muted-foreground">10 Mo maximum</span>
+                  <input
+                    id="support-pdf"
+                    type="file"
+                    accept="application/pdf,.pdf"
+                    className="hidden"
+                    onChange={(event) => setPdf(event.target.files?.[0] || null)}
+                  />
+                </label>
+              </TabsContent>
+              <TabsContent value="url" className="mt-4">
+                <Label htmlFor="support-url">Adresse de la page</Label>
+                <Input
+                  id="support-url"
+                  className="mt-2"
+                  placeholder="https://exemple.com/ressource-fle"
+                  value={url}
+                  onChange={(event) => setUrl(event.target.value)}
+                />
+              </TabsContent>
+            </Tabs>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <Label>Compétence</Label>
-                <Select value={competence} onValueChange={setCompetence}>
-                  <SelectTrigger><SelectValue placeholder="Auto-détection" /></SelectTrigger>
-                  <SelectContent>
-                    {COMPETENCES.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Niveau visé</Label>
+                <Label>Niveau de l'exercice</Label>
                 <Select value={niveau} onValueChange={setNiveau}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {NIVEAUX.map(n => <SelectItem key={n} value={n}>{n}</SelectItem>)}
-                  </SelectContent>
+                  <SelectTrigger className="mt-2"><SelectValue /></SelectTrigger>
+                  <SelectContent>{NIVEAUX.map((item) => <SelectItem key={item} value={item}>{item}</SelectItem>)}</SelectContent>
                 </Select>
+              </div>
+              <div>
+                <Label>Competence cible</Label>
+                <Select value={competence} onValueChange={setCompetence}>
+                  <SelectTrigger className="mt-2"><SelectValue /></SelectTrigger>
+                  <SelectContent>{COMPETENCES.map((item) => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>Format</Label>
+                <Select value={format} onValueChange={setFormat}>
+                  <SelectTrigger className="mt-2"><SelectValue /></SelectTrigger>
+                  <SelectContent>{FORMATS.map((item) => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>Nombre d'exercices</Label>
+                <Input
+                  className="mt-2"
+                  type="number"
+                  min={1}
+                  max={30}
+                  value={count}
+                  onChange={(event) => {
+                    const value = Number(event.target.value);
+                    setCount(Number.isFinite(value) ? Math.min(30, Math.max(1, value)) : 1);
+                  }}
+                />
+                <p className="mt-1 text-xs text-muted-foreground">Choisissez entre 1 et 30 exercices.</p>
               </div>
             </div>
 
             <div>
-              <Label>Traitement IA</Label>
-              <Select value={treatment} onValueChange={(v) => setTreatment(v as "extract" | "reconfigure")}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+              <Label>Destination</Label>
+              <Select value={destination} onValueChange={(value) => setDestination(value as Destination)}>
+                <SelectTrigger className="mt-2"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="reconfigure">Reconfigurer en exercice TCF IRN (recommandé)</SelectItem>
-                  <SelectItem value="extract">Extraire l'exercice tel quel</SelectItem>
+                  <SelectItem value="bank">Banque d'exercices</SelectItem>
+                  {sessionId && <SelectItem value="session">Exercices de la seance</SelectItem>}
+                  {sessionId && <SelectItem value="diagnostic">Prediagnostic de la seance</SelectItem>}
+                  {sessionId && <SelectItem value="homework">Devoirs des eleves</SelectItem>}
                 </SelectContent>
               </Select>
             </div>
 
-            {treatment === "reconfigure" && (
-              <div>
-                <Label>Format souhaité</Label>
-                <Select value={targetFormat} onValueChange={setTargetFormat}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {FORMATS.map(f => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-
-            <Button onClick={handleGenerate} className="w-full gap-2" disabled={!url.trim()}>
-              <Wand2 className="h-4 w-4" /> Analyser et transformer
+            <Button className="w-full gap-2" size="lg" disabled={!canGenerate} onClick={generate}>
+              <Wand2 className="h-4 w-4" />
+              Analyser et generer {count} exercice{count > 1 ? "s" : ""}
             </Button>
           </div>
         )}
 
-        {/* STEP 2 — Loading */}
-        {(step === "loading" || step === "duplicate_loading") && (
-          <div className="flex flex-col items-center justify-center py-12 gap-4">
-            <Loader2 className="h-10 w-10 animate-spin text-primary" />
-            <div className="text-center">
+        {(step === "analyzing" || step === "generating" || step === "saving") && (
+          <div className="flex min-h-64 flex-col items-center justify-center gap-4 text-center">
+            <Loader2 className="h-9 w-9 animate-spin text-primary" />
+            <div>
               <p className="font-medium">
-                {step === "duplicate_loading"
-                  ? "Génération de la variante en cours…"
-                  : "L'IA analyse la page, détecte les médias et génère l'exercice…"
-                }
+                {step === "analyzing" ? "Analyse du PDF et de son vocabulaire..." : step === "generating" ? "Generation des exercices..." : "Ajout des exercices..."}
               </p>
-              <p className="text-sm text-muted-foreground mt-1">Cela peut prendre 10-15 secondes</p>
+              <p className="mt-1 text-sm text-muted-foreground">Le contenu reste ancre dans le support choisi.</p>
             </div>
           </div>
         )}
 
-        {/* STEP 3 — Preview */}
-        {step === "preview" && preview && (
+        {step === "preview" && (
           <div className="space-y-4">
-            <div className="flex items-center gap-2 text-green-600">
+            <div className="flex items-center gap-2 text-green-700">
               <CheckCircle2 className="h-5 w-5" />
-              <span className="font-medium">Exercice généré</span>
+              <span className="font-medium">{exercises.length} exercice(s) pret(s)</span>
             </div>
-
-            {/* Exercise preview */}
-            <div className="border rounded-lg p-4 space-y-2 bg-muted/30">
-              <div className="flex flex-wrap gap-2">
-                <Badge>{preview.competence}</Badge>
-                <Badge variant="outline">{preview.niveau_vise}</Badge>
-                <Badge variant="secondary">{preview.format}</Badge>
-                {preview.difficulte && <Badge variant="outline">Difficulté {preview.difficulte}/5</Badge>}
-              </div>
-              <h3 className="font-semibold text-lg">{preview.titre}</h3>
-              <p className="text-sm text-muted-foreground">{preview.consigne}</p>
-              {preview.contenu?.items?.length > 0 && (
-                <p className="text-xs text-muted-foreground">{preview.contenu.items.length} question(s)</p>
-              )}
-              {preview.metadata?.code && (
-                <p className="text-xs font-mono text-muted-foreground">Code TCF : {preview.metadata.code}</p>
-              )}
-              {(preview.contenu?.image_url || preview.contenu?.script_audio_url) && (
-                <div className="flex gap-2 pt-1">
-                  {preview.contenu.image_url && (
-                    <Badge variant="outline" className="gap-1 text-xs">
-                      <Image className="h-3 w-3" /> Image incluse
-                    </Badge>
-                  )}
-                  {preview.contenu.script_audio_url && (
-                    <Badge variant="outline" className="gap-1 text-xs">
-                      <Volume2 className="h-3 w-3" /> Audio inclus
-                    </Badge>
-                  )}
+            {analysis && (
+              <div className="border bg-muted/30 p-4">
+                <p className="font-semibold">{analysis.title || pdf?.name}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{analysis.theme}</p>
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {(analysis.vocabulary || []).slice(0, 12).map((word: string) => <Badge key={word} variant="outline">{word}</Badge>)}
                 </div>
-              )}
-            </div>
-
-            {/* Detected media */}
-            {detectedMedia.length > 0 && (
-              <div className="border rounded-lg p-3 space-y-2">
-                <button
-                  onClick={() => setShowMediaDetails(!showMediaDetails)}
-                  className="flex items-center justify-between w-full text-sm font-medium"
-                >
-                  <span className="flex items-center gap-2">
-                    {detectedMedia.some(m => m.type === "image") && <Image className="h-4 w-4" />}
-                    {detectedMedia.some(m => m.type === "audio") && <Volume2 className="h-4 w-4" />}
-                    {detectedMedia.some(m => m.type === "video") && <Video className="h-4 w-4" />}
-                    {detectedMedia.length} média(s) détecté(s) sur la page
-                  </span>
-                  {showMediaDetails ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                </button>
-                {showMediaDetails && (
-                  <div className="space-y-1 pt-1">
-                    {detectedMedia.slice(0, 5).map((m, i) => {
-                      const Icon = mediaIcons[m.type] ?? Image;
-                      return (
-                        <div key={i} className="flex items-center gap-2 text-xs text-muted-foreground truncate">
-                          <Icon className="h-3 w-3 shrink-0" />
-                          <span className="truncate">{m.alt || m.url.split("/").pop() || m.url}</span>
-                        </div>
-                      );
-                    })}
-                    {detectedMedia.length > 5 && (
-                      <p className="text-xs text-muted-foreground">…et {detectedMedia.length - 5} autre(s)</p>
-                    )}
-                  </div>
-                )}
               </div>
             )}
-
-            {/* Duplication controls */}
-            <div className="border rounded-lg p-4 space-y-3 bg-muted/20">
-              <div className="flex items-center gap-2 text-sm font-medium">
-                <Copy className="h-4 w-4" /> Générer une variante
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <Label className="text-xs">Difficulté</Label>
-                  <div className="flex gap-1 mt-1">
-                    <Button
-                      size="sm" variant={difficultyAdjust === "easier" ? "default" : "outline"}
-                      onClick={() => setDifficultyAdjust(difficultyAdjust === "easier" ? null : "easier")}
-                      className="flex-1 gap-1 text-xs"
-                    >
-                      <Minus className="h-3 w-3" /> Plus facile
-                    </Button>
-                    <Button
-                      size="sm" variant={difficultyAdjust === "harder" ? "default" : "outline"}
-                      onClick={() => setDifficultyAdjust(difficultyAdjust === "harder" ? null : "harder")}
-                      className="flex-1 gap-1 text-xs"
-                    >
-                      <Plus className="h-3 w-3" /> Plus dur
-                    </Button>
+            <div className="space-y-2">
+              {exercises.map((exercise, index) => (
+                <div key={`${exercise.titre}-${index}`} className="flex items-start justify-between gap-3 border p-3">
+                  <div className="min-w-0">
+                    <p className="font-medium">{exercise.titre}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">{exercise.consigne}</p>
+                  </div>
+                  <div className="flex shrink-0 gap-1">
+                    <Badge>{exercise.competence}</Badge>
+                    <Badge variant="outline">{exercise.niveau_vise}</Badge>
                   </div>
                 </div>
-                <div>
-                  <Label className="text-xs">Longueur</Label>
-                  <div className="flex gap-1 mt-1">
-                    <Button
-                      size="sm" variant={lengthAdjust === "shorter" ? "default" : "outline"}
-                      onClick={() => setLengthAdjust(lengthAdjust === "shorter" ? null : "shorter")}
-                      className="flex-1 gap-1 text-xs"
-                    >
-                      <Minus className="h-3 w-3" /> Court
-                    </Button>
-                    <Button
-                      size="sm" variant={lengthAdjust === "longer" ? "default" : "outline"}
-                      onClick={() => setLengthAdjust(lengthAdjust === "longer" ? null : "longer")}
-                      className="flex-1 gap-1 text-xs"
-                    >
-                      <Plus className="h-3 w-3" /> Long
-                    </Button>
-                  </div>
-                </div>
-              </div>
-              <Button onClick={handleDuplicate} variant="secondary" className="w-full gap-2">
-                <Wand2 className="h-4 w-4" /> Générer cette variante
-              </Button>
+              ))}
             </div>
-
-            {/* Final actions */}
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setStep("form")} className="flex-1">
-                Modifier
-              </Button>
-              <Button onClick={handleSave} disabled={saving} className="flex-1 gap-2">
-                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                {sessionId ? "Ajouter à la séance" : "Sauvegarder"}
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setStep("form")}>Modifier</Button>
+              <Button className="gap-2" onClick={save}>
+                <Save className="h-4 w-4" />
+                Valider et ajouter
               </Button>
             </div>
           </div>
