@@ -12,15 +12,21 @@ const clearStaleBodyPointerLock = () => {
   }, 350);
 };
 
-const Dialog = ({ onOpenChange, ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) => (
-  <DialogPrimitive.Root
-    onOpenChange={(open) => {
-      onOpenChange?.(open);
-      if (!open) clearStaleBodyPointerLock();
-    }}
-    {...props}
-  />
-);
+const Dialog = ({ onOpenChange, ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) => {
+  React.useEffect(() => {
+    clearStaleBodyPointerLock();
+  }, []);
+
+  return (
+    <DialogPrimitive.Root
+      onOpenChange={(open) => {
+        onOpenChange?.(open);
+        if (!open) clearStaleBodyPointerLock();
+      }}
+      {...props}
+    />
+  );
+};
 
 const DialogTrigger = DialogPrimitive.Trigger;
 
