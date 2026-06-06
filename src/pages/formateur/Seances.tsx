@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { COMPETENCES_ORDER, COMPETENCE_COLORS, resolveSessionCompetences } from "@/lib/competences";
 import { cn } from "@/lib/utils";
+import { prepareSessionKit } from "@/lib/prepareSessionKit";
 
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
 
