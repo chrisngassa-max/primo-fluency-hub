@@ -121,7 +121,7 @@ const SeancesPage = () => {
     queryKey: ["formateur-groups", user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("groups").select("id, nom, niveau")
+        .from("groups").select("id, nom, niveau, type_demarche")
         .eq("formateur_id", user!.id).eq("is_active", true)
         .order("nom");
       if (error) throw error;
@@ -155,14 +155,32 @@ const SeancesPage = () => {
   ];
 
   // Detect the highest session number already created for this formateur
+  const extractSessionNumber = (title?: string | null): number | null => {
+    const match = title?.match(/S[ée]ance\s*(\d+)/i);
+    return match ? parseInt(match[1]) : null;
+  };
+
   const getNextSessionNumber = (): number => {
     if (!sessions || sessions.length === 0) return 1;
     let maxNum = 0;
     for (const s of sessions as any[]) {
-      const match = s.titre?.match(/S[ée]ance\s*(\d+)/i);
-      if (match) maxNum = Math.max(maxNum, parseInt(match[1]));
+      const num = extractSessionNumber(s.titre);
+      if (num) maxNum = Math.max(maxNum, num);
     }
     return Math.min(maxNum + 1, 20);
+  };
+
+  const findPreviousSessionForAutoPrep = (targetGroupId: string, targetDate: string, targetSessionNum?: number) => {
+    const groupSessions = (sessions ?? []).filter((s: any) => s.group_id === targetGroupId);
+    if (targetSessionNum && targetSessionNum > 1) {
+      const byNumber = groupSessions.find((s: any) => extractSessionNumber(s.titre) === targetSessionNum - 1);
+      if (byNumber) return byNumber;
+    }
+
+    const targetTime = new Date(targetDate).getTime();
+    return groupSessions
+      .filter((s: any) => new Date(s.date_seance).getTime() < targetTime)
+      .sort((a: any, b: any) => new Date(b.date_seance).getTime() - new Date(a.date_seance).getTime())[0] ?? null;
   };
 
   // State for "next session" dialog
@@ -208,6 +226,8 @@ const SeancesPage = () => {
       if (error) throw error;
 
       if (createdSession && user) {
+        const previousSession = findPreviousSessionForAutoPrep(nextGroupId, createdSession.date_seance, selectedCurriculum.numero);
+        const targetGroup = (groups ?? []).find((g: any) => g.id === nextGroupId);
         prepareSessionKit({
           sessionId: createdSession.id,
           groupId: nextGroupId,
@@ -216,6 +236,9 @@ const SeancesPage = () => {
           objectifs: selectedCurriculum.objectif,
           titre: selectedCurriculum.titre,
           formateurId: user.id,
+          typeDemarche: (targetGroup as any)?.type_demarche,
+          sessionExercisesTargetId: previousSession?.id,
+          homeworkSourceSessionId: previousSession?.id,
         });
       }
 
@@ -351,6 +374,8 @@ const SeancesPage = () => {
       }
 
       if (user) {
+        const previousSession = findPreviousSessionForAutoPrep(groupId, session.date_seance, extractSessionNumber(titre) ?? undefined);
+        const targetGroup = (groups ?? []).find((g: any) => g.id === groupId);
         prepareSessionKit({
           sessionId: session.id,
           groupId,
@@ -359,6 +384,9 @@ const SeancesPage = () => {
           objectifs,
           titre,
           formateurId: user.id,
+          typeDemarche: (targetGroup as any)?.type_demarche,
+          sessionExercisesTargetId: previousSession?.id,
+          homeworkSourceSessionId: previousSession?.id,
         });
       }
 

@@ -82,6 +82,30 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
   const [diagMembers, setDiagMembers] = useState<{ eleve_id: string; nom: string; prenom: string; present?: boolean }[]>([]);
   const [diagBilanTestId, setDiagBilanTestId] = useState<string | null>(null);
 
+  const loadDiagnosticRecipients = async () => {
+    const { data: members } = await supabase
+      .from("group_members")
+      .select("eleve_id, profile:profiles(nom, prenom)")
+      .eq("group_id", groupId);
+
+    const { data: presences } = await supabase
+      .from("presences")
+      .select("eleve_id, present")
+      .eq("session_id", sessionId);
+
+    const presenceMap = new Map((presences ?? []).map((p: any) => [p.eleve_id, p.present]));
+    const mapped = (members || []).map((m: any) => ({
+      eleve_id: m.eleve_id,
+      nom: m.profile?.nom || "",
+      prenom: m.profile?.prenom || "",
+      present: presenceMap.get(m.eleve_id) ?? true,
+    }));
+
+    setDiagMembers(mapped);
+    setDiagSelectedIds(new Set(mapped.map((m) => m.eleve_id)));
+    return mapped;
+  };
+
   // ─── Détecte un prédiagnostic déjà pré-généré (statut 'pret') pour cette séance ───
   React.useEffect(() => {
     let cancelled = false;
@@ -97,6 +121,7 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
       if (!cancelled && data) {
         setDiagBilanTestId(data.id);
         setDiagGenerated(true);
+        loadDiagnosticRecipients();
       }
     })();
     return () => { cancelled = true; };
@@ -375,28 +400,7 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
       setDiagBilanTestId(data.bilanTestId);
       setDiagGenerated(true);
 
-      // Fetch group members with presence info
-      const { data: members } = await supabase
-        .from("group_members")
-        .select("eleve_id, profile:profiles(nom, prenom)")
-        .eq("group_id", groupId);
-
-      const { data: presences } = await supabase
-        .from("presences")
-        .select("eleve_id, present")
-        .eq("session_id", sessionId);
-
-      const presenceMap = new Map((presences ?? []).map((p: any) => [p.eleve_id, p.present]));
-
-      const mapped = (members || []).map((m: any) => ({
-        eleve_id: m.eleve_id,
-        nom: m.profile?.nom || "",
-        prenom: m.profile?.prenom || "",
-        present: presenceMap.get(m.eleve_id) ?? true,
-      }));
-
-      setDiagMembers(mapped);
-      setDiagSelectedIds(new Set(mapped.map((m) => m.eleve_id)));
+      await loadDiagnosticRecipients();
       setDiagSendOpen(true);
 
       toast.success(`Test diagnostique généré (${data.nbQuestions} questions) !`, {

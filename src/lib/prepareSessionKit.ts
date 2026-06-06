@@ -10,6 +10,8 @@ interface PrepareArgs {
   titre: string;
   formateurId: string;
   typeDemarche?: string;
+  sessionExercisesTargetId?: string;
+  homeworkSourceSessionId?: string;
 }
 
 /**
@@ -23,7 +25,9 @@ interface PrepareArgs {
  */
 export function prepareSessionKit(args: PrepareArgs) {
   toast.info("Préparation auto de la séance…", {
-    description: "Génération du prédiagnostic et de 5 exercices en arrière-plan.",
+    description: args.sessionExercisesTargetId
+      ? "Génération du prédiagnostic et rattachement des exercices à la séance précédente."
+      : "Génération du prédiagnostic et de 5 exercices en arrière-plan.",
     duration: 4000,
   });
 
@@ -31,6 +35,7 @@ export function prepareSessionKit(args: PrepareArgs) {
   void Promise.allSettled([
     generatePrediagnostic(args),
     generateFiveExercises(args),
+    generateHomeworkSeriesForPreviousSession(args),
   ]).then((results) => {
     const failed = results.filter((r) => r.status === "rejected");
     if (failed.length === 0) {
@@ -78,6 +83,7 @@ async function generatePrediagnostic({
 
 async function generateFiveExercises({
   sessionId,
+  sessionExercisesTargetId,
   niveauCible,
   competencesCibles,
   objectifs,
@@ -85,11 +91,13 @@ async function generateFiveExercises({
   formateurId,
   typeDemarche,
 }: PrepareArgs) {
+  const targetSessionId = sessionExercisesTargetId || sessionId;
+
   // Évite de regénérer si la séance a déjà des exercices.
   const { count } = await supabase
     .from("session_exercices")
     .select("id", { count: "exact", head: true })
-    .eq("session_id", sessionId);
+    .eq("session_id", targetSessionId);
   if ((count ?? 0) > 0) return;
 
   const { data: defaultPoint } = await supabase
@@ -160,7 +168,7 @@ async function generateFiveExercises({
   if (allInserted.length === 0) return;
 
   const links = allInserted.map((ex, i) => ({
-    session_id: sessionId,
+    session_id: targetSessionId,
     exercice_id: ex.id,
     ordre: i + 1,
     statut: "planifie" as any,
@@ -168,4 +176,43 @@ async function generateFiveExercises({
 
   const { error: linkErr } = await supabase.from("session_exercices").insert(links);
   if (linkErr) throw linkErr;
+}
+
+async function generateHomeworkSeriesForPreviousSession({
+  homeworkSourceSessionId,
+  groupId,
+  formateurId,
+  typeDemarche,
+}: PrepareArgs) {
+  if (!homeworkSourceSessionId) return;
+
+  const { count } = await supabase
+    .from("devoirs")
+    .select("id", { count: "exact", head: true })
+    .eq("session_id", homeworkSourceSessionId)
+    .eq("contexte", "devoir" as any);
+  if ((count ?? 0) > 0) return;
+
+  const { data: members, error: membersError } = await supabase
+    .from("group_members")
+    .select("eleve_id")
+    .eq("group_id", groupId);
+  if (membersError) throw membersError;
+
+  const eleveIds = (members ?? []).map((member) => member.eleve_id);
+  if (eleveIds.length === 0) return;
+
+  const { data, error } = await supabase.functions.invoke("generate-next-homework-series", {
+    body: {
+      eleveIds,
+      formateurId,
+      sessionId: homeworkSourceSessionId,
+      targetCount: 5,
+      estimatedDuration: 30,
+      force: true,
+      type_demarche: typeDemarche || "titre_sejour",
+    },
+  });
+  if (error) throw error;
+  if ((data as any)?.error) throw new Error((data as any).error);
 }
