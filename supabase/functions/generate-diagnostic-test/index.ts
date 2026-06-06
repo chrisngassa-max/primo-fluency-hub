@@ -9,6 +9,23 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+function parseJsonObject(raw: string) {
+  const cleaned = raw
+    .trim()
+    .replace(/^```(?:json)?\s*/i, "")
+    .replace(/\s*```$/i, "")
+    .trim();
+
+  try {
+    return JSON.parse(cleaned);
+  } catch {
+    const start = cleaned.indexOf("{");
+    const end = cleaned.lastIndexOf("}");
+    if (start >= 0 && end > start) return JSON.parse(cleaned.slice(start, end + 1));
+    throw new Error("L'IA n'a pas retourné un JSON valide");
+  }
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -89,7 +106,26 @@ EXPLICATION PÉDAGOGIQUE : Pour chaque question, fournir :
     const systemPrompt = TCF_SYSTEM_PROMPT + `
 
 // Mode diagnostic pré-séance EXHAUSTIF — Génère un test complet (8-15 questions, ~5-8 min) pour évaluer précisément le niveau avant la séance.
-// La sortie DOIT être un JSON structuré via l'outil generate_diagnostic.`;
+// Réponds UNIQUEMENT avec un objet JSON valide, sans markdown, sans texte avant/après.
+// Structure obligatoire :
+// {
+//   "titre": "...",
+//   "duree_estimee_minutes": 5,
+//   "questions": [
+//     {
+//       "competence": "CO|CE|EE|EO|Structures",
+//       "sous_competence": "...",
+//       "consigne": "...",
+//       "support": "script audio CO ou texte support CE, sinon chaîne vide",
+//       "choix": ["A", "B", "C", "D"],
+//       "bonne_reponse": "réponse exacte ou production attendue",
+//       "explication": "...",
+//       "niveau": "${niveau}",
+//       "difficulte": 3
+//     }
+//   ]
+// }
+// CO, CE et Structures : choix contient exactement 4 réponses. EE et EO : choix peut être [].`;
 
     const aiResult = await callAI({
       model: MODEL,
@@ -97,56 +133,13 @@ EXPLICATION PÉDAGOGIQUE : Pour chaque question, fournir :
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
       ],
-      tools: [
-        {
-          type: "function",
-          function: {
-            name: "generate_diagnostic",
-            description: "Retourne un test diagnostique exhaustif pré-séance au format TCF IRN (8-15 questions, ~5 min).",
-            parameters: {
-              type: "object",
-              properties: {
-                titre: { type: "string" },
-                duree_estimee_minutes: { type: "number" },
-                questions: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: {
-                      competence: { type: "string", description: "CO, CE, EE, EO ou Structures" },
-                      sous_competence: { type: "string" },
-                      consigne: { type: "string" },
-                      support: { type: "string" },
-                      choix: {
-                        type: "array",
-                        items: { type: "string" },
-                      },
-                      bonne_reponse: { type: "string" },
-                      explication: { type: "string" },
-                      niveau: { type: "string" },
-                      difficulte: { type: "number" },
-                    },
-                    required: ["competence", "consigne", "bonne_reponse", "niveau"],
-                  },
-                },
-              },
-              required: ["titre", "questions"],
-            },
-          },
-        },
-      ],
-      tool_choice: {
-        type: "function",
-        function: { name: "generate_diagnostic" },
-      },
     });
-    const toolCall = aiResult.choices?.[0]?.message?.tool_calls?.[0];
-
-    if (!toolCall?.function?.arguments) {
-      throw new Error("L'IA n'a pas retourné de résultat structuré");
+    const content = aiResult.choices?.[0]?.message?.content;
+    if (!content || typeof content !== "string") {
+      throw new Error("L'IA n'a pas retourné de diagnostic exploitable");
     }
 
-    const diagnostic = JSON.parse(toolCall.function.arguments);
+    const diagnostic = parseJsonObject(content);
 
     // Validate: at least 3 questions with 4 choices each
     if (!diagnostic.questions || diagnostic.questions.length < 8) {

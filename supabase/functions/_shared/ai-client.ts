@@ -63,7 +63,7 @@ export async function callAI(options: AICallOptions): Promise<any> {
     console.error("Lovable AI gateway error:", response.status, errText);
 
     if (response.status === 400) {
-      throw new AIError(`Erreur du service IA (400): ${errText.slice(0, 500)}`, 400);
+      throw new AIError(`Erreur du service IA (400): ${extractAIErrorMessage(errText)}`, 400);
     }
 
     // Fallback to direct Gemini if gateway fails (e.g. 404 when key not registered on external project)
@@ -120,6 +120,7 @@ export async function callAI(options: AICallOptions): Promise<any> {
     const errText = await geminiResp.text();
     console.error("Gemini direct error:", geminiResp.status, errText);
     if (geminiResp.status === 429) throw new AIError("Trop de requêtes, réessayez plus tard.", 429);
+    if (geminiResp.status === 400) throw new AIError(`Erreur du service IA (400): ${extractAIErrorMessage(errText)}`, 400);
     throw new AIError(`Erreur du service IA (${geminiResp.status})`, geminiResp.status);
   }
 
@@ -151,5 +152,16 @@ export class AIError extends Error {
   constructor(message: string, status: number) {
     super(message);
     this.status = status;
+  }
+}
+
+function extractAIErrorMessage(raw: string) {
+  if (!raw) return "requête refusée par le fournisseur IA";
+  try {
+    const parsed = JSON.parse(raw);
+    const message = parsed?.error?.message || parsed?.error || parsed?.message;
+    return String(message || raw).slice(0, 500);
+  } catch {
+    return raw.slice(0, 500);
   }
 }
