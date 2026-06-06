@@ -113,29 +113,36 @@ async function generateFiveExercises({
   const perComp = Math.max(1, Math.floor(totalCount / competences.length));
   const remainder = totalCount - perComp * competences.length;
 
-  const allInserted: { id: string }[] = [];
   const niveau = niveauCible || "A1";
   const objectif = objectifs || titre || "Exercice de séance";
 
-  for (let ci = 0; ci < competences.length; ci++) {
-    const comp = competences[ci];
+  // Lance les générations IA EN PARALLÈLE (au lieu de séquentiel)
+  // pour diviser le temps total par le nombre de compétences.
+  const genPromises = competences.map((comp, ci) => {
     const compCount = perComp + (ci < remainder ? 1 : 0);
-    if (compCount <= 0) continue;
+    if (compCount <= 0) return Promise.resolve({ comp, generated: [] as any[] });
+    return supabase.functions
+      .invoke("generate-exercises", {
+        body: {
+          pointName: objectif,
+          competence: comp,
+          niveauVise: niveau,
+          count: compCount,
+          difficultyLevel: 3,
+          type_demarche: typeDemarche || "titre_sejour",
+        },
+      })
+      .then(({ data, error }) => {
+        if (error) throw error;
+        if ((data as any)?.error) throw new Error((data as any).error);
+        return { comp, generated: ((data as any)?.exercises ?? []) as any[] };
+      });
+  });
 
-    const { data, error } = await supabase.functions.invoke("generate-exercises", {
-      body: {
-        pointName: objectif,
-        competence: comp,
-        niveauVise: niveau,
-        count: compCount,
-        difficultyLevel: 3,
-        type_demarche: typeDemarche || "titre_sejour",
-      },
-    });
-    if (error) throw error;
-    if ((data as any)?.error) throw new Error((data as any).error);
+  const results = await Promise.all(genPromises);
 
-    const generated = (data as any)?.exercises ?? [];
+  const allInserted: { id: string }[] = [];
+  for (const { comp, generated } of results) {
     if (generated.length === 0) continue;
 
     const toInsert = generated.map((ex: any) => ({
@@ -161,6 +168,7 @@ async function generateFiveExercises({
     if (insertErr) throw insertErr;
     allInserted.push(...((inserted as { id: string }[]) ?? []));
   }
+
 
   if (allInserted.length === 0) return;
 
