@@ -16,11 +16,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-const formatSessionDate = (value?: string) => {
-  if (!value) return "Aucune séance planifiée";
-  return new Date(value).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
-};
-
 const formatSessionTimeRange = (session: any) => {
   if (!session?.date_seance) return "À planifier";
   const start = new Date(session.date_seance);
