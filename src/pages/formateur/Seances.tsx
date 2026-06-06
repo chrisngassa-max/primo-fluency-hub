@@ -390,7 +390,7 @@ const SeancesPage = () => {
   const [editTitre, setEditTitre] = useState("");
   const [editDate, setEditDate] = useState("");
   const [editNiveau, setEditNiveau] = useState("A2");
-  const [editDuree, setEditDuree] = useState("90");
+  const [editDuree, setEditDuree] = useState("180");
   const [editLieu, setEditLieu] = useState("");
   const [editObjectifs, setEditObjectifs] = useState("");
   const [editStatut, setEditStatut] = useState("planifiee");
@@ -504,7 +504,7 @@ const SeancesPage = () => {
           group_id: editGroupId,
           date_seance: new Date(editDate).toISOString(),
           niveau_cible: editNiveau as any,
-          duree_minutes: parseInt(editDuree) || 90,
+          duree_minutes: parseInt(editDuree) || 180,
           lieu: editLieu || null,
           objectifs: editObjectifs || null,
           statut: editStatut as any,
@@ -876,7 +876,7 @@ const SeancesPage = () => {
           const isCancelled = s.statut === "annulee";
 
           const startDate = new Date(s.date_seance);
-          const endDate = new Date(startDate.getTime() + (s.duree_minutes || 90) * 60000);
+          const endDate = new Date(startDate.getTime() + (s.duree_minutes || 180) * 60000);
           const timeRange = `${format(startDate, "HH:mm")} - ${format(endDate, "HH:mm")}`;
 
           const today = new Date();
