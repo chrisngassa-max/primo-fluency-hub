@@ -2542,8 +2542,14 @@ export type Database = {
       }
       profils_eleves: {
         Row: {
+          aisance_numerique: string | null
+          autres_langues: string[]
+          besoins_accessibilite: string[]
+          date_cible_tcf: string | null
+          disponibilite_hors_seance: string | null
           eleve_id: string
           id: string
+          langue_maternelle: string | null
           niveau_actuel: string
           niveau_ce: string
           niveau_co: string
@@ -2552,7 +2558,11 @@ export type Database = {
           niveau_locked: boolean | null
           niveau_source: string | null
           niveau_updated_at: string | null
+          niveau_scolarisation: string | null
+          objectif_tcf: string | null
+          preferences_apprentissage: string[]
           priorites_pedagogiques: Json
+          projet_personnel: string | null
           profil_litteratie: string | null
           score_risque: number
           taux_reussite_ce: number
@@ -2566,8 +2576,14 @@ export type Database = {
           vitesse_lecture: string | null
         }
         Insert: {
+          aisance_numerique?: string | null
+          autres_langues?: string[]
+          besoins_accessibilite?: string[]
+          date_cible_tcf?: string | null
+          disponibilite_hors_seance?: string | null
           eleve_id: string
           id?: string
+          langue_maternelle?: string | null
           niveau_actuel: string
           niveau_ce?: string
           niveau_co?: string
@@ -2576,7 +2592,11 @@ export type Database = {
           niveau_locked?: boolean | null
           niveau_source?: string | null
           niveau_updated_at?: string | null
+          niveau_scolarisation?: string | null
+          objectif_tcf?: string | null
+          preferences_apprentissage?: string[]
           priorites_pedagogiques?: Json
+          projet_personnel?: string | null
           profil_litteratie?: string | null
           score_risque?: number
           taux_reussite_ce?: number
@@ -2590,8 +2610,14 @@ export type Database = {
           vitesse_lecture?: string | null
         }
         Update: {
+          aisance_numerique?: string | null
+          autres_langues?: string[]
+          besoins_accessibilite?: string[]
+          date_cible_tcf?: string | null
+          disponibilite_hors_seance?: string | null
           eleve_id?: string
           id?: string
+          langue_maternelle?: string | null
           niveau_actuel?: string
           niveau_ce?: string
           niveau_co?: string
@@ -2600,7 +2626,11 @@ export type Database = {
           niveau_locked?: boolean | null
           niveau_source?: string | null
           niveau_updated_at?: string | null
+          niveau_scolarisation?: string | null
+          objectif_tcf?: string | null
+          preferences_apprentissage?: string[]
           priorites_pedagogiques?: Json
+          projet_personnel?: string | null
           profil_litteratie?: string | null
           score_risque?: number
           taux_reussite_ce?: number
@@ -2974,6 +3004,7 @@ export type Database = {
           session_id: string
           status: string
           updated_at: string
+          warning_message: string | null
         }
         Insert: {
           block_type: string
@@ -2983,6 +3014,7 @@ export type Database = {
           session_id: string
           status: string
           updated_at?: string
+          warning_message?: string | null
         }
         Update: {
           block_type?: string
@@ -2992,6 +3024,7 @@ export type Database = {
           session_id?: string
           status?: string
           updated_at?: string
+          warning_message?: string | null
         }
         Relationships: [
           {
@@ -3996,6 +4029,10 @@ export type Database = {
       claim_session_block: {
         Args: { p_block_type: string; p_session_id: string }
         Returns: boolean
+      }
+      update_andragogical_profile: {
+        Args: { p_eleve_id: string; p_profile: Json }
+        Returns: undefined
       }
       delete_email: {
         Args: { message_id: number; queue_name: string }

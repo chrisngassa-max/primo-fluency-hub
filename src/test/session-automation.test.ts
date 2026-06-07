@@ -1,7 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
-import { determineBlocksToLaunch } from "../../supabase/functions/prepare-session-start/logic.ts";
+import { calibrateRetrospective, determineBlocksToLaunch } from "../../supabase/functions/prepare-session-start/logic.ts";
 import { parseNbQuestions, validateDiagnosticQuestions } from "../../supabase/functions/generate-diagnostic-test/logic.ts";
-import { buildFocusPrompt } from "../../supabase/functions/generate-exercises/logic.ts";
+import { buildDurationPrompt, buildFocusPrompt, parseTargetDurationMinutes } from "../../supabase/functions/generate-exercises/logic.ts";
+import { buildGenerationBatchSizes, clampExerciseCount } from "@/components/formateur/wizard/generation-settings";
 
 describe("Edge Functions business logic", () => {
   describe("prepare-session-start", () => {
@@ -27,6 +28,17 @@ describe("Edge Functions business logic", () => {
       const result = determineBlocksToLaunch(true, "core");
       expect(result.blocks).toEqual(["core"]);
       expect(result.automatic).toBe(false);
+    });
+
+    it("keeps the requested retrospective volume and warns when duration is too short", () => {
+      const calibration = calibrateRetrospective(8, 10);
+      expect(calibration.count).toBe(8);
+      expect(calibration.estimatedMinutes).toBe(24);
+      expect(calibration.warning).toContain("Le nombre choisi a ete conserve");
+    });
+
+    it("does not warn when the retrospective duration is sufficient", () => {
+      expect(calibrateRetrospective(3, 12).warning).toBeNull();
     });
   });
 
@@ -74,6 +86,26 @@ describe("Edge Functions business logic", () => {
     it("returns empty prompt for other competencies or null focus", () => {
       expect(buildFocusPrompt("CO", "grammaire")).toBe("");
       expect(buildFocusPrompt("Structures", null)).toBe("");
+    });
+
+    it("constrains and injects the target duration", () => {
+      expect(parseTargetDurationMinutes(null)).toBe(12);
+      expect(parseTargetDurationMinutes(0)).toBe(1);
+      expect(parseTargetDurationMinutes(90)).toBe(60);
+      expect(buildDurationPrompt(7)).toContain("420");
+    });
+  });
+
+  describe("targeted exercise wizard settings", () => {
+    it("supports one to thirty exercises", () => {
+      expect(clampExerciseCount(0)).toBe(1);
+      expect(clampExerciseCount(31)).toBe(30);
+    });
+
+    it("splits large generations into stable batches", () => {
+      expect(buildGenerationBatchSizes(1)).toEqual([1]);
+      expect(buildGenerationBatchSizes(12)).toEqual([5, 5, 2]);
+      expect(buildGenerationBatchSizes(30)).toEqual([5, 5, 5, 5, 5, 5]);
     });
   });
 });

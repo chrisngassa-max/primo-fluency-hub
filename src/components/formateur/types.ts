@@ -62,8 +62,9 @@ export interface WizardState {
   competence: "CO" | "CE" | "EE" | "EO" | "Structures";
   anglePedagogique: "theme" | "CO" | "CE" | "EE" | "EO" | "grammaire" | "vocabulaire";
   count: number;
-  niveau: "A0" | "A1" | "A2";
+  niveau: "A0" | "A1" | "A2" | "B1" | "B2";
   difficulte: number;
+  dureeCible: number;
   // Step 2
   generated: ExerciceDraft[];
   referencesUtilisees: PedagogicalReference[];

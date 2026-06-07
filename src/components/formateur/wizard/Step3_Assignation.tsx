@@ -16,20 +16,35 @@ interface Props {
   onChange: (partial: Partial<WizardState>) => void;
   onBack: () => void;
   onPublish: () => void;
+  mode: "devoir" | "session_live";
+  sessionId?: string;
 }
 
-const Step3_Assignation = ({ state, onChange, onBack, onPublish }: Props) => {
+const Step3_Assignation = ({ state, onChange, onBack, onPublish, mode, sessionId }: Props) => {
   const { user } = useAuth();
 
   // Fetch groups + members
   const { data: groups, isLoading } = useQuery({
-    queryKey: ["formateur-groups-members", user?.id],
+    queryKey: ["formateur-groups-members", user?.id, mode, sessionId],
     queryFn: async () => {
-      const { data: grps } = await supabase
+      let sessionGroupId: string | undefined;
+      if (mode === "session_live" && sessionId) {
+        const { data: session } = await supabase
+          .from("sessions")
+          .select("group_id")
+          .eq("id", sessionId)
+          .single();
+        sessionGroupId = session?.group_id;
+        if (!sessionGroupId) throw new Error("Groupe de séance introuvable");
+      }
+
+      let groupsQuery = supabase
         .from("groups")
         .select("id, nom, niveau")
         .eq("formateur_id", user!.id)
         .eq("is_active", true);
+      if (sessionGroupId) groupsQuery = groupsQuery.eq("id", sessionGroupId);
+      const { data: grps } = await groupsQuery;
       if (!grps?.length) return [];
 
       const { data: members } = await supabase
@@ -126,7 +141,7 @@ const Step3_Assignation = ({ state, onChange, onBack, onPublish }: Props) => {
       </div>
 
       {/* Devoir switch */}
-      {state.elevesSelected.length > 0 && (
+      {mode === "devoir" && state.elevesSelected.length > 0 && (
         <div className="flex items-center gap-3">
           <Switch
             checked={state.creerCommeDevoir}

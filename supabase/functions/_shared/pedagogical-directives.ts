@@ -12,6 +12,12 @@ export interface StudentProfileSignals {
   taux_reussite_structures?: number | string | null;
   priorites_pedagogiques?: unknown;
   vitesse_lecture?: "lente" | "fluide" | null;
+  niveau_scolarisation?: string | null;
+  aisance_numerique?: string | null;
+  projet_personnel?: string | null;
+  objectif_tcf?: string | null;
+  preferences_apprentissage?: string[] | null;
+  besoins_accessibilite?: string[] | null;
 }
 
 export interface StudentOutcomeSignals {
@@ -36,6 +42,8 @@ export interface PedagogicalDirectives {
   feedback_type: "phonologique" | "structurel" | "encourageant";
   strategie: string;
   regle_descente: string | null;
+  contexte_prioritaire: string | null;
+  objectif_tcf: string | null;
 }
 
 interface BuildInput {
@@ -201,7 +209,12 @@ export function buildPedagogicalDirectives(input: BuildInput): PedagogicalDirect
   const profil_ecrit = deriveWrittenProfile(profile);
   const alphabet_l1 = deriveAlphabetL1(profile);
   const competence_blocage = deriveBlockingCompetence(profile, weakCompetences, targetCompetence);
-  const limitedLiteracy = profil_ecrit === "NSA" || profil_ecrit === "Alpha";
+  const lowSchooling = profile?.niveau_scolarisation === "non_scolarise"
+    || profile?.niveau_scolarisation === "primaire";
+  const limitedLiteracy = profil_ecrit === "NSA" || profil_ecrit === "Alpha" || lowSchooling;
+  const lowDigitalComfort = profile?.aisance_numerique === "faible";
+  const preferences = profile?.preferences_apprentissage ?? [];
+  const accessibilityNeeds = profile?.besoins_accessibilite ?? [];
 
   const eeScore = asNumber(profile?.taux_reussite_ee);
   const structuresScore = asNumber(profile?.taux_reussite_structures);
@@ -228,19 +241,34 @@ export function buildPedagogicalDirectives(input: BuildInput): PedagogicalDirect
     : niveau_etayage === "moyen"
       ? ["exemple", "feedback_court"]
       : ["feedback_court"];
+  if (preferences.includes("audio") || accessibilityNeeds.includes("dyslexie") || accessibilityNeeds.includes("vision")) {
+    supports_obligatoires.push("audio");
+  }
+  if (preferences.includes("visuel")) {
+    supports_obligatoires.push("image");
+  }
+  if (preferences.includes("exemples")) {
+    supports_obligatoires.push("exemple_resolu");
+  }
 
-  const formats_autorises = limitedLiteracy
+  let formats_autorises = limitedLiteracy
     ? ["qcm", "vrai_faux", "appariement", "selection_image", "texte_lacunaire"]
     : niveau_etayage === "fort"
       ? ["qcm", "vrai_faux", "appariement", "texte_lacunaire", "transformation"]
     : niveau_etayage === "moyen"
       ? ["qcm", "vrai_faux", "appariement", "texte_lacunaire", "transformation", "production_orale"]
       : ["qcm", "vrai_faux", "appariement", "texte_lacunaire", "transformation", "production_ecrite", "production_orale"];
+  if (lowDigitalComfort) {
+    formats_autorises = formats_autorises.filter((format) =>
+      ["qcm", "vrai_faux", "production_orale"].includes(format)
+    );
+  }
 
   const formats_interdits = unique([
     "texte_long",
     ...(niveau_etayage === "fort" || regle_descente ? ["redaction_libre", "production_ecrite_longue"] : []),
     ...(limitedLiteracy ? ["production_ecrite_libre", "consigne_ecrite_seule", "copie_longue"] : []),
+    ...(lowDigitalComfort ? ["glisser_deposer", "appariement_complexe", "saisie_longue"] : []),
   ]);
 
   const feedback_type = competence_cible === "Structures" || competence_blocage === "EE"
@@ -269,6 +297,8 @@ export function buildPedagogicalDirectives(input: BuildInput): PedagogicalDirect
     feedback_type,
     strategie: buildStrategy(competence_blocage, competence_cible, niveau_etayage, besoin_pedagogique),
     regle_descente,
+    contexte_prioritaire: profile?.projet_personnel?.trim() || null,
+    objectif_tcf: profile?.objectif_tcf?.trim() || null,
   };
 }
 
@@ -285,6 +315,8 @@ export function formatPedagogicalDirectives(directives: PedagogicalDirectives): 
     `- limites: consigne <= ${directives.longueur_max_consigne_mots} mots; items <= ${directives.nombre_items_max}`,
     `- feedback: ${directives.feedback_type}`,
     `- strategie: ${directives.strategie}`,
+    `- contexte_prioritaire: ${directives.contexte_prioritaire ?? "vie quotidienne en France"}`,
+    `- objectif_tcf: ${directives.objectif_tcf ?? "non renseigne"}`,
   ];
   if (directives.regle_descente) lines.push(`- descente_competence: ${directives.regle_descente}`);
   return lines.join("\n");

@@ -44,10 +44,14 @@ CREATE TABLE IF NOT EXISTS public.session_blocks (
   block_type text NOT NULL CHECK (block_type IN ('retrospective', 'diagnostic', 'core')),
   status text NOT NULL CHECK (status IN ('pending', 'generating', 'ready', 'failed')),
   error_message text,
+  warning_message text,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now(),
   UNIQUE (session_id, block_type)
 );
+
+ALTER TABLE public.session_blocks
+  ADD COLUMN IF NOT EXISTS warning_message text;
 
 ALTER TABLE public.session_blocks ENABLE ROW LEVEL SECURITY;
 
@@ -67,10 +71,10 @@ BEGIN
   IF p_block_type NOT IN ('retrospective', 'diagnostic', 'core') THEN
     RAISE EXCEPTION 'Invalid session block type';
   END IF;
-  INSERT INTO public.session_blocks (session_id, block_type, status, error_message, updated_at)
-  VALUES (p_session_id, p_block_type, 'generating', NULL, now())
+  INSERT INTO public.session_blocks (session_id, block_type, status, error_message, warning_message, updated_at)
+  VALUES (p_session_id, p_block_type, 'generating', NULL, NULL, now())
   ON CONFLICT (session_id, block_type) DO UPDATE
-  SET status = 'generating', error_message = NULL, updated_at = now()
+  SET status = 'generating', error_message = NULL, warning_message = NULL, updated_at = now()
   WHERE session_blocks.status IN ('failed', 'pending')
      OR (session_blocks.status = 'generating' AND session_blocks.updated_at < now() - interval '5 minutes')
   RETURNING true INTO v_claimed;

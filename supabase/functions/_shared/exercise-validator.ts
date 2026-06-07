@@ -141,8 +141,8 @@ export function validateExercise(ex: ExerciseLike): ValidationResult {
   }
 
   // ── Difficulté ──
-  if (typeof ex.difficulte === "number" && (ex.difficulte < 1 || ex.difficulte > 5)) {
-    issues.push({ code: "invalid_difficulty", severity: "error", message: `Difficulté ${ex.difficulte} hors [1-5]` });
+  if (typeof ex.difficulte === "number" && (ex.difficulte < 1 || ex.difficulte > 10)) {
+    issues.push({ code: "invalid_difficulty", severity: "error", message: `Difficulté ${ex.difficulte} hors [1-10]` });
   }
 
   const ok = !issues.some(i => i.severity === "error");

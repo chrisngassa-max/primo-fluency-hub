@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { Users, TrendingUp, User } from "lucide-react";
+import AndragogicalProfileForm from "@/components/AndragogicalProfileForm";
 
 const EleveProfil = () => {
   const { user } = useAuth();
@@ -42,7 +43,7 @@ const EleveProfil = () => {
     queryFn: async () => {
       const { data } = await supabase
         .from("profils_eleves")
-        .select("niveau_actuel, taux_reussite_global")
+        .select("*")
         .eq("eleve_id", user!.id)
         .maybeSingle();
       return data;
@@ -206,6 +207,29 @@ const EleveProfil = () => {
           </div>
         </div>
       </div>
+
+      {profilEleve && user && (
+        <div className="space-y-3">
+          <h2 className="text-base font-bold text-foreground">Mon profil d'apprentissage</h2>
+          <div className="rounded-[0.625rem] border bg-card p-4 shadow-sm">
+            <AndragogicalProfileForm
+              profile={{
+                eleve_id: user.id,
+                langue_maternelle: profilEleve.langue_maternelle,
+                autres_langues: profilEleve.autres_langues ?? [],
+                niveau_scolarisation: profilEleve.niveau_scolarisation,
+                aisance_numerique: profilEleve.aisance_numerique,
+                projet_personnel: profilEleve.projet_personnel,
+                objectif_tcf: profilEleve.objectif_tcf,
+                date_cible_tcf: profilEleve.date_cible_tcf,
+                preferences_apprentissage: profilEleve.preferences_apprentissage ?? [],
+                besoins_accessibilite: profilEleve.besoins_accessibilite ?? [],
+                disponibilite_hors_seance: profilEleve.disponibilite_hors_seance,
+              }}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Sécurité */}
       <div className="space-y-3">

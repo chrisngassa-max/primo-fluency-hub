@@ -23,6 +23,7 @@ import { toast } from "sonner";
 import Step1_ChoixParametres from "./wizard/Step1_ChoixParametres";
 import Step2_PreviewEdition from "./wizard/Step2_PreviewEdition";
 import Step3_Assignation from "./wizard/Step3_Assignation";
+import { buildGenerationBatchSizes, clampExerciseCount } from "./wizard/generation-settings";
 import type { WizardState, ExerciceDraft } from "./types";
 
 interface Props {
@@ -43,6 +44,7 @@ const initialState: WizardState = {
   count: 2,
   niveau: "A1",
   difficulte: 4,
+  dureeCible: 12,
   generated: [],
   referencesUtilisees: [],
   loadingGenerate: false,
@@ -74,23 +76,46 @@ const GenerateTargetedExerciseWizard = ({ open, onOpenChange, onSuccess, session
     if (!user || !theme) return;
     update({ loadingGenerate: true });
     try {
-      const { data, error } = await supabase.functions.invoke("generate-exercises", {
-        body: {
-          pointName: theme,
-          competence: state.competence,
-          niveauVise: state.niveau,
-          count: count ?? state.count,
-          difficultyLevel: state.difficulte,
-          focus_pedagogique:
-            state.anglePedagogique === "grammaire" || state.anglePedagogique === "vocabulaire"
-              ? state.anglePedagogique
-              : undefined,
-        },
-      });
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
+      const requestedCount = clampExerciseCount(count ?? state.count);
+      const batchSizes = buildGenerationBatchSizes(requestedCount);
 
-      const exercises: ExerciceDraft[] = (data.exercises || []).map((ex: any) => ({
+      const responses: any[] = [];
+      for (const batchCount of batchSizes) {
+        const batchResponses: any[] = [];
+        let generatedInBatch = 0;
+        for (let attempt = 0; attempt < 2 && generatedInBatch < batchCount; attempt++) {
+          const missingCount = batchCount - generatedInBatch;
+          const { data, error } = await supabase.functions.invoke("generate-exercises", {
+            body: {
+              pointName: theme,
+              competence: state.competence,
+              niveauVise: state.niveau,
+              count: missingCount,
+              difficultyLevel: state.difficulte,
+              targetDurationMinutes: state.dureeCible,
+              focus_pedagogique:
+                state.anglePedagogique === "grammaire" || state.anglePedagogique === "vocabulaire"
+                  ? state.anglePedagogique
+                  : undefined,
+            },
+          });
+          if (error) throw error;
+          if (data?.error) throw new Error(data.error);
+          batchResponses.push(data);
+          generatedInBatch += data?.exercises?.length ?? 0;
+        }
+        if (generatedInBatch < batchCount) {
+          throw new Error(
+            `L'IA n'a produit que ${generatedInBatch} exercice(s) valide(s) sur ${batchCount} après deux tentatives.`
+          );
+        }
+        responses.push(...batchResponses);
+      }
+
+      const exercises: ExerciceDraft[] = responses
+        .flatMap((response) => response.exercises || [])
+        .slice(0, requestedCount)
+        .map((ex: any) => ({
         titre: ex.titre || "",
         consigne: ex.consigne || "",
         format: ex.format || "qcm",
@@ -112,10 +137,10 @@ const GenerateTargetedExerciseWizard = ({ open, onOpenChange, onSuccess, session
       if (count === 1) return exercises[0];
       update({
         generated: exercises,
-        referencesUtilisees: data.references_utilisees || [],
-        referenceScores: data.reference_scores || [],
-        selectionMetadata: data.selection_metadata || undefined,
-        pedagogicalWarnings: data.pedagogical_warnings || [],
+        referencesUtilisees: responses.flatMap((response) => response.references_utilisees || []),
+        referenceScores: responses.flatMap((response) => response.reference_scores || []),
+        selectionMetadata: responses[0]?.selection_metadata || undefined,
+        pedagogicalWarnings: responses.flatMap((response) => response.pedagogical_warnings || []),
         step: 2,
       });
     } catch (e: any) {
@@ -315,6 +340,8 @@ const GenerateTargetedExerciseWizard = ({ open, onOpenChange, onSuccess, session
               onChange={update}
               onBack={() => update({ step: 2 })}
               onPublish={handlePublish}
+              mode={mode}
+              sessionId={sessionId}
             />
           )}
         </DialogContent>

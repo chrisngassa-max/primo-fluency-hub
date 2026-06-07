@@ -21,6 +21,7 @@ export interface SessionTool {
   icon: ElementType;
   content: ReactNode;
   preparationStatus?: PreparationStatus;
+  preparationWarning?: string | null;
   onPrepare?: () => void;
 }
 
@@ -120,6 +121,12 @@ export default function SessionToolbox({ sessionId, tools }: SessionToolboxProps
                     )}
                   </div>
                   <p className="mt-1 text-xs leading-5 text-muted-foreground">{tool.description}</p>
+                  {tool.preparationWarning && (
+                    <p className="mt-2 flex items-start gap-1.5 text-xs leading-5 text-amber-700">
+                      <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                      {tool.preparationWarning}
+                    </p>
+                  )}
                 </div>
               </div>
               <div className="mt-3 flex items-center gap-2">

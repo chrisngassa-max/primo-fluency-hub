@@ -7,7 +7,7 @@ import { QA_REVIEW_BLOCK } from "../_shared/qa-prompt.ts";
 import { buildPedagogicalDirectives } from "../_shared/pedagogical-directives.ts";
 import { hasBlockingReviewIssue, reviewExercise } from "../_shared/review-exercise.ts";
 import { ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth } from "../_shared/check-consent.ts";
-import { buildFocusPrompt } from "./logic.ts";
+import { buildDurationPrompt, buildFocusPrompt, parseTargetDurationMinutes } from "./logic.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -23,7 +23,8 @@ serve(async (req) => {
     const _secretBlock = await ensurePseudonymSecretOrLog("generate-exercises", corsHeaders, null);
     if (_secretBlock) return _secretBlock;
     await logAICall({ function_name: "generate-exercises", triggered_by_user_id: _triggeredBy, status: "ok", data_categories: [], pseudonymization_level: "none" });
-    const { pointName, competence, niveauVise, count = 10, difficultyLevel, gabaritNumero, type_demarche, niveau_depart, niveau_arrivee, groupId, existingExercises, focus_pedagogique } = await req.json();
+    const { pointName, competence, niveauVise, count: requestedCount = 10, difficultyLevel, targetDurationMinutes, gabaritNumero, type_demarche, niveau_depart, niveau_arrivee, groupId, existingExercises, focus_pedagogique } = await req.json();
+    const count = Math.min(30, Math.max(1, Math.round(Number(requestedCount) || 1)));
     const demarche = type_demarche || "titre_sejour";
     const epreuvesAutorisees = demarche === "naturalisation" ? "CO, CE, EE, EO" : "CO, CE";
     // AI key check moved to shared ai-client
@@ -309,7 +310,7 @@ ${refTexts.join("\n")}
           // 3. Profils élèves (taux de réussite)
           const { data: profils } = await supabase
             .from("profils_eleves")
-            .select("eleve_id, niveau_actuel, taux_reussite_co, taux_reussite_ce, taux_reussite_ee, taux_reussite_eo, taux_reussite_structures, priorites_pedagogiques, vitesse_lecture")
+            .select("eleve_id, niveau_actuel, taux_reussite_co, taux_reussite_ce, taux_reussite_ee, taux_reussite_eo, taux_reussite_structures, priorites_pedagogiques, vitesse_lecture, langue_maternelle, autres_langues, niveau_scolarisation, aisance_numerique, projet_personnel, objectif_tcf, date_cible_tcf, preferences_apprentissage, besoins_accessibilite, disponibilite_hors_seance")
             .in("eleve_id", eleveIds);
 
           // 4. Tests de positionnement
@@ -353,6 +354,16 @@ ${refTexts.join("\n")}
               niveaux_competences: levels.reduce((acc: any, l: any) => { acc[l.competence] = l.niveau_actuel; return acc; }, {}),
               erreurs_recentes: recentErrors,
               priorites: profil?.priorites_pedagogiques || [],
+              langue_maternelle: profil?.langue_maternelle || null,
+              autres_langues: profil?.autres_langues || [],
+              niveau_scolarisation: profil?.niveau_scolarisation || null,
+              aisance_numerique: profil?.aisance_numerique || null,
+              projet_personnel: profil?.projet_personnel || null,
+              objectif_tcf: profil?.objectif_tcf || null,
+              date_cible_tcf: profil?.date_cible_tcf || null,
+              preferences_apprentissage: profil?.preferences_apprentissage || [],
+              besoins_accessibilite: profil?.besoins_accessibilite || [],
+              disponibilite_hors_seance: profil?.disponibilite_hors_seance || null,
               directives_pedagogiques: pedagogicalDirectives,
             };
           });
@@ -371,6 +382,9 @@ RÈGLES D'ADAPTATION :
 - Respecter le niveau moyen du groupe tout en proposant des variantes (niveau_bas / niveau_haut)
 - Les champs directives_pedagogiques sont contraignants: respecte formats_autorises, formats_interdits, supports_obligatoires, limites consigne/items et feedback_type
 - Si une directive contient descente_competence, la variante_niveau_bas doit redescendre vers competence_cible au lieu de demander une production libre
+- Si aisance_numerique vaut faible, utilise seulement des interactions simples: QCM, vrai/faux ou reponse orale.
+- Utilise contexte_prioritaire pour ancrer les situations dans le projet personnel, sans exposer de donnee sensible.
+- Adapte les situations au champ objectif_tcf lorsqu'il est renseigne.
 ═══════════════════════════════════════════`;
         }
       } catch (ctxErr) {
@@ -418,6 +432,7 @@ RÈGLES STRICTES :
     }
 
     const focusPrompt = buildFocusPrompt(competence, focus_pedagogique);
+    const durationPrompt = buildDurationPrompt(parseTargetDurationMinutes(targetDurationMinutes));
 
     const systemPrompt = `Tu es un expert en FLE (Français Langue Étrangère) spécialisé dans la préparation au TCF IRN (Intégration et Résidence en France).
 Tu dois générer exactement ${count} exercices pour le point à maîtriser suivant.
@@ -498,19 +513,14 @@ RÈGLE ABSOLUE : La consigne DOIT mentionner explicitement le nombre de mots att
 
 ═══════════════════════════════════════════════════
 
-DURÉE CIBLE PAR EXERCICE : 10 À 15 MINUTES
-Chaque exercice doit être conçu pour occuper l'élève entre 10 et 15 minutes.
-Adapte le NOMBRE D'ITEMS selon la compétence pour atteindre cette durée :
+${durationPrompt}
 
-| Compétence  | Temps moyen par item | Nb items pour 10-15 min | time_limit_seconds |
-|-------------|----------------------|-------------------------|--------------------|
-| CO          | ~45 secondes         | 12 à 18 items           | 720 (12 min)       |
-| CE          | ~80 secondes         | 8 à 12 items            | 780 (13 min)       |
-| Structures  | ~90 secondes         | 7 à 10 items            | 780 (13 min)       |
-| EE          | ~5-10 min par tâche  | 2 à 3 tâches            | 900 (15 min)       |
-| EO          | ~3-5 min par tâche   | 2 à 4 tâches            | 900 (15 min)       |
-
-Le champ "time_limit_seconds" dans metadata DOIT refléter la durée totale de l'exercice (entre 600 et 900 secondes).
+Repères pour adapter le nombre d'items :
+- CO : environ 45 secondes par item.
+- CE : environ 80 secondes par item.
+- Structures : environ 90 secondes par item.
+- EE : environ 5 à 10 minutes par tâche.
+- EO : environ 3 à 5 minutes par tâche.
 
 RÈGLES DE GÉNÉRATION :
 - Chaque exercice doit recevoir un champ "metadata" avec : { "code": "CO1", "skill": "Compréhension Orale", "sub_skill": "Identifier situation", "time_limit_seconds": 720 }

@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { Loader2, Wand2 } from "lucide-react";
+import { Clock3, Loader2, Wand2 } from "lucide-react";
 import type { WizardState } from "../types";
 
 const THEMES_PREDEFINIS = [
@@ -97,13 +97,30 @@ const Step1_ChoixParametres = ({ state, onChange, onGenerate }: Props) => {
       {/* Nombre d'exercices */}
       <div className="space-y-2">
         <Label className="text-base font-semibold">Nombre d'exercices : {state.count}</Label>
-        <Slider
-          value={[state.count]}
-          onValueChange={([v]) => onChange({ count: v })}
-          min={1}
-          max={5}
-          step={1}
-        />
+        <div className="flex items-center gap-3">
+          <Slider
+            value={[state.count]}
+            onValueChange={([v]) => onChange({ count: v })}
+            min={1}
+            max={30}
+            step={1}
+            className="flex-1"
+          />
+          <Input
+            type="number"
+            min={1}
+            max={30}
+            value={state.count}
+            aria-label="Nombre d'exercices"
+            onChange={(event) => onChange({
+              count: Math.min(30, Math.max(1, Number(event.target.value) || 1)),
+            })}
+            className="h-9 w-20 text-center"
+          />
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Les volumes importants sont générés en plusieurs lots.
+        </p>
       </div>
 
       {/* Niveau */}
@@ -114,7 +131,7 @@ const Step1_ChoixParametres = ({ state, onChange, onGenerate }: Props) => {
           onValueChange={(v) => onChange({ niveau: v as WizardState["niveau"] })}
           className="flex flex-wrap gap-4"
         >
-          {(["A0", "A1", "A2"] as const).map((n) => (
+          {(["A0", "A1", "A2", "B1", "B2"] as const).map((n) => (
             <div key={n} className="flex items-center gap-2">
               <RadioGroupItem value={n} id={`niv-${n}`} />
               <Label htmlFor={`niv-${n}`} className="text-base cursor-pointer">{n}</Label>
@@ -133,6 +150,34 @@ const Step1_ChoixParametres = ({ state, onChange, onGenerate }: Props) => {
           max={10}
           step={1}
         />
+      </div>
+
+      <div className="space-y-2">
+        <Label className="flex items-center gap-2 text-base font-semibold">
+          <Clock3 className="h-4 w-4" />
+          Durée cible par exercice : {state.dureeCible} min
+        </Label>
+        <div className="flex items-center gap-3">
+          <Slider
+            value={[state.dureeCible]}
+            onValueChange={([v]) => onChange({ dureeCible: v })}
+            min={1}
+            max={60}
+            step={1}
+            className="flex-1"
+          />
+          <Input
+            type="number"
+            min={1}
+            max={60}
+            value={state.dureeCible}
+            aria-label="Durée cible par exercice"
+            onChange={(event) => onChange({
+              dureeCible: Math.min(60, Math.max(1, Number(event.target.value) || 1)),
+            })}
+            className="h-9 w-20 text-center"
+          />
+        </div>
       </div>
 
       {/* Bouton générer */}

@@ -26,6 +26,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import CompetenceLabel from "@/components/CompetenceLabel";
 import { StudentPacingCard } from "@/components/PacingTracker";
 import { NiveauEleveEditor, normalizeProfilLitteratie, type ProfilNiveaux } from "@/components/formateur/NiveauEleveEditor";
+import AndragogicalProfileForm from "@/components/AndragogicalProfileForm";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -431,6 +432,33 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
                   queryClient.invalidateQueries({ queryKey: ["profil-eleve", targetId] });
                 }
               }}
+            />
+          </CardContent>
+        </Card>
+      )}
+
+      {eleveId && profil && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Profil d'apprentissage</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <AndragogicalProfileForm
+              compact
+              profile={{
+                eleve_id: profil.eleve_id,
+                langue_maternelle: profil.langue_maternelle,
+                autres_langues: profil.autres_langues ?? [],
+                niveau_scolarisation: profil.niveau_scolarisation,
+                aisance_numerique: profil.aisance_numerique,
+                projet_personnel: profil.projet_personnel,
+                objectif_tcf: profil.objectif_tcf,
+                date_cible_tcf: profil.date_cible_tcf,
+                preferences_apprentissage: profil.preferences_apprentissage ?? [],
+                besoins_accessibilite: profil.besoins_accessibilite ?? [],
+                disponibilite_hors_seance: profil.disponibilite_hors_seance,
+              }}
+              onSaved={() => queryClient.invalidateQueries({ queryKey: ["profil-eleve", targetId] })}
             />
           </CardContent>
         </Card>

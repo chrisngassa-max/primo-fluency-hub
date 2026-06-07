@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.99.2";
-import { determineBlocksToLaunch, BlockType } from "./logic.ts";
+import { calibrateRetrospective, determineBlocksToLaunch, BlockType } from "./logic.ts";
 
 declare const EdgeRuntime: { waitUntil(promise: Promise<unknown>): void };
 
@@ -67,6 +67,7 @@ serve(async (req) => {
 
 async function runBlock(admin: any, supabaseUrl: string, serviceKey: string, session: any, block: BlockType) {
   try {
+    let warningMessage: string | null = null;
     if (block === "diagnostic") {
       const { data: existing } = await admin
         .from("bilan_tests").select("id").eq("session_id", session.id).in("statut", ["pret", "envoye"]).limit(1);
@@ -83,7 +84,7 @@ async function runBlock(admin: any, supabaseUrl: string, serviceKey: string, ses
         });
       }
     } else if (block === "retrospective") {
-      await prepareRetrospective(admin, supabaseUrl, serviceKey, session);
+      warningMessage = await prepareRetrospective(admin, supabaseUrl, serviceKey, session);
     } else {
       await generateAndAttach(admin, supabaseUrl, serviceKey, session, {
         block: "core",
@@ -92,7 +93,10 @@ async function runBlock(admin: any, supabaseUrl: string, serviceKey: string, ses
       });
     }
     await admin.from("session_blocks").update({
-      status: "ready", error_message: null, updated_at: new Date().toISOString(),
+      status: "ready",
+      error_message: null,
+      warning_message: warningMessage,
+      updated_at: new Date().toISOString(),
     }).eq("session_id", session.id).eq("block_type", block);
   } catch (error) {
     console.error(`prepare-session-start:${block}`, error);
@@ -108,7 +112,7 @@ async function prepareRetrospective(admin: any, supabaseUrl: string, serviceKey:
   const { data: previous } = await admin.from("sessions").select("id, titre, objectifs")
     .eq("group_id", session.group_id).lt("date_seance", session.date_seance)
     .order("date_seance", { ascending: false }).limit(1).maybeSingle();
-  if (!previous) return;
+  if (!previous) return null;
 
   const { data: reported } = await admin.from("session_exercices")
     .select("exercice_id, ordre").eq("session_id", previous.id).eq("statut", "reporte");
@@ -120,9 +124,10 @@ async function prepareRetrospective(admin: any, supabaseUrl: string, serviceKey:
     if (error && error.code !== "23505") throw error;
   }
 
-  const duration = Number(session.duree_retrospective ?? 10);
-  const configured = Number(session.nb_exercices_retrospective ?? 3);
-  const count = duration <= 5 ? 1 : duration <= 15 ? Math.min(2, configured) : Math.min(3, configured);
+  const calibration = calibrateRetrospective(
+    session.nb_exercices_retrospective,
+    session.duree_retrospective
+  );
   const { data: previousLinks } = await admin.from("session_exercices")
     .select("exercice_id, exercice:exercices(competence)")
     .eq("session_id", previous.id);
@@ -143,10 +148,12 @@ async function prepareRetrospective(admin: any, supabaseUrl: string, serviceKey:
     .map(([competence]) => competence);
   await generateAndAttach(admin, supabaseUrl, serviceKey, session, {
     block: "retrospective",
-    count,
+    count: calibration.count,
     pointName: `Revision de ${previous.titre}. ${previous.objectifs ?? ""}. Points faibles: ${weakCompetences.join(", ") || "consolidation generale"}`.trim(),
     competences: weakCompetences.length ? weakCompetences : undefined,
+    targetDurationMinutes: Math.max(1, Math.floor(calibration.durationMinutes / calibration.count)),
   });
+  return calibration.warning;
 }
 
 async function generateAndAttach(
@@ -154,7 +161,13 @@ async function generateAndAttach(
   supabaseUrl: string,
   serviceKey: string,
   session: any,
-  options: { block: "retrospective" | "core"; count: number; pointName: string; competences?: string[] },
+  options: {
+    block: "retrospective" | "core";
+    count: number;
+    pointName: string;
+    competences?: string[];
+    targetDurationMinutes?: number;
+  },
 ) {
   const configuredCompetences: string[] = session.competences_autorisees?.length
     ? session.competences_autorisees
@@ -168,16 +181,24 @@ async function generateAndAttach(
   const generated: any[] = [];
   for (let index = 0; index < options.count; index++) {
     const competence = competences[index % competences.length];
-    const result = await invokeFunction(supabaseUrl, serviceKey, "generate-exercises", {
-      pointName: options.pointName,
-      competence,
-      niveauVise: session.niveau_cible,
-      count: 1,
-      difficultyLevel: session.difficulte_par_defaut,
-      groupId: session.group_id,
-      type_demarche: session.group?.type_demarche,
-    });
-    if (result.exercises?.[0]) generated.push(result.exercises[0]);
+    let generatedExercise: any = null;
+    for (let attempt = 0; attempt < 2 && !generatedExercise; attempt++) {
+      const result = await invokeFunction(supabaseUrl, serviceKey, "generate-exercises", {
+        pointName: options.pointName,
+        competence,
+        niveauVise: session.niveau_cible,
+        count: 1,
+        difficultyLevel: session.difficulte_par_defaut,
+        targetDurationMinutes: options.targetDurationMinutes,
+        groupId: session.group_id,
+        type_demarche: session.group?.type_demarche,
+      });
+      generatedExercise = result.exercises?.[0] ?? null;
+    }
+    if (!generatedExercise) {
+      throw new Error(`Impossible de generer l'exercice ${index + 1} sur ${options.count} apres deux tentatives`);
+    }
+    generated.push(generatedExercise);
   }
 
   if (!generated.length) throw new Error("Aucun exercice genere");

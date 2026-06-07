@@ -178,6 +178,10 @@ const SessionPilot = () => {
       "pending" | "generating" | "ready" | "failed";
   }, [sessionBlocks]);
 
+  const getBlockWarning = useCallback((blockType: string) => {
+    return sessionBlocks.find((item: any) => item.block_type === blockType)?.warning_message ?? null;
+  }, [sessionBlocks]);
+
   useEffect(() => {
     if (!id) return;
     if ((session as any)?.generation_automatique_activee) {
@@ -1233,6 +1237,7 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
       description: "Relire les acquis, erreurs et devoirs de la seance precedente.",
       icon: RotateCcw,
       preparationStatus: getBlockStatus("retrospective"),
+      preparationWarning: getBlockWarning("retrospective"),
       onPrepare: () => void startPreparation("retrospective"),
       content: (
         <StartOfSessionBilan

@@ -15,3 +15,24 @@
 - [ ] Executer les tests SQL et concurrence sur Supabase local ou staging.
 - [ ] Regenerer officiellement les types depuis l'environnement valide.
 - [ ] Deployer la migration et les Edge Functions apres validation explicite.
+
+# Lot 2 - Limites de generation
+
+- [x] Permettre de choisir entre 1 et 30 exercices.
+- [x] Ajouter les niveaux A0, A1, A2, B1 et B2.
+- [x] Conserver une difficulte reglable de 1 a 10 jusque dans la validation.
+- [x] Ajouter une duree cible de 1 a 60 minutes par exercice.
+- [x] Generer les gros volumes par lots stables avec une seconde tentative.
+- [x] Limiter les destinataires du mode direct au groupe de la seance.
+- [x] Respecter le nombre retrospectif choisi sans reduction silencieuse.
+- [x] Afficher un avertissement lorsque la duree retrospective est trop courte.
+- [x] Valider le lot avec Vitest, ESLint, build et verification du diff.
+
+# Lot 3 - Profil andragogique
+
+- [x] Ajouter les informations linguistiques, scolaires et numeriques.
+- [x] Ajouter le projet personnel, l'objectif et la date cible TCF.
+- [x] Ajouter les preferences d'apprentissage et besoins d'accessibilite.
+- [x] Permettre l'edition par l'eleve et son formateur via une RPC limitee.
+- [x] Interdire la modification indirecte des scores et niveaux par l'eleve.
+- [x] Utiliser le profil pour choisir formats, aides, consignes et contextes.
