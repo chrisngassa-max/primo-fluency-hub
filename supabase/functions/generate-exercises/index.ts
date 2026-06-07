@@ -7,6 +7,7 @@ import { QA_REVIEW_BLOCK } from "../_shared/qa-prompt.ts";
 import { buildPedagogicalDirectives } from "../_shared/pedagogical-directives.ts";
 import { hasBlockingReviewIssue, reviewExercise } from "../_shared/review-exercise.ts";
 import { ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth } from "../_shared/check-consent.ts";
+import { buildFocusPrompt } from "./logic.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -416,11 +417,7 @@ RÈGLES STRICTES :
 5. Ne pas inventer de situations hors du contexte IRN (préfecture, OFII, médecin, école...)`;
     }
 
-    const focusPrompt = competence === "Structures" && focus_pedagogique === "grammaire"
-      ? "\nFOCUS OBLIGATOIRE : GRAMMAIRE. Travaille exclusivement la conjugaison, les accords, les pronoms, la negation ou les prepositions en contexte."
-      : competence === "Structures" && focus_pedagogique === "vocabulaire"
-        ? "\nFOCUS OBLIGATOIRE : VOCABULAIRE. Travaille exclusivement le lexique utile, les definitions, associations, synonymes, antonymes et categories lexicales en contexte."
-        : "";
+    const focusPrompt = buildFocusPrompt(competence, focus_pedagogique);
 
     const systemPrompt = `Tu es un expert en FLE (Français Langue Étrangère) spécialisé dans la préparation au TCF IRN (Intégration et Résidence en France).
 Tu dois générer exactement ${count} exercices pour le point à maîtriser suivant.

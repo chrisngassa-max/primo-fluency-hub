@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.99.2";
+import { determineBlocksToLaunch, BlockType } from "./logic.ts";
 
 declare const EdgeRuntime: { waitUntil(promise: Promise<unknown>): void };
 
@@ -7,8 +8,6 @@ const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
-
-type BlockType = "retrospective" | "diagnostic" | "core";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -36,14 +35,16 @@ serve(async (req) => {
       .single();
     if (sessionError || !session) return json({ error: "Seance introuvable" }, 404);
     if (session.group?.formateur_id !== user.id) return json({ error: "Acces refuse" }, 403);
-    if (!session.generation_automatique_activee && !requestedBlock) {
+
+    const { blocks, automatic } = determineBlocksToLaunch(
+      session.generation_automatique_activee,
+      requestedBlock
+    );
+
+    if (blocks.length === 0) {
       return json({ launched: [], automatic: false });
     }
 
-    const allowedBlocks: BlockType[] = ["retrospective", "diagnostic", "core"];
-    const blocks = requestedBlock && allowedBlocks.includes(requestedBlock)
-      ? [requestedBlock as BlockType]
-      : allowedBlocks;
     const launched: BlockType[] = [];
 
     for (const block of blocks) {
@@ -57,7 +58,7 @@ serve(async (req) => {
       EdgeRuntime.waitUntil(runBlock(admin, supabaseUrl, serviceKey, session, block));
     }
 
-    return json({ launched, automatic: Boolean(session.generation_automatique_activee) }, 202);
+    return json({ launched, automatic }, 202);
   } catch (error) {
     console.error("prepare-session-start", error);
     return json({ error: error instanceof Error ? error.message : "Erreur inconnue" }, 500);

@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/tooltip";
 import { toast } from "sonner";
 import {
-  BookOpen, Send, Loader2, CheckCircle2, Lock, AlertTriangle, Sparkles, Clock, UserX, History,
+  BookOpen, Send, Loader2, CheckCircle2, AlertTriangle, Sparkles, Clock, UserX, History,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import AutoHomeworkPreviewDialog from "@/components/AutoHomeworkPreviewDialog";
@@ -178,10 +178,21 @@ export default function EndOfSessionSection({
     }
   };
 
-  const handleCloseSession = () => {
-    if (!homeworkSent) return;
-    // Open auto-generation dialog instead of closing directly
-    setAutoGenOpen(true);
+  const handleCloseSession = async () => {
+    setClosing(true);
+    try {
+      const { error } = await supabase
+        .from("sessions")
+        .update({ statut: "terminee" as any, updated_at: new Date().toISOString() })
+        .eq("id", sessionId);
+      if (error) throw error;
+      toast.success("Seance cloturee.");
+      onCloseSession?.();
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    } finally {
+      setClosing(false);
+    }
   };
 
   const handleAutoHomeworkSent = async () => {
@@ -215,7 +226,7 @@ export default function EndOfSessionSection({
             Fin de séance
           </CardTitle>
           <CardDescription>
-            Envoyez les devoirs aux élèves avant de clôturer la séance.
+            Préparez des devoirs si nécessaire. La clôture reste indépendante.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -261,6 +272,15 @@ export default function EndOfSessionSection({
               {homeworkSent ? "Envoyer d'autres devoirs" : "Envoyer les devoirs"}
             </Button>
 
+            <Button
+              variant="outline"
+              className="gap-2"
+              onClick={() => setAutoGenOpen(true)}
+            >
+              <Sparkles className="h-4 w-4" />
+              Préparer des devoirs personnalisés
+            </Button>
+
             {/* Send to absentees as makeup */}
             <Button
               variant="outline"
@@ -271,7 +291,7 @@ export default function EndOfSessionSection({
               Envoyer aux absents en devoir
             </Button>
 
-            {/* Close session button → triggers auto-generation */}
+            {/* Closing remains independent from homework */}
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -279,25 +299,21 @@ export default function EndOfSessionSection({
                     <Button
                       variant="outline"
                       className="gap-2"
-                      disabled={!homeworkSent || closing}
+                      disabled={closing}
                       onClick={handleCloseSession}
                     >
                       {closing ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : !homeworkSent ? (
-                        <Lock className="h-4 w-4 text-muted-foreground" />
                       ) : (
-                        <Sparkles className="h-4 w-4" />
+                        <CheckCircle2 className="h-4 w-4" />
                       )}
                       Clôturer la séance
                     </Button>
                   </span>
                 </TooltipTrigger>
-                {!homeworkSent && (
-                  <TooltipContent>
-                    <p>Envoyez les devoirs avant de clôturer la séance</p>
-                  </TooltipContent>
-                )}
+                <TooltipContent>
+                  <p>Clôture la séance sans imposer l’envoi de devoirs.</p>
+                </TooltipContent>
               </Tooltip>
             </TooltipProvider>
           </div>

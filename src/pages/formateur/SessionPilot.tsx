@@ -53,7 +53,7 @@ import html2canvas from "html2canvas";
 import {
   CheckCircle2, Clock, ArrowRight, Printer, ArrowLeft,
   BookOpen, Minus, Plus, Loader2, Sparkles, Pencil, Trash2, CirclePlus, Circle,
-  AlertTriangle, RotateCcw, ClipboardCheck, FileText, Users, Brain, Target,
+  AlertTriangle, RotateCcw, ClipboardCheck, FileText, Users, Brain, Target, Activity, ListChecks,
   Eye, Volume2, ChevronDown, ChevronLeft, ChevronRight, Drama, Package, MessageCircle, Wand2,
   Rocket, Copy, Send, UserCheck, Link2,
 } from "lucide-react";
@@ -72,6 +72,7 @@ import SessionExternalResourcesList from "@/components/SessionExternalResourcesL
 import StartOfSessionBilan from "@/components/StartOfSessionBilan";
 import SessionClosureReminder from "@/components/SessionClosureReminder";
 import PreflightExercises from "@/components/PreflightExercises";
+import SessionToolbox, { type SessionTool } from "@/components/SessionToolbox";
 import VigilanceDrawer from "@/components/VigilanceDrawer";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
@@ -161,7 +162,7 @@ const SessionPilot = () => {
       if (error) throw error;
       return data ?? [];
     },
-    enabled: !!id && Boolean((session as any)?.generation_automatique_activee),
+    enabled: !!id,
   });
 
   const startPreparation = useCallback(async (blockType?: string) => {
@@ -172,9 +173,16 @@ const SessionPilot = () => {
     if (error) toast.error("Préparation impossible", { description: error.message });
   }, [id]);
 
+  const getBlockStatus = useCallback((blockType: string) => {
+    return (sessionBlocks.find((item: any) => item.block_type === blockType)?.status ?? "pending") as
+      "pending" | "generating" | "ready" | "failed";
+  }, [sessionBlocks]);
+
   useEffect(() => {
-    if (!id || !(session as any)?.generation_automatique_activee) return;
-    void startPreparation();
+    if (!id) return;
+    if ((session as any)?.generation_automatique_activee) {
+      void startPreparation();
+    }
     const channel = supabase
       .channel(`session-blocks-${id}`)
       .on("postgres_changes", {
@@ -1218,6 +1226,137 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
     );
   }
 
+  const sessionTools: SessionTool[] = session && user ? [
+    {
+      id: "retrospective",
+      title: "Retrospective",
+      description: "Relire les acquis, erreurs et devoirs de la seance precedente.",
+      icon: RotateCcw,
+      preparationStatus: getBlockStatus("retrospective"),
+      onPrepare: () => void startPreparation("retrospective"),
+      content: (
+        <StartOfSessionBilan
+          mode="retrospective"
+          sessionId={id!}
+          userId={user.id}
+          groupId={session.group_id}
+          session={{
+            id: session.id,
+            titre: session.titre,
+            objectifs: session.objectifs,
+            niveau_cible: session.niveau_cible,
+            date_seance: session.date_seance,
+            group_id: session.group_id,
+            competences_cibles: session.competences_cibles,
+          }}
+        />
+      ),
+    },
+    {
+      id: "diagnostic",
+      title: "Diagnostic",
+      description: "Evaluer les acquis utiles avant ou pendant le travail prevu.",
+      icon: Target,
+      preparationStatus: getBlockStatus("diagnostic"),
+      onPrepare: () => void startPreparation("diagnostic"),
+      content: (
+        <StartOfSessionBilan
+          mode="diagnostic"
+          sessionId={id!}
+          userId={user.id}
+          groupId={session.group_id}
+          session={{
+            id: session.id,
+            titre: session.titre,
+            objectifs: session.objectifs,
+            niveau_cible: session.niveau_cible,
+            date_seance: session.date_seance,
+            group_id: session.group_id,
+            competences_cibles: session.competences_cibles,
+          }}
+        />
+      ),
+    },
+    {
+      id: "common",
+      title: "Activite commune",
+      description: "Preparer, verifier et diffuser les exercices utiles au groupe.",
+      icon: Users,
+      preparationStatus: getBlockStatus("core"),
+      onPrepare: () => void startPreparation("core"),
+      content: (
+        <PreflightExercises
+          sessionId={id!}
+          session={session}
+          exercises={exercises}
+          formateurId={user.id}
+          parcoursSeance={parcoursSeance}
+        />
+      ),
+    },
+    {
+      id: "differentiation",
+      title: "Differenciation",
+      description: "Piloter le direct et envoyer un soutien ou un bonus cible.",
+      icon: Activity,
+      content: (
+        <LivePilotingSection
+          sessionId={id!}
+          session={session}
+          exercises={exercises}
+          groupMembers={groupMembers ?? []}
+          userId={user.id}
+        />
+      ),
+    },
+    {
+      id: "synthesis",
+      title: "Synthese",
+      description: "Consulter les points de vigilance et ouvrir le bilan quand vous le souhaitez.",
+      icon: ListChecks,
+      content: (
+        <div className="space-y-3">
+          <SessionClosureReminder
+            currentSessionId={id!}
+            groupId={session.group_id}
+            currentSessionDate={session.date_seance}
+          />
+          <div className="flex flex-wrap items-center justify-between gap-3 border p-4">
+            <div>
+              <p className="text-sm font-medium">Bilan de la seance</p>
+              <p className="text-xs text-muted-foreground">
+                Le bilan reste accessible sans condition et sans ordre impose.
+              </p>
+            </div>
+            <Button variant="outline" onClick={() => navigate(`/formateur/seances/${id}/bilan`)}>
+              Ouvrir le bilan
+            </Button>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "homework",
+      title: "Devoirs et cloture",
+      description: "Preparer des devoirs facultatifs ou cloturer directement la seance.",
+      icon: ClipboardCheck,
+      content: (
+        <EndOfSessionSection
+          sessionId={id!}
+          userId={user.id}
+          sessionStatut={session.statut}
+          groupId={(session as any)?.group?.id || session.group_id}
+          checkedExerciseIds={exercises.filter((ex) => checked[ex.id]).map((ex) => (ex as any).exercice?.id || ex.exercice_id).filter(Boolean)}
+          onHomeworkSent={() => qc.invalidateQueries({ queryKey: ["devoirs-formateur-all"] })}
+          onCloseSession={() => {
+            qc.invalidateQueries({ queryKey: ["session-info", id] });
+            navigate(`/formateur/seances/${id}/bilan`);
+          }}
+        />
+      ),
+    },
+  ] : [];
+
   return (
     <div className="space-y-6 max-w-3xl mx-auto">
       {/* Header */}
@@ -1316,32 +1455,6 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
           </Button>
         </div>
       </div>
-
-      {(session as any)?.generation_automatique_activee && sessionBlocks.length > 0 && (
-        <div className="print:hidden rounded-md border bg-muted/20 px-3 py-2">
-          <div className="flex flex-wrap items-center gap-2 text-xs">
-            <span className="font-semibold">Préparation de la séance</span>
-            {(["retrospective", "diagnostic", "core"] as const).map((blockType) => {
-              const block = sessionBlocks.find((item: any) => item.block_type === blockType);
-              const label = blockType === "retrospective" ? "Rétrospective" : blockType === "diagnostic" ? "Diagnostic" : "Exercices";
-              const status = block?.status ?? "pending";
-              return (
-                <span key={blockType} className="inline-flex items-center gap-1 rounded border bg-background px-2 py-1">
-                  {status === "ready" ? <CheckCircle2 className="h-3 w-3 text-emerald-600" /> :
-                    status === "failed" ? <AlertTriangle className="h-3 w-3 text-red-600" /> :
-                    <Loader2 className="h-3 w-3 animate-spin text-primary" />}
-                  {label}
-                  {status === "failed" && (
-                    <button className="font-semibold text-primary hover:underline" onClick={() => void startPreparation(blockType)}>
-                      Réessayer
-                    </button>
-                  )}
-                </span>
-              );
-            })}
-          </div>
-        </div>
-      )}
 
       {/* Bloc ressources externes ajoutées à la séance */}
       <SessionExternalResourcesList sessionId={id!} />
@@ -1514,33 +1627,6 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
         </CardContent>
       </Card>
 
-      {/* ─── Rappel de clôture de séance précédente ─── */}
-      {session && (
-        <SessionClosureReminder
-          currentSessionId={id!}
-          groupId={session.group_id}
-          currentSessionDate={session.date_seance}
-        />
-      )}
-
-      {/* ─── Bilan de début de séance (rétrospective + diagnostic) ─── */}
-      {session && user && (
-        <StartOfSessionBilan
-          sessionId={id!}
-          userId={user.id}
-          groupId={session.group_id}
-          session={{
-            id: session.id,
-            titre: session.titre,
-            objectifs: session.objectifs,
-            niveau_cible: session.niveau_cible,
-            date_seance: session.date_seance,
-            group_id: session.group_id,
-            competences_cibles: session.competences_cibles,
-          }}
-        />
-      )}
-
       {/* ─── Feuille d'appel ─── */}
       {session && (
         <div className="print:hidden">
@@ -1548,27 +1634,7 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
         </div>
       )}
 
-      {/* ─── Pré-vol exercices (V1 — front-only) ─── */}
-      {session && user && (
-        <PreflightExercises
-          sessionId={id!}
-          session={session}
-          exercises={exercises}
-          formateurId={user.id}
-          parcoursSeance={parcoursSeance}
-        />
-      )}
-
-      {/* ─── Pilotage en direct ─── */}
-      {session && user && (
-        <LivePilotingSection
-          sessionId={id!}
-          session={session}
-          exercises={exercises}
-          groupMembers={groupMembers ?? []}
-          userId={user.id}
-        />
-      )}
+      <SessionToolbox sessionId={id!} tools={sessionTools} />
 
       {/* ─── Bloc 0: Rappel — Exercices reportés (séance N-1) ─── */}
       {reported.length > 0 && !rappelDismissed && (
@@ -2583,22 +2649,6 @@ ${ficheHtml}</body></html>`;
           session={{ id: session.id, titre: session.titre, objectifs: session.objectifs, niveau_cible: session.niveau_cible }}
           exercises={exercises.map((se: any) => ({ id: se.id, exercice: se.exercice, statut: se.statut }))}
           checkedExercises={checked}
-        />
-      )}
-
-      {/* ─── End of Session Section ─── */}
-      {session && user && (
-        <EndOfSessionSection
-          sessionId={id!}
-          userId={user.id}
-          sessionStatut={session.statut}
-          groupId={(session as any)?.group?.id || session.group_id}
-          checkedExerciseIds={exercises.filter((ex) => checked[ex.id]).map((ex) => (ex as any).exercice?.id || ex.exercice_id).filter(Boolean)}
-          onHomeworkSent={() => qc.invalidateQueries({ queryKey: ["devoirs-formateur-all"] })}
-          onCloseSession={() => {
-            qc.invalidateQueries({ queryKey: ["session-info", id] });
-            navigate(`/formateur/seances/${id}/bilan`);
-          }}
         />
       )}
 

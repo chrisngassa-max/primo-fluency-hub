@@ -8,6 +8,13 @@ ALTER TABLE public.sessions
   ADD COLUMN IF NOT EXISTS generation_automatique_activee boolean NOT NULL DEFAULT true;
 
 ALTER TABLE public.sessions
+  DROP CONSTRAINT IF EXISTS sessions_nb_exercices_souhaite_check,
+  DROP CONSTRAINT IF EXISTS sessions_nb_exercices_retrospective_check,
+  DROP CONSTRAINT IF EXISTS sessions_duree_retrospective_check,
+  DROP CONSTRAINT IF EXISTS sessions_nb_questions_diagnostic_check,
+  DROP CONSTRAINT IF EXISTS sessions_difficulte_par_defaut_check;
+
+ALTER TABLE public.sessions
   ADD CONSTRAINT sessions_nb_exercices_souhaite_check CHECK (nb_exercices_souhaite BETWEEN 1 AND 30),
   ADD CONSTRAINT sessions_nb_exercices_retrospective_check CHECK (nb_exercices_retrospective BETWEEN 1 AND 30),
   ADD CONSTRAINT sessions_duree_retrospective_check CHECK (duree_retrospective BETWEEN 1 AND 60),
@@ -15,7 +22,12 @@ ALTER TABLE public.sessions
   ADD CONSTRAINT sessions_difficulte_par_defaut_check CHECK (difficulte_par_defaut BETWEEN 1 AND 10);
 
 ALTER TABLE public.session_exercices
-  ADD COLUMN IF NOT EXISTS bloc text NOT NULL DEFAULT 'core',
+  ADD COLUMN IF NOT EXISTS bloc text NOT NULL DEFAULT 'core';
+
+ALTER TABLE public.session_exercices
+  DROP CONSTRAINT IF EXISTS session_exercices_bloc_check;
+
+ALTER TABLE public.session_exercices
   ADD CONSTRAINT session_exercices_bloc_check CHECK (bloc IN ('retrospective', 'core', 'bonus'));
 
 ALTER TABLE public.session_exercices
@@ -38,6 +50,8 @@ CREATE TABLE IF NOT EXISTS public.session_blocks (
 );
 
 ALTER TABLE public.session_blocks ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Acces session_blocks formateur" ON public.session_blocks;
 CREATE POLICY "Acces session_blocks formateur" ON public.session_blocks FOR ALL
   USING (public.get_session_formateur(session_id) = auth.uid())
   WITH CHECK (public.get_session_formateur(session_id) = auth.uid());
@@ -79,8 +93,10 @@ DECLARE
   v_exercice_id uuid;
   v_eleve_id uuid;
   v_count integer := 0;
+  v_formateur_id uuid;
 BEGIN
-  IF public.get_session_formateur(p_session_id) <> auth.uid() THEN
+  v_formateur_id := public.get_session_formateur(p_session_id);
+  IF v_formateur_id IS NULL OR v_formateur_id <> auth.uid() THEN
     RAISE EXCEPTION 'Access denied';
   END IF;
   FOREACH v_eleve_id IN ARRAY p_eleve_ids LOOP
@@ -92,18 +108,29 @@ BEGIN
       RAISE EXCEPTION 'Student is not a member of the session group';
     END IF;
     FOREACH v_exercice_id IN ARRAY p_exercice_ids LOOP
+      -- Verify that the exercise belongs to the session's trainer
+      IF NOT EXISTS (
+        SELECT 1 FROM public.exercices
+        WHERE id = v_exercice_id AND formateur_id = v_formateur_id
+      ) THEN
+        RAISE EXCEPTION 'Exercise % does not belong to the session trainer', v_exercice_id;
+      END IF;
+
       INSERT INTO public.session_exercices
         (session_id, exercice_id, eleve_id, is_sent, statut, bloc)
       VALUES
         (p_session_id, v_exercice_id, v_eleve_id, true, 'traite_en_classe', 'bonus')
       ON CONFLICT DO NOTHING;
-      INSERT INTO public.session_live_events
-        (session_id, eleve_id, event_type, payload)
-      VALUES (
-        p_session_id, v_eleve_id, 'intervention_recue',
-        jsonb_build_object('type', 'exercice_personnalise', 'exercice_id', v_exercice_id)
-      );
-      v_count := v_count + 1;
+
+      IF FOUND THEN
+        INSERT INTO public.session_live_events
+          (session_id, eleve_id, event_type, payload)
+        VALUES (
+          p_session_id, v_eleve_id, 'intervention_recue',
+          jsonb_build_object('type', 'exercice_personnalise', 'exercice_id', v_exercice_id)
+        );
+        v_count := v_count + 1;
+      END IF;
     END LOOP;
   END LOOP;
   RETURN v_count;
@@ -114,6 +141,7 @@ GRANT EXECUTE ON FUNCTION public.assign_live_session_exercises(uuid, uuid[], uui
 
 DROP POLICY IF EXISTS "Eleves view session_exercices" ON public.session_exercices;
 DROP POLICY IF EXISTS "eleves_view_session_exercices_content" ON public.session_exercices;
+DROP POLICY IF EXISTS "Eleves view session_exercices_secure" ON public.session_exercices;
 CREATE POLICY "Eleves view session_exercices_secure" ON public.session_exercices FOR SELECT
 USING (
   EXISTS (
@@ -125,6 +153,7 @@ USING (
 );
 
 DROP POLICY IF EXISTS "Eleves view assigned exercices" ON public.exercices;
+DROP POLICY IF EXISTS "Eleves view assigned exercices secure" ON public.exercices;
 CREATE POLICY "Eleves view assigned exercices secure" ON public.exercices FOR SELECT
 USING (
   eleve_id = auth.uid() OR EXISTS (

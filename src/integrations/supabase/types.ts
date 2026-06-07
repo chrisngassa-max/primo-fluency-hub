@@ -2900,6 +2900,7 @@ export type Database = {
       }
       session_exercices: {
         Row: {
+          bloc: string
           created_at: string
           eleve_id: string | null
           exercice_id: string
@@ -2913,6 +2914,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          bloc?: string
           created_at?: string
           eleve_id?: string | null
           exercice_id: string
@@ -2926,6 +2928,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          bloc?: string
           created_at?: string
           eleve_id?: string | null
           exercice_id?: string
@@ -2955,6 +2958,44 @@ export type Database = {
           },
           {
             foreignKeyName: "session_exercices_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      session_blocks: {
+        Row: {
+          block_type: string
+          created_at: string
+          error_message: string | null
+          id: string
+          session_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          block_type: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          session_id: string
+          status: string
+          updated_at?: string
+        }
+        Update: {
+          block_type?: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          session_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_blocks_session_id_fkey"
             columns: ["session_id"]
             isOneToOne: false
             referencedRelation: "sessions"
@@ -3212,45 +3253,66 @@ export type Database = {
       }
       sessions: {
         Row: {
+          competences_autorisees: string[]
           competences_cibles: string[] | null
           created_at: string
           date_seance: string
+          difficulte_par_defaut: number
           duree_minutes: number
+          duree_retrospective: number
+          generation_automatique_activee: boolean
           group_id: string
           id: string
           lien_visio: string | null
           lieu: string | null
           niveau_cible: string
+          nb_exercices_retrospective: number
+          nb_exercices_souhaite: number
+          nb_questions_diagnostic: number
           objectifs: string | null
           statut: Database["public"]["Enums"]["session_statut"]
           titre: string
           updated_at: string
         }
         Insert: {
+          competences_autorisees?: string[]
           competences_cibles?: string[] | null
           created_at?: string
           date_seance: string
+          difficulte_par_defaut?: number
           duree_minutes?: number
+          duree_retrospective?: number
+          generation_automatique_activee?: boolean
           group_id: string
           id?: string
           lien_visio?: string | null
           lieu?: string | null
           niveau_cible: string
+          nb_exercices_retrospective?: number
+          nb_exercices_souhaite?: number
+          nb_questions_diagnostic?: number
           objectifs?: string | null
           statut?: Database["public"]["Enums"]["session_statut"]
           titre: string
           updated_at?: string
         }
         Update: {
+          competences_autorisees?: string[]
           competences_cibles?: string[] | null
           created_at?: string
           date_seance?: string
+          difficulte_par_defaut?: number
           duree_minutes?: number
+          duree_retrospective?: number
+          generation_automatique_activee?: boolean
           group_id?: string
           id?: string
           lien_visio?: string | null
           lieu?: string | null
           niveau_cible?: string
+          nb_exercices_retrospective?: number
+          nb_exercices_souhaite?: number
+          nb_questions_diagnostic?: number
           objectifs?: string | null
           statut?: Database["public"]["Enums"]["session_statut"]
           titre?: string
@@ -3923,6 +3985,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      assign_live_session_exercises: {
+        Args: {
+          p_eleve_ids: string[]
+          p_exercice_ids: string[]
+          p_session_id: string
+        }
+        Returns: number
+      }
+      claim_session_block: {
+        Args: { p_block_type: string; p_session_id: string }
+        Returns: boolean
+      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean

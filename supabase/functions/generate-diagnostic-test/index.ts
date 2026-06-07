@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.99.2";
 import { TCF_SYSTEM_PROMPT, MODEL } from "../_shared/system-prompt.ts";
 import { callAI, AIError } from "../_shared/ai-client.ts";
+import { parseNbQuestions, validateDiagnosticQuestions } from "./logic.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -34,7 +35,7 @@ serve(async (req) => {
       nbQuestions: requestedNbQuestions,
       nb_questions_diagnostic: requestedNbQuestionsSnake,
     } = body;
-    const nbQuestions = Math.max(5, Math.min(30, Number(requestedNbQuestions ?? requestedNbQuestionsSnake ?? 10)));
+    const nbQuestions = parseNbQuestions(requestedNbQuestions, requestedNbQuestionsSnake);
 
     if (!sessionId || !groupId || !competences || !niveau) {
       throw new Error("Champs requis : sessionId, groupId, competences, niveau");
@@ -152,40 +153,31 @@ EXPLICATION PÉDAGOGIQUE : Pour chaque question, fournir :
       if (toolCall?.function?.arguments) {
         diagnostic = JSON.parse(toolCall.function.arguments);
       }
-      if (diagnostic?.questions?.length === nbQuestions) break;
+      const validationError = validateDiagnosticQuestions(diagnostic?.questions, nbQuestions);
+      if (!validationError) break;
       if (attempt === 2) {
-        throw new Error(`Nombre de questions invalide : ${diagnostic?.questions?.length ?? 0} reçues, ${nbQuestions} attendues.`);
+        throw new Error(validationError);
       }
     }
 
-    if (!diagnostic?.questions || diagnostic.questions.length !== nbQuestions) {
-      throw new Error(`Le diagnostic doit contenir exactement ${nbQuestions} questions`);
-    }
-
-    for (const q of diagnostic.questions) {
-      // QCM questions (CO, CE, Structures) must have 4 choices; EE/EO may not have choices
-      if (q.choix && q.choix.length > 0 && q.choix.length !== 4) {
-        throw new Error(`QCM invalide : ${q.competence} doit avoir 4 choix`);
-      }
-    }
-
-    // Save as bilan_test linked to the session
     const competencesCouvertes = [...new Set(diagnostic.questions.map((q: any) => q.competence))];
 
     // Get formateur id from session
-    const { data: sessionData } = await supabase
+    const { data: sessionData, error: sessionErr } = await supabase
       .from("sessions")
       .select("group_id")
       .eq("id", sessionId)
       .single();
+    if (sessionErr || !sessionData) throw new Error("Session introuvable");
 
-    const { data: groupData } = await supabase
+    const { data: groupData, error: groupErr } = await supabase
       .from("groups")
       .select("formateur_id")
-      .eq("id", sessionData?.group_id || groupId)
+      .eq("id", sessionData.group_id)
       .single();
+    if (groupErr || !groupData) throw new Error("Groupe introuvable");
 
-    const formateurId = groupData?.formateur_id;
+    const formateurId = groupData.formateur_id;
     if (!formateurId) throw new Error("Formateur introuvable");
 
     const { data: bilanTest, error: insertErr } = await supabase
