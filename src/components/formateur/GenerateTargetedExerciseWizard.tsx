@@ -33,6 +33,13 @@ interface Props {
   sessionId?: string;
   eleveId?: string;
   mode?: "devoir" | "session_live";
+  initialRecommendation?: {
+    theme?: string;
+    competence?: WizardState["competence"];
+    niveau?: WizardState["niveau"];
+    difficulte?: number;
+    count?: number;
+  } | null;
 }
 
 const initialState: WizardState = {
@@ -53,7 +60,15 @@ const initialState: WizardState = {
   loadingPublish: false,
 };
 
-const GenerateTargetedExerciseWizard = ({ open, onOpenChange, onSuccess, sessionId, eleveId, mode = "devoir" }: Props) => {
+const GenerateTargetedExerciseWizard = ({
+  open,
+  onOpenChange,
+  onSuccess,
+  sessionId,
+  eleveId,
+  mode = "devoir",
+  initialRecommendation,
+}: Props) => {
   const { user } = useAuth();
   const [state, setState] = useState<WizardState>({ ...initialState });
   const [confirmClose, setConfirmClose] = useState(false);
@@ -67,10 +82,29 @@ const GenerateTargetedExerciseWizard = ({ open, onOpenChange, onSuccess, session
   const theme = state.themePredefini || state.themePersonnalise.trim();
 
   useEffect(() => {
-    if (open && mode === "session_live" && eleveId) {
-      setState((prev) => ({ ...prev, elevesSelected: [eleveId], creerCommeDevoir: false }));
+    if (open) {
+      setState((prev) => ({
+        ...prev,
+        ...(initialRecommendation?.theme ? {
+          themePredefini: "",
+          themePersonnalise: initialRecommendation.theme,
+        } : {}),
+        ...(initialRecommendation?.competence ? {
+          competence: initialRecommendation.competence,
+          anglePedagogique: initialRecommendation.competence === "Structures"
+            ? "grammaire"
+            : initialRecommendation.competence,
+        } : {}),
+        ...(initialRecommendation?.niveau ? { niveau: initialRecommendation.niveau } : {}),
+        ...(initialRecommendation?.difficulte ? { difficulte: initialRecommendation.difficulte } : {}),
+        ...(initialRecommendation?.count ? { count: initialRecommendation.count } : {}),
+        ...(mode === "session_live" && eleveId ? {
+          elevesSelected: [eleveId],
+          creerCommeDevoir: false,
+        } : {}),
+      }));
     }
-  }, [open, mode, eleveId]);
+  }, [open, mode, eleveId, initialRecommendation]);
 
   const handleGenerate = async (count?: number) => {
     if (!user || !theme) return;

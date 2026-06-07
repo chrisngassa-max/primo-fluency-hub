@@ -61,6 +61,9 @@ import { cn } from "@/lib/utils";
 import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/DifficultyBadge";
 import FeuilleAppel from "@/components/FeuilleAppel";
 import LivePilotingSection from "@/components/LivePilotingSection";
+import GenerateTargetedExerciseWizard from "@/components/formateur/GenerateTargetedExerciseWizard";
+import ExerciseRecommendationsPanel from "@/components/formateur/ExerciseRecommendationsPanel";
+import { routeExercises, type ExerciseRecommendation } from "@/services/ExerciseRouter";
 import { COMPETENCE_COLORS, resolveSessionCompetences, sortCompetences } from "@/lib/competences";
 import GenerateHomeworkSeriesDialog from "@/components/GenerateHomeworkSeriesDialog";
 import ImportFromUrlDialog from "@/components/ImportFromUrlDialog";
@@ -118,6 +121,8 @@ const SessionPilot = () => {
   const [rappelChecked, setRappelChecked] = useState<Record<string, boolean>>({});
   const [rappelDismissed, setRappelDismissed] = useState(false);
   const [validatingRappel, setValidatingRappel] = useState(false);
+  const [routerWizardOpen, setRouterWizardOpen] = useState(false);
+  const [selectedRecommendation, setSelectedRecommendation] = useState<ExerciseRecommendation | null>(null);
 
   // Editor state
   const [editingExercise, setEditingExercise] = useState<any>(null);
@@ -383,6 +388,75 @@ const SessionPilot = () => {
     },
     enabled: !!session,
   });
+
+  const memberIds = useMemo(
+    () => (groupMembers ?? []).map((member: any) => member.eleve_id).filter(Boolean),
+    [groupMembers],
+  );
+
+  const { data: routerStudentData } = useQuery({
+    queryKey: ["exercise-router-students", id, memberIds],
+    queryFn: async () => {
+      if (memberIds.length === 0) return { profiles: [], results: [] };
+      const [profilesResponse, resultsResponse] = await Promise.all([
+        supabase
+          .from("profils_eleves")
+          .select(
+            "eleve_id, niveau_actuel, niveau_co, niveau_ce, niveau_ee, niveau_eo, taux_reussite_co, taux_reussite_ce, taux_reussite_ee, taux_reussite_eo, taux_reussite_structures, niveau_scolarisation, aisance_numerique, vitesse_lecture, preferences_apprentissage, besoins_accessibilite",
+          )
+          .in("eleve_id", memberIds),
+        supabase
+          .from("resultats")
+          .select("eleve_id, score, created_at, exercice:exercices(competence)")
+          .in("eleve_id", memberIds)
+          .order("created_at", { ascending: false })
+          .limit(memberIds.length * 15),
+      ]);
+      if (profilesResponse.error) throw profilesResponse.error;
+      if (resultsResponse.error) throw resultsResponse.error;
+      return {
+        profiles: profilesResponse.data ?? [],
+        results: resultsResponse.data ?? [],
+      };
+    },
+    enabled: memberIds.length > 0,
+  });
+
+  const exerciseRecommendations = useMemo(() => {
+    const profileByStudent = new Map<string, any>();
+    (routerStudentData?.profiles ?? []).forEach((profile: any) => profileByStudent.set(profile.eleve_id, profile));
+    const resultsByStudent = new Map<string, any[]>();
+    (routerStudentData?.results ?? []).forEach((result: any) => {
+      const current = resultsByStudent.get(result.eleve_id) ?? [];
+      current.push({
+        competence: result.exercice?.competence,
+        score: result.score,
+        createdAt: result.created_at,
+      });
+      resultsByStudent.set(result.eleve_id, current);
+    });
+    const sessionCompetences = Array.isArray((session as any)?.competences_cibles)
+      ? (session as any).competences_cibles
+      : [];
+    const objectives = Array.isArray((session as any)?.objectifs)
+      ? (session as any).objectifs.join(", ")
+      : (session as any)?.objectifs;
+
+    return routeExercises(
+      (groupMembers ?? []).map((member: any) => ({
+        id: member.eleve_id,
+        name: [member.eleve?.prenom, member.eleve?.nom].filter(Boolean).join(" ") || "Eleve",
+        profile: profileByStudent.get(member.eleve_id),
+        results: resultsByStudent.get(member.eleve_id) ?? [],
+      })),
+      {
+        theme: objectives || session?.titre,
+        niveauCible: (session as any)?.niveau_cible,
+        competencesCibles: sessionCompetences,
+        defaultCount: 2,
+      },
+    );
+  }, [groupMembers, routerStudentData, session]);
 
   // Fetch presences for this session
   const { data: presences } = useQuery({
@@ -1305,13 +1379,22 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
       description: "Piloter le direct et envoyer un soutien ou un bonus cible.",
       icon: Activity,
       content: (
-        <LivePilotingSection
-          sessionId={id!}
-          session={session}
-          exercises={exercises}
-          groupMembers={groupMembers ?? []}
-          userId={user.id}
-        />
+        <div className="space-y-5">
+          <ExerciseRecommendationsPanel
+            recommendations={exerciseRecommendations}
+            onUse={(recommendation) => {
+              setSelectedRecommendation(recommendation);
+              setRouterWizardOpen(true);
+            }}
+          />
+          <LivePilotingSection
+            sessionId={id!}
+            session={session}
+            exercises={exercises}
+            groupMembers={groupMembers ?? []}
+            userId={user.id}
+          />
+        </div>
       ),
     },
     {
@@ -1640,6 +1723,27 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
       )}
 
       <SessionToolbox sessionId={id!} tools={sessionTools} />
+      <GenerateTargetedExerciseWizard
+        open={routerWizardOpen}
+        onOpenChange={(open) => {
+          setRouterWizardOpen(open);
+          if (!open) setSelectedRecommendation(null);
+        }}
+        onSuccess={() => {
+          qc.invalidateQueries({ queryKey: ["session-exercices", id] });
+          qc.invalidateQueries({ queryKey: ["exercise-router-students", id] });
+        }}
+        sessionId={id}
+        eleveId={selectedRecommendation?.eleveId}
+        mode="session_live"
+        initialRecommendation={selectedRecommendation ? {
+          theme: selectedRecommendation.theme,
+          competence: selectedRecommendation.competence,
+          niveau: selectedRecommendation.niveau,
+          difficulte: selectedRecommendation.difficulte,
+          count: selectedRecommendation.count,
+        } : null}
+      />
 
       {/* ─── Bloc 0: Rappel — Exercices reportés (séance N-1) ─── */}
       {reported.length > 0 && !rappelDismissed && (
