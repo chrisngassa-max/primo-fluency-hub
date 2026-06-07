@@ -39,6 +39,7 @@ import {
   remainingAudioPlays,
   type LearnerTextSize,
 } from "@/lib/audioAccess";
+import { qualitativeProgress } from "@/lib/qualitativeProgress";
 
 function CorrectionAccordion({ correction }: { correction: any[] }) {
   const [openItems, setOpenItems] = useState<number[]>([]);
@@ -585,7 +586,7 @@ const DevoirPassation = () => {
       setResult({ score, correction, bilanId });
       qc.invalidateQueries({ queryKey: ["eleve-devoirs"] });
       qc.invalidateQueries({ queryKey: ["devoir-detail", devoirId] });
-      toast.success(`Devoir oral soumis ! Score : ${score}%`);
+      toast.success(`Devoir oral soumis : ${qualitativeProgress(score).label}`);
 
       const sessionId = (devoir as any)?.session_id as string | null;
       if (sessionId && user?.id) {
@@ -647,7 +648,7 @@ const DevoirPassation = () => {
       setResult({ score, correction, bilanId });
       qc.invalidateQueries({ queryKey: ["eleve-devoirs"] });
       qc.invalidateQueries({ queryKey: ["devoir-detail", devoirId] });
-      toast.success(`Devoir soumis ! Score : ${score}%`);
+      toast.success(`Devoir soumis : ${qualitativeProgress(score).label}`);
 
       // exercice_termine côté client — classification + reponse_incorrecte/correcte
       // sont désormais émis server-side dans submit-devoir-result (Sprint 3).
@@ -715,6 +716,7 @@ const DevoirPassation = () => {
         <CorrectionDetaillee
           itemResults={finalResult.correction}
           scoreNormalized={finalResult.score}
+          displayMode="qualitative"
         />
 
         {user?.id && devoirId && (

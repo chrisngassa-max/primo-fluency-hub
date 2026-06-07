@@ -34,6 +34,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { attendanceLabel, qualitativeProgress } from "@/lib/qualitativeProgress";
 
 const COMPETENCES = ["CO", "CE", "EE", "EO", "Structures"] as const;
 
@@ -320,6 +321,7 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
 
   // Global progress: compute from profil or average competencies
   const globalProgress = profil?.taux_reussite_global ?? 0;
+  const globalAcquisition = qualitativeProgress(Number(globalProgress));
   // Show "Non évalué" until test is completed
   const niveauActuel = (testCompleted || eleveId) ? (profil?.niveau_actuel ?? "A0") : "Non évalué";
 
@@ -349,7 +351,7 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
       </div>
 
       {/* 60-hour pacing tracker */}
-      {targetId && <StudentPacingCard eleveId={targetId} />}
+      {targetId && <StudentPacingCard eleveId={targetId} detailed={!!eleveId} />}
 
       {/* Student credentials (formateur view only) */}
       {eleveId && studentProfile && (
@@ -580,17 +582,25 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
           </div>
         ) : (
           <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <div className="h-3.5 w-full rounded-full bg-white/20 overflow-hidden shadow-inner">
-                <div
-                  className="h-full rounded-full bg-[#f47b20] transition-all duration-500"
-                  style={{ width: `${globalProgress}%` }}
-                />
+            {eleveId ? (
+              <div className="flex items-center gap-3">
+                <div className="h-3.5 w-full rounded-full bg-white/20 overflow-hidden shadow-inner">
+                  <div
+                    className="h-full rounded-full bg-[#f47b20] transition-all duration-500"
+                    style={{ width: `${globalProgress}%` }}
+                  />
+                </div>
+                <span className="text-white font-bold tracking-widest">{niveauTarget}</span>
               </div>
-              <span className="text-white font-bold tracking-widest">{niveauTarget}</span>
-            </div>
+            ) : (
+              <span className={`inline-flex rounded-full px-4 py-2 font-bold ${globalAcquisition.className}`}>
+                {globalAcquisition.label}
+              </span>
+            )}
             <p className="text-[15px] text-white/90 font-medium">
-              Prochain niveau : <strong>{niveauTarget}</strong>
+              {eleveId
+                ? <>Prochain niveau : <strong>{niveauTarget}</strong></>
+                : globalAcquisition.message}
             </p>
           </div>
         )}
@@ -612,7 +622,7 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
                     presenceStats.rate! >= 80 && "bg-green-600 hover:bg-green-700"
                   )}
                 >
-                  {presenceStats.rate}%
+                  {eleveId ? `${presenceStats.rate}%` : attendanceLabel(presenceStats.rate)}
                 </Badge>
               </div>
             <div className="grid grid-cols-3 gap-3 text-center">
@@ -784,7 +794,9 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
                     <th className="text-left py-2 px-2 font-medium text-muted-foreground">Date</th>
                     <th className="text-left py-2 px-2 font-medium text-muted-foreground">Exercice</th>
                     <th className="text-center py-2 px-2 font-medium text-muted-foreground">Compétence</th>
-                    <th className="text-center py-2 px-2 font-medium text-muted-foreground">Score</th>
+                    <th className="text-center py-2 px-2 font-medium text-muted-foreground">
+                      {eleveId ? "Score" : "Résultat"}
+                    </th>
                     <th className="text-center py-2 px-2 font-medium text-muted-foreground">Statut</th>
                   </tr>
                 </thead>
@@ -804,8 +816,14 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
                             <CompetenceLabel code={r.exercice?.competence || "—"} />
                           </Badge>
                         </td>
-                        <td className={`py-2.5 px-2 text-center font-bold ${scoreColor(r.score)}`}>
-                          {Math.round(r.score)}%
+                        <td className={`py-2.5 px-2 text-center font-bold ${eleveId ? scoreColor(r.score) : ""}`}>
+                          {eleveId ? (
+                            `${Math.round(r.score)}%`
+                          ) : (
+                            <Badge className={`text-xs ${qualitativeProgress(Number(r.score)).className}`}>
+                              {qualitativeProgress(Number(r.score)).shortLabel}
+                            </Badge>
+                          )}
                         </td>
                         <td className="py-2.5 px-2 text-center">
                           <Badge variant={badge.variant} className={`text-xs ${badge.className}`}>

@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { qualitativeProgress } from "@/lib/qualitativeProgress";
 
 function scoreToCECRL(score: number): string {
   if (score >= 80) return "B1";
@@ -32,6 +33,7 @@ const CompetencyGauge = ({
   };
 
   const status = getStatus();
+  const acquisition = qualitativeProgress(currentScore);
 
   return (
     <div className="space-y-1.5">
@@ -40,39 +42,12 @@ const CompetencyGauge = ({
         <Badge className={`${status.color} text-xs shrink-0`}>{status.label}</Badge>
       </div>
 
-      {/* Gauge */}
-      <div className="relative h-3 w-full rounded-full bg-muted">
-        {/* Fill */}
-        <div
-          className="absolute inset-y-0 left-0 rounded-full bg-primary transition-all"
-          style={{ width: `${Math.min(currentScore, 100)}%` }}
-        />
-
-        {/* Initial marker */}
-        <div
-          className="absolute top-1/2 -translate-y-1/2 w-0.5 h-5 bg-muted-foreground/60 rounded-full"
-          style={{ left: `${initialScore}%` }}
-          title={`Initial : ${initialScore}%`}
-        />
-
-        {/* Expected marker (dashed target) */}
-        <div
-          className="absolute top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-full"
-          style={{
-            left: `${Math.min(expectedScore, 100)}%`,
-            background: "repeating-linear-gradient(to bottom, hsl(var(--warning)) 0px, hsl(var(--warning)) 2px, transparent 2px, transparent 4px)",
-          }}
-          title={`Objectif : ${Math.round(expectedScore)}%`}
-        />
-      </div>
-
-      {/* Legend */}
-      <div className="flex justify-between text-xs text-muted-foreground">
-        <span>Départ : {initialScore}%</span>
-        <span>Objectif : {Math.round(expectedScore)}%</span>
-        <span className="font-semibold text-foreground">
-          Maintenant : {currentScore}% — <span className="text-primary">{scoreToCECRL(currentScore)}</span>
-        </span>
+      <div className={`rounded-md border p-3 ${acquisition.borderClassName}`}>
+        <div className="flex items-center justify-between gap-3">
+          <Badge className={acquisition.className}>{acquisition.label}</Badge>
+          <span className="text-xs font-semibold text-primary">{scoreToCECRL(currentScore)}</span>
+        </div>
+        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{acquisition.message}</p>
       </div>
     </div>
   );
