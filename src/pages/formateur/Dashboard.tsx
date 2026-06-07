@@ -240,23 +240,26 @@ const FormateurDashboard = () => {
       if (!groups?.length) return [];
       const groupIds = groups.map((g) => g.id);
       const groupMap = Object.fromEntries(groups.map((g) => [g.id, g.nom]));
-      // Try upcoming first
-      const { data: upcoming } = await supabase
+      const now = new Date();
+      // Fenêtre : séances en cours (commencées il y a moins de 6h) ou à venir, hors terminées/annulées
+      const sixHoursAgo = new Date(now.getTime() - 6 * 60 * 60 * 1000).toISOString();
+      const { data: active } = await supabase
         .from("sessions")
         .select("id, titre, date_seance, duree_minutes, niveau_cible, objectifs, statut, group_id, competences_cibles")
         .in("group_id", groupIds)
-        .gte("date_seance", new Date().toISOString())
+        .gte("date_seance", sixHoursAgo)
+        .not("statut", "in", "(terminee,annulee)")
         .order("date_seance", { ascending: true })
         .limit(3);
-      if (upcoming && upcoming.length > 0) {
-        return upcoming.map((s) => ({ ...s, group_nom: groupMap[s.group_id] || "—", isPast: false }));
+      if (active && active.length > 0) {
+        return active.map((s) => ({ ...s, group_nom: groupMap[s.group_id] || "—", isPast: false }));
       }
-      // Fallback: most recent past session
+      // Fallback : dernière séance passée (toutes statuts confondus) pour info
       const { data: recent } = await supabase
         .from("sessions")
         .select("id, titre, date_seance, duree_minutes, niveau_cible, objectifs, statut, group_id, competences_cibles")
         .in("group_id", groupIds)
-        .lt("date_seance", new Date().toISOString())
+        .lt("date_seance", now.toISOString())
         .order("date_seance", { ascending: false })
         .limit(1);
       return (recent ?? []).map((s) => ({ ...s, group_nom: groupMap[s.group_id] || "—", isPast: true }));
@@ -811,12 +814,20 @@ ${sessionExercises.map((ex: any, i: number) => `
             {format(new Date(), "EEEE d MMMM", { locale: fr })}
           </p>
         </div>
-        {hasActiveSession && (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-white text-green-700 px-3 py-1.5 text-xs font-semibold border border-green-300 shadow-sm">
-            Séance en cours
-            <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-          </span>
-        )}
+        <div className="flex items-center gap-2 flex-wrap justify-end">
+          {hasActiveSession && (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white text-green-700 px-3 py-1.5 text-xs font-semibold border border-green-300 shadow-sm">
+              Séance en cours
+              <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+            </span>
+          )}
+          <Button variant="outline" className="gap-2 rounded-full" onClick={() => navigate("/formateur/seances")}>
+            <Calendar className="h-4 w-4" /> Mon planning
+          </Button>
+          <Button className="gap-2 rounded-full bg-accent hover:bg-accent/90 text-accent-foreground" onClick={() => navigate("/formateur/groupes?new=1")}>
+            <UserPlus className="h-4 w-4" /> Nouveau groupe
+          </Button>
+        </div>
       </div>
 
       {/* ─── KPI Cards ─── */}
@@ -1021,7 +1032,7 @@ ${sessionExercises.map((ex: any, i: number) => `
                     </p>
                     <p>
                       <span className="font-bold text-white">Horaire :</span>{" "}
-                      {format(new Date(nextSession.date_seance), "HH:mm")} – {format(new Date(new Date(nextSession.date_seance).getTime() + (nextSession.duree_minutes || 90) * 60000), "HH:mm")}
+                      {format(new Date(nextSession.date_seance), "HH:mm")} – {format(new Date(new Date(nextSession.date_seance).getTime() + (nextSession.duree_minutes || 180) * 60000), "HH:mm")}
                     </p>
                   </div>
                   <Button

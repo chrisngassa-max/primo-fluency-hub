@@ -68,7 +68,7 @@ const SessionClosureReminder: React.FC<SessionClosureReminderProps> = ({
   };
 
   const handleGoToPilot = () => {
-    navigate(`/formateur/seances/${unclosedSession.id}/pilot`);
+    navigate(`/formateur/seances/${unclosedSession.id}/pilote`);
   };
 
   const isEnCours = unclosedSession.statut === "en_cours";

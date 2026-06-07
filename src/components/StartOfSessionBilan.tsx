@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { COMPETENCE_COLORS } from "@/lib/competences";
+import { createProceduralDiagnosticTest } from "@/lib/diagnosticFallback";
 
 interface StartOfSessionBilanProps {
   sessionId: string;
@@ -83,6 +84,52 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
   const [diagSelectedIds, setDiagSelectedIds] = useState<Set<string>>(new Set());
   const [diagMembers, setDiagMembers] = useState<{ eleve_id: string; nom: string; prenom: string; present?: boolean }[]>([]);
   const [diagBilanTestId, setDiagBilanTestId] = useState<string | null>(null);
+
+  const loadDiagnosticRecipients = async () => {
+    const { data: members } = await supabase
+      .from("group_members")
+      .select("eleve_id, profile:profiles(nom, prenom)")
+      .eq("group_id", groupId);
+
+    const { data: presences } = await supabase
+      .from("presences")
+      .select("eleve_id, present")
+      .eq("session_id", sessionId);
+
+    const presenceMap = new Map((presences ?? []).map((p: any) => [p.eleve_id, p.present]));
+    const mapped = (members || []).map((m: any) => ({
+      eleve_id: m.eleve_id,
+      nom: m.profile?.nom || "",
+      prenom: m.profile?.prenom || "",
+      present: presenceMap.get(m.eleve_id) ?? true,
+    }));
+
+    setDiagMembers(mapped);
+    setDiagSelectedIds(new Set(mapped.map((m) => m.eleve_id)));
+    return mapped;
+  };
+
+  // ─── Détecte un prédiagnostic déjà pré-généré (statut 'pret') pour cette séance ───
+  React.useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("bilan_tests")
+        .select("id, statut")
+        .eq("session_id", sessionId)
+        .in("statut", ["pret", "envoye"])
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (!cancelled && data) {
+        setDiagBilanTestId(data.id);
+        setDiagGenerated(true);
+        loadDiagnosticRecipients();
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [sessionId]);
+
 
   // ─── Fetch comprehensive previous session data ───
   const { data: prevData, isLoading, isError, error: queryError } = useQuery<PrevSessionData | null>({
@@ -334,56 +381,25 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
           ? prevData.weakCompetences.slice(0, 2)
           : ["CE"];
 
-      const { data, error } = await supabase.functions.invoke("generate-diagnostic-test", {
-        body: {
-          sessionId,
-          groupId,
-          competences,
-          niveau: session.niveau_cible,
-          statut: "pret",
-          weakPoints: prevData?.homeworkLowScores?.slice(0, 3).map((ls) => ({
-            competence: ls.competence,
-            exercice: ls.exercice,
-            score: ls.score,
-          })),
-          previousSessionScores: prevData?.sessionScoresByCompetence,
-        },
+      const data = await createProceduralDiagnosticTest({
+        sessionId,
+        groupId,
+        competences,
+        niveau: session.niveau_cible,
+        statut: "pret",
       });
-
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
 
       setDiagBilanTestId(data.bilanTestId);
       setDiagGenerated(true);
 
-      // Fetch group members with presence info
-      const { data: members } = await supabase
-        .from("group_members")
-        .select("eleve_id, profile:profiles(nom, prenom)")
-        .eq("group_id", groupId);
-
-      const { data: presences } = await supabase
-        .from("presences")
-        .select("eleve_id, present")
-        .eq("session_id", sessionId);
-
-      const presenceMap = new Map((presences ?? []).map((p: any) => [p.eleve_id, p.present]));
-
-      const mapped = (members || []).map((m: any) => ({
-        eleve_id: m.eleve_id,
-        nom: m.profile?.nom || "",
-        prenom: m.profile?.prenom || "",
-        present: presenceMap.get(m.eleve_id) ?? true,
-      }));
-
-      setDiagMembers(mapped);
-      setDiagSelectedIds(new Set(mapped.map((m) => m.eleve_id)));
+      await loadDiagnosticRecipients();
       setDiagSendOpen(true);
 
       toast.success(`Test diagnostique généré (${data.nbQuestions} questions) !`, {
         description: "Choisissez les élèves destinataires.",
       });
     } catch (e: any) {
+      console.error("[handleGenerateDiagnostic]", e);
       toast.error("Erreur de génération", { description: e.message });
     } finally {
       setGeneratingDiag(false);
@@ -409,7 +425,10 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
         message: `Un test diagnostique pour la séance "${session.titre}" est prêt.`,
         link: "/eleve",
       }));
-      await supabase.from("notifications").insert(notifs);
+      const { error: notifError } = await supabase.from("notifications").insert(notifs);
+      if (notifError) {
+        console.warn("Notifications non créées, diagnostic déjà envoyé", notifError);
+      }
 
       toast.success(`Diagnostic envoyé à ${diagSelectedIds.size} élève(s) !`);
       setDiagSendOpen(false);

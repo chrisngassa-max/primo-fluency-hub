@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { callAI, AIError } from "../_shared/ai-client.ts";
 import { checkConsentBatch, ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth } from "../_shared/check-consent.ts";
 
@@ -22,6 +23,9 @@ serve(async (req) => {
       nextSessionTitle,
       nextSessionObjectifs,
       nextSessionNiveauCible,
+      sessionId,
+      nextSessionId,
+      formateurId,
       eleveIds,
     } = await req.json();
     const triggeredBy = await getUserIdFromAuth(req);
@@ -47,6 +51,12 @@ serve(async (req) => {
     await logAICall({ function_name: "adapt-next-session", triggered_by_user_id: triggeredBy, status: "ok", data_categories: hasNominative ? ["nominative"] : ["aggregated_results"], pseudonymization_level: hasNominative ? "hmac_sha256" : "none" });
     // AI key check moved to shared ai-client
 
+    const teacherValidationRule = `
+REGLE PRODUIT OBLIGATOIRE :
+- Le systeme propose uniquement. Le formateur valide, modifie ou refuse.
+- Ne presente jamais une mise en commun, une seance complementaire, une affectation collective ou une modification de deroule comme deja appliquee.
+- Les recommandations doivent etre motivees pour le formateur et rester modifiables.`;
+
     const systemPrompt = `Tu es un expert en ingénierie pédagogique FLE/TCF IRN.
 On te fournit le bilan d'une séance qui vient de se terminer, et les infos de la séance suivante.
 
@@ -56,7 +66,8 @@ Tu dois :
 3. Suggérer des exercices de remédiation ciblés à ajouter EN DÉBUT de séance N+1
 4. Identifier la compétence principale à renforcer
 
-Contexte TCF IRN : 5 compétences (CO, CE, EE, EO, Structures), niveaux A0-C1, public adulte primo-arrivant.`;
+Contexte TCF IRN : 5 compétences (CO, CE, EE, EO, Structures), niveaux A0-C1, public adulte primo-arrivant.
+${teacherValidationRule}`;
 
     const userPrompt = `BILAN DE LA SÉANCE "${sessionTitle}" :
 - Scores moyens du groupe : ${JSON.stringify(bilanScores)}
@@ -117,6 +128,40 @@ Propose des ajustements concrets.`;
                       type: "string",
                       description: "Message court pour la notification au formateur",
                     },
+                    recommandations_formateur: {
+                      type: "array",
+                      description: "Actions proposees uniquement, a valider ou refuser par le formateur",
+                      items: {
+                        type: "object",
+                        properties: {
+                          type: {
+                            type: "string",
+                            enum: ["mise_en_commun", "atelier_remediation", "seance_complementaire", "devoir_individuel", "support_guide"],
+                          },
+                          competence: {
+                            type: "string",
+                            enum: ["CO", "CE", "EE", "EO", "Structures"],
+                          },
+                          eleves_concernes: {
+                            type: "array",
+                            items: { type: "string" },
+                          },
+                          raison_formateur: { type: "string" },
+                          action_proposee: {
+                            type: "object",
+                            properties: {
+                              titre: { type: "string" },
+                              description: { type: "string" },
+                              duree_minutes: { type: "number" },
+                            },
+                            required: ["titre", "description"],
+                            additionalProperties: true,
+                          },
+                        },
+                        required: ["type", "competence", "eleves_concernes", "raison_formateur", "action_proposee"],
+                        additionalProperties: false,
+                      },
+                    },
                   },
                   required: [
                     "competence_focus",
@@ -124,6 +169,7 @@ Propose des ajustements concrets.`;
                     "exercices_remediation",
                     "objectifs_ajustes",
                     "message_formateur",
+                    "recommandations_formateur",
                   ],
                   additionalProperties: false,
                 },
@@ -137,6 +183,36 @@ Propose des ajustements concrets.`;
     if (!toolCall) throw new Error("L'IA n'a pas pu analyser le bilan");
 
     const adaptation = JSON.parse(toolCall.function.arguments);
+    const recommandations = Array.isArray(adaptation.recommandations_formateur)
+      ? adaptation.recommandations_formateur
+      : [];
+
+    if (recommandations.length > 0 && (sessionId || nextSessionId || formateurId || triggeredBy)) {
+      const supabase = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+      );
+
+      const rows = recommandations.map((recommendation: any) => ({
+        source_session_id: sessionId ?? null,
+        target_session_id: nextSessionId ?? null,
+        formateur_id: formateurId ?? triggeredBy ?? null,
+        type: recommendation.type,
+        competence: recommendation.competence ?? adaptation.competence_focus ?? null,
+        eleves_concernes: recommendation.eleves_concernes ?? [],
+        raison_formateur: recommendation.raison_formateur,
+        action_proposee: {
+          ...(recommendation.action_proposee ?? {}),
+          objectifs_ajustes: adaptation.objectifs_ajustes ?? null,
+          message_formateur: adaptation.message_formateur ?? null,
+        },
+        source: "system",
+        status: "proposed",
+      }));
+
+      const { error: recErr } = await supabase.from("session_recommendations").insert(rows);
+      if (recErr) console.warn("Insert session recommendations failed", recErr);
+    }
 
     return new Response(JSON.stringify({ adaptation }), {
       status: 200,

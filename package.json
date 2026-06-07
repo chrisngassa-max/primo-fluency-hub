@@ -15,6 +15,8 @@
     "import:pedagogical-images": "node scripts/import-pedagogical-images.mjs",
     "import:text-documents": "node scripts/import-text-documents.mjs",
     "generate:pedagogical-images": "node scripts/generate-pedagogical-images-gemini.mjs",
+    "import:logement-co-a2-b1": "node scripts/import-logement-co-a2-b2.mjs",
+    "import:logement-co-a2-b2": "node scripts/import-logement-co-a2-b2.mjs",
     "test:watch": "vitest"
   },
   "dependencies": {

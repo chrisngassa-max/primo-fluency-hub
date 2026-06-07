@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { COMPETENCES_ORDER, COMPETENCE_COLORS, resolveSessionCompetences } from "@/lib/competences";
 import { cn } from "@/lib/utils";
+import { prepareSessionKit } from "@/lib/prepareSessionKit";
 
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
 
@@ -147,6 +148,7 @@ const CompetenceMultiSelect = ({
 const SeancesPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const qc = useQueryClient();
 
   const [createOpen, setCreateOpen] = useState(false);
@@ -156,10 +158,20 @@ const SeancesPage = () => {
   const [dateSeance, setDateSeance] = useState("");
   const [niveauCible, setNiveauCible] = useState("A2");
   const [objectifs, setObjectifs] = useState("");
-  const [dureeMinutes, setDureeMinutes] = useState("90");
+  const [dureeMinutes, setDureeMinutes] = useState("180");
   const [lieu, setLieu] = useState("");
   const [competencesCibles, setCompetencesCibles] = useState<string[]>([]);
   const [automation, setAutomation] = useState<AutomationSettings>(defaultAutomation);
+
+  useEffect(() => {
+    if (searchParams.get("new") === "1") {
+      setCreateOpen(true);
+      setSearchParams((current) => {
+        current.delete("new");
+        return current;
+      }, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   // Delete state
   const [deleteSessionId, setDeleteSessionId] = useState<string | null>(null);
@@ -173,7 +185,7 @@ const SeancesPage = () => {
     queryKey: ["formateur-groups", user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("groups").select("id, nom, niveau")
+        .from("groups").select("id, nom, niveau, type_demarche")
         .eq("formateur_id", user!.id).eq("is_active", true)
         .order("nom");
       if (error) throw error;
@@ -207,14 +219,32 @@ const SeancesPage = () => {
   ];
 
   // Detect the highest session number already created for this formateur
+  const extractSessionNumber = (title?: string | null): number | null => {
+    const match = title?.match(/S[ée]ance\s*(\d+)/i);
+    return match ? parseInt(match[1]) : null;
+  };
+
   const getNextSessionNumber = (): number => {
     if (!sessions || sessions.length === 0) return 1;
     let maxNum = 0;
     for (const s of sessions as any[]) {
-      const match = s.titre?.match(/S[ée]ance\s*(\d+)/i);
-      if (match) maxNum = Math.max(maxNum, parseInt(match[1]));
+      const num = extractSessionNumber(s.titre);
+      if (num) maxNum = Math.max(maxNum, num);
     }
     return Math.min(maxNum + 1, 20);
+  };
+
+  const findPreviousSessionForAutoPrep = (targetGroupId: string, targetDate: string, targetSessionNum?: number) => {
+    const groupSessions = (sessions ?? []).filter((s: any) => s.group_id === targetGroupId);
+    if (targetSessionNum && targetSessionNum > 1) {
+      const byNumber = groupSessions.find((s: any) => extractSessionNumber(s.titre) === targetSessionNum - 1);
+      if (byNumber) return byNumber;
+    }
+
+    const targetTime = new Date(targetDate).getTime();
+    return groupSessions
+      .filter((s: any) => new Date(s.date_seance).getTime() < targetTime)
+      .sort((a: any, b: any) => new Date(b.date_seance).getTime() - new Date(a.date_seance).getTime())[0] ?? null;
   };
 
   // State for "next session" dialog
@@ -243,7 +273,7 @@ const SeancesPage = () => {
 
     setNextSaving(true);
     try {
-      const { error } = await supabase
+      const { data: createdSession, error } = await supabase
         .from("sessions")
         .insert({
           titre: selectedCurriculum.titre,
@@ -254,8 +284,27 @@ const SeancesPage = () => {
           duree_minutes: selectedCurriculum.duree,
           lieu: nextLieu || null,
           competences_cibles: selectedCurriculum.competences,
-        } as any);
+        } as any)
+        .select()
+        .single();
       if (error) throw error;
+
+      if (createdSession && user) {
+        const previousSession = findPreviousSessionForAutoPrep(nextGroupId, createdSession.date_seance, selectedCurriculum.numero);
+        const targetGroup = (groups ?? []).find((g: any) => g.id === nextGroupId);
+        prepareSessionKit({
+          sessionId: createdSession.id,
+          groupId: nextGroupId,
+          niveauCible: "A1",
+          competencesCibles: selectedCurriculum.competences as any,
+          objectifs: selectedCurriculum.objectif,
+          titre: selectedCurriculum.titre,
+          formateurId: user.id,
+          typeDemarche: (targetGroup as any)?.type_demarche,
+          sessionExercisesTargetId: previousSession?.id,
+          homeworkSourceSessionId: previousSession?.id,
+        });
+      }
 
       toast.success("Séance créée !", {
         description: `« ${selectedCurriculum.titre} » est prête.`,
@@ -370,7 +419,7 @@ const SeancesPage = () => {
           date_seance: new Date(dateSeance).toISOString(),
           niveau_cible: niveauCible as any,
           objectifs: objectifs || null,
-          duree_minutes: parseInt(dureeMinutes) || 90,
+          duree_minutes: parseInt(dureeMinutes) || 180,
           lieu: lieu || null,
           competences_cibles: competencesCibles.length > 0 ? competencesCibles : null,
           nb_exercices_souhaite: automation.coreCount,
@@ -395,6 +444,23 @@ const SeancesPage = () => {
         if (seErr) throw seErr;
       }
 
+      if (user) {
+        const previousSession = findPreviousSessionForAutoPrep(groupId, session.date_seance, extractSessionNumber(titre) ?? undefined);
+        const targetGroup = (groups ?? []).find((g: any) => g.id === groupId);
+        prepareSessionKit({
+          sessionId: session.id,
+          groupId,
+          niveauCible,
+          competencesCibles: competencesCibles.length > 0 ? competencesCibles : null,
+          objectifs,
+          titre,
+          formateurId: user.id,
+          typeDemarche: (targetGroup as any)?.type_demarche,
+          sessionExercisesTargetId: previousSession?.id,
+          homeworkSourceSessionId: previousSession?.id,
+        });
+      }
+
       toast.success("Séance créée !", {
         description: selectedExerciseIds.size > 0
           ? `${selectedExerciseIds.size} exercice(s) rattaché(s).`
@@ -410,7 +476,7 @@ const SeancesPage = () => {
 
   const resetForm = () => {
     setTitre(""); setGroupId(""); setDateSeance(""); setNiveauCible("A2");
-    setObjectifs(""); setDureeMinutes("90"); setLieu("");
+    setObjectifs(""); setDureeMinutes("180"); setLieu("");
     setSelectedSequenceId(""); setSelectedExerciseIds(new Set());
     setCompetencesCibles([]);
     setAutomation(defaultAutomation);
@@ -424,7 +490,7 @@ const SeancesPage = () => {
   const [editTitre, setEditTitre] = useState("");
   const [editDate, setEditDate] = useState("");
   const [editNiveau, setEditNiveau] = useState("A2");
-  const [editDuree, setEditDuree] = useState("90");
+  const [editDuree, setEditDuree] = useState("180");
   const [editLieu, setEditLieu] = useState("");
   const [editObjectifs, setEditObjectifs] = useState("");
   const [editStatut, setEditStatut] = useState("planifiee");
@@ -485,6 +551,18 @@ const SeancesPage = () => {
         if (seErr) throw seErr;
       }
 
+      if (user) {
+        prepareSessionKit({
+          sessionId: newSession.id,
+          groupId: dupGroupId,
+          niveauCible: dupSession.niveau_cible,
+          competencesCibles: (dupSession as any).competences_cibles || null,
+          objectifs: dupSession.objectifs,
+          titre: dupSession.titre,
+          formateurId: user.id,
+        });
+      }
+
       const targetGroup = (groups ?? []).find((g) => g.id === dupGroupId);
       toast.success("Séance dupliquée !", {
         description: `Pour le groupe ${targetGroup?.nom || ""} avec ${srcExercises?.length || 0} exercice(s).`,
@@ -536,7 +614,7 @@ const SeancesPage = () => {
           group_id: editGroupId,
           date_seance: new Date(editDate).toISOString(),
           niveau_cible: editNiveau as any,
-          duree_minutes: parseInt(editDuree) || 90,
+          duree_minutes: parseInt(editDuree) || 180,
           lieu: editLieu || null,
           objectifs: editObjectifs || null,
           statut: editStatut as any,
@@ -926,7 +1004,7 @@ const SeancesPage = () => {
           const isCancelled = s.statut === "annulee";
 
           const startDate = new Date(s.date_seance);
-          const endDate = new Date(startDate.getTime() + (s.duree_minutes || 90) * 60000);
+          const endDate = new Date(startDate.getTime() + (s.duree_minutes || 180) * 60000);
           const timeRange = `${format(startDate, "HH:mm")} - ${format(endDate, "HH:mm")}`;
 
           const today = new Date();

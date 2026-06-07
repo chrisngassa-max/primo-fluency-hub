@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -74,6 +74,16 @@ const GroupesPage = () => {
   const [desc, setDesc] = useState("");
   const [typeDemarche, setTypeDemarche] = useState<"titre_sejour" | "naturalisation">("titre_sejour");
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get("new") === "1") {
+      setCreateOpen(true);
+      setSearchParams((current) => {
+        current.delete("new");
+        return current;
+      }, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   // Edit dialog
   const [editOpen, setEditOpen] = useState(false);

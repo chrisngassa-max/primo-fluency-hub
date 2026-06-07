@@ -100,7 +100,8 @@ const App = () => (
               }
             >
               <Route index element={<FormateurDashboardV2 />} />
-              <Route path="dashboard-old" element={<FormateurDashboard />} />
+              <Route path="dashboard-legacy" element={<FormateurDashboard />} />
+
               <Route path="groupes" element={<GroupesPage />} />
               <Route path="seances" element={<SeancesPage />} />
               <Route path="seances/:id/pilote" element={<SessionPilot />} />

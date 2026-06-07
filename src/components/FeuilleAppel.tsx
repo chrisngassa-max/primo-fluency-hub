@@ -10,7 +10,13 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
-import { Printer, Save, Share2, CheckCircle2, XCircle, Loader2, Users } from "lucide-react";
+import { Printer, Save, Share2, CheckCircle2, XCircle, Loader2, Users, MessageCircle, Mail, Copy } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -199,20 +205,34 @@ export default function FeuilleAppel({ sessionId, session }: FeuilleAppelProps) 
     }
   };
 
-  const handleShare = async () => {
-    await handleSave();
+  const buildShareText = () => {
     const groupName = (session as any)?.group?.nom || "Groupe";
     const dateStr = format(new Date(session.date_seance), "d MMMM yyyy", { locale: fr });
     const absentNames = (members || [])
       .filter((m) => !presenceState[m.eleve_id]?.present)
       .map((m) => `${m.prenom} ${m.nom}`)
       .join(", ");
-
-    const text = `📋 *Feuille d'appel — ${session.titre}*
+    return `📋 Feuille d'appel — ${session.titre}
 📅 ${dateStr} · ${groupName}
 ✅ Présents : ${presentCount}/${totalCount}
 ${totalCount - presentCount > 0 ? `❌ Absents : ${absentNames}` : "🎉 Aucune absence !"}`;
+  };
 
+  const handleShareWhatsApp = async () => {
+    await handleSave();
+    const url = `https://wa.me/?text=${encodeURIComponent(buildShareText())}`;
+    window.open(url, "_blank");
+  };
+
+  const handleShareEmail = async () => {
+    await handleSave();
+    const subject = `Feuille d'appel — ${session.titre}`;
+    window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(buildShareText())}`;
+  };
+
+  const handleShareNative = async () => {
+    await handleSave();
+    const text = buildShareText();
     if (navigator.share) {
       try {
         await navigator.share({ title: `Appel ${session.titre}`, text });
@@ -221,8 +241,13 @@ ${totalCount - presentCount > 0 ? `❌ Absents : ${absentNames}` : "🎉 Aucune 
       }
     } else {
       await navigator.clipboard.writeText(text);
-      toast.success("Récapitulatif copié dans le presse-papier (collez dans WhatsApp)");
+      toast.success("Récapitulatif copié dans le presse-papier");
     }
+  };
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(buildShareText());
+    toast.success("Récapitulatif copié");
   };
 
   if (loadingMembers || loadingPresences) {
@@ -325,9 +350,27 @@ ${totalCount - presentCount > 0 ? `❌ Absents : ${absentNames}` : "🎉 Aucune 
           <Button variant="outline" onClick={handlePrint} className="gap-2">
             <Printer className="h-4 w-4" /> Imprimer PDF
           </Button>
-          <Button variant="outline" onClick={handleShare} className="gap-2">
-            <Share2 className="h-4 w-4" /> Partager
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="gap-2">
+                <Share2 className="h-4 w-4" /> Partager
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56 bg-popover z-50">
+              <DropdownMenuItem onClick={handleShareWhatsApp}>
+                <MessageCircle className="h-4 w-4 mr-2 text-green-600" /> WhatsApp
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleShareEmail}>
+                <Mail className="h-4 w-4 mr-2" /> E-mail
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleShareNative}>
+                <Share2 className="h-4 w-4 mr-2" /> Partage système
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleCopy}>
+                <Copy className="h-4 w-4 mr-2" /> Copier le texte
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </CardContent>
     </Card>

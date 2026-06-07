@@ -1,21 +1,32 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { 
-  Users, GraduationCap, Bell, Calendar, Clock, 
+  Users, GraduationCap, Bell, Calendar,
   TrendingUp, AlertTriangle, ChevronRight, CheckCircle2, 
-  Play, FileCheck, Send, Activity, Sparkles 
+  Send, Activity
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+
+const formatSessionTimeRange = (session: any) => {
+  if (!session?.date_seance) return "À planifier";
+  const start = new Date(session.date_seance);
+  const end = new Date(start.getTime() + Number(session.duree_minutes || 180) * 60000);
+  return `${start.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })} - ${end.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`;
+};
 
 export default function FormateurDashboardV2() {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState("seance-du-jour");
 
   // --- 1. BRANCHEMENT DES DONNÉES SUPABASE (KPIs réels) ---
@@ -59,13 +70,119 @@ export default function FormateurDashboardV2() {
     enabled: !!user,
   });
 
-  // (Mock pour la maquette)
-  const nextSessionMock = {
-    titre: "Groupe Alpha - Niveau A2",
-    date: "Aujourd'hui, 14:00",
-    duree: "90 minutes",
-    eleves: 12,
-    objectifs: "Se présenter, parler de ses loisirs et de sa routine quotidienne."
+  const { data: sessionCount = 0 } = useQuery({
+    queryKey: ["kpi-sessions-total", user?.id],
+    queryFn: async () => {
+      if (!user) return 0;
+      const { data: groups } = await supabase.from("groups").select("id").eq("formateur_id", user.id);
+      if (!groups?.length) return 0;
+      const { count } = await supabase
+        .from("sessions")
+        .select("*", { count: "exact", head: true })
+        .in("group_id", groups.map((g) => g.id));
+      return count ?? 0;
+    },
+    enabled: !!user,
+  });
+
+  const { data: nextSessions = [], isLoading: loadingSessions } = useQuery({
+    queryKey: ["dashboard-v2-next-sessions", user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      const { data: groups } = await supabase.from("groups").select("id, nom").eq("formateur_id", user.id);
+      if (!groups?.length) return [];
+      const groupIds = groups.map((g) => g.id);
+      const groupMap = Object.fromEntries(groups.map((g) => [g.id, g.nom]));
+      const sixHoursAgo = new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString();
+      const { data } = await supabase
+        .from("sessions")
+        .select("id, titre, date_seance, duree_minutes, niveau_cible, objectifs, statut, group_id")
+        .in("group_id", groupIds)
+        .gte("date_seance", sixHoursAgo)
+        .not("statut", "in", "(terminee,annulee)")
+        .order("date_seance", { ascending: true })
+        .limit(3);
+      return (data ?? []).map((session) => ({ ...session, group_nom: groupMap[session.group_id] || "—" }));
+    },
+    enabled: !!user,
+  });
+
+  const nextSession = nextSessions[0] ?? null;
+  const canOpenSession = nextSession && !["terminee", "annulee"].includes(nextSession.statut);
+
+  const { data: sessionExercises = [] } = useQuery({
+    queryKey: ["dashboard-v2-session-exercises", nextSession?.id],
+    queryFn: async () => {
+      if (!nextSession) return [];
+      const { data: links } = await supabase
+        .from("session_exercices")
+        .select("id, ordre, statut, exercice_id")
+        .eq("session_id", nextSession.id)
+        .order("ordre");
+      if (!links?.length) return [];
+      const { data: exercices } = await supabase
+        .from("exercices")
+        .select("id, titre, competence")
+        .in("id", links.map((link) => link.exercice_id));
+      const exerciseMap = Object.fromEntries((exercices ?? []).map((exercise) => [exercise.id, exercise]));
+      return links
+        .map((link) => ({ sessionExerciceId: link.id, ordre: link.ordre, statut: link.statut, ...exerciseMap[link.exercice_id] }))
+        .filter((exercise: any) => exercise.titre);
+    },
+    enabled: !!nextSession,
+  });
+
+  const { data: alerts = [] } = useQuery({
+    queryKey: ["dashboard-v2-alerts", user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      const { data: alertes } = await supabase
+        .from("alertes")
+        .select("id, message, eleve_id, type, created_at")
+        .eq("formateur_id", user.id)
+        .eq("is_resolved", false)
+        .order("created_at", { ascending: false })
+        .limit(8);
+      if (!alertes?.length) return [];
+      const eleveIds = [...new Set(alertes.map((alert) => alert.eleve_id).filter(Boolean))];
+      const { data: profiles } = eleveIds.length
+        ? await supabase.from("profiles").select("id, nom, prenom").in("id", eleveIds)
+        : { data: [] as any[] };
+      const profileMap = Object.fromEntries((profiles ?? []).map((profile: any) => [profile.id, `${profile.prenom ?? ""} ${profile.nom ?? ""}`.trim()]));
+      return alertes.map((alert) => ({ ...alert, eleve_nom: profileMap[alert.eleve_id] || "Élève" }));
+    },
+    enabled: !!user,
+  });
+
+  const openSession = () => {
+    if (canOpenSession) {
+      navigate(`/formateur/seances/${nextSession.id}/pilote`);
+      return;
+    }
+    navigate("/formateur/seances?new=1");
+  };
+
+  const handleSendExercises = async () => {
+    if (!nextSession) {
+      navigate("/formateur/seances?new=1");
+      return;
+    }
+    if (sessionExercises.length === 0) {
+      toast.warning("Aucun exercice prêt à envoyer pour cette séance.");
+      navigate(`/formateur/seances/${nextSession.id}/pilote`);
+      return;
+    }
+    const ids = sessionExercises.map((exercise: any) => exercise.sessionExerciceId);
+    const { error } = await supabase
+      .from("session_exercices")
+      .update({ statut: "traite_en_classe" as any, is_sent: true, updated_at: new Date().toISOString() } as any)
+      .in("id", ids);
+    if (error) {
+      toast.error("Erreur d'envoi", { description: error.message });
+      return;
+    }
+    await queryClient.invalidateQueries({ queryKey: ["dashboard-v2-session-exercises"] });
+    toast.success(`${sessionExercises.length} exercice(s) envoyé(s) aux élèves.`);
   };
 
   return (
@@ -87,11 +204,11 @@ export default function FormateurDashboardV2() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="hidden md:flex gap-2 bg-white cap-card border-none">
+          <Button variant="outline" className="hidden md:flex gap-2 bg-white cap-card border-none" onClick={() => navigate("/formateur/seances")}>
             <Calendar className="h-4 w-4" />
             Mon Planning
           </Button>
-          <button className="cap-orange-button px-5 py-2.5 text-sm flex items-center gap-2">
+          <button className="cap-orange-button px-5 py-2.5 text-sm flex items-center gap-2" onClick={() => navigate("/formateur/groupes?new=1")}>
             <Users className="h-4 w-4" />
             Nouveau Groupe
           </button>
@@ -106,6 +223,7 @@ export default function FormateurDashboardV2() {
           icon={<Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />} 
           trend="En cours"
           bgClass="bg-blue-50 dark:bg-blue-950/30"
+          onClick={() => navigate("/formateur/groupes")}
         />
         <KPICard 
           title="Élèves inscrits" 
@@ -113,13 +231,15 @@ export default function FormateurDashboardV2() {
           icon={<GraduationCap className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />} 
           trend="Total"
           bgClass="bg-indigo-50 dark:bg-indigo-950/30"
+          onClick={() => navigate("/formateur/groupes?tab=eleves")}
         />
         <KPICard 
           title="Séances" 
-          value="18" 
+          value={sessionCount} 
           icon={<CheckCircle2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />} 
-          trend="Réalisées"
+          trend="Total"
           bgClass="bg-emerald-50 dark:bg-emerald-950/30"
+          onClick={() => navigate("/formateur/seances")}
         />
         <KPICard 
           title="Alertes" 
@@ -128,6 +248,7 @@ export default function FormateurDashboardV2() {
           trend={alertCount > 0 ? "À traiter urgemment" : "Tout va bien"}
           bgClass="bg-rose-50 dark:bg-rose-950/30"
           isAlert={alertCount > 0}
+          onClick={() => navigate("/formateur/monitoring")}
         />
       </div>
 
@@ -157,55 +278,41 @@ export default function FormateurDashboardV2() {
               {/* Next Session Highlight (Conforme Maquette) */}
               <div className="cap-card cap-primary-gradient rounded-2xl p-6 text-white mb-6">
                 <h3 className="font-bold text-xl mb-1 flex items-center gap-2">
-                  Séance active: <span className="font-medium opacity-90">{nextSessionMock.titre}</span>
+                  {nextSession ? "Séance active:" : "Séance à planifier"} <span className="font-medium opacity-90">{nextSession?.titre ?? "Aucune séance prévue"}</span>
                 </h3>
-                <p className="text-white/80 font-medium mb-1">Group: <span className="font-normal opacity-90">Groupe A</span></p>
-                <p className="text-white/80 font-medium mb-5">Time: <span className="font-normal opacity-90">14:00 - 15:30</span></p>
+                <p className="text-white/80 font-medium mb-1">Groupe: <span className="font-normal opacity-90">{nextSession?.group_nom ?? "—"}</span></p>
+                <p className="text-white/80 font-medium mb-5">Horaire: <span className="font-normal opacity-90">{formatSessionTimeRange(nextSession)}</span></p>
                 
-                <button className="w-full cap-orange-button py-3 text-lg tracking-wide">
-                  Piloter
+                <button className="w-full cap-orange-button py-3 text-lg tracking-wide" onClick={openSession}>
+                  {loadingSessions ? "Chargement…" : nextSession ? "Piloter" : "Planifier une séance"}
                 </button>
               </div>
 
-              {/* Liste d'exercices (mock) conforme maquette */}
+              {/* Liste d'exercices de la séance */}
               <div className="space-y-3 mb-6">
-                <div className="cap-card p-4 flex items-center justify-between cursor-pointer hover:border-primary/30 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <div className="h-5 w-5 rounded border-2 border-slate-300 bg-white"></div>
-                    <span className="font-semibold text-[#0b234a] text-[15px]">Exercice 1: Écoute active</span>
-                  </div>
-                  <Badge className="bg-purple-500 hover:bg-purple-600 text-white border-none rounded-full px-2.5 font-bold">CO</Badge>
-                </div>
-                <div className="cap-card p-4 flex items-center justify-between cursor-pointer hover:border-primary/30 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <div className="h-5 w-5 rounded border-2 border-slate-300 bg-white"></div>
-                    <span className="font-semibold text-[#0b234a] text-[15px]">Exercice 2: Compréhension orale</span>
-                  </div>
-                  <Badge className="bg-purple-500 hover:bg-purple-600 text-white border-none rounded-full px-2.5 font-bold">CO</Badge>
-                </div>
-                <div className="cap-card p-4 flex items-center justify-between cursor-pointer hover:border-primary/30 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <div className="h-5 w-5 rounded border-2 border-slate-300 bg-white"></div>
-                    <span className="font-semibold text-[#0b234a] text-[15px]">Exercice 3: Expression écrite</span>
-                  </div>
-                  <Badge className="bg-[#a58d60] hover:bg-[#a58d60]/90 text-white border-none rounded-full px-2.5 font-bold">EE</Badge>
-                </div>
-                <div className="cap-card p-4 flex items-center justify-between cursor-pointer hover:border-primary/30 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <div className="h-5 w-5 rounded border-2 border-slate-300 bg-white"></div>
-                    <span className="font-semibold text-[#0b234a] text-[15px]">Exercice 4: Expression orale</span>
-                  </div>
-                  <Badge className="bg-teal-500 hover:bg-teal-600 text-white border-none rounded-full px-2.5 font-bold">EO</Badge>
-                </div>
+                {sessionExercises.length === 0 ? (
+                  <button className="cap-card p-4 w-full text-left hover:border-primary/30 transition-colors" onClick={openSession}>
+                    <span className="font-semibold text-[#0b234a] text-[15px]">Aucun exercice rattaché — ouvrir la séance</span>
+                    <ChevronRight className="h-4 w-4 float-right text-slate-400" />
+                  </button>
+                ) : sessionExercises.slice(0, 5).map((exercise: any, index: number) => (
+                  <button key={exercise.sessionExerciceId} className="cap-card p-4 w-full flex items-center justify-between cursor-pointer hover:border-primary/30 transition-colors text-left" onClick={openSession}>
+                    <div className="flex items-center gap-3">
+                      <div className={cn("h-5 w-5 rounded border-2 bg-white", exercise.statut === "traite_en_classe" ? "border-emerald-400" : "border-slate-300")}></div>
+                      <span className="font-semibold text-[#0b234a] text-[15px]">Exercice {index + 1}: {exercise.titre}</span>
+                    </div>
+                    <Badge className="bg-primary hover:bg-primary text-primary-foreground border-none rounded-full px-2.5 font-bold">{exercise.competence === "Structures" ? "ST" : exercise.competence}</Badge>
+                  </button>
+                ))}
               </div>
               
-              <button className="w-full cap-orange-button py-4 text-lg mb-8">
+              <button className="w-full cap-orange-button py-4 text-lg mb-8" onClick={openSession}>
                 Générer des devoirs automatiques
               </button>
 
               {/* Quick Actions */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Card className="hover:border-primary/40 transition-colors cursor-pointer group">
+                <Card className="hover:border-primary/40 transition-colors cursor-pointer group" onClick={handleSendExercises}>
                   <CardContent className="p-5 flex items-start gap-4">
                     <div className="h-10 w-10 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                       <Send className="h-5 w-5 text-blue-600 dark:text-blue-400" />
@@ -216,7 +323,7 @@ export default function FormateurDashboardV2() {
                     </div>
                   </CardContent>
                 </Card>
-                <Card className="hover:border-primary/40 transition-colors cursor-pointer group">
+                <Card className="hover:border-primary/40 transition-colors cursor-pointer group" onClick={() => navigate(nextSession ? `/formateur/suivi-direct?session=${nextSession.id}` : "/formateur/suivi-direct")}>
                   <CardContent className="p-5 flex items-start gap-4">
                     <div className="h-10 w-10 rounded-full bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                       <Activity className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
@@ -280,31 +387,22 @@ export default function FormateurDashboardV2() {
             </CardHeader>
             <CardContent className="p-0">
               <div className="h-[400px] overflow-y-auto p-4 space-y-4">
-                {/* Alert Item 1 */}
-                <div className="bg-rose-50/50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/50 p-3 rounded-lg flex gap-3 items-start transition-all hover:shadow-sm cursor-pointer">
-                  <div className="mt-0.5 bg-rose-100 dark:bg-rose-900 p-1.5 rounded-md text-rose-600 dark:text-rose-400">
-                    <TrendingUp className="h-4 w-4" />
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200">Baisse de performance</h4>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                      <span className="font-medium">Sarah M.</span> a échoué à 3 exercices de suite en Compréhension Orale.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Alert Item 2 */}
-                <div className="bg-orange-50/50 dark:bg-orange-950/20 border border-orange-100 dark:border-orange-900/50 p-3 rounded-lg flex gap-3 items-start transition-all hover:shadow-sm cursor-pointer">
-                  <div className="mt-0.5 bg-orange-100 dark:bg-orange-900 p-1.5 rounded-md text-orange-600 dark:text-orange-400">
-                    <AlertTriangle className="h-4 w-4" />
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200">Absence répétée</h4>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                      <span className="font-medium">Ahmed K.</span> est absent pour la 2ème séance consécutive.
-                    </p>
-                  </div>
-                </div>
+                {alerts.length === 0 ? (
+                  <button className="w-full text-left bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/50 p-3 rounded-lg transition-all hover:shadow-sm" onClick={() => navigate("/formateur/monitoring")}>
+                    <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200">Aucune alerte active</h4>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">Ouvrir le monitoring pédagogique.</p>
+                  </button>
+                ) : alerts.map((alert: any) => (
+                  <button key={alert.id} className="w-full text-left bg-rose-50/50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/50 p-3 rounded-lg flex gap-3 items-start transition-all hover:shadow-sm cursor-pointer" onClick={() => navigate(alert.eleve_id ? `/formateur/eleves/${alert.eleve_id}` : "/formateur/monitoring")}>
+                    <div className="mt-0.5 bg-rose-100 dark:bg-rose-900 p-1.5 rounded-md text-rose-600 dark:text-rose-400">
+                      {alert.type === "tendance_baisse" ? <TrendingUp className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200">{alert.eleve_nom}</h4>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">{alert.message || "Alerte pédagogique"}</p>
+                    </div>
+                  </button>
+                ))}
               </div>
             </CardContent>
           </Card>
@@ -315,12 +413,15 @@ export default function FormateurDashboardV2() {
   );
 }
 
-function KPICard({ title, value, icon, trend, bgClass, isAlert = false }: any) {
+function KPICard({ title, value, icon, trend, bgClass, isAlert = false, onClick }: any) {
   return (
     <Card className={cn(
       "overflow-hidden transition-all duration-200 hover:shadow-md",
+      onClick ? "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary" : "",
       isAlert ? "border-rose-200 dark:border-rose-900/50" : ""
-    )}>
+    )} onClick={onClick} role={onClick ? "button" : undefined} tabIndex={onClick ? 0 : undefined} onKeyDown={(event) => {
+      if (onClick && (event.key === "Enter" || event.key === " ")) onClick();
+    }}>
       <CardContent className="p-5">
         <div className="flex justify-between items-start">
           <div className="space-y-2">
