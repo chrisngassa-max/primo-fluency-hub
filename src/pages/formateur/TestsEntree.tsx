@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
+import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -885,20 +886,15 @@ function TimerBar({ timeLeft, isUrgent }: { timeLeft: number; isUrgent: boolean 
 }
 
 /* ───────── Main Page ───────── */
-const TestsEntreePage = () => {
+const TestsEntreePage = ({ embedded = false }: { embedded?: boolean }) => {
+  if (!embedded) return <Navigate to="/formateur/positionnement" replace />;
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Tests d'entrée</h1>
-        <p className="text-muted-foreground mt-1">
-          Diagnostic précis par sous-items, radar de compétences et analyse IA.
-        </p>
-      </div>
-
       <Tabs defaultValue="diagnostic">
         <TabsList>
           <TabsTrigger value="diagnostic">Diagnostic par sous-items</TabsTrigger>
-          <TabsTrigger value="passation">Passage du Test (Aperçu)</TabsTrigger>
+          <TabsTrigger value="passation">Simulation du test</TabsTrigger>
         </TabsList>
 
         <TabsContent value="diagnostic" className="mt-4">

@@ -14,6 +14,7 @@ import { Loader2, Volume2, RefreshCw, FileDown, Mail } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useExportPDF } from "@/hooks/useExportPDF";
 import GenerateTargetedExerciseWizard from "@/components/formateur/GenerateTargetedExerciseWizard";
+import { useQuery } from "@tanstack/react-query";
 
 type Row = {
   type_erreur_id: string | null;
@@ -35,9 +36,10 @@ type StudentErrorRow = {
 
 const PALETTE = ["#2563eb", "#16a34a", "#f59e0b", "#dc2626", "#7c3aed", "#0891b2", "#db2777", "#65a30d"];
 
-export default function AnalyticsErreursPage() {
+function GlobalErrorAnalytics({ sessionScoped = false }: { sessionScoped?: boolean }) {
   const { user } = useAuth();
   const [period, setPeriod] = useState<"7" | "30" | "90">("30");
+  const [selectedSessionId, setSelectedSessionId] = useState("");
   const [loading, setLoading] = useState(true);
   const [bulkLoading, setBulkLoading] = useState(false);
   const [rows, setRows] = useState<Row[]>([]);
@@ -48,22 +50,47 @@ export default function AnalyticsErreursPage() {
   const exportRef = useRef<HTMLDivElement>(null);
   const { exportPDF, isExporting } = useExportPDF(exportRef);
 
+  const { data: sessions = [] } = useQuery({
+    queryKey: ["error-analysis-sessions", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      const { data, error } = await supabase
+        .from("sessions")
+        .select("id, titre, date_seance, groups!inner(formateur_id)")
+        .eq("groups.formateur_id", user.id)
+        .order("date_seance", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: sessionScoped && !!user?.id,
+  });
+
   useEffect(() => {
+    if (sessionScoped && !selectedSessionId && sessions.length > 0) {
+      setSelectedSessionId(sessions[0].id);
+    }
+  }, [selectedSessionId, sessionScoped, sessions]);
+
+  useEffect(() => {
+    if (sessionScoped && !selectedSessionId) return;
     void load();
-  }, [period]);
+  }, [period, selectedSessionId, sessionScoped]);
 
   async function load() {
     setLoading(true);
     try {
       const since = new Date(Date.now() - Number(period) * 24 * 3600 * 1000).toISOString();
 
-      const [{ data: events, error }, { data: types }, { data: interv }] = await Promise.all([
-        supabase
+      let eventsQuery = supabase
           .from("session_live_events")
           .select("session_id, type_erreur_id, competence, event_type, created_at, eleve_id, payload")
           .in("event_type", ["reponse_incorrecte", "erreur_repetee", "intervention_recue"])
           .gte("created_at", since)
-          .limit(5000),
+          .limit(5000);
+      if (sessionScoped && selectedSessionId) eventsQuery = eventsQuery.eq("session_id", selectedSessionId);
+
+      const [{ data: events, error }, { data: types }, { data: interv }] = await Promise.all([
+        eventsQuery,
         supabase.from("types_erreur").select("id, libelle"),
         supabase
           .from("interventions")
@@ -182,6 +209,16 @@ export default function AnalyticsErreursPage() {
           </p>
         </div>
         <div className="flex gap-2">
+          {sessionScoped && (
+            <Select value={selectedSessionId} onValueChange={setSelectedSessionId}>
+              <SelectTrigger className="w-56"><SelectValue placeholder="Choisir une séance" /></SelectTrigger>
+              <SelectContent>
+                {sessions.map((session: any) => (
+                  <SelectItem key={session.id} value={session.id}>{session.titre}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
           <Select value={period} onValueChange={(v: any) => setPeriod(v)}>
             <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
             <SelectContent>
@@ -368,6 +405,31 @@ export default function AnalyticsErreursPage() {
         sessionId={wizardTarget?.sessionId}
         mode="session_live"
       />
+    </div>
+  );
+}
+
+export default function AnalyticsErreursPage() {
+  return (
+    <div className="space-y-5">
+      <div>
+        <h1 className="text-2xl font-bold text-[#0b234a]">Analyse des erreurs</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Analysez les tendances globales ou concentrez-vous sur une séance précise.
+        </p>
+      </div>
+      <Tabs defaultValue="global">
+        <TabsList className="grid h-auto w-full max-w-xl grid-cols-2">
+          <TabsTrigger value="global">Vue globale</TabsTrigger>
+          <TabsTrigger value="session">Vue par séance</TabsTrigger>
+        </TabsList>
+        <TabsContent value="global">
+          <GlobalErrorAnalytics />
+        </TabsContent>
+        <TabsContent value="session">
+          <GlobalErrorAnalytics sessionScoped />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

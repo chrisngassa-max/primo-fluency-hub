@@ -15,9 +15,10 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import TestsEntreePage from "@/pages/formateur/TestsEntree";
 
 export default function PositionnementPage() {
-  const [activeTab, setActiveTab] = useState("mes-tests");
+  const [activeTab, setActiveTab] = useState("diagnostic");
   const queryClient = useQueryClient();
 
   // --- 1. Queries ---
@@ -89,13 +90,17 @@ export default function PositionnementPage() {
             Test de Positionnement
           </h1>
           <p className="text-slate-500 font-medium mt-1">
-            Gérez vos objets pédagogiques exportables et suivez les résultats.
+            Générez les tests, réalisez le diagnostic individuel et suivez les résultats depuis un seul espace.
           </p>
         </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="bg-white p-1 h-14 rounded-xl shadow-sm border border-slate-100 mb-8">
+        <TabsList className="grid h-auto w-full grid-cols-2 gap-1 bg-white p-1 shadow-sm border border-slate-100 mb-8 lg:grid-cols-4">
+          <TabsTrigger value="diagnostic" className="px-4 py-2.5 data-[state=active]:bg-[#0b234a] data-[state=active]:text-white flex items-center justify-center gap-2">
+            <ListChecks className="h-4 w-4" />
+            Diagnostic individuel
+          </TabsTrigger>
           <TabsTrigger value="generer" className="px-6 py-2.5 rounded-lg data-[state=active]:bg-[#0b234a] data-[state=active]:text-white flex items-center gap-2">
             <Sparkles className="h-4 w-4" />
             Générer
@@ -109,6 +114,10 @@ export default function PositionnementPage() {
             Résultats
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="diagnostic" className="outline-none">
+          <TestsEntreePage embedded />
+        </TabsContent>
 
         {/* --- TAB: GENERER --- */}
         <TabsContent value="generer" className="outline-none">
