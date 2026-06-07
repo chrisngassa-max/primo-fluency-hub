@@ -35,6 +35,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { attendanceLabel, qualitativeProgress } from "@/lib/qualitativeProgress";
+import LearnerPortfolio from "@/components/eleve/LearnerPortfolio";
 
 const COMPETENCES = ["CO", "CE", "EE", "EO", "Structures"] as const;
 
@@ -840,6 +841,19 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
         </CardContent>
       </Card>
       </div>
+      <LearnerPortfolio
+        learnerName={
+          studentProfile
+            ? `${studentProfile.prenom ?? ""} ${studentProfile.nom ?? ""}`.trim()
+            : `${user?.user_metadata?.prenom ?? ""} ${user?.user_metadata?.nom ?? ""}`.trim() || "Apprenant CAP TCF"
+        }
+        level={niveauActuel}
+        competencies={COMPETENCES.map((competence) => ({
+          competence,
+          statut: compMap[competence] || "non_evalue",
+        }))}
+        results={(resultats ?? []) as any}
+      />
       {eleveId && studentProfile && (
         <Dialog open={credentialsOpen} onOpenChange={(open) => open ? openCredentialsDialog() : closeCredentialsDialog()}>
           <DialogContent className="sm:max-w-md">

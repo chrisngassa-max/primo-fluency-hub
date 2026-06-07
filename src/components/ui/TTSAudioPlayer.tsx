@@ -16,6 +16,7 @@ interface TTSAudioPlayerProps {
   playCount?: number;
   maxPlays?: number | null;
   showSpeedControl?: boolean;
+  language?: string;
 }
 
 const TTSAudioPlayer = ({
@@ -29,6 +30,7 @@ const TTSAudioPlayer = ({
   playCount = 0,
   maxPlays = null,
   showSpeedControl = false,
+  language = "fr-FR",
 }: TTSAudioPlayerProps) => {
   const [loading, setLoading] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
@@ -63,7 +65,7 @@ const TTSAudioPlayer = ({
     utterance.text = message || text;
     if (!utterance.text.trim()) return false;
 
-    utterance.lang = "fr-FR";
+    utterance.lang = language;
     utterance.rate = playbackRate;
     utterance.pitch = 1;
     utterance.onstart = () => {
@@ -82,7 +84,7 @@ const TTSAudioPlayer = ({
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utterance);
     return true;
-  }, [onPlayComplete, onPlayStart, playbackRate, text]);
+  }, [language, onPlayComplete, onPlayStart, playbackRate, text]);
 
   useEffect(() => {
     return () => {
@@ -108,6 +110,14 @@ const TTSAudioPlayer = ({
     const browserUtterance = typeof window !== "undefined" && "SpeechSynthesisUtterance" in window
       ? new SpeechSynthesisUtterance("")
       : null;
+
+    if (!language.toLowerCase().startsWith("fr")) {
+      setLoading(false);
+      if (!speakWithBrowserFallback(browserUtterance)) {
+        toast.error("Voix indisponible sur cet appareil");
+      }
+      return;
+    }
 
     if (audioUrl) {
       try {

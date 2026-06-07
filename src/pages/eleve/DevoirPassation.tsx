@@ -34,12 +34,20 @@ import { corrigerExercice } from "@/lib/correctionExercice";
 import { applyExerciseVariant, resolveStudentExerciseLevel } from "@/lib/exerciseVariant";
 import InterventionPlayer from "@/components/eleve/InterventionPlayer";
 import LearnerAccessibilityToolbar from "@/components/eleve/LearnerAccessibilityToolbar";
+import TranslatedInstruction from "@/components/eleve/TranslatedInstruction";
 import {
   learnerTextSizeClass,
   remainingAudioPlays,
   type LearnerTextSize,
 } from "@/lib/audioAccess";
 import { qualitativeProgress } from "@/lib/qualitativeProgress";
+import {
+  deleteExerciseDraft,
+  exerciseDraftKey,
+  loadExerciseDraft,
+  queueSubmission,
+  saveExerciseDraft,
+} from "@/lib/offlineExercise";
 
 function CorrectionAccordion({ correction }: { correction: any[] }) {
   const [openItems, setOpenItems] = useState<number[]>([]);
@@ -221,6 +229,7 @@ const DevoirPassation = () => {
   const [result, setResult] = useState<{ score: number; correction: any[]; bilanId?: string } | null>(null);
   const [itemOverrides, setItemOverrides] = useState<Record<number, any>>({});
   const [reportedItemIdx, setReportedItemIdx] = useState<Set<number>>(new Set());
+  const draftRestoredRef = useRef(false);
 
   // Audio recording state for EO
   const [isRecording, setIsRecording] = useState(false);
@@ -320,6 +329,33 @@ const DevoirPassation = () => {
     ?? contenu?.transcription_verrouillee
     ?? false;
   const remainingPlays = remainingAudioPlays(audioPlayCount, maxAudioPlays);
+  const draftKey = user?.id && devoirId ? exerciseDraftKey(user.id, devoirId) : null;
+
+  useEffect(() => {
+    if (!draftKey || result || isDone || draftRestoredRef.current) return;
+    draftRestoredRef.current = true;
+    void loadExerciseDraft(draftKey).then((draft) => {
+      if (!draft) return;
+      setAnswers(draft.answers ?? {});
+      if (draft.audioBlob) setAudioBlob(draft.audioBlob);
+      toast.info("Tes réponses sauvegardées ont été restaurées.");
+    });
+  }, [draftKey, isDone, result]);
+
+  useEffect(() => {
+    if (!draftKey || result || isDone || (!Object.keys(answers).length && !audioBlob)) return;
+    const timeout = window.setTimeout(() => {
+      void saveExerciseDraft({
+        key: draftKey,
+        userId: user!.id,
+        devoirId: devoirId!,
+        answers,
+        audioBlob,
+        updatedAt: new Date().toISOString(),
+      });
+    }, 350);
+    return () => window.clearTimeout(timeout);
+  }, [answers, audioBlob, devoirId, draftKey, isDone, result, user]);
 
   useEffect(() => {
     localStorage.setItem("learner-text-size", textSize);
@@ -522,6 +558,22 @@ const DevoirPassation = () => {
 
   const handleSubmitOral = useCallback(async () => {
     if (!devoir || !ex || !user || !audioBlob) return;
+    if (!navigator.onLine && draftKey) {
+      await queueSubmission({
+        key: draftKey,
+        userId: user.id,
+        devoirId: devoirId!,
+        kind: "oral",
+        answers: {},
+        audioBlob,
+        createdAt: new Date().toISOString(),
+      });
+      toast.success("Enregistrement sauvegardé", {
+        description: "Il sera envoyé automatiquement au retour de la connexion.",
+      });
+      navigate("/eleve/devoirs");
+      return;
+    }
     setSubmitting(true);
     try {
       // Upload audio to storage
@@ -584,6 +636,7 @@ const DevoirPassation = () => {
       const bilanId = await triggerBilanGeneration(score, correction);
 
       setResult({ score, correction, bilanId });
+      if (draftKey) void deleteExerciseDraft(draftKey);
       qc.invalidateQueries({ queryKey: ["eleve-devoirs"] });
       qc.invalidateQueries({ queryKey: ["devoir-detail", devoirId] });
       toast.success(`Devoir oral soumis : ${qualitativeProgress(score).label}`);
@@ -598,14 +651,45 @@ const DevoirPassation = () => {
         });
       }
     } catch (e: any) {
-      toast.error("Erreur de soumission", { description: e.message });
+      if (!navigator.onLine && draftKey) {
+        await queueSubmission({
+          key: draftKey,
+          userId: user.id,
+          devoirId: devoirId!,
+          kind: "oral",
+          answers: {},
+          audioBlob,
+          createdAt: new Date().toISOString(),
+        });
+        toast.success("Enregistrement sauvegardé", {
+          description: "Il sera envoyé automatiquement au retour de la connexion.",
+        });
+        navigate("/eleve/devoirs");
+      } else {
+        toast.error("Erreur de soumission", { description: e.message });
+      }
     } finally {
       setSubmitting(false);
     }
-  }, [devoir, ex, user, audioBlob, devoirId, contenu, metadata]);
+  }, [devoir, ex, user, audioBlob, devoirId, contenu, metadata, draftKey, navigate]);
 
   const handleSubmit = useCallback(async () => {
     if (!devoir || !ex || !user) return;
+    if (!navigator.onLine && draftKey) {
+      await queueSubmission({
+        key: draftKey,
+        userId: user.id,
+        devoirId: devoirId!,
+        kind: "text",
+        answers,
+        createdAt: new Date().toISOString(),
+      });
+      toast.success("Réponses sauvegardées", {
+        description: "Elles seront envoyées automatiquement au retour de la connexion.",
+      });
+      navigate("/eleve/devoirs");
+      return;
+    }
     setSubmitting(true);
     try {
       // VAGUE 2 : tout passe par submit-devoir-result. Le client n'écrit plus
@@ -646,6 +730,7 @@ const DevoirPassation = () => {
       const bilanId = await triggerBilanGeneration(score, correction);
 
       setResult({ score, correction, bilanId });
+      if (draftKey) void deleteExerciseDraft(draftKey);
       qc.invalidateQueries({ queryKey: ["eleve-devoirs"] });
       qc.invalidateQueries({ queryKey: ["devoir-detail", devoirId] });
       toast.success(`Devoir soumis : ${qualitativeProgress(score).label}`);
@@ -662,11 +747,26 @@ const DevoirPassation = () => {
         });
       }
     } catch (e: any) {
-      toast.error("Erreur de soumission", { description: e.message });
+      if (!navigator.onLine && draftKey) {
+        await queueSubmission({
+          key: draftKey,
+          userId: user.id,
+          devoirId: devoirId!,
+          kind: "text",
+          answers,
+          createdAt: new Date().toISOString(),
+        });
+        toast.success("Réponses sauvegardées", {
+          description: "Elles seront envoyées automatiquement au retour de la connexion.",
+        });
+        navigate("/eleve/devoirs");
+      } else {
+        toast.error("Erreur de soumission", { description: e.message });
+      }
     } finally {
       setSubmitting(false);
     }
-  }, [devoir, ex, user, items, answers, devoirId]);
+  }, [devoir, ex, user, items, answers, devoirId, draftKey, navigate]);
 
   // Format timer display
   const formatTime = (seconds: number) => {
@@ -821,6 +921,7 @@ const DevoirPassation = () => {
               <SmartText text={ex?.consigne || ""} studentId={user.id} />
             ) : ex?.consigne}
           </CardDescription>
+          <TranslatedInstruction text={ex?.consigne || ""} />
         </CardHeader>
       </Card>
 
