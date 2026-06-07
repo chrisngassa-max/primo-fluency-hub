@@ -33,6 +33,7 @@ import LiveExercisesPanel from "@/components/LiveExercisesPanel";
 import { useLiveSession, type NiveauxEleve } from "@/hooks/useLiveSession";
 import { TuileEleveLive } from "@/components/formateur/TuileEleveLive";
 import { FocusEleveSheet } from "@/components/formateur/FocusEleveSheet";
+import GenerateTargetedExerciseWizard from "@/components/formateur/GenerateTargetedExerciseWizard";
 import { FinAtelierDialog } from "@/components/formateur/FinAtelierDialog";
 import {
   Dialog,
@@ -143,6 +144,15 @@ const SuiviDirectClasse = () => {
 
   // Sprint 7 — focus 1-to-1
   const [focusEleve, setFocusEleve] = useState<Member | null>(null);
+  const [wizardOpen, setWizardOpen] = useState(false);
+  const [wizardTargetEleveId, setWizardTargetEleveId] = useState<string>();
+  const [wizardInitialRecommendation, setWizardInitialRecommendation] = useState<{
+    theme?: string;
+    competence?: "CO" | "CE" | "EE" | "EO" | "Structures";
+    niveau?: "A0" | "A1" | "A2" | "B1" | "B2";
+    difficulte?: number;
+    count?: number;
+  } | null>(null);
 
   // Sprint 8 — fin d'atelier
   const [finAtelierOpen, setFinAtelierOpen] = useState(false);
@@ -310,8 +320,8 @@ const SuiviDirectClasse = () => {
     };
   }, [bilanIds, refetchResults]);
 
-  // Sprint 10 — recalibrage automatique : toast + highlight 5s
-  const [recalibratedMap, setRecalibratedMap] = useState<Map<string, { competence: string; avant: string; apres: string }>>(new Map());
+  // Sprint 10 & 11 — recalibrage automatique : toast + highlight 5s
+  const [recalibratedMap, setRecalibratedMap] = useState<Map<string, { competence: string; avant: string; apres: string; isMontant: boolean }>>(new Map());
   const seenRecalibrageRef = useRef<Set<string>>(new Set());
   useEffect(() => {
     for (const ev of liveEvents) {
@@ -323,12 +333,15 @@ const SuiviDirectClasse = () => {
       if (!eleveId) continue;
       const member = (members ?? []).find((m) => m.eleve_id === eleveId);
       const nom = member ? `${member.eleve?.prenom ?? ""} ${member.eleve?.nom ?? ""}`.trim() : "Élève";
-      toast(`⬇️ ${nom} — niveau ${p.competence} recalibré : ${p.niveau_avant} → ${p.niveau_apres}`, {
+      const isMontant = p.direction === "montant";
+      const icon = isMontant ? "⬆️" : "⬇️";
+      const action = isMontant ? "progressé" : "recalibré";
+      toast(`${icon} ${nom} — niveau ${p.competence} ${action} : ${p.niveau_avant} → ${p.niveau_apres}`, {
         duration: 6000,
       });
       setRecalibratedMap((prev) => {
         const next = new Map(prev);
-        next.set(eleveId, { competence: p.competence, avant: p.niveau_avant, apres: p.niveau_apres });
+        next.set(eleveId, { competence: p.competence, avant: p.niveau_avant, apres: p.niveau_apres, isMontant });
         return next;
       });
       setTimeout(() => {
@@ -727,11 +740,11 @@ const SuiviDirectClasse = () => {
                           return (
                             <div
                               key={m.eleve_id}
-                              className={rec ? "relative rounded-md ring-2 ring-orange-500 transition-all" : "relative"}
+                              className={rec ? `relative rounded-md ring-2 transition-all ${rec.isMontant ? 'ring-emerald-500' : 'ring-orange-500'}` : "relative"}
                             >
                               {rec && (
-                                <span className="absolute -top-2 -right-2 z-10 rounded-full bg-orange-500 px-2 py-0.5 text-[10px] font-semibold text-white shadow">
-                                  Recalibré {rec.competence} {rec.avant}→{rec.apres}
+                                <span className={`absolute -top-2 -right-2 z-10 rounded-full px-2 py-0.5 text-[10px] font-semibold text-white shadow ${rec.isMontant ? 'bg-emerald-500' : 'bg-orange-500'}`}>
+                                  {rec.isMontant ? 'Progression' : 'Recalibré'} {rec.competence} {rec.avant}→{rec.apres}
                                 </span>
                               )}
                               <TuileEleveLive
@@ -741,6 +754,21 @@ const SuiviDirectClasse = () => {
                                 priorite={prioriteMap.get(m.eleve_id) ?? 0}
                                 onIntervenir={() => setInterventionTarget(m)}
                                 onFocus={() => setFocusEleve(m)}
+                                onBonus={() => {
+                                  const state = eleveStateMap.get(m.eleve_id);
+                                  const level = niveauxMap.get(m.eleve_id)?.niveau_ce ?? selectedSession.niveau_cible;
+                                  setWizardTargetEleveId(m.eleve_id);
+                                  setWizardInitialRecommendation({
+                                    theme: selectedSession.titre,
+                                    competence: "CE",
+                                    niveau: (["A0", "A1", "A2", "B1", "B2"].includes(level ?? "")
+                                      ? level
+                                      : "A1") as "A0" | "A1" | "A2" | "B1" | "B2",
+                                    difficulte: (state?.score_dernier_exercice ?? 0) >= 80 ? 7 : 5,
+                                    count: 1,
+                                  });
+                                  setWizardOpen(true);
+                                }}
                               />
                             </div>
                           );
@@ -859,8 +887,26 @@ const SuiviDirectClasse = () => {
             setInterventionTarget(focusEleve);
             setFocusEleve(null);
           }}
+          onEnvoyerExercice={() => {
+            setWizardTargetEleveId(focusEleve.eleve_id);
+            setWizardInitialRecommendation(null);
+            setWizardOpen(true);
+            setFocusEleve(null);
+          }}
         />
       )}
+
+      <GenerateTargetedExerciseWizard
+        open={wizardOpen}
+        onOpenChange={(open) => {
+          setWizardOpen(open);
+          if (!open) setWizardInitialRecommendation(null);
+        }}
+        sessionId={selectedSessionId}
+        eleveId={wizardTargetEleveId}
+        mode="session_live"
+        initialRecommendation={wizardInitialRecommendation}
+      />
 
       {/* Dialog envoi intervention — Sprint 6 */}
       {interventionTarget && (() => {

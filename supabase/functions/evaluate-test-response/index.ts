@@ -3,6 +3,7 @@ import { callAI, AIError } from "../_shared/ai-client.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { checkConsent, consentBlockedResponse, ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth } from "../_shared/check-consent.ts";
 import { pseudonymizeProductionText } from "../_shared/pseudonymize.ts";
+import { normalizeOralCriteria } from "../_shared/oral-evaluation.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -75,7 +76,8 @@ Tu DOIS :
 Évalue cette production selon les critères suivants : ${JSON.stringify(criteres_evaluation)}.${keywordsBlock}${toleranceBlock}
 
 Donne un score de 0 à 3 et une justification courte en français (max 2 phrases). Sois ENCOURAGEANT — valorise les réussites même partielles.
-Réponds uniquement en JSON : {"score": number, "justification": string}`;
+${isOral ? `Évalue aussi séparément, chacun de 0 à 3 : réalisation de la consigne, lexique, grammaire, prononciation, fluidité et cohérence. La réponse provient d'une transcription STT : ne pénalise pas un artefact probable de transcription et indique prudemment ce que le texte seul ne permet pas de confirmer.` : ""}
+Réponds uniquement en JSON : {"score": number, "justification": string${isOral ? ', "criteres_oraux": {"realisation_consigne":{"score":0,"commentaire":""},"lexique":{"score":0,"commentaire":""},"grammaire":{"score":0,"commentaire":""},"prononciation":{"score":0,"commentaire":""},"fluidite":{"score":0,"commentaire":""},"coherence":{"score":0,"commentaire":""}}' : ""}}`;
 
     const data = await callAI({
       model: "google/gemini-3-flash-preview",
@@ -92,6 +94,7 @@ Réponds uniquement en JSON : {"score": number, "justification": string}`;
       JSON.stringify({
         score: Math.min(3, Math.max(0, Math.round(parsed.score ?? 0))),
         justification: parsed.justification ?? "",
+        ...(isOral ? { criteres_oraux: normalizeOralCriteria(parsed.criteres_oraux, 3) } : {}),
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },

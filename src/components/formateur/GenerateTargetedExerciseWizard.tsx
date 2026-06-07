@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -23,12 +23,24 @@ import { toast } from "sonner";
 import Step1_ChoixParametres from "./wizard/Step1_ChoixParametres";
 import Step2_PreviewEdition from "./wizard/Step2_PreviewEdition";
 import Step3_Assignation from "./wizard/Step3_Assignation";
+import { buildGenerationBatchSizes, clampExerciseCount } from "./wizard/generation-settings";
 import type { WizardState, ExerciceDraft } from "./types";
+import { structuredExerciseMetadata } from "@/lib/exerciseMetadata";
 
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess?: () => void;
+  sessionId?: string;
+  eleveId?: string;
+  mode?: "devoir" | "session_live";
+  initialRecommendation?: {
+    theme?: string;
+    competence?: WizardState["competence"];
+    niveau?: WizardState["niveau"];
+    difficulte?: number;
+    count?: number;
+  } | null;
 }
 
 const initialState: WizardState = {
@@ -36,9 +48,11 @@ const initialState: WizardState = {
   themePredefini: "",
   themePersonnalise: "",
   competence: "CE",
+  anglePedagogique: "theme",
   count: 2,
   niveau: "A1",
   difficulte: 4,
+  dureeCible: 12,
   generated: [],
   referencesUtilisees: [],
   loadingGenerate: false,
@@ -47,7 +61,15 @@ const initialState: WizardState = {
   loadingPublish: false,
 };
 
-const GenerateTargetedExerciseWizard = ({ open, onOpenChange, onSuccess }: Props) => {
+const GenerateTargetedExerciseWizard = ({
+  open,
+  onOpenChange,
+  onSuccess,
+  sessionId,
+  eleveId,
+  mode = "devoir",
+  initialRecommendation,
+}: Props) => {
   const { user } = useAuth();
   const [state, setState] = useState<WizardState>({ ...initialState });
   const [confirmClose, setConfirmClose] = useState(false);
@@ -60,23 +82,75 @@ const GenerateTargetedExerciseWizard = ({ open, onOpenChange, onSuccess }: Props
 
   const theme = state.themePredefini || state.themePersonnalise.trim();
 
+  useEffect(() => {
+    if (open) {
+      setState((prev) => ({
+        ...prev,
+        ...(initialRecommendation?.theme ? {
+          themePredefini: "",
+          themePersonnalise: initialRecommendation.theme,
+        } : {}),
+        ...(initialRecommendation?.competence ? {
+          competence: initialRecommendation.competence,
+          anglePedagogique: initialRecommendation.competence === "Structures"
+            ? "grammaire"
+            : initialRecommendation.competence,
+        } : {}),
+        ...(initialRecommendation?.niveau ? { niveau: initialRecommendation.niveau } : {}),
+        ...(initialRecommendation?.difficulte ? { difficulte: initialRecommendation.difficulte } : {}),
+        ...(initialRecommendation?.count ? { count: initialRecommendation.count } : {}),
+        ...(mode === "session_live" && eleveId ? {
+          elevesSelected: [eleveId],
+          creerCommeDevoir: false,
+        } : {}),
+      }));
+    }
+  }, [open, mode, eleveId, initialRecommendation]);
+
   const handleGenerate = async (count?: number) => {
     if (!user || !theme) return;
     update({ loadingGenerate: true });
     try {
-      const { data, error } = await supabase.functions.invoke("generate-exercises", {
-        body: {
-          pointName: theme,
-          competence: state.competence,
-          niveauVise: state.niveau,
-          count: count ?? state.count,
-          difficultyLevel: state.difficulte,
-        },
-      });
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
+      const requestedCount = clampExerciseCount(count ?? state.count);
+      const batchSizes = buildGenerationBatchSizes(requestedCount);
 
-      const exercises: ExerciceDraft[] = (data.exercises || []).map((ex: any) => ({
+      const responses: any[] = [];
+      for (const batchCount of batchSizes) {
+        const batchResponses: any[] = [];
+        let generatedInBatch = 0;
+        for (let attempt = 0; attempt < 2 && generatedInBatch < batchCount; attempt++) {
+          const missingCount = batchCount - generatedInBatch;
+          const { data, error } = await supabase.functions.invoke("generate-exercises", {
+            body: {
+              pointName: theme,
+              competence: state.competence,
+              niveauVise: state.niveau,
+              count: missingCount,
+              difficultyLevel: state.difficulte,
+              targetDurationMinutes: state.dureeCible,
+              focus_pedagogique:
+                state.anglePedagogique === "grammaire" || state.anglePedagogique === "vocabulaire"
+                  ? state.anglePedagogique
+                  : undefined,
+            },
+          });
+          if (error) throw error;
+          if (data?.error) throw new Error(data.error);
+          batchResponses.push(data);
+          generatedInBatch += data?.exercises?.length ?? 0;
+        }
+        if (generatedInBatch < batchCount) {
+          throw new Error(
+            `L'IA n'a produit que ${generatedInBatch} exercice(s) valide(s) sur ${batchCount} après deux tentatives.`
+          );
+        }
+        responses.push(...batchResponses);
+      }
+
+      const exercises: ExerciceDraft[] = responses
+        .flatMap((response) => response.exercises || [])
+        .slice(0, requestedCount)
+        .map((ex: any) => ({
         titre: ex.titre || "",
         consigne: ex.consigne || "",
         format: ex.format || "qcm",
@@ -98,10 +172,10 @@ const GenerateTargetedExerciseWizard = ({ open, onOpenChange, onSuccess }: Props
       if (count === 1) return exercises[0];
       update({
         generated: exercises,
-        referencesUtilisees: data.references_utilisees || [],
-        referenceScores: data.reference_scores || [],
-        selectionMetadata: data.selection_metadata || undefined,
-        pedagogicalWarnings: data.pedagogical_warnings || [],
+        referencesUtilisees: responses.flatMap((response) => response.references_utilisees || []),
+        referenceScores: responses.flatMap((response) => response.reference_scores || []),
+        selectionMetadata: responses[0]?.selection_metadata || undefined,
+        pedagogicalWarnings: responses.flatMap((response) => response.pedagogical_warnings || []),
         step: 2,
       });
     } catch (e: any) {
@@ -193,13 +267,25 @@ const GenerateTargetedExerciseWizard = ({ open, onOpenChange, onSuccess }: Props
             point_a_maitriser_id: pointId,
             is_ai_generated: true,
             statut: "validated",
+            ...structuredExerciseMetadata(ex),
           }))
         )
         .select();
 
       if (error) throw error;
 
-      if (state.elevesSelected.length > 0 && state.creerCommeDevoir && insertedExercices) {
+      if (mode === "session_live") {
+        if (!sessionId || !insertedExercices?.length || state.elevesSelected.length === 0) {
+          throw new Error("Séance ou élève cible manquant");
+        }
+        const { error: assignError } = await (supabase as any).rpc("assign_live_session_exercises", {
+          p_session_id: sessionId,
+          p_exercice_ids: insertedExercices.map((ex: any) => ex.id),
+          p_eleve_ids: state.elevesSelected,
+        });
+        if (assignError) throw assignError;
+        toast.success(`${insertedExercices.length} exercice(s) envoyé(s) en direct`);
+      } else if (state.elevesSelected.length > 0 && state.creerCommeDevoir && insertedExercices) {
         const devoirsToInsert = state.elevesSelected.flatMap((eleveId) =>
           insertedExercices.map((ex) => ({
             eleve_id: eleveId,
@@ -290,6 +376,8 @@ const GenerateTargetedExerciseWizard = ({ open, onOpenChange, onSuccess }: Props
               onChange={update}
               onBack={() => update({ step: 2 })}
               onPublish={handlePublish}
+              mode={mode}
+              sessionId={sessionId}
             />
           )}
         </DialogContent>

@@ -3,6 +3,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0"
 import { checkConsent, consentBlockedResponse, ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth } from "../_shared/check-consent.ts"
 import { pseudonymizeProductionText } from "../_shared/pseudonymize.ts"
+import { emptyOralCriteria, normalizeOralCriteria } from "../_shared/oral-evaluation.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -58,7 +59,15 @@ Si une banque de référence est fournie ci-dessous, utilise-la pour calibrer ta
   "points_amelioration": ["..."],// précis : ce qui manque par rapport à la consigne
   "reformulation_modele": "...", // exemple court de réponse attendue, adressé à l'élève en tutoiement
   "encouragement": "...",        // bienveillant mais HONNÊTE — ne félicite jamais une non-réponse
-  "priorite_remediation": "..."  // un seul axe à travailler en premier
+  "priorite_remediation": "...", // un seul axe à travailler en premier
+  "criteres_oraux": {            // obligatoire pour EO, absent sinon
+    "realisation_consigne": {"score": 0, "commentaire": "..."},
+    "lexique": {"score": 0, "commentaire": "..."},
+    "grammaire": {"score": 0, "commentaire": "..."},
+    "prononciation": {"score": 0, "commentaire": "..."},
+    "fluidite": {"score": 0, "commentaire": "..."},
+    "coherence": {"score": 0, "commentaire": "..."}
+  }
 }
 
 RAPPEL CRITIQUE :
@@ -151,6 +160,7 @@ Deno.serve(async (req) => {
         reformulation_modele: "",
         encouragement: "Tu peux y arriver — relis la question et donne une vraie réponse.",
         priorite_remediation: "Comprendre et traiter la consigne",
+        ...(isOral ? { criteres_oraux: emptyOralCriteria() } : {}),
         skipped_ai: true,
       }), { headers: { ...corsHeaders, "Content-Type": "application/json" } })
     }
@@ -209,6 +219,7 @@ Règle / Consigne : "${rule || 'Exercice TCF IRN'}"
 Réponse de l'apprenant : "${safeStudentAnswer}"
 ${banqueBlock}
 
+${isOral ? `Pour cette expression orale, attribue séparément une note de 0 à 10 et un commentaire court aux six critères : réalisation de la consigne, lexique, grammaire, prononciation, fluidité et cohérence. Comme l'entrée est une transcription STT, ne transforme pas les artefacts probables de transcription en fautes certaines ; indique les limites du texte pour la prononciation et la fluidité.` : ""}
 Produis le JSON de correction complet selon le format spécifié.`
 
     const response = await fetch(
@@ -249,6 +260,7 @@ Produis le JSON de correction complet selon le format spécifié.`
       resultat,
       justification,
       correction_text: justification,
+      ...(isOral ? { criteres_oraux: normalizeOralCriteria(evaluation.criteres_oraux, 10) } : {}),
     }
 
     return new Response(JSON.stringify(normalized), {

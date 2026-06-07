@@ -33,6 +33,21 @@ import { emitLiveEvent } from "@/lib/liveEventEmitter";
 import { corrigerExercice } from "@/lib/correctionExercice";
 import { applyExerciseVariant, resolveStudentExerciseLevel } from "@/lib/exerciseVariant";
 import InterventionPlayer from "@/components/eleve/InterventionPlayer";
+import LearnerAccessibilityToolbar from "@/components/eleve/LearnerAccessibilityToolbar";
+import TranslatedInstruction from "@/components/eleve/TranslatedInstruction";
+import {
+  learnerTextSizeClass,
+  remainingAudioPlays,
+  type LearnerTextSize,
+} from "@/lib/audioAccess";
+import { qualitativeProgress } from "@/lib/qualitativeProgress";
+import {
+  deleteExerciseDraft,
+  exerciseDraftKey,
+  loadExerciseDraft,
+  queueSubmission,
+  saveExerciseDraft,
+} from "@/lib/offlineExercise";
 
 function CorrectionAccordion({ correction }: { correction: any[] }) {
   const [openItems, setOpenItems] = useState<number[]>([]);
@@ -59,7 +74,7 @@ function CorrectionAccordion({ correction }: { correction: any[] }) {
                   </>
                 )}
               </div>
-              {(c.explication || c.justification_pedagogique || c.reformulation_modele) && (
+              {(c.explication || c.justification_pedagogique || c.reformulation_modele || c.criteres_oraux) && (
                 <button
                   onClick={() => toggleItem(i)}
                   className="text-xs text-primary underline shrink-0 mt-0.5"
@@ -89,6 +104,16 @@ function CorrectionAccordion({ correction }: { correction: any[] }) {
                 )}
                 {c.encouragement && (
                   <p className="text-amber-700 dark:text-amber-400 font-medium">💪 {c.encouragement}</p>
+                )}
+                {c.criteres_oraux && (
+                  <div className="grid gap-2 pt-2 sm:grid-cols-2">
+                    {Object.entries(c.criteres_oraux).map(([key, value]: [string, any]) => (
+                      <div key={key} className="border-l-2 border-primary pl-2">
+                        <p className="font-semibold capitalize">{key.replace(/_/g, " ")} · {value.score}/10</p>
+                        {value.commentaire && <p className="text-muted-foreground">{value.commentaire}</p>}
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
             )}
@@ -204,6 +229,7 @@ const DevoirPassation = () => {
   const [result, setResult] = useState<{ score: number; correction: any[]; bilanId?: string } | null>(null);
   const [itemOverrides, setItemOverrides] = useState<Record<number, any>>({});
   const [reportedItemIdx, setReportedItemIdx] = useState<Set<number>>(new Set());
+  const draftRestoredRef = useRef(false);
 
   // Audio recording state for EO
   const [isRecording, setIsRecording] = useState(false);
@@ -213,6 +239,15 @@ const DevoirPassation = () => {
 
   // Forced-listen state for CO
   const [hasListened, setHasListened] = useState(false);
+  const [audioPlayCount, setAudioPlayCount] = useState(0);
+  const [showTranscript, setShowTranscript] = useState(false);
+  const [textSize, setTextSize] = useState<LearnerTextSize>(() => {
+    const saved = localStorage.getItem("learner-text-size");
+    return saved === "large" || saved === "extra-large" ? saved : "normal";
+  });
+  const [highContrast, setHighContrast] = useState(
+    () => localStorage.getItem("learner-high-contrast") === "true"
+  );
 
   // Timer state
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -232,7 +267,7 @@ const DevoirPassation = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("devoirs")
-        .select("*, exercice:exercices(id, titre, consigne, competence, format, contenu, niveau_vise, variante_niveau_bas, variante_niveau_haut)")
+        .select("*, exercice:exercices(id, titre, consigne, competence, format, contenu, niveau_vise, variante_niveau_bas, variante_niveau_haut, metadata_code, metadata_skill, sous_competence, duree_limite_secondes, aides_disponibles, nombre_ecoutes_max, transcription_verrouillee, objectif_tcf, type_differenciation)")
         .eq("id", devoirId!)
         .eq("eleve_id", user!.id)
         .single();
@@ -283,11 +318,58 @@ const DevoirPassation = () => {
   const items: any[] = rawItems.map((it, idx) => itemOverrides[idx] ? { ...it, ...itemOverrides[idx] } : it);
   const isDone = devoir?.statut === "fait" || devoir?.statut === "arrete";
   const metadata = contenu?.metadata;
-  const timeLimit = metadata?.time_limit_seconds || contenu?.time_limit_seconds || 0;
+  const timeLimit = ex?.duree_limite_secondes || metadata?.time_limit_seconds || contenu?.time_limit_seconds || 0;
 
   const isCompetenceCO = ex?.competence === "CO";
   const isCompetenceEO = ex?.competence === "EO" || contenu?.type_reponse === "oral" || ex?.format === "production_orale";
   const scriptAudio = contenu?.script_audio;
+  const maxAudioPlays = ex?.nombre_ecoutes_max ?? metadata?.nombre_ecoutes_max ?? null;
+  const transcriptLocked = ex?.transcription_verrouillee
+    ?? metadata?.transcription_verrouillee
+    ?? contenu?.transcription_verrouillee
+    ?? false;
+  const remainingPlays = remainingAudioPlays(audioPlayCount, maxAudioPlays);
+  const draftKey = user?.id && devoirId ? exerciseDraftKey(user.id, devoirId) : null;
+
+  useEffect(() => {
+    if (!draftKey || result || isDone || draftRestoredRef.current) return;
+    draftRestoredRef.current = true;
+    void loadExerciseDraft(draftKey).then((draft) => {
+      if (!draft) return;
+      setAnswers(draft.answers ?? {});
+      if (draft.audioBlob) setAudioBlob(draft.audioBlob);
+      toast.info("Tes réponses sauvegardées ont été restaurées.");
+    });
+  }, [draftKey, isDone, result]);
+
+  useEffect(() => {
+    if (!draftKey || result || isDone || (!Object.keys(answers).length && !audioBlob)) return;
+    const timeout = window.setTimeout(() => {
+      void saveExerciseDraft({
+        key: draftKey,
+        userId: user!.id,
+        devoirId: devoirId!,
+        answers,
+        audioBlob,
+        updatedAt: new Date().toISOString(),
+      });
+    }, 350);
+    return () => window.clearTimeout(timeout);
+  }, [answers, audioBlob, devoirId, draftKey, isDone, result, user]);
+
+  useEffect(() => {
+    localStorage.setItem("learner-text-size", textSize);
+  }, [textSize]);
+
+  useEffect(() => {
+    localStorage.setItem("learner-high-contrast", String(highContrast));
+  }, [highContrast]);
+
+  useEffect(() => {
+    setHasListened(false);
+    setAudioPlayCount(0);
+    setShowTranscript(false);
+  }, [ex?.id]);
 
   // Timer logic
   useEffect(() => {
@@ -333,10 +415,13 @@ const DevoirPassation = () => {
       sessionId,
       eleveId: user.id,
       eventType: "exercice_demarre",
-      payload: { exercice_id: ex.id, competence: ex.competence },
+      payload: {
+        exercice_id: ex.id,
+        exercice_titre: ex.titre,
+        competence: ex.competence,
+        timestamp: new Date().toISOString(),
+      },
     });
-  // Déclenché une seule fois quand ex est disponible
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ex?.id, (devoir as any)?.session_id, user?.id]);
 
   // Sprint 6 — écoute les intervention_recue du formateur en temps réel
@@ -374,7 +459,6 @@ const DevoirPassation = () => {
       .subscribe();
 
     return () => { supabase.removeChannel(ch); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [(devoir as any)?.session_id, user?.id]);
 
   // La finalisation "completed" est gérée par le trigger mirror_resultat_to_attempt
@@ -474,6 +558,22 @@ const DevoirPassation = () => {
 
   const handleSubmitOral = useCallback(async () => {
     if (!devoir || !ex || !user || !audioBlob) return;
+    if (!navigator.onLine && draftKey) {
+      await queueSubmission({
+        key: draftKey,
+        userId: user.id,
+        devoirId: devoirId!,
+        kind: "oral",
+        answers: {},
+        audioBlob,
+        createdAt: new Date().toISOString(),
+      });
+      toast.success("Enregistrement sauvegardé", {
+        description: "Il sera envoyé automatiquement au retour de la connexion.",
+      });
+      navigate("/eleve/devoirs");
+      return;
+    }
     setSubmitting(true);
     try {
       // Upload audio to storage
@@ -536,9 +636,10 @@ const DevoirPassation = () => {
       const bilanId = await triggerBilanGeneration(score, correction);
 
       setResult({ score, correction, bilanId });
+      if (draftKey) void deleteExerciseDraft(draftKey);
       qc.invalidateQueries({ queryKey: ["eleve-devoirs"] });
       qc.invalidateQueries({ queryKey: ["devoir-detail", devoirId] });
-      toast.success(`Devoir oral soumis ! Score : ${score}%`);
+      toast.success(`Devoir oral soumis : ${qualitativeProgress(score).label}`);
 
       const sessionId = (devoir as any)?.session_id as string | null;
       if (sessionId && user?.id) {
@@ -550,14 +651,45 @@ const DevoirPassation = () => {
         });
       }
     } catch (e: any) {
-      toast.error("Erreur de soumission", { description: e.message });
+      if (!navigator.onLine && draftKey) {
+        await queueSubmission({
+          key: draftKey,
+          userId: user.id,
+          devoirId: devoirId!,
+          kind: "oral",
+          answers: {},
+          audioBlob,
+          createdAt: new Date().toISOString(),
+        });
+        toast.success("Enregistrement sauvegardé", {
+          description: "Il sera envoyé automatiquement au retour de la connexion.",
+        });
+        navigate("/eleve/devoirs");
+      } else {
+        toast.error("Erreur de soumission", { description: e.message });
+      }
     } finally {
       setSubmitting(false);
     }
-  }, [devoir, ex, user, audioBlob, devoirId, contenu, metadata]);
+  }, [devoir, ex, user, audioBlob, devoirId, contenu, metadata, draftKey, navigate]);
 
   const handleSubmit = useCallback(async () => {
     if (!devoir || !ex || !user) return;
+    if (!navigator.onLine && draftKey) {
+      await queueSubmission({
+        key: draftKey,
+        userId: user.id,
+        devoirId: devoirId!,
+        kind: "text",
+        answers,
+        createdAt: new Date().toISOString(),
+      });
+      toast.success("Réponses sauvegardées", {
+        description: "Elles seront envoyées automatiquement au retour de la connexion.",
+      });
+      navigate("/eleve/devoirs");
+      return;
+    }
     setSubmitting(true);
     try {
       // VAGUE 2 : tout passe par submit-devoir-result. Le client n'écrit plus
@@ -598,9 +730,10 @@ const DevoirPassation = () => {
       const bilanId = await triggerBilanGeneration(score, correction);
 
       setResult({ score, correction, bilanId });
+      if (draftKey) void deleteExerciseDraft(draftKey);
       qc.invalidateQueries({ queryKey: ["eleve-devoirs"] });
       qc.invalidateQueries({ queryKey: ["devoir-detail", devoirId] });
-      toast.success(`Devoir soumis ! Score : ${score}%`);
+      toast.success(`Devoir soumis : ${qualitativeProgress(score).label}`);
 
       // exercice_termine côté client — classification + reponse_incorrecte/correcte
       // sont désormais émis server-side dans submit-devoir-result (Sprint 3).
@@ -614,11 +747,26 @@ const DevoirPassation = () => {
         });
       }
     } catch (e: any) {
-      toast.error("Erreur de soumission", { description: e.message });
+      if (!navigator.onLine && draftKey) {
+        await queueSubmission({
+          key: draftKey,
+          userId: user.id,
+          devoirId: devoirId!,
+          kind: "text",
+          answers,
+          createdAt: new Date().toISOString(),
+        });
+        toast.success("Réponses sauvegardées", {
+          description: "Elles seront envoyées automatiquement au retour de la connexion.",
+        });
+        navigate("/eleve/devoirs");
+      } else {
+        toast.error("Erreur de soumission", { description: e.message });
+      }
     } finally {
       setSubmitting(false);
     }
-  }, [devoir, ex, user, items, answers, devoirId]);
+  }, [devoir, ex, user, items, answers, devoirId, draftKey, navigate]);
 
   // Format timer display
   const formatTime = (seconds: number) => {
@@ -668,6 +816,7 @@ const DevoirPassation = () => {
         <CorrectionDetaillee
           itemResults={finalResult.correction}
           scoreNormalized={finalResult.score}
+          displayMode="qualitative"
         />
 
         {user?.id && devoirId && (
@@ -697,8 +846,18 @@ const DevoirPassation = () => {
 
   // ─── Exercise Passation ───
   return (
-    <div className="space-y-6 max-w-2xl mx-auto">
+    <div className={cn(
+      "space-y-6 max-w-2xl mx-auto",
+      learnerTextSizeClass(textSize),
+      highContrast && "learner-high-contrast"
+    )}>
       <InterventionPlayer sessionId={(devoir as any)?.session_id ?? null} />
+      <LearnerAccessibilityToolbar
+        textSize={textSize}
+        highContrast={highContrast}
+        onTextSizeChange={setTextSize}
+        onHighContrastChange={setHighContrast}
+      />
       <div className="flex items-center gap-3">
         <Button variant="ghost" size="sm" onClick={() => navigate("/eleve/devoirs")} className="gap-1.5">
           <ArrowLeft className="h-4 w-4" /> Retour
@@ -707,8 +866,8 @@ const DevoirPassation = () => {
           <h1 className="text-xl font-bold">{ex?.titre}</h1>
           <div className="flex items-center gap-2">
             <p className="text-sm text-muted-foreground">{ex?.competence} · {ex?.format?.replace(/_/g, " ")}</p>
-            {metadata?.code && (
-              <Badge variant="outline" className="text-xs">{metadata.code}</Badge>
+            {(ex?.metadata_code || metadata?.code) && (
+              <Badge variant="outline" className="text-xs">{ex?.metadata_code || metadata.code}</Badge>
             )}
           </div>
         </div>
@@ -762,6 +921,7 @@ const DevoirPassation = () => {
               <SmartText text={ex?.consigne || ""} studentId={user.id} />
             ) : ex?.consigne}
           </CardDescription>
+          <TranslatedInstruction text={ex?.consigne || ""} />
         </CardHeader>
       </Card>
 
@@ -773,8 +933,36 @@ const DevoirPassation = () => {
             <TTSAudioPlayer
               text={scriptAudio}
               className="mb-0"
+              playCount={audioPlayCount}
+              maxPlays={maxAudioPlays}
+              showSpeedControl
+              onPlayStart={() => setAudioPlayCount((count) => count + 1)}
               onPlayComplete={() => setHasListened(true)}
             />
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-sm">
+              <span className="font-medium" aria-live="polite">
+                {maxAudioPlays
+                  ? `${audioPlayCount}/${maxAudioPlays} écoute${maxAudioPlays > 1 ? "s" : ""}`
+                  : `${audioPlayCount} écoute${audioPlayCount > 1 ? "s" : ""}`}
+                {remainingPlays === 0 ? " · Limite atteinte" : ""}
+              </span>
+              {!transcriptLocked && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowTranscript((visible) => !visible)}
+                  aria-expanded={showTranscript}
+                >
+                  {showTranscript ? "Masquer le texte" : "Afficher le texte"}
+                </Button>
+              )}
+            </div>
+            {showTranscript && !transcriptLocked && (
+              <div className="mt-3 border-l-4 border-primary bg-background p-3 leading-relaxed">
+                {scriptAudio}
+              </div>
+            )}
             {!hasListened && (
               <p className="text-xs text-orange-600 mt-2 font-medium">
                 ⚠️ Vous devez écouter l'audio au moins une fois avant de répondre.

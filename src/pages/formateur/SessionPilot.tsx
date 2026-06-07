@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -53,7 +53,7 @@ import html2canvas from "html2canvas";
 import {
   CheckCircle2, Clock, ArrowRight, Printer, ArrowLeft,
   BookOpen, Minus, Plus, Loader2, Sparkles, Pencil, Trash2, CirclePlus, Circle,
-  AlertTriangle, RotateCcw, ClipboardCheck, FileText, Users, Brain, Target,
+  AlertTriangle, RotateCcw, ClipboardCheck, FileText, Users, Brain, Target, Activity, ListChecks,
   Eye, Volume2, ChevronDown, ChevronLeft, ChevronRight, Drama, Package, MessageCircle, Wand2,
   Rocket, Copy, Send, UserCheck, Link2,
 } from "lucide-react";
@@ -61,7 +61,11 @@ import { cn } from "@/lib/utils";
 import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/DifficultyBadge";
 import FeuilleAppel from "@/components/FeuilleAppel";
 import LivePilotingSection from "@/components/LivePilotingSection";
+import GenerateTargetedExerciseWizard from "@/components/formateur/GenerateTargetedExerciseWizard";
+import ExerciseRecommendationsPanel from "@/components/formateur/ExerciseRecommendationsPanel";
+import { routeExercises, type ExerciseRecommendation } from "@/services/ExerciseRouter";
 import { COMPETENCE_COLORS, resolveSessionCompetences, sortCompetences } from "@/lib/competences";
+import { structuredExerciseMetadata } from "@/lib/exerciseMetadata";
 import GenerateHomeworkSeriesDialog from "@/components/GenerateHomeworkSeriesDialog";
 import ImportFromUrlDialog from "@/components/ImportFromUrlDialog";
 import { ExternalResourcePicker } from "@/components/ExternalResourcePicker";
@@ -72,6 +76,7 @@ import SessionExternalResourcesList from "@/components/SessionExternalResourcesL
 import StartOfSessionBilan from "@/components/StartOfSessionBilan";
 import SessionClosureReminder from "@/components/SessionClosureReminder";
 import PreflightExercises from "@/components/PreflightExercises";
+import SessionToolbox, { type SessionTool } from "@/components/SessionToolbox";
 import VigilanceDrawer from "@/components/VigilanceDrawer";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
@@ -117,6 +122,8 @@ const SessionPilot = () => {
   const [rappelChecked, setRappelChecked] = useState<Record<string, boolean>>({});
   const [rappelDismissed, setRappelDismissed] = useState(false);
   const [validatingRappel, setValidatingRappel] = useState(false);
+  const [routerWizardOpen, setRouterWizardOpen] = useState(false);
+  const [selectedRecommendation, setSelectedRecommendation] = useState<ExerciseRecommendation | null>(null);
 
   // Editor state
   const [editingExercise, setEditingExercise] = useState<any>(null);
@@ -149,6 +156,54 @@ const SessionPilot = () => {
     },
     enabled: !!id,
   });
+
+  const { data: sessionBlocks = [] } = useQuery({
+    queryKey: ["session-blocks", id],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from("session_blocks")
+        .select("*")
+        .eq("session_id", id)
+        .order("block_type");
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: !!id,
+  });
+
+  const startPreparation = useCallback(async (blockType?: string) => {
+    if (!id) return;
+    const { error } = await supabase.functions.invoke("prepare-session-start", {
+      body: { session_id: id, ...(blockType ? { block_type: blockType } : {}) },
+    });
+    if (error) toast.error("Préparation impossible", { description: error.message });
+  }, [id]);
+
+  const getBlockStatus = useCallback((blockType: string) => {
+    return (sessionBlocks.find((item: any) => item.block_type === blockType)?.status ?? "pending") as
+      "pending" | "generating" | "ready" | "failed";
+  }, [sessionBlocks]);
+
+  const getBlockWarning = useCallback((blockType: string) => {
+    return sessionBlocks.find((item: any) => item.block_type === blockType)?.warning_message ?? null;
+  }, [sessionBlocks]);
+
+  useEffect(() => {
+    if (!id) return;
+    if ((session as any)?.generation_automatique_activee) {
+      void startPreparation();
+    }
+    const channel = supabase
+      .channel(`session-blocks-${id}`)
+      .on("postgres_changes", {
+        event: "*", schema: "public", table: "session_blocks", filter: `session_id=eq.${id}`,
+      }, () => {
+        qc.invalidateQueries({ queryKey: ["session-blocks", id] });
+        qc.invalidateQueries({ queryKey: ["session-exercices", id] });
+      })
+      .subscribe();
+    return () => { void supabase.removeChannel(channel); };
+  }, [id, session, startPreparation, qc]);
 
   const { data: sessionExercices, isLoading } = useQuery({
     queryKey: ["session-exercices", id],
@@ -334,6 +389,75 @@ const SessionPilot = () => {
     },
     enabled: !!session,
   });
+
+  const memberIds = useMemo(
+    () => (groupMembers ?? []).map((member: any) => member.eleve_id).filter(Boolean),
+    [groupMembers],
+  );
+
+  const { data: routerStudentData } = useQuery({
+    queryKey: ["exercise-router-students", id, memberIds],
+    queryFn: async () => {
+      if (memberIds.length === 0) return { profiles: [], results: [] };
+      const [profilesResponse, resultsResponse] = await Promise.all([
+        supabase
+          .from("profils_eleves")
+          .select(
+            "eleve_id, niveau_actuel, niveau_co, niveau_ce, niveau_ee, niveau_eo, taux_reussite_co, taux_reussite_ce, taux_reussite_ee, taux_reussite_eo, taux_reussite_structures, niveau_scolarisation, aisance_numerique, vitesse_lecture, preferences_apprentissage, besoins_accessibilite",
+          )
+          .in("eleve_id", memberIds),
+        supabase
+          .from("resultats")
+          .select("eleve_id, score, created_at, exercice:exercices(competence)")
+          .in("eleve_id", memberIds)
+          .order("created_at", { ascending: false })
+          .limit(memberIds.length * 15),
+      ]);
+      if (profilesResponse.error) throw profilesResponse.error;
+      if (resultsResponse.error) throw resultsResponse.error;
+      return {
+        profiles: profilesResponse.data ?? [],
+        results: resultsResponse.data ?? [],
+      };
+    },
+    enabled: memberIds.length > 0,
+  });
+
+  const exerciseRecommendations = useMemo(() => {
+    const profileByStudent = new Map<string, any>();
+    (routerStudentData?.profiles ?? []).forEach((profile: any) => profileByStudent.set(profile.eleve_id, profile));
+    const resultsByStudent = new Map<string, any[]>();
+    (routerStudentData?.results ?? []).forEach((result: any) => {
+      const current = resultsByStudent.get(result.eleve_id) ?? [];
+      current.push({
+        competence: result.exercice?.competence,
+        score: result.score,
+        createdAt: result.created_at,
+      });
+      resultsByStudent.set(result.eleve_id, current);
+    });
+    const sessionCompetences = Array.isArray((session as any)?.competences_cibles)
+      ? (session as any).competences_cibles
+      : [];
+    const objectives = Array.isArray((session as any)?.objectifs)
+      ? (session as any).objectifs.join(", ")
+      : (session as any)?.objectifs;
+
+    return routeExercises(
+      (groupMembers ?? []).map((member: any) => ({
+        id: member.eleve_id,
+        name: [member.eleve?.prenom, member.eleve?.nom].filter(Boolean).join(" ") || "Eleve",
+        profile: profileByStudent.get(member.eleve_id),
+        results: resultsByStudent.get(member.eleve_id) ?? [],
+      })),
+      {
+        theme: objectives || session?.titre,
+        niveauCible: (session as any)?.niveau_cible,
+        competencesCibles: sessionCompetences,
+        defaultCount: 2,
+      },
+    );
+  }, [groupMembers, routerStudentData, session]);
 
   // Fetch presences for this session
   const { data: presences } = useQuery({
@@ -644,6 +768,7 @@ const SessionPilot = () => {
           is_ai_generated: true,
           is_template: false,
           is_devoir: false,
+          ...structuredExerciseMetadata(ex),
         }));
 
         const { data: inserted, error: insertErr } = await supabase
@@ -1181,6 +1306,147 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
     );
   }
 
+  const sessionTools: SessionTool[] = session && user ? [
+    {
+      id: "retrospective",
+      title: "Retrospective",
+      description: "Relire les acquis, erreurs et devoirs de la seance precedente.",
+      icon: RotateCcw,
+      preparationStatus: getBlockStatus("retrospective"),
+      preparationWarning: getBlockWarning("retrospective"),
+      onPrepare: () => void startPreparation("retrospective"),
+      content: (
+        <StartOfSessionBilan
+          mode="retrospective"
+          sessionId={id!}
+          userId={user.id}
+          groupId={session.group_id}
+          session={{
+            id: session.id,
+            titre: session.titre,
+            objectifs: session.objectifs,
+            niveau_cible: session.niveau_cible,
+            date_seance: session.date_seance,
+            group_id: session.group_id,
+            competences_cibles: session.competences_cibles,
+          }}
+        />
+      ),
+    },
+    {
+      id: "diagnostic",
+      title: "Diagnostic",
+      description: "Evaluer les acquis utiles avant ou pendant le travail prevu.",
+      icon: Target,
+      preparationStatus: getBlockStatus("diagnostic"),
+      onPrepare: () => void startPreparation("diagnostic"),
+      content: (
+        <StartOfSessionBilan
+          mode="diagnostic"
+          sessionId={id!}
+          userId={user.id}
+          groupId={session.group_id}
+          session={{
+            id: session.id,
+            titre: session.titre,
+            objectifs: session.objectifs,
+            niveau_cible: session.niveau_cible,
+            date_seance: session.date_seance,
+            group_id: session.group_id,
+            competences_cibles: session.competences_cibles,
+          }}
+        />
+      ),
+    },
+    {
+      id: "common",
+      title: "Activite commune",
+      description: "Preparer, verifier et diffuser les exercices utiles au groupe.",
+      icon: Users,
+      preparationStatus: getBlockStatus("core"),
+      onPrepare: () => void startPreparation("core"),
+      content: (
+        <PreflightExercises
+          sessionId={id!}
+          session={session}
+          exercises={exercises}
+          formateurId={user.id}
+          parcoursSeance={parcoursSeance}
+        />
+      ),
+    },
+    {
+      id: "differentiation",
+      title: "Differenciation",
+      description: "Piloter le direct et envoyer un soutien ou un bonus cible.",
+      icon: Activity,
+      content: (
+        <div className="space-y-5">
+          <ExerciseRecommendationsPanel
+            recommendations={exerciseRecommendations}
+            onUse={(recommendation) => {
+              setSelectedRecommendation(recommendation);
+              setRouterWizardOpen(true);
+            }}
+          />
+          <LivePilotingSection
+            sessionId={id!}
+            session={session}
+            exercises={exercises}
+            groupMembers={groupMembers ?? []}
+            userId={user.id}
+          />
+        </div>
+      ),
+    },
+    {
+      id: "synthesis",
+      title: "Synthese",
+      description: "Consulter les points de vigilance et ouvrir le bilan quand vous le souhaitez.",
+      icon: ListChecks,
+      content: (
+        <div className="space-y-3">
+          <SessionClosureReminder
+            currentSessionId={id!}
+            groupId={session.group_id}
+            currentSessionDate={session.date_seance}
+          />
+          <div className="flex flex-wrap items-center justify-between gap-3 border p-4">
+            <div>
+              <p className="text-sm font-medium">Bilan de la seance</p>
+              <p className="text-xs text-muted-foreground">
+                Le bilan reste accessible sans condition et sans ordre impose.
+              </p>
+            </div>
+            <Button variant="outline" onClick={() => navigate(`/formateur/seances/${id}/bilan`)}>
+              Ouvrir le bilan
+            </Button>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "homework",
+      title: "Devoirs et cloture",
+      description: "Preparer des devoirs facultatifs ou cloturer directement la seance.",
+      icon: ClipboardCheck,
+      content: (
+        <EndOfSessionSection
+          sessionId={id!}
+          userId={user.id}
+          sessionStatut={session.statut}
+          groupId={(session as any)?.group?.id || session.group_id}
+          checkedExerciseIds={exercises.filter((ex) => checked[ex.id]).map((ex) => (ex as any).exercice?.id || ex.exercice_id).filter(Boolean)}
+          onHomeworkSent={() => qc.invalidateQueries({ queryKey: ["devoirs-formateur-all"] })}
+          onCloseSession={() => {
+            qc.invalidateQueries({ queryKey: ["session-info", id] });
+            navigate(`/formateur/seances/${id}/bilan`);
+          }}
+        />
+      ),
+    },
+  ] : [];
+
   return (
     <div className="space-y-6 max-w-3xl mx-auto">
       {/* Header */}
@@ -1257,7 +1523,7 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
                 ✨ Générer IA
               </Button>
               <Button variant="outline" size="sm" onClick={() => setImportUrlOpen(true)} className="gap-2">
-                <Link2 className="h-4 w-4" /> Importer depuis un lien
+                <Link2 className="h-4 w-4" /> Importer un support
               </Button>
               <ExternalResourcePicker
                 sessionId={id!}
@@ -1451,33 +1717,6 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
         </CardContent>
       </Card>
 
-      {/* ─── Rappel de clôture de séance précédente ─── */}
-      {session && (
-        <SessionClosureReminder
-          currentSessionId={id!}
-          groupId={session.group_id}
-          currentSessionDate={session.date_seance}
-        />
-      )}
-
-      {/* ─── Bilan de début de séance (rétrospective + diagnostic) ─── */}
-      {session && user && (
-        <StartOfSessionBilan
-          sessionId={id!}
-          userId={user.id}
-          groupId={session.group_id}
-          session={{
-            id: session.id,
-            titre: session.titre,
-            objectifs: session.objectifs,
-            niveau_cible: session.niveau_cible,
-            date_seance: session.date_seance,
-            group_id: session.group_id,
-            competences_cibles: session.competences_cibles,
-          }}
-        />
-      )}
-
       {/* ─── Feuille d'appel ─── */}
       {session && (
         <div className="print:hidden">
@@ -1485,27 +1724,28 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
         </div>
       )}
 
-      {/* ─── Pré-vol exercices (V1 — front-only) ─── */}
-      {session && user && (
-        <PreflightExercises
-          sessionId={id!}
-          session={session}
-          exercises={exercises}
-          formateurId={user.id}
-          parcoursSeance={parcoursSeance}
-        />
-      )}
-
-      {/* ─── Pilotage en direct ─── */}
-      {session && user && (
-        <LivePilotingSection
-          sessionId={id!}
-          session={session}
-          exercises={exercises}
-          groupMembers={groupMembers ?? []}
-          userId={user.id}
-        />
-      )}
+      <SessionToolbox sessionId={id!} tools={sessionTools} />
+      <GenerateTargetedExerciseWizard
+        open={routerWizardOpen}
+        onOpenChange={(open) => {
+          setRouterWizardOpen(open);
+          if (!open) setSelectedRecommendation(null);
+        }}
+        onSuccess={() => {
+          qc.invalidateQueries({ queryKey: ["session-exercices", id] });
+          qc.invalidateQueries({ queryKey: ["exercise-router-students", id] });
+        }}
+        sessionId={id}
+        eleveId={selectedRecommendation?.eleveId}
+        mode="session_live"
+        initialRecommendation={selectedRecommendation ? {
+          theme: selectedRecommendation.theme,
+          competence: selectedRecommendation.competence,
+          niveau: selectedRecommendation.niveau,
+          difficulte: selectedRecommendation.difficulte,
+          count: selectedRecommendation.count,
+        } : null}
+      />
 
       {/* ─── Bloc 0: Rappel — Exercices reportés (séance N-1) ─── */}
       {reported.length > 0 && !rappelDismissed && (
@@ -1671,7 +1911,7 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
                 Générer des exercices IA
               </Button>
               <Button variant="outline" size="sm" onClick={() => setImportUrlOpen(true)} className="gap-2">
-                <Link2 className="h-4 w-4" /> Importer depuis un lien
+                <Link2 className="h-4 w-4" /> Importer un support
               </Button>
             </div>
           </CardContent>
@@ -2520,22 +2760,6 @@ ${ficheHtml}</body></html>`;
           session={{ id: session.id, titre: session.titre, objectifs: session.objectifs, niveau_cible: session.niveau_cible }}
           exercises={exercises.map((se: any) => ({ id: se.id, exercice: se.exercice, statut: se.statut }))}
           checkedExercises={checked}
-        />
-      )}
-
-      {/* ─── End of Session Section ─── */}
-      {session && user && (
-        <EndOfSessionSection
-          sessionId={id!}
-          userId={user.id}
-          sessionStatut={session.statut}
-          groupId={(session as any)?.group?.id || session.group_id}
-          checkedExerciseIds={exercises.filter((ex) => checked[ex.id]).map((ex) => (ex as any).exercice?.id || ex.exercice_id).filter(Boolean)}
-          onHomeworkSent={() => qc.invalidateQueries({ queryKey: ["devoirs-formateur-all"] })}
-          onCloseSession={() => {
-            qc.invalidateQueries({ queryKey: ["session-info", id] });
-            navigate(`/formateur/seances/${id}/bilan`);
-          }}
         />
       )}
 

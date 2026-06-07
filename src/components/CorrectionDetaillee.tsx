@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { qualitativeProgress } from "@/lib/qualitativeProgress";
 
 interface ItemResult {
   question: string;
@@ -17,9 +18,10 @@ interface ItemResult {
 interface Props {
   itemResults: ItemResult[] | Record<string, ItemResult>;
   scoreNormalized: number;
+  displayMode?: "numeric" | "qualitative";
 }
 
-export default function CorrectionDetaillee({ itemResults, scoreNormalized }: Props) {
+export default function CorrectionDetaillee({ itemResults, scoreNormalized, displayMode = "numeric" }: Props) {
   const [showCorrect, setShowCorrect] = useState(false);
 
   const entries: ItemResult[] = Array.isArray(itemResults)
@@ -28,6 +30,7 @@ export default function CorrectionDetaillee({ itemResults, scoreNormalized }: Pr
 
   const wrongItems = entries.filter((r) => !r.correct);
   const correctItems = entries.filter((r) => r.correct);
+  const acquisition = qualitativeProgress(scoreNormalized);
 
   const emoji = scoreNormalized >= 80 ? "🎉" : scoreNormalized >= 60 ? "💪" : "📚";
   const feedbackMsg =
@@ -39,20 +42,30 @@ export default function CorrectionDetaillee({ itemResults, scoreNormalized }: Pr
 
   return (
     <div className="space-y-5">
-      {/* Score visuel */}
+      {/* Résultat visuel */}
       <Card className={cn(
         "text-center",
-        scoreNormalized >= 80 ? "border-green-500/30" : scoreNormalized >= 60 ? "border-orange-500/30" : "border-destructive/30"
+        displayMode === "qualitative"
+          ? acquisition.borderClassName
+          : scoreNormalized >= 80 ? "border-green-500/30" : scoreNormalized >= 60 ? "border-orange-500/30" : "border-destructive/30"
       )}>
         <CardContent className="pt-6 pb-4">
-          <p className={cn(
-            "text-5xl font-black",
-            scoreNormalized >= 80 ? "text-green-600" : scoreNormalized >= 60 ? "text-orange-600" : "text-destructive"
-          )}>
-            {scoreNormalized}%
-          </p>
+          {displayMode === "qualitative" ? (
+            <p className={`mx-auto inline-flex rounded-full px-4 py-2 text-lg font-bold ${acquisition.className}`}>
+              {acquisition.label}
+            </p>
+          ) : (
+            <p className={cn(
+              "text-5xl font-black",
+              scoreNormalized >= 80 ? "text-green-600" : scoreNormalized >= 60 ? "text-orange-600" : "text-destructive"
+            )}>
+              {scoreNormalized}%
+            </p>
+          )}
           <p className="text-3xl mt-1">{emoji}</p>
-          <p className="text-sm text-muted-foreground mt-2">{feedbackMsg}</p>
+          <p className="text-sm text-muted-foreground mt-2">
+            {displayMode === "qualitative" ? acquisition.message : feedbackMsg}
+          </p>
         </CardContent>
       </Card>
 
@@ -60,7 +73,7 @@ export default function CorrectionDetaillee({ itemResults, scoreNormalized }: Pr
       {wrongItems.length > 0 && (
         <div className="space-y-2">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-destructive flex items-center gap-2">
-            ❌ À retravailler ({wrongItems.length})
+            Points à travailler ({wrongItems.length})
           </h2>
           {wrongItems.map((r, idx) => {
             const answer = r.reponse_donnee ?? r.reponse_eleve ?? "—";
@@ -98,7 +111,7 @@ export default function CorrectionDetaillee({ itemResults, scoreNormalized }: Pr
             onClick={() => setShowCorrect(!showCorrect)}
             className="text-sm font-semibold uppercase tracking-wide text-green-600 flex items-center gap-2 hover:underline"
           >
-            ✅ {correctItems.length} bonne{correctItems.length > 1 ? "s" : ""} réponse{correctItems.length > 1 ? "s" : ""} {showCorrect ? "▲" : "▼"}
+            Réussites ({correctItems.length}) {showCorrect ? "▲" : "▼"}
           </button>
           {showCorrect && correctItems.map((r, idx) => (
             <Card key={`correct-${idx}`} className="border-l-4 border-l-green-500">

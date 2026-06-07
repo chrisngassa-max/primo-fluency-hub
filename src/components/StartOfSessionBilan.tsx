@@ -40,6 +40,7 @@ interface StartOfSessionBilanProps {
   };
   groupId: string;
   userId: string;
+  mode?: "both" | "retrospective" | "diagnostic";
 }
 
 interface PrevSessionData {
@@ -73,6 +74,7 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
   session,
   groupId,
   userId,
+  mode = "both",
 }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [generatingDiag, setGeneratingDiag] = useState(false);
@@ -472,6 +474,15 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
   const hasSessionResults = prevData ? prevData.sessionResultsCount > 0 : false;
   const hasBilanTest = prevData ? !!prevData.bilanTestId : false;
   const hasAnyData = hasHomework || hasSessionResults || hasBilanTest;
+  const showRetrospective = mode !== "diagnostic";
+  const showDiagnostic = mode !== "retrospective";
+  const defaultTab = mode === "retrospective"
+    ? "retrospective"
+    : mode === "diagnostic"
+      ? "diagnostic"
+      : noPrevSession || !hasAnyData
+        ? "diagnostic"
+        : "retrospective";
 
   const scoreColor = (score: number) =>
     score >= 80 ? "text-green-600 dark:text-green-400" :
@@ -507,21 +518,29 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
 
       {!collapsed && (
         <CardContent className="space-y-4">
-          <Tabs defaultValue={noPrevSession || !hasAnyData ? "diagnostic" : "retrospective"}>
+          <Tabs defaultValue={defaultTab}>
+            {showRetrospective && showDiagnostic && (
             <TabsList className="w-full">
-              {hasAnyData && (
+              {hasAnyData && showRetrospective && (
                 <TabsTrigger value="retrospective" className="flex-1 text-xs">
                   📋 Rétrospective
                 </TabsTrigger>
               )}
-              <TabsTrigger value="diagnostic" className="flex-1 text-xs">
+              {showDiagnostic && <TabsTrigger value="diagnostic" className="flex-1 text-xs">
                 🎯 Diagnostic pré-séance
-              </TabsTrigger>
+              </TabsTrigger>}
             </TabsList>
+            )}
 
             {/* ─── TAB: Rétrospective ─── */}
-            {hasAnyData && (
+            {showRetrospective && (
             <TabsContent value="retrospective" className="space-y-4 mt-3">
+              {!hasAnyData && (
+                <div className="rounded-md border border-dashed p-4 text-sm text-muted-foreground">
+                  Aucune donnee de seance precedente n'est disponible.
+                </div>
+              )}
+              {hasAnyData && <>
               {/* Global synthesis */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                 {hasHomework && (
@@ -739,11 +758,12 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
                   </AccordionItem>
                 )}
               </Accordion>
+              </>}
             </TabsContent>
             )}
 
             {/* ─── TAB: Diagnostic pré-séance ─── */}
-            <TabsContent value="diagnostic" className="space-y-4 mt-3">
+            {showDiagnostic && <TabsContent value="diagnostic" className="space-y-4 mt-3">
               <div className="rounded-lg border bg-muted/30 p-4 space-y-3">
                 <div className="flex items-start gap-3">
                   <Target className="h-5 w-5 text-primary mt-0.5 shrink-0" />
@@ -797,7 +817,7 @@ const StartOfSessionBilan: React.FC<StartOfSessionBilanProps> = ({
                   </Button>
                 )}
               </div>
-            </TabsContent>
+            </TabsContent>}
           </Tabs>
         </CardContent>
       )}

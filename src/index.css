@@ -109,6 +109,33 @@
 }
 
 @layer components {
+  .learner-high-contrast {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 0%;
+    --muted: 0 0% 94%;
+    --muted-foreground: 0 0% 18%;
+    --border: 0 0% 12%;
+    --input: 0 0% 12%;
+    --primary: 225 100% 28%;
+    --ring: 225 100% 28%;
+  }
+
+  .learner-high-contrast :is(p, span, label, h1, h2, h3) {
+    text-shadow: none;
+  }
+
+  .learner-text-large :is(p, span, label, li, textarea, input) {
+    font-size: 1.075rem !important;
+    line-height: 1.7 !important;
+  }
+
+  .learner-text-extra-large :is(p, span, label, li, textarea, input) {
+    font-size: 1.25rem !important;
+    line-height: 1.75 !important;
+  }
+
   .cap-screen {
     background:
       radial-gradient(circle at top left, hsl(215 65% 92% / 0.65), transparent 34rem),

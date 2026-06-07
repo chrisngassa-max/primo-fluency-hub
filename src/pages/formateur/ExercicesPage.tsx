@@ -26,6 +26,7 @@ import {
   Brain, FileText, Upload, Clock, Link2, Target, Radio, Copy, UserPlus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { structuredExerciseMetadata } from "@/lib/exerciseMetadata";
 import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/DifficultyBadge";
 import ImportFromUrlDialog from "@/components/ImportFromUrlDialog";
 import GenerateTargetedExerciseWizard from "@/components/formateur/GenerateTargetedExerciseWizard";
@@ -171,6 +172,11 @@ const ExercicesPage = () => {
           contenu: contenu,
           point_a_maitriser_id: pointId,
           is_ai_generated: true,
+          ...structuredExerciseMetadata({
+            ...ex,
+            contenu,
+            metadata: ex.metadata,
+          }),
         });
         if (insertError) throw insertError;
 

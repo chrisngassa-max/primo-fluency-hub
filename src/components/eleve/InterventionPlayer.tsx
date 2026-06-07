@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Headphones, Play, Pause } from "lucide-react";
+import { Headphones, Play, Pause, ArrowUp } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -12,12 +12,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { useInterventionListener } from "@/hooks/useInterventionListener";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   sessionId: string | null | undefined;
 };
 
 export default function InterventionPlayer({ sessionId }: Props) {
+  const navigate = useNavigate();
   const { intervention, dismiss } = useInterventionListener(sessionId);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
@@ -48,20 +50,21 @@ export default function InterventionPlayer({ sessionId }: Props) {
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-lg">
-            <Headphones className="h-5 w-5 text-primary" />
-            Conseil personnalisé
+            {intervention.isRecalibrage ? <ArrowUp className="h-5 w-5 text-emerald-600" /> : <Headphones className="h-5 w-5 text-primary" />}
+            {intervention.isRecalibrage ? "Progression !" : "Conseil personnalisé"}
           </DialogTitle>
           <DialogDescription className="font-semibold text-foreground">
             {intervention.titre}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="rounded-md border bg-muted/30 p-4 text-base leading-relaxed">
+        <div className={`rounded-md border p-4 text-base leading-relaxed ${intervention.isRecalibrage ? 'bg-emerald-50/50 border-emerald-100 text-emerald-900' : 'bg-muted/30'}`}>
           {intervention.contenu_texte}
         </div>
 
-        {intervention.audio_url ? (
-          <div className="space-y-2">
+        {!intervention.isRecalibrage && (
+          intervention.audio_url ? (
+            <div className="space-y-2">
             <div className="flex items-center gap-3">
               <Button onClick={togglePlay} variant="secondary" size="sm" className="gap-2">
                 {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
@@ -84,7 +87,7 @@ export default function InterventionPlayer({ sessionId }: Props) {
           </div>
         ) : (
           <p className="text-xs text-muted-foreground">Lecture audio indisponible — texte uniquement.</p>
-        )}
+        ))}
 
         <div className="flex flex-wrap gap-2 text-xs">
           {intervention.competence && (
@@ -96,7 +99,19 @@ export default function InterventionPlayer({ sessionId }: Props) {
         </div>
 
         <DialogFooter>
-          <Button onClick={dismiss} className="w-full">OK, j'ai compris</Button>
+          {intervention.isExercicePersonnalise ? (
+            <Button
+              onClick={async () => {
+                await dismiss();
+                navigate(`/eleve/exercices-seance/${sessionId}`);
+              }}
+              className="w-full"
+            >
+              Faire l'exercice
+            </Button>
+          ) : (
+            <Button onClick={dismiss} className="w-full">OK, j'ai compris</Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>

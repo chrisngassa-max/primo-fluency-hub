@@ -844,6 +844,7 @@ export type Database = {
       exercices: {
         Row: {
           animation_guide: Json | null
+          aides_disponibles: string[]
           collectif: boolean
           competence: Database["public"]["Enums"]["competence_type"]
           consigne: string
@@ -851,6 +852,7 @@ export type Database = {
           contexte_irn: string | null
           created_at: string
           difficulte: number
+          duree_limite_secondes: number | null
           eleve_id: string | null
           format: Database["public"]["Enums"]["exercice_format"]
           formateur_id: string
@@ -859,8 +861,12 @@ export type Database = {
           is_devoir: boolean
           is_live_ready: boolean | null
           is_template: boolean
+          metadata_code: string | null
+          metadata_skill: string | null
           mode: Database["public"]["Enums"]["exercice_mode"]
           niveau_vise: string
+          nombre_ecoutes_max: number | null
+          objectif_tcf: string | null
           play_token: string | null
           point_a_maitriser_id: string
           sequence_id: string | null
@@ -868,12 +874,15 @@ export type Database = {
           sous_competence: string | null
           statut: string | null
           titre: string
+          transcription_verrouillee: boolean
+          type_differenciation: string | null
           updated_at: string
           variante_niveau_bas: Json | null
           variante_niveau_haut: Json | null
         }
         Insert: {
           animation_guide?: Json | null
+          aides_disponibles?: string[]
           collectif?: boolean
           competence: Database["public"]["Enums"]["competence_type"]
           consigne: string
@@ -881,6 +890,7 @@ export type Database = {
           contexte_irn?: string | null
           created_at?: string
           difficulte?: number
+          duree_limite_secondes?: number | null
           eleve_id?: string | null
           format?: Database["public"]["Enums"]["exercice_format"]
           formateur_id: string
@@ -889,8 +899,12 @@ export type Database = {
           is_devoir?: boolean
           is_live_ready?: boolean | null
           is_template?: boolean
+          metadata_code?: string | null
+          metadata_skill?: string | null
           mode?: Database["public"]["Enums"]["exercice_mode"]
           niveau_vise: string
+          nombre_ecoutes_max?: number | null
+          objectif_tcf?: string | null
           play_token?: string | null
           point_a_maitriser_id: string
           sequence_id?: string | null
@@ -898,12 +912,15 @@ export type Database = {
           sous_competence?: string | null
           statut?: string | null
           titre: string
+          transcription_verrouillee?: boolean
+          type_differenciation?: string | null
           updated_at?: string
           variante_niveau_bas?: Json | null
           variante_niveau_haut?: Json | null
         }
         Update: {
           animation_guide?: Json | null
+          aides_disponibles?: string[]
           collectif?: boolean
           competence?: Database["public"]["Enums"]["competence_type"]
           consigne?: string
@@ -911,6 +928,7 @@ export type Database = {
           contexte_irn?: string | null
           created_at?: string
           difficulte?: number
+          duree_limite_secondes?: number | null
           eleve_id?: string | null
           format?: Database["public"]["Enums"]["exercice_format"]
           formateur_id?: string
@@ -919,8 +937,12 @@ export type Database = {
           is_devoir?: boolean
           is_live_ready?: boolean | null
           is_template?: boolean
+          metadata_code?: string | null
+          metadata_skill?: string | null
           mode?: Database["public"]["Enums"]["exercice_mode"]
           niveau_vise?: string
+          nombre_ecoutes_max?: number | null
+          objectif_tcf?: string | null
           play_token?: string | null
           point_a_maitriser_id?: string
           sequence_id?: string | null
@@ -928,6 +950,8 @@ export type Database = {
           sous_competence?: string | null
           statut?: string | null
           titre?: string
+          transcription_verrouillee?: boolean
+          type_differenciation?: string | null
           updated_at?: string
           variante_niveau_bas?: Json | null
           variante_niveau_haut?: Json | null
@@ -1497,6 +1521,7 @@ export type Database = {
           created_at: string
           description: string | null
           formateur_id: string
+          homework_delivery_mode: string
           id: string
           is_active: boolean
           niveau: string
@@ -1508,6 +1533,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           formateur_id: string
+          homework_delivery_mode?: string
           id?: string
           is_active?: boolean
           niveau: string
@@ -1519,6 +1545,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           formateur_id?: string
+          homework_delivery_mode?: string
           id?: string
           is_active?: boolean
           niveau?: string
@@ -2542,8 +2569,14 @@ export type Database = {
       }
       profils_eleves: {
         Row: {
+          aisance_numerique: string | null
+          autres_langues: string[]
+          besoins_accessibilite: string[]
+          date_cible_tcf: string | null
+          disponibilite_hors_seance: string | null
           eleve_id: string
           id: string
+          langue_maternelle: string | null
           niveau_actuel: string
           niveau_ce: string
           niveau_co: string
@@ -2552,7 +2585,11 @@ export type Database = {
           niveau_locked: boolean | null
           niveau_source: string | null
           niveau_updated_at: string | null
+          niveau_scolarisation: string | null
+          objectif_tcf: string | null
+          preferences_apprentissage: string[]
           priorites_pedagogiques: Json
+          projet_personnel: string | null
           profil_litteratie: string | null
           score_risque: number
           taux_reussite_ce: number
@@ -2566,8 +2603,14 @@ export type Database = {
           vitesse_lecture: string | null
         }
         Insert: {
+          aisance_numerique?: string | null
+          autres_langues?: string[]
+          besoins_accessibilite?: string[]
+          date_cible_tcf?: string | null
+          disponibilite_hors_seance?: string | null
           eleve_id: string
           id?: string
+          langue_maternelle?: string | null
           niveau_actuel: string
           niveau_ce?: string
           niveau_co?: string
@@ -2576,7 +2619,11 @@ export type Database = {
           niveau_locked?: boolean | null
           niveau_source?: string | null
           niveau_updated_at?: string | null
+          niveau_scolarisation?: string | null
+          objectif_tcf?: string | null
+          preferences_apprentissage?: string[]
           priorites_pedagogiques?: Json
+          projet_personnel?: string | null
           profil_litteratie?: string | null
           score_risque?: number
           taux_reussite_ce?: number
@@ -2590,8 +2637,14 @@ export type Database = {
           vitesse_lecture?: string | null
         }
         Update: {
+          aisance_numerique?: string | null
+          autres_langues?: string[]
+          besoins_accessibilite?: string[]
+          date_cible_tcf?: string | null
+          disponibilite_hors_seance?: string | null
           eleve_id?: string
           id?: string
+          langue_maternelle?: string | null
           niveau_actuel?: string
           niveau_ce?: string
           niveau_co?: string
@@ -2600,7 +2653,11 @@ export type Database = {
           niveau_locked?: boolean | null
           niveau_source?: string | null
           niveau_updated_at?: string | null
+          niveau_scolarisation?: string | null
+          objectif_tcf?: string | null
+          preferences_apprentissage?: string[]
           priorites_pedagogiques?: Json
+          projet_personnel?: string | null
           profil_litteratie?: string | null
           score_risque?: number
           taux_reussite_ce?: number
@@ -2900,6 +2957,7 @@ export type Database = {
       }
       session_exercices: {
         Row: {
+          bloc: string
           created_at: string
           eleve_id: string | null
           exercice_id: string
@@ -2913,6 +2971,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          bloc?: string
           created_at?: string
           eleve_id?: string | null
           exercice_id: string
@@ -2926,6 +2985,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          bloc?: string
           created_at?: string
           eleve_id?: string | null
           exercice_id?: string
@@ -2955,6 +3015,47 @@ export type Database = {
           },
           {
             foreignKeyName: "session_exercices_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      session_blocks: {
+        Row: {
+          block_type: string
+          created_at: string
+          error_message: string | null
+          id: string
+          session_id: string
+          status: string
+          updated_at: string
+          warning_message: string | null
+        }
+        Insert: {
+          block_type: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          session_id: string
+          status: string
+          updated_at?: string
+          warning_message?: string | null
+        }
+        Update: {
+          block_type?: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          session_id?: string
+          status?: string
+          updated_at?: string
+          warning_message?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_blocks_session_id_fkey"
             columns: ["session_id"]
             isOneToOne: false
             referencedRelation: "sessions"
@@ -3212,45 +3313,66 @@ export type Database = {
       }
       sessions: {
         Row: {
+          competences_autorisees: string[]
           competences_cibles: string[] | null
           created_at: string
           date_seance: string
+          difficulte_par_defaut: number
           duree_minutes: number
+          duree_retrospective: number
+          generation_automatique_activee: boolean
           group_id: string
           id: string
           lien_visio: string | null
           lieu: string | null
           niveau_cible: string
+          nb_exercices_retrospective: number
+          nb_exercices_souhaite: number
+          nb_questions_diagnostic: number
           objectifs: string | null
           statut: Database["public"]["Enums"]["session_statut"]
           titre: string
           updated_at: string
         }
         Insert: {
+          competences_autorisees?: string[]
           competences_cibles?: string[] | null
           created_at?: string
           date_seance: string
+          difficulte_par_defaut?: number
           duree_minutes?: number
+          duree_retrospective?: number
+          generation_automatique_activee?: boolean
           group_id: string
           id?: string
           lien_visio?: string | null
           lieu?: string | null
           niveau_cible: string
+          nb_exercices_retrospective?: number
+          nb_exercices_souhaite?: number
+          nb_questions_diagnostic?: number
           objectifs?: string | null
           statut?: Database["public"]["Enums"]["session_statut"]
           titre: string
           updated_at?: string
         }
         Update: {
+          competences_autorisees?: string[]
           competences_cibles?: string[] | null
           created_at?: string
           date_seance?: string
+          difficulte_par_defaut?: number
           duree_minutes?: number
+          duree_retrospective?: number
+          generation_automatique_activee?: boolean
           group_id?: string
           id?: string
           lien_visio?: string | null
           lieu?: string | null
           niveau_cible?: string
+          nb_exercices_retrospective?: number
+          nb_exercices_souhaite?: number
+          nb_questions_diagnostic?: number
           objectifs?: string | null
           statut?: Database["public"]["Enums"]["session_statut"]
           titre?: string
@@ -3923,6 +4045,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      assign_live_session_exercises: {
+        Args: {
+          p_eleve_ids: string[]
+          p_exercice_ids: string[]
+          p_session_id: string
+        }
+        Returns: number
+      }
+      claim_session_block: {
+        Args: { p_block_type: string; p_session_id: string }
+        Returns: boolean
+      }
+      update_andragogical_profile: {
+        Args: { p_eleve_id: string; p_profile: Json }
+        Returns: undefined
+      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean

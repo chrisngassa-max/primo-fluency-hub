@@ -68,10 +68,11 @@ export interface FocusEleveSheetProps {
   allEvents: LiveEvent[];
   onClose: () => void;
   onIntervenir: () => void;
+  onEnvoyerExercice?: () => void;
 }
 
 export function FocusEleveSheet({
-  prenom, nom, eleveId, state, priorite, niveaux, allEvents, onClose, onIntervenir,
+  prenom, nom, eleveId, state, priorite, niveaux, allEvents, onClose, onIntervenir, onEnvoyerExercice,
 }: FocusEleveSheetProps) {
   // Événements de cet élève, du plus ancien au plus récent
   const eleveEvents = allEvents
@@ -147,9 +148,16 @@ export function FocusEleveSheet({
             </div>
 
             {/* Bouton intervention */}
-            <Button size="sm" className="gap-1.5 shrink-0" onClick={onIntervenir}>
-              <Send className="h-3.5 w-3.5" /> Aide
-            </Button>
+            <div className="flex gap-2 shrink-0">
+              {onEnvoyerExercice && (
+                <Button size="sm" variant="outline" className="gap-1.5" onClick={onEnvoyerExercice}>
+                  <Zap className="h-3.5 w-3.5" /> Exercice
+                </Button>
+              )}
+              <Button size="sm" className="gap-1.5" onClick={onIntervenir}>
+                <Send className="h-3.5 w-3.5" /> Aide
+              </Button>
+            </div>
           </div>
         </SheetHeader>
 

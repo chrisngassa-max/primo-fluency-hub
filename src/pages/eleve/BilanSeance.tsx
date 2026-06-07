@@ -28,6 +28,7 @@ import RegenerateItemButton from "@/components/RegenerateItemButton";
 import { useLiveAttemptSync } from "@/hooks/useLiveAttemptSync";
 import { corrigerExercice } from "@/lib/correctionExercice";
 import { applyExerciseVariant, resolveStudentExerciseLevel } from "@/lib/exerciseVariant";
+import { qualitativeProgress } from "@/lib/qualitativeProgress";
 
 const STORAGE_KEY_PREFIX = "bilan-seance-progress-";
 
@@ -163,6 +164,7 @@ const BilanSeance = () => {
         .select("*, exercice:exercices(id, titre, consigne, competence, format, contenu, niveau_vise, formateur_id, variante_niveau_bas, variante_niveau_haut)")
         .eq("session_id", sessionId!)
         .eq("statut", "traite_en_classe" as any)
+        .or(`eleve_id.is.null,eleve_id.eq.${user!.id}`)
         .order("ordre");
       if (error) throw error;
       return data ?? [];
@@ -413,7 +415,7 @@ const BilanSeance = () => {
       qc.invalidateQueries({ queryKey: ["bilan-existing"] });
       qc.invalidateQueries({ queryKey: ["profil-eleve"] });
       qc.invalidateQueries({ queryKey: ["eleve-resultats"] });
-      toast.success(`Exercices soumis ! Score moyen : ${globalScore}%`);
+      toast.success(`Exercices soumis : ${qualitativeProgress(globalScore).label}`);
     } catch (e: any) {
       toast.error("Erreur lors de la soumission", { description: e.message });
     } finally {
@@ -500,6 +502,7 @@ const BilanSeance = () => {
 
   // Show results
   if (results) {
+    const globalAcquisition = qualitativeProgress(results.globalScore);
     return (
       <div className="space-y-6 max-w-2xl mx-auto">
         <div className="flex items-center gap-3">
@@ -511,17 +514,14 @@ const BilanSeance = () => {
 
         <Card className={cn(
           "text-center",
-          results.globalScore >= 80 ? "border-green-500/30" : results.globalScore >= 60 ? "border-orange-500/30" : "border-destructive/30"
+          globalAcquisition.borderClassName
         )}>
           <CardContent className="pt-6 pb-4">
-            <p className={cn(
-              "text-5xl font-black",
-              results.globalScore >= 80 ? "text-green-600" : results.globalScore >= 60 ? "text-orange-600" : "text-destructive"
-            )}>
-              {results.globalScore}%
+            <p className={`mx-auto inline-flex rounded-full px-4 py-2 text-lg font-bold ${globalAcquisition.className}`}>
+              {globalAcquisition.label}
             </p>
             <p className="text-sm text-muted-foreground mt-2">
-              {`Score moyen sur ${results.scores.length} ${results.scores.length === 1 ? "exercice" : "exercices"}`}
+              {globalAcquisition.message}
             </p>
             {results.devoirsCreated > 0 && (
               <Badge variant="secondary" className="mt-3 gap-1">
@@ -537,11 +537,10 @@ const BilanSeance = () => {
           <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
             Détail par exercice
           </h2>
-          {results.scores.map((s) => (
-            <Card key={s.exerciceId} className={cn(
-              "border-l-4",
-              s.score >= 80 ? "border-l-green-500" : s.score >= 60 ? "border-l-orange-500" : "border-l-destructive"
-            )}>
+          {results.scores.map((s) => {
+            const acquisition = qualitativeProgress(s.score);
+            return (
+            <Card key={s.exerciceId} className={`border-l-4 ${acquisition.borderClassName}`}>
               <CardContent className="py-3 px-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -550,12 +549,7 @@ const BilanSeance = () => {
                       <CompetenceLabel code={s.competence} />
                     </Badge>
                   </div>
-                  <span className={cn(
-                    "text-2xl font-bold",
-                    s.score >= 80 ? "text-green-600" : s.score >= 60 ? "text-orange-600" : "text-destructive"
-                  )}>
-                    {s.score}%
-                  </span>
+                  <Badge className={acquisition.className}>{acquisition.shortLabel}</Badge>
                 </div>
 
                 {/* Correction */}
@@ -588,7 +582,7 @@ const BilanSeance = () => {
                 </div>
               </CardContent>
             </Card>
-          ))}
+          )})}
         </div>
 
         {sessionId && user?.id && (

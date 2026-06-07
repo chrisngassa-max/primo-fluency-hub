@@ -21,6 +21,7 @@ import {
   Route,
   Inbox,
   Library,
+  BarChart3,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -30,7 +31,7 @@ const mainNav = [
   { title: "Demandes d'accès", url: "/formateur/demandes", icon: Inbox },
   { title: "Groupes & Élèves", url: "/formateur/groupes", icon: Users },
   { title: "Séances", url: "/formateur/seances", icon: Calendar },
-  { title: "Exercices", url: "/formateur/exercices", icon: BookOpen },
+  { title: "Bibliothèque d'exercices", url: "/formateur/exercices", icon: BookOpen },
   { title: "Importer programme", url: "/formateur/import-programme", icon: Upload },
   { title: "Plans de formation", url: "/formateur/parcours", icon: Route },
   { title: "Ressources", url: "/formateur/ressources", icon: Library },
@@ -40,8 +41,9 @@ const monitorNav = [
   { title: "Suivi en direct", url: "/formateur/suivi-direct", icon: Activity },
   { title: "Monitoring", url: "/formateur/monitoring", icon: Activity },
   { title: "Suivi des devoirs", url: "/formateur/suivi-devoirs", icon: BookOpen },
-  { title: "Tests d'entrée", url: "/formateur/tests", icon: ClipboardList },
-  { title: "Test positionnement", url: "/formateur/test-resultats", icon: GraduationCap },
+  { title: "Positionnement", url: "/formateur/positionnement", icon: ClipboardList },
+  { title: "Résultats de positionnement", url: "/formateur/test-resultats", icon: GraduationCap },
+  { title: "Analyse des erreurs", url: "/formateur/analytics-erreurs", icon: BarChart3 },
   { title: "Rapports IA", url: "/formateur/rapports", icon: FileText },
 ];
 

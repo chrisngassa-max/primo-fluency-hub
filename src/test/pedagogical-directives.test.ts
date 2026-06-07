@@ -40,4 +40,36 @@ describe("buildPedagogicalDirectives", () => {
     expect(directives.formats_autorises).not.toContain("production_ecrite");
     expect(directives.formats_interdits).toContain("redaction_libre");
   });
+
+  it("simplifie les interactions quand l'aisance numerique est faible", () => {
+    const directives = buildPedagogicalDirectives({
+      profile: {
+        aisance_numerique: "faible",
+        niveau_scolarisation: "primaire",
+      },
+    });
+
+    expect(directives.formats_autorises).toEqual(
+      expect.arrayContaining(["qcm", "vrai_faux"])
+    );
+    expect(directives.formats_autorises).not.toContain("appariement");
+    expect(directives.formats_interdits).toContain("glisser_deposer");
+    expect(directives.longueur_max_consigne_mots).toBeLessThanOrEqual(6);
+  });
+
+  it("reprend le projet personnel comme contexte prioritaire", () => {
+    const directives = buildPedagogicalDirectives({
+      profile: {
+        projet_personnel: "Travailler dans la restauration",
+        objectif_tcf: "irn",
+        preferences_apprentissage: ["audio", "exemples"],
+      },
+    });
+
+    expect(directives.contexte_prioritaire).toBe("Travailler dans la restauration");
+    expect(directives.objectif_tcf).toBe("irn");
+    expect(directives.supports_obligatoires).toEqual(
+      expect.arrayContaining(["audio", "exemple_resolu"])
+    );
+  });
 });

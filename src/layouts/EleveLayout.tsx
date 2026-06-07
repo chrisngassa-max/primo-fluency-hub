@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import AppFooter from "@/components/AppFooter";
 import { CapPublicHeader } from "@/components/CapBrand";
 import InterventionPlayer from "@/components/eleve/InterventionPlayer";
+import OfflineStatus from "@/components/eleve/OfflineStatus";
 
 const navItems = [
   { title: "Accueil", path: "/eleve", icon: Home },
@@ -62,6 +63,7 @@ const EleveLayout = () => {
 
   return (
     <div className="cap-screen min-h-screen">
+      <OfflineStatus />
       <InterventionPlayer sessionId={activeSessionId ?? null} />
       <CapPublicHeader avatar={initiales.slice(0, 2)} showMenu={false} />
 

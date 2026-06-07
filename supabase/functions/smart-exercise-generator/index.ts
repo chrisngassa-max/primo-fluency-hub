@@ -158,12 +158,20 @@ Choisis le code le plus adapté dans la cartographie TCF IRN (CO1-CO4, CE1-CE4, 
     } else if (mode === "import") {
       const source = resolvedSource || sourceText || sourceUrl || "";
       if (!source) throw new Error("Aucune source fournie pour l'import");
+      const importCalibration = `
+Niveau CECRL impose : ${niveau || niveau_depart || "A1"}.
+Competence imposee : ${competence || "a detecter selon le support"}.
+Demarche IRN : ${demarche}.
+Le niveau, la longueur des phrases, les distracteurs et les explications doivent etre calibres pour ce niveau.
+Le theme, les faits et le vocabulaire central doivent rester fideles au document source.`;
 
       if (treatment === "extract") {
         userPrompt = `Voici un document source :
 ---
 ${source}
 ---
+
+${importCalibration}
 
 Extrais l'exercice tel quel de ce document. Restructure-le au format standard avec titre, consigne et items (question, options, bonne_reponse, explication). Attribue le code TCF IRN approprié.${mediaContext}`;
       } else {
@@ -172,6 +180,8 @@ Extrais l'exercice tel quel de ce document. Restructure-le au format standard av
 ---
 ${source}
 ---
+
+${importCalibration}
 
 Reconfigure entièrement ce contenu pour créer un exercice au format "${targetFormat}" pour le TCF IRN.
 Conserve le thème et le vocabulaire du document original mais restructure tout le contenu pour qu'il corresponde parfaitement au format demandé.

@@ -13,6 +13,8 @@ import {
 import { Loader2, Volume2, RefreshCw, FileDown, Mail } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useExportPDF } from "@/hooks/useExportPDF";
+import GenerateTargetedExerciseWizard from "@/components/formateur/GenerateTargetedExerciseWizard";
+import { useQuery } from "@tanstack/react-query";
 
 type Row = {
   type_erreur_id: string | null;
@@ -23,35 +25,72 @@ type Row = {
   derniere: string;
 };
 
+type StudentErrorRow = {
+  eleve_id: string;
+  nom: string;
+  total: number;
+  repeated: number;
+  competences: string[];
+  session_id: string | null;
+};
+
 const PALETTE = ["#2563eb", "#16a34a", "#f59e0b", "#dc2626", "#7c3aed", "#0891b2", "#db2777", "#65a30d"];
 
-export default function AnalyticsErreursPage() {
+function GlobalErrorAnalytics({ sessionScoped = false }: { sessionScoped?: boolean }) {
   const { user } = useAuth();
   const [period, setPeriod] = useState<"7" | "30" | "90">("30");
+  const [selectedSessionId, setSelectedSessionId] = useState("");
   const [loading, setLoading] = useState(true);
   const [bulkLoading, setBulkLoading] = useState(false);
   const [rows, setRows] = useState<Row[]>([]);
   const [typesErreur, setTypesErreur] = useState<Record<string, string>>({});
   const [systemInterventions, setSystemInterventions] = useState<any[]>([]);
+  const [studentRows, setStudentRows] = useState<StudentErrorRow[]>([]);
+  const [wizardTarget, setWizardTarget] = useState<{ eleveId: string; sessionId: string } | null>(null);
   const exportRef = useRef<HTMLDivElement>(null);
   const { exportPDF, isExporting } = useExportPDF(exportRef);
 
+  const { data: sessions = [] } = useQuery({
+    queryKey: ["error-analysis-sessions", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      const { data, error } = await supabase
+        .from("sessions")
+        .select("id, titre, date_seance, groups!inner(formateur_id)")
+        .eq("groups.formateur_id", user.id)
+        .order("date_seance", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: sessionScoped && !!user?.id,
+  });
+
   useEffect(() => {
+    if (sessionScoped && !selectedSessionId && sessions.length > 0) {
+      setSelectedSessionId(sessions[0].id);
+    }
+  }, [selectedSessionId, sessionScoped, sessions]);
+
+  useEffect(() => {
+    if (sessionScoped && !selectedSessionId) return;
     void load();
-  }, [period]);
+  }, [period, selectedSessionId, sessionScoped]);
 
   async function load() {
     setLoading(true);
     try {
       const since = new Date(Date.now() - Number(period) * 24 * 3600 * 1000).toISOString();
 
-      const [{ data: events, error }, { data: types }, { data: interv }] = await Promise.all([
-        supabase
+      let eventsQuery = supabase
           .from("session_live_events")
-          .select("type_erreur_id, competence, event_type, created_at, eleve_id, payload")
+          .select("session_id, type_erreur_id, competence, event_type, created_at, eleve_id, payload")
           .in("event_type", ["reponse_incorrecte", "erreur_repetee", "intervention_recue"])
           .gte("created_at", since)
-          .limit(5000),
+          .limit(5000);
+      if (sessionScoped && selectedSessionId) eventsQuery = eventsQuery.eq("session_id", selectedSessionId);
+
+      const [{ data: events, error }, { data: types }, { data: interv }] = await Promise.all([
+        eventsQuery,
         supabase.from("types_erreur").select("id, libelle"),
         supabase
           .from("interventions")
@@ -85,6 +124,33 @@ export default function AnalyticsErreursPage() {
         map.set(key, r);
       });
       setRows(Array.from(map.values()).sort((a, b) => b.occurrences - a.occurrences));
+
+      const errorEvents = (events || []).filter((event: any) =>
+        event.eleve_id && (event.event_type === "reponse_incorrecte" || event.event_type === "erreur_repetee")
+      );
+      const eleveIds = [...new Set(errorEvents.map((event: any) => event.eleve_id))] as string[];
+      const { data: profiles } = eleveIds.length
+        ? await supabase.from("profiles").select("id, nom, prenom").in("id", eleveIds)
+        : { data: [] };
+      const names = new Map((profiles ?? []).map((profile: any) => [
+        profile.id, `${profile.prenom ?? ""} ${profile.nom ?? ""}`.trim() || "Élève",
+      ]));
+      const students = new Map<string, StudentErrorRow>();
+      for (const event of errorEvents as any[]) {
+        const current = students.get(event.eleve_id) ?? {
+          eleve_id: event.eleve_id,
+          nom: names.get(event.eleve_id) ?? "Élève",
+          total: 0,
+          repeated: 0,
+          competences: [],
+          session_id: event.session_id,
+        };
+        if (event.event_type === "reponse_incorrecte") current.total += 1;
+        if (event.event_type === "erreur_repetee") current.repeated += 1;
+        if (event.competence && !current.competences.includes(event.competence)) current.competences.push(event.competence);
+        students.set(event.eleve_id, current);
+      }
+      setStudentRows([...students.values()].sort((a, b) => b.total - a.total));
     } catch (e: any) {
       toast.error("Erreur de chargement : " + e.message);
     } finally {
@@ -143,6 +209,16 @@ export default function AnalyticsErreursPage() {
           </p>
         </div>
         <div className="flex gap-2">
+          {sessionScoped && (
+            <Select value={selectedSessionId} onValueChange={setSelectedSessionId}>
+              <SelectTrigger className="w-56"><SelectValue placeholder="Choisir une séance" /></SelectTrigger>
+              <SelectContent>
+                {sessions.map((session: any) => (
+                  <SelectItem key={session.id} value={session.id}>{session.titre}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
           <Select value={period} onValueChange={(v: any) => setPeriod(v)}>
             <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
             <SelectContent>
@@ -187,6 +263,7 @@ export default function AnalyticsErreursPage() {
           <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
           <TabsTrigger value="details">Détails</TabsTrigger>
           <TabsTrigger value="library">Bibliothèque système</TabsTrigger>
+          <TabsTrigger value="students">Par élève</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
@@ -292,8 +369,67 @@ export default function AnalyticsErreursPage() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        <TabsContent value="students">
+          <Card>
+            <CardHeader><CardTitle className="text-base">Erreurs par élève</CardTitle></CardHeader>
+            <CardContent className="space-y-2">
+              {studentRows.length === 0 ? <Empty /> : studentRows.map((student) => (
+                <div key={student.eleve_id} className="flex items-center justify-between gap-3 border-b py-3">
+                  <div className="min-w-0">
+                    <p className="font-medium truncate">{student.nom}</p>
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      <Badge variant="outline">{student.total} erreur(s)</Badge>
+                      {student.repeated > 0 && <Badge variant="destructive">{student.repeated} répétée(s)</Badge>}
+                      {student.competences.map((competence) => <Badge key={competence} variant="secondary">{competence}</Badge>)}
+                    </div>
+                  </div>
+                  <Button
+                    size="sm"
+                    disabled={!student.session_id}
+                    onClick={() => student.session_id && setWizardTarget({ eleveId: student.eleve_id, sessionId: student.session_id })}
+                  >
+                    Envoyer un exercice
+                  </Button>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
       </div>
+      <GenerateTargetedExerciseWizard
+        open={!!wizardTarget}
+        onOpenChange={(open) => { if (!open) setWizardTarget(null); }}
+        eleveId={wizardTarget?.eleveId}
+        sessionId={wizardTarget?.sessionId}
+        mode="session_live"
+      />
+    </div>
+  );
+}
+
+export default function AnalyticsErreursPage() {
+  return (
+    <div className="space-y-5">
+      <div>
+        <h1 className="text-2xl font-bold text-[#0b234a]">Analyse des erreurs</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Analysez les tendances globales ou concentrez-vous sur une séance précise.
+        </p>
+      </div>
+      <Tabs defaultValue="global">
+        <TabsList className="grid h-auto w-full max-w-xl grid-cols-2">
+          <TabsTrigger value="global">Vue globale</TabsTrigger>
+          <TabsTrigger value="session">Vue par séance</TabsTrigger>
+        </TabsList>
+        <TabsContent value="global">
+          <GlobalErrorAnalytics />
+        </TabsContent>
+        <TabsContent value="session">
+          <GlobalErrorAnalytics sessionScoped />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

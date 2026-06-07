@@ -1,5 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.99.2";
+import { TCF_SYSTEM_PROMPT, MODEL } from "../_shared/system-prompt.ts";
+import { callAI, AIError } from "../_shared/ai-client.ts";
+import { parseNbQuestions, validateDiagnosticQuestions } from "./logic.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -7,85 +10,15 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-function buildProceduralDiagnostic(competences: string[], niveau: string) {
-  const normalized = (competences?.length ? competences : ["CE"]).filter(Boolean);
-  const contexts = ["préfecture", "logement", "emploi", "transport", "CAF", "médecin", "mairie", "banque"];
-  const questions = normalized.flatMap((competence, compIndex) =>
-    Array.from({ length: Math.max(3, Math.ceil(8 / normalized.length)) }, (_, i) => {
-      const ctx = contexts[(compIndex + i) % contexts.length];
-      const base = {
-        competence,
-        sous_competence: `Repérage d'information en contexte ${ctx}`,
-        niveau,
-        difficulte: i % 3 === 0 ? 2 : i % 3 === 1 ? 3 : 4,
-        explication: `La réponse attendue vérifie la compréhension d'une information utile dans une situation de ${ctx}.`,
-      };
-
-      if (competence === "CO") {
-        return {
-          ...base,
-          consigne: "Écoute le message et choisis la bonne réponse.",
-          support: `Bonjour. Pour votre rendez-vous à la ${ctx}, apportez une pièce d'identité [pause 1s] et un justificatif récent [pause 1s]. Le rendez-vous est confirmé pour jeudi matin. [débit lent]`,
-          choix: ["Jeudi matin", "Lundi soir", "Samedi après-midi", "Dimanche matin"],
-          bonne_reponse: "Jeudi matin",
-        };
-      }
-
-      if (competence === "CE") {
-        return {
-          ...base,
-          consigne: "Lis le document et choisis la bonne réponse.",
-          support: `Avis ${ctx} : votre dossier est disponible à l'accueil du lundi au vendredi, de 9 h à 12 h. Merci d'apporter votre numéro de dossier.`,
-          choix: ["De 9 h à 12 h", "De 14 h à 18 h", "Le samedi matin", "Uniquement le dimanche"],
-          bonne_reponse: "De 9 h à 12 h",
-        };
-      }
-
-      if (competence === "Structures") {
-        return {
-          ...base,
-          consigne: "Choisis la phrase correcte.",
-          support: "",
-          choix: ["Je dois apporter mon justificatif.", "Je dois apportez mon justificatif.", "Je doit apporter mon justificatif.", "Je dois apporte mon justificatif."],
-          bonne_reponse: "Je dois apporter mon justificatif.",
-        };
-      }
-
-      if (competence === "EE") {
-        return {
-          ...base,
-          consigne: `Écris un message court pour demander une information liée à ${ctx}.`,
-          support: `Tu dois contacter un service de ${ctx} pour demander un rendez-vous ou une information simple.`,
-          choix: [],
-          bonne_reponse: "Production écrite attendue : message clair avec salutation, demande précise et formule de politesse.",
-        };
-      }
-
-      return {
-        ...base,
-        consigne: `Prépare une réponse orale courte pour expliquer ta situation liée à ${ctx}.`,
-        support: `Situation : tu es à un guichet de ${ctx}. Explique ce dont tu as besoin en phrases simples.`,
-        choix: [],
-        bonne_reponse: "Production orale attendue : réponse compréhensible, informations personnelles utiles et demande claire.",
-      };
-    })
-  ).slice(0, 15);
-
-  while (questions.length < 8) questions.push({ ...questions[questions.length % Math.max(questions.length, 1)] });
-
-  return {
-    titre: `Diagnostic pré-séance ${niveau}`,
-    duree_estimee_minutes: 6,
-    questions: questions.slice(0, 15),
-  };
-}
-
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    // AI key check moved to shared ai-client
+
+    const authHeader = req.headers.get("Authorization");
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
@@ -96,44 +29,155 @@ serve(async (req) => {
       groupId,
       competences, // string[] e.g. ["CO", "CE"]
       niveau,      // e.g. "A1"
+      weakPoints,  // optional: [{ competence, exercice, score }]
+      previousSessionScores, // optional: Record<string, { avg, count }>
       statut: requestedStatut, // optional: "pret" | "envoye" (default "envoye")
+      nbQuestions: requestedNbQuestions,
+      nb_questions_diagnostic: requestedNbQuestionsSnake,
     } = body;
+    const nbQuestions = parseNbQuestions(requestedNbQuestions, requestedNbQuestionsSnake);
 
     if (!sessionId || !groupId || !competences || !niveau) {
       throw new Error("Champs requis : sessionId, groupId, competences, niveau");
     }
 
-    const diagnostic = buildProceduralDiagnostic(competences, niveau);
+    // Build prompt for diagnostic test generation
+    let userPrompt = `Action : générer un TEST DIAGNOSTIQUE EXHAUSTIF pré-séance au format TCF IRN.
+Durée cible : 5 à 8 minutes de passation.
 
-    // Validate: at least 3 questions with 4 choices each
-    if (!diagnostic.questions || diagnostic.questions.length < 8) {
-      throw new Error("Le diagnostic doit contenir au moins 8 questions pour une évaluation exhaustive");
+Objectif : évaluer de manière PRÉCISE et EXHAUSTIVE le niveau actuel des élèves sur les compétences suivantes : ${competences.join(", ")}
+Niveau cible : ${niveau}
+
+NOMBRE DE QUESTIONS : Générer exactement ${nbQuestions} questions au total.
+- Minimum 2-3 questions PAR compétence demandée pour une évaluation fiable
+- Varier les sous-compétences testées au sein de chaque compétence
+- Couvrir différents aspects : vocabulaire, syntaxe, pragmatique, phonologie selon la compétence
+
+CONTRAINTE TCF IRN ABSOLUE : Chaque question doit respecter le format officiel du TCF.
+- CO : QCM 4 choix basé sur un script audio réaliste (fournir le script complet avec balises [pause], contexte IRN : préfecture, CAF, médecin, logement, transport)
+- CE : QCM 4 choix basé sur un document authentique (courrier administratif, formulaire, affiche, panneau, SMS, email) — fournir le texte intégral du support
+- EE : Tâche de production écrite calibrée (remplir un formulaire, écrire un message court, répondre à une annonce)
+- EO : Tâche de production orale calibrée (se présenter, décrire une situation, laisser un message vocal)
+- Structures : QCM 4 choix sur la grammaire/vocabulaire en contexte IRN (conjugaison, articles, prépositions, négation, vocabulaire administratif)
+
+CALIBRATION DE LA DIFFICULTÉ :
+- 60% des questions au niveau ${niveau} (consolidation)
+- 25% des questions un demi-niveau en dessous (vérification des acquis de base)
+- 15% des questions un demi-niveau au-dessus (détection des élèves avancés)
+
+QUALITÉ DES DISTRACTEURS (choix incorrects) :
+- Les distracteurs doivent être PLAUSIBLES (erreurs typiques des apprenants de ce niveau)
+- Pas de distracteurs absurdes ou évidents
+- Chaque distracteur doit correspondre à une erreur identifiable (confusion phonétique, interférence L1, surgénéralisation)
+
+EXPLICATION PÉDAGOGIQUE : Pour chaque question, fournir :
+- La bonne réponse avec une explication claire
+- Le type d'erreur que chaque distracteur représente
+- Le micro-objectif pédagogique évalué`;
+
+
+    if (weakPoints && weakPoints.length > 0) {
+      userPrompt += `\n\nPOINTS FAIBLES DÉTECTÉS (à tester en priorité) :`;
+      weakPoints.forEach((wp: any) => {
+        userPrompt += `\n- ${wp.competence} : "${wp.exercice}" (score ${wp.score}%)`;
+      });
     }
 
-    for (const q of diagnostic.questions) {
-      // QCM questions (CO, CE, Structures) must have 4 choices; EE/EO may not have choices
-      if (q.choix && q.choix.length > 0 && q.choix.length !== 4) {
-        throw new Error(`QCM invalide : ${q.competence} doit avoir 4 choix`);
+    if (previousSessionScores) {
+      userPrompt += `\n\nSCORES SÉANCE PRÉCÉDENTE PAR COMPÉTENCE :`;
+      Object.entries(previousSessionScores).forEach(([comp, data]: [string, any]) => {
+        userPrompt += `\n- ${comp} : ${data.avg}% (${data.count} résultats)`;
+      });
+    }
+
+    const systemPrompt = TCF_SYSTEM_PROMPT + `
+
+// Mode diagnostic pré-séance EXHAUSTIF — Génère exactement ${nbQuestions} questions.
+// La sortie DOIT être un JSON structuré via l'outil generate_diagnostic.`;
+
+    let diagnostic: any = null;
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      const aiResult = await callAI({
+        model: MODEL,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        tools: [
+        {
+          type: "function",
+          function: {
+            name: "generate_diagnostic",
+            description: `Retourne un test diagnostique pré-séance au format TCF IRN avec exactement ${nbQuestions} questions.`,
+            parameters: {
+              type: "object",
+              properties: {
+                titre: { type: "string", description: "Titre du test diagnostique" },
+                duree_estimee_minutes: { type: "number", description: "Durée estimée en minutes (cible : 5-8)" },
+                questions: {
+                  type: "array",
+                  description: `Questions du test diagnostique (exactement ${nbQuestions})`,
+                  items: {
+                    type: "object",
+                    properties: {
+                      competence: { type: "string", enum: ["CO", "CE", "EE", "EO", "Structures"] },
+                      sous_competence: { type: "string", description: "Micro-objectif évalué (ex: vocabulaire administratif, conjugaison présent, compréhension globale)" },
+                      consigne: { type: "string", description: "Consigne de la question" },
+                      support: { type: "string", description: "Texte support complet, script audio avec [pause] ou description de la tâche" },
+                      choix: {
+                        type: "array",
+                        items: { type: "string" },
+                        description: "4 choix de réponse (QCM uniquement, null pour EE/EO)",
+                      },
+                      bonne_reponse: { type: "string", description: "La bonne réponse ou la production attendue" },
+                      explication: { type: "string", description: "Explication pédagogique détaillée incluant le type d'erreur de chaque distracteur" },
+                      niveau: { type: "string", description: "Niveau CECRL précis de la question (A1, A1+, A2, A2+, B1)" },
+                      difficulte: { type: "number", description: "Difficulté 1-5 (1=très facile, 5=difficile)" },
+                    },
+                    required: ["competence", "sous_competence", "consigne", "bonne_reponse", "explication", "niveau", "difficulte"],
+                  },
+                },
+              },
+              required: ["titre", "duree_estimee_minutes", "questions"],
+              additionalProperties: false,
+            },
+          },
+        },
+        ],
+        tool_choice: {
+          type: "function",
+          function: { name: "generate_diagnostic" },
+        },
+      });
+      const toolCall = aiResult.choices?.[0]?.message?.tool_calls?.[0];
+      if (toolCall?.function?.arguments) {
+        diagnostic = JSON.parse(toolCall.function.arguments);
+      }
+      const validationError = validateDiagnosticQuestions(diagnostic?.questions, nbQuestions);
+      if (!validationError) break;
+      if (attempt === 2) {
+        throw new Error(validationError);
       }
     }
 
-    // Save as bilan_test linked to the session
     const competencesCouvertes = [...new Set(diagnostic.questions.map((q: any) => q.competence))];
 
     // Get formateur id from session
-    const { data: sessionData } = await supabase
+    const { data: sessionData, error: sessionErr } = await supabase
       .from("sessions")
       .select("group_id")
       .eq("id", sessionId)
       .single();
+    if (sessionErr || !sessionData) throw new Error("Session introuvable");
 
-    const { data: groupData } = await supabase
+    const { data: groupData, error: groupErr } = await supabase
       .from("groups")
       .select("formateur_id")
-      .eq("id", sessionData?.group_id || groupId)
+      .eq("id", sessionData.group_id)
       .single();
+    if (groupErr || !groupData) throw new Error("Groupe introuvable");
 
-    const formateurId = groupData?.formateur_id;
+    const formateurId = groupData.formateur_id;
     if (!formateurId) throw new Error("Formateur introuvable");
 
     const { data: bilanTest, error: insertErr } = await supabase
@@ -162,9 +206,10 @@ serve(async (req) => {
     );
   } catch (e) {
     console.error("generate-diagnostic-test error:", e);
+    const status = e instanceof AIError ? e.status : 500;
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "Erreur inconnue" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 });

@@ -7,7 +7,6 @@ import {
   Settings,
   LogOut,
   GraduationCap,
-  ClipboardList,
   Upload,
   Route,
   ClipboardCheck,
@@ -42,6 +41,7 @@ import { Badge } from "@/components/ui/badge";
 import { useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import PedagogicalTerminologyHelp from "@/components/PedagogicalTerminologyHelp";
 
 const gestionNav = [
   { title: "Tableau de bord", url: "/formateur", icon: LayoutDashboard },
@@ -51,11 +51,11 @@ const gestionNav = [
 ];
 
 const pedagogieNav = [
-  { title: "Exercices", url: "/formateur/exercices", icon: BookOpen },
-  { title: "Devoirs", url: "/formateur/devoirs", icon: ClipboardCheck },
+  { title: "Bibliothèque d'exercices", url: "/formateur/exercices", icon: BookOpen },
+  { title: "Devoirs envoyés", url: "/formateur/devoirs", icon: ClipboardCheck },
   { title: "Plans de formation", url: "/formateur/parcours", icon: Route },
   { title: "Ressources", url: "/formateur/ressources", icon: Library },
-  { title: "Banque d'activités", url: "/formateur/banque-activites", icon: Database },
+  { title: "Ressources pédagogiques", url: "/formateur/banque-activites", icon: Database },
   { title: "Importer programme", url: "/formateur/import-programme", icon: Upload },
 ];
 
@@ -69,11 +69,10 @@ const pilotageNav = [
 
 const analysesNav = [
   { title: "Positionnement", url: "/formateur/positionnement", icon: ListChecks },
-  { title: "Tests d'entrée", url: "/formateur/tests", icon: ClipboardList },
-  { title: "Résultats positionnement", url: "/formateur/test-resultats", icon: GraduationCap },
+  { title: "Résultats de positionnement", url: "/formateur/test-resultats", icon: GraduationCap },
   { title: "Bilans d'atelier", url: "/formateur/bilans-atelier", icon: BookMarked },
   { title: "Rapports IA", url: "/formateur/rapports", icon: FileText },
-  { title: "Analytics erreurs", url: "/formateur/analytics-erreurs", icon: BarChart3 },
+  { title: "Analyse des erreurs", url: "/formateur/analytics-erreurs", icon: BarChart3 },
   { title: "Signalements", url: "/formateur/signalements", icon: Flag },
 ];
 
@@ -114,6 +113,7 @@ export function FormateurSidebar({ onNavigate }: FormateurSidebarProps) {
               <span className="text-[#f59e0b]">TCF</span>
             </span>
           )}
+          {!collapsed && <div className="ml-auto"><PedagogicalTerminologyHelp /></div>}
         </div>
       </SidebarHeader>
 

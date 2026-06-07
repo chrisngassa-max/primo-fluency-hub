@@ -23,6 +23,11 @@ export interface ExerciceDraft {
     skill?: string;
     sub_skill?: string;
     time_limit_seconds?: number;
+    aides_disponibles?: string[];
+    nombre_ecoutes_max?: number;
+    transcription_verrouillee?: boolean;
+    objectif_tcf?: string;
+    type_differenciation?: string;
   };
   animation_guide?: any;
   variante_niveau_bas?: any;
@@ -59,10 +64,12 @@ export interface WizardState {
   // Step 1
   themePredefini: string;
   themePersonnalise: string;
-  competence: "CO" | "CE" | "EE" | "EO";
+  competence: "CO" | "CE" | "EE" | "EO" | "Structures";
+  anglePedagogique: "theme" | "CO" | "CE" | "EE" | "EO" | "grammaire" | "vocabulaire";
   count: number;
-  niveau: "A0" | "A1" | "A2";
+  niveau: "A0" | "A1" | "A2" | "B1" | "B2";
   difficulte: number;
+  dureeCible: number;
   // Step 2
   generated: ExerciceDraft[];
   referencesUtilisees: PedagogicalReference[];

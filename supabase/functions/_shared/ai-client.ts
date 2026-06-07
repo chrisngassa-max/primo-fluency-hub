@@ -1,9 +1,5 @@
-/**
- * Shared AI client — uses Lovable AI Gateway only.
- * All edge functions should use `callAI()` instead of direct fetch.
- */
-
 const LOVABLE_GATEWAY = "https://ai.gateway.lovable.dev/v1/chat/completions";
+const GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models";
 
 interface OpenAITool {
   type: "function";
@@ -27,14 +23,12 @@ interface AICallOptions {
 }
 
 /**
- * Call AI via Lovable AI Gateway.
+ * Call AI via Lovable AI Gateway, then fall back to Gemini direct.
  * Returns an OpenAI-compatible response object.
  */
 export async function callAI(options: AICallOptions): Promise<any> {
   const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-  const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
 
-  // --- Primary: Lovable AI Gateway ---
   if (LOVABLE_API_KEY) {
     const response = await fetch(LOVABLE_GATEWAY, {
       method: "POST",
@@ -50,101 +44,128 @@ export async function callAI(options: AICallOptions): Promise<any> {
       }),
     });
 
-    if (response.ok) return await response.json();
-
-    if (response.status === 429) {
-      throw new AIError("Trop de requêtes, réessayez dans quelques instants.", 429);
-    }
-    if (response.status === 402) {
-      throw new AIError("Crédits IA insuffisants. Rechargez vos crédits dans Paramètres > Workspace > Usage.", 402);
+    if (response.ok) {
+      return await response.json();
     }
 
     const errText = await response.text();
-    console.error("Lovable AI gateway error:", response.status, errText);
-
-    if (response.status === 400) {
-      throw new AIError(`Erreur du service IA (400): ${extractAIErrorMessage(errText)}`, 400);
-    }
-
-    // Fallback to direct Gemini if gateway fails (e.g. 404 when key not registered on external project)
-    if (!GEMINI_API_KEY) {
-      throw new AIError(`Erreur du service IA (${response.status})`, response.status);
-    }
-    console.warn("Falling back to direct Gemini API.");
+    console.error("Lovable AI gateway error, falling back to Gemini:", response.status, errText);
+  } else {
+    console.warn("LOVABLE_API_KEY is not configured, using Gemini fallback.");
   }
 
-  // --- Fallback: Direct Gemini API ---
+  return await callGemini(options);
+}
+
+async function callGemini(options: AICallOptions): Promise<any> {
+  const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
   if (!GEMINI_API_KEY) {
-    throw new AIError("Aucune clé IA configurée (LOVABLE_API_KEY ou GEMINI_API_KEY).", 500);
+    throw new AIError("GEMINI_API_KEY non configuree.", 500);
   }
 
-  const geminiModel = (options.model || "google/gemini-2.5-flash").replace(/^google\//, "");
-  const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${GEMINI_API_KEY}`;
+  const systemParts: { text: string }[] = [];
+  const contents: Array<{ role: "user" | "model"; parts: { text: string }[] }> = [];
 
-  const systemText = options.messages.filter((m) => m.role === "system").map((m) => m.content).join("\n\n");
-  const contents = options.messages
-    .filter((m) => m.role !== "system")
-    .map((m) => ({
-      role: m.role === "assistant" ? "model" : "user",
-      parts: [{ text: m.content }],
-    }));
-
-  const geminiBody: any = { contents };
-  if (systemText) geminiBody.systemInstruction = { parts: [{ text: systemText }] };
-
-  if (options.tools && options.tools.length > 0) {
-    geminiBody.tools = [{
-      functionDeclarations: options.tools.map((t) => ({
-        name: t.function.name,
-        description: t.function.description,
-        parameters: t.function.parameters,
-      })),
-    }];
-    if (options.tool_choice) {
-      geminiBody.toolConfig = {
-        functionCallingConfig: {
-          mode: "ANY",
-          allowedFunctionNames: [options.tool_choice.function.name],
-        },
-      };
+  for (const message of options.messages) {
+    if (message.role === "system") {
+      systemParts.push({ text: message.content });
+      continue;
     }
+
+    contents.push({
+      role: message.role === "assistant" ? "model" : "user",
+      parts: [{ text: message.content }],
+    });
   }
 
-  const geminiResp = await fetch(geminiUrl, {
+  const functionDeclarations = options.tools?.map((tool) => ({
+    name: tool.function.name,
+    description: tool.function.description,
+    parameters: tool.function.parameters,
+  }));
+
+  const body = {
+    contents,
+    ...(systemParts.length ? { systemInstruction: { parts: systemParts } } : {}),
+    ...(functionDeclarations?.length ? { tools: [{ functionDeclarations }] } : {}),
+    ...(options.tool_choice
+      ? {
+          toolConfig: {
+            functionCallingConfig: {
+              mode: "ANY",
+              allowedFunctionNames: [options.tool_choice.function.name],
+            },
+          },
+        }
+      : {}),
+  };
+
+  const model = normalizeGeminiModel(options.model || "google/gemini-2.5-flash");
+  const response = await fetch(`${GEMINI_ENDPOINT}/${model}:generateContent?key=${GEMINI_API_KEY}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(geminiBody),
+    body: JSON.stringify(body),
   });
 
-  if (!geminiResp.ok) {
-    const errText = await geminiResp.text();
-    console.error("Gemini direct error:", geminiResp.status, errText);
-    if (geminiResp.status === 429) throw new AIError("Trop de requêtes, réessayez plus tard.", 429);
-    if (geminiResp.status === 400) throw new AIError(`Erreur du service IA (400): ${extractAIErrorMessage(errText)}`, 400);
-    throw new AIError(`Erreur du service IA (${geminiResp.status})`, geminiResp.status);
+  if (!response.ok) {
+    const errText = await response.text();
+    console.error("Gemini API error:", response.status, errText);
+    throw new AIError(`Erreur du service IA (${response.status})`, response.status);
   }
 
-  const geminiData = await geminiResp.json();
-  const candidate = geminiData.candidates?.[0];
-  const parts = candidate?.content?.parts || [];
-  const textPart = parts.find((p: any) => p.text)?.text || "";
-  const funcCall = parts.find((p: any) => p.functionCall)?.functionCall;
+  return geminiToOpenAI(await response.json(), options);
+}
 
-  const message: any = { role: "assistant", content: textPart };
-  if (funcCall) {
-    message.tool_calls = [{
-      id: `call_${Date.now()}`,
-      type: "function",
-      function: {
-        name: funcCall.name,
-        arguments: JSON.stringify(funcCall.args || {}),
-      },
-    }];
-  }
+function normalizeGeminiModel(model: string): string {
+  return model.replace(/^google\//, "");
+}
+
+function geminiToOpenAI(data: any, options: AICallOptions): any {
+  const parts = data.candidates?.[0]?.content?.parts ?? [];
+  const text = parts
+    .filter((part: any) => typeof part.text === "string")
+    .map((part: any) => part.text)
+    .join("\n");
+
+  const functionCall = parts.find((part: any) => part.functionCall)?.functionCall;
+  const toolCalls = functionCall
+    ? [toToolCall(functionCall.name, functionCall.args ?? {})]
+    : maybeToolCallFromJsonText(text, options);
 
   return {
-    choices: [{ message, finish_reason: funcCall ? "tool_calls" : "stop" }],
+    choices: [{
+      message: {
+        role: "assistant",
+        content: text || null,
+        ...(toolCalls?.length ? { tool_calls: toolCalls } : {}),
+      },
+      finish_reason: toolCalls?.length ? "tool_calls" : "stop",
+      index: 0,
+    }],
   };
+}
+
+function toToolCall(name: string, args: unknown) {
+  return {
+    id: `call_${crypto.randomUUID().replaceAll("-", "")}`,
+    type: "function",
+    function: {
+      name,
+      arguments: JSON.stringify(args ?? {}),
+    },
+  };
+}
+
+function maybeToolCallFromJsonText(text: string, options: AICallOptions) {
+  if (!text || !options.tool_choice) return undefined;
+
+  try {
+    const cleaned = text.replace(/^```(?:json)?/i, "").replace(/```$/i, "").trim();
+    const parsed = JSON.parse(cleaned);
+    return [toToolCall(options.tool_choice.function.name, parsed)];
+  } catch {
+    return undefined;
+  }
 }
 
 export class AIError extends Error {
@@ -152,16 +173,5 @@ export class AIError extends Error {
   constructor(message: string, status: number) {
     super(message);
     this.status = status;
-  }
-}
-
-function extractAIErrorMessage(raw: string) {
-  if (!raw) return "requête refusée par le fournisseur IA";
-  try {
-    const parsed = JSON.parse(raw);
-    const message = parsed?.error?.message || parsed?.error || parsed?.message;
-    return String(message || raw).slice(0, 500);
-  } catch {
-    return raw.slice(0, 500);
   }
 }

@@ -13,6 +13,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { useNavigate } from "react-router-dom";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+import { qualitativeProgress } from "@/lib/qualitativeProgress";
 
 // Average duration per exercise type in minutes (TCF IRN standards)
 const EXERCISE_DURATION_MINUTES: Record<string, number> = {
@@ -82,7 +83,7 @@ export function computePacingStatus(
 }
 
 /** Student-facing pacing card */
-export function StudentPacingCard({ eleveId }: { eleveId: string }) {
+export function StudentPacingCard({ eleveId, detailed = false }: { eleveId: string; detailed?: boolean }) {
   const { data, isLoading } = useQuery({
     queryKey: ["student-pacing", eleveId],
     queryFn: async () => {
@@ -159,6 +160,7 @@ export function StudentPacingCard({ eleveId }: { eleveId: string }) {
   if (!data) return null;
 
   const cfg = STATUS_CONFIG[data.status];
+  const mastery = qualitativeProgress(data.mastery);
 
   return (
     <Card className="border-primary/20">
@@ -192,7 +194,9 @@ export function StudentPacingCard({ eleveId }: { eleveId: string }) {
               style={{ left: `${data.expectedPct}%` }}
             >
               <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 whitespace-nowrap">
-                <span className="text-[9px] text-muted-foreground font-medium">Attendu {data.expectedPct}%</span>
+                <span className="text-[9px] text-muted-foreground font-medium">
+                  {detailed ? `Attendu ${data.expectedPct}%` : "Repère prévu"}
+                </span>
               </div>
             </div>
           )}
@@ -209,8 +213,12 @@ export function StudentPacingCard({ eleveId }: { eleveId: string }) {
             <p className="text-[11px] text-muted-foreground">Devoirs</p>
           </div>
           <div className="p-2 rounded-lg bg-muted/50">
-            <p className="text-lg font-bold">{data.mastery}%</p>
-            <p className="text-[11px] text-muted-foreground">Maîtrise</p>
+            {detailed ? (
+              <p className="text-lg font-bold">{data.mastery}%</p>
+            ) : (
+              <Badge className={`text-[10px] ${mastery.className}`}>{mastery.shortLabel}</Badge>
+            )}
+            <p className="text-[11px] text-muted-foreground">Acquisition</p>
           </div>
         </div>
       </CardContent>
