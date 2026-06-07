@@ -23,6 +23,11 @@ export interface ExerciceDraft {
     skill?: string;
     sub_skill?: string;
     time_limit_seconds?: number;
+    aides_disponibles?: string[];
+    nombre_ecoutes_max?: number;
+    transcription_verrouillee?: boolean;
+    objectif_tcf?: string;
+    type_differenciation?: string;
   };
   animation_guide?: any;
   variante_niveau_bas?: any;

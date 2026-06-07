@@ -232,7 +232,7 @@ const DevoirPassation = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("devoirs")
-        .select("*, exercice:exercices(id, titre, consigne, competence, format, contenu, niveau_vise, variante_niveau_bas, variante_niveau_haut)")
+        .select("*, exercice:exercices(id, titre, consigne, competence, format, contenu, niveau_vise, variante_niveau_bas, variante_niveau_haut, metadata_code, metadata_skill, sous_competence, duree_limite_secondes, aides_disponibles, nombre_ecoutes_max, transcription_verrouillee, objectif_tcf, type_differenciation)")
         .eq("id", devoirId!)
         .eq("eleve_id", user!.id)
         .single();
@@ -283,7 +283,7 @@ const DevoirPassation = () => {
   const items: any[] = rawItems.map((it, idx) => itemOverrides[idx] ? { ...it, ...itemOverrides[idx] } : it);
   const isDone = devoir?.statut === "fait" || devoir?.statut === "arrete";
   const metadata = contenu?.metadata;
-  const timeLimit = metadata?.time_limit_seconds || contenu?.time_limit_seconds || 0;
+  const timeLimit = ex?.duree_limite_secondes || metadata?.time_limit_seconds || contenu?.time_limit_seconds || 0;
 
   const isCompetenceCO = ex?.competence === "CO";
   const isCompetenceEO = ex?.competence === "EO" || contenu?.type_reponse === "oral" || ex?.format === "production_orale";
@@ -712,8 +712,8 @@ const DevoirPassation = () => {
           <h1 className="text-xl font-bold">{ex?.titre}</h1>
           <div className="flex items-center gap-2">
             <p className="text-sm text-muted-foreground">{ex?.competence} · {ex?.format?.replace(/_/g, " ")}</p>
-            {metadata?.code && (
-              <Badge variant="outline" className="text-xs">{metadata.code}</Badge>
+            {(ex?.metadata_code || metadata?.code) && (
+              <Badge variant="outline" className="text-xs">{ex?.metadata_code || metadata.code}</Badge>
             )}
           </div>
         </div>

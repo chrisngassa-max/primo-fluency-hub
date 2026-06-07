@@ -206,7 +206,17 @@ async function generateAndAttach(
     formateur_id: session.group.formateur_id,
     point_a_maitriser_id: point.id,
     competence: ex.competence,
-    sous_competence: ex.sous_competence ?? null,
+    metadata_code: ex.metadata?.code ?? null,
+    metadata_skill: ex.metadata?.skill ?? null,
+    sous_competence: ex.sous_competence ?? ex.metadata?.sub_skill ?? null,
+    duree_limite_secondes: ex.metadata?.time_limit_seconds ?? ex.contenu?.time_limit_seconds ?? null,
+    aides_disponibles: ex.metadata?.aides_disponibles ?? ex.contenu?.aides_disponibles ?? [],
+    nombre_ecoutes_max: ex.metadata?.nombre_ecoutes_max ?? ex.contenu?.nombre_ecoutes_max ?? null,
+    transcription_verrouillee:
+      ex.metadata?.transcription_verrouillee ?? ex.contenu?.transcription_verrouillee ?? false,
+    objectif_tcf: ex.metadata?.objectif_tcf ?? ex.contenu?.objectif_tcf ?? null,
+    type_differenciation:
+      ex.metadata?.type_differenciation ?? (options.block === "retrospective" ? "consolidation" : "demarrage"),
     niveau_vise: ex.niveau_vise ?? session.niveau_cible,
     format: ex.format ?? "qcm",
     difficulte: ex.difficulte ?? session.difficulte_par_defaut,

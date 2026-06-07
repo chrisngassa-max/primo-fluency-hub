@@ -672,8 +672,31 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
                           skill: { type: "string", description: "Compétence (Compréhension Orale, Expression Écrite, etc.)" },
                           sub_skill: { type: "string", description: "Sous-compétence (Identifier situation, Se présenter, etc.)" },
                           time_limit_seconds: { type: "number", description: "Durée maximale en secondes" },
+                          aides_disponibles: {
+                            type: "array",
+                            items: { type: "string" },
+                            description: "Aides autorisées : lexique, indice, exemple ou transcription",
+                          },
+                          nombre_ecoutes_max: {
+                            type: "number",
+                            minimum: 1,
+                            maximum: 10,
+                            description: "Nombre maximal d'écoutes pour un exercice audio",
+                          },
+                          transcription_verrouillee: { type: "boolean" },
+                          objectif_tcf: {
+                            type: "string",
+                            description: "Objectif pédagogique précis, par exemple comprendre_info_explicite",
+                          },
+                          type_differenciation: {
+                            type: "string",
+                            enum: ["demarrage", "remediation", "consolidation", "approfondissement", "bonus"],
+                          },
                         },
-                        required: ["code", "skill", "sub_skill", "time_limit_seconds"],
+                        required: [
+                          "code", "skill", "sub_skill", "time_limit_seconds", "aides_disponibles",
+                          "transcription_verrouillee", "objectif_tcf", "type_differenciation"
+                        ],
                       },
                       contenu: {
                         type: "object",

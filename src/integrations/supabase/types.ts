@@ -844,6 +844,7 @@ export type Database = {
       exercices: {
         Row: {
           animation_guide: Json | null
+          aides_disponibles: string[]
           collectif: boolean
           competence: Database["public"]["Enums"]["competence_type"]
           consigne: string
@@ -851,6 +852,7 @@ export type Database = {
           contexte_irn: string | null
           created_at: string
           difficulte: number
+          duree_limite_secondes: number | null
           eleve_id: string | null
           format: Database["public"]["Enums"]["exercice_format"]
           formateur_id: string
@@ -859,8 +861,12 @@ export type Database = {
           is_devoir: boolean
           is_live_ready: boolean | null
           is_template: boolean
+          metadata_code: string | null
+          metadata_skill: string | null
           mode: Database["public"]["Enums"]["exercice_mode"]
           niveau_vise: string
+          nombre_ecoutes_max: number | null
+          objectif_tcf: string | null
           play_token: string | null
           point_a_maitriser_id: string
           sequence_id: string | null
@@ -868,12 +874,15 @@ export type Database = {
           sous_competence: string | null
           statut: string | null
           titre: string
+          transcription_verrouillee: boolean
+          type_differenciation: string | null
           updated_at: string
           variante_niveau_bas: Json | null
           variante_niveau_haut: Json | null
         }
         Insert: {
           animation_guide?: Json | null
+          aides_disponibles?: string[]
           collectif?: boolean
           competence: Database["public"]["Enums"]["competence_type"]
           consigne: string
@@ -881,6 +890,7 @@ export type Database = {
           contexte_irn?: string | null
           created_at?: string
           difficulte?: number
+          duree_limite_secondes?: number | null
           eleve_id?: string | null
           format?: Database["public"]["Enums"]["exercice_format"]
           formateur_id: string
@@ -889,8 +899,12 @@ export type Database = {
           is_devoir?: boolean
           is_live_ready?: boolean | null
           is_template?: boolean
+          metadata_code?: string | null
+          metadata_skill?: string | null
           mode?: Database["public"]["Enums"]["exercice_mode"]
           niveau_vise: string
+          nombre_ecoutes_max?: number | null
+          objectif_tcf?: string | null
           play_token?: string | null
           point_a_maitriser_id: string
           sequence_id?: string | null
@@ -898,12 +912,15 @@ export type Database = {
           sous_competence?: string | null
           statut?: string | null
           titre: string
+          transcription_verrouillee?: boolean
+          type_differenciation?: string | null
           updated_at?: string
           variante_niveau_bas?: Json | null
           variante_niveau_haut?: Json | null
         }
         Update: {
           animation_guide?: Json | null
+          aides_disponibles?: string[]
           collectif?: boolean
           competence?: Database["public"]["Enums"]["competence_type"]
           consigne?: string
@@ -911,6 +928,7 @@ export type Database = {
           contexte_irn?: string | null
           created_at?: string
           difficulte?: number
+          duree_limite_secondes?: number | null
           eleve_id?: string | null
           format?: Database["public"]["Enums"]["exercice_format"]
           formateur_id?: string
@@ -919,8 +937,12 @@ export type Database = {
           is_devoir?: boolean
           is_live_ready?: boolean | null
           is_template?: boolean
+          metadata_code?: string | null
+          metadata_skill?: string | null
           mode?: Database["public"]["Enums"]["exercice_mode"]
           niveau_vise?: string
+          nombre_ecoutes_max?: number | null
+          objectif_tcf?: string | null
           play_token?: string | null
           point_a_maitriser_id?: string
           sequence_id?: string | null
@@ -928,6 +950,8 @@ export type Database = {
           sous_competence?: string | null
           statut?: string | null
           titre?: string
+          transcription_verrouillee?: boolean
+          type_differenciation?: string | null
           updated_at?: string
           variante_niveau_bas?: Json | null
           variante_niveau_haut?: Json | null

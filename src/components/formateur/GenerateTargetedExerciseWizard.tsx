@@ -25,6 +25,7 @@ import Step2_PreviewEdition from "./wizard/Step2_PreviewEdition";
 import Step3_Assignation from "./wizard/Step3_Assignation";
 import { buildGenerationBatchSizes, clampExerciseCount } from "./wizard/generation-settings";
 import type { WizardState, ExerciceDraft } from "./types";
+import { structuredExerciseMetadata } from "@/lib/exerciseMetadata";
 
 interface Props {
   open: boolean;
@@ -266,6 +267,7 @@ const GenerateTargetedExerciseWizard = ({
             point_a_maitriser_id: pointId,
             is_ai_generated: true,
             statut: "validated",
+            ...structuredExerciseMetadata(ex),
           }))
         )
         .select();

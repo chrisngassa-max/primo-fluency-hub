@@ -65,6 +65,7 @@ import GenerateTargetedExerciseWizard from "@/components/formateur/GenerateTarge
 import ExerciseRecommendationsPanel from "@/components/formateur/ExerciseRecommendationsPanel";
 import { routeExercises, type ExerciseRecommendation } from "@/services/ExerciseRouter";
 import { COMPETENCE_COLORS, resolveSessionCompetences, sortCompetences } from "@/lib/competences";
+import { structuredExerciseMetadata } from "@/lib/exerciseMetadata";
 import GenerateHomeworkSeriesDialog from "@/components/GenerateHomeworkSeriesDialog";
 import ImportFromUrlDialog from "@/components/ImportFromUrlDialog";
 import { ExternalResourcePicker } from "@/components/ExternalResourcePicker";
@@ -767,6 +768,7 @@ const SessionPilot = () => {
           is_ai_generated: true,
           is_template: false,
           is_devoir: false,
+          ...structuredExerciseMetadata(ex),
         }));
 
         const { data: inserted, error: insertErr } = await supabase
