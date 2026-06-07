@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle2, Hourglass, MessageSquare, Play, Zap } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Gift, Hourglass, MessageSquare, Play, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { EleveStateLive, EleveStatutLive } from "@/hooks/useLiveSession";
 
@@ -54,9 +54,10 @@ export interface TuileEleveLiveProps {
   priorite: number;
   onIntervenir?: () => void;
   onFocus?: () => void;
+  onBonus?: () => void;
 }
 
-export function TuileEleveLive({ prenom, nom, state, priorite, onIntervenir, onFocus }: TuileEleveLiveProps) {
+export function TuileEleveLive({ prenom, nom, state, priorite, onIntervenir, onFocus, onBonus }: TuileEleveLiveProps) {
   const niveau = priorite > 10 ? "alert" : priorite >= 4 ? "suggest" : "ok";
 
   const borderClass =
@@ -145,18 +146,32 @@ export function TuileEleveLive({ prenom, nom, state, priorite, onIntervenir, onF
         </p>
       )}
 
-      {/* Bouton intervention */}
-      {onIntervenir && (
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute bottom-1.5 right-1.5 h-6 w-6 text-muted-foreground hover:text-primary"
-          onClick={(e) => { e.stopPropagation(); onIntervenir(); }}
-          title="Envoyer une aide"
-        >
-          <MessageSquare className="h-3.5 w-3.5" />
-        </Button>
-      )}
+      <div className="absolute bottom-1.5 right-1.5 flex items-center gap-0.5">
+        {state?.statut === "finished" && onBonus && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 text-emerald-600 hover:text-emerald-700"
+            onClick={(event) => { event.stopPropagation(); onBonus(); }}
+            title="Envoyer une activite bonus"
+            aria-label="Envoyer une activite bonus"
+          >
+            <Gift className="h-3.5 w-3.5" />
+          </Button>
+        )}
+        {onIntervenir && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 text-muted-foreground hover:text-primary"
+            onClick={(event) => { event.stopPropagation(); onIntervenir(); }}
+            title="Envoyer une aide"
+            aria-label="Envoyer une aide"
+          >
+            <MessageSquare className="h-3.5 w-3.5" />
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

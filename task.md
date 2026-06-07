@@ -36,3 +36,18 @@
 - [x] Permettre l'edition par l'eleve et son formateur via une RPC limitee.
 - [x] Interdire la modification indirecte des scores et niveaux par l'eleve.
 - [x] Utiliser le profil pour choisir formats, aides, consignes et contextes.
+
+# Lot 4 - Routage pedagogique explicable
+
+- [x] Centraliser les recommandations dans ExerciseRouter.
+- [x] Expliquer chaque proposition au formateur.
+- [x] Permettre de modifier, accepter ou refuser.
+- [x] Pre-remplir le generateur cible depuis la recommandation.
+
+# Lot 5 - Devoirs individualises et actions rapides
+
+- [x] Supprimer le compte a rebours d'envoi implicite.
+- [x] Ajouter les modes recommandation, validation et automatique autorise.
+- [x] Memoriser le mode d'envoi au niveau du groupe.
+- [x] Choisir les destinataires, l'echeance et le volume.
+- [x] Ajouter un raccourci bonus pour les eleves ayant termine.

@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
 } from "@/components/ui/dialog";
@@ -14,7 +16,7 @@ import {
 } from "@/components/ui/tooltip";
 import { toast } from "sonner";
 import {
-  BookOpen, Send, Loader2, CheckCircle2, AlertTriangle, Sparkles, Clock, UserX, History,
+  BookOpen, Send, Loader2, CheckCircle2, AlertTriangle, Sparkles, Clock, UserX, History, CalendarDays,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import AutoHomeworkPreviewDialog from "@/components/AutoHomeworkPreviewDialog";
@@ -45,6 +47,10 @@ export default function EndOfSessionSection({
   const [selectedDuration, setSelectedDuration] = useState<number>(30);
   const [autoGenOpen, setAutoGenOpen] = useState(false);
   const [absentMakeupOpen, setAbsentMakeupOpen] = useState(false);
+  const [selectedMemberIds, setSelectedMemberIds] = useState<Set<string>>(new Set());
+  const [manualDeadline, setManualDeadline] = useState(() =>
+    new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10)
+  );
 
   // Absent makeup history
   const { data: makeupHistory } = useQuery({
@@ -116,7 +122,7 @@ export default function EndOfSessionSection({
     queryFn: async () => {
       const { data, error } = await supabase
         .from("group_members")
-        .select("eleve_id")
+        .select("eleve_id, eleve:profiles(id, prenom, nom)")
         .eq("group_id", groupId);
       if (error) throw error;
       return data ?? [];
@@ -140,6 +146,7 @@ export default function EndOfSessionSection({
       checkedExerciseIds.forEach((id) => { preSelected[id] = true; });
       setSelectedExIds(preSelected);
     }
+    setSelectedMemberIds(new Set((members ?? []).map((member: any) => member.eleve_id)));
     setSelectOpen(true);
   };
 
@@ -148,10 +155,15 @@ export default function EndOfSessionSection({
     if (exIds.length === 0) { toast.warning("Sélectionnez au moins un exercice."); return; }
     if (!members || members.length === 0) { toast.warning("Aucun élève dans le groupe."); return; }
 
+    if (selectedMemberIds.size === 0) {
+      toast.warning("Selectionnez au moins un eleve.");
+      return;
+    }
+
     setSending(true);
     try {
       const devoirs = exIds.flatMap((exId) =>
-        members.map((m: any) => ({
+        members.filter((m: any) => selectedMemberIds.has(m.eleve_id)).map((m: any) => ({
           eleve_id: m.eleve_id,
           exercice_id: exId,
           formateur_id: userId,
@@ -159,6 +171,8 @@ export default function EndOfSessionSection({
           statut: "en_attente" as const,
           session_id: sessionId,
           contexte: "devoir",
+          date_echeance: new Date(`${manualDeadline}T23:59:00`).toISOString(),
+          source_label: "session_manual_validated",
         }))
       );
 
@@ -196,22 +210,9 @@ export default function EndOfSessionSection({
   };
 
   const handleAutoHomeworkSent = async () => {
-    // After auto homework is sent, close the session
-    setClosing(true);
-    try {
-      const { error } = await supabase
-        .from("sessions")
-        .update({ statut: "terminee" as any, updated_at: new Date().toISOString() })
-        .eq("id", sessionId);
-      if (error) throw error;
-
-      toast.success("Séance clôturée !");
-      onCloseSession?.();
-    } catch (e: any) {
-      toast.error("Erreur", { description: e.message });
-    } finally {
-      setClosing(false);
-    }
+    qc.invalidateQueries({ queryKey: ["session-homework-sent", sessionId] });
+    qc.invalidateQueries({ queryKey: ["devoirs-formateur-all"] });
+    onHomeworkSent?.();
   };
 
   // Only show when session is active (en_cours or planifiee)
@@ -361,6 +362,59 @@ export default function EndOfSessionSection({
           </DialogHeader>
 
           <div className="flex-1 overflow-y-auto space-y-2 py-2 min-h-0">
+            <div className="grid gap-4 border-b pb-4 md:grid-cols-[1fr_220px]">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between gap-3">
+                  <Label>Destinataires</Label>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelectedMemberIds(
+                      selectedMemberIds.size === (members ?? []).length
+                        ? new Set()
+                        : new Set((members ?? []).map((member: any) => member.eleve_id))
+                    )}
+                  >
+                    {selectedMemberIds.size === (members ?? []).length ? "Tout deselectionner" : "Tout selectionner"}
+                  </Button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {(members ?? []).map((member: any) => {
+                    const name = [member.eleve?.prenom, member.eleve?.nom].filter(Boolean).join(" ") || "Eleve";
+                    return (
+                      <label key={member.eleve_id} className="flex items-center gap-2 border px-2.5 py-2 text-sm">
+                        <Checkbox
+                          checked={selectedMemberIds.has(member.eleve_id)}
+                          onCheckedChange={(checked) => {
+                            setSelectedMemberIds((current) => {
+                              const next = new Set(current);
+                              if (checked) next.add(member.eleve_id);
+                              else next.delete(member.eleve_id);
+                              return next;
+                            });
+                          }}
+                        />
+                        {name}
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="manual-homework-deadline" className="flex items-center gap-1.5">
+                  <CalendarDays className="h-4 w-4" />
+                  Date limite
+                </Label>
+                <Input
+                  id="manual-homework-deadline"
+                  type="date"
+                  min={new Date().toISOString().slice(0, 10)}
+                  value={manualDeadline}
+                  onChange={(event) => setManualDeadline(event.target.value)}
+                />
+              </div>
+            </div>
             {loadingBank ? (
               <div className="space-y-2">
                 {[1, 2, 3].map((i) => <Skeleton key={i} className="h-14 w-full" />)}
@@ -400,10 +454,10 @@ export default function EndOfSessionSection({
           <DialogFooter className="gap-2 sm:gap-0 border-t pt-3">
             <p className="text-xs text-muted-foreground flex-1">
               {selectedCount} exercice(s) sélectionné(s)
-              {members ? ` · ${members.length} élève(s) dans le groupe` : ""}
+              {members ? ` · ${selectedMemberIds.size}/${members.length} élève(s)` : ""}
             </p>
             <Button variant="outline" onClick={() => setSelectOpen(false)}>Annuler</Button>
-            <Button onClick={handleSendHomework} disabled={sending || selectedCount === 0} className="gap-2">
+            <Button onClick={handleSendHomework} disabled={sending || selectedCount === 0 || selectedMemberIds.size === 0} className="gap-2">
               {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
               Envoyer {selectedCount > 0 ? `(${selectedCount})` : ""}
             </Button>

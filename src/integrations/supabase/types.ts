@@ -1497,6 +1497,7 @@ export type Database = {
           created_at: string
           description: string | null
           formateur_id: string
+          homework_delivery_mode: string
           id: string
           is_active: boolean
           niveau: string
@@ -1508,6 +1509,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           formateur_id: string
+          homework_delivery_mode?: string
           id?: string
           is_active?: boolean
           niveau: string
@@ -1519,6 +1521,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           formateur_id?: string
+          homework_delivery_mode?: string
           id?: string
           is_active?: boolean
           niveau?: string

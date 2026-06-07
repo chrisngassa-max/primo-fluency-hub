@@ -146,6 +146,13 @@ const SuiviDirectClasse = () => {
   const [focusEleve, setFocusEleve] = useState<Member | null>(null);
   const [wizardOpen, setWizardOpen] = useState(false);
   const [wizardTargetEleveId, setWizardTargetEleveId] = useState<string>();
+  const [wizardInitialRecommendation, setWizardInitialRecommendation] = useState<{
+    theme?: string;
+    competence?: "CO" | "CE" | "EE" | "EO" | "Structures";
+    niveau?: "A0" | "A1" | "A2" | "B1" | "B2";
+    difficulte?: number;
+    count?: number;
+  } | null>(null);
 
   // Sprint 8 — fin d'atelier
   const [finAtelierOpen, setFinAtelierOpen] = useState(false);
@@ -747,6 +754,21 @@ const SuiviDirectClasse = () => {
                                 priorite={prioriteMap.get(m.eleve_id) ?? 0}
                                 onIntervenir={() => setInterventionTarget(m)}
                                 onFocus={() => setFocusEleve(m)}
+                                onBonus={() => {
+                                  const state = eleveStateMap.get(m.eleve_id);
+                                  const level = niveauxMap.get(m.eleve_id)?.niveau_ce ?? selectedSession.niveau_cible;
+                                  setWizardTargetEleveId(m.eleve_id);
+                                  setWizardInitialRecommendation({
+                                    theme: selectedSession.titre,
+                                    competence: "CE",
+                                    niveau: (["A0", "A1", "A2", "B1", "B2"].includes(level ?? "")
+                                      ? level
+                                      : "A1") as "A0" | "A1" | "A2" | "B1" | "B2",
+                                    difficulte: (state?.score_dernier_exercice ?? 0) >= 80 ? 7 : 5,
+                                    count: 1,
+                                  });
+                                  setWizardOpen(true);
+                                }}
                               />
                             </div>
                           );
@@ -867,6 +889,7 @@ const SuiviDirectClasse = () => {
           }}
           onEnvoyerExercice={() => {
             setWizardTargetEleveId(focusEleve.eleve_id);
+            setWizardInitialRecommendation(null);
             setWizardOpen(true);
             setFocusEleve(null);
           }}
@@ -875,10 +898,14 @@ const SuiviDirectClasse = () => {
 
       <GenerateTargetedExerciseWizard
         open={wizardOpen}
-        onOpenChange={setWizardOpen}
+        onOpenChange={(open) => {
+          setWizardOpen(open);
+          if (!open) setWizardInitialRecommendation(null);
+        }}
         sessionId={selectedSessionId}
         eleveId={wizardTargetEleveId}
         mode="session_live"
+        initialRecommendation={wizardInitialRecommendation}
       />
 
       {/* Dialog envoi intervention — Sprint 6 */}

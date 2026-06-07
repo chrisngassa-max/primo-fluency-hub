@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -6,14 +6,17 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Accordion, AccordionContent, AccordionItem, AccordionTrigger,
 } from "@/components/ui/accordion";
 import { toast } from "sonner";
 import {
-  Send, Loader2, Trash2, Clock, Users, AlertTriangle, BookOpen, Sparkles, Timer,
+  Send, Loader2, Trash2, Clock, Users, AlertTriangle, BookOpen, Sparkles, CalendarDays,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { COMPETENCE_COLORS } from "@/lib/competences";
@@ -60,6 +63,8 @@ const FORMAT_TIME: Record<string, number> = {
   production_orale: 8,
 };
 
+type HomeworkDeliveryMode = "recommendation" | "validation" | "automatic";
+
 export default function AutoHomeworkPreviewDialog({
   open, onOpenChange, sessionId, groupId, userId, durationMinutes, onSent,
 }: AutoHomeworkPreviewDialogProps) {
@@ -67,48 +72,43 @@ export default function AutoHomeworkPreviewDialog({
   const [loading, setLoading] = useState(false);
   const [sending, setSending] = useState(false);
   const [studentHomework, setStudentHomework] = useState<StudentHomework[]>([]);
-  const [countdown, setCountdown] = useState(60);
-  const [countdownActive, setCountdownActive] = useState(false);
-  const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [deliveryMode, setDeliveryMode] = useState<HomeworkDeliveryMode>("validation");
+  const [selectedStudentIds, setSelectedStudentIds] = useState<Set<string>>(new Set());
+  const [volumePerStudent, setVolumePerStudent] = useState(() => Math.max(1, Math.round(durationMinutes / 4)));
+  const [deadline, setDeadline] = useState(() => {
+    const value = new Date(Date.now() + 7 * 86400000);
+    return value.toISOString().slice(0, 10);
+  });
   const generatedRef = useRef(false);
+  const automaticSendRef = useRef(false);
+  const storedAutomaticModeRef = useRef(false);
 
   // Generate homework when dialog opens
   useEffect(() => {
     if (open && !generatedRef.current) {
       generatedRef.current = true;
-      generateHomework();
+      void generateHomework();
+      void supabase
+        .from("groups")
+        .select("homework_delivery_mode")
+        .eq("id", groupId)
+        .single()
+        .then(({ data }) => {
+          const mode = data?.homework_delivery_mode;
+          if (mode === "recommendation" || mode === "validation" || mode === "automatic") {
+            storedAutomaticModeRef.current = mode === "automatic";
+            setDeliveryMode(mode);
+          }
+        });
     }
     if (!open) {
       generatedRef.current = false;
+      automaticSendRef.current = false;
+      storedAutomaticModeRef.current = false;
       setStudentHomework([]);
-      setCountdown(60);
-      setCountdownActive(false);
-      if (countdownRef.current) clearInterval(countdownRef.current);
+      setSelectedStudentIds(new Set());
     }
   }, [open]);
-
-  // Countdown timer
-  useEffect(() => {
-    if (countdownActive && countdown > 0) {
-      countdownRef.current = setInterval(() => {
-        setCountdown((prev) => {
-          if (prev <= 1) {
-            clearInterval(countdownRef.current!);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      return () => { if (countdownRef.current) clearInterval(countdownRef.current); };
-    }
-  }, [countdownActive]);
-
-  // Auto-send when countdown reaches 0
-  useEffect(() => {
-    if (countdownActive && countdown === 0 && studentHomework.length > 0 && !sending) {
-      handleSendAll();
-    }
-  }, [countdown, countdownActive, studentHomework.length, sending]);
 
   const generateHomework = async () => {
     setLoading(true);
@@ -149,8 +149,6 @@ export default function AutoHomeworkPreviewDialog({
 
       const defaultPointId = defaultPoint?.id || null;
 
-      const halfTime = durationMinutes / 2;
-
       // For each student, analyze and generate
       const allHomework: StudentHomework[] = [];
 
@@ -187,13 +185,12 @@ export default function AutoHomeworkPreviewDialog({
         const remediationComps = weakComps.length > 0 ? weakComps : (allComps.length > 0 ? [allComps[0]] : ["CE"]);
         const consolidationComps = strongComps.length > 0 ? strongComps : (allComps.length > 0 ? [allComps[allComps.length - 1]] : ["CO"]);
 
-        // Determine exercise counts based on time budget
-        const avgTimePerEx = 4; // minutes
-        const exPerSerie = Math.max(1, Math.floor(halfTime / avgTimePerEx));
+        const remediationCount = Math.max(1, Math.ceil(volumePerStudent / 2));
+        const consolidationCount = Math.max(0, volumePerStudent - remediationCount);
 
         // Generate Serie 1 (Remediation)
         const serie1: GeneratedExercise[] = [];
-        for (let i = 0; i < Math.min(exPerSerie, remediationComps.length * 2); i++) {
+        for (let i = 0; i < remediationCount; i++) {
           const comp = remediationComps[i % remediationComps.length];
           const refEx = (sessionExercises ?? []).find((se: any) => (se.exercices as any)?.competence === comp);
           const refData = refEx?.exercices as any;
@@ -213,7 +210,7 @@ export default function AutoHomeworkPreviewDialog({
 
         // Generate Serie 2 (Consolidation)
         const serie2: GeneratedExercise[] = [];
-        for (let i = 0; i < Math.min(exPerSerie, consolidationComps.length * 2); i++) {
+        for (let i = 0; i < consolidationCount; i++) {
           const comp = consolidationComps[i % consolidationComps.length];
           const refEx = (sessionExercises ?? []).find((se: any) => (se.exercices as any)?.competence === comp);
           const refData = refEx?.exercices as any;
@@ -245,7 +242,7 @@ export default function AutoHomeworkPreviewDialog({
       }
 
       setStudentHomework(allHomework);
-      setCountdownActive(true);
+      setSelectedStudentIds(new Set(allHomework.map((student) => student.eleveId)));
     } catch (e: any) {
       toast.error("Erreur de génération", { description: e.message });
     } finally {
@@ -253,13 +250,7 @@ export default function AutoHomeworkPreviewDialog({
     }
   };
 
-  const pauseCountdown = useCallback(() => {
-    setCountdownActive(false);
-    if (countdownRef.current) clearInterval(countdownRef.current);
-  }, []);
-
   const removeExercise = (eleveIdx: number, serie: 1 | 2, exIdx: number) => {
-    pauseCountdown();
     setStudentHomework((prev) => {
       const copy = [...prev];
       const student = { ...copy[eleveIdx] };
@@ -278,15 +269,37 @@ export default function AutoHomeworkPreviewDialog({
 
   const handleSendAll = async () => {
     if (sending) return;
+    if (deliveryMode === "recommendation") {
+      setSending(true);
+      const { error } = await supabase
+        .from("groups")
+        .update({ homework_delivery_mode: deliveryMode })
+        .eq("id", groupId);
+      setSending(false);
+      if (error) {
+        toast.error("Mode non enregistre", { description: error.message });
+        return;
+      }
+      toast.info("Aucun devoir envoye. Le mode recommandation est memorise pour ce groupe.");
+      onOpenChange(false);
+      return;
+    }
     setSending(true);
-    pauseCountdown();
 
     try {
+      const { error: modeError } = await supabase
+        .from("groups")
+        .update({ homework_delivery_mode: deliveryMode })
+        .eq("id", groupId);
+      if (modeError) throw modeError;
+
       // First, create the exercises in the DB, then create devoirs referencing them
       const allDevoirs: any[] = [];
+      const dueIso = new Date(`${deadline}T23:59:00`).toISOString();
 
       for (const student of studentHomework) {
-        const allExercises = [...student.serie1, ...student.serie2];
+        if (!selectedStudentIds.has(student.eleveId)) continue;
+        const allExercises = [...student.serie1, ...student.serie2].slice(0, volumePerStudent);
         if (allExercises.length === 0) continue;
 
         for (const ex of allExercises) {
@@ -321,6 +334,10 @@ export default function AutoHomeworkPreviewDialog({
             serie: ex.serie,
             raison: ex.serie === 1 ? ("remediation" as const) : ("consolidation" as const),
             statut: "en_attente" as const,
+            date_echeance: dueIso,
+            source_label: deliveryMode === "automatic"
+              ? "session_personalized_automatic"
+              : "session_personalized_validated",
           });
         }
       }
@@ -332,7 +349,7 @@ export default function AutoHomeworkPreviewDialog({
 
       const totalEx = allDevoirs.length;
       const totalEleves = studentHomework.filter(
-        (s) => s.serie1.length + s.serie2.length > 0
+        (student) => selectedStudentIds.has(student.eleveId) && student.serie1.length + student.serie2.length > 0
       ).length;
 
       toast.success(
@@ -351,11 +368,28 @@ export default function AutoHomeworkPreviewDialog({
   };
 
   const totalExercises = studentHomework.reduce(
-    (sum, s) => sum + s.serie1.length + s.serie2.length, 0
+    (sum, student) => selectedStudentIds.has(student.eleveId)
+      ? sum + Math.min(volumePerStudent, student.serie1.length + student.serie2.length)
+      : sum,
+    0,
   );
 
+  useEffect(() => {
+    if (
+      open &&
+      deliveryMode === "automatic" &&
+      storedAutomaticModeRef.current &&
+      studentHomework.length > 0 &&
+      selectedStudentIds.size > 0 &&
+      !automaticSendRef.current
+    ) {
+      automaticSendRef.current = true;
+      void handleSendAll();
+    }
+  }, [deliveryMode, open, selectedStudentIds.size, studentHomework.length]);
+
   return (
-    <Dialog open={open} onOpenChange={(v) => { if (!v) pauseCountdown(); onOpenChange(v); }}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-3xl max-h-[85vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -367,21 +401,56 @@ export default function AutoHomeworkPreviewDialog({
           </DialogDescription>
         </DialogHeader>
 
-        {/* Countdown banner */}
-        {countdownActive && !loading && !sending && studentHomework.length > 0 && (
-          <div className="flex items-center gap-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800">
-            <Timer className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0" />
-            <div className="flex-1">
-              <p className="text-sm font-medium text-amber-700 dark:text-amber-300">
-                Envoi automatique dans {countdown}s
-              </p>
-              <Progress value={((60 - countdown) / 60) * 100} className="h-1.5 mt-1" />
-            </div>
-            <Button variant="outline" size="sm" onClick={pauseCountdown}>
-              Modifier
+        <div className="grid gap-4 border-y py-4 md:grid-cols-[1.4fr_0.8fr_0.8fr]">
+          <div className="space-y-2">
+            <Label>Mode d'envoi</Label>
+            <RadioGroup
+              value={deliveryMode}
+              onValueChange={(value) => setDeliveryMode(value as HomeworkDeliveryMode)}
+              className="grid gap-2"
+            >
+              <label className="flex items-start gap-2 text-sm">
+                <RadioGroupItem value="recommendation" className="mt-0.5" />
+                <span><strong>Recommandation seule</strong><br /><span className="text-xs text-muted-foreground">Aucun devoir n'est envoye.</span></span>
+              </label>
+              <label className="flex items-start gap-2 text-sm">
+                <RadioGroupItem value="validation" className="mt-0.5" />
+                <span><strong>Validation groupee</strong><br /><span className="text-xs text-muted-foreground">Envoi apres votre validation.</span></span>
+              </label>
+              <label className="flex items-start gap-2 text-sm">
+                <RadioGroupItem value="automatic" className="mt-0.5" />
+                <span><strong>Automatique autorise</strong><br /><span className="text-xs text-muted-foreground">Ce choix est memorise pour le groupe.</span></span>
+              </label>
+            </RadioGroup>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="homework-volume">Volume par eleve</Label>
+            <Input
+              id="homework-volume"
+              type="number"
+              min={1}
+              max={30}
+              value={volumePerStudent}
+              onChange={(event) => setVolumePerStudent(Math.min(30, Math.max(1, Number(event.target.value) || 1)))}
+            />
+            <Button variant="outline" size="sm" className="w-full" onClick={() => void generateHomework()} disabled={loading}>
+              Regenerer
             </Button>
           </div>
-        )}
+          <div className="space-y-2">
+            <Label htmlFor="homework-deadline" className="flex items-center gap-1.5">
+              <CalendarDays className="h-4 w-4" />
+              Date limite
+            </Label>
+            <Input
+              id="homework-deadline"
+              type="date"
+              value={deadline}
+              min={new Date().toISOString().slice(0, 10)}
+              onChange={(event) => setDeadline(event.target.value)}
+            />
+          </div>
+        </div>
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto space-y-2 py-2 min-h-0">
@@ -406,6 +475,19 @@ export default function AutoHomeworkPreviewDialog({
                 <AccordionItem key={student.eleveId} value={`student-${sIdx}`}>
                   <AccordionTrigger className="hover:no-underline">
                     <div className="flex items-center gap-3 w-full pr-2">
+                      <Checkbox
+                        checked={selectedStudentIds.has(student.eleveId)}
+                        onClick={(event) => event.stopPropagation()}
+                        onCheckedChange={(checked) => {
+                          setSelectedStudentIds((current) => {
+                            const next = new Set(current);
+                            if (checked) next.add(student.eleveId);
+                            else next.delete(student.eleveId);
+                            return next;
+                          });
+                        }}
+                        aria-label={`Selectionner ${student.eleveName}`}
+                      />
                       <span className="font-medium text-sm">{student.eleveName}</span>
                       <Badge variant="secondary" className="text-[10px] gap-1">
                         <Clock className="h-3 w-3" />
@@ -465,7 +547,7 @@ export default function AutoHomeworkPreviewDialog({
             <Users className="h-3 w-3" />
             {studentHomework.length} élève(s) · {totalExercises} exercice(s)
           </p>
-          <Button variant="outline" onClick={() => { pauseCountdown(); onOpenChange(false); }}>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
             Annuler
           </Button>
           <Button
@@ -474,7 +556,11 @@ export default function AutoHomeworkPreviewDialog({
             className="gap-2"
           >
             {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-            Envoyer à tous ✅
+            {deliveryMode === "recommendation"
+              ? "Fermer sans envoyer"
+              : deliveryMode === "automatic"
+                ? "Autoriser et envoyer"
+                : "Valider et envoyer"}
           </Button>
         </DialogFooter>
       </DialogContent>
