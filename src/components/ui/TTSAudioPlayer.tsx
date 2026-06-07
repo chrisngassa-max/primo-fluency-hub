@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Volume2, Loader2, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
+import { PLAYBACK_RATES, canStartAudioPlay } from "@/lib/audioAccess";
 
 interface TTSAudioPlayerProps {
   text: string;
@@ -11,6 +12,10 @@ interface TTSAudioPlayerProps {
   autoPlay?: boolean;
   size?: "sm" | "icon";
   onPlayComplete?: () => void;
+  onPlayStart?: () => void;
+  playCount?: number;
+  maxPlays?: number | null;
+  showSpeedControl?: boolean;
 }
 
 const TTSAudioPlayer = ({
@@ -20,10 +25,15 @@ const TTSAudioPlayer = ({
   autoPlay = false,
   size = "sm",
   onPlayComplete,
+  onPlayStart,
+  playCount = 0,
+  maxPlays = null,
+  showSpeedControl = false,
 }: TTSAudioPlayerProps) => {
   const [loading, setLoading] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [playing, setPlaying] = useState(false);
+  const [playbackRate, setPlaybackRate] = useState<number>(1);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const objectUrlRef = useRef<string | null>(null);
   const autoPlayTriggered = useRef(false);
@@ -33,6 +43,7 @@ const TTSAudioPlayer = ({
 
     const audio = new Audio();
     audio.preload = "auto";
+    audio.playbackRate = playbackRate;
     audio.onended = () => {
       setPlaying(false);
       onPlayComplete?.();
@@ -44,7 +55,7 @@ const TTSAudioPlayer = ({
 
     audioRef.current = audio;
     return audio;
-  }, [onPlayComplete]);
+  }, [onPlayComplete, playbackRate]);
 
   const speakWithBrowserFallback = useCallback((utterance: SpeechSynthesisUtterance | null, message?: string) => {
     if (!utterance || !("speechSynthesis" in window)) return false;
@@ -53,9 +64,12 @@ const TTSAudioPlayer = ({
     if (!utterance.text.trim()) return false;
 
     utterance.lang = "fr-FR";
-    utterance.rate = 0.95;
+    utterance.rate = playbackRate;
     utterance.pitch = 1;
-    utterance.onstart = () => setPlaying(true);
+    utterance.onstart = () => {
+      setPlaying(true);
+      onPlayStart?.();
+    };
     utterance.onend = () => {
       setPlaying(false);
       onPlayComplete?.();
@@ -68,7 +82,7 @@ const TTSAudioPlayer = ({
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utterance);
     return true;
-  }, [onPlayComplete, text]);
+  }, [onPlayComplete, onPlayStart, playbackRate, text]);
 
   useEffect(() => {
     return () => {
@@ -86,6 +100,10 @@ const TTSAudioPlayer = ({
   }, []);
 
   const generateAndPlay = useCallback(async () => {
+    if (!canStartAudioPlay(playCount, maxPlays)) {
+      toast.info("Nombre maximal d’écoutes atteint");
+      return;
+    }
     const audio = ensureAudioElement();
     const browserUtterance = typeof window !== "undefined" && "SpeechSynthesisUtterance" in window
       ? new SpeechSynthesisUtterance("")
@@ -97,8 +115,10 @@ const TTSAudioPlayer = ({
           window.speechSynthesis.cancel();
         }
         audio.currentTime = 0;
+        audio.playbackRate = playbackRate;
         await audio.play();
         setPlaying(true);
+        onPlayStart?.();
       } catch (err: any) {
         console.error("Audio replay error:", err);
         const didFallback = speakWithBrowserFallback(browserUtterance);
@@ -144,8 +164,10 @@ const TTSAudioPlayer = ({
           window.speechSynthesis.cancel();
         }
         audio.currentTime = 0;
+        audio.playbackRate = playbackRate;
         await audio.play();
         setPlaying(true);
+        onPlayStart?.();
       } catch (playErr: any) {
         console.error("Audio play error:", playErr);
         const didFallback = speakWithBrowserFallback(browserUtterance);
@@ -164,7 +186,7 @@ const TTSAudioPlayer = ({
     } finally {
       setLoading(false);
     }
-  }, [audioUrl, ensureAudioElement, speakWithBrowserFallback, text]);
+  }, [audioUrl, ensureAudioElement, maxPlays, onPlayStart, playCount, playbackRate, speakWithBrowserFallback, text]);
 
   // Auto-play on mount when autoPlay is true
   useEffect(() => {
@@ -193,7 +215,7 @@ const TTSAudioPlayer = ({
           e.stopPropagation();
           generateAndPlay();
         }}
-        disabled={loading}
+        disabled={loading || playing || !canStartAudioPlay(playCount, maxPlays)}
         className={`h-7 w-7 shrink-0 ${className}`}
         title="Écouter"
       >
@@ -212,13 +234,13 @@ const TTSAudioPlayer = ({
   const displayLabel = label || defaultLabel;
 
   return (
-    <div className={`flex items-center gap-2 ${className}`}>
+    <div className={`flex flex-wrap items-center gap-2 ${className}`}>
       <Button
         type="button"
         variant={playing ? "default" : "outline"}
         size="sm"
         onClick={generateAndPlay}
-        disabled={loading}
+        disabled={loading || playing || !canStartAudioPlay(playCount, maxPlays)}
         className="gap-2"
       >
         {loading ? (
@@ -243,6 +265,26 @@ const TTSAudioPlayer = ({
           </>
         )}
       </Button>
+      {showSpeedControl && (
+        <div className="flex items-center gap-1" aria-label="Vitesse de lecture">
+          {PLAYBACK_RATES.map((rate) => (
+            <Button
+              key={rate}
+              type="button"
+              variant={playbackRate === rate ? "secondary" : "ghost"}
+              size="sm"
+              className="h-8 min-w-11 px-2 text-xs"
+              aria-pressed={playbackRate === rate}
+              onClick={() => {
+                setPlaybackRate(rate);
+                if (audioRef.current) audioRef.current.playbackRate = rate;
+              }}
+            >
+              {rate}x
+            </Button>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

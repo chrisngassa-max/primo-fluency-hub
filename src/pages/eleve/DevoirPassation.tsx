@@ -33,6 +33,12 @@ import { emitLiveEvent } from "@/lib/liveEventEmitter";
 import { corrigerExercice } from "@/lib/correctionExercice";
 import { applyExerciseVariant, resolveStudentExerciseLevel } from "@/lib/exerciseVariant";
 import InterventionPlayer from "@/components/eleve/InterventionPlayer";
+import LearnerAccessibilityToolbar from "@/components/eleve/LearnerAccessibilityToolbar";
+import {
+  learnerTextSizeClass,
+  remainingAudioPlays,
+  type LearnerTextSize,
+} from "@/lib/audioAccess";
 
 function CorrectionAccordion({ correction }: { correction: any[] }) {
   const [openItems, setOpenItems] = useState<number[]>([]);
@@ -59,7 +65,7 @@ function CorrectionAccordion({ correction }: { correction: any[] }) {
                   </>
                 )}
               </div>
-              {(c.explication || c.justification_pedagogique || c.reformulation_modele) && (
+              {(c.explication || c.justification_pedagogique || c.reformulation_modele || c.criteres_oraux) && (
                 <button
                   onClick={() => toggleItem(i)}
                   className="text-xs text-primary underline shrink-0 mt-0.5"
@@ -89,6 +95,16 @@ function CorrectionAccordion({ correction }: { correction: any[] }) {
                 )}
                 {c.encouragement && (
                   <p className="text-amber-700 dark:text-amber-400 font-medium">💪 {c.encouragement}</p>
+                )}
+                {c.criteres_oraux && (
+                  <div className="grid gap-2 pt-2 sm:grid-cols-2">
+                    {Object.entries(c.criteres_oraux).map(([key, value]: [string, any]) => (
+                      <div key={key} className="border-l-2 border-primary pl-2">
+                        <p className="font-semibold capitalize">{key.replace(/_/g, " ")} · {value.score}/10</p>
+                        {value.commentaire && <p className="text-muted-foreground">{value.commentaire}</p>}
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
             )}
@@ -213,6 +229,15 @@ const DevoirPassation = () => {
 
   // Forced-listen state for CO
   const [hasListened, setHasListened] = useState(false);
+  const [audioPlayCount, setAudioPlayCount] = useState(0);
+  const [showTranscript, setShowTranscript] = useState(false);
+  const [textSize, setTextSize] = useState<LearnerTextSize>(() => {
+    const saved = localStorage.getItem("learner-text-size");
+    return saved === "large" || saved === "extra-large" ? saved : "normal";
+  });
+  const [highContrast, setHighContrast] = useState(
+    () => localStorage.getItem("learner-high-contrast") === "true"
+  );
 
   // Timer state
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -288,6 +313,26 @@ const DevoirPassation = () => {
   const isCompetenceCO = ex?.competence === "CO";
   const isCompetenceEO = ex?.competence === "EO" || contenu?.type_reponse === "oral" || ex?.format === "production_orale";
   const scriptAudio = contenu?.script_audio;
+  const maxAudioPlays = ex?.nombre_ecoutes_max ?? metadata?.nombre_ecoutes_max ?? null;
+  const transcriptLocked = ex?.transcription_verrouillee
+    ?? metadata?.transcription_verrouillee
+    ?? contenu?.transcription_verrouillee
+    ?? false;
+  const remainingPlays = remainingAudioPlays(audioPlayCount, maxAudioPlays);
+
+  useEffect(() => {
+    localStorage.setItem("learner-text-size", textSize);
+  }, [textSize]);
+
+  useEffect(() => {
+    localStorage.setItem("learner-high-contrast", String(highContrast));
+  }, [highContrast]);
+
+  useEffect(() => {
+    setHasListened(false);
+    setAudioPlayCount(0);
+    setShowTranscript(false);
+  }, [ex?.id]);
 
   // Timer logic
   useEffect(() => {
@@ -340,8 +385,6 @@ const DevoirPassation = () => {
         timestamp: new Date().toISOString(),
       },
     });
-  // Déclenché une seule fois quand ex est disponible
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ex?.id, (devoir as any)?.session_id, user?.id]);
 
   // Sprint 6 — écoute les intervention_recue du formateur en temps réel
@@ -379,7 +422,6 @@ const DevoirPassation = () => {
       .subscribe();
 
     return () => { supabase.removeChannel(ch); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [(devoir as any)?.session_id, user?.id]);
 
   // La finalisation "completed" est gérée par le trigger mirror_resultat_to_attempt
@@ -702,8 +744,18 @@ const DevoirPassation = () => {
 
   // ─── Exercise Passation ───
   return (
-    <div className="space-y-6 max-w-2xl mx-auto">
+    <div className={cn(
+      "space-y-6 max-w-2xl mx-auto",
+      learnerTextSizeClass(textSize),
+      highContrast && "learner-high-contrast"
+    )}>
       <InterventionPlayer sessionId={(devoir as any)?.session_id ?? null} />
+      <LearnerAccessibilityToolbar
+        textSize={textSize}
+        highContrast={highContrast}
+        onTextSizeChange={setTextSize}
+        onHighContrastChange={setHighContrast}
+      />
       <div className="flex items-center gap-3">
         <Button variant="ghost" size="sm" onClick={() => navigate("/eleve/devoirs")} className="gap-1.5">
           <ArrowLeft className="h-4 w-4" /> Retour
@@ -778,8 +830,36 @@ const DevoirPassation = () => {
             <TTSAudioPlayer
               text={scriptAudio}
               className="mb-0"
+              playCount={audioPlayCount}
+              maxPlays={maxAudioPlays}
+              showSpeedControl
+              onPlayStart={() => setAudioPlayCount((count) => count + 1)}
               onPlayComplete={() => setHasListened(true)}
             />
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-sm">
+              <span className="font-medium" aria-live="polite">
+                {maxAudioPlays
+                  ? `${audioPlayCount}/${maxAudioPlays} écoute${maxAudioPlays > 1 ? "s" : ""}`
+                  : `${audioPlayCount} écoute${audioPlayCount > 1 ? "s" : ""}`}
+                {remainingPlays === 0 ? " · Limite atteinte" : ""}
+              </span>
+              {!transcriptLocked && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowTranscript((visible) => !visible)}
+                  aria-expanded={showTranscript}
+                >
+                  {showTranscript ? "Masquer le texte" : "Afficher le texte"}
+                </Button>
+              )}
+            </div>
+            {showTranscript && !transcriptLocked && (
+              <div className="mt-3 border-l-4 border-primary bg-background p-3 leading-relaxed">
+                {scriptAudio}
+              </div>
+            )}
             {!hasListened && (
               <p className="text-xs text-orange-600 mt-2 font-medium">
                 ⚠️ Vous devez écouter l'audio au moins une fois avant de répondre.

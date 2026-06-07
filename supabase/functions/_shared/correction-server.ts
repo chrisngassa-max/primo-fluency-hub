@@ -21,6 +21,7 @@ export interface ServerCorrectionItem {
   explication: string;
   ia_evaluated?: boolean;
   ia_score_raw?: number;
+  criteres_oraux?: Record<string, { score: number; commentaire: string }>;
   ai_failed?: boolean;
 }
 
@@ -87,8 +88,14 @@ function looksLikeTemplate(s: string): boolean {
 async function evaluateAI(
   supabaseUrl: string,
   serviceRoleKey: string,
-  payload: { studentAnswer: string; exerciseContent: string; rule: string }
-): Promise<{ scoreRaw10: number; justification: string; resultat?: string; reformulation?: string }> {
+  payload: { studentAnswer: string; exerciseContent: string; rule: string; epreuve?: string }
+): Promise<{
+  scoreRaw10: number;
+  justification: string;
+  resultat?: string;
+  reformulation?: string;
+  criteresOraux?: Record<string, { score: number; commentaire: string }>;
+}> {
   const url = `${supabaseUrl}/functions/v1/tcf-evaluate-answer`;
   const res = await fetch(url, {
     method: "POST",
@@ -111,6 +118,7 @@ async function evaluateAI(
     justification: data?.justification ?? data?.correction_text ?? "Pas de justification disponible.",
     resultat: data?.resultat,
     reformulation: data?.reformulation_modele,
+    criteresOraux: data?.criteres_oraux,
   };
 }
 
@@ -140,6 +148,7 @@ export async function corrigerExerciceServer(
     let iaEvaluated = false;
     let iaScoreRaw: number | undefined;
     let aiFailedItem = false;
+    let criteresOraux: Record<string, { score: number; commentaire: string }> | undefined;
     let explication = explicationOrig;
     let displayedBonneReponse = bonneReponse;
     let label: "bonne_reponse" | "exemple_attendu" = "bonne_reponse";
@@ -162,9 +171,11 @@ export async function corrigerExerciceServer(
           studentAnswer: userAnswer,
           exerciseContent,
           rule,
+          epreuve: competence,
         });
         iaEvaluated = true;
         iaScoreRaw = ai.scoreRaw10;
+        criteresOraux = ai.criteresOraux;
         isCorrect = (iaScoreRaw ?? 0) >= 6 && ai.resultat !== "incorrect";
         if (ai.justification) {
           explication = explication ? `${explication}\n\n${ai.justification}` : ai.justification;
@@ -208,6 +219,7 @@ export async function corrigerExerciceServer(
       explication,
       ia_evaluated: iaEvaluated,
       ia_score_raw: iaScoreRaw,
+      criteres_oraux: criteresOraux,
       ai_failed: aiFailedItem || undefined,
     });
   }
