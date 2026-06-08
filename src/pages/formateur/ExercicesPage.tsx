@@ -29,6 +29,7 @@ import { cn } from "@/lib/utils";
 import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/DifficultyBadge";
 import ImportFromUrlDialog from "@/components/ImportFromUrlDialog";
 import GenerateTargetedExerciseWizard from "@/components/formateur/GenerateTargetedExerciseWizard";
+import PdfImportDialog from "@/components/formateur/PdfImportDialog";
 
 const COMPETENCES = ["CO", "CE", "EE", "EO", "Structures"] as const;
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
@@ -74,6 +75,7 @@ const ExercicesPage = () => {
   const [aiLoading, setAiLoading] = useState(false);
 
   // RAG Test state
+  const [pdfDialogOpen, setPdfDialogOpen] = useState(false);
   const [ragTestOpen, setRagTestOpen] = useState(false);
   const [ragTestLoading, setRagTestLoading] = useState(false);
   const [ragTestResult, setRagTestResult] = useState<any>(null);
@@ -658,6 +660,10 @@ ${Array.isArray(item.options) && item.options.length > 0
           <Button size="lg" variant="secondary" className="gap-2" onClick={() => setImportDialogOpen(true)}>
             <FileText className="h-5 w-5" />
             📄 Importer &amp; Transformer
+          </Button>
+          <Button size="lg" variant="secondary" className="gap-2" onClick={() => setPdfDialogOpen(true)}>
+            <Upload className="h-5 w-5" />
+            📎 Depuis un PDF
           </Button>
           <Button size="lg" variant="outline" className="gap-2" onClick={() => setImportUrlOpen(true)}>
             <Link2 className="h-5 w-5" />
@@ -1514,6 +1520,13 @@ ${Array.isArray(item.options) && item.options.length > 0
           )}
         </DialogContent>
       </Dialog>
+
+      {/* ─── PDF Import Dialog ─── */}
+      <PdfImportDialog
+        open={pdfDialogOpen}
+        onOpenChange={setPdfDialogOpen}
+        onSuccess={() => qc.invalidateQueries({ queryKey: ["formateur-all-exercices", user?.id] })}
+      />
 
       {/* ─── Import from URL Dialog ─── */}
       <ImportFromUrlDialog

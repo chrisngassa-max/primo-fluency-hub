@@ -7,6 +7,7 @@ import {
   BookMarked,
   ClipboardList,
   Home,
+  Library,
   NotebookTabs,
   TrendingUp,
   User,
@@ -20,6 +21,7 @@ const navItems = [
   { title: "Accueil", path: "/eleve", icon: Home },
   { title: "Test de niveau", path: "/eleve/test-positionnement", icon: ClipboardList },
   { title: "Mes devoirs", path: "/eleve/devoirs", icon: BookOpen },
+  { title: "Ressources", path: "/eleve/ressources", icon: Library },
   { title: "Mon carnet", path: "/eleve/carnet", icon: NotebookTabs },
   { title: "Ma progression", path: "/eleve/progression", icon: TrendingUp },
   { title: "Mon profil", path: "/eleve/profil", icon: User },
@@ -99,7 +101,7 @@ const EleveLayout = () => {
         <AppFooter />
       </div>
 
-      <nav className="fixed inset-x-0 bottom-0 z-50 grid grid-cols-6 border-t border-black/10 bg-white/95 px-1 py-2 shadow-[0_-6px_24px_rgba(15,23,42,0.12)] backdrop-blur lg:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-50 grid grid-cols-7 border-t border-black/10 bg-white/95 px-1 py-2 shadow-[0_-6px_24px_rgba(15,23,42,0.12)] backdrop-blur lg:hidden">
         {navItems.map((item) => {
           const active = isActive(item.path);
           return (

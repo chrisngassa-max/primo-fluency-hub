@@ -62,6 +62,7 @@ import TestPositionnement from "@/pages/eleve/TestPositionnement";
 import PositionnementPassation from "@/pages/eleve/PositionnementPassation";
 import PositionnementResultat from "@/pages/eleve/PositionnementResultat";
 import RessourcesPage from "@/pages/formateur/RessourcesPage";
+import RessourcesEleve from "@/pages/eleve/RessourcesEleve";
 import BanqueActivites from "@/pages/formateur/BanqueActivites";
 import BilansAtelierPage from "@/pages/formateur/BilansAtelierPage";
 import PositionnementPage from "@/pages/formateur/PositionnementPage";
@@ -153,6 +154,7 @@ const App = () => (
               <Route path="test-positionnement/resultat/:attemptId" element={<PositionnementResultat />} />
               <Route path="devoirs" element={<AIConsentRequiredRoute><EleveDevoirs /></AIConsentRequiredRoute>} />
               <Route path="carnet" element={<AIConsentRequiredRoute><CarnetMots /></AIConsentRequiredRoute>} />
+              <Route path="ressources" element={<AIConsentRequiredRoute><RessourcesEleve /></AIConsentRequiredRoute>} />
               <Route path="bilan/:sessionId" element={<AIConsentRequiredRoute><BilanSeance /></AIConsentRequiredRoute>} />
               <Route path="exercices-seance/:sessionId" element={<AIConsentRequiredRoute><BilanSeance /></AIConsentRequiredRoute>} />
               <Route path="bilan-test/:testId" element={<AIConsentRequiredRoute><BilanTestPassation /></AIConsentRequiredRoute>} />
