@@ -403,7 +403,7 @@ const SessionPilot = () => {
         supabase
           .from("profils_eleves")
           .select(
-            "eleve_id, niveau_actuel, niveau_co, niveau_ce, niveau_ee, niveau_eo, taux_reussite_co, taux_reussite_ce, taux_reussite_ee, taux_reussite_eo, taux_reussite_structures, niveau_scolarisation, aisance_numerique, vitesse_lecture, preferences_apprentissage, besoins_accessibilite",
+            "eleve_id, niveau_baseline_at, niveau_actuel, niveau_co, niveau_ce, niveau_ee, niveau_eo, taux_reussite_co, taux_reussite_ce, taux_reussite_ee, taux_reussite_eo, taux_reussite_structures, niveau_scolarisation, aisance_numerique, vitesse_lecture, preferences_apprentissage, besoins_accessibilite",
           )
           .in("eleve_id", memberIds),
         supabase

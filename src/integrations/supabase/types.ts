@@ -2578,11 +2578,14 @@ export type Database = {
           id: string
           langue_maternelle: string | null
           niveau_actuel: string
+          niveau_baseline_at: string | null
           niveau_ce: string
           niveau_co: string
           niveau_ee: string
           niveau_eo: string
           niveau_locked: boolean | null
+          niveau_reference_date: string | null
+          niveau_reference_note: string | null
           niveau_source: string | null
           niveau_updated_at: string | null
           niveau_scolarisation: string | null
@@ -2612,11 +2615,14 @@ export type Database = {
           id?: string
           langue_maternelle?: string | null
           niveau_actuel: string
+          niveau_baseline_at?: string | null
           niveau_ce?: string
           niveau_co?: string
           niveau_ee?: string
           niveau_eo?: string
           niveau_locked?: boolean | null
+          niveau_reference_date?: string | null
+          niveau_reference_note?: string | null
           niveau_source?: string | null
           niveau_updated_at?: string | null
           niveau_scolarisation?: string | null
@@ -2646,11 +2652,14 @@ export type Database = {
           id?: string
           langue_maternelle?: string | null
           niveau_actuel?: string
+          niveau_baseline_at?: string | null
           niveau_ce?: string
           niveau_co?: string
           niveau_ee?: string
           niveau_eo?: string
           niveau_locked?: boolean | null
+          niveau_reference_date?: string | null
+          niveau_reference_note?: string | null
           niveau_source?: string | null
           niveau_updated_at?: string | null
           niveau_scolarisation?: string | null
@@ -4056,6 +4065,15 @@ export type Database = {
       claim_session_block: {
         Args: { p_block_type: string; p_session_id: string }
         Returns: boolean
+      }
+      set_student_level_baseline: {
+        Args: {
+          p_eleve_id: string
+          p_levels: Json
+          p_note?: string | null
+          p_reference_date: string
+        }
+        Returns: Database["public"]["Tables"]["profils_eleves"]["Row"]
       }
       update_andragogical_profile: {
         Args: { p_eleve_id: string; p_profile: Json }

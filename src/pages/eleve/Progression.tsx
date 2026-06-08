@@ -402,6 +402,9 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
                 niveau_ee: (profil as any).niveau_ee ?? profil.niveau_actuel ?? "A1",
                 niveau_eo: (profil as any).niveau_eo ?? profil.niveau_actuel ?? "A1",
                 niveau_locked: (profil as any).niveau_locked ?? false,
+                niveau_source: (profil as any).niveau_source ?? null,
+                niveau_reference_date: (profil as any).niveau_reference_date ?? null,
+                niveau_reference_note: (profil as any).niveau_reference_note ?? null,
                 profil_litteratie: normalizeProfilLitteratie((profil as any).profil_litteratie),
                 alphabet_l1:
                   ((profil as any).priorites_pedagogiques?.alphabet_l1 as ProfilNiveaux["alphabet_l1"]) ?? null,
@@ -434,6 +437,25 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
                 } else {
                   queryClient.invalidateQueries({ queryKey: ["profil-eleve", targetId] });
                 }
+              }}
+              onSetBaseline={async ({ levels, referenceDate, note }) => {
+                const { error } = await supabase.rpc("set_student_level_baseline" as any, {
+                  p_eleve_id: targetId,
+                  p_levels: levels,
+                  p_reference_date: referenceDate,
+                  p_note: note || null,
+                } as any);
+                if (error) {
+                  toast.error("Impossible d'enregistrer la nouvelle base TCF.", {
+                    description: error.message,
+                  });
+                  throw error;
+                }
+                toast.success("Nouvelle base TCF IRN enregistrée", {
+                  description: "Les prochains exercices repartiront de ces niveaux.",
+                });
+                await queryClient.invalidateQueries({ queryKey: ["profil-eleve", targetId] });
+                await queryClient.invalidateQueries({ queryKey: ["competency-status", targetId] });
               }}
             />
           </CardContent>

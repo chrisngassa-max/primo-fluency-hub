@@ -1,3 +1,5 @@
+import { resultsSinceBaseline } from "@/lib/studentLevelBaseline";
+
 export const ROUTER_COMPETENCES = ["CO", "CE", "EE", "EO", "Structures"] as const;
 
 export type RouterCompetence = (typeof ROUTER_COMPETENCES)[number];
@@ -10,6 +12,7 @@ export interface RouterResult {
 }
 
 export interface RouterProfile {
+  niveau_baseline_at?: string | null;
   niveau_actuel?: string | null;
   niveau_co?: string | null;
   niveau_ce?: string | null;
@@ -95,8 +98,10 @@ function average(values: number[]): number | null {
 
 function competenceScores(student: RouterStudent): Map<RouterCompetence, number> {
   const scores = new Map<RouterCompetence, number>();
+  const baselineAt = student.profile?.niveau_baseline_at;
+  const eligibleResults = resultsSinceBaseline(student.results ?? [], baselineAt);
   for (const competence of ROUTER_COMPETENCES) {
-    const recent = (student.results ?? [])
+    const recent = eligibleResults
       .filter((result) => normalizeCompetence(result.competence) === competence)
       .slice(0, 5)
       .map((result) => Number(result.score))
@@ -104,13 +109,16 @@ function competenceScores(student: RouterStudent): Map<RouterCompetence, number>
     const resultAverage = average(recent);
     const profileRate = Number(student.profile?.[PROFILE_RATE_KEYS[competence]]);
     if (resultAverage !== null) scores.set(competence, resultAverage);
-    else if (Number.isFinite(profileRate)) scores.set(competence, Math.round(profileRate));
+    else if (!baselineAt && Number.isFinite(profileRate)) scores.set(competence, Math.round(profileRate));
   }
   return scores;
 }
 
 function detectStagnation(student: RouterStudent, competence: RouterCompetence): boolean {
-  const scores = (student.results ?? [])
+  const scores = resultsSinceBaseline(
+    student.results ?? [],
+    student.profile?.niveau_baseline_at,
+  )
     .filter((result) => normalizeCompetence(result.competence) === competence)
     .slice(0, 3)
     .map((result) => Number(result.score))

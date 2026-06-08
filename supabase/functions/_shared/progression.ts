@@ -119,7 +119,7 @@ export async function computeProgressionForEleves(
   const [{ data: profils }, { data: levels }, { data: results }, outcomesRes] = await Promise.all([
     supabase
       .from("profils_eleves")
-      .select("eleve_id, niveau_actuel, taux_reussite_co, taux_reussite_ce, taux_reussite_ee, taux_reussite_eo, taux_reussite_structures, priorites_pedagogiques, vitesse_lecture")
+      .select("eleve_id, niveau_actuel, niveau_baseline_at, taux_reussite_co, taux_reussite_ce, taux_reussite_ee, taux_reussite_eo, taux_reussite_structures, priorites_pedagogiques, vitesse_lecture")
       .in("eleve_id", uniqueIds),
     supabase
       .from("student_competency_levels")
@@ -154,7 +154,16 @@ export async function computeProgressionForEleves(
 
   const output: Record<string, StudentProgressionProfile> = {};
   for (const eleveId of uniqueIds) {
-    const myResults = (results ?? []).filter((row: any) => row.eleve_id === eleveId);
+    const profile = profileById.get(eleveId) ?? null;
+    const baselineAt = profile?.niveau_baseline_at
+      ? new Date(profile.niveau_baseline_at).getTime()
+      : null;
+    const myResults = (results ?? []).filter((row: any) => {
+      if (row.eleve_id !== eleveId) return false;
+      if (baselineAt === null) return true;
+      const createdAt = row.created_at ? new Date(row.created_at).getTime() : Number.NaN;
+      return Number.isFinite(createdAt) && createdAt >= baselineAt;
+    });
     const weakCompetences = computeWeakCompetencesFromResults(myResults);
     const targetCompetence =
       options.targetCompetence ??
@@ -164,7 +173,6 @@ export async function computeProgressionForEleves(
     const result = deriveProgressionWithHistory(myResults, targetCompetence);
     const { progression, averageLast5 } = result;
 
-    const profile = profileById.get(eleveId) ?? null;
     const outcome = outcomeById.get(eleveId) ?? null;
     const directives = buildPedagogicalDirectives({
       profile,
