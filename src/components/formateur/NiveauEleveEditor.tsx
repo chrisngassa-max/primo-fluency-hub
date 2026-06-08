@@ -1,11 +1,19 @@
-import { useState } from "react";
-import { Lock, Unlock, User } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Award, Loader2, Lock, Unlock, User } from "lucide-react";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  CEFR_LEVELS, lowestBaselineLevel, type StudentBaselineLevels,
+} from "@/lib/studentLevelBaseline";
 
 export type NiveauCECRL = "A0" | "A1" | "A2" | "B1" | "B2";
 
@@ -25,6 +33,9 @@ export type ProfilNiveaux = {
   niveau_ee: NiveauCECRL;
   niveau_eo: NiveauCECRL;
   niveau_locked: boolean;
+  niveau_source?: string | null;
+  niveau_reference_date?: string | null;
+  niveau_reference_note?: string | null;
   profil_litteratie: ProfilLitteratie;
   alphabet_l1: AlphabetL1 | null;
 };
@@ -32,6 +43,11 @@ export type ProfilNiveaux = {
 type Props = {
   profil: ProfilNiveaux;
   onUpdate: (patch: Partial<ProfilNiveaux>) => void;
+  onSetBaseline?: (input: {
+    levels: StudentBaselineLevels;
+    referenceDate: string;
+    note: string;
+  }) => Promise<void>;
 };
 
 const COMPETENCES: Array<{ key: "co" | "ce" | "ee" | "eo"; label: string }> = [
@@ -41,7 +57,7 @@ const COMPETENCES: Array<{ key: "co" | "ce" | "ee" | "eo"; label: string }> = [
   { key: "eo", label: "Expr. Orale" },
 ];
 
-const NIVEAUX: NiveauCECRL[] = ["A0", "A1", "A2", "B1", "B2"];
+const NIVEAUX: NiveauCECRL[] = [...CEFR_LEVELS];
 
 const PROFILS_LITTERATIE: Array<{ value: ProfilLitteratie; label: string }> = [
   { value: "FLE", label: "FLE scolarisé" },
@@ -72,8 +88,32 @@ export function normalizeProfilLitteratie(raw: unknown): ProfilLitteratie {
   return "inconnu";
 }
 
-export function NiveauEleveEditor({ profil, onUpdate }: Props) {
+export function NiveauEleveEditor({ profil, onUpdate, onSetBaseline }: Props) {
   const [data, setData] = useState<ProfilNiveaux>(profil);
+  const [baselineOpen, setBaselineOpen] = useState(false);
+  const [savingBaseline, setSavingBaseline] = useState(false);
+  const [baselineLevels, setBaselineLevels] = useState<StudentBaselineLevels>({
+    co: profil.niveau_co,
+    ce: profil.niveau_ce,
+    ee: profil.niveau_ee,
+    eo: profil.niveau_eo,
+  });
+  const [referenceDate, setReferenceDate] = useState(
+    profil.niveau_reference_date ?? new Date().toISOString().slice(0, 10),
+  );
+  const [referenceNote, setReferenceNote] = useState(profil.niveau_reference_note ?? "");
+
+  useEffect(() => {
+    setData(profil);
+    setBaselineLevels({
+      co: profil.niveau_co,
+      ce: profil.niveau_ce,
+      ee: profil.niveau_ee,
+      eo: profil.niveau_eo,
+    });
+    setReferenceDate(profil.niveau_reference_date ?? new Date().toISOString().slice(0, 10));
+    setReferenceNote(profil.niveau_reference_note ?? "");
+  }, [profil]);
 
   const apply = <K extends keyof ProfilNiveaux>(field: K, value: ProfilNiveaux[K]) => {
     const next = { ...data, [field]: value };
@@ -82,6 +122,33 @@ export function NiveauEleveEditor({ profil, onUpdate }: Props) {
   };
 
   const locked = data.niveau_locked;
+  const officialBaseline = data.niveau_source === "tcf_irn_officiel";
+
+  const setGlobalBaselineLevel = (level: NiveauCECRL) => {
+    setBaselineLevels({ co: level, ce: level, ee: level, eo: level });
+  };
+
+  const saveBaseline = async () => {
+    if (!onSetBaseline || !referenceDate) return;
+    setSavingBaseline(true);
+    try {
+      await onSetBaseline({ levels: baselineLevels, referenceDate, note: referenceNote });
+      setData((current) => ({
+        ...current,
+        niveau_co: baselineLevels.co,
+        niveau_ce: baselineLevels.ce,
+        niveau_ee: baselineLevels.ee,
+        niveau_eo: baselineLevels.eo,
+        niveau_locked: true,
+        niveau_source: "tcf_irn_officiel",
+        niveau_reference_date: referenceDate,
+        niveau_reference_note: referenceNote,
+      }));
+      setBaselineOpen(false);
+    } finally {
+      setSavingBaseline(false);
+    }
+  };
 
   return (
     <div className="p-4 border rounded-lg bg-white shadow-sm space-y-4">
@@ -99,6 +166,24 @@ export function NiveauEleveEditor({ profil, onUpdate }: Props) {
           {locked ? "Verrouillé" : "Déverrouillé"}
         </Button>
       </div>
+
+      {officialBaseline && (
+        <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">
+          <p className="font-medium">Base de départ : résultat officiel TCF IRN</p>
+          <p className="mt-1 text-xs">
+            Référence du {data.niveau_reference_date
+              ? new Date(`${data.niveau_reference_date}T12:00:00`).toLocaleDateString("fr-FR")
+              : "jour de saisie"}. Les adaptations repartent de ces niveaux.
+          </p>
+        </div>
+      )}
+
+      {onSetBaseline && (
+        <Button type="button" variant="outline" className="w-full gap-2" onClick={() => setBaselineOpen(true)}>
+          <Award className="h-4 w-4" />
+          Définir une nouvelle base TCF IRN
+        </Button>
+      )}
 
       <div className="grid grid-cols-2 gap-3">
         {COMPETENCES.map(({ key, label }) => (
@@ -168,6 +253,82 @@ export function NiveauEleveEditor({ profil, onUpdate }: Props) {
           ))}
         </RadioGroup>
       </div>
+
+      <Dialog open={baselineOpen} onOpenChange={setBaselineOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Nouvelle base de départ TCF IRN</DialogTitle>
+            <DialogDescription>
+              Les prochains exercices utiliseront ces niveaux. Les anciens résultats restent archivés,
+              mais ne piloteront plus les adaptations après cette nouvelle référence.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Niveau identique pour les quatre compétences</Label>
+              <Select value={lowestBaselineLevel(baselineLevels)} onValueChange={(value) => setGlobalBaselineLevel(value as NiveauCECRL)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {NIVEAUX.map((level) => <SelectItem key={level} value={level}>{level}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              {COMPETENCES.map(({ key, label }) => (
+                <div key={key} className="space-y-1">
+                  <Label className="text-xs">{label}</Label>
+                  <Select
+                    value={baselineLevels[key]}
+                    onValueChange={(value) => setBaselineLevels((current) => ({
+                      ...current,
+                      [key]: value as NiveauCECRL,
+                    }))}
+                  >
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {NIVEAUX.map((level) => <SelectItem key={level} value={level}>{level}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+              ))}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="tcf-reference-date">Date du résultat TCF IRN</Label>
+              <Input
+                id="tcf-reference-date"
+                type="date"
+                max={new Date().toISOString().slice(0, 10)}
+                value={referenceDate}
+                onChange={(event) => setReferenceDate(event.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="tcf-reference-note">Référence ou commentaire (optionnel)</Label>
+              <Textarea
+                id="tcf-reference-note"
+                value={referenceNote}
+                onChange={(event) => setReferenceNote(event.target.value)}
+                placeholder="Ex. attestation France Éducation international, session de mai 2026"
+                maxLength={500}
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setBaselineOpen(false)} disabled={savingBaseline}>
+              Annuler
+            </Button>
+            <Button onClick={saveBaseline} disabled={savingBaseline || !referenceDate}>
+              {savingBaseline && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Utiliser comme nouvelle base
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

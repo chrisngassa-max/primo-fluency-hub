@@ -9,10 +9,22 @@ import { supabase } from "@/integrations/supabase/client";
  * - Un bonus réussi (score >= 70) alimente un signal `eleve_en_avance` exposé via priorites_pedagogiques.
  */
 export async function updateProfilEleve(eleveId: string, niveauActuel?: string): Promise<void> {
-  const { data: allResults } = await supabase
+  const { data: previous } = await supabase
+    .from("profils_eleves")
+    .select("taux_reussite_global, updated_at, niveau_baseline_at, niveau_locked, niveau_actuel")
+    .eq("eleve_id", eleveId)
+    .maybeSingle();
+
+  let resultsQuery = supabase
     .from("resultats")
-    .select("score, is_bonus, exercice:exercices(competence)")
+    .select("score, is_bonus, created_at, exercice:exercices(competence)")
     .eq("eleve_id", eleveId);
+
+  if ((previous as any)?.niveau_baseline_at) {
+    resultsQuery = resultsQuery.gte("created_at", (previous as any).niveau_baseline_at);
+  }
+
+  const { data: allResults } = await resultsQuery;
 
   if (!allResults || allResults.length === 0) return;
 
@@ -47,13 +59,6 @@ export async function updateProfilEleve(eleveId: string, niveauActuel?: string):
 
   const globalAvg = avg(allScores);
 
-  // Fetch previous profile to compute progression speed
-  const { data: previous } = await supabase
-    .from("profils_eleves")
-    .select("taux_reussite_global, updated_at")
-    .eq("eleve_id", eleveId)
-    .maybeSingle();
-
   let vitesse_progression: "rapide" | "normale" | "lente" = "normale";
   let score_progression_delta = 0;
 
@@ -74,8 +79,10 @@ export async function updateProfilEleve(eleveId: string, niveauActuel?: string):
     bonusReussisCount >= 2 || (bonusCount >= 3 && ratioBonusReussis >= 0.6);
 
   // Determine niveau
-  let niveau = niveauActuel;
-  if (!niveau) {
+  let niveau = (previous as any)?.niveau_locked
+    ? (previous as any)?.niveau_actuel
+    : niveauActuel;
+  if (!niveau && !(previous as any)?.niveau_locked) {
     if (globalAvg >= 80) niveau = "B1";
     else if (globalAvg >= 60) niveau = "A2";
     else if (globalAvg >= 30) niveau = "A1";

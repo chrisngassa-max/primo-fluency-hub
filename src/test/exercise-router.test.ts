@@ -72,4 +72,26 @@ describe("routeExercises", () => {
     expect(recommendation.progression).toBe("demarrage");
     expect(recommendation.motif).toContain("aucun resultat recent");
   });
+
+  it("starts from the official level and ignores results before the new baseline", () => {
+    const [recommendation] = routeExercises([{
+      id: "student-5",
+      name: "Meryem",
+      profile: {
+        niveau_actuel: "A2",
+        niveau_eo: "B1",
+        niveau_baseline_at: "2026-06-01T09:00:00Z",
+        taux_reussite_ce: 25,
+      },
+      results: [
+        { competence: "CE", score: 20, createdAt: "2026-05-20T09:00:00Z" },
+      ],
+    }], {
+      competencesCibles: ["Expression orale"],
+    });
+
+    expect(recommendation.competence).toBe("EO");
+    expect(recommendation.niveau).toBe("B1");
+    expect(recommendation.progression).toBe("demarrage");
+  });
 });
