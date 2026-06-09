@@ -11,6 +11,10 @@ import type {
   NiveauSandbox,
   SandboxSetupRequest,
 } from "../_shared/sandbox.types.ts";
+import {
+  buildSandboxHistory,
+  SANDBOX_LEARNER_FIXTURES,
+} from "../_shared/sandbox-fixtures.ts";
 
 const LEVELS: NiveauSandbox[] = ["A1", "A2", "B1", "B2"];
 
@@ -73,6 +77,7 @@ Deno.serve(async (req) => {
     const shortId = sandbox.id.replaceAll("-", "").slice(0, 8);
     const created: EleveSandbox[] = [];
     for (const niveau of LEVELS) {
+      const fixture = SANDBOX_LEARNER_FIXTURES[niveau];
       const password = createReadablePassword();
       const email = `sandbox-${niveau.toLowerCase()}-${shortId}@sandbox.captcf.local`;
       const { data, error } = await admin.auth.admin.createUser({
@@ -83,8 +88,8 @@ Deno.serve(async (req) => {
           role: "eleve",
           niveau,
           sandbox_session_id: sandbox.id,
-          prenom: "Eleve Test",
-          nom: niveau,
+          prenom: fixture.prenom,
+          nom: fixture.nom,
         },
       });
       if (error || !data.user) throw error ?? new Error("Compte sandbox non cree");
@@ -93,7 +98,7 @@ Deno.serve(async (req) => {
         niveau,
         email,
         user_id: data.user.id,
-        display_name: `Eleve Test ${niveau}`,
+        display_name: `${fixture.prenom} ${fixture.nom}`,
         mot_de_passe_initial: password,
       });
       const { error: checkpointError } = await admin
@@ -101,6 +106,19 @@ Deno.serve(async (req) => {
         .update({ eleve_user_ids: created.map((eleve) => eleve.user_id) })
         .eq("id", sandbox.id);
       if (checkpointError) throw checkpointError;
+    }
+
+    const { data: exercises, error: exercisesError } = await admin
+      .from("exercices")
+      .select("id, niveau_vise")
+      .in("format", ["qcm", "vrai_faux"])
+      .order("created_at", { ascending: false })
+      .limit(80);
+    if (exercisesError) throw exercisesError;
+    if (!exercises?.length) {
+      throw Object.assign(new Error("Aucun exercice QCM ou vrai/faux disponible pour initialiser la sandbox"), {
+        status: 422,
+      });
     }
 
     const trainerName = user.user_metadata?.prenom || "Formateur";
@@ -118,10 +136,16 @@ Deno.serve(async (req) => {
     if (groupError) throw groupError;
 
     for (const eleve of created) {
+      const fixture = SANDBOX_LEARNER_FIXTURES[eleve.niveau];
       // Le trigger Auth cree profiles. Le mot de passe sandbox reste volontairement NULL.
       const { error: profileError } = await admin
         .from("profiles")
-        .update({ mot_de_passe_initial: null, status: "approved" })
+        .update({
+          prenom: fixture.prenom,
+          nom: fixture.nom,
+          mot_de_passe_initial: null,
+          status: "approved",
+        })
         .eq("id", eleve.user_id);
       if (profileError) throw profileError;
 
@@ -132,11 +156,9 @@ Deno.serve(async (req) => {
 
       const { error: learnerError } = await admin.from("profils_eleves").upsert({
         eleve_id: eleve.user_id,
-        niveau_actuel: eleve.niveau,
-        niveau_co: eleve.niveau,
-        niveau_ce: eleve.niveau,
-        niveau_ee: eleve.niveau,
-        niveau_eo: eleve.niveau,
+        ...fixture.profile,
+        niveau_source: "manuel",
+        niveau_locked: false,
         sandbox_session_id: sandbox.id,
       }, { onConflict: "eleve_id" });
       if (learnerError) throw learnerError;
@@ -147,6 +169,63 @@ Deno.serve(async (req) => {
         sandbox_session_id: sandbox.id,
       });
       if (memberError) throw memberError;
+
+      const levelExercises = exercises.filter((exercise: any) => exercise.niveau_vise === eleve.niveau);
+      const selectedExercises = (levelExercises.length ? levelExercises : exercises).slice(0, 5);
+      const history = buildSandboxHistory(
+        fixture,
+        selectedExercises.map((exercise: any) => exercise.id),
+      );
+      const devoirRows = history.devoirs.map((devoir) => ({
+        exercice_id: devoir.exercise_id,
+        eleve_id: eleve.user_id,
+        formateur_id: user.id,
+        statut: devoir.statut,
+        raison: devoir.raison,
+        date_echeance: devoir.due_at,
+        nb_reussites_consecutives: devoir.successes,
+        created_at: devoir.created_at,
+        updated_at: devoir.created_at,
+        sandbox_session_id: sandbox.id,
+      }));
+      const { data: insertedDevoirs, error: devoirError } = await admin
+        .from("devoirs")
+        .insert(devoirRows)
+        .select("id, statut");
+      if (devoirError) throw devoirError;
+
+      const completedDevoirs = (insertedDevoirs ?? []).filter(
+        (devoir: any) => devoir.statut === "fait" || devoir.statut === "arrete",
+      );
+      const resultRows = history.resultats.map((resultat, index) => ({
+        exercice_id: resultat.exercise_id,
+        eleve_id: eleve.user_id,
+        score: resultat.score,
+        reponses_eleve: { fixture: true, tentative: index + 1 },
+        correction_detaillee: {
+          fixture: true,
+          commentaire: resultat.score >= 80
+            ? "Objectif atteint, poursuivre la consolidation."
+            : "Points a reprendre lors de la prochaine seance.",
+        },
+        tentative: 1,
+        devoir_id: resultat.devoir_index === null
+          ? null
+          : completedDevoirs[resultat.devoir_index]?.id ?? null,
+        created_at: resultat.created_at,
+        sandbox_session_id: sandbox.id,
+      }));
+      const { error: resultError } = await admin.from("resultats").insert(resultRows);
+      if (resultError) throw resultError;
+
+      // Les triggers de resultats peuvent recalculer le risque. La fixture reste la reference
+      // visible afin que chaque profil sandbox conserve sa trajectoire pedagogique.
+      const { error: finalProfileError } = await admin
+        .from("profils_eleves")
+        .update({ ...fixture.profile, updated_at: new Date().toISOString() })
+        .eq("eleve_id", eleve.user_id)
+        .eq("sandbox_session_id", sandbox.id);
+      if (finalProfileError) throw finalProfileError;
     }
 
     const persistedEleves = created.map(({ mot_de_passe_initial: _password, ...eleve }) => eleve);
