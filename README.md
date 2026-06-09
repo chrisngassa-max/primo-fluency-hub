@@ -11,6 +11,24 @@ Le panneau formateur est accessible depuis `/#/formateur/sandbox` (l'alias
 4. Ouvrir le lien dans un onglet prive sur le PC ou sur le telephone.
 5. Utiliser les trois niveaux de reinitialisation selon le test effectue.
 
+### Apercu multi-profils sur un seul appareil
+
+Le bandeau sandbox propose :
+
+```text
+Formateur | A1 | A2 | B1 | B2 | Mosaique
+```
+
+Le changement de vue ne remplace pas la session formateur. Le navigateur
+envoie uniquement le niveau choisi ; les Edge Functions retrouvent et
+verifient elles-memes le compte eleve rattache a la sandbox active.
+
+La vue eleve integree permet actuellement de consulter le tableau de bord,
+les devoirs et de tester les exercices QCM ou vrai/faux. La mosaique compare
+les quatre profils avec un seul appel agrege. Les productions audio et les
+corrections IA restent a tester avec les liens magiques dans cette premiere
+version.
+
 Les comptes A1, A2, B1 et B2, leur groupe, leurs sessions, devoirs et
 resultats portent tous un `sandbox_session_id`. Les suppressions sont limitees
 a la session du formateur authentifie. Les mots de passe initiaux ne sont
