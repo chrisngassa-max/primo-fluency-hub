@@ -7,8 +7,10 @@ import { supabase } from "@/integrations/supabase/client";
 import type { SandboxLevel } from "@/contexts/SandboxContext";
 import SandboxExerciseRunner from "@/components/sandbox/SandboxExerciseRunner";
 import { getEdgeFunctionErrorMessage } from "@/lib/edgeFunctionError";
+import { useSandboxPreview } from "@/contexts/SandboxPreviewContext";
 
 export default function SandboxStudentPreview({ niveau }: { niveau: SandboxLevel }) {
+  const { exitStudentPreview } = useSandboxPreview();
   const [tab, setTab] = useState<"dashboard" | "devoirs">("dashboard");
   const [dashboard, setDashboard] = useState<any>(null);
   const [devoirs, setDevoirs] = useState<any[]>([]);
@@ -71,7 +73,16 @@ export default function SandboxStudentPreview({ niveau }: { niveau: SandboxLevel
       </div>
 
       {loading && <Card><CardContent className="p-8 text-center">Chargement de la vue {niveau}...</CardContent></Card>}
-      {error && <Card className="border-destructive"><CardContent className="p-6 text-destructive">{error}</CardContent></Card>}
+      {error && (
+        <Card className="border-destructive">
+          <CardContent className="space-y-4 p-6">
+            <p className="text-destructive">{error}</p>
+            <Button variant="outline" onClick={exitStudentPreview}>
+              Revenir a la vue formateur
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
       {!loading && !error && tab === "dashboard" && dashboard && (
         <>

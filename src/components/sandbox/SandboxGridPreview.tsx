@@ -7,7 +7,7 @@ import { getEdgeFunctionErrorMessage } from "@/lib/edgeFunctionError";
 import { useSandboxPreview } from "@/contexts/SandboxPreviewContext";
 
 export default function SandboxGridPreview() {
-  const { enterStudentPreview } = useSandboxPreview();
+  const { enterStudentPreview, exitStudentPreview } = useSandboxPreview();
   const [profiles, setProfiles] = useState<any[]>([]);
   const [error, setError] = useState("");
 
@@ -18,7 +18,18 @@ export default function SandboxGridPreview() {
     });
   }, []);
 
-  if (error) return <Card className="border-destructive"><CardContent className="p-6 text-destructive">{error}</CardContent></Card>;
+  if (error) {
+    return (
+      <Card className="border-destructive">
+        <CardContent className="space-y-4 p-6">
+          <p className="text-destructive">{error}</p>
+          <Button variant="outline" onClick={exitStudentPreview}>
+            Revenir a la vue formateur
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <div className="space-y-5">

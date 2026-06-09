@@ -83,7 +83,14 @@ export default function SandboxBanner() {
         <RotateCcw className="mr-2 h-4 w-4" />
         Reinitialiser
       </Button>
-      <Button size="sm" variant="secondary" onClick={() => navigate("/formateur/sandbox")}>
+      <Button
+        size="sm"
+        variant="secondary"
+        onClick={() => {
+          exitStudentPreview();
+          navigate("/formateur/sandbox");
+        }}
+      >
         <XCircle className="mr-2 h-4 w-4" />
         Quitter
       </Button>
