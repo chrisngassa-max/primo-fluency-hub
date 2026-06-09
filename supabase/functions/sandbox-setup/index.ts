@@ -135,6 +135,70 @@ Deno.serve(async (req) => {
       .single();
     if (groupError) throw groupError;
 
+    const now = new Date();
+    const previousSessionDate = new Date(now);
+    previousSessionDate.setUTCDate(previousSessionDate.getUTCDate() - 7);
+    previousSessionDate.setUTCHours(14, 0, 0, 0);
+    const currentSessionDate = new Date(now);
+    currentSessionDate.setUTCDate(currentSessionDate.getUTCDate() + 1);
+    currentSessionDate.setUTCHours(14, 0, 0, 0);
+
+    const { data: seededSessions, error: sessionsError } = await admin
+      .from("sessions")
+      .insert([
+        {
+          group_id: group.id,
+          titre: "Sandbox 1 - Comprendre les informations essentielles",
+          date_seance: previousSessionDate.toISOString(),
+          niveau_cible: "A2",
+          objectifs: "Reperer une information utile et reformuler une consigne.",
+          duree_minutes: 90,
+          statut: "terminee",
+          competences_cibles: ["CO", "CE"],
+          generation_automatique_activee: false,
+          sandbox_session_id: sandbox.id,
+        },
+        {
+          group_id: group.id,
+          titre: "Sandbox 2 - Agir dans une situation administrative",
+          date_seance: currentSessionDate.toISOString(),
+          niveau_cible: "A2",
+          objectifs: "Mobiliser les acquis, diagnostiquer les besoins et differencier la suite.",
+          duree_minutes: 90,
+          statut: "planifiee",
+          competences_cibles: ["CO", "CE", "EO"],
+          nb_exercices_retrospective: 3,
+          duree_retrospective: 10,
+          nb_questions_diagnostic: 10,
+          generation_automatique_activee: false,
+          sandbox_session_id: sandbox.id,
+        },
+      ])
+      .select("id, statut");
+    if (sessionsError) throw sessionsError;
+    const previousSession = seededSessions?.find((session: any) => session.statut === "terminee");
+    const currentSession = seededSessions?.find((session: any) => session.statut === "planifiee");
+    if (!previousSession || !currentSession) throw new Error("Seances sandbox non creees");
+
+    const retrospectiveExerciseIds = exercises.slice(0, 5).map((exercise: any) => exercise.id);
+    const { error: sessionExerciseError } = await admin.from("session_exercices").insert(
+      retrospectiveExerciseIds.map((exerciseId: string, index: number) => ({
+        session_id: previousSession.id,
+        exercice_id: exerciseId,
+        statut: "traite_en_classe",
+        ordre: index + 1,
+        bloc: "core",
+      })),
+    );
+    if (sessionExerciseError) throw sessionExerciseError;
+
+    const { error: blockError } = await admin.from("session_blocks").insert([
+      { session_id: currentSession.id, block_type: "retrospective", status: "ready" },
+      { session_id: currentSession.id, block_type: "diagnostic", status: "ready" },
+      { session_id: currentSession.id, block_type: "core", status: "ready" },
+    ]);
+    if (blockError) throw blockError;
+
     for (const eleve of created) {
       const fixture = SANDBOX_LEARNER_FIXTURES[eleve.niveau];
       // Le trigger Auth cree profiles. Le mot de passe sandbox reste volontairement NULL.
@@ -184,6 +248,7 @@ Deno.serve(async (req) => {
         raison: devoir.raison,
         date_echeance: devoir.due_at,
         nb_reussites_consecutives: devoir.successes,
+        session_id: previousSession.id,
         created_at: devoir.created_at,
         updated_at: devoir.created_at,
         sandbox_session_id: sandbox.id,
