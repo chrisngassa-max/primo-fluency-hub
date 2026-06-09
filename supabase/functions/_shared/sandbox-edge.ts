@@ -95,11 +95,22 @@ export async function resolveSandboxPreviewStudent(
     .from("profils_eleves")
     .select("*")
     .eq("eleve_id", student.user_id)
-    .eq("sandbox_session_id", session.id)
     .maybeSingle();
   if (learnerError) throw learnerError;
   if (!learner) {
     throw Object.assign(new Error("Profil non rattache a cette sandbox"), { status: 403 });
+  }
+  if (learner.sandbox_session_id && learner.sandbox_session_id !== session.id) {
+    throw Object.assign(new Error("Profil rattache a une autre sandbox"), { status: 403 });
+  }
+  if (!learner.sandbox_session_id) {
+    const { error: repairError } = await admin
+      .from("profils_eleves")
+      .update({ sandbox_session_id: session.id })
+      .eq("eleve_id", student.user_id)
+      .is("sandbox_session_id", null);
+    if (repairError) throw repairError;
+    learner.sandbox_session_id = session.id;
   }
 
   return { session, student, learner };

@@ -3,6 +3,7 @@ import { ArrowRight, BookOpen, Clock3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
+import { getEdgeFunctionErrorMessage } from "@/lib/edgeFunctionError";
 import { useSandboxPreview } from "@/contexts/SandboxPreviewContext";
 
 export default function SandboxGridPreview() {
@@ -11,8 +12,8 @@ export default function SandboxGridPreview() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    void supabase.functions.invoke("sandbox-mosaic-summary").then(({ data, error: invokeError }) => {
-      if (invokeError) setError(invokeError.message);
+    void supabase.functions.invoke("sandbox-mosaic-summary").then(async ({ data, error: invokeError }) => {
+      if (invokeError) setError(await getEdgeFunctionErrorMessage(invokeError, "Mosaique indisponible"));
       else setProfiles(data?.profils ?? []);
     });
   }, []);

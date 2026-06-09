@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import type { SandboxLevel } from "@/contexts/SandboxContext";
 import SandboxExerciseRunner from "@/components/sandbox/SandboxExerciseRunner";
+import { getEdgeFunctionErrorMessage } from "@/lib/edgeFunctionError";
 
 export default function SandboxStudentPreview({ niveau }: { niveau: SandboxLevel }) {
   const [tab, setTab] = useState<"dashboard" | "devoirs">("dashboard");
@@ -23,7 +24,7 @@ export default function SandboxStudentPreview({ niveau }: { niveau: SandboxLevel
     });
     setLoading(false);
     if (invokeError) {
-      setError(invokeError.message);
+      setError(await getEdgeFunctionErrorMessage(invokeError, "Vue eleve indisponible"));
       return;
     }
     if (resource === "dashboard") setDashboard(data);
@@ -41,7 +42,7 @@ export default function SandboxStudentPreview({ niveau }: { niveau: SandboxLevel
       body: { niveau, resource: "exercice", payload: { devoir_id: devoirId } },
     });
     setLoading(false);
-    if (invokeError) setError(invokeError.message);
+    if (invokeError) setError(await getEdgeFunctionErrorMessage(invokeError, "Exercice indisponible"));
     else setActiveDevoir(data.devoir);
   };
 
