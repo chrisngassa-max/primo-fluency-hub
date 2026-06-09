@@ -66,6 +66,20 @@ export function createReadablePassword() {
 
 const PREVIEW_LEVELS: NiveauSandbox[] = ["A1", "A2", "B1", "B2"];
 
+function fallbackLearner(niveau: NiveauSandbox, sessionId: string) {
+  return {
+    niveau_actuel: niveau,
+    niveau_co: niveau,
+    niveau_ce: niveau,
+    niveau_ee: niveau,
+    niveau_eo: niveau,
+    score_risque: 0,
+    taux_reussite_global: 0,
+    priorites_pedagogiques: [],
+    sandbox_session_id: sessionId,
+  };
+}
+
 export async function resolveSandboxPreviewStudent(
   admin: any,
   formateurId: string,
@@ -77,7 +91,7 @@ export async function resolveSandboxPreviewStudent(
 
   const { data: session, error: sessionError } = await admin
     .from("sandbox_sessions")
-    .select("id, statut, expires_at, eleve_emails")
+    .select("id, statut, expires_at, eleve_emails, eleve_user_ids")
     .eq("formateur_id", formateurId)
     .maybeSingle();
   if (sessionError) throw sessionError;
@@ -86,7 +100,17 @@ export async function resolveSandboxPreviewStudent(
     throw Object.assign(new Error("Sandbox expiree ou inactive"), { status: 409 });
   }
 
-  const student = (session.eleve_emails ?? []).find((item: any) => item.niveau === niveau);
+  const levelIndex = PREVIEW_LEVELS.indexOf(niveau);
+  const student = (session.eleve_emails ?? []).find((item: any) => item.niveau === niveau) ?? (
+    session.eleve_user_ids?.[levelIndex]
+      ? {
+        niveau,
+        user_id: session.eleve_user_ids[levelIndex],
+        email: "",
+        display_name: `Eleve Test ${niveau}`,
+      }
+      : null
+  );
   if (!student?.user_id) {
     throw Object.assign(new Error("Profil sandbox introuvable"), { status: 400 });
   }
@@ -96,12 +120,22 @@ export async function resolveSandboxPreviewStudent(
     .select("*")
     .eq("eleve_id", student.user_id)
     .maybeSingle();
-  if (learnerError) throw learnerError;
+  if (learnerError) {
+    console.warn("sandbox learner lookup failed", learnerError.message);
+    return { session, student, learner: fallbackLearner(niveau, session.id) };
+  }
   if (!learner) {
-    throw Object.assign(new Error("Profil non rattache a cette sandbox"), { status: 403 });
+    const fallback = fallbackLearner(niveau, session.id);
+    const { error: createError } = await admin.from("profils_eleves").upsert({
+      eleve_id: student.user_id,
+      ...fallback,
+    }, { onConflict: "eleve_id" });
+    if (createError) console.warn("sandbox learner repair failed", createError.message);
+    return { session, student, learner: fallback };
   }
   if (learner.sandbox_session_id && learner.sandbox_session_id !== session.id) {
-    throw Object.assign(new Error("Profil rattache a une autre sandbox"), { status: 403 });
+    console.warn("sandbox learner belongs to another session", student.user_id);
+    return { session, student, learner: fallbackLearner(niveau, session.id) };
   }
   if (!learner.sandbox_session_id) {
     const { error: repairError } = await admin

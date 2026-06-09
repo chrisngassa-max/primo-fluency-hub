@@ -15,8 +15,9 @@ Deno.serve(async (req) => {
     const { admin, user } = await getSandboxClients(req);
     const profiles = [];
     for (const niveau of LEVELS) {
-      const { session, student, learner } = await resolveSandboxPreviewStudent(admin, user.id, niveau);
-      const [{ count: pending }, { count: completed }, { data: latest }] = await Promise.all([
+      try {
+        const { session, student, learner } = await resolveSandboxPreviewStudent(admin, user.id, niveau);
+        const [{ count: pending }, { count: completed }, { data: latest }] = await Promise.all([
         admin.from("devoirs").select("id", { count: "exact", head: true })
           .eq("eleve_id", student.user_id).eq("sandbox_session_id", session.id)
           .in("statut", ["en_attente", "expire"]),
@@ -26,22 +27,36 @@ Deno.serve(async (req) => {
         admin.from("resultats").select("score, created_at")
           .eq("eleve_id", student.user_id).eq("sandbox_session_id", session.id)
           .order("created_at", { ascending: false }).limit(1).maybeSingle(),
-      ]);
-      profiles.push({
-        niveau,
-        display_name: student.display_name,
-        competences: {
-          CO: learner.niveau_co,
-          CE: learner.niveau_ce,
-          EE: learner.niveau_ee,
-          EO: learner.niveau_eo,
-        },
-        score_risque: learner.score_risque,
-        devoirs_en_cours: pending ?? 0,
-        devoirs_termines: completed ?? 0,
-        derniere_activite: latest?.created_at ?? null,
-        dernier_score: latest?.score ?? null,
-      });
+        ]);
+        profiles.push({
+          niveau,
+          display_name: student.display_name,
+          competences: {
+            CO: learner.niveau_co,
+            CE: learner.niveau_ce,
+            EE: learner.niveau_ee,
+            EO: learner.niveau_eo,
+          },
+          score_risque: learner.score_risque,
+          devoirs_en_cours: pending ?? 0,
+          devoirs_termines: completed ?? 0,
+          derniere_activite: latest?.created_at ?? null,
+          dernier_score: latest?.score ?? null,
+        });
+      } catch (profileError) {
+        console.warn(`sandbox mosaic ${niveau} degraded`, profileError instanceof Error ? profileError.message : "unknown");
+        profiles.push({
+          niveau,
+          display_name: `Eleve Test ${niveau}`,
+          competences: { CO: niveau, CE: niveau, EE: niveau, EO: niveau },
+          score_risque: 0,
+          devoirs_en_cours: 0,
+          devoirs_termines: 0,
+          derniere_activite: null,
+          dernier_score: null,
+          degraded: true,
+        });
+      }
     }
     return jsonResponse({ profils: profiles });
   } catch (error) {
