@@ -20,6 +20,7 @@ import {
   ListChecks,
   BookMarked,
   BarChart3,
+  FlaskConical,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
@@ -45,6 +46,7 @@ import PedagogicalTerminologyHelp from "@/components/PedagogicalTerminologyHelp"
 
 const gestionNav = [
   { title: "Tableau de bord", url: "/formateur", icon: LayoutDashboard },
+  { title: "Mode Sandbox", url: "/formateur/sandbox", icon: FlaskConical },
   { title: "Demandes d'accès", url: "/formateur/demandes", icon: Inbox },
   { title: "Groupes & Élèves", url: "/formateur/groupes", icon: Users },
   { title: "Séances", url: "/formateur/seances", icon: Calendar },
