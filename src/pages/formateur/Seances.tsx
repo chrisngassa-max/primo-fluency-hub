@@ -162,6 +162,7 @@ const SeancesPage = () => {
   const [lieu, setLieu] = useState("");
   const [competencesCibles, setCompetencesCibles] = useState<string[]>([]);
   const [automation, setAutomation] = useState<AutomationSettings>(defaultAutomation);
+  const [planningSessionNum, setPlanningSessionNum] = useState(0);
 
   useEffect(() => {
     if (searchParams.get("new") === "1") {
@@ -219,6 +220,20 @@ const SeancesPage = () => {
   ];
 
   // Detect the highest session number already created for this formateur
+  const applyCurriculumPreset = (numero: number) => {
+    const preset = CURRICULUM.find((session) => session.numero === numero);
+    if (!preset) return;
+    setPlanningSessionNum(numero);
+    setTitre(preset.titre);
+    setObjectifs(preset.objectif);
+    setDureeMinutes(String(preset.duree));
+    setCompetencesCibles([...preset.competences]);
+    setAutomation((current) => ({
+      ...current,
+      competences: [...preset.competences],
+    }));
+  };
+
   const extractSessionNumber = (title?: string | null): number | null => {
     const match = title?.match(/S[ée]ance\s*(\d+)/i);
     return match ? parseInt(match[1]) : null;
@@ -358,6 +373,12 @@ const SeancesPage = () => {
     enabled: !!user,
   });
 
+  useEffect(() => {
+    if (createOpen && planningSessionNum === 0) {
+      applyCurriculumPreset(getNextSessionNumber());
+    }
+  }, [createOpen, planningSessionNum, sessions]);
+
   // Fetch sequences for attachment
   const { data: sequences } = useQuery({
     queryKey: ["formateur-sequences", user?.id],
@@ -479,6 +500,7 @@ const SeancesPage = () => {
     setObjectifs(""); setDureeMinutes("180"); setLieu("");
     setSelectedSequenceId(""); setSelectedExerciseIds(new Set());
     setCompetencesCibles([]);
+    setPlanningSessionNum(0);
     setAutomation(defaultAutomation);
   };
 
@@ -693,6 +715,27 @@ const SeancesPage = () => {
           <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
             <DialogHeader><DialogTitle>Planifier une séance</DialogTitle></DialogHeader>
             <div className="space-y-4">
+              <div className="space-y-2 rounded-lg border bg-muted/30 p-3">
+                <Label>Séance proposée</Label>
+                <Select
+                  value={planningSessionNum ? String(planningSessionNum) : undefined}
+                  onValueChange={(value) => applyCurriculumPreset(Number(value))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choisir une séance de 1 à 20" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CURRICULUM.map((session) => (
+                      <SelectItem key={session.numero} value={String(session.numero)}>
+                        {session.titre}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  La proposition préremplit le formulaire. Tous les champs restent modifiables.
+                </p>
+              </div>
               <div className="space-y-2">
                 <Label>Titre</Label>
                 <Input value={titre} onChange={(e) => setTitre(e.target.value)} placeholder="Ex: Séance 1 — Vie quotidienne" />
