@@ -27,6 +27,8 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import SandboxBanner from "@/components/sandbox/SandboxBanner";
 import { useSandbox } from "@/contexts/SandboxContext";
+import { useSandboxPreview } from "@/contexts/SandboxPreviewContext";
+import SandboxPreviewSurface from "@/components/sandbox/SandboxPreviewSurface";
 
 const mainNav = [
   { title: "Tableau de bord", url: "/formateur", icon: LayoutDashboard },
@@ -58,6 +60,7 @@ const FormateurLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { session, displayHint } = useSandbox();
+  const { mode } = useSandboxPreview();
   const sandboxVisible = displayHint || (!!session && session.statut !== "reset");
 
   const isActive = (path: string) =>
@@ -166,7 +169,7 @@ const FormateurLayout = () => {
           </div>
         </header>
         <main className="flex-1 overflow-auto p-4">
-          <Outlet />
+          {mode === "formateur" ? <Outlet /> : <SandboxPreviewSurface />}
         </main>
       </div>
       </>
@@ -191,7 +194,7 @@ const FormateurLayout = () => {
             </div>
           </header>
           <main className="flex-1 overflow-auto p-4 md:p-8">
-            <Outlet />
+            {mode === "formateur" ? <Outlet /> : <SandboxPreviewSurface />}
           </main>
         </div>
       </div>

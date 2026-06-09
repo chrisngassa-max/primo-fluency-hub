@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import type { NiveauSandbox } from "./sandbox.types.ts";
 
 export const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -61,4 +62,45 @@ export function createReadablePassword() {
   const bytes = new Uint32Array(4);
   crypto.getRandomValues(bytes);
   return `${words[bytes[0] % words.length]}-${words[bytes[1] % words.length]}-${words[bytes[2] % words.length]}-${bytes[3] % 10}`;
+}
+
+const PREVIEW_LEVELS: NiveauSandbox[] = ["A1", "A2", "B1", "B2"];
+
+export async function resolveSandboxPreviewStudent(
+  admin: any,
+  formateurId: string,
+  niveau: NiveauSandbox,
+) {
+  if (!PREVIEW_LEVELS.includes(niveau)) {
+    throw Object.assign(new Error("Niveau sandbox invalide"), { status: 400 });
+  }
+
+  const { data: session, error: sessionError } = await admin
+    .from("sandbox_sessions")
+    .select("id, statut, expires_at, eleve_emails")
+    .eq("formateur_id", formateurId)
+    .maybeSingle();
+  if (sessionError) throw sessionError;
+  if (!session) throw Object.assign(new Error("Sandbox introuvable"), { status: 404 });
+  if (session.statut !== "active" || new Date(session.expires_at) <= new Date()) {
+    throw Object.assign(new Error("Sandbox expiree ou inactive"), { status: 409 });
+  }
+
+  const student = (session.eleve_emails ?? []).find((item: any) => item.niveau === niveau);
+  if (!student?.user_id) {
+    throw Object.assign(new Error("Profil sandbox introuvable"), { status: 400 });
+  }
+
+  const { data: learner, error: learnerError } = await admin
+    .from("profils_eleves")
+    .select("*")
+    .eq("eleve_id", student.user_id)
+    .eq("sandbox_session_id", session.id)
+    .maybeSingle();
+  if (learnerError) throw learnerError;
+  if (!learner) {
+    throw Object.assign(new Error("Profil non rattache a cette sandbox"), { status: 403 });
+  }
+
+  return { session, student, learner };
 }

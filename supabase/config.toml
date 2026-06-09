@@ -23,3 +23,9 @@ project_id = "gudcenhmzlcvhgbgklzw"
     verify_jwt = true
   [functions.sandbox-status]
     verify_jwt = true
+  [functions.sandbox-preview-data]
+    verify_jwt = true
+  [functions.sandbox-preview-action]
+    verify_jwt = true
+  [functions.sandbox-mosaic-summary]
+    verify_jwt = true

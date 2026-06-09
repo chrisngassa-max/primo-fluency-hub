@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { SandboxPreviewProvider } from "@/contexts/SandboxPreviewContext";
 
 export type SandboxLevel = "A1" | "A2" | "B1" | "B2";
 
@@ -76,6 +77,17 @@ export function SandboxProvider({ children }: { children: React.ReactNode }) {
     if (user && role === "formateur") void refresh();
   }, [refresh, role, user]);
 
+  useEffect(() => {
+    if (!session?.expires_at || session.statut !== "active") return;
+    const delay = new Date(session.expires_at).getTime() - Date.now();
+    if (delay <= 0) {
+      void refresh();
+      return;
+    }
+    const timer = window.setTimeout(() => void refresh(), Math.min(delay + 250, 2_147_000_000));
+    return () => window.clearTimeout(timer);
+  }, [refresh, session?.expires_at, session?.statut]);
+
   const setup = useCallback(async (forceRecreate = false) => {
     const { data, error } = await supabase.functions.invoke("sandbox-setup", {
       body: { force_recreate: forceRecreate },
@@ -110,7 +122,17 @@ export function SandboxProvider({ children }: { children: React.ReactNode }) {
     [session, counts, loading, displayHint, refresh, setup, reset, invite],
   );
 
-  return <SandboxContext.Provider value={value}>{children}</SandboxContext.Provider>;
+  const previewActive =
+    session?.statut === "active" &&
+    new Date(session.expires_at).getTime() > Date.now();
+
+  return (
+    <SandboxContext.Provider value={value}>
+      <SandboxPreviewProvider active={previewActive}>
+        {children}
+      </SandboxPreviewProvider>
+    </SandboxContext.Provider>
+  );
 }
 
 export function useSandbox() {
