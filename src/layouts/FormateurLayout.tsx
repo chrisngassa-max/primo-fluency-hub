@@ -25,6 +25,8 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import SandboxBanner from "@/components/sandbox/SandboxBanner";
+import { useSandbox } from "@/contexts/SandboxContext";
 
 const mainNav = [
   { title: "Tableau de bord", url: "/formateur", icon: LayoutDashboard },
@@ -55,6 +57,8 @@ const FormateurLayout = () => {
   const [sheetOpen, setSheetOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { session, displayHint } = useSandbox();
+  const sandboxVisible = displayHint || (!!session && session.statut !== "reset");
 
   const isActive = (path: string) =>
     path === "/formateur" ? location.pathname === path : location.pathname.startsWith(path);
@@ -67,7 +71,9 @@ const FormateurLayout = () => {
   // Tablet / mobile: hamburger menu with Sheet containing simple nav links
   if (isMobile) {
     return (
-      <div className="min-h-screen flex flex-col bg-background">
+      <>
+      <SandboxBanner />
+      <div className={cn("min-h-screen flex flex-col bg-background", sandboxVisible && "pt-12")}>
         <header className="h-14 flex items-center gap-3 border-b bg-card px-4 shrink-0">
           <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
             <SheetTrigger asChild>
@@ -163,13 +169,16 @@ const FormateurLayout = () => {
           <Outlet />
         </main>
       </div>
+      </>
     );
   }
 
   // Desktop: persistent sidebar
   return (
+    <>
+    <SandboxBanner />
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-[radial-gradient(circle_at_top_right,hsl(var(--accent)/0.12),transparent_34%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--secondary)/0.45))]">
+      <div className={cn("min-h-screen flex w-full bg-[radial-gradient(circle_at_top_right,hsl(var(--accent)/0.12),transparent_34%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--secondary)/0.45))]", sandboxVisible && "pt-12")}>
         <FormateurSidebar />
         <div className="flex-1 flex flex-col min-w-0">
           <header className="h-16 flex items-center gap-3 border-b bg-card/90 backdrop-blur px-5 shrink-0 shadow-sm">
@@ -187,6 +196,7 @@ const FormateurLayout = () => {
         </div>
       </div>
     </SidebarProvider>
+    </>
   );
 };
 

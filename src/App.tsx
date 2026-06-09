@@ -1,9 +1,10 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { HashRouter, Route, Routes } from "react-router-dom";
+import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { SandboxProvider } from "@/contexts/SandboxContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import AIConsentRequiredRoute from "@/components/AIConsentRequiredRoute";
 import AccesLimite from "@/pages/eleve/AccesLimite";
@@ -68,13 +69,15 @@ import PositionnementPage from "@/pages/formateur/PositionnementPage";
 import PlayExercise from "@/pages/PlayExercise";
 import AnalyticsErreursPage from "@/pages/formateur/AnalyticsErreursPage";
 import AuthRelayReset from "@/pages/AuthRelayReset";
+import SandboxControlPanel from "@/pages/formateur/SandboxControlPanel";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <TooltipProvider>
+      <SandboxProvider>
+        <TooltipProvider>
         <Toaster />
         <Sonner />
         <HashRouter>
@@ -89,6 +92,7 @@ const App = () => (
             <Route path="/unsubscribe" element={<Unsubscribe />} />
             <Route path="/play/:token" element={<PlayExercise />} />
             <Route path="/auth/relay-reset" element={<AuthRelayReset />} />
+            <Route path="/sandbox" element={<Navigate to="/formateur/sandbox" replace />} />
 
             {/* Formateur routes */}
             <Route
@@ -131,6 +135,7 @@ const App = () => (
               <Route path="positionnement" element={<PositionnementPage />} />
               <Route path="analytics-erreurs" element={<AnalyticsErreursPage />} />
               <Route path="parametres" element={<Parametres />} />
+              <Route path="sandbox" element={<SandboxControlPanel />} />
             </Route>
 
             {/* Élève routes */}
@@ -164,7 +169,8 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </HashRouter>
-      </TooltipProvider>
+        </TooltipProvider>
+      </SandboxProvider>
     </AuthProvider>
   </QueryClientProvider>
 );
