@@ -20,11 +20,39 @@ Deno.serve(async (req) => {
     };
     if (!body.niveau || !body.resource) return jsonResponse({ error: "Requete incomplete" }, 400);
 
-    const { session, student, learner } = await resolveSandboxPreviewStudent(
-      admin,
-      user.id,
-      body.niveau,
-    );
+    let resolved;
+    try {
+      resolved = await resolveSandboxPreviewStudent(admin, user.id, body.niveau);
+    } catch (resolveError) {
+      console.warn(
+        `sandbox preview ${body.niveau} degraded`,
+        resolveError instanceof Error ? resolveError.message : "unknown",
+      );
+      if (body.resource === "dashboard") {
+        return jsonResponse({
+          niveau: body.niveau,
+          display_name: `Eleve Test ${body.niveau}`,
+          profil: {
+            niveau_actuel: body.niveau,
+            niveau_co: body.niveau,
+            niveau_ce: body.niveau,
+            niveau_ee: body.niveau,
+            niveau_eo: body.niveau,
+            taux_reussite_global: 0,
+            score_risque: 0,
+            priorites_pedagogiques: [],
+          },
+          devoirs: { en_cours: 0, termines: 0 },
+          resultats_recents: [],
+          degraded: true,
+        });
+      }
+      if (body.resource === "devoirs") {
+        return jsonResponse({ niveau: body.niveau, devoirs: [], degraded: true });
+      }
+      throw resolveError;
+    }
+    const { session, student, learner } = resolved;
 
     if (body.resource === "dashboard") {
       const [{ count: pending }, { count: completed }, { data: recent }] = await Promise.all([
