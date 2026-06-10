@@ -7,6 +7,7 @@ import {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+  const requestId = crypto.randomUUID();
   try {
     const { admin, user } = await getSandboxClients(req);
     const { data: session, error } = await admin
@@ -16,7 +17,13 @@ Deno.serve(async (req) => {
       .maybeSingle();
     if (error) throw error;
     if (!session) {
+      console.info("sandbox-status completed", {
+        requestId,
+        formateurId: user.id,
+        sandboxSessionId: null,
+      });
       return jsonResponse({
+        request_id: requestId,
         session: null,
         counts: {
           groups: 0,
@@ -46,7 +53,15 @@ Deno.serve(async (req) => {
       admin.from("sessions").select("id", { count: "exact", head: true }).eq("sandbox_session_id", session.id),
     ]);
 
+    console.info("sandbox-status completed", {
+      requestId,
+      formateurId: user.id,
+      sandboxSessionId: session.id,
+      statut: session.statut,
+    });
+
     return jsonResponse({
+      request_id: requestId,
       session: { ...session, group: groupResult.data ?? null },
       counts: {
         groups: groups.count ?? 0,
@@ -58,7 +73,13 @@ Deno.serve(async (req) => {
       },
     });
   } catch (error) {
-    console.error("sandbox-status failed", error instanceof Error ? error.message : "unknown");
-    return jsonResponse({ error: error instanceof Error ? error.message : "Erreur sandbox" }, (error as any)?.status ?? 500);
+    console.error("sandbox-status failed", {
+      requestId,
+      message: error instanceof Error ? error.message : "unknown",
+    });
+    return jsonResponse({
+      error: error instanceof Error ? error.message : "Erreur sandbox",
+      request_id: requestId,
+    }, (error as any)?.status ?? 500);
   }
 });

@@ -26,7 +26,12 @@ export type SandboxResetScope = "attempts_only" | "sessions" | "everything";
 
 export interface SandboxResetResponse {
   tables_nettoyees: Record<string, number>;
-  sandbox_session_id: string;
+  sandbox_session_id: string | null;
+  session_deleted: boolean;
+  remaining_session: boolean;
+  request_id?: string;
+  message?: "already_cleaned";
+  auth_cleanup_failures?: number;
 }
 
 export interface SandboxInviteResponse {

@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { SandboxPreviewProvider } from "@/contexts/SandboxPreviewContext";
@@ -50,6 +50,8 @@ export function SandboxProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<SandboxSession | null>(null);
   const [counts, setCounts] = useState<SandboxCounts>(EMPTY_COUNTS);
   const [loading, setLoading] = useState(false);
+  const exitingRef = useRef(false);
+  const exitPromiseRef = useRef<Promise<void> | null>(null);
   const [displayHint, setDisplayHint] = useState(
     () =>
       localStorage.getItem("sandbox_mode") === "true" &&
@@ -57,6 +59,7 @@ export function SandboxProvider({ children }: { children: React.ReactNode }) {
   );
 
   const refresh = useCallback(async () => {
+    if (exitingRef.current) return;
     if (role !== "formateur") {
       setSession(null);
       setCounts(EMPTY_COUNTS);
@@ -67,6 +70,7 @@ export function SandboxProvider({ children }: { children: React.ReactNode }) {
     try {
       const { data, error } = await supabase.functions.invoke("sandbox-status");
       if (error) throw error;
+      if (exitingRef.current) return;
       setSession(data?.session ?? null);
       setCounts(data?.counts ?? EMPTY_COUNTS);
       const dismissed = localStorage.getItem("sandbox_dismissed") === "true";
@@ -127,16 +131,55 @@ export function SandboxProvider({ children }: { children: React.ReactNode }) {
     return data.invite_url as string;
   }, []);
 
-  const exitSandboxMode = useCallback(async () => {
-    localStorage.setItem("sandbox_dismissed", "true");
-    localStorage.removeItem("sandbox_mode");
-    setDisplayHint(false);
-    const { error } = await supabase.functions.invoke("sandbox-reset", {
-      body: { scope: "everything", sandbox_session_id: session?.id },
-    });
-    if (error) throw error;
-    setSession(null);
-    setCounts(EMPTY_COUNTS);
+  const exitSandboxMode = useCallback(() => {
+    if (exitPromiseRef.current) return exitPromiseRef.current;
+
+    const operation = (async () => {
+      exitingRef.current = true;
+      const requestedSessionId = session?.id ?? null;
+      console.info("[sandbox-exit:start]", { sandboxSessionId: requestedSessionId });
+
+      try {
+        const { data, error } = await supabase.functions.invoke("sandbox-reset", {
+          body: { scope: "everything", sandbox_session_id: session?.id },
+        });
+        if (error) throw error;
+
+        console.info("[sandbox-exit:reset-response]", {
+          sandboxSessionId: data?.sandbox_session_id ?? requestedSessionId,
+          sessionDeleted: data?.session_deleted,
+          remainingSession: data?.remaining_session,
+          requestId: data?.request_id,
+        });
+
+        if (data?.session_deleted !== true || data?.remaining_session !== false) {
+          throw new Error("La suppression de la session sandbox n'a pas ete confirmee par le serveur");
+        }
+
+        const { data: statusData, error: statusError } = await supabase.functions.invoke("sandbox-status");
+        if (statusError) throw statusError;
+        console.info("[sandbox-exit:status-response]", {
+          hasSession: !!statusData?.session,
+          sandboxSessionId: statusData?.session?.id ?? null,
+          requestId: statusData?.request_id,
+        });
+        if (statusData?.session) {
+          throw new Error("Une session sandbox est encore active apres la suppression");
+        }
+
+        localStorage.removeItem("sandbox_mode");
+        localStorage.removeItem("sandbox_dismissed");
+        setDisplayHint(false);
+        setSession(null);
+        setCounts(EMPTY_COUNTS);
+      } finally {
+        exitingRef.current = false;
+        exitPromiseRef.current = null;
+      }
+    })();
+
+    exitPromiseRef.current = operation;
+    return operation;
   }, [session?.id]);
 
   const value = useMemo(

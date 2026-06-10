@@ -173,10 +173,24 @@ export function createSandboxDomain(repository: InMemorySandboxRepository) {
     async reset(ownerId: string, scope: SandboxResetScope, requestedSessionId?: string) {
       assertFormateur(ownerId);
       const owned = repository.findSessionByOwner(ownerId);
-      if (requestedSessionId && owned?.id !== requestedSessionId) {
+      if (!owned) {
+        if (requestedSessionId && repository.sessions.has(requestedSessionId)) {
+          throw new SandboxDomainError("Sandbox non autorise", 403);
+        }
+        if (scope === "everything") {
+          return {
+            tables_nettoyees: {},
+            sandbox_session_id: requestedSessionId ?? null,
+            session_deleted: true,
+            remaining_session: false,
+            message: "already_cleaned" as const,
+          };
+        }
+        throw new SandboxDomainError("Sandbox introuvable", 404);
+      }
+      if (requestedSessionId && owned.id !== requestedSessionId) {
         throw new SandboxDomainError("Sandbox non autorise", 403);
       }
-      if (!owned) throw new SandboxDomainError("Sandbox introuvable", 404);
 
       const tables: Record<string, number> = {
         resultats: repository.clear("resultats", owned.id),
@@ -189,11 +203,14 @@ export function createSandboxDomain(repository: InMemorySandboxRepository) {
         tables.group_members = owned.eleve_user_ids.length;
         tables.profils_eleves = owned.eleve_user_ids.length;
         tables.groups = owned.group_id ? 1 : 0;
-        removeEnvironment(owned, false);
-        owned.statut = "reset";
-        owned.group_id = null;
+        removeEnvironment(owned);
       }
-      return { tables_nettoyees: tables, sandbox_session_id: owned.id };
+      return {
+        tables_nettoyees: tables,
+        sandbox_session_id: owned.id,
+        session_deleted: scope === "everything",
+        remaining_session: scope !== "everything",
+      };
     },
 
     async invite(ownerId: string, niveau: NiveauSandbox): Promise<SandboxInviteResponse> {
