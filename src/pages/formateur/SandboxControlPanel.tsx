@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { Clock3, Copy, RefreshCw, ShieldCheck, Trash2, Users, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export default function SandboxControlPanel() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { session, counts, loading, refresh, setup, reset, invite, exitSandboxMode } = useSandbox();
   const [credentials, setCredentials] = useState<SandboxStudent[]>([]);
   const [busy, setBusy] = useState(false);
@@ -77,6 +79,7 @@ export default function SandboxControlPanel() {
     setBusy(true);
     try {
       await exitSandboxMode();
+      queryClient.clear();
       toast.success("Mode sandbox quitte. Tes donnees reelles sont a nouveau affichees.");
       navigate("/formateur");
     } catch (error) {
