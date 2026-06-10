@@ -306,7 +306,7 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
   const { data: testPositionnement } = useQuery({
     queryKey: ["eleve-test-positionnement-progression", targetId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("test_sessions")
         .select("statut")
         .eq("apprenant_id", targetId!)

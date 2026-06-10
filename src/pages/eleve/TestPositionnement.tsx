@@ -97,7 +97,7 @@ const TestPositionnement = () => {
   const getPreferredSession = useCallback(async () => {
     if (!user?.id) return null;
 
-    const { data: sessions, error } = await supabase
+    const { data: sessions, error } = await (supabase as any)
       .from("test_sessions")
       .select("*")
       .eq("apprenant_id", user.id)
@@ -374,7 +374,7 @@ const TestPositionnement = () => {
       return;
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("test_sessions")
       .insert({ apprenant_id: user.id })
       .select()
@@ -760,7 +760,7 @@ const TestPositionnement = () => {
       const updateData: Record<string, number> = {};
       updateData[`palier_${compKey}`] = nextPalier;
       updateData[`score_${compKey}`] = newScores[compKey];
-      await supabase
+      await (supabase as any)
         .from("test_sessions")
         .update(updateData as any)
         .eq("id", sessionState.sessionId);
@@ -790,7 +790,7 @@ const TestPositionnement = () => {
 
     const scoreUpdate: Record<string, number> = {};
     scoreUpdate[`score_${compKey}`] = newScores[compKey];
-    await supabase
+    await (supabase as any)
       .from("test_sessions")
       .update(scoreUpdate as any)
       .eq("id", sessionState.sessionId);
