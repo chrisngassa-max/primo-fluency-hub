@@ -18,18 +18,39 @@ import {
 
 const LEVELS: NiveauSandbox[] = ["A1", "A2", "B1", "B2"];
 
+function isMissingSandboxSchema(error: any) {
+  const message = `${error?.message ?? ""} ${error?.details ?? ""}`.toLowerCase();
+  return ["42p01", "42703", "pgrst204", "pgrst205"].includes(
+    String(error?.code ?? "").toLowerCase(),
+  ) || message.includes("sandbox_sessions") ||
+    (message.includes("sandbox_session_id") && message.includes("column"));
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+  let cleanupAdmin: any = null;
+  let cleanupSandboxId: string | null = null;
+  let cleanupUserIds: string[] = [];
+
   try {
     const { admin, user } = await getSandboxClients(req);
+    cleanupAdmin = admin;
     const body = await req.json().catch(() => ({})) as SandboxSetupRequest;
     const { data: current, error: currentError } = await admin
       .from("sandbox_sessions")
       .select("*")
       .eq("formateur_id", user.id)
       .maybeSingle();
-    if (currentError) throw currentError;
+    if (currentError) {
+      if (isMissingSandboxSchema(currentError)) {
+        return jsonResponse({
+          error: "La base de donnees Sandbox n'est pas initialisee. Appliquez les migrations Supabase avant de recommencer.",
+          code: "SANDBOX_NOT_PROVISIONED",
+        }, 503);
+      }
+      throw currentError;
+    }
 
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
     if (current && !body.force_recreate && ["active", "expired"].includes(current.statut)) {
@@ -73,6 +94,7 @@ Deno.serve(async (req) => {
       .select("*")
       .single();
     if (sandboxError) throw sandboxError;
+    cleanupSandboxId = sandbox.id;
 
     const shortId = sandbox.id.replaceAll("-", "").slice(0, 8);
     const created: EleveSandbox[] = [];
@@ -101,9 +123,10 @@ Deno.serve(async (req) => {
         display_name: `${fixture.prenom} ${fixture.nom}`,
         mot_de_passe_initial: password,
       });
+      cleanupUserIds = created.map((eleve) => eleve.user_id);
       const { error: checkpointError } = await admin
         .from("sandbox_sessions")
-        .update({ eleve_user_ids: created.map((eleve) => eleve.user_id) })
+        .update({ eleve_user_ids: cleanupUserIds })
         .eq("id", sandbox.id);
       if (checkpointError) throw checkpointError;
     }
@@ -318,7 +341,46 @@ Deno.serve(async (req) => {
       message: isResume ? "resumed" : "created",
     });
   } catch (error) {
+    if (cleanupAdmin && cleanupSandboxId) {
+      try {
+        await deleteSandboxRows(cleanupAdmin, cleanupSandboxId);
+      } catch (cleanupError) {
+        console.error(
+          "sandbox-setup row cleanup failed",
+          cleanupError instanceof Error ? cleanupError.message : "unknown",
+        );
+      }
+      try {
+        await deleteAuthUsers(cleanupAdmin, cleanupUserIds);
+      } catch (cleanupError) {
+        console.error(
+          "sandbox-setup auth cleanup failed",
+          cleanupError instanceof Error ? cleanupError.message : "unknown",
+        );
+      }
+      try {
+        const { error: sessionCleanupError } = await cleanupAdmin
+          .from("sandbox_sessions")
+          .delete()
+          .eq("id", cleanupSandboxId);
+        if (sessionCleanupError) throw sessionCleanupError;
+      } catch (cleanupError) {
+        console.error(
+          "sandbox-setup session cleanup failed",
+          cleanupError instanceof Error ? cleanupError.message : "unknown",
+        );
+      }
+    }
     console.error("sandbox-setup failed", error instanceof Error ? error.message : "unknown");
-    return jsonResponse({ error: error instanceof Error ? error.message : "Erreur sandbox" }, (error as any)?.status ?? 500);
+    if (isMissingSandboxSchema(error)) {
+      return jsonResponse({
+        error: "La base de donnees Sandbox n'est pas initialisee. Appliquez les migrations Supabase avant de recommencer.",
+        code: "SANDBOX_NOT_PROVISIONED",
+      }, 503);
+    }
+    return jsonResponse({
+      error: error instanceof Error ? error.message : "Erreur sandbox",
+      code: "SANDBOX_SETUP_FAILED",
+    }, (error as any)?.status ?? 500);
   }
 });
