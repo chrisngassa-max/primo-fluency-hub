@@ -10,7 +10,7 @@ const LEVELS = ["A1", "A2", "B1", "B2"] as const;
 
 export default function SandboxBanner() {
   const navigate = useNavigate();
-  const { session, displayHint, setup, reset } = useSandbox();
+  const { session, displayHint, setup, reset, exitSandboxMode } = useSandbox();
   const {
     mode,
     niveau,
