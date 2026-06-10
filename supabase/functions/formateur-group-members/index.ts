@@ -46,19 +46,35 @@ Deno.serve(async (req) => {
       .eq("formateur_id", user.id);
     if (groupsError) throw groupsError;
 
+    const sandboxIds = [...new Set((groups ?? [])
+      .map((group: any) => group.sandbox_session_id)
+      .filter(Boolean))];
+    const { data: activeSandboxes, error: sandboxError } = sandboxIds.length
+      ? await admin
+        .from("sandbox_sessions")
+        .select("id")
+        .eq("formateur_id", user.id)
+        .eq("statut", "active")
+        .gt("expires_at", new Date().toISOString())
+        .in("id", sandboxIds)
+      : { data: [], error: null };
+    if (sandboxError) throw sandboxError;
+    const allowedSandboxIds = new Set((activeSandboxes ?? []).map((sandbox: any) => sandbox.id));
     const groupIds = (groups ?? [])
-      .filter((group: any) => !group.sandbox_session_id)
+      .filter((group: any) => !group.sandbox_session_id || allowedSandboxIds.has(group.sandbox_session_id))
       .map((group: any) => group.id);
     if (groupIds.length === 0) return json({ members: [] });
 
     const { data: members, error: membersError } = await admin
       .from("group_members")
       .select("id, group_id, eleve_id, joined_at, sandbox_session_id")
-      .in("group_id", groupIds)
-      .is("sandbox_session_id", null);
+      .in("group_id", groupIds);
     if (membersError) throw membersError;
 
-    const eleveIds = [...new Set((members ?? []).map((member: any) => member.eleve_id).filter(Boolean))];
+    const visibleMembers = (members ?? []).filter(
+      (member: any) => !member.sandbox_session_id || allowedSandboxIds.has(member.sandbox_session_id),
+    );
+    const eleveIds = [...new Set(visibleMembers.map((member: any) => member.eleve_id).filter(Boolean))];
     const { data: profiles, error: profilesError } = eleveIds.length
       ? await admin
         .from("profiles")
@@ -81,7 +97,7 @@ Deno.serve(async (req) => {
       };
     }));
     const fallbackById = new Map(authFallbacks.filter(Boolean).map((profile: any) => [profile.id, profile]));
-    const normalized = (members ?? []).map((member: any) => {
+    const normalized = visibleMembers.map((member: any) => {
       const profile = profileById.get(member.eleve_id) as any | undefined;
       const fallback = fallbackById.get(member.eleve_id) as any | undefined;
       const mergedProfile = profile || fallback
