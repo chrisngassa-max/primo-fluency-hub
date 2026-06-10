@@ -38,6 +38,8 @@ interface SandboxContextValue {
   setup: (forceRecreate?: boolean) => Promise<SandboxStudent[]>;
   reset: (scope: "attempts_only" | "sessions" | "everything") => Promise<Record<string, number>>;
   invite: (niveau: SandboxLevel) => Promise<string>;
+  exitSandboxMode: () => void;
+
 }
 
 const SandboxContext = createContext<SandboxContextValue | null>(null);
