@@ -189,6 +189,48 @@ export function sandboxDate(daysFromNow: number, hour = 10) {
   return date.toISOString();
 }
 
+export function buildSandboxSessions(groupId: string, sandboxSessionId: string, now = new Date()) {
+  const previousSessionDate = new Date(now);
+  previousSessionDate.setUTCDate(previousSessionDate.getUTCDate() - 7);
+  previousSessionDate.setUTCHours(14, 0, 0, 0);
+  const currentSessionDate = new Date(now);
+  currentSessionDate.setUTCDate(currentSessionDate.getUTCDate() + 1);
+  currentSessionDate.setUTCHours(14, 0, 0, 0);
+
+  return [
+    {
+      group_id: groupId,
+      titre: "Sandbox 1 - Comprendre les informations essentielles",
+      date_seance: previousSessionDate.toISOString(),
+      niveau_cible: "A2",
+      objectifs: "Reperer une information utile et reformuler une consigne.",
+      duree_minutes: 90,
+      statut: "terminee",
+      competences_cibles: ["CO", "CE"],
+      nb_exercices_retrospective: 3,
+      duree_retrospective: 10,
+      nb_questions_diagnostic: 10,
+      generation_automatique_activee: false,
+      sandbox_session_id: sandboxSessionId,
+    },
+    {
+      group_id: groupId,
+      titre: "Sandbox 2 - Agir dans une situation administrative",
+      date_seance: currentSessionDate.toISOString(),
+      niveau_cible: "A2",
+      objectifs: "Mobiliser les acquis, diagnostiquer les besoins et differencier la suite.",
+      duree_minutes: 90,
+      statut: "planifiee",
+      competences_cibles: ["CO", "CE", "EO"],
+      nb_exercices_retrospective: 3,
+      duree_retrospective: 10,
+      nb_questions_diagnostic: 10,
+      generation_automatique_activee: false,
+      sandbox_session_id: sandboxSessionId,
+    },
+  ];
+}
+
 export function buildSandboxHistory(
   fixture: SandboxLearnerFixture,
   exerciseIds: string[],

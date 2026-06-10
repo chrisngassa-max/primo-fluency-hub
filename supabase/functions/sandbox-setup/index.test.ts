@@ -3,11 +3,27 @@ import {
   createSandboxDomain,
   InMemorySandboxRepository,
 } from "../_shared/sandbox-domain";
+import { buildSandboxSessions } from "../_shared/sandbox-fixtures";
 
 const FORMATEUR_A = "formateur-a";
 const FORMATEUR_B = "formateur-b";
 
 describe("sandbox-setup", () => {
+  it("0 - utilise les memes colonnes pour les deux seances de l'insert groupe", () => {
+    const sessions = buildSandboxSessions(
+      "00000000-0000-0000-0000-000000000001",
+      "00000000-0000-0000-0000-000000000002",
+      new Date("2026-06-10T12:00:00.000Z"),
+    );
+
+    expect(Object.keys(sessions[0]).sort()).toEqual(Object.keys(sessions[1]).sort());
+    expect(sessions.every((session) =>
+      session.nb_exercices_retrospective === 3 &&
+      session.duree_retrospective === 10 &&
+      session.nb_questions_diagnostic === 10
+    )).toBe(true);
+  });
+
   it("1 - cree une session, un groupe et quatre eleves sans persister les mots de passe", async () => {
     const repository = new InMemorySandboxRepository();
     const domain = createSandboxDomain(repository);

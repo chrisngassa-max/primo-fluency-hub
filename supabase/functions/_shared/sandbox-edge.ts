@@ -14,6 +14,29 @@ export function jsonResponse(body: unknown, status = 200) {
   });
 }
 
+export function getErrorDetails(error: unknown) {
+  const candidate = error as {
+    code?: unknown;
+    message?: unknown;
+    details?: unknown;
+    hint?: unknown;
+    status?: unknown;
+  } | null;
+  const message = typeof candidate?.message === "string"
+    ? candidate.message
+    : error instanceof Error
+    ? error.message
+    : String(error ?? "Erreur inconnue");
+
+  return {
+    code: typeof candidate?.code === "string" ? candidate.code : null,
+    message,
+    details: typeof candidate?.details === "string" ? candidate.details : null,
+    hint: typeof candidate?.hint === "string" ? candidate.hint : null,
+    status: typeof candidate?.status === "number" ? candidate.status : 500,
+  };
+}
+
 export async function getSandboxClients(req: Request) {
   const authorization = req.headers.get("Authorization");
   if (!authorization) throw Object.assign(new Error("Non autorise"), { status: 401 });

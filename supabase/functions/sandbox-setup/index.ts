@@ -3,6 +3,7 @@ import {
   createReadablePassword,
   deleteAuthUsers,
   deleteSandboxRows,
+  getErrorDetails,
   getSandboxClients,
   jsonResponse,
 } from "../_shared/sandbox-edge.ts";
@@ -13,6 +14,7 @@ import type {
 } from "../_shared/sandbox.types.ts";
 import {
   buildSandboxHistory,
+  buildSandboxSessions,
   SANDBOX_LEARNER_FIXTURES,
 } from "../_shared/sandbox-fixtures.ts";
 
@@ -180,45 +182,9 @@ Deno.serve(async (req) => {
     if (groupCheckpointError) throw groupCheckpointError;
 
     provisioningStep = "create_sessions";
-    const now = new Date();
-    const previousSessionDate = new Date(now);
-    previousSessionDate.setUTCDate(previousSessionDate.getUTCDate() - 7);
-    previousSessionDate.setUTCHours(14, 0, 0, 0);
-    const currentSessionDate = new Date(now);
-    currentSessionDate.setUTCDate(currentSessionDate.getUTCDate() + 1);
-    currentSessionDate.setUTCHours(14, 0, 0, 0);
-
     const { data: seededSessions, error: sessionsError } = await admin
       .from("sessions")
-      .insert([
-        {
-          group_id: group.id,
-          titre: "Sandbox 1 - Comprendre les informations essentielles",
-          date_seance: previousSessionDate.toISOString(),
-          niveau_cible: "A2",
-          objectifs: "Reperer une information utile et reformuler une consigne.",
-          duree_minutes: 90,
-          statut: "terminee",
-          competences_cibles: ["CO", "CE"],
-          generation_automatique_activee: false,
-          sandbox_session_id: sandbox.id,
-        },
-        {
-          group_id: group.id,
-          titre: "Sandbox 2 - Agir dans une situation administrative",
-          date_seance: currentSessionDate.toISOString(),
-          niveau_cible: "A2",
-          objectifs: "Mobiliser les acquis, diagnostiquer les besoins et differencier la suite.",
-          duree_minutes: 90,
-          statut: "planifiee",
-          competences_cibles: ["CO", "CE", "EO"],
-          nb_exercices_retrospective: 3,
-          duree_retrospective: 10,
-          nb_questions_diagnostic: 10,
-          generation_automatique_activee: false,
-          sandbox_session_id: sandbox.id,
-        },
-      ])
+      .insert(buildSandboxSessions(group.id, sandbox.id))
       .select("id, statut");
     if (sessionsError) throw sessionsError;
     const previousSession = seededSessions?.find((session: any) => session.statut === "terminee");
@@ -371,18 +337,12 @@ Deno.serve(async (req) => {
       try {
         await deleteSandboxRows(cleanupAdmin, cleanupSandboxId);
       } catch (cleanupError) {
-        console.error(
-          "sandbox-setup row cleanup failed",
-          cleanupError instanceof Error ? cleanupError.message : "unknown",
-        );
+        console.error("sandbox-setup row cleanup failed", getErrorDetails(cleanupError));
       }
       try {
         await deleteAuthUsers(cleanupAdmin, cleanupUserIds);
       } catch (cleanupError) {
-        console.error(
-          "sandbox-setup auth cleanup failed",
-          cleanupError instanceof Error ? cleanupError.message : "unknown",
-        );
+        console.error("sandbox-setup auth cleanup failed", getErrorDetails(cleanupError));
       }
       try {
         const { error: sessionCleanupError } = await cleanupAdmin
@@ -391,16 +351,13 @@ Deno.serve(async (req) => {
           .eq("id", cleanupSandboxId);
         if (sessionCleanupError) throw sessionCleanupError;
       } catch (cleanupError) {
-        console.error(
-          "sandbox-setup session cleanup failed",
-          cleanupError instanceof Error ? cleanupError.message : "unknown",
-        );
+        console.error("sandbox-setup session cleanup failed", getErrorDetails(cleanupError));
       }
     }
+    const errorDetails = getErrorDetails(error);
     console.error("sandbox-setup failed", {
       step: provisioningStep,
-      code: (error as any)?.code ?? null,
-      message: error instanceof Error ? error.message : "unknown",
+      ...errorDetails,
     });
     if (isMissingSandboxSchema(error)) {
       return jsonResponse({
@@ -409,9 +366,12 @@ Deno.serve(async (req) => {
       }, 503);
     }
     return jsonResponse({
-      error: error instanceof Error ? error.message : "Erreur sandbox",
+      error: errorDetails.message,
       code: "SANDBOX_SETUP_FAILED",
+      postgres_code: errorDetails.code,
+      details: errorDetails.details,
+      hint: errorDetails.hint,
       step: provisioningStep,
-    }, (error as any)?.status ?? 500);
+    }, errorDetails.status);
   }
 });
