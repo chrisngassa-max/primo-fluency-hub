@@ -86,11 +86,15 @@ export default function SandboxBanner() {
       <Button
         size="sm"
         variant="secondary"
-        onClick={() => {
-          exitStudentPreview();
-          exitSandboxMode();
-          toast.success("Sortie du mode sandbox. Tes donnees reelles sont a nouveau affichees.");
-          navigate("/formateur");
+        onClick={async () => {
+          try {
+            exitStudentPreview();
+            await exitSandboxMode();
+            toast.success("Mode sandbox quitte. Tes donnees reelles sont a nouveau affichees.");
+            navigate("/formateur");
+          } catch (error) {
+            toast.error(error instanceof Error ? error.message : "Sortie du mode sandbox impossible");
+          }
         }}
       >
         <XCircle className="mr-2 h-4 w-4" />
