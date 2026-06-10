@@ -1,6 +1,7 @@
 import {
   corsHeaders,
   deleteAuthUsers,
+  deleteSandboxRows,
   getSandboxClients,
   jsonResponse,
 } from "../_shared/sandbox-edge.ts";
@@ -43,22 +44,17 @@ Deno.serve(async (req) => {
     }
 
     if (body.scope === "everything") {
-      cleaned.group_members = await deleteCount(admin, "group_members", session.id);
-      cleaned.profils_eleves = await deleteCount(admin, "profils_eleves", session.id);
-      cleaned.groups = await deleteCount(admin, "groups", session.id);
+      await deleteSandboxRows(admin, session.id);
+      cleaned.group_members = 0;
+      cleaned.profils_eleves = 0;
+      cleaned.groups = 0;
       await deleteAuthUsers(admin, session.eleve_user_ids);
-      const { error: updateError } = await admin
+      const { error: deleteError } = await admin
         .from("sandbox_sessions")
-        .update({
-          statut: "reset",
-          group_id: null,
-          eleve_user_ids: [],
-          eleve_emails: [],
-          last_activity: new Date().toISOString(),
-        })
+        .delete()
         .eq("id", session.id)
         .eq("formateur_id", user.id);
-      if (updateError) throw updateError;
+      if (deleteError) throw deleteError;
     }
 
     return jsonResponse({ tables_nettoyees: cleaned, sandbox_session_id: session.id });

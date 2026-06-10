@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { AlertTriangle, Grid2X2, RotateCcw, UserCog, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ const LEVELS = ["A1", "A2", "B1", "B2"] as const;
 
 export default function SandboxBanner() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { session, displayHint, setup, reset, exitSandboxMode } = useSandbox();
   const {
     mode,
@@ -90,6 +92,7 @@ export default function SandboxBanner() {
           try {
             exitStudentPreview();
             await exitSandboxMode();
+            queryClient.clear();
             toast.success("Mode sandbox quitte. Tes donnees reelles sont a nouveau affichees.");
             navigate("/formateur");
           } catch (error) {
