@@ -36,7 +36,7 @@ const TestResultatDetail = () => {
     queryKey: ["test-session-detail", apprenantId],
     queryFn: async () => {
       const { data } = await supabase
-        .from("test_sessions" as any)
+        .from("test_sessions")
         .select("*")
         .eq("apprenant_id", apprenantId!)
         .eq("statut", "termine")
@@ -154,7 +154,7 @@ const TestResultatDetail = () => {
       .eq("id", resultat.id);
 
     await supabase
-      .from("test_sessions" as any)
+      .from("test_sessions")
       .update({
         score_co: compScores.co,
         score_ce: compScores.ce,
