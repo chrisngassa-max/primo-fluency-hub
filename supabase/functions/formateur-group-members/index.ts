@@ -68,8 +68,7 @@ Deno.serve(async (req) => {
     if (profilesError) throw profilesError;
 
     const profileById = new Map((profiles ?? []).map((profile: any) => [profile.id, profile]));
-    const missingProfileIds = eleveIds.filter((eleveId) => !profileById.has(eleveId));
-    const authFallbacks = await Promise.all(missingProfileIds.map(async (eleveId) => {
+    const authFallbacks = await Promise.all(eleveIds.map(async (eleveId) => {
       const { data } = await admin.auth.admin.getUserById(eleveId);
       const authUser = data?.user;
       if (!authUser) return null;
@@ -83,18 +82,20 @@ Deno.serve(async (req) => {
     }));
     const fallbackById = new Map(authFallbacks.filter(Boolean).map((profile: any) => [profile.id, profile]));
     const normalized = (members ?? []).map((member: any) => {
-      const profile = (profileById.get(member.eleve_id) ?? fallbackById.get(member.eleve_id)) as any | undefined;
+      const profile = profileById.get(member.eleve_id) as any | undefined;
+      const fallback = fallbackById.get(member.eleve_id) as any | undefined;
+      const mergedProfile = profile || fallback
+        ? {
+          id: member.eleve_id,
+          nom: profile?.nom || fallback?.nom || "",
+          prenom: profile?.prenom || fallback?.prenom || "",
+          email: profile?.email || fallback?.email || "",
+          mot_de_passe_initial: profile?.mot_de_passe_initial ?? fallback?.mot_de_passe_initial ?? null,
+        }
+        : null;
       return {
         ...member,
-        eleve: profile
-          ? {
-            id: profile.id,
-            nom: profile.nom ?? "",
-            prenom: profile.prenom ?? "",
-            email: profile.email ?? "",
-            mot_de_passe_initial: profile.mot_de_passe_initial ?? null,
-          }
-          : null,
+        eleve: mergedProfile,
         eleve_missing_profile: !profileById.has(member.eleve_id),
       };
     });
