@@ -25,16 +25,6 @@ export default function SandboxControlPanel() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    // L'utilisateur a explicitement ouvert le panneau : on leve l'eventuel masquage de la banniere.
-    if (localStorage.getItem("sandbox_dismissed") === "true") {
-      localStorage.removeItem("sandbox_dismissed");
-      void refresh();
-    }
-  }, [refresh]);
-
-
-
-  useEffect(() => {
     if (!session?.id) return;
     const channel = supabase
       .channel(`sandbox-control-${session.id}`)

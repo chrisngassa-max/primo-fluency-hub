@@ -61,7 +61,7 @@ const FormateurLayout = () => {
   const navigate = useNavigate();
   const { session, displayHint } = useSandbox();
   const { mode } = useSandboxPreview();
-  const sandboxVisible = displayHint || (!!session && session.statut !== "reset");
+  const sandboxVisible = displayHint && !!session && session.statut !== "reset";
 
   const isActive = (path: string) =>
     path === "/formateur" ? location.pathname === path : location.pathname.startsWith(path);
