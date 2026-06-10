@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.4"
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
@@ -333,6 +333,66 @@ export type Database = {
           },
         ]
       }
+      attendance: {
+        Row: {
+          arrival_time: string | null
+          created_at: string
+          duration_minutes: number | null
+          id: string
+          ip_address: string | null
+          lead_id: string
+          marked_by: string | null
+          notes: string | null
+          session_id: string
+          signature_method: string | null
+          signed_at: string | null
+          status: string
+        }
+        Insert: {
+          arrival_time?: string | null
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          ip_address?: string | null
+          lead_id: string
+          marked_by?: string | null
+          notes?: string | null
+          session_id: string
+          signature_method?: string | null
+          signed_at?: string | null
+          status?: string
+        }
+        Update: {
+          arrival_time?: string | null
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          ip_address?: string | null
+          lead_id?: string
+          marked_by?: string | null
+          notes?: string | null
+          session_id?: string
+          signature_method?: string | null
+          signed_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "cohort_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bilan_post_devoirs: {
         Row: {
           analyse_data: Json
@@ -496,6 +556,282 @@ export type Database = {
           },
         ]
       }
+      checklist_states: {
+        Row: {
+          attestation_ok: boolean
+          created_at: string | null
+          dispense_demandee: boolean | null
+          docs_checklist: Json
+          docs_manquants: number
+          id: string
+          lead_id: string
+          situation_pro: string | null
+          type_demarche: string
+        }
+        Insert: {
+          attestation_ok?: boolean
+          created_at?: string | null
+          dispense_demandee?: boolean | null
+          docs_checklist?: Json
+          docs_manquants?: number
+          id?: string
+          lead_id: string
+          situation_pro?: string | null
+          type_demarche: string
+        }
+        Update: {
+          attestation_ok?: boolean
+          created_at?: string | null
+          dispense_demandee?: boolean | null
+          docs_checklist?: Json
+          docs_manquants?: number
+          id?: string
+          lead_id?: string
+          situation_pro?: string | null
+          type_demarche?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checklist_states_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cohort_enrollments: {
+        Row: {
+          acompte_amount: number | null
+          acompte_paid: boolean | null
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          cohort_id: string
+          confirmed_at: string | null
+          created_at: string
+          id: string
+          lead_id: string
+          payment_mode: string | null
+          reserved_at: string | null
+          solde_due: number | null
+          stafy_dossier_id: string | null
+          stafy_status: string | null
+          stafy_transmitted_at: string | null
+          status: string
+          stripe_payment_intent_id: string | null
+          total_paid: number | null
+          updated_at: string
+        }
+        Insert: {
+          acompte_amount?: number | null
+          acompte_paid?: boolean | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          cohort_id: string
+          confirmed_at?: string | null
+          created_at?: string
+          id?: string
+          lead_id: string
+          payment_mode?: string | null
+          reserved_at?: string | null
+          solde_due?: number | null
+          stafy_dossier_id?: string | null
+          stafy_status?: string | null
+          stafy_transmitted_at?: string | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          total_paid?: number | null
+          updated_at?: string
+        }
+        Update: {
+          acompte_amount?: number | null
+          acompte_paid?: boolean | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          cohort_id?: string
+          confirmed_at?: string | null
+          created_at?: string
+          id?: string
+          lead_id?: string
+          payment_mode?: string | null
+          reserved_at?: string | null
+          solde_due?: number | null
+          stafy_dossier_id?: string | null
+          stafy_status?: string | null
+          stafy_transmitted_at?: string | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          total_paid?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cohort_enrollments_cohort_id_fkey"
+            columns: ["cohort_id"]
+            isOneToOne: false
+            referencedRelation: "cohorts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cohort_enrollments_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cohort_sessions: {
+        Row: {
+          cohort_id: string
+          created_at: string
+          documents: Json | null
+          duration_minutes: number
+          end_time: string
+          format: string
+          formateur_id: string | null
+          id: string
+          location: string | null
+          meeting_url: string | null
+          notes_formateur: string | null
+          objectives: string | null
+          session_date: string
+          session_number: number
+          session_type: string
+          start_time: string
+          status: string
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          cohort_id: string
+          created_at?: string
+          documents?: Json | null
+          duration_minutes?: number
+          end_time: string
+          format?: string
+          formateur_id?: string | null
+          id?: string
+          location?: string | null
+          meeting_url?: string | null
+          notes_formateur?: string | null
+          objectives?: string | null
+          session_date: string
+          session_number: number
+          session_type?: string
+          start_time: string
+          status?: string
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          cohort_id?: string
+          created_at?: string
+          documents?: Json | null
+          duration_minutes?: number
+          end_time?: string
+          format?: string
+          formateur_id?: string | null
+          id?: string
+          location?: string | null
+          meeting_url?: string | null
+          notes_formateur?: string | null
+          objectives?: string | null
+          session_date?: string
+          session_number?: number
+          session_type?: string
+          start_time?: string
+          status?: string
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cohort_sessions_cohort_id_fkey"
+            columns: ["cohort_id"]
+            isOneToOne: false
+            referencedRelation: "cohorts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cohorts: {
+        Row: {
+          code: string | null
+          created_at: string
+          estimated_end_date: string | null
+          exam_blank_1_session: number | null
+          exam_blank_2_session: number | null
+          exam_blank_3_session: number | null
+          formateur_id: string | null
+          formation_journey_id: string | null
+          id: string
+          intensity: string
+          max_students: number
+          meeting_url: string | null
+          min_students_to_confirm: number
+          notes_internes: string | null
+          start_date: string
+          status: string
+          total_sessions: number | null
+          updated_at: string
+          visibility: string
+          weekly_schedule: Json
+        }
+        Insert: {
+          code?: string | null
+          created_at?: string
+          estimated_end_date?: string | null
+          exam_blank_1_session?: number | null
+          exam_blank_2_session?: number | null
+          exam_blank_3_session?: number | null
+          formateur_id?: string | null
+          formation_journey_id?: string | null
+          id?: string
+          intensity?: string
+          max_students?: number
+          meeting_url?: string | null
+          min_students_to_confirm?: number
+          notes_internes?: string | null
+          start_date: string
+          status?: string
+          total_sessions?: number | null
+          updated_at?: string
+          visibility?: string
+          weekly_schedule?: Json
+        }
+        Update: {
+          code?: string | null
+          created_at?: string
+          estimated_end_date?: string | null
+          exam_blank_1_session?: number | null
+          exam_blank_2_session?: number | null
+          exam_blank_3_session?: number | null
+          formateur_id?: string | null
+          formation_journey_id?: string | null
+          id?: string
+          intensity?: string
+          max_students?: number
+          meeting_url?: string | null
+          min_students_to_confirm?: number
+          notes_internes?: string | null
+          start_date?: string
+          status?: string
+          total_sessions?: number | null
+          updated_at?: string
+          visibility?: string
+          weekly_schedule?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cohorts_formation_journey_id_fkey"
+            columns: ["formation_journey_id"]
+            isOneToOne: false
+            referencedRelation: "formation_journeys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       daily_reports: {
         Row: {
           auto_applied: number
@@ -603,6 +939,7 @@ export type Database = {
           id: string
           nb_reussites_consecutives: number
           raison: Database["public"]["Enums"]["devoir_raison"]
+          sandbox_session_id: string | null
           serie: number | null
           session_id: string | null
           source_label: string | null
@@ -621,6 +958,7 @@ export type Database = {
           id?: string
           nb_reussites_consecutives?: number
           raison?: Database["public"]["Enums"]["devoir_raison"]
+          sandbox_session_id?: string | null
           serie?: number | null
           session_id?: string | null
           source_label?: string | null
@@ -639,6 +977,7 @@ export type Database = {
           id?: string
           nb_reussites_consecutives?: number
           raison?: Database["public"]["Enums"]["devoir_raison"]
+          sandbox_session_id?: string | null
           serie?: number | null
           session_id?: string | null
           source_label?: string | null
@@ -665,6 +1004,13 @@ export type Database = {
             columns: ["formateur_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "devoirs_sandbox_session_id_fkey"
+            columns: ["sandbox_session_id"]
+            isOneToOne: false
+            referencedRelation: "sandbox_sessions"
             referencedColumns: ["id"]
           },
           {
@@ -723,6 +1069,78 @@ export type Database = {
             columns: ["formateur_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dossiers: {
+        Row: {
+          attempt_id: string | null
+          cpf_mobilise: number | null
+          created_at: string
+          has_employer_agreement: boolean | null
+          has_main_docs: boolean | null
+          has_siret: boolean | null
+          id: string
+          lead_id: string | null
+          opco_estime: number | null
+          partner_id: string | null
+          partner_status: string | null
+          reste_a_charge: number | null
+          solde_cpf: number | null
+          status: string | null
+          status_emploi: string | null
+          updated_at: string
+        }
+        Insert: {
+          attempt_id?: string | null
+          cpf_mobilise?: number | null
+          created_at?: string
+          has_employer_agreement?: boolean | null
+          has_main_docs?: boolean | null
+          has_siret?: boolean | null
+          id?: string
+          lead_id?: string | null
+          opco_estime?: number | null
+          partner_id?: string | null
+          partner_status?: string | null
+          reste_a_charge?: number | null
+          solde_cpf?: number | null
+          status?: string | null
+          status_emploi?: string | null
+          updated_at?: string
+        }
+        Update: {
+          attempt_id?: string | null
+          cpf_mobilise?: number | null
+          created_at?: string
+          has_employer_agreement?: boolean | null
+          has_main_docs?: boolean | null
+          has_siret?: boolean | null
+          id?: string
+          lead_id?: string | null
+          opco_estime?: number | null
+          partner_id?: string | null
+          partner_status?: string | null
+          reste_a_charge?: number | null
+          solde_cpf?: number | null
+          status?: string | null
+          status_emploi?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dossiers_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dossiers_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
             referencedColumns: ["id"]
           },
         ]
@@ -843,8 +1261,9 @@ export type Database = {
       }
       exercices: {
         Row: {
-          animation_guide: Json | null
           aides_disponibles: string[]
+          animation_guide: Json | null
+          autonomie_requise: string | null
           collectif: boolean
           competence: Database["public"]["Enums"]["competence_type"]
           consigne: string
@@ -852,6 +1271,7 @@ export type Database = {
           contexte_irn: string | null
           created_at: string
           difficulte: number
+          duree_estimee_min: number | null
           duree_limite_secondes: number | null
           eleve_id: string | null
           format: Database["public"]["Enums"]["exercice_format"]
@@ -864,15 +1284,19 @@ export type Database = {
           metadata_code: string | null
           metadata_skill: string | null
           mode: Database["public"]["Enums"]["exercice_mode"]
+          niveau_guidage: string | null
           niveau_vise: string
           nombre_ecoutes_max: number | null
           objectif_tcf: string | null
+          outils_aide: string[]
           play_token: string | null
           point_a_maitriser_id: string
+          regle_montee_auto: boolean
           sequence_id: string | null
           source_url: string | null
           sous_competence: string | null
           statut: string | null
+          theme: string | null
           titre: string
           transcription_verrouillee: boolean
           type_differenciation: string | null
@@ -881,8 +1305,9 @@ export type Database = {
           variante_niveau_haut: Json | null
         }
         Insert: {
-          animation_guide?: Json | null
           aides_disponibles?: string[]
+          animation_guide?: Json | null
+          autonomie_requise?: string | null
           collectif?: boolean
           competence: Database["public"]["Enums"]["competence_type"]
           consigne: string
@@ -890,6 +1315,7 @@ export type Database = {
           contexte_irn?: string | null
           created_at?: string
           difficulte?: number
+          duree_estimee_min?: number | null
           duree_limite_secondes?: number | null
           eleve_id?: string | null
           format?: Database["public"]["Enums"]["exercice_format"]
@@ -902,15 +1328,19 @@ export type Database = {
           metadata_code?: string | null
           metadata_skill?: string | null
           mode?: Database["public"]["Enums"]["exercice_mode"]
-          niveau_vise: string
+          niveau_guidage?: string | null
+          niveau_vise?: string
           nombre_ecoutes_max?: number | null
           objectif_tcf?: string | null
+          outils_aide?: string[]
           play_token?: string | null
           point_a_maitriser_id: string
+          regle_montee_auto?: boolean
           sequence_id?: string | null
           source_url?: string | null
           sous_competence?: string | null
           statut?: string | null
+          theme?: string | null
           titre: string
           transcription_verrouillee?: boolean
           type_differenciation?: string | null
@@ -919,8 +1349,9 @@ export type Database = {
           variante_niveau_haut?: Json | null
         }
         Update: {
-          animation_guide?: Json | null
           aides_disponibles?: string[]
+          animation_guide?: Json | null
+          autonomie_requise?: string | null
           collectif?: boolean
           competence?: Database["public"]["Enums"]["competence_type"]
           consigne?: string
@@ -928,6 +1359,7 @@ export type Database = {
           contexte_irn?: string | null
           created_at?: string
           difficulte?: number
+          duree_estimee_min?: number | null
           duree_limite_secondes?: number | null
           eleve_id?: string | null
           format?: Database["public"]["Enums"]["exercice_format"]
@@ -940,15 +1372,19 @@ export type Database = {
           metadata_code?: string | null
           metadata_skill?: string | null
           mode?: Database["public"]["Enums"]["exercice_mode"]
+          niveau_guidage?: string | null
           niveau_vise?: string
           nombre_ecoutes_max?: number | null
           objectif_tcf?: string | null
+          outils_aide?: string[]
           play_token?: string | null
           point_a_maitriser_id?: string
+          regle_montee_auto?: boolean
           sequence_id?: string | null
           source_url?: string | null
           sous_competence?: string | null
           statut?: string | null
+          theme?: string | null
           titre?: string
           transcription_verrouillee?: boolean
           type_differenciation?: string | null
@@ -997,7 +1433,6 @@ export type Database = {
           group_id: string | null
           id: string
           learner_id: string | null
-          source_devoir_id: string | null
           sync_status: string | null
         }
         Insert: {
@@ -1009,7 +1444,6 @@ export type Database = {
           group_id?: string | null
           id?: string
           learner_id?: string | null
-          source_devoir_id?: string | null
           sync_status?: string | null
         }
         Update: {
@@ -1021,7 +1455,6 @@ export type Database = {
           group_id?: string | null
           id?: string
           learner_id?: string | null
-          source_devoir_id?: string | null
           sync_status?: string | null
         }
         Relationships: [
@@ -1069,7 +1502,6 @@ export type Database = {
           score_normalized: number | null
           score_raw: number | null
           source_app: string | null
-          source_resultat_id: string | null
           started_at: string | null
           status: string | null
           time_spent_seconds: number | null
@@ -1087,7 +1519,6 @@ export type Database = {
           score_normalized?: number | null
           score_raw?: number | null
           source_app?: string | null
-          source_resultat_id?: string | null
           started_at?: string | null
           status?: string | null
           time_spent_seconds?: number | null
@@ -1105,7 +1536,6 @@ export type Database = {
           score_normalized?: number | null
           score_raw?: number | null
           source_app?: string | null
-          source_resultat_id?: string | null
           started_at?: string | null
           status?: string | null
           time_spent_seconds?: number | null
@@ -1387,51 +1817,96 @@ export type Database = {
           },
         ]
       }
-      gabarits_pedagogiques: {
+      formation_journeys: {
         Row: {
-          bloc: string | null
-          competences_cibles: string[]
-          consignes_generation: string | null
           created_at: string
-          criteres_reussite: string | null
-          dependances_seances: number[]
+          description: string | null
+          duration_weeks: number | null
           id: string
-          lexique_cibles: string[]
-          niveau_cible: string | null
-          numero: number
-          objectif_principal: string | null
-          palier_cecrl: string | null
-          titre: string
+          level: string | null
+          price_euros: number | null
+          slug: string | null
+          status: string | null
+          title: string
+          updated_at: string
         }
         Insert: {
-          bloc?: string | null
-          competences_cibles?: string[]
-          consignes_generation?: string | null
           created_at?: string
-          criteres_reussite?: string | null
-          dependances_seances?: number[]
+          description?: string | null
+          duration_weeks?: number | null
           id?: string
-          lexique_cibles?: string[]
-          niveau_cible?: string | null
-          numero: number
-          objectif_principal?: string | null
-          palier_cecrl?: string | null
-          titre: string
+          level?: string | null
+          price_euros?: number | null
+          slug?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string
         }
         Update: {
-          bloc?: string | null
-          competences_cibles?: string[]
-          consignes_generation?: string | null
           created_at?: string
-          criteres_reussite?: string | null
-          dependances_seances?: number[]
+          description?: string | null
+          duration_weeks?: number | null
           id?: string
-          lexique_cibles?: string[]
-          niveau_cible?: string | null
+          level?: string | null
+          price_euros?: number | null
+          slug?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      gabarits_pedagogiques: {
+        Row: {
+          bloc: string
+          competences_cibles: string[]
+          consignes_generation: string
+          created_at: string
+          criteres_reussite: string
+          dependances_seances: number[]
+          duree_minutes: number
+          id: string
+          lexique_cibles: string
+          niveau_cible: string
+          numero: number
+          objectif_principal: string
+          palier_cecrl: string
+          titre: string
+          version: string
+        }
+        Insert: {
+          bloc: string
+          competences_cibles?: string[]
+          consignes_generation?: string
+          created_at?: string
+          criteres_reussite?: string
+          dependances_seances?: number[]
+          duree_minutes?: number
+          id?: string
+          lexique_cibles?: string
+          niveau_cible?: string
+          numero: number
+          objectif_principal?: string
+          palier_cecrl: string
+          titre: string
+          version?: string
+        }
+        Update: {
+          bloc?: string
+          competences_cibles?: string[]
+          consignes_generation?: string
+          created_at?: string
+          criteres_reussite?: string
+          dependances_seances?: number[]
+          duree_minutes?: number
+          id?: string
+          lexique_cibles?: string
+          niveau_cible?: string
           numero?: number
-          objectif_principal?: string | null
-          palier_cecrl?: string | null
+          objectif_principal?: string
+          palier_cecrl?: string
           titre?: string
+          version?: string
         }
         Relationships: []
       }
@@ -1486,18 +1961,21 @@ export type Database = {
           group_id: string
           id: string
           joined_at: string
+          sandbox_session_id: string | null
         }
         Insert: {
           eleve_id: string
           group_id: string
           id?: string
           joined_at?: string
+          sandbox_session_id?: string | null
         }
         Update: {
           eleve_id?: string
           group_id?: string
           id?: string
           joined_at?: string
+          sandbox_session_id?: string | null
         }
         Relationships: [
           {
@@ -1514,6 +1992,13 @@ export type Database = {
             referencedRelation: "groups"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "group_members_sandbox_session_id_fkey"
+            columns: ["sandbox_session_id"]
+            isOneToOne: false
+            referencedRelation: "sandbox_sessions"
+            referencedColumns: ["id"]
+          },
         ]
       }
       groups: {
@@ -1526,6 +2011,7 @@ export type Database = {
           is_active: boolean
           niveau: string
           nom: string
+          sandbox_session_id: string | null
           type_demarche: string | null
           updated_at: string
         }
@@ -1536,8 +2022,9 @@ export type Database = {
           homework_delivery_mode?: string
           id?: string
           is_active?: boolean
-          niveau: string
+          niveau?: string
           nom: string
+          sandbox_session_id?: string | null
           type_demarche?: string | null
           updated_at?: string
         }
@@ -1550,6 +2037,7 @@ export type Database = {
           is_active?: boolean
           niveau?: string
           nom?: string
+          sandbox_session_id?: string | null
           type_demarche?: string | null
           updated_at?: string
         }
@@ -1559,6 +2047,13 @@ export type Database = {
             columns: ["formateur_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "groups_sandbox_session_id_fkey"
+            columns: ["sandbox_session_id"]
+            isOneToOne: false
+            referencedRelation: "sandbox_sessions"
             referencedColumns: ["id"]
           },
         ]
@@ -1670,6 +2165,318 @@ export type Database = {
             columns: ["type_erreur_id"]
             isOneToOne: false
             referencedRelation: "types_erreur"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_events: {
+        Row: {
+          created_at: string | null
+          event_name: string
+          id: string
+          lead_id: string | null
+          properties: Json
+        }
+        Insert: {
+          created_at?: string | null
+          event_name: string
+          id?: string
+          lead_id?: string | null
+          properties?: Json
+        }
+        Update: {
+          created_at?: string | null
+          event_name?: string
+          id?: string
+          lead_id?: string | null
+          properties?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_events_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_partenaire_assignments: {
+        Row: {
+          created_at: string
+          id: string
+          lead_id: string | null
+          partenaire_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lead_id?: string | null
+          partenaire_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lead_id?: string | null
+          partenaire_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_partenaire_assignments_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_partenaire_assignments_partenaire_id_fkey"
+            columns: ["partenaire_id"]
+            isOneToOne: false
+            referencedRelation: "partenaire_comptes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leads: {
+        Row: {
+          address_line1: string | null
+          assigned_to: string | null
+          birth_date: string | null
+          city: string | null
+          consent_at: string | null
+          consent_partner: boolean
+          consent_partner_text_version: string | null
+          consent_timestamp: string | null
+          consent_training: boolean
+          consent_training_text_version: string | null
+          contacte: boolean | null
+          contacte_at: string | null
+          cpf_balance_declared: number | null
+          cpf_status: string | null
+          created_at: string | null
+          demarche_inconnue: boolean | null
+          destination: string | null
+          email: string | null
+          employer_support: boolean | null
+          estimated_level: string | null
+          financement_opt_in: boolean | null
+          first_name: string
+          france_travail_registered: boolean | null
+          funding_followup_at: string | null
+          funding_internal_notes: string | null
+          funding_next_action: string | null
+          funding_status: string
+          funding_target_date: string | null
+          goal: string | null
+          id: string
+          last_name: string | null
+          lead_intent: string
+          lead_type: string
+          message: string | null
+          nationality: string | null
+          partenaire_opt_in: boolean | null
+          partner_id: string | null
+          partner_request_type: string | null
+          partner_status: string | null
+          postal_code: string | null
+          professional_status: string | null
+          sector_activity: string | null
+          source: string
+          status: string | null
+          tunnel: string | null
+          updated_at: string | null
+          whatsapp_consent: boolean
+          whatsapp_phone: string | null
+        }
+        Insert: {
+          address_line1?: string | null
+          assigned_to?: string | null
+          birth_date?: string | null
+          city?: string | null
+          consent_at?: string | null
+          consent_partner?: boolean
+          consent_partner_text_version?: string | null
+          consent_timestamp?: string | null
+          consent_training?: boolean
+          consent_training_text_version?: string | null
+          contacte?: boolean | null
+          contacte_at?: string | null
+          cpf_balance_declared?: number | null
+          cpf_status?: string | null
+          created_at?: string | null
+          demarche_inconnue?: boolean | null
+          destination?: string | null
+          email?: string | null
+          employer_support?: boolean | null
+          estimated_level?: string | null
+          financement_opt_in?: boolean | null
+          first_name: string
+          france_travail_registered?: boolean | null
+          funding_followup_at?: string | null
+          funding_internal_notes?: string | null
+          funding_next_action?: string | null
+          funding_status?: string
+          funding_target_date?: string | null
+          goal?: string | null
+          id?: string
+          last_name?: string | null
+          lead_intent?: string
+          lead_type: string
+          message?: string | null
+          nationality?: string | null
+          partenaire_opt_in?: boolean | null
+          partner_id?: string | null
+          partner_request_type?: string | null
+          partner_status?: string | null
+          postal_code?: string | null
+          professional_status?: string | null
+          sector_activity?: string | null
+          source: string
+          status?: string | null
+          tunnel?: string | null
+          updated_at?: string | null
+          whatsapp_consent?: boolean
+          whatsapp_phone?: string | null
+        }
+        Update: {
+          address_line1?: string | null
+          assigned_to?: string | null
+          birth_date?: string | null
+          city?: string | null
+          consent_at?: string | null
+          consent_partner?: boolean
+          consent_partner_text_version?: string | null
+          consent_timestamp?: string | null
+          consent_training?: boolean
+          consent_training_text_version?: string | null
+          contacte?: boolean | null
+          contacte_at?: string | null
+          cpf_balance_declared?: number | null
+          cpf_status?: string | null
+          created_at?: string | null
+          demarche_inconnue?: boolean | null
+          destination?: string | null
+          email?: string | null
+          employer_support?: boolean | null
+          estimated_level?: string | null
+          financement_opt_in?: boolean | null
+          first_name?: string
+          france_travail_registered?: boolean | null
+          funding_followup_at?: string | null
+          funding_internal_notes?: string | null
+          funding_next_action?: string | null
+          funding_status?: string
+          funding_target_date?: string | null
+          goal?: string | null
+          id?: string
+          last_name?: string | null
+          lead_intent?: string
+          lead_type?: string
+          message?: string | null
+          nationality?: string | null
+          partenaire_opt_in?: boolean | null
+          partner_id?: string | null
+          partner_request_type?: string | null
+          partner_status?: string | null
+          postal_code?: string | null
+          professional_status?: string | null
+          sector_activity?: string | null
+          source?: string
+          status?: string | null
+          tunnel?: string | null
+          updated_at?: string | null
+          whatsapp_consent?: boolean
+          whatsapp_phone?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_leads_partner_id"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leads_partenaire_status: {
+        Row: {
+          contacte_at: string | null
+          created_at: string
+          id: string
+          lead_id: string | null
+          note: string | null
+          partenaire_id: string | null
+          statut: string
+          updated_at: string
+        }
+        Insert: {
+          contacte_at?: string | null
+          created_at?: string
+          id?: string
+          lead_id?: string | null
+          note?: string | null
+          partenaire_id?: string | null
+          statut?: string
+          updated_at?: string
+        }
+        Update: {
+          contacte_at?: string | null
+          created_at?: string
+          id?: string
+          lead_id?: string | null
+          note?: string | null
+          partenaire_id?: string | null
+          statut?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_partenaire_status_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_partenaire_status_partenaire_id_fkey"
+            columns: ["partenaire_id"]
+            isOneToOne: false
+            referencedRelation: "partenaire_comptes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      magic_links: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          lead_id: string | null
+          token: string
+          used: boolean
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          lead_id?: string | null
+          token?: string
+          used?: boolean
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          lead_id?: string | null
+          token?: string
+          used?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "magic_links_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
             referencedColumns: ["id"]
           },
         ]
@@ -1912,6 +2719,162 @@ export type Database = {
           },
         ]
       }
+      partenaire_comptes: {
+        Row: {
+          actif: boolean
+          created_at: string
+          email: string
+          id: string
+          nom: string | null
+          password_hash: string
+        }
+        Insert: {
+          actif?: boolean
+          created_at?: string
+          email: string
+          id?: string
+          nom?: string | null
+          password_hash: string
+        }
+        Update: {
+          actif?: boolean
+          created_at?: string
+          email?: string
+          id?: string
+          nom?: string | null
+          password_hash?: string
+        }
+        Relationships: []
+      }
+      partner_transmissions: {
+        Row: {
+          consent_snapshot: Json
+          created_at: string | null
+          error_message: string | null
+          id: string
+          lead_id: string | null
+          notes: string | null
+          partner_id: string | null
+          payload_snapshot: Json
+          status: string | null
+          transmission_mode: string
+          transmitted_at: string | null
+          transmitted_by: string | null
+        }
+        Insert: {
+          consent_snapshot: Json
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          lead_id?: string | null
+          notes?: string | null
+          partner_id?: string | null
+          payload_snapshot: Json
+          status?: string | null
+          transmission_mode: string
+          transmitted_at?: string | null
+          transmitted_by?: string | null
+        }
+        Update: {
+          consent_snapshot?: Json
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          lead_id?: string | null
+          notes?: string | null
+          partner_id?: string | null
+          payload_snapshot?: Json
+          status?: string | null
+          transmission_mode?: string
+          transmitted_at?: string | null
+          transmitted_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partner_transmissions_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "partner_transmissions_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      partners: {
+        Row: {
+          consent_text_override: string | null
+          contact_email: string | null
+          contact_name: string | null
+          contact_whatsapp: string | null
+          contract_signed: boolean | null
+          contract_signed_at: string | null
+          created_at: string | null
+          id: string
+          insurance_verified: boolean | null
+          kbis_verified: boolean | null
+          legal_notes: string | null
+          name: string
+          reception_email: string | null
+          requires_manual_export: boolean | null
+          service_types: string[] | null
+          slug: string
+          status: string | null
+          transmission_mode: string | null
+          updated_at: string | null
+          webhook_url: string | null
+        }
+        Insert: {
+          consent_text_override?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_whatsapp?: string | null
+          contract_signed?: boolean | null
+          contract_signed_at?: string | null
+          created_at?: string | null
+          id?: string
+          insurance_verified?: boolean | null
+          kbis_verified?: boolean | null
+          legal_notes?: string | null
+          name: string
+          reception_email?: string | null
+          requires_manual_export?: boolean | null
+          service_types?: string[] | null
+          slug: string
+          status?: string | null
+          transmission_mode?: string | null
+          updated_at?: string | null
+          webhook_url?: string | null
+        }
+        Update: {
+          consent_text_override?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_whatsapp?: string | null
+          contract_signed?: boolean | null
+          contract_signed_at?: string | null
+          created_at?: string | null
+          id?: string
+          insurance_verified?: boolean | null
+          kbis_verified?: boolean | null
+          legal_notes?: string | null
+          name?: string
+          reception_email?: string | null
+          requires_manual_export?: boolean | null
+          service_types?: string[] | null
+          slug?: string
+          status?: string | null
+          transmission_mode?: string | null
+          updated_at?: string | null
+          webhook_url?: string | null
+        }
+        Relationships: []
+      }
       pedagogical_activities: {
         Row: {
           activity_id: string
@@ -2064,6 +3027,99 @@ export type Database = {
           id?: string
           raw?: Json
           source_kind?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      pedagogical_images: {
+        Row: {
+          alt_text: string
+          attribution: string | null
+          author: string | null
+          created_at: string
+          description: string
+          id: string
+          image_url: string | null
+          import_key: string
+          is_active: boolean
+          language_level: string | null
+          level_tags: string[]
+          license: string | null
+          pedagogical_relevance_score: number | null
+          pedagogical_tags: string[]
+          public_url: string | null
+          quality_score: number | null
+          raw: Json
+          recommended_exercise_types: string[]
+          rejected: boolean
+          rejection_reason: string
+          skill_tags: string[]
+          source: string | null
+          source_url: string | null
+          storage_bucket: string
+          storage_path: string
+          theme_tags: string[]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          alt_text?: string
+          attribution?: string | null
+          author?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          image_url?: string | null
+          import_key: string
+          is_active?: boolean
+          language_level?: string | null
+          level_tags?: string[]
+          license?: string | null
+          pedagogical_relevance_score?: number | null
+          pedagogical_tags?: string[]
+          public_url?: string | null
+          quality_score?: number | null
+          raw?: Json
+          recommended_exercise_types?: string[]
+          rejected?: boolean
+          rejection_reason?: string
+          skill_tags?: string[]
+          source?: string | null
+          source_url?: string | null
+          storage_bucket?: string
+          storage_path: string
+          theme_tags?: string[]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          alt_text?: string
+          attribution?: string | null
+          author?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          image_url?: string | null
+          import_key?: string
+          is_active?: boolean
+          language_level?: string | null
+          level_tags?: string[]
+          license?: string | null
+          pedagogical_relevance_score?: number | null
+          pedagogical_tags?: string[]
+          public_url?: string | null
+          quality_score?: number | null
+          raw?: Json
+          recommended_exercise_types?: string[]
+          rejected?: boolean
+          rejection_reason?: string
+          skill_tags?: string[]
+          source?: string | null
+          source_url?: string | null
+          storage_bucket?: string
+          storage_path?: string
+          theme_tags?: string[]
+          title?: string
           updated_at?: string
         }
         Relationships: []
@@ -2457,8 +3513,8 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
-          niveau_max: string
-          niveau_min: string
+          niveau_max?: string
+          niveau_min?: string
           nom: string
           ordre?: number
           sous_section_id: string
@@ -2573,10 +3629,14 @@ export type Database = {
           autres_langues: string[]
           besoins_accessibilite: string[]
           date_cible_tcf: string | null
+          dernier_score_phase2_ce: number | null
+          dernier_score_phase2_co: number | null
           disponibilite_hors_seance: string | null
           eleve_id: string
+          fragilite_principale: string | null
           id: string
           langue_maternelle: string | null
+          montee_auto_phase2: boolean
           niveau_actuel: string
           niveau_baseline_at: string | null
           niveau_ce: string
@@ -2586,15 +3646,17 @@ export type Database = {
           niveau_locked: boolean | null
           niveau_reference_date: string | null
           niveau_reference_note: string | null
+          niveau_scolarisation: string | null
           niveau_source: string | null
           niveau_updated_at: string | null
-          niveau_scolarisation: string | null
           objectif_tcf: string | null
           preferences_apprentissage: string[]
           priorites_pedagogiques: Json
-          projet_personnel: string | null
           profil_litteratie: string | null
+          projet_personnel: string | null
+          sandbox_session_id: string | null
           score_risque: number
+          seances_consecutives_sous_60: Json
           taux_reussite_ce: number
           taux_reussite_co: number
           taux_reussite_ee: number
@@ -2602,6 +3664,7 @@ export type Database = {
           taux_reussite_global: number
           taux_reussite_structures: number
           type_demarche: string | null
+          type_erreur_dominant: string | null
           updated_at: string
           vitesse_lecture: string | null
         }
@@ -2610,47 +3673,14 @@ export type Database = {
           autres_langues?: string[]
           besoins_accessibilite?: string[]
           date_cible_tcf?: string | null
+          dernier_score_phase2_ce?: number | null
+          dernier_score_phase2_co?: number | null
           disponibilite_hors_seance?: string | null
           eleve_id: string
+          fragilite_principale?: string | null
           id?: string
           langue_maternelle?: string | null
-          niveau_actuel: string
-          niveau_baseline_at?: string | null
-          niveau_ce?: string
-          niveau_co?: string
-          niveau_ee?: string
-          niveau_eo?: string
-          niveau_locked?: boolean | null
-          niveau_reference_date?: string | null
-          niveau_reference_note?: string | null
-          niveau_source?: string | null
-          niveau_updated_at?: string | null
-          niveau_scolarisation?: string | null
-          objectif_tcf?: string | null
-          preferences_apprentissage?: string[]
-          priorites_pedagogiques?: Json
-          projet_personnel?: string | null
-          profil_litteratie?: string | null
-          score_risque?: number
-          taux_reussite_ce?: number
-          taux_reussite_co?: number
-          taux_reussite_ee?: number
-          taux_reussite_eo?: number
-          taux_reussite_global?: number
-          taux_reussite_structures?: number
-          type_demarche?: string | null
-          updated_at?: string
-          vitesse_lecture?: string | null
-        }
-        Update: {
-          aisance_numerique?: string | null
-          autres_langues?: string[]
-          besoins_accessibilite?: string[]
-          date_cible_tcf?: string | null
-          disponibilite_hors_seance?: string | null
-          eleve_id?: string
-          id?: string
-          langue_maternelle?: string | null
+          montee_auto_phase2?: boolean
           niveau_actuel?: string
           niveau_baseline_at?: string | null
           niveau_ce?: string
@@ -2660,15 +3690,17 @@ export type Database = {
           niveau_locked?: boolean | null
           niveau_reference_date?: string | null
           niveau_reference_note?: string | null
+          niveau_scolarisation?: string | null
           niveau_source?: string | null
           niveau_updated_at?: string | null
-          niveau_scolarisation?: string | null
           objectif_tcf?: string | null
           preferences_apprentissage?: string[]
           priorites_pedagogiques?: Json
-          projet_personnel?: string | null
           profil_litteratie?: string | null
+          projet_personnel?: string | null
+          sandbox_session_id?: string | null
           score_risque?: number
+          seances_consecutives_sous_60?: Json
           taux_reussite_ce?: number
           taux_reussite_co?: number
           taux_reussite_ee?: number
@@ -2676,6 +3708,51 @@ export type Database = {
           taux_reussite_global?: number
           taux_reussite_structures?: number
           type_demarche?: string | null
+          type_erreur_dominant?: string | null
+          updated_at?: string
+          vitesse_lecture?: string | null
+        }
+        Update: {
+          aisance_numerique?: string | null
+          autres_langues?: string[]
+          besoins_accessibilite?: string[]
+          date_cible_tcf?: string | null
+          dernier_score_phase2_ce?: number | null
+          dernier_score_phase2_co?: number | null
+          disponibilite_hors_seance?: string | null
+          eleve_id?: string
+          fragilite_principale?: string | null
+          id?: string
+          langue_maternelle?: string | null
+          montee_auto_phase2?: boolean
+          niveau_actuel?: string
+          niveau_baseline_at?: string | null
+          niveau_ce?: string
+          niveau_co?: string
+          niveau_ee?: string
+          niveau_eo?: string
+          niveau_locked?: boolean | null
+          niveau_reference_date?: string | null
+          niveau_reference_note?: string | null
+          niveau_scolarisation?: string | null
+          niveau_source?: string | null
+          niveau_updated_at?: string | null
+          objectif_tcf?: string | null
+          preferences_apprentissage?: string[]
+          priorites_pedagogiques?: Json
+          profil_litteratie?: string | null
+          projet_personnel?: string | null
+          sandbox_session_id?: string | null
+          score_risque?: number
+          seances_consecutives_sous_60?: Json
+          taux_reussite_ce?: number
+          taux_reussite_co?: number
+          taux_reussite_ee?: number
+          taux_reussite_eo?: number
+          taux_reussite_global?: number
+          taux_reussite_structures?: number
+          type_demarche?: string | null
+          type_erreur_dominant?: string | null
           updated_at?: string
           vitesse_lecture?: string | null
         }
@@ -2685,6 +3762,13 @@ export type Database = {
             columns: ["eleve_id"]
             isOneToOne: true
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profils_eleves_sandbox_session_id_fkey"
+            columns: ["sandbox_session_id"]
+            isOneToOne: false
+            referencedRelation: "sandbox_sessions"
             referencedColumns: ["id"]
           },
         ]
@@ -2869,6 +3953,7 @@ export type Database = {
           id: string
           is_bonus: boolean
           reponses_eleve: Json
+          sandbox_session_id: string | null
           score: number
           tentative: number
         }
@@ -2881,6 +3966,7 @@ export type Database = {
           id?: string
           is_bonus?: boolean
           reponses_eleve?: Json
+          sandbox_session_id?: string | null
           score: number
           tentative?: number
         }
@@ -2893,6 +3979,7 @@ export type Database = {
           id?: string
           is_bonus?: boolean
           reponses_eleve?: Json
+          sandbox_session_id?: string | null
           score?: number
           tentative?: number
         }
@@ -2918,6 +4005,140 @@ export type Database = {
             referencedRelation: "exercices"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "resultats_sandbox_session_id_fkey"
+            columns: ["sandbox_session_id"]
+            isOneToOne: false
+            referencedRelation: "sandbox_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      routing_decisions: {
+        Row: {
+          competence: string
+          context_snapshot: Json
+          created_at: string
+          decision: string
+          devoir_genere: string | null
+          eleve_id: string
+          exercice_id: string | null
+          formateur_id: string | null
+          id: string
+          modified_by_trainer: boolean
+          phase: string
+          reason_student: string
+          reason_trainer: string
+          rule_id: string
+          session_id: string | null
+        }
+        Insert: {
+          competence: string
+          context_snapshot?: Json
+          created_at?: string
+          decision: string
+          devoir_genere?: string | null
+          eleve_id: string
+          exercice_id?: string | null
+          formateur_id?: string | null
+          id?: string
+          modified_by_trainer?: boolean
+          phase: string
+          reason_student: string
+          reason_trainer: string
+          rule_id: string
+          session_id?: string | null
+        }
+        Update: {
+          competence?: string
+          context_snapshot?: Json
+          created_at?: string
+          decision?: string
+          devoir_genere?: string | null
+          eleve_id?: string
+          exercice_id?: string | null
+          formateur_id?: string | null
+          id?: string
+          modified_by_trainer?: boolean
+          phase?: string
+          reason_student?: string
+          reason_trainer?: string
+          rule_id?: string
+          session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "routing_decisions_eleve_id_fkey"
+            columns: ["eleve_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "routing_decisions_exercice_id_fkey"
+            columns: ["exercice_id"]
+            isOneToOne: false
+            referencedRelation: "exercices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "routing_decisions_formateur_id_fkey"
+            columns: ["formateur_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "routing_decisions_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sandbox_sessions: {
+        Row: {
+          created_at: string
+          eleve_emails: Json
+          eleve_user_ids: string[]
+          expires_at: string
+          formateur_id: string
+          group_id: string | null
+          id: string
+          last_activity: string
+          statut: string
+        }
+        Insert: {
+          created_at?: string
+          eleve_emails?: Json
+          eleve_user_ids?: string[]
+          expires_at?: string
+          formateur_id: string
+          group_id?: string | null
+          id?: string
+          last_activity?: string
+          statut?: string
+        }
+        Update: {
+          created_at?: string
+          eleve_emails?: Json
+          eleve_user_ids?: string[]
+          expires_at?: string
+          formateur_id?: string
+          group_id?: string | null
+          id?: string
+          last_activity?: string
+          statut?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sandbox_sessions_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
         ]
       }
       sequences_pedagogiques: {
@@ -2939,7 +4160,7 @@ export type Database = {
           id?: string
           is_ai_generated?: boolean
           is_public?: boolean
-          niveau: string
+          niveau?: string
           titre: string
           updated_at?: string
         }
@@ -2963,6 +4184,77 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      session_blocks: {
+        Row: {
+          block_type: string
+          created_at: string
+          error_message: string | null
+          id: string
+          session_id: string
+          status: string
+          updated_at: string
+          warning_message: string | null
+        }
+        Insert: {
+          block_type: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          session_id: string
+          status: string
+          updated_at?: string
+          warning_message?: string | null
+        }
+        Update: {
+          block_type?: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          session_id?: string
+          status?: string
+          updated_at?: string
+          warning_message?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_blocks_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      session_blocks_test: {
+        Row: {
+          block_type: string
+          created_at: string
+          error_message: string | null
+          id: string
+          session_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          block_type: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          session_id: string
+          status: string
+          updated_at?: string
+        }
+        Update: {
+          block_type?: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          session_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       session_exercices: {
         Row: {
@@ -3024,47 +4316,6 @@ export type Database = {
           },
           {
             foreignKeyName: "session_exercices_session_id_fkey"
-            columns: ["session_id"]
-            isOneToOne: false
-            referencedRelation: "sessions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      session_blocks: {
-        Row: {
-          block_type: string
-          created_at: string
-          error_message: string | null
-          id: string
-          session_id: string
-          status: string
-          updated_at: string
-          warning_message: string | null
-        }
-        Insert: {
-          block_type: string
-          created_at?: string
-          error_message?: string | null
-          id?: string
-          session_id: string
-          status: string
-          updated_at?: string
-          warning_message?: string | null
-        }
-        Update: {
-          block_type?: string
-          created_at?: string
-          error_message?: string | null
-          id?: string
-          session_id?: string
-          status?: string
-          updated_at?: string
-          warning_message?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "session_blocks_session_id_fkey"
             columns: ["session_id"]
             isOneToOne: false
             referencedRelation: "sessions"
@@ -3241,6 +4492,89 @@ export type Database = {
           },
         ]
       }
+      session_recommendations: {
+        Row: {
+          action_proposee: Json
+          competence: string | null
+          created_at: string
+          eleves_concernes: Json
+          formateur_id: string | null
+          id: string
+          raison_formateur: string
+          source: string
+          source_session_id: string | null
+          status: string
+          target_session_id: string | null
+          type: string
+          updated_at: string
+          validated_at: string | null
+          validated_by: string | null
+        }
+        Insert: {
+          action_proposee?: Json
+          competence?: string | null
+          created_at?: string
+          eleves_concernes?: Json
+          formateur_id?: string | null
+          id?: string
+          raison_formateur: string
+          source?: string
+          source_session_id?: string | null
+          status?: string
+          target_session_id?: string | null
+          type: string
+          updated_at?: string
+          validated_at?: string | null
+          validated_by?: string | null
+        }
+        Update: {
+          action_proposee?: Json
+          competence?: string | null
+          created_at?: string
+          eleves_concernes?: Json
+          formateur_id?: string | null
+          id?: string
+          raison_formateur?: string
+          source?: string
+          source_session_id?: string | null
+          status?: string
+          target_session_id?: string | null
+          type?: string
+          updated_at?: string
+          validated_at?: string | null
+          validated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_recommendations_formateur_id_fkey"
+            columns: ["formateur_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_recommendations_source_session_id_fkey"
+            columns: ["source_session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_recommendations_target_session_id_fkey"
+            columns: ["target_session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_recommendations_validated_by_fkey"
+            columns: ["validated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       session_student_outcomes: {
         Row: {
           besoin_pedagogique:
@@ -3320,6 +4654,56 @@ export type Database = {
           },
         ]
       }
+      session_templates_v4: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          duree_totale_min: number
+          id: string
+          is_active: boolean
+          is_public: boolean
+          mvp_competences: string[]
+          objectif_commun: string
+          phases: Json
+          theme: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          duree_totale_min?: number
+          id?: string
+          is_active?: boolean
+          is_public?: boolean
+          mvp_competences?: string[]
+          objectif_commun: string
+          phases: Json
+          theme: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          duree_totale_min?: number
+          id?: string
+          is_active?: boolean
+          is_public?: boolean
+          mvp_competences?: string[]
+          objectif_commun?: string
+          phases?: Json
+          theme?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_templates_v4_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sessions: {
         Row: {
           competences_autorisees: string[]
@@ -3334,11 +4718,13 @@ export type Database = {
           id: string
           lien_visio: string | null
           lieu: string | null
-          niveau_cible: string
           nb_exercices_retrospective: number
           nb_exercices_souhaite: number
           nb_questions_diagnostic: number
+          niveau_cible: string
           objectifs: string | null
+          sandbox_session_id: string | null
+          session_template_v4_id: string | null
           statut: Database["public"]["Enums"]["session_statut"]
           titre: string
           updated_at: string
@@ -3356,11 +4742,13 @@ export type Database = {
           id?: string
           lien_visio?: string | null
           lieu?: string | null
-          niveau_cible: string
           nb_exercices_retrospective?: number
           nb_exercices_souhaite?: number
           nb_questions_diagnostic?: number
+          niveau_cible?: string
           objectifs?: string | null
+          sandbox_session_id?: string | null
+          session_template_v4_id?: string | null
           statut?: Database["public"]["Enums"]["session_statut"]
           titre: string
           updated_at?: string
@@ -3378,11 +4766,13 @@ export type Database = {
           id?: string
           lien_visio?: string | null
           lieu?: string | null
-          niveau_cible?: string
           nb_exercices_retrospective?: number
           nb_exercices_souhaite?: number
           nb_questions_diagnostic?: number
+          niveau_cible?: string
           objectifs?: string | null
+          sandbox_session_id?: string | null
+          session_template_v4_id?: string | null
           statut?: Database["public"]["Enums"]["session_statut"]
           titre?: string
           updated_at?: string
@@ -3393,6 +4783,20 @@ export type Database = {
             columns: ["group_id"]
             isOneToOne: false
             referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sessions_sandbox_session_id_fkey"
+            columns: ["sandbox_session_id"]
+            isOneToOne: false
+            referencedRelation: "sandbox_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sessions_session_template_v4_id_fkey"
+            columns: ["session_template_v4_id"]
+            isOneToOne: false
+            referencedRelation: "session_templates_v4"
             referencedColumns: ["id"]
           },
         ]
@@ -3506,6 +4910,66 @@ export type Database = {
           {
             foreignKeyName: "student_competency_status_eleve_id_fkey"
             columns: ["eleve_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      student_level_baselines: {
+        Row: {
+          created_at: string
+          eleve_id: string
+          id: string
+          niveau_ce: string
+          niveau_co: string
+          niveau_ee: string
+          niveau_eo: string
+          niveau_global: string
+          note: string | null
+          reference_date: string
+          set_by: string
+          source: string
+        }
+        Insert: {
+          created_at?: string
+          eleve_id: string
+          id?: string
+          niveau_ce: string
+          niveau_co: string
+          niveau_ee: string
+          niveau_eo: string
+          niveau_global: string
+          note?: string | null
+          reference_date: string
+          set_by: string
+          source: string
+        }
+        Update: {
+          created_at?: string
+          eleve_id?: string
+          id?: string
+          niveau_ce?: string
+          niveau_co?: string
+          niveau_ee?: string
+          niveau_eo?: string
+          niveau_global?: string
+          note?: string | null
+          reference_date?: string
+          set_by?: string
+          source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_level_baselines_eleve_id_fkey"
+            columns: ["eleve_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_level_baselines_set_by_fkey"
+            columns: ["set_by"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -3674,7 +5138,7 @@ export type Database = {
           created_at?: string
           format?: Database["public"]["Enums"]["exercice_format"]
           id?: string
-          niveau: string
+          niveau?: string
           ordre?: number
         }
         Update: {
@@ -3793,13 +5257,6 @@ export type Database = {
             referencedRelation: "test_questions"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "test_reponses_session_id_fkey"
-            columns: ["session_id"]
-            isOneToOne: false
-            referencedRelation: "test_sessions"
-            referencedColumns: ["id"]
-          },
         ]
       }
       test_resultats_apprenants: {
@@ -3865,76 +5322,54 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "test_resultats_apprenants_session_id_fkey"
-            columns: ["session_id"]
-            isOneToOne: false
-            referencedRelation: "test_sessions"
-            referencedColumns: ["id"]
-          },
         ]
       }
       test_sessions: {
         Row: {
-          apprenant_id: string
-          date_debut: string | null
-          date_fin: string | null
-          groupe_suggere: string | null
-          groupe_valide_par_formateur: string | null
+          created_at: string
+          duree_secondes: number | null
+          flags: Json
+          ia_evaluation_consent: boolean | null
+          ia_evaluation_consent_at: string | null
           id: string
-          palier_ce: number | null
-          palier_co: number | null
-          palier_ee: number | null
-          palier_eo: number | null
-          profil_final: string | null
-          score_ce: number | null
-          score_co: number | null
-          score_ee: number | null
-          score_eo: number | null
-          statut: string | null
+          lead_id: string | null
+          niveau_estime: string | null
+          production_feedback: Json | null
+          score_production: number | null
+          scores: Json
         }
         Insert: {
-          apprenant_id: string
-          date_debut?: string | null
-          date_fin?: string | null
-          groupe_suggere?: string | null
-          groupe_valide_par_formateur?: string | null
+          created_at?: string
+          duree_secondes?: number | null
+          flags?: Json
+          ia_evaluation_consent?: boolean | null
+          ia_evaluation_consent_at?: string | null
           id?: string
-          palier_ce?: number | null
-          palier_co?: number | null
-          palier_ee?: number | null
-          palier_eo?: number | null
-          profil_final?: string | null
-          score_ce?: number | null
-          score_co?: number | null
-          score_ee?: number | null
-          score_eo?: number | null
-          statut?: string | null
+          lead_id?: string | null
+          niveau_estime?: string | null
+          production_feedback?: Json | null
+          score_production?: number | null
+          scores?: Json
         }
         Update: {
-          apprenant_id?: string
-          date_debut?: string | null
-          date_fin?: string | null
-          groupe_suggere?: string | null
-          groupe_valide_par_formateur?: string | null
+          created_at?: string
+          duree_secondes?: number | null
+          flags?: Json
+          ia_evaluation_consent?: boolean | null
+          ia_evaluation_consent_at?: string | null
           id?: string
-          palier_ce?: number | null
-          palier_co?: number | null
-          palier_ee?: number | null
-          palier_eo?: number | null
-          profil_final?: string | null
-          score_ce?: number | null
-          score_co?: number | null
-          score_ee?: number | null
-          score_eo?: number | null
-          statut?: string | null
+          lead_id?: string | null
+          niveau_estime?: string | null
+          production_feedback?: Json | null
+          score_production?: number | null
+          scores?: Json
         }
         Relationships: [
           {
-            foreignKeyName: "test_sessions_apprenant_id_fkey"
-            columns: ["apprenant_id"]
+            foreignKeyName: "test_sessions_lead_id_fkey"
+            columns: ["lead_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "leads"
             referencedColumns: ["id"]
           },
         ]
@@ -4062,22 +5497,17 @@ export type Database = {
         }
         Returns: number
       }
+      can_access_sandbox: {
+        Args: { _sandbox_session_id: string }
+        Returns: boolean
+      }
       claim_session_block: {
         Args: { p_block_type: string; p_session_id: string }
         Returns: boolean
       }
-      set_student_level_baseline: {
-        Args: {
-          p_eleve_id: string
-          p_levels: Json
-          p_note?: string | null
-          p_reference_date: string
-        }
-        Returns: Database["public"]["Tables"]["profils_eleves"]["Row"]
-      }
-      update_andragogical_profile: {
-        Args: { p_eleve_id: string; p_profile: Json }
-        Returns: undefined
+      claim_session_block_test: {
+        Args: { p_block_type: string; p_session_id: string }
+        Returns: boolean
       }
       delete_email: {
         Args: { message_id: number; queue_name: string }
@@ -4086,6 +5516,10 @@ export type Database = {
       descendre_niveau: { Args: { v_niveau: string }; Returns: string }
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
+        Returns: number
+      }
+      get_cohort_enrolled_count: {
+        Args: { p_cohort_id: string }
         Returns: number
       }
       get_group_formateur: { Args: { _group_id: string }; Returns: string }
@@ -4100,12 +5534,12 @@ export type Database = {
       }
       has_role: {
         Args: {
-          _role: Database["public"]["Enums"]["app_role"]
-          _user_id: string
+          target_role: Database["public"]["Enums"]["app_role"]
+          uid: string
         }
         Returns: boolean
       }
-      monter_niveau: { Args: { v_niveau: string }; Returns: string }
+      monter_niveau: { Args: { p_niveau_actuel: string }; Returns: string }
       move_to_dlq: {
         Args: {
           dlq_name: string
@@ -4114,6 +5548,10 @@ export type Database = {
           source_queue: string
         }
         Returns: number
+      }
+      publish_session_variants_run: {
+        Args: { p_generation_run_id: string; p_session_id: string }
+        Returns: undefined
       }
       purge_ai_processing_logs_older_than_12_months: {
         Args: never
@@ -4198,6 +5636,113 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      search_pedagogical_images: {
+        Args: {
+          p_level?: string
+          p_limit?: number
+          p_query?: string
+          p_skill?: string
+          p_theme?: string
+        }
+        Returns: {
+          alt_text: string
+          attribution: string | null
+          author: string | null
+          created_at: string
+          description: string
+          id: string
+          image_url: string | null
+          import_key: string
+          is_active: boolean
+          language_level: string | null
+          level_tags: string[]
+          license: string | null
+          pedagogical_relevance_score: number | null
+          pedagogical_tags: string[]
+          public_url: string | null
+          quality_score: number | null
+          raw: Json
+          recommended_exercise_types: string[]
+          rejected: boolean
+          rejection_reason: string
+          skill_tags: string[]
+          source: string | null
+          source_url: string | null
+          storage_bucket: string
+          storage_path: string
+          theme_tags: string[]
+          title: string
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "pedagogical_images"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      set_student_level_baseline: {
+        Args: {
+          p_eleve_id: string
+          p_levels: Json
+          p_note?: string
+          p_reference_date: string
+        }
+        Returns: {
+          aisance_numerique: string | null
+          autres_langues: string[]
+          besoins_accessibilite: string[]
+          date_cible_tcf: string | null
+          dernier_score_phase2_ce: number | null
+          dernier_score_phase2_co: number | null
+          disponibilite_hors_seance: string | null
+          eleve_id: string
+          fragilite_principale: string | null
+          id: string
+          langue_maternelle: string | null
+          montee_auto_phase2: boolean
+          niveau_actuel: string
+          niveau_baseline_at: string | null
+          niveau_ce: string
+          niveau_co: string
+          niveau_ee: string
+          niveau_eo: string
+          niveau_locked: boolean | null
+          niveau_reference_date: string | null
+          niveau_reference_note: string | null
+          niveau_scolarisation: string | null
+          niveau_source: string | null
+          niveau_updated_at: string | null
+          objectif_tcf: string | null
+          preferences_apprentissage: string[]
+          priorites_pedagogiques: Json
+          profil_litteratie: string | null
+          projet_personnel: string | null
+          sandbox_session_id: string | null
+          score_risque: number
+          seances_consecutives_sous_60: Json
+          taux_reussite_ce: number
+          taux_reussite_co: number
+          taux_reussite_ee: number
+          taux_reussite_eo: number
+          taux_reussite_global: number
+          taux_reussite_structures: number
+          type_demarche: string | null
+          type_erreur_dominant: string | null
+          updated_at: string
+          vitesse_lecture: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "profils_eleves"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      update_andragogical_profile: {
+        Args: { p_eleve_id: string; p_profile: Json }
+        Returns: undefined
+      }
       update_priorites_pedagogiques: {
         Args: { p_eleve_id: string; p_nouvelle_priorite: string }
         Returns: undefined
@@ -4210,7 +5755,14 @@ export type Database = {
         | "devoir_expire"
         | "tendance_baisse"
         | "progression"
-      app_role: "formateur" | "eleve" | "admin"
+      app_role:
+        | "formateur"
+        | "eleve"
+        | "admin"
+        | "gestionnaire"
+        | "partenaire"
+        | "inscrit"
+        | "conseiller"
       competence_statut:
         | "non_evalue"
         | "non_acquis"
@@ -4388,7 +5940,15 @@ export const Constants = {
         "tendance_baisse",
         "progression",
       ],
-      app_role: ["formateur", "eleve", "admin"],
+      app_role: [
+        "formateur",
+        "eleve",
+        "admin",
+        "gestionnaire",
+        "partenaire",
+        "inscrit",
+        "conseiller",
+      ],
       competence_statut: [
         "non_evalue",
         "non_acquis",
