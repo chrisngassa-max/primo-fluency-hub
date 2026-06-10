@@ -223,7 +223,7 @@ const GroupesPage = () => {
   });
 
   // Fetch members for ALL groups (simpler approach, one query)
-  const { data: allMembers } = useQuery({
+  const { data: allMembers } = useQuery<any[]>({
     queryKey: ["all-group-members", user?.id],
     queryFn: async () => {
       if (!groups || groups.length === 0) return [];
@@ -237,7 +237,7 @@ const GroupesPage = () => {
         if (fallback.error) throw fallback.error;
         return fallback.data;
       }
-      return data?.members ?? [];
+      return (data?.members ?? []) as any[];
     },
     enabled: !!groups && groups.length > 0,
   });
@@ -247,7 +247,7 @@ const GroupesPage = () => {
     queryKey: ["all-eleve-profils", user?.id],
     queryFn: async () => {
       if (!allMembers || allMembers.length === 0) return [];
-      const eleveIds = [...new Set(allMembers.map((m: any) => m.eleve_id))];
+      const eleveIds = [...new Set(allMembers.map((m: any) => String(m.eleve_id)).filter(Boolean))];
       const { data, error } = await supabase
         .from("profils_eleves")
         .select("eleve_id, taux_reussite_global, niveau_co, niveau_ce, niveau_ee, niveau_eo, profil_litteratie")
@@ -259,8 +259,8 @@ const GroupesPage = () => {
   });
 
   // ─── Détection "élève en avance" (formateur uniquement) ───
-  const advancedEleveIds = useMemo(
-    () => [...new Set((allMembers ?? []).map((m: any) => m.eleve_id))],
+  const advancedEleveIds = useMemo<string[]>(
+    () => [...new Set((allMembers ?? []).map((m: any) => String(m.eleve_id)).filter(Boolean))],
     [allMembers]
   );
   const { data: advancedMap = {} as Record<string, AdvancedSignal> } = useQuery({
