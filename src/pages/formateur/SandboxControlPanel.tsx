@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Clock3, Copy, RefreshCw, ShieldCheck, Trash2, Users } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Clock3, Copy, RefreshCw, ShieldCheck, Trash2, Users, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,8 @@ import { useSandbox, type SandboxLevel, type SandboxStudent } from "@/contexts/S
 import { supabase } from "@/integrations/supabase/client";
 
 export default function SandboxControlPanel() {
-  const { session, counts, loading, refresh, setup, reset, invite } = useSandbox();
+  const navigate = useNavigate();
+  const { session, counts, loading, refresh, setup, reset, invite, exitSandboxMode } = useSandbox();
   const [credentials, setCredentials] = useState<SandboxStudent[]>([]);
   const [busy, setBusy] = useState(false);
 
@@ -71,6 +73,19 @@ export default function SandboxControlPanel() {
     }
   };
 
+  const runExit = async () => {
+    setBusy(true);
+    try {
+      await exitSandboxMode();
+      toast.success("Mode sandbox quitte. Tes donnees reelles sont a nouveau affichees.");
+      navigate("/formateur");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Sortie du mode sandbox impossible");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const expiresIn = session
     ? Math.max(0, Math.ceil((new Date(session.expires_at).getTime() - Date.now()) / 3_600_000))
     : 0;
@@ -97,9 +112,15 @@ export default function SandboxControlPanel() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Mode Sandbox</h1>
-        <p className="text-muted-foreground">Teste le parcours formateur et eleve sans polluer les donnees reelles.</p>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Mode Sandbox</h1>
+          <p className="text-muted-foreground">Teste le parcours formateur et eleve sans polluer les donnees reelles.</p>
+        </div>
+        <Button variant="destructive" disabled={busy} onClick={() => void runExit()}>
+          <XCircle className="mr-2 h-4 w-4" />
+          Quitter le mode sandbox
+        </Button>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
