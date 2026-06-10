@@ -139,6 +139,7 @@ export function SandboxProvider({ children }: { children: React.ReactNode }) {
 
 
   const previewActive =
+    displayHint &&
     session?.statut === "active" &&
     new Date(session.expires_at).getTime() > Date.now();
 
