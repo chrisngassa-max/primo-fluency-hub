@@ -18,7 +18,7 @@ export default function SandboxBanner() {
     exitStudentPreview,
     enterMosaicView,
   } = useSandboxPreview();
-  if (!displayHint && !session) return null;
+  if (!displayHint || !session) return null;
 
   const expired = session?.statut === "expired";
 
