@@ -38,6 +38,8 @@ interface SandboxContextValue {
   setup: (forceRecreate?: boolean) => Promise<SandboxStudent[]>;
   reset: (scope: "attempts_only" | "sessions" | "everything") => Promise<Record<string, number>>;
   invite: (niveau: SandboxLevel) => Promise<string>;
+  exitSandboxMode: () => void;
+
 }
 
 const SandboxContext = createContext<SandboxContextValue | null>(null);
@@ -49,7 +51,9 @@ export function SandboxProvider({ children }: { children: React.ReactNode }) {
   const [counts, setCounts] = useState<SandboxCounts>(EMPTY_COUNTS);
   const [loading, setLoading] = useState(false);
   const [displayHint, setDisplayHint] = useState(
-    () => localStorage.getItem("sandbox_mode") === "true",
+    () =>
+      localStorage.getItem("sandbox_mode") === "true" &&
+      localStorage.getItem("sandbox_dismissed") !== "true",
   );
 
   const refresh = useCallback(async () => {
@@ -64,10 +68,14 @@ export function SandboxProvider({ children }: { children: React.ReactNode }) {
       if (error) throw error;
       setSession(data?.session ?? null);
       setCounts(data?.counts ?? EMPTY_COUNTS);
-      const visible = !!data?.session && data.session.statut !== "reset";
+      const dismissed = localStorage.getItem("sandbox_dismissed") === "true";
+      const visible = !!data?.session && data.session.statut !== "reset" && !dismissed;
       setDisplayHint(visible);
       if (visible) localStorage.setItem("sandbox_mode", "true");
-      else localStorage.removeItem("sandbox_mode");
+      else if (!data?.session) {
+        localStorage.removeItem("sandbox_mode");
+        localStorage.removeItem("sandbox_dismissed");
+      }
     } finally {
       setLoading(false);
     }
@@ -94,6 +102,7 @@ export function SandboxProvider({ children }: { children: React.ReactNode }) {
     });
     if (error) throw error;
     localStorage.setItem("sandbox_mode", "true");
+    localStorage.removeItem("sandbox_dismissed");
     setDisplayHint(true);
     await refresh();
     return (data?.eleves ?? []) as SandboxStudent[];
@@ -117,10 +126,17 @@ export function SandboxProvider({ children }: { children: React.ReactNode }) {
     return data.invite_url as string;
   }, []);
 
+  const exitSandboxMode = useCallback(() => {
+    localStorage.setItem("sandbox_dismissed", "true");
+    localStorage.removeItem("sandbox_mode");
+    setDisplayHint(false);
+  }, []);
+
   const value = useMemo(
-    () => ({ session, counts, loading, displayHint, refresh, setup, reset, invite }),
-    [session, counts, loading, displayHint, refresh, setup, reset, invite],
+    () => ({ session, counts, loading, displayHint, refresh, setup, reset, invite, exitSandboxMode }),
+    [session, counts, loading, displayHint, refresh, setup, reset, invite, exitSandboxMode],
   );
+
 
   const previewActive =
     session?.statut === "active" &&

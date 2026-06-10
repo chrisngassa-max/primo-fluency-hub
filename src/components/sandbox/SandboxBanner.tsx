@@ -10,7 +10,7 @@ const LEVELS = ["A1", "A2", "B1", "B2"] as const;
 
 export default function SandboxBanner() {
   const navigate = useNavigate();
-  const { session, displayHint, setup, reset } = useSandbox();
+  const { session, displayHint, setup, reset, exitSandboxMode } = useSandbox();
   const {
     mode,
     niveau,
@@ -88,12 +88,15 @@ export default function SandboxBanner() {
         variant="secondary"
         onClick={() => {
           exitStudentPreview();
-          navigate("/formateur/sandbox");
+          exitSandboxMode();
+          toast.success("Sortie du mode sandbox. Tes donnees reelles sont a nouveau affichees.");
+          navigate("/formateur");
         }}
       >
         <XCircle className="mr-2 h-4 w-4" />
         Quitter
       </Button>
+
     </div>
   );
 }
