@@ -68,8 +68,22 @@ Deno.serve(async (req) => {
     if (profilesError) throw profilesError;
 
     const profileById = new Map((profiles ?? []).map((profile: any) => [profile.id, profile]));
+    const missingProfileIds = eleveIds.filter((eleveId) => !profileById.has(eleveId));
+    const authFallbacks = await Promise.all(missingProfileIds.map(async (eleveId) => {
+      const { data } = await admin.auth.admin.getUserById(eleveId);
+      const authUser = data?.user;
+      if (!authUser) return null;
+      return {
+        id: eleveId,
+        nom: authUser.user_metadata?.nom ?? "",
+        prenom: authUser.user_metadata?.prenom ?? "",
+        email: authUser.email ?? "",
+        mot_de_passe_initial: null,
+      };
+    }));
+    const fallbackById = new Map(authFallbacks.filter(Boolean).map((profile: any) => [profile.id, profile]));
     const normalized = (members ?? []).map((member: any) => {
-      const profile = profileById.get(member.eleve_id) as any | undefined;
+      const profile = (profileById.get(member.eleve_id) ?? fallbackById.get(member.eleve_id)) as any | undefined;
       return {
         ...member,
         eleve: profile
@@ -81,7 +95,7 @@ Deno.serve(async (req) => {
             mot_de_passe_initial: profile.mot_de_passe_initial ?? null,
           }
           : null,
-        eleve_missing_profile: !profile,
+        eleve_missing_profile: !profileById.has(member.eleve_id),
       };
     });
 

@@ -227,13 +227,17 @@ const GroupesPage = () => {
     queryKey: ["all-group-members", user?.id],
     queryFn: async () => {
       if (!groups || groups.length === 0) return [];
-      const groupIds = groups.map((g) => g.id);
-      const { data, error } = await supabase
-        .from("group_members")
-        .select("*, eleve:profiles(id, nom, prenom, email, mot_de_passe_initial)")
-        .in("group_id", groupIds);
-      if (error) throw error;
-      return data;
+      const { data, error } = await supabase.functions.invoke("formateur-group-members");
+      if (error || data?.error) {
+        const groupIds = groups.map((g) => g.id);
+        const fallback = await supabase
+          .from("group_members")
+          .select("*, eleve:profiles(id, nom, prenom, email, mot_de_passe_initial)")
+          .in("group_id", groupIds);
+        if (fallback.error) throw fallback.error;
+        return fallback.data;
+      }
+      return data?.members ?? [];
     },
     enabled: !!groups && groups.length > 0,
   });
