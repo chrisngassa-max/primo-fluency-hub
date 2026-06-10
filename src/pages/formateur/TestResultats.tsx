@@ -52,7 +52,7 @@ const TestResultats = () => {
       .update({ groupe_confirme: groupe })
       .eq("id", resultId);
     const { error: e2 } = await supabase
-      .from("test_sessions")
+      .from("test_sessions" as any)
       .update({ groupe_valide_par_formateur: groupe })
       .eq("id", sessionId);
     if (e1 || e2) {

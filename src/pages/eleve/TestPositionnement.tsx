@@ -98,7 +98,7 @@ const TestPositionnement = () => {
     if (!user?.id) return null;
 
     const { data: sessions, error } = await supabase
-      .from("test_sessions")
+      .from("test_sessions" as any)
       .select("*")
       .eq("apprenant_id", user.id)
       .order("date_debut", { ascending: false });
@@ -375,7 +375,7 @@ const TestPositionnement = () => {
     }
 
     const { data, error } = await supabase
-      .from("test_sessions")
+      .from("test_sessions" as any)
       .insert({ apprenant_id: user.id })
       .select()
       .single();
@@ -761,7 +761,7 @@ const TestPositionnement = () => {
       updateData[`palier_${compKey}`] = nextPalier;
       updateData[`score_${compKey}`] = newScores[compKey];
       await supabase
-        .from("test_sessions")
+        .from("test_sessions" as any)
         .update(updateData as any)
         .eq("id", sessionState.sessionId);
 
@@ -791,7 +791,7 @@ const TestPositionnement = () => {
     const scoreUpdate: Record<string, number> = {};
     scoreUpdate[`score_${compKey}`] = newScores[compKey];
     await supabase
-      .from("test_sessions")
+      .from("test_sessions" as any)
       .update(scoreUpdate as any)
       .eq("id", sessionState.sessionId);
 
