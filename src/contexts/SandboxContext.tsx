@@ -38,7 +38,7 @@ interface SandboxContextValue {
   setup: (forceRecreate?: boolean) => Promise<SandboxStudent[]>;
   reset: (scope: "attempts_only" | "sessions" | "everything") => Promise<Record<string, number>>;
   invite: (niveau: SandboxLevel) => Promise<string>;
-  exitSandboxMode: () => void;
+  exitSandboxMode: () => Promise<void>;
 
 }
 
@@ -60,6 +60,7 @@ export function SandboxProvider({ children }: { children: React.ReactNode }) {
     if (role !== "formateur") {
       setSession(null);
       setCounts(EMPTY_COUNTS);
+      setDisplayHint(false);
       return;
     }
     setLoading(true);
@@ -126,11 +127,17 @@ export function SandboxProvider({ children }: { children: React.ReactNode }) {
     return data.invite_url as string;
   }, []);
 
-  const exitSandboxMode = useCallback(() => {
+  const exitSandboxMode = useCallback(async () => {
     localStorage.setItem("sandbox_dismissed", "true");
     localStorage.removeItem("sandbox_mode");
     setDisplayHint(false);
-  }, []);
+    const { error } = await supabase.functions.invoke("sandbox-reset", {
+      body: { scope: "everything", sandbox_session_id: session?.id },
+    });
+    if (error) throw error;
+    setSession(null);
+    setCounts(EMPTY_COUNTS);
+  }, [session?.id]);
 
   const value = useMemo(
     () => ({ session, counts, loading, displayHint, refresh, setup, reset, invite, exitSandboxMode }),
