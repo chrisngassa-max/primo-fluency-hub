@@ -32,10 +32,12 @@ Deno.serve(async (req) => {
   let cleanupAdmin: any = null;
   let cleanupSandboxId: string | null = null;
   let cleanupUserIds: string[] = [];
+  let provisioningStep = "authenticate";
 
   try {
     const { admin, user } = await getSandboxClients(req);
     cleanupAdmin = admin;
+    provisioningStep = "load_existing_sandbox";
     const body = await req.json().catch(() => ({})) as SandboxSetupRequest;
     const { data: current, error: currentError } = await admin
       .from("sandbox_sessions")
@@ -78,12 +80,32 @@ Deno.serve(async (req) => {
 
     const isResume = current?.statut === "provisioning" && !body.force_recreate;
     if (current) {
-      await deleteAuthUsers(admin, current.eleve_user_ids);
+      provisioningStep = "cleanup_existing_sandbox";
+      cleanupSandboxId = current.id;
+      cleanupUserIds = current.eleve_user_ids ?? [];
       await deleteSandboxRows(admin, current.id);
+      await deleteAuthUsers(admin, cleanupUserIds);
       const { error } = await admin.from("sandbox_sessions").delete().eq("id", current.id);
       if (error) throw error;
+      cleanupSandboxId = null;
+      cleanupUserIds = [];
     }
 
+    provisioningStep = "load_compatible_exercises";
+    const { data: exercises, error: exercisesError } = await admin
+      .from("exercices")
+      .select("id, niveau_vise")
+      .in("format", ["qcm", "vrai_faux"])
+      .order("created_at", { ascending: false })
+      .limit(80);
+    if (exercisesError) throw exercisesError;
+    if (!exercises?.length) {
+      throw Object.assign(new Error("Aucun exercice QCM ou vrai/faux disponible pour initialiser la sandbox"), {
+        status: 422,
+      });
+    }
+
+    provisioningStep = "create_sandbox_session";
     const { data: sandbox, error: sandboxError } = await admin
       .from("sandbox_sessions")
       .insert({
@@ -99,6 +121,7 @@ Deno.serve(async (req) => {
     const shortId = sandbox.id.replaceAll("-", "").slice(0, 8);
     const created: EleveSandbox[] = [];
     for (const niveau of LEVELS) {
+      provisioningStep = `create_auth_user_${niveau}`;
       const fixture = SANDBOX_LEARNER_FIXTURES[niveau];
       const password = createReadablePassword();
       const email = `sandbox-${niveau.toLowerCase()}-${shortId}@sandbox.captcf.local`;
@@ -124,26 +147,19 @@ Deno.serve(async (req) => {
         mot_de_passe_initial: password,
       });
       cleanupUserIds = created.map((eleve) => eleve.user_id);
+      const persistedCheckpoint = created.map(({ mot_de_passe_initial: _password, ...eleve }) => eleve);
       const { error: checkpointError } = await admin
         .from("sandbox_sessions")
-        .update({ eleve_user_ids: cleanupUserIds })
+        .update({
+          eleve_user_ids: cleanupUserIds,
+          eleve_emails: persistedCheckpoint,
+          last_activity: new Date().toISOString(),
+        })
         .eq("id", sandbox.id);
       if (checkpointError) throw checkpointError;
     }
 
-    const { data: exercises, error: exercisesError } = await admin
-      .from("exercices")
-      .select("id, niveau_vise")
-      .in("format", ["qcm", "vrai_faux"])
-      .order("created_at", { ascending: false })
-      .limit(80);
-    if (exercisesError) throw exercisesError;
-    if (!exercises?.length) {
-      throw Object.assign(new Error("Aucun exercice QCM ou vrai/faux disponible pour initialiser la sandbox"), {
-        status: 422,
-      });
-    }
-
+    provisioningStep = "create_group";
     const trainerName = user.user_metadata?.prenom || "Formateur";
     const { data: group, error: groupError } = await admin
       .from("groups")
@@ -157,7 +173,13 @@ Deno.serve(async (req) => {
       .select("id")
       .single();
     if (groupError) throw groupError;
+    const { error: groupCheckpointError } = await admin
+      .from("sandbox_sessions")
+      .update({ group_id: group.id, last_activity: new Date().toISOString() })
+      .eq("id", sandbox.id);
+    if (groupCheckpointError) throw groupCheckpointError;
 
+    provisioningStep = "create_sessions";
     const now = new Date();
     const previousSessionDate = new Date(now);
     previousSessionDate.setUTCDate(previousSessionDate.getUTCDate() - 7);
@@ -203,6 +225,7 @@ Deno.serve(async (req) => {
     const currentSession = seededSessions?.find((session: any) => session.statut === "planifiee");
     if (!previousSession || !currentSession) throw new Error("Seances sandbox non creees");
 
+    provisioningStep = "attach_retrospective_exercises";
     const retrospectiveExerciseIds = exercises.slice(0, 5).map((exercise: any) => exercise.id);
     const { error: sessionExerciseError } = await admin.from("session_exercices").insert(
       retrospectiveExerciseIds.map((exerciseId: string, index: number) => ({
@@ -215,6 +238,7 @@ Deno.serve(async (req) => {
     );
     if (sessionExerciseError) throw sessionExerciseError;
 
+    provisioningStep = "create_session_blocks";
     const { error: blockError } = await admin.from("session_blocks").insert([
       { session_id: currentSession.id, block_type: "retrospective", status: "ready" },
       { session_id: currentSession.id, block_type: "diagnostic", status: "ready" },
@@ -223,6 +247,7 @@ Deno.serve(async (req) => {
     if (blockError) throw blockError;
 
     for (const eleve of created) {
+      provisioningStep = `seed_learner_${eleve.niveau}`;
       const fixture = SANDBOX_LEARNER_FIXTURES[eleve.niveau];
       // Le trigger Auth cree profiles. Le mot de passe sandbox reste volontairement NULL.
       const { error: profileError } = await admin
@@ -316,6 +341,7 @@ Deno.serve(async (req) => {
       if (finalProfileError) throw finalProfileError;
     }
 
+    provisioningStep = "activate_sandbox";
     const persistedEleves = created.map(({ mot_de_passe_initial: _password, ...eleve }) => eleve);
     const { data: active, error: activeError } = await admin
       .from("sandbox_sessions")
@@ -371,7 +397,11 @@ Deno.serve(async (req) => {
         );
       }
     }
-    console.error("sandbox-setup failed", error instanceof Error ? error.message : "unknown");
+    console.error("sandbox-setup failed", {
+      step: provisioningStep,
+      code: (error as any)?.code ?? null,
+      message: error instanceof Error ? error.message : "unknown",
+    });
     if (isMissingSandboxSchema(error)) {
       return jsonResponse({
         error: "La base de donnees Sandbox n'est pas initialisee. Appliquez les migrations Supabase avant de recommencer.",
@@ -381,6 +411,7 @@ Deno.serve(async (req) => {
     return jsonResponse({
       error: error instanceof Error ? error.message : "Erreur sandbox",
       code: "SANDBOX_SETUP_FAILED",
+      step: provisioningStep,
     }, (error as any)?.status ?? 500);
   }
 });
