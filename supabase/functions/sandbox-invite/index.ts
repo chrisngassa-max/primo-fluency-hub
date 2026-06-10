@@ -29,11 +29,20 @@ Deno.serve(async (req) => {
       .from("sandbox_sessions")
       .select("id, statut, eleve_emails")
       .eq("formateur_id", user.id)
-      .eq("statut", "active")
+      .order("created_at", { ascending: false })
+      .limit(1)
       .maybeSingle();
     if (error) throw error;
-    const eleve = session?.eleve_emails?.find((item: any) => item.niveau === niveau);
-    if (!eleve) return jsonResponse({ error: "Eleve sandbox introuvable" }, 400);
+    if (!session) {
+      return jsonResponse({ error: "Aucune sandbox. Cree-la depuis le panneau Sandbox avant de basculer." }, 409);
+    }
+    if (session.statut !== "active") {
+      return jsonResponse({
+        error: `Sandbox indisponible (statut: ${session.statut}). Relance la creation depuis le panneau Sandbox.`,
+      }, 409);
+    }
+    const eleve = session.eleve_emails?.find((item: any) => item.niveau === niveau);
+    if (!eleve) return jsonResponse({ error: `Eleve sandbox ${niveau} introuvable dans la session active.` }, 400);
 
     const { data, error: linkError } = await admin.auth.admin.generateLink({
       type: "magiclink",

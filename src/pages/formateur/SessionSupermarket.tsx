@@ -797,7 +797,7 @@ ${(doc.fiches_eleves || [])
                     {detectedGabarit.lexique_cibles?.length > 0 && (
                       <p className="text-xs text-muted-foreground">
                         <span className="font-medium">Lexique :</span>{" "}
-                        {detectedGabarit.lexique_cibles.slice(0, 8).join(", ")}
+                        {(detectedGabarit.lexique_cibles as any).slice(0, 8).join(", ")}
                         {detectedGabarit.lexique_cibles.length > 8 && "…"}
                       </p>
                     )}
