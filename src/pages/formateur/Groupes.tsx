@@ -223,17 +223,21 @@ const GroupesPage = () => {
   });
 
   // Fetch members for ALL groups (simpler approach, one query)
-  const { data: allMembers } = useQuery({
+  const { data: allMembers } = useQuery<any[]>({
     queryKey: ["all-group-members", user?.id],
     queryFn: async () => {
       if (!groups || groups.length === 0) return [];
-      const groupIds = groups.map((g) => g.id);
-      const { data, error } = await supabase
-        .from("group_members")
-        .select("*, eleve:profiles(id, nom, prenom, email, mot_de_passe_initial)")
-        .in("group_id", groupIds);
-      if (error) throw error;
-      return data;
+      const { data, error } = await supabase.functions.invoke("formateur-group-members");
+      if (error || data?.error) {
+        const groupIds = groups.map((g) => g.id);
+        const fallback = await supabase
+          .from("group_members")
+          .select("*, eleve:profiles(id, nom, prenom, email, mot_de_passe_initial)")
+          .in("group_id", groupIds);
+        if (fallback.error) throw fallback.error;
+        return fallback.data;
+      }
+      return (data?.members ?? []) as any[];
     },
     enabled: !!groups && groups.length > 0,
   });
@@ -243,7 +247,7 @@ const GroupesPage = () => {
     queryKey: ["all-eleve-profils", user?.id],
     queryFn: async () => {
       if (!allMembers || allMembers.length === 0) return [];
-      const eleveIds = [...new Set(allMembers.map((m: any) => m.eleve_id))];
+      const eleveIds = [...new Set(allMembers.map((m: any) => String(m.eleve_id)).filter(Boolean))];
       const { data, error } = await supabase
         .from("profils_eleves")
         .select("eleve_id, taux_reussite_global, niveau_co, niveau_ce, niveau_ee, niveau_eo, profil_litteratie")
@@ -255,8 +259,8 @@ const GroupesPage = () => {
   });
 
   // ─── Détection "élève en avance" (formateur uniquement) ───
-  const advancedEleveIds = useMemo(
-    () => [...new Set((allMembers ?? []).map((m: any) => m.eleve_id))],
+  const advancedEleveIds = useMemo<string[]>(
+    () => [...new Set((allMembers ?? []).map((m: any) => String(m.eleve_id)).filter(Boolean))],
     [allMembers]
   );
   const { data: advancedMap = {} as Record<string, AdvancedSignal> } = useQuery({
@@ -272,6 +276,11 @@ const GroupesPage = () => {
   const getProgress = (eleveId: string) => {
     const p = (allProfils ?? []).find((p: any) => p.eleve_id === eleveId);
     return p ? Math.round(Number(p.taux_reussite_global)) : 0;
+  };
+
+  const getStudentDisplayName = (member: any) => {
+    const name = `${member.eleve?.prenom ?? ""} ${member.eleve?.nom ?? ""}`.trim();
+    return name || (member.eleve_missing_profile ? "Profil élève à restaurer" : "Élève sans nom");
   };
 
   const sortedStudents = useMemo(() => {
@@ -663,6 +672,7 @@ const GroupesPage = () => {
                             {members.map((m: any) => {
                               const prog = getProgress(m.eleve_id);
                               const eleve = m.eleve;
+                              const studentName = getStudentDisplayName(m);
                               return (
                                 <tr
                                   key={m.id}
@@ -671,14 +681,14 @@ const GroupesPage = () => {
                                 >
                                   <td className="py-2.5 px-3 font-medium">
                                     <div className="flex flex-col gap-1">
-                                      <span>{eleve?.prenom} {eleve?.nom}</span>
+                                      <span>{studentName}</span>
                                       <Button
                                         variant="link"
                                         size="sm"
                                         className="h-auto w-fit p-0 text-xs font-semibold text-primary"
                                         onClick={(e) => {
                                           e.stopPropagation();
-                                          openSetPasswordDialog(m.eleve_id, `${eleve?.prenom} ${eleve?.nom}`, eleve?.email || "");
+                                          openSetPasswordDialog(m.eleve_id, studentName, eleve?.email || "");
                                         }}
                                       >
                                         <KeyRound className="mr-1 h-3.5 w-3.5" />
@@ -725,7 +735,7 @@ const GroupesPage = () => {
                                         variant="outline" size="sm" className="h-7 px-2 gap-1 text-xs"
                                         onClick={(e) => {
                                           e.stopPropagation();
-                                          openSetPasswordDialog(m.eleve_id, `${eleve?.prenom} ${eleve?.nom}`, eleve?.email || "");
+                                          openSetPasswordDialog(m.eleve_id, studentName, eleve?.email || "");
                                         }}
                                         title="Réinitialiser le mot de passe"
                                       >
@@ -801,6 +811,7 @@ const GroupesPage = () => {
                         })
                         .map((m: any) => {
                           const eleve = m.eleve;
+                          const studentName = getStudentDisplayName(m);
                           const studentGroups = getStudentGroups(m.eleve_id);
                           const otherGroups = (groups ?? []).filter(
                             (g) => !studentGroups.some((sg) => sg.groupId === g.id)
@@ -811,14 +822,14 @@ const GroupesPage = () => {
                               <TableCell className="font-medium">
                                 <div className="flex flex-col gap-1">
                                   <div className="flex items-center gap-2">
-                                    <span>{eleve?.prenom} {eleve?.nom}</span>
+                                    <span>{studentName}</span>
                                     <AdvancedStudentBadge signal={advancedMap[m.eleve_id]} compact />
                                   </div>
                                   <Button
                                     variant="link"
                                     size="sm"
                                     className="h-auto w-fit p-0 text-xs font-semibold text-primary"
-                                    onClick={() => openSetPasswordDialog(m.eleve_id, `${eleve?.prenom} ${eleve?.nom}`, eleve?.email || "")}
+                                    onClick={() => openSetPasswordDialog(m.eleve_id, studentName, eleve?.email || "")}
                                   >
                                     <KeyRound className="mr-1 h-3.5 w-3.5" />
                                     Modifier email / mot de passe
@@ -855,7 +866,7 @@ const GroupesPage = () => {
                                   )}
                                   <Button
                                     variant="outline" size="sm" className="h-7 px-2 gap-1 text-xs"
-                                    onClick={() => openSetPasswordDialog(m.eleve_id, `${eleve?.prenom} ${eleve?.nom}`, eleve?.email || "")}
+                                    onClick={() => openSetPasswordDialog(m.eleve_id, studentName, eleve?.email || "")}
                                     title="Réinitialiser avec un mot de passe choisi"
                                   >
                                     <KeyRound className="h-3.5 w-3.5" />
@@ -863,7 +874,7 @@ const GroupesPage = () => {
                                   </Button>
                                   <Button
                                     variant="ghost" size="icon" className="h-6 w-6"
-                                    onClick={() => handleResetPassword(m.eleve_id, `${eleve?.prenom} ${eleve?.nom}`)}
+                                    onClick={() => handleResetPassword(m.eleve_id, studentName)}
                                     disabled={resettingPwd === m.eleve_id}
                                     title="Générer un nouveau mot de passe aléatoire"
                                   >

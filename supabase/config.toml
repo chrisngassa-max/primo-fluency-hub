@@ -42,6 +42,8 @@ project_id = "gudcenhmzlcvhgbgklzw"
     verify_jwt = false
   [functions.reset-student-password]
     verify_jwt = false
+  [functions.formateur-group-members]
+    verify_jwt = true
   [functions.sandbox-setup]
     verify_jwt = true
   [functions.sandbox-reset]

@@ -101,7 +101,32 @@ Deno.serve(async (req) => {
       }
 
       let authCleanupFailures = 0;
+      let skippedUnsafeAuthUsers = 0;
       for (const userId of authUserIds) {
+        const { data: authUser, error: getUserError } = await admin.auth.admin.getUserById(userId);
+        if (getUserError && !getUserError.message?.toLowerCase().includes("not found")) {
+          authCleanupFailures += 1;
+          console.warn("sandbox-reset auth lookup failed", {
+            requestId,
+            sandboxSessionId: session.id,
+            userId,
+            message: getUserError.message,
+          });
+          continue;
+        }
+        const email = authUser?.user?.email ?? "";
+        const metadataSessionId = authUser?.user?.user_metadata?.sandbox_session_id;
+        if (!email.endsWith("@sandbox.captcf.local") || metadataSessionId !== session.id) {
+          skippedUnsafeAuthUsers += 1;
+          console.warn("sandbox-reset skipped non-sandbox auth user", {
+            requestId,
+            sandboxSessionId: session.id,
+            userId,
+            email,
+            metadataSessionId: metadataSessionId ?? null,
+          });
+          continue;
+        }
         const { error: authError } = await admin.auth.admin.deleteUser(userId);
         if (authError && !authError.message?.toLowerCase().includes("not found")) {
           authCleanupFailures += 1;
@@ -130,6 +155,7 @@ Deno.serve(async (req) => {
         deletedSessionId: session.id,
         cleaned,
         authCleanupFailures,
+        skippedUnsafeAuthUsers,
       });
 
       return jsonResponse({
@@ -139,6 +165,7 @@ Deno.serve(async (req) => {
         remaining_session: false,
         request_id: requestId,
         auth_cleanup_failures: authCleanupFailures,
+        skipped_unsafe_auth_users: skippedUnsafeAuthUsers,
       });
     }
 
