@@ -7,12 +7,23 @@ import { getEdgeFunctionErrorMessage } from "@/lib/edgeFunctionError";
 import type { SandboxLevel } from "@/contexts/SandboxContext";
 
 interface InviteResponse {
-  token_hash: string;
+  token_hash?: string;
+  invite_url?: string;
   niveau: string;
   expires_in_seconds: number;
 }
 
 type Status = "loading" | "ready" | "error";
+
+function getTokenHashFromInvite(data: InviteResponse | null): string | null {
+  if (data?.token_hash) return data.token_hash;
+  if (!data?.invite_url) return null;
+  try {
+    return new URL(data.invite_url).searchParams.get("token");
+  } catch {
+    return null;
+  }
+}
 
 export default function SandboxEmbedFrame({ niveau }: { niveau: SandboxLevel }) {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
@@ -41,12 +52,13 @@ export default function SandboxEmbedFrame({ niveau }: { niveau: SandboxLevel }) 
       setError(message);
       return null;
     }
-    if (!data?.token_hash) {
+    const tokenHash = getTokenHashFromInvite(data ?? null);
+    if (!tokenHash) {
       setStatus("error");
       setError("Réponse sandbox-invite invalide.");
       return null;
     }
-    return data.token_hash;
+    return tokenHash;
   }, [iframeSrc, niveau]);
 
   // Charge un nouveau token à chaque changement de niveau / reload
