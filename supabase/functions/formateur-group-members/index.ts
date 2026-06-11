@@ -15,6 +15,13 @@ function json(body: unknown, status = 200) {
 
 const cleanText = (value: unknown) => (typeof value === "string" ? value.trim() : "");
 
+const SANDBOX_NAMES_BY_LEVEL: Record<string, { prenom: string; nom: string }> = {
+  A1: { prenom: "Mina", nom: "Diallo" },
+  A2: { prenom: "Youssef", nom: "Benali" },
+  B1: { prenom: "Olena", nom: "Kravchenko" },
+  B2: { prenom: "Lucas", nom: "Martins" },
+};
+
 function namesFromMetadata(metadata: Record<string, unknown> | null | undefined) {
   const prenom = cleanText(metadata?.prenom) || cleanText(metadata?.first_name) || cleanText(metadata?.given_name);
   const nom = cleanText(metadata?.nom) || cleanText(metadata?.last_name) || cleanText(metadata?.family_name);
@@ -31,6 +38,15 @@ function namesFromDisplayName(displayName: unknown) {
   return {
     prenom: parts.length > 1 ? parts.slice(0, -1).join(" ") : parts[0] ?? "",
     nom: parts.length > 1 ? parts[parts.length - 1] : "",
+  };
+}
+
+function namesFromSandboxStudent(student: any) {
+  const fromDisplayName = namesFromDisplayName(student?.display_name);
+  const fromLevel = SANDBOX_NAMES_BY_LEVEL[cleanText(student?.niveau)] ?? { prenom: "", nom: "" };
+  return {
+    prenom: fromDisplayName.prenom || fromLevel.prenom,
+    nom: fromDisplayName.nom || fromLevel.nom,
   };
 }
 
@@ -130,7 +146,7 @@ Deno.serve(async (req) => {
       const profile = profileById.get(member.eleve_id) as any | undefined;
       const fallback = fallbackById.get(member.eleve_id) as any | undefined;
       const sandboxStudent = sandboxStudentById.get(member.eleve_id);
-      const sandboxNames = namesFromDisplayName(sandboxStudent?.display_name);
+      const sandboxNames = namesFromSandboxStudent(sandboxStudent);
       const mergedProfile = profile || fallback
         ? {
           id: member.eleve_id,
