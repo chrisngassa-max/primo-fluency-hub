@@ -7,6 +7,7 @@ import {
 import type { NiveauSandbox } from "../_shared/sandbox.types.ts";
 
 const LEVELS = ["A1", "A2", "B1", "B2"];
+// redeploy: ensure latest version is live (token_hash via generateLink, no redirectTo)
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
