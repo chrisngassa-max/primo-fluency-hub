@@ -26,6 +26,14 @@ function namesFromMetadata(metadata: Record<string, unknown> | null | undefined)
   };
 }
 
+function namesFromDisplayName(displayName: unknown) {
+  const parts = cleanText(displayName).split(/\s+/).filter(Boolean);
+  return {
+    prenom: parts.length > 1 ? parts.slice(0, -1).join(" ") : parts[0] ?? "",
+    nom: parts.length > 1 ? parts[parts.length - 1] : "",
+  };
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -65,7 +73,7 @@ Deno.serve(async (req) => {
     const { data: activeSandboxes, error: sandboxError } = sandboxIds.length
       ? await admin
         .from("sandbox_sessions")
-        .select("id")
+        .select("id, eleve_emails")
         .eq("formateur_id", user.id)
         .eq("statut", "active")
         .gt("expires_at", new Date().toISOString())
@@ -73,6 +81,12 @@ Deno.serve(async (req) => {
       : { data: [], error: null };
     if (sandboxError) throw sandboxError;
     const allowedSandboxIds = new Set((activeSandboxes ?? []).map((sandbox: any) => sandbox.id));
+    const sandboxStudentById = new Map<string, any>();
+    for (const sandbox of activeSandboxes ?? []) {
+      for (const student of sandbox.eleve_emails ?? []) {
+        if (student?.user_id) sandboxStudentById.set(student.user_id, student);
+      }
+    }
     const groupIds = (groups ?? [])
       .filter((group: any) => !group.sandbox_session_id || allowedSandboxIds.has(group.sandbox_session_id))
       .map((group: any) => group.id);
@@ -114,13 +128,23 @@ Deno.serve(async (req) => {
     const normalized = visibleMembers.map((member: any) => {
       const profile = profileById.get(member.eleve_id) as any | undefined;
       const fallback = fallbackById.get(member.eleve_id) as any | undefined;
+      const sandboxStudent = sandboxStudentById.get(member.eleve_id);
+      const sandboxNames = namesFromDisplayName(sandboxStudent?.display_name);
       const mergedProfile = profile || fallback
         ? {
           id: member.eleve_id,
-          nom: cleanText(profile?.nom) || cleanText(fallback?.nom),
-          prenom: cleanText(profile?.prenom) || cleanText(fallback?.prenom),
-          email: cleanText(profile?.email) || cleanText(fallback?.email),
+          nom: cleanText(profile?.nom) || cleanText(fallback?.nom) || sandboxNames.nom,
+          prenom: cleanText(profile?.prenom) || cleanText(fallback?.prenom) || sandboxNames.prenom,
+          email: cleanText(profile?.email) || cleanText(fallback?.email) || cleanText(sandboxStudent?.email),
           mot_de_passe_initial: profile?.mot_de_passe_initial ?? fallback?.mot_de_passe_initial ?? null,
+        }
+        : sandboxStudent
+        ? {
+          id: member.eleve_id,
+          nom: sandboxNames.nom,
+          prenom: sandboxNames.prenom,
+          email: cleanText(sandboxStudent.email),
+          mot_de_passe_initial: null,
         }
         : null;
       return {
