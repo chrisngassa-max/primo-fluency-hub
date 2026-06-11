@@ -295,7 +295,7 @@ const GroupesPage = () => {
           .select("*, eleve:profiles(id, nom, prenom, email, mot_de_passe_initial)")
           .in("group_id", groupIds);
         if (fallback.error) throw fallback.error;
-        return fallback.data;
+        return hydrateSandboxIdentities(fallback.data ?? []);
       }
       const members = (data?.members ?? []) as any[];
       if (members.some((member) => !hasStudentIdentity(member))) {
@@ -306,10 +306,10 @@ const GroupesPage = () => {
           .in("group_id", groupIds);
         if (!fallback.error && fallback.data?.length) {
           const fallbackById = new Map(fallback.data.map((member: any) => [member.id, member]));
-          return members.map((member) => hasStudentIdentity(member) ? member : fallbackById.get(member.id) ?? member);
+          return hydrateSandboxIdentities(members.map((member) => hasStudentIdentity(member) ? member : fallbackById.get(member.id) ?? member));
         }
       }
-      return members;
+      return hydrateSandboxIdentities(members);
     },
     enabled: !!groups && groups.length > 0,
   });
