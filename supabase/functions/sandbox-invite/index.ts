@@ -7,18 +7,19 @@ import {
 import type { NiveauSandbox } from "../_shared/sandbox.types.ts";
 
 const LEVELS = ["A1", "A2", "B1", "B2"];
-// redeploy: ensure latest version is live (token_hash via generateLink, no redirectTo)
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
     const { admin, user } = await getSandboxClients(req);
-    const { niveau } = await req.json().catch(() => ({})) as {
+    const body = await req.json().catch(() => ({})) as {
       niveau?: NiveauSandbox;
+      origin?: string;
     };
+    const niveau = body.niveau;
     if (!niveau || !LEVELS.includes(niveau)) {
-      return jsonResponse({ error: "Niveau invalide" }, 400);
+      return jsonResponse({ error: `Niveau invalide: ${String(niveau)}` }, 400);
     }
 
     const { data: session, error } = await admin
@@ -40,11 +41,22 @@ Deno.serve(async (req) => {
     const eleve = session.eleve_emails?.find((item: any) => item.niveau === niveau);
     if (!eleve) return jsonResponse({ error: `Eleve sandbox ${niveau} introuvable dans la session active.` }, 400);
 
-    const { data, error: linkError } = await admin.auth.admin.generateLink({
+    const redirectTo = body.origin
+      ? `${body.origin}/?sandbox_embed=1#/eleve`
+      : undefined;
+
+    const linkPayload: Record<string, unknown> = {
       type: "magiclink",
       email: eleve.email,
-    });
-    if (linkError) throw linkError;
+    };
+    if (redirectTo) linkPayload.options = { redirectTo };
+
+    const { data, error: linkError } = await admin.auth.admin.generateLink(linkPayload as any);
+    if (linkError) {
+      console.error("generateLink failed", linkError);
+      throw linkError;
+    }
+
 
     return jsonResponse({
       token_hash: data.properties.hashed_token,
