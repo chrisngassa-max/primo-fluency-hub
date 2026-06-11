@@ -29,7 +29,7 @@ export default function SandboxEmbedFrame({ niveau }: { niveau: SandboxLevel }) 
   const requestInvite = useCallback(async (): Promise<string | null> => {
     const { data, error: invokeError } = await supabase.functions.invoke<InviteResponse>(
       "sandbox-invite",
-      { body: { niveau } },
+      { body: { niveau, origin: window.location.origin } },
     );
     if (invokeError) {
       const message = await getEdgeFunctionErrorMessage(
