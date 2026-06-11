@@ -37,9 +37,9 @@ export default function SandboxCredentialsDialog({
 
   const download = () => {
     const text = students
-      .map((student) => `${student.niveau}\t${student.email}\t${student.mot_de_passe_initial}`)
+      .map((student) => `${student.niveau}\t${student.display_name}\t${student.email}\t${student.mot_de_passe_initial}`)
       .join("\n");
-    const url = URL.createObjectURL(new Blob([`Niveau\tEmail\tMot de passe\n${text}\n`], { type: "text/plain" }));
+    const url = URL.createObjectURL(new Blob([`Niveau\tNom\tEmail\tMot de passe\n${text}\n`], { type: "text/plain" }));
     const anchor = document.createElement("a");
     anchor.href = url;
     anchor.download = "identifiants-sandbox.txt";
@@ -65,11 +65,12 @@ export default function SandboxCredentialsDialog({
         </DialogHeader>
         <div className="overflow-x-auto rounded-md border bg-white">
           <table className="w-full text-sm">
-            <thead><tr className="border-b bg-muted/60"><th className="p-3 text-left">Niveau</th><th className="p-3 text-left">Email</th><th className="p-3 text-left">Mot de passe</th></tr></thead>
+            <thead><tr className="border-b bg-muted/60"><th className="p-3 text-left">Niveau</th><th className="p-3 text-left">Nom</th><th className="p-3 text-left">Email</th><th className="p-3 text-left">Mot de passe</th></tr></thead>
             <tbody>
               {students.map((student) => (
                 <tr key={student.user_id} className="border-b last:border-0">
                   <td className="p-3 font-semibold">{student.niveau}</td>
+                  <td className="p-3 font-medium">{student.display_name}</td>
                   <td className="p-3">{student.email}</td>
                   <td className="p-3 font-mono">{student.mot_de_passe_initial}</td>
                 </tr>
