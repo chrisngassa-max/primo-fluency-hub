@@ -15,6 +15,10 @@ function json(body: unknown, status = 200) {
 
 const cleanText = (value: unknown) => (typeof value === "string" ? value.trim() : "");
 
+// LEGACY-ONLY fallback. Les sandboxes créées avec le code actuel de
+// `sandbox-setup` écrivent prenom/nom dans profiles via user_metadata +
+// trigger handle_new_user. Ces noms en dur ne servent qu'aux vieilles
+// sandboxes (pré-correctif) où profiles.prenom/nom étaient vides.
 const SANDBOX_NAMES_BY_LEVEL: Record<string, { prenom: string; nom: string }> = {
   A1: { prenom: "Mina", nom: "Diallo" },
   A2: { prenom: "Youssef", nom: "Benali" },
