@@ -39,8 +39,15 @@ import InviteStudentDialog from "@/components/InviteStudentDialog";
 import { detectAdvancedStudentsBatch, type AdvancedSignal } from "@/lib/detectAdvancedStudent";
 import { AdvancedStudentBadge } from "@/components/AdvancedStudentBadge";
 import { GroupeNiveauxMap, type EleveAvecNiveaux } from "@/components/formateur/GroupeNiveauxMap";
+import { useSandbox } from "@/contexts/SandboxContext";
 
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
+const SANDBOX_NAMES_BY_LEVEL: Record<string, { prenom: string; nom: string }> = {
+  A1: { prenom: "Mina", nom: "Diallo" },
+  A2: { prenom: "Youssef", nom: "Benali" },
+  B1: { prenom: "Olena", nom: "Kravchenko" },
+  B2: { prenom: "Lucas", nom: "Martins" },
+};
 
 const hasStudentIdentity = (member: any) => {
   const eleve = member?.eleve;
@@ -49,6 +56,26 @@ const hasStudentIdentity = (member: any) => {
     || String(eleve?.nom ?? "").trim()
     || String(eleve?.email ?? "").trim(),
   );
+};
+
+const namesFromDisplayName = (displayName?: string) => {
+  const parts = String(displayName ?? "").trim().split(/\s+/).filter(Boolean);
+  return {
+    prenom: parts.length > 1 ? parts.slice(0, -1).join(" ") : parts[0] ?? "",
+    nom: parts.length > 1 ? parts[parts.length - 1] : "",
+  };
+};
+
+const getSandboxStudentIdentity = (student: any) => {
+  if (!student) return null;
+  const fromDisplay = namesFromDisplayName(student.display_name);
+  const fromLevel = SANDBOX_NAMES_BY_LEVEL[String(student.niveau ?? "")] ?? { prenom: "", nom: "" };
+  return {
+    id: student.user_id,
+    prenom: fromDisplay.prenom || fromLevel.prenom,
+    nom: fromDisplay.nom || fromLevel.nom,
+    email: String(student.email ?? "").trim(),
+  };
 };
 
 interface CreatedStudent {
@@ -66,6 +93,7 @@ interface PasswordDelivery {
 
 const GroupesPage = () => {
   const { user } = useAuth();
+  const { session: sandboxSession } = useSandbox();
   const navigate = useNavigate();
   const qc = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -137,6 +165,29 @@ const GroupesPage = () => {
 
   const buildPasswordMessage = (delivery: PasswordDelivery) =>
     `Bonjour ${delivery.name},\n\nVoici vos identifiants CAP TCF :\nIdentifiant : ${delivery.email}\nMot de passe : ${delivery.password}\n\nLien : https://captcf.fr/#/eleve/login`;
+
+  const sandboxIdentityById = useMemo(() => {
+    return new Map((sandboxSession?.eleve_emails ?? [])
+      .map((student: any) => [student.user_id, getSandboxStudentIdentity(student)] as const)
+      .filter(([, identity]) => Boolean(identity)));
+  }, [sandboxSession?.eleve_emails]);
+
+  const hydrateSandboxIdentities = (members: any[] = []) => members.map((member: any) => {
+    const identity = sandboxIdentityById.get(member.eleve_id);
+    if (!identity || hasStudentIdentity(member)) return member;
+    const current = member.eleve ?? {};
+    return {
+      ...member,
+      eleve: {
+        ...current,
+        id: current.id ?? member.eleve_id,
+        prenom: String(current.prenom ?? "").trim() || identity.prenom,
+        nom: String(current.nom ?? "").trim() || identity.nom,
+        email: String(current.email ?? "").trim() || identity.email,
+      },
+      eleve_missing_profile: false,
+    };
+  });
 
   const openSetPasswordDialog = (eleveId: string, eleveName: string, eleveEmail = "") => {
     setSetPwdEleveId(eleveId);
@@ -233,7 +284,7 @@ const GroupesPage = () => {
 
   // Fetch members for ALL groups (simpler approach, one query)
   const { data: allMembers } = useQuery<any[]>({
-    queryKey: ["all-group-members", user?.id],
+    queryKey: ["all-group-members", user?.id, sandboxSession?.id, sandboxSession?.eleve_emails?.map((student: any) => student.user_id).join(",")],
     queryFn: async () => {
       if (!groups || groups.length === 0) return [];
       const { data, error } = await supabase.functions.invoke("formateur-group-members");
@@ -244,7 +295,7 @@ const GroupesPage = () => {
           .select("*, eleve:profiles(id, nom, prenom, email, mot_de_passe_initial)")
           .in("group_id", groupIds);
         if (fallback.error) throw fallback.error;
-        return fallback.data;
+        return hydrateSandboxIdentities(fallback.data ?? []);
       }
       const members = (data?.members ?? []) as any[];
       if (members.some((member) => !hasStudentIdentity(member))) {
@@ -255,10 +306,10 @@ const GroupesPage = () => {
           .in("group_id", groupIds);
         if (!fallback.error && fallback.data?.length) {
           const fallbackById = new Map(fallback.data.map((member: any) => [member.id, member]));
-          return members.map((member) => hasStudentIdentity(member) ? member : fallbackById.get(member.id) ?? member);
+          return hydrateSandboxIdentities(members.map((member) => hasStudentIdentity(member) ? member : fallbackById.get(member.id) ?? member));
         }
       }
-      return members;
+      return hydrateSandboxIdentities(members);
     },
     enabled: !!groups && groups.length > 0,
   });
