@@ -1546,8 +1546,38 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
         </div>
       </div>
 
+      {/* Sélecteur élève — accès rapide au profil */}
+      {(groupMembers ?? []).length > 0 && (
+        <Card className="print:hidden">
+          <CardContent className="p-3">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs font-medium text-muted-foreground mr-1">
+                Élèves ({(groupMembers ?? []).length}) — cliquer pour ouvrir le profil :
+              </span>
+              {(groupMembers ?? []).map((m: any) => {
+                const prenom = m.eleve?.prenom ?? "";
+                const nom = m.eleve?.nom ?? "";
+                const label = [prenom, nom].filter(Boolean).join(" ") || "Élève";
+                return (
+                  <Button
+                    key={m.eleve_id}
+                    size="sm"
+                    variant="outline"
+                    className="h-7 px-2 text-xs"
+                    onClick={() => navigate(`/formateur/eleves/${m.eleve_id}`)}
+                  >
+                    {label}
+                  </Button>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Bloc ressources externes ajoutées à la séance */}
       <SessionExternalResourcesList sessionId={id!} />
+
 
       {/* Print header */}
       <div className="hidden print:block mb-8">
