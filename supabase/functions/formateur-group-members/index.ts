@@ -125,6 +125,7 @@ Deno.serve(async (req) => {
       };
     }));
     const fallbackById = new Map(authFallbacks.filter(Boolean).map((profile: any) => [profile.id, profile]));
+    const profileRepairs: Promise<unknown>[] = [];
     const normalized = visibleMembers.map((member: any) => {
       const profile = profileById.get(member.eleve_id) as any | undefined;
       const fallback = fallbackById.get(member.eleve_id) as any | undefined;
@@ -147,12 +148,26 @@ Deno.serve(async (req) => {
           mot_de_passe_initial: null,
         }
         : null;
+      if (profile && sandboxStudent && mergedProfile && (!cleanText(profile.nom) || !cleanText(profile.prenom) || !cleanText(profile.email))) {
+        profileRepairs.push(admin.from("profiles").update({
+          nom: mergedProfile.nom,
+          prenom: mergedProfile.prenom,
+          email: mergedProfile.email,
+          status: "approved",
+        }).eq("id", member.eleve_id));
+      }
       return {
         ...member,
         eleve: mergedProfile,
         eleve_missing_profile: !profileById.has(member.eleve_id),
       };
     });
+    if (profileRepairs.length) {
+      const repairResults = await Promise.allSettled(profileRepairs);
+      repairResults.forEach((result) => {
+        if (result.status === "rejected") console.warn("sandbox profile repair failed", result.reason?.message ?? result.reason);
+      });
+    }
 
     return json({ members: normalized });
   } catch (error) {
