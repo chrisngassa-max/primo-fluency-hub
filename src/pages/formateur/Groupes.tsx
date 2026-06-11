@@ -93,6 +93,7 @@ interface PasswordDelivery {
 
 const GroupesPage = () => {
   const { user } = useAuth();
+  const { session: sandboxSession } = useSandbox();
   const navigate = useNavigate();
   const qc = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -164,6 +165,29 @@ const GroupesPage = () => {
 
   const buildPasswordMessage = (delivery: PasswordDelivery) =>
     `Bonjour ${delivery.name},\n\nVoici vos identifiants CAP TCF :\nIdentifiant : ${delivery.email}\nMot de passe : ${delivery.password}\n\nLien : https://captcf.fr/#/eleve/login`;
+
+  const sandboxIdentityById = useMemo(() => {
+    return new Map((sandboxSession?.eleve_emails ?? [])
+      .map((student: any) => [student.user_id, getSandboxStudentIdentity(student)] as const)
+      .filter(([, identity]) => Boolean(identity)));
+  }, [sandboxSession?.eleve_emails]);
+
+  const hydrateSandboxIdentities = (members: any[] = []) => members.map((member: any) => {
+    const identity = sandboxIdentityById.get(member.eleve_id);
+    if (!identity || hasStudentIdentity(member)) return member;
+    const current = member.eleve ?? {};
+    return {
+      ...member,
+      eleve: {
+        ...current,
+        id: current.id ?? member.eleve_id,
+        prenom: String(current.prenom ?? "").trim() || identity.prenom,
+        nom: String(current.nom ?? "").trim() || identity.nom,
+        email: String(current.email ?? "").trim() || identity.email,
+      },
+      eleve_missing_profile: false,
+    };
+  });
 
   const openSetPasswordDialog = (eleveId: string, eleveName: string, eleveEmail = "") => {
     setSetPwdEleveId(eleveId);
