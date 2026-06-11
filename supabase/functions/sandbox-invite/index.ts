@@ -1,5 +1,6 @@
 import {
   corsHeaders,
+  getErrorDetails,
   getSandboxClients,
   jsonResponse,
 } from "../_shared/sandbox-edge.ts";
@@ -12,17 +13,11 @@ Deno.serve(async (req) => {
 
   try {
     const { admin, user } = await getSandboxClients(req);
-    const { niveau, redirect_to } = await req.json().catch(() => ({})) as {
+    const { niveau } = await req.json().catch(() => ({})) as {
       niveau?: NiveauSandbox;
-      redirect_to?: string;
     };
-    if (!niveau || !LEVELS.includes(niveau) || !redirect_to) {
-      return jsonResponse({ error: "Niveau ou URL de redirection invalide" }, 400);
-    }
-
-    const redirect = new URL(redirect_to);
-    if (!["http:", "https:"].includes(redirect.protocol)) {
-      return jsonResponse({ error: "URL de redirection invalide" }, 400);
+    if (!niveau || !LEVELS.includes(niveau)) {
+      return jsonResponse({ error: "Niveau invalide" }, 400);
     }
 
     const { data: session, error } = await admin
@@ -47,17 +42,17 @@ Deno.serve(async (req) => {
     const { data, error: linkError } = await admin.auth.admin.generateLink({
       type: "magiclink",
       email: eleve.email,
-      options: { redirectTo: redirect.toString() },
     });
     if (linkError) throw linkError;
 
     return jsonResponse({
-      invite_url: data.properties.action_link,
+      token_hash: data.properties.hashed_token,
       niveau,
       expires_in_seconds: 3600,
     });
   } catch (error) {
-    console.error("sandbox-invite failed", error instanceof Error ? error.message : "unknown");
-    return jsonResponse({ error: error instanceof Error ? error.message : "Erreur sandbox" }, (error as any)?.status ?? 500);
+    const details = getErrorDetails(error);
+    console.error("sandbox-invite failed", { message: details.message, code: details.code });
+    return jsonResponse({ error: details.message }, details.status);
   }
 });
