@@ -41,15 +41,10 @@ Deno.serve(async (req) => {
     const eleve = session.eleve_emails?.find((item: any) => item.niveau === niveau);
     if (!eleve) return jsonResponse({ error: `Eleve sandbox ${niveau} introuvable dans la session active.` }, 400);
 
-    const redirectTo = body.origin
-      ? `${body.origin}/?sandbox_embed=1#/eleve`
-      : undefined;
-
     const linkPayload: Record<string, unknown> = {
       type: "magiclink",
       email: eleve.email,
     };
-    if (redirectTo) linkPayload.options = { redirectTo };
 
     const { data, error: linkError } = await admin.auth.admin.generateLink(linkPayload as any);
     if (linkError) {
