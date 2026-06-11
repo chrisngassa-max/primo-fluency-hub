@@ -27,9 +27,10 @@ export default function SandboxEmbedFrame({ niveau }: { niveau: SandboxLevel }) 
   }, []);
 
   const requestInvite = useCallback(async (): Promise<string | null> => {
+    const redirectTo = iframeSrc;
     const { data, error: invokeError } = await supabase.functions.invoke<InviteResponse>(
       "sandbox-invite",
-      { body: { niveau, origin: window.location.origin } },
+      { body: { niveau, origin: window.location.origin, redirect_to: redirectTo } },
     );
     if (invokeError) {
       const message = await getEdgeFunctionErrorMessage(
@@ -46,7 +47,7 @@ export default function SandboxEmbedFrame({ niveau }: { niveau: SandboxLevel }) 
       return null;
     }
     return data.token_hash;
-  }, [niveau]);
+  }, [iframeSrc, niveau]);
 
   // Charge un nouveau token à chaque changement de niveau / reload
   useEffect(() => {
