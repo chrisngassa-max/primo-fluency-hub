@@ -13,6 +13,19 @@ function json(body: unknown, status = 200) {
   });
 }
 
+const cleanText = (value: unknown) => (typeof value === "string" ? value.trim() : "");
+
+function namesFromMetadata(metadata: Record<string, unknown> | null | undefined) {
+  const prenom = cleanText(metadata?.prenom) || cleanText(metadata?.first_name) || cleanText(metadata?.given_name);
+  const nom = cleanText(metadata?.nom) || cleanText(metadata?.last_name) || cleanText(metadata?.family_name);
+  const displayName = cleanText(metadata?.display_name) || cleanText(metadata?.full_name) || cleanText(metadata?.name);
+  const parts = displayName.split(/\s+/).filter(Boolean);
+  return {
+    prenom: prenom || (parts.length > 1 ? parts.slice(0, -1).join(" ") : parts[0] ?? ""),
+    nom: nom || (parts.length > 1 ? parts[parts.length - 1] : ""),
+  };
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -88,10 +101,11 @@ Deno.serve(async (req) => {
       const { data } = await admin.auth.admin.getUserById(eleveId);
       const authUser = data?.user;
       if (!authUser) return null;
+      const metadataNames = namesFromMetadata(authUser.user_metadata);
       return {
         id: eleveId,
-        nom: authUser.user_metadata?.nom ?? "",
-        prenom: authUser.user_metadata?.prenom ?? "",
+        nom: metadataNames.nom,
+        prenom: metadataNames.prenom,
         email: authUser.email ?? "",
         mot_de_passe_initial: null,
       };
@@ -103,9 +117,9 @@ Deno.serve(async (req) => {
       const mergedProfile = profile || fallback
         ? {
           id: member.eleve_id,
-          nom: profile?.nom || fallback?.nom || "",
-          prenom: profile?.prenom || fallback?.prenom || "",
-          email: profile?.email || fallback?.email || "",
+          nom: cleanText(profile?.nom) || cleanText(fallback?.nom),
+          prenom: cleanText(profile?.prenom) || cleanText(fallback?.prenom),
+          email: cleanText(profile?.email) || cleanText(fallback?.email),
           mot_de_passe_initial: profile?.mot_de_passe_initial ?? fallback?.mot_de_passe_initial ?? null,
         }
         : null;
