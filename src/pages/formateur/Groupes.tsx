@@ -39,8 +39,15 @@ import InviteStudentDialog from "@/components/InviteStudentDialog";
 import { detectAdvancedStudentsBatch, type AdvancedSignal } from "@/lib/detectAdvancedStudent";
 import { AdvancedStudentBadge } from "@/components/AdvancedStudentBadge";
 import { GroupeNiveauxMap, type EleveAvecNiveaux } from "@/components/formateur/GroupeNiveauxMap";
+import { useSandbox } from "@/contexts/SandboxContext";
 
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
+const SANDBOX_NAMES_BY_LEVEL: Record<string, { prenom: string; nom: string }> = {
+  A1: { prenom: "Mina", nom: "Diallo" },
+  A2: { prenom: "Youssef", nom: "Benali" },
+  B1: { prenom: "Olena", nom: "Kravchenko" },
+  B2: { prenom: "Lucas", nom: "Martins" },
+};
 
 const hasStudentIdentity = (member: any) => {
   const eleve = member?.eleve;
@@ -49,6 +56,26 @@ const hasStudentIdentity = (member: any) => {
     || String(eleve?.nom ?? "").trim()
     || String(eleve?.email ?? "").trim(),
   );
+};
+
+const namesFromDisplayName = (displayName?: string) => {
+  const parts = String(displayName ?? "").trim().split(/\s+/).filter(Boolean);
+  return {
+    prenom: parts.length > 1 ? parts.slice(0, -1).join(" ") : parts[0] ?? "",
+    nom: parts.length > 1 ? parts[parts.length - 1] : "",
+  };
+};
+
+const getSandboxStudentIdentity = (student: any) => {
+  if (!student) return null;
+  const fromDisplay = namesFromDisplayName(student.display_name);
+  const fromLevel = SANDBOX_NAMES_BY_LEVEL[String(student.niveau ?? "")] ?? { prenom: "", nom: "" };
+  return {
+    id: student.user_id,
+    prenom: fromDisplay.prenom || fromLevel.prenom,
+    nom: fromDisplay.nom || fromLevel.nom,
+    email: String(student.email ?? "").trim(),
+  };
 };
 
 interface CreatedStudent {
