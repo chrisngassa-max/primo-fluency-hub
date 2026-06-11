@@ -1,10 +1,10 @@
 import { useSandboxPreview } from "@/contexts/SandboxPreviewContext";
 import SandboxGridPreview from "@/components/sandbox/SandboxGridPreview";
-import SandboxStudentPreview from "@/components/sandbox/SandboxStudentPreview";
+import SandboxEmbedFrame from "@/components/sandbox/SandboxEmbedFrame";
 
 export default function SandboxPreviewSurface() {
   const { mode, niveau } = useSandboxPreview();
   if (mode === "mosaic") return <SandboxGridPreview />;
-  if (mode === "eleve" && niveau) return <SandboxStudentPreview niveau={niveau} />;
+  if (mode === "eleve" && niveau) return <SandboxEmbedFrame niveau={niveau} />;
   return null;
 }
