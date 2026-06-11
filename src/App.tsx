@@ -201,6 +201,7 @@ const App = () => (
 
             <Route path="*" element={<NotFound />} />
           </Routes>
+          )}
         </HashRouter>
         </TooltipProvider>
       </SandboxProvider>
