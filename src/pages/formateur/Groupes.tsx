@@ -284,7 +284,7 @@ const GroupesPage = () => {
 
   // Fetch members for ALL groups (simpler approach, one query)
   const { data: allMembers } = useQuery<any[]>({
-    queryKey: ["all-group-members", user?.id],
+    queryKey: ["all-group-members", user?.id, sandboxSession?.id, sandboxSession?.eleve_emails?.map((student: any) => student.user_id).join(",")],
     queryFn: async () => {
       if (!groups || groups.length === 0) return [];
       const { data, error } = await supabase.functions.invoke("formateur-group-members");
