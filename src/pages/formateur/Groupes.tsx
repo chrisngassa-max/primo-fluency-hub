@@ -638,6 +638,16 @@ const GroupesPage = () => {
         </TabsList>
 
         <TabsContent value="groupes">
+          {membersEdgeError && (
+            <Card className="mb-3 border-destructive bg-destructive/5">
+              <CardContent className="py-3 text-sm text-destructive flex items-start justify-between gap-3">
+                <div>
+                  <strong>Erreur de chargement des élèves.</strong> L'edge function <code>formateur-group-members</code> a échoué : {membersEdgeError}. Les données affichées proviennent d'un fallback direct sur <code>profiles</code> et peuvent être incomplètes.
+                </div>
+                <Button size="sm" variant="outline" onClick={() => qc.invalidateQueries({ queryKey: ["all-group-members"] })}>Réessayer</Button>
+              </CardContent>
+            </Card>
+          )}
           {/* Empty state */}
           {groups && groups.length === 0 && (
             <Card className="border-dashed">
