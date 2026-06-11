@@ -7,6 +7,8 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { SandboxProvider } from "@/contexts/SandboxContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import AIConsentRequiredRoute from "@/components/AIConsentRequiredRoute";
+import SandboxEmbedBootstrap from "@/components/sandbox/SandboxEmbedBootstrap";
+import { isSandboxEmbed } from "@/integrations/supabase/sandboxEmbed";
 import AccesLimite from "@/pages/eleve/AccesLimite";
 
 import Index from "@/pages/Index";
