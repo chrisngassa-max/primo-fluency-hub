@@ -44,16 +44,13 @@ export default function FeuilleAppel({ sessionId, session }: FeuilleAppelProps) 
   const { data: members, isLoading: loadingMembers } = useQuery({
     queryKey: ["group-members-appel", groupId],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("group_members")
-        .select("eleve_id, profiles:eleve_id(id, nom, prenom, email)")
-        .eq("group_id", groupId);
+      const { data, error } = await supabase.functions.invoke<{ members: any[] }>("formateur-group-members");
       if (error) throw error;
-      return (data ?? []).map((m: any) => ({
+      return (data?.members ?? []).filter((m: any) => m.group_id === groupId).map((m: any) => ({
         eleve_id: m.eleve_id,
-        nom: m.profiles?.nom || "",
-        prenom: m.profiles?.prenom || "",
-        email: m.profiles?.email || "",
+        nom: m.eleve?.nom || "",
+        prenom: m.eleve?.prenom || "",
+        email: m.eleve?.email || "",
       }));
     },
     enabled: !!groupId,
