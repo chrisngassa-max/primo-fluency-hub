@@ -380,12 +380,9 @@ const SessionPilot = () => {
     queryKey: ["group-members-for-dup", session?.group_id],
     queryFn: async () => {
       const groupId = (session as any)?.group?.id || session!.group_id;
-      const { data, error } = await supabase
-        .from("group_members")
-        .select("eleve_id, eleve:profiles(id, nom, prenom)")
-        .eq("group_id", groupId);
+      const { data, error } = await supabase.functions.invoke<{ members: any[] }>("formateur-group-members");
       if (error) throw error;
-      return data ?? [];
+      return (data?.members ?? []).filter((member: any) => member.group_id === groupId);
     },
     enabled: !!session,
   });
