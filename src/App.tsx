@@ -83,6 +83,36 @@ const App = () => (
         <Toaster />
         <Sonner />
         <HashRouter>
+          {isSandboxEmbed() ? (
+            <SandboxEmbedBootstrap>
+              <Routes>
+                <Route
+                  path="/eleve"
+                  element={
+                    <ProtectedRoute requiredRole="eleve">
+                      <EleveLayout />
+                    </ProtectedRoute>
+                  }
+                >
+                  <Route path="acces-limite" element={<AccesLimite />} />
+                  <Route path="profil" element={<EleveProfil />} />
+                  <Route index element={<AIConsentRequiredRoute><EleveDashboard /></AIConsentRequiredRoute>} />
+                  <Route path="test-positionnement" element={<AIConsentRequiredRoute><TestPositionnement /></AIConsentRequiredRoute>} />
+                  <Route path="test-positionnement/passer/:token" element={<PositionnementPassation />} />
+                  <Route path="test-positionnement/resultat/:attemptId" element={<PositionnementResultat />} />
+                  <Route path="devoirs" element={<AIConsentRequiredRoute><EleveDevoirs /></AIConsentRequiredRoute>} />
+                  <Route path="carnet" element={<AIConsentRequiredRoute><CarnetMots /></AIConsentRequiredRoute>} />
+                  <Route path="bilan/:sessionId" element={<AIConsentRequiredRoute><BilanSeance /></AIConsentRequiredRoute>} />
+                  <Route path="exercices-seance/:sessionId" element={<AIConsentRequiredRoute><BilanSeance /></AIConsentRequiredRoute>} />
+                  <Route path="bilan-test/:testId" element={<AIConsentRequiredRoute><BilanTestPassation /></AIConsentRequiredRoute>} />
+                  <Route path="bilan-devoirs/:bilanId" element={<AIConsentRequiredRoute><BilanDevoirs /></AIConsentRequiredRoute>} />
+                  <Route path="devoirs/:devoirId" element={<AIConsentRequiredRoute><DevoirPassation /></AIConsentRequiredRoute>} />
+                  <Route path="progression" element={<AIConsentRequiredRoute><EleveProgression /></AIConsentRequiredRoute>} />
+                </Route>
+                <Route path="*" element={<Navigate to="/eleve" replace />} />
+              </Routes>
+            </SandboxEmbedBootstrap>
+          ) : (
           <Routes>
             {/* Public routes */}
             <Route path="/" element={<Index />} />
