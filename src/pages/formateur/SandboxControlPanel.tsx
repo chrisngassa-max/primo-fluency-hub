@@ -140,11 +140,12 @@ export default function SandboxControlPanel() {
         <CardContent className="space-y-4">
           <div className="overflow-x-auto rounded-md border">
             <table className="w-full text-sm">
-              <thead><tr className="border-b bg-muted/50"><th className="p-3 text-left">Niveau</th><th className="p-3 text-left">Email</th><th className="p-3 text-right">Connexion</th></tr></thead>
+              <thead><tr className="border-b bg-muted/50"><th className="p-3 text-left">Niveau</th><th className="p-3 text-left">Nom</th><th className="p-3 text-left">Email</th><th className="p-3 text-right">Connexion</th></tr></thead>
               <tbody>
                 {(session.eleve_emails ?? []).map((student) => (
                   <tr key={student.user_id} className="border-b last:border-0">
                     <td className="p-3 font-semibold">{student.niveau}</td>
+                    <td className="p-3 font-medium">{student.display_name}</td>
                     <td className="p-3">{student.email}</td>
                     <td className="p-3 text-right"><Button size="sm" variant="outline" onClick={() => void copyInvite(student.niveau)}><Copy className="mr-2 h-4 w-4" />Lien rapide</Button></td>
                   </tr>
