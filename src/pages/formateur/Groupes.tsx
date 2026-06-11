@@ -42,6 +42,15 @@ import { GroupeNiveauxMap, type EleveAvecNiveaux } from "@/components/formateur/
 
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
 
+const hasStudentIdentity = (member: any) => {
+  const eleve = member?.eleve;
+  return Boolean(
+    String(eleve?.prenom ?? "").trim()
+    || String(eleve?.nom ?? "").trim()
+    || String(eleve?.email ?? "").trim(),
+  );
+};
+
 interface CreatedStudent {
   prenom: string;
   nom: string;
@@ -237,7 +246,19 @@ const GroupesPage = () => {
         if (fallback.error) throw fallback.error;
         return fallback.data;
       }
-      return (data?.members ?? []) as any[];
+      const members = (data?.members ?? []) as any[];
+      if (members.some((member) => !hasStudentIdentity(member))) {
+        const groupIds = groups.map((g) => g.id);
+        const fallback = await supabase
+          .from("group_members")
+          .select("*, eleve:profiles(id, nom, prenom, email, mot_de_passe_initial)")
+          .in("group_id", groupIds);
+        if (!fallback.error && fallback.data?.length) {
+          const fallbackById = new Map(fallback.data.map((member: any) => [member.id, member]));
+          return members.map((member) => hasStudentIdentity(member) ? member : fallbackById.get(member.id) ?? member);
+        }
+      }
+      return members;
     },
     enabled: !!groups && groups.length > 0,
   });
