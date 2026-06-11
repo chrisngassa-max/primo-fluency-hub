@@ -127,18 +127,28 @@ Deno.serve(async (req) => {
     if (profilesError) throw profilesError;
 
     const profileById = new Map((profiles ?? []).map((profile: any) => [profile.id, profile]));
-    const authFallbacks = await Promise.all(eleveIds.map(async (eleveId) => {
-      const { data } = await admin.auth.admin.getUserById(eleveId);
-      const authUser = data?.user;
-      if (!authUser) return null;
-      const metadataNames = namesFromMetadata(authUser.user_metadata);
-      return {
-        id: eleveId,
-        nom: metadataNames.nom,
-        prenom: metadataNames.prenom,
-        email: authUser.email ?? "",
-        mot_de_passe_initial: null,
-      };
+    const needsAuthFallback = eleveIds.filter((eleveId) => {
+      const profile = profileById.get(eleveId) as any | undefined;
+      if (!profile) return true;
+      return !cleanText(profile.nom) || !cleanText(profile.prenom) || !cleanText(profile.email);
+    });
+    const authFallbacks = await Promise.all(needsAuthFallback.map(async (eleveId) => {
+      try {
+        const { data } = await admin.auth.admin.getUserById(eleveId);
+        const authUser = data?.user;
+        if (!authUser) return null;
+        const metadataNames = namesFromMetadata(authUser.user_metadata);
+        return {
+          id: eleveId,
+          nom: metadataNames.nom,
+          prenom: metadataNames.prenom,
+          email: authUser.email ?? "",
+          mot_de_passe_initial: null,
+        };
+      } catch (e) {
+        console.warn("auth fallback failed for", eleveId, e instanceof Error ? e.message : e);
+        return null;
+      }
     }));
     const fallbackById = new Map(authFallbacks.filter(Boolean).map((profile: any) => [profile.id, profile]));
     const profileRepairs: Promise<unknown>[] = [];
