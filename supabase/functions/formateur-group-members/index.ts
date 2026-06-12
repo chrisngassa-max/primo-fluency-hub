@@ -15,17 +15,6 @@ function json(body: unknown, status = 200) {
 
 const cleanText = (value: unknown) => (typeof value === "string" ? value.trim() : "");
 
-// LEGACY-ONLY fallback. Les sandboxes créées avec le code actuel de
-// `sandbox-setup` écrivent prenom/nom dans profiles via user_metadata +
-// trigger handle_new_user. Ces noms en dur ne servent qu'aux vieilles
-// sandboxes (pré-correctif) où profiles.prenom/nom étaient vides.
-const SANDBOX_NAMES_BY_LEVEL: Record<string, { prenom: string; nom: string }> = {
-  A1: { prenom: "Mina", nom: "Diallo" },
-  A2: { prenom: "Youssef", nom: "Benali" },
-  B1: { prenom: "Olena", nom: "Kravchenko" },
-  B2: { prenom: "Lucas", nom: "Martins" },
-};
-
 function namesFromMetadata(metadata: Record<string, unknown> | null | undefined) {
   const prenom = cleanText(metadata?.prenom) || cleanText(metadata?.first_name) || cleanText(metadata?.given_name);
   const nom = cleanText(metadata?.nom) || cleanText(metadata?.last_name) || cleanText(metadata?.family_name);
@@ -46,12 +35,7 @@ function namesFromDisplayName(displayName: unknown) {
 }
 
 function namesFromSandboxStudent(student: any) {
-  const fromDisplayName = namesFromDisplayName(student?.display_name);
-  const fromLevel = SANDBOX_NAMES_BY_LEVEL[cleanText(student?.niveau)] ?? { prenom: "", nom: "" };
-  return {
-    prenom: fromDisplayName.prenom || fromLevel.prenom,
-    nom: fromDisplayName.nom || fromLevel.nom,
-  };
+  return namesFromDisplayName(student?.display_name);
 }
 
 Deno.serve(async (req) => {

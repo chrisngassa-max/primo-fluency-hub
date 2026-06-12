@@ -42,17 +42,6 @@ import { GroupeNiveauxMap, type EleveAvecNiveaux } from "@/components/formateur/
 import { useSandbox } from "@/contexts/SandboxContext";
 
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
-// LEGACY-ONLY fallback. Toute sandbox créée avec le code actuel de
-// `sandbox-setup` écrit prenom/nom dans profiles via user_metadata + trigger
-// handle_new_user. Ces noms en dur ne servent qu'aux vieilles sandboxes
-// (pré-correctif) où profiles.prenom/nom étaient vides. À supprimer une fois
-// toutes les sandboxes legacy expirées.
-const SANDBOX_NAMES_BY_LEVEL: Record<string, { prenom: string; nom: string }> = {
-  A1: { prenom: "Mina", nom: "Diallo" },
-  A2: { prenom: "Youssef", nom: "Benali" },
-  B1: { prenom: "Olena", nom: "Kravchenko" },
-  B2: { prenom: "Lucas", nom: "Martins" },
-};
 
 const hasStudentIdentity = (member: any) => {
   const eleve = member?.eleve;
@@ -74,11 +63,10 @@ const namesFromDisplayName = (displayName?: string) => {
 const getSandboxStudentIdentity = (student: any) => {
   if (!student) return null;
   const fromDisplay = namesFromDisplayName(student.display_name);
-  const fromLevel = SANDBOX_NAMES_BY_LEVEL[String(student.niveau ?? "")] ?? { prenom: "", nom: "" };
   return {
     id: student.user_id,
-    prenom: fromDisplay.prenom || fromLevel.prenom,
-    nom: fromDisplay.nom || fromLevel.nom,
+    prenom: fromDisplay.prenom,
+    nom: fromDisplay.nom,
     email: String(student.email ?? "").trim(),
   };
 };
