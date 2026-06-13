@@ -50,6 +50,9 @@ const Index = () => {
             >
               Je commence maintenant
             </button>
+            <p className="-mt-2 text-sm text-[#0b234a]/65">
+              Munissez-vous du code à 6 chiffres donné par votre formateur.
+            </p>
             <button
               onClick={() => navigate("/formateur/login")}
               className="h-14 w-full rounded-lg border-2 border-[#0b234a] bg-white text-lg font-bold text-[#0b234a] transition hover:bg-[#0b234a] hover:text-white"

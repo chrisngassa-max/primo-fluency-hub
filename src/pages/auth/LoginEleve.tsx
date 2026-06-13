@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Navigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -7,29 +7,37 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Eye, EyeOff, Users } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Eye, EyeOff, Mail, Users } from "lucide-react";
 import { translateAuthError } from "@/lib/authErrors";
 import { CapPublicHeader } from "@/components/CapBrand";
 import AppFooter from "@/components/AppFooter";
 import { getPasswordRecoveryRedirect } from "@/lib/passwordRecovery";
+import {
+  GROUP_INVITATION_STORAGE_KEY,
+  validateGroupInvitation,
+} from "@/lib/groupInvitation";
+import { normalizeInvitationCode } from "@/lib/invitationCode";
 
 const LoginEleve = () => {
-  const { signIn, signUp, session, role, loading, user } = useAuth();
+  const { signIn, signUp, session, role, loading } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const inviteParam = searchParams.get("invite");
   const [busy, setBusy] = useState(false);
   const [activeTab, setActiveTab] = useState(searchParams.get("tab") === "signup" ? "signup" : "login");
   const [formMessage, setFormMessage] = useState<string | null>(null);
-  const autoJoinAttempted = useRef(false);
+  const [signupComplete, setSignupComplete] = useState<{
+    email: string;
+    groupName: string;
+  } | null>(null);
 
   useEffect(() => {
     if (inviteParam) {
-      sessionStorage.setItem("tcf-invite-code", inviteParam);
+      sessionStorage.setItem(GROUP_INVITATION_STORAGE_KEY, normalizeInvitationCode(inviteParam));
     }
   }, [inviteParam]);
 
-  const inviteCode = inviteParam || sessionStorage.getItem("tcf-invite-code");
+  const inviteCode = normalizeInvitationCode(inviteParam || sessionStorage.getItem(GROUP_INVITATION_STORAGE_KEY) || "");
 
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -39,48 +47,11 @@ const LoginEleve = () => {
   const [signupPassword, setSignupPassword] = useState("");
   const [signupNom, setSignupNom] = useState("");
   const [signupPrenom, setSignupPrenom] = useState("");
+  const [signupInviteCode, setSignupInviteCode] = useState(inviteCode);
   const [showSignupPw, setShowSignupPw] = useState(false);
 
   const [forgotEmail, setForgotEmail] = useState("");
   const [showForgot, setShowForgot] = useState(false);
-
-  useEffect(() => {
-    if (!session || !user || !inviteCode || autoJoinAttempted.current) return;
-    autoJoinAttempted.current = true;
-
-    const joinGroup = async () => {
-      try {
-        const { data: invitation } = await supabase
-          .from("group_invitations")
-          .select("id, group_id, expires_at, used_count, group:groups(nom)")
-          .eq("code", inviteCode)
-          .maybeSingle();
-
-        if (!invitation) return;
-        if (new Date(invitation.expires_at) < new Date()) return;
-
-        const { data: existing } = await supabase
-          .from("group_members")
-          .select("id")
-          .eq("group_id", invitation.group_id)
-          .eq("eleve_id", user.id)
-          .maybeSingle();
-
-        if (existing) return;
-
-        await supabase
-          .from("group_members")
-          .insert({ group_id: invitation.group_id, eleve_id: user.id });
-
-        sessionStorage.removeItem("tcf-invite-code");
-        const groupName = (invitation as any).group?.nom || "le groupe";
-        toast.success(`Tu as rejoint le groupe « ${groupName} » !`);
-      } catch (e) {
-        console.error("Auto-join failed", e);
-      }
-    };
-    joinGroup();
-  }, [session, user, inviteCode]);
 
   if (!loading && session && role === "eleve") return <Navigate to="/eleve" replace />;
   if (!loading && session && role === "formateur") return <Navigate to="/formateur" replace />;
@@ -103,16 +74,34 @@ const LoginEleve = () => {
     e.preventDefault();
     setFormMessage(null);
     if (!signupNom || !signupPrenom) { toast.error("Remplissez votre nom et prénom."); return; }
+    if (signupInviteCode.length !== 6) {
+      setFormMessage("Demandez le code à 6 chiffres à votre formateur.");
+      return;
+    }
     setBusy(true);
-    const { error } = await signUp(signupEmail, signupPassword, { nom: signupNom, prenom: signupPrenom, role: "eleve" });
+    const { data: invitation, error: invitationError } = await validateGroupInvitation(signupInviteCode);
+    if (invitationError || !invitation?.valid) {
+      setFormMessage(invitation?.error || "Ce code de groupe est invalide ou expiré.");
+      setBusy(false);
+      return;
+    }
+    sessionStorage.setItem(GROUP_INVITATION_STORAGE_KEY, signupInviteCode);
+    const { error } = await signUp(signupEmail, signupPassword, {
+      nom: signupNom,
+      prenom: signupPrenom,
+      role: "eleve",
+      inviteCode: signupInviteCode,
+    });
     if (error) {
       const message = translateAuthError(error.message);
       setFormMessage(message);
       toast.error("Erreur d'inscription", { description: message });
     } else {
-      toast.success("Inscription réussie !", { description: "Vous pouvez maintenant vous connecter." });
-      setFormMessage("Compte créé. Vous pouvez maintenant vous connecter.");
-      setActiveTab("login");
+      toast.success("Compte créé", { description: "Vérifiez maintenant votre boîte email." });
+      setSignupComplete({
+        email: signupEmail,
+        groupName: invitation.group?.nom ?? "de votre formateur",
+      });
       setLoginEmail(signupEmail);
     }
     setBusy(false);
@@ -189,7 +178,48 @@ const LoginEleve = () => {
           )}
 
           <div className="rounded-2xl border border-black/5 bg-white p-6 shadow-[0_8px_30px_rgba(15,23,42,0.08)] sm:p-8">
-            {showForgot ? (
+            {signupComplete ? (
+              <div className="space-y-6 text-center">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-green-700">
+                  <CheckCircle2 className="h-8 w-8" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-black text-[#0b234a]">Votre compte est créé</h1>
+                  <p className="mt-2 text-sm text-[#0b234a]/70">
+                    Groupe : <strong>{signupComplete.groupName}</strong>
+                  </p>
+                </div>
+                <div className="space-y-3 rounded-xl bg-[#0b234a]/5 p-4 text-left text-sm text-[#0b234a]">
+                  <p className="flex items-start gap-3">
+                    <Mail className="mt-0.5 h-5 w-5 shrink-0 text-[#f47b20]" />
+                    <span>
+                      <strong>1. Confirmez votre email</strong><br />
+                      Un message a été envoyé à {signupComplete.email}.
+                    </span>
+                  </p>
+                  <p className="flex items-start gap-3">
+                    <Users className="mt-0.5 h-5 w-5 shrink-0 text-[#f47b20]" />
+                    <span>
+                      <strong>2. Votre formateur valide l'accès</strong><br />
+                      Vous verrez un écran d'attente tant que la validation n'est pas terminée.
+                    </span>
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  className={orangeBtn}
+                  onClick={() => {
+                    setSignupComplete(null);
+                    setActiveTab("login");
+                  }}
+                >
+                  Aller à la connexion
+                </button>
+                <p className="text-xs text-[#0b234a]/60">
+                  Email absent ? Vérifiez aussi le dossier Courrier indésirable.
+                </p>
+              </div>
+            ) : showForgot ? (
               <form onSubmit={handleForgot} className="space-y-5">
                 <div className="text-center">
                   <h1 className="text-2xl font-black text-[#0b234a]">Mot de passe oublié</h1>
@@ -279,6 +309,25 @@ const LoginEleve = () => {
                       <div className="space-y-2">
                         <Label htmlFor="eleve-signup-password" className="text-[#0b234a]">Mot de passe</Label>
                         {renderPasswordInput("eleve-signup-password", signupPassword, setSignupPassword, showSignupPw, () => setShowSignupPw(!showSignupPw), 6)}
+                        <p className="text-xs text-[#0b234a]/65">Au moins 6 caractères.</p>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="eleve-signup-code" className="text-[#0b234a]">Code donné par votre formateur</Label>
+                        <Input
+                          id="eleve-signup-code"
+                          inputMode="numeric"
+                          autoComplete="one-time-code"
+                          placeholder="123456"
+                          value={signupInviteCode}
+                          onChange={(event) => setSignupInviteCode(normalizeInvitationCode(event.target.value))}
+                          maxLength={6}
+                          required
+                          className="h-12 text-center font-mono text-lg tracking-[0.3em]"
+                        />
+                        <p className="text-xs text-[#0b234a]/65">
+                          Ce code permet à votre formateur de retrouver et valider votre inscription.
+                          Si vous n'avez pas de code, demandez-le avant de créer le compte.
+                        </p>
                       </div>
                       <button type="submit" disabled={busy} className={orangeBtn}>
                         {busy ? "Inscription…" : "S'inscrire"}

@@ -59,11 +59,10 @@ serve(async (req) => {
     const profilByEleve: Record<string, any> = {};
     (profils ?? []).forEach(p => { profilByEleve[p.eleve_id] = p; });
 
-    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     const { data: existingAlerts } = await supabase
       .from("alertes")
-      .select("eleve_id, type")
-      .gte("created_at", oneDayAgo);
+      .select("eleve_id, type, exercise_id")
+      .eq("is_resolved", false);
 
     const existingAlertKeys = new Set(
       (existingAlerts ?? []).map(a => `${a.eleve_id}:${a.type}`)
@@ -89,6 +88,7 @@ serve(async (req) => {
               recommandation: "Planifier un entretien individuel et proposer des exercices de remédiation.",
               created_at: now,
             });
+            existingAlertKeys.add(key);
           }
         }
       }
@@ -109,6 +109,7 @@ serve(async (req) => {
                 recommandation: "Revoir le parcours et diversifier les exercices.",
                 created_at: now,
               });
+              existingAlertKeys.add(key);
             }
           }
         }
@@ -124,6 +125,7 @@ serve(async (req) => {
             recommandation: "Entretien individuel recommandé.",
             created_at: now,
           });
+          existingAlertKeys.add(key);
         }
       } else if (nbNonRendus >= SEUIL_DEVOIRS_RELANCE) {
         const key = `${eleveId}:abandon_eleve`;
@@ -135,6 +137,7 @@ serve(async (req) => {
             recommandation: "Envoyer un message de relance.",
             created_at: now,
           });
+          existingAlertKeys.add(key);
         }
       }
     }

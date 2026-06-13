@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -25,48 +25,6 @@ const EleveDashboard = () => {
   const [showOnboarding, dismissOnboarding] = useShowOnboarding();
   const [activeTab, setActiveTab] = useState<"dashboard" | "fiches">("dashboard");
   const qc = useQueryClient();
-  const autoJoinRef = useRef(false);
-
-  // Auto-join group from persisted invite code (survives email confirmation redirect)
-  useEffect(() => {
-    const code = sessionStorage.getItem("tcf-invite-code");
-    if (!user || !code || autoJoinRef.current) return;
-    autoJoinRef.current = true;
-
-    (async () => {
-      try {
-        const { data: invitation } = await supabase
-          .from("group_invitations")
-          .select("id, group_id, expires_at, group:groups(nom)")
-          .eq("code", code)
-          .maybeSingle();
-        if (!invitation || new Date(invitation.expires_at) < new Date()) {
-          sessionStorage.removeItem("tcf-invite-code");
-          return;
-        }
-        const { data: existing } = await supabase
-          .from("group_members")
-          .select("id")
-          .eq("group_id", invitation.group_id)
-          .eq("eleve_id", user.id)
-          .maybeSingle();
-        if (existing) {
-          sessionStorage.removeItem("tcf-invite-code");
-          return;
-        }
-        await supabase
-          .from("group_members")
-          .insert({ group_id: invitation.group_id, eleve_id: user.id });
-        sessionStorage.removeItem("tcf-invite-code");
-        const groupName = (invitation as any).group?.nom || "le groupe";
-        toast.success(`Tu as rejoint le groupe « ${groupName} » !`);
-        qc.invalidateQueries({ queryKey: ["eleve-memberships"] });
-      } catch (e) {
-        console.error("Auto-join failed", e);
-      }
-    })();
-  }, [user, qc]);
-
   // Check if student already passed the positioning test
   const { data: testResultat, isLoading: testLoading } = useQuery({
     queryKey: ["eleve-test-positionnement-result", user?.id],

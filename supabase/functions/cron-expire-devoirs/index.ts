@@ -36,15 +36,38 @@ Deno.serve(async (req) => {
       .select("id, eleve_id, formateur_id")
       .in("id", expired.map((d: any) => d.id));
 
-    if (devoirs) {
-      const alerts = devoirs.map((d: any) => ({
-        eleve_id: d.eleve_id,
-        formateur_id: d.formateur_id,
-        type: "devoir_expire" as const,
-        message: `Devoir expiré automatiquement (${d.id})`,
-      }));
+    if (devoirs?.length) {
+      const affectedLearners = new Map<string, { eleve_id: string; formateur_id: string; count: number }>();
+      for (const devoir of devoirs) {
+        const key = `${devoir.formateur_id}:${devoir.eleve_id}`;
+        const current = affectedLearners.get(key);
+        affectedLearners.set(key, {
+          eleve_id: devoir.eleve_id,
+          formateur_id: devoir.formateur_id,
+          count: (current?.count ?? 0) + 1,
+        });
+      }
 
-      await supabase.from("alertes").insert(alerts);
+      const { data: activeAlerts } = await supabase
+        .from("alertes")
+        .select("eleve_id, formateur_id")
+        .eq("type", "devoir_expire")
+        .eq("is_resolved", false);
+      const activeKeys = new Set(
+        (activeAlerts ?? []).map((alert: any) => `${alert.formateur_id}:${alert.eleve_id}`),
+      );
+      const alerts = [...affectedLearners.entries()]
+        .filter(([key]) => !activeKeys.has(key))
+        .map(([, learner]) => ({
+          eleve_id: learner.eleve_id,
+          formateur_id: learner.formateur_id,
+          type: "devoir_expire" as const,
+          message: learner.count === 1
+            ? "Un devoir vient d'expirer."
+            : `${learner.count} devoirs viennent d'expirer.`,
+        }));
+
+      if (alerts.length) await supabase.from("alertes").insert(alerts);
     }
   }
 

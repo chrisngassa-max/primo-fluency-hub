@@ -9,6 +9,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import AIConsentRequiredRoute from "@/components/AIConsentRequiredRoute";
 import SandboxEmbedBootstrap from "@/components/sandbox/SandboxEmbedBootstrap";
 import PasswordRecoveryBridge from "@/components/PasswordRecoveryBridge";
+import PendingGroupInvitationBridge from "@/components/PendingGroupInvitationBridge";
 import { isSandboxEmbed } from "@/integrations/supabase/sandboxEmbed";
 import AccesLimite from "@/pages/eleve/AccesLimite";
 
@@ -85,6 +86,7 @@ const App = () => (
         <Sonner />
         <HashRouter>
           <PasswordRecoveryBridge />
+          <PendingGroupInvitationBridge />
           {isSandboxEmbed() ? (
             <SandboxEmbedBootstrap>
               <Routes>

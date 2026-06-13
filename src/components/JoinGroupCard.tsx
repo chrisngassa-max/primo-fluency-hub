@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Users, Loader2, CheckCircle2 } from "lucide-react";
+import { joinGroupWithInvitation } from "@/lib/groupInvitation";
+import { normalizeInvitationCode } from "@/lib/invitationCode";
 
 const JoinGroupCard = () => {
   const { user } = useAuth();
@@ -36,47 +38,12 @@ const JoinGroupCard = () => {
     }
     setJoining(true);
     try {
-      // Find invitation by code
-      const { data: invitation, error: invErr } = await supabase
-        .from("group_invitations")
-        .select("id, group_id, expires_at, group:groups(nom)")
-        .eq("code", trimmed)
-        .maybeSingle();
-
-      if (invErr) throw invErr;
-      if (!invitation) {
-        toast.error("Code invalide ou expiré.");
-        return;
+      const { data, error } = await joinGroupWithInvitation(trimmed);
+      if (error || data?.error || !data?.joined) {
+        throw new Error(data?.error || "Code invalide ou expiré.");
       }
 
-      // Check expiration
-      if (new Date(invitation.expires_at) < new Date()) {
-        toast.error("Ce code d'invitation a expiré.");
-        return;
-      }
-
-      // Check if already a member
-      const { data: existing } = await supabase
-        .from("group_members")
-        .select("id")
-        .eq("group_id", invitation.group_id)
-        .eq("eleve_id", user!.id)
-        .maybeSingle();
-
-      if (existing) {
-        toast.info("Tu fais déjà partie de ce groupe !");
-        setCode("");
-        return;
-      }
-
-      // Join group
-      const { error: joinErr } = await supabase
-        .from("group_members")
-        .insert({ group_id: invitation.group_id, eleve_id: user!.id });
-
-      if (joinErr) throw joinErr;
-
-      const groupName = (invitation as any).group?.nom || "le groupe";
+      const groupName = data.group?.nom || "le groupe";
       toast.success(`Tu as rejoint le groupe « ${groupName} » !`);
       setCode("");
       qc.invalidateQueries({ queryKey: ["eleve-memberships"] });
@@ -118,7 +85,7 @@ const JoinGroupCard = () => {
               <Input
                 placeholder="Code à 6 chiffres"
                 value={code}
-                onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                onChange={(e) => setCode(normalizeInvitationCode(e.target.value))}
                 maxLength={6}
                 className="max-w-[180px] text-center text-lg tracking-widest font-mono"
                 onKeyDown={(e) => e.key === "Enter" && handleJoin()}

@@ -15,6 +15,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { countLearnersWithAlerts, dedupeAlertsByLearner } from "@/lib/activeAlerts";
 
 const formatSessionTimeRange = (session: any) => {
   if (!session?.date_seance) return "À planifier";
@@ -61,11 +62,11 @@ export default function FormateurDashboardV2() {
     queryKey: ["kpi-alertes", user?.id],
     queryFn: async () => {
       if (!user) return 0;
-      const { count } = await supabase.from("alertes")
-        .select("*", { count: "exact", head: true })
+      const { data } = await supabase.from("alertes")
+        .select("id, eleve_id")
         .eq("formateur_id", user.id)
         .eq("is_resolved", false);
-      return count ?? 0;
+      return countLearnersWithAlerts(data ?? []);
     },
     enabled: !!user,
   });
@@ -142,14 +143,15 @@ export default function FormateurDashboardV2() {
         .eq("formateur_id", user.id)
         .eq("is_resolved", false)
         .order("created_at", { ascending: false })
-        .limit(8);
+        .limit(100);
       if (!alertes?.length) return [];
-      const eleveIds = [...new Set(alertes.map((alert) => alert.eleve_id).filter(Boolean))];
+      const learnerAlerts = dedupeAlertsByLearner(alertes).slice(0, 8);
+      const eleveIds = [...new Set(learnerAlerts.map((alert) => alert.eleve_id).filter(Boolean))];
       const { data: profiles } = eleveIds.length
         ? await supabase.from("profiles").select("id, nom, prenom").in("id", eleveIds)
         : { data: [] as any[] };
       const profileMap = Object.fromEntries((profiles ?? []).map((profile: any) => [profile.id, `${profile.prenom ?? ""} ${profile.nom ?? ""}`.trim()]));
-      return alertes.map((alert) => ({ ...alert, eleve_nom: profileMap[alert.eleve_id] || "Élève" }));
+      return learnerAlerts.map((alert) => ({ ...alert, eleve_nom: profileMap[alert.eleve_id] || "Élève" }));
     },
     enabled: !!user,
   });
@@ -242,10 +244,10 @@ export default function FormateurDashboardV2() {
           onClick={() => navigate("/formateur/seances")}
         />
         <KPICard 
-          title="Alertes" 
+          title="Élèves à accompagner"
           value={alertCount} 
           icon={<AlertTriangle className="h-5 w-5 text-rose-600 dark:text-rose-400" />} 
-          trend={alertCount > 0 ? "À traiter urgemment" : "Tout va bien"}
+          trend={alertCount > 0 ? "Une priorité par élève" : "Tout va bien"}
           bgClass="bg-rose-50 dark:bg-rose-950/30"
           isAlert={alertCount > 0}
           onClick={() => navigate("/formateur/monitoring")}
@@ -380,7 +382,7 @@ export default function FormateurDashboardV2() {
               <div className="flex justify-between items-center">
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Bell className="h-5 w-5 text-rose-500" />
-                  Alertes à traiter
+                  Élèves à accompagner
                 </CardTitle>
                 <Badge variant="destructive" className="rounded-full">{alertCount}</Badge>
               </div>

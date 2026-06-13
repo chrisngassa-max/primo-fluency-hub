@@ -4,6 +4,12 @@ import type { Session, User } from "@supabase/supabase-js";
 
 type AppRole = "formateur" | "eleve" | "admin";
 type ProfileStatus = "pending" | "approved";
+type SignUpMetadata = {
+  nom: string;
+  prenom: string;
+  role: AppRole;
+  inviteCode?: string;
+};
 
 interface AuthContextType {
   session: Session | null;
@@ -11,7 +17,7 @@ interface AuthContextType {
   role: AppRole | null;
   profileStatus: ProfileStatus | null;
   loading: boolean;
-  signUp: (email: string, password: string, metadata: { nom: string; prenom: string; role: AppRole }) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, metadata: SignUpMetadata) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
 }
@@ -103,13 +109,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, metadata: { nom: string; prenom: string; role: AppRole }) => {
+  const signUp = async (email: string, password: string, metadata: SignUpMetadata) => {
+    const confirmationUrl = new URL(window.location.href);
+    confirmationUrl.search = "";
+    confirmationUrl.hash = "";
+    if (metadata.inviteCode) confirmationUrl.searchParams.set("invite", metadata.inviteCode);
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: { nom: metadata.nom, prenom: metadata.prenom, role: metadata.role },
-        emailRedirectTo: window.location.origin,
+        data: {
+          nom: metadata.nom,
+          prenom: metadata.prenom,
+          role: metadata.role,
+          invite_code: metadata.inviteCode,
+        },
+        emailRedirectTo: confirmationUrl.toString(),
       },
     });
     return { error };

@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ClipboardList, BookOpen, TrendingUp, ArrowRight, X } from "lucide-react";
@@ -9,19 +8,16 @@ const ONBOARDING_KEY = "tcf-eleve-onboarding-done";
 const steps = [
   {
     icon: ClipboardList,
-    emoji: "📝",
     title: "Évalue ton niveau réel",
     description: "Passe le test de positionnement. Il analyse tes 4 compétences TCF et adapte ton programme. C'est la première étape pour réussir ton TCF IRN.",
   },
   {
     icon: BookOpen,
-    emoji: "📚",
     title: "Fais tes exercices chaque semaine",
     description: "Tu reçois des exercices adaptés à ton niveau, formatés exactement comme l'examen TCF. Plus tu pratiques, plus tu gagnes des points.",
   },
   {
     icon: TrendingUp,
-    emoji: "📈",
     title: "Suis ta progression vers B1",
     description: "Ton tableau de bord montre ta progression compétence par compétence. L'objectif : atteindre le niveau B1 avant ton examen.",
   },
@@ -32,7 +28,6 @@ interface EleveOnboardingProps {
 }
 
 const EleveOnboarding = ({ onComplete }: EleveOnboardingProps) => {
-  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
 
   const handleFinish = () => {
@@ -77,7 +72,10 @@ const EleveOnboarding = ({ onComplete }: EleveOnboardingProps) => {
           <div className="text-center space-y-4">
             <div className="flex justify-center">
               <div className="h-20 w-20 rounded-2xl bg-primary/10 flex items-center justify-center">
-                <span className="text-4xl">{steps[currentStep].emoji}</span>
+                {(() => {
+                  const StepIcon = steps[currentStep].icon;
+                  return <StepIcon className="h-10 w-10 text-primary" aria-hidden="true" />;
+                })()}
               </div>
             </div>
             <div>
