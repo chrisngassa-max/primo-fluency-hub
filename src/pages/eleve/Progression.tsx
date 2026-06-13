@@ -350,6 +350,11 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
             ? `Progression de ${studentProfile.prenom} ${studentProfile.nom}`
             : "Ma progression"}
         </h1>
+        {!eleveId && (
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+            Cette page résume tes activités récentes. Elle t’aide à choisir quoi travailler, mais ne remplace pas un résultat officiel du TCF.
+          </p>
+        )}
       </div>
 
       {/* 60-hour pacing tracker */}
@@ -679,6 +684,14 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
         </p>
         <Card className="rounded-2xl shadow-sm border-black/5">
           <CardContent className="pt-6">
+          {!eleveId && (
+            <div className="mb-5 rounded-xl bg-blue-50 p-4 text-sm text-blue-950">
+              <p className="font-bold">Comment lire les résultats ?</p>
+              <p className="mt-1 leading-relaxed">
+                « À retravailler » indique la prochaine priorité. « En consolidation » signifie que tu progresses. « Acquis » signifie que la compétence est réussie régulièrement.
+              </p>
+            </div>
+          )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
             {/* Radar chart or empty message */}
             {hasRadarData ? (
@@ -728,6 +741,12 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
                   </div>
                 );
               })}
+              {!eleveId && (
+                <Button className="min-h-11 w-full" onClick={() => navigate("/eleve/devoirs")}>
+                  Travailler ma prochaine activité
+                  <BookOpen className="ml-2 h-4 w-4" />
+                </Button>
+              )}
             </div>
           </div>
         </CardContent>

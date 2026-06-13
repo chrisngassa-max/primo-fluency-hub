@@ -131,6 +131,23 @@ const EleveDashboard = () => {
 
   const uncompletedTests = (pendingTests ?? []).filter((t: any) => !t.completed);
 
+  const { data: nextHomework } = useQuery({
+    queryKey: ["eleve-next-homework", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("devoirs")
+        .select("id, statut, date_echeance, exercice:exercices(titre)")
+        .eq("eleve_id", user!.id)
+        .in("statut", ["en_attente", "expire"])
+        .order("date_echeance", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id,
+  });
+
   // Exercices de toutes les séances visibles aujourd'hui / en cours
   const { data: sessionExercises, isLoading: loadingSessionEx } = useQuery({
     queryKey: ["eleve-session-exercises", user?.id, activeSessionIds.join(",")],
@@ -247,6 +264,42 @@ const EleveDashboard = () => {
     },
   ] : null;
 
+  const primaryAction = !testLoading && !testCompleted
+    ? {
+      eyebrow: "Première étape",
+      title: "Évalue ton niveau",
+      description: "Ce test permet de te proposer des activités adaptées.",
+      button: "Commencer le test",
+      path: "/eleve/test-positionnement",
+    }
+    : uncompletedTests[0]
+      ? {
+        eyebrow: "À faire maintenant",
+        title: "Termine ton test de bilan",
+        description: "Ton formateur l’a préparé pour vérifier ce que tu as retenu.",
+        button: "Faire le test",
+        path: `/eleve/bilan-test/${uncompletedTests[0].id}`,
+      }
+      : sessionExercises?.[0]
+        ? {
+          eyebrow: "À faire maintenant",
+          title: "Continue les exercices de ta séance",
+          description: `${sessionExercises[0].remaining} activité${sessionExercises[0].remaining > 1 ? "s" : ""} encore à faire.`,
+          button: "Continuer",
+          path: `/eleve/exercices-seance/${sessionExercises[0].sessionId}`,
+        }
+        : nextHomework
+          ? {
+            eyebrow: "À faire maintenant",
+            title: (nextHomework.exercice as any)?.titre || "Un devoir t’attend",
+            description: nextHomework.statut === "expire"
+              ? "La date conseillée est passée, mais tu peux encore le terminer."
+              : "Avance à ton rythme. Ton brouillon sera enregistré.",
+            button: "Ouvrir le devoir",
+            path: `/eleve/devoirs/${nextHomework.id}`,
+          }
+          : null;
+
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
       {showOnboarding && <EleveOnboarding onComplete={dismissOnboarding} />}
@@ -302,23 +355,32 @@ const EleveDashboard = () => {
       ) : (
       <>
 
-      {/* CARTE PRIORITAIRE — test non fait — icône centrée */}
-      {!testLoading && !testCompleted && (
-        <div className="cap-card cap-primary-gradient rounded-2xl p-6 text-center space-y-5">
-          <h3 className="font-bold text-white text-xl leading-tight">
-            Évalue ton niveau d'abord
-          </h3>
-          <div className="flex justify-center py-2">
-            <Target className="h-20 w-20 text-[#f47b20]" strokeWidth={2} />
+      {primaryAction ? (
+        <section aria-labelledby="primary-action-title" className="cap-card cap-primary-gradient rounded-2xl p-6 text-white">
+          <p className="text-xs font-bold uppercase tracking-widest text-white/70">{primaryAction.eyebrow}</p>
+          <div className="mt-3 flex items-start gap-4">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/10">
+              <Target className="h-8 w-8 text-[#f47b20]" />
+            </div>
+            <div>
+              <h2 id="primary-action-title" className="text-xl font-extrabold leading-tight">{primaryAction.title}</h2>
+              <p className="mt-2 text-sm leading-relaxed text-white/85">{primaryAction.description}</p>
+            </div>
           </div>
-          <button
-            className="w-full cap-orange-button py-4 text-base"
-            onClick={() => navigate("/eleve/test-positionnement")}
+          <Button
+            className="mt-5 min-h-12 w-full rounded-full bg-[#f47b20] font-bold text-white hover:bg-[#ea6815]"
+            onClick={() => navigate(primaryAction.path)}
           >
-            Commencer le test
-          </button>
+            {primaryAction.button}
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </section>
+      ) : !testLoading ? (
+        <div className="rounded-2xl border border-green-200 bg-green-50 p-5">
+          <p className="font-bold text-green-900">Tu es à jour</p>
+          <p className="mt-1 text-sm text-green-800">Aucune activité prioritaire pour le moment. Bravo pour ton travail.</p>
         </div>
-      )}
+      ) : null}
 
       {user?.id && <TrajectoireTCF eleveId={user.id} />}
 
