@@ -67,7 +67,7 @@ const LoginFormateur = () => {
         <div className="w-full max-w-md space-y-5">
           <button
             onClick={() => navigate("/")}
-            className="inline-flex items-center gap-2 rounded text-sm font-semibold text-[#0b234a]/70 hover:text-[#0b234a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f47b20]"
+            className="inline-flex min-h-11 items-center gap-2 rounded text-sm font-semibold text-[#0b234a]/70 hover:text-[#0b234a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f47b20]"
           >
             <ArrowLeft className="h-4 w-4" /> Retour à l'accueil
           </button>
@@ -116,7 +116,7 @@ const LoginFormateur = () => {
                 {busy ? (showForgot ? "Envoi…" : "Connexion…") : (showForgot ? "Envoyer le lien" : "Se connecter")}
               </button>
               <div className="text-center">
-                <button type="button" onClick={() => { setShowForgot(!showForgot); setMessage(null); }} className="text-sm font-semibold text-[#0b234a]/70 hover:text-[#0b234a]">
+                <button type="button" onClick={() => { setShowForgot(!showForgot); setMessage(null); }} className="min-h-11 text-sm font-semibold text-[#0b234a]/70 hover:text-[#0b234a]">
                   {showForgot ? "Retour à la connexion" : "Mot de passe oublié ?"}
                 </button>
               </div>

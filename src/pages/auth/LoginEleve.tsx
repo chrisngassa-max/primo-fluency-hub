@@ -169,7 +169,7 @@ const LoginEleve = () => {
         <div className="w-full max-w-md space-y-5">
           <button
             onClick={() => navigate("/")}
-            className="inline-flex items-center gap-2 rounded text-sm font-semibold text-[#0b234a]/70 hover:text-[#0b234a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f47b20]"
+            className="inline-flex min-h-11 items-center gap-2 rounded text-sm font-semibold text-[#0b234a]/70 hover:text-[#0b234a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f47b20]"
           >
             <ArrowLeft className="h-4 w-4" /> Retour à l'accueil
           </button>
@@ -243,7 +243,7 @@ const LoginEleve = () => {
                     {formMessage}
                   </p>
                 )}
-                <button type="button" onClick={() => setShowForgot(false)} className="w-full text-sm font-semibold text-[#0b234a]/70 hover:text-[#0b234a]">
+                <button type="button" onClick={() => setShowForgot(false)} className="min-h-11 w-full text-sm font-semibold text-[#0b234a]/70 hover:text-[#0b234a]">
                   Retour
                 </button>
               </form>
@@ -262,9 +262,9 @@ const LoginEleve = () => {
                   setActiveTab(value);
                   setFormMessage(null);
                 }}>
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="login">Connexion</TabsTrigger>
-                    <TabsTrigger value="signup">Inscription</TabsTrigger>
+                  <TabsList className="grid h-12 w-full grid-cols-2">
+                    <TabsTrigger value="login" className="min-h-11">Connexion</TabsTrigger>
+                    <TabsTrigger value="signup" className="min-h-11">Inscription</TabsTrigger>
                   </TabsList>
 
                   {formMessage && (
@@ -290,7 +290,7 @@ const LoginEleve = () => {
                       <button type="submit" disabled={busy} className={orangeBtn}>
                         {busy ? "Connexion…" : "Se connecter"}
                       </button>
-                      <button type="button" onClick={() => setShowForgot(true)} className="block w-full text-sm font-semibold text-[#0b234a]/70 hover:text-[#0b234a]">
+                      <button type="button" onClick={() => setShowForgot(true)} className="block min-h-11 w-full text-sm font-semibold text-[#0b234a]/70 hover:text-[#0b234a]">
                         Mot de passe oublié ?
                       </button>
                     </form>
