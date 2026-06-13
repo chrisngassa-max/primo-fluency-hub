@@ -13,7 +13,7 @@ interface Props {
  * Otherwise: shows a blocking consent modal (first time) or redirects to /eleve/acces-limite.
  */
 export default function AIConsentRequiredRoute({ children }: Props) {
-  const { consent, loading, isFullyGranted, hasAnswered } = useAIConsent();
+  const { loading, isFullyGranted, hasAnswered, refresh } = useAIConsent();
 
   if (loading) {
     return (
@@ -31,10 +31,10 @@ export default function AIConsentRequiredRoute({ children }: Props) {
     return <Navigate to="/eleve/acces-limite" replace />;
   }
 
-  // First time → blocking modal
+  // First time → blocking modal. Pass refresh so parent state updates on accept/refuse.
   return (
     <>
-      <AIConsentModal open blocking />
+      <AIConsentModal open blocking onClose={() => { void refresh(); }} />
       <div className="p-8">
         <Skeleton className="h-8 w-64" />
       </div>
