@@ -70,6 +70,8 @@ const TestPositionnement = () => {
   const [selectedAnswer, setSelectedAnswer] = useState("");
   const [writtenAnswer, setWrittenAnswer] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isStarting, setIsStarting] = useState(false);
+  const [startError, setStartError] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [recordingCount, setRecordingCount] = useState(0);
@@ -250,9 +252,12 @@ const TestPositionnement = () => {
   );
 
   const handleStart = async () => {
-    if (!user?.id) return;
+    if (!user?.id || isStarting) return;
+    setIsStarting(true);
+    setStartError(null);
 
-    const resumableSession = await getPreferredSession();
+    try {
+      const resumableSession = await getPreferredSession();
 
     // If there's an in-progress session, resume at exact position
     if (resumableSession && resumableSession.statut === "en_cours") {
@@ -374,6 +379,12 @@ const TestPositionnement = () => {
       return;
     }
 
+    const initialQuestions = await loadQuestions("CO", 1);
+    if (initialQuestions.length === 0) {
+      setStartError("Le test n'est pas encore disponible. Votre formateur peut vérifier les questions.");
+      return;
+    }
+
     const { data, error } = await (supabase as any)
       .from("test_sessions")
       .insert({ apprenant_id: user.id })
@@ -381,9 +392,11 @@ const TestPositionnement = () => {
       .single();
 
     if (error) {
+      console.error("Unable to create positioning session", error);
+      setStartError("Le test n'a pas pu démarrer. Réessayez. Si le problème continue, prévenez votre formateur.");
       toast({
         title: "Erreur",
-        description: "Impossible de démarrer le test.",
+        description: "Impossible de démarrer le test. Vous pouvez réessayer.",
         variant: "destructive",
       });
       return;
@@ -400,17 +413,13 @@ const TestPositionnement = () => {
       scores: { co: 0, ce: 0, eo: 0, ee: 0 },
     };
     setSessionState(state);
-    const qs = await loadQuestions("CO", 1);
-    setQuestions(qs);
-    if (qs.length > 0) {
-      setScreen("question");
-    } else {
-      toast({
-        title: "Aucune question disponible",
-        description:
-          "Les questions du test n'ont pas encore été ajoutées.",
-        variant: "destructive",
-      });
+    setQuestions(initialQuestions);
+    setScreen("question");
+    } catch (error) {
+      console.error("Unable to start positioning test", error);
+      setStartError("Une erreur de connexion empêche le démarrage. Vérifiez votre réseau puis réessayez.");
+    } finally {
+      setIsStarting(false);
     }
   };
 
@@ -1131,10 +1140,16 @@ const TestPositionnement = () => {
         </CardContent>
       </Card>
 
-      <Button size="xl" className="w-full" onClick={handleStart}>
+      {startError && (
+        <div role="alert" className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
+          {startError}
+        </div>
+      )}
+
+      <Button size="xl" className="w-full" onClick={handleStart} disabled={isStarting}>
         {existingSession?.statut === "en_cours"
-          ? "Reprendre le test"
-          : "Je suis prêt — Commencer le test"}
+          ? (isStarting ? "Reprise…" : "Reprendre le test")
+          : (isStarting ? "Démarrage…" : "Je suis prêt — Commencer le test")}
         <ArrowRight className="ml-2 h-5 w-5" />
       </Button>
     </div>

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 type VocabularyItem = {
   id: string;
@@ -22,6 +23,7 @@ type VocabularyItem = {
 
 const CarnetMots = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const vocabularyQuery = useQuery({
@@ -82,6 +84,9 @@ const CarnetMots = () => {
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-normal text-foreground">Mon carnet de mots</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Les mots enregistrés pendant tes activités apparaissent ici pour les réviser.
+          </p>
         </div>
         <Badge variant="secondary" className="w-fit text-sm">
           {(vocabularyQuery.data ?? []).length} mot{(vocabularyQuery.data ?? []).length > 1 ? "s" : ""}
@@ -94,7 +99,13 @@ const CarnetMots = () => {
             <BookMarked className="h-12 w-12 text-muted-foreground" />
             <div>
               <h2 className="text-xl font-semibold tracking-normal">Aucun mot enregistré</h2>
+              <p className="mt-2 max-w-md text-sm text-muted-foreground">
+                Dans un exercice, sélectionne un mot puis ajoute-le à ton carnet. Tu pourras ensuite écouter sa prononciation et le revoir ici.
+              </p>
             </div>
+            <Button type="button" onClick={() => navigate("/eleve/devoirs")}>
+              Voir mes devoirs
+            </Button>
           </CardContent>
         </Card>
       ) : (

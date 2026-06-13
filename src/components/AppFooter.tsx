@@ -18,7 +18,7 @@ const AppFooter = React.forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement
             <ul className="space-y-1">
               {[
                 { label: "Se connecter", to: "/eleve/login" },
-                { label: "Créer un compte", to: "/eleve/login" },
+                { label: "Créer un compte", to: "/eleve/login?tab=signup" },
                 { label: "Test de niveau", to: "/eleve/login" },
               ].map((link) => (
                 <li key={link.label}>
@@ -48,7 +48,7 @@ const AppFooter = React.forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement
         </div>
 
         <div className="border-t border-white/15 pt-5 text-center">
-          <p className="text-sm text-white/55">© 2024 CAP TCF. Tous droits réservés.</p>
+          <p className="text-sm text-white/55">© {new Date().getFullYear()} CAP TCF. Tous droits réservés.</p>
         </div>
       </div>
     </footer>

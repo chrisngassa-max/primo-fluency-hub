@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Navigate, Link } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,11 +8,15 @@ import { ArrowLeft } from "lucide-react";
 import { translateAuthError } from "@/lib/authErrors";
 import { CapPublicHeader } from "@/components/CapBrand";
 import AppFooter from "@/components/AppFooter";
+import { supabase } from "@/integrations/supabase/client";
+import { getPasswordRecoveryRedirect } from "@/lib/passwordRecovery";
 
 const LoginFormateur = () => {
   const { session, role, loading, signIn } = useAuth();
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
+  const [showForgot, setShowForgot] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,6 +32,23 @@ const LoginFormateur = () => {
       toast.error("Erreur de connexion", { description: translateAuthError(error.message) });
     } else {
       toast.success("Connexion réussie !");
+    }
+    setBusy(false);
+  };
+
+  const handleForgot = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBusy(true);
+    setMessage(null);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: getPasswordRecoveryRedirect("formateur"),
+    });
+    if (error) {
+      const translated = translateAuthError(error.message);
+      setMessage(translated);
+      toast.error("Erreur", { description: translated });
+    } else {
+      setMessage("Si un compte existe pour cette adresse, un lien vient d'être envoyé.");
     }
     setBusy(false);
   };
@@ -53,8 +74,8 @@ const LoginFormateur = () => {
               </p>
             </div>
 
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div className="space-y-2">
+            <form onSubmit={showForgot ? handleForgot : handleLogin} className="space-y-4">
+              {!showForgot && <div className="space-y-2">
                 <Label htmlFor="form-login-email" className="text-[#0b234a]">Email</Label>
                 <Input
                   id="form-login-email"
@@ -66,7 +87,8 @@ const LoginFormateur = () => {
                   autoComplete="email"
                   className="h-12"
                 />
-              </div>
+              </div>}
+              {message && <p role="status" aria-live="polite" className="rounded-lg bg-[#0b234a]/5 p-3 text-sm text-[#0b234a]">{message}</p>}
               <div className="space-y-2">
                 <Label htmlFor="form-login-password" className="text-[#0b234a]">Mot de passe</Label>
                 <Input
@@ -85,12 +107,12 @@ const LoginFormateur = () => {
                 disabled={busy}
                 className="h-14 w-full rounded-lg bg-[#0b234a] text-base font-bold text-white transition hover:bg-[#0b234a]/90 disabled:opacity-60"
               >
-                {busy ? "Connexion…" : "Se connecter"}
+                {busy ? (showForgot ? "Envoi…" : "Connexion…") : (showForgot ? "Envoyer le lien" : "Se connecter")}
               </button>
               <div className="text-center">
-                <Link to="/reset-password" className="text-sm font-semibold text-[#0b234a]/70 hover:text-[#0b234a]">
-                  Mot de passe oublié ?
-                </Link>
+                <button type="button" onClick={() => { setShowForgot(!showForgot); setMessage(null); }} className="text-sm font-semibold text-[#0b234a]/70 hover:text-[#0b234a]">
+                  {showForgot ? "Retour à la connexion" : "Mot de passe oublié ?"}
+                </button>
               </div>
             </form>
 

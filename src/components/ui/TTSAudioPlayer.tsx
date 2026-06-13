@@ -36,6 +36,7 @@ const TTSAudioPlayer = ({
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [playing, setPlaying] = useState(false);
   const [playbackRate, setPlaybackRate] = useState<number>(1);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const objectUrlRef = useRef<string | null>(null);
   const autoPlayTriggered = useRef(false);
@@ -52,6 +53,7 @@ const TTSAudioPlayer = ({
     };
     audio.onerror = () => {
       setPlaying(false);
+      setErrorMessage("Le son ne peut pas être lu. Vérifiez votre connexion puis réessayez.");
       toast.error("Erreur de lecture audio");
     };
 
@@ -69,6 +71,7 @@ const TTSAudioPlayer = ({
     utterance.rate = playbackRate;
     utterance.pitch = 1;
     utterance.onstart = () => {
+      setErrorMessage(null);
       setPlaying(true);
       onPlayStart?.();
     };
@@ -78,6 +81,7 @@ const TTSAudioPlayer = ({
     };
     utterance.onerror = () => {
       setPlaying(false);
+      setErrorMessage("La voix n'est pas disponible sur cet appareil.");
       toast.error("Lecture audio impossible");
     };
 
@@ -102,6 +106,7 @@ const TTSAudioPlayer = ({
   }, []);
 
   const generateAndPlay = useCallback(async () => {
+    setErrorMessage(null);
     if (!canStartAudioPlay(playCount, maxPlays)) {
       toast.info("Nombre maximal d’écoutes atteint");
       return;
@@ -133,6 +138,7 @@ const TTSAudioPlayer = ({
         console.error("Audio replay error:", err);
         const didFallback = speakWithBrowserFallback(browserUtterance);
         if (!didFallback) {
+          setErrorMessage("La lecture a été bloquée. Appuyez à nouveau sur Écouter.");
           toast.error("Lecture audio bloquée", {
             description: "Appuyez de nouveau sur le bouton pour relancer l'audio.",
           });
@@ -182,6 +188,7 @@ const TTSAudioPlayer = ({
         console.error("Audio play error:", playErr);
         const didFallback = speakWithBrowserFallback(browserUtterance);
         if (!didFallback) {
+          setErrorMessage("Le son est prêt, mais la lecture a été bloquée. Appuyez à nouveau.");
           toast.error("Lecture audio bloquée", {
             description: "Le son a bien été généré. Appuyez à nouveau sur Écouter pour lancer la lecture.",
           });
@@ -191,6 +198,7 @@ const TTSAudioPlayer = ({
       console.error("TTS error:", err);
       const didFallback = speakWithBrowserFallback(browserUtterance);
       if (!didFallback) {
+        setErrorMessage("L'audio est momentanément indisponible. Vérifiez votre connexion puis réessayez.");
         toast.error("Impossible de générer l'audio", { description: err.message });
       }
     } finally {
@@ -294,6 +302,11 @@ const TTSAudioPlayer = ({
             </Button>
           ))}
         </div>
+      )}
+      {errorMessage && (
+        <p role="alert" className="w-full text-sm text-destructive">
+          {errorMessage}
+        </p>
       )}
     </div>
   );

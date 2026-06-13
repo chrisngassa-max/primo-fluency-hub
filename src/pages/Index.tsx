@@ -45,7 +45,7 @@ const Index = () => {
 
           <div className="mx-auto mt-8 flex max-w-md flex-col gap-4">
             <button
-              onClick={() => navigate("/eleve/login")}
+              onClick={() => navigate("/eleve/login?tab=signup")}
               className="cap-orange-button h-14 w-full text-lg"
             >
               Je commence maintenant
@@ -69,6 +69,28 @@ const Index = () => {
               height={1024}
               className="h-auto w-full"
             />
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-3xl px-6 py-10">
+          <div className="rounded-2xl border border-[#0b234a]/10 bg-white p-6 shadow-sm md:p-8">
+            <h2 className="text-center text-2xl font-black text-[#0b234a]">Comment ça marche ?</h2>
+            <div className="mt-6 grid gap-5 sm:grid-cols-3">
+              {[
+                ["1", "Créez votre compte", "Quelques informations suffisent pour commencer."],
+                ["2", "Évaluez votre niveau", "Un test vous propose un parcours adapté."],
+                ["3", "Entraînez-vous", "Réalisez vos devoirs et suivez vos progrès."],
+              ].map(([step, title, description]) => (
+                <div key={step} className="text-center">
+                  <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-[#0b234a] font-bold text-white">{step}</span>
+                  <h3 className="mt-3 font-bold text-[#0b234a]">{title}</h3>
+                  <p className="mt-1 text-sm text-[#0b234a]/70">{description}</p>
+                </div>
+              ))}
+            </div>
+            <p className="mt-7 text-center text-sm font-medium text-[#0b234a]/75">
+              Vos réponses restent dans votre espace. Les fonctions d'IA et de voix sont expliquées avant leur première utilisation.
+            </p>
           </div>
         </section>
 

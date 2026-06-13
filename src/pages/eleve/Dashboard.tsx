@@ -8,7 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BookOpen, TrendingUp, AlertCircle, ArrowRight, Target, ClipboardCheck, Calendar, BarChart2, Pencil, FileText, History } from "lucide-react";
+import { BookOpen, TrendingUp, ArrowRight, Target, ClipboardCheck, Pencil } from "lucide-react";
 import CompetenceLabel from "@/components/CompetenceLabel";
 import MesFichesTab from "@/components/MesFichesTab";
 import EleveOnboarding, { useShowOnboarding } from "@/components/EleveOnboarding";
@@ -372,28 +372,30 @@ const EleveDashboard = () => {
         {(uncompletedTests.length > 0 || (sessionExercises && sessionExercises.length > 0)) ? (
           <div className="grid grid-cols-2 gap-3">
             {uncompletedTests.map((test: any) => (
-              <div
+              <button
+                type="button"
                 key={test.id}
-                className="flex flex-col items-start gap-3 p-5 rounded-2xl bg-[#e5edff] hover:bg-[#d6e3ff] transition-colors cursor-pointer min-h-[120px]"
+                className="flex min-h-[120px] flex-col items-start gap-3 rounded-2xl bg-[#e5edff] p-5 text-left transition-colors hover:bg-[#d6e3ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 onClick={() => navigate(`/eleve/bilan-test/${test.id}`)}
               >
                 <div className="h-12 w-12 rounded-full bg-white/60 flex items-center justify-center">
                   <ClipboardCheck className="h-6 w-6 text-[#2b6cb0]" />
                 </div>
                 <p className="font-bold text-[15px] leading-snug text-[#0b234a]">Test de bilan</p>
-              </div>
+              </button>
             ))}
             {sessionExercises && sessionExercises.map((se: any) => (
-              <div
+              <button
+                type="button"
                 key={se.sessionId}
-                className="flex flex-col items-start gap-3 p-5 rounded-2xl bg-[#def5e4] hover:bg-[#cbf0d5] transition-colors cursor-pointer min-h-[120px]"
+                className="flex min-h-[120px] flex-col items-start gap-3 rounded-2xl bg-[#def5e4] p-5 text-left transition-colors hover:bg-[#cbf0d5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 onClick={() => navigate(`/eleve/exercices-seance/${se.sessionId}`)}
               >
                 <div className="h-12 w-12 rounded-full bg-white/60 flex items-center justify-center">
                   <Pencil className="h-6 w-6 text-[#2f855a]" />
                 </div>
                 <p className="font-bold text-[15px] leading-snug text-[#0b234a]">Exercices de séance</p>
-              </div>
+              </button>
             ))}
           </div>
         ) : (
@@ -431,12 +433,9 @@ const EleveDashboard = () => {
                 </div>
                 <p className="font-semibold text-foreground">Ta progression apparaîtra ici</p>
                 <p className="text-sm text-muted-foreground mt-1">Commence par le test de niveau</p>
-                <Button
-                  className="mt-4 gap-2 bg-accent hover:bg-accent/90 text-accent-foreground"
-                  onClick={() => navigate("/eleve/test-positionnement")}
-                >
-                  Passer le test →
-                </Button>
+                <p className="mt-3 text-xs font-medium text-[#0b234a]">
+                  Utilise le bouton « Commencer le test » affiché en haut de la page.
+                </p>
               </div>
             )}
           </CardContent>
@@ -448,10 +447,8 @@ const EleveDashboard = () => {
         <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground px-1">
           Mes outils
         </p>
-        <Card
-          className="cursor-pointer hover:bg-muted/30 transition-colors shadow-sm"
-          onClick={() => navigate("/eleve/devoirs")}
-        >
+        <Card className="shadow-sm">
+          <button type="button" className="w-full text-left hover:bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary" onClick={() => navigate("/eleve/devoirs")}>
           <CardContent className="flex items-center justify-between gap-3 py-4">
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -464,23 +461,23 @@ const EleveDashboard = () => {
             </div>
             <ArrowRight className="h-4 w-4 text-muted-foreground" />
           </CardContent>
+          </button>
         </Card>
-        <Card
-          className="cursor-pointer hover:bg-muted/30 transition-colors shadow-sm"
-          onClick={() => navigate("/eleve/historique")}
-        >
+        <Card className="shadow-sm">
+          <button type="button" className="w-full text-left hover:bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary" onClick={() => navigate("/eleve/progression")}>
           <CardContent className="flex items-center justify-between gap-3 py-4">
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-xl bg-orange-100 flex items-center justify-center">
-                <History className="h-5 w-5 text-orange-600" />
+                <TrendingUp className="h-5 w-5 text-orange-600" />
               </div>
               <div>
-                <p className="font-semibold text-sm">Mon historique</p>
-                <p className="text-xs text-muted-foreground">Interventions reçues et évolution de niveau</p>
+                <p className="font-semibold text-sm">Ma progression détaillée</p>
+                <p className="text-xs text-muted-foreground">Résultats, compétences et activités réalisées</p>
               </div>
             </div>
             <ArrowRight className="h-4 w-4 text-muted-foreground" />
           </CardContent>
+          </button>
         </Card>
       </div>
 

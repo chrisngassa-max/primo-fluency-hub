@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import { Clock3, Copy, RefreshCw, ShieldCheck, Trash2, Users, XCircle } from "lucide-react";
+import { Clock3, Eye, RefreshCw, ShieldCheck, Trash2, Users, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,13 +18,15 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import SandboxCredentialsDialog from "@/components/sandbox/SandboxCredentialsDialog";
-import { useSandbox, type SandboxLevel, type SandboxStudent } from "@/contexts/SandboxContext";
+import { useSandbox, type SandboxStudent } from "@/contexts/SandboxContext";
 import { supabase } from "@/integrations/supabase/client";
+import { useSandboxPreview } from "@/contexts/SandboxPreviewContext";
 
 export default function SandboxControlPanel() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { session, counts, loading, refresh, setup, reset, invite, exitSandboxMode } = useSandbox();
+  const { session, counts, loading, refresh, setup, reset, exitSandboxMode } = useSandbox();
+  const { enterStudentPreview } = useSandboxPreview();
   const [credentials, setCredentials] = useState<SandboxStudent[]>([]);
   const [busy, setBusy] = useState(false);
 
@@ -63,15 +65,6 @@ export default function SandboxControlPanel() {
       toast.error(error instanceof Error ? error.message : "Operation impossible");
     } finally {
       setBusy(false);
-    }
-  };
-
-  const copyInvite = async (level: SandboxLevel) => {
-    try {
-      await navigator.clipboard.writeText(await invite(level));
-      toast.success(`Lien ${level} copie`);
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Lien impossible");
     }
   };
 
@@ -135,7 +128,7 @@ export default function SandboxControlPanel() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2"><Users className="h-5 w-5" />Comptes eleves</CardTitle>
-          <CardDescription>Le mot de passe initial n'est plus recuperable. Utilise les liens rapides.</CardDescription>
+          <CardDescription>Ouvre un aperçu isolé pour vérifier exactement ce que voit chaque élève test.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="overflow-x-auto rounded-md border">
@@ -147,7 +140,11 @@ export default function SandboxControlPanel() {
                     <td className="p-3 font-semibold">{student.niveau}</td>
                     <td className="p-3 font-medium">{student.display_name}</td>
                     <td className="p-3">{student.email}</td>
-                    <td className="p-3 text-right"><Button size="sm" variant="outline" onClick={() => void copyInvite(student.niveau)}><Copy className="mr-2 h-4 w-4" />Lien rapide</Button></td>
+                    <td className="p-3 text-right">
+                      <Button size="sm" variant="outline" onClick={() => enterStudentPreview(student.niveau)}>
+                        <Eye className="mr-2 h-4 w-4" />Voir comme cet élève
+                      </Button>
+                    </td>
                   </tr>
                 ))}
               </tbody>

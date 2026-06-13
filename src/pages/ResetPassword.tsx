@@ -5,61 +5,40 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
-
-const getRecoveryParams = () => {
-  const searchParams = new URLSearchParams(window.location.search);
-  const hash = window.location.hash;
-  const hashQuery = hash.includes("?")
-    ? hash.split("?")[1]
-    : hash.startsWith("#access_token=")
-      ? hash.slice(1)
-      : "";
-  const hashParams = new URLSearchParams(hashQuery);
-
-  return {
-    type: searchParams.get("type") ?? hashParams.get("type"),
-    hasToken: Boolean(
-      searchParams.get("access_token") ||
-      hashParams.get("access_token") ||
-      searchParams.get("refresh_token") ||
-      hashParams.get("refresh_token") ||
-      searchParams.get("code") ||
-      hashParams.get("code")
-    ),
-  };
-};
+import { useNavigate, useSearchParams } from "react-router-dom";
+import {
+  consumePasswordRecovery,
+  getLoginPath,
+  type AuthAudience,
+} from "@/lib/passwordRecovery";
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);
+  const [audience, setAudience] = useState<AuthAudience>("eleve");
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    const syncRecoveryState = async () => {
-      const recovery = getRecoveryParams();
-      if (recovery.type === "recovery" || recovery.hasToken) {
-        setReady(true);
-        return;
-      }
-
-      const { data } = await supabase.auth.getSession();
-      setReady(Boolean(data.session));
-    };
-
-    syncRecoveryState();
+    const recoveryAudience = consumePasswordRecovery();
+    if (recoveryAudience) {
+      setAudience(recoveryAudience);
+      setReady(true);
+    }
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") {
+      if (event === "PASSWORD_RECOVERY") {
+        const nextAudience = searchParams.get("audience") === "formateur" ? "formateur" : "eleve";
+        setAudience(nextAudience);
         setReady(true);
       }
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [searchParams]);
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,7 +52,8 @@ const ResetPassword = () => {
       toast.error("Erreur", { description: error.message });
     } else {
       toast.success("Mot de passe mis à jour !");
-      navigate("/formateur/login");
+      await supabase.auth.signOut();
+      navigate(getLoginPath(audience), { replace: true });
     }
     setLoading(false);
   };
@@ -83,8 +63,12 @@ const ResetPassword = () => {
       <div className="min-h-screen flex items-center justify-center bg-background p-4">
         <Card className="w-full max-w-md">
           <CardContent className="pt-6 text-center">
-            <p className="text-muted-foreground">Lien de réinitialisation invalide ou expiré.</p>
-            <Button variant="link" onClick={() => navigate("/")}>Retour à la connexion</Button>
+            <p role="alert" className="text-muted-foreground">
+              Ce lien de réinitialisation est invalide ou a expiré.
+            </p>
+            <Button variant="link" onClick={() => navigate(getLoginPath(audience))}>
+              Demander un nouveau lien
+            </Button>
           </CardContent>
         </Card>
       </div>

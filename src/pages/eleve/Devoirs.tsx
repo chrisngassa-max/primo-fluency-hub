@@ -203,9 +203,10 @@ function DevoirCard({ devoir, onOpen, inProgress }: { devoir: any; onOpen: () =>
   const isDone = devoir.statut === "fait" || devoir.statut === "arrete";
 
   return (
-    <div
+    <button
+      type="button"
       className={cn(
-        "flex items-center gap-3 p-4 rounded-[0.625rem] border cursor-pointer transition-colors shadow-sm",
+        "flex w-full items-center gap-3 p-4 rounded-[0.625rem] border text-left transition-colors shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
         isDone ? "bg-green-50 border-green-200 hover:bg-green-100/70 opacity-80"
           : inProgress ? "bg-blue-50 border-blue-200 hover:bg-blue-100/70"
           : isUrgent ? "bg-destructive/5 border-destructive/30 hover:bg-destructive/10"
@@ -232,7 +233,7 @@ function DevoirCard({ devoir, onOpen, inProgress }: { devoir: any; onOpen: () =>
           </div>
           <div className="flex-1 min-w-0 space-y-0.5">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-semibold truncate">{ex?.titre || "Exercice"}</span>
+              <span className="font-semibold truncate">{ex?.titre || "Activité à compléter"}</span>
               {(devoir as any).source_label === "tronc_commun" && !isDone && (
                 <Badge className="text-xs bg-blue-100 text-blue-700 border-blue-300 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700">Exercice du groupe</Badge>
               )}
@@ -252,7 +253,7 @@ function DevoirCard({ devoir, onOpen, inProgress }: { devoir: any; onOpen: () =>
             <DeadlineDisplay dateEcheance={devoir.date_echeance} isDone={isDone} />
           </div>
           <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
-    </div>
+    </button>
   );
 }
 

@@ -10,12 +10,20 @@ import {
   NotebookTabs,
   TrendingUp,
   User,
+  MoreHorizontal,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import AppFooter from "@/components/AppFooter";
 import { CapPublicHeader } from "@/components/CapBrand";
 import InterventionPlayer from "@/components/eleve/InterventionPlayer";
 import OfflineStatus from "@/components/eleve/OfflineStatus";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const navItems = [
   { title: "Accueil", path: "/eleve", icon: Home },
@@ -25,6 +33,9 @@ const navItems = [
   { title: "Ma progression", path: "/eleve/progression", icon: TrendingUp },
   { title: "Mon profil", path: "/eleve/profil", icon: User },
 ];
+
+const mobileNavItems = navItems.slice(0, 4);
+const mobileMoreItems = navItems.slice(4);
 
 const EleveLayout = () => {
   const { user, signOut } = useAuth();
@@ -101,14 +112,15 @@ const EleveLayout = () => {
         <AppFooter />
       </div>
 
-      <nav className="fixed inset-x-0 bottom-0 z-50 grid grid-cols-6 border-t border-black/10 bg-white/95 px-1 py-2 shadow-[0_-6px_24px_rgba(15,23,42,0.12)] backdrop-blur lg:hidden">
-        {navItems.map((item) => {
+      <nav aria-label="Navigation élève" className="fixed inset-x-0 bottom-0 z-50 grid grid-cols-5 border-t border-black/10 bg-white/95 px-1 py-2 shadow-[0_-6px_24px_rgba(15,23,42,0.12)] backdrop-blur lg:hidden">
+        {mobileNavItems.map((item) => {
           const active = isActive(item.path);
           return (
             <button
               key={item.path}
               onClick={() => navigate(item.path)}
-              className="flex min-w-0 flex-col items-center gap-1 px-1 py-1 text-center transition-colors"
+              aria-current={active ? "page" : undefined}
+              className="flex min-h-14 min-w-0 flex-col items-center gap-1 px-1 py-1 text-center transition-colors"
             >
               <span
                 className={cn(
@@ -120,7 +132,7 @@ const EleveLayout = () => {
               </span>
               <span
                 className={cn(
-                  "text-[11px] font-medium leading-[1.05]",
+                  "text-xs font-medium leading-none",
                   active ? "font-extrabold text-[#0b234a]" : "text-zinc-500"
                 )}
               >
@@ -129,6 +141,35 @@ const EleveLayout = () => {
             </button>
           );
         })}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              aria-label="Plus de rubriques"
+              className="flex min-h-14 min-w-0 flex-col items-center gap-1 px-1 py-1 text-center"
+            >
+              <span className={cn(
+                "flex h-10 w-10 items-center justify-center rounded-lg",
+                mobileMoreItems.some((item) => isActive(item.path)) ? "bg-[#e7e9f1] text-[#0b234a]" : "text-zinc-500",
+              )}>
+                <MoreHorizontal className="h-7 w-7" />
+              </span>
+              <span className="text-xs font-medium leading-none text-zinc-600">Plus</span>
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" side="top" className="mb-2 min-w-56">
+            {mobileMoreItems.map((item) => (
+              <DropdownMenuItem key={item.path} onSelect={() => navigate(item.path)} className="min-h-11 gap-3">
+                <item.icon className="h-5 w-5" />
+                {item.title}
+              </DropdownMenuItem>
+            ))}
+            <DropdownMenuItem onSelect={() => void signOut()} className="min-h-11 gap-3 text-destructive">
+              <LogOut className="h-5 w-5" />
+              Se déconnecter
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </nav>
     </div>
   );

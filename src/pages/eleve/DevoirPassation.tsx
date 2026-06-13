@@ -798,6 +798,41 @@ const DevoirPassation = () => {
   }
 
   const showResult = result || (existingResult ? { score: Number(existingResult.score), correction: (existingResult.correction_detaillee as any) || [] } : null);
+  const exerciseUnavailable = !ex || (!isCompetenceEO && items.length === 0);
+
+  if (!showResult && !isDone && exerciseUnavailable) {
+    return (
+      <div className="mx-auto max-w-2xl py-8">
+        <Card className="border-orange-300 bg-orange-50">
+          <CardHeader>
+            <CardTitle>Cette activité n'est pas encore disponible</CardTitle>
+            <CardDescription>
+              Il manque des questions dans ce devoir. Aucune réponse ne sera perdue ni comptée.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Retourne à tes devoirs et préviens ton formateur pour qu'il complète l'activité.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Button onClick={() => navigate("/eleve/devoirs")}>
+                <ArrowLeft className="mr-2 h-4 w-4" /> Retour aux devoirs
+              </Button>
+              {user?.id && (
+                <ReportProblemButton
+                  context="devoir"
+                  devoirId={devoir.id}
+                  exerciceId={ex?.id}
+                  formateurId={devoir.formateur_id}
+                  onReported={() => navigate("/eleve/devoirs")}
+                />
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   if (showResult || isDone) {
     const finalResult = showResult || { score: 0, correction: [] };

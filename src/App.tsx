@@ -8,6 +8,7 @@ import { SandboxProvider } from "@/contexts/SandboxContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import AIConsentRequiredRoute from "@/components/AIConsentRequiredRoute";
 import SandboxEmbedBootstrap from "@/components/sandbox/SandboxEmbedBootstrap";
+import PasswordRecoveryBridge from "@/components/PasswordRecoveryBridge";
 import { isSandboxEmbed } from "@/integrations/supabase/sandboxEmbed";
 import AccesLimite from "@/pages/eleve/AccesLimite";
 
@@ -83,6 +84,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <HashRouter>
+          <PasswordRecoveryBridge />
           {isSandboxEmbed() ? (
             <SandboxEmbedBootstrap>
               <Routes>

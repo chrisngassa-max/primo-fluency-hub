@@ -306,11 +306,12 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
   const { data: testPositionnement } = useQuery({
     queryKey: ["eleve-test-positionnement-progression", targetId],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
-        .from("test_sessions")
-        .select("statut")
+      const { data, error } = await supabase
+        .from("test_resultats_apprenants")
+        .select("id")
         .eq("apprenant_id", targetId!)
-        .eq("statut", "termine")
+        .order("date_test", { ascending: false })
+        .limit(1)
         .maybeSingle();
       if (error) throw error;
       return data;
@@ -318,7 +319,7 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
     enabled: !!targetId && !eleveId,
   });
 
-  const testCompleted = !eleveId && testPositionnement?.statut === "termine";
+  const testCompleted = !eleveId && Boolean(testPositionnement);
 
   // Global progress: compute from profil or average competencies
   const globalProgress = profil?.taux_reussite_global ?? 0;
@@ -347,7 +348,7 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
         <h1 className="text-[28px] font-extrabold tracking-tight text-[#0b234a] flex items-center gap-2">
           {eleveId && studentProfile
             ? `Progression de ${studentProfile.prenom} ${studentProfile.nom}`
-            : "Progression Élève"}
+            : "Ma progression"}
         </h1>
       </div>
 
@@ -832,7 +833,7 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
                           {format(new Date(r.created_at), "dd MMM", { locale: fr })}
                         </td>
                         <td className="py-2.5 px-2 font-medium max-w-[200px] truncate">
-                          {r.exercice?.titre || "Exercice"}
+                          {r.exercice?.titre || "Activité réalisée"}
                         </td>
                         <td className="py-2.5 px-2 text-center">
                           <Badge variant="outline" className="text-xs">

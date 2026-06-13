@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { Users, TrendingUp, User } from "lucide-react";
 import AndragogicalProfileForm from "@/components/AndragogicalProfileForm";
+import AIConsentSettings from "@/components/AIConsentSettings";
 
 const EleveProfil = () => {
   const { user } = useAuth();
@@ -230,6 +231,11 @@ const EleveProfil = () => {
           </div>
         </div>
       )}
+
+      <div className="space-y-3">
+        <h2 className="text-base font-bold text-foreground">Confidentialité et consentements</h2>
+        <AIConsentSettings />
+      </div>
 
       {/* Sécurité */}
       <div className="space-y-3">

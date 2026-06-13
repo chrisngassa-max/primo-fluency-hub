@@ -11,6 +11,7 @@ import { ArrowLeft, Eye, EyeOff, Users } from "lucide-react";
 import { translateAuthError } from "@/lib/authErrors";
 import { CapPublicHeader } from "@/components/CapBrand";
 import AppFooter from "@/components/AppFooter";
+import { getPasswordRecoveryRedirect } from "@/lib/passwordRecovery";
 
 const LoginEleve = () => {
   const { signIn, signUp, session, role, loading, user } = useAuth();
@@ -18,6 +19,8 @@ const LoginEleve = () => {
   const [searchParams] = useSearchParams();
   const inviteParam = searchParams.get("invite");
   const [busy, setBusy] = useState(false);
+  const [activeTab, setActiveTab] = useState(searchParams.get("tab") === "signup" ? "signup" : "login");
+  const [formMessage, setFormMessage] = useState<string | null>(null);
   const autoJoinAttempted = useRef(false);
 
   useEffect(() => {
@@ -84,70 +87,52 @@ const LoginEleve = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormMessage(null);
     setBusy(true);
     const { error } = await signIn(loginEmail, loginPassword);
-    if (error) toast.error("Erreur de connexion", { description: translateAuthError(error.message) });
+    if (error) {
+      const message = translateAuthError(error.message);
+      setFormMessage(message);
+      toast.error("Erreur de connexion", { description: message });
+    }
     else toast.success("Connexion réussie !");
     setBusy(false);
   };
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormMessage(null);
     if (!signupNom || !signupPrenom) { toast.error("Remplissez votre nom et prénom."); return; }
     setBusy(true);
     const { error } = await signUp(signupEmail, signupPassword, { nom: signupNom, prenom: signupPrenom, role: "eleve" });
     if (error) {
-      toast.error("Erreur d'inscription", { description: translateAuthError(error.message) });
+      const message = translateAuthError(error.message);
+      setFormMessage(message);
+      toast.error("Erreur d'inscription", { description: message });
     } else {
       toast.success("Inscription réussie !", { description: "Vous pouvez maintenant vous connecter." });
-      try {
-        const { data: formateurs } = await supabase
-          .from("user_roles")
-          .select("user_id")
-          .eq("role", "formateur");
-        if (formateurs) {
-          for (const f of formateurs) {
-            await supabase.from("notifications").insert({
-              user_id: f.user_id,
-              titre: "Nouvel élève inscrit",
-              message: `${signupPrenom} ${signupNom} (${signupEmail}) vient de s'inscrire et attend ta validation.`,
-              link: "/formateur/demandes",
-            });
-            const { data: profile } = await supabase
-              .from("profiles")
-              .select("email")
-              .eq("id", f.user_id)
-              .maybeSingle();
-            if (profile?.email) {
-              await supabase.functions.invoke("send-transactional-email", {
-                body: {
-                  templateName: "new-student-notification",
-                  recipientEmail: profile.email,
-                  idempotencyKey: `new-student-${signupEmail}-${f.user_id}`,
-                  templateData: {
-                    studentName: `${signupPrenom} ${signupNom}`,
-                    studentEmail: signupEmail,
-                  },
-                },
-              });
-            }
-          }
-        }
-      } catch (e) {
-        console.error("Failed to send formateur notification", e);
-      }
+      setFormMessage("Compte créé. Vous pouvez maintenant vous connecter.");
+      setActiveTab("login");
+      setLoginEmail(signupEmail);
     }
     setBusy(false);
   };
 
   const handleForgot = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormMessage(null);
     setBusy(true);
     const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
-      redirectTo: `${window.location.origin}/reset-password`,
+      redirectTo: getPasswordRecoveryRedirect("eleve"),
     });
-    if (error) toast.error("Erreur", { description: translateAuthError(error.message) });
-    else toast.success("Email envoyé", { description: "Consultez votre boîte mail." });
+    if (error) {
+      const message = translateAuthError(error.message);
+      setFormMessage(message);
+      toast.error("Erreur", { description: message });
+    } else {
+      setFormMessage("Si un compte existe pour cette adresse, un lien vient d'être envoyé.");
+      toast.success("Demande envoyée", { description: "Consultez votre boîte mail." });
+    }
     setBusy(false);
   };
 
@@ -163,14 +148,14 @@ const LoginEleve = () => {
         onChange={(e) => onChange(e.target.value)}
         placeholder="••••••••"
         minLength={minLength}
-        autoComplete="new-password"
+        autoComplete={id.includes("login") ? "current-password" : "new-password"}
         required
         className="h-12 pr-10"
       />
       <button
         type="button"
         onClick={onToggle}
-        tabIndex={-1}
+        aria-label={show ? "Masquer le mot de passe" : "Afficher le mot de passe"}
         className="absolute right-0 top-0 flex h-full items-center px-3 text-[#0b234a]/60 hover:text-[#0b234a]"
       >
         {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -217,6 +202,11 @@ const LoginEleve = () => {
                 <button type="submit" disabled={busy} className={orangeBtn}>
                   {busy ? "Envoi…" : "Envoyer le lien"}
                 </button>
+                {formMessage && (
+                  <p role="status" aria-live="polite" className="rounded-lg bg-[#0b234a]/5 p-3 text-sm text-[#0b234a]">
+                    {formMessage}
+                  </p>
+                )}
                 <button type="button" onClick={() => setShowForgot(false)} className="w-full text-sm font-semibold text-[#0b234a]/70 hover:text-[#0b234a]">
                   Retour
                 </button>
@@ -225,14 +215,31 @@ const LoginEleve = () => {
               <>
                 <div className="mb-6 text-center">
                   <h1 className="text-2xl font-black text-[#0b234a] sm:text-3xl">Espace élève</h1>
-                  <p className="mt-1 text-sm text-[#0b234a]/70">Connecte-toi pour accéder à tes devoirs et ta progression.</p>
+                  <p className="mt-1 text-sm text-[#0b234a]/70">
+                    {activeTab === "signup"
+                      ? "Crée ton compte pour commencer ta préparation."
+                      : "Connecte-toi pour accéder à tes devoirs et ta progression."}
+                  </p>
                 </div>
 
-                <Tabs defaultValue="login">
+                <Tabs value={activeTab} onValueChange={(value) => {
+                  setActiveTab(value);
+                  setFormMessage(null);
+                }}>
                   <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="login">Connexion</TabsTrigger>
                     <TabsTrigger value="signup">Inscription</TabsTrigger>
                   </TabsList>
+
+                  {formMessage && (
+                    <p
+                      role="status"
+                      aria-live="polite"
+                      className="mt-4 rounded-lg border border-[#0b234a]/15 bg-[#0b234a]/5 p-3 text-sm text-[#0b234a]"
+                    >
+                      {formMessage}
+                    </p>
+                  )}
 
                   <TabsContent value="login">
                     <form onSubmit={handleLogin} className="mt-5 space-y-4">
