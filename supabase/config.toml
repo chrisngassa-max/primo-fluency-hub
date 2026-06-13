@@ -41,7 +41,7 @@ project_id = "gudcenhmzlcvhgbgklzw"
   [functions.handle-email-suppression]
     verify_jwt = false
   [functions.reset-student-password]
-    verify_jwt = false
+    verify_jwt = true
   [functions.formateur-group-members]
     verify_jwt = true
   [functions.sandbox-setup]
@@ -59,6 +59,6 @@ project_id = "gudcenhmzlcvhgbgklzw"
   [functions.sandbox-mosaic-summary]
     verify_jwt = true
   [functions.group-invitation]
-    verify_jwt = false
+    verify_jwt = true
   [functions.request-student-help]
     verify_jwt = true
