@@ -142,7 +142,6 @@ const GroupesPage = () => {
   // Track expanded groups to fetch members
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [shownPasswords, setShownPasswords] = useState<Record<string, boolean>>({});
   const [resettingPwd, setResettingPwd] = useState<string | null>(null);
 
   // Set custom password dialog
@@ -241,7 +240,6 @@ const GroupesPage = () => {
       if (data?.error) throw new Error(data.error);
       const savedEmail = data?.email || setPwdEleveEmail;
       const savedPassword = data?.password || password;
-      setShownPasswords((s) => ({ ...s, [setPwdEleveId]: true }));
       setSetPwdEleveEmail(savedEmail);
       if (savedPassword) {
         setPasswordDelivery({
@@ -297,7 +295,7 @@ const GroupesPage = () => {
         const groupIds = groups.map((g) => g.id);
         const fallback = await supabase
           .from("group_members")
-          .select("*, eleve:profiles(id, nom, prenom, email, mot_de_passe_initial)")
+          .select("*, eleve:profiles(id, nom, prenom, email)")
           .in("group_id", groupIds);
         if (fallback.error) throw fallback.error;
         return hydrateSandboxIdentities(fallback.data ?? []);
@@ -308,7 +306,7 @@ const GroupesPage = () => {
         const groupIds = groups.map((g) => g.id);
         const fallback = await supabase
           .from("group_members")
-          .select("*, eleve:profiles(id, nom, prenom, email, mot_de_passe_initial)")
+          .select("*, eleve:profiles(id, nom, prenom, email)")
           .in("group_id", groupIds);
         if (!fallback.error && fallback.data?.length) {
           const fallbackById = new Map(fallback.data.map((member: any) => [member.id, member]));
@@ -478,8 +476,16 @@ const GroupesPage = () => {
       });
       if (error) throw new Error(data?.error || error.message);
       if (data?.error) throw new Error(data.error);
-      setShownPasswords((s) => ({ ...s, [eleveId]: true }));
-      toast.success(`Nouveau mot de passe : ${data.password}`, { duration: 10000 });
+      const member = (allMembers ?? []).find((item: any) => item.eleve_id === eleveId);
+      const email = member?.eleve?.email || "";
+      setSetPwdEleveId(eleveId);
+      setSetPwdEleveName(eleveName);
+      setSetPwdEleveEmail(email);
+      setCustomEmail(email);
+      setCustomPwd("");
+      setPasswordDelivery({ name: eleveName, email, password: data.password });
+      setSetPwdOpen(true);
+      toast.success("Mot de passe réinitialisé. Transmettez-le maintenant à l’élève.");
       qc.invalidateQueries({ queryKey: ["all-group-members"] });
     } catch (e: any) {
       toast.error("Erreur", { description: e.message });
@@ -879,7 +885,6 @@ const GroupesPage = () => {
                     <TableRow>
                       <TableHead>Prénom & Nom</TableHead>
                       <TableHead>Identifiant</TableHead>
-                      <TableHead>Mot de passe</TableHead>
                       <TableHead>Groupe</TableHead>
                       <TableHead className="text-center">Progression</TableHead>
                       <TableHead className="text-center w-20">Actions</TableHead>
@@ -926,49 +931,6 @@ const GroupesPage = () => {
                               </TableCell>
                               <TableCell>
                                 <code className="text-xs bg-muted px-1.5 py-0.5 rounded">{eleve?.email || "—"}</code>
-                              </TableCell>
-                              <TableCell>
-                                <div className="flex items-center gap-1">
-                                  {eleve?.mot_de_passe_initial ? (
-                                    <>
-                                      <code className="text-xs bg-muted px-1.5 py-0.5 rounded font-mono min-w-[80px] inline-block">
-                                        {shownPasswords[m.eleve_id] ? eleve.mot_de_passe_initial : "••••••••"}
-                                      </code>
-                                      <Button
-                                        variant="ghost" size="icon" className="h-6 w-6"
-                                        onClick={() => setShownPasswords((s) => ({ ...s, [m.eleve_id]: !s[m.eleve_id] }))}
-                                        title={shownPasswords[m.eleve_id] ? "Masquer" : "Afficher"}
-                                      >
-                                        {shownPasswords[m.eleve_id] ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-                                      </Button>
-                                      <Button
-                                        variant="ghost" size="icon" className="h-6 w-6"
-                                        onClick={() => copyToClipboard(eleve.mot_de_passe_initial!, `pwd-${m.eleve_id}`)}
-                                        title="Copier"
-                                      >
-                                        {copiedField === `pwd-${m.eleve_id}` ? <Check className="h-3.5 w-3.5 text-green-600" /> : <Copy className="h-3.5 w-3.5" />}
-                                      </Button>
-                                    </>
-                                  ) : (
-                                    <span className="text-xs text-muted-foreground italic">non disponible</span>
-                                  )}
-                                  <Button
-                                    variant="outline" size="sm" className="h-7 px-2 gap-1 text-xs"
-                                    onClick={() => openSetPasswordDialog(m.eleve_id, studentName, eleve?.email || "")}
-                                    title="Réinitialiser avec un mot de passe choisi"
-                                  >
-                                    <KeyRound className="h-3.5 w-3.5" />
-                                    Réinitialiser
-                                  </Button>
-                                  <Button
-                                    variant="ghost" size="icon" className="h-6 w-6"
-                                    onClick={() => handleResetPassword(m.eleve_id, studentName)}
-                                    disabled={resettingPwd === m.eleve_id}
-                                    title="Générer un nouveau mot de passe aléatoire"
-                                  >
-                                    {resettingPwd === m.eleve_id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
-                                  </Button>
-                                </div>
                               </TableCell>
                               <TableCell>
                                 <div className="flex flex-wrap items-center gap-1">
@@ -1032,13 +994,27 @@ const GroupesPage = () => {
                                 </div>
                               </TableCell>
                               <TableCell className="text-center">
-                                <Button
-                                  variant="ghost" size="icon" className="h-7 w-7"
-                                  onClick={() => navigate(`/formateur/eleves/${m.eleve_id}`)}
-                                  title="Voir le dossier"
-                                >
-                                  <Eye className="h-4 w-4" />
-                                </Button>
+                                <div className="flex items-center justify-center gap-1">
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8"
+                                    onClick={() => handleResetPassword(m.eleve_id, studentName)}
+                                    disabled={resettingPwd === m.eleve_id}
+                                    title="Générer un nouveau mot de passe"
+                                  >
+                                    {resettingPwd === m.eleve_id
+                                      ? <Loader2 className="h-4 w-4 animate-spin" />
+                                      : <RefreshCw className="h-4 w-4" />}
+                                  </Button>
+                                  <Button
+                                    variant="ghost" size="icon" className="h-8 w-8"
+                                    onClick={() => navigate(`/formateur/eleves/${m.eleve_id}`)}
+                                    title="Voir le dossier"
+                                  >
+                                    <Eye className="h-4 w-4" />
+                                  </Button>
+                                </div>
                               </TableCell>
                             </TableRow>
                           );

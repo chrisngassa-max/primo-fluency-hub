@@ -12,12 +12,15 @@ import {
   User,
   MoreHorizontal,
   LogOut,
+  CircleHelp,
 } from "lucide-react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import AppFooter from "@/components/AppFooter";
 import { CapPublicHeader } from "@/components/CapBrand";
 import InterventionPlayer from "@/components/eleve/InterventionPlayer";
 import OfflineStatus from "@/components/eleve/OfflineStatus";
+import StudentHelpDialog from "@/components/eleve/StudentHelpDialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,6 +44,7 @@ const EleveLayout = () => {
   const { user, signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const [helpOpen, setHelpOpen] = useState(false);
 
   const isActive = (path: string) =>
     path === "/eleve" ? location.pathname === path : location.pathname.startsWith(path);
@@ -95,6 +99,13 @@ const EleveLayout = () => {
               <span>{item.title}</span>
             </button>
           ))}
+          <button
+            onClick={() => setHelpOpen(true)}
+            className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            <CircleHelp className="h-4 w-4" />
+            Aide
+          </button>
           <button
             onClick={signOut}
             className="ml-auto rounded-lg px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
@@ -164,6 +175,10 @@ const EleveLayout = () => {
                 {item.title}
               </DropdownMenuItem>
             ))}
+            <DropdownMenuItem onSelect={() => setHelpOpen(true)} className="min-h-11 gap-3">
+              <CircleHelp className="h-5 w-5" />
+              Demander de l’aide
+            </DropdownMenuItem>
             <DropdownMenuItem onSelect={() => void signOut()} className="min-h-11 gap-3 text-destructive">
               <LogOut className="h-5 w-5" />
               Se déconnecter
@@ -171,6 +186,7 @@ const EleveLayout = () => {
           </DropdownMenuContent>
         </DropdownMenu>
       </nav>
+      <StudentHelpDialog open={helpOpen} onOpenChange={setHelpOpen} />
     </div>
   );
 };

@@ -109,7 +109,7 @@ Deno.serve(async (req) => {
     const { data: profiles, error: profilesError } = eleveIds.length
       ? await admin
         .from("profiles")
-        .select("id, nom, prenom, email, mot_de_passe_initial")
+        .select("id, nom, prenom, email")
         .in("id", eleveIds)
       : { data: [], error: null };
     if (profilesError) throw profilesError;
@@ -131,7 +131,6 @@ Deno.serve(async (req) => {
           nom: metadataNames.nom,
           prenom: metadataNames.prenom,
           email: authUser.email ?? "",
-          mot_de_passe_initial: null,
         };
       } catch (e) {
         console.warn("auth fallback failed for", eleveId, e instanceof Error ? e.message : e);
@@ -151,7 +150,6 @@ Deno.serve(async (req) => {
           nom: cleanText(profile?.nom) || cleanText(fallback?.nom) || sandboxNames.nom,
           prenom: cleanText(profile?.prenom) || cleanText(fallback?.prenom) || sandboxNames.prenom,
           email: cleanText(profile?.email) || cleanText(fallback?.email) || cleanText(sandboxStudent?.email),
-          mot_de_passe_initial: profile?.mot_de_passe_initial ?? fallback?.mot_de_passe_initial ?? null,
         }
         : sandboxStudent
         ? {
@@ -159,7 +157,6 @@ Deno.serve(async (req) => {
           nom: sandboxNames.nom,
           prenom: sandboxNames.prenom,
           email: cleanText(sandboxStudent.email),
-          mot_de_passe_initial: null,
         }
         : null;
       if (profile && sandboxStudent && mergedProfile && (!cleanText(profile.nom) || !cleanText(profile.prenom) || !cleanText(profile.email))) {

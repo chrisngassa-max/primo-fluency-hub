@@ -93,7 +93,7 @@ Deno.serve(async (req) => {
     }
 
     const { error: profileErr } = await admin.from("profiles")
-      .update({ mot_de_passe_initial: new_password, status: "approved" })
+      .update({ mot_de_passe_initial: null, status: "approved" })
       .eq("id", eleve_id);
     if (profileErr) {
       return new Response(JSON.stringify({ error: profileErr.message }), {

@@ -60,3 +60,5 @@ project_id = "gudcenhmzlcvhgbgklzw"
     verify_jwt = true
   [functions.group-invitation]
     verify_jwt = false
+  [functions.request-student-help]
+    verify_jwt = true

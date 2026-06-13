@@ -112,9 +112,8 @@ Deno.serve(async (req) => {
 
     const userId = newUser.user.id;
 
-    // Store initial password and approve the profile immediately.
-    // These accounts are created by a verified formateur, so students should not
-    // have to confirm an email or wait for manual activation.
+    // Approve the profile immediately. The password is returned once for
+    // handoff, but is never persisted in the profile.
     await adminClient
       .from("profiles")
       .upsert({
@@ -122,7 +121,6 @@ Deno.serve(async (req) => {
         email: cleanEmail,
         prenom: cleanPrenom,
         nom: cleanNom,
-        mot_de_passe_initial: cleanPassword,
         status: "approved",
       });
 

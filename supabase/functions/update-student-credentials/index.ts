@@ -107,7 +107,7 @@ Deno.serve(async (req) => {
 
     const profileUpdate: Record<string, unknown> = { status: "approved" };
     if (new_email) profileUpdate.email = new_email;
-    if (new_password) profileUpdate.mot_de_passe_initial = new_password;
+    if (new_password) profileUpdate.mot_de_passe_initial = null;
 
     const { error: profileErr } = await admin
       .from("profiles")
