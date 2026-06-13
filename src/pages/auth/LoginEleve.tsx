@@ -145,7 +145,7 @@ const LoginEleve = () => {
         type="button"
         onClick={onToggle}
         aria-label={show ? "Masquer le mot de passe" : "Afficher le mot de passe"}
-        className="absolute right-0 top-0 flex h-full items-center px-3 text-[#0b234a]/60 hover:text-[#0b234a]"
+        className="absolute right-0 top-0 flex h-full items-center px-3 text-[#0b234a]/60 hover:text-[#0b234a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#f47b20]"
       >
         {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
       </button>
@@ -157,13 +157,19 @@ const LoginEleve = () => {
 
   return (
     <div className="cap-screen flex min-h-[100dvh] flex-col">
+      <a
+        href="#contenu-principal"
+        className="sr-only z-50 rounded-md bg-white px-4 py-2 font-semibold text-[#0b234a] shadow focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+      >
+        Aller au contenu principal
+      </a>
       <CapPublicHeader showMenu={false} />
 
-      <main className="flex flex-1 items-start justify-center px-4 py-8 sm:items-center">
+      <main id="contenu-principal" tabIndex={-1} className="flex flex-1 items-start justify-center px-4 py-8 sm:items-center">
         <div className="w-full max-w-md space-y-5">
           <button
             onClick={() => navigate("/")}
-            className="inline-flex items-center gap-2 text-sm font-semibold text-[#0b234a]/70 hover:text-[#0b234a]"
+            className="inline-flex items-center gap-2 rounded text-sm font-semibold text-[#0b234a]/70 hover:text-[#0b234a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f47b20]"
           >
             <ArrowLeft className="h-4 w-4" /> Retour à l'accueil
           </button>

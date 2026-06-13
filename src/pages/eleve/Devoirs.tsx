@@ -64,11 +64,25 @@ const EleveDevoirs = () => {
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
       <div>
-        <h1 className="text-[28px] font-extrabold tracking-tight text-[#0b234a]">Devoirs Élève</h1>
+        <h1 className="text-[28px] font-extrabold tracking-tight text-[#0b234a]">Mes devoirs</h1>
         <p className="text-muted-foreground mt-1">
           {pendingAll.length === 0 ? "Aucun devoir en attente" : pendingAll.length === 1 ? "1 devoir en attente" : `${pendingAll.length} devoirs en attente`}
         </p>
       </div>
+
+      {!isLoading && inProgress[0] && (
+        <button
+          type="button"
+          onClick={() => navigate(`/eleve/devoirs/${inProgress[0].id}`)}
+          className="flex min-h-14 w-full items-center justify-between gap-3 rounded-2xl bg-[#0b234a] p-4 text-left text-white shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+        >
+          <div>
+            <p className="text-xs font-bold uppercase tracking-widest text-white/65">À continuer</p>
+            <p className="mt-1 font-bold">{(inProgress[0].exercice as any)?.titre || "Devoir en cours"}</p>
+          </div>
+          <ChevronRight className="h-5 w-5 shrink-0" />
+        </button>
+      )}
 
       {/* Stats */}
       {all.length > 0 && (

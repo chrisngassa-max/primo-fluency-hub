@@ -62,3 +62,7 @@ project_id = "gudcenhmzlcvhgbgklzw"
     verify_jwt = true
   [functions.request-student-help]
     verify_jwt = true
+  [functions.cron-expire-devoirs]
+    verify_jwt = true
+  [functions.analyze-snapshot-and-alert]
+    verify_jwt = true

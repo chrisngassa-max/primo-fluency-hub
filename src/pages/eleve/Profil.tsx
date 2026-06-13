@@ -3,6 +3,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
@@ -112,7 +113,12 @@ const EleveProfil = () => {
 
   return (
     <div className="max-w-lg mx-auto space-y-6">
-      <h1 className="text-[28px] font-extrabold tracking-tight text-[#0b234a]">Profil Élève</h1>
+      <div>
+        <h1 className="text-[28px] font-extrabold tracking-tight text-[#0b234a]">Mon profil</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Modifie tes informations, tes préférences d’apprentissage et tes consentements.
+        </p>
+      </div>
 
       {/* Hero */}
       <div className="rounded-2xl p-6 flex flex-col items-center gap-2 shadow-sm bg-[#b4c5e4]">
@@ -180,30 +186,36 @@ const EleveProfil = () => {
       {/* Informations personnelles */}
       <div className="space-y-3">
         <h2 className="text-base font-bold text-foreground">Informations personnelles</h2>
-        <div className="rounded-[0.625rem] border bg-card divide-y shadow-sm">
-          <div className="px-4 py-1">
+        <div className="space-y-4 rounded-[0.625rem] border bg-card p-4 shadow-sm">
+          <div className="space-y-2">
+            <Label htmlFor="profile-first-name">Prénom</Label>
             <Input
+              id="profile-first-name"
               value={prenom}
               onChange={(e) => setPrenom(e.target.value)}
               placeholder="Prénom"
-              className="border-0 px-0 shadow-none focus-visible:ring-0 text-sm"
+              autoComplete="given-name"
             />
           </div>
-          <div className="px-4 py-1">
+          <div className="space-y-2">
+            <Label htmlFor="profile-last-name">Nom</Label>
             <Input
+              id="profile-last-name"
               value={nom}
               onChange={(e) => setNom(e.target.value)}
               placeholder="Nom"
-              className="border-0 px-0 shadow-none focus-visible:ring-0 text-sm"
+              autoComplete="family-name"
             />
           </div>
-          <div className="px-4 py-1">
+          <div className="space-y-2">
+            <Label htmlFor="profile-email">Email de connexion</Label>
             <Input
+              id="profile-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Email"
-              className="border-0 px-0 shadow-none focus-visible:ring-0 text-sm"
+              autoComplete="email"
             />
           </div>
         </div>
@@ -240,27 +252,29 @@ const EleveProfil = () => {
       {/* Sécurité */}
       <div className="space-y-3">
         <h2 className="text-base font-bold text-foreground">Sécurité</h2>
-        <div className="rounded-[0.625rem] border bg-card shadow-sm">
-          <div className="px-4 py-1">
+        <div className="rounded-[0.625rem] border bg-card p-4 shadow-sm">
+          <div className="space-y-2">
+            <Label htmlFor="profile-password">Nouveau mot de passe</Label>
             <Input
+              id="profile-password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Mot de passe"
+              placeholder="6 caractères minimum"
               autoComplete="new-password"
-              className="border-0 px-0 shadow-none focus-visible:ring-0 text-sm"
             />
+            <p className="text-xs text-muted-foreground">Laisse ce champ vide si tu ne souhaites pas le modifier.</p>
           </div>
         </div>
       </div>
 
-      <button
+      <Button
         onClick={handleSave}
         disabled={saving}
-        className="w-full cap-orange-button py-4 text-[17px]"
+        className="min-h-12 w-full rounded-full bg-[#f47b20] text-[17px] font-bold text-white hover:bg-[#ea6815]"
       >
         {saving ? "Enregistrement…" : "Enregistrer les modifications"}
-      </button>
+      </Button>
     </div>
   );
 };

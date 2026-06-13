@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { lazy, Suspense } from "react";
 import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
@@ -23,57 +24,55 @@ import LoginEleve from "@/pages/auth/LoginEleve";
 import LoginFormateur from "@/pages/auth/LoginFormateur";
 // LoginAdmin removed — no admin dashboard exists yet
 
-import FormateurLayout from "@/layouts/FormateurLayout";
-import FormateurDashboard from "@/pages/formateur/Dashboard";
-import FormateurDashboardV2 from "@/pages/formateur/DashboardV2";
-import MonitoringPage from "@/pages/formateur/MonitoringPage";
-import GroupesPage from "@/pages/formateur/Groupes";
-import SeancesPage from "@/pages/formateur/Seances";
-import SessionPilot from "@/pages/formateur/SessionPilot";
-import SessionBilan from "@/pages/formateur/SessionBilan";
-import SequenceBuilder from "@/pages/formateur/SequenceBuilder";
-import ExercicesPage from "@/pages/formateur/ExercicesPage";
-import InterventionRapidePage from "@/pages/formateur/InterventionRapidePage";
-import SuiviDirectClasse from "@/pages/formateur/SuiviDirectClasse";
-import BibliothequeInterventions from "@/pages/formateur/BibliothequeInterventions";
-
-import EleveLayout from "@/layouts/EleveLayout";
-import EleveDashboard from "@/pages/eleve/Dashboard";
-import EleveDevoirs from "@/pages/eleve/Devoirs";
-import DevoirPassation from "@/pages/eleve/DevoirPassation";
-import CarnetMots from "@/pages/eleve/CarnetMots";
-import EleveProgression from "@/pages/eleve/Progression";
-import EleveProfil from "@/pages/eleve/Profil";
-
-import BilanSeance from "@/pages/eleve/BilanSeance";
-import BilanTestPassation from "@/pages/eleve/BilanTestPassation";
-import BilanDevoirs from "@/pages/eleve/BilanDevoirs";
-import EleveDetail from "@/pages/formateur/EleveDetail";
-import TestsEntreePage from "@/pages/formateur/TestsEntree";
-import ImportProgramme from "@/pages/formateur/ImportProgramme";
-import Parametres from "@/pages/formateur/Parametres";
-import ParcoursPage from "@/pages/formateur/ParcoursPage";
-import ParcoursDetail from "@/pages/formateur/ParcoursDetail";
-import RapportsPage from "@/pages/formateur/RapportsPage";
-import SessionSupermarket from "@/pages/formateur/SessionSupermarket";
-import SuiviDevoirsPage from "@/pages/formateur/SuiviDevoirsPage";
-import SignalementsPage from "@/pages/formateur/SignalementsPage";
-import DevoirsFormateur from "@/pages/formateur/DevoirsFormateur";
-import AccessRequests from "@/pages/formateur/AccessRequests";
-import TestResultats from "@/pages/formateur/TestResultats";
-import TestResultatDetail from "@/pages/formateur/TestResultatDetail";
-import TestResultatGroupes from "@/pages/formateur/TestResultatGroupes";
-import TestPositionnement from "@/pages/eleve/TestPositionnement";
-import PositionnementPassation from "@/pages/eleve/PositionnementPassation";
-import PositionnementResultat from "@/pages/eleve/PositionnementResultat";
-import RessourcesPage from "@/pages/formateur/RessourcesPage";
-import BanqueActivites from "@/pages/formateur/BanqueActivites";
-import BilansAtelierPage from "@/pages/formateur/BilansAtelierPage";
-import PositionnementPage from "@/pages/formateur/PositionnementPage";
-import PlayExercise from "@/pages/PlayExercise";
-import AnalyticsErreursPage from "@/pages/formateur/AnalyticsErreursPage";
-import AuthRelayReset from "@/pages/AuthRelayReset";
-import SandboxControlPanel from "@/pages/formateur/SandboxControlPanel";
+const FormateurLayout = lazy(() => import("@/layouts/FormateurLayout"));
+const FormateurDashboard = lazy(() => import("@/pages/formateur/Dashboard"));
+const FormateurDashboardV2 = lazy(() => import("@/pages/formateur/DashboardV2"));
+const MonitoringPage = lazy(() => import("@/pages/formateur/MonitoringPage"));
+const GroupesPage = lazy(() => import("@/pages/formateur/Groupes"));
+const SeancesPage = lazy(() => import("@/pages/formateur/Seances"));
+const SessionPilot = lazy(() => import("@/pages/formateur/SessionPilot"));
+const SessionBilan = lazy(() => import("@/pages/formateur/SessionBilan"));
+const SequenceBuilder = lazy(() => import("@/pages/formateur/SequenceBuilder"));
+const ExercicesPage = lazy(() => import("@/pages/formateur/ExercicesPage"));
+const InterventionRapidePage = lazy(() => import("@/pages/formateur/InterventionRapidePage"));
+const SuiviDirectClasse = lazy(() => import("@/pages/formateur/SuiviDirectClasse"));
+const BibliothequeInterventions = lazy(() => import("@/pages/formateur/BibliothequeInterventions"));
+const EleveLayout = lazy(() => import("@/layouts/EleveLayout"));
+const EleveDashboard = lazy(() => import("@/pages/eleve/Dashboard"));
+const EleveDevoirs = lazy(() => import("@/pages/eleve/Devoirs"));
+const DevoirPassation = lazy(() => import("@/pages/eleve/DevoirPassation"));
+const CarnetMots = lazy(() => import("@/pages/eleve/CarnetMots"));
+const EleveProgression = lazy(() => import("@/pages/eleve/Progression"));
+const EleveProfil = lazy(() => import("@/pages/eleve/Profil"));
+const BilanSeance = lazy(() => import("@/pages/eleve/BilanSeance"));
+const BilanTestPassation = lazy(() => import("@/pages/eleve/BilanTestPassation"));
+const BilanDevoirs = lazy(() => import("@/pages/eleve/BilanDevoirs"));
+const EleveDetail = lazy(() => import("@/pages/formateur/EleveDetail"));
+const TestsEntreePage = lazy(() => import("@/pages/formateur/TestsEntree"));
+const ImportProgramme = lazy(() => import("@/pages/formateur/ImportProgramme"));
+const Parametres = lazy(() => import("@/pages/formateur/Parametres"));
+const ParcoursPage = lazy(() => import("@/pages/formateur/ParcoursPage"));
+const ParcoursDetail = lazy(() => import("@/pages/formateur/ParcoursDetail"));
+const RapportsPage = lazy(() => import("@/pages/formateur/RapportsPage"));
+const SessionSupermarket = lazy(() => import("@/pages/formateur/SessionSupermarket"));
+const SuiviDevoirsPage = lazy(() => import("@/pages/formateur/SuiviDevoirsPage"));
+const SignalementsPage = lazy(() => import("@/pages/formateur/SignalementsPage"));
+const DevoirsFormateur = lazy(() => import("@/pages/formateur/DevoirsFormateur"));
+const AccessRequests = lazy(() => import("@/pages/formateur/AccessRequests"));
+const TestResultats = lazy(() => import("@/pages/formateur/TestResultats"));
+const TestResultatDetail = lazy(() => import("@/pages/formateur/TestResultatDetail"));
+const TestResultatGroupes = lazy(() => import("@/pages/formateur/TestResultatGroupes"));
+const TestPositionnement = lazy(() => import("@/pages/eleve/TestPositionnement"));
+const PositionnementPassation = lazy(() => import("@/pages/eleve/PositionnementPassation"));
+const PositionnementResultat = lazy(() => import("@/pages/eleve/PositionnementResultat"));
+const RessourcesPage = lazy(() => import("@/pages/formateur/RessourcesPage"));
+const BanqueActivites = lazy(() => import("@/pages/formateur/BanqueActivites"));
+const BilansAtelierPage = lazy(() => import("@/pages/formateur/BilansAtelierPage"));
+const PositionnementPage = lazy(() => import("@/pages/formateur/PositionnementPage"));
+const PlayExercise = lazy(() => import("@/pages/PlayExercise"));
+const AnalyticsErreursPage = lazy(() => import("@/pages/formateur/AnalyticsErreursPage"));
+const AuthRelayReset = lazy(() => import("@/pages/AuthRelayReset"));
+const SandboxControlPanel = lazy(() => import("@/pages/formateur/SandboxControlPanel"));
 
 const queryClient = new QueryClient();
 
@@ -85,6 +84,13 @@ const App = () => (
         <Toaster />
         <Sonner />
         <HashRouter>
+          <Suspense
+            fallback={
+              <div role="status" aria-live="polite" className="flex min-h-screen items-center justify-center bg-background p-6 text-center">
+                <p className="font-semibold text-foreground">Chargement de ton espace…</p>
+              </div>
+            }
+          >
           <PasswordRecoveryBridge />
           <PendingGroupInvitationBridge />
           {isSandboxEmbed() ? (
@@ -206,6 +212,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
           )}
+          </Suspense>
         </HashRouter>
         </TooltipProvider>
       </SandboxProvider>

@@ -18,6 +18,7 @@ import TrajectoireTCF from "@/components/TrajectoireTCF";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toast } from "sonner";
+import { getLearnerPrimaryAction } from "@/lib/learnerPrimaryAction";
 
 const EleveDashboard = () => {
   const { user } = useAuth();
@@ -264,41 +265,21 @@ const EleveDashboard = () => {
     },
   ] : null;
 
-  const primaryAction = !testLoading && !testCompleted
-    ? {
-      eyebrow: "Première étape",
-      title: "Évalue ton niveau",
-      description: "Ce test permet de te proposer des activités adaptées.",
-      button: "Commencer le test",
-      path: "/eleve/test-positionnement",
-    }
-    : uncompletedTests[0]
+  const primaryAction = getLearnerPrimaryAction({
+    testLoading,
+    testCompleted,
+    pendingTestId: uncompletedTests[0]?.id,
+    session: sessionExercises?.[0]
+      ? { id: sessionExercises[0].sessionId, remaining: sessionExercises[0].remaining }
+      : undefined,
+    homework: nextHomework
       ? {
-        eyebrow: "À faire maintenant",
-        title: "Termine ton test de bilan",
-        description: "Ton formateur l’a préparé pour vérifier ce que tu as retenu.",
-        button: "Faire le test",
-        path: `/eleve/bilan-test/${uncompletedTests[0].id}`,
+        id: nextHomework.id,
+        title: (nextHomework.exercice as any)?.titre,
+        expired: nextHomework.statut === "expire",
       }
-      : sessionExercises?.[0]
-        ? {
-          eyebrow: "À faire maintenant",
-          title: "Continue les exercices de ta séance",
-          description: `${sessionExercises[0].remaining} activité${sessionExercises[0].remaining > 1 ? "s" : ""} encore à faire.`,
-          button: "Continuer",
-          path: `/eleve/exercices-seance/${sessionExercises[0].sessionId}`,
-        }
-        : nextHomework
-          ? {
-            eyebrow: "À faire maintenant",
-            title: (nextHomework.exercice as any)?.titre || "Un devoir t’attend",
-            description: nextHomework.statut === "expire"
-              ? "La date conseillée est passée, mais tu peux encore le terminer."
-              : "Avance à ton rythme. Ton brouillon sera enregistré.",
-            button: "Ouvrir le devoir",
-            path: `/eleve/devoirs/${nextHomework.id}`,
-          }
-          : null;
+      : undefined,
+  });
 
   return (
     <div className="space-y-6 max-w-2xl mx-auto">

@@ -31,9 +31,15 @@ const Index = () => {
 
   return (
     <div className="cap-screen min-h-screen flex flex-col">
+      <a
+        href="#contenu-principal"
+        className="sr-only z-50 rounded-md bg-white px-4 py-2 font-semibold text-[#0b234a] shadow focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+      >
+        Aller au contenu principal
+      </a>
       <CapPublicHeader />
 
-      <main className="flex-1">
+      <main id="contenu-principal" tabIndex={-1} className="flex-1">
         {/* HERO */}
         <section className="mx-auto max-w-3xl px-6 pt-10 pb-6 text-center md:pt-16">
           <h1 className="text-3xl font-black leading-tight tracking-tight text-[#0b234a] md:text-5xl">
@@ -46,7 +52,7 @@ const Index = () => {
           <div className="mx-auto mt-8 flex max-w-md flex-col gap-4">
             <button
               onClick={() => navigate("/eleve/login?tab=signup")}
-              className="cap-orange-button h-14 w-full text-lg"
+              className="cap-orange-button h-14 w-full text-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#f47b20]/35"
             >
               Je commence maintenant
             </button>
@@ -55,7 +61,7 @@ const Index = () => {
             </p>
             <button
               onClick={() => navigate("/formateur/login")}
-              className="h-14 w-full rounded-lg border-2 border-[#0b234a] bg-white text-lg font-bold text-[#0b234a] transition hover:bg-[#0b234a] hover:text-white"
+              className="h-14 w-full rounded-lg border-2 border-[#0b234a] bg-white text-lg font-bold text-[#0b234a] transition hover:bg-[#0b234a] hover:text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#0b234a]/25"
             >
               Espace formateur
             </button>
