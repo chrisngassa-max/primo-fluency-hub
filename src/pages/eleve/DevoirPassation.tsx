@@ -230,6 +230,7 @@ const DevoirPassation = () => {
   const [itemOverrides, setItemOverrides] = useState<Record<number, any>>({});
   const [reportedItemIdx, setReportedItemIdx] = useState<Set<number>>(new Set());
   const draftRestoredRef = useRef(false);
+  const [draftStatus, setDraftStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
 
   // Audio recording state for EO
   const [isRecording, setIsRecording] = useState(false);
@@ -344,6 +345,7 @@ const DevoirPassation = () => {
 
   useEffect(() => {
     if (!draftKey || result || isDone || (!Object.keys(answers).length && !audioBlob)) return;
+    setDraftStatus("saving");
     const timeout = window.setTimeout(() => {
       void saveExerciseDraft({
         key: draftKey,
@@ -352,7 +354,9 @@ const DevoirPassation = () => {
         answers,
         audioBlob,
         updatedAt: new Date().toISOString(),
-      });
+      })
+        .then(() => setDraftStatus("saved"))
+        .catch(() => setDraftStatus("error"));
     }, 350);
     return () => window.clearTimeout(timeout);
   }, [answers, audioBlob, devoirId, draftKey, isDone, result, user]);
@@ -893,6 +897,11 @@ const DevoirPassation = () => {
         onTextSizeChange={setTextSize}
         onHighContrastChange={setHighContrast}
       />
+      <p className="min-h-5 text-right text-xs text-muted-foreground" role="status" aria-live="polite">
+        {draftStatus === "saving" && "Enregistrement du brouillon…"}
+        {draftStatus === "saved" && "Brouillon enregistré sur cet appareil"}
+        {draftStatus === "error" && "Brouillon non enregistré. Garde cette page ouverte."}
+      </p>
       <div className="flex items-center gap-3">
         <Button variant="ghost" size="sm" onClick={() => navigate("/eleve/devoirs")} className="gap-1.5">
           <ArrowLeft className="h-4 w-4" /> Retour

@@ -20,7 +20,11 @@ export default function LearnerAccessibilityToolbar({
   const currentIndex = sizes.indexOf(textSize);
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3" aria-label="Réglages d’accessibilité">
+    <div
+      role="group"
+      className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3"
+      aria-label="Réglages d’accessibilité"
+    >
       <span className="text-sm font-semibold">Confort de lecture</span>
       <div className="flex items-center gap-1">
         <Button

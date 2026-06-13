@@ -13,13 +13,25 @@ type InstallPromptEvent = Event & {
 export default function OfflineStatus() {
   const { user } = useAuth();
   const [online, setOnline] = useState(() => navigator.onLine);
+  const [syncing, setSyncing] = useState(false);
   const [installPrompt, setInstallPrompt] = useState<InstallPromptEvent | null>(null);
 
   useEffect(() => {
     const sync = async () => {
       setOnline(true);
-      const count = await syncPendingSubmissions(user?.id);
-      if (count > 0) toast.success(`${count} exercice${count > 1 ? "s" : ""} synchronisé${count > 1 ? "s" : ""}`);
+      setSyncing(true);
+      try {
+        const count = await syncPendingSubmissions(user?.id);
+        if (count > 0) {
+          toast.success(`${count} exercice${count > 1 ? "s" : ""} synchronisé${count > 1 ? "s" : ""}`);
+        }
+      } catch {
+        toast.error("La synchronisation n’a pas abouti.", {
+          description: "Tes réponses restent enregistrées sur cet appareil.",
+        });
+      } finally {
+        setSyncing(false);
+      }
     };
     const offline = () => setOnline(false);
     const beforeInstall = (event: Event) => {
@@ -41,9 +53,21 @@ export default function OfflineStatus() {
 
   if (!online) {
     return (
-      <div className="fixed inset-x-0 top-0 z-[70] flex items-center justify-center gap-2 bg-amber-500 px-3 py-2 text-sm font-semibold text-black">
+      <div
+        role="status"
+        aria-live="polite"
+        className="fixed inset-x-0 top-0 z-[70] flex items-center justify-center gap-2 bg-amber-500 px-3 py-2 text-sm font-semibold text-black"
+      >
         <WifiOff className="h-4 w-4" />
-        Mode hors ligne : tes réponses sont sauvegardées
+        Mode hors ligne : tes réponses sont enregistrées sur cet appareil
+      </div>
+    );
+  }
+
+  if (syncing) {
+    return (
+      <div role="status" aria-live="polite" className="sr-only">
+        Connexion retrouvée. Synchronisation des réponses en cours.
       </div>
     );
   }

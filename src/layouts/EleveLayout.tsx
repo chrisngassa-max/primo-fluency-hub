@@ -78,6 +78,12 @@ const EleveLayout = () => {
 
   return (
     <div className="cap-screen min-h-screen">
+      <a
+        href="#contenu-eleve"
+        className="sr-only z-[100] rounded-md bg-primary px-4 py-3 font-semibold text-primary-foreground focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+      >
+        Aller au contenu principal
+      </a>
       <OfflineStatus />
       <InterventionPlayer sessionId={activeSessionId ?? null} />
       <CapPublicHeader avatar={initiales.slice(0, 2)} showMenu={false} />
@@ -88,8 +94,9 @@ const EleveLayout = () => {
             <button
               key={item.path}
               onClick={() => navigate(item.path)}
+              aria-current={isActive(item.path) ? "page" : undefined}
               className={cn(
-                "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors",
+                "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
                 isActive(item.path)
                   ? "bg-[#e7e9f1] text-[#0b234a]"
                   : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -101,21 +108,21 @@ const EleveLayout = () => {
           ))}
           <button
             onClick={() => setHelpOpen(true)}
-            className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           >
             <CircleHelp className="h-4 w-4" />
             Aide
           </button>
           <button
             onClick={signOut}
-            className="ml-auto rounded-lg px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            className="ml-auto rounded-lg px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           >
             Se déconnecter
           </button>
         </div>
       </nav>
 
-      <main className="mx-auto w-full max-w-5xl px-5 py-8 pb-32 lg:px-8 lg:pb-8">
+      <main id="contenu-eleve" tabIndex={-1} className="mx-auto w-full max-w-5xl px-5 py-8 pb-32 outline-none lg:px-8 lg:pb-8">
         <Outlet />
       </main>
 
@@ -131,7 +138,7 @@ const EleveLayout = () => {
               key={item.path}
               onClick={() => navigate(item.path)}
               aria-current={active ? "page" : undefined}
-              className="flex min-h-14 min-w-0 flex-col items-center gap-1 px-1 py-1 text-center transition-colors"
+              className="flex min-h-14 min-w-0 flex-col items-center gap-1 px-1 py-1 text-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
             >
               <span
                 className={cn(
@@ -157,7 +164,7 @@ const EleveLayout = () => {
             <button
               type="button"
               aria-label="Plus de rubriques"
-              className="flex min-h-14 min-w-0 flex-col items-center gap-1 px-1 py-1 text-center"
+              className="flex min-h-14 min-w-0 flex-col items-center gap-1 px-1 py-1 text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
             >
               <span className={cn(
                 "flex h-10 w-10 items-center justify-center rounded-lg",
