@@ -27,7 +27,7 @@ import {
   getProfilMessage,
   COMPETENCE_ORDER,
 } from "@/lib/testPositionnement";
-import { Mic, Square, ArrowRight } from "lucide-react";
+import { Mic, Square, ArrowRight, CheckCircle2 } from "lucide-react";
 import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
 
 type Screen = "accueil" | "question" | "resultats";
@@ -75,6 +75,7 @@ const TestPositionnement = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [recordingCount, setRecordingCount] = useState(0);
+  const [microphoneCheck, setMicrophoneCheck] = useState<"idle" | "checking" | "ready" | "error">("idle");
   const MAX_RECORDINGS = 2;
   const [aiEvaluation, setAiEvaluation] = useState<{
     score: number;
@@ -595,6 +596,22 @@ const TestPositionnement = () => {
     }
   };
 
+  const checkMicrophone = async () => {
+    setMicrophoneCheck("checking");
+    try {
+      const stream = await requestMicrophoneStream();
+      stream.getTracks().forEach((track) => track.stop());
+      setMicrophoneCheck("ready");
+    } catch (error) {
+      setMicrophoneCheck("error");
+      toast({
+        title: "Microphone non disponible",
+        description: getMicrophoneErrorMessage(error),
+        variant: "destructive",
+      });
+    }
+  };
+
   const stopRecording = () => {
     wavRecorderRef.current?.stop();
     wavRecorderRef.current = null;
@@ -870,8 +887,11 @@ const TestPositionnement = () => {
     return (
       <div className="max-w-2xl mx-auto space-y-6 p-4">
         <h1 className="text-2xl font-bold text-foreground">
-          Votre test est terminé. Merci !
+          Ton test est terminé. Bravo !
         </h1>
+        <p className="text-sm text-muted-foreground">
+          Ces résultats servent à adapter tes activités. Ce ne sont pas des résultats officiels du TCF.
+        </p>
 
         <Card>
           <CardHeader>
@@ -879,16 +899,20 @@ const TestPositionnement = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             {(["co", "ce", "eo", "ee"] as const).map((comp) => {
-              const label = comp.toUpperCase();
+              const labels = {
+                co: "Compréhension orale",
+                ce: "Compréhension écrite",
+                eo: "Expression orale",
+                ee: "Expression écrite",
+              };
+              const label = labels[comp];
               const score = sessionState.scores[comp];
               const pct = Math.round((score / maxScore) * 100);
               return (
                 <div key={comp} className="space-y-1">
                   <div className="flex justify-between text-sm">
                     <span className="font-medium">{label}</span>
-                    <span className="text-muted-foreground">
-                      {score}/{maxScore}
-                    </span>
+                    <span className="text-muted-foreground">{pct}%</span>
                   </div>
                   <Progress value={pct} className="h-3" />
                 </div>
@@ -918,8 +942,16 @@ const TestPositionnement = () => {
   // SCREEN: QUESTION
   if (screen === "question" && sessionState && currentQuestion) {
     const totalQInPalier = questions.length;
-    const progressPct =
-      ((sessionState.questionIndex + 1) / totalQInPalier) * 100;
+    const progressPct = (
+      (sessionState.competenceIndex + ((sessionState.questionIndex + 1) / totalQInPalier))
+      / COMPETENCE_ORDER.length
+    ) * 100;
+    const competenceLabels: Record<string, string> = {
+      CO: "Compréhension orale",
+      CE: "Compréhension écrite",
+      EO: "Expression orale",
+      EE: "Expression écrite",
+    };
 
     return (
       <>
@@ -928,13 +960,14 @@ const TestPositionnement = () => {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <Badge variant="outline" className="text-sm">
-              {currentCompetence} — Palier {sessionState.palier}
+              Partie {sessionState.competenceIndex + 1} sur {COMPETENCE_ORDER.length}
             </Badge>
             <span className="text-sm text-muted-foreground">
-              Question {sessionState.questionIndex + 1}/{totalQInPalier}
+              Question {sessionState.questionIndex + 1} sur {totalQInPalier}
             </span>
           </div>
           <Progress value={progressPct} className="h-2" />
+          <p className="text-sm font-semibold text-foreground">{competenceLabels[currentCompetence]}</p>
         </div>
 
         <Card>
@@ -1123,20 +1156,44 @@ const TestPositionnement = () => {
   return (
     <div className="space-y-6 max-w-lg mx-auto py-8">
       <div className="text-center space-y-3">
-        <span className="text-5xl">📋</span>
-        <h1 className="text-2xl font-bold">Test de positionnement TCF</h1>
+        <h1 className="text-2xl font-bold">Test de niveau</h1>
         <p className="text-muted-foreground">
-          Ce test évalue ton niveau sur 4 compétences : Compréhension Orale, Compréhension Écrite,
-          Expression Orale et Expression Écrite. Il dure environ 20 minutes.
+          Il vérifie quatre compétences : comprendre à l’oral, comprendre à l’écrit, parler et écrire. Prévois environ 20 minutes.
         </p>
       </div>
 
       <Card>
-        <CardContent className="pt-5 space-y-3 text-sm text-muted-foreground">
-          <p>✅ Mets-toi dans un endroit calme</p>
-          <p>✅ Si tu as des exercices oraux, assure-toi que ton micro fonctionne</p>
-          <p>✅ Ne quitte pas la page pendant le test</p>
-          <p>✅ Réponds honnêtement — le test adapte le programme à ton vrai niveau</p>
+        <CardContent className="space-y-4 pt-5 text-sm">
+          <div className="space-y-2 text-muted-foreground">
+            <p>1. Mets-toi dans un endroit calme.</p>
+            <p>2. Réponds sans aide : il n’y a pas de note à réussir.</p>
+            <p>3. Si tu quittes le test, tu pourras le reprendre là où tu t’es arrêté.</p>
+          </div>
+          <div className="rounded-xl border bg-muted/30 p-3">
+            <p className="font-semibold text-foreground">Le test contient des réponses orales.</p>
+            <p className="mt-1 text-muted-foreground">Tu choisis toi-même quand autoriser le microphone.</p>
+            <Button
+              type="button"
+              variant="outline"
+              className="mt-3 min-h-11 w-full"
+              onClick={checkMicrophone}
+              disabled={microphoneCheck === "checking"}
+            >
+              {microphoneCheck === "ready"
+                ? <CheckCircle2 className="mr-2 h-4 w-4 text-green-600" />
+                : <Mic className="mr-2 h-4 w-4" />}
+              {microphoneCheck === "checking"
+                ? "Vérification…"
+                : microphoneCheck === "ready"
+                  ? "Microphone prêt"
+                  : "Tester mon microphone"}
+            </Button>
+            {microphoneCheck === "error" && (
+              <p role="alert" className="mt-2 text-sm text-destructive">
+                Le microphone n’est pas disponible. Vérifie l’autorisation du navigateur puis réessaie.
+              </p>
+            )}
+          </div>
         </CardContent>
       </Card>
 
@@ -1148,8 +1205,8 @@ const TestPositionnement = () => {
 
       <Button size="xl" className="w-full" onClick={handleStart} disabled={isStarting}>
         {existingSession?.statut === "en_cours"
-          ? (isStarting ? "Reprise…" : "Reprendre le test")
-          : (isStarting ? "Démarrage…" : "Je suis prêt — Commencer le test")}
+          ? (isStarting ? "Reprise…" : "Reprendre là où je me suis arrêté")
+          : (isStarting ? "Démarrage…" : "Commencer le test")}
         <ArrowRight className="ml-2 h-5 w-5" />
       </Button>
     </div>
