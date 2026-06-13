@@ -26,7 +26,7 @@ export default function SandboxStudentPreview({ niveau }: { niveau: SandboxLevel
     });
     setLoading(false);
     if (invokeError) {
-      setError(await getEdgeFunctionErrorMessage(invokeError, "Vue eleve indisponible"));
+      setError(await getEdgeFunctionErrorMessage(invokeError, "Vue élève indisponible"));
       return;
     }
     if (resource === "dashboard") setDashboard(data);
@@ -63,7 +63,7 @@ export default function SandboxStudentPreview({ niveau }: { niveau: SandboxLevel
     <div className="mx-auto max-w-5xl space-y-5">
       <div className="rounded-xl border-2 border-amber-400 bg-amber-50 p-4">
         <div className="flex flex-wrap items-center gap-3">
-          <Badge className="bg-amber-700">Apercu Eleve {niveau}</Badge>
+          <Badge className="bg-amber-700">Aperçu élève {niveau}</Badge>
           <span className="text-sm text-amber-950">La session formateur reste active.</span>
           <div className="ml-auto flex gap-2">
             <Button size="sm" variant={tab === "dashboard" ? "default" : "outline"} onClick={() => setTab("dashboard")}>Tableau de bord</Button>
@@ -78,7 +78,7 @@ export default function SandboxStudentPreview({ niveau }: { niveau: SandboxLevel
           <CardContent className="space-y-4 p-6">
             <p className="text-destructive">{error}</p>
             <Button variant="outline" onClick={exitStudentPreview}>
-              Revenir a la vue formateur
+              Revenir à la vue formateur
             </Button>
           </CardContent>
         </Card>
@@ -89,10 +89,10 @@ export default function SandboxStudentPreview({ niveau }: { niveau: SandboxLevel
           <div className="grid gap-4 md:grid-cols-3">
             <Card><CardHeader><CardDescription>Niveau actuel</CardDescription><CardTitle className="flex items-center gap-2"><GraduationCap />{dashboard.profil?.niveau_actuel}</CardTitle></CardHeader></Card>
             <Card><CardHeader><CardDescription>Devoirs en cours</CardDescription><CardTitle className="flex items-center gap-2"><BookOpen />{dashboard.devoirs?.en_cours ?? 0}</CardTitle></CardHeader></Card>
-            <Card><CardHeader><CardDescription>Taux de reussite</CardDescription><CardTitle className="flex items-center gap-2"><Gauge />{dashboard.profil?.taux_reussite_global ?? 0}%</CardTitle></CardHeader></Card>
+            <Card><CardHeader><CardDescription>Taux de réussite</CardDescription><CardTitle className="flex items-center gap-2"><Gauge />{dashboard.profil?.taux_reussite_global ?? 0}%</CardTitle></CardHeader></Card>
           </div>
           <Card>
-            <CardHeader><CardTitle>Competences</CardTitle></CardHeader>
+            <CardHeader><CardTitle>Compétences</CardTitle></CardHeader>
             <CardContent className="grid grid-cols-2 gap-3 md:grid-cols-4">
               {(["co", "ce", "ee", "eo"] as const).map((code) => (
                 <div key={code} className="rounded-lg bg-muted p-4 text-center">

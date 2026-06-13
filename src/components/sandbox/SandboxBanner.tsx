@@ -28,11 +28,11 @@ export default function SandboxBanner() {
     <div className="fixed inset-x-0 top-0 z-[9999] flex h-12 items-center gap-2 overflow-x-auto bg-[#92400E] px-3 text-white shadow-lg">
       <AlertTriangle className="h-5 w-5 shrink-0" />
       <strong className="shrink-0 text-sm">
-        MODE SANDBOX {expired ? "- Session expiree" : "- Donnees de test isolees"}
+        MODE SANDBOX {expired ? "- Session expirée" : "- Données de test isolées"}
       </strong>
       {expired ? (
         <Button size="sm" variant="secondary" onClick={() => void setup(false)}>
-          Reactiver
+          Réactiver
         </Button>
       ) : (
         <>
@@ -64,7 +64,7 @@ export default function SandboxBanner() {
               onClick={enterMosaicView}
             >
               <Grid2X2 className="mr-1 h-4 w-4" />
-              Mosaique
+              Mosaïque
             </Button>
           </div>
           <SandboxSwitcher />
@@ -76,14 +76,14 @@ export default function SandboxBanner() {
         onClick={async () => {
           try {
             await reset("attempts_only");
-            toast.success("Resultats et devoirs sandbox effaces");
+            toast.success("Résultats et devoirs sandbox effacés");
           } catch (error) {
-            toast.error(error instanceof Error ? error.message : "Echec de la reinitialisation");
+            toast.error(error instanceof Error ? error.message : "Échec de la réinitialisation");
           }
         }}
       >
         <RotateCcw className="mr-2 h-4 w-4" />
-        Reinitialiser
+        Réinitialiser
       </Button>
       <Button
         size="sm"
@@ -93,7 +93,7 @@ export default function SandboxBanner() {
             exitStudentPreview();
             await exitSandboxMode();
             queryClient.clear();
-            toast.success("Mode sandbox quitte. Tes donnees reelles sont a nouveau affichees.");
+            toast.success("Mode sandbox quitté. Tes données réelles sont à nouveau affichées.");
             navigate("/formateur");
           } catch (error) {
             toast.error(error instanceof Error ? error.message : "Sortie du mode sandbox impossible");

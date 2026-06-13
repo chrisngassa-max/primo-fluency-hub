@@ -13,7 +13,7 @@ export default function SandboxGridPreview() {
 
   useEffect(() => {
     void supabase.functions.invoke("sandbox-mosaic-summary").then(async ({ data, error: invokeError }) => {
-      if (invokeError) setError(await getEdgeFunctionErrorMessage(invokeError, "Mosaique indisponible"));
+      if (invokeError) setError(await getEdgeFunctionErrorMessage(invokeError, "Mosaïque indisponible"));
       else setProfiles(data?.profils ?? []);
     });
   }, []);
@@ -24,7 +24,7 @@ export default function SandboxGridPreview() {
         <CardContent className="space-y-4 p-6">
           <p className="text-destructive">{error}</p>
           <Button variant="outline" onClick={exitStudentPreview}>
-            Revenir a la vue formateur
+            Revenir à la vue formateur
           </Button>
         </CardContent>
       </Card>
@@ -34,14 +34,14 @@ export default function SandboxGridPreview() {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-2xl font-bold">Mosaique des profils sandbox</h1>
-        <p className="text-muted-foreground">Comparaison legere des quatre eleves, chargee en un seul appel.</p>
+        <h1 className="text-2xl font-bold">Mosaïque des profils sandbox</h1>
+        <p className="text-muted-foreground">Comparaison légère des quatre élèves, chargée en un seul appel.</p>
       </div>
       <div className="grid gap-4 md:grid-cols-2">
         {profiles.map((profile) => (
           <Card key={profile.niveau} className="border-2 border-amber-200">
             <CardHeader className="flex-row items-center">
-              <CardTitle>Eleve Test {profile.niveau}</CardTitle>
+              <CardTitle>Élève Test {profile.niveau}</CardTitle>
               <Button className="ml-auto" size="sm" onClick={() => enterStudentPreview(profile.niveau)}>
                 Ouvrir <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -57,7 +57,7 @@ export default function SandboxGridPreview() {
               </div>
               <div className="flex gap-4 text-sm">
                 <span className="flex items-center gap-1"><BookOpen className="h-4 w-4" />{profile.devoirs_en_cours} en cours</span>
-                <span className="flex items-center gap-1"><Clock3 className="h-4 w-4" />{profile.derniere_activite ? new Date(profile.derniere_activite).toLocaleDateString("fr-FR") : "Aucune activite"}</span>
+                <span className="flex items-center gap-1"><Clock3 className="h-4 w-4" />{profile.derniere_activite ? new Date(profile.derniere_activite).toLocaleDateString("fr-FR") : "Aucune activité"}</span>
               </div>
             </CardContent>
           </Card>

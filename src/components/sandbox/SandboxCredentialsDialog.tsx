@@ -79,7 +79,7 @@ export default function SandboxCredentialsDialog({
           </table>
         </div>
         <p className="text-sm text-amber-950">
-          Si tu fermes sans les noter, utilise Regenerer les comptes pour en creer de nouveaux.
+          Si tu fermes sans les noter, utilise « Régénérer les comptes » pour en créer de nouveaux.
         </p>
         <DialogFooter className="gap-2">
           <Button variant="outline" onClick={download}>

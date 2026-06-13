@@ -19,7 +19,7 @@ export default function SandboxSwitcher() {
       <DropdownMenuTrigger asChild>
         <Button size="sm" variant="secondary">
           <UserRound className="mr-2 h-4 w-4" />
-          Basculer eleve
+          Basculer vers un élève
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
@@ -29,7 +29,7 @@ export default function SandboxSwitcher() {
             disabled={mode === "eleve" && niveau === item}
             onSelect={() => enterStudentPreview(item)}
           >
-            Eleve Test {item}
+            Élève Test {item}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
