@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -15,6 +15,7 @@ interface ImportFromUrlDialogProps {
   open: boolean;
   onClose: () => void;
   sessionId?: string;
+  defaultSourceMode?: SourceMode;
   onExerciseCreated?: (exercise: any) => void;
 }
 
@@ -53,10 +54,11 @@ export default function ImportFromUrlDialog({
   open,
   onClose,
   sessionId,
+  defaultSourceMode = "pdf",
   onExerciseCreated,
 }: ImportFromUrlDialogProps) {
   const { user } = useAuth();
-  const [sourceMode, setSourceMode] = useState<SourceMode>("pdf");
+  const [sourceMode, setSourceMode] = useState<SourceMode>(defaultSourceMode);
   const [url, setUrl] = useState("");
   const [pdf, setPdf] = useState<File | null>(null);
   const [competence, setCompetence] = useState("auto");
@@ -68,6 +70,12 @@ export default function ImportFromUrlDialog({
   const [analysis, setAnalysis] = useState<any>(null);
   const [exercises, setExercises] = useState<any[]>([]);
 
+  useEffect(() => {
+    if (open) {
+      setSourceMode(defaultSourceMode);
+    }
+  }, [open, defaultSourceMode]);
+
   const busy = step === "analyzing" || step === "generating" || step === "saving";
   const canGenerate = sourceMode === "pdf" ? !!pdf : /^https?:\/\//i.test(url.trim());
   const sourceLabel = useMemo(
@@ -76,6 +84,7 @@ export default function ImportFromUrlDialog({
   );
 
   const reset = () => {
+    setSourceMode(defaultSourceMode);
     setUrl("");
     setPdf(null);
     setCompetence("auto");
