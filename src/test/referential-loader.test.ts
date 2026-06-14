@@ -81,6 +81,8 @@ describe("referential-loader", () => {
     expect(theme?.phases).toHaveLength(4);
     expect(theme?.phases[0].competences).toContain("Structures");
     expect(theme?.phases[0].pilier).toBe("vocabulaire");
+    expect(theme?.competences_prioritaires?.titre_sejour).toEqual(["CO", "CE", "EO", "EE"]);
+    expect(theme?.competences_prioritaires?.naturalisation).toEqual(["CO", "CE", "EO", "EE"]);
   });
 
   it("infers theme from session title keywords", () => {

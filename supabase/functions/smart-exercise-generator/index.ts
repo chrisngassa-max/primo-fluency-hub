@@ -3,6 +3,7 @@ import { TCF_SYSTEM_PROMPT, MODEL } from "../_shared/system-prompt.ts";
 import { callAI, AIError } from "../_shared/ai-client.ts";
 import { validateAndFix } from "../_shared/exercise-validator.ts";
 import { ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth } from "../_shared/check-consent.ts";
+import { formatEpreuvesAutorisees, type TypeDemarche } from "../_shared/pedagogical-directives.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -42,10 +43,8 @@ serve(async (req) => {
       duplicateFrom,      // exercise source JSON for duplication
     } = body;
 
-    const demarche = type_demarche || "titre_sejour";
-    const epreuvesAutorisees = demarche === "naturalisation"
-      ? "CO, CE, EE, EO (les 4 épreuves)"
-      : "CO et CE uniquement (titre de séjour)";
+    const demarche = (type_demarche || "titre_sejour") as TypeDemarche;
+    const epreuvesAutorisees = formatEpreuvesAutorisees(demarche);
 
     if (!mode) throw new Error("Le champ 'mode' est requis");
 

@@ -177,8 +177,8 @@ Règles :
 - Si un historique de groupe est fourni, ADAPTER la progression en conséquence (ne pas recommencer ce qui est acquis)`;
 
     const demarcheLabel = type_demarche === 'naturalisation'
-      ? 'Naturalisation (B1 obligatoire sur les 4 épreuves)'
-      : 'Titre de séjour / Résidence (seuil A2/B1 OFII)';
+      ? 'Naturalisation (B2 requis sur les 4 épreuves)'
+      : 'Titre de séjour / Résidence (B1 — 4 compétences travaillées, pondération CO/CE renforcée)';
 
     const userPrompt = `Génère un parcours de formation FLE/TCF IRN :
 - Volume total : ${heuresTotales} heures

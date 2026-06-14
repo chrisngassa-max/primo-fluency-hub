@@ -15,6 +15,13 @@ export type WrittenProfile = "NSA" | "Alpha" | "Post-Alpha" | "FLE" | "inconnu";
 export type StructuresPilier = "conjugaison" | "grammaire" | "phonetique" | "vocabulaire";
 export type TypeDemarche = "titre_sejour" | "naturalisation";
 
+/** All four TCF IRN competencies are worked for every demarche; weekly weights differ. */
+export const TCF_COMPETENCES = ["CO", "CE", "EE", "EO"] as const;
+
+export function formatEpreuvesAutorisees(demarche: TypeDemarche): string {
+  return `${TCF_COMPETENCES.join(", ")} (4 compétences + Structures — ${formatDemarcheWeightGuidance(demarche)})`;
+}
+
 export interface StudentProfileSignals {
   niveau_actuel?: string | null;
   taux_reussite_co?: number | string | null;

@@ -12,7 +12,7 @@
       "donnees_chiffrees_cles": ["horaires d'ouverture", "numéro de téléphone"],
       "lexique_noyau": ["allocataire", "guichet", "dossier", "rendez-vous", "horaires", "formulaire", "signature", "fermé", "ouvert"],
       "competences_prioritaires": {
-        "titre_sejour": ["CO", "CE"],
+        "titre_sejour": ["CO", "CE", "EO", "EE"],
         "naturalisation": ["CO", "CE", "EO", "EE"]
       },
       "objectif_pedagogique_global": "Gérer une interaction de service public pour mettre à jour sa situation",
@@ -57,7 +57,7 @@
       "donnees_chiffrees_cles": ["posologie", "durée du traitement"],
       "lexique_noyau": ["douleur", "maladie", "ordonnance", "médicament", "pharmacie", "carte vitale"],
       "competences_prioritaires": {
-        "titre_sejour": ["CO", "EO"],
+        "titre_sejour": ["CO", "CE", "EO", "EE"],
         "naturalisation": ["CO", "CE", "EO", "EE"]
       },
       "objectif_pedagogique_global": "Décrire un état physique et comprendre une prescription",
@@ -102,7 +102,7 @@
       "donnees_chiffrees_cles": ["numéro de téléphone du plombier", "montant du loyer"],
       "lexique_noyau": ["fuite", "eau", "urgence", "réparer", "plombier", "loyer", "propriétaire"],
       "competences_prioritaires": {
-        "titre_sejour": ["CE", "EE"],
+        "titre_sejour": ["CO", "CE", "EO", "EE"],
         "naturalisation": ["CO", "CE", "EO", "EE"]
       },
       "objectif_pedagogique_global": "Alerter sur un dysfonctionnement domestique et demander une intervention",

@@ -13,7 +13,7 @@ Le niveau A0 désigne des adultes intégrés en France, majoritairement issus du
 NIVEAUX : A0 (débutant scolaire intégré) → A1 (premier objectif certification) → A2 → B1 (SEUIL IRN MINIMUM) → B2.
 
 DÉMARCHE IRN :
-- type_demarche = "titre_sejour" : 4 compétences travaillées avec pondération hebdomadaire CO 35%, CE 35%, EE 15%, EO 15% (seuil B1 ; épreuves examen CO+CE)
+- type_demarche = "titre_sejour" : les 4 compétences CO/CE/EE/EO + Structures sont travaillées (pondération hebdomadaire CO 35%, CE 35%, EE 15%, EO 15% ; seuil B1 ; examen officiel CO+CE uniquement)
 - type_demarche = "naturalisation" : 4 épreuves obligatoires CO + CE + EE + EO avec pondération équilibrée 25% chacune (seuil B2)
 Adapte les épreuves générées et les devoirs selon ce champ. Si absent, utiliser "titre_sejour" par défaut.
 

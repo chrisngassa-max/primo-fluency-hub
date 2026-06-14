@@ -21,7 +21,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { callAI, AIError } from "../_shared/ai-client.ts";
 import { validateAndFix } from "../_shared/exercise-validator.ts";
 import { QA_REVIEW_BLOCK } from "../_shared/qa-prompt.ts";
-import { buildPedagogicalDirectives, formatPedagogicalDirectives } from "../_shared/pedagogical-directives.ts";
+import { buildPedagogicalDirectives, formatEpreuvesAutorisees, formatPedagogicalDirectives, type TypeDemarche } from "../_shared/pedagogical-directives.ts";
 import { computeWeakCompetencesFromResults, deriveProgressionFromResults } from "../_shared/progression.ts";
 import { routeExercise, type CompetenceTCF, type RoutingResult } from "../_shared/exercise-router.ts";
 import {
@@ -200,7 +200,7 @@ serve(async (req) => {
         if (!body.type_demarche) demarche = ((s as any).group?.type_demarche) || demarche;
       }
     }
-    const epreuvesObligatoires = demarche === "naturalisation" ? "CO, CE, EE, EO" : "CO, CE";
+    const epreuvesObligatoires = formatEpreuvesAutorisees(demarche as TypeDemarche);
 
     const [{ data: tcfRules }, { data: tcfThresholds }, { data: baselines }] = await Promise.all([
       supabase.from("tcf_routing_rules").select("*").eq("actif", true),

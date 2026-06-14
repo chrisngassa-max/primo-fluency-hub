@@ -11,7 +11,7 @@
     { "id": "SCORE_08", "condition": "student.mode == 'augmente' AND exercise.etayage == 'faible'", "points": 15, "reason": "Étayage adapté à l'augmentation" },
     { "id": "SCORE_09", "condition": "exercise.competence == session.current_phase_competence", "points": 30, "reason": "Compétence requise pour la phase de la séance" },
     { "id": "SCORE_10", "condition": "exercise.pilier == student.structures_pilier_faible", "points": 20, "reason": "Cible le pilier structurel faible" },
-    { "id": "SCORE_11", "condition": "session.type_demarche == 'titre_sejour' AND (exercise.competence == 'CO' OR exercise.competence == 'CE')", "points": 10, "reason": "Priorité CO/CE pour le titre de séjour" },
+    { "id": "SCORE_11", "condition": "session.type_demarche == 'titre_sejour' AND (exercise.competence == 'CO' OR exercise.competence == 'CE')", "points": 10, "reason": "Pondération CO/CE pour titre de séjour (EE/EO actives à 15% chacune)" },
     { "id": "SCORE_12", "condition": "session.type_demarche == 'naturalisation' AND exercise.niveau_cecrl == 'B2'", "points": 15, "reason": "Niveau cible de la naturalisation" },
     { "id": "SCORE_13", "condition": "student.niveau_variante == 'bas' AND exercise.limite_mots_max <= 40", "points": 10, "reason": "Volume adapté à variante basse" },
     { "id": "SCORE_14", "condition": "exercise.format IN matrix.formats_autorises", "points": 10, "reason": "Format autorisé par la matrice" },

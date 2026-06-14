@@ -770,9 +770,9 @@ ${(doc.fiches_eleves || [])
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="titre_sejour">Titre de séjour (CO + CE)</SelectItem>
-                      <SelectItem value="residency">Résidence (CO + CE)</SelectItem>
-                      <SelectItem value="naturalisation">Naturalisation (CO + CE + EE + EO)</SelectItem>
+                      <SelectItem value="titre_sejour">Titre de séjour (4 compétences)</SelectItem>
+                      <SelectItem value="residency">Résidence (4 compétences)</SelectItem>
+                      <SelectItem value="naturalisation">Naturalisation (4 compétences, seuil B2)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

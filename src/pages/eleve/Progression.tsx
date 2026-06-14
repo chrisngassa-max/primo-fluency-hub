@@ -736,9 +736,8 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
       {/* Objectif TCF IRN */}
       {(() => {
         const demarche = profil?.type_demarche || "titre_sejour";
-        const epreuvesRequises: string[] = demarche === "naturalisation"
-          ? ["CO", "CE", "EE", "EO"]
-          : ["CO", "CE"];
+        const epreuvesRequises: string[] = ["CO", "CE", "EE", "EO"];
+        const niveauRequis = demarche === "naturalisation" ? "B2" : "B1";
         const epreuvesNonValidees = epreuvesRequises.filter(
           (comp) => compMap[comp] !== "acquis_provisoire"
         );
@@ -755,7 +754,7 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
             <CardContent className="space-y-3">
               <p className="text-sm text-muted-foreground">
                 Démarche : <span className="font-medium text-foreground">
-                  {demarche === "naturalisation" ? "Naturalisation (B1 requis sur 4 épreuves)" : "Titre de séjour (A2/B1 sur CO + CE)"}
+                  {demarche === "naturalisation" ? "Naturalisation (B2 requis sur 4 épreuves)" : "Titre de séjour (B1 — 4 compétences + grammaire/structures)"}
                 </span>
               </p>
 
@@ -767,7 +766,7 @@ const EleveProgression = ({ eleveId }: EleveProgressionProps) => {
               ) : (
                 <>
                   <p className="text-sm font-medium">
-                    Il te reste <span className="text-destructive font-bold">{nbRestant} épreuve{nbRestant > 1 ? "s" : ""}</span> à valider pour atteindre le niveau B1 requis.
+                    Il te reste <span className="text-destructive font-bold">{nbRestant} épreuve{nbRestant > 1 ? "s" : ""}</span> à valider pour atteindre le niveau {niveauRequis} requis.
                   </p>
                   <div className="space-y-2">
                     {epreuvesRequises.map((comp) => {

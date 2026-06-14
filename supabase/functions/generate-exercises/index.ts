@@ -26,7 +26,6 @@ serve(async (req) => {
     const { pointName, competence, niveauVise, count: requestedCount = 10, difficultyLevel, targetDurationMinutes, gabaritNumero, type_demarche, niveau_depart, niveau_arrivee, groupId, existingExercises, focus_pedagogique } = await req.json();
     const count = Math.min(30, Math.max(1, Math.round(Number(requestedCount) || 1)));
     const demarche = type_demarche || "titre_sejour";
-    const epreuvesAutorisees = demarche === "naturalisation" ? "CO, CE, EE, EO" : "CO, CE";
     // AI key check moved to shared ai-client
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;

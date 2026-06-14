@@ -77,7 +77,7 @@ async function runBlock(admin: any, supabaseUrl: string, serviceKey: string, ses
           groupId: session.group_id,
           competences: session.competences_autorisees?.length
             ? session.competences_autorisees
-            : session.competences_cibles ?? ["CO", "CE"],
+            : session.competences_cibles ?? ["CO", "CE", "EE", "EO"],
           niveau: session.niveau_cible,
           nbQuestions: session.nb_questions_diagnostic,
           statut: "envoye",
@@ -171,7 +171,7 @@ async function generateAndAttach(
 ) {
   const configuredCompetences: string[] = session.competences_autorisees?.length
     ? session.competences_autorisees
-    : session.competences_cibles?.length ? session.competences_cibles : ["CO", "CE"];
+    : session.competences_cibles?.length ? session.competences_cibles : ["CO", "CE", "EE", "EO"];
   const competences = options.competences?.filter((item) => configuredCompetences.includes(item)).length
     ? options.competences!.filter((item) => configuredCompetences.includes(item))
     : configuredCompetences;

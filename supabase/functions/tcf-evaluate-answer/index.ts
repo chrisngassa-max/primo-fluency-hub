@@ -5,6 +5,7 @@ import { checkConsent, consentBlockedResponse, ensurePseudonymSecretOrLog, logAI
 import { evaluateScoreToTcf13 } from "../_shared/tcf-routing-referential.ts"
 import { pseudonymizeProductionText } from "../_shared/pseudonymize.ts"
 import { emptyOralCriteria, normalizeOralCriteria } from "../_shared/oral-evaluation.ts"
+import { formatEpreuvesAutorisees, type TypeDemarche } from "../_shared/pedagogical-directives.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -102,7 +103,7 @@ Deno.serve(async (req) => {
     const apiKey = Deno.env.get('GEMINI_API_KEY')
     if (!apiKey) throw new Error('La clé GEMINI_API_KEY n\'est pas configurée')
 
-    const demarche = type_demarche || "titre_sejour"
+    const demarche = (type_demarche || "titre_sejour") as TypeDemarche
     const targetEpreuve = epreuve || "CO"
     const targetNiveau = niveau || "A1"
 
@@ -207,9 +208,7 @@ Deno.serve(async (req) => {
       ? `\n\nBanque de référence pédagogique (exercices certifiés similaires — calibre ta correction dessus) :\n${JSON.stringify(banqueReference, null, 2)}`
       : "\n\nAucune banque de référence disponible — corrige selon les standards CECRL généraux."
 
-    const epreuvesAutorisees = demarche === "naturalisation"
-      ? "CO, CE, EE, EO (les 4 épreuves obligatoires, seuil B1 strict)"
-      : "CO et CE principalement (titre de séjour, tolérance EE/EO)"
+    const epreuvesAutorisees = formatEpreuvesAutorisees(demarche)
 
     const userPrompt = `CORRECTION DEMANDÉE :
 Épreuve : ${targetEpreuve}

@@ -609,8 +609,8 @@ const GroupesPage = () => {
                 <Select value={typeDemarche} onValueChange={(v) => setTypeDemarche(v as any)}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="titre_sejour">Titre de séjour / Résidence (CO + CE)</SelectItem>
-                    <SelectItem value="naturalisation">Naturalisation (CO + CE + EE + EO)</SelectItem>
+                    <SelectItem value="titre_sejour">Titre de séjour / Résidence (4 compétences)</SelectItem>
+                    <SelectItem value="naturalisation">Naturalisation (4 compétences, seuil B2)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -1079,8 +1079,8 @@ const GroupesPage = () => {
               <Select value={editTypeDemarche} onValueChange={(v) => setEditTypeDemarche(v as any)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="titre_sejour">Titre de séjour / Résidence (CO + CE)</SelectItem>
-                  <SelectItem value="naturalisation">Naturalisation (CO + CE + EE + EO)</SelectItem>
+                  <SelectItem value="titre_sejour">Titre de séjour / Résidence (4 compétences)</SelectItem>
+                  <SelectItem value="naturalisation">Naturalisation (4 compétences, seuil B2)</SelectItem>
                 </SelectContent>
               </Select>
             </div>

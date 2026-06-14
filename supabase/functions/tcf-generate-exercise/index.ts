@@ -3,6 +3,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0"
 import { QA_REVIEW_BLOCK } from "../_shared/qa-prompt.ts"
 import { ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth } from "../_shared/check-consent.ts"
+import { formatEpreuvesAutorisees, type TypeDemarche } from "../_shared/pedagogical-directives.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -152,10 +153,8 @@ Deno.serve(async (req) => {
     }
     // === Fin RAG ===
 
-    const demarche = type_demarche || "titre_sejour";
-    const epreuvesAutorisees = demarche === "naturalisation"
-      ? "CO, CE, EE, EO (les 4 épreuves obligatoires)"
-      : "CO et CE uniquement (titre de séjour)";
+    const demarche = (type_demarche || "titre_sejour") as TypeDemarche;
+    const epreuvesAutorisees = formatEpreuvesAutorisees(demarche);
 
     const promptDynamique = `
 GÉNÉRATION D'EXERCICE DEMANDÉE:
