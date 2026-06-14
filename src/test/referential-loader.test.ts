@@ -1,18 +1,32 @@
 import { describe, expect, it } from "vitest";
 import {
+  assignClusterVariant,
+  deriveFormatsForCluster,
+  formatReferentialPromptBlock,
+  getClusterVariantRules,
   getDemarcheWeights,
   getDominantPilierFromErrors,
   getErrorRemediation,
+  getExerciseScoringRules,
+  getIntraSessionRules,
+  getSessionBlockRules,
+  getSessionMinimumsForDuration,
   getStructuresSwitchRules,
+  getThemeTemplate,
+  inferThemeFromText,
+  mapStructuresCompetence,
   matchSwitchRule,
   niveauToBand,
   resolveFormatAlias,
+  resolveFormatForGenerator,
+  scoreExerciseCandidate,
 } from "../../supabase/functions/_shared/referential-loader.ts";
 
 describe("referential-loader", () => {
   it("loads referential data", () => {
-    expect(getStructuresSwitchRules().length).toBeGreaterThanOrEqual(12);
+    expect(getStructuresSwitchRules().length).toBeGreaterThanOrEqual(24);
     expect(getErrorRemediation("PHONO", "A0_A1")).not.toBeNull();
+    expect(getIntraSessionRules().length).toBe(12);
   });
 
   it("returns demarche weights for titre_sejour and naturalisation", () => {
@@ -38,6 +52,7 @@ describe("referential-loader", () => {
     const alias = resolveFormatAlias("discrimination_audio");
     expect(alias?.generateur).toBe("qcm");
     expect(alias?.options).toContain("support_audio");
+    expect(resolveFormatForGenerator("discrimination_audio")).toBe("qcm");
   });
 
   it("matches PHONO switch rule when error rate exceeds threshold", () => {
@@ -58,5 +73,106 @@ describe("referential-loader", () => {
       "A0_A1",
     );
     expect(pilier).toBe("phonetique");
+  });
+
+  it("loads theme templates by id", () => {
+    const theme = getThemeTemplate("ADMIN_CAF_01");
+    expect(theme?.label).toContain("CAF");
+    expect(theme?.phases).toHaveLength(4);
+    expect(theme?.phases[0].competences).toContain("Structures");
+    expect(theme?.phases[0].pilier).toBe("vocabulaire");
+  });
+
+  it("infers theme from session title keywords", () => {
+    const theme = inferThemeFromText("Rendez-vous à la CAF pour les allocataires");
+    expect(theme?.theme_id).toBe("ADMIN_CAF_01");
+  });
+
+  it("maps Structures_* competence to Structures + pilier", () => {
+    expect(mapStructuresCompetence("Structures_Vocabulaire")).toEqual({
+      competence: "Structures",
+      pilier: "vocabulaire",
+    });
+    expect(mapStructuresCompetence("Structures_Phonetique")).toEqual({
+      competence: "Structures",
+      pilier: "phonetique",
+    });
+  });
+
+  it("assigns cluster variants with normalized niveau_variante", () => {
+    const rules = getClusterVariantRules();
+    expect(rules.max_clusters_per_session).toBe(3);
+    expect(rules.clusters).toHaveLength(3);
+
+    const bas = assignClusterVariant("A0", "bas");
+    expect(bas?.id).toBe("bas");
+    expect(bas?.etayage_default).toBe("fort");
+  });
+
+  it("scores exercise candidates and applies hard filters", () => {
+    const scoring = getExerciseScoringRules();
+    expect(scoring.scoring_rules.length).toBeGreaterThanOrEqual(15);
+    expect(scoring.hard_filters.length).toBeGreaterThanOrEqual(10);
+
+    const aligned = scoreExerciseCandidate({
+      exercise: {
+        theme_id: "ADMIN_CAF_01",
+        domaine_irn: "admin",
+        niveau_cecrl: "A1",
+        competence: "CO",
+        format: "qcm",
+        etayage: "fort",
+      },
+      session: {
+        theme_id: "ADMIN_CAF_01",
+        domaine_irn: "admin",
+        current_phase_competence: "CO",
+        lexique_noyau: ["allocataire", "guichet"],
+      },
+      student: {
+        niveau_cecrl: "A1",
+        mode: "remediation",
+        niveau_variante: "bas",
+      },
+      matrix: { formats_autorises: ["qcm", "vrai_faux"] },
+    });
+
+    expect(aligned.excluded).toBe(false);
+    expect(aligned.score).toBeGreaterThan(0);
+    expect(aligned.matchedRules).toContain("SCORE_01");
+
+    const excluded = scoreExerciseCandidate({
+      exercise: { theme_id: "LOG_FUITE_01", format: "qcm", niveau_cecrl: "A1" },
+      session: { theme_id: "ADMIN_CAF_01" },
+      student: { niveau_cecrl: "A1", mode: "demarrage" },
+    });
+    expect(excluded.excluded).toBe(true);
+    expect(excluded.exclusionReason).toContain("tronc commun");
+  });
+
+  it("derives formats per cluster from pedagogical rules", () => {
+    const derived = deriveFormatsForCluster("A1", "bas", "CO", "remediation");
+    expect(derived.formats.length).toBeGreaterThan(0);
+    expect(derived.rule?.competence).toBe("CO");
+  });
+
+  it("loads session block rules and minimums", () => {
+    const rules = getSessionBlockRules();
+    expect(rules.minimums_seance).toBeDefined();
+    const mins60 = getSessionMinimumsForDuration(60);
+    expect(mins60?.CO).toBe(2);
+    expect(mins60?.EE).toBe(1);
+  });
+
+  it("formats referential prompt block with theme and invariants", () => {
+    const theme = getThemeTemplate("SANTE_MED_01");
+    const block = formatReferentialPromptBlock({
+      theme,
+      dureeMinutes: 60,
+      clusterVariants: ["bas", "standard"],
+    });
+    expect(block).toContain("SANTE_MED_01");
+    expect(block).toContain("INVARIANTS OBLIGATOIRES");
+    expect(block).toContain("lexique_noyau");
   });
 });

@@ -180,6 +180,90 @@
       "seuil_sortie_pct": 62,
       "reussites_consecutives_sortie": 3,
       "retour_competence": "EE"
+    },
+    {
+      "id": "INTRA_01",
+      "rule_type": "intra_session",
+      "condition": "score_last_item < 60",
+      "action": "set_mode_remediation_next_item",
+      "scope": "same_competence"
+    },
+    {
+      "id": "INTRA_02",
+      "rule_type": "intra_session",
+      "condition": "consecutive_success >= 3 AND score >= 62",
+      "action": "upgrade_niveau_variante",
+      "scope": "same_theme"
+    },
+    {
+      "id": "INTRA_03",
+      "rule_type": "intra_session",
+      "condition": "error_type == 'PHONO'",
+      "action": "insert_block_structures_phonetique_5m",
+      "scope": "before_next_EO"
+    },
+    {
+      "id": "INTRA_04",
+      "rule_type": "intra_session",
+      "condition": "error_type == 'CONSIGNE_NC'",
+      "action": "insert_block_structures_vocabulaire_consignes",
+      "scope": "commun"
+    },
+    {
+      "id": "INTRA_05",
+      "rule_type": "intra_session",
+      "condition": "error_type == 'GRAM_TEMPS' AND competence == 'EE'",
+      "action": "switch_to_structures_conjugaison",
+      "scope": "intra_phase"
+    },
+    {
+      "id": "INTRA_06",
+      "rule_type": "intra_session",
+      "condition": "score_last_item >= 80",
+      "action": "set_mode_augmente_next_item",
+      "scope": "same_competence"
+    },
+    {
+      "id": "INTRA_07",
+      "rule_type": "intra_session",
+      "condition": "error_type == 'COHERENCE_ADMIN'",
+      "action": "downgrade_etayage_to_fort",
+      "scope": "same_competence"
+    },
+    {
+      "id": "INTRA_08",
+      "rule_type": "intra_session",
+      "condition": "competence == 'CO' AND score_last_item < 40",
+      "action": "switch_to_structures_phonetique_discrimination",
+      "scope": "intra_phase"
+    },
+    {
+      "id": "INTRA_09",
+      "rule_type": "intra_session",
+      "condition": "competence == 'EE' AND word_count > 90",
+      "action": "trigger_warning_TCF_IRN_limit",
+      "scope": "immediate"
+    },
+    {
+      "id": "INTRA_10",
+      "rule_type": "intra_session",
+      "condition": "error_type == 'LEX_CONFUSION'",
+      "action": "insert_vocab_matching_exercise",
+      "scope": "same_theme"
+    },
+    {
+      "id": "INTRA_11",
+      "rule_type": "intra_session",
+      "condition": "error_type == 'HORS_SUJET'",
+      "action": "switch_to_vrai_faux_justification",
+      "scope": "intra_phase"
+    },
+    {
+      "id": "INTRA_12",
+      "rule_type": "intra_session",
+      "condition": "time_remaining < 10",
+      "action": "force_transition_to_bilan_phase",
+      "scope": "session"
     }
   ]
 }

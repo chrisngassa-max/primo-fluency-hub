@@ -1,0 +1,140 @@
+{
+  "version": "1.0",
+  "themes": [
+    {
+      "theme_id": "ADMIN_CAF_01",
+      "label": "Prendre et gérer un rendez-vous à la CAF",
+      "domaine_irn": "admin",
+      "situation_type": "dialogue_guichet_et_formulaire",
+      "support_commun": "Audio d'un allocataire au guichet + affiche des horaires + formulaire de changement d'adresse",
+      "personnages": ["l'allocataire", "l'agent CAF"],
+      "lieux": ["CAF", "guichet d'accueil"],
+      "donnees_chiffrees_cles": ["horaires d'ouverture", "numéro de téléphone"],
+      "lexique_noyau": ["allocataire", "guichet", "dossier", "rendez-vous", "horaires", "formulaire", "signature", "fermé", "ouvert"],
+      "competences_prioritaires": {
+        "titre_sejour": ["CO", "CE"],
+        "naturalisation": ["CO", "CE", "EO", "EE"]
+      },
+      "objectif_pedagogique_global": "Gérer une interaction de service public pour mettre à jour sa situation",
+      "duree_minutes": 60,
+      "phases": [
+        {
+          "id": "activation",
+          "duree_min": 10,
+          "commun": true,
+          "competences": ["Structures"],
+          "pilier": "vocabulaire",
+          "tache_type": "appariement_lexique_noyau"
+        },
+        {
+          "id": "reception",
+          "duree_min": 20,
+          "commun": false,
+          "competences": ["CO", "CE"]
+        },
+        {
+          "id": "production_ou_remediation",
+          "duree_min": 20,
+          "commun": false,
+          "competences": ["EO", "EE", "Structures"]
+        },
+        {
+          "id": "bilan",
+          "duree_min": 10,
+          "commun": true,
+          "competences": ["EO"]
+        }
+      ]
+    },
+    {
+      "theme_id": "SANTE_MED_01",
+      "label": "Expliquer ses symptômes au médecin",
+      "domaine_irn": "sante",
+      "situation_type": "dialogue_cabinet",
+      "support_commun": "Audio d'une consultation médecin/patient + visuel d'une ordonnance",
+      "personnages": ["le médecin", "le patient"],
+      "lieux": ["cabinet médical", "pharmacie"],
+      "donnees_chiffrees_cles": ["posologie", "durée du traitement"],
+      "lexique_noyau": ["douleur", "maladie", "ordonnance", "médicament", "pharmacie", "carte vitale"],
+      "competences_prioritaires": {
+        "titre_sejour": ["CO", "EO"],
+        "naturalisation": ["CO", "CE", "EO", "EE"]
+      },
+      "objectif_pedagogique_global": "Décrire un état physique et comprendre une prescription",
+      "duree_minutes": 60,
+      "phases": [
+        {
+          "id": "activation",
+          "duree_min": 10,
+          "commun": true,
+          "competences": ["Structures"],
+          "pilier": "vocabulaire",
+          "tache_type": "association_corps"
+        },
+        {
+          "id": "reception",
+          "duree_min": 20,
+          "commun": false,
+          "competences": ["CO", "CE"]
+        },
+        {
+          "id": "production_ou_remediation",
+          "duree_min": 20,
+          "commun": false,
+          "competences": ["EO", "EE", "Structures"]
+        },
+        {
+          "id": "bilan",
+          "duree_min": 10,
+          "commun": true,
+          "competences": ["EO"]
+        }
+      ]
+    },
+    {
+      "theme_id": "LOG_FUITE_01",
+      "label": "Signaler un dégât des eaux au propriétaire",
+      "domaine_irn": "logement",
+      "situation_type": "telephone_et_email",
+      "support_commun": "Message vocal laissé au propriétaire + brouillon de SMS",
+      "personnages": ["le locataire", "le propriétaire", "le plombier"],
+      "lieux": ["appartement", "salle de bain"],
+      "donnees_chiffrees_cles": ["numéro de téléphone du plombier", "montant du loyer"],
+      "lexique_noyau": ["fuite", "eau", "urgence", "réparer", "plombier", "loyer", "propriétaire"],
+      "competences_prioritaires": {
+        "titre_sejour": ["CE", "EE"],
+        "naturalisation": ["CO", "CE", "EO", "EE"]
+      },
+      "objectif_pedagogique_global": "Alerter sur un dysfonctionnement domestique et demander une intervention",
+      "duree_minutes": 60,
+      "phases": [
+        {
+          "id": "activation",
+          "duree_min": 10,
+          "commun": true,
+          "competences": ["Structures"],
+          "pilier": "vocabulaire",
+          "tache_type": "reconnaissance_visuelle"
+        },
+        {
+          "id": "reception",
+          "duree_min": 20,
+          "commun": false,
+          "competences": ["CO", "CE"]
+        },
+        {
+          "id": "production_ou_remediation",
+          "duree_min": 20,
+          "commun": false,
+          "competences": ["EO", "EE", "Structures"]
+        },
+        {
+          "id": "bilan",
+          "duree_min": 10,
+          "commun": true,
+          "competences": ["EO"]
+        }
+      ]
+    }
+  ]
+}

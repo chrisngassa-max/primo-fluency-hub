@@ -1,0 +1,44 @@
+{
+  "version": "1.0",
+  "max_clusters_per_session": 3,
+  "clusters": [
+    {
+      "id": "bas",
+      "niveau_cecrl": ["A0", "A1"],
+      "niveau_variante": "bas",
+      "focus": "reception_et_structures",
+      "etayage_default": "fort",
+      "description": "A0 et A1 en variante basse : réception et étayage fort"
+    },
+    {
+      "id": "standard",
+      "niveau_cecrl": ["A1", "A2"],
+      "niveau_variante": "standard",
+      "focus": "actionnel_direct",
+      "etayage_default": "moyen",
+      "description": "A1 standard et A2 : action directe, étayage moyen"
+    },
+    {
+      "id": "haut",
+      "niveau_cecrl": ["B1", "B2"],
+      "niveau_variante": "haut",
+      "focus": "argumentation_implicite",
+      "etayage_default": "faible",
+      "description": "B1 et B2 : argumentation et inférence, étayage faible"
+    }
+  ],
+  "invariants_obligatoires": [
+    "situation_type",
+    "noms_des_personnages",
+    "lieux_et_institutions",
+    "donnees_chiffrees_cles",
+    "lexique_noyau"
+  ],
+  "elements_adaptables": [
+    "longueur_du_texte",
+    "vitesse_de_l_audio",
+    "bruit_de_fond_audio",
+    "complexite_syntaxique_consigne",
+    "niveau_implicite_distracteurs"
+  ]
+}

@@ -7,6 +7,17 @@ import { checkConsentBatch, ensurePseudonymSecretOrLog, logAICall, getUserIdFrom
 import { formatPedagogicalDirectives, type PedagogicalDirectives } from "../_shared/pedagogical-directives.ts";
 import { computeProgressionForEleves, type ProgressionMode } from "../_shared/progression.ts";
 import { bigramJaccard } from "../_shared/text-similarity.ts";
+import {
+  assignClusterVariant,
+  deriveFormatsForCluster,
+  formatReferentialPromptBlock,
+  getClusterVariantRules,
+  getSessionMinimumsForDuration,
+  getThemeTemplate,
+  inferThemeFromText,
+  type ClusterVariantId,
+  type ThemeSessionTemplate,
+} from "../_shared/referential-loader.ts";
 
 const VARIANT_JACCARD_THRESHOLD = 0.3;
 
@@ -18,12 +29,30 @@ const corsHeaders = {
 
 interface DifferentiationCluster {
   key: string;
+  cluster_id: ClusterVariantId;
   niveau_variante: PedagogicalDirectives["niveau_variante"];
   niveau_etayage: PedagogicalDirectives["niveau_etayage"];
   mode_adaptation: ProgressionMode;
   competence_cible: string | null;
   directives: PedagogicalDirectives;
+  formats_autorises: string[];
   eleve_ids: string[];
+}
+
+function mergeClustersToMaxThree(clusters: DifferentiationCluster[]): DifferentiationCluster[] {
+  const maxClusters = getClusterVariantRules().max_clusters_per_session ?? 3;
+  if (clusters.length <= maxClusters) return clusters;
+
+  const byVariant = new Map<ClusterVariantId, DifferentiationCluster>();
+  for (const cluster of clusters) {
+    const variant = cluster.niveau_variante;
+    if (!byVariant.has(variant)) {
+      byVariant.set(variant, { ...cluster, eleve_ids: [...cluster.eleve_ids] });
+    } else {
+      byVariant.get(variant)!.eleve_ids.push(...cluster.eleve_ids);
+    }
+  }
+  return Array.from(byVariant.values()).slice(0, maxClusters);
 }
 
 function summarizeExercise(exercise: any): string {
@@ -90,7 +119,7 @@ serve(async (req) => {
     const _secretBlock = await ensurePseudonymSecretOrLog("generate-session-content", corsHeaders, null);
     if (_secretBlock) return _secretBlock;
     await logAICall({ function_name: "generate-session-content", triggered_by_user_id: _triggeredBy, status: "ok", data_categories: [], pseudonymization_level: "none" });
-    const { titre, objectifs, competences_cibles, niveau_cible, duree_minutes, exercices_suggeres, gabaritNumero, micro_competences, selected_activities, groupId, eleveIds, formateurId, sessionId } = await req.json();
+    const { titre, objectifs, competences_cibles, niveau_cible, duree_minutes, exercices_suggeres, gabaritNumero, micro_competences, selected_activities, groupId, eleveIds, formateurId, sessionId, theme_id, type_demarche } = await req.json();
     // AI key check moved to shared ai-client
 
     if (!titre || !competences_cibles || competences_cibles.length === 0) {
@@ -103,6 +132,30 @@ serve(async (req) => {
     const niveau = niveau_cible || "A1";
     const duree = duree_minutes || 180;
     const nbExercices = Math.max(8, Math.round(duree / 18));
+
+    // Theme template (explicit theme_id or inferred from title/domain)
+    let themeTemplate: ThemeSessionTemplate | null = null;
+    if (theme_id) {
+      themeTemplate = getThemeTemplate(theme_id);
+    }
+    if (!themeTemplate) {
+      themeTemplate = inferThemeFromText(`${titre} ${objectifs ?? ""} ${competences_cibles?.join(" ") ?? ""}`);
+    }
+
+    const referentialBlock = formatReferentialPromptBlock({
+      theme: themeTemplate,
+      dureeMinutes: duree,
+      typeDemarche: type_demarche,
+    });
+
+    const sessionMinimums = getSessionMinimumsForDuration(duree);
+    let minimumsWarning = "";
+    if (sessionMinimums) {
+      const minLines = Object.entries(sessionMinimums)
+        .map(([comp, min]) => `${comp}: minimum ${min} exercice(s)`)
+        .join("; ");
+      minimumsWarning = `\nVALIDATION MINIMUMS SEANCE: ${minLines}. Avertir si non respecte.`;
+    }
 
     // Load gabarit if provided
     let gabarit: any = null;
@@ -216,6 +269,8 @@ Instructions de pondération :
 })()}
 ${gabaritBlock}
 ${banqueBlock}
+${referentialBlock}
+${minimumsWarning}
 
 ═══════════════════════════════════════════════════
 RÈGLES ABSOLUES SUR LA LANGUE — PUBLIC A0/A1 ALLOPHONE
@@ -459,34 +514,37 @@ Utilise le tool fourni pour retourner le résultat.` + QA_REVIEW_BLOCK;
       const profile = progressionProfiles[eleveId];
       if (!profile) continue;
       const directives = profile.directives;
-      const key = `${directives.niveau_variante}:${directives.niveau_etayage}:${profile.progression}`;
+      const clusterVariant = assignClusterVariant(
+        profile.profile?.niveau_actuel ?? niveau,
+        directives.niveau_variante,
+      );
+      const clusterId = clusterVariant?.id ?? directives.niveau_variante;
+      const key = clusterId;
+      const targetComp = directives.competence_cible ?? targetCompetence ?? "CE";
+      const formatDerivation = deriveFormatsForCluster(
+        profile.profile?.niveau_actuel ?? niveau,
+        directives.niveau_variante,
+        targetComp,
+        profile.progression,
+        type_demarche,
+      );
       if (!clusterMap.has(key)) {
         clusterMap.set(key, {
           key,
+          cluster_id: clusterId,
           niveau_variante: directives.niveau_variante,
           niveau_etayage: directives.niveau_etayage,
           mode_adaptation: profile.progression,
           competence_cible: directives.competence_cible,
           directives,
+          formats_autorises: formatDerivation.formats,
           eleve_ids: [],
         });
       }
       clusterMap.get(key)!.eleve_ids.push(eleveId);
     }
 
-    let clusters = Array.from(clusterMap.values());
-    if (clusters.length > 4) {
-      const merged = new Map<string, DifferentiationCluster>();
-      for (const cluster of clusters) {
-        const key = cluster.niveau_variante;
-        if (!merged.has(key) || cluster.eleve_ids.length > merged.get(key)!.eleve_ids.length) {
-          merged.set(key, { ...cluster, key, eleve_ids: [...cluster.eleve_ids] });
-        } else {
-          merged.get(key)!.eleve_ids.push(...cluster.eleve_ids);
-        }
-      }
-      clusters = Array.from(merged.values());
-    }
+    let clusters = mergeClustersToMaxThree(Array.from(clusterMap.values()));
     if (clusters.length > 8) {
       return new Response(
         JSON.stringify({ error: "too_many_clusters", clusters: clusters.length }),
@@ -500,6 +558,12 @@ Utilise le tool fourni pour retourner le résultat.` + QA_REVIEW_BLOCK;
 
     for (const cluster of clusters) {
       const directivesBlock = formatPedagogicalDirectives(cluster.directives);
+      const clusterReferentialBlock = formatReferentialPromptBlock({
+        theme: themeTemplate,
+        dureeMinutes: duree,
+        clusterVariants: [cluster.cluster_id],
+        typeDemarche: type_demarche,
+      });
       const variantPrompt = `Tu produis des variantes pedagogiques d'une seance FLE TCF IRN.
 
 Tu dois conserver le meme objectif, le meme theme, la meme situation de communication et la meme competence.
@@ -507,6 +571,14 @@ Tu dois garder le support source du tronc commun comme support commun.
 Tu peux uniquement le segmenter, le simplifier legerement, ajouter des aides lexicales, un exemple, une consigne audio ou une aide visuelle.
 Tu ne dois jamais remplacer le support par un autre document, un autre texte, une autre situation ou un autre scenario.
 Tu dois adapter l'exercice et les attendus selon les directives.
+
+INVARIANTS CLUSTER (OBLIGATOIRES — identiques entre variantes):
+- situation_type, noms des personnages, lieux, donnees chiffrees, lexique_noyau du theme
+- Ne jamais modifier les faits du support commun (horaires, noms, chiffres)
+
+FORMATS AUTORISES POUR CE CLUSTER: ${cluster.formats_autorises.join(", ")}
+
+${clusterReferentialBlock}
 
 DIRECTIVES DU CLUSTER:
 ${directivesBlock}
@@ -659,11 +731,14 @@ Si le support.contenu change, il doit rester une version etayee du support commu
       differentiation: {
         generation_run_id: generationRunId,
         clusters: clusters.map((cluster) => ({
+          cluster_id: cluster.cluster_id,
           niveau_variante: cluster.niveau_variante,
           niveau_etayage: cluster.niveau_etayage,
           mode_adaptation: cluster.mode_adaptation,
+          formats_autorises: cluster.formats_autorises,
           eleve_ids: cluster.eleve_ids,
         })),
+        theme_id: themeTemplate?.theme_id ?? null,
         variants_per_eleve: variantsPerEleve,
         excluded: differentiationExcluded,
         summaries: Object.fromEntries(Object.entries(variantsPerEleve).map(([eleveId, value]: [string, any]) => [

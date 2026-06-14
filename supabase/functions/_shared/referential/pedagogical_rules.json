@@ -6,6 +6,8 @@
       "niveau_cecrl": "A0",
       "competence": "CO",
       "mode": "demarrage",
+      "tache_type": "comprehension_globale",
+      "etayage_default": "fort",
       "formats_recommandes": [
         "qcm",
         "vrai_faux",
@@ -56,6 +58,8 @@
       "niveau_cecrl": "A0",
       "competence": "CE",
       "mode": "demarrage",
+      "tache_type": "reperage_visuel",
+      "etayage_default": "fort",
       "formats_recommandes": [
         "qcm",
         "appariement"
@@ -104,6 +108,8 @@
       "niveau_cecrl": "A1",
       "competence": "CO",
       "mode": "demarrage",
+      "tache_type": "comprehension_globale",
+      "etayage_default": "fort",
       "formats_recommandes": [
         "qcm"
       ],
@@ -148,6 +154,8 @@
       "niveau_cecrl": "A1",
       "competence": "CE",
       "mode": "demarrage",
+      "tache_type": "recherche_information_specifique",
+      "etayage_default": "moyen",
       "formats_recommandes": [
         "qcm",
         "vrai_faux",
@@ -284,6 +292,8 @@
       "niveau_cecrl": "A2",
       "competence": "CO",
       "mode": "demarrage",
+      "tache_type": "comprehension_detaillee",
+      "etayage_default": "moyen",
       "formats_recommandes": [
         "qcm"
       ],
@@ -327,6 +337,8 @@
       "niveau_cecrl": "A2",
       "competence": "CE",
       "mode": "demarrage",
+      "tache_type": "recherche_information_specifique",
+      "etayage_default": "moyen",
       "formats_recommandes": [
         "qcm",
         "vrai_faux"
@@ -372,6 +384,8 @@
       "niveau_cecrl": "B1",
       "competence": "EE",
       "mode": "demarrage",
+      "tache_type": "redaction_message",
+      "etayage_default": "faible",
       "formats_recommandes": [
         "production_ecrite"
       ],
@@ -416,6 +430,8 @@
       "niveau_cecrl": "B1",
       "competence": "EO",
       "mode": "demarrage",
+      "tache_type": "interaction_guichet",
+      "etayage_default": "faible",
       "formats_recommandes": [
         "production_orale"
       ],
@@ -536,6 +552,8 @@
       "niveau_cecrl": "A1",
       "competence": "Structures",
       "mode": "remediation",
+      "tache_type": "discrimination_phonemes",
+      "etayage_default": "fort",
       "type_demarche": "both",
       "formats_recommandes": [
         "transformation",
