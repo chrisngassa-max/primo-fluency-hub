@@ -1,0 +1,415 @@
+{
+  "version": "v3",
+  "ee_word_bounds": { "t1": [30, 60], "t2": [40, 90], "t3": [40, 90] },
+  "eo_duration_minutes": { "t1": 3, "t2": 3.5, "t3": 3.5 },
+  "rules": [
+    {
+      "rule_id": "A1_CO",
+      "niveau": "A1",
+      "epreuve": "CO",
+      "profil_entree_specifique": "Apprenant maghrébin en emploi : comprend oralement le français du quotidien professionnel mais sans traitement analytique. L'écoute est globale et contextuelle, non linguistique.",
+      "condition": {
+        "score_min": 100,
+        "score_max": 199,
+        "score_scale": "tcf_699",
+        "erreur_type": "Compréhension par déduction contextuelle uniquement — blocage dès que le contexte situationnel est absent ou ambigu.",
+        "signal_qualitatif": "L'apprenant comprend l'essentiel d'un échange familier s'il voit son interlocuteur, mais décroche à l'écoute seule."
+      },
+      "action": {
+        "variante_exercice": "QCM audio court (15-30 sec) sur situations professionnelles connues (atelier, chantier, commerce, transport). Appui sur le lexique déjà maîtrisé à l'oral.",
+        "type_remediation": "Transfert de la compétence orale informelle vers une écoute analytique structurée. Identification des mots-clés porteurs de sens.",
+        "contre_indication": "Documents audio abstraits sans ancrage professionnel ou quotidien. Débit rapide sans contexte visuel.",
+        "message_apprenant": "Vous comprenez déjà beaucoup à l'oral ! Entraînez-vous à repérer les mots importants dans ce que vous entendez."
+      },
+      "bascule_niveau_suivant": {
+        "condition_qualitative": "Capacité à identifier des informations précises (lieu, heure, personne) dans un message oral court sans appui visuel.",
+        "condition_quantitative": 200,
+        "fiabilite": "haute"
+      },
+      "plafond_tcf_irn": false
+    },
+    {
+      "rule_id": "A1_CE",
+      "niveau": "A1",
+      "epreuve": "CE",
+      "profil_entree_specifique": "Lecteur débutant non illettré : déchiffre lentement, reconnaît des mots isolés. A reçu une scolarisation partielle en français au Maghreb. Lit les chiffres et les noms propres.",
+      "condition": {
+        "score_min": 100,
+        "score_max": 199,
+        "score_scale": "tcf_699",
+        "erreur_type": "Lecture linéaire mot-à-mot. Blocage total sur un mot inconnu. Pas de stratégie de contournement (contexte, image, forme du mot).",
+        "signal_qualitatif": "L'apprenant déchiffre mais ne comprend pas la phrase dans son ensemble. Il lit les mots séparément sans construire le sens."
+      },
+      "action": {
+        "variante_exercice": "Textes très courts (2-3 phrases) avec vocabulaire du monde professionnel connu. Exercices d'association mot écrit / mot oral déjà connu. Documents réels simplifiés (fiche de paie, bon de commande, panneau de sécurité).",
+        "type_remediation": "Construction du lien entre ce que l'apprenant sait dire à l'oral et ce qu'il voit à l'écrit. L'oral devient levier d'entrée dans l'écrit.",
+        "contre_indication": "Textes sans ancrage professionnel ou quotidien. Exercices de grammaire théorique décontextualisés.",
+        "message_apprenant": "Vous savez déjà dire ces mots à l'oral — apprenez maintenant à les reconnaître à l'écrit !"
+      },
+      "bascule_niveau_suivant": {
+        "condition_qualitative": "Capacité à comprendre le sens global d'une phrase courte sans bloquer sur chaque mot inconnu.",
+        "condition_quantitative": 200,
+        "fiabilite": "haute"
+      },
+      "plafond_tcf_irn": false
+    },
+    {
+      "rule_id": "A1_EO",
+      "niveau": "A1",
+      "epreuve": "EO",
+      "profil_entree_specifique": "Parle spontanément dans la vie quotidienne et au travail, mais avec une syntaxe très approximative : ellipses, calques de l'arabe/darija/berbère, absence de structure Sujet-Verbe-Complément.",
+      "condition": {
+        "score_min": 1,
+        "score_max": 1,
+        "score_scale": "tcf_13",
+        "erreur_type": "Phrases sans verbe conjugué (ex : 'moi travail demain'). Absence d'articles. Confusion des temps (présent utilisé pour tout). Calques syntaxiques de la langue maternelle.",
+        "signal_qualitatif": "L'apprenant communique efficacement dans la vie réelle mais sa production n'est pas conforme aux critères TCF. Il est compris mais mal noté."
+      },
+      "action": {
+        "variante_exercice": "Reformulation de phrases produites spontanément par l'apprenant lui-même. Exercices S-V-C à partir de ses propres énoncés. Simulation d'entretien TCF Tâche 1 sur des thèmes maîtrisés (identité, travail, famille). Paires minimales ciblées arabophones : p/b (pain/bain), u/ou (lune/loupe), voyelles nasales (an/in/on).",
+        "type_remediation": "Restructuration syntaxique progressive à partir de la production orale existante. Phonétique corrective ciblée sur les sons inexistants en arabe/darija : /p/, /y/, /ø/, /œ/, nasales /ɑ̃/ /ɛ̃/ /ɔ̃/. Ces corrections phonétiques améliorent simultanément la CO (discrimination auditive) et l'EE (orthographe phonétique).",
+        "contre_indication": "Phonétique abstraite décontextualisée (tableaux API sans ancrage lexical). Demande d'argumentation ou de justification.",
+        "message_apprenant": "Vous parlez déjà bien ! Travaillons maintenant à construire vos phrases de façon plus structurée pour l'examen. RAPPEL : Tâche 1 = 3 min — phrases S-V-C complètes."
+      },
+      "bascule_niveau_suivant": {
+        "condition_qualitative": "Capacité à produire des phrases complètes (S+V+C) de manière stable, même sur des sujets simples.",
+        "condition_quantitative": 2,
+        "fiabilite": "moyenne"
+      },
+      "plafond_tcf_irn": false
+    },
+    {
+      "rule_id": "A1_EE",
+      "niveau": "A1",
+      "epreuve": "EE",
+      "profil_entree_specifique": "Écrit très difficile : l'apprenant peut recopier mais produit peu de façon autonome. Erreurs orthographiques massives liées aux interférences phonétiques (écrit comme il prononce, avec accent maghrébin).",
+      "condition": {
+        "score_min": 1,
+        "score_max": 1,
+        "score_scale": "tcf_13",
+        "erreur_type": "Orthographe phonétique (ex : 'je travail' pour 'je travaille'). Absence de ponctuation. Confusion masculin/féminin. Verbes non conjugués.",
+        "signal_qualitatif": "L'apprenant peut recopier et écrire quelques mots isolés mais ne peut pas produire une phrase complète autonome de façon lisible et compréhensible."
+      },
+      "action": {
+        "variante_exercice": "Complétion de phrases à trous très guidées. Rédaction assistée d'un message ultra-court (30-60 mots) à partir d'un canevas structuré. Dictées très courtes de phrases S-V-C simples déjà travaillées à l'oral.",
+        "type_remediation": "Transfert oral → écrit : ce que l'apprenant dit correctement à l'oral après restructuration, il apprend à l'écrire. Travail systématique sur les formes graphiques des mots à haute fréquence.",
+        "contre_indication": "Production écrite libre sans canevas. Exercices de grammaire abstraite (règles d'accord sans ancrage phrase).",
+        "message_apprenant": "Continuez vos efforts ! RAPPEL IMPÉRATIF : Tâche 1 = entre 30 et 60 mots, écriture lisible obligatoire."
+      },
+      "bascule_niveau_suivant": {
+        "condition_qualitative": "Capacité à rédiger un court message intelligible (3-4 phrases) de façon autonome avec un canevas minimal.",
+        "condition_quantitative": 2,
+        "fiabilite": "haute"
+      },
+      "plafond_tcf_irn": false
+    },
+    {
+      "rule_id": "A2_CO",
+      "niveau": "A2",
+      "epreuve": "CO",
+      "profil_entree_specifique": "L'apprenant comprend des conversations professionnelles standards mais décroche sur le vocabulaire administratif ou formel. Comprend mieux en face-à-face qu'en écoute seule.",
+      "condition": {
+        "score_min": 200,
+        "score_max": 299,
+        "score_scale": "tcf_699",
+        "erreur_type": "Décrochage dès que le débit s'accélère ou face à du vocabulaire administratif/formel non rencontré en milieu professionnel.",
+        "signal_qualitatif": "L'apprenant comprend l'essentiel d'une conversation de travail mais échoue sur les messages officiels, annonces publiques ou instructions complexes."
+      },
+      "action": {
+        "variante_exercice": "QCM sur dialogues de la vie courante et professionnelle : demandes d'information, consignes de sécurité, rendez-vous administratifs. Audios de 1 minute maximum.",
+        "type_remediation": "Extension du vocabulaire de compréhension vers les registres administratifs et formels à partir du socle oral professionnel acquis.",
+        "contre_indication": "Exposés abstraits, débats d'idées, documents radiophoniques avec bruits de fond.",
+        "message_apprenant": "Vous progressez bien ! Élargissez votre vocabulaire aux situations administratives et officielles."
+      },
+      "bascule_niveau_suivant": {
+        "condition_qualitative": "Compréhension des points essentiels d'un message clair et standard sur des sujets variés, y compris administratifs.",
+        "condition_quantitative": 300,
+        "fiabilite": "haute"
+      },
+      "plafond_tcf_irn": false
+    },
+    {
+      "rule_id": "A2_CE",
+      "niveau": "A2",
+      "epreuve": "CE",
+      "profil_entree_specifique": "L'apprenant lit lentement mais comprend des phrases simples. Difficulté principale : le vocabulaire administratif et les connecteurs logiques absents de son usage oral quotidien.",
+      "condition": {
+        "score_min": 200,
+        "score_max": 299,
+        "score_scale": "tcf_699",
+        "erreur_type": "Blocage sur le lexique administratif et les connecteurs logiques. Confusion sur les pronoms de reprise. Lecture trop lente pour exploiter les 35 minutes de l'épreuve CE.",
+        "signal_qualitatif": "L'apprenant comprend une petite annonce ou un courriel simple mais échoue face à un document administratif ou une notice structurée."
+      },
+      "action": {
+        "variante_exercice": "Lecture de documents courants : courriels professionnels simples, petites annonces, horaires, convocations administratives basiques. Exercices de repérage d'informations clés.",
+        "type_remediation": "Développement de stratégies de lecture rapide (balayage, repérage des mots-clés) pour compenser la lenteur de déchiffrage. Travail sur le vocabulaire administratif de haute fréquence.",
+        "contre_indication": "Textes longs, articles de presse d'opinion, textes littéraires.",
+        "message_apprenant": "C'est très bien ! Entraînez-vous à trouver l'information importante rapidement sans lire chaque mot."
+      },
+      "bascule_niveau_suivant": {
+        "condition_qualitative": "Capacité à extraire des informations spécifiques d'un texte courant sans bloquer sur les mots inconnus.",
+        "condition_quantitative": 300,
+        "fiabilite": "haute"
+      },
+      "plafond_tcf_irn": false
+    },
+    {
+      "rule_id": "A2_EO",
+      "niveau": "A2",
+      "epreuve": "EO",
+      "profil_entree_specifique": "L'apprenant parle mais sa syntaxe reste approximative. Les calques de l'arabe/darija persistent. Il peut raconter mais ne structure pas son discours. Il interagit mais dépend des relances.",
+      "condition": {
+        "score_min": 2,
+        "score_max": 5,
+        "score_scale": "tcf_13",
+        "erreur_type": "Dépendance aux relances de l'interlocuteur. Structure discursive plate (pas de connecteurs, pas de chronologie explicite). Calques syntaxiques persistants de la L1 (arabe/darija/berbère).",
+        "signal_qualitatif": "L'apprenant échange des informations simples mais reste dans un style question-réponse. Il ne prend pas l'initiative discursive."
+      },
+      "action": {
+        "variante_exercice": "Simulations d'interaction TCF Tâche 2 : obtenir une information, prendre un rendez-vous, expliquer un problème à un employeur. Entraînement aux structures d'initiative discursive. Paires minimales en contexte : liaison et enchaînement vocalique, discrimination nasales.",
+        "type_remediation": "Formalisation syntaxique des productions orales spontanées : connecteurs temporels, structures de politesse formelle. Phonétique corrective intégrée : liaison et enchaînement (impact direct sur la CO), discrimination des nasales /ɑ̃/ /ɛ̃/ /ɔ̃/ qui génèrent des erreurs d'orthographe phonétique en EE.",
+        "contre_indication": "Monologue continu ou argumentation abstraite. Phonétique abstraite décontextualisée sans ancrage lexical ou communicatif.",
+        "message_apprenant": "Vous communiquez efficacement ! Travaillons maintenant à structurer vos phrases pour l'examen. RAPPEL : Tâche 2 = 3 min 30 — prenez l'initiative, connecteurs temporels, racontez sans attendre les relances."
+      },
+      "bascule_niveau_suivant": {
+        "condition_qualitative": "Capacité à initier et conduire une interaction simple sans dépendre des relances, en racontant un événement ou justifiant un choix.",
+        "condition_quantitative": 6,
+        "fiabilite": "moyenne"
+      },
+      "plafond_tcf_irn": false
+    },
+    {
+      "rule_id": "A2_EE",
+      "niveau": "A2",
+      "epreuve": "EE",
+      "profil_entree_specifique": "L'apprenant peut écrire quelques phrases mais avec des erreurs massives liées aux interférences phonétiques et aux calques de la L1. La ponctuation et les majuscules sont souvent absentes.",
+      "condition": {
+        "score_min": 2,
+        "score_max": 5,
+        "score_scale": "tcf_13",
+        "erreur_type": "Erreurs d'accord (genre/nombre) systématiques. Confusion auxiliaires être/avoir. Orthographe phonétique. Absence de ponctuation structurante. Négation mal construite.",
+        "signal_qualitatif": "L'apprenant rédige des messages compréhensibles mais truffés d'erreurs qui nuisent à la lisibilité et à la notation TCF."
+      },
+      "action": {
+        "variante_exercice": "Rédaction guidée d'un compte rendu d'expérience (Tâche 2 : raconter son week-end, décrire son travail) avec canevas et checklist de révision. Exercices de réécriture : ajouter, déplacer, remplacer.",
+        "type_remediation": "Travail systématique sur les accords de base (genre/nombre), les auxiliaires et la négation — points de blocage spécifiques aux locuteurs arabophones.",
+        "contre_indication": "Textes d'opinion formalisés. Productions sans canevas ni structure d'appui.",
+        "message_apprenant": "Vos messages sont compréhensibles ! RAPPEL IMPÉRATIF : Tâche 2 = entre 40 et 90 mots maximum. Hors limites = lourdement sanctionné."
+      },
+      "bascule_niveau_suivant": {
+        "condition_qualitative": "Capacité à rédiger un message cohérent avec des connecteurs basiques, des phrases complètes et une ponctuation minimale.",
+        "condition_quantitative": 6,
+        "fiabilite": "haute"
+      },
+      "plafond_tcf_irn": false
+    },
+    {
+      "rule_id": "B1_CO",
+      "niveau": "B1",
+      "epreuve": "CO",
+      "profil_entree_specifique": "L'apprenant comprend des échanges professionnels complexes mais décroche sur les débats d'idées, les nuances temporelles et les registres soutenu ou soutenu-administratif.",
+      "condition": {
+        "score_min": 300,
+        "score_max": 399,
+        "score_scale": "tcf_699",
+        "erreur_type": "Perte du fil sur les digressions. Difficulté à distinguer fait/opinion/hypothèse à l'oral. Incompréhension des nuances temporelles (conditionnel, imparfait narratif).",
+        "signal_qualitatif": "L'apprenant comprend les points essentiels d'un discours clair mais échoue sur les registres formels et les nuances argumentatives."
+      },
+      "action": {
+        "variante_exercice": "Écoute de reportages simples, d'interviews professionnelles, d'explications administratives. Exercices de distinction fait/opinion/hypothèse.",
+        "type_remediation": "Développement de l'écoute analytique : repérage de la structure logique, des nuances temporelles, des marqueurs d'opinion.",
+        "contre_indication": "Débats d'idées hautement abstraits. Voix multiples superposées.",
+        "message_apprenant": "Très bon niveau ! Entraînez-vous à repérer les nuances et les raisons données par les locuteurs."
+      },
+      "bascule_niveau_suivant": {
+        "condition_qualitative": "Compréhension de discours complexes incluant des arguments abstraits et des nuances temporelles.",
+        "condition_quantitative": 400,
+        "fiabilite": "haute"
+      },
+      "plafond_tcf_irn": false
+    },
+    {
+      "rule_id": "B1_CE",
+      "niveau": "B1",
+      "epreuve": "CE",
+      "profil_entree_specifique": "L'apprenant lit des textes courants mais avec lenteur. Le vocabulaire abstrait et les connecteurs d'opposition/concession restent des obstacles. La vitesse de lecture est un enjeu fort pour l'épreuve de 35 minutes.",
+      "condition": {
+        "score_min": 300,
+        "score_max": 399,
+        "score_scale": "tcf_699",
+        "erreur_type": "Confusion sémantique entre synonymes. Mauvaise interprétation de l'implicite. Lenteur de lecture incompatible avec les contraintes temporelles de l'épreuve CE.",
+        "signal_qualitatif": "L'apprenant comprend des textes factuels courants mais échoue sur les textes argumentatifs ou les documents à lecture rapide."
+      },
+      "action": {
+        "variante_exercice": "Textes informatifs, articles de presse courants, documents liés à la vie citoyenne et à l'intégration. Exercices chronométrés de lecture rapide.",
+        "type_remediation": "Développement des stratégies de lecture efficace et enrichissement lexical autour des thèmes citoyens et professionnels.",
+        "contre_indication": "Textes littéraires ou juridiques bruts non explicités.",
+        "message_apprenant": "Félicitations ! Travaillez la lecture rapide et le vocabulaire des opinions pour l'épreuve."
+      },
+      "bascule_niveau_suivant": {
+        "condition_qualitative": "Lecture autonome de textes complexes avec adaptation du style et de la vitesse selon le type de document.",
+        "condition_quantitative": 400,
+        "fiabilite": "haute"
+      },
+      "plafond_tcf_irn": false
+    },
+    {
+      "rule_id": "B1_EO",
+      "niveau": "B1",
+      "epreuve": "EO",
+      "profil_entree_specifique": "L'apprenant parle avec fluidité mais reste sur des structures simples. Il évite les phrases complexes pour ne pas risquer l'erreur. La surgénéralisation des règles apprises crée des fautes inédites.",
+      "condition": {
+        "score_min": 6,
+        "score_max": 9,
+        "score_scale": "tcf_13",
+        "erreur_type": "Surgénéralisation (ex : 'vous disez', 'ils faisent'). Omission ou mauvais placement des pronoms compléments (en, y, lui). Ruptures syntaxiques dans les phrases complexes.",
+        "signal_qualitatif": "L'apprenant s'exprime de façon continue mais sa production reste pauvre lexicalement, compensée par des périphrases. L'auto-correction est absente ou rare."
+      },
+      "action": {
+        "variante_exercice": "Entraînement TCF Tâche 3 : expression d'un point de vue sur un sujet simple (travail, famille, quartier). Plan logique imposé (position + argument + exemple). Prise de parole enregistrée pour auto-écoute.",
+        "type_remediation": "Structuration du discours oral argumentatif. Connecteurs de cause/conséquence/opposition. Pronominalisation. Ne pas sur-corriger la surgénéralisation — reformuler.",
+        "contre_indication": "Correction morphosyntaxique systématique qui bloque la fluidité. Répétition mécanique sans enjeu communicatif.",
+        "message_apprenant": "Votre discours est vivant ! Travaillons l'organisation de vos arguments. RAPPEL : Tâche 3 = 3 min 30 — position + argument + exemple, fluidité avant perfection morphologique."
+      },
+      "bascule_niveau_suivant": {
+        "condition_qualitative": "Apparition de l'auto-correction et capacité à défendre un point de vue structuré de façon spontanée.",
+        "condition_quantitative": 10,
+        "fiabilite": "moyenne"
+      },
+      "plafond_tcf_irn": false
+    },
+    {
+      "rule_id": "B1_EE",
+      "niveau": "B1",
+      "epreuve": "EE",
+      "profil_entree_specifique": "L'apprenant produit des textes cohérents mais avec des fautes persistantes liées aux interférences arabophones. Le passage à l'argumentation écrite formelle est le défi principal.",
+      "condition": {
+        "score_min": 6,
+        "score_max": 9,
+        "score_scale": "tcf_13",
+        "erreur_type": "Bévues syntaxiques non systématiques. Calques sémantiques (faux-synonymes). Difficulté à structurer une argumentation écrite dense en 40-90 mots.",
+        "signal_qualitatif": "L'apprenant produit un texte suivi et cohérent sur des sujets familiers mais l'argumentation manque de structure et de densité."
+      },
+      "action": {
+        "variante_exercice": "Rédaction TCF Tâche 3 : texte d'opinion motivé sur un sujet du quotidien (40-90 mots). Exercices de densification : dire plus en moins de mots. Autocorrection guidée.",
+        "type_remediation": "Maîtrise de l'argumentation concise : position + argument + exemple en 40-90 mots. Travail sur les connecteurs d'articulation logique.",
+        "contre_indication": "Synthèses longues ou analyses de données chiffrées. Productions dépassant 90 mots.",
+        "message_apprenant": "Votre écrit progresse bien ! RAPPEL IMPÉRATIF : Tâche 3 = entre 40 et 90 mots obligatoirement. Entraînez-vous à être précis et concis."
+      },
+      "bascule_niveau_suivant": {
+        "condition_qualitative": "Production d'une argumentation claire, structurée et détaillée dans les limites de mots TCF IRN.",
+        "condition_quantitative": 10,
+        "fiabilite": "haute"
+      },
+      "plafond_tcf_irn": false
+    },
+    {
+      "rule_id": "B2_CO",
+      "niveau": "B2",
+      "epreuve": "CO",
+      "profil_entree_specifique": "L'apprenant comprend des discours complexes mais reste fragile face aux accents régionaux marqués, à l'ironie fine et aux registres très soutenus ou très argotiques.",
+      "condition": {
+        "score_min": 400,
+        "score_max": 699,
+        "score_scale": "tcf_699",
+        "erreur_type": "Incompréhension de l'implicite, de l'ironie ou des tournures idiomatiques rares. Saturation face à un débit très rapide ou des accents non standards.",
+        "signal_qualitatif": "L'apprenant comprend l'essentiel des discours complexes mais rate les nuances fines de positionnement ou d'attitude du locuteur."
+      },
+      "action": {
+        "variante_exercice": "Écoute de débats, d'émissions d'actualité, d'exposés thématiques. Questions de compréhension fine portant sur l'implicite, le non-dit, l'attitude du locuteur.",
+        "type_remediation": "Développement de la compréhension de l'implicite et des nuances discursives. Entraînement aux registres soutenus et aux tournures idiomatiques.",
+        "contre_indication": "Exercices simplistes de repérage de mots isolés ou d'informations factuelles basiques.",
+        "message_apprenant": "Excellent niveau ! Entraînez-vous à saisir les nuances et les positions implicites des locuteurs."
+      },
+      "bascule_niveau_suivant": {
+        "condition_qualitative": "Seuil C1/C2 — hors périmètre TCF IRN.",
+        "condition_quantitative": 500,
+        "note": "Valeur sentinelle — flag hors_perimetre_tcf_irn. Le TCF IRN plafonne au B2. Aucune bascule C1 à implémenter.",
+        "fiabilite": "faible",
+        "hors_perimetre_tcf_irn": true
+      },
+      "plafond_tcf_irn": true
+    },
+    {
+      "rule_id": "B2_CE",
+      "niveau": "B2",
+      "epreuve": "CE",
+      "profil_entree_specifique": "L'apprenant lit de façon autonome mais peut ralentir sur des textes de spécialité ou des structures syntaxiques très complexes (subordonnées enchâssées, nominalisation dense).",
+      "condition": {
+        "score_min": 400,
+        "score_max": 699,
+        "score_scale": "tcf_699",
+        "erreur_type": "Lenteur face aux textes de spécialité. Blocage sur le subjonctif imparfait ou les nominalisations denses dans les textes formels.",
+        "signal_qualitatif": "L'apprenant lit de façon très autonome mais peut rater les nuances argumentatives fines ou les stratégies rhétoriques complexes."
+      },
+      "action": {
+        "variante_exercice": "Articles de fond, éditoriaux, textes réglementaires, synthèses professionnelles. Exercices d'identification thèse/arguments/réfutation.",
+        "type_remediation": "Développement de la lecture critique et de l'analyse des stratégies argumentatives complexes.",
+        "contre_indication": "Textes simplifiés ou exercices de vocabulaire de niveau élémentaire.",
+        "message_apprenant": "Magnifique maîtrise ! Travaillez l'analyse des stratégies argumentatives dans les textes complexes."
+      },
+      "bascule_niveau_suivant": {
+        "condition_qualitative": "Seuil C1/C2 — hors périmètre TCF IRN.",
+        "condition_quantitative": 500,
+        "note": "Valeur sentinelle — flag hors_perimetre_tcf_irn. Le TCF IRN plafonne au B2. Aucune bascule C1 à implémenter.",
+        "fiabilite": "faible",
+        "hors_perimetre_tcf_irn": true
+      },
+      "plafond_tcf_irn": true
+    },
+    {
+      "rule_id": "B2_EO",
+      "niveau": "B2",
+      "epreuve": "EO",
+      "profil_entree_specifique": "L'apprenant s'exprime avec aisance mais peut présenter une légère rigidité stylistique (formules répétées) ou une auto-correction excessive qui ralentit son débit lors des débats.",
+      "condition": {
+        "score_min": 10,
+        "score_max": 13,
+        "score_scale": "tcf_13",
+        "erreur_type": "Rigidité stylistique. Réapparition d'erreurs fossilisées sous forte charge cognitive (débat intense, sujet abstrait). Auto-correction excessive freinant la fluidité.",
+        "signal_qualitatif": "L'apprenant s'exprime clairement et de façon détaillée mais peut manquer de spontanéité ou de nuance dans les échanges très formels."
+      },
+      "action": {
+        "variante_exercice": "Simulations de débats citoyens chronométrés. Exposés argumentés suivis de questions complexes. Exercices d'intonation expressive (concession, doute, emphase).",
+        "type_remediation": "Développement de la spontanéité argumentative et de la diversité stylistique. Entraînement à l'expression des nuances (concession, hypothèse, doute).",
+        "contre_indication": "Exercices de répétition syntaxique simple sans enjeu communicatif abstrait.",
+        "message_apprenant": "Votre aisance orale est excellente ! RAPPEL : Tâche 3 = 3 min 30 — débat argumenté avec nuances (concession, doute), spontanéité et diversité stylistique."
+      },
+      "bascule_niveau_suivant": {
+        "condition_qualitative": "Seuil C1/C2 — hors périmètre TCF IRN.",
+        "condition_quantitative": 500,
+        "note": "Valeur sentinelle — flag hors_perimetre_tcf_irn. Le TCF IRN plafonne au B2. Aucune bascule C1 à implémenter.",
+        "fiabilite": "faible",
+        "hors_perimetre_tcf_irn": true
+      },
+      "plafond_tcf_irn": true
+    },
+    {
+      "rule_id": "B2_EE",
+      "niveau": "B2",
+      "epreuve": "EE",
+      "profil_entree_specifique": "L'apprenant rédige des textes clairs et structurés mais peut présenter des maladresses stylistiques ou des erreurs d'accord dans les structures pronominales complexes.",
+      "condition": {
+        "score_min": 10,
+        "score_max": 13,
+        "score_scale": "tcf_13",
+        "erreur_type": "Erreurs d'accord dans les structures pronominales passives complexes. Rigidité stylistique (formules d'opinion répétées). Mauvais choix de connecteurs logiques avancés.",
+        "signal_qualitatif": "L'apprenant rédige des textes bien structurés mais peut manquer de fluidité stylistique ou de précision dans les connecteurs logiques complexes."
+      },
+      "action": {
+        "variante_exercice": "Rédaction d'essais argumentés, de courriers administratifs complexes, de rapports professionnels. Exercices de nominalisation et de diversification stylistique. Concordanciers numériques.",
+        "type_remediation": "Perfectionnement stylistique et maîtrise des connecteurs logiques avancés. Densification de l'écrit par la nominalisation.",
+        "contre_indication": "Exercices de dictée ou de recopiage de structures figées.",
+        "message_apprenant": "Félicitations pour votre excellente compétence écrite ! RAPPEL IMPÉRATIF : Tâche 3 = entre 40 et 90 mots maximum TCF IRN."
+      },
+      "bascule_niveau_suivant": {
+        "condition_qualitative": "Seuil C1/C2 — hors périmètre TCF IRN.",
+        "condition_quantitative": 500,
+        "note": "Valeur sentinelle — flag hors_perimetre_tcf_irn. Le TCF IRN plafonne au B2. Aucune bascule C1 à implémenter.",
+        "fiabilite": "faible",
+        "hors_perimetre_tcf_irn": true
+      },
+      "plafond_tcf_irn": true
+    }
+  ]
+}

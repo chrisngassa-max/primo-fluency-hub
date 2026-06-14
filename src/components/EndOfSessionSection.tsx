@@ -200,7 +200,7 @@ export default function EndOfSessionSection({
         .update({ statut: "terminee" as any, updated_at: new Date().toISOString() })
         .eq("id", sessionId);
       if (error) throw error;
-      toast.success("Seance cloturee.");
+      toast.success("Séance clôturée.");
       onCloseSession?.();
     } catch (e: any) {
       toast.error("Erreur", { description: e.message });

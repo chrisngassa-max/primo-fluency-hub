@@ -157,51 +157,16 @@ const BilanTestPassation = () => {
             niveauCible: bilanTest.session?.niveau_cible || "A1",
             sessionTitle: bilanTest.session?.titre || "Séance",
             eleveIds: [user.id],
+            persistContext: {
+              formateur_id: bilanTest.formateur_id,
+              session_id: bilanTest.session_id,
+              eleve_id: user.id,
+            },
           },
         });
 
-        if (!devoirErr && devoirData?.devoirs && Array.isArray(devoirData.devoirs)) {
-          // Get a point_a_maitriser_id for creating exercises
-          const { data: point } = await supabase.from("points_a_maitriser").select("id").limit(1).single();
-          const pointId = point?.id;
-
-          if (pointId) {
-            // Get the formateur_id from the bilan test
-            const formateurId = bilanTest.formateur_id;
-
-            for (const devoir of devoirData.devoirs) {
-              // Create the exercise
-              const { data: newEx, error: exErr } = await supabase.from("exercices").insert({
-                formateur_id: formateurId,
-                titre: devoir.titre,
-                consigne: devoir.consigne,
-                competence: devoir.competence as any,
-                format: devoir.format as any,
-                niveau_vise: devoir.niveau_vise || "A1",
-                contenu: { items: devoir.items || [] },
-                point_a_maitriser_id: pointId,
-                is_devoir: true,
-                is_ai_generated: true,
-                eleve_id: user.id,
-              }).select("id").single();
-
-              if (!exErr && newEx) {
-                const raison = devoir.type_devoir === "renforcement" ? "remediation" : "consolidation";
-                const delaiJours = 3; // J+3 par défaut
-
-                await supabase.from("devoirs").insert({
-                  eleve_id: user.id,
-                  exercice_id: newEx.id,
-                  formateur_id: formateurId,
-                  session_id: bilanTest.session_id,
-                  raison: raison as any,
-                  statut: "en_attente" as any,
-                  date_echeance: new Date(Date.now() + delaiJours * 86400000).toISOString(),
-                });
-                devoirsGenerated++;
-              }
-            }
-          }
+        if (!devoirErr && typeof devoirData?.devoirs_created === "number") {
+          devoirsGenerated = devoirData.devoirs_created;
         }
       } catch (devoirGenErr) {
         console.error("Devoir generation failed:", devoirGenErr);

@@ -11,11 +11,19 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+function scorePct(score: unknown): number {
+  if (typeof score === "number") return score;
+  if (score && typeof score === "object" && "pct" in score) {
+    return Number((score as { pct: number }).pct) || 0;
+  }
+  return 100;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { scoresParCompetence, niveauCible, sessionTitle, eleveIds } = await req.json();
+    const { scoresParCompetence, niveauCible, sessionTitle, eleveIds, persistContext } = await req.json();
     const triggeredBy = await getUserIdFromAuth(req);
     const secretBlock = await ensurePseudonymSecretOrLog("generate-bilan-devoirs", corsHeaders, null);
     if (secretBlock) return secretBlock;
@@ -33,15 +41,18 @@ serve(async (req) => {
 
     // Identify weaknesses
     const competencesATravailler = Object.entries(scoresParCompetence || {})
-      .filter(([_, score]) => (score as number) < 80)
-      .map(([comp, score]) => ({
-        competence: comp,
-        score: score as number,
-        type: (score as number) < 60 ? "renforcement" : "consolidation",
-      }));
+      .filter(([_, score]) => scorePct(score) < 80)
+      .map(([comp, score]) => {
+        const pct = scorePct(score);
+        return {
+          competence: comp,
+          score: pct,
+          type: pct < 60 ? "renforcement" : "consolidation",
+        };
+      });
 
     if (competencesATravailler.length === 0) {
-      return new Response(JSON.stringify({ devoirs: [], message: "Tous les scores sont >= 80%. Aucun devoir nécessaire." }), {
+      return new Response(JSON.stringify({ devoirs: [], devoirs_created: 0, message: "Tous les scores sont >= 80%. Aucun devoir nécessaire." }), {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -197,8 +208,79 @@ Génère les devoirs ciblés pour chaque compétence en difficulté. Attribue un
       );
     }
 
+    // Optional persistence (service role) — BilanTestPassation after test submission
+    let devoirsCreated = 0;
+    const ctx = persistContext as {
+      formateur_id?: string;
+      session_id?: string;
+      eleve_id?: string;
+    } | undefined;
+    if (
+      ctx?.formateur_id &&
+      ctx?.session_id &&
+      ctx?.eleve_id &&
+      triggeredBy === ctx.eleve_id &&
+      validatedDevoirs.length > 0
+    ) {
+      const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+      const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+      if (SUPABASE_URL && SERVICE_KEY) {
+        const admin = createClient(SUPABASE_URL, SERVICE_KEY);
+        const { data: point } = await admin.from("points_a_maitriser").select("id").limit(1).single();
+        const pointId = point?.id;
+        if (pointId) {
+          const delaiJours = 3;
+          const dateEcheance = new Date(Date.now() + delaiJours * 86400000).toISOString();
+          for (const devoir of validatedDevoirs) {
+            const { data: newEx, error: exErr } = await admin
+              .from("exercices")
+              .insert({
+                formateur_id: ctx.formateur_id,
+                titre: devoir.titre,
+                consigne: devoir.consigne,
+                competence: devoir.competence,
+                format: devoir.format || "qcm",
+                niveau_vise: devoir.niveau_vise || niveauCible || "A1",
+                contenu: { items: devoir.items || [] },
+                point_a_maitriser_id: pointId,
+                is_devoir: true,
+                is_ai_generated: true,
+                eleve_id: ctx.eleve_id,
+              })
+              .select("id")
+              .single();
+            if (exErr || !newEx) {
+              console.warn("[bilan-devoirs] exercise insert failed:", exErr?.message);
+              continue;
+            }
+            const raison = devoir.type_devoir === "renforcement" ? "remediation" : "consolidation";
+            const { error: devErr } = await admin.from("devoirs").insert({
+              eleve_id: ctx.eleve_id,
+              exercice_id: newEx.id,
+              formateur_id: ctx.formateur_id,
+              session_id: ctx.session_id,
+              raison,
+              statut: "en_attente",
+              contexte: "devoir",
+              date_echeance: dateEcheance,
+            });
+            if (devErr) {
+              console.warn("[bilan-devoirs] devoir insert failed:", devErr.message);
+              continue;
+            }
+            devoirsCreated++;
+          }
+        }
+      }
+    }
+
     return new Response(
-      JSON.stringify({ devoirs: validatedDevoirs, excluded: excludedDevoirs, totalExcluded: excludedDevoirs.length }),
+      JSON.stringify({
+        devoirs: validatedDevoirs,
+        excluded: excludedDevoirs,
+        totalExcluded: excludedDevoirs.length,
+        devoirs_created: devoirsCreated,
+      }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (e) {

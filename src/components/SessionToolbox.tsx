@@ -31,10 +31,10 @@ interface SessionToolboxProps {
 }
 
 const STATUS_LABEL: Record<PreparationStatus, string> = {
-  pending: "A preparer",
-  generating: "Preparation",
-  ready: "Pret",
-  failed: "Echec",
+  pending: "À préparer",
+  generating: "Préparation",
+  ready: "Prêt",
+  failed: "Échec",
 };
 
 export default function SessionToolbox({ sessionId, tools }: SessionToolboxProps) {
@@ -71,7 +71,7 @@ export default function SessionToolbox({ sessionId, tools }: SessionToolboxProps
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 id="session-toolbox-title" className="text-lg font-semibold">
-            Outils de seance
+            Outils de séance
           </h2>
           <p className="text-sm text-muted-foreground">
             Ouvrez uniquement les outils utiles, dans l'ordre qui convient a la classe.
@@ -153,7 +153,7 @@ export default function SessionToolbox({ sessionId, tools }: SessionToolboxProps
                     ) : (
                       <RotateCcw className="h-3.5 w-3.5" />
                     )}
-                    {status === "failed" ? "Reessayer" : "Preparer"}
+                    {status === "failed" ? "Réessayer" : "Préparer"}
                   </Button>
                 )}
                 <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform", isOpen && "rotate-180")} />

@@ -8,7 +8,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Eye, EyeOff, Users } from "lucide-react";
-import { translateAuthError } from "@/lib/authErrors";
+import { translateAuthError, translateEleveLoginHint, type EleveLoginHintCode, isInvalidCredentialsError } from "@/lib/authErrors";
+import { Checkbox } from "@/components/ui/checkbox";
+import { CONSENT_VERSION } from "@/hooks/useAIConsent";
 import { CapPublicHeader } from "@/components/CapBrand";
 import AppFooter from "@/components/AppFooter";
 
@@ -37,6 +39,10 @@ const LoginEleve = () => {
   const [signupNom, setSignupNom] = useState("");
   const [signupPrenom, setSignupPrenom] = useState("");
   const [showSignupPw, setShowSignupPw] = useState(false);
+  const [signupCodeFormateur, setSignupCodeFormateur] = useState(inviteParam || "");
+  const [signupConsentAi, setSignupConsentAi] = useState(false);
+  const [signupConsentBio, setSignupConsentBio] = useState(false);
+  const [signupDone, setSignupDone] = useState(false);
 
   const [forgotEmail, setForgotEmail] = useState("");
   const [showForgot, setShowForgot] = useState(false);
@@ -82,24 +88,82 @@ const LoginEleve = () => {
   if (!loading && session && role === "eleve") return <Navigate to="/eleve" replace />;
   if (!loading && session && role === "formateur") return <Navigate to="/formateur" replace />;
 
+  const resolveLoginHint = async (email: string): Promise<EleveLoginHintCode | null> => {
+    const { data, error } = await supabase.functions.invoke("resolve-eleve-login", {
+      body: { email: email.trim().toLowerCase() },
+    });
+    if (error) return null;
+    return (data?.code as EleveLoginHintCode) ?? null;
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
-    const { error } = await signIn(loginEmail, loginPassword);
-    if (error) toast.error("Erreur de connexion", { description: translateAuthError(error.message) });
-    else toast.success("Connexion réussie !");
+    const email = loginEmail.trim().toLowerCase();
+    const hint = await resolveLoginHint(email);
+
+    if (hint === "email_not_found") {
+      toast.error("Erreur de connexion", { description: translateEleveLoginHint(hint) });
+      setBusy(false);
+      return;
+    }
+    if (hint === "pending_approval") {
+      toast.error("Compte en attente", { description: translateEleveLoginHint(hint) });
+      setBusy(false);
+      return;
+    }
+    if (hint === "not_eleve") {
+      toast.error("Erreur de connexion", { description: translateEleveLoginHint(hint) });
+      setBusy(false);
+      return;
+    }
+
+    const { error } = await signIn(email, loginPassword);
+    if (error) {
+      const description = isInvalidCredentialsError(error.message)
+        ? translateEleveLoginHint(hint === "consent_missing" ? "wrong_password" : hint ?? "wrong_password")
+        : translateAuthError(error.message);
+      toast.error("Erreur de connexion", { description });
+    } else if (hint === "consent_missing") {
+      toast.success("Connexion réussie", {
+        description: translateEleveLoginHint("consent_missing"),
+      });
+    } else {
+      toast.success("Connexion réussie !");
+    }
     setBusy(false);
   };
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!signupNom || !signupPrenom) { toast.error("Remplissez votre nom et prénom."); return; }
+    if (!signupConsentAi || !signupConsentBio) {
+      toast.error("Vous devez accepter le consentement IA et voix pour vous inscrire.");
+      return;
+    }
     setBusy(true);
+    const formateurCode = signupCodeFormateur.trim() || inviteCode || "";
+    if (formateurCode) {
+      sessionStorage.setItem("tcf-invite-code", formateurCode);
+    }
     const { error } = await signUp(signupEmail, signupPassword, { nom: signupNom, prenom: signupPrenom, role: "eleve" });
     if (error) {
       toast.error("Erreur d'inscription", { description: translateAuthError(error.message) });
     } else {
-      toast.success("Inscription réussie !", { description: "Vous pouvez maintenant vous connecter." });
+      const { data: authData } = await supabase.auth.getUser();
+      const newUserId = authData.user?.id;
+      if (newUserId) {
+        await supabase.from("ai_processing_consents" as any).upsert({
+          user_id: newUserId,
+          consent_ai: true,
+          consent_biometric: true,
+          consented_at: new Date().toISOString(),
+          revoked_at: null,
+          version: CONSENT_VERSION,
+          source: "signup",
+        }, { onConflict: "user_id" });
+      }
+      setSignupDone(true);
       try {
         const { data: formateurs } = await supabase
           .from("user_roles")
@@ -254,6 +318,29 @@ const LoginEleve = () => {
                   </TabsContent>
 
                   <TabsContent value="signup">
+                    {signupDone ? (
+                      <div className="mt-5 space-y-4 text-center">
+                        <h2 className="text-lg font-bold text-[#0b234a]">Demande envoyée</h2>
+                        <p className="text-sm text-[#0b234a]/80">
+                          Votre formateur va valider votre inscription. Vous pourrez vous connecter dès que votre compte sera approuvé.
+                        </p>
+                        <button
+                          type="button"
+                          className={orangeBtn}
+                          onClick={() => {
+                            setSignupDone(false);
+                            setSignupEmail("");
+                            setSignupPassword("");
+                            setSignupNom("");
+                            setSignupPrenom("");
+                            setSignupConsentAi(false);
+                            setSignupConsentBio(false);
+                          }}
+                        >
+                          Retour à la connexion
+                        </button>
+                      </div>
+                    ) : (
                     <form onSubmit={handleSignup} className="mt-5 space-y-4">
                       <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-2">
@@ -273,10 +360,32 @@ const LoginEleve = () => {
                         <Label htmlFor="eleve-signup-password" className="text-[#0b234a]">Mot de passe</Label>
                         {renderPasswordInput("eleve-signup-password", signupPassword, setSignupPassword, showSignupPw, () => setShowSignupPw(!showSignupPw), 6)}
                       </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="eleve-signup-code" className="text-[#0b234a]">Code formateur (optionnel)</Label>
+                        <Input
+                          id="eleve-signup-code"
+                          placeholder="Code d'invitation du groupe"
+                          value={signupCodeFormateur}
+                          onChange={(e) => setSignupCodeFormateur(e.target.value)}
+                          className="h-12"
+                        />
+                      </div>
+                      <div className="space-y-3 rounded-lg border border-[#0b234a]/10 p-3 text-left">
+                        <p className="text-xs font-semibold text-[#0b234a]">Consentement RGPD (obligatoire)</p>
+                        <label className="flex items-start gap-2 text-sm text-[#0b234a]/90">
+                          <Checkbox checked={signupConsentAi} onCheckedChange={(v) => setSignupConsentAi(v === true)} />
+                          <span>J'accepte l'utilisation de l'IA pour corriger mes exercices et préparer mon travail.</span>
+                        </label>
+                        <label className="flex items-start gap-2 text-sm text-[#0b234a]/90">
+                          <Checkbox checked={signupConsentBio} onCheckedChange={(v) => setSignupConsentBio(v === true)} />
+                          <span>J'accepte l'enregistrement et le traitement de ma voix pour les exercices oraux.</span>
+                        </label>
+                      </div>
                       <button type="submit" disabled={busy} className={orangeBtn}>
                         {busy ? "Inscription…" : "S'inscrire"}
                       </button>
                     </form>
+                    )}
                   </TabsContent>
                 </Tabs>
               </>

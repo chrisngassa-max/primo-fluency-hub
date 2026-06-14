@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useSandbox } from "@/contexts/SandboxContext";
 import SandboxSwitcher from "@/components/sandbox/SandboxSwitcher";
 import { useSandboxPreview } from "@/contexts/SandboxPreviewContext";
+import { useSandboxStudentPreview } from "@/hooks/useSandboxStudentPreview";
 
 const LEVELS = ["A1", "A2", "B1", "B2"] as const;
 
@@ -16,10 +17,10 @@ export default function SandboxBanner() {
   const {
     mode,
     niveau,
-    enterStudentPreview,
     exitStudentPreview,
     enterMosaicView,
   } = useSandboxPreview();
+  const { switchToStudentPreview } = useSandboxStudentPreview();
   if (!displayHint || !session) return null;
 
   const expired = session?.statut === "expired";
@@ -28,7 +29,7 @@ export default function SandboxBanner() {
     <div className="fixed inset-x-0 top-0 z-[9999] flex h-12 items-center gap-2 overflow-x-auto bg-[#92400E] px-3 text-white shadow-lg">
       <AlertTriangle className="h-5 w-5 shrink-0" />
       <strong className="shrink-0 text-sm">
-        MODE SANDBOX {expired ? "- Session expiree" : "- Donnees de test isolees"}
+        MODE SANDBOX {expired ? "- Session expirée" : "- Données de test isolées"}
       </strong>
       {expired ? (
         <Button size="sm" variant="secondary" onClick={() => void setup(false)}>
@@ -52,7 +53,7 @@ export default function SandboxBanner() {
                 size="sm"
                 variant={mode === "eleve" && niveau === level ? "default" : "secondary"}
                 disabled={mode === "eleve" && niveau === level}
-                onClick={() => enterStudentPreview(level)}
+                onClick={() => void switchToStudentPreview(level)}
               >
                 {level}
               </Button>
@@ -78,7 +79,7 @@ export default function SandboxBanner() {
             await reset("attempts_only");
             toast.success("Resultats et devoirs sandbox effaces");
           } catch (error) {
-            toast.error(error instanceof Error ? error.message : "Echec de la reinitialisation");
+            toast.error(error instanceof Error ? error.message : "Échec de la réinitialisation");
           }
         }}
       >

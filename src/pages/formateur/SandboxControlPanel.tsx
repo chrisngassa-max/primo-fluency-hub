@@ -58,7 +58,7 @@ export default function SandboxControlPanel() {
     try {
       await reset(scope);
       if (scope === "everything") await runSetup(true);
-      else toast.success("Donnees sandbox effacees");
+      else toast.success("Données sandbox effacées");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Operation impossible");
     } finally {

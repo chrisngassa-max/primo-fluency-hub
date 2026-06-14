@@ -34,7 +34,6 @@ export function SandboxPreviewProvider({
     mode,
     niveau,
     enterStudentPreview: (nextLevel) => {
-      if (!active) return;
       setNiveau(nextLevel);
       setMode("eleve");
     },
@@ -43,7 +42,6 @@ export function SandboxPreviewProvider({
       setNiveau(null);
     },
     enterMosaicView: () => {
-      if (!active) return;
       setNiveau(null);
       setMode("mosaic");
     },

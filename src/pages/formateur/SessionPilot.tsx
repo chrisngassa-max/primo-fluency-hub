@@ -1357,8 +1357,8 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
     },
     {
       id: "common",
-      title: "Activite commune",
-      description: "Preparer, verifier et diffuser les exercices utiles au groupe.",
+      title: "Activité commune",
+      description: "Préparer, vérifier et diffuser les exercices utiles au groupe.",
       icon: Users,
       preparationStatus: getBlockStatus("core"),
       onPrepare: () => void startPreparation("core"),
@@ -1374,7 +1374,7 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
     },
     {
       id: "differentiation",
-      title: "Differenciation",
+      title: "Différenciation",
       description: "Piloter le direct et envoyer un soutien ou un bonus cible.",
       icon: Activity,
       content: (
@@ -1398,7 +1398,7 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
     },
     {
       id: "synthesis",
-      title: "Synthese",
+      title: "Synthèse",
       description: "Consulter les points de vigilance et ouvrir le bilan quand vous le souhaitez.",
       icon: ListChecks,
       content: (
@@ -1424,8 +1424,8 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
     },
     {
       id: "homework",
-      title: "Devoirs et cloture",
-      description: "Preparer des devoirs facultatifs ou cloturer directement la seance.",
+      title: "Devoirs et clôture",
+      description: "Préparer des devoirs facultatifs ou clôturer directement la séance.",
       icon: ClipboardCheck,
       content: (
         <EndOfSessionSection
