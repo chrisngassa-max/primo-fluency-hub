@@ -71,6 +71,7 @@ const ExercicesPage = () => {
   const [themeDialogOpen, setThemeDialogOpen] = useState(false);
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [importUrlOpen, setImportUrlOpen] = useState(false);
+  const [importSourceMode, setImportSourceMode] = useState<"pdf" | "url">("pdf");
   const [targetedWizardOpen, setTargetedWizardOpen] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
 
@@ -657,17 +658,36 @@ ${Array.isArray(item.options) && item.options.length > 0
             <Target className="h-5 w-5" />
             🎯 Générer exercice ciblé
           </Button>
+          <Button
+            size="lg"
+            className="gap-2"
+            onClick={() => {
+              setImportSourceMode("pdf");
+              setImportUrlOpen(true);
+            }}
+          >
+            <Upload className="h-5 w-5" />
+            📄 Importer un PDF
+          </Button>
           <Button size="lg" className="gap-2" onClick={() => setThemeDialogOpen(true)}>
             <Brain className="h-5 w-5" />
             🧠 Générer à partir d'un Thème
           </Button>
           <Button size="lg" variant="secondary" className="gap-2" onClick={() => setImportDialogOpen(true)}>
             <FileText className="h-5 w-5" />
-            📄 Importer &amp; Transformer
+            📝 Coller du texte
           </Button>
-          <Button size="lg" variant="outline" className="gap-2" onClick={() => setImportUrlOpen(true)}>
+          <Button
+            size="lg"
+            variant="outline"
+            className="gap-2"
+            onClick={() => {
+              setImportSourceMode("url");
+              setImportUrlOpen(true);
+            }}
+          >
             <Link2 className="h-5 w-5" />
-            🔗 Depuis un lien
+            🔗 Depuis un lien web
           </Button>
           <Button size="lg" variant="outline" className="gap-2" onClick={handleRagTest} disabled={ragTestLoading}>
             {ragTestLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Search className="h-5 w-5" />}
@@ -1423,8 +1443,11 @@ ${Array.isArray(item.options) && item.options.length > 0
       <Dialog open={importDialogOpen} onOpenChange={setImportDialogOpen}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>📄 Importer &amp; Transformer</DialogTitle>
-            <DialogDescription>Collez un texte ou une URL, et l'IA en fera un exercice TCF.</DialogDescription>
+            <DialogTitle>📝 Coller du texte</DialogTitle>
+            <DialogDescription>
+              Collez un texte ou une URL de page web — l'IA en fera un exercice TCF.
+              Pour un document PDF, utilisez le bouton « Importer un PDF ».
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 mt-2">
             <div className="space-y-1.5">
@@ -1525,6 +1548,7 @@ ${Array.isArray(item.options) && item.options.length > 0
       <ImportFromUrlDialog
         open={importUrlOpen}
         onClose={() => setImportUrlOpen(false)}
+        defaultSourceMode={importSourceMode}
         onExerciseCreated={() => qc.invalidateQueries({ queryKey: ["formateur-all-exercices", user?.id] })}
       />
 
