@@ -1,0 +1,55 @@
+{
+  "version": "1.0",
+  "mixes": [
+    {
+      "niveau_cecrl": "A0",
+      "mode": "remediation",
+      "poids_piliers": {
+        "vocabulaire": 0.4,
+        "phonetique": 0.3,
+        "grammaire": 0.2,
+        "conjugaison": 0.1
+      }
+    },
+    {
+      "niveau_cecrl": "A1",
+      "mode": "consolide",
+      "poids_piliers": {
+        "vocabulaire": 0.35,
+        "phonetique": 0.25,
+        "grammaire": 0.2,
+        "conjugaison": 0.2
+      }
+    },
+    {
+      "niveau_cecrl": "A2",
+      "mode": "remediation",
+      "poids_piliers": {
+        "vocabulaire": 0.25,
+        "phonetique": 0.15,
+        "grammaire": 0.3,
+        "conjugaison": 0.3
+      }
+    },
+    {
+      "niveau_cecrl": "B1",
+      "mode": "augmente",
+      "poids_piliers": {
+        "vocabulaire": 0.3,
+        "phonetique": 0.1,
+        "grammaire": 0.3,
+        "conjugaison": 0.3
+      }
+    },
+    {
+      "niveau_cecrl": "B2",
+      "mode": "consolide",
+      "poids_piliers": {
+        "vocabulaire": 0.4,
+        "phonetique": 0.1,
+        "grammaire": 0.3,
+        "conjugaison": 0.2
+      }
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "version": "1.0",
+  "minimums_seance": {
+    "45_min": {
+      "CO": 2,
+      "CE": 2,
+      "EE_EO_ou_Structures": 1
+    },
+    "60_min": {
+      "CO": 2,
+      "CE": 2,
+      "EE": 1,
+      "EO": 1
+    },
+    "90_min": {
+      "CO": 3,
+      "CE": 3,
+      "EE": 2,
+      "EO": 2,
+      "Structures": 1
+    }
+  },
+  "minimums_devoir_quotidien": {
+    "duree_min": 15,
+    "composition": {
+      "CO": 1,
+      "CE": 1,
+      "EE_EO_courte": 1
+    }
+  },
+  "minimums_semaine": {
+    "regle_couverture": "Les 4 compétences doivent être traitées au moins une fois par semaine.",
+    "composition": {
+      "CO": 10,
+      "CE": 10,
+      "EE": 4,
+      "EO": 4
+    }
+  },
+  "ordre_competences_recommande": [
+    "CO",
+    "CE",
+    "EO",
+    "EE"
+  ],
+  "ponderation_focus_maintenance": {
+    "remediation": {
+      "competence_focus_pct": 60,
+      "autres_pct": 40
+    },
+    "consolide": {
+      "competence_focus_pct": 40,
+      "autres_pct": 60
+    },
+    "augmente": {
+      "competence_focus_pct": 25,
+      "autres_pct": 75
+    }
+  },
+  "regles_par_groupe_niveau": {
+    "A0_A1": "Privilégier CO et CE (réception) en début de session pour mettre en confiance. L'EE et l'EO sont courtes, guidées et clôturent la séance.",
+    "A2_B1": "Équilibrer les 4 compétences. La séance peut s'ouvrir par une brève production orale pour solliciter la fluidité, si l'apprenant est en mode consolidé ou augmente."
+  },
+  "volume_seance": {
+    "formule": "max(8, round(duree_minutes / 18))",
+    "duree_par_competence_minutes": {
+      "CO": 8,
+      "CE": 8,
+      "EE": 10,
+      "EO": 6,
+      "Structures": 5
+    }
+  }
+}

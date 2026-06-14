@@ -187,6 +187,39 @@ Deno.serve(async (req) => {
     return json(500, { error: "Failed to save result", details: insErr.message });
   }
 
+  // 5b. BilanSeance: auto-create remediation devoir when score < 80 (service role)
+  let devoirCreated = false;
+  if (!devoirId && score < 80 && ex.formateur_id) {
+    const { count: activeCount, error: countErr } = await admin
+      .from("devoirs")
+      .select("id", { count: "exact", head: true })
+      .eq("eleve_id", userId)
+      .eq("statut", "en_attente");
+    if (!countErr && (activeCount ?? 0) < 3) {
+      const { data: existing } = await admin
+        .from("devoirs")
+        .select("id")
+        .eq("eleve_id", userId)
+        .eq("exercice_id", ex.id)
+        .eq("statut", "en_attente")
+        .maybeSingle();
+      if (!existing) {
+        const raison = score < 60 ? "remediation" : "consolidation";
+        const { error: devInsErr } = await admin.from("devoirs").insert({
+          eleve_id: userId,
+          exercice_id: ex.id,
+          formateur_id: ex.formateur_id,
+          session_id: body.session_id ?? null,
+          raison,
+          statut: "en_attente",
+          contexte: "devoir",
+        });
+        if (!devInsErr) devoirCreated = true;
+        else console.warn("[submit-devoir-result] auto devoir failed:", devInsErr.message);
+      }
+    }
+  }
+
   // 6. Update devoir statut (mode devoir uniquement)
   let newStatut: string | null = null;
   if (devoir && devoirId) {
@@ -235,6 +268,7 @@ Deno.serve(async (req) => {
     score,
     correction_detaillee: correction,
     devoir_statut: newStatut,
+    devoir_created: devoirCreated,
     ai_failed: aiFailed,
   });
 });

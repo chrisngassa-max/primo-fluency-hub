@@ -13,8 +13,8 @@ Le niveau A0 désigne des adultes intégrés en France, majoritairement issus du
 NIVEAUX : A0 (débutant scolaire intégré) → A1 (premier objectif certification) → A2 → B1 (SEUIL IRN MINIMUM) → B2.
 
 DÉMARCHE IRN :
-- type_demarche = "titre_sejour" : épreuves obligatoires CO + CE uniquement (seuil B1)
-- type_demarche = "naturalisation" : 4 épreuves obligatoires CO + CE + EE + EO (seuil B1)
+- type_demarche = "titre_sejour" : 4 compétences travaillées avec pondération hebdomadaire CO 35%, CE 35%, EE 15%, EO 15% (seuil B1 ; épreuves examen CO+CE)
+- type_demarche = "naturalisation" : 4 épreuves obligatoires CO + CE + EE + EO avec pondération équilibrée 25% chacune (seuil B2)
 Adapte les épreuves générées et les devoirs selon ce champ. Si absent, utiliser "titre_sejour" par défaut.
 
 CADRE TCF IRN — 4 ÉPREUVES :
@@ -38,8 +38,9 @@ RÈGLES GÉNÉRATION :
 - Contextes : vie réelle en France uniquement (préfecture, CAF, médecin, SNCF, logement, école, Pôle Emploi, commerce, mairie, banque, urgences)
 - CO : script audio complet avec balises [pause 1s] [pause 2s] [ton interrogatif] [débit lent] — OBLIGATOIRES pour le TTS
 - CE : décrire le support visuel dans image_description + texte complet dans support
-- EE tâche 1 : 60-80 mots / tâche 2 : 120-150 mots / tâche 3 : 180-220 mots. Consigne suffisamment riche pour atteindre le volume naturellement.
-- EO tâche 1 : 1-2 min / tâche 2 : 2-3 min / tâche 3 : 3 min
+- EE tâche 1 : 30-60 mots / tâche 2 : 40-90 mots / tâche 3 : 40-90 mots. Consigne suffisamment riche pour atteindre le volume naturellement.
+- EO tâche 1 : 3 min / tâche 2 : 3 min 30 / tâche 3 : 3 min 30
+- TCF IRN : plafond 90 mots pour l'EE uniquement (jamais l'EO — durées chronométrées).
 - QCM : 4 choix, 1 seul correct. Distracteurs fondés sur erreurs réelles (sonorité proche, confusion date/chiffre, piège contextuel, synonyme trompeur). JAMAIS de distracteurs absurdes.
 
 INTERDITS ABSOLUS :

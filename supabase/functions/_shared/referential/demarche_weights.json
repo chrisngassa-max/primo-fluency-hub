@@ -1,0 +1,17 @@
+{
+  "version": "1.0",
+  "titre_sejour": {
+    "niveau_cible": "B1",
+    "CO": 0.35,
+    "CE": 0.35,
+    "EE": 0.15,
+    "EO": 0.15
+  },
+  "naturalisation": {
+    "niveau_cible": "B2",
+    "CO": 0.25,
+    "CE": 0.25,
+    "EE": 0.25,
+    "EO": 0.25
+  }
+}

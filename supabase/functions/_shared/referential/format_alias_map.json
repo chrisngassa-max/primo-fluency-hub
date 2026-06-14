@@ -1,0 +1,108 @@
+{
+  "version": "1.0",
+  "selection_image": {
+    "generateur": "qcm",
+    "options": [
+      "support_image"
+    ]
+  },
+  "qcm_audio": {
+    "generateur": "qcm",
+    "options": [
+      "support_audio"
+    ]
+  },
+  "appariement_image_mot": {
+    "generateur": "appariement",
+    "options": [
+      "support_mixte"
+    ]
+  },
+  "production_ecrite_guidee": {
+    "generateur": "production_ecrite",
+    "options": [
+      "etayage_fort"
+    ]
+  },
+  "production_ecrite_libre": {
+    "generateur": "production_ecrite",
+    "options": [
+      "etayage_faible"
+    ]
+  },
+  "repetition_audio": {
+    "generateur": "production_orale",
+    "options": [
+      "mode_repetition"
+    ]
+  },
+  "qcm_complexe": {
+    "generateur": "qcm",
+    "options": [
+      "distracteurs_semantiques"
+    ]
+  },
+  "texte_lacunaire_guide": {
+    "generateur": "texte_lacunaire",
+    "options": [
+      "banque_mots_fournie"
+    ]
+  },
+  "texte_lacunaire_libre": {
+    "generateur": "texte_lacunaire",
+    "options": [
+      "saisie_clavier"
+    ]
+  },
+  "formulaire_cerfa_simplifie": {
+    "generateur": "texte_lacunaire",
+    "options": [
+      "etayage_fort",
+      "contexte_admin"
+    ]
+  },
+  "production_orale_guidee": {
+    "generateur": "production_orale",
+    "options": [
+      "trame_fournie"
+    ]
+  },
+  "production_orale_libre": {
+    "generateur": "production_orale",
+    "options": [
+      "sujet_seul"
+    ]
+  },
+  "vrai_faux_justifie": {
+    "generateur": "vrai_faux",
+    "options": [
+      "demande_justification"
+    ]
+  },
+  "transformation_syntaxique": {
+    "generateur": "transformation",
+    "options": [
+      "focus_grammaire"
+    ]
+  },
+  "ordonnancement_phrases": {
+    "generateur": "appariement",
+    "options": [
+      "mode_chronologique"
+    ]
+  },
+  "discrimination_audio": {
+    "generateur": "qcm",
+    "options": [
+      "support_audio",
+      "paires_minimales"
+    ]
+  },
+  "repetition_guidee": {
+    "generateur": "production_orale",
+    "options": [
+      "mode_repetition",
+      "etayage_fort"
+    ]
+  }
+}

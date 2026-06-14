@@ -1,0 +1,559 @@
+{
+  "version": "1.0",
+  "rules": [
+    {
+      "id": "PR-A0-CO-demarrage",
+      "niveau_cecrl": "A0",
+      "competence": "CO",
+      "mode": "demarrage",
+      "formats_recommandes": [
+        "qcm",
+        "vrai_faux",
+        "selection_image"
+      ],
+      "formats_interdits": [
+        "production_ecrite_libre",
+        "production_orale",
+        "texte_lacunaire"
+      ],
+      "volume_items_min": 3,
+      "volume_items_max": 5,
+      "duree_estimee_minutes": 10,
+      "supports_requis": [
+        "audio_court",
+        "image_contextuelle"
+      ],
+      "critere_reussite_pct": 60,
+      "contexte_exemple": "Annonce sonore dans le métro (direction, arrêt)",
+      "regle_descente": "Si score < 40%, passer en mode remediation avec audio ralenti."
+    },
+    {
+      "id": "PR-A0-CO-remediation",
+      "niveau_cecrl": "A0",
+      "competence": "CO",
+      "mode": "remediation",
+      "formats_recommandes": [
+        "selection_image",
+        "appariement"
+      ],
+      "formats_interdits": [
+        "qcm_complexe",
+        "production_ecrite_libre"
+      ],
+      "volume_items_min": 2,
+      "volume_items_max": 4,
+      "duree_estimee_minutes": 8,
+      "supports_requis": [
+        "audio_tres_court",
+        "pictogrammes_IRN"
+      ],
+      "critere_reussite_pct": 62,
+      "contexte_exemple": "Bruitage et mot simple (bruit de train = gare)",
+      "regle_descente": "Maintenir en remédiation jusqu'à 3 succès consécutifs ≥ 62%."
+    },
+    {
+      "id": "PR-A0-CE-demarrage",
+      "niveau_cecrl": "A0",
+      "competence": "CE",
+      "mode": "demarrage",
+      "formats_recommandes": [
+        "qcm",
+        "appariement"
+      ],
+      "formats_interdits": [
+        "production_ecrite_libre",
+        "texte_lacunaire"
+      ],
+      "volume_items_min": 3,
+      "volume_items_max": 5,
+      "duree_estimee_minutes": 10,
+      "supports_requis": [
+        "image_document_authentique",
+        "texte_tres_court"
+      ],
+      "critere_reussite_pct": 60,
+      "contexte_exemple": "Identifier l'heure d'un rendez-vous sur une convocation OFII",
+      "regle_descente": "Si score < 40%, basculer sur reconnaissance de logos institutionnels."
+    },
+    {
+      "id": "PR-A0-CE-remediation",
+      "niveau_cecrl": "A0",
+      "competence": "CE",
+      "mode": "remediation",
+      "formats_recommandes": [
+        "vrai_faux",
+        "selection_image"
+      ],
+      "formats_interdits": [
+        "qcm_texte",
+        "production_ecrite_libre"
+      ],
+      "volume_items_min": 2,
+      "volume_items_max": 4,
+      "duree_estimee_minutes": 8,
+      "supports_requis": [
+        "pictogrammes_IRN",
+        "etayage_fort"
+      ],
+      "critere_reussite_pct": 62,
+      "contexte_exemple": "Reconnaître l'enseigne de la Pharmacie ou de La Poste",
+      "regle_descente": "Maintenir en remédiation avec étayage visuel fort."
+    },
+    {
+      "id": "PR-A1-CO-demarrage",
+      "niveau_cecrl": "A1",
+      "competence": "CO",
+      "mode": "demarrage",
+      "formats_recommandes": [
+        "qcm"
+      ],
+      "formats_interdits": [
+        "production_ecrite_libre"
+      ],
+      "volume_items_min": 4,
+      "volume_items_max": 6,
+      "duree_estimee_minutes": 12,
+      "supports_requis": [
+        "audio_authentique_simple"
+      ],
+      "critere_reussite_pct": 60,
+      "contexte_exemple": "Message vocal d'un médecin annulant un rendez-vous",
+      "regle_descente": "Si score < 50%, repasser à PR-A0-CO-demarrage."
+    },
+    {
+      "id": "PR-A1-CO-remediation",
+      "niveau_cecrl": "A1",
+      "competence": "CO",
+      "mode": "remediation",
+      "formats_recommandes": [
+        "qcm",
+        "vrai_faux"
+      ],
+      "formats_interdits": [
+        "production_ecrite_libre"
+      ],
+      "volume_items_min": 3,
+      "volume_items_max": 5,
+      "duree_estimee_minutes": 10,
+      "supports_requis": [
+        "audio_avec_repetition",
+        "banque_de_mots"
+      ],
+      "critere_reussite_pct": 62,
+      "contexte_exemple": "Identifier les prix énoncés au marché",
+      "regle_descente": "Isoler les nombres et dates avant de reprendre la CO globale."
+    },
+    {
+      "id": "PR-A1-CE-demarrage",
+      "niveau_cecrl": "A1",
+      "competence": "CE",
+      "mode": "demarrage",
+      "formats_recommandes": [
+        "qcm",
+        "vrai_faux",
+        "appariement"
+      ],
+      "formats_interdits": [
+        "production_ecrite_libre"
+      ],
+      "volume_items_min": 4,
+      "volume_items_max": 6,
+      "duree_estimee_minutes": 15,
+      "supports_requis": [
+        "documents_courts",
+        "emails"
+      ],
+      "critere_reussite_pct": 60,
+      "contexte_exemple": "Comprendre une affiche d'horaires d'ouverture de la mairie",
+      "regle_descente": "Si score < 50%, cibler la compétence Structures (lexique de base)."
+    },
+    {
+      "id": "PR-A1-CE-remediation",
+      "niveau_cecrl": "A1",
+      "competence": "CE",
+      "mode": "remediation",
+      "formats_recommandes": [
+        "appariement",
+        "texte_lacunaire_guide"
+      ],
+      "formats_interdits": [
+        "qcm_textes_longs"
+      ],
+      "volume_items_min": 3,
+      "volume_items_max": 5,
+      "duree_estimee_minutes": 12,
+      "supports_requis": [
+        "etayage_moyen",
+        "mots_surlignes"
+      ],
+      "critere_reussite_pct": 62,
+      "contexte_exemple": "Repérer le mot 'urgent' sur une lettre de la CAF",
+      "regle_descente": "Travailler la reconnaissance globale des mots transparents."
+    },
+    {
+      "id": "PR-A1-EE-demarrage",
+      "niveau_cecrl": "A1",
+      "competence": "EE",
+      "mode": "demarrage",
+      "formats_recommandes": [
+        "texte_lacunaire",
+        "production_ecrite_guidee"
+      ],
+      "formats_interdits": [
+        "production_ecrite_libre_longue"
+      ],
+      "volume_items_min": 1,
+      "volume_items_max": 2,
+      "duree_estimee_minutes": 10,
+      "supports_requis": [
+        "formulaire_type",
+        "amorce_phrase"
+      ],
+      "critere_reussite_pct": 60,
+      "contexte_exemple": "Remplir une fiche de renseignements basique (Nom, adresse)",
+      "regle_descente": "Si échec total, repasser aux exercices d'appariement CE."
+    },
+    {
+      "id": "PR-A1-EE-remediation",
+      "niveau_cecrl": "A1",
+      "competence": "EE",
+      "mode": "remediation",
+      "formats_recommandes": [
+        "transformation",
+        "appariement"
+      ],
+      "formats_interdits": [
+        "production_ecrite"
+      ],
+      "volume_items_min": 2,
+      "volume_items_max": 4,
+      "duree_estimee_minutes": 10,
+      "supports_requis": [
+        "etayage_fort"
+      ],
+      "critere_reussite_pct": 62,
+      "contexte_exemple": "Remettre en ordre les mots de la phrase 'Je m'appelle Ali.'",
+      "regle_descente": "Utiliser uniquement la manipulation d'étiquettes."
+    },
+    {
+      "id": "PR-A1-EO-demarrage",
+      "niveau_cecrl": "A1",
+      "competence": "EO",
+      "mode": "demarrage",
+      "formats_recommandes": [
+        "production_orale",
+        "qcm_oral"
+      ],
+      "formats_interdits": [
+        "argumentation"
+      ],
+      "volume_items_min": 1,
+      "volume_items_max": 2,
+      "duree_estimee_minutes": 5,
+      "supports_requis": [
+        "consigne_audio_courte"
+      ],
+      "critere_reussite_pct": 60,
+      "contexte_exemple": "Se présenter brièvement (tâche 1 du TCF)",
+      "regle_descente": "Si < 40%, travailler la phonétique et la répétition."
+    },
+    {
+      "id": "PR-A1-EO-remediation",
+      "niveau_cecrl": "A1",
+      "competence": "EO",
+      "mode": "remediation",
+      "formats_recommandes": [
+        "repetition_audio",
+        "transformation"
+      ],
+      "formats_interdits": [
+        "production_orale_libre"
+      ],
+      "volume_items_min": 2,
+      "volume_items_max": 3,
+      "duree_estimee_minutes": 8,
+      "supports_requis": [
+        "exemples_resolus"
+      ],
+      "critere_reussite_pct": 62,
+      "contexte_exemple": "Répéter des formules de salutations standard",
+      "regle_descente": "Maintenir en écoute et répétition structurée."
+    },
+    {
+      "id": "PR-A2-CO-demarrage",
+      "niveau_cecrl": "A2",
+      "competence": "CO",
+      "mode": "demarrage",
+      "formats_recommandes": [
+        "qcm"
+      ],
+      "formats_interdits": [
+        "selection_image_simple"
+      ],
+      "volume_items_min": 4,
+      "volume_items_max": 6,
+      "duree_estimee_minutes": 15,
+      "supports_requis": [
+        "audio_dialogue_quotidien"
+      ],
+      "critere_reussite_pct": 65,
+      "contexte_exemple": "Comprendre une consigne donnée par un employeur",
+      "regle_descente": "Si < 50%, passer en mode consolidé A1."
+    },
+    {
+      "id": "PR-A2-CO-remediation",
+      "niveau_cecrl": "A2",
+      "competence": "CO",
+      "mode": "remediation",
+      "formats_recommandes": [
+        "qcm",
+        "vrai_faux"
+      ],
+      "formats_interdits": [
+        "audio_long"
+      ],
+      "volume_items_min": 3,
+      "volume_items_max": 5,
+      "duree_estimee_minutes": 10,
+      "supports_requis": [
+        "ecoute_fractionnee"
+      ],
+      "critere_reussite_pct": 62,
+      "contexte_exemple": "Distinguer une interdiction d'une obligation dans une annonce",
+      "regle_descente": "Travailler les mots-outils de négation dans Structures."
+    },
+    {
+      "id": "PR-A2-CE-demarrage",
+      "niveau_cecrl": "A2",
+      "competence": "CE",
+      "mode": "demarrage",
+      "formats_recommandes": [
+        "qcm",
+        "vrai_faux"
+      ],
+      "formats_interdits": [
+        "appariement_image"
+      ],
+      "volume_items_min": 4,
+      "volume_items_max": 6,
+      "duree_estimee_minutes": 20,
+      "supports_requis": [
+        "textes_informatifs"
+      ],
+      "critere_reussite_pct": 65,
+      "contexte_exemple": "Lire un article de journal local court sur un événement",
+      "regle_descente": "Si < 50%, travailler sur la recherche d'informations spécifiques."
+    },
+    {
+      "id": "PR-A2-CE-remediation",
+      "niveau_cecrl": "A2",
+      "competence": "CE",
+      "mode": "remediation",
+      "formats_recommandes": [
+        "texte_lacunaire",
+        "qcm"
+      ],
+      "formats_interdits": [
+        "textes_abstraits"
+      ],
+      "volume_items_min": 3,
+      "volume_items_max": 5,
+      "duree_estimee_minutes": 15,
+      "supports_requis": [
+        "etayage_moyen",
+        "question_directe"
+      ],
+      "critere_reussite_pct": 62,
+      "contexte_exemple": "Retrouver la date et le lieu dans un email professionnel",
+      "regle_descente": "Utiliser des textes à format prévisible (petites annonces)."
+    },
+    {
+      "id": "PR-B1-EE-demarrage",
+      "niveau_cecrl": "B1",
+      "competence": "EE",
+      "mode": "demarrage",
+      "formats_recommandes": [
+        "production_ecrite"
+      ],
+      "formats_interdits": [
+        "texte_lacunaire"
+      ],
+      "volume_items_min": 1,
+      "volume_items_max": 2,
+      "duree_estimee_minutes": 20,
+      "supports_requis": [
+        "amorce_sujet",
+        "rappel_90_mots"
+      ],
+      "critere_reussite_pct": 70,
+      "contexte_exemple": "Rédiger un message pour exposer un problème de voisinage (max 90 mots)",
+      "regle_descente": "Si la cohérence est mauvaise, travailler la COHERENCE_ADMIN et les connecteurs."
+    },
+    {
+      "id": "PR-B1-EE-remediation",
+      "niveau_cecrl": "B1",
+      "competence": "EE",
+      "mode": "remediation",
+      "formats_recommandes": [
+        "transformation",
+        "production_ecrite_guidee"
+      ],
+      "formats_interdits": [
+        "production_libre_longue"
+      ],
+      "volume_items_min": 2,
+      "volume_items_max": 3,
+      "duree_estimee_minutes": 15,
+      "supports_requis": [
+        "banque_connecteurs_logiques"
+      ],
+      "critere_reussite_pct": 62,
+      "contexte_exemple": "Relier deux idées simples avec 'parce que' ou 'donc'",
+      "regle_descente": "Bascule sur le module Structures pour la syntaxe de base."
+    },
+    {
+      "id": "PR-B1-EO-demarrage",
+      "niveau_cecrl": "B1",
+      "competence": "EO",
+      "mode": "demarrage",
+      "formats_recommandes": [
+        "production_orale"
+      ],
+      "formats_interdits": [
+        "lecture_a_voix_haute"
+      ],
+      "volume_items_min": 1,
+      "volume_items_max": 2,
+      "duree_estimee_minutes": 10,
+      "supports_requis": [
+        "sujet_debat_simple",
+        "chronometre"
+      ],
+      "critere_reussite_pct": 70,
+      "contexte_exemple": "Donner son avis sur l'usage du téléphone au travail (tâche 3)",
+      "regle_descente": "Si HORS_SUJET ou JUSTIFICATION faible, passer en remédiation guidée."
+    },
+    {
+      "id": "PR-B1-EO-remediation",
+      "niveau_cecrl": "B1",
+      "competence": "EO",
+      "mode": "remediation",
+      "formats_recommandes": [
+        "production_orale_guidee",
+        "qcm_audio_analyse"
+      ],
+      "formats_interdits": [
+        "debat_libre"
+      ],
+      "volume_items_min": 2,
+      "volume_items_max": 3,
+      "duree_estimee_minutes": 12,
+      "supports_requis": [
+        "grille_arguments"
+      ],
+      "critere_reussite_pct": 62,
+      "contexte_exemple": "Choisir le bon argument pour défendre une idée avant de la prononcer",
+      "regle_descente": "Maintenir l'étayage sur la structure de l'argumentation."
+    },
+    {
+      "id": "PR-B2-CO-demarrage",
+      "niveau_cecrl": "B2",
+      "competence": "CO",
+      "mode": "demarrage",
+      "type_demarche": "naturalisation",
+      "formats_recommandes": [
+        "qcm",
+        "appariement_complexe"
+      ],
+      "formats_interdits": [
+        "selection_image"
+      ],
+      "volume_items_min": 4,
+      "volume_items_max": 8,
+      "duree_estimee_minutes": 15,
+      "supports_requis": [
+        "audio_authentique_rapide",
+        "debat_radiophonique"
+      ],
+      "critere_reussite_pct": 70,
+      "contexte_exemple": "Débat sur l'écologie à la radio",
+      "regle_descente": "Si < 60%, passer en mode B1 augmente."
+    },
+    {
+      "id": "PR-B2-EE-augmente",
+      "niveau_cecrl": "B2",
+      "competence": "EE",
+      "mode": "augmente",
+      "type_demarche": "naturalisation",
+      "formats_recommandes": [
+        "production_ecrite_argumentative"
+      ],
+      "formats_interdits": [
+        "texte_lacunaire"
+      ],
+      "volume_items_min": 1,
+      "volume_items_max": 2,
+      "duree_estimee_minutes": 25,
+      "supports_requis": [
+        "sujet_societe"
+      ],
+      "critere_reussite_pct": 80,
+      "contexte_exemple": "Rédiger un article pour le journal de la ville (Tâche 3)",
+      "regle_descente": "Si < 70%, retour au mode consolide",
+      "limite_mots_production": {
+        "min": 40,
+        "max": 90
+      }
+    },
+    {
+      "id": "PR-A2-EE-consolide",
+      "niveau_cecrl": "A2",
+      "competence": "EE",
+      "mode": "consolide",
+      "type_demarche": "both",
+      "formats_recommandes": [
+        "production_ecrite_courte"
+      ],
+      "formats_interdits": [
+        "dissertation"
+      ],
+      "volume_items_min": 1,
+      "volume_items_max": 2,
+      "duree_estimee_minutes": 15,
+      "supports_requis": [
+        "amorce_email"
+      ],
+      "critere_reussite_pct": 70,
+      "contexte_exemple": "Écrire un email d'absence au travail",
+      "regle_descente": "Si < 60%, remédiation via Structures",
+      "limite_mots_production": {
+        "min": 40,
+        "max": 90
+      }
+    },
+    {
+      "id": "PR-Structures-A1-remediation",
+      "niveau_cecrl": "A1",
+      "competence": "Structures",
+      "mode": "remediation",
+      "type_demarche": "both",
+      "formats_recommandes": [
+        "transformation",
+        "texte_lacunaire",
+        "qcm"
+      ],
+      "formats_interdits": [
+        "production_libre"
+      ],
+      "volume_items_min": 5,
+      "volume_items_max": 10,
+      "duree_estimee_minutes": 10,
+      "supports_requis": [
+        "tableaux_conjugaison_simplifies"
+      ],
+      "critere_reussite_pct": 62,
+      "contexte_exemple": "Conjuguer les verbes de routine au présent",
+      "regle_descente": "Maintien jusqu'à 3 succès >= 62%"
+    }
+  ]
+}

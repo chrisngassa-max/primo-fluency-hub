@@ -58,6 +58,13 @@ interface AdaptationEntry {
     decision: string;
     devoirGenere: string;
     reasonTrainer: string;
+    routingSource?: string;
+    tcfRule?: {
+      rule_id: string;
+      type_remediation: string;
+      message_apprenant: string;
+      variante_exercice: string;
+    };
   };
 }
 
@@ -195,10 +202,17 @@ serve(async (req) => {
     }
     const epreuvesObligatoires = demarche === "naturalisation" ? "CO, CE, EE, EO" : "CO, CE";
 
+    const [{ data: tcfRules }, { data: tcfThresholds }, { data: baselines }] = await Promise.all([
+      supabase.from("tcf_routing_rules").select("*").eq("actif", true),
+      supabase.from("tcf_score_thresholds").select("*"),
+      supabase.from("student_level_baselines").select("eleve_id").in("eleve_id", eleveIds),
+    ]);
+    const baselineEleveIds = new Set((baselines ?? []).map((row: { eleve_id: string }) => row.eleve_id));
+
     // ── Profils & historique par élève ──
     const { data: profils } = await supabase
       .from("profils_eleves")
-      .select("eleve_id, niveau_actuel, fragilite_principale, taux_reussite_co, taux_reussite_ce, taux_reussite_ee, taux_reussite_eo, taux_reussite_structures, priorites_pedagogiques, vitesse_lecture")
+      .select("eleve_id, niveau_actuel, fragilite_principale, niveau_co, niveau_ce, niveau_ee, niveau_eo, niveau_source, taux_reussite_co, taux_reussite_ce, taux_reussite_ee, taux_reussite_eo, taux_reussite_structures, priorites_pedagogiques, vitesse_lecture")
       .in("eleve_id", eleveIds);
 
     let outcomesByEleve = new Map<string, any>();
@@ -290,11 +304,21 @@ serve(async (req) => {
       const competenceCible = normalizeCompetence(targetCompetence, fragilitePrincipale);
       const nbReussitesConsecutives = consecutiveScoresAtLeast(myResults, targetCompetence, 80);
       const routing = routeExercise({
-        profil: { fragilite_principale: fragilitePrincipale },
+        profil: {
+          fragilite_principale: fragilitePrincipale,
+          niveau_co: profile?.niveau_co,
+          niveau_ce: profile?.niveau_ce,
+          niveau_ee: profile?.niveau_ee,
+          niveau_eo: profile?.niveau_eo,
+          niveau_source: profile?.niveau_source,
+          has_baseline: baselineEleveIds.has(eleveId),
+        },
         phase: "phase5_devoir",
         competenceCible,
         scoreDernierExercice: avg ?? undefined,
         nbReussitesConsecutives,
+        tcfRules: tcfRules ?? [],
+        tcfThresholds: tcfThresholds ?? [],
       });
       routingByEleve[eleveId] = routing;
 
@@ -328,6 +352,15 @@ serve(async (req) => {
           decision: routing.decision,
           devoirGenere: routing.devoirGenere,
           reasonTrainer: routing.reasonTrainer,
+          routingSource: routing.routingSource,
+          tcfRule: routing.tcfRule
+            ? {
+              rule_id: routing.tcfRule.rule_id,
+              type_remediation: routing.tcfRule.type_remediation,
+              message_apprenant: routing.tcfRule.message_apprenant,
+              variante_exercice: routing.tcfRule.variante_exercice,
+            }
+            : undefined,
         },
       };
 
@@ -352,6 +385,11 @@ serve(async (req) => {
       lines.push(`  DECISION ROUTEUR V4: ${routing.ruleId} | ${routing.decision} | devoir=${routing.devoirGenere}`);
       lines.push(`  RAISON FORMATEUR: ${routing.reasonTrainer}`);
       lines.push(`  MESSAGE ELEVE NEUTRE: ${routing.reasonStudent}`);
+      if (routing.tcfRule) {
+        lines.push(`  REFERENTIEL TCF V3: ${routing.tcfRule.rule_id} | remediation=${routing.tcfRule.type_remediation.slice(0, 120)}`);
+        lines.push(`  VARIANTE EXERCICE V3: ${routing.tcfRule.variante_exercice.slice(0, 200)}`);
+        lines.push(`  MESSAGE APPRENANT V3: ${routing.tcfRule.message_apprenant}`);
+      }
 
       if (myDevoirs.length) {
         lines.push(`  HISTORIQUE DEVOIRS RÉCENTS À NE PAS REPRODUIRE :`);
@@ -636,6 +674,8 @@ Pour chaque élève, génère ${targetCount} exercices respectant strictement la
               router_raison: raison,
               source_label: sourceLabel,
               condition: routing.conditionLabel,
+              routing_source: routing.routingSource ?? "legacy_percent",
+              tcf_rule: routing.tcfRule ?? null,
             },
           });
           if (routingErr) console.warn("Insert routing decision failed", routingErr);

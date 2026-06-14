@@ -1,0 +1,75 @@
+{
+  "version": "1.0",
+  "pillars": [
+    {
+      "id": "conjugaison",
+      "label": "Conjugaison",
+      "error_types_lies": [
+        "GRAM_TEMPS"
+      ],
+      "competences_impactees": [
+        "EE",
+        "EO"
+      ],
+      "formats_mesure": [
+        "texte_lacunaire",
+        "transformation",
+        "qcm"
+      ]
+    },
+    {
+      "id": "grammaire",
+      "label": "Grammaire",
+      "error_types_lies": [
+        "GRAM_ACCORD",
+        "CONSIGNE_NC"
+      ],
+      "competences_impactees": [
+        "EE",
+        "EO",
+        "CE"
+      ],
+      "formats_mesure": [
+        "transformation",
+        "texte_lacunaire",
+        "qcm"
+      ]
+    },
+    {
+      "id": "phonetique",
+      "label": "Phonétique",
+      "error_types_lies": [
+        "PHONO"
+      ],
+      "competences_impactees": [
+        "EO",
+        "CO"
+      ],
+      "formats_mesure": [
+        "discrimination_audio",
+        "repetition_guidee",
+        "qcm_audio"
+      ]
+    },
+    {
+      "id": "vocabulaire",
+      "label": "Vocabulaire",
+      "error_types_lies": [
+        "LEX_CONFUSION",
+        "COHERENCE_ADMIN",
+        "CONSIGNE_NC"
+      ],
+      "competences_impactees": [
+        "CE",
+        "CO",
+        "EE",
+        "EO"
+      ],
+      "formats_mesure": [
+        "appariement",
+        "qcm",
+        "texte_lacunaire"
+      ]
+    }
+  ]
+}

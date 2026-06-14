@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { getEdgeFunctionErrorMessage } from "@/lib/edgeFunctionError";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -128,7 +129,8 @@ export default function ImportFromUrlDialog({
         const { data, error } = await supabase.functions.invoke("analyze-pdf-support", {
           body: { pdfBase64, fileName: pdf.name, targetLevel: niveau },
         });
-        if (error || data?.error) throw new Error(data?.error || error?.message);
+        if (error) throw new Error(await getEdgeFunctionErrorMessage(error, "Analyse du PDF impossible."));
+        if (data?.error) throw new Error(data.error);
         pdfAnalysis = data.analysis;
         setAnalysis(pdfAnalysis);
         sourceText = buildSourceText(pdfAnalysis);
@@ -153,7 +155,8 @@ export default function ImportFromUrlDialog({
             niveau_arrivee: niveau,
           },
         });
-        if (error || data?.error) throw new Error(data?.error || error?.message);
+        if (error) throw new Error(await getEdgeFunctionErrorMessage(error, "Generation des exercices impossible."));
+        if (data?.error) throw new Error(data.error);
         generated.push(data.exercise);
       }
       setExercises(generated);

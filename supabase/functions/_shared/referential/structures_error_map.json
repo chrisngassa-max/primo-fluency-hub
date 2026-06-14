@@ -1,0 +1,176 @@
+{
+  "version": "1.0",
+  "entries": [
+    {
+      "type_erreur_id": "PHONO",
+      "pilier_principal": "phonetique",
+      "pilier_secondaire": null,
+      "contenu_cible": "Discrimination auditive, paires minimales, prosodie",
+      "formats_recommandes": [
+        "discrimination_audio",
+        "repetition_guidee",
+        "qcm_audio"
+      ],
+      "priorite_par_niveau": {
+        "A0_A1": 1,
+        "A2_B1": 2,
+        "B2": 3
+      }
+    },
+    {
+      "type_erreur_id": "GRAM_ACCORD",
+      "pilier_principal": "grammaire",
+      "pilier_secondaire": null,
+      "contenu_cible": "Accords en genre et en nombre, accords sujet-verbe",
+      "formats_recommandes": [
+        "transformation",
+        "texte_lacunaire"
+      ],
+      "priorite_par_niveau": {
+        "A0_A1": 3,
+        "A2_B1": 2,
+        "B2": 2
+      }
+    },
+    {
+      "type_erreur_id": "GRAM_TEMPS",
+      "pilier_principal": "conjugaison",
+      "pilier_secondaire": "grammaire",
+      "contenu_cible": "Valeur des temps, marqueurs temporels",
+      "formats_recommandes": [
+        "texte_lacunaire",
+        "transformation",
+        "qcm"
+      ],
+      "priorite_par_niveau": {
+        "A0_A1": 3,
+        "A2_B1": 1,
+        "B2": 2
+      }
+    },
+    {
+      "type_erreur_id": "LEX_CONFUSION",
+      "pilier_principal": "vocabulaire",
+      "pilier_secondaire": null,
+      "contenu_cible": "Lexique thématique IRN, faux-amis",
+      "formats_recommandes": [
+        "appariement",
+        "texte_lacunaire",
+        "qcm"
+      ],
+      "priorite_par_niveau": {
+        "A0_A1": 2,
+        "A2_B1": 1,
+        "B2": 3
+      }
+    },
+    {
+      "type_erreur_id": "CONSIGNE_NC",
+      "pilier_principal": "vocabulaire",
+      "pilier_secondaire": "grammaire",
+      "contenu_cible": "Verbes d'action des consignes (décrire, raconter, justifier)",
+      "formats_recommandes": [
+        "appariement",
+        "qcm"
+      ],
+      "priorite_par_niveau": {
+        "A0_A1": 1,
+        "A2_B1": 2,
+        "B2": 2
+      }
+    },
+    {
+      "type_erreur_id": "HORS_SUJET",
+      "pilier_principal": "vocabulaire",
+      "pilier_secondaire": "grammaire",
+      "contenu_cible": "Recadrage situation IRN, tri d'arguments pertinents",
+      "formats_recommandes": [
+        "vrai_faux",
+        "qcm",
+        "selection_image"
+      ],
+      "priorite_par_niveau": {
+        "A0_A1": 3,
+        "A2_B1": 1,
+        "B2": 1
+      }
+    },
+    {
+      "type_erreur_id": "PRODUCTION_COURTE",
+      "pilier_principal": "grammaire",
+      "pilier_secondaire": "conjugaison",
+      "contenu_cible": "Connecteurs logiques, extension de phrase",
+      "formats_recommandes": [
+        "transformation",
+        "texte_lacunaire"
+      ],
+      "priorite_par_niveau": {
+        "A0_A1": 3,
+        "A2_B1": 1,
+        "B2": 2
+      }
+    },
+    {
+      "type_erreur_id": "REGISTRE",
+      "pilier_principal": "vocabulaire",
+      "pilier_secondaire": null,
+      "contenu_cible": "Formules de politesse, tu/vous, registre administratif",
+      "formats_recommandes": [
+        "appariement",
+        "vrai_faux"
+      ],
+      "priorite_par_niveau": {
+        "A0_A1": 3,
+        "A2_B1": 2,
+        "B2": 2
+      }
+    },
+    {
+      "type_erreur_id": "INTERPRETATION",
+      "pilier_principal": "vocabulaire",
+      "pilier_secondaire": "phonetique",
+      "contenu_cible": "Repérage d'indices, négation, mots-clés",
+      "formats_recommandes": [
+        "qcm",
+        "vrai_faux"
+      ],
+      "priorite_par_niveau": {
+        "A0_A1": 2,
+        "A2_B1": 2,
+        "B2": 3
+      }
+    },
+    {
+      "type_erreur_id": "JUSTIFICATION",
+      "pilier_principal": "grammaire",
+      "pilier_secondaire": null,
+      "contenu_cible": "Connecteurs argumentatifs (parce que, donc, puisque)",
+      "formats_recommandes": [
+        "texte_lacunaire",
+        "transformation",
+        "qcm"
+      ],
+      "priorite_par_niveau": {
+        "A0_A1": 3,
+        "A2_B1": 3,
+        "B2": 1
+      }
+    },
+    {
+      "type_erreur_id": "COHERENCE_ADMIN",
+      "pilier_principal": "vocabulaire",
+      "pilier_secondaire": null,
+      "contenu_cible": "Lexique état civil, champs formulaire",
+      "formats_recommandes": [
+        "appariement",
+        "texte_lacunaire",
+        "formulaire_cerfa_simplifie"
+      ],
+      "priorite_par_niveau": {
+        "A0_A1": 1,
+        "A2_B1": 3,
+        "B2": 3
+      }
+    }
+  ]
+}

@@ -1,0 +1,341 @@
+{
+  "version": "1.0",
+  "entries": [
+    {
+      "type_erreur_id": "CONSIGNE_NC",
+      "label": "Réponse hors tâche demandée",
+      "competences_cibles": [
+        "CO",
+        "CE",
+        "EE",
+        "EO"
+      ],
+      "priorite": 1,
+      "strategie": "Entraînement au repérage des verbes d'action et de la tâche pragmatique.",
+      "formats_recommandes": [
+        "appariement",
+        "qcm"
+      ],
+      "formats_interdits": [
+        "production_ecrite_libre",
+        "production_orale_libre"
+      ],
+      "par_niveau": {
+        "A0_A1": "Exemple d'erreur : Raconte au lieu de Décrire. Exercice : Associer une consigne simple à un pictogramme.",
+        "A2_B1": "Exemple d'erreur : Expliquer au lieu de Justifier. Exercice : Isoler le verbe clé dans une consigne complexe."
+      },
+      "modes_progression_applicables": [
+        "demarrage",
+        "remediation",
+        "consolide"
+      ],
+      "priorite_par_niveau": {
+        "A0_A1": 1,
+        "A2_B1": 2,
+        "B2": 2
+      }
+    },
+    {
+      "type_erreur_id": "HORS_SUJET",
+      "label": "Production hors situation IRN",
+      "competences_cibles": [
+        "EE",
+        "EO"
+      ],
+      "priorite": 1,
+      "strategie": "Recentrer sur le contexte pragmatique imposé par le prompt.",
+      "formats_recommandes": [
+        "vrai_faux",
+        "selection_image"
+      ],
+      "formats_interdits": [
+        "production_ecrite_libre"
+      ],
+      "par_niveau": {
+        "A0_A1": "Exemple : Parle de sa famille au lieu du médecin. Exercice : QCM de catégorisation de situation.",
+        "A2_B1": "Exemple : Discute de politique au lieu de l'école. Exercice : Trier des arguments pertinents vs hors sujet."
+      },
+      "modes_progression_applicables": [
+        "remediation",
+        "consolide",
+        "augmente"
+      ],
+      "priorite_par_niveau": {
+        "A0_A1": 3,
+        "A2_B1": 1,
+        "B2": 1
+      }
+    },
+    {
+      "type_erreur_id": "COHERENCE_ADMIN",
+      "label": "Incohérence formulaire administratif",
+      "competences_cibles": [
+        "CE",
+        "EE"
+      ],
+      "priorite": 1,
+      "strategie": "Automatiser la compréhension du lexique formulaire de base.",
+      "formats_recommandes": [
+        "texte_lacunaire",
+        "appariement"
+      ],
+      "formats_interdits": [
+        "redaction_libre"
+      ],
+      "par_niveau": {
+        "A0_A1": "Exemple : Inverse Nom et Prénom. Exercice : Remplissage guidé d'un formulaire Cerfa simplifié.",
+        "A2_B1": "Exemple : Erreur sur 'Lieu de délivrance'. Exercice : Apparier les champs à leurs définitions."
+      },
+      "modes_progression_applicables": [
+        "remediation",
+        "consolide"
+      ],
+      "priorite_par_niveau": {
+        "A0_A1": 1,
+        "A2_B1": 3,
+        "B2": 3
+      }
+    },
+    {
+      "type_erreur_id": "PRODUCTION_COURTE",
+      "label": "Volume insuffisant",
+      "competences_cibles": [
+        "EE",
+        "EO"
+      ],
+      "priorite": 2,
+      "strategie": "Enrichir la phrase avec des extensions simples, avec limite à 90 mots.",
+      "formats_recommandes": [
+        "transformation",
+        "texte_lacunaire"
+      ],
+      "formats_interdits": [
+        "qcm"
+      ],
+      "par_niveau": {
+        "A0_A1": "Exemple : Dit juste 'Bonjour, je viens'. Exercice : Ajouter des adjectifs ou des lieux à une phrase basique.",
+        "A2_B1": "Exemple : Texte de 20 mots au lieu de 60. Exercice : Connecter deux phrases indépendantes par 'parce que' ou 'mais'."
+      },
+      "modes_progression_applicables": [
+        "remediation",
+        "consolide"
+      ],
+      "priorite_par_niveau": {
+        "A0_A1": 3,
+        "A2_B1": 1,
+        "B2": 2
+      }
+    },
+    {
+      "type_erreur_id": "REGISTRE",
+      "label": "Tutoiement/ton inadapté",
+      "competences_cibles": [
+        "EE",
+        "EO"
+      ],
+      "priorite": 2,
+      "strategie": "Discriminer les contextes formels et informels (ami vs institution).",
+      "formats_recommandes": [
+        "appariement",
+        "vrai_faux"
+      ],
+      "formats_interdits": [
+        "redaction_libre"
+      ],
+      "par_niveau": {
+        "A0_A1": "Exemple : Dit 'Salut' au préfet. Exercice : Associer 'Bonjour Monsieur' / 'Salut' au bon interlocuteur.",
+        "A2_B1": "Exemple : Mélange tu/vous dans une lettre. Exercice : Corriger un email contenant des erreurs de registre."
+      },
+      "modes_progression_applicables": [
+        "remediation",
+        "consolide",
+        "augmente"
+      ],
+      "priorite_par_niveau": {
+        "A0_A1": 3,
+        "A2_B1": 2,
+        "B2": 2
+      }
+    },
+    {
+      "type_erreur_id": "LEX_CONFUSION",
+      "label": "Faux ami, paronyme, mot hors contexte",
+      "competences_cibles": [
+        "CO",
+        "CE",
+        "EE"
+      ],
+      "priorite": 2,
+      "strategie": "Renforcer le lexique de survie (domaines: santé, logement, travail).",
+      "formats_recommandes": [
+        "appariement",
+        "qcm"
+      ],
+      "formats_interdits": [
+        "production_ecrite_libre"
+      ],
+      "par_niveau": {
+        "A0_A1": "Exemple : Confond 'bureau' et 'bruit'. Exercice : Associer mot audio à une image.",
+        "A2_B1": "Exemple : Utilise 'location' au lieu de 'loyer'. Exercice : Compléter un texte lacunaire contextuel."
+      },
+      "modes_progression_applicables": [
+        "remediation",
+        "consolide"
+      ],
+      "priorite_par_niveau": {
+        "A0_A1": 2,
+        "A2_B1": 3,
+        "B2": 3
+      }
+    },
+    {
+      "type_erreur_id": "INTERPRETATION",
+      "label": "Contresens document écrit/audio",
+      "competences_cibles": [
+        "CE",
+        "CO"
+      ],
+      "priorite": 2,
+      "strategie": "Focaliser sur le repérage de la négation et des informations clés (qui/quand/où).",
+      "formats_recommandes": [
+        "vrai_faux",
+        "qcm"
+      ],
+      "formats_interdits": [
+        "-"
+      ],
+      "par_niveau": {
+        "A0_A1": "Exemple : Ne voit pas le 'pas' dans un texte. Exercice : Vrai/Faux sur des phrases simples à la forme négative.",
+        "A2_B1": "Exemple : Confond la cause et l'effet dans une annonce. Exercice : QCM sur la finalité d'un document."
+      },
+      "modes_progression_applicables": [
+        "remediation",
+        "consolide"
+      ],
+      "priorite_par_niveau": {
+        "A0_A1": 2,
+        "A2_B1": 2,
+        "B2": 3
+      }
+    },
+    {
+      "type_erreur_id": "JUSTIFICATION",
+      "label": "Absence ou insuffisance d'arguments",
+      "competences_cibles": [
+        "EE",
+        "EO"
+      ],
+      "priorite": 2,
+      "strategie": "Fournir les outils de l'argumentation de base.",
+      "formats_recommandes": [
+        "texte_lacunaire",
+        "transformation"
+      ],
+      "formats_interdits": [
+        "production_libre_longue"
+      ],
+      "par_niveau": {
+        "A0_A1": "Non applicable ou traité très basiquement via l'expression d'un goût simple.",
+        "A2_B1": "Exemple : Donne un avis sans le 'pourquoi'. Exercice : Compléter 'Je pense que... parce que...'."
+      },
+      "modes_progression_applicables": [
+        "remediation",
+        "consolide",
+        "augmente"
+      ],
+      "priorite_par_niveau": {
+        "A0_A1": 3,
+        "A2_B1": 3,
+        "B2": 1
+      }
+    },
+    {
+      "type_erreur_id": "GRAM_ACCORD",
+      "label": "Accord sujet-verbe ou nom-adjectif",
+      "competences_cibles": [
+        "EE"
+      ],
+      "priorite": 3,
+      "strategie": "Revue systématique des règles de genre et nombre au sein de Structures.",
+      "formats_recommandes": [
+        "transformation",
+        "texte_lacunaire"
+      ],
+      "formats_interdits": [
+        "redaction_libre"
+      ],
+      "par_niveau": {
+        "A0_A1": "Exemple : 'Les ami'. Exercice : Ajouter les 's' manquants dans des phrases simples.",
+        "A2_B1": "Exemple : 'Ils sont parti'. Exercice : Transformation de phrases du singulier au pluriel."
+      },
+      "modes_progression_applicables": [
+        "remediation",
+        "consolide",
+        "augmente"
+      ],
+      "priorite_par_niveau": {
+        "A0_A1": 3,
+        "A2_B1": 3,
+        "B2": 2
+      }
+    },
+    {
+      "type_erreur_id": "GRAM_TEMPS",
+      "label": "Temps verbal inadéquat",
+      "competences_cibles": [
+        "EE",
+        "EO"
+      ],
+      "priorite": 3,
+      "strategie": "Faire le lien entre les indicateurs de temps et la conjugaison.",
+      "formats_recommandes": [
+        "appariement",
+        "texte_lacunaire"
+      ],
+      "formats_interdits": [
+        "-"
+      ],
+      "par_niveau": {
+        "A0_A1": "Exemple : 'Hier je mange'. Exercice : Apparier 'hier/aujourd'hui' avec les formes verbales correspondantes.",
+        "A2_B1": "Exemple : 'Demain je suis allé'. Exercice : Compléter des phrases selon un marqueur temporel donné."
+      },
+      "modes_progression_applicables": [
+        "remediation",
+        "consolide"
+      ],
+      "priorite_par_niveau": {
+        "A0_A1": 3,
+        "A2_B1": 2,
+        "B2": 3
+      }
+    },
+    {
+      "type_erreur_id": "PHONO",
+      "label": "Erreur de son gênant la compréhension",
+      "competences_cibles": [
+        "EO"
+      ],
+      "priorite": 3,
+      "strategie": "Discrimination phonétique et pratique de l'articulation de paires minimales.",
+      "formats_recommandes": [
+        "qcm",
+        "production_orale_repetition"
+      ],
+      "formats_interdits": [
+        "production_orale_libre"
+      ],
+      "par_niveau": {
+        "A0_A1": "Exemple : Confond [u] et [y] (vous/vu). Exercice : Entendez-vous X ou Y ?",
+        "A2_B1": "Exemple : Mauvaise intonation interrogative. Exercice : Répéter des phrases avec la bonne mélodie."
+      },
+      "modes_progression_applicables": [
+        "remediation"
+      ],
+      "priorite_par_niveau": {
+        "A0_A1": 3,
+        "A2_B1": 3,
+        "B2": 3
+      }
+    }
+  ]
+}

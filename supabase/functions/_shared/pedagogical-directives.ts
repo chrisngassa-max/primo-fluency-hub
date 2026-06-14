@@ -1,7 +1,19 @@
+import {
+  formatDemarcheWeightGuidance,
+  getMergedRemediationFormats,
+  getStructuresMeasurementRule,
+  getStructuresSessionMix,
+  matchSwitchRule,
+  niveauToBand,
+  resolveFormatsToGenerateurs,
+} from "./referential-loader.ts";
+
 export type ExerciseVariantLevel = "bas" | "standard" | "haut";
 export type ScaffoldingLevel = "fort" | "moyen" | "faible";
 export type CompetenceKey = "CO" | "CE" | "EE" | "EO" | "Structures";
 export type WrittenProfile = "NSA" | "Alpha" | "Post-Alpha" | "FLE" | "inconnu";
+export type StructuresPilier = "conjugaison" | "grammaire" | "phonetique" | "vocabulaire";
+export type TypeDemarche = "titre_sejour" | "naturalisation";
 
 export interface StudentProfileSignals {
   niveau_actuel?: string | null;
@@ -52,6 +64,9 @@ interface BuildInput {
   progression?: string | null;
   weakCompetences?: string[] | null;
   targetCompetence?: string | null;
+  dominantErrorType?: string;
+  dominantPilier?: StructuresPilier;
+  typeDemarche?: TypeDemarche;
 }
 
 const COMPETENCE_FIELDS: Record<CompetenceKey, keyof StudentProfileSignals> = {
@@ -202,7 +217,16 @@ function buildStrategy(
 }
 
 export function buildPedagogicalDirectives(input: BuildInput): PedagogicalDirectives {
-  const { profile, outcome, progression, weakCompetences, targetCompetence } = input;
+  const {
+    profile,
+    outcome,
+    progression,
+    weakCompetences,
+    targetCompetence,
+    dominantErrorType,
+    dominantPilier,
+    typeDemarche,
+  } = input;
   const niveau_variante = deriveVariantLevel(profile, outcome, progression);
   const niveau_etayage = variantToScaffolding(niveau_variante);
   const vitesse_lecture = deriveReadingSpeed(profile);
@@ -215,23 +239,82 @@ export function buildPedagogicalDirectives(input: BuildInput): PedagogicalDirect
   const lowDigitalComfort = profile?.aisance_numerique === "faible";
   const preferences = profile?.preferences_apprentissage ?? [];
   const accessibilityNeeds = profile?.besoins_accessibilite ?? [];
+  const niveauActuel = profile?.niveau_actuel ?? "A1";
+  const niveauBand = niveauToBand(niveauActuel);
+  const progressionMode = progression === "remediation"
+    ? "remediation"
+    : progression === "augmente"
+      ? "augmente"
+      : "consolide";
+
+  const switchRule = matchSwitchRule({
+    niveauCecrl: niveauActuel,
+    competenceScores: {
+      CO: asNumber(profile?.taux_reussite_co) ?? undefined,
+      CE: asNumber(profile?.taux_reussite_ce) ?? undefined,
+      EE: asNumber(profile?.taux_reussite_ee) ?? undefined,
+      EO: asNumber(profile?.taux_reussite_eo) ?? undefined,
+      Structures: asNumber(profile?.taux_reussite_structures) ?? undefined,
+    },
+    errorCounts: dominantErrorType ? { [dominantErrorType]: 1 } : undefined,
+  });
+  const pilierFocus = dominantPilier
+    ?? (switchRule?.pilier_cible === "vocabulaire_phonetique"
+      ? "vocabulaire"
+      : switchRule?.pilier_cible as StructuresPilier | undefined);
 
   const eeScore = asNumber(profile?.taux_reussite_ee);
+  const eoScore = asNumber(profile?.taux_reussite_eo);
   const structuresScore = asNumber(profile?.taux_reussite_structures);
-  const shouldDescendFromWriting = (eeScore != null && eeScore < 50) || competence_blocage === "EE";
-  const structuresWeak = structuresScore == null || structuresScore < 60;
-  const competence_cible: CompetenceKey | null = shouldDescendFromWriting && structuresWeak
+  const shouldDescendFromWriting = (eeScore != null && eeScore < 50)
+    || (eoScore != null && eoScore < 50)
+    || competence_blocage === "EE"
+    || switchRule?.competence_suspendue === "EE"
+    || switchRule?.competence_suspendue === "EE_EO";
+  const structuresWeak = structuresScore == null || structuresScore < 60 || pilierFocus != null;
+  let competence_cible: CompetenceKey | null = shouldDescendFromWriting && structuresWeak
     ? "Structures"
     : competence_blocage;
 
-  const regles_descente = [
+  const regles_descente: string[] = [
     shouldDescendFromWriting && structuresWeak
-      ? "EE faible: ne pas demander de redaction libre. Redescendre vers Structures, lexique en contexte, banque de mots ou texte lacunaire."
-      : null,
+      ? `EE/EO faible: ne pas demander de redaction libre. Redescendre vers Structures${pilierFocus ? ` (pilier ${pilierFocus})` : ""}, lexique en contexte, banque de mots ou texte lacunaire.`
+      : "",
     limitedLiteracy
       ? `Profil ecrit ${profil_ecrit}: changer la modalite avant de baisser le niveau; proposer consigne audio, image, exemple resolu, manipulation ou appariement.`
-      : null,
-  ].filter(Boolean) as string[];
+      : "",
+    switchRule?.action === "enter_focus" && pilierFocus
+      ? `Bascule Structures: ${switchRule.id} -> focus ${pilierFocus} (~${switchRule.volume_seance_pct ?? 20}% de la seance).`
+      : "",
+  ].filter(Boolean);
+
+  if (typeDemarche) {
+    regles_descente.push(formatDemarcheWeightGuidance(typeDemarche));
+  }
+
+  if (pilierFocus) {
+    const measurement = getStructuresMeasurementRule(pilierFocus);
+    const formatsMesure = (measurement?.formats_valides_mesure as string[] | undefined) ?? [];
+    if (formatsMesure.length) {
+      regles_descente.push(`Pilier Structures ${pilierFocus}: privilegier ${formatsMesure.join(", ")}.`);
+    }
+    const sessionMix = getStructuresSessionMix(niveauActuel, progressionMode);
+    const poids = sessionMix?.poids_piliers as Record<string, number> | undefined;
+    if (poids) {
+      const mixText = Object.entries(poids)
+        .map(([pilier, poidsValue]) => `${pilier} ${Math.round(poidsValue * 100)}%`)
+        .join(", ");
+      regles_descente.push(`Mix Structures (${niveauActuel}, ${progressionMode}): ${mixText}.`);
+    }
+  }
+
+  if (dominantErrorType) {
+    const remediation = getMergedRemediationFormats(dominantErrorType, niveauBand);
+    if (remediation.strategie) {
+      regles_descente.push(`Erreur ${dominantErrorType}: ${remediation.strategie}`);
+    }
+  }
+
   const regle_descente = regles_descente.length ? regles_descente.join(" ") : null;
 
   const supports_obligatoires = limitedLiteracy
@@ -264,11 +347,31 @@ export function buildPedagogicalDirectives(input: BuildInput): PedagogicalDirect
     );
   }
 
+  if (dominantErrorType) {
+    const remediation = getMergedRemediationFormats(dominantErrorType, niveauBand);
+    if (remediation.formats.length) {
+      formats_autorises = unique([...formats_autorises, ...remediation.formats]);
+    }
+  }
+
+  if (pilierFocus) {
+    const measurement = getStructuresMeasurementRule(pilierFocus);
+    const formatsMesure = resolveFormatsToGenerateurs(
+      (measurement?.formats_valides_mesure as string[] | undefined) ?? [],
+    );
+    if (formatsMesure.length && competence_cible === "Structures") {
+      formats_autorises = unique([...formats_autorises, ...formatsMesure]);
+    }
+  }
+
   const formats_interdits = unique([
     "texte_long",
     ...(niveau_etayage === "fort" || regle_descente ? ["redaction_libre", "production_ecrite_longue"] : []),
     ...(limitedLiteracy ? ["production_ecrite_libre", "consigne_ecrite_seule", "copie_longue"] : []),
     ...(lowDigitalComfort ? ["glisser_deposer", "appariement_complexe", "saisie_longue"] : []),
+    ...(dominantErrorType
+      ? getMergedRemediationFormats(dominantErrorType, niveauBand).interdits
+      : []),
   ]);
 
   const feedback_type = competence_cible === "Structures" || competence_blocage === "EE"

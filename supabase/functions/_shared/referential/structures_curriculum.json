@@ -1,0 +1,479 @@
+{
+  "version": "1.0",
+  "entries": [
+    {
+      "id": "ST-A0-PHON-01",
+      "niveau_cecrl": "A0",
+      "pilier": "phonetique",
+      "theme": "Discrimination voyelles orales/nasales",
+      "objectifs": [
+        "Distinguer [a] et [ã]"
+      ],
+      "formats_recommandes": [
+        "discrimination_audio"
+      ],
+      "formats_interdits": [
+        "production_orale_libre"
+      ],
+      "volume_items_min": 5,
+      "volume_items_max": 8,
+      "duree_minutes": 5,
+      "critere_acquisition_pct": 65,
+      "contexte_irn": "Numéros de téléphone (un/deux)",
+      "prerequis": [],
+      "contre_indications_niveau": [
+        "intonation_complexe"
+      ]
+    },
+    {
+      "id": "ST-A0-VOC-01",
+      "niveau_cecrl": "A0",
+      "pilier": "vocabulaire",
+      "theme": "Identité",
+      "objectifs": [
+        "Reconnaître les champs d'un formulaire civil"
+      ],
+      "formats_recommandes": [
+        "appariement"
+      ],
+      "formats_interdits": [
+        "texte_lacunaire_libre"
+      ],
+      "volume_items_min": 4,
+      "volume_items_max": 8,
+      "duree_minutes": 10,
+      "critere_acquisition_pct": 70,
+      "contexte_irn": "Formulaire CAF",
+      "prerequis": [],
+      "contre_indications_niveau": [
+        "lexique_abstrait"
+      ]
+    },
+    {
+      "id": "ST-A1-CONJ-01",
+      "niveau_cecrl": "A1",
+      "pilier": "conjugaison",
+      "theme": "Présent indicatif verbes fréquents",
+      "objectifs": [
+        "Conjuguer être, avoir, aller, faire au présent"
+      ],
+      "temps_verbaux": [
+        "present"
+      ],
+      "formats_recommandes": [
+        "texte_lacunaire",
+        "transformation"
+      ],
+      "formats_interdits": [
+        "production_ecrite_libre"
+      ],
+      "volume_items_min": 5,
+      "volume_items_max": 10,
+      "duree_minutes": 10,
+      "critere_acquisition_pct": 70,
+      "contexte_irn": "Formulaire : Je suis, J'habite, Je travaille",
+      "prerequis": [],
+      "contre_indications_niveau": [
+        "imparfait",
+        "subjonctif"
+      ]
+    },
+    {
+      "id": "ST-A1-GRAM-01",
+      "niveau_cecrl": "A1",
+      "pilier": "grammaire",
+      "theme": "Déterminants possessifs",
+      "objectifs": [
+        "Utiliser mon/ma/mes, ton/ta/tes"
+      ],
+      "formats_recommandes": [
+        "texte_lacunaire",
+        "qcm"
+      ],
+      "formats_interdits": [],
+      "volume_items_min": 5,
+      "volume_items_max": 10,
+      "duree_minutes": 8,
+      "critere_acquisition_pct": 70,
+      "contexte_irn": "Parler de sa famille au médecin",
+      "prerequis": [],
+      "contre_indications_niveau": [
+        "pronoms_possessifs"
+      ]
+    },
+    {
+      "id": "ST-A1-PHON-01",
+      "niveau_cecrl": "A1",
+      "pilier": "phonetique",
+      "theme": "Intonation interrogative",
+      "objectifs": [
+        "Monter la voix sur une question fermée"
+      ],
+      "formats_recommandes": [
+        "repetition_guidee",
+        "discrimination_audio"
+      ],
+      "formats_interdits": [
+        "production_orale_libre"
+      ],
+      "volume_items_min": 3,
+      "volume_items_max": 6,
+      "duree_minutes": 5,
+      "critere_acquisition_pct": 70,
+      "contexte_irn": "Poser une question au guichet",
+      "prerequis": [],
+      "contre_indications_niveau": []
+    },
+    {
+      "id": "ST-A1-VOC-01",
+      "niveau_cecrl": "A1",
+      "pilier": "vocabulaire",
+      "theme": "La santé de base",
+      "objectifs": [
+        "Nommer les parties du corps principales"
+      ],
+      "formats_recommandes": [
+        "appariement",
+        "qcm"
+      ],
+      "formats_interdits": [],
+      "volume_items_min": 5,
+      "volume_items_max": 10,
+      "duree_minutes": 8,
+      "critere_acquisition_pct": 70,
+      "contexte_irn": "Consultation médicale",
+      "prerequis": [],
+      "contre_indications_niveau": []
+    },
+    {
+      "id": "ST-A2-CONJ-01",
+      "niveau_cecrl": "A2",
+      "pilier": "conjugaison",
+      "theme": "Passé composé",
+      "objectifs": [
+        "Choisir entre être et avoir"
+      ],
+      "temps_verbaux": [
+        "passe_compose"
+      ],
+      "formats_recommandes": [
+        "transformation",
+        "texte_lacunaire"
+      ],
+      "formats_interdits": [],
+      "volume_items_min": 5,
+      "volume_items_max": 10,
+      "duree_minutes": 12,
+      "critere_acquisition_pct": 75,
+      "contexte_irn": "Raconter son arrivée en France",
+      "prerequis": [
+        "ST-A1-CONJ-01"
+      ],
+      "contre_indications_niveau": [
+        "accord_participe_passe_complexe"
+      ]
+    },
+    {
+      "id": "ST-A2-GRAM-01",
+      "niveau_cecrl": "A2",
+      "pilier": "grammaire",
+      "theme": "Pronoms relatifs qui/que",
+      "objectifs": [
+        "Éviter la répétition avec qui/que"
+      ],
+      "formats_recommandes": [
+        "transformation",
+        "qcm"
+      ],
+      "formats_interdits": [],
+      "volume_items_min": 5,
+      "volume_items_max": 8,
+      "duree_minutes": 10,
+      "critere_acquisition_pct": 75,
+      "contexte_irn": "Décrire un logement (C'est un appartement qui...)",
+      "prerequis": [],
+      "contre_indications_niveau": [
+        "dont",
+        "lequel"
+      ]
+    },
+    {
+      "id": "ST-A2-PHON-01",
+      "niveau_cecrl": "A2",
+      "pilier": "phonetique",
+      "theme": "Liaisons obligatoires",
+      "objectifs": [
+        "Faire la liaison après les/des/un"
+      ],
+      "formats_recommandes": [
+        "repetition_guidee"
+      ],
+      "formats_interdits": [],
+      "volume_items_min": 5,
+      "volume_items_max": 10,
+      "duree_minutes": 5,
+      "critere_acquisition_pct": 75,
+      "contexte_irn": "Donner des quantités (deux_enfants)",
+      "prerequis": [],
+      "contre_indications_niveau": [
+        "liaisons_facultatives"
+      ]
+    },
+    {
+      "id": "ST-A2-VOC-01",
+      "niveau_cecrl": "A2",
+      "pilier": "vocabulaire",
+      "theme": "Logement",
+      "objectifs": [
+        "Comprendre les termes d'une petite annonce"
+      ],
+      "formats_recommandes": [
+        "appariement",
+        "texte_lacunaire"
+      ],
+      "formats_interdits": [],
+      "volume_items_min": 5,
+      "volume_items_max": 10,
+      "duree_minutes": 10,
+      "critere_acquisition_pct": 75,
+      "contexte_irn": "Recherche d'appartement (loyer, charges, bail)",
+      "prerequis": [],
+      "contre_indications_niveau": []
+    },
+    {
+      "id": "ST-B1-CONJ-01",
+      "niveau_cecrl": "B1",
+      "pilier": "conjugaison",
+      "theme": "Imparfait vs Passé Composé",
+      "objectifs": [
+        "Alterner description et action dans le passé"
+      ],
+      "temps_verbaux": [
+        "imparfait",
+        "passe_compose"
+      ],
+      "formats_recommandes": [
+        "texte_lacunaire",
+        "qcm"
+      ],
+      "formats_interdits": [],
+      "volume_items_min": 5,
+      "volume_items_max": 10,
+      "duree_minutes": 15,
+      "critere_acquisition_pct": 80,
+      "contexte_irn": "Raconter un accident ou un événement",
+      "prerequis": [
+        "ST-A2-CONJ-01"
+      ],
+      "contre_indications_niveau": [
+        "passe_simple"
+      ]
+    },
+    {
+      "id": "ST-B1-GRAM-01",
+      "niveau_cecrl": "B1",
+      "pilier": "grammaire",
+      "theme": "Connecteurs logiques cause/conséquence",
+      "objectifs": [
+        "Utiliser donc, c'est pourquoi, comme"
+      ],
+      "formats_recommandes": [
+        "transformation",
+        "qcm"
+      ],
+      "formats_interdits": [],
+      "volume_items_min": 5,
+      "volume_items_max": 10,
+      "duree_minutes": 12,
+      "critere_acquisition_pct": 80,
+      "contexte_irn": "Expliquer un retard à l'employeur",
+      "prerequis": [],
+      "contre_indications_niveau": []
+    },
+    {
+      "id": "ST-B1-PHON-01",
+      "niveau_cecrl": "B1",
+      "pilier": "phonetique",
+      "theme": "Mélodie de la phrase longue",
+      "objectifs": [
+        "Gérer les groupes rythmiques"
+      ],
+      "formats_recommandes": [
+        "repetition_guidee"
+      ],
+      "formats_interdits": [],
+      "volume_items_min": 3,
+      "volume_items_max": 5,
+      "duree_minutes": 8,
+      "critere_acquisition_pct": 80,
+      "contexte_irn": "Argumenter lors de l'entretien de naturalisation",
+      "prerequis": [],
+      "contre_indications_niveau": []
+    },
+    {
+      "id": "ST-B1-VOC-01",
+      "niveau_cecrl": "B1",
+      "pilier": "vocabulaire",
+      "theme": "Le monde professionnel",
+      "objectifs": [
+        "Maîtriser le lexique du contrat et des conditions de travail"
+      ],
+      "formats_recommandes": [
+        "texte_lacunaire",
+        "appariement"
+      ],
+      "formats_interdits": [],
+      "volume_items_min": 5,
+      "volume_items_max": 10,
+      "duree_minutes": 10,
+      "critere_acquisition_pct": 80,
+      "contexte_irn": "Signer un CDI",
+      "prerequis": [],
+      "contre_indications_niveau": []
+    },
+    {
+      "id": "ST-B2-CONJ-01",
+      "niveau_cecrl": "B2",
+      "pilier": "conjugaison",
+      "theme": "Subjonctif présent",
+      "objectifs": [
+        "Exprimer la nécessité, le doute, le sentiment"
+      ],
+      "temps_verbaux": [
+        "subjonctif_present"
+      ],
+      "formats_recommandes": [
+        "transformation",
+        "texte_lacunaire"
+      ],
+      "formats_interdits": [],
+      "volume_items_min": 5,
+      "volume_items_max": 10,
+      "duree_minutes": 15,
+      "critere_acquisition_pct": 85,
+      "contexte_irn": "Rédiger une lettre de réclamation",
+      "prerequis": [],
+      "contre_indications_niveau": [
+        "subjonctif_imparfait"
+      ]
+    },
+    {
+      "id": "ST-B2-GRAM-01",
+      "niveau_cecrl": "B2",
+      "pilier": "grammaire",
+      "theme": "Mise en relief",
+      "objectifs": [
+        "Utiliser c'est... qui / ce que... c'est"
+      ],
+      "formats_recommandes": [
+        "transformation"
+      ],
+      "formats_interdits": [],
+      "volume_items_min": 5,
+      "volume_items_max": 8,
+      "duree_minutes": 12,
+      "critere_acquisition_pct": 85,
+      "contexte_irn": "Défendre une opinion forte (Ce qui est important, c'est...)",
+      "prerequis": [
+        "ST-A2-GRAM-01"
+      ],
+      "contre_indications_niveau": []
+    },
+    {
+      "id": "ST-B2-PHON-01",
+      "niveau_cecrl": "B2",
+      "pilier": "phonetique",
+      "theme": "Intonation et nuances",
+      "objectifs": [
+        "Marquer l'opposition, l'insistance par la voix"
+      ],
+      "formats_recommandes": [
+        "repetition_guidee",
+        "qcm_audio"
+      ],
+      "formats_interdits": [],
+      "volume_items_min": 3,
+      "volume_items_max": 5,
+      "duree_minutes": 8,
+      "critere_acquisition_pct": 85,
+      "contexte_irn": "Débat avec l'examinateur TCF (Tâche 3)",
+      "prerequis": [
+        "ST-B1-PHON-01"
+      ],
+      "contre_indications_niveau": []
+    },
+    {
+      "id": "ST-B2-VOC-01",
+      "niveau_cecrl": "B2",
+      "pilier": "vocabulaire",
+      "theme": "Citoyenneté et valeurs",
+      "objectifs": [
+        "Maîtriser le lexique institutionnel et civique"
+      ],
+      "formats_recommandes": [
+        "appariement",
+        "texte_lacunaire"
+      ],
+      "formats_interdits": [],
+      "volume_items_min": 5,
+      "volume_items_max": 10,
+      "duree_minutes": 12,
+      "critere_acquisition_pct": 85,
+      "contexte_irn": "Entretien de naturalisation",
+      "prerequis": [],
+      "contre_indications_niveau": []
+    },
+    {
+      "id": "ST-A0-GRAM-01",
+      "niveau_cecrl": "A0",
+      "pilier": "grammaire",
+      "theme": "La phrase de base",
+      "objectifs": [
+        "Ordre Sujet-Verbe-Objet simple"
+      ],
+      "formats_recommandes": [
+        "appariement",
+        "qcm"
+      ],
+      "formats_interdits": [
+        "transformation_complexe"
+      ],
+      "volume_items_min": 3,
+      "volume_items_max": 6,
+      "duree_minutes": 8,
+      "critere_acquisition_pct": 65,
+      "contexte_irn": "Comprendre une consigne simple",
+      "prerequis": [],
+      "contre_indications_niveau": [
+        "inversion_sujet"
+      ]
+    },
+    {
+      "id": "ST-A0-CONJ-01",
+      "niveau_cecrl": "A0",
+      "pilier": "conjugaison",
+      "theme": "Verbes d'état figés",
+      "objectifs": [
+        "Identifier Je suis / J'ai"
+      ],
+      "temps_verbaux": [
+        "present"
+      ],
+      "formats_recommandes": [
+        "qcm"
+      ],
+      "formats_interdits": [
+        "production_ecrite_libre"
+      ],
+      "volume_items_min": 3,
+      "volume_items_max": 5,
+      "duree_minutes": 5,
+      "critere_acquisition_pct": 65,
+      "contexte_irn": "Décliner son identité",
+      "prerequis": [],
+      "contre_indications_niveau": [
+        "conjugaison_systematique"
+      ]
+    }
+  ]
+}

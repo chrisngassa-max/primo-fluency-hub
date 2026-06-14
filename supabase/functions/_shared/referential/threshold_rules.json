@@ -1,0 +1,29 @@
+{
+  "version": "1.0",
+  "entree_remediation": {
+    "condition": "< 60",
+    "action": "set_mode_remediation",
+    "source": "regle_app"
+  },
+  "sortie_remediation": {
+    "condition": ">= 62",
+    "occurences_requises": 3,
+    "action": "set_mode_consolide",
+    "source": "regle_app"
+  },
+  "maintien_consolide": {
+    "condition": ">= 60 AND <= 79",
+    "action": "set_mode_consolide",
+    "source": "regle_app"
+  },
+  "entree_augmente": {
+    "condition": ">= 80",
+    "action": "set_mode_augmente",
+    "source": "regle_app"
+  },
+  "validation_palier_cecrl": {
+    "condition": ">= 85",
+    "action": "upgrade_niveau_cecrl",
+    "source": "regle_app"
+  }
+}

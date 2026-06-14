@@ -347,28 +347,7 @@ const BilanSeance = () => {
           correction,
         });
 
-        // Auto-create devoir if score < 80% and formateur_id available
-        if (score < 80 && ex.formateur_id) {
-          // Check existing active devoirs count
-          const { count } = await supabase
-            .from("devoirs")
-            .select("id", { count: "exact", head: true })
-            .eq("eleve_id", user.id)
-            .eq("statut", "en_attente" as any);
-
-          if ((count ?? 0) < 3) {
-            const raison = score < 60 ? "remediation" : "consolidation";
-            const { error: devErr } = await supabase.from("devoirs").insert({
-              eleve_id: user.id,
-              exercice_id: ex.id,
-              formateur_id: ex.formateur_id,
-              session_id: sessionId!,
-              raison: raison as any,
-              statut: "en_attente" as any,
-            });
-            if (!devErr) devoirsCreated++;
-          }
-        }
+        if (serverResult.devoir_created) devoirsCreated++;
 
         // Update student competency status
         const statut = score >= 80 ? "acquis_provisoire" : score >= 60 ? "consolide" : "non_acquis";

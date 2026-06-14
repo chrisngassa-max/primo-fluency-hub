@@ -1,15 +1,23 @@
-export type CompetenceTCF = "CO" | "CE" | "EE" | "EO";
+export type { CompetenceTCF, RouterDecision } from "./tcf-routing-referential.ts";
+import type { CompetenceTCF, RouterDecision, ScoreScale } from "./tcf-routing-referential.ts";
+import {
+  buildTcfRoutingResult,
+  resolveRoutingFromProfile,
+  type ProfileRoutingSignals,
+  type TcfRoutingRuleRow,
+  type TcfScoreThresholdRow,
+} from "./tcf-routing-referential.ts";
+
 export type RoutingPhase = "phase2_tronc_commun" | "phase3_atelier" | "phase5_devoir";
 
-export type RouterDecision =
-  | "upgrade_support_phase2"
-  | "remediation_prioritaire"
-  | "consolidation"
-  | "exercice_equivalent_ou_superieur"
-  | "reproposition_automatique"
-  | "maintien_parcours";
+export type {
+  ProfileRoutingSignals,
+  ScoreScale,
+  TcfRoutingRuleRow,
+  TcfScoreThresholdRow,
+} from "./tcf-routing-referential.ts";
 
-export interface StudentProfileRouterSignals {
+export interface StudentProfileRouterSignals extends ProfileRoutingSignals {
   fragilite_principale: CompetenceTCF;
 }
 
@@ -20,12 +28,27 @@ export interface RouterContext {
   scorePhase2?: number;
   scorePhase3?: number;
   scoreDernierExercice?: number;
+  scoreScale?: ScoreScale;
   nbReussitesConsecutives?: number;
   nbEchecsConsecutifs?: number;
   exerciceNonFait?: boolean;
   exerciceNonTermine?: boolean;
   tempsTropLong?: boolean;
   stagnationMemeCompetence?: boolean;
+  tcfRules?: TcfRoutingRuleRow[];
+  tcfThresholds?: TcfScoreThresholdRow[];
+}
+
+export interface TcfRuleSnapshot {
+  rule_id: string;
+  variante_exercice: string;
+  type_remediation: string;
+  message_apprenant: string;
+  niveau: string;
+  epreuve: string;
+  score_min: number;
+  score_max: number;
+  score_scale: string;
 }
 
 export interface RoutingResult {
@@ -35,6 +58,8 @@ export interface RoutingResult {
   devoirGenere: string;
   reasonStudent: string;
   reasonTrainer: string;
+  tcfRule?: TcfRuleSnapshot;
+  routingSource?: "tcf_referential" | "legacy_percent";
 }
 
 interface RouterRule {
@@ -61,6 +86,35 @@ function scoreForContext(context: RouterContext): number | null {
 
 function competenceLabel(context: RouterContext): string {
   return context.competenceCible ?? context.profil.fragilite_principale;
+}
+
+function tryTcfReferentialRouting(context: RouterContext): RoutingResult | null {
+  const rules = context.tcfRules;
+  if (!rules?.length) return null;
+
+  const competence = context.competenceCible ?? context.profil.fragilite_principale;
+  const percentScore = scoreForContext(context) ?? undefined;
+  const scoreScale = context.scoreScale ?? "percent";
+
+  const resolution = resolveRoutingFromProfile(
+    context.profil,
+    competence,
+    rules,
+    context.tcfThresholds ?? [],
+    percentScore,
+    scoreScale,
+  );
+
+  if (!resolution.rule || !resolution.niveau) return null;
+
+  return buildTcfRoutingResult(
+    resolution.rule,
+    competence,
+    resolution.niveau,
+    resolution.tcfScore,
+    resolution.scoreScale,
+    percentScore,
+  );
 }
 
 export const REGLES_MOTEUR: RouterRule[] = [
@@ -138,7 +192,7 @@ export const REGLES_MOTEUR: RouterRule[] = [
   },
 ];
 
-export function routeExercise(context: RouterContext): RoutingResult {
+function routeLegacyPercent(context: RouterContext): RoutingResult {
   const rule = [...REGLES_MOTEUR]
     .sort((a, b) => a.priority - b.priority)
     .find((candidate) => candidate.applies(context));
@@ -151,6 +205,7 @@ export function routeExercise(context: RouterContext): RoutingResult {
       devoirGenere: "exercice_meme_niveau",
       reasonStudent: `Activite personnalisee : continuer le travail sur ${competenceLabel(context)}.`,
       reasonTrainer: "Aucune regle prioritaire declenchee : maintien du parcours actuel.",
+      routingSource: "legacy_percent",
     };
   }
 
@@ -160,5 +215,30 @@ export function routeExercise(context: RouterContext): RoutingResult {
     decision: rule.decision,
     devoirGenere: rule.devoirGenere,
     ...rule.explain(context),
+    routingSource: "legacy_percent",
   };
+}
+
+export function routeExercise(context: RouterContext): RoutingResult {
+  // Regles comportementales prioritaires (R1, R10) avant le referentiel TCF
+  const behavioralRule = [...REGLES_MOTEUR]
+    .filter((r) => r.id === "R1" || r.id === "R10")
+    .sort((a, b) => a.priority - b.priority)
+    .find((candidate) => candidate.applies(context));
+
+  if (behavioralRule) {
+    return {
+      ruleId: behavioralRule.id,
+      conditionLabel: behavioralRule.conditionLabel,
+      decision: behavioralRule.decision,
+      devoirGenere: behavioralRule.devoirGenere,
+      ...behavioralRule.explain(context),
+      routingSource: "legacy_percent",
+    };
+  }
+
+  const tcfResult = tryTcfReferentialRouting(context);
+  if (tcfResult) return tcfResult;
+
+  return routeLegacyPercent(context);
 }

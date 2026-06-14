@@ -2,6 +2,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0"
 import { checkConsent, consentBlockedResponse, ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth } from "../_shared/check-consent.ts"
+import { evaluateScoreToTcf13 } from "../_shared/tcf-routing-referential.ts"
 import { pseudonymizeProductionText } from "../_shared/pseudonymize.ts"
 import { emptyOralCriteria, normalizeOralCriteria } from "../_shared/oral-evaluation.ts"
 
@@ -260,6 +261,10 @@ Produis le JSON de correction complet selon le format spécifié.`
       resultat,
       justification,
       correction_text: justification,
+      // Bande TCF 1-13 pour routage EE/EO (voir tcf-routing-referential.evaluateScoreToTcf13)
+      ...(targetEpreuve === "EE" || targetEpreuve === "EO"
+        ? { tcf_13_routing_band: evaluateScoreToTcf13(safeScore) }
+        : {}),
       ...(isOral ? { criteres_oraux: normalizeOralCriteria(evaluation.criteres_oraux, 10) } : {}),
     }
 

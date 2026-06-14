@@ -4,6 +4,14 @@ import { validateAndFix } from "../_shared/exercise-validator.ts";
 import { QA_REVIEW_BLOCK, logQaAuto } from "../_shared/qa-prompt.ts";
 import { buildPedagogicalDirectives, formatPedagogicalDirectives } from "../_shared/pedagogical-directives.ts";
 import { computeWeakCompetencesFromResults } from "../_shared/progression.ts";
+import {
+  formatDemarcheWeightGuidance,
+  getDemarcheWeights,
+  getDominantErrorType,
+  getDominantPilierFromErrors,
+  matchSwitchRule,
+  niveauToBand,
+} from "../_shared/referential-loader.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { checkConsentBatch, ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth, consentBlockedResponse } from "../_shared/check-consent.ts";
 
@@ -50,7 +58,8 @@ serve(async (req) => {
       const { data: grp } = await supabase.from("groups").select("type_demarche").eq("id", groupId).maybeSingle();
       demarche = grp?.type_demarche || "titre_sejour";
     }
-    const epreuvesOblgatoires = demarche === "naturalisation" ? "CO, CE, EE, EO" : "CO, CE";
+    const demarcheWeights = getDemarcheWeights(demarche);
+    const demarcheWeightGuidance = formatDemarcheWeightGuidance(demarche);
 
     // 2. Fetch group members with profiles
     const { data: members } = await supabase
@@ -106,6 +115,24 @@ serve(async (req) => {
 
     const outcomeByEleve = new Map<string, any>();
     (studentOutcomes ?? []).forEach((outcome: any) => outcomeByEleve.set(outcome.eleve_id, outcome));
+
+    const { data: sessionErrorEvents } = await supabase
+      .from("session_live_events")
+      .select("eleve_id, type_erreur_id, event_type, competence, created_at")
+      .eq("session_id", sessionId)
+      .in("eleve_id", eleveIds)
+      .not("type_erreur_id", "is", null)
+      .order("created_at", { ascending: false })
+      .limit(eleveIds.length * 30);
+
+    const errorCountsByEleve: Record<string, Record<string, number>> = {};
+    for (const event of sessionErrorEvents ?? []) {
+      if (!event.eleve_id || !event.type_erreur_id) continue;
+      if (event.event_type !== "reponse_incorrecte") continue;
+      if (!errorCountsByEleve[event.eleve_id]) errorCountsByEleve[event.eleve_id] = {};
+      errorCountsByEleve[event.eleve_id][event.type_erreur_id] =
+        (errorCountsByEleve[event.eleve_id][event.type_erreur_id] ?? 0) + 1;
+    }
 
     // 6. Fetch bilan test results if targeting weaknesses
     const bilanWeaknesses: Record<string, Record<string, number>> = {};
@@ -193,6 +220,29 @@ serve(async (req) => {
 
       // Profile data
       const profile = (studentProfiles ?? []).find((p: any) => p.eleve_id === eleveId);
+      const errorCounts = errorCountsByEleve[eleveId] ?? {};
+      const niveauBand = niveauToBand(profile?.niveau_actuel ?? niveauCible);
+      const dominantErrorType = getDominantErrorType(errorCounts, niveauBand);
+      const switchRule = matchSwitchRule({
+        niveauCecrl: profile?.niveau_actuel ?? niveauCible,
+        errorCounts,
+        totalErrors: Object.values(errorCounts).reduce((sum, n) => sum + n, 0),
+        competenceScores: {
+          CO: profile?.taux_reussite_co ?? undefined,
+          CE: profile?.taux_reussite_ce ?? undefined,
+          EE: profile?.taux_reussite_ee ?? undefined,
+          EO: profile?.taux_reussite_eo ?? undefined,
+          Structures: profile?.taux_reussite_structures ?? undefined,
+        },
+      });
+      const switchPilier = switchRule?.pilier_cible === "vocabulaire_phonetique"
+        ? "vocabulaire"
+        : switchRule?.pilier_cible;
+      const dominantPilier = getDominantPilierFromErrors(errorCounts, niveauBand)
+        ?? (["conjugaison", "grammaire", "phonetique", "vocabulaire"].includes(String(switchPilier))
+          ? switchPilier as "conjugaison" | "grammaire" | "phonetique" | "vocabulaire"
+          : undefined);
+
       // Liste des compétences faibles : module partagé (seuil < 70, tri ascendant).
       // max non plafonné pour conserver le comportement historique (liste complète).
       const weakCompetencesForDirectives = computeWeakCompetencesFromResults(
@@ -204,6 +254,9 @@ serve(async (req) => {
         outcome: outcomeByEleve.get(eleveId),
         weakCompetences: weakCompetencesForDirectives,
         targetCompetence: weakCompetencesForDirectives[0] ?? null,
+        dominantErrorType: dominantErrorType ?? undefined,
+        dominantPilier: dominantPilier ?? undefined,
+        typeDemarche: demarche,
       });
 
       // Bilan weaknesses
@@ -222,6 +275,9 @@ serve(async (req) => {
           priorites: profile.priorites_pedagogiques,
         } : null,
         directives,
+        dominantErrorType,
+        dominantPilier,
+        sessionErrorCounts: errorCounts,
         recentErrors: failedByCompetence,
         bilanScores: bilan || null,
         nbResultats: myResults.length,
@@ -241,6 +297,15 @@ serve(async (req) => {
       const lines = [`ÉLÈVE "${p.name}" (id: ${eleveId.slice(0, 8)})`];
       if (p.profile) {
         lines.push(`  Niveau actuel: ${p.profile.niveau} | Taux réussite: CO=${p.profile.CO}% CE=${p.profile.CE}% EE=${p.profile.EE}% EO=${p.profile.EO}% Struct=${p.profile.Structures}%`);
+      }
+      if (p.dominantErrorType) {
+        lines.push(`  Erreur dominante (session live): ${p.dominantErrorType}`);
+      }
+      if (p.dominantPilier) {
+        lines.push(`  Pilier Structures cible: ${p.dominantPilier}`);
+      }
+      if (p.sessionErrorCounts && Object.keys(p.sessionErrorCounts).length > 0) {
+        lines.push(`  Erreurs session: ${Object.entries(p.sessionErrorCounts).map(([k, v]) => `${k}=${v}`).join(", ")}`);
       }
       if (p.directives) {
         lines.push(formatPedagogicalDirectives(p.directives).split("\n").map((line) => `  ${line}`).join("\n"));
@@ -331,7 +396,9 @@ Un tableau "eleves" contenant pour chaque élève un objet avec son id et ses jo
 Chaque jour contient les exercices personnalisés.` + QA_REVIEW_BLOCK;
 
     const userPrompt = `Séance "${session.titre}" — Niveau ${niveauCible}
-Démarche IRN : ${demarche} — Épreuves obligatoires : ${epreuvesOblgatoires}
+Démarche IRN : ${demarche} — 4 compétences travaillées (CO, CE, EE, EO)
+Pondération hebdomadaire : ${demarcheWeightGuidance}
+Niveau cible démarche : ${demarcheWeights.niveau_cible ?? (demarche === "naturalisation" ? "B2" : "B1")}
 Compétences travaillées : ${competencesUsed.join(", ")}
 
 EXERCICES TRAITÉS EN CLASSE :

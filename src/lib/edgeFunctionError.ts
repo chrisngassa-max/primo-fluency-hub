@@ -8,6 +8,10 @@ export async function getEdgeFunctionErrorMessage(
   } | null;
 
   if (candidate?.context instanceof Response) {
+    if (candidate.context.status === 404) {
+      return "Fonction edge introuvable (non deployee sur Supabase). Contactez l'administrateur.";
+    }
+
     try {
       const payload = await candidate.context.clone().json() as {
         error?: string;
@@ -24,5 +28,10 @@ export async function getEdgeFunctionErrorMessage(
     }
   }
 
-  return candidate?.message || fallback;
+  const message = candidate?.message || fallback;
+  if (/failed to send a request to the edge function/i.test(message)) {
+    return "Impossible de joindre la fonction edge (non deployee ou indisponible).";
+  }
+
+  return message;
 }

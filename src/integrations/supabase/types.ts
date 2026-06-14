@@ -1,4 +1,4 @@
-export type Json =
+﻿export type Json =
   | string
   | number
   | boolean
@@ -11,6 +11,31 @@ export type Database = {
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "14.5"
+  }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
   }
   public: {
     Tables: {
@@ -5122,6 +5147,123 @@ export type Database = {
         }
         Relationships: []
       }
+      tcf_routing_rules: {
+        Row: {
+          actif: boolean
+          bascule_condition_qualitative: string | null
+          bascule_condition_quantitative: number | null
+          bascule_fiabilite: string | null
+          bascule_note: string | null
+          contre_indication: string | null
+          created_at: string
+          ee_word_bounds: Json | null
+          eo_duration_minutes: Json | null
+          epreuve: string
+          erreur_type: string | null
+          id: string
+          message_apprenant: string
+          niveau: string
+          plafond_tcf_irn: boolean
+          priority: number
+          profil_entree_specifique: string
+          raw: Json
+          rule_id: string
+          score_max: number
+          score_min: number
+          score_scale: string
+          signal_qualitatif: string | null
+          type_demarche: string[]
+          type_remediation: string
+          variante_exercice: string
+          version: string
+        }
+        Insert: {
+          actif?: boolean
+          bascule_condition_qualitative?: string | null
+          bascule_condition_quantitative?: number | null
+          bascule_fiabilite?: string | null
+          bascule_note?: string | null
+          contre_indication?: string | null
+          created_at?: string
+          ee_word_bounds?: Json | null
+          eo_duration_minutes?: Json | null
+          epreuve: string
+          erreur_type?: string | null
+          id?: string
+          message_apprenant: string
+          niveau: string
+          plafond_tcf_irn?: boolean
+          priority?: number
+          profil_entree_specifique: string
+          raw?: Json
+          rule_id: string
+          score_max: number
+          score_min: number
+          score_scale: string
+          signal_qualitatif?: string | null
+          type_demarche?: string[]
+          type_remediation: string
+          variante_exercice: string
+          version?: string
+        }
+        Update: {
+          actif?: boolean
+          bascule_condition_qualitative?: string | null
+          bascule_condition_quantitative?: number | null
+          bascule_fiabilite?: string | null
+          bascule_note?: string | null
+          contre_indication?: string | null
+          created_at?: string
+          ee_word_bounds?: Json | null
+          eo_duration_minutes?: Json | null
+          epreuve?: string
+          erreur_type?: string | null
+          id?: string
+          message_apprenant?: string
+          niveau?: string
+          plafond_tcf_irn?: boolean
+          priority?: number
+          profil_entree_specifique?: string
+          raw?: Json
+          rule_id?: string
+          score_max?: number
+          score_min?: number
+          score_scale?: string
+          signal_qualitatif?: string | null
+          type_demarche?: string[]
+          type_remediation?: string
+          variante_exercice?: string
+          version?: string
+        }
+        Relationships: []
+      }
+      tcf_score_thresholds: {
+        Row: {
+          epreuve: string
+          niveau: string
+          niveau_cecrl: string
+          score_max: number
+          score_min: number
+          score_scale: string
+        }
+        Insert: {
+          epreuve: string
+          niveau: string
+          niveau_cecrl: string
+          score_max: number
+          score_min: number
+          score_scale: string
+        }
+        Update: {
+          epreuve?: string
+          niveau?: string
+          niveau_cecrl?: string
+          score_max?: number
+          score_min?: number
+          score_scale?: string
+        }
+        Relationships: []
+      }
       test_entree_items: {
         Row: {
           competence: Database["public"]["Enums"]["competence_type"]
@@ -5326,45 +5468,97 @@ export type Database = {
       }
       test_sessions: {
         Row: {
+          apprenant_id: string | null
           created_at: string
+          date_debut: string | null
+          date_fin: string | null
           duree_secondes: number | null
           flags: Json
+          groupe_suggere: string | null
+          groupe_valide_par_formateur: string | null
           ia_evaluation_consent: boolean | null
           ia_evaluation_consent_at: string | null
           id: string
           lead_id: string | null
           niveau_estime: string | null
+          palier_ce: number | null
+          palier_co: number | null
+          palier_ee: number | null
+          palier_eo: number | null
           production_feedback: Json | null
+          profil_final: string | null
+          score_ce: number | null
+          score_co: number | null
+          score_ee: number | null
+          score_eo: number | null
           score_production: number | null
           scores: Json
+          statut: string | null
         }
         Insert: {
+          apprenant_id?: string | null
           created_at?: string
+          date_debut?: string | null
+          date_fin?: string | null
           duree_secondes?: number | null
           flags?: Json
+          groupe_suggere?: string | null
+          groupe_valide_par_formateur?: string | null
           ia_evaluation_consent?: boolean | null
           ia_evaluation_consent_at?: string | null
           id?: string
           lead_id?: string | null
           niveau_estime?: string | null
+          palier_ce?: number | null
+          palier_co?: number | null
+          palier_ee?: number | null
+          palier_eo?: number | null
           production_feedback?: Json | null
+          profil_final?: string | null
+          score_ce?: number | null
+          score_co?: number | null
+          score_ee?: number | null
+          score_eo?: number | null
           score_production?: number | null
           scores?: Json
+          statut?: string | null
         }
         Update: {
+          apprenant_id?: string | null
           created_at?: string
+          date_debut?: string | null
+          date_fin?: string | null
           duree_secondes?: number | null
           flags?: Json
+          groupe_suggere?: string | null
+          groupe_valide_par_formateur?: string | null
           ia_evaluation_consent?: boolean | null
           ia_evaluation_consent_at?: string | null
           id?: string
           lead_id?: string | null
           niveau_estime?: string | null
+          palier_ce?: number | null
+          palier_co?: number | null
+          palier_ee?: number | null
+          palier_eo?: number | null
           production_feedback?: Json | null
+          profil_final?: string | null
+          score_ce?: number | null
+          score_co?: number | null
+          score_ee?: number | null
+          score_eo?: number | null
           score_production?: number | null
           scores?: Json
+          statut?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "test_sessions_apprenant_id_fkey"
+            columns: ["apprenant_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "test_sessions_lead_id_fkey"
             columns: ["lead_id"]
@@ -5931,6 +6125,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       alerte_type: [

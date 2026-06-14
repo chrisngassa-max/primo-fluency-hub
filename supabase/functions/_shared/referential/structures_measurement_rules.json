@@ -1,0 +1,82 @@
+{
+  "version": "1.0",
+  "rules": [
+    {
+      "pilier": "phonetique",
+      "indicateurs": [
+        "discrimination_correcte",
+        "intelligibilite_globale"
+      ],
+      "formats_valides_mesure": [
+        "discrimination_audio",
+        "repetition_guidee",
+        "qcm_audio"
+      ],
+      "seuil_entree_focus_pct": 50,
+      "seuil_sortie_focus_pct": 62,
+      "reussites_consecutives_sortie": 3,
+      "declencheur_erreur": {
+        "type_erreur_id": "PHONO",
+        "frequence_min_pct": 25
+      }
+    },
+    {
+      "pilier": "conjugaison",
+      "indicateurs": [
+        "forme_verbale_correcte",
+        "concordance_temporelle"
+      ],
+      "formats_valides_mesure": [
+        "texte_lacunaire",
+        "transformation",
+        "qcm"
+      ],
+      "seuil_entree_focus_pct": 60,
+      "seuil_sortie_focus_pct": 62,
+      "reussites_consecutives_sortie": 3,
+      "declencheur_erreur": {
+        "type_erreur_id": "GRAM_TEMPS",
+        "frequence_min_pct": 30
+      }
+    },
+    {
+      "pilier": "grammaire",
+      "indicateurs": [
+        "accord_genre_nombre",
+        "ordre_mots",
+        "choix_pronom"
+      ],
+      "formats_valides_mesure": [
+        "transformation",
+        "texte_lacunaire",
+        "qcm"
+      ],
+      "seuil_entree_focus_pct": 60,
+      "seuil_sortie_focus_pct": 62,
+      "reussites_consecutives_sortie": 3,
+      "declencheur_erreur": {
+        "type_erreur_id": "GRAM_ACCORD",
+        "frequence_min_pct": 30
+      }
+    },
+    {
+      "pilier": "vocabulaire",
+      "indicateurs": [
+        "choix_lexical_adequat",
+        "reconnaissance_mot_cible"
+      ],
+      "formats_valides_mesure": [
+        "appariement",
+        "texte_lacunaire",
+        "qcm"
+      ],
+      "seuil_entree_focus_pct": 60,
+      "seuil_sortie_focus_pct": 62,
+      "reussites_consecutives_sortie": 3,
+      "declencheur_erreur": {
+        "type_erreur_id": "LEX_CONFUSION",
+        "frequence_min_pct": 30
+      }
+    }
+  ]
+}
