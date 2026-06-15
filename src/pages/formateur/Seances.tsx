@@ -66,7 +66,7 @@ const defaultAutomation: AutomationSettings = {
   retrospectiveDuration: 10,
   diagnosticCount: 10,
   difficulty: 5,
-  competences: ["CO", "CE"],
+  competences: ["CO", "CE", "EE", "EO", "Structures"],
 };
 
 const AutomationFields = ({ value, onChange }: {
@@ -617,7 +617,7 @@ const SeancesPage = () => {
       retrospectiveDuration: (s as any).duree_retrospective ?? 10,
       diagnosticCount: (s as any).nb_questions_diagnostic ?? 10,
       difficulty: (s as any).difficulte_par_defaut ?? 5,
-      competences: (s as any).competences_autorisees ?? ["CO", "CE"],
+      competences: (s as any).competences_autorisees ?? ["CO", "CE", "EE", "EO", "Structures"],
     });
     setEditOpen(true);
   };
