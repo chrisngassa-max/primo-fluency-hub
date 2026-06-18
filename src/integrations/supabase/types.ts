@@ -2616,6 +2616,7 @@ export type Database = {
           titre: string
           type_demarche: string | null
           updated_at: string
+          variante_plan: string
         }
         Insert: {
           created_at?: string
@@ -2635,6 +2636,7 @@ export type Database = {
           titre: string
           type_demarche?: string | null
           updated_at?: string
+          variante_plan?: string
         }
         Update: {
           created_at?: string
@@ -2654,6 +2656,7 @@ export type Database = {
           titre?: string
           type_demarche?: string | null
           updated_at?: string
+          variante_plan?: string
         }
         Relationships: [
           {

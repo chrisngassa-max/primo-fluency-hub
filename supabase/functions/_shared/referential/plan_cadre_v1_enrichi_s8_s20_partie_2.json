@@ -1,0 +1,1910 @@
+{
+  "version": "plan_cadre_v1_enrichi_s8_s20_partie_2",
+  "parcours_id": "plan_cadre_v1",
+  "seances": [
+    {
+      "numero": 15,
+      "module_id": "M3_TRAVAIL_ADMINISTRATIF",
+      "type": "EVALUATION",
+      "theme_id": "EVAL_M3",
+      "domaine_irn": "admin",
+      "duree_min": 180,
+      "objectif_communicatif": "Évaluer les acquis du module Travail & Administratif (A2)",
+      "situation_type": "evaluation_formative",
+      "personnages": [
+        "Candidat",
+        "Évaluateur"
+      ],
+      "lieux": [
+        "salle d'examen"
+      ],
+      "donnees_chiffrees_cles": [],
+      "lexique_noyau": [
+        "travail",
+        "horaires",
+        "formulaire",
+        "dossier",
+        "guichet",
+        "contrat"
+      ],
+      "support_commun": "Sujet type TCF IRN (extraits adaptés M3)",
+      "points_structure": {
+        "pilier_principal": "grammaire",
+        "contenu": "Révision globale M3 : passé composé, conditionnel de politesse, impératif, pour+infinitif",
+        "pilliers_secondaires": [
+          "vocabulaire"
+        ]
+      },
+      "civique_visible": {
+        "default": false,
+        "conditions_true": [],
+        "note": "Aucun bloc civique pendant les évaluations"
+      },
+      "format_evaluation": "EVALUATION_DECLENCHE_RECALCUL_SEUILS",
+      "phases": {
+        "activation": {
+          "duree_min": 15,
+          "commun": true,
+          "competences": [
+            "methodologie"
+          ],
+          "pilier": "vocabulaire",
+          "tache_type": "rappel_consignes",
+          "consigne_formateur": "Explication des modalités du test pour le module 3.",
+          "exercice_collectif": {
+            "format": "qcm",
+            "items": 0
+          }
+        },
+        "CO": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Audios d'évaluation standardisés (annonces pôle emploi, guichet)",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "faible",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "comprehension_orale",
+              "tache_type": "test_co_a1",
+              "consigne": "Écoutez et répondez aux questions.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_M3",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "demarrage",
+              "etayage": "faible",
+              "consigne_max_mots": 12,
+              "critere_pct": 60,
+              "format": "comprehension_orale",
+              "tache_type": "test_co_a2",
+              "consigne": "Écoutez les documents et choisissez la bonne réponse.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_M3",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "demarrage",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 60,
+              "format": "comprehension_orale",
+              "tache_type": "test_co_b1",
+              "consigne": "Écoutez et répondez.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_M3",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "CE": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Textes d'évaluation standardisés (offres d'emploi, CERFA)",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "faible",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "comprehension_ecrite",
+              "tache_type": "test_ce_a1",
+              "consigne": "Lisez et répondez aux questions.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_M3",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "demarrage",
+              "etayage": "faible",
+              "consigne_max_mots": 12,
+              "critere_pct": 60,
+              "format": "comprehension_ecrite",
+              "tache_type": "test_ce_a2",
+              "consigne": "Lisez les documents et choisissez la bonne réponse.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_M3",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "demarrage",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 60,
+              "format": "comprehension_ecrite",
+              "tache_type": "test_ce_b1",
+              "consigne": "Lisez et répondez.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_M3",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "structures": {
+          "duree_min": 30,
+          "commun": false,
+          "pilier": "grammaire",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "faible",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "qcm",
+              "tache_type": "test_struc_a1",
+              "consigne": "Choisissez le bon mot.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_M3",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "demarrage",
+              "etayage": "faible",
+              "consigne_max_mots": 12,
+              "critere_pct": 60,
+              "format": "texte_lacunaire",
+              "tache_type": "test_struc_a2",
+              "consigne": "Complétez les phrases.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_M3",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "demarrage",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 60,
+              "format": "texte_lacunaire",
+              "tache_type": "test_struc_b1",
+              "consigne": "Complétez.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_M3",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "production": {
+          "duree_min": 35,
+          "commun": false,
+          "EO_EE_split": true,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "faible",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "production_orale",
+              "tache_type": "test_eo_a1",
+              "consigne": "Parlez de votre métier.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_M3",
+                "competence": "EO",
+                "limite_mots_max": 40
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "demarrage",
+              "etayage": "faible",
+              "consigne_max_mots": 12,
+              "critere_pct": 60,
+              "format": "expression_ecrite",
+              "tache_type": "test_ee_a2",
+              "consigne": "Écrivez un message administratif (40 mots minimum).",
+              "metadata_exercice": {
+                "theme_id": "EVAL_M3",
+                "competence": "EE",
+                "limite_mots_max": 90
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "demarrage",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 60,
+              "format": "expression_ecrite",
+              "tache_type": "test_ee_b1",
+              "consigne": "Rédigez votre réponse.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_M3",
+                "competence": "EE",
+                "limite_mots_max": 90
+              }
+            }
+          }
+        },
+        "bilan": {
+          "duree_min": 20,
+          "commun": true,
+          "elements_obligatoires": [
+            "vocabulaire_seance",
+            "strategie_tcf",
+            "erreur_type_commune",
+            "phrase_modele",
+            "contribution_collective"
+          ],
+          "phrase_modele": "Merci pour votre participation.",
+          "strategie_tcf": "Relire sa production écrite",
+          "erreur_type_commune": "Oubli de la ponctuation"
+        }
+      },
+      "types_exercices_attendus": [
+        "comprehension_orale",
+        "comprehension_ecrite",
+        "texte_lacunaire",
+        "production_orale",
+        "expression_ecrite",
+        "qcm"
+      ],
+      "mapping_phases_moteur": {
+        "phase_moteur_CO": "phases.CO",
+        "phase_moteur_CE": "phases.CE",
+        "phase_moteur_Structures": "phases.structures",
+        "phase_moteur_EO_EE": "phases.production"
+      }
+    },
+    {
+      "numero": 16,
+      "module_id": "M4_ECOLE_CITOYENNETE",
+      "type": "DECOUVERTE",
+      "theme_id": "ECOLE_ABSENCE_01",
+      "domaine_irn": "ecole",
+      "duree_min": 180,
+      "objectif_communicatif": "Justifier une absence ou un retard scolaire (A2)",
+      "situation_type": "communication_ecole",
+      "personnages": [
+        "Parent d'élève",
+        "Directrice"
+      ],
+      "lieux": [
+        "école primaire"
+      ],
+      "donnees_chiffrees_cles": [
+        "absence de 2 jours",
+        "fièvre 39°C"
+      ],
+      "lexique_noyau": [
+        "école",
+        "professeur",
+        "cantine",
+        "malade",
+        "retard",
+        "absence",
+        "carnet",
+        "justifier"
+      ],
+      "support_commun": "Audio d'appel à l'école (1m30) + Extrait de carnet de liaison",
+      "points_structure": {
+        "pilier_principal": "grammaire",
+        "contenu": "Passé composé + expression de la cause (parce que / à cause de)",
+        "pilliers_secondaires": [
+          "vocabulaire"
+        ]
+      },
+      "civique_visible": {
+        "default": false,
+        "conditions_true": [
+          "type_demarche == 'naturalisation'",
+          "mention == 'NAT'",
+          "premiere_demande_CSP == true",
+          "premiere_demande_CR_eligible == true"
+        ]
+      },
+      "phases": {
+        "activation": {
+          "duree_min": 15,
+          "commun": true,
+          "competences": [
+            "Structures"
+          ],
+          "pilier": "vocabulaire",
+          "tache_type": "brainstorming_lexical",
+          "consigne_formateur": "Afficher une image d'école. Citer les mots de l'école.",
+          "exercice_collectif": {
+            "format": "qcm",
+            "format_pedagogique_alias": "nuage_de_mots",
+            "items": 6
+          }
+        },
+        "CO": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Audio appel téléphonique parent-école",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A0",
+              "mode": "remediation",
+              "etayage": "fort",
+              "consigne_max_mots": 5,
+              "critere_pct": 62,
+              "format": "comprehension_orale",
+              "format_pedagogique_alias": "qcm_image",
+              "tache_type": "identification_probleme",
+              "consigne": "Écoutez. Quel est le problème ?",
+              "metadata_exercice": {
+                "theme_id": "ECOLE_ABSENCE_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "demarrage",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 60,
+              "format": "comprehension_orale",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "comprehension_globale",
+              "consigne": "Pourquoi l'enfant est-il absent aujourd'hui ?",
+              "metadata_exercice": {
+                "theme_id": "ECOLE_ABSENCE_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "comprehension_orale",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "comprehension_detail",
+              "consigne": "Quelles démarches le parent doit-il faire pour le retour de l'enfant ?",
+              "metadata_exercice": {
+                "theme_id": "ECOLE_ABSENCE_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "CE": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Mot d'absence dans un carnet de liaison",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "comprehension_ecrite",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "reperage_date",
+              "consigne": "Lisez. Trouvez la date d'absence.",
+              "metadata_exercice": {
+                "theme_id": "ECOLE_ABSENCE_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "comprehension_ecrite",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "recherche_information_specifique",
+              "consigne": "Lisez le mot. Quelle est la raison de l'absence ?",
+              "metadata_exercice": {
+                "theme_id": "ECOLE_ABSENCE_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "augmente",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "format": "comprehension_ecrite",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "inference_document",
+              "consigne": "Quel justificatif accompagne ce mot ?",
+              "metadata_exercice": {
+                "theme_id": "ECOLE_ABSENCE_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "structures": {
+          "duree_min": 30,
+          "commun": false,
+          "pilier": "grammaire",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "remediation",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 62,
+              "format": "qcm",
+              "tache_type": "identifier_passe_compose",
+              "consigne": "Cochez le verbe au passé composé.",
+              "metadata_exercice": {
+                "theme_id": "ECOLE_ABSENCE_01",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "expression_cause",
+              "consigne": "Complétez avec : parce que / à cause de.",
+              "metadata_exercice": {
+                "theme_id": "ECOLE_ABSENCE_01",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "transformation_phrase",
+              "consigne": "Réécrivez la phrase en utilisant « en raison de ».",
+              "metadata_exercice": {
+                "theme_id": "ECOLE_ABSENCE_01",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "production": {
+          "duree_min": 25,
+          "commun": false,
+          "EO_EE_split": true,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "production_orale",
+              "tache_type": "excuse_simple",
+              "consigne": "Répétez : Il est malade.",
+              "metadata_exercice": {
+                "theme_id": "ECOLE_ABSENCE_01",
+                "competence": "EO",
+                "limite_mots_max": 15
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "expression_ecrite",
+              "tache_type": "redaction_mot",
+              "consigne": "Écrivez un mot pour justifier l'absence de votre enfant (max 40 mots).",
+              "metadata_exercice": {
+                "theme_id": "ECOLE_ABSENCE_01",
+                "competence": "EE",
+                "limite_mots_max": 40
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "production_orale",
+              "tache_type": "appel_directeur",
+              "consigne": "Enregistrez-vous. Appelez l'école pour expliquer la situation et demander les devoirs.",
+              "metadata_exercice": {
+                "theme_id": "ECOLE_ABSENCE_01",
+                "competence": "EO",
+                "limite_mots_max": 90
+              }
+            }
+          }
+        },
+        "civique": {
+          "duree_min": 10,
+          "commun": false,
+          "routage_profil": true,
+          "question_qcm": {
+            "theme_officiel": "Vivre dans la société française",
+            "enonce": "En France, l'école est obligatoire pour tous les enfants à partir de :",
+            "options": [
+              "A) 3 ans",
+              "B) 6 ans",
+              "C) 11 ans",
+              "D) L'école n'est pas obligatoire"
+            ],
+            "bonne_reponse": "A",
+            "justification_pedagogique": "Règles du système scolaire français"
+          }
+        },
+        "bilan": {
+          "duree_min": 20,
+          "commun": true,
+          "elements_obligatoires": [
+            "vocabulaire_seance",
+            "strategie_tcf",
+            "erreur_type_commune",
+            "phrase_modele",
+            "contribution_collective"
+          ],
+          "phrase_modele": "Il est absent parce qu'il est malade.",
+          "strategie_tcf": "Utiliser 'parce que' pour répondre à 'pourquoi'.",
+          "erreur_type_commune": "Confusion parce que / à cause de"
+        }
+      },
+      "types_exercices_attendus": [
+        "comprehension_orale",
+        "comprehension_ecrite",
+        "qcm",
+        "texte_lacunaire",
+        "production_orale",
+        "expression_ecrite"
+      ],
+      "mapping_phases_moteur": {
+        "phase_moteur_CO": "phases.CO",
+        "phase_moteur_CE": "phases.CE",
+        "phase_moteur_Structures": "phases.structures",
+        "phase_moteur_EO_EE": "phases.production"
+      }
+    },
+    {
+      "numero": 17,
+      "module_id": "M4_ECOLE_CITOYENNETE",
+      "type": "DECOUVERTE",
+      "theme_id": "CITOYEN_SYMBOLES_01",
+      "domaine_irn": "citoyennete",
+      "duree_min": 180,
+      "objectif_communicatif": "Identifier et nommer les symboles de la République (A2)",
+      "situation_type": "visite_mairie",
+      "personnages": [
+        "Agent d'accueil",
+        "Citoyen"
+      ],
+      "lieux": [
+        "mairie"
+      ],
+      "donnees_chiffrees_cles": [
+        "14 juillet"
+      ],
+      "lexique_noyau": [
+        "drapeau",
+        "hymne",
+        "devise",
+        "mairie",
+        "Marianne",
+        "république",
+        "bleu",
+        "blanc",
+        "rouge"
+      ],
+      "support_commun": "Affiche des symboles de la République + audio description",
+      "points_structure": {
+        "pilier_principal": "phonetique",
+        "contenu": "Sons [y] (République) / [wa] (loi, roi) + présentatifs (C'est / Ce sont)",
+        "pilliers_secondaires": [
+          "grammaire",
+          "vocabulaire"
+        ]
+      },
+      "civique_visible": {
+        "default": false,
+        "conditions_true": [
+          "type_demarche == 'naturalisation'",
+          "mention == 'NAT'",
+          "premiere_demande_CSP == true",
+          "premiere_demande_CR_eligible == true"
+        ]
+      },
+      "phases": {
+        "activation": {
+          "duree_min": 15,
+          "commun": true,
+          "competences": [
+            "Structures"
+          ],
+          "pilier": "vocabulaire",
+          "tache_type": "association_symbole",
+          "consigne_formateur": "Afficher le drapeau et Marianne. Nommer les couleurs.",
+          "exercice_collectif": {
+            "format": "qcm",
+            "format_pedagogique_alias": "appariement",
+            "items": 4
+          }
+        },
+        "CO": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Audio visite guidée à la mairie",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A0",
+              "mode": "remediation",
+              "etayage": "fort",
+              "consigne_max_mots": 5,
+              "critere_pct": 62,
+              "format": "comprehension_orale",
+              "tache_type": "reperage_couleur",
+              "consigne": "Écoutez. Quelle couleur entendez-vous ?",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_SYMBOLES_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "demarrage",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 60,
+              "format": "comprehension_orale",
+              "tache_type": "comprehension_globale",
+              "consigne": "De quel symbole l'agent parle-t-il ?",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_SYMBOLES_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "comprehension_orale",
+              "tache_type": "comprehension_detail",
+              "consigne": "Où trouve-t-on le buste de Marianne selon le guide ?",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_SYMBOLES_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "CE": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Affiche officielle de la République",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "comprehension_ecrite",
+              "tache_type": "reconnaissance_mots",
+              "consigne": "Trouvez le mot 'Liberté' sur l'affiche.",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_SYMBOLES_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "comprehension_ecrite",
+              "tache_type": "lecture_devise",
+              "consigne": "Lisez. Quels sont les trois mots de la devise ?",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_SYMBOLES_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "augmente",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "format": "comprehension_ecrite",
+              "tache_type": "inference_texte",
+              "consigne": "Associez chaque mot de la devise à un exemple de la vie quotidienne.",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_SYMBOLES_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "structures": {
+          "duree_min": 30,
+          "commun": false,
+          "pilier": "phonetique",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "remediation",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 62,
+              "format": "qcm",
+              "format_pedagogique_alias": "discrimination_audio",
+              "tache_type": "discrimination_y_wa",
+              "consigne": "Écoutez. Entendez-vous [y] ou [wa] ?",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_SYMBOLES_01",
+                "competence": "Structures",
+                "pilier": "phonetique",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "presentatifs",
+              "consigne": "Complétez avec : C'est / Ce sont.",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_SYMBOLES_01",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "accords_pluriel",
+              "consigne": "Accordez les adjectifs de couleur (bleu, blanc, rouge).",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_SYMBOLES_01",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "production": {
+          "duree_min": 25,
+          "commun": false,
+          "EO_EE_split": true,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "production_orale",
+              "tache_type": "nommer_symbole",
+              "consigne": "Nommez les couleurs du drapeau.",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_SYMBOLES_01",
+                "competence": "EO",
+                "limite_mots_max": 15
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "expression_ecrite",
+              "tache_type": "decrire_symbole",
+              "consigne": "Décrivez le drapeau français en une phrase.",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_SYMBOLES_01",
+                "competence": "EE",
+                "limite_mots_max": 30
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "production_orale",
+              "tache_type": "expliquer_symbole",
+              "consigne": "Enregistrez-vous. Expliquez brièvement ce que représente Marianne pour vous.",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_SYMBOLES_01",
+                "competence": "EO",
+                "limite_mots_max": 90
+              }
+            }
+          }
+        },
+        "civique": {
+          "duree_min": 10,
+          "commun": false,
+          "routage_profil": true,
+          "question_qcm": {
+            "theme_officiel": "Principes et valeurs de la République",
+            "enonce": "L'hymne national de la France s'appelle :",
+            "options": [
+              "A) La Parisienne",
+              "B) La Marseillaise",
+              "C) La Française",
+              "D) L'Européenne"
+            ],
+            "bonne_reponse": "B",
+            "justification_pedagogique": "Connaissance des symboles"
+          }
+        },
+        "bilan": {
+          "duree_min": 20,
+          "commun": true,
+          "elements_obligatoires": [
+            "vocabulaire_seance",
+            "strategie_tcf",
+            "erreur_type_commune",
+            "phrase_modele",
+            "contribution_collective"
+          ],
+          "phrase_modele": "C'est le drapeau français, il est bleu, blanc, rouge.",
+          "strategie_tcf": "Prononciation claire du son [y] pour 'République'",
+          "erreur_type_commune": "Dire 'c'est des' au lieu de 'ce sont'"
+        }
+      },
+      "types_exercices_attendus": [
+        "comprehension_orale",
+        "comprehension_ecrite",
+        "qcm",
+        "texte_lacunaire",
+        "production_orale",
+        "expression_ecrite"
+      ],
+      "mapping_phases_moteur": {
+        "phase_moteur_CO": "phases.CO",
+        "phase_moteur_CE": "phases.CE",
+        "phase_moteur_Structures": "phases.structures",
+        "phase_moteur_EO_EE": "phases.production"
+      }
+    },
+    {
+      "numero": 18,
+      "module_id": "M4_ECOLE_CITOYENNETE",
+      "type": "DECOUVERTE",
+      "theme_id": "CITOYEN_LAICITE_01",
+      "domaine_irn": "citoyennete",
+      "duree_min": 180,
+      "objectif_communicatif": "Comprendre les règles du vivre-ensemble et la laïcité (A2)",
+      "situation_type": "lecture_reglement",
+      "personnages": [
+        "Formateur",
+        "Citoyen"
+      ],
+      "lieux": [
+        "espace public",
+        "école"
+      ],
+      "donnees_chiffrees_cles": [],
+      "lexique_noyau": [
+        "loi",
+        "interdit",
+        "religion",
+        "égalité",
+        "respect",
+        "laïcité",
+        "droit",
+        "règle"
+      ],
+      "support_commun": "Charte de la laïcité simplifiée + audio explicatif",
+      "points_structure": {
+        "pilier_principal": "grammaire",
+        "contenu": "La négation (ne... pas) + expression de l'interdiction/obligation (il faut / il est interdit de)",
+        "pilliers_secondaires": [
+          "phonetique"
+        ]
+      },
+      "civique_visible": {
+        "default": false,
+        "conditions_true": [
+          "type_demarche == 'naturalisation'",
+          "mention == 'NAT'",
+          "premiere_demande_CSP == true",
+          "premiere_demande_CR_eligible == true"
+        ]
+      },
+      "phases": {
+        "activation": {
+          "duree_min": 15,
+          "commun": true,
+          "competences": [
+            "Structures"
+          ],
+          "pilier": "vocabulaire",
+          "tache_type": "association_interdit",
+          "consigne_formateur": "Afficher des panneaux (téléphone interdit, fumer interdit). Demander ce que ça signifie.",
+          "exercice_collectif": {
+            "format": "qcm",
+            "items": 4
+          }
+        },
+        "CO": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Audio : explication des règles de l'école",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A0",
+              "mode": "remediation",
+              "etayage": "fort",
+              "consigne_max_mots": 5,
+              "critere_pct": 62,
+              "format": "comprehension_orale",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "reconnaissance_non",
+              "consigne": "Écoutez. Est-ce autorisé ou interdit ?",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_LAICITE_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "demarrage",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 60,
+              "format": "comprehension_orale",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "comprehension_regle",
+              "consigne": "Cochez ce qui est interdit à l'école selon l'audio.",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_LAICITE_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "comprehension_orale",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "comprehension_nuance",
+              "consigne": "Que dit l'audio sur la liberté de croyance ?",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_LAICITE_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "CE": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Extrait de la Charte de la laïcité",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "comprehension_ecrite",
+              "format_pedagogique_alias": "vrai_faux",
+              "tache_type": "reperage_mot_cle",
+              "consigne": "Lisez. Trouvez le mot 'respect'.",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_LAICITE_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "comprehension_ecrite",
+              "format_pedagogique_alias": "vrai_faux",
+              "tache_type": "lecture_regles",
+              "consigne": "Vrai ou Faux ? Tout le monde a les mêmes droits.",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_LAICITE_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "augmente",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "format": "comprehension_ecrite",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "analyse_texte",
+              "consigne": "Expliquez le sens de l'article 3 de la charte.",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_LAICITE_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "structures": {
+          "duree_min": 30,
+          "commun": false,
+          "pilier": "grammaire",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "remediation",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 62,
+              "format": "qcm",
+              "tache_type": "identification_negation",
+              "consigne": "Cochez la phrase négative (ne... pas).",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_LAICITE_01",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "expression_obligation",
+              "consigne": "Complétez avec : Il faut / Il est interdit de.",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_LAICITE_01",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "transformation_negative",
+              "consigne": "Mettez la phrase à la forme négative.",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_LAICITE_01",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "production": {
+          "duree_min": 25,
+          "commun": false,
+          "EO_EE_split": true,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "production_orale",
+              "tache_type": "repeter_interdit",
+              "consigne": "Répétez : C'est interdit.",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_LAICITE_01",
+                "competence": "EO",
+                "limite_mots_max": 10
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "expression_ecrite",
+              "tache_type": "rediger_regle",
+              "consigne": "Écrivez une règle importante pour la vie en société.",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_LAICITE_01",
+                "competence": "EE",
+                "limite_mots_max": 30
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "production_orale",
+              "tache_type": "expliquer_laicite",
+              "consigne": "Enregistrez-vous. Que veut dire 'respecter les croyances' ? (max 90 mots)",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_LAICITE_01",
+                "competence": "EO",
+                "limite_mots_max": 90
+              }
+            }
+          }
+        },
+        "civique": {
+          "duree_min": 10,
+          "commun": false,
+          "routage_profil": true,
+          "question_qcm": {
+            "theme_officiel": "Principes et valeurs de la République",
+            "enonce": "La laïcité garantit :",
+            "options": [
+              "A) La liberté de croire ou de ne pas croire",
+              "B) L'interdiction de toutes les religions",
+              "C) L'obligation d'avoir une religion",
+              "D) L'étude obligatoire des religions"
+            ],
+            "bonne_reponse": "A",
+            "justification_pedagogique": "Principe de laïcité."
+          }
+        },
+        "bilan": {
+          "duree_min": 20,
+          "commun": true,
+          "elements_obligatoires": [
+            "vocabulaire_seance",
+            "strategie_tcf",
+            "erreur_type_commune",
+            "phrase_modele",
+            "contribution_collective"
+          ],
+          "phrase_modele": "Il est interdit de fumer ici.",
+          "strategie_tcf": "Utiliser 'il faut' pour une obligation en production.",
+          "erreur_type_commune": "Chute du 'ne' à l'écrit (Je sais pas)"
+        }
+      },
+      "types_exercices_attendus": [
+        "comprehension_orale",
+        "comprehension_ecrite",
+        "qcm",
+        "texte_lacunaire",
+        "production_orale",
+        "expression_ecrite"
+      ],
+      "mapping_phases_moteur": {
+        "phase_moteur_CO": "phases.CO",
+        "phase_moteur_CE": "phases.CE",
+        "phase_moteur_Structures": "phases.structures",
+        "phase_moteur_EO_EE": "phases.production"
+      }
+    },
+    {
+      "numero": 19,
+      "module_id": "M4_ECOLE_CITOYENNETE",
+      "type": "DECOUVERTE",
+      "theme_id": "CITOYEN_VALEURS_01",
+      "domaine_irn": "citoyennete",
+      "duree_min": 180,
+      "objectif_communicatif": "Exprimer son opinion et son adhésion aux valeurs de la République (A2)",
+      "situation_type": "entretien_citoyen",
+      "personnages": [
+        "Candidat",
+        "Agent de préfecture"
+      ],
+      "lieux": [
+        "préfecture"
+      ],
+      "donnees_chiffrees_cles": [],
+      "lexique_noyau": [
+        "d'accord",
+        "important",
+        "liberté",
+        "fraternité",
+        "vivre",
+        "penser",
+        "société",
+        "valeur"
+      ],
+      "support_commun": "Audio d'un entretien d'assimilation (court extrait) + texte sur l'engagement citoyen",
+      "points_structure": {
+        "pilier_principal": "grammaire",
+        "contenu": "Verbes d'opinion (je pense que, je crois que) + expression de l'accord",
+        "pilliers_secondaires": [
+          "vocabulaire"
+        ]
+      },
+      "civique_visible": {
+        "default": false,
+        "conditions_true": [
+          "type_demarche == 'naturalisation'",
+          "mention == 'NAT'",
+          "premiere_demande_CSP == true",
+          "premiere_demande_CR_eligible == true"
+        ]
+      },
+      "phases": {
+        "activation": {
+          "duree_min": 15,
+          "commun": true,
+          "competences": [
+            "Structures"
+          ],
+          "pilier": "vocabulaire",
+          "tache_type": "brainstorming_opinion",
+          "consigne_formateur": "Afficher : 'Pour ou Contre ?' Introduire les formules d'accord.",
+          "exercice_collectif": {
+            "format": "qcm",
+            "items": 4
+          }
+        },
+        "CO": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Audio d'un entretien en préfecture",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A0",
+              "mode": "remediation",
+              "etayage": "fort",
+              "consigne_max_mots": 5,
+              "critere_pct": 62,
+              "format": "comprehension_orale",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "reperage_accord",
+              "consigne": "Écoutez. Est-il d'accord ?",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_VALEURS_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "demarrage",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 60,
+              "format": "comprehension_orale",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "comprehension_opinion",
+              "consigne": "Que pense le candidat de l'égalité homme-femme ?",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_VALEURS_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "comprehension_orale",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "comprehension_nuance",
+              "consigne": "Comment le candidat justifie-t-il son attachement à la liberté d'expression ?",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_VALEURS_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "CE": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Témoignage sur l'engagement bénévole",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "comprehension_ecrite",
+              "format_pedagogique_alias": "vrai_faux",
+              "tache_type": "reperage_action",
+              "consigne": "Lisez. Fait-il du bénévolat ?",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_VALEURS_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "comprehension_ecrite",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "comprehension_motivations",
+              "consigne": "Pourquoi a-t-il rejoint cette association ?",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_VALEURS_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "augmente",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "format": "comprehension_ecrite",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "analyse_valeur",
+              "consigne": "Quelle valeur de la République est illustrée par ce témoignage ?",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_VALEURS_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "structures": {
+          "duree_min": 30,
+          "commun": false,
+          "pilier": "grammaire",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "remediation",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 62,
+              "format": "qcm",
+              "tache_type": "identifier_accord",
+              "consigne": "Cochez la phrase pour dire 'Oui'.",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_VALEURS_01",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "verbes_opinion",
+              "consigne": "Complétez avec : je pense que / je suis d'accord.",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_VALEURS_01",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "nuance_opinion",
+              "consigne": "Complétez avec les expressions de nuance.",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_VALEURS_01",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "production": {
+          "duree_min": 25,
+          "commun": false,
+          "EO_EE_split": true,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "production_orale",
+              "tache_type": "dire_accord",
+              "consigne": "Dites : Je suis d'accord.",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_VALEURS_01",
+                "competence": "EO",
+                "limite_mots_max": 10
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "production_orale",
+              "tache_type": "donner_opinion",
+              "consigne": "Enregistrez-vous. Que pensez-vous de l'égalité ? (max 40 mots)",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_VALEURS_01",
+                "competence": "EO",
+                "limite_mots_max": 40
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "expression_ecrite",
+              "tache_type": "rediger_opinion",
+              "consigne": "Écrivez un texte (max 90 mots) pour expliquer pourquoi la fraternité est importante.",
+              "metadata_exercice": {
+                "theme_id": "CITOYEN_VALEURS_01",
+                "competence": "EE",
+                "limite_mots_max": 90
+              }
+            }
+          }
+        },
+        "civique": {
+          "duree_min": 10,
+          "commun": false,
+          "routage_profil": true,
+          "question_qcm": {
+            "theme_officiel": "Principes et valeurs de la République",
+            "enonce": "L'égalité entre les hommes et les femmes est :",
+            "options": [
+              "A) Un principe inscrit dans la loi",
+              "B) Un choix de chaque entreprise",
+              "C) Seulement une règle pour l'école",
+              "D) Interdite"
+            ],
+            "bonne_reponse": "A",
+            "justification_pedagogique": "Valeur d'égalité."
+          }
+        },
+        "bilan": {
+          "duree_min": 20,
+          "commun": true,
+          "elements_obligatoires": [
+            "vocabulaire_seance",
+            "strategie_tcf",
+            "erreur_type_commune",
+            "phrase_modele",
+            "contribution_collective"
+          ],
+          "phrase_modele": "Je pense que c'est très important.",
+          "strategie_tcf": "Savoir donner son avis simplement.",
+          "erreur_type_commune": "Dire 'je suis d'accord avec toi' au lieu de 'je suis d'accord'."
+        }
+      },
+      "types_exercices_attendus": [
+        "comprehension_orale",
+        "comprehension_ecrite",
+        "qcm",
+        "texte_lacunaire",
+        "production_orale",
+        "expression_ecrite"
+      ],
+      "mapping_phases_moteur": {
+        "phase_moteur_CO": "phases.CO",
+        "phase_moteur_CE": "phases.CE",
+        "phase_moteur_Structures": "phases.structures",
+        "phase_moteur_EO_EE": "phases.production"
+      }
+    },
+    {
+      "numero": 20,
+      "module_id": "M4_ECOLE_CITOYENNETE",
+      "type": "EVALUATION",
+      "theme_id": "EVAL_TCF_IRN_FINALE",
+      "domaine_irn": "citoyennete",
+      "duree_min": 180,
+      "objectif_communicatif": "Simulation officielle TCF IRN (A2)",
+      "situation_type": "examen_officiel",
+      "personnages": [
+        "Candidat",
+        "Examinateur"
+      ],
+      "lieux": [
+        "Centre d'examen"
+      ],
+      "donnees_chiffrees_cles": [],
+      "lexique_noyau": [],
+      "support_commun": "Plateforme de test blanche complète",
+      "points_structure": {
+        "pilier_principal": "grammaire",
+        "contenu": "Mobilisation globale",
+        "pilliers_secondaires": [
+          "vocabulaire",
+          "phonetique"
+        ]
+      },
+      "civique_visible": {
+        "default": false,
+        "conditions_true": [],
+        "note": "Aucun bloc civique pour la simulation TCF IRN"
+      },
+      "format_evaluation": "EVALUATION_FINALE_TCF_IRN",
+      "phases": {
+        "activation": {
+          "duree_min": 15,
+          "commun": true,
+          "competences": [
+            "methodologie"
+          ],
+          "pilier": "vocabulaire",
+          "tache_type": "rappel_consignes",
+          "consigne_formateur": "Règles de l'examen final (silence, chronomètre).",
+          "exercice_collectif": {
+            "format": "qcm",
+            "items": 0
+          }
+        },
+        "CO": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Épreuve officielle CO",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "augmente",
+              "etayage": "faible",
+              "consigne_max_mots": 16,
+              "critere_pct": 60,
+              "format": "comprehension_orale",
+              "tache_type": "simulation_co",
+              "consigne": "Passez l'épreuve de CO.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_TCF_IRN_FINALE",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "augmente",
+              "etayage": "faible",
+              "consigne_max_mots": 16,
+              "critere_pct": 60,
+              "format": "comprehension_orale",
+              "tache_type": "simulation_co",
+              "consigne": "Passez l'épreuve de CO.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_TCF_IRN_FINALE",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "augmente",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 60,
+              "format": "comprehension_orale",
+              "tache_type": "simulation_co_b1",
+              "consigne": "Passez l'épreuve de CO.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_TCF_IRN_FINALE",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "CE": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Épreuve officielle CE",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "augmente",
+              "etayage": "faible",
+              "consigne_max_mots": 16,
+              "critere_pct": 60,
+              "format": "comprehension_ecrite",
+              "tache_type": "simulation_ce",
+              "consigne": "Passez l'épreuve de CE.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_TCF_IRN_FINALE",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "augmente",
+              "etayage": "faible",
+              "consigne_max_mots": 16,
+              "critere_pct": 60,
+              "format": "comprehension_ecrite",
+              "tache_type": "simulation_ce",
+              "consigne": "Passez l'épreuve de CE.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_TCF_IRN_FINALE",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "augmente",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 60,
+              "format": "comprehension_ecrite",
+              "tache_type": "simulation_ce_b1",
+              "consigne": "Passez l'épreuve de CE.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_TCF_IRN_FINALE",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "structures": {
+          "duree_min": 30,
+          "commun": false,
+          "pilier": "grammaire",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "augmente",
+              "etayage": "faible",
+              "consigne_max_mots": 16,
+              "critere_pct": 60,
+              "format": "qcm",
+              "tache_type": "revision",
+              "consigne": "Répondez aux questions.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_TCF_IRN_FINALE",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "augmente",
+              "etayage": "faible",
+              "consigne_max_mots": 16,
+              "critere_pct": 60,
+              "format": "qcm",
+              "tache_type": "revision",
+              "consigne": "Répondez aux questions.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_TCF_IRN_FINALE",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "augmente",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 60,
+              "format": "qcm",
+              "tache_type": "revision",
+              "consigne": "Répondez aux questions.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_TCF_IRN_FINALE",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "production": {
+          "duree_min": 35,
+          "commun": false,
+          "EO_EE_split": true,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "augmente",
+              "etayage": "faible",
+              "consigne_max_mots": 16,
+              "critere_pct": 60,
+              "format": "production_orale",
+              "tache_type": "simulation_eo",
+              "consigne": "Passez l'épreuve d'EO.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_TCF_IRN_FINALE",
+                "competence": "EO",
+                "limite_mots_max": 90
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "augmente",
+              "etayage": "faible",
+              "consigne_max_mots": 16,
+              "critere_pct": 60,
+              "format": "expression_ecrite",
+              "tache_type": "simulation_ee",
+              "consigne": "Passez l'épreuve d'EE.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_TCF_IRN_FINALE",
+                "competence": "EE",
+                "limite_mots_max": 90
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "augmente",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 60,
+              "format": "expression_ecrite",
+              "tache_type": "simulation_ee_b1",
+              "consigne": "Passez l'épreuve d'EE.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_TCF_IRN_FINALE",
+                "competence": "EE",
+                "limite_mots_max": 90
+              }
+            }
+          }
+        },
+        "bilan": {
+          "duree_min": 20,
+          "commun": true,
+          "elements_obligatoires": [
+            "vocabulaire_seance",
+            "strategie_tcf",
+            "erreur_type_commune",
+            "phrase_modele",
+            "contribution_collective"
+          ],
+          "phrase_modele": "Félicitations pour votre parcours.",
+          "strategie_tcf": "Attendre les résultats officiels",
+          "erreur_type_commune": "Stress"
+        }
+      },
+      "types_exercices_attendus": [
+        "comprehension_orale",
+        "comprehension_ecrite",
+        "production_orale",
+        "expression_ecrite",
+        "qcm"
+      ],
+      "mapping_phases_moteur": {
+        "phase_moteur_CO": "phases.CO",
+        "phase_moteur_CE": "phases.CE",
+        "phase_moteur_Structures": "phases.structures",
+        "phase_moteur_EO_EE": "phases.production"
+      }
+    }
+  ]
+}

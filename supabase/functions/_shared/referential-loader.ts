@@ -722,3 +722,17 @@ export function formatReferentialPromptBlock(options: {
 export function getIntraSessionRules(): StructuresSwitchRule[] {
   return structuresSwitchRules.filter((rule) => rule.rule_type === "intra_session");
 }
+
+export {
+  getEnrichedSession,
+  getOptionalModuleSessions,
+  getPlanCadreStudentProfileSchema,
+  isCiviqueVisible,
+  isOptionalModuleActive,
+  normalizePlanCadreFormat,
+  resolvePlanCadreThemeId,
+  type CiviqueVisibleRouting,
+  type PlanCadreSession,
+  type PlanCadreStudentProfile,
+  type PlanCadreStudentProfileSchema,
+} from "./plan-cadre-loader.ts";

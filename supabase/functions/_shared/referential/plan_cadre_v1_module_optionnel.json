@@ -1,0 +1,3236 @@
+{
+  "version": "plan_cadre_v1_module_optionnel",
+  "parcours_id": "plan_cadre_v1_module_optionnel",
+  "nb_seances": 10,
+  "volume_h": 30,
+  "activation": {
+    "enabled_by_default": false,
+    "conditions_all": [
+      "re_signature_civique == true",
+      "examen_civique_obligatoire == true"
+    ],
+    "profils_eligibles": [
+      "naturalisation NAT",
+      "premiere_CSP",
+      "premiere_CR_eligible"
+    ],
+    "profils_exclus": [
+      "renouvellement_titre",
+      "titre_etudiant",
+      "titre_temporaire_sans_civique",
+      "refugie_titre_seul",
+      "dispense_legale"
+    ]
+  },
+  "student_profile_schema": {
+    "source": "test_entree",
+    "niveaux_par_competence": {
+      "CO": "A0|A1|A2|B1|B2",
+      "CE": "A0|A1|A2|B1|B2",
+      "EO": "A0|A1|A2|B1|B2",
+      "EE": "A0|A1|A2|B1|B2"
+    },
+    "niveaux_structures_par_pilier": {
+      "conjugaison": "A0|A1|A2|B1|B2",
+      "grammaire": "A0|A1|A2|B1|B2",
+      "phonetique": "A0|A1|A2|B1|B2",
+      "vocabulaire": "A0|A1|A2|B1|B2"
+    },
+    "cluster_mapping": {
+      "bas": "A0-A1 faible",
+      "standard": "A1 fort-A2",
+      "haut": "B1-B2 (élévation manuelle formateur)"
+    }
+  },
+  "seances": [
+    {
+      "numero": 21,
+      "module_id": "M_OPTIONNEL_TRANSVERSAL",
+      "type": "STRUCTURES_TRANSVERSALES",
+      "theme_id": "MODULE_STRUCT_CONJ_01",
+      "domaine_irn": "transversal",
+      "duree_min": 180,
+      "objectif_communicatif": "Consolider la maîtrise des temps verbaux (présent, passé composé, futur proche) pour le TCF IRN et l'examen civique",
+      "civique_visible": false,
+      "support_commun": "Frise chronologique des démarches d'intégration + textes courts administratifs",
+      "lexique_noyau": [
+        "passé",
+        "présent",
+        "futur",
+        "hier",
+        "aujourd'hui",
+        "demain",
+        "démarche",
+        "rendez-vous",
+        "formulaire"
+      ],
+      "points_structure": {
+        "pilier_principal": "conjugaison",
+        "contenu": "Alternance présent / passé composé / futur proche dans le récit d'expérience",
+        "pilliers_secondaires": [
+          "vocabulaire"
+        ]
+      },
+      "phases": {
+        "activation": {
+          "duree_min": 15,
+          "commun": true,
+          "consigne_formateur": "Rappel des objectifs du module optionnel. Placer des actions d'intégration sur une ligne du temps (avant, maintenant, plus tard).",
+          "exercice_collectif": {
+            "format": "qcm",
+            "format_pedagogique_alias": "frise_chronologique",
+            "items": 3
+          }
+        },
+        "structures_conjugaison": {
+          "duree_min": 90,
+          "commun": false,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "remediation",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 62,
+              "format": "texte_lacunaire",
+              "tache_type": "identifier_temps",
+              "consigne": "Choisissez le bon verbe au présent.",
+              "items": 10,
+              "metadata_exercice": {
+                "theme_id": "MODULE_STRUCT_CONJ_01",
+                "competence": "Structures",
+                "pilier": "conjugaison"
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "conjuguer_temps_usuels",
+              "consigne": "Complétez le texte avec le verbe au passé composé ou au futur.",
+              "items": 15,
+              "metadata_exercice": {
+                "theme_id": "MODULE_STRUCT_CONJ_01",
+                "competence": "Structures",
+                "pilier": "conjugaison"
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "alternance_complexe",
+              "consigne": "Conjuguez les verbes entre parenthèses au temps qui convient pour donner du sens au récit.",
+              "items": 15,
+              "metadata_exercice": {
+                "theme_id": "MODULE_STRUCT_CONJ_01",
+                "competence": "Structures",
+                "pilier": "conjugaison"
+              }
+            }
+          }
+        },
+        "co_ce_pont_irn": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Témoignage écrit et audio d'une personne racontant son parcours depuis son arrivée en France.",
+          "variants_cluster": {
+            "bas": {
+              "format": "comprehension_orale",
+              "format_pedagogique_alias": "qcm",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "consigne": "Écoutez. Qu'a fait la personne hier ?",
+              "items": 4
+            },
+            "standard": {
+              "format": "comprehension_ecrite",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "consigne": "Lisez le témoignage. Remettez les trois événements dans l'ordre.",
+              "items": 5
+            },
+            "haut": {
+              "format": "comprehension_ecrite",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "consigne": "Relevez les indices temporels qui marquent une évolution dans le projet de la personne.",
+              "items": 5
+            }
+          }
+        },
+        "eo_ee_production": {
+          "duree_min": 20,
+          "commun": false,
+          "variants_cluster": {
+            "bas": {
+              "format": "production_orale",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "limite_mots_max": 20,
+              "consigne": "Dites ce que vous avez fait ce matin."
+            },
+            "standard": {
+              "format": "expression_ecrite",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "limite_mots_max": 60,
+              "consigne": "Écrivez 3 phrases : une sur votre passé, une sur aujourd'hui, une sur demain."
+            },
+            "haut": {
+              "format": "expression_ecrite",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "limite_mots_max": 90,
+              "consigne": "Rédigez un court paragraphe expliquant pourquoi vous avez commencé vos démarches et ce que vous ferez ensuite."
+            }
+          }
+        },
+        "bilan": {
+          "duree_min": 15,
+          "commun": true,
+          "elements_obligatoires": [
+            "phrase_modele",
+            "auto_evaluation",
+            "erreur_type_commune"
+          ],
+          "phrase_modele": "Hier j'ai pris rendez-vous, aujourd'hui je prépare mon dossier, demain j'irai à la préfecture.",
+          "erreur_type_commune": "Oubli de l'auxiliaire au passé composé."
+        }
+      },
+      "types_exercices_attendus": [
+        "qcm",
+        "texte_lacunaire",
+        "comprehension_orale",
+        "comprehension_ecrite",
+        "production_orale",
+        "expression_ecrite"
+      ],
+      "mapping_phases_moteur": {
+        "phase_moteur_Structures": "phases.structures_conjugaison",
+        "phase_moteur_CO_CE": "phases.co_ce_pont_irn",
+        "phase_moteur_EO_EE": "phases.eo_ee_production"
+      }
+    },
+    {
+      "numero": 22,
+      "module_id": "M_OPTIONNEL_TRANSVERSAL",
+      "type": "STRUCTURES_TRANSVERSALES",
+      "theme_id": "MODULE_STRUCT_GRAM_01",
+      "domaine_irn": "transversal",
+      "duree_min": 180,
+      "objectif_communicatif": "Maîtriser les accords, l'usage des pronoms et la syntaxe pour sécuriser l'expression.",
+      "civique_visible": false,
+      "support_commun": "Courriers administratifs types avec erreurs volontaires à corriger.",
+      "lexique_noyau": [
+        "monsieur",
+        "madame",
+        "signature",
+        "document",
+        "envoyer",
+        "recevoir",
+        "réponse"
+      ],
+      "points_structure": {
+        "pilier_principal": "grammaire",
+        "contenu": "Accords de base (genre/nombre), pronoms COD/COI usuels (le, la, lui), syntaxe de la phrase simple",
+        "pilliers_secondaires": [
+          "vocabulaire"
+        ]
+      },
+      "phases": {
+        "activation": {
+          "duree_min": 15,
+          "commun": true,
+          "consigne_formateur": "Afficher une phrase mal construite. Demander à la classe de la corriger ensemble.",
+          "exercice_collectif": {
+            "format": "texte_lacunaire",
+            "items": 1
+          }
+        },
+        "structures_grammaire": {
+          "duree_min": 90,
+          "commun": false,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "qcm",
+              "tache_type": "accord_genre_nombre",
+              "consigne": "Choisissez : le, la, les.",
+              "items": 12,
+              "metadata_exercice": {
+                "theme_id": "MODULE_STRUCT_GRAM_01",
+                "competence": "Structures",
+                "pilier": "grammaire"
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "pronoms_complements",
+              "consigne": "Remplacez le mot souligné par le, la, l' ou les.",
+              "items": 12,
+              "metadata_exercice": {
+                "theme_id": "MODULE_STRUCT_GRAM_01",
+                "competence": "Structures",
+                "pilier": "grammaire"
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "syntaxe_complexe",
+              "consigne": "Reconstruisez les phrases en plaçant le pronom au bon endroit.",
+              "items": 10,
+              "metadata_exercice": {
+                "theme_id": "MODULE_STRUCT_GRAM_01",
+                "competence": "Structures",
+                "pilier": "grammaire"
+              }
+            }
+          }
+        },
+        "co_ce_pont_irn": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Une note d'information de la mairie concernant les règles de stationnement.",
+          "variants_cluster": {
+            "bas": {
+              "format": "comprehension_ecrite",
+              "format_pedagogique_alias": "vrai_faux",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "consigne": "Vrai ou Faux ? Cochez la case.",
+              "items": 4
+            },
+            "standard": {
+              "format": "comprehension_ecrite",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "consigne": "Lisez. A qui s'adresse ce document et que demande-t-il ?",
+              "items": 5
+            },
+            "haut": {
+              "format": "comprehension_ecrite",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "consigne": "Identifiez les obligations et les exceptions mentionnées dans la note.",
+              "items": 5
+            }
+          }
+        },
+        "eo_ee_production": {
+          "duree_min": 20,
+          "commun": false,
+          "variants_cluster": {
+            "bas": {
+              "format": "expression_ecrite",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "limite_mots_max": 20,
+              "consigne": "Écrivez 2 phrases avec le mot 'document'."
+            },
+            "standard": {
+              "format": "production_orale",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "limite_mots_max": 50,
+              "consigne": "Enregistrez-vous. Demandez poliment si la personne a reçu votre lettre."
+            },
+            "haut": {
+              "format": "expression_ecrite",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "limite_mots_max": 90,
+              "consigne": "Rédigez un courriel à la mairie pour confirmer l'envoi de vos documents."
+            }
+          }
+        },
+        "bilan": {
+          "duree_min": 15,
+          "commun": true,
+          "elements_obligatoires": [
+            "phrase_modele",
+            "auto_evaluation"
+          ],
+          "phrase_modele": "Le document ? Je l'ai envoyé hier.",
+          "erreur_type_commune": "Erreur de placement du pronom avant le verbe."
+        }
+      },
+      "types_exercices_attendus": [
+        "qcm",
+        "texte_lacunaire",
+        "comprehension_ecrite",
+        "production_orale",
+        "expression_ecrite"
+      ],
+      "mapping_phases_moteur": {
+        "phase_moteur_Structures": "phases.structures_grammaire",
+        "phase_moteur_CO_CE": "phases.co_ce_pont_irn",
+        "phase_moteur_EO_EE": "phases.eo_ee_production"
+      }
+    },
+    {
+      "numero": 23,
+      "module_id": "M_OPTIONNEL_TRANSVERSAL",
+      "type": "STRUCTURES_TRANSVERSALES",
+      "theme_id": "MODULE_STRUCT_PHONO_01",
+      "domaine_irn": "transversal",
+      "duree_min": 180,
+      "objectif_communicatif": "Améliorer la discrimination auditive et la prosodie pour la compréhension et la production orales.",
+      "civique_visible": false,
+      "support_commun": "Extraits d'annonces sonores (gares, administration) et dialogues rapides.",
+      "lexique_noyau": [
+        "écouter",
+        "entendre",
+        "répéter",
+        "prononcer",
+        "accent",
+        "rythme",
+        "question",
+        "affirmation"
+      ],
+      "points_structure": {
+        "pilier_principal": "phonetique",
+        "contenu": "Discrimination de sons proches (b/v, s/z), repérage des liaisons obligatoires, courbes intonatives.",
+        "pilliers_secondaires": [
+          "comprehension_orale"
+        ]
+      },
+      "phases": {
+        "activation": {
+          "duree_min": 15,
+          "commun": true,
+          "consigne_formateur": "Jeu du téléphone arabe pour démontrer l'importance de la prononciation.",
+          "exercice_collectif": {
+            "format": "production_orale",
+            "items": 1
+          }
+        },
+        "structures_phonetique": {
+          "duree_min": 90,
+          "commun": false,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "remediation",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 62,
+              "format": "qcm",
+              "format_pedagogique_alias": "discrimination_audio",
+              "tache_type": "paires_minimales",
+              "consigne": "Écoutez. C'est le même mot ou différent ?",
+              "items": 15,
+              "metadata_exercice": {
+                "theme_id": "MODULE_STRUCT_PHONO_01",
+                "competence": "Structures",
+                "pilier": "phonetique"
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "qcm",
+              "tache_type": "reperage_intonation",
+              "consigne": "Écoutez la phrase. Est-ce une question ou une affirmation ?",
+              "items": 15,
+              "metadata_exercice": {
+                "theme_id": "MODULE_STRUCT_PHONO_01",
+                "competence": "Structures",
+                "pilier": "phonetique"
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "dictee_liaisons",
+              "consigne": "Écoutez et écrivez les mots manquants en respectant les liaisons.",
+              "items": 10,
+              "metadata_exercice": {
+                "theme_id": "MODULE_STRUCT_PHONO_01",
+                "competence": "Structures",
+                "pilier": "phonetique"
+              }
+            }
+          }
+        },
+        "co_ce_pont_irn": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Série de messages d'accueil téléphoniques (CAF, Préfecture).",
+          "variants_cluster": {
+            "bas": {
+              "format": "comprehension_orale",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "consigne": "Écoutez. Quel service appelez-vous ?",
+              "items": 4
+            },
+            "standard": {
+              "format": "comprehension_orale",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "consigne": "Écoutez. Sur quelle touche faut-il appuyer pour parler à un conseiller ?",
+              "items": 5
+            },
+            "haut": {
+              "format": "comprehension_orale",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "consigne": "Relevez les horaires d'ouverture exceptionnels annoncés dans le message.",
+              "items": 5
+            }
+          }
+        },
+        "eo_ee_production": {
+          "duree_min": 20,
+          "commun": false,
+          "variants_cluster": {
+            "bas": {
+              "format": "production_orale",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "limite_mots_max": 15,
+              "consigne": "Répétez la phrase avec la bonne intonation."
+            },
+            "standard": {
+              "format": "production_orale",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "limite_mots_max": 40,
+              "consigne": "Enregistrez-vous. Lisez le texte à voix haute en faisant les liaisons."
+            },
+            "haut": {
+              "format": "production_orale",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "limite_mots_max": 90,
+              "consigne": "Laissez un message vocal clair et précis pour expliquer votre absence à un rendez-vous."
+            }
+          }
+        },
+        "bilan": {
+          "duree_min": 15,
+          "commun": true,
+          "elements_obligatoires": [
+            "phrase_modele",
+            "erreur_type_commune"
+          ],
+          "phrase_modele": "Ils_ont un rendez-vous à la préfecture. (Liaison)",
+          "erreur_type_commune": "Absence de liaison modifiant le sens (ils ont / ils sont)."
+        }
+      },
+      "types_exercices_attendus": [
+        "qcm",
+        "texte_lacunaire",
+        "comprehension_orale",
+        "production_orale"
+      ],
+      "mapping_phases_moteur": {
+        "phase_moteur_Structures": "phases.structures_phonetique",
+        "phase_moteur_CO_CE": "phases.co_ce_pont_irn",
+        "phase_moteur_EO_EE": "phases.eo_ee_production"
+      }
+    },
+    {
+      "numero": 24,
+      "module_id": "M_OPTIONNEL_TRANSVERSAL",
+      "type": "STRUCTURES_TRANSVERSALES",
+      "theme_id": "MODULE_STRUCT_VOC_01",
+      "domaine_irn": "transversal",
+      "duree_min": 180,
+      "objectif_communicatif": "Renforcer le lexique transversal et institutionnel nécessaire à la compréhension des sujets TCF et civiques.",
+      "civique_visible": false,
+      "support_commun": "Cartes mentales thématiques (société, institutions, emploi, logement).",
+      "lexique_noyau": [
+        "droit",
+        "devoir",
+        "loi",
+        "citoyen",
+        "société",
+        "égalité",
+        "respect",
+        "engagement"
+      ],
+      "points_structure": {
+        "pilier_principal": "vocabulaire",
+        "contenu": "Synonymes, antonymes, familles de mots institutionnels.",
+        "pilliers_secondaires": [
+          "comprehension_ecrite"
+        ]
+      },
+      "phases": {
+        "activation": {
+          "duree_min": 15,
+          "commun": true,
+          "consigne_formateur": "Créer une carte mentale au tableau autour du mot 'Citoyen'.",
+          "exercice_collectif": {
+            "format": "qcm",
+            "items": 0
+          }
+        },
+        "structures_vocabulaire": {
+          "duree_min": 90,
+          "commun": false,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "qcm",
+              "format_pedagogique_alias": "association_mot_image",
+              "tache_type": "identification_mots_cles",
+              "consigne": "Associez le mot à l'image.",
+              "items": 15,
+              "metadata_exercice": {
+                "theme_id": "MODULE_STRUCT_VOC_01",
+                "competence": "Structures",
+                "pilier": "vocabulaire"
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "familles_de_mots",
+              "consigne": "Complétez avec un mot de la famille de 'loi' (légal, illégal).",
+              "items": 15,
+              "metadata_exercice": {
+                "theme_id": "MODULE_STRUCT_VOC_01",
+                "competence": "Structures",
+                "pilier": "vocabulaire"
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "augmente",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "format": "qcm",
+              "tache_type": "synonymes_antonymes",
+              "consigne": "Trouvez le synonyme du mot souligné dans la phrase.",
+              "items": 15,
+              "metadata_exercice": {
+                "theme_id": "MODULE_STRUCT_VOC_01",
+                "competence": "Structures",
+                "pilier": "vocabulaire"
+              }
+            }
+          }
+        },
+        "co_ce_pont_irn": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Article simplifié sur le rôle d'une association de quartier.",
+          "variants_cluster": {
+            "bas": {
+              "format": "comprehension_ecrite",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "consigne": "Lisez. Que fait l'association ?",
+              "items": 4
+            },
+            "standard": {
+              "format": "comprehension_ecrite",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "consigne": "Trouvez dans le texte trois actions menées par les bénévoles.",
+              "items": 5
+            },
+            "haut": {
+              "format": "comprehension_ecrite",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "consigne": "Quel est le but principal de l'association d'après le président interrogé ?",
+              "items": 5
+            }
+          }
+        },
+        "eo_ee_production": {
+          "duree_min": 20,
+          "commun": false,
+          "variants_cluster": {
+            "bas": {
+              "format": "expression_ecrite",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "limite_mots_max": 20,
+              "consigne": "Recopiez les trois mots les plus importants."
+            },
+            "standard": {
+              "format": "expression_ecrite",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "limite_mots_max": 50,
+              "consigne": "Écrivez une phrase pour expliquer ce qu'est une association."
+            },
+            "haut": {
+              "format": "production_orale",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "limite_mots_max": 90,
+              "consigne": "Enregistrez-vous. Expliquez pourquoi il est important d'aider les autres dans la société."
+            }
+          }
+        },
+        "bilan": {
+          "duree_min": 15,
+          "commun": true,
+          "elements_obligatoires": [
+            "phrase_modele",
+            "auto_evaluation"
+          ],
+          "phrase_modele": "C'est un droit, mais c'est aussi un devoir.",
+          "erreur_type_commune": "Confusion entre termes proches (légal/loyal)."
+        }
+      },
+      "types_exercices_attendus": [
+        "qcm",
+        "texte_lacunaire",
+        "comprehension_ecrite",
+        "production_orale",
+        "expression_ecrite"
+      ],
+      "mapping_phases_moteur": {
+        "phase_moteur_Structures": "phases.structures_vocabulaire",
+        "phase_moteur_CO_CE": "phases.co_ce_pont_irn",
+        "phase_moteur_EO_EE": "phases.eo_ee_production"
+      }
+    },
+    {
+      "numero": 25,
+      "module_id": "M_OPTIONNEL_CIVIQUE",
+      "type": "CIVIQUE_INTENSIF",
+      "theme_id": "MODULE_CIV_PRINCIPES_01",
+      "domaine_irn": "citoyennete",
+      "duree_min": 180,
+      "objectif_communicatif": "Comprendre et répondre aux QCM sur les Principes/valeurs de la République et le système institutionnel (17 questions-types)",
+      "civique_visible": true,
+      "themes_officiels_civique": [
+        "Principes et valeurs de la République",
+        "Système institutionnel et politique"
+      ],
+      "support_commun": "Fiche récapitulative : Devise, symboles, laïcité, séparation des pouvoirs + organigramme institutions",
+      "lexique_noyau": [
+        "République",
+        "liberté",
+        "égalité",
+        "fraternité",
+        "laïcité",
+        "Constitution",
+        "Président",
+        "Parlement",
+        "Assemblée nationale",
+        "Sénat",
+        "Premier ministre",
+        "démocratie"
+      ],
+      "points_structure": {
+        "pilier_principal": "vocabulaire",
+        "contenu": "Lexique institutionnel civique + connecteurs d'opinion pour justifier une réponse"
+      },
+      "phases": {
+        "activation": {
+          "duree_min": 15,
+          "commun": true,
+          "consigne_formateur": "Rappel : examen civique = 40 Q / 45 min / 32/40 requis. Brainstorm symboles et institutions.",
+          "exercice_collectif": {
+            "format": "qcm",
+            "format_pedagogique_alias": "appariement",
+            "consigne": "Reliez symbole ↔ signification",
+            "items": 6
+          }
+        },
+        "civique_theorique_CE": {
+          "duree_min": 70,
+          "commun": false,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "comprehension_ecrite",
+              "tache_type": "repérage_fiche",
+              "consigne": "Lisez la fiche. Trouvez la devise de la République.",
+              "items": 5,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_PRINCIPES_01",
+                "competence": "CE",
+                "theme_civique": "Principes et valeurs"
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "comprehension_ecrite",
+              "tache_type": "comprehension_fiche_institution",
+              "consigne": "Lisez l'organigramme. Qui nomme le Premier ministre ?",
+              "items": 6,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_PRINCIPES_01",
+                "competence": "CE",
+                "theme_civique": "Institutions"
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "comprehension_ecrite",
+              "tache_type": "inference_institutionnelle",
+              "consigne": "Peut-on dire que le Président exerce seul le pouvoir législatif ? Justifiez.",
+              "items": 5,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_PRINCIPES_01",
+                "competence": "CE",
+                "theme_civique": "Institutions"
+              }
+            }
+          }
+        },
+        "CO_civique": {
+          "duree_min": 30,
+          "commun": false,
+          "support_invariant": "Audio : extrait cours de citoyenneté sur la laïcité (1 min 30)",
+          "variants_cluster": {
+            "bas": {
+              "format": "comprehension_orale",
+              "format_pedagogique_alias": "qcm",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "consigne": "Écoutez. Cochez le mot principal.",
+              "items": 4
+            },
+            "standard": {
+              "format": "comprehension_orale",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "consigne": "Qu'est-ce que la laïcité à l'école ?",
+              "items": 5
+            },
+            "haut": {
+              "format": "comprehension_orale",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "consigne": "Quelle distinction fait le document entre neutralité et prosélytisme ?",
+              "items": 5
+            }
+          }
+        },
+        "qcm_entrainement": {
+          "duree_min": 40,
+          "commun": false,
+          "variants_cluster": {
+            "bas": {
+              "format": "qcm",
+              "items": 12,
+              "critere_pct": 60,
+              "themes": [
+                "Principes et valeurs"
+              ],
+              "etayage": "fort"
+            },
+            "standard": {
+              "format": "qcm",
+              "items": 15,
+              "critere_pct": 70,
+              "themes": [
+                "Principes et valeurs",
+                "Institutions"
+              ],
+              "etayage": "moyen"
+            },
+            "haut": {
+              "format": "qcm",
+              "items": 17,
+              "critere_pct": 70,
+              "themes": [
+                "Principes et valeurs",
+                "Institutions"
+              ],
+              "etayage": "faible",
+              "elevation_manuelle": true
+            }
+          },
+          "banque_qcm_exemple": [
+            {
+              "id": "CIV_S25_Q01",
+              "theme_officiel": "Principes et valeurs de la République",
+              "enonce": "Quelle est la devise de la République française ?",
+              "options": [
+                "A) Travail, Famille, Patrie",
+                "B) Liberté, Égalité, Fraternité",
+                "C) Unité, Progrès, Justice",
+                "D) Paix, Force, Union"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "CIV_S25_Q02",
+              "theme_officiel": "Système institutionnel et politique",
+              "enonce": "Le Parlement français est composé de…",
+              "options": [
+                "A) L'Assemblée nationale et le Sénat",
+                "B) Le Conseil constitutionnel et le Sénat",
+                "C) La Préfecture et l'Assemblée",
+                "D) Le Sénat et l'Union européenne"
+              ],
+              "bonne_reponse": "A"
+            }
+          ]
+        },
+        "bilan": {
+          "duree_min": 25,
+          "commun": true,
+          "elements_obligatoires": [
+            "score_par_theme",
+            "points_forts",
+            "points_faibles",
+            "fiche_memo",
+            "plan_revision"
+          ],
+          "seuil_reussite_simulation": "32/40",
+          "note_formateur": "Corriger les confusions symboles / institutions avant S28"
+        }
+      },
+      "types_exercices_attendus": [
+        "qcm",
+        "comprehension_ecrite",
+        "comprehension_orale"
+      ],
+      "mapping_phases_moteur": {
+        "phase_moteur_CE": "phases.civique_theorique_CE",
+        "phase_moteur_CO": "phases.CO_civique",
+        "phase_moteur_QCM": "phases.qcm_entrainement"
+      }
+    },
+    {
+      "numero": 26,
+      "module_id": "M_OPTIONNEL_CIVIQUE",
+      "type": "CIVIQUE_INTENSIF",
+      "theme_id": "MODULE_CIV_DROITS_HIST_01",
+      "domaine_irn": "citoyennete",
+      "duree_min": 180,
+      "objectif_communicatif": "Comprendre et répondre aux QCM sur les Droits/Devoirs et l'Histoire/Géographie de la France.",
+      "civique_visible": true,
+      "themes_officiels_civique": [
+        "Droits et devoirs",
+        "Histoire, géographie, culture"
+      ],
+      "support_commun": "Fiches thématiques : carte de France, dates clés (1789, 1914, 1945), liste des devoirs du citoyen.",
+      "lexique_noyau": [
+        "impôts",
+        "vote",
+        "école",
+        "frontière",
+        "montagne",
+        "fleuve",
+        "révolution",
+        "guerre",
+        "loi"
+      ],
+      "points_structure": {
+        "pilier_principal": "vocabulaire",
+        "contenu": "Lexique géographique et historique + verbes de droit et d'obligation (avoir le droit de, devoir)."
+      },
+      "phases": {
+        "activation": {
+          "duree_min": 15,
+          "commun": true,
+          "consigne_formateur": "Placement des pays frontaliers sur la carte et rappel des devoirs fondamentaux.",
+          "exercice_collectif": {
+            "format": "qcm",
+            "format_pedagogique_alias": "carte_interactive",
+            "items": 5
+          }
+        },
+        "civique_theorique_CE": {
+          "duree_min": 70,
+          "commun": false,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "comprehension_ecrite",
+              "format_pedagogique_alias": "association_image_mot",
+              "tache_type": "reperage_geographique",
+              "consigne": "Associez les noms aux images.",
+              "items": 6,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_DROITS_HIST_01",
+                "competence": "CE"
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "comprehension_ecrite",
+              "format_pedagogique_alias": "vrai_faux",
+              "tache_type": "comprehension_droits",
+              "consigne": "Lisez le texte sur les impôts. Vrai ou Faux ?",
+              "items": 6,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_DROITS_HIST_01",
+                "competence": "CE"
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "augmente",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "format": "comprehension_ecrite",
+              "format_pedagogique_alias": "qcm_inference",
+              "tache_type": "analyse_historique",
+              "consigne": "Lisez les dates clés. Pourquoi 1789 est-elle fondatrice ?",
+              "items": 5,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_DROITS_HIST_01",
+                "competence": "CE"
+              }
+            }
+          }
+        },
+        "CO_civique": {
+          "duree_min": 30,
+          "commun": false,
+          "support_invariant": "Audio court : documentaire sur la construction européenne et les valeurs partagées.",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "comprehension_orale",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "reperage_pays",
+              "consigne": "Cochez les pays que vous entendez.",
+              "items": 4,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_DROITS_HIST_01",
+                "competence": "CO"
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "comprehension_orale",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "comprehension_but",
+              "consigne": "Quel est le but principal de l'Union européenne ?",
+              "items": 5,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_DROITS_HIST_01",
+                "competence": "CO"
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "augmente",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "format": "comprehension_orale",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "inference_audio",
+              "consigne": "Comment l'orateur explique-t-il le lien entre paix et droits ?",
+              "items": 5,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_DROITS_HIST_01",
+                "competence": "CO"
+              }
+            }
+          }
+        },
+        "qcm_entrainement": {
+          "duree_min": 40,
+          "commun": false,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "qcm",
+              "tache_type": "qcm_entrainement_civique",
+              "consigne": "Répondez aux questions civiques.",
+              "items": 19,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_DROITS_HIST_01",
+                "competence": "CE"
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "qcm",
+              "tache_type": "qcm_entrainement_civique",
+              "consigne": "Choisissez la bonne réponse pour chaque question.",
+              "items": 19,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_DROITS_HIST_01",
+                "competence": "CE"
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "augmente",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "format": "qcm",
+              "tache_type": "qcm_entrainement_civique",
+              "consigne": "Répondez aux QCM sur les droits et l'histoire.",
+              "items": 19,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_DROITS_HIST_01",
+                "competence": "CE"
+              }
+            }
+          },
+          "banque_qcm": [
+            {
+              "id": "CIV_S26_01",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "L'école est obligatoire en France :",
+              "options": [
+                "A) De 3 à 16 ans",
+                "B) De 6 à 18 ans",
+                "C) L'école n'est pas obligatoire",
+                "D) Seulement pour les garçons"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "CIV_S26_02",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "Le paiement des impôts sert à :",
+              "options": [
+                "A) Financer les services publics",
+                "B) Enrichir les élus",
+                "C) Acheter des produits personnels",
+                "D) Payer les entreprises privées"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "CIV_S26_03",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "La loi française autorise-t-elle le mariage entre deux personnes du même sexe ?",
+              "options": [
+                "A) Oui",
+                "B) Non",
+                "C) Seulement à Paris",
+                "D) Seulement si elles sont étrangères"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "CIV_S26_04",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "La liberté d'expression permet de :",
+              "options": [
+                "A) Dire tout ce qu'on veut, y compris des insultes racistes",
+                "B) S'exprimer librement dans le respect de la loi",
+                "C) Mentir à la police",
+                "D) Ne pas payer ses amendes"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "CIV_S26_05",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "Le vote en France est :",
+              "options": [
+                "A) Obligatoire sous peine d'amende",
+                "B) Un droit et un devoir civique",
+                "C) Réservé aux hommes",
+                "D) Public"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "CIV_S26_06",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "Hommes et femmes ont-ils les mêmes droits dans le mariage ?",
+              "options": [
+                "A) Non, l'homme décide",
+                "B) Oui, autorité parentale et gestion des biens partagées",
+                "C) Non, la femme décide",
+                "D) Seulement si le juge l'autorise"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "CIV_S26_07",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "En France, la polygamie (avoir plusieurs conjoints) est :",
+              "options": [
+                "A) Interdite par la loi",
+                "B) Autorisée",
+                "C) Autorisée avec l'accord de la mairie",
+                "D) Obligatoire"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "CIV_S26_08",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "Qui doit respecter la loi française ?",
+              "options": [
+                "A) Uniquement les Français",
+                "B) Toutes les personnes vivant en France",
+                "C) Uniquement les étrangers",
+                "D) Uniquement les élus"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "CIV_S26_09",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "En cas de conflit au travail, un salarié a le droit de :",
+              "options": [
+                "A) Faire grève dans le respect du cadre légal",
+                "B) Frapper son patron",
+                "C) Voler l'entreprise",
+                "D) Ne plus jamais travailler"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "CIV_S26_10",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "Toute personne a droit à un procès équitable et à un avocat :",
+              "options": [
+                "A) Vrai",
+                "B) Faux, c'est payant obligatoirement",
+                "C) Vrai, mais seulement si elle est innocente",
+                "D) Faux, les étrangers n'y ont pas droit"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "CIV_S26_11",
+              "theme_officiel": "Histoire, géographie, culture",
+              "enonce": "Quelle est la capitale de la France ?",
+              "options": [
+                "A) Lyon",
+                "B) Marseille",
+                "C) Paris",
+                "D) Bordeaux"
+              ],
+              "bonne_reponse": "C"
+            },
+            {
+              "id": "CIV_S26_12",
+              "theme_officiel": "Histoire, géographie, culture",
+              "enonce": "Que s'est-il passé en 1789 ?",
+              "options": [
+                "A) La fin de la Première Guerre mondiale",
+                "B) La Révolution française",
+                "C) La création de l'Union européenne",
+                "D) La mort de Napoléon"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "CIV_S26_13",
+              "theme_officiel": "Histoire, géographie, culture",
+              "enonce": "Quel pays a une frontière commune avec la France ?",
+              "options": [
+                "A) L'Espagne",
+                "B) La Suède",
+                "C) Le Portugal",
+                "D) La Grèce"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "CIV_S26_14",
+              "theme_officiel": "Histoire, géographie, culture",
+              "enonce": "Le Mont Blanc est situé dans :",
+              "options": [
+                "A) Les Pyrénées",
+                "B) Les Alpes",
+                "C) Le Massif Central",
+                "D) Le Jura"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "CIV_S26_15",
+              "theme_officiel": "Histoire, géographie, culture",
+              "enonce": "Quel grand fleuve traverse Paris ?",
+              "options": [
+                "A) Le Rhône",
+                "B) La Loire",
+                "C) La Seine",
+                "D) La Garonne"
+              ],
+              "bonne_reponse": "C"
+            },
+            {
+              "id": "CIV_S26_16",
+              "theme_officiel": "Histoire, géographie, culture",
+              "enonce": "L'appel du 18 juin 1940 a été prononcé par :",
+              "options": [
+                "A) François Mitterrand",
+                "B) Charles de Gaulle",
+                "C) Jean Moulin",
+                "D) Georges Pompidou"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "CIV_S26_17",
+              "theme_officiel": "Histoire, géographie, culture",
+              "enonce": "Qui a fait construire le château de Versailles ?",
+              "options": [
+                "A) Louis XIV",
+                "B) Charlemagne",
+                "C) Napoléon",
+                "D) François Ier"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "CIV_S26_18",
+              "theme_officiel": "Histoire, géographie, culture",
+              "enonce": "Quel roi est appelé le 'Roi Soleil' ?",
+              "options": [
+                "A) Clovis",
+                "B) Louis XIV",
+                "C) Henri IV",
+                "D) Louis XVI"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "CIV_S26_19",
+              "theme_officiel": "Histoire, géographie, culture",
+              "enonce": "La Première Guerre mondiale a eu lieu :",
+              "options": [
+                "A) De 1870 à 1871",
+                "B) De 1914 à 1918",
+                "C) De 1939 à 1945",
+                "D) De 1789 à 1799"
+              ],
+              "bonne_reponse": "B"
+            }
+          ]
+        },
+        "bilan": {
+          "duree_min": 25,
+          "commun": true,
+          "elements_obligatoires": [
+            "score_par_theme",
+            "points_faibles",
+            "fiche_memo",
+            "plan_revision"
+          ],
+          "seuil_reussite_simulation": "16/20",
+          "note_formateur": "Insister sur la différence entre un droit et un devoir."
+        }
+      },
+      "types_exercices_attendus": [
+        "qcm",
+        "comprehension_ecrite",
+        "comprehension_orale"
+      ],
+      "mapping_phases_moteur": {
+        "phase_moteur_CE": "phases.civique_theorique_CE",
+        "phase_moteur_CO": "phases.CO_civique",
+        "phase_moteur_QCM": "phases.qcm_entrainement"
+      }
+    },
+    {
+      "numero": 27,
+      "module_id": "M_OPTIONNEL_CIVIQUE",
+      "type": "CIVIQUE_INTENSIF",
+      "theme_id": "MODULE_CIV_VIVRE_SYNTHESE_01",
+      "domaine_irn": "citoyennete",
+      "duree_min": 180,
+      "objectif_communicatif": "Maîtriser les codes de la vie en société française et réviser l'ensemble des 5 thèmes officiels.",
+      "civique_visible": true,
+      "themes_officiels_civique": [
+        "Vivre dans la société française",
+        "Synthèse transversale"
+      ],
+      "support_commun": "Fiches pratiques sur l'assurance maladie, pôle emploi, l'école, le tri des déchets.",
+      "lexique_noyau": [
+        "sécurité sociale",
+        "carte vitale",
+        "mutuelle",
+        "emploi",
+        "démarche",
+        "médecin traitant",
+        "urgence",
+        "environnement"
+      ],
+      "points_structure": {
+        "pilier_principal": "vocabulaire",
+        "contenu": "Sigles de la vie courante (CAF, CPAM, SAMU, SMIC)."
+      },
+      "phases": {
+        "activation": {
+          "duree_min": 15,
+          "commun": true,
+          "consigne_formateur": "Que faire en cas d'urgence médicale ou administrative ? Rappel des sigles utiles.",
+          "exercice_collectif": {
+            "format": "qcm",
+            "format_pedagogique_alias": "appariement_sigles",
+            "items": 6
+          }
+        },
+        "civique_theorique_CE": {
+          "duree_min": 70,
+          "commun": false,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "comprehension_ecrite",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "reperage_sigle",
+              "consigne": "Lisez et trouvez le bon sigle.",
+              "items": 5,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_VIVRE_SYNTHESE_01",
+                "competence": "CE"
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "comprehension_ecrite",
+              "format_pedagogique_alias": "vrai_faux",
+              "tache_type": "comprehension_demarche",
+              "consigne": "Lisez les conseils. Est-ce vrai ou faux ?",
+              "items": 6,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_VIVRE_SYNTHESE_01",
+                "competence": "CE"
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "augmente",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "format": "comprehension_ecrite",
+              "format_pedagogique_alias": "qcm_inference",
+              "tache_type": "synthese_documents",
+              "consigne": "Combinez les informations pour trouver la démarche.",
+              "items": 5,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_VIVRE_SYNTHESE_01",
+                "competence": "CE"
+              }
+            }
+          }
+        },
+        "CO_civique": {
+          "duree_min": 30,
+          "commun": false,
+          "support_invariant": "Audio : appel au médecin traitant et gestion de la carte Vitale.",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "comprehension_orale",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "reperage_document",
+              "consigne": "Quel document le médecin demande-t-il ?",
+              "items": 4,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_VIVRE_SYNTHESE_01",
+                "competence": "CO"
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "comprehension_orale",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "comprehension_action",
+              "consigne": "Que doit faire le patient après la consultation ?",
+              "items": 5,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_VIVRE_SYNTHESE_01",
+                "competence": "CO"
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "augmente",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "format": "comprehension_orale",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "inference_sociale",
+              "consigne": "Pourquoi est-il important de mettre à jour sa carte Vitale ?",
+              "items": 5,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_VIVRE_SYNTHESE_01",
+                "competence": "CO"
+              }
+            }
+          }
+        },
+        "qcm_entrainement": {
+          "duree_min": 40,
+          "commun": false,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "qcm",
+              "tache_type": "qcm_entrainement_civique",
+              "consigne": "Répondez aux questions.",
+              "items": 17,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_VIVRE_SYNTHESE_01",
+                "competence": "CE"
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "qcm",
+              "tache_type": "qcm_entrainement_civique",
+              "consigne": "Choisissez la bonne réponse.",
+              "items": 17,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_VIVRE_SYNTHESE_01",
+                "competence": "CE"
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "augmente",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "format": "qcm",
+              "tache_type": "qcm_entrainement_civique",
+              "consigne": "Passez le QCM de synthèse transversale.",
+              "items": 17,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_VIVRE_SYNTHESE_01",
+                "competence": "CE"
+              }
+            }
+          },
+          "banque_qcm": [
+            {
+              "id": "CIV_S27_01",
+              "theme_officiel": "Vivre dans la société française",
+              "enonce": "Pour être remboursé de ses soins médicaux, il faut présenter :",
+              "options": [
+                "A) Son passeport",
+                "B) Sa carte Vitale",
+                "C) Sa carte bancaire",
+                "D) Son permis de conduire"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "CIV_S27_02",
+              "theme_officiel": "Vivre dans la société française",
+              "enonce": "Qui verse les allocations familiales en France ?",
+              "options": [
+                "A) La CPAM",
+                "B) La CAF",
+                "C) La Mairie",
+                "D) France Travail"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "CIV_S27_03",
+              "theme_officiel": "Vivre dans la société française",
+              "enonce": "En France, la protection de l'environnement :",
+              "options": [
+                "A) N'est pas importante",
+                "B) Est l'affaire de tous (tri des déchets)",
+                "C) Est réservée aux professionnels",
+                "D) Est interdite"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "CIV_S27_04",
+              "theme_officiel": "Vivre dans la société française",
+              "enonce": "Quel numéro appeler en cas d'urgence médicale (SAMU) ?",
+              "options": [
+                "A) Le 15",
+                "B) Le 17",
+                "C) Le 18",
+                "D) Le 112 est aussi un numéro d'urgence européen"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "CIV_S27_05",
+              "theme_officiel": "Vivre dans la société française",
+              "enonce": "L'école publique en France est :",
+              "options": [
+                "A) Laïque et gratuite",
+                "B) Payante et religieuse",
+                "C) Réservée aux Français",
+                "D) Facultative"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "CIV_S27_06",
+              "theme_officiel": "Vivre dans la société française",
+              "enonce": "Comment s'appelle l'organisme public pour la recherche d'emploi ?",
+              "options": [
+                "A) La Sécurité Sociale",
+                "B) La CAF",
+                "C) France Travail (anciennement Pôle Emploi)",
+                "D) La Préfecture"
+              ],
+              "bonne_reponse": "C"
+            },
+            {
+              "id": "CIV_S27_07",
+              "theme_officiel": "Vivre dans la société française",
+              "enonce": "L'accès aux soins d'urgence dans les hôpitaux publics :",
+              "options": [
+                "A) Est refusé aux étrangers",
+                "B) Est garanti pour tous",
+                "C) Nécessite de payer d'avance",
+                "D) N'existe pas"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "CIV_S27_08",
+              "theme_officiel": "Vivre dans la société française",
+              "enonce": "Si vous déménagez, vous devez :",
+              "options": [
+                "A) Le déclarer aux impôts et à la CAF",
+                "B) Changer de nom",
+                "C) Ne rien dire à personne",
+                "D) Quitter la France"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "CIV_S27_09",
+              "theme_officiel": "Principes et valeurs de la République",
+              "enonce": "La laïcité permet :",
+              "options": [
+                "A) L'interdiction des religions",
+                "B) La liberté de croire ou ne pas croire dans le respect des lois",
+                "C) La religion obligatoire à l'école",
+                "D) D'imposer sa croyance"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "CIV_S27_10",
+              "theme_officiel": "Système institutionnel et politique",
+              "enonce": "Où travaille le Président de la République ?",
+              "options": [
+                "A) À l'Hôtel de Ville",
+                "B) Au Palais de l'Élysée",
+                "C) Au Sénat",
+                "D) À Matignon"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "CIV_S27_11",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "Les hommes et les femmes ont-ils les mêmes droits au travail ?",
+              "options": [
+                "A) Non, les hommes doivent gagner plus",
+                "B) Oui, à travail égal, salaire égal",
+                "C) Non, les femmes ne peuvent pas être chefs",
+                "D) Seulement dans l'administration"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "CIV_S27_12",
+              "theme_officiel": "Histoire, géographie, culture",
+              "enonce": "Qui est l'auteur des 'Misérables' ?",
+              "options": [
+                "A) Molière",
+                "B) Victor Hugo",
+                "C) Émile Zola",
+                "D) Albert Camus"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "CIV_S27_13",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "Si un policier vous demande vos papiers d'identité dans la rue :",
+              "options": [
+                "A) Vous devez obtempérer",
+                "B) Vous pouvez refuser",
+                "C) Vous devez vous enfuir",
+                "D) Vous pouvez l'insulter"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "CIV_S27_14",
+              "theme_officiel": "Système institutionnel et politique",
+              "enonce": "Qui élit le maire de la commune ?",
+              "options": [
+                "A) Le Président de la République",
+                "B) Le conseil municipal élu par les citoyens",
+                "C) Le préfet",
+                "D) Les députés"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "CIV_S27_15",
+              "theme_officiel": "Principes et valeurs de la République",
+              "enonce": "Le drapeau français est :",
+              "options": [
+                "A) Bleu, Blanc, Rouge",
+                "B) Bleu, Blanc, Vert",
+                "C) Vert, Blanc, Rouge",
+                "D) Jaune, Blanc, Rouge"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "CIV_S27_16",
+              "theme_officiel": "Histoire, géographie, culture",
+              "enonce": "Que fête-t-on le 14 juillet ?",
+              "options": [
+                "A) La fin de la Première Guerre mondiale",
+                "B) La Fête nationale (Prise de la Bastille)",
+                "C) La fête du travail",
+                "D) L'armistice de 1945"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "CIV_S27_17",
+              "theme_officiel": "Vivre dans la société française",
+              "enonce": "En France, les impôts sont :",
+              "options": [
+                "A) Facultatifs",
+                "B) Pris à la source pour la majorité des salariés",
+                "C) Payés seulement par les riches",
+                "D) Interdits"
+              ],
+              "bonne_reponse": "B"
+            }
+          ]
+        },
+        "bilan": {
+          "duree_min": 25,
+          "commun": true,
+          "elements_obligatoires": [
+            "score_par_theme",
+            "points_faibles",
+            "fiche_memo",
+            "plan_revision"
+          ],
+          "seuil_reussite_simulation": "13/17",
+          "note_formateur": "Distribuer les convocations aux simulations S28 et S29."
+        }
+      },
+      "types_exercices_attendus": [
+        "qcm",
+        "comprehension_ecrite",
+        "comprehension_orale"
+      ],
+      "mapping_phases_moteur": {
+        "phase_moteur_CE": "phases.civique_theorique_CE",
+        "phase_moteur_CO": "phases.CO_civique",
+        "phase_moteur_QCM": "phases.qcm_entrainement"
+      }
+    },
+    {
+      "numero": 28,
+      "module_id": "M_OPTIONNEL_CIVIQUE",
+      "type": "SIMULATION_CIVIQUE",
+      "theme_id": "MODULE_CIV_SIM_01",
+      "domaine_irn": "citoyennete",
+      "duree_min": 180,
+      "objectif_communicatif": "S'entraîner à l'examen officiel de connaissances civiques dans les conditions réelles (Sim 1).",
+      "civique_visible": true,
+      "themes_officiels_civique": [
+        "Principes et valeurs de la République",
+        "Système institutionnel et politique",
+        "Droits et devoirs",
+        "Histoire, géographie, culture",
+        "Vivre dans la société française"
+      ],
+      "phases": {
+        "briefing": {
+          "duree_min": 10,
+          "commun": true,
+          "consigne_formateur": "Rappel des consignes : 40 questions, 45 minutes, seuil de réussite 32 bonnes réponses. Silence total.",
+          "exercice_collectif": {
+            "format": "qcm",
+            "items": 0
+          }
+        },
+        "simulation": {
+          "duree_min": 45,
+          "commun": false,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "augmente",
+              "etayage": "faible",
+              "consigne_max_mots": 8,
+              "critere_pct": 80,
+              "format": "qcm",
+              "tache_type": "examen_civique",
+              "consigne": "Passez l'examen.",
+              "items": 40,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_SIM_01",
+                "competence": "CE"
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "augmente",
+              "etayage": "faible",
+              "consigne_max_mots": 12,
+              "critere_pct": 80,
+              "format": "qcm",
+              "tache_type": "examen_civique",
+              "consigne": "Passez l'examen officiel blanc.",
+              "items": 40,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_SIM_01",
+                "competence": "CE"
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "augmente",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "format": "qcm",
+              "tache_type": "examen_civique",
+              "consigne": "Répondez aux 40 QCM de l'examen civique.",
+              "items": 40,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_SIM_01",
+                "competence": "CE"
+              }
+            }
+          },
+          "banque_qcm_simulation": [
+            {
+              "id": "S28_01",
+              "theme_officiel": "Principes et valeurs de la République",
+              "enonce": "La devise de la France est :",
+              "options": [
+                "A) Travail, Famille, Patrie",
+                "B) Liberté, Égalité, Fraternité",
+                "C) Ordre, Justice, Progrès",
+                "D) Honneur et Patrie"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S28_02",
+              "theme_officiel": "Principes et valeurs de la République",
+              "enonce": "Les couleurs du drapeau français sont :",
+              "options": [
+                "A) Bleu, Blanc, Rouge",
+                "B) Vert, Blanc, Rouge",
+                "C) Bleu, Jaune, Rouge",
+                "D) Rouge, Blanc, Bleu"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "S28_03",
+              "theme_officiel": "Principes et valeurs de la République",
+              "enonce": "L'hymne national français est :",
+              "options": [
+                "A) Le Chant des Partisans",
+                "B) La Marseillaise",
+                "C) La Carmagnole",
+                "D) L'Internationale"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S28_04",
+              "theme_officiel": "Principes et valeurs de la République",
+              "enonce": "Qui est le symbole de la République que l'on trouve dans les mairies ?",
+              "options": [
+                "A) Marianne",
+                "B) Jeanne d'Arc",
+                "C) Marie Curie",
+                "D) Victor Hugo"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "S28_05",
+              "theme_officiel": "Principes et valeurs de la République",
+              "enonce": "La laïcité en France signifie :",
+              "options": [
+                "A) L'interdiction des religions",
+                "B) L'obligation d'avoir une religion",
+                "C) La séparation de l'Église et de l'État, et la liberté de croire ou de ne pas croire",
+                "D) Que l'État finance les lieux de culte"
+              ],
+              "bonne_reponse": "C"
+            },
+            {
+              "id": "S28_06",
+              "theme_officiel": "Principes et valeurs de la République",
+              "enonce": "Le principe d'égalité implique que :",
+              "options": [
+                "A) Tout le monde a le même salaire",
+                "B) La loi est la même pour tous",
+                "C) Les étrangers n'ont pas de droits",
+                "D) Les hommes ont plus de droits que les femmes"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S28_07",
+              "theme_officiel": "Principes et valeurs de la République",
+              "enonce": "En France, la langue officielle de la République est :",
+              "options": [
+                "A) L'anglais",
+                "B) Le français",
+                "C) L'espagnol",
+                "D) Il n'y en a pas"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S28_08",
+              "theme_officiel": "Principes et valeurs de la République",
+              "enonce": "La République est dite indivisible, ce qui veut dire :",
+              "options": [
+                "A) Que les lois s'appliquent sur tout le territoire de façon égale",
+                "B) Qu'on ne peut pas voyager d'une région à l'autre",
+                "C) Que les départements n'existent plus",
+                "D) Qu'il n'y a qu'un seul parti politique"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "S28_09",
+              "theme_officiel": "Principes et valeurs de la République",
+              "enonce": "La fraternité correspond à la valeur de :",
+              "options": [
+                "A) Concurrence",
+                "B) Solidarité entre les citoyens",
+                "C) Richesse",
+                "D) Vengeance"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S28_10",
+              "theme_officiel": "Principes et valeurs de la République",
+              "enonce": "La démocratie signifie que le pouvoir appartient :",
+              "options": [
+                "A) Au roi",
+                "B) À l'armée",
+                "C) Au peuple, qui élit ses représentants",
+                "D) Aux plus riches"
+              ],
+              "bonne_reponse": "C"
+            },
+            {
+              "id": "S28_11",
+              "theme_officiel": "Principes et valeurs de la République",
+              "enonce": "La France est un État :",
+              "options": [
+                "A) Monarchique",
+                "B) Théocratique",
+                "C) Démocratique et laïque",
+                "D) Dictatorial"
+              ],
+              "bonne_reponse": "C"
+            },
+            {
+              "id": "S28_12",
+              "theme_officiel": "Système institutionnel et politique",
+              "enonce": "Qui promulgue les lois en France ?",
+              "options": [
+                "A) Le Président de la République",
+                "B) Le Maire",
+                "C) Le Juge",
+                "D) Le Préfet"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "S28_13",
+              "theme_officiel": "Système institutionnel et politique",
+              "enonce": "Le Parlement est chargé de :",
+              "options": [
+                "A) Rendre la justice",
+                "B) Voter les lois",
+                "C) Diriger la police",
+                "D) Gérer les mairies"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S28_14",
+              "theme_officiel": "Système institutionnel et politique",
+              "enonce": "L'Assemblée nationale et le Sénat forment :",
+              "options": [
+                "A) Le Parlement",
+                "B) Le Gouvernement",
+                "C) Le Conseil constitutionnel",
+                "D) La Cour de cassation"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "S28_15",
+              "theme_officiel": "Système institutionnel et politique",
+              "enonce": "Le texte suprême qui organise les institutions de la France s'appelle :",
+              "options": [
+                "A) Le Code civil",
+                "B) La Constitution",
+                "C) Le Code pénal",
+                "D) Le Traité de Paris"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S28_16",
+              "theme_officiel": "Système institutionnel et politique",
+              "enonce": "Qui dirige le gouvernement ?",
+              "options": [
+                "A) Le Président de l'Assemblée nationale",
+                "B) Le Premier ministre",
+                "C) Le Ministre de l'Intérieur",
+                "D) Le Maire de Paris"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S28_17",
+              "theme_officiel": "Système institutionnel et politique",
+              "enonce": "L'État est séparé en trois pouvoirs :",
+              "options": [
+                "A) Législatif, exécutif et judiciaire",
+                "B) Présidentiel, ministériel et préfectoral",
+                "C) National, régional, départemental",
+                "D) Militaire, religieux, civil"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "S28_18",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "L'instruction (l'école) est obligatoire en France pour les enfants de :",
+              "options": [
+                "A) 3 à 16 ans",
+                "B) 6 à 18 ans",
+                "C) 2 à 14 ans",
+                "D) 6 à 16 ans"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "S28_19",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "En France, les impôts sur le revenu sont :",
+              "options": [
+                "A) Facultatifs",
+                "B) Un devoir pour contribuer aux dépenses publiques",
+                "C) Réservés aux étrangers",
+                "D) Interdits"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S28_20",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "Le droit de vote permet aux citoyens de :",
+              "options": [
+                "A) Juger les criminels",
+                "B) Choisir leurs représentants politiques",
+                "C) Ne pas payer d'impôts",
+                "D) Voyager sans passeport"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S28_21",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "La loi autorise-t-elle la violence contre les femmes et les enfants ?",
+              "options": [
+                "A) Oui, dans le cercle familial",
+                "B) Non, toutes les violences sont punies par la loi",
+                "C) Seulement les punitions corporelles",
+                "D) Oui, c'est privé"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S28_22",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "Le droit de grève est :",
+              "options": [
+                "A) Un droit reconnu par la Constitution",
+                "B) Un crime puni de prison",
+                "C) Réservé aux fonctionnaires",
+                "D) Interdit en France"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "S28_23",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "En France, la liberté d'expression :",
+              "options": [
+                "A) Permet de tout dire sans limite",
+                "B) Est garantie mais limitée par la loi (diffamation, racisme interdits)",
+                "C) N'existe pas",
+                "D) Est réservée à la presse"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S28_24",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "Les parents ont le devoir de :",
+              "options": [
+                "A) Nourrir, entretenir et élever leurs enfants",
+                "B) Faire travailler leurs enfants",
+                "C) Laisser l'État éduquer seul leurs enfants",
+                "D) Choisir le métier de leurs enfants"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "S28_25",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "En France, le mariage forcé est :",
+              "options": [
+                "A) Autorisé",
+                "B) Strictement interdit et puni par la loi",
+                "C) Toléré pour certaines cultures",
+                "D) Légal si les parents sont d'accord"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S28_26",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "Si vous avez un problème avec votre employeur, qui peut vous aider ?",
+              "options": [
+                "A) Le Conseil des prud'hommes",
+                "B) La police nationale",
+                "C) Le maire",
+                "D) Le tribunal de commerce"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "S28_27",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "La liberté d'association permet de :",
+              "options": [
+                "A) S'armer contre l'État",
+                "B) Créer ou rejoindre librement une association légale",
+                "C) Ne pas payer d'impôts",
+                "D) Contourner la loi"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S28_28",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "Est-il obligatoire de secourir une personne en danger ?",
+              "options": [
+                "A) Non",
+                "B) Oui, c'est un devoir d'assistance",
+                "C) Uniquement si c'est un membre de la famille",
+                "D) Uniquement si on est médecin"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S28_29",
+              "theme_officiel": "Histoire, géographie, culture",
+              "enonce": "Qui était Jean Moulin ?",
+              "options": [
+                "A) Un roi de France",
+                "B) Un chef de la Résistance pendant la Seconde Guerre mondiale",
+                "C) Un écrivain célèbre",
+                "D) Le premier Président de la République"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S28_30",
+              "theme_officiel": "Histoire, géographie, culture",
+              "enonce": "Quel pays ne partage pas de frontière terrestre avec la France ?",
+              "options": [
+                "A) L'Allemagne",
+                "B) L'Italie",
+                "C) La Grande-Bretagne",
+                "D) La Belgique"
+              ],
+              "bonne_reponse": "C"
+            },
+            {
+              "id": "S28_31",
+              "theme_officiel": "Histoire, géographie, culture",
+              "enonce": "La Révolution française a commencé en :",
+              "options": [
+                "A) 1789",
+                "B) 1914",
+                "C) 1815",
+                "D) 1945"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "S28_32",
+              "theme_officiel": "Histoire, géographie, culture",
+              "enonce": "Quelle chaîne de montagnes sépare la France et l'Espagne ?",
+              "options": [
+                "A) Les Alpes",
+                "B) Les Pyrénées",
+                "C) Les Vosges",
+                "D) Le Jura"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S28_33",
+              "theme_officiel": "Histoire, géographie, culture",
+              "enonce": "Qui est l'auteur des 'Misérables' ?",
+              "options": [
+                "A) Molière",
+                "B) Victor Hugo",
+                "C) Émile Zola",
+                "D) Albert Camus"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S28_34",
+              "theme_officiel": "Histoire, géographie, culture",
+              "enonce": "Quel roi a fait construire le château de Versailles ?",
+              "options": [
+                "A) François Ier",
+                "B) Louis XVI",
+                "C) Louis XIV",
+                "D) Henri IV"
+              ],
+              "bonne_reponse": "C"
+            },
+            {
+              "id": "S28_35",
+              "theme_officiel": "Histoire, géographie, culture",
+              "enonce": "Quelle grande ville française se trouve sur la côte de la mer Méditerranée ?",
+              "options": [
+                "A) Strasbourg",
+                "B) Bordeaux",
+                "C) Marseille",
+                "D) Lille"
+              ],
+              "bonne_reponse": "C"
+            },
+            {
+              "id": "S28_36",
+              "theme_officiel": "Histoire, géographie, culture",
+              "enonce": "Jeanne d'Arc est célèbre pour :",
+              "options": [
+                "A) Avoir écrit des romans",
+                "B) Avoir combattu les Anglais pendant la guerre de Cent Ans",
+                "C) Avoir découvert le radium",
+                "D) Être la première présidente"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S28_37",
+              "theme_officiel": "Vivre dans la société française",
+              "enonce": "La carte Vitale permet de :",
+              "options": [
+                "A) Voter",
+                "B) Conduire",
+                "C) Faciliter le remboursement des frais médicaux",
+                "D) Prendre l'avion"
+              ],
+              "bonne_reponse": "C"
+            },
+            {
+              "id": "S28_38",
+              "theme_officiel": "Vivre dans la société française",
+              "enonce": "Le tri sélectif des déchets est :",
+              "options": [
+                "A) Interdit",
+                "B) Une pratique encouragée pour protéger l'environnement",
+                "C) Réservé aux entreprises",
+                "D) Une taxe supplémentaire"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S28_39",
+              "theme_officiel": "Vivre dans la société française",
+              "enonce": "Pour rechercher un emploi, vous pouvez vous inscrire à :",
+              "options": [
+                "A) La Sécurité Sociale",
+                "B) France Travail",
+                "C) La Préfecture",
+                "D) La CAF"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S28_40",
+              "theme_officiel": "Vivre dans la société française",
+              "enonce": "Le permis de conduire à points en France démarre avec un capital de :",
+              "options": [
+                "A) 6 points",
+                "B) 10 points",
+                "C) 12 points (après la période probatoire)",
+                "D) 20 points"
+              ],
+              "bonne_reponse": "C"
+            }
+          ]
+        },
+        "correction_commentee": {
+          "duree_min": 60,
+          "commun": true,
+          "consigne_formateur": "Analyse par thème officiel. Explication des pièges courants.",
+          "exercice_collectif": {
+            "format": "qcm",
+            "items": 40
+          }
+        },
+        "remediation_ciblee": {
+          "duree_min": 40,
+          "commun": false,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "remediation",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 62,
+              "format": "qcm",
+              "tache_type": "revisions_themes_faibles",
+              "consigne": "Revenez sur vos erreurs avec ces fiches.",
+              "items": 10,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_SIM_01",
+                "competence": "CE"
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "qcm",
+              "tache_type": "revisions_themes_faibles",
+              "consigne": "Corrigez vos erreurs avec ces nouveaux QCM.",
+              "items": 10,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_SIM_01",
+                "competence": "CE"
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "augmente",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "format": "qcm",
+              "tache_type": "revisions_themes_faibles",
+              "consigne": "Passez ces QCM d'approfondissement sur vos points faibles.",
+              "items": 10,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_SIM_01",
+                "competence": "CE"
+              }
+            }
+          }
+        },
+        "bilan": {
+          "duree_min": 25,
+          "commun": true,
+          "elements_obligatoires": [
+            "score_par_theme",
+            "seuil_reussite_simulation",
+            "plan_revision"
+          ],
+          "seuil_reussite_simulation": "32/40"
+        }
+      },
+      "types_exercices_attendus": [
+        "qcm"
+      ],
+      "mapping_phases_moteur": {
+        "phase_moteur_QCM_SIM": "phases.simulation",
+        "phase_moteur_REMEDIATION": "phases.remediation_ciblee"
+      }
+    },
+    {
+      "numero": 29,
+      "module_id": "M_OPTIONNEL_CIVIQUE",
+      "type": "SIMULATION_CIVIQUE",
+      "theme_id": "MODULE_CIV_SIM_02",
+      "domaine_irn": "citoyennete",
+      "duree_min": 180,
+      "objectif_communicatif": "S'entraîner à l'examen officiel de connaissances civiques dans les conditions réelles avec une nouvelle banque de questions (Sim 2).",
+      "civique_visible": true,
+      "themes_officiels_civique": [
+        "Principes et valeurs de la République",
+        "Système institutionnel et politique",
+        "Droits et devoirs",
+        "Histoire, géographie, culture",
+        "Vivre dans la société française"
+      ],
+      "phases": {
+        "briefing": {
+          "duree_min": 10,
+          "commun": true,
+          "consigne_formateur": "Rappel des consignes : 40 questions, 45 minutes, seuil de réussite 32 bonnes réponses. Gestion du temps.",
+          "exercice_collectif": {
+            "format": "qcm",
+            "items": 0
+          }
+        },
+        "simulation": {
+          "duree_min": 45,
+          "commun": false,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "augmente",
+              "etayage": "faible",
+              "consigne_max_mots": 8,
+              "critere_pct": 80,
+              "format": "qcm",
+              "tache_type": "examen_civique",
+              "consigne": "Passez l'examen.",
+              "items": 40,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_SIM_02",
+                "competence": "CE"
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "augmente",
+              "etayage": "faible",
+              "consigne_max_mots": 12,
+              "critere_pct": 80,
+              "format": "qcm",
+              "tache_type": "examen_civique",
+              "consigne": "Passez l'examen blanc numéro 2.",
+              "items": 40,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_SIM_02",
+                "competence": "CE"
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "augmente",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "format": "qcm",
+              "tache_type": "examen_civique",
+              "consigne": "Répondez aux 40 QCM de l'examen civique numéro 2.",
+              "items": 40,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_SIM_02",
+                "competence": "CE"
+              }
+            }
+          },
+          "banque_qcm_simulation": [
+            {
+              "id": "S29_01",
+              "theme_officiel": "Principes et valeurs de la République",
+              "enonce": "Le Panthéon est un monument dédié à :",
+              "options": [
+                "A) La famille royale",
+                "B) L'armée française",
+                "C) Aux grands personnages de la République",
+                "D) À la religion catholique"
+              ],
+              "bonne_reponse": "C"
+            },
+            {
+              "id": "S29_02",
+              "theme_officiel": "Principes et valeurs de la République",
+              "enonce": "La fête nationale du 14 juillet célèbre :",
+              "options": [
+                "A) La naissance de Napoléon",
+                "B) La Prise de la Bastille et la Fête de la Fédération",
+                "C) La fin de la guerre",
+                "D) L'élection du premier président"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S29_03",
+              "theme_officiel": "Principes et valeurs de la République",
+              "enonce": "Dans la devise française, 'Liberté' veut dire que :",
+              "options": [
+                "A) On peut ignorer la loi",
+                "B) On peut faire ce que l'on veut si on ne nuit pas à autrui",
+                "C) On ne paie pas d'impôts",
+                "D) L'école n'est pas obligatoire"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S29_04",
+              "theme_officiel": "Principes et valeurs de la République",
+              "enonce": "La laïcité garantit :",
+              "options": [
+                "A) L'interdiction des signes religieux dans la rue",
+                "B) La neutralité de l'État et la liberté de conscience",
+                "C) La suppression des jours fériés religieux",
+                "D) L'obligation de manger la même chose à l'école"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S29_05",
+              "theme_officiel": "Principes et valeurs de la République",
+              "enonce": "La République française est une république 'sociale', c'est-à-dire que :",
+              "options": [
+                "A) Elle organise des fêtes",
+                "B) Elle garantit la protection sociale et la solidarité nationale",
+                "C) Tout est gratuit",
+                "D) L'État contrôle les réseaux sociaux"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S29_06",
+              "theme_officiel": "Principes et valeurs de la République",
+              "enonce": "L'égalité devant la loi signifie :",
+              "options": [
+                "A) Que la loi est la même pour tous",
+                "B) Que tous les citoyens ont le même âge",
+                "C) Que tout le monde a la même religion",
+                "D) Que les peines de prison sont les mêmes pour tous"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "S29_07",
+              "theme_officiel": "Principes et valeurs de la République",
+              "enonce": "Que représente la figure de Marianne ?",
+              "options": [
+                "A) La reine de France",
+                "B) La République française et ses valeurs",
+                "C) La première femme présidente",
+                "D) La Révolution industrielle"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S29_08",
+              "theme_officiel": "Principes et valeurs de la République",
+              "enonce": "La séparation des pouvoirs permet :",
+              "options": [
+                "A) De concentrer tout le pouvoir",
+                "B) D'éviter la dictature en séparant les pouvoirs",
+                "C) De diviser la France en deux",
+                "D) De séparer la police de l'armée"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S29_09",
+              "theme_officiel": "Principes et valeurs de la République",
+              "enonce": "Quel est le statut de l'école publique en France ?",
+              "options": [
+                "A) Gratuite, laïque et obligatoire",
+                "B) Payante et obligatoire",
+                "C) Gratuite et religieuse",
+                "D) Facultative et payante"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "S29_10",
+              "theme_officiel": "Principes et valeurs de la République",
+              "enonce": "La fraternité est une valeur qui encourage :",
+              "options": [
+                "A) L'égoïsme",
+                "B) L'entraide et la solidarité entre citoyens",
+                "C) La guerre",
+                "D) La compétition déloyale"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S29_11",
+              "theme_officiel": "Principes et valeurs de la République",
+              "enonce": "L'usage du français comme langue de la République :",
+              "options": [
+                "A) Est obligatoire dans les administrations",
+                "B) Est interdit dans la rue",
+                "C) Est facultatif au tribunal",
+                "D) N'est pas inscrit dans la Constitution"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "S29_12",
+              "theme_officiel": "Système institutionnel et politique",
+              "enonce": "Qui nomme le Premier ministre ?",
+              "options": [
+                "A) Les députés",
+                "B) Le Président de la République",
+                "C) Les juges",
+                "D) Le Conseil constitutionnel"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S29_13",
+              "theme_officiel": "Système institutionnel et politique",
+              "enonce": "Les lois sont discutées et votées par :",
+              "options": [
+                "A) L'Assemblée nationale et le Sénat",
+                "B) Les préfets",
+                "C) Les ministres seuls",
+                "D) Les maires"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "S29_14",
+              "theme_officiel": "Système institutionnel et politique",
+              "enonce": "Qui veille au respect de la Constitution ?",
+              "options": [
+                "A) Le maire de Paris",
+                "B) Le Conseil constitutionnel",
+                "C) Le Premier ministre",
+                "D) La police municipale"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S29_15",
+              "theme_officiel": "Système institutionnel et politique",
+              "enonce": "Où siège l'Assemblée nationale ?",
+              "options": [
+                "A) Au Palais de l'Élysée",
+                "B) Au Palais Bourbon",
+                "C) Au Palais du Luxembourg",
+                "D) Au Louvre"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S29_16",
+              "theme_officiel": "Système institutionnel et politique",
+              "enonce": "Où siège le Sénat ?",
+              "options": [
+                "A) Au Palais du Luxembourg",
+                "B) À Matignon",
+                "C) À Notre-Dame",
+                "D) À la Tour Eiffel"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "S29_17",
+              "theme_officiel": "Système institutionnel et politique",
+              "enonce": "Dans une commune, l'état civil est géré par :",
+              "options": [
+                "A) La préfecture",
+                "B) La mairie",
+                "C) Le tribunal",
+                "D) L'hôpital"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S29_18",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "Le droit à l'éducation en France est garanti pour :",
+              "options": [
+                "A) Seulement les enfants français",
+                "B) Tous les enfants résidant en France",
+                "C) Seulement les garçons",
+                "D) Seulement les enfants nés à Paris"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S29_19",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "L'excision et les mutilations sexuelles féminines sont :",
+              "options": [
+                "A) Tolérées",
+                "B) Sévèrement punies par la loi",
+                "C) Autorisées",
+                "D) Pratiquées à l'hôpital"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S29_20",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "La liberté syndicale donne le droit de :",
+              "options": [
+                "A) Ne pas payer d'impôts",
+                "B) Se regrouper pour défendre ses droits au travail",
+                "C) Insulter son employeur",
+                "D) Travailler sans contrat"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S29_21",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "Les violences conjugales sont :",
+              "options": [
+                "A) Une affaire privée",
+                "B) Des crimes ou délits punis par la loi",
+                "C) Autorisées si légères",
+                "D) Autorisées pour l'homme seulement"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S29_22",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "La liberté de circulation en France permet :",
+              "options": [
+                "A) De se déplacer librement sur tout le territoire national",
+                "B) De conduire sans permis",
+                "C) De voyager sans payer le train",
+                "D) De franchir les frontières sans passeport ni visa"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "S29_23",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "En France, chaque année, vous avez l'obligation de :",
+              "options": [
+                "A) Faire une déclaration de vos revenus aux impôts",
+                "B) Changer de carte d'identité",
+                "C) Déménager",
+                "D) Acheter une voiture"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "S29_24",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "Le secret médical garantit que :",
+              "options": [
+                "A) Le médecin ne dit rien à son patient",
+                "B) Le médecin ne révèle pas les informations de santé de son patient",
+                "C) Les médicaments sont cachés",
+                "D) Les hôpitaux sont secrets"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S29_25",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "La peine de mort en France :",
+              "options": [
+                "A) A été abolie",
+                "B) Est en vigueur",
+                "C) Est appliquée par les maires",
+                "D) Ne s'applique qu'aux hommes"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "S29_26",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "L'autorité parentale est exercée :",
+              "options": [
+                "A) Par le père uniquement",
+                "B) Par la mère uniquement",
+                "C) Conjointement par les deux parents",
+                "D) Par les grands-parents"
+              ],
+              "bonne_reponse": "C"
+            },
+            {
+              "id": "S29_27",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "Le respect du code de la route est :",
+              "options": [
+                "A) Obligatoire pour la sécurité de tous",
+                "B) Facultatif la nuit",
+                "C) Conseillé mais pas puni",
+                "D) Obligatoire seulement pour les voitures"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "S29_28",
+              "theme_officiel": "Droits et devoirs",
+              "enonce": "En France, la liberté de la presse signifie que :",
+              "options": [
+                "A) Les journaux appartiennent à l'État",
+                "B) Les médias peuvent publier des informations librement",
+                "C) Il n'y a qu'un journal autorisé",
+                "D) On ne critique pas le gouvernement"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S29_29",
+              "theme_officiel": "Histoire, géographie, culture",
+              "enonce": "En 1944, quel droit les femmes ont-elles obtenu ?",
+              "options": [
+                "A) Le droit d'aller à l'école",
+                "B) Le droit de vote",
+                "C) Le droit de conduire",
+                "D) Le droit de travailler"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S29_30",
+              "theme_officiel": "Histoire, géographie, culture",
+              "enonce": "La loi de 1905 est historique car elle instaure :",
+              "options": [
+                "A) La Sécurité Sociale",
+                "B) La séparation des Églises et de l'État",
+                "C) L'école obligatoire",
+                "D) La peine de mort"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S29_31",
+              "theme_officiel": "Histoire, géographie, culture",
+              "enonce": "Quel empereur français a créé le Code civil ?",
+              "options": [
+                "A) Napoléon Bonaparte",
+                "B) Louis XVI",
+                "C) Charlemagne",
+                "D) Clovis"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "S29_32",
+              "theme_officiel": "Histoire, géographie, culture",
+              "enonce": "La France est baignée à l'ouest par :",
+              "options": [
+                "A) L'Océan Atlantique",
+                "B) La Mer Méditerranée",
+                "C) La Manche",
+                "D) La Mer du Nord"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "S29_33",
+              "theme_officiel": "Histoire, géographie, culture",
+              "enonce": "La Corse est :",
+              "options": [
+                "A) Un pays voisin",
+                "B) Une île française en Méditerranée",
+                "C) Une région des Alpes",
+                "D) Un DOM-TOM"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S29_34",
+              "theme_officiel": "Histoire, géographie, culture",
+              "enonce": "Qui est un scientifique célèbre français ?",
+              "options": [
+                "A) Louis Pasteur",
+                "B) Molière",
+                "C) Auguste Rodin",
+                "D) Gustave Eiffel"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "S29_35",
+              "theme_officiel": "Histoire, géographie, culture",
+              "enonce": "Le Louvre est un célèbre :",
+              "options": [
+                "A) Musée à Paris",
+                "B) Stade de football",
+                "C) Tribunal",
+                "D) Parc d'attractions"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "S29_36",
+              "theme_officiel": "Histoire, géographie, culture",
+              "enonce": "Les départements d'outre-mer (DOM) français comprennent :",
+              "options": [
+                "A) La Martinique, La Réunion, la Guyane, Mayotte",
+                "B) La Corse et la Bretagne",
+                "C) Monaco et Andorre",
+                "D) Madagascar et l'Algérie"
+              ],
+              "bonne_reponse": "A"
+            },
+            {
+              "id": "S29_37",
+              "theme_officiel": "Vivre dans la société française",
+              "enonce": "La CAF peut vous aider financièrement pour :",
+              "options": [
+                "A) Rembourser les médicaments",
+                "B) Le logement et la famille",
+                "C) Payer vos amendes",
+                "D) Acheter une entreprise"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S29_38",
+              "theme_officiel": "Vivre dans la société française",
+              "enonce": "Le parcours de soins coordonnés implique de :",
+              "options": [
+                "A) Aller aux urgences",
+                "B) Déclarer un médecin traitant",
+                "C) Payer tous les soins",
+                "D) Aller chez un spécialiste sans ordonnance"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "S29_39",
+              "theme_officiel": "Vivre dans la société française",
+              "enonce": "En cas d'incendie, quel numéro appeler ?",
+              "options": [
+                "A) Le 15",
+                "B) Le 17",
+                "C) Le 18",
+                "D) Le 119"
+              ],
+              "bonne_reponse": "C"
+            },
+            {
+              "id": "S29_40",
+              "theme_officiel": "Vivre dans la société française",
+              "enonce": "Dans un lieu public fermé, il est :",
+              "options": [
+                "A) Interdit de fumer et de vapoter",
+                "B) Autorisé de fumer",
+                "C) Obligatoire de payer une taxe",
+                "D) Interdit de téléphoner"
+              ],
+              "bonne_reponse": "A"
+            }
+          ]
+        },
+        "correction_commentee": {
+          "duree_min": 60,
+          "commun": true,
+          "consigne_formateur": "Analyse par thème officiel. Révision des points bloquants.",
+          "exercice_collectif": {
+            "format": "qcm",
+            "items": 40
+          }
+        },
+        "remediation_ciblee": {
+          "duree_min": 40,
+          "commun": false,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "remediation",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 62,
+              "format": "qcm",
+              "tache_type": "revisions_themes_faibles",
+              "consigne": "Révisez les questions sur les Droits.",
+              "items": 10,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_SIM_02",
+                "competence": "CE"
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "qcm",
+              "tache_type": "revisions_themes_faibles",
+              "consigne": "Corrigez vos erreurs sur l'Histoire.",
+              "items": 10,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_SIM_02",
+                "competence": "CE"
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "augmente",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "format": "qcm",
+              "tache_type": "revisions_themes_faibles",
+              "consigne": "Faites ces QCM complémentaires sur les Institutions.",
+              "items": 10,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_SIM_02",
+                "competence": "CE"
+              }
+            }
+          }
+        },
+        "bilan": {
+          "duree_min": 25,
+          "commun": true,
+          "elements_obligatoires": [
+            "score_par_theme",
+            "seuil_reussite_simulation",
+            "plan_revision"
+          ],
+          "seuil_reussite_simulation": "32/40"
+        }
+      },
+      "types_exercices_attendus": [
+        "qcm"
+      ],
+      "mapping_phases_moteur": {
+        "phase_moteur_QCM_SIM": "phases.simulation",
+        "phase_moteur_REMEDIATION": "phases.remediation_ciblee"
+      }
+    },
+    {
+      "numero": 30,
+      "module_id": "M_OPTIONNEL_CIVIQUE",
+      "type": "BILAN_ORIENTATION",
+      "theme_id": "MODULE_CIV_BILAN_01",
+      "domaine_irn": "transversal",
+      "duree_min": 180,
+      "objectif_communicatif": "Faire le bilan du parcours et orienter les candidats vers le passage officiel des examens.",
+      "civique_visible": true,
+      "phases": {
+        "bilan_structures": {
+          "duree_min": 30,
+          "commun": true,
+          "consigne_formateur": "Synthèse des acquis sur les piliers linguistiques. Remise des attestations.",
+          "exercice_collectif": {
+            "format": "qcm",
+            "items": 0
+          }
+        },
+        "bilan_civique": {
+          "duree_min": 30,
+          "commun": true,
+          "consigne_formateur": "Analyse des scores aux simulations S28 et S29. Identification des thèmes forts et faibles.",
+          "exercice_collectif": {
+            "format": "qcm",
+            "items": 0
+          }
+        },
+        "orientation_examens": {
+          "duree_min": 40,
+          "commun": true,
+          "consigne_formateur": "Explication claire : TCF IRN (test de langue B1 oral/écrit) vs Examen Civique (QCM de connaissances). Dates et démarches séparées.",
+          "exercice_collectif": {
+            "format": "qcm",
+            "items": 0
+          }
+        },
+        "plan_revision": {
+          "duree_min": 40,
+          "commun": false,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "remediation",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 62,
+              "format": "qcm",
+              "tache_type": "plan_revision",
+              "consigne": "Révisez le livret citoyen en images.",
+              "items": 10,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_BILAN_01",
+                "competence": "CE"
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "qcm",
+              "tache_type": "plan_revision",
+              "consigne": "Refaites les QCM d'entraînement sur l'application.",
+              "items": 10,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_BILAN_01",
+                "competence": "CE"
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "augmente",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "format": "qcm",
+              "tache_type": "plan_revision",
+              "consigne": "Préparez votre entretien de naturalisation et le TCF.",
+              "items": 10,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_BILAN_01",
+                "competence": "CE"
+              }
+            }
+          }
+        },
+        "cloture": {
+          "duree_min": 40,
+          "commun": true,
+          "elements_obligatoires": [
+            "questions_reponses",
+            "prochaines_etapes"
+          ],
+          "note_formateur": "S'assurer que chaque apprenant sait quelle démarche il doit faire la semaine suivante."
+        }
+      },
+      "types_exercices_attendus": [
+        "qcm"
+      ],
+      "mapping_phases_moteur": {
+        "phase_moteur_REVISION": "phases.plan_revision"
+      }
+    }
+  ]
+}

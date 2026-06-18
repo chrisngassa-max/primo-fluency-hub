@@ -1,0 +1,961 @@
+{
+  "version": "plan_cadre_v1_module_optionnel_part_1",
+  "parcours_id": "plan_cadre_v1_module_optionnel",
+  "nb_seances": 10,
+  "volume_h": 30,
+  "activation": {
+    "enabled_by_default": false,
+    "conditions_all": [
+      "re_signature_civique == true",
+      "examen_civique_obligatoire == true"
+    ],
+    "profils_eligibles": [
+      "naturalisation NAT",
+      "premiere_CSP",
+      "premiere_CR_eligible"
+    ],
+    "profils_exclus": [
+      "renouvellement_titre",
+      "titre_etudiant",
+      "titre_temporaire_sans_civique",
+      "refugie_titre_seul",
+      "dispense_legale"
+    ]
+  },
+  "student_profile_schema": {
+    "source": "test_entree",
+    "niveaux_par_competence": {
+      "CO": "A0|A1|A2|B1|B2",
+      "CE": "A0|A1|A2|B1|B2",
+      "EO": "A0|A1|A2|B1|B2",
+      "EE": "A0|A1|A2|B1|B2"
+    },
+    "niveaux_structures_par_pilier": {
+      "conjugaison": "A0|A1|A2|B1|B2",
+      "grammaire": "A0|A1|A2|B1|B2",
+      "phonetique": "A0|A1|A2|B1|B2",
+      "vocabulaire": "A0|A1|A2|B1|B2"
+    },
+    "cluster_mapping": {
+      "bas": "A0-A1 faible",
+      "standard": "A1 fort-A2",
+      "haut": "B1-B2 (élévation manuelle formateur)"
+    }
+  },
+  "seances": [
+    {
+      "numero": 21,
+      "module_id": "M_OPTIONNEL_TRANSVERSAL",
+      "type": "STRUCTURES_TRANSVERSALES",
+      "theme_id": "MODULE_STRUCT_CONJ_01",
+      "domaine_irn": "transversal",
+      "duree_min": 180,
+      "objectif_communicatif": "Consolider la maîtrise des temps verbaux (présent, passé composé, futur proche) pour le TCF IRN et l'examen civique",
+      "civique_visible": false,
+      "support_commun": "Frise chronologique des démarches d'intégration + textes courts administratifs",
+      "lexique_noyau": [
+        "passé",
+        "présent",
+        "futur",
+        "hier",
+        "aujourd'hui",
+        "demain",
+        "démarche",
+        "rendez-vous",
+        "formulaire"
+      ],
+      "points_structure": {
+        "pilier_principal": "conjugaison",
+        "contenu": "Alternance présent / passé composé / futur proche dans le récit d'expérience",
+        "pilliers_secondaires": [
+          "vocabulaire"
+        ]
+      },
+      "phases": {
+        "activation": {
+          "duree_min": 15,
+          "commun": true,
+          "consigne_formateur": "Rappel des objectifs du module optionnel. Placer des actions d'intégration sur une ligne du temps (avant, maintenant, plus tard).",
+          "exercice_collectif": {
+            "format": "qcm",
+            "format_pedagogique_alias": "frise_chronologique",
+            "items": 3
+          }
+        },
+        "structures_conjugaison": {
+          "duree_min": 90,
+          "commun": false,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "remediation",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 62,
+              "format": "texte_lacunaire",
+              "tache_type": "identifier_temps",
+              "consigne": "Choisissez le bon verbe au présent.",
+              "items": 10,
+              "metadata_exercice": {
+                "theme_id": "MODULE_STRUCT_CONJ_01",
+                "competence": "Structures",
+                "pilier": "conjugaison"
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "conjuguer_temps_usuels",
+              "consigne": "Complétez le texte avec le verbe au passé composé ou au futur.",
+              "items": 15,
+              "metadata_exercice": {
+                "theme_id": "MODULE_STRUCT_CONJ_01",
+                "competence": "Structures",
+                "pilier": "conjugaison"
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "alternance_complexe",
+              "consigne": "Conjuguez les verbes entre parenthèses au temps qui convient pour donner du sens au récit.",
+              "items": 15,
+              "metadata_exercice": {
+                "theme_id": "MODULE_STRUCT_CONJ_01",
+                "competence": "Structures",
+                "pilier": "conjugaison"
+              }
+            }
+          }
+        },
+        "co_ce_pont_irn": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Témoignage écrit et audio d'une personne racontant son parcours depuis son arrivée en France.",
+          "variants_cluster": {
+            "bas": {
+              "format": "comprehension_orale",
+              "format_pedagogique_alias": "qcm",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "consigne": "Écoutez. Qu'a fait la personne hier ?",
+              "items": 4
+            },
+            "standard": {
+              "format": "comprehension_ecrite",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "consigne": "Lisez le témoignage. Remettez les trois événements dans l'ordre.",
+              "items": 5
+            },
+            "haut": {
+              "format": "comprehension_ecrite",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "consigne": "Relevez les indices temporels qui marquent une évolution dans le projet de la personne.",
+              "items": 5
+            }
+          }
+        },
+        "eo_ee_production": {
+          "duree_min": 20,
+          "commun": false,
+          "variants_cluster": {
+            "bas": {
+              "format": "production_orale",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "limite_mots_max": 20,
+              "consigne": "Dites ce que vous avez fait ce matin."
+            },
+            "standard": {
+              "format": "expression_ecrite",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "limite_mots_max": 60,
+              "consigne": "Écrivez 3 phrases : une sur votre passé, une sur aujourd'hui, une sur demain."
+            },
+            "haut": {
+              "format": "expression_ecrite",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "limite_mots_max": 90,
+              "consigne": "Rédigez un court paragraphe expliquant pourquoi vous avez commencé vos démarches et ce que vous ferez ensuite."
+            }
+          }
+        },
+        "bilan": {
+          "duree_min": 15,
+          "commun": true,
+          "elements_obligatoires": [
+            "phrase_modele",
+            "auto_evaluation",
+            "erreur_type_commune"
+          ],
+          "phrase_modele": "Hier j'ai pris rendez-vous, aujourd'hui je prépare mon dossier, demain j'irai à la préfecture.",
+          "erreur_type_commune": "Oubli de l'auxiliaire au passé composé."
+        }
+      },
+      "types_exercices_attendus": [
+        "qcm",
+        "texte_lacunaire",
+        "comprehension_orale",
+        "comprehension_ecrite",
+        "production_orale",
+        "expression_ecrite"
+      ],
+      "mapping_phases_moteur": {
+        "phase_moteur_Structures": "phases.structures_conjugaison",
+        "phase_moteur_CO_CE": "phases.co_ce_pont_irn",
+        "phase_moteur_EO_EE": "phases.eo_ee_production"
+      }
+    },
+    {
+      "numero": 22,
+      "module_id": "M_OPTIONNEL_TRANSVERSAL",
+      "type": "STRUCTURES_TRANSVERSALES",
+      "theme_id": "MODULE_STRUCT_GRAM_01",
+      "domaine_irn": "transversal",
+      "duree_min": 180,
+      "objectif_communicatif": "Maîtriser les accords, l'usage des pronoms et la syntaxe pour sécuriser l'expression.",
+      "civique_visible": false,
+      "support_commun": "Courriers administratifs types avec erreurs volontaires à corriger.",
+      "lexique_noyau": [
+        "monsieur",
+        "madame",
+        "signature",
+        "document",
+        "envoyer",
+        "recevoir",
+        "réponse"
+      ],
+      "points_structure": {
+        "pilier_principal": "grammaire",
+        "contenu": "Accords de base (genre/nombre), pronoms COD/COI usuels (le, la, lui), syntaxe de la phrase simple",
+        "pilliers_secondaires": [
+          "vocabulaire"
+        ]
+      },
+      "phases": {
+        "activation": {
+          "duree_min": 15,
+          "commun": true,
+          "consigne_formateur": "Afficher une phrase mal construite. Demander à la classe de la corriger ensemble.",
+          "exercice_collectif": {
+            "format": "texte_lacunaire",
+            "items": 1
+          }
+        },
+        "structures_grammaire": {
+          "duree_min": 90,
+          "commun": false,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "qcm",
+              "tache_type": "accord_genre_nombre",
+              "consigne": "Choisissez : le, la, les.",
+              "items": 12,
+              "metadata_exercice": {
+                "theme_id": "MODULE_STRUCT_GRAM_01",
+                "competence": "Structures",
+                "pilier": "grammaire"
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "pronoms_complements",
+              "consigne": "Remplacez le mot souligné par le, la, l' ou les.",
+              "items": 12,
+              "metadata_exercice": {
+                "theme_id": "MODULE_STRUCT_GRAM_01",
+                "competence": "Structures",
+                "pilier": "grammaire"
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "syntaxe_complexe",
+              "consigne": "Reconstruisez les phrases en plaçant le pronom au bon endroit.",
+              "items": 10,
+              "metadata_exercice": {
+                "theme_id": "MODULE_STRUCT_GRAM_01",
+                "competence": "Structures",
+                "pilier": "grammaire"
+              }
+            }
+          }
+        },
+        "co_ce_pont_irn": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Une note d'information de la mairie concernant les règles de stationnement.",
+          "variants_cluster": {
+            "bas": {
+              "format": "comprehension_ecrite",
+              "format_pedagogique_alias": "vrai_faux",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "consigne": "Vrai ou Faux ? Cochez la case.",
+              "items": 4
+            },
+            "standard": {
+              "format": "comprehension_ecrite",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "consigne": "Lisez. A qui s'adresse ce document et que demande-t-il ?",
+              "items": 5
+            },
+            "haut": {
+              "format": "comprehension_ecrite",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "consigne": "Identifiez les obligations et les exceptions mentionnées dans la note.",
+              "items": 5
+            }
+          }
+        },
+        "eo_ee_production": {
+          "duree_min": 20,
+          "commun": false,
+          "variants_cluster": {
+            "bas": {
+              "format": "expression_ecrite",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "limite_mots_max": 20,
+              "consigne": "Écrivez 2 phrases avec le mot 'document'."
+            },
+            "standard": {
+              "format": "production_orale",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "limite_mots_max": 50,
+              "consigne": "Enregistrez-vous. Demandez poliment si la personne a reçu votre lettre."
+            },
+            "haut": {
+              "format": "expression_ecrite",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "limite_mots_max": 90,
+              "consigne": "Rédigez un courriel à la mairie pour confirmer l'envoi de vos documents."
+            }
+          }
+        },
+        "bilan": {
+          "duree_min": 15,
+          "commun": true,
+          "elements_obligatoires": [
+            "phrase_modele",
+            "auto_evaluation"
+          ],
+          "phrase_modele": "Le document ? Je l'ai envoyé hier.",
+          "erreur_type_commune": "Erreur de placement du pronom avant le verbe."
+        }
+      },
+      "types_exercices_attendus": [
+        "qcm",
+        "texte_lacunaire",
+        "comprehension_ecrite",
+        "production_orale",
+        "expression_ecrite"
+      ],
+      "mapping_phases_moteur": {
+        "phase_moteur_Structures": "phases.structures_grammaire",
+        "phase_moteur_CO_CE": "phases.co_ce_pont_irn",
+        "phase_moteur_EO_EE": "phases.eo_ee_production"
+      }
+    },
+    {
+      "numero": 23,
+      "module_id": "M_OPTIONNEL_TRANSVERSAL",
+      "type": "STRUCTURES_TRANSVERSALES",
+      "theme_id": "MODULE_STRUCT_PHONO_01",
+      "domaine_irn": "transversal",
+      "duree_min": 180,
+      "objectif_communicatif": "Améliorer la discrimination auditive et la prosodie pour la compréhension et la production orales.",
+      "civique_visible": false,
+      "support_commun": "Extraits d'annonces sonores (gares, administration) et dialogues rapides.",
+      "lexique_noyau": [
+        "écouter",
+        "entendre",
+        "répéter",
+        "prononcer",
+        "accent",
+        "rythme",
+        "question",
+        "affirmation"
+      ],
+      "points_structure": {
+        "pilier_principal": "phonetique",
+        "contenu": "Discrimination de sons proches (b/v, s/z), repérage des liaisons obligatoires, courbes intonatives.",
+        "pilliers_secondaires": [
+          "comprehension_orale"
+        ]
+      },
+      "phases": {
+        "activation": {
+          "duree_min": 15,
+          "commun": true,
+          "consigne_formateur": "Jeu du téléphone arabe pour démontrer l'importance de la prononciation.",
+          "exercice_collectif": {
+            "format": "production_orale",
+            "items": 1
+          }
+        },
+        "structures_phonetique": {
+          "duree_min": 90,
+          "commun": false,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "remediation",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 62,
+              "format": "qcm",
+              "format_pedagogique_alias": "discrimination_audio",
+              "tache_type": "paires_minimales",
+              "consigne": "Écoutez. C'est le même mot ou différent ?",
+              "items": 15,
+              "metadata_exercice": {
+                "theme_id": "MODULE_STRUCT_PHONO_01",
+                "competence": "Structures",
+                "pilier": "phonetique"
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "qcm",
+              "tache_type": "reperage_intonation",
+              "consigne": "Écoutez la phrase. Est-ce une question ou une affirmation ?",
+              "items": 15,
+              "metadata_exercice": {
+                "theme_id": "MODULE_STRUCT_PHONO_01",
+                "competence": "Structures",
+                "pilier": "phonetique"
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "dictee_liaisons",
+              "consigne": "Écoutez et écrivez les mots manquants en respectant les liaisons.",
+              "items": 10,
+              "metadata_exercice": {
+                "theme_id": "MODULE_STRUCT_PHONO_01",
+                "competence": "Structures",
+                "pilier": "phonetique"
+              }
+            }
+          }
+        },
+        "co_ce_pont_irn": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Série de messages d'accueil téléphoniques (CAF, Préfecture).",
+          "variants_cluster": {
+            "bas": {
+              "format": "comprehension_orale",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "consigne": "Écoutez. Quel service appelez-vous ?",
+              "items": 4
+            },
+            "standard": {
+              "format": "comprehension_orale",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "consigne": "Écoutez. Sur quelle touche faut-il appuyer pour parler à un conseiller ?",
+              "items": 5
+            },
+            "haut": {
+              "format": "comprehension_orale",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "consigne": "Relevez les horaires d'ouverture exceptionnels annoncés dans le message.",
+              "items": 5
+            }
+          }
+        },
+        "eo_ee_production": {
+          "duree_min": 20,
+          "commun": false,
+          "variants_cluster": {
+            "bas": {
+              "format": "production_orale",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "limite_mots_max": 15,
+              "consigne": "Répétez la phrase avec la bonne intonation."
+            },
+            "standard": {
+              "format": "production_orale",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "limite_mots_max": 40,
+              "consigne": "Enregistrez-vous. Lisez le texte à voix haute en faisant les liaisons."
+            },
+            "haut": {
+              "format": "production_orale",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "limite_mots_max": 90,
+              "consigne": "Laissez un message vocal clair et précis pour expliquer votre absence à un rendez-vous."
+            }
+          }
+        },
+        "bilan": {
+          "duree_min": 15,
+          "commun": true,
+          "elements_obligatoires": [
+            "phrase_modele",
+            "erreur_type_commune"
+          ],
+          "phrase_modele": "Ils_ont un rendez-vous à la préfecture. (Liaison)",
+          "erreur_type_commune": "Absence de liaison modifiant le sens (ils ont / ils sont)."
+        }
+      },
+      "types_exercices_attendus": [
+        "qcm",
+        "texte_lacunaire",
+        "comprehension_orale",
+        "production_orale"
+      ],
+      "mapping_phases_moteur": {
+        "phase_moteur_Structures": "phases.structures_phonetique",
+        "phase_moteur_CO_CE": "phases.co_ce_pont_irn",
+        "phase_moteur_EO_EE": "phases.eo_ee_production"
+      }
+    },
+    {
+      "numero": 24,
+      "module_id": "M_OPTIONNEL_TRANSVERSAL",
+      "type": "STRUCTURES_TRANSVERSALES",
+      "theme_id": "MODULE_STRUCT_VOC_01",
+      "domaine_irn": "transversal",
+      "duree_min": 180,
+      "objectif_communicatif": "Renforcer le lexique transversal et institutionnel nécessaire à la compréhension des sujets TCF et civiques.",
+      "civique_visible": false,
+      "support_commun": "Cartes mentales thématiques (société, institutions, emploi, logement).",
+      "lexique_noyau": [
+        "droit",
+        "devoir",
+        "loi",
+        "citoyen",
+        "société",
+        "égalité",
+        "respect",
+        "engagement"
+      ],
+      "points_structure": {
+        "pilier_principal": "vocabulaire",
+        "contenu": "Synonymes, antonymes, familles de mots institutionnels.",
+        "pilliers_secondaires": [
+          "comprehension_ecrite"
+        ]
+      },
+      "phases": {
+        "activation": {
+          "duree_min": 15,
+          "commun": true,
+          "consigne_formateur": "Créer une carte mentale au tableau autour du mot 'Citoyen'.",
+          "exercice_collectif": {
+            "format": "qcm",
+            "items": 0
+          }
+        },
+        "structures_vocabulaire": {
+          "duree_min": 90,
+          "commun": false,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "qcm",
+              "format_pedagogique_alias": "association_mot_image",
+              "tache_type": "identification_mots_cles",
+              "consigne": "Associez le mot à l'image.",
+              "items": 15,
+              "metadata_exercice": {
+                "theme_id": "MODULE_STRUCT_VOC_01",
+                "competence": "Structures",
+                "pilier": "vocabulaire"
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "familles_de_mots",
+              "consigne": "Complétez avec un mot de la famille de 'loi' (légal, illégal).",
+              "items": 15,
+              "metadata_exercice": {
+                "theme_id": "MODULE_STRUCT_VOC_01",
+                "competence": "Structures",
+                "pilier": "vocabulaire"
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "augmente",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "format": "qcm",
+              "tache_type": "synonymes_antonymes",
+              "consigne": "Trouvez le synonyme du mot souligné dans la phrase.",
+              "items": 15,
+              "metadata_exercice": {
+                "theme_id": "MODULE_STRUCT_VOC_01",
+                "competence": "Structures",
+                "pilier": "vocabulaire"
+              }
+            }
+          }
+        },
+        "co_ce_pont_irn": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Article simplifié sur le rôle d'une association de quartier.",
+          "variants_cluster": {
+            "bas": {
+              "format": "comprehension_ecrite",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "consigne": "Lisez. Que fait l'association ?",
+              "items": 4
+            },
+            "standard": {
+              "format": "comprehension_ecrite",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "consigne": "Trouvez dans le texte trois actions menées par les bénévoles.",
+              "items": 5
+            },
+            "haut": {
+              "format": "comprehension_ecrite",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "consigne": "Quel est le but principal de l'association d'après le président interrogé ?",
+              "items": 5
+            }
+          }
+        },
+        "eo_ee_production": {
+          "duree_min": 20,
+          "commun": false,
+          "variants_cluster": {
+            "bas": {
+              "format": "expression_ecrite",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "limite_mots_max": 20,
+              "consigne": "Recopiez les trois mots les plus importants."
+            },
+            "standard": {
+              "format": "expression_ecrite",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "limite_mots_max": 50,
+              "consigne": "Écrivez une phrase pour expliquer ce qu'est une association."
+            },
+            "haut": {
+              "format": "production_orale",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "limite_mots_max": 90,
+              "consigne": "Enregistrez-vous. Expliquez pourquoi il est important d'aider les autres dans la société."
+            }
+          }
+        },
+        "bilan": {
+          "duree_min": 15,
+          "commun": true,
+          "elements_obligatoires": [
+            "phrase_modele",
+            "auto_evaluation"
+          ],
+          "phrase_modele": "C'est un droit, mais c'est aussi un devoir.",
+          "erreur_type_commune": "Confusion entre termes proches (légal/loyal)."
+        }
+      },
+      "types_exercices_attendus": [
+        "qcm",
+        "texte_lacunaire",
+        "comprehension_ecrite",
+        "production_orale",
+        "expression_ecrite"
+      ],
+      "mapping_phases_moteur": {
+        "phase_moteur_Structures": "phases.structures_vocabulaire",
+        "phase_moteur_CO_CE": "phases.co_ce_pont_irn",
+        "phase_moteur_EO_EE": "phases.eo_ee_production"
+      }
+    },
+    {
+      "numero": 25,
+      "module_id": "M_OPTIONNEL_CIVIQUE",
+      "type": "CIVIQUE_INTENSIF",
+      "theme_id": "MODULE_CIV_PRINCIPES_01",
+      "domaine_irn": "citoyennete",
+      "duree_min": 180,
+      "objectif_communicatif": "Comprendre et répondre aux QCM sur les Principes/valeurs de la République et le système institutionnel (17 questions-types)",
+      "civique_visible": true,
+      "themes_officiels_civique": [
+        "Principes et valeurs de la République",
+        "Système institutionnel et politique"
+      ],
+      "support_commun": "Fiche récapitulative : Devise, symboles, laïcité, séparation des pouvoirs + organigramme institutions",
+      "lexique_noyau": [
+        "République",
+        "liberté",
+        "égalité",
+        "fraternité",
+        "laïcité",
+        "Constitution",
+        "Président",
+        "Parlement",
+        "Assemblée nationale",
+        "Sénat",
+        "Premier ministre",
+        "démocratie"
+      ],
+      "points_structure": {
+        "pilier_principal": "vocabulaire",
+        "contenu": "Lexique institutionnel civique + connecteurs d'opinion pour justifier une réponse"
+      },
+      "phases": {
+        "activation": {
+          "duree_min": 15,
+          "commun": true,
+          "consigne_formateur": "Rappel : examen civique = 40 Q / 45 min / 32/40 requis. Brainstorm symboles et institutions.",
+          "exercice_collectif": {
+            "format": "qcm",
+            "format_pedagogique_alias": "appariement",
+            "consigne": "Reliez symbole ↔ signification",
+            "items": 6
+          }
+        },
+        "civique_theorique_CE": {
+          "duree_min": 70,
+          "commun": false,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "comprehension_ecrite",
+              "tache_type": "repérage_fiche",
+              "consigne": "Lisez la fiche. Trouvez la devise de la République.",
+              "items": 5,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_PRINCIPES_01",
+                "competence": "CE",
+                "theme_civique": "Principes et valeurs"
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "comprehension_ecrite",
+              "tache_type": "comprehension_fiche_institution",
+              "consigne": "Lisez l'organigramme. Qui nomme le Premier ministre ?",
+              "items": 6,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_PRINCIPES_01",
+                "competence": "CE",
+                "theme_civique": "Institutions"
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "comprehension_ecrite",
+              "tache_type": "inference_institutionnelle",
+              "consigne": "Peut-on dire que le Président exerce seul le pouvoir législatif ? Justifiez.",
+              "items": 5,
+              "metadata_exercice": {
+                "theme_id": "MODULE_CIV_PRINCIPES_01",
+                "competence": "CE",
+                "theme_civique": "Institutions"
+              }
+            }
+          }
+        },
+        "CO_civique": {
+          "duree_min": 30,
+          "commun": false,
+          "support_invariant": "Audio : extrait cours de citoyenneté sur la laïcité (1 min 30)",
+          "variants_cluster": {
+            "bas": {
+              "format": "comprehension_orale",
+              "format_pedagogique_alias": "qcm",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "consigne": "Écoutez. Cochez le mot principal.",
+              "items": 4
+            },
+            "standard": {
+              "format": "comprehension_orale",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "consigne": "Qu'est-ce que la laïcité à l'école ?",
+              "items": 5
+            },
+            "haut": {
+              "format": "comprehension_orale",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "consigne": "Quelle distinction fait le document entre neutralité et prosélytisme ?",
+              "items": 5
+            }
+          }
+        },
+        "qcm_entrainement": {
+          "duree_min": 40,
+          "commun": false,
+          "variants_cluster": {
+            "bas": {
+              "format": "qcm",
+              "items": 12,
+              "critere_pct": 60,
+              "themes": [
+                "Principes et valeurs"
+              ],
+              "etayage": "fort"
+            },
+            "standard": {
+              "format": "qcm",
+              "items": 15,
+              "critere_pct": 70,
+              "themes": [
+                "Principes et valeurs",
+                "Institutions"
+              ],
+              "etayage": "moyen"
+            },
+            "haut": {
+              "format": "qcm",
+              "items": 17,
+              "critere_pct": 70,
+              "themes": [
+                "Principes et valeurs",
+                "Institutions"
+              ],
+              "etayage": "faible",
+              "elevation_manuelle": true
+            }
+          },
+          "banque_qcm_exemple": [
+            {
+              "id": "CIV_S25_Q01",
+              "theme_officiel": "Principes et valeurs de la République",
+              "enonce": "Quelle est la devise de la République française ?",
+              "options": [
+                "A) Travail, Famille, Patrie",
+                "B) Liberté, Égalité, Fraternité",
+                "C) Unité, Progrès, Justice",
+                "D) Paix, Force, Union"
+              ],
+              "bonne_reponse": "B"
+            },
+            {
+              "id": "CIV_S25_Q02",
+              "theme_officiel": "Système institutionnel et politique",
+              "enonce": "Le Parlement français est composé de…",
+              "options": [
+                "A) L'Assemblée nationale et le Sénat",
+                "B) Le Conseil constitutionnel et le Sénat",
+                "C) La Préfecture et l'Assemblée",
+                "D) Le Sénat et l'Union européenne"
+              ],
+              "bonne_reponse": "A"
+            }
+          ]
+        },
+        "bilan": {
+          "duree_min": 25,
+          "commun": true,
+          "elements_obligatoires": [
+            "score_par_theme",
+            "points_forts",
+            "points_faibles",
+            "fiche_memo",
+            "plan_revision"
+          ],
+          "seuil_reussite_simulation": "32/40",
+          "note_formateur": "Corriger les confusions symboles / institutions avant S28"
+        }
+      },
+      "types_exercices_attendus": [
+        "qcm",
+        "comprehension_ecrite",
+        "comprehension_orale"
+      ],
+      "mapping_phases_moteur": {
+        "phase_moteur_CE": "phases.civique_theorique_CE",
+        "phase_moteur_CO": "phases.CO_civique",
+        "phase_moteur_QCM": "phases.qcm_entrainement"
+      }
+    }
+  ]
+}

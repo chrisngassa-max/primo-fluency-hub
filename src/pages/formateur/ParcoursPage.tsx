@@ -32,9 +32,51 @@ import {
   Eye,
   GraduationCap,
   CalendarIcon,
+  Landmark,
+  CheckCircle2,
+  Layers,
 } from "lucide-react";
 
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
+
+type VariantePlan = "enrichi" | "civique";
+
+interface VarianteConfig {
+  label: string;
+  shortLabel: string;
+  tagline: string;
+  description: string;
+  civique: boolean;
+  heuresDefaut: number;
+  badgeClass: string;
+  cardActiveClass: string;
+}
+
+const VARIANTES: Record<VariantePlan, VarianteConfig> = {
+  enrichi: {
+    label: "Parcours enrichi (sans civique)",
+    shortLabel: "Enrichi",
+    tagline: "Cohorte actuelle",
+    description: "Contrat 20 séances · S8–S20 enrichi (TCF IRN). Module civique masqué par profil.",
+    civique: false,
+    heuresDefaut: 50,
+    badgeClass: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
+    cardActiveClass: "ring-2 ring-emerald-500 border-emerald-500",
+  },
+  civique: {
+    label: "Parcours complet / civique (90h)",
+    shortLabel: "Civique 90h",
+    tagline: "Cohorte suivante",
+    description: "Inclut le module optionnel civique S21–S30 (activé si re-signature + examen civique obligatoire).",
+    civique: true,
+    heuresDefaut: 90,
+    badgeClass: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
+    cardActiveClass: "ring-2 ring-amber-500 border-amber-500",
+  },
+};
+
+const normalizeVariante = (v?: string | null): VariantePlan =>
+  v === "civique" ? "civique" : "enrichi";
 
 interface GeneratedSeance {
   titre: string;
@@ -56,6 +98,10 @@ const ParcoursPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const qc = useQueryClient();
+
+  // Variant selection (filter + creation preset)
+  const [selectedVariante, setSelectedVariante] = useState<VariantePlan | "tous">("tous");
+  const [variante, setVariante] = useState<VariantePlan>("enrichi");
 
   // Form state
   const [showForm, setShowForm] = useState(false);
@@ -145,6 +191,7 @@ const ParcoursPage = () => {
           is_template: isTemplate,
           statut: isTemplate ? "template" : "actif",
           type_demarche: typeDemarche,
+          variante_plan: variante,
           date_examen_cible: dateExamenCible ? format(dateExamenCible, "yyyy-MM-dd") : null,
         } as any)
         .select()
@@ -207,6 +254,7 @@ const ParcoursPage = () => {
           niveau_cible: (original as any).niveau_cible,
           heures_totales_prevues: (original as any).heures_totales_prevues,
           nb_seances_prevues: (original as any).nb_seances_prevues,
+          variante_plan: (original as any).variante_plan ?? "enrichi",
           is_template: false,
           statut: "brouillon",
         } as any)
@@ -247,6 +295,20 @@ const ParcoursPage = () => {
     }
   };
 
+  const openForm = (v?: VariantePlan) => {
+    const variant = v ?? (selectedVariante !== "tous" ? selectedVariante : "enrichi");
+    setVariante(variant);
+    setHeuresTotales(VARIANTES[variant].heuresDefaut);
+    setTypeDemarche(variant === "civique" ? "naturalisation" : "titre_sejour");
+    setShowForm(true);
+  };
+
+  const changeFormVariante = (variant: VariantePlan) => {
+    setVariante(variant);
+    setHeuresTotales(VARIANTES[variant].heuresDefaut);
+    setTypeDemarche(variant === "civique" ? "naturalisation" : "titre_sejour");
+  };
+
   const resetForm = () => {
     setShowForm(false);
     setTitre("");
@@ -254,9 +316,10 @@ const ParcoursPage = () => {
     setGroupId("");
     setNiveauDepart("A0");
     setNiveauCible("A1");
-    setHeuresTotales(50);
+    setHeuresTotales(VARIANTES.enrichi.heuresDefaut);
     setDureeSeance(90);
     setIsTemplate(false);
+    setVariante("enrichi");
     setTypeDemarche("titre_sejour");
     setDateExamenCible(undefined);
     setGeneratedSeances(null);
@@ -272,6 +335,16 @@ const ParcoursPage = () => {
   const totalGeneratedMinutes = generatedSeances?.reduce((sum, s) => sum + s.duree_minutes, 0) || 0;
   const totalGeneratedExercises = generatedSeances?.reduce((sum, s) => sum + s.nb_exercices_suggeres, 0) || 0;
 
+  const allParcours = parcoursList || [];
+  const varianteCounts: Record<VariantePlan, number> = {
+    enrichi: allParcours.filter((p: any) => normalizeVariante(p.variante_plan) === "enrichi").length,
+    civique: allParcours.filter((p: any) => normalizeVariante(p.variante_plan) === "civique").length,
+  };
+  const filteredParcours =
+    selectedVariante === "tous"
+      ? allParcours
+      : allParcours.filter((p: any) => normalizeVariante(p.variante_plan) === selectedVariante);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -284,10 +357,70 @@ const ParcoursPage = () => {
             Créez et gérez vos plans de formation adaptatifs
           </p>
         </div>
-        <Button onClick={() => setShowForm(true)} disabled={showForm}>
+        <Button onClick={() => openForm()} disabled={showForm}>
           <Plus className="h-4 w-4 mr-2" />
           Nouveau plan
         </Button>
+      </div>
+
+      {/* Variant selector: deux cohortes en parallèle */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-sm font-medium flex items-center gap-2">
+            <Layers className="h-4 w-4 text-primary" />
+            Variante de parcours
+          </p>
+          {selectedVariante !== "tous" && (
+            <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => setSelectedVariante("tous")}>
+              Voir tous les parcours
+            </Button>
+          )}
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Sélectionnez la variante pour filtrer la liste et préparer un nouveau plan. Vous pouvez gérer les deux cohortes en parallèle.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {(Object.keys(VARIANTES) as VariantePlan[]).map((key) => {
+            const v = VARIANTES[key];
+            const active = selectedVariante === key;
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setSelectedVariante(active ? "tous" : key)}
+                className={cn(
+                  "text-left rounded-lg border bg-card p-4 transition-all hover:shadow-md hover:border-primary/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  active && v.cardActiveClass,
+                )}
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    {v.civique ? (
+                      <Landmark className="h-5 w-5 text-amber-600 shrink-0" />
+                    ) : (
+                      <GraduationCap className="h-5 w-5 text-emerald-600 shrink-0" />
+                    )}
+                    <div>
+                      <p className="font-semibold leading-tight">{v.label}</p>
+                      <p className="text-xs text-muted-foreground">{v.tagline}</p>
+                    </div>
+                  </div>
+                  {active && <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />}
+                </div>
+                <p className="text-xs text-muted-foreground mt-2">{v.description}</p>
+                <div className="flex items-center gap-2 mt-3 flex-wrap">
+                  <Badge className={cn("text-[10px] gap-1", v.badgeClass)}>
+                    {v.civique ? <Landmark className="h-3 w-3" /> : null}
+                    {v.civique ? "Module civique inclus" : "Sans module civique"}
+                  </Badge>
+                  <Badge variant="outline" className="text-[10px]">
+                    {varianteCounts[key]} plan{varianteCounts[key] > 1 ? "s" : ""}
+                  </Badge>
+                </div>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Creation form */}
@@ -300,6 +433,40 @@ const ParcoursPage = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label>Variante du parcours</Label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {(Object.keys(VARIANTES) as VariantePlan[]).map((key) => {
+                  const v = VARIANTES[key];
+                  const active = variante === key;
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => changeFormVariante(key)}
+                      className={cn(
+                        "flex items-center gap-2 rounded-md border p-3 text-left text-sm transition-all hover:border-primary/40",
+                        active && v.cardActiveClass,
+                      )}
+                    >
+                      {v.civique ? (
+                        <Landmark className="h-4 w-4 text-amber-600 shrink-0" />
+                      ) : (
+                        <GraduationCap className="h-4 w-4 text-emerald-600 shrink-0" />
+                      )}
+                      <div className="min-w-0">
+                        <p className="font-medium leading-tight">{v.label}</p>
+                        <p className="text-xs text-muted-foreground truncate">
+                          {v.civique ? "Module civique inclus" : "Sans module civique"}
+                        </p>
+                      </div>
+                      {active && <CheckCircle2 className="h-4 w-4 text-primary ml-auto shrink-0" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Titre du plan</Label>
@@ -486,7 +653,7 @@ const ParcoursPage = () => {
           <Skeleton className="h-24 w-full" />
           <Skeleton className="h-24 w-full" />
         </div>
-      ) : (parcoursList || []).length === 0 && !showForm ? (
+      ) : allParcours.length === 0 && !showForm ? (
         <Card className="border-dashed">
           <CardContent className="py-16 text-center space-y-4">
             <GraduationCap className="h-14 w-14 mx-auto text-muted-foreground/40" />
@@ -496,16 +663,29 @@ const ParcoursPage = () => {
                 Créez votre premier plan de formation adaptatif pour organiser la progression de vos groupes.
               </p>
             </div>
-            <Button onClick={() => setShowForm(true)} size="lg" className="gap-2">
+            <Button onClick={() => openForm()} size="lg" className="gap-2">
               <Plus className="h-4 w-4" />
               Nouveau plan de formation
             </Button>
           </CardContent>
         </Card>
+      ) : filteredParcours.length === 0 ? (
+        <Card className="border-dashed">
+          <CardContent className="py-12 text-center space-y-3">
+            <p className="text-sm text-muted-foreground">
+              Aucun plan « {VARIANTES[selectedVariante as VariantePlan]?.shortLabel} » pour le moment.
+            </p>
+            <Button onClick={() => openForm()} className="gap-2">
+              <Plus className="h-4 w-4" />
+              Créer ce parcours
+            </Button>
+          </CardContent>
+        </Card>
       ) : (
         <div className="space-y-3">
-          {(parcoursList || []).map((p: any) => {
+          {filteredParcours.map((p: any) => {
             const sb = statutBadge[p.statut] || statutBadge.brouillon;
+            const pv = VARIANTES[normalizeVariante(p.variante_plan)];
             return (
               <Card key={p.id} className="hover:shadow-md transition-shadow">
                 <CardContent className="py-4 px-5">
@@ -514,6 +694,10 @@ const ParcoursPage = () => {
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-semibold">{p.titre}</span>
                         <Badge variant={sb.variant}>{sb.label}</Badge>
+                        <Badge className={cn("text-[10px] gap-1", pv.badgeClass)}>
+                          {pv.civique ? <Landmark className="h-3 w-3" /> : null}
+                          {pv.shortLabel}
+                        </Badge>
                         {p.is_template && <Badge variant="secondary" className="text-[10px]">📋 Modèle</Badge>}
                       </div>
                       <div className="flex items-center gap-3 text-xs text-muted-foreground">
@@ -522,7 +706,7 @@ const ParcoursPage = () => {
                         <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{p.heures_totales_prevues}h prévues</span>
                         <span>·</span>
                         <span>{p.nb_seances_prevues} séances</span>
-                        {p.group?.nom && <><span>·</span><span>{p.group.nom}</span></>}\\
+                        {p.group?.nom && <><span>·</span><span>{p.group.nom}</span></>}
                       </div>
                     </div>
                     <div className="flex items-center gap-1 shrink-0">

@@ -1,0 +1,2325 @@
+{
+  "version": "plan_cadre_v1_enrichi_s8_s20_partie_1",
+  "parcours_id": "plan_cadre_v1",
+  "nb_seances": 13,
+  "volume_h": 39,
+  "student_profile_schema": {
+    "source": "test_entree",
+    "niveaux_par_competence": {
+      "CO": "A0|A1|A2|B1|B2",
+      "CE": "A0|A1|A2|B1|B2",
+      "EO": "A0|A1|A2|B1|B2",
+      "EE": "A0|A1|A2|B1|B2"
+    },
+    "niveaux_structures_par_pilier": {
+      "conjugaison": "A0|A1|A2|B1|B2",
+      "grammaire": "A0|A1|A2|B1|B2",
+      "phonetique": "A0|A1|A2|B1|B2",
+      "vocabulaire": "A0|A1|A2|B1|B2"
+    },
+    "cluster_mapping": {
+      "bas": "A0-A1 faible",
+      "standard": "A1 fort-A2",
+      "haut": "B1-B2 (élévation manuelle formateur)"
+    }
+  },
+  "seances": [
+    {
+      "numero": 8,
+      "module_id": "M2_SANTE_SOCIAL",
+      "type": "DECOUVERTE",
+      "theme_id": "SANTE_SYMPT_01",
+      "theme_id_alias": [
+        "SANTE_MED_01"
+      ],
+      "domaine_irn": "sante",
+      "duree_min": 180,
+      "objectif_communicatif": "Expliquer ses symptômes et localiser une douleur au médecin (A2)",
+      "situation_type": "dialogue_cabinet",
+      "personnages": [
+        "Dr Martin",
+        "Amina"
+      ],
+      "lieux": [
+        "cabinet médical",
+        "salle d'attente"
+      ],
+      "donnees_chiffrees_cles": [
+        "température 38,5°C",
+        "rendez-vous 14h30",
+        "posologie 3 fois par jour"
+      ],
+      "lexique_noyau": [
+        "douleur",
+        "mal",
+        "tête",
+        "ventre",
+        "gorge",
+        "fièvre",
+        "ordonnance",
+        "médicament",
+        "repos",
+        "urgence"
+      ],
+      "support_commun": "Audio consultation Dr Martin / Amina (2 min) + visuel ordonnance + silhouette corps humain",
+      "points_structure": {
+        "pilier_principal": "phonetique",
+        "contenu": "Discrimination auditive [a]/[e] dans le lexique symptômes + structure « avoir mal à + déterminant + nom »",
+        "pilliers_secondaires": [
+          "vocabulaire"
+        ]
+      },
+      "civique_visible": {
+        "default": false,
+        "conditions_true": [
+          "type_demarche == 'naturalisation'",
+          "mention == 'NAT'",
+          "premiere_demande_CSP == true",
+          "premiere_demande_CR_eligible == true"
+        ],
+        "note": "Masquer le bloc entier si civique_visible == false"
+      },
+      "phases": {
+        "activation": {
+          "duree_min": 15,
+          "commun": true,
+          "competences": [
+            "Structures"
+          ],
+          "pilier": "vocabulaire",
+          "tache_type": "association_corps",
+          "consigne_formateur": "Afficher le support_commun. Pluie de mots sur le lexique_noyau. Appariement collectif parties du corps / mots.",
+          "exercice_collectif": {
+            "format": "qcm",
+            "format_pedagogique_alias": "appariement_image_mot",
+            "items": 8
+          }
+        },
+        "CO": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Audio consultation Dr Martin / Amina — mêmes faits pour tous les clusters",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A0",
+              "mode": "remediation",
+              "etayage": "fort",
+              "consigne_max_mots": 5,
+              "critere_pct": 62,
+              "format": "comprehension_orale",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "repérage_lexical",
+              "consigne": "Écoutez. Cochez le mot entendu.",
+              "support_adaptation": "Audio ralenti ×0,75, pauses après chaque symptôme",
+              "items": 4,
+              "metadata_exercice": {
+                "theme_id": "SANTE_SYMPT_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "demarrage",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 60,
+              "format": "comprehension_orale",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "comprehension_globale",
+              "consigne": "Écoutez la consultation. Répondez : Où Amina a-t-elle mal ?",
+              "support_adaptation": "Audio standard, 2 écoutes autorisées",
+              "items": 5,
+              "metadata_exercice": {
+                "theme_id": "SANTE_SYMPT_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "comprehension_orale",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "comprehension_implicite",
+              "consigne": "D'après la consultation, que doit faire Amina ce soir ? Justifiez avec un indice du dialogue.",
+              "support_adaptation": "Audio avec bruit ambiant léger salle d'attente",
+              "items": 5,
+              "metadata_exercice": {
+                "theme_id": "SANTE_SYMPT_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "CE": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Ordonnance du Dr Martin + consignes pharmacie — mêmes informations factuelles",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "comprehension_ecrite",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "reperage_visuel",
+              "consigne": "Regardez l'ordonnance. Trouvez le médicament.",
+              "items": 4,
+              "metadata_exercice": {
+                "theme_id": "SANTE_SYMPT_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "comprehension_ecrite",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "recherche_information_specifique",
+              "consigne": "Lisez l'ordonnance. Combien de comprimés par jour ?",
+              "items": 5,
+              "metadata_exercice": {
+                "theme_id": "SANTE_SYMPT_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "augmente",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "format": "comprehension_ecrite",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "inference_document",
+              "consigne": "La pharmacie est fermée ce soir. Que risque Amina si elle ne prend pas son traitement ?",
+              "items": 5,
+              "metadata_exercice": {
+                "theme_id": "SANTE_SYMPT_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "structures": {
+          "duree_min": 30,
+          "commun": false,
+          "pilier": "phonetique",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "remediation",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 62,
+              "format": "qcm",
+              "format_pedagogique_alias": "discrimination_audio",
+              "tache_type": "discrimination_phonemes",
+              "consigne": "Écoutez [a] ou [e]. Cochez la bonne voyelle.",
+              "focus": "Paires mal/mile, tête/tète, bras/brés",
+              "items": 6,
+              "metadata_exercice": {
+                "theme_id": "SANTE_SYMPT_01",
+                "competence": "Structures",
+                "pilier": "phonetique",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "structure_avoir_mal_a",
+              "consigne": "Complétez : J'ai mal ___ la gorge / au ventre.",
+              "focus": "avoir mal à + au/à la/à l'",
+              "items": 5,
+              "metadata_exercice": {
+                "theme_id": "SANTE_SYMPT_01",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "transformation_phrase",
+              "consigne": "Réécrivez en utilisant « avoir mal à » : « Ma tête me fait souffrir. »",
+              "items": 4,
+              "metadata_exercice": {
+                "theme_id": "SANTE_SYMPT_01",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "production": {
+          "duree_min": 25,
+          "commun": false,
+          "EO_EE_split": true,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "production_orale",
+              "format_pedagogique_alias": "repetition_guidee",
+              "tache_type": "decrire_symptome_simple",
+              "consigne": "Répétez : J'ai mal à la tête.",
+              "metadata_exercice": {
+                "theme_id": "SANTE_SYMPT_01",
+                "competence": "EO",
+                "limite_mots_max": 10
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "production_orale",
+              "tache_type": "dialogue_medecin",
+              "consigne": "Vous êtes Amina. Expliquez 2 symptômes au médecin.",
+              "metadata_exercice": {
+                "theme_id": "SANTE_SYMPT_01",
+                "competence": "EO",
+                "limite_mots_max": 40
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "expression_ecrite",
+              "tache_type": "message_pharmacie",
+              "consigne": "Écrivez un SMS à la pharmacie pour demander une information sur votre ordonnance (90 mots max).",
+              "metadata_exercice": {
+                "theme_id": "SANTE_SYMPT_01",
+                "competence": "EE",
+                "limite_mots_max": 90
+              }
+            }
+          }
+        },
+        "civique": {
+          "duree_min": 10,
+          "commun": false,
+          "routage_profil": true,
+          "masquable": true,
+          "question_qcm": {
+            "theme_officiel": "Vivre dans la société française",
+            "enonce": "En France, la carte Vitale sert principalement à…",
+            "options": [
+              "A) Prouver son identité",
+              "B) Se faire rembourser les soins",
+              "C) Voter aux élections",
+              "D) Obtenir un titre de séjour"
+            ],
+            "bonne_reponse": "B",
+            "justification_pedagogique": "Lien thème santé + droits sociaux en France"
+          }
+        },
+        "bilan": {
+          "duree_min": 20,
+          "commun": true,
+          "elements_obligatoires": [
+            "vocabulaire_seance",
+            "strategie_tcf",
+            "erreur_type_commune",
+            "phrase_modele",
+            "contribution_collective"
+          ],
+          "phrase_modele": "J'ai mal à la gorge depuis hier soir.",
+          "strategie_tcf": "Repérer les mots-clés symptômes avant de répondre en CO santé",
+          "erreur_type_commune": "Confusion au/à la avec « avoir mal à »"
+        }
+      },
+      "types_exercices_attendus": [
+        "comprehension_orale",
+        "comprehension_ecrite",
+        "texte_lacunaire",
+        "production_orale",
+        "expression_ecrite",
+        "qcm"
+      ],
+      "mapping_phases_moteur": {
+        "phase_moteur_CO": "phases.CO",
+        "phase_moteur_CE": "phases.CE",
+        "phase_moteur_Structures": "phases.structures",
+        "phase_moteur_EO_EE": "phases.production"
+      }
+    },
+    {
+      "numero": 9,
+      "module_id": "M2_SANTE_SOCIAL",
+      "type": "DECOUVERTE",
+      "theme_id": "SOCIAL_VOISIN_01",
+      "domaine_irn": "social",
+      "duree_min": 180,
+      "objectif_communicatif": "S'excuser ou se plaindre d'une nuisance auprès d'un voisin (A2)",
+      "situation_type": "interaction_palier",
+      "personnages": [
+        "M. Dubois",
+        "Fatima"
+      ],
+      "lieux": [
+        "hall de l'immeuble",
+        "palier"
+      ],
+      "donnees_chiffrees_cles": [
+        "fête samedi",
+        "musique jusqu'à 2h du matin",
+        "appartement 4B"
+      ],
+      "lexique_noyau": [
+        "bruit",
+        "musique",
+        "fête",
+        "désolé",
+        "excuse",
+        "déranger",
+        "voisin",
+        "soirée"
+      ],
+      "support_commun": "Vidéo dialogue M. Dubois et Fatima sur le palier (1m30) + Affiche dans le hall",
+      "points_structure": {
+        "pilier_principal": "phonetique",
+        "contenu": "Intonation de l'excuse vs intonation du reproche + expression de la cause",
+        "pilliers_secondaires": [
+          "grammaire"
+        ]
+      },
+      "civique_visible": {
+        "default": false,
+        "conditions_true": [
+          "type_demarche == 'naturalisation'",
+          "mention == 'NAT'",
+          "premiere_demande_CSP == true",
+          "premiere_demande_CR_eligible == true"
+        ]
+      },
+      "phases": {
+        "activation": {
+          "duree_min": 15,
+          "commun": true,
+          "competences": [
+            "Structures"
+          ],
+          "pilier": "vocabulaire",
+          "tache_type": "brainstorming_lexical",
+          "consigne_formateur": "Afficher l'image du hall. Pluie de mots sur le bruit et le voisinage.",
+          "exercice_collectif": {
+            "format": "qcm",
+            "format_pedagogique_alias": "nuage_de_mots",
+            "items": 6
+          }
+        },
+        "CO": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Vidéo dialogue M. Dubois et Fatima",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A0",
+              "mode": "remediation",
+              "etayage": "fort",
+              "consigne_max_mots": 5,
+              "critere_pct": 62,
+              "format": "comprehension_orale",
+              "format_pedagogique_alias": "qcm_image",
+              "tache_type": "identification_nuisance",
+              "consigne": "Écoutez. Quel est le problème ?",
+              "support_adaptation": "Vidéo segmentée par réplique",
+              "items": 4,
+              "metadata_exercice": {
+                "theme_id": "SOCIAL_VOISIN_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "demarrage",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 60,
+              "format": "comprehension_orale",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "comprehension_globale",
+              "consigne": "Pourquoi M. Dubois n'a pas dormi ? Choisissez la bonne réponse.",
+              "support_adaptation": "Vidéo complète, 2 écoutes",
+              "items": 5,
+              "metadata_exercice": {
+                "theme_id": "SOCIAL_VOISIN_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "comprehension_orale",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "inference_socioculturelle",
+              "consigne": "Quelle est l'attitude de Fatima face au reproche ? Justifiez avec ses mots.",
+              "support_adaptation": "Vidéo complète sans sous-titres",
+              "items": 5,
+              "metadata_exercice": {
+                "theme_id": "SOCIAL_VOISIN_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "CE": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Affiche d'excuse déposée par Fatima dans le hall",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "comprehension_ecrite",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "reperage_date",
+              "consigne": "Lisez l'affiche. Quel jour est la fête ?",
+              "items": 4,
+              "metadata_exercice": {
+                "theme_id": "SOCIAL_VOISIN_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "comprehension_ecrite",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "recherche_information_specifique",
+              "consigne": "À quelle heure la musique va s'arrêter selon l'affiche ?",
+              "items": 5,
+              "metadata_exercice": {
+                "theme_id": "SOCIAL_VOISIN_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "augmente",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "format": "comprehension_ecrite",
+              "format_pedagogique_alias": "qcm",
+              "tache_type": "analyse_ton",
+              "consigne": "Comment le ton de l'affiche montre-t-il le respect des règles de copropriété ?",
+              "items": 5,
+              "metadata_exercice": {
+                "theme_id": "SOCIAL_VOISIN_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "structures": {
+          "duree_min": 30,
+          "commun": false,
+          "pilier": "phonetique",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "remediation",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 62,
+              "format": "qcm",
+              "format_pedagogique_alias": "discrimination_audio",
+              "tache_type": "identification_intonation",
+              "consigne": "Écoutez. Est-ce une excuse ou un reproche ?",
+              "focus": "Courbe intonative montante/descendante",
+              "items": 6,
+              "metadata_exercice": {
+                "theme_id": "SOCIAL_VOISIN_01",
+                "competence": "Structures",
+                "pilier": "phonetique",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "structure_cause",
+              "consigne": "Complétez avec : parce que / à cause de.",
+              "focus": "Expression de la cause simple",
+              "items": 5,
+              "metadata_exercice": {
+                "theme_id": "SOCIAL_VOISIN_01",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "transformation_phrase",
+              "consigne": "Transformez la phrase en utilisant « en raison de ».",
+              "items": 4,
+              "metadata_exercice": {
+                "theme_id": "SOCIAL_VOISIN_01",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "production": {
+          "duree_min": 25,
+          "commun": false,
+          "EO_EE_split": true,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "production_orale",
+              "format_pedagogique_alias": "repetition_guidee",
+              "tache_type": "excuse_simple",
+              "consigne": "Répétez : Je suis désolé pour le bruit.",
+              "metadata_exercice": {
+                "theme_id": "SOCIAL_VOISIN_01",
+                "competence": "EO",
+                "limite_mots_max": 15
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "expression_ecrite",
+              "tache_type": "mot_voisin",
+              "consigne": "Écrivez un mot pour prévenir vos voisins d'une fête (max 40 mots).",
+              "metadata_exercice": {
+                "theme_id": "SOCIAL_VOISIN_01",
+                "competence": "EE",
+                "limite_mots_max": 40
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "production_orale",
+              "tache_type": "negociation_conflit",
+              "consigne": "Enregistrez-vous. M. Dubois est très en colère. Calmez-le et trouvez un compromis.",
+              "metadata_exercice": {
+                "theme_id": "SOCIAL_VOISIN_01",
+                "competence": "EO",
+                "limite_mots_max": 90
+              }
+            }
+          }
+        },
+        "civique": {
+          "duree_min": 10,
+          "commun": false,
+          "routage_profil": true,
+          "masquable": true,
+          "question_qcm": {
+            "theme_officiel": "Droits et devoirs",
+            "enonce": "Le tapage nocturne (bruit gênant la nuit) est :",
+            "options": [
+              "A) Autorisé le week-end",
+              "B) Interdit et sanctionné par la loi",
+              "C) Autorisé si on prévient les voisins",
+              "D) Uniquement interdit en centre-ville"
+            ],
+            "bonne_reponse": "B",
+            "justification_pedagogique": "Règles de bon voisinage et loi française"
+          }
+        },
+        "bilan": {
+          "duree_min": 20,
+          "commun": true,
+          "elements_obligatoires": [
+            "vocabulaire_seance",
+            "strategie_tcf",
+            "erreur_type_commune",
+            "phrase_modele",
+            "contribution_collective"
+          ],
+          "phrase_modele": "Je suis désolé de vous déranger.",
+          "strategie_tcf": "Utiliser un ton poli et calme lors de l'EO tâche 2",
+          "erreur_type_commune": "Oublier l'accord ou utiliser le mauvais registre"
+        }
+      },
+      "types_exercices_attendus": [
+        "comprehension_orale",
+        "comprehension_ecrite",
+        "qcm",
+        "texte_lacunaire",
+        "production_orale",
+        "expression_ecrite"
+      ],
+      "mapping_phases_moteur": {
+        "phase_moteur_CO": "phases.CO",
+        "phase_moteur_CE": "phases.CE",
+        "phase_moteur_Structures": "phases.structures",
+        "phase_moteur_EO_EE": "phases.production"
+      }
+    },
+    {
+      "numero": 10,
+      "module_id": "M2_SANTE_SOCIAL",
+      "type": "EVALUATION",
+      "theme_id": "EVAL_M2",
+      "domaine_irn": "social",
+      "duree_min": 180,
+      "objectif_communicatif": "Évaluer les acquis du module Santé & Social (A2)",
+      "situation_type": "evaluation_formative",
+      "personnages": [
+        "Candidat",
+        "Évaluateur"
+      ],
+      "lieux": [
+        "salle d'examen"
+      ],
+      "donnees_chiffrees_cles": [],
+      "lexique_noyau": [
+        "santé",
+        "médecin",
+        "voisin",
+        "famille"
+      ],
+      "support_commun": "Sujet type TCF IRN (extraits adaptés)",
+      "points_structure": {
+        "pilier_principal": "grammaire",
+        "contenu": "Révision globale M2 : possessifs, cause, avoir mal à",
+        "pilliers_secondaires": [
+          "vocabulaire"
+        ]
+      },
+      "civique_visible": {
+        "default": false,
+        "conditions_true": [],
+        "note": "Aucun bloc civique pendant les évaluations"
+      },
+      "format_evaluation": "EVALUATION_DECLENCHE_RECALCUL_SEUILS",
+      "phases": {
+        "activation": {
+          "duree_min": 15,
+          "commun": true,
+          "competences": [
+            "methodologie"
+          ],
+          "pilier": "vocabulaire",
+          "tache_type": "rappel_consignes",
+          "consigne_formateur": "Explication des modalités du test. Mise en confiance.",
+          "exercice_collectif": {
+            "format": "qcm",
+            "items": 0
+          }
+        },
+        "CO": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Audios d'évaluation standardisés",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "faible",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "comprehension_orale",
+              "tache_type": "test_co_a1",
+              "consigne": "Écoutez et répondez aux questions.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_M2",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "demarrage",
+              "etayage": "faible",
+              "consigne_max_mots": 12,
+              "critere_pct": 60,
+              "format": "comprehension_orale",
+              "tache_type": "test_co_a2",
+              "consigne": "Écoutez les documents et choisissez la bonne réponse.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_M2",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "demarrage",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 60,
+              "format": "comprehension_orale",
+              "tache_type": "test_co_b1",
+              "consigne": "Écoutez et répondez.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_M2",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "CE": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Textes d'évaluation standardisés",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "faible",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "comprehension_ecrite",
+              "tache_type": "test_ce_a1",
+              "consigne": "Lisez et répondez aux questions.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_M2",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "demarrage",
+              "etayage": "faible",
+              "consigne_max_mots": 12,
+              "critere_pct": 60,
+              "format": "comprehension_ecrite",
+              "tache_type": "test_ce_a2",
+              "consigne": "Lisez les documents et choisissez la bonne réponse.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_M2",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "demarrage",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 60,
+              "format": "comprehension_ecrite",
+              "tache_type": "test_ce_b1",
+              "consigne": "Lisez et répondez.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_M2",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "structures": {
+          "duree_min": 30,
+          "commun": false,
+          "pilier": "grammaire",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "faible",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "qcm",
+              "tache_type": "test_struc_a1",
+              "consigne": "Choisissez le bon mot.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_M2",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "demarrage",
+              "etayage": "faible",
+              "consigne_max_mots": 12,
+              "critere_pct": 60,
+              "format": "texte_lacunaire",
+              "tache_type": "test_struc_a2",
+              "consigne": "Complétez les phrases.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_M2",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "demarrage",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 60,
+              "format": "texte_lacunaire",
+              "tache_type": "test_struc_b1",
+              "consigne": "Complétez.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_M2",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "production": {
+          "duree_min": 35,
+          "commun": false,
+          "EO_EE_split": true,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "faible",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "production_orale",
+              "tache_type": "test_eo_a1",
+              "consigne": "Présentez-vous.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_M2",
+                "competence": "EO",
+                "limite_mots_max": 40
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "demarrage",
+              "etayage": "faible",
+              "consigne_max_mots": 12,
+              "critere_pct": 60,
+              "format": "expression_ecrite",
+              "tache_type": "test_ee_a2",
+              "consigne": "Écrivez un message (40 mots minimum).",
+              "metadata_exercice": {
+                "theme_id": "EVAL_M2",
+                "competence": "EE",
+                "limite_mots_max": 90
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "demarrage",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 60,
+              "format": "expression_ecrite",
+              "tache_type": "test_ee_b1",
+              "consigne": "Rédigez votre texte.",
+              "metadata_exercice": {
+                "theme_id": "EVAL_M2",
+                "competence": "EE",
+                "limite_mots_max": 90
+              }
+            }
+          }
+        },
+        "bilan": {
+          "duree_min": 20,
+          "commun": true,
+          "elements_obligatoires": [
+            "vocabulaire_seance",
+            "strategie_tcf",
+            "erreur_type_commune",
+            "phrase_modele",
+            "contribution_collective"
+          ],
+          "phrase_modele": "Bravo pour vos efforts.",
+          "strategie_tcf": "Gestion du temps pendant l'examen",
+          "erreur_type_commune": "Stress face à l'enregistrement"
+        }
+      },
+      "types_exercices_attendus": [
+        "comprehension_orale",
+        "comprehension_ecrite",
+        "texte_lacunaire",
+        "production_orale",
+        "expression_ecrite",
+        "qcm"
+      ],
+      "mapping_phases_moteur": {
+        "phase_moteur_CO": "phases.CO",
+        "phase_moteur_CE": "phases.CE",
+        "phase_moteur_Structures": "phases.structures",
+        "phase_moteur_EO_EE": "phases.production"
+      }
+    },
+    {
+      "numero": 11,
+      "module_id": "M3_TRAVAIL_ADMINISTRATIF",
+      "type": "DECOUVERTE",
+      "theme_id": "TRAVAIL_PARCOURS_01",
+      "domaine_irn": "travail",
+      "duree_min": 180,
+      "objectif_communicatif": "Parler de son expérience professionnelle passée (A2)",
+      "situation_type": "entretien_conseiller",
+      "personnages": [
+        "Hassan",
+        "Conseillère France Travail"
+      ],
+      "lieux": [
+        "agence France Travail"
+      ],
+      "donnees_chiffrees_cles": [
+        "5 ans d'expérience",
+        "2 entreprises"
+      ],
+      "lexique_noyau": [
+        "métier",
+        "expérience",
+        "menuisier",
+        "entreprise",
+        "contrat",
+        "année",
+        "diplôme"
+      ],
+      "support_commun": "Audio d'un entretien de bilan (1m45) + CV simplifié de Hassan",
+      "points_structure": {
+        "pilier_principal": "grammaire",
+        "contenu": "Passé composé + prépositions de temps (pendant, de... à)",
+        "pilliers_secondaires": [
+          "vocabulaire"
+        ]
+      },
+      "civique_visible": {
+        "default": false,
+        "conditions_true": [
+          "type_demarche == 'naturalisation'",
+          "mention == 'NAT'",
+          "premiere_demande_CSP == true",
+          "premiere_demande_CR_eligible == true"
+        ]
+      },
+      "phases": {
+        "activation": {
+          "duree_min": 15,
+          "commun": true,
+          "competences": [
+            "Structures"
+          ],
+          "pilier": "vocabulaire",
+          "tache_type": "brainstorming_lexical",
+          "consigne_formateur": "Présenter le CV vide. Demander quels mots on y trouve.",
+          "exercice_collectif": {
+            "format": "qcm",
+            "items": 5
+          }
+        },
+        "CO": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Audio entretien Hassan",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A0",
+              "mode": "remediation",
+              "etayage": "fort",
+              "consigne_max_mots": 5,
+              "critere_pct": 62,
+              "format": "comprehension_orale",
+              "tache_type": "reperage_metier",
+              "consigne": "Écoutez. Quel est le métier ?",
+              "metadata_exercice": {
+                "theme_id": "TRAVAIL_PARCOURS_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "demarrage",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 60,
+              "format": "comprehension_orale",
+              "tache_type": "comprehension_duree",
+              "consigne": "Combien d'années Hassan a-t-il travaillé comme menuisier ?",
+              "metadata_exercice": {
+                "theme_id": "TRAVAIL_PARCOURS_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "comprehension_orale",
+              "tache_type": "inference_projet",
+              "consigne": "Quel est le nouveau projet professionnel de Hassan ?",
+              "metadata_exercice": {
+                "theme_id": "TRAVAIL_PARCOURS_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "CE": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "CV de Hassan",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "comprehension_ecrite",
+              "tache_type": "reperage_visuel",
+              "consigne": "Lisez. Trouvez la date de naissance.",
+              "metadata_exercice": {
+                "theme_id": "TRAVAIL_PARCOURS_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "comprehension_ecrite",
+              "tache_type": "chronologie_cv",
+              "consigne": "Lisez le CV. Mettez les expériences dans l'ordre.",
+              "metadata_exercice": {
+                "theme_id": "TRAVAIL_PARCOURS_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "augmente",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "format": "comprehension_ecrite",
+              "tache_type": "analyse_competences",
+              "consigne": "Quelles compétences Hassan a-t-il acquises dans sa dernière entreprise ?",
+              "metadata_exercice": {
+                "theme_id": "TRAVAIL_PARCOURS_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "structures": {
+          "duree_min": 30,
+          "commun": false,
+          "pilier": "grammaire",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "remediation",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 62,
+              "format": "qcm",
+              "tache_type": "identification_pc",
+              "consigne": "Cochez l'action au passé.",
+              "metadata_exercice": {
+                "theme_id": "TRAVAIL_PARCOURS_01",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "production_pc",
+              "consigne": "Complétez au passé composé : Je ___ (travailler).",
+              "metadata_exercice": {
+                "theme_id": "TRAVAIL_PARCOURS_01",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "prepositions_temps",
+              "consigne": "Complétez avec : depuis, pendant, il y a.",
+              "metadata_exercice": {
+                "theme_id": "TRAVAIL_PARCOURS_01",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "production": {
+          "duree_min": 25,
+          "commun": false,
+          "EO_EE_split": true,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "production_orale",
+              "tache_type": "metier_actuel",
+              "consigne": "Dites votre métier et votre pays.",
+              "metadata_exercice": {
+                "theme_id": "TRAVAIL_PARCOURS_01",
+                "competence": "EO",
+                "limite_mots_max": 20
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "production_orale",
+              "tache_type": "presentation_parcours",
+              "consigne": "Racontez une expérience passée. Qu'avez-vous fait ?",
+              "metadata_exercice": {
+                "theme_id": "TRAVAIL_PARCOURS_01",
+                "competence": "EO",
+                "limite_mots_max": 60
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "expression_ecrite",
+              "tache_type": "mail_candidature",
+              "consigne": "Écrivez un court mail (max 90 mots) pour présenter vos expériences.",
+              "metadata_exercice": {
+                "theme_id": "TRAVAIL_PARCOURS_01",
+                "competence": "EE",
+                "limite_mots_max": 90
+              }
+            }
+          }
+        },
+        "civique": {
+          "duree_min": 10,
+          "commun": false,
+          "routage_profil": true,
+          "question_qcm": {
+            "theme_officiel": "Principes et valeurs",
+            "enonce": "L'égalité homme-femme au travail signifie :",
+            "options": [
+              "A) Le même salaire pour le même travail",
+              "B) Des horaires différents",
+              "C) Moins d'impôts pour les femmes",
+              "D) Des métiers réservés aux hommes"
+            ],
+            "bonne_reponse": "A",
+            "justification_pedagogique": "Valeur d'égalité dans la République"
+          }
+        },
+        "bilan": {
+          "duree_min": 20,
+          "commun": true,
+          "elements_obligatoires": [
+            "vocabulaire_seance",
+            "strategie_tcf",
+            "erreur_type_commune",
+            "phrase_modele",
+            "contribution_collective"
+          ],
+          "phrase_modele": "J'ai travaillé comme menuisier pendant cinq ans.",
+          "strategie_tcf": "Utiliser le passé composé en EO tâche 2",
+          "erreur_type_commune": "Oubli de l'auxiliaire"
+        }
+      },
+      "types_exercices_attendus": [
+        "comprehension_orale",
+        "comprehension_ecrite",
+        "texte_lacunaire",
+        "production_orale",
+        "expression_ecrite",
+        "qcm"
+      ],
+      "mapping_phases_moteur": {
+        "phase_moteur_CO": "phases.CO",
+        "phase_moteur_CE": "phases.CE",
+        "phase_moteur_Structures": "phases.structures",
+        "phase_moteur_EO_EE": "phases.production"
+      }
+    },
+    {
+      "numero": 12,
+      "module_id": "M3_TRAVAIL_ADMINISTRATIF",
+      "type": "DECOUVERTE",
+      "theme_id": "TRAVAIL_OFFRE_01",
+      "domaine_irn": "travail",
+      "duree_min": 180,
+      "objectif_communicatif": "Comprendre une offre d'emploi simple (A2)",
+      "situation_type": "recherche_emploi",
+      "personnages": [
+        "Chercheur d'emploi"
+      ],
+      "lieux": [
+        "internet"
+      ],
+      "donnees_chiffrees_cles": [
+        "CDD 6 mois",
+        "35h",
+        "SMIC"
+      ],
+      "lexique_noyau": [
+        "contrat",
+        "salaire",
+        "horaires",
+        "poste",
+        "candidature",
+        "vendeur",
+        "temps plein"
+      ],
+      "support_commun": "3 annonces d'emploi simplifiées + audio d'une annonce radio",
+      "points_structure": {
+        "pilier_principal": "vocabulaire",
+        "contenu": "Sigles professionnels + structure « pour + infinitif »",
+        "pilliers_secondaires": [
+          "grammaire"
+        ]
+      },
+      "civique_visible": {
+        "default": false,
+        "conditions_true": [
+          "type_demarche == 'naturalisation'",
+          "mention == 'NAT'",
+          "premiere_demande_CSP == true",
+          "premiere_demande_CR_eligible == true"
+        ]
+      },
+      "phases": {
+        "activation": {
+          "duree_min": 15,
+          "commun": true,
+          "competences": [
+            "Structures"
+          ],
+          "pilier": "vocabulaire",
+          "tache_type": "reconnaissance_sigles",
+          "consigne_formateur": "Que signifient CDD, CDI, CV, SMIC ?",
+          "exercice_collectif": {
+            "format": "qcm",
+            "items": 4
+          }
+        },
+        "CO": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Audio annonce radio pôle emploi",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A0",
+              "mode": "remediation",
+              "etayage": "fort",
+              "consigne_max_mots": 5,
+              "critere_pct": 62,
+              "format": "comprehension_orale",
+              "tache_type": "reperage_metier",
+              "consigne": "Écoutez. Quel métier ?",
+              "metadata_exercice": {
+                "theme_id": "TRAVAIL_OFFRE_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "demarrage",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 60,
+              "format": "comprehension_orale",
+              "tache_type": "comprehension_horaires",
+              "consigne": "Cochez les bonnes informations : temps plein ou temps partiel ?",
+              "metadata_exercice": {
+                "theme_id": "TRAVAIL_OFFRE_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "comprehension_orale",
+              "tache_type": "modalites_candidature",
+              "consigne": "Comment faut-il postuler selon l'annonce ?",
+              "metadata_exercice": {
+                "theme_id": "TRAVAIL_OFFRE_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "CE": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "3 annonces d'emploi",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "comprehension_ecrite",
+              "tache_type": "reperage_salaire",
+              "consigne": "Trouvez le salaire sur l'annonce.",
+              "metadata_exercice": {
+                "theme_id": "TRAVAIL_OFFRE_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "comprehension_ecrite",
+              "tache_type": "comparaison_annonces",
+              "consigne": "Quelle annonce propose un CDD de 6 mois ?",
+              "metadata_exercice": {
+                "theme_id": "TRAVAIL_OFFRE_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "augmente",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "format": "comprehension_ecrite",
+              "tache_type": "profil_recherche",
+              "consigne": "Quelles sont les qualités demandées pour le poste numéro 2 ?",
+              "metadata_exercice": {
+                "theme_id": "TRAVAIL_OFFRE_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "structures": {
+          "duree_min": 30,
+          "commun": false,
+          "pilier": "grammaire",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "remediation",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 62,
+              "format": "qcm",
+              "tache_type": "identification_infinitif",
+              "consigne": "Cochez le verbe à l'infinitif.",
+              "metadata_exercice": {
+                "theme_id": "TRAVAIL_OFFRE_01",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "pour_infinitif",
+              "consigne": "Complétez avec POUR + infinitif.",
+              "metadata_exercice": {
+                "theme_id": "TRAVAIL_OFFRE_01",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "afin_de_infinitif",
+              "consigne": "Remplacez POUR par AFIN DE.",
+              "metadata_exercice": {
+                "theme_id": "TRAVAIL_OFFRE_01",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "production": {
+          "duree_min": 25,
+          "commun": false,
+          "EO_EE_split": true,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "expression_ecrite",
+              "tache_type": "recopie_coordonnees",
+              "consigne": "Recopiez le nom et le mail.",
+              "metadata_exercice": {
+                "theme_id": "TRAVAIL_OFFRE_01",
+                "competence": "EE",
+                "limite_mots_max": 15
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "expression_ecrite",
+              "tache_type": "reponse_annonce",
+              "consigne": "Répondez à l'annonce par mail (max 40 mots).",
+              "metadata_exercice": {
+                "theme_id": "TRAVAIL_OFFRE_01",
+                "competence": "EE",
+                "limite_mots_max": 40
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "production_orale",
+              "tache_type": "appel_employeur",
+              "consigne": "Enregistrez-vous. Téléphonez à l'employeur pour poser 2 questions sur le poste.",
+              "metadata_exercice": {
+                "theme_id": "TRAVAIL_OFFRE_01",
+                "competence": "EO",
+                "limite_mots_max": 90
+              }
+            }
+          }
+        },
+        "civique": {
+          "duree_min": 10,
+          "commun": false,
+          "routage_profil": true,
+          "question_qcm": {
+            "theme_officiel": "Droits et devoirs",
+            "enonce": "Le contrat de travail sert à :",
+            "options": [
+              "A) Protéger le salarié et l'employeur",
+              "B) Payer moins d'impôts",
+              "C) Éviter d'aller à la préfecture",
+              "D) Avoir des vacances illimitées"
+            ],
+            "bonne_reponse": "A",
+            "justification_pedagogique": "Notion de droit du travail"
+          }
+        },
+        "bilan": {
+          "duree_min": 20,
+          "commun": true,
+          "elements_obligatoires": [
+            "vocabulaire_seance",
+            "strategie_tcf",
+            "erreur_type_commune",
+            "phrase_modele",
+            "contribution_collective"
+          ],
+          "phrase_modele": "J'écris pour répondre à votre annonce.",
+          "strategie_tcf": "Savoir scanner une annonce pour trouver le contrat.",
+          "erreur_type_commune": "Confondre CDD et CDI"
+        }
+      },
+      "types_exercices_attendus": [
+        "comprehension_orale",
+        "comprehension_ecrite",
+        "texte_lacunaire",
+        "production_orale",
+        "expression_ecrite",
+        "qcm"
+      ],
+      "mapping_phases_moteur": {
+        "phase_moteur_CO": "phases.CO",
+        "phase_moteur_CE": "phases.CE",
+        "phase_moteur_Structures": "phases.structures",
+        "phase_moteur_EO_EE": "phases.production"
+      }
+    },
+    {
+      "numero": 13,
+      "module_id": "M3_TRAVAIL_ADMINISTRATIF",
+      "type": "DECOUVERTE",
+      "theme_id": "ADMIN_CERFA_01",
+      "domaine_irn": "admin",
+      "duree_min": 180,
+      "objectif_communicatif": "Comprendre et remplir un formulaire administratif usuel (A2)",
+      "situation_type": "demarche_administrative",
+      "personnages": [
+        "Ousmane"
+      ],
+      "lieux": [
+        "guichet",
+        "domicile"
+      ],
+      "donnees_chiffrees_cles": [
+        "né le 12/05/1980"
+      ],
+      "lexique_noyau": [
+        "nom",
+        "prénom",
+        "date",
+        "signature",
+        "cocher",
+        "rayer",
+        "lieu",
+        "conjoint"
+      ],
+      "support_commun": "Audio agent expliquant comment remplir + Formulaire CERFA AME",
+      "points_structure": {
+        "pilier_principal": "vocabulaire",
+        "contenu": "Épellation + conventions de l'écrit (majuscules) + vocabulaire état civil",
+        "pilliers_secondaires": [
+          "phonetique"
+        ]
+      },
+      "civique_visible": {
+        "default": false,
+        "conditions_true": [
+          "type_demarche == 'naturalisation'",
+          "mention == 'NAT'",
+          "premiere_demande_CSP == true",
+          "premiere_demande_CR_eligible == true"
+        ]
+      },
+      "phases": {
+        "activation": {
+          "duree_min": 15,
+          "commun": true,
+          "competences": [
+            "Structures"
+          ],
+          "pilier": "vocabulaire",
+          "tache_type": "association_mot_symbole",
+          "consigne_formateur": "Afficher le CERFA. Que veut dire 'cocher', 'rayer' ?",
+          "exercice_collectif": {
+            "format": "qcm",
+            "items": 4
+          }
+        },
+        "CO": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Audio agent aide CERFA",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A0",
+              "mode": "remediation",
+              "etayage": "fort",
+              "consigne_max_mots": 5,
+              "critere_pct": 62,
+              "format": "comprehension_orale",
+              "tache_type": "epellation",
+              "consigne": "Écoutez les lettres. Choisissez.",
+              "metadata_exercice": {
+                "theme_id": "ADMIN_CERFA_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "demarrage",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 60,
+              "format": "comprehension_orale",
+              "tache_type": "comprehension_consigne_orale",
+              "consigne": "Que dit l'agent ? Faut-il signer en bas ?",
+              "metadata_exercice": {
+                "theme_id": "ADMIN_CERFA_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "comprehension_orale",
+              "tache_type": "comprehension_detail",
+              "consigne": "Pourquoi Ousmane doit-il écrire en majuscules ?",
+              "metadata_exercice": {
+                "theme_id": "ADMIN_CERFA_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "CE": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Formulaire CERFA AME",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "comprehension_ecrite",
+              "tache_type": "reperage_rubriques",
+              "consigne": "Où écrire le nom de famille ?",
+              "metadata_exercice": {
+                "theme_id": "ADMIN_CERFA_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "comprehension_ecrite",
+              "tache_type": "lecture_consignes_formulaire",
+              "consigne": "Lisez. Quelles cases faut-il cocher pour un adulte ?",
+              "metadata_exercice": {
+                "theme_id": "ADMIN_CERFA_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "augmente",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "format": "comprehension_ecrite",
+              "tache_type": "documents_annexes",
+              "consigne": "Quels justificatifs sont demandés à la fin du formulaire ?",
+              "metadata_exercice": {
+                "theme_id": "ADMIN_CERFA_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "structures": {
+          "duree_min": 30,
+          "commun": false,
+          "pilier": "phonetique",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "remediation",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 62,
+              "format": "qcm",
+              "tache_type": "alphabet",
+              "consigne": "Écoutez. Quelle est la lettre ?",
+              "metadata_exercice": {
+                "theme_id": "ADMIN_CERFA_01",
+                "competence": "Structures",
+                "pilier": "phonetique",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "majuscules",
+              "consigne": "Écrivez le nom en lettres majuscules.",
+              "metadata_exercice": {
+                "theme_id": "ADMIN_CERFA_01",
+                "competence": "Structures",
+                "pilier": "vocabulaire",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "imperatif",
+              "consigne": "Transformez à l'impératif : Il faut signer en bas.",
+              "metadata_exercice": {
+                "theme_id": "ADMIN_CERFA_01",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "production": {
+          "duree_min": 25,
+          "commun": false,
+          "EO_EE_split": true,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "production_orale",
+              "tache_type": "epeler_nom",
+              "consigne": "Épelez votre nom de famille.",
+              "metadata_exercice": {
+                "theme_id": "ADMIN_CERFA_01",
+                "competence": "EO",
+                "limite_mots_max": 20
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "expression_ecrite",
+              "tache_type": "remplir_formulaire",
+              "consigne": "Remplissez la partie 1 du formulaire avec vos informations.",
+              "metadata_exercice": {
+                "theme_id": "ADMIN_CERFA_01",
+                "competence": "EE",
+                "limite_mots_max": 40
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "expression_ecrite",
+              "tache_type": "lettre_accompagnement",
+              "consigne": "Écrivez un court mot (max 90 mots) pour envoyer votre dossier.",
+              "metadata_exercice": {
+                "theme_id": "ADMIN_CERFA_01",
+                "competence": "EE",
+                "limite_mots_max": 90
+              }
+            }
+          }
+        },
+        "civique": {
+          "duree_min": 10,
+          "commun": false,
+          "routage_profil": true,
+          "question_qcm": {
+            "theme_officiel": "Institutions",
+            "enonce": "L'assurance maladie (la Sécurité Sociale) permet de :",
+            "options": [
+              "A) Trouver un emploi",
+              "B) Payer moins de loyer",
+              "C) Être aidé pour les dépenses de santé",
+              "D) Voyager gratuitement"
+            ],
+            "bonne_reponse": "C",
+            "justification_pedagogique": "Droits sociaux."
+          }
+        },
+        "bilan": {
+          "duree_min": 20,
+          "commun": true,
+          "elements_obligatoires": [
+            "vocabulaire_seance",
+            "strategie_tcf",
+            "erreur_type_commune",
+            "phrase_modele",
+            "contribution_collective"
+          ],
+          "phrase_modele": "J'écris mon nom en majuscules.",
+          "strategie_tcf": "Savoir remplir ses coordonnées",
+          "erreur_type_commune": "Confondre nom et prénom"
+        }
+      },
+      "types_exercices_attendus": [
+        "comprehension_orale",
+        "comprehension_ecrite",
+        "texte_lacunaire",
+        "production_orale",
+        "expression_ecrite",
+        "qcm"
+      ],
+      "mapping_phases_moteur": {
+        "phase_moteur_CO": "phases.CO",
+        "phase_moteur_CE": "phases.CE",
+        "phase_moteur_Structures": "phases.structures",
+        "phase_moteur_EO_EE": "phases.production"
+      }
+    },
+    {
+      "numero": 14,
+      "module_id": "M3_TRAVAIL_ADMINISTRATIF",
+      "type": "DECOUVERTE",
+      "theme_id": "ADMIN_CAF_01",
+      "domaine_irn": "admin",
+      "duree_min": 180,
+      "objectif_communicatif": "Mener une démarche au guichet (A2)",
+      "situation_type": "guichet_caf",
+      "personnages": [
+        "Karim",
+        "Mme Dubois (Agent CAF)"
+      ],
+      "lieux": [
+        "CAF Paris 18e"
+      ],
+      "donnees_chiffrees_cles": [
+        "numéro 142",
+        "guichet 4",
+        "facture moins de 3 mois"
+      ],
+      "lexique_noyau": [
+        "dossier",
+        "incomplet",
+        "attestation",
+        "domicile",
+        "facture",
+        "carte",
+        "guichet"
+      ],
+      "support_commun": "Vidéo guichet (2 min) + liste pièces justificatives",
+      "points_structure": {
+        "pilier_principal": "grammaire",
+        "contenu": "Conditionnel de politesse (Je voudrais, J'aimerais)",
+        "pilliers_secondaires": [
+          "vocabulaire",
+          "phonetique"
+        ]
+      },
+      "civique_visible": {
+        "default": false,
+        "conditions_true": [
+          "type_demarche == 'naturalisation'",
+          "mention == 'NAT'",
+          "premiere_demande_CSP == true",
+          "premiere_demande_CR_eligible == true"
+        ]
+      },
+      "phases": {
+        "activation": {
+          "duree_min": 15,
+          "commun": true,
+          "competences": [
+            "Structures"
+          ],
+          "pilier": "vocabulaire",
+          "tache_type": "brainstorming_lexical",
+          "consigne_formateur": "Afficher le logo CAF. Que peut-on faire ici ?",
+          "exercice_collectif": {
+            "format": "qcm",
+            "items": 4
+          }
+        },
+        "CO": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Vidéo dialogue Karim / Mme Dubois",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A0",
+              "mode": "remediation",
+              "etayage": "fort",
+              "consigne_max_mots": 5,
+              "critere_pct": 62,
+              "format": "comprehension_orale",
+              "tache_type": "identification_lieu",
+              "consigne": "Écoutez. Où sont-ils ?",
+              "metadata_exercice": {
+                "theme_id": "ADMIN_CAF_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "demarrage",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 60,
+              "format": "comprehension_orale",
+              "tache_type": "probleme_dossier",
+              "consigne": "Quel est le problème avec le dossier de Karim ?",
+              "metadata_exercice": {
+                "theme_id": "ADMIN_CAF_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "comprehension_orale",
+              "tache_type": "solution_proposee",
+              "consigne": "Quelles sont les deux solutions proposées par l'agent ?",
+              "metadata_exercice": {
+                "theme_id": "ADMIN_CAF_01",
+                "competence": "CO",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "CE": {
+          "duree_min": 40,
+          "commun": false,
+          "support_invariant": "Flyer CAF liste des pièces justificatives",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "comprehension_ecrite",
+              "tache_type": "association_images",
+              "consigne": "Associez les mots aux images.",
+              "metadata_exercice": {
+                "theme_id": "ADMIN_CAF_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "comprehension_ecrite",
+              "tache_type": "verification_pieces",
+              "consigne": "Quels documents prouvent le domicile ?",
+              "metadata_exercice": {
+                "theme_id": "ADMIN_CAF_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "augmente",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 80,
+              "format": "comprehension_ecrite",
+              "tache_type": "validite_documents",
+              "consigne": "Pourquoi une facture EDF de 6 mois sera-t-elle refusée ?",
+              "metadata_exercice": {
+                "theme_id": "ADMIN_CAF_01",
+                "competence": "CE",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "structures": {
+          "duree_min": 30,
+          "commun": false,
+          "pilier": "grammaire",
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "remediation",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 62,
+              "format": "qcm",
+              "tache_type": "vouloir_present",
+              "consigne": "Cochez le bon verbe : Je veux.",
+              "metadata_exercice": {
+                "theme_id": "ADMIN_CAF_01",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "conditionnel_politesse",
+              "consigne": "Complétez avec : voudrais.",
+              "metadata_exercice": {
+                "theme_id": "ADMIN_CAF_01",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "texte_lacunaire",
+              "tache_type": "politesse_avancee",
+              "consigne": "Transformez la demande pour la rendre très polie.",
+              "metadata_exercice": {
+                "theme_id": "ADMIN_CAF_01",
+                "competence": "Structures",
+                "pilier": "grammaire",
+                "limite_mots_max": null
+              }
+            }
+          }
+        },
+        "production": {
+          "duree_min": 25,
+          "commun": false,
+          "EO_EE_split": true,
+          "variants_cluster": {
+            "bas": {
+              "niveau_cecrl_cible": "A1",
+              "mode": "demarrage",
+              "etayage": "fort",
+              "consigne_max_mots": 8,
+              "critere_pct": 60,
+              "format": "production_orale",
+              "tache_type": "nommer_documents",
+              "consigne": "Lisez les noms des documents.",
+              "metadata_exercice": {
+                "theme_id": "ADMIN_CAF_01",
+                "competence": "EO",
+                "limite_mots_max": 20
+              }
+            },
+            "standard": {
+              "niveau_cecrl_cible": "A2",
+              "mode": "consolide",
+              "etayage": "moyen",
+              "consigne_max_mots": 12,
+              "critere_pct": 70,
+              "format": "production_orale",
+              "tache_type": "demande_guichet",
+              "consigne": "Vous êtes au guichet. Dites ce que vous voulez.",
+              "metadata_exercice": {
+                "theme_id": "ADMIN_CAF_01",
+                "competence": "EO",
+                "limite_mots_max": 40
+              }
+            },
+            "haut": {
+              "niveau_cecrl_cible": "B1",
+              "mode": "consolide",
+              "etayage": "faible",
+              "elevation_manuelle": true,
+              "consigne_max_mots": 16,
+              "critere_pct": 70,
+              "format": "expression_ecrite",
+              "tache_type": "message_plateforme",
+              "consigne": "Écrivez un message (90 mots max) sur votre espace CAF.",
+              "metadata_exercice": {
+                "theme_id": "ADMIN_CAF_01",
+                "competence": "EE",
+                "limite_mots_max": 90
+              }
+            }
+          }
+        },
+        "civique": {
+          "duree_min": 10,
+          "commun": false,
+          "routage_profil": true,
+          "question_qcm": {
+            "theme_officiel": "Institutions",
+            "enonce": "La Caisse d'Allocations Familiales (CAF) verse des aides pour :",
+            "options": [
+              "A) Payer les impôts",
+              "B) Le logement et la famille",
+              "C) Acheter une voiture",
+              "D) Rembourser les médicaments"
+            ],
+            "bonne_reponse": "B",
+            "justification_pedagogique": "Rôle des institutions sociales"
+          }
+        },
+        "bilan": {
+          "duree_min": 20,
+          "commun": true,
+          "elements_obligatoires": [
+            "vocabulaire_seance",
+            "strategie_tcf",
+            "erreur_type_commune",
+            "phrase_modele",
+            "contribution_collective"
+          ],
+          "phrase_modele": "Bonjour, je voudrais renouveler mon dossier.",
+          "strategie_tcf": "Utiliser 'Je voudrais' en EO tâche 2 pour être poli.",
+          "erreur_type_commune": "Dire 'Je veux' au guichet"
+        }
+      },
+      "types_exercices_attendus": [
+        "comprehension_orale",
+        "comprehension_ecrite",
+        "texte_lacunaire",
+        "production_orale",
+        "expression_ecrite",
+        "qcm"
+      ],
+      "mapping_phases_moteur": {
+        "phase_moteur_CO": "phases.CO",
+        "phase_moteur_CE": "phases.CE",
+        "phase_moteur_Structures": "phases.structures",
+        "phase_moteur_EO_EE": "phases.production"
+      }
+    }
+  ]
+}

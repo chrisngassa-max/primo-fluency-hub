@@ -8,17 +8,23 @@ import {
   getDominantPilierFromErrors,
   getErrorRemediation,
   getExerciseScoringRules,
+  getEnrichedSession,
   getIntraSessionRules,
+  getOptionalModuleSessions,
   getSessionBlockRules,
   getSessionMinimumsForDuration,
   getStructuresSwitchRules,
   getThemeTemplate,
   inferThemeFromText,
+  isCiviqueVisible,
+  isOptionalModuleActive,
   mapStructuresCompetence,
   matchSwitchRule,
+  normalizePlanCadreFormat,
   niveauToBand,
   resolveFormatAlias,
   resolveFormatForGenerator,
+  resolvePlanCadreThemeId,
   scoreExerciseCandidate,
 } from "../../supabase/functions/_shared/referential-loader.ts";
 
@@ -176,5 +182,61 @@ describe("referential-loader", () => {
     expect(block).toContain("SANTE_MED_01");
     expect(block).toContain("INVARIANTS OBLIGATOIRES");
     expect(block).toContain("lexique_noyau");
+  });
+
+  it("loads enriched plan cadre sessions S8-S20", () => {
+    expect(getEnrichedSession(7)).toBeNull();
+    expect(getEnrichedSession(21)).toBeNull();
+
+    const s8 = getEnrichedSession(8);
+    expect(s8?.numero).toBe(8);
+    expect(s8?.theme_id).toBe("SANTE_SYMPT_01");
+    expect(resolvePlanCadreThemeId(s8!)).toBe("SANTE_MED_01");
+
+    const s20 = getEnrichedSession(20);
+    expect(s20?.theme_id).toBe("EVAL_TCF_IRN_FINALE");
+    expect(getEnrichedSession(8)?.numero).toBe(8);
+  });
+
+  it("loads optional module sessions S21-S30", () => {
+    const sessions = getOptionalModuleSessions();
+    expect(sessions).toHaveLength(10);
+    expect(sessions[0]?.numero).toBe(21);
+    expect(sessions[9]?.numero).toBe(30);
+  });
+
+  it("activates optional module only when civique flags are set", () => {
+    expect(isOptionalModuleActive({})).toBe(false);
+    expect(isOptionalModuleActive({ re_signature_civique: true })).toBe(false);
+    expect(
+      isOptionalModuleActive({
+        re_signature_civique: true,
+        examen_civique_obligatoire: true,
+      }),
+    ).toBe(true);
+  });
+
+  it("routes civique visibility by student profile", () => {
+    const s8 = getEnrichedSession(8)!;
+    expect(isCiviqueVisible(s8, { type_demarche: "titre_sejour" })).toBe(false);
+    expect(isCiviqueVisible(s8, { type_demarche: "naturalisation" })).toBe(true);
+    expect(isCiviqueVisible(s8, { mention: "NAT" })).toBe(true);
+    expect(isCiviqueVisible(s8, { premiere_demande_CSP: true })).toBe(true);
+
+    const s10 = getEnrichedSession(10)!;
+    expect(isCiviqueVisible(s10, { type_demarche: "naturalisation" })).toBe(false);
+  });
+
+  it("normalizes domain exercise formats via alias map", () => {
+    expect(normalizePlanCadreFormat("comprehension_orale", "qcm")).toBe("qcm");
+    expect(normalizePlanCadreFormat("comprehension_orale")).toBe("qcm");
+    expect(normalizePlanCadreFormat("expression_ecrite")).toBe("production_ecrite");
+    expect(normalizePlanCadreFormat("discrimination_audio")).toBe("qcm");
+
+    const s8 = getEnrichedSession(8)!;
+    const coBas = (s8.phases as Record<string, unknown>)?.CO as Record<string, unknown>;
+    const variant = (coBas?.variants_cluster as Record<string, unknown>)?.bas as Record<string, unknown>;
+    expect(variant?.format_domain).toBe("comprehension_orale");
+    expect(variant?.format).toBe("qcm");
   });
 });

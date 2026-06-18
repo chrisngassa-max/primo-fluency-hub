@@ -13,8 +13,10 @@ import {
   formatReferentialPromptBlock,
   getClusterVariantRules,
   getSessionMinimumsForDuration,
+  getEnrichedSession,
   getThemeTemplate,
   inferThemeFromText,
+  resolvePlanCadreThemeId,
   type ClusterVariantId,
   type ThemeSessionTemplate,
 } from "../_shared/referential-loader.ts";
@@ -137,6 +139,12 @@ serve(async (req) => {
     let themeTemplate: ThemeSessionTemplate | null = null;
     if (theme_id) {
       themeTemplate = getThemeTemplate(theme_id);
+    }
+    if (!themeTemplate && gabaritNumero != null && gabaritNumero >= 8 && gabaritNumero <= 20) {
+      const planSession = getEnrichedSession(gabaritNumero);
+      if (planSession) {
+        themeTemplate = getThemeTemplate(resolvePlanCadreThemeId(planSession));
+      }
     }
     if (!themeTemplate) {
       themeTemplate = inferThemeFromText(`${titre} ${objectifs ?? ""} ${competences_cibles?.join(" ") ?? ""}`);
