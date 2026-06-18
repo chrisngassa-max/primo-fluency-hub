@@ -2,6 +2,95 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { callAI, AIError } from "../_shared/ai-client.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth } from "../_shared/check-consent.ts";
+import {
+  getOptionalModuleSessions,
+  isCiviqueVisible,
+  isOptionalModuleActive,
+  resolvePlanCadreThemeId,
+  type PlanCadreSession,
+  type PlanCadreStudentProfile,
+} from "../_shared/referential-loader.ts";
+
+type VariantePlan = "enrichi" | "civique";
+
+const normalizeVariante = (v?: string | null): VariantePlan =>
+  v === "civique" ? "civique" : "enrichi";
+
+// Lisibilité des séances du module optionnel S21–S30 (mappées vers le format GeneratedSeance).
+const MODULE_TYPE_LABELS: Record<string, string> = {
+  STRUCTURES_TRANSVERSALES: "Structures transversales",
+  CIVIQUE_INTENSIF: "Civique intensif",
+  SIMULATION_CIVIQUE: "Simulation examen civique",
+  BILAN_ORIENTATION: "Bilan & orientation",
+};
+
+const MODULE_TYPE_COMPETENCES: Record<string, string[]> = {
+  STRUCTURES_TRANSVERSALES: ["Structures"],
+  CIVIQUE_INTENSIF: ["CE", "CO"],
+  SIMULATION_CIVIQUE: ["CE", "CO"],
+  BILAN_ORIENTATION: ["EO", "CE"],
+};
+
+/**
+ * Construit un profil apprenant minimal mais réel à partir du corps de requête.
+ * Si aucun profil n'est fourni, on dérive un défaut sûr :
+ *  - civique  -> profil activant le module optionnel (re-signature + examen civique)
+ *  - enrichi  -> civique masqué, module désactivé (comportement historique)
+ */
+function buildStudentProfile(
+  body: Record<string, unknown>,
+  variante: VariantePlan,
+  typeDemarche: string,
+): PlanCadreStudentProfile {
+  const provided = body.profile;
+  if (provided && typeof provided === "object") {
+    return provided as PlanCadreStudentProfile;
+  }
+  if (variante === "civique") {
+    return {
+      type_demarche: typeDemarche || "naturalisation",
+      mention: "NAT",
+      premiere_demande_CSP: true,
+      premiere_demande_CR_eligible: true,
+      re_signature_civique: true,
+      examen_civique_obligatoire: true,
+    };
+  }
+  return {
+    type_demarche: typeDemarche || "titre_sejour",
+    re_signature_civique: false,
+    examen_civique_obligatoire: false,
+  };
+}
+
+function estimateModuleExercices(session: PlanCadreSession): number {
+  const duree = typeof session.duree_min === "number" ? session.duree_min : 180;
+  return Math.max(3, Math.round(duree / 40));
+}
+
+/** Mappe les séances S21–S30 du module optionnel vers le format de séance renvoyé au front. */
+function buildOptionalModuleSeances(profile: PlanCadreStudentProfile) {
+  return getOptionalModuleSessions().map((session) => {
+    const type = typeof session.type === "string" ? session.type : "";
+    const label = MODULE_TYPE_LABELS[type] ?? "Module optionnel";
+    const competences = MODULE_TYPE_COMPETENCES[type] ?? ["Structures"];
+    const objectif = typeof session.objectif_communicatif === "string"
+      ? session.objectif_communicatif
+      : "Module optionnel civique";
+    return {
+      titre: `Module optionnel S${session.numero} — ${label}`,
+      objectif_principal: objectif,
+      competences_cibles: competences,
+      duree_minutes: typeof session.duree_min === "number" ? session.duree_min : 180,
+      nb_exercices_suggeres: estimateModuleExercices(session),
+      // Métadonnées plan-cadre (ignorées par le front si non utilisées)
+      numero: session.numero,
+      module_optionnel: true,
+      theme_id: resolvePlanCadreThemeId(session),
+      civique_visible: isCiviqueVisible(session, profile),
+    };
+  });
+}
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -18,7 +107,8 @@ serve(async (req) => {
     const _secretBlock = await ensurePseudonymSecretOrLog("generate-parcours", corsHeaders, null);
     if (_secretBlock) return _secretBlock;
     await logAICall({ function_name: "generate-parcours", triggered_by_user_id: _triggeredBy, status: "ok", data_categories: [], pseudonymization_level: "none" });
-    const { heuresTotales, niveauDepart, niveauCible, dureeSeanceMinutes = 90, type_demarche = 'titre_sejour', groupId } = await req.json();
+    const body = await req.json();
+    const { heuresTotales, niveauDepart, niveauCible, dureeSeanceMinutes = 90, type_demarche = 'titre_sejour', groupId, parcoursId } = body;
     // AI key check moved to shared ai-client
 
     if (!heuresTotales || !niveauDepart || !niveauCible) {
@@ -27,6 +117,40 @@ serve(async (req) => {
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    // === VARIANTE DE PLAN : enrichi (défaut) vs civique (module optionnel S21–S30) ===
+    // Source de vérité : le corps de requête (la ligne `parcours` n'existe pas encore
+    // au moment de la génération). À défaut, on relit la ligne `parcours` si un id est fourni.
+    let variante = normalizeVariante(body.variante_plan ?? body.variante);
+    if (!body.variante_plan && !body.variante && parcoursId) {
+      try {
+        const sbUrl = Deno.env.get("SUPABASE_URL")!;
+        const sbKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+        const sb = createClient(sbUrl, sbKey);
+        const { data: parcoursRow } = await sb
+          .from("parcours")
+          .select("variante_plan")
+          .eq("id", parcoursId)
+          .maybeSingle();
+        if (parcoursRow?.variante_plan) variante = normalizeVariante(parcoursRow.variante_plan);
+      } catch (vErr) {
+        console.error("Error reading parcours variante_plan:", vErr);
+      }
+    }
+
+    const studentProfile = buildStudentProfile(body, variante, type_demarche);
+    const includeOptionalModule = variante === "civique" && isOptionalModuleActive(studentProfile);
+    const optionalModuleSeances = includeOptionalModule
+      ? buildOptionalModuleSeances(studentProfile)
+      : [];
+    const moduleHeures = Math.round(
+      optionalModuleSeances.reduce((sum, s) => sum + (s.duree_minutes || 0), 0) / 60,
+    );
+    // On demande à l'IA le découpage de la partie « tronc commun » uniquement ;
+    // le module optionnel (≈30h / 10 séances) est ajouté de façon déterministe.
+    const baseHeures = includeOptionalModule
+      ? Math.max(heuresTotales - moduleHeures, Math.round(dureeSeanceMinutes / 60))
+      : heuresTotales;
 
     // === ENRICHISSEMENT : Récupérer l'historique du groupe ===
     let studentHistoryPrompt = "";
@@ -180,12 +304,16 @@ Règles :
       ? 'Naturalisation (B2 requis sur les 4 épreuves)'
       : 'Titre de séjour / Résidence (B1 — 4 compétences travaillées, pondération CO/CE renforcée)';
 
+    const moduleNote = includeOptionalModule
+      ? `\n- IMPORTANT : un module optionnel civique de ${moduleHeures}h (séances S21–S30 : structures transversales, civique intensif, simulations d'examen et bilan) sera AJOUTÉ automatiquement après ta progression. Ne le génère donc PAS toi-même ; planifie uniquement le tronc commun sur ${baseHeures}h.`
+      : "";
+
     const userPrompt = `Génère un parcours de formation FLE/TCF IRN :
-- Volume total : ${heuresTotales} heures
+- Volume total à découper : ${baseHeures} heures
 - Niveau de départ : ${niveauDepart}
 - Niveau cible : ${niveauCible}
 - Durée type d'une séance : ${dureeSeanceMinutes} minutes
-- Type de démarche : ${demarcheLabel}
+- Type de démarche : ${demarcheLabel}${moduleNote}
 
 Propose le découpage complet en séances.
 ${studentHistoryPrompt}`;
@@ -236,11 +364,21 @@ ${studentHistoryPrompt}`;
     if (!toolCall) throw new Error("L'IA n'a pas pu générer la progression");
 
     const parsed = JSON.parse(toolCall.function.arguments);
+    const baseSeances = parsed.seances || [];
+    const seances = [...baseSeances, ...optionalModuleSeances];
 
-    return new Response(JSON.stringify({ seances: parsed.seances || [] }), {
-      status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({
+        seances,
+        variante_plan: variante,
+        module_optionnel_inclus: includeOptionalModule,
+        nb_seances_module: optionalModuleSeances.length,
+      }),
+      {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      },
+    );
   } catch (e) {
     console.error("generate-parcours error:", e);
     return new Response(
