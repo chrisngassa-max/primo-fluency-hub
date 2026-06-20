@@ -81,7 +81,7 @@ async function callGemini(options: AICallOptions): Promise<any> {
   const functionDeclarations = options.tools?.map((tool) => ({
     name: tool.function.name,
     description: tool.function.description,
-    parameters: tool.function.parameters,
+    parameters: sanitizeGeminiSchema(tool.function.parameters),
   }));
 
   const body = {
@@ -110,14 +110,72 @@ async function callGemini(options: AICallOptions): Promise<any> {
   if (!response.ok) {
     const errText = await response.text();
     console.error("Gemini API error:", response.status, errText);
-    throw new AIError(`Erreur du service IA (${response.status})`, response.status);
+    throw new AIError(`Erreur du service IA (${response.status})`, response.status, errText);
   }
 
   return geminiToOpenAI(await response.json(), options);
 }
 
+/**
+ * Certains identifiants de modèle (ex. `gemini-3-flash-preview`) sont des alias propres
+ * à la passerelle Lovable et n'existent pas sur l'API Gemini directe. Quand on bascule
+ * en secours sur Gemini, on les ramène vers un modèle stable réellement disponible afin
+ * d'éviter une erreur 404 « model not found ».
+ */
 function normalizeGeminiModel(model: string): string {
-  return model.replace(/^google\//, "");
+  const bare = model.replace(/^google\//, "");
+  if (/gemini-3/.test(bare) || /preview/.test(bare)) {
+    return "gemini-2.5-flash";
+  }
+  return bare;
+}
+
+/**
+ * L'API Gemini (generateContent) n'accepte qu'un sous-ensemble d'OpenAPI pour les
+ * `functionDeclarations.parameters`. Des mots-clés JSON-Schema courants comme
+ * `additionalProperties`, `minimum`, `maximum`, `$schema`... provoquent une erreur 400
+ * « Invalid JSON payload ... Unknown name ... ». On nettoie donc récursivement le schéma
+ * pour ne conserver que les champs supportés avant l'appel direct à Gemini.
+ */
+const GEMINI_SCHEMA_ALLOWED_KEYS = new Set([
+  "type",
+  "format",
+  "description",
+  "nullable",
+  "enum",
+  "items",
+  "properties",
+  "required",
+  "anyOf",
+  "minItems",
+  "maxItems",
+]);
+
+function sanitizeGeminiSchema(schema: unknown): any {
+  if (Array.isArray(schema)) {
+    return schema.map((entry) => sanitizeGeminiSchema(entry));
+  }
+  if (!schema || typeof schema !== "object") {
+    return schema;
+  }
+
+  const result: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(schema as Record<string, unknown>)) {
+    if (!GEMINI_SCHEMA_ALLOWED_KEYS.has(key)) continue;
+
+    if (key === "properties" && value && typeof value === "object") {
+      const cleanedProps: Record<string, unknown> = {};
+      for (const [propName, propSchema] of Object.entries(value as Record<string, unknown>)) {
+        cleanedProps[propName] = sanitizeGeminiSchema(propSchema);
+      }
+      result[key] = cleanedProps;
+    } else if (key === "items" || key === "anyOf") {
+      result[key] = sanitizeGeminiSchema(value);
+    } else {
+      result[key] = value;
+    }
+  }
+  return result;
 }
 
 function geminiToOpenAI(data: any, options: AICallOptions): any {
@@ -170,8 +228,10 @@ function maybeToolCallFromJsonText(text: string, options: AICallOptions) {
 
 export class AIError extends Error {
   status: number;
-  constructor(message: string, status: number) {
+  detail?: string;
+  constructor(message: string, status: number, detail?: string) {
     super(message);
     this.status = status;
+    this.detail = detail;
   }
 }

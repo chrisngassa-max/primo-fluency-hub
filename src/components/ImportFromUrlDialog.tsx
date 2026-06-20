@@ -5,12 +5,13 @@ import { getEdgeFunctionErrorMessage } from "@/lib/edgeFunctionError";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle2, FileText, Link2, Loader2, Save, Upload, Wand2 } from "lucide-react";
+import { BookOpen, CheckCircle2, FileText, Link2, Loader2, Save, Upload, Wand2 } from "lucide-react";
 
 interface ImportFromUrlDialogProps {
   open: boolean;
@@ -21,8 +22,16 @@ interface ImportFromUrlDialogProps {
 }
 
 type SourceMode = "url" | "pdf";
+type Target = "exercice" | "lecon";
 type Destination = "bank" | "session" | "diagnostic" | "homework";
 type Step = "form" | "analyzing" | "generating" | "preview" | "saving";
+
+interface SessionOption {
+  id: string;
+  titre: string;
+  date_seance: string;
+  group_id: string;
+}
 
 const COMPETENCES = [
   { value: "auto", label: "Detection automatique" },
@@ -43,6 +52,8 @@ const FORMATS = [
   { value: "production_ecrite", label: "Production ecrite" },
 ];
 
+const NO_SESSION = "__none__";
+
 const readAsBase64 = (file: File) =>
   new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
@@ -60,6 +71,7 @@ export default function ImportFromUrlDialog({
 }: ImportFromUrlDialogProps) {
   const { user } = useAuth();
   const [sourceMode, setSourceMode] = useState<SourceMode>(defaultSourceMode);
+  const [target, setTarget] = useState<Target>("exercice");
   const [url, setUrl] = useState("");
   const [pdf, setPdf] = useState<File | null>(null);
   const [competence, setCompetence] = useState("auto");
@@ -67,18 +79,39 @@ export default function ImportFromUrlDialog({
   const [format, setFormat] = useState("qcm");
   const [count, setCount] = useState(1);
   const [destination, setDestination] = useState<Destination>(sessionId ? "session" : "bank");
+  const [destinationSessionId, setDestinationSessionId] = useState<string>(sessionId || NO_SESSION);
+  const [sessions, setSessions] = useState<SessionOption[]>([]);
+  const [sendToStudents, setSendToStudents] = useState(false);
   const [step, setStep] = useState<Step>("form");
   const [analysis, setAnalysis] = useState<any>(null);
   const [exercises, setExercises] = useState<any[]>([]);
+  const [lesson, setLesson] = useState<any>(null);
 
   useEffect(() => {
     if (open) {
       setSourceMode(defaultSourceMode);
+      setDestinationSessionId(sessionId || NO_SESSION);
+      setDestination(sessionId ? "session" : "bank");
     }
-  }, [open, defaultSourceMode]);
+  }, [open, defaultSourceMode, sessionId]);
+
+  useEffect(() => {
+    if (!open || !user) return;
+    (async () => {
+      const { data } = await supabase
+        .from("sessions")
+        .select("id, titre, date_seance, group_id, group:groups(formateur_id)")
+        .order("date_seance", { ascending: false });
+      const owned = (data || []).filter((s: any) => s.group?.formateur_id === user.id);
+      setSessions(
+        owned.map((s: any) => ({ id: s.id, titre: s.titre, date_seance: s.date_seance, group_id: s.group_id })),
+      );
+    })();
+  }, [open, user]);
 
   const busy = step === "analyzing" || step === "generating" || step === "saving";
   const canGenerate = sourceMode === "pdf" ? !!pdf : /^https?:\/\//i.test(url.trim());
+  const effectiveSessionId = destinationSessionId !== NO_SESSION ? destinationSessionId : undefined;
   const sourceLabel = useMemo(
     () => sourceMode === "pdf" ? pdf?.name : url.trim(),
     [pdf, sourceMode, url],
@@ -86,6 +119,7 @@ export default function ImportFromUrlDialog({
 
   const reset = () => {
     setSourceMode(defaultSourceMode);
+    setTarget("exercice");
     setUrl("");
     setPdf(null);
     setCompetence("auto");
@@ -93,9 +127,12 @@ export default function ImportFromUrlDialog({
     setFormat("qcm");
     setCount(1);
     setDestination(sessionId ? "session" : "bank");
+    setDestinationSessionId(sessionId || NO_SESSION);
+    setSendToStudents(false);
     setStep("form");
     setAnalysis(null);
     setExercises([]);
+    setLesson(null);
   };
 
   const close = () => {
@@ -114,28 +151,55 @@ export default function ImportFromUrlDialog({
     `Objectifs : ${(pdfAnalysis.learning_objectives || []).join(", ")}`,
   ].join("\n");
 
+  // Analyse le PDF (le cas échéant) et renvoie l'analyse + le texte source exploitable.
+  const analyzeSource = async (): Promise<{ pdfAnalysis: any; sourceText?: string; sourceUrl?: string }> => {
+    if (sourceMode === "pdf") {
+      if (!pdf) throw new Error("Aucun PDF sélectionné.");
+      if (pdf.size > 10 * 1024 * 1024) throw new Error("Le PDF ne doit pas depasser 10 Mo.");
+      setStep("analyzing");
+      const pdfBase64 = await readAsBase64(pdf);
+      const { data, error } = await supabase.functions.invoke("analyze-pdf-support", {
+        body: { pdfBase64, fileName: pdf.name, targetLevel: niveau },
+      });
+      if (error) throw new Error(await getEdgeFunctionErrorMessage(error, "Analyse du PDF impossible."));
+      if (data?.error) throw new Error(data.error);
+      const pdfAnalysis = data.analysis;
+      setAnalysis(pdfAnalysis);
+      return { pdfAnalysis, sourceText: buildSourceText(pdfAnalysis) };
+    }
+    return { pdfAnalysis: null, sourceUrl: url.trim() };
+  };
+
   const generate = async () => {
     if (!canGenerate) return;
     try {
-      let sourceText: string | undefined;
-      let sourceUrl: string | undefined;
-      let pdfAnalysis = null;
+      const { pdfAnalysis, sourceText, sourceUrl } = await analyzeSource();
 
-      if (sourceMode === "pdf") {
-        if (!pdf) return;
-        if (pdf.size > 10 * 1024 * 1024) throw new Error("Le PDF ne doit pas depasser 10 Mo.");
-        setStep("analyzing");
-        const pdfBase64 = await readAsBase64(pdf);
-        const { data, error } = await supabase.functions.invoke("analyze-pdf-support", {
-          body: { pdfBase64, fileName: pdf.name, targetLevel: niveau },
+      if (target === "lecon") {
+        setStep("generating");
+        const { data, error } = await supabase.functions.invoke("generate-resource", {
+          body: {
+            type: "lecon",
+            competence: competence === "auto" ? "CE" : competence,
+            niveau,
+            mode: "manual",
+            sourceContext: pdfAnalysis
+              ? {
+                  title: pdfAnalysis.title || pdf?.name,
+                  theme: pdfAnalysis.theme,
+                  summary: pdfAnalysis.summary,
+                  vocabulary: pdfAnalysis.vocabulary,
+                  grammar_points: pdfAnalysis.grammar_points,
+                  learning_objectives: pdfAnalysis.learning_objectives,
+                }
+              : { title: sourceLabel, summary: `Support importé depuis : ${sourceUrl}` },
+          },
         });
-        if (error) throw new Error(await getEdgeFunctionErrorMessage(error, "Analyse du PDF impossible."));
+        if (error) throw new Error(await getEdgeFunctionErrorMessage(error, "Generation de la leçon impossible."));
         if (data?.error) throw new Error(data.error);
-        pdfAnalysis = data.analysis;
-        setAnalysis(pdfAnalysis);
-        sourceText = buildSourceText(pdfAnalysis);
-      } else {
-        sourceUrl = url.trim();
+        setLesson(data.resource);
+        setStep("preview");
+        return;
       }
 
       setStep("generating");
@@ -167,7 +231,76 @@ export default function ImportFromUrlDialog({
     }
   };
 
+  const groupIdForSession = (sid?: string) => sessions.find((s) => s.id === sid)?.group_id;
+
+  const saveLesson = async () => {
+    if (!user || !lesson) return;
+    setStep("saving");
+    try {
+      const { data: savedRow, error } = await supabase
+        .from("ressources_pedagogiques" as any)
+        .insert({
+          formateur_id: user.id,
+          session_id: effectiveSessionId || null,
+          type: "lecon",
+          competence: competence === "auto" ? "CE" : competence,
+          niveau,
+          titre: lesson.titre,
+          contenu: {
+            ...lesson,
+            source_support: {
+              type: sourceMode,
+              label: sourceLabel,
+              theme: analysis?.theme || null,
+            },
+          },
+          source: "auto",
+          statut: "published",
+        } as any)
+        .select("id")
+        .single();
+      if (error) throw error;
+      const resourceId = (savedRow as any)?.id;
+
+      let assignedCount = 0;
+      if (sendToStudents && resourceId) {
+        const groupId = groupIdForSession(effectiveSessionId);
+        if (groupId) {
+          const { data: members } = await supabase
+            .from("group_members")
+            .select("eleve_id")
+            .eq("group_id", groupId);
+          const rows = (members || []).map((m: any) => ({
+            resource_id: resourceId,
+            learner_id: m.eleve_id,
+            group_id: groupId,
+            assigned_by: user.id,
+          }));
+          if (rows.length) {
+            const { error: aErr } = await supabase.from("resource_assignments" as any).insert(rows);
+            if (aErr) throw aErr;
+            assignedCount = rows.length;
+          }
+        }
+      }
+
+      toast.success("Leçon créée", {
+        description: assignedCount
+          ? `Visible dans la séance et envoyée à ${assignedCount} élève(s).`
+          : effectiveSessionId
+            ? "Visible dans la séance (section Supports & leçons)."
+            : "Disponible dans la banque de ressources.",
+      });
+      reset();
+      onClose();
+    } catch (error: any) {
+      toast.error("Sauvegarde impossible", { description: error.message });
+      setStep("preview");
+    }
+  };
+
   const save = async () => {
+    if (target === "lecon") return saveLesson();
     if (!user || exercises.length === 0) return;
     setStep("saving");
     try {
@@ -206,11 +339,11 @@ export default function ImportFromUrlDialog({
         .select();
       if (error) throw error;
 
-      if (sessionId && destination !== "bank") {
+      if (effectiveSessionId && destination !== "bank") {
         const { data: existing } = await supabase
           .from("session_exercices")
           .select("ordre")
-          .eq("session_id", sessionId)
+          .eq("session_id", effectiveSessionId)
           .order("ordre", { ascending: false })
           .limit(1);
         const startOrder = (existing?.[0]?.ordre ?? 0) + 1;
@@ -218,7 +351,7 @@ export default function ImportFromUrlDialog({
 
         const { error: linkError } = await supabase.from("session_exercices").insert(
           (created || []).map((exercise, index) => ({
-            session_id: sessionId,
+            session_id: effectiveSessionId,
             exercice_id: exercise.id,
             ordre: startOrder + index,
             statut: sessionStatus,
@@ -230,7 +363,7 @@ export default function ImportFromUrlDialog({
           const { data: session } = await supabase
             .from("sessions")
             .select("group_id")
-            .eq("id", sessionId)
+            .eq("id", effectiveSessionId)
             .single();
           const { data: members } = await supabase
             .from("group_members")
@@ -242,7 +375,7 @@ export default function ImportFromUrlDialog({
               eleve_id: member.eleve_id,
               exercice_id: exercise.id,
               formateur_id: user.id,
-              session_id: sessionId,
+              session_id: effectiveSessionId,
               date_echeance: deadline,
               statut: "en_attente",
               raison: "entrainement",
@@ -261,7 +394,7 @@ export default function ImportFromUrlDialog({
           ? "Les exercices ont aussi ete envoyes aux eleves."
           : destination === "diagnostic"
             ? "Ils sont places en diagnostic de debut de seance."
-            : destination === "session"
+            : destination === "session" && effectiveSessionId
               ? "Ils sont ajoutes a la seance."
               : "Ils sont disponibles dans la banque.",
       });
@@ -282,7 +415,7 @@ export default function ImportFromUrlDialog({
             Importer un support pedagogique
           </DialogTitle>
           <DialogDescription>
-            Genere des exercices sur le meme theme, avec le vocabulaire du support et le niveau choisi.
+            Transformez un PDF ou une page web en exercice interactif ou en leçon lisible dans l'application.
           </DialogDescription>
         </DialogHeader>
 
@@ -320,9 +453,42 @@ export default function ImportFromUrlDialog({
               </TabsContent>
             </Tabs>
 
+            {/* Cible de conversion */}
+            <div>
+              <Label>Convertir en</Label>
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setTarget("exercice")}
+                  className={`flex items-start gap-2 rounded-md border p-3 text-left transition-colors ${
+                    target === "exercice" ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"
+                  }`}
+                >
+                  <Wand2 className="mt-0.5 h-4 w-4 text-primary" />
+                  <span>
+                    <span className="block text-sm font-medium">Exercice interactif</span>
+                    <span className="block text-xs text-muted-foreground">L'élève le fait dans l'app</span>
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTarget("lecon")}
+                  className={`flex items-start gap-2 rounded-md border p-3 text-left transition-colors ${
+                    target === "lecon" ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"
+                  }`}
+                >
+                  <BookOpen className="mt-0.5 h-4 w-4 text-primary" />
+                  <span>
+                    <span className="block text-sm font-medium">Leçon (page lisible)</span>
+                    <span className="block text-xs text-muted-foreground">Lisible en ligne, sans PDF</span>
+                  </span>
+                </button>
+              </div>
+            </div>
+
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <Label>Niveau de l'exercice</Label>
+                <Label>Niveau {target === "lecon" ? "de la leçon" : "de l'exercice"}</Label>
                 <Select value={niveau} onValueChange={setNiveau}>
                   <SelectTrigger className="mt-2"><SelectValue /></SelectTrigger>
                   <SelectContent>{NIVEAUX.map((item) => <SelectItem key={item} value={item}>{item}</SelectItem>)}</SelectContent>
@@ -335,46 +501,77 @@ export default function ImportFromUrlDialog({
                   <SelectContent>{COMPETENCES.map((item) => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
-              <div>
-                <Label>Format</Label>
-                <Select value={format} onValueChange={setFormat}>
-                  <SelectTrigger className="mt-2"><SelectValue /></SelectTrigger>
-                  <SelectContent>{FORMATS.map((item) => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}</SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Nombre d'exercices</Label>
-                <Input
-                  className="mt-2"
-                  type="number"
-                  min={1}
-                  max={30}
-                  value={count}
-                  onChange={(event) => {
-                    const value = Number(event.target.value);
-                    setCount(Number.isFinite(value) ? Math.min(30, Math.max(1, value)) : 1);
-                  }}
-                />
-                <p className="mt-1 text-xs text-muted-foreground">Choisissez entre 1 et 30 exercices.</p>
-              </div>
+              {target === "exercice" && (
+                <>
+                  <div>
+                    <Label>Format</Label>
+                    <Select value={format} onValueChange={setFormat}>
+                      <SelectTrigger className="mt-2"><SelectValue /></SelectTrigger>
+                      <SelectContent>{FORMATS.map((item) => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label>Nombre d'exercices</Label>
+                    <Input
+                      className="mt-2"
+                      type="number"
+                      min={1}
+                      max={30}
+                      value={count}
+                      onChange={(event) => {
+                        const value = Number(event.target.value);
+                        setCount(Number.isFinite(value) ? Math.min(30, Math.max(1, value)) : 1);
+                      }}
+                    />
+                    <p className="mt-1 text-xs text-muted-foreground">Choisissez entre 1 et 30 exercices.</p>
+                  </div>
+                </>
+              )}
             </div>
 
+            {/* Séance de destination */}
             <div>
-              <Label>Destination</Label>
-              <Select value={destination} onValueChange={(value) => setDestination(value as Destination)}>
-                <SelectTrigger className="mt-2"><SelectValue /></SelectTrigger>
+              <Label>Séance de destination</Label>
+              <Select value={destinationSessionId} onValueChange={setDestinationSessionId}>
+                <SelectTrigger className="mt-2"><SelectValue placeholder="Aucune (banque)" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="bank">Banque d'exercices</SelectItem>
-                  {sessionId && <SelectItem value="session">Exercices de la seance</SelectItem>}
-                  {sessionId && <SelectItem value="diagnostic">Prediagnostic de la seance</SelectItem>}
-                  {sessionId && <SelectItem value="homework">Devoirs des eleves</SelectItem>}
+                  <SelectItem value={NO_SESSION}>Aucune — banque {target === "lecon" ? "de ressources" : "d'exercices"}</SelectItem>
+                  {sessions.map((s) => (
+                    <SelectItem key={s.id} value={s.id}>
+                      {s.titre} — {new Date(s.date_seance).toLocaleDateString("fr-FR")}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
 
+            {target === "exercice" && effectiveSessionId && (
+              <div>
+                <Label>Emplacement dans la séance</Label>
+                <Select value={destination} onValueChange={(value) => setDestination(value as Destination)}>
+                  <SelectTrigger className="mt-2"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="bank">Banque d'exercices (non lié)</SelectItem>
+                    <SelectItem value="session">Exercices de la seance</SelectItem>
+                    <SelectItem value="diagnostic">Prediagnostic de la seance</SelectItem>
+                    <SelectItem value="homework">Devoirs des eleves</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {target === "lecon" && effectiveSessionId && (
+              <label className="flex items-center gap-2 text-sm">
+                <Checkbox checked={sendToStudents} onCheckedChange={(v) => setSendToStudents(v === true)} />
+                Envoyer la leçon aux élèves de la séance (visible dans « Mes fiches »)
+              </label>
+            )}
+
             <Button className="w-full gap-2" size="lg" disabled={!canGenerate} onClick={generate}>
-              <Wand2 className="h-4 w-4" />
-              Analyser et generer {count} exercice{count > 1 ? "s" : ""}
+              {target === "lecon" ? <BookOpen className="h-4 w-4" /> : <Wand2 className="h-4 w-4" />}
+              {target === "lecon"
+                ? "Analyser et générer la leçon"
+                : `Analyser et generer ${count} exercice${count > 1 ? "s" : ""}`}
             </Button>
           </div>
         )}
@@ -384,14 +581,54 @@ export default function ImportFromUrlDialog({
             <Loader2 className="h-9 w-9 animate-spin text-primary" />
             <div>
               <p className="font-medium">
-                {step === "analyzing" ? "Analyse du PDF et de son vocabulaire..." : step === "generating" ? "Generation des exercices..." : "Ajout des exercices..."}
+                {step === "analyzing"
+                  ? "Analyse du support et de son vocabulaire..."
+                  : step === "generating"
+                    ? target === "lecon" ? "Rédaction de la leçon..." : "Generation des exercices..."
+                    : "Enregistrement..."}
               </p>
               <p className="mt-1 text-sm text-muted-foreground">Le contenu reste ancre dans le support choisi.</p>
             </div>
           </div>
         )}
 
-        {step === "preview" && (
+        {step === "preview" && target === "lecon" && lesson && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 text-green-700">
+              <CheckCircle2 className="h-5 w-5" />
+              <span className="font-medium">Leçon prête</span>
+            </div>
+            <div className="max-h-[45vh] space-y-3 overflow-y-auto border bg-muted/20 p-4">
+              <p className="text-lg font-bold">{lesson.titre}</p>
+              {lesson.resume && <p className="text-sm italic text-muted-foreground">{lesson.resume}</p>}
+              {(lesson.sections || []).map((section: any, index: number) => (
+                <div key={index} className="border-l-2 border-primary/40 pl-3">
+                  <p className="text-sm font-semibold">{section.titre}</p>
+                  <p className="whitespace-pre-wrap text-sm text-muted-foreground">{section.contenu}</p>
+                  {(section.items || []).length > 0 && (
+                    <ul className="mt-1 list-inside list-disc text-sm text-muted-foreground">
+                      {section.items.map((item: any, j: number) => (
+                        <li key={j}>
+                          {item.terme && <span className="font-medium">{item.terme}</span>}
+                          {item.definition && <span> — {item.definition}</span>}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setStep("form")}>Modifier</Button>
+              <Button className="gap-2" onClick={save}>
+                <Save className="h-4 w-4" />
+                Valider la leçon
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {step === "preview" && target === "exercice" && (
           <div className="space-y-4">
             <div className="flex items-center gap-2 text-green-700">
               <CheckCircle2 className="h-5 w-5" />

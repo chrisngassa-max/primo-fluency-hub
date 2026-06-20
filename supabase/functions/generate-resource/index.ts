@@ -59,7 +59,7 @@ serve(async (req) => {
     // AI key check moved to shared ai-client
 
     const body = await req.json();
-    const { type, competence, niveau, exerciseContext, exercisesContext, sessionContext, mode } = body;
+    const { type, competence, niveau, exerciseContext, exercisesContext, sessionContext, sourceContext, mode } = body;
 
     if (!type || !competence || !niveau) {
       throw new Error("Champs requis : type, competence, niveau");
@@ -91,6 +91,23 @@ CONTEXTE DES ${exercisesContext.length} EXERCICES SOURCES :
 ${exercisesContext.map((ex: any, i: number) => `${i + 1}. "${ex.titre}" (${ex.competence}, ${ex.format}) — ${ex.consigne || ""}`).join("\n")}
 
 La ressource doit couvrir les notions nécessaires pour réussir l'ensemble de ces exercices. Identifie les points communs et les compétences transversales.`;
+    }
+
+    if (sourceContext) {
+      const vocab = Array.isArray(sourceContext.vocabulary) ? sourceContext.vocabulary.join(", ") : "";
+      const grammar = Array.isArray(sourceContext.grammar_points) ? sourceContext.grammar_points.join(", ") : "";
+      const objectives = Array.isArray(sourceContext.learning_objectives) ? sourceContext.learning_objectives.join(", ") : "";
+      userPrompt += `
+
+SUPPORT PÉDAGOGIQUE IMPORTÉ (source à respecter fidèlement) :
+- Titre : ${sourceContext.title || "Document importé"}
+- Thème : ${sourceContext.theme || "Non spécifié"}
+${vocab ? `- Vocabulaire à conserver : ${vocab}` : ""}
+${grammar ? `- Points de langue : ${grammar}` : ""}
+${objectives ? `- Objectifs : ${objectives}` : ""}
+${sourceContext.summary ? `- Synthèse du document :\n${String(sourceContext.summary).slice(0, 4000)}` : ""}
+
+La leçon doit transformer ce support en une page lisible directement dans l'application (l'élève ne peut pas ouvrir le PDF). Reste fidèle au thème et au vocabulaire du document, sans inventer de contenu absent.`;
     }
 
     if (sessionContext) {

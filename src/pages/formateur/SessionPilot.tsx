@@ -73,6 +73,7 @@ import EndOfSessionSection from "@/components/EndOfSessionSection";
 import GenerateResourceDialog from "@/components/GenerateResourceDialog";
 import AutoResourceSuggestions from "@/components/AutoResourceSuggestions";
 import SessionExternalResourcesList from "@/components/SessionExternalResourcesList";
+import SessionImportedSupportsList from "@/components/SessionImportedSupportsList";
 import StartOfSessionBilan from "@/components/StartOfSessionBilan";
 import SessionClosureReminder from "@/components/SessionClosureReminder";
 import PreflightExercises from "@/components/PreflightExercises";
@@ -1575,6 +1576,9 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
       {/* Bloc ressources externes ajoutées à la séance */}
       <SessionExternalResourcesList sessionId={id!} />
 
+      {/* Bloc supports & leçons importés (PDF → leçon lisible) */}
+      <SessionImportedSupportsList sessionId={id!} />
+
 
       {/* Print header */}
       <div className="hidden print:block mb-8">
@@ -2834,7 +2838,10 @@ ${ficheHtml}</body></html>`;
       {/* ─── Import from URL Dialog ─── */}
       <ImportFromUrlDialog
         open={importUrlOpen}
-        onClose={() => setImportUrlOpen(false)}
+        onClose={() => {
+          setImportUrlOpen(false);
+          qc.invalidateQueries({ queryKey: ["session-supports", id] });
+        }}
         sessionId={id}
         onExerciseCreated={() => qc.invalidateQueries({ queryKey: ["session-exercices", id] })}
       />
