@@ -45,6 +45,26 @@ interface SandboxContextValue {
 const SandboxContext = createContext<SandboxContextValue | null>(null);
 const EMPTY_COUNTS = { resultats: 0, devoirs: 0, sessions: 0 };
 
+// supabase.functions.invoke renvoie un FunctionsHttpError generique
+// ("Edge Function returned a non-2xx status code") sur une reponse non-2xx.
+// Le vrai message d'erreur est dans la reponse JSON (error.context). On l'extrait
+// pour le remonter a l'utilisateur au lieu d'echouer silencieusement.
+async function describeFunctionError(error: unknown): Promise<Error> {
+  const context = (error as { context?: Response } | null)?.context;
+  if (context && typeof context.clone === "function") {
+    try {
+      const body = await context.clone().json();
+      const message = body?.error ?? body?.message;
+      if (typeof message === "string" && message.length) {
+        return new Error(body?.code ? `${message} (${body.code})` : message);
+      }
+    } catch {
+      // Corps non JSON : on retombe sur l'erreur d'origine.
+    }
+  }
+  return error instanceof Error ? error : new Error("Operation impossible");
+}
+
 export function SandboxProvider({ children }: { children: React.ReactNode }) {
   const { role, user } = useAuth();
   const [session, setSession] = useState<SandboxSession | null>(null);
@@ -105,7 +125,7 @@ export function SandboxProvider({ children }: { children: React.ReactNode }) {
     const { data, error } = await supabase.functions.invoke("sandbox-setup", {
       body: { force_recreate: forceRecreate },
     });
-    if (error) throw error;
+    if (error) throw await describeFunctionError(error);
     localStorage.setItem("sandbox_mode", "true");
     localStorage.removeItem("sandbox_dismissed");
     setDisplayHint(true);
@@ -117,7 +137,7 @@ export function SandboxProvider({ children }: { children: React.ReactNode }) {
     const { data, error } = await supabase.functions.invoke("sandbox-reset", {
       body: { scope, sandbox_session_id: session?.id },
     });
-    if (error) throw error;
+    if (error) throw await describeFunctionError(error);
     await refresh();
     return data?.tables_nettoyees ?? {};
   }, [refresh, session?.id]);
@@ -127,7 +147,7 @@ export function SandboxProvider({ children }: { children: React.ReactNode }) {
     const { data, error } = await supabase.functions.invoke("sandbox-invite", {
       body: { niveau, redirect_to: redirectTo },
     });
-    if (error) throw error;
+    if (error) throw await describeFunctionError(error);
     return data.invite_url as string;
   }, []);
 
@@ -143,7 +163,7 @@ export function SandboxProvider({ children }: { children: React.ReactNode }) {
         const { data, error } = await supabase.functions.invoke("sandbox-reset", {
           body: { scope: "everything", sandbox_session_id: session?.id },
         });
-        if (error) throw error;
+        if (error) throw await describeFunctionError(error);
 
         console.info("[sandbox-exit:reset-response]", {
           sandboxSessionId: data?.sandbox_session_id ?? requestedSessionId,

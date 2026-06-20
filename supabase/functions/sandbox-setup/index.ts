@@ -255,6 +255,13 @@ Deno.serve(async (req) => {
         fixture,
         selectedExercises.map((exercise: any) => exercise.id),
       );
+      // IMPORTANT : toutes les lignes de devoirs inserees en lot doivent partager
+      // exactement les memes cles. PostgREST construit une seule liste de colonnes a
+      // partir de l'UNION des cles du tableau ; une ligne a qui il manque une cle
+      // recoit NULL (et non la valeur par defaut SQL). Comme le devoir diagnostic
+      // ci-dessous renseigne `contexte` (NOT NULL) et `source_label`, on les fixe
+      // explicitement ici (valeur par defaut de la colonne + NULL) pour eviter une
+      // violation de contrainte NOT NULL sur `contexte`.
       const devoirRows: Record<string, unknown>[] = history.devoirs.map((devoir) => ({
         exercice_id: devoir.exercise_id,
         eleve_id: eleve.user_id,
@@ -264,6 +271,8 @@ Deno.serve(async (req) => {
         date_echeance: devoir.due_at,
         nb_reussites_consecutives: devoir.successes,
         session_id: previousSession.id,
+        source_label: null,
+        contexte: "devoir",
         created_at: devoir.created_at,
         updated_at: devoir.created_at,
         sandbox_session_id: sandbox.id,
