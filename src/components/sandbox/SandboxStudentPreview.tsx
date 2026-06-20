@@ -1,24 +1,29 @@
 import { useEffect, useState } from "react";
-import { BookOpen, Gauge, GraduationCap, PlayCircle } from "lucide-react";
+import { BookOpen, Gauge, GraduationCap, PlayCircle, CalendarRange, TrendingUp, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import type { SandboxLevel } from "@/contexts/SandboxContext";
 import SandboxExerciseRunner from "@/components/sandbox/SandboxExerciseRunner";
 import { getEdgeFunctionErrorMessage } from "@/lib/edgeFunctionError";
 import { useSandboxPreview } from "@/contexts/SandboxPreviewContext";
 
+type PreviewTab = "dashboard" | "devoirs" | "sessions";
+
 export default function SandboxStudentPreview({ niveau }: { niveau: SandboxLevel }) {
   const { exitStudentPreview } = useSandboxPreview();
-  const [tab, setTab] = useState<"dashboard" | "devoirs">("dashboard");
+  const [tab, setTab] = useState<PreviewTab>("dashboard");
   const [dashboard, setDashboard] = useState<any>(null);
   const [devoirs, setDevoirs] = useState<any[]>([]);
+  const [sessions, setSessions] = useState<any[]>([]);
   const [activeDevoir, setActiveDevoir] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [adaptingId, setAdaptingId] = useState<string | null>(null);
 
-  const load = async (resource: "dashboard" | "devoirs") => {
+  const load = async (resource: PreviewTab) => {
     setLoading(true);
     setError("");
     const { data, error: invokeError } = await supabase.functions.invoke("sandbox-preview-data", {
@@ -30,7 +35,26 @@ export default function SandboxStudentPreview({ niveau }: { niveau: SandboxLevel
       return;
     }
     if (resource === "dashboard") setDashboard(data);
-    else setDevoirs(data?.devoirs ?? []);
+    else if (resource === "devoirs") setDevoirs(data?.devoirs ?? []);
+    else setSessions(data?.sessions ?? []);
+  };
+
+  const adaptDifficulty = async (devoirId: string) => {
+    setAdaptingId(devoirId);
+    const { data, error: invokeError } = await supabase.functions.invoke("sandbox-preview-action", {
+      body: { niveau, action: "adapt_difficulty", payload: { devoir_id: devoirId } },
+    });
+    setAdaptingId(null);
+    if (invokeError) {
+      toast.error(await getEdgeFunctionErrorMessage(invokeError, "Adaptation impossible"));
+      return;
+    }
+    if (data?.adapted) {
+      toast.success(`Difficulté augmentée : ${data.exercice?.titre ?? "nouvel exercice"}`);
+      void load("sessions");
+    } else {
+      toast.info(data?.message ?? "Aucun exercice plus difficile disponible.");
+    }
   };
 
   useEffect(() => {
@@ -68,6 +92,7 @@ export default function SandboxStudentPreview({ niveau }: { niveau: SandboxLevel
           <div className="ml-auto flex gap-2">
             <Button size="sm" variant={tab === "dashboard" ? "default" : "outline"} onClick={() => setTab("dashboard")}>Tableau de bord</Button>
             <Button size="sm" variant={tab === "devoirs" ? "default" : "outline"} onClick={() => setTab("devoirs")}>Devoirs</Button>
+            <Button size="sm" variant={tab === "sessions" ? "default" : "outline"} onClick={() => setTab("sessions")}>Séances</Button>
           </div>
         </div>
       </div>
@@ -125,6 +150,70 @@ export default function SandboxStudentPreview({ niveau }: { niveau: SandboxLevel
               </CardHeader>
             </Card>
           ))}
+        </div>
+      )}
+
+      {!loading && !error && tab === "sessions" && (
+        <div className="grid gap-4">
+          {sessions.length === 0 && (
+            <Card><CardContent className="p-8 text-center text-muted-foreground">Aucune séance sandbox pour ce profil.</CardContent></Card>
+          )}
+          {sessions.map((seance) => {
+            const isDiagnostic = seance.role === "diagnostic";
+            return (
+              <Card key={seance.id} className={isDiagnostic ? "border-blue-300" : "border-emerald-300"}>
+                <CardHeader>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge variant={isDiagnostic ? "default" : "secondary"} className="gap-1">
+                      {isDiagnostic ? <CalendarRange className="h-3.5 w-3.5" /> : <BookOpen className="h-3.5 w-3.5" />}
+                      {isDiagnostic ? "Diagnostic — prochaine séance" : "Évaluation — séance précédente"}
+                    </Badge>
+                    <CardTitle className="text-base">{seance.titre}</CardTitle>
+                  </div>
+                  <CardDescription>
+                    {(seance.competences_cibles ?? []).join(", ") || "—"}
+                    {seance.date_seance ? ` · ${new Date(seance.date_seance).toLocaleDateString("fr-FR")}` : ""}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  {(seance.questions ?? []).length === 0 && (
+                    <p className="text-sm text-muted-foreground">Aucune question rattachée à cette séance.</p>
+                  )}
+                  {(seance.questions ?? []).map((question: any) => {
+                    const ex = question.exercice ?? {};
+                    const canAdapt = isDiagnostic && ["en_attente", "expire"].includes(question.statut);
+                    return (
+                      <div key={question.id} className="flex flex-wrap items-center gap-2 rounded-lg border bg-card p-3">
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium truncate">{ex.titre ?? "Exercice"}</p>
+                          <div className="flex flex-wrap items-center gap-1.5 mt-1">
+                            <Badge variant="outline" className="text-xs">{ex.competence ?? "—"}</Badge>
+                            <Badge variant="outline" className="text-xs">{ex.format ?? "—"}</Badge>
+                            <Badge variant="outline" className="text-xs">Niveau {ex.niveau_vise ?? "—"}</Badge>
+                            <Badge variant="outline" className="text-xs">Difficulté {ex.difficulte ?? "?"}</Badge>
+                            <Badge variant="secondary" className="text-xs">{question.statut}</Badge>
+                          </div>
+                        </div>
+                        {canAdapt && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            disabled={adaptingId === question.id}
+                            onClick={() => void adaptDifficulty(question.id)}
+                          >
+                            {adaptingId === question.id
+                              ? <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              : <TrendingUp className="mr-2 h-4 w-4" />}
+                            Augmenter la difficulté
+                          </Button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       )}
     </div>

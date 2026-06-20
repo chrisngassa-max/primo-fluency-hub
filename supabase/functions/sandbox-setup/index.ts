@@ -15,6 +15,7 @@ import type {
 import {
   buildSandboxHistory,
   buildSandboxSessions,
+  buildUpcomingDiagnostic,
   SANDBOX_LEARNER_FIXTURES,
 } from "../_shared/sandbox-fixtures.ts";
 
@@ -96,7 +97,7 @@ Deno.serve(async (req) => {
     provisioningStep = "load_compatible_exercises";
     const { data: exercises, error: exercisesError } = await admin
       .from("exercices")
-      .select("id, niveau_vise")
+      .select("id, niveau_vise, difficulte, competence, format")
       .in("format", ["qcm", "vrai_faux"])
       .order("created_at", { ascending: false })
       .limit(80);
@@ -254,7 +255,7 @@ Deno.serve(async (req) => {
         fixture,
         selectedExercises.map((exercise: any) => exercise.id),
       );
-      const devoirRows = history.devoirs.map((devoir) => ({
+      const devoirRows: Record<string, unknown>[] = history.devoirs.map((devoir) => ({
         exercice_id: devoir.exercise_id,
         eleve_id: eleve.user_id,
         formateur_id: user.id,
@@ -267,6 +268,31 @@ Deno.serve(async (req) => {
         updated_at: devoir.created_at,
         sandbox_session_id: sandbox.id,
       }));
+
+      // Devoir diagnostic frais rattache a la PROCHAINE seance : c'est le devoir que
+      // l'eleve "recoit" pour preparer la diagnostique. Choisi au niveau de l'eleve,
+      // en privilegiant la difficulte la plus elevee disponible (differenciation A1->B2).
+      const diagnosticExercise = [...selectedExercises]
+        .sort((a: any, b: any) => (b.difficulte ?? 0) - (a.difficulte ?? 0))[0];
+      if (diagnosticExercise) {
+        const upcoming = buildUpcomingDiagnostic(eleve.niveau, diagnosticExercise.id);
+        devoirRows.push({
+          exercice_id: upcoming.exercise_id,
+          eleve_id: eleve.user_id,
+          formateur_id: user.id,
+          statut: upcoming.statut,
+          raison: upcoming.raison,
+          date_echeance: upcoming.due_at,
+          nb_reussites_consecutives: 0,
+          session_id: currentSession.id,
+          source_label: "individualise",
+          contexte: `Diagnostic preparatoire ${eleve.niveau} — prochaine seance`,
+          created_at: upcoming.created_at,
+          updated_at: upcoming.created_at,
+          sandbox_session_id: sandbox.id,
+        });
+      }
+
       const { data: insertedDevoirs, error: devoirError } = await admin
         .from("devoirs")
         .insert(devoirRows)
@@ -306,6 +332,24 @@ Deno.serve(async (req) => {
         .eq("sandbox_session_id", sandbox.id);
       if (finalProfileError) throw finalProfileError;
     }
+
+    // Appel/presence automatique : chaque eleve est rattache aux deux seances et marque
+    // present. La feuille d'appel affiche ainsi les noms et les coches des le depart.
+    provisioningStep = "mark_presences";
+    const nowIso = new Date().toISOString();
+    const presenceRows = created.flatMap((eleve) =>
+      [previousSession.id, currentSession.id].map((sessionId) => ({
+        session_id: sessionId,
+        eleve_id: eleve.user_id,
+        present: true,
+        commentaire: null,
+        updated_at: nowIso,
+      }))
+    );
+    const { error: presenceError } = await admin
+      .from("presences")
+      .upsert(presenceRows, { onConflict: "session_id,eleve_id" });
+    if (presenceError) throw presenceError;
 
     provisioningStep = "activate_sandbox";
     const persistedEleves = created.map(({ mot_de_passe_initial: _password, ...eleve }) => eleve);

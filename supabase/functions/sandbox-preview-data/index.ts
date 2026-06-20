@@ -6,7 +6,7 @@ import {
 } from "../_shared/sandbox-edge.ts";
 import type { NiveauSandbox } from "../_shared/sandbox.types.ts";
 
-type Resource = "dashboard" | "devoirs" | "exercice";
+type Resource = "dashboard" | "devoirs" | "exercice" | "sessions";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -50,6 +50,9 @@ Deno.serve(async (req) => {
       if (body.resource === "devoirs") {
         return jsonResponse({ niveau: body.niveau, devoirs: [], degraded: true });
       }
+      if (body.resource === "sessions") {
+        return jsonResponse({ niveau: body.niveau, sessions: [], degraded: true });
+      }
       throw resolveError;
     }
     const { session, student, learner } = resolved;
@@ -84,6 +87,42 @@ Deno.serve(async (req) => {
         .order("date_echeance", { ascending: true });
       if (error) throw error;
       return jsonResponse({ niveau: body.niveau, devoirs: data ?? [] });
+    }
+
+    if (body.resource === "sessions") {
+      // Vue formateur : pour chaque eleve, la seance precedente (evaluation, terminee)
+      // et la prochaine seance (diagnostic, planifiee) avec les types de questions.
+      const [{ data: sessionRows }, { data: devoirs }] = await Promise.all([
+        admin
+          .from("sessions")
+          .select("id, titre, statut, date_seance, niveau_cible, competences_cibles, objectifs")
+          .eq("sandbox_session_id", session.id)
+          .order("date_seance", { ascending: true }),
+        admin
+          .from("devoirs")
+          .select(
+            "id, statut, raison, date_echeance, session_id, source_label, exercice:exercices(id, titre, competence, format, niveau_vise, difficulte)",
+          )
+          .eq("eleve_id", student.user_id)
+          .eq("sandbox_session_id", session.id)
+          .order("date_echeance", { ascending: true }),
+      ]);
+      const grouped = (sessionRows ?? []).map((seance: any) => ({
+        id: seance.id,
+        titre: seance.titre,
+        statut: seance.statut,
+        date_seance: seance.date_seance,
+        niveau_cible: seance.niveau_cible,
+        competences_cibles: seance.competences_cibles,
+        objectifs: seance.objectifs,
+        role: seance.statut === "terminee" ? "evaluation" : "diagnostic",
+        questions: (devoirs ?? []).filter((devoir: any) => devoir.session_id === seance.id),
+      }));
+      return jsonResponse({
+        niveau: body.niveau,
+        display_name: student.display_name,
+        sessions: grouped,
+      });
     }
 
     const devoirId = body.payload?.devoir_id;

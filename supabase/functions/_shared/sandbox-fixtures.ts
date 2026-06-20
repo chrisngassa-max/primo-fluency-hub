@@ -182,6 +182,31 @@ export const SANDBOX_LEARNER_FIXTURES: Record<NiveauSandbox, SandboxLearnerFixtu
   },
 };
 
+export const LEVEL_ORDER: NiveauSandbox[] = ["A1", "A2", "B1", "B2"];
+
+// Niveau immediatement superieur, utilise pour "augmenter la difficulte".
+export function harderLevel(niveau: NiveauSandbox): NiveauSandbox {
+  const index = LEVEL_ORDER.indexOf(niveau);
+  return LEVEL_ORDER[Math.min(index + 1, LEVEL_ORDER.length - 1)];
+}
+
+// Devoir diagnostic frais rattache a la prochaine seance (visible cote eleve).
+// La raison depend du niveau : remediation pour les debutants, consolidation pour les avances.
+export function buildUpcomingDiagnostic(
+  niveau: NiveauSandbox,
+  exerciseId: string,
+) {
+  const raison: "remediation" | "consolidation" =
+    niveau === "A1" || niveau === "A2" ? "remediation" : "consolidation";
+  return {
+    exercise_id: exerciseId,
+    statut: "en_attente" as const,
+    raison,
+    due_at: sandboxDate(5, 18),
+    created_at: sandboxDate(0, 9),
+  };
+}
+
 export function sandboxDate(daysFromNow: number, hour = 10) {
   const date = new Date();
   date.setUTCDate(date.getUTCDate() + daysFromNow);
