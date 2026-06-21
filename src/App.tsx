@@ -42,6 +42,8 @@ import DevoirPassation from "@/pages/eleve/DevoirPassation";
 import CarnetMots from "@/pages/eleve/CarnetMots";
 import EleveProgression from "@/pages/eleve/Progression";
 import EleveProfil from "@/pages/eleve/Profil";
+import MaSeance from "@/pages/eleve/MaSeance";
+import MesSeances from "@/pages/eleve/MesSeances";
 
 import BilanSeance from "@/pages/eleve/BilanSeance";
 import BilanTestPassation from "@/pages/eleve/BilanTestPassation";
@@ -97,6 +99,8 @@ const App = () => (
                   <Route path="acces-limite" element={<AccesLimite />} />
                   <Route path="profil" element={<EleveProfil />} />
                   <Route index element={<AIConsentRequiredRoute><EleveDashboard /></AIConsentRequiredRoute>} />
+                  <Route path="ma-seance" element={<AIConsentRequiredRoute><MaSeance /></AIConsentRequiredRoute>} />
+                  <Route path="mes-seances" element={<AIConsentRequiredRoute><MesSeances /></AIConsentRequiredRoute>} />
                   <Route path="test-positionnement" element={<AIConsentRequiredRoute><TestPositionnement /></AIConsentRequiredRoute>} />
                   <Route path="test-positionnement/passer/:token" element={<PositionnementPassation />} />
                   <Route path="test-positionnement/resultat/:attemptId" element={<PositionnementResultat />} />
@@ -186,6 +190,8 @@ const App = () => (
 
               {/* Routes pédagogiques : double consentement requis */}
               <Route index element={<AIConsentRequiredRoute><EleveDashboard /></AIConsentRequiredRoute>} />
+              <Route path="ma-seance" element={<AIConsentRequiredRoute><MaSeance /></AIConsentRequiredRoute>} />
+              <Route path="mes-seances" element={<AIConsentRequiredRoute><MesSeances /></AIConsentRequiredRoute>} />
               <Route path="test-positionnement" element={<AIConsentRequiredRoute><TestPositionnement /></AIConsentRequiredRoute>} />
               <Route path="test-positionnement/passer/:token" element={<PositionnementPassation />} />
               <Route path="test-positionnement/resultat/:attemptId" element={<PositionnementResultat />} />

@@ -4,8 +4,9 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
   BookOpen,
-  BookMarked,
+  CalendarClock,
   ClipboardList,
+  History,
   Home,
   NotebookTabs,
   TrendingUp,
@@ -19,6 +20,8 @@ import OfflineStatus from "@/components/eleve/OfflineStatus";
 
 const navItems = [
   { title: "Accueil", path: "/eleve", icon: Home },
+  { title: "Ma séance", path: "/eleve/ma-seance", icon: CalendarClock },
+  { title: "Mes séances", path: "/eleve/mes-seances", icon: History },
   { title: "Test de niveau", path: "/eleve/test-positionnement", icon: ClipboardList },
   { title: "Mes devoirs", path: "/eleve/devoirs", icon: BookOpen },
   { title: "Mon carnet", path: "/eleve/carnet", icon: NotebookTabs },
@@ -101,26 +104,29 @@ const EleveLayout = () => {
         <AppFooter />
       </div>
 
-      <nav className="fixed inset-x-0 bottom-0 z-50 grid grid-cols-6 border-t border-black/10 bg-white/95 px-1 py-2 shadow-[0_-6px_24px_rgba(15,23,42,0.12)] backdrop-blur lg:hidden">
+      <nav
+        className="fixed inset-x-0 bottom-0 z-50 grid border-t border-black/10 bg-white/95 px-1 py-2 shadow-[0_-6px_24px_rgba(15,23,42,0.12)] backdrop-blur lg:hidden"
+        style={{ gridTemplateColumns: `repeat(${navItems.length}, minmax(0, 1fr))` }}
+      >
         {navItems.map((item) => {
           const active = isActive(item.path);
           return (
             <button
               key={item.path}
               onClick={() => navigate(item.path)}
-              className="flex min-w-0 flex-col items-center gap-1 px-1 py-1 text-center transition-colors"
+              className="flex min-w-0 flex-col items-center gap-1 px-0.5 py-1 text-center transition-colors"
             >
               <span
                 className={cn(
-                  "flex h-10 w-10 items-center justify-center rounded-lg transition-colors",
+                  "flex h-9 w-9 items-center justify-center rounded-lg transition-colors",
                   active ? "bg-[#e7e9f1] text-[#0b234a]" : "text-zinc-500"
                 )}
               >
-                <item.icon className="h-7 w-7" strokeWidth={active ? 2.6 : 2.2} />
+                <item.icon className="h-6 w-6" strokeWidth={active ? 2.6 : 2.2} />
               </span>
               <span
                 className={cn(
-                  "text-[11px] font-medium leading-[1.05]",
+                  "text-[10px] font-medium leading-[1.05]",
                   active ? "font-extrabold text-[#0b234a]" : "text-zinc-500"
                 )}
               >

@@ -467,7 +467,7 @@ const EleveDashboard = () => {
         </Card>
         <Card
           className="cursor-pointer hover:bg-muted/30 transition-colors shadow-sm"
-          onClick={() => navigate("/eleve/historique")}
+          onClick={() => navigate("/eleve/mes-seances")}
         >
           <CardContent className="flex items-center justify-between gap-3 py-4">
             <div className="flex items-center gap-3">
@@ -475,8 +475,8 @@ const EleveDashboard = () => {
                 <History className="h-5 w-5 text-orange-600" />
               </div>
               <div>
-                <p className="font-semibold text-sm">Mon historique</p>
-                <p className="text-xs text-muted-foreground">Interventions reçues et évolution de niveau</p>
+                <p className="font-semibold text-sm">Mes séances</p>
+                <p className="text-xs text-muted-foreground">Exercices faits, scores et leçons à réviser</p>
               </div>
             </div>
             <ArrowRight className="h-4 w-4 text-muted-foreground" />
