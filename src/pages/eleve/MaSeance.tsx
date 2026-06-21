@@ -168,7 +168,7 @@ const MaSeance = () => {
 
       {/* Leçons à conserver */}
       <Section title="Leçons à conserver" icon={<GraduationCap className="h-4 w-4" />}>
-        <SeanceLeconsList sessionIds={[seance.id]} />
+        <SeanceLeconsList sessionIds={[seance.id]} studentId={user?.id ?? ""} />
       </Section>
     </div>
   );

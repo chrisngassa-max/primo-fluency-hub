@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BookOpen, ChevronDown, ChevronUp, Printer } from "lucide-react";
 import CompetenceLabel from "@/components/CompetenceLabel";
+import SmartText from "@/components/SmartText";
 
 /**
  * Liste des leçons à conserver (révisables) rattachées à une ou plusieurs
@@ -46,9 +47,11 @@ const resourceTypeLabels: Record<string, string> = {
 
 export default function SeanceLeconsList({
   sessionIds,
+  studentId,
   emptyHint,
 }: {
   sessionIds: string[];
+  studentId: string;
   emptyHint?: string;
 }) {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
@@ -168,7 +171,7 @@ export default function SeanceLeconsList({
               <CardContent className="pt-0">
                 <div className="space-y-4">
                   {content.sections.map((section, i) => (
-                    <SectionRenderer key={i} section={section} />
+                    <SectionRenderer key={i} section={section} studentId={studentId} />
                   ))}
                 </div>
               </CardContent>
@@ -180,7 +183,7 @@ export default function SeanceLeconsList({
   );
 }
 
-function SectionRenderer({ section }: { section: ResourceSection }) {
+function SectionRenderer({ section, studentId }: { section: ResourceSection; studentId: string }) {
   const wrapperClass = (() => {
     switch (section.type) {
       case "encadre": return "border-l-4 border-primary bg-primary/5 p-3 rounded-r-md";
@@ -194,14 +197,28 @@ function SectionRenderer({ section }: { section: ResourceSection }) {
 
   return (
     <div className={wrapperClass}>
-      <h3 className="font-bold mb-1 text-[15px]">{prefix}{section.titre}</h3>
+      <h3 className="font-bold mb-1 text-[15px]">
+        {prefix}
+        {section.titre && (
+          <SmartText text={section.titre} studentId={studentId} contextSentence={section.titre} />
+        )}
+      </h3>
       {section.type === "liste" && section.items?.length ? (
         <ul className="list-disc list-inside space-y-1">
           {section.items.map((item, j) => (
             <li key={j} className="text-sm">
               {item.terme && <span className="font-medium">{item.terme}</span>}
-              {item.definition && <span className="text-muted-foreground"> — {item.definition}</span>}
-              {item.exemple && <span className="italic text-muted-foreground ml-1">(Ex : {item.exemple})</span>}
+              {item.definition && (
+                <span className="text-muted-foreground">
+                  {" — "}
+                  <SmartText text={item.definition} studentId={studentId} contextSentence={item.definition} />
+                </span>
+              )}
+              {item.exemple && (
+                <span className="italic text-muted-foreground ml-1">
+                  (Ex : <SmartText text={item.exemple} studentId={studentId} contextSentence={item.exemple} />)
+                </span>
+              )}
             </li>
           ))}
         </ul>
@@ -218,21 +235,38 @@ function SectionRenderer({ section }: { section: ResourceSection }) {
             {section.items.map((item, j) => (
               <tr key={j}>
                 <td className="p-2 font-medium border border-border">{item.terme || ""}</td>
-                <td className="p-2 text-muted-foreground border border-border">{item.definition || ""}</td>
-                <td className="p-2 italic text-muted-foreground border border-border">{item.exemple || ""}</td>
+                <td className="p-2 text-muted-foreground border border-border">
+                  {item.definition ? (
+                    <SmartText text={item.definition} studentId={studentId} contextSentence={item.definition} />
+                  ) : ""}
+                </td>
+                <td className="p-2 italic text-muted-foreground border border-border">
+                  {item.exemple ? (
+                    <SmartText text={item.exemple} studentId={studentId} contextSentence={item.exemple} />
+                  ) : ""}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       ) : (
-        <p className="whitespace-pre-wrap text-sm">{section.contenu}</p>
+        <p className="whitespace-pre-wrap text-sm">
+          {section.contenu && (
+            <SmartText text={section.contenu} studentId={studentId} contextSentence={section.contenu} />
+          )}
+        </p>
       )}
       {section.type !== "liste" && section.type !== "tableau" && section.items?.length ? (
         <ul className="list-disc list-inside space-y-1 mt-2">
           {section.items.map((item, j) => (
             <li key={j} className="text-sm">
               {item.terme && <span className="font-medium">{item.terme}</span>}
-              {item.definition && <span className="text-muted-foreground"> — {item.definition}</span>}
+              {item.definition && (
+                <span className="text-muted-foreground">
+                  {" — "}
+                  <SmartText text={item.definition} studentId={studentId} contextSentence={item.definition} />
+                </span>
+              )}
             </li>
           ))}
         </ul>

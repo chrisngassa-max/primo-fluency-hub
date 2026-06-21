@@ -196,6 +196,7 @@ const MesSeances = () => {
             <SeanceCard
               key={s.id}
               seance={s}
+              studentId={user?.id ?? ""}
               open={openId === s.id}
               onToggle={() => setOpenId((cur) => (cur === s.id ? null : s.id))}
             />
@@ -206,7 +207,7 @@ const MesSeances = () => {
   );
 };
 
-function SeanceCard({ seance, open, onToggle }: { seance: SeancePassee; open: boolean; onToggle: () => void }) {
+function SeanceCard({ seance, studentId, open, onToggle }: { seance: SeancePassee; studentId: string; open: boolean; onToggle: () => void }) {
   const acquis = seance.avgScore !== null ? qualitativeProgress(seance.avgScore) : null;
 
   return (
@@ -287,7 +288,7 @@ function SeanceCard({ seance, open, onToggle }: { seance: SeancePassee; open: bo
               <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 Leçons reçues
               </h3>
-              <SeanceLeconsList sessionIds={[seance.id]} emptyHint="Aucune leçon pour cette séance." />
+              <SeanceLeconsList sessionIds={[seance.id]} studentId={studentId} emptyHint="Aucune leçon pour cette séance." />
             </div>
           </div>
         )}
