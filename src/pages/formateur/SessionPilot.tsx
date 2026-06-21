@@ -140,6 +140,9 @@ const SessionPilot = () => {
   const [duplicating, setDuplicating] = useState(false);
   const [duplicateDifficulty, setDuplicateDifficulty] = useState<number>(3);
 
+  // Direct send (without duplication) — one row per exercise being sent
+  const [sendingExerciseId, setSendingExerciseId] = useState<string | null>(null);
+
   // Resource generation
   const [resourceExercise, setResourceExercise] = useState<any>(null);
   const [resourceExercises, setResourceExercises] = useState<any[] | null>(null);
@@ -1033,6 +1036,73 @@ const SessionPilot = () => {
       toast.error("Erreur de duplication", { description: e.message });
     } finally {
       setDuplicating(false);
+    }
+  };
+
+  // ─── Send an exercise directly (as-is, no duplication) to the session students ───
+  // Reuses the same "devoir" mechanism as Dupliquer & Envoyer, but points the devoir at
+  // the existing exercice_id instead of generating a new exercise per student.
+  const handleSendExerciseDirect = async (se: any) => {
+    if (!session || !user) return;
+    const exerciceId = (se as any).exercice_id;
+    const exTitre = (se as any).exercice?.titre || "Exercice";
+    if (!exerciceId) {
+      toast.error("Impossible d'envoyer", { description: "Exercice introuvable." });
+      return;
+    }
+    const studentIds = (groupMembers ?? []).map((m: any) => m.eleve_id).filter(Boolean) as string[];
+    if (studentIds.length === 0) {
+      toast.warning("Aucun élève dans ce groupe pour cette séance.");
+      return;
+    }
+    setSendingExerciseId(se.id);
+    try {
+      // Idempotence: skip students who already received this exercise for this session
+      const { data: existing, error: existErr } = await supabase
+        .from("devoirs")
+        .select("eleve_id")
+        .eq("exercice_id", exerciceId)
+        .eq("session_id", id!)
+        .in("eleve_id", studentIds);
+      if (existErr) throw existErr;
+
+      const alreadySent = new Set((existing ?? []).map((d: any) => d.eleve_id));
+      const targetIds = studentIds.filter((sid) => !alreadySent.has(sid));
+
+      if (targetIds.length === 0) {
+        toast.info(`« ${exTitre} » a déjà été envoyé à tous les élèves de la séance.`);
+        return;
+      }
+
+      const devoirs = targetIds.map((sid) => ({
+        eleve_id: sid,
+        exercice_id: exerciceId,
+        formateur_id: user.id,
+        raison: "consolidation" as const,
+        statut: "en_attente" as const,
+        session_id: id,
+        sandbox_session_id: (session as any).sandbox_session_id ?? null,
+      }));
+      const { error: devErr } = await supabase.from("devoirs").insert(devoirs as any);
+      if (devErr) throw devErr;
+
+      // Mark the exercise as sent (same visual state as the global send)
+      await supabase
+        .from("session_exercices")
+        .update({ is_sent: true, updated_at: new Date().toISOString() } as any)
+        .eq("id", se.id);
+      qc.invalidateQueries({ queryKey: ["session-exercices", id] });
+
+      const skipped = alreadySent.size;
+      toast.success(
+        `« ${exTitre} » envoyé à ${targetIds.length} élève(s)` +
+          (skipped > 0 ? ` (${skipped} déjà destinataire(s))` : ""),
+      );
+    } catch (e: any) {
+      console.error(e);
+      toast.error("Erreur d'envoi", { description: e.message });
+    } finally {
+      setSendingExerciseId(null);
     }
   };
 
@@ -2286,6 +2356,14 @@ ${ficheHtml || '<div class="fiche"><h3>📄 Matériel pédagogique</h3><div clas
                         </Button>
                         <Button variant="outline" size="sm" className="gap-1 text-destructive border-destructive/30 hover:bg-destructive/10" onClick={() => setDeleteSeId(se.id)}>
                           <Trash2 className="h-3.5 w-3.5" />Supprimer
+                        </Button>
+                        <Button variant="default" size="sm" className="gap-1"
+                          disabled={sendingExerciseId === se.id}
+                          onClick={() => handleSendExerciseDirect(se)}>
+                          {sendingExerciseId === se.id
+                            ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            : <Send className="h-3.5 w-3.5" />}
+                          Envoyer
                         </Button>
                         <Button variant="outline" size="sm" className="gap-1 text-primary border-primary/30 hover:bg-primary/10"
                           onClick={() => { setDuplicateExercise(ex); setDuplicateStudentIds([]); setDuplicateDifficulty(ex.difficulte || 3); }}>
