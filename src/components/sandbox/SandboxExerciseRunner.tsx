@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import SmartText from "@/components/SmartText";
 import type { SandboxLevel } from "@/contexts/SandboxContext";
 
 export default function SandboxExerciseRunner({
@@ -19,6 +21,7 @@ export default function SandboxExerciseRunner({
   onBack: () => void;
   onCompleted: () => void;
 }) {
+  const { user } = useAuth();
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<any>(null);
@@ -57,12 +60,37 @@ export default function SandboxExerciseRunner({
       <Card className="border-2 border-amber-400">
         <CardHeader>
           <CardTitle>{devoir.exercice?.titre ?? "Exercice sandbox"}</CardTitle>
-          <p className="text-sm text-muted-foreground">{devoir.exercice?.consigne}</p>
+          <p className="text-sm text-muted-foreground">
+            {user?.id && devoir.exercice?.consigne ? (
+              <SmartText
+                text={devoir.exercice.consigne}
+                studentId={user.id}
+                allowSave={false}
+                contextSentence={devoir.exercice.consigne}
+              />
+            ) : (
+              devoir.exercice?.consigne
+            )}
+          </p>
         </CardHeader>
         <CardContent className="space-y-6">
-          {items.map((item: any, index: number) => (
+          {items.map((item: any, index: number) => {
+            const questionText = item.question ?? item.consigne ?? item.texte ?? "Choisis la bonne reponse";
+            return (
             <div key={item.id ?? index} className="space-y-3 rounded-lg border p-4">
-              <p className="font-medium">{index + 1}. {item.question ?? item.consigne ?? item.texte ?? "Choisis la bonne reponse"}</p>
+              <p className="font-medium">
+                {index + 1}.{" "}
+                {user?.id ? (
+                  <SmartText
+                    text={questionText}
+                    studentId={user.id}
+                    allowSave={false}
+                    contextSentence={questionText}
+                  />
+                ) : (
+                  questionText
+                )}
+              </p>
               <RadioGroup
                 value={answers[String(index)] ?? ""}
                 onValueChange={(value) => setAnswers((current) => ({ ...current, [String(index)]: value }))}
@@ -72,13 +100,25 @@ export default function SandboxExerciseRunner({
                   return (
                     <div key={id} className="flex items-center gap-2">
                       <RadioGroupItem id={id} value={option} disabled={!!result} />
-                      <Label htmlFor={id}>{option}</Label>
+                      <Label htmlFor={id}>
+                        {user?.id ? (
+                          <SmartText
+                            text={option}
+                            studentId={user.id}
+                            allowSave={false}
+                            contextSentence={questionText}
+                          />
+                        ) : (
+                          option
+                        )}
+                      </Label>
                     </div>
                   );
                 })}
               </RadioGroup>
             </div>
-          ))}
+            );
+          })}
           {result ? (
             <div className="flex items-center gap-3 rounded-lg bg-emerald-50 p-4 text-emerald-800">
               <CheckCircle2 className="h-6 w-6" />

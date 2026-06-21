@@ -38,6 +38,7 @@ interface SmartTextProps {
   contextSentence?: string;
   translationLanguage?: string;
   className?: string;
+  allowSave?: boolean;
 }
 
 function normalizeWord(word: string) {
@@ -74,6 +75,7 @@ export default function SmartText({
   contextSentence,
   translationLanguage = "fr",
   className,
+  allowSave = true,
 }: SmartTextProps) {
   const tokens = useMemo(() => tokenize(text), [text]);
   const [selectedTranslationLanguage, setSelectedTranslationLanguage] = useState(() =>
@@ -117,6 +119,7 @@ export default function SmartText({
   };
 
   const saveWord = async (word: string) => {
+    if (!allowSave) return;
     const normalized = normalizeWord(word);
     const detailsKey = makeDetailsKey(normalized, selectedTranslationLanguage);
     const details = detailsByWord[detailsKey];
@@ -220,10 +223,12 @@ export default function SmartText({
                     <p className="text-xs uppercase text-muted-foreground">Définition simple</p>
                     <p>{details.simple_definition || "—"}</p>
                   </div>
-                  <Button size="sm" className="w-full" onClick={() => saveWord(token)} disabled={isSaving}>
-                    {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
-                    Ajouter à mon carnet
-                  </Button>
+                  {allowSave && (
+                    <Button size="sm" className="w-full" onClick={() => saveWord(token)} disabled={isSaving}>
+                      {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
+                      Ajouter à mon carnet
+                    </Button>
+                  )}
                 </div>
               ) : (
                 <p className="text-sm text-muted-foreground">Clique encore si le mot ne s'affiche pas.</p>
