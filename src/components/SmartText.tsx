@@ -32,6 +32,64 @@ interface WordDetails {
   context_sentence?: string | null;
 }
 
+const WORD_ERROR_MESSAGES = {
+  ai_unavailable: "Traduction momentanément indisponible. Réessaie dans un instant.",
+  consent_required: "La traduction nécessite le consentement IA. Active-le dans ton profil.",
+  network: "Connexion impossible. Vérifie ta connexion internet, puis réessaie.",
+  generic: "Impossible d'afficher ce mot pour le moment. Réessaie.",
+} as const;
+
+type WordErrorKind = keyof typeof WORD_ERROR_MESSAGES;
+
+/**
+ * Lit le corps JSON renvoyé par l'Edge Function (même sur statut non-2xx, où
+ * supabase-js expose la réponse via `error.context`) afin de distinguer un
+ * service IA indisponible, un consentement manquant ou une erreur réseau.
+ */
+async function classifyWordError(error: unknown, data: any): Promise<WordErrorKind> {
+  let code: string | undefined;
+  let rawMessage: string | undefined;
+
+  if (data && typeof data === "object" && "error" in data) {
+    code = (data as any).code ?? (data as any).reason ?? (data as any).error;
+    rawMessage = (data as any).error ?? (data as any).message;
+  }
+
+  const context = (error as any)?.context;
+  if (!code && context && typeof context.json === "function") {
+    try {
+      const body = await context.json();
+      code = body?.code ?? body?.reason ?? body?.error;
+      rawMessage = body?.error ?? body?.message ?? rawMessage;
+    } catch {
+      // Corps illisible : on retombe sur le nom/message d'erreur ci-dessous.
+    }
+  }
+
+  const errorName = (error as any)?.name as string | undefined;
+  if (!code && (errorName === "FunctionsFetchError" || error instanceof TypeError)) {
+    return "network";
+  }
+
+  const haystack = `${code ?? ""} ${rawMessage ?? ""}`.toLowerCase();
+  if (haystack.includes("consent")) return "consent_required";
+  if (
+    haystack.includes("ai_unavailable") ||
+    haystack.includes("server_misconfigured") ||
+    haystack.includes("pseudonym") ||
+    haystack.includes("gemini") ||
+    haystack.includes("lovable") ||
+    haystack.includes("service ia") ||
+    haystack.includes("tool call") ||
+    haystack.includes("internal_error")
+  ) {
+    return "ai_unavailable";
+  }
+  if (errorName === "FunctionsFetchError" || haystack.includes("failed to fetch")) return "network";
+
+  return "generic";
+}
+
 interface SmartTextProps {
   text: string;
   studentId: string;
@@ -82,6 +140,7 @@ export default function SmartText({
     getInitialTranslationLanguage(translationLanguage)
   );
   const [detailsByWord, setDetailsByWord] = useState<Record<string, WordDetails>>({});
+  const [errorByWord, setErrorByWord] = useState<Record<string, WordErrorKind>>({});
   const [loadingWord, setLoadingWord] = useState<string | null>(null);
   const [savingWord, setSavingWord] = useState<string | null>(null);
 
@@ -90,6 +149,12 @@ export default function SmartText({
     const detailsKey = makeDetailsKey(normalized, language);
     if (!normalized || detailsByWord[detailsKey]) return;
 
+    setErrorByWord((prev) => {
+      if (!prev[detailsKey]) return prev;
+      const next = { ...prev };
+      delete next[detailsKey];
+      return next;
+    });
     setLoadingWord(detailsKey);
     try {
       const { data, error } = await supabase.functions.invoke("get-word-definition", {
@@ -100,8 +165,12 @@ export default function SmartText({
           translation_language: language,
         },
       });
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
+      if (error || data?.error) {
+        const kind = await classifyWordError(error, data);
+        setErrorByWord((prev) => ({ ...prev, [detailsKey]: kind }));
+        toast.error("Mot indisponible", { description: WORD_ERROR_MESSAGES[kind] });
+        return;
+      }
       setDetailsByWord((prev) => ({
         ...prev,
         [detailsKey]: {
@@ -111,8 +180,10 @@ export default function SmartText({
           context_sentence: data.context_sentence ?? contextSentence ?? text,
         },
       }));
-    } catch (error: any) {
-      toast.error("Mot indisponible", { description: error.message });
+    } catch (error) {
+      const kind = await classifyWordError(error, null);
+      setErrorByWord((prev) => ({ ...prev, [detailsKey]: kind }));
+      toast.error("Mot indisponible", { description: WORD_ERROR_MESSAGES[kind] });
     } finally {
       setLoadingWord(null);
     }
@@ -164,6 +235,7 @@ export default function SmartText({
         const normalized = normalizeWord(token);
         const detailsKey = makeDetailsKey(normalized, selectedTranslationLanguage);
         const details = detailsByWord[detailsKey];
+        const errorKind = errorByWord[detailsKey];
         const isLoading = loadingWord === detailsKey;
         const isSaving = savingWord === detailsKey;
         const selectedLanguageLabel =
@@ -212,6 +284,22 @@ export default function SmartText({
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Loader2 className="h-4 w-4 animate-spin" />
                   Recherche du mot...
+                </div>
+              ) : errorKind ? (
+                <div className="space-y-2">
+                  <p className="text-sm text-destructive" role="alert">
+                    {WORD_ERROR_MESSAGES[errorKind]}
+                  </p>
+                  {errorKind !== "consent_required" && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => void loadDetails(token)}
+                    >
+                      Réessayer
+                    </Button>
+                  )}
                 </div>
               ) : details ? (
                 <div className="space-y-2 text-sm">

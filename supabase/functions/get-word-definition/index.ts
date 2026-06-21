@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { callAI } from "../_shared/ai-client.ts";
+import { AIError, callAI } from "../_shared/ai-client.ts";
 import { ensurePseudonymSecretOrLog, getUserIdFromAuth, logAICall } from "../_shared/check-consent.ts";
 
 const corsHeaders = {
@@ -56,14 +56,14 @@ serve(async (req) => {
     const translationLanguageLabel = LANGUAGE_LABELS[translationLanguage] ?? translationLanguage;
 
     if (!word || !studentId) {
-      return new Response(JSON.stringify({ error: "missing_word_or_student" }), {
+      return new Response(JSON.stringify({ error: "missing_word_or_student", code: "missing_word_or_student" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     if (triggeredBy && studentId !== triggeredBy) {
-      return new Response(JSON.stringify({ error: "student_mismatch" }), {
+      return new Response(JSON.stringify({ error: "student_mismatch", code: "student_mismatch" }), {
         status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -177,8 +177,12 @@ Utilise le contexte de phrase pour choisir le bon sens du mot.`,
     });
   } catch (error) {
     console.error("get-word-definition error:", error);
-    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }), {
-      status: 500,
+    const isAIError = error instanceof AIError;
+    const status = isAIError ? (error.status >= 400 ? error.status : 502) : 500;
+    const code = isAIError ? "ai_unavailable" : "internal_error";
+    const message = error instanceof Error ? error.message : "Unknown error";
+    return new Response(JSON.stringify({ error: message, code }), {
+      status,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
