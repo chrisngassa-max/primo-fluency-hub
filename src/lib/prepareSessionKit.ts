@@ -1,6 +1,10 @@
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { createProceduralDiagnosticTest } from "@/lib/diagnosticFallback";
+import {
+  buildAdaptiveExercisePlan,
+  type CompetencePerf,
+} from "@/lib/adaptiveExercisePlan";
 
 interface PrepareArgs {
   sessionId: string;
@@ -78,9 +82,59 @@ async function generatePrediagnostic({
   });
 }
 
+/**
+ * Calcule la performance par compétence à partir des résultats des devoirs
+ * d'une séance donnée (évaluation des devoirs faits ENTRE les deux séances
+ * précédentes). Sert de base à la génération adaptative.
+ */
+async function loadPreviousHomeworkPerformance(sessionId?: string): Promise<CompetencePerf[]> {
+  if (!sessionId) return [];
+
+  const { data: devoirs } = await supabase
+    .from("devoirs")
+    .select("id, exercice:exercices(competence)")
+    .eq("session_id", sessionId);
+
+  if (!devoirs || devoirs.length === 0) return [];
+
+  const devoirCompetence = new Map<string, string>();
+  for (const d of devoirs as any[]) {
+    const comp = d.exercice?.competence;
+    if (comp) devoirCompetence.set(d.id, comp);
+  }
+
+  const devoirIds = (devoirs as any[]).map((d) => d.id);
+  const { data: resultats } = await supabase
+    .from("resultats")
+    .select("score, devoir_id")
+    .in("devoir_id", devoirIds);
+
+  if (!resultats || resultats.length === 0) return [];
+
+  const agg = new Map<string, { sum: number; count: number }>();
+  for (const r of resultats as any[]) {
+    const comp = devoirCompetence.get(r.devoir_id);
+    if (!comp) continue;
+    const score = Number(r.score);
+    if (!Number.isFinite(score)) continue;
+    const entry = agg.get(comp) ?? { sum: 0, count: 0 };
+    entry.sum += score;
+    entry.count += 1;
+    agg.set(comp, entry);
+  }
+
+  return [...agg.entries()].map(([competence, { sum, count }]) => ({
+    competence,
+    avgScore: count > 0 ? sum / count : 0,
+    count,
+  }));
+}
+
 async function generateFiveExercises({
   sessionId,
+  groupId,
   sessionExercisesTargetId,
+  homeworkSourceSessionId,
   niveauCible,
   competencesCibles,
   objectifs,
@@ -107,35 +161,42 @@ async function generateFiveExercises({
     return;
   }
 
-  const competences =
+  const fallbackCompetences =
     competencesCibles && competencesCibles.length > 0 ? competencesCibles : ["CE"];
   const totalCount = 5;
-  const perComp = Math.max(1, Math.floor(totalCount / competences.length));
-  const remainder = totalCount - perComp * competences.length;
+
+  // ═══ ADAPTATIF : on cible les faiblesses révélées par les devoirs de la
+  // séance précédente (résultats faits entre les deux séances précédentes). ═══
+  const perf = await loadPreviousHomeworkPerformance(homeworkSourceSessionId);
+  const plan = buildAdaptiveExercisePlan(perf, fallbackCompetences, totalCount);
 
   const niveau = niveauCible || "A1";
   const objectif = objectifs || titre || "Exercice de séance";
 
   // Lance les générations IA EN PARALLÈLE (au lieu de séquentiel)
   // pour diviser le temps total par le nombre de compétences.
-  const genPromises = competences.map((comp, ci) => {
-    const compCount = perComp + (ci < remainder ? 1 : 0);
-    if (compCount <= 0) return Promise.resolve({ comp, generated: [] as any[] });
+  const genPromises = plan.map((slot) => {
+    if (slot.count <= 0) return Promise.resolve({ comp: slot.competence, generated: [] as any[] });
     return supabase.functions
       .invoke("generate-exercises", {
         body: {
-          pointName: objectif,
-          competence: comp,
+          pointName: slot.adaptive
+            ? `${objectif} — remédiation ${slot.competence}`
+            : objectif,
+          competence: slot.competence,
           niveauVise: niveau,
-          count: compCount,
-          difficultyLevel: 3,
+          count: slot.count,
+          difficultyLevel: slot.difficultyLevel,
+          // groupId permet au moteur d'exploiter les profils élèves et les
+          // erreurs récentes pour une adaptation fine.
+          groupId,
           type_demarche: typeDemarche || "titre_sejour",
         },
       })
       .then(({ data, error }) => {
         if (error) throw error;
         if ((data as any)?.error) throw new Error((data as any).error);
-        return { comp, generated: ((data as any)?.exercises ?? []) as any[] };
+        return { comp: slot.competence, generated: ((data as any)?.exercises ?? []) as any[] };
       });
   });
 

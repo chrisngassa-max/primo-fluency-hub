@@ -271,7 +271,7 @@ const ExercicesPage = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("exercices")
-        .select("id, titre, consigne, competence, format, contenu, difficulte, niveau_vise, created_at, is_ai_generated, animation_guide, is_live_ready, play_token")
+        .select("id, titre, consigne, competence, format, contenu, difficulte, niveau_vise, created_at, is_ai_generated, animation_guide, is_live_ready, play_token, source")
         .eq("formateur_id", user!.id)
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -419,6 +419,12 @@ const ExercicesPage = () => {
     });
     return g;
   }, [filtered]);
+
+  // Exercices issus d'un import (PDF ou lien web) — repérés via la colonne `source`.
+  const importedExercises = useMemo(
+    () => (exercices ?? []).filter((ex: any) => !!ex.source),
+    [exercices],
+  );
 
   const toggle = (id: string) => {
     setSelected((prev) => {
@@ -704,6 +710,13 @@ ${Array.isArray(item.options) && item.options.length > 0
             Exercices live
             {liveExercises && liveExercises.length > 0 && (
               <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-[10px]">{liveExercises.length}</Badge>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="imported" className="gap-1.5">
+            <Upload className="h-3.5 w-3.5" />
+            Exercices importés
+            {importedExercises.length > 0 && (
+              <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-[10px]">{importedExercises.length}</Badge>
             )}
           </TabsTrigger>
         </TabsList>
@@ -1173,6 +1186,85 @@ ${Array.isArray(item.options) && item.options.length > 0
                       </CardContent>
                     </Card>
                   ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* ─── Imported Exercises Tab ─── */}
+        <TabsContent value="imported" className="space-y-4 mt-0">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Upload className="h-5 w-5 text-primary" />
+                Exercices importés
+              </CardTitle>
+              <CardDescription>
+                Exercices créés à partir d'un import (PDF ou lien web). Retrouvez ici les exercices ciblés générés depuis vos supports.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {importedExercises.length === 0 ? (
+                <div className="text-center py-10 space-y-2">
+                  <Upload className="h-10 w-10 mx-auto text-muted-foreground/40 mb-1" />
+                  <p className="text-sm text-muted-foreground">
+                    Aucun exercice importé pour le moment.
+                  </p>
+                  <p className="text-xs text-muted-foreground/80">
+                    Utilisez le bouton <strong>📄 Importer un PDF</strong> ou <strong>🔗 Depuis un lien web</strong> pour transformer un support en exercice.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {importedExercises.map((ex: any) => {
+                    const support = (ex.contenu && typeof ex.contenu === "object" ? ex.contenu : {})?.source_support;
+                    return (
+                      <Card key={ex.id} className="border-l-4 border-l-primary/60">
+                        <CardContent className="py-3 px-4 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+                          <div className="flex-1 min-w-0 space-y-1">
+                            <p className="font-semibold text-sm truncate">{ex.titre}</p>
+                            <div className="flex flex-wrap gap-1.5">
+                              <Badge className={cn("text-[10px]", competenceColor[ex.competence] || "bg-muted")}>
+                                {ex.competence}
+                              </Badge>
+                              <Badge variant="secondary" className="text-[10px]">Niv. {ex.niveau_vise}</Badge>
+                              <Badge variant="outline" className="text-[10px]">{ex.format?.replace(/_/g, " ")}</Badge>
+                              <Badge variant="outline" className="text-[10px] gap-1">
+                                <FileText className="h-3 w-3" />
+                                {ex.source === "url_import" ? "Lien web" : "PDF"}
+                              </Badge>
+                              {support?.label && (
+                                <Badge variant="outline" className="text-[10px] max-w-[200px] truncate">
+                                  {support.label}
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex flex-wrap gap-2 shrink-0">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="gap-1.5"
+                              onClick={() => { setPreviewExercise(ex); setPreviewPage(0); }}
+                            >
+                              <Eye className="h-3.5 w-3.5" />
+                              Aperçu
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="gap-1.5"
+                              onClick={() => handlePrintSingle(ex)}
+                            >
+                              <Printer className="h-3.5 w-3.5" />
+                              Imprimer
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
                 </div>
               )}
             </CardContent>

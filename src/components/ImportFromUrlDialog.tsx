@@ -95,6 +95,17 @@ export default function ImportFromUrlDialog({
     }
   }, [open, defaultSourceMode, sessionId]);
 
+  // Dès qu'une séance de destination est choisie, on rattache par défaut les
+  // exercices à la séance (sinon ils partaient silencieusement dans la banque
+  // et n'apparaissaient jamais dans la séance ciblée).
+  useEffect(() => {
+    if (destinationSessionId !== NO_SESSION) {
+      setDestination((prev) => (prev === "bank" ? "session" : prev));
+    } else {
+      setDestination("bank");
+    }
+  }, [destinationSessionId]);
+
   useEffect(() => {
     if (!open || !user) return;
     (async () => {
@@ -331,6 +342,7 @@ export default function ImportFromUrlDialog({
         animation_guide: exercise.metadata ?? null,
         point_a_maitriser_id: defaultPoint.id,
         is_ai_generated: true,
+        source: sourceMode === "pdf" ? "pdf_import" : "url_import",
       }));
 
       const { data: created, error } = await supabase
@@ -378,7 +390,7 @@ export default function ImportFromUrlDialog({
               session_id: effectiveSessionId,
               date_echeance: deadline,
               statut: "en_attente",
-              raison: "entrainement",
+              raison: "consolidation",
             })),
           );
           if (devoirs.length) {

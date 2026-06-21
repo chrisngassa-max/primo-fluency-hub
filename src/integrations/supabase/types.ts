@@ -1318,6 +1318,7 @@ export type Database = {
           point_a_maitriser_id: string
           regle_montee_auto: boolean
           sequence_id: string | null
+          source: string | null
           source_url: string | null
           sous_competence: string | null
           statut: string | null
@@ -1362,6 +1363,7 @@ export type Database = {
           point_a_maitriser_id: string
           regle_montee_auto?: boolean
           sequence_id?: string | null
+          source?: string | null
           source_url?: string | null
           sous_competence?: string | null
           statut?: string | null
@@ -1406,6 +1408,7 @@ export type Database = {
           point_a_maitriser_id?: string
           regle_montee_auto?: boolean
           sequence_id?: string | null
+          source?: string | null
           source_url?: string | null
           sous_competence?: string | null
           statut?: string | null
