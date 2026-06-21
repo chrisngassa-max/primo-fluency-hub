@@ -4,16 +4,213 @@ import { MODEL } from "../_shared/system-prompt.ts";
 import { callAI, AIError } from "../_shared/ai-client.ts";
 import { validateAndFix } from "../_shared/exercise-validator.ts";
 import { QA_REVIEW_BLOCK } from "../_shared/qa-prompt.ts";
-import { buildPedagogicalDirectives } from "../_shared/pedagogical-directives.ts";
+import { buildPedagogicalDirectives, formatPedagogicalDirectives } from "../_shared/pedagogical-directives.ts";
+import type { PedagogicalDirectives } from "../_shared/pedagogical-directives.ts";
 import { hasBlockingReviewIssue, reviewExercise } from "../_shared/review-exercise.ts";
+import type { ExerciseReviewIssue, ExerciseReviewResult } from "../_shared/review-exercise.ts";
 import { ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth } from "../_shared/check-consent.ts";
-import { buildDurationPrompt, buildFocusPrompt, parseTargetDurationMinutes } from "./logic.ts";
+import { buildDurationPrompt, buildFallbackExercise, buildFocusPrompt, parseTargetDurationMinutes } from "./logic.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
+
+// Schéma du tool de génération — partagé entre l'appel initial et la régénération QA.
+const EXERCISES_TOOL = [
+  {
+    type: "function" as const,
+    function: {
+      name: "generate_exercises",
+      description: "Return generated exercises with animation guides and metadata codes",
+      parameters: {
+        type: "object",
+        properties: {
+          exercises: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                titre: { type: "string", description: "Titre court de l'exercice" },
+                consigne: { type: "string", description: "Consigne pour l'élève" },
+                format: { type: "string", enum: ["qcm", "vrai_faux", "texte_lacunaire", "appariement", "transformation", "production_ecrite", "production_orale"] },
+                difficulte: { type: "number", minimum: 0, maximum: 10, description: "Niveau de difficulté sur l'échelle 0-10" },
+                metadata: {
+                  type: "object",
+                  description: "Métadonnées pédagogiques de l'exercice",
+                  properties: {
+                    code: { type: "string", description: "Code de l'exercice (CO1, CO2, CE1, EO1, EE1, etc.)" },
+                    skill: { type: "string", description: "Compétence (Compréhension Orale, Expression Écrite, etc.)" },
+                    sub_skill: { type: "string", description: "Sous-compétence (Identifier situation, Se présenter, etc.)" },
+                    time_limit_seconds: { type: "number", description: "Durée maximale en secondes" },
+                    aides_disponibles: {
+                      type: "array",
+                      items: { type: "string" },
+                      description: "Aides autorisées : lexique, indice, exemple ou transcription",
+                    },
+                    nombre_ecoutes_max: {
+                      type: "number",
+                      minimum: 1,
+                      maximum: 10,
+                      description: "Nombre maximal d'écoutes pour un exercice audio",
+                    },
+                    transcription_verrouillee: { type: "boolean" },
+                    objectif_tcf: {
+                      type: "string",
+                      description: "Objectif pédagogique précis, par exemple comprendre_info_explicite",
+                    },
+                    type_differenciation: {
+                      type: "string",
+                      enum: ["demarrage", "remediation", "consolidation", "approfondissement", "bonus"],
+                    },
+                  },
+                  required: [
+                    "code", "skill", "sub_skill", "time_limit_seconds", "aides_disponibles",
+                    "transcription_verrouillee", "objectif_tcf", "type_differenciation"
+                  ],
+                },
+                contenu: {
+                  type: "object",
+                  properties: {
+                    texte: { type: "string", description: "Texte support / document à lire avant les questions (OBLIGATOIRE pour CE)." },
+                    script_audio: { type: "string", description: "Script audio pour CO (OBLIGATOIRE pour CO)" },
+                    image_description: { type: "string", description: "Description de l'image à générer automatiquement (pour EO)" },
+                    type_reponse: { type: "string", enum: ["ecrit", "oral"] },
+                    criteres_evaluation: { type: "object", description: "Critères d'évaluation pour les productions orales/écrites" },
+                    mots_cles_attendus: { type: "array", items: { type: "string" } },
+                    items: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          question: { type: "string" },
+                          options: { type: "array", items: { type: "string" } },
+                          bonne_reponse: { type: "string" },
+                          explication: { type: "string" },
+                        },
+                        required: ["question", "bonne_reponse"],
+                      },
+                    },
+                  },
+                  required: ["items"],
+                },
+                variante_niveau_bas: {
+                  type: "object",
+                  properties: {
+                    consigne: { type: "string" },
+                    aide: { type: "string" },
+                    nb_items_reduit: { type: "number" },
+                  },
+                  required: ["consigne", "aide", "nb_items_reduit"],
+                },
+                variante_niveau_haut: {
+                  type: "object",
+                  properties: {
+                    consigne: { type: "string" },
+                    extension: { type: "string" },
+                  },
+                  required: ["consigne", "extension"],
+                },
+                animation_guide: {
+                  type: "object",
+                  properties: {
+                    scenario: { type: "string" },
+                    jeu: { type: "string" },
+                    materiel: { type: "string" },
+                    objectif_oral: { type: "string" },
+                    documentation_fournie: {
+                      type: "object",
+                      properties: {
+                        guide_formateur: { type: "string" },
+                        fiches_eleves: {
+                          type: "array",
+                          items: {
+                            type: "object",
+                            properties: {
+                              titre_fiche: { type: "string" },
+                              contenu_fiche: { type: "string" },
+                              lexique_cles: { type: "array", items: { type: "string" } },
+                            },
+                            required: ["titre_fiche", "contenu_fiche", "lexique_cles"],
+                          },
+                        },
+                      },
+                      required: ["guide_formateur", "fiches_eleves"],
+                    },
+                  },
+                  required: ["scenario", "jeu", "materiel", "objectif_oral", "documentation_fournie"],
+                },
+              },
+              required: ["titre", "consigne", "format", "difficulte", "metadata", "contenu", "animation_guide", "variante_niveau_bas", "variante_niveau_haut"],
+            },
+          },
+        },
+        required: ["exercises"],
+      },
+    },
+  },
+];
+
+/**
+ * Régénère UN exercice rejeté par la QA pédagogique en réinjectant les motifs de
+ * rejet et les directives, pour que l'IA corrige plutôt que de reproduire l'erreur.
+ * Retourne l'ébauche corrigée (objet exercice brut) ou null si l'appel IA échoue.
+ */
+async function regenerateExerciseForQA(params: {
+  systemPrompt: string;
+  rejected: Record<string, unknown>;
+  issues: ExerciseReviewIssue[];
+  directives: PedagogicalDirectives;
+  competence: string;
+  niveauVise: string;
+  diffLevel: number;
+}): Promise<Record<string, unknown> | null> {
+  const issuesText = params.issues.length
+    ? params.issues
+        .map((i) => `- [${i.code}] ${i.message}${i.correction ? ` → CORRECTION ATTENDUE : ${i.correction}` : ""}`)
+        .join("\n")
+    : "- (motif non détaillé) l'exercice n'a pas passé la revue pédagogique.";
+  const directivesText = formatPedagogicalDirectives(params.directives);
+
+  try {
+    const data = await callAI({
+      model: MODEL,
+      messages: [
+        { role: "system", content: params.systemPrompt + QA_REVIEW_BLOCK },
+        {
+          role: "user",
+          content: `Ta tentative précédente a été REJETÉE par la passerelle QA pédagogique. Tu dois régénérer UN SEUL exercice corrigé et conforme.
+
+EXERCICE REJETÉ :
+${JSON.stringify(params.rejected, null, 2)}
+
+MOTIFS DE REJET QA (tu DOIS TOUS les corriger, sans exception) :
+${issuesText}
+
+${directivesText}
+
+CONTRAINTES IMPÉRATIVES POUR LA CORRECTION :
+- Compétence : ${params.competence} | Niveau visé : ${params.niveauVise} | Difficulté : ${params.diffLevel}/10.
+- Respecte STRICTEMENT formats_autorises ci-dessus et n'utilise JAMAIS un format listé dans formats_interdits.
+- S'il existe une règle de descente de compétence (descente_competence), NE DEMANDE PLUS de production écrite/orale libre : utilise impérativement qcm, vrai_faux, appariement, texte_lacunaire ou transformation simple, avec étayage (banque de mots, exemple résolu, support audio/image).
+- Respecte la longueur max de consigne et le nombre max d'items indiqués dans les directives.
+- Retourne EXACTEMENT 1 exercice via le tool generate_exercises.`,
+        },
+      ],
+      tools: EXERCISES_TOOL,
+      tool_choice: { type: "function", function: { name: "generate_exercises" } },
+    });
+
+    const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
+    if (!toolCall) return null;
+    const parsed = JSON.parse(toolCall.function.arguments);
+    return parsed?.exercises?.[0] ?? null;
+  } catch (e) {
+    console.error("[generate-exercises] regenerateExerciseForQA failed:", e);
+    return null;
+  }
+}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -645,139 +842,7 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
         { role: "system", content: systemPrompt + QA_REVIEW_BLOCK },
         { role: "user", content: userPrompt },
       ],
-      tools: [
-        {
-          type: "function",
-          function: {
-            name: "generate_exercises",
-            description: "Return generated exercises with animation guides and metadata codes",
-            parameters: {
-              type: "object",
-              properties: {
-                exercises: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: {
-                      titre: { type: "string", description: "Titre court de l'exercice" },
-                      consigne: { type: "string", description: "Consigne pour l'élève" },
-                      format: { type: "string", enum: ["qcm", "vrai_faux", "texte_lacunaire", "appariement", "transformation", "production_ecrite", "production_orale"] },
-                      difficulte: { type: "number", minimum: 0, maximum: 10, description: "Niveau de difficulté sur l'échelle 0-10" },
-                      metadata: {
-                        type: "object",
-                        description: "Métadonnées pédagogiques de l'exercice",
-                        properties: {
-                          code: { type: "string", description: "Code de l'exercice (CO1, CO2, CE1, EO1, EE1, etc.)" },
-                          skill: { type: "string", description: "Compétence (Compréhension Orale, Expression Écrite, etc.)" },
-                          sub_skill: { type: "string", description: "Sous-compétence (Identifier situation, Se présenter, etc.)" },
-                          time_limit_seconds: { type: "number", description: "Durée maximale en secondes" },
-                          aides_disponibles: {
-                            type: "array",
-                            items: { type: "string" },
-                            description: "Aides autorisées : lexique, indice, exemple ou transcription",
-                          },
-                          nombre_ecoutes_max: {
-                            type: "number",
-                            minimum: 1,
-                            maximum: 10,
-                            description: "Nombre maximal d'écoutes pour un exercice audio",
-                          },
-                          transcription_verrouillee: { type: "boolean" },
-                          objectif_tcf: {
-                            type: "string",
-                            description: "Objectif pédagogique précis, par exemple comprendre_info_explicite",
-                          },
-                          type_differenciation: {
-                            type: "string",
-                            enum: ["demarrage", "remediation", "consolidation", "approfondissement", "bonus"],
-                          },
-                        },
-                        required: [
-                          "code", "skill", "sub_skill", "time_limit_seconds", "aides_disponibles",
-                          "transcription_verrouillee", "objectif_tcf", "type_differenciation"
-                        ],
-                      },
-                      contenu: {
-                        type: "object",
-                        properties: {
-                          texte: { type: "string", description: "Texte support / document à lire avant les questions (OBLIGATOIRE pour CE)." },
-                          script_audio: { type: "string", description: "Script audio pour CO (OBLIGATOIRE pour CO)" },
-                          image_description: { type: "string", description: "Description de l'image à générer automatiquement (pour EO)" },
-                          type_reponse: { type: "string", enum: ["ecrit", "oral"] },
-                          criteres_evaluation: { type: "object", description: "Critères d'évaluation pour les productions orales/écrites" },
-                          mots_cles_attendus: { type: "array", items: { type: "string" } },
-                          items: {
-                            type: "array",
-                            items: {
-                              type: "object",
-                              properties: {
-                                question: { type: "string" },
-                                options: { type: "array", items: { type: "string" } },
-                                bonne_reponse: { type: "string" },
-                                explication: { type: "string" },
-                              },
-                              required: ["question", "bonne_reponse"],
-                            },
-                          },
-                        },
-                        required: ["items"],
-                      },
-                      variante_niveau_bas: {
-                        type: "object",
-                        properties: {
-                          consigne: { type: "string" },
-                          aide: { type: "string" },
-                          nb_items_reduit: { type: "number" },
-                        },
-                        required: ["consigne", "aide", "nb_items_reduit"],
-                      },
-                      variante_niveau_haut: {
-                        type: "object",
-                        properties: {
-                          consigne: { type: "string" },
-                          extension: { type: "string" },
-                        },
-                        required: ["consigne", "extension"],
-                      },
-                      animation_guide: {
-                        type: "object",
-                        properties: {
-                          scenario: { type: "string" },
-                          jeu: { type: "string" },
-                          materiel: { type: "string" },
-                          objectif_oral: { type: "string" },
-                          documentation_fournie: {
-                            type: "object",
-                            properties: {
-                              guide_formateur: { type: "string" },
-                              fiches_eleves: {
-                                type: "array",
-                                items: {
-                                  type: "object",
-                                  properties: {
-                                    titre_fiche: { type: "string" },
-                                    contenu_fiche: { type: "string" },
-                                    lexique_cles: { type: "array", items: { type: "string" } },
-                                  },
-                                  required: ["titre_fiche", "contenu_fiche", "lexique_cles"],
-                                },
-                              },
-                            },
-                            required: ["guide_formateur", "fiches_eleves"],
-                          },
-                        },
-                        required: ["scenario", "jeu", "materiel", "objectif_oral", "documentation_fournie"],
-                      },
-                    },
-                    required: ["titre", "consigne", "format", "difficulte", "metadata", "contenu", "animation_guide", "variante_niveau_bas", "variante_niveau_haut"],
-                  },
-                },
-              },
-              required: ["exercises"],
-            },
-          },
-        },
-      ],
+      tools: EXERCISES_TOOL,
       tool_choice: { type: "function", function: { name: "generate_exercises" } },
     });
 
@@ -793,60 +858,129 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
       ?? groupReviewDirectives[0]
       ?? defaultReviewDirective;
 
-    // ── Validation + relecture pédagogique + régénération de chaque exercice ──
+    // ── Validation + relecture pédagogique + régénération QA + filet de sécurité ──
+    // Objectif : garantir TOUJOURS `count` exercices non vides, même quand l'IA
+    // échoue la passerelle QA au premier coup (ex: descente de compétence EE faible).
+    const QA_MAX_RETRIES = 2; // jusqu'à 2 régénérations après la 1re passe = 3 passes IA max par slot
+
+    const attachReviewMeta = (validExercise: any, review: ExerciseReviewResult, extra: Record<string, unknown> = {}) => ({
+      ...validExercise,
+      metadata: {
+        ...(validExercise.metadata ?? {}),
+        ...extra,
+        pedagogical_review: {
+          source: review.source,
+          niveau_ok: review.niveau_ok,
+          pedagogie_ok: review.pedagogie_ok,
+          directives_ok: review.directives_ok,
+          warnings: review.issues.filter((issue) => issue.severity === "warning"),
+          suggestions: review.suggestions,
+        },
+      },
+    });
+
     const validatedList: any[] = [];
     const excludedList: { titre: string; reason: string; details?: unknown }[] = [];
-    for (const ex of exercises.exercises || []) {
-      const validated = await validateAndFix(ex, { niveau: ex.niveau_vise });
-      if (!validated) {
-        excludedList.push({ titre: ex.titre || "?", reason: "validation_failed_after_3_attempts" });
-        console.warn(`[generate-exercises] Excluded: ${ex.titre}`);
-        continue;
+    let aiPassedCount = 0;
+    let retryAttempts = 0;
+    let fallbackCount = 0;
+
+    const drafts: any[] = Array.isArray(exercises.exercises) ? exercises.exercises : [];
+
+    for (const draft of drafts) {
+      if (validatedList.length >= count) break; // on a déjà assez d'exercices
+      let current: any = draft;
+      let accepted: any = null;
+      let lastIssues: ExerciseReviewIssue[] = [];
+
+      for (let attempt = 0; attempt <= QA_MAX_RETRIES; attempt++) {
+        const validated = await validateAndFix(current, { niveau: current?.niveau_vise ?? niveauVise });
+        if (validated) {
+          const validExercise = { ...current, ...validated.exercise };
+          const review = await reviewExercise({
+            exercise: validExercise,
+            pedagogicalDirectives: reviewDirective,
+            niveau: validExercise.niveau_vise ?? niveauVise,
+            competence: validExercise.competence ?? competence,
+            contexte: "generate-exercises",
+          });
+          if (!hasBlockingReviewIssue(review)) {
+            accepted = attachReviewMeta(validExercise, review, { qa_retries: attempt });
+            break;
+          }
+          lastIssues = review.issues.filter((issue) => issue.severity === "error");
+        } else {
+          lastIssues = [{ code: "validation_failed_after_3_attempts", severity: "error", message: "Validation structurelle échouée après 3 tentatives." }];
+        }
+
+        // Encore des tentatives disponibles → on régénère ce slot avec le feedback QA.
+        if (attempt < QA_MAX_RETRIES) {
+          retryAttempts++;
+          console.warn(`[generate-exercises] QA reject (slot "${current?.titre ?? "?"}", tentative ${attempt + 1}):`, lastIssues.map((i) => i.code).join(", "));
+          const regen = await regenerateExerciseForQA({
+            systemPrompt,
+            rejected: current,
+            issues: lastIssues,
+            directives: reviewDirective,
+            competence,
+            niveauVise,
+            diffLevel,
+          });
+          if (!regen) break; // l'IA n'a pas répondu → on bascule sur le filet de sécurité
+          current = regen;
+        }
       }
-      const validExercise = { ...ex, ...validated.exercise };
-      const review = await reviewExercise({
-        exercise: validExercise,
-        pedagogicalDirectives: reviewDirective,
-        niveau: validExercise.niveau_vise ?? niveauVise,
-        competence: validExercise.competence ?? competence,
-        contexte: "generate-exercises",
-      });
-      if (hasBlockingReviewIssue(review)) {
+
+      if (accepted) {
+        aiPassedCount++;
+        validatedList.push(accepted);
+      } else {
         excludedList.push({
-          titre: validExercise.titre || "?",
-          reason: "pedagogical_review_failed",
-          details: review.issues,
+          titre: current?.titre || "?",
+          reason: "pedagogical_review_failed_after_retries",
+          details: lastIssues,
         });
-        console.warn(`[review-exercise] Excluded: ${validExercise.titre}`, review.issues);
-        continue;
+        console.warn(`[generate-exercises] Slot abandonné après ${QA_MAX_RETRIES} régénérations:`, lastIssues.map((i) => i.code).join(", "));
       }
-      validatedList.push({
-        ...validExercise,
-        metadata: {
-          ...(validExercise.metadata ?? {}),
-          pedagogical_review: {
-            source: review.source,
-            niveau_ok: review.niveau_ok,
-            pedagogie_ok: review.pedagogie_ok,
-            directives_ok: review.directives_ok,
-            warnings: review.issues.filter((issue) => issue.severity === "warning"),
-            suggestions: review.suggestions,
-          },
-        },
-      });
     }
+
+    // ── FILET DE SÉCURITÉ : compléter jusqu'à `count` avec des exercices de repli ──
+    // garantis conformes (jamais de liste vide ni de séance sous-dotée).
+    while (validatedList.length < count) {
+      const fb = buildFallbackExercise({ competence, niveauVise, diffLevel, pointName, directives: reviewDirective });
+      const review = await reviewExercise({
+        exercise: fb,
+        pedagogicalDirectives: reviewDirective,
+        niveau: niveauVise,
+        competence,
+        contexte: "generate-exercises-fallback",
+        useAI: false,
+      });
+      validatedList.push(attachReviewMeta(fb, review, { is_fallback: true }));
+      fallbackCount++;
+      console.warn(`[generate-exercises] Fallback exercise ${fallbackCount} added to guarantee count=${count}`);
+    }
+
     exercises.exercises = validatedList;
     if (excludedList.length > 0) {
       (exercises as any).excluded = excludedList;
       (exercises as any).totalExcluded = excludedList.length;
     }
-    // QA gate : avertit si moins de 60% rescapés (laisse le frontend décider)
-    const initial = (validatedList.length + excludedList.length);
-    const ratio = initial > 0 ? validatedList.length / initial : 1;
-    if (initial > 0 && ratio < 0.6) {
-      (exercises as any).qa_warning = `Seulement ${validatedList.length}/${initial} exercices ont passé la QA (<60%)`;
-      console.warn(`[QA_AUTO][generate-exercises] Low ratio ${(ratio * 100).toFixed(0)}%`);
+
+    // Rapport de génération : demandés vs générés vs repli (évite les échecs silencieux).
+    const generationReport = {
+      requested: count,
+      generated: validatedList.length,
+      ai_passed: aiPassedCount,
+      fallback_used: fallbackCount,
+      retry_attempts: retryAttempts,
+      excluded: excludedList.length,
+    };
+    (exercises as any).generation_report = generationReport;
+    if (fallbackCount > 0) {
+      (exercises as any).qa_warning = `${fallbackCount}/${count} exercice(s) de repli généré(s) après échec QA (le reste a passé la QA).`;
     }
+    console.log(JSON.stringify({ event: "generation_report", ...generationReport }));
 
     // Post-processing: fetch photos from Pexels for exercises that have image_description
     const PEXELS_API_KEY = Deno.env.get("PEXELS_API_KEY");
