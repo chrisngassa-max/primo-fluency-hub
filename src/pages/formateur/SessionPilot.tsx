@@ -48,6 +48,14 @@ import {
   RadioGroup,
   RadioGroupItem,
 } from "@/components/ui/radio-group";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import {
@@ -1076,7 +1084,10 @@ const SessionPilot = () => {
   // ─── Send an exercise directly (as-is, no duplication) to the session students ───
   // Reuses the same "devoir" mechanism as Dupliquer & Envoyer, but points the devoir at
   // the existing exercice_id instead of generating a new exercise per student.
-  const handleSendExerciseDirect = async (se: any) => {
+  const handleSendExerciseDirect = async (
+    se: any,
+    target?: { studentIds: string[]; label?: string },
+  ) => {
     if (!session || !user) return;
     const exerciceId = (se as any).exercice_id;
     const exTitre = (se as any).exercice?.titre || "Exercice";
@@ -1084,9 +1095,13 @@ const SessionPilot = () => {
       toast.error("Impossible d'envoyer", { description: "Exercice introuvable." });
       return;
     }
-    const studentIds = (groupMembers ?? []).map((m: any) => m.eleve_id).filter(Boolean) as string[];
+    const allStudentIds = (groupMembers ?? []).map((m: any) => m.eleve_id).filter(Boolean) as string[];
+    // Either a specific recipient (single student) or the whole session group (default).
+    const studentIds = target?.studentIds?.length
+      ? target.studentIds.filter((sid) => allStudentIds.includes(sid))
+      : allStudentIds;
     if (studentIds.length === 0) {
-      toast.warning("Aucun élève dans ce groupe pour cette séance.");
+      toast.warning("Aucun élève dans cette séance pour recevoir l'exercice.");
       return;
     }
     setSendingExerciseId(se.id);
@@ -1104,7 +1119,11 @@ const SessionPilot = () => {
       const targetIds = studentIds.filter((sid) => !alreadySent.has(sid));
 
       if (targetIds.length === 0) {
-        toast.info(`« ${exTitre} » a déjà été envoyé à tous les élèves de la séance.`);
+        toast.info(
+          target?.label
+            ? `« ${exTitre} » a déjà été envoyé à ${target.label}.`
+            : `« ${exTitre} » a déjà été envoyé à tous les élèves de la séance.`,
+        );
         return;
       }
 
@@ -1128,8 +1147,9 @@ const SessionPilot = () => {
       qc.invalidateQueries({ queryKey: ["session-exercices", id] });
 
       const skipped = alreadySent.size;
+      const recipientText = target?.label ?? `${targetIds.length} élève(s)`;
       toast.success(
-        `« ${exTitre} » envoyé à ${targetIds.length} élève(s)` +
+        `« ${exTitre} » envoyé à ${recipientText}` +
           (skipped > 0 ? ` (${skipped} déjà destinataire(s))` : ""),
       );
     } catch (e: any) {
@@ -2391,14 +2411,46 @@ ${ficheHtml || '<div class="fiche"><h3>📄 Matériel pédagogique</h3><div clas
                         <Button variant="outline" size="sm" className="gap-1 text-destructive border-destructive/30 hover:bg-destructive/10" onClick={() => setDeleteSeId(se.id)}>
                           <Trash2 className="h-3.5 w-3.5" />Supprimer
                         </Button>
-                        <Button variant="default" size="sm" className="gap-1"
-                          disabled={sendingExerciseId === se.id}
-                          onClick={() => handleSendExerciseDirect(se)}>
-                          {sendingExerciseId === se.id
-                            ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                            : <Send className="h-3.5 w-3.5" />}
-                          Envoyer
-                        </Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="default" size="sm" className="gap-1"
+                              disabled={sendingExerciseId === se.id}>
+                              {sendingExerciseId === se.id
+                                ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                : <Send className="h-3.5 w-3.5" />}
+                              Envoyer
+                              <ChevronDown className="h-3.5 w-3.5 opacity-70" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-60">
+                            <DropdownMenuLabel>Envoyer l'exercice à…</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              className="gap-2"
+                              disabled={(groupMembers ?? []).length === 0}
+                              onClick={() => handleSendExerciseDirect(se)}>
+                              <Users className="h-4 w-4" />
+                              Tout le groupe ({(groupMembers ?? []).length})
+                            </DropdownMenuItem>
+                            {(groupMembers ?? []).length > 0 && <DropdownMenuSeparator />}
+                            {(groupMembers ?? []).map((m: any) => {
+                              const prenom = m.eleve?.prenom || "Élève";
+                              const fullName = [m.eleve?.prenom, m.eleve?.nom].filter(Boolean).join(" ") || "Élève";
+                              return (
+                                <DropdownMenuItem
+                                  key={m.eleve_id}
+                                  className="gap-2"
+                                  onClick={() => handleSendExerciseDirect(se, { studentIds: [m.eleve_id], label: prenom })}>
+                                  <UserCheck className="h-4 w-4" />
+                                  {fullName}
+                                </DropdownMenuItem>
+                              );
+                            })}
+                            {(groupMembers ?? []).length === 0 && (
+                              <DropdownMenuItem disabled>Aucun élève dans la séance</DropdownMenuItem>
+                            )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                         <Button variant="outline" size="sm" className="gap-1 text-primary border-primary/30 hover:bg-primary/10"
                           onClick={() => { setDuplicateExercise(ex); setDuplicateStudentIds([]); setDuplicateDifficulty(ex.difficulte || 3); }}>
                           <Copy className="h-3.5 w-3.5" />Dupliquer & Envoyer
