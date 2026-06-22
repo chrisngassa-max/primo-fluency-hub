@@ -21,6 +21,10 @@ import {
 
 const LEVELS: NiveauSandbox[] = ["A1", "A2", "B1", "B2"];
 
+// Aligne sur CONSENT_VERSION cote frontend (src/hooks/useAIConsent.ts) et sur la
+// valeur par defaut de la colonne ai_processing_consents.version.
+const SANDBOX_AI_CONSENT_VERSION = "v1.0";
+
 function isMissingSandboxSchema(error: any) {
   const message = `${error?.message ?? ""} ${error?.details ?? ""}`.toLowerCase();
   return ["42p01", "42703", "pgrst204", "pgrst205"].includes(
@@ -161,6 +165,33 @@ Deno.serve(async (req) => {
         .eq("id", sandbox.id);
       if (checkpointError) throw checkpointError;
     }
+
+    // Pre-remplit le consentement IA pour chaque eleve sandbox : l'apercu eleve
+    // (embed) se connecte AVEC le compte de l'eleve et traverse la garde
+    // AIConsentRequiredRoute, qui exige consent_ai === true ET
+    // consent_biometric === true sans revocation (cf. src/hooks/useAIConsent.ts).
+    // On calque donc le flux reel de l'app (accept(true, true)) pour que les
+    // fonctionnalites IA marchent immediatement, sans etape manuelle.
+    // Upsert idempotent sur user_id ; nettoyage assure par la cascade FK
+    // ai_processing_consents.user_id -> auth.users(id) ON DELETE CASCADE lors de
+    // la suppression des comptes sandbox (sandbox-setup cleanup et sandbox-reset).
+    provisioningStep = "grant_ai_consent";
+    const consentTimestamp = new Date().toISOString();
+    const { error: consentError } = await admin
+      .from("ai_processing_consents")
+      .upsert(
+        created.map((eleve) => ({
+          user_id: eleve.user_id,
+          consent_ai: true,
+          consent_biometric: true,
+          consented_at: consentTimestamp,
+          revoked_at: null,
+          version: SANDBOX_AI_CONSENT_VERSION,
+          source: "sandbox",
+        })),
+        { onConflict: "user_id" },
+      );
+    if (consentError) throw consentError;
 
     provisioningStep = "create_group";
     const trainerName = user.user_metadata?.prenom || "Formateur";
