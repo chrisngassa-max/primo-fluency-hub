@@ -10,6 +10,12 @@ import { hasBlockingReviewIssue, reviewExercise } from "../_shared/review-exerci
 import type { ExerciseReviewIssue, ExerciseReviewResult } from "../_shared/review-exercise.ts";
 import { ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth } from "../_shared/check-consent.ts";
 import { buildDurationPrompt, buildFallbackExercise, buildFocusPrompt, parseTargetDurationMinutes } from "./logic.ts";
+import {
+  findReusableExercises,
+  scoreGeneratedExercise,
+  GENERATE_SCORE_MIN,
+  REUSE_SCORE_MIN,
+} from "../_shared/exercise-search.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -220,9 +226,11 @@ serve(async (req) => {
     const _secretBlock = await ensurePseudonymSecretOrLog("generate-exercises", corsHeaders, null);
     if (_secretBlock) return _secretBlock;
     await logAICall({ function_name: "generate-exercises", triggered_by_user_id: _triggeredBy, status: "ok", data_categories: [], pseudonymization_level: "none" });
-    const { pointName, competence, niveauVise, count: requestedCount = 10, difficultyLevel, targetDurationMinutes, gabaritNumero, type_demarche, niveau_depart, niveau_arrivee, groupId, existingExercises, focus_pedagogique } = await req.json();
+    const { pointName, competence, niveauVise, count: requestedCount = 10, difficultyLevel, targetDurationMinutes, gabaritNumero, type_demarche, niveau_depart, niveau_arrivee, groupId, existingExercises, focus_pedagogique, themeId, eleveIds: eleveIdsParam, excludeExerciceIds, reuseScoreMin, freshnessWindowDays, searchFirst } = await req.json();
     const count = Math.min(30, Math.max(1, Math.round(Number(requestedCount) || 1)));
     const demarche = type_demarche || "titre_sejour";
+    // Le moteur search-first est actif par défaut ; on peut le désactiver (searchFirst === false).
+    const useSearchFirst = searchFirst !== false;
     // AI key check moved to shared ai-client
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -484,6 +492,8 @@ ${refTexts.join("\n")}
     // === ENRICHISSEMENT : Récupérer les données élèves si groupId fourni ===
     let studentContextPrompt = "";
     const groupReviewDirectives: any[] = [];
+    // Élèves concernés (pour le croisement de fraîcheur du search-first).
+    let eleveIdsForFreshness: string[] = Array.isArray(eleveIdsParam) ? eleveIdsParam : [];
     if (groupId) {
       try {
         // 1. Membres du groupe
@@ -494,6 +504,7 @@ ${refTexts.join("\n")}
 
         if (members?.length) {
           const eleveIds = members.map((m: any) => m.eleve_id);
+          if (eleveIdsForFreshness.length === 0) eleveIdsForFreshness = eleveIds;
 
           // 2. Résultats récents (15 derniers par élève)
           const { data: resultats } = await supabase
@@ -588,6 +599,46 @@ RÈGLES D'ADAPTATION :
       }
     }
 
+    // ═══════════════════════════════════════════════════════════════════
+    // SEARCH-FIRST : chercher d'abord dans la banque `exercices` et ne
+    // générer par IA que le complément. Juge unique = scoreExerciseCandidate.
+    // ═══════════════════════════════════════════════════════════════════
+    let reusedExercises: any[] = [];
+    let searchReport: any = null;
+    if (useSearchFirst && competence) {
+      try {
+        const search = await findReusableExercises(supabase, {
+          competence,
+          niveauVise: niveauVise || "A1",
+          count,
+          typeDemarche: demarche,
+          themeId: themeId ?? null,
+          eleveIds: eleveIdsForFreshness,
+          excludeExerciceIds: Array.isArray(excludeExerciceIds) ? excludeExerciceIds : [],
+          reuseScoreMin: typeof reuseScoreMin === "number" ? reuseScoreMin : undefined,
+          freshnessWindowDays: typeof freshnessWindowDays === "number" ? freshnessWindowDays : undefined,
+        });
+        reusedExercises = search.reusable.map((c) => ({
+          id: c.id,
+          source: "banque",
+          score: c.score,
+          titre: c.titre,
+          competence: c.competence,
+          format: c.format,
+          niveau_vise: c.niveau_vise,
+          difficulte: c.difficulte,
+          matched_rules: c.matchedRules,
+          recent_occurrences: c.recentOccurrences,
+        }));
+        searchReport = search.report;
+        console.log(JSON.stringify({ event: "search_first", competence, niveauVise, ...search.report }));
+      } catch (searchErr) {
+        console.error("[generate-exercises] search-first failed, full generation fallback:", searchErr);
+      }
+    }
+    // Nombre d'exercices restant à GÉNÉRER après réutilisation depuis la banque.
+    const generationCount = Math.max(0, count - reusedExercises.length);
+
     // Determine difficulty range description
     const diffLevel = difficultyLevel ?? 5;
     let difficultyDescription = "";
@@ -631,7 +682,7 @@ RÈGLES STRICTES :
     const durationPrompt = buildDurationPrompt(parseTargetDurationMinutes(targetDurationMinutes));
 
     const systemPrompt = `Tu es un expert en FLE (Français Langue Étrangère) spécialisé dans la préparation au TCF IRN (Intégration et Résidence en France).
-Tu dois générer exactement ${count} exercices pour le point à maîtriser suivant.
+Tu dois générer exactement ${generationCount} exercices pour le point à maîtriser suivant.
 ${focusPrompt}
 
 CALIBRAGE DE DIFFICULTÉ (CRITIQUE) :
@@ -828,7 +879,7 @@ RÈGLES ANTI-REDONDANCE STRICTES :
 ═══════════════════════════════════════════════════════════════════`;
     }
 
-    const userPrompt = `Génère ${count} exercices pour :
+    const userPrompt = `Génère ${generationCount} exercices pour :
 - Point à maîtriser : "${pointName}"
 - Compétence : ${competence}
 - Niveau visé : ${niveauVise}
@@ -836,20 +887,26 @@ RÈGLES ANTI-REDONDANCE STRICTES :
 ${studentContextPrompt}${antiRedundancyPrompt}${referencesPrompt}
 Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO2/CO3/CO4, varier les codes).`;
 
-    const data = await callAI({
-      model: MODEL,
-      messages: [
-        { role: "system", content: systemPrompt + QA_REVIEW_BLOCK },
-        { role: "user", content: userPrompt },
-      ],
-      tools: EXERCISES_TOOL,
-      tool_choice: { type: "function", function: { name: "generate_exercises" } },
-    });
+    // On n'appelle l'IA que s'il reste des exercices à générer (la banque a pu
+    // tout fournir via le search-first).
+    const exercises: any = { exercises: [] };
+    if (generationCount > 0) {
+      const data = await callAI({
+        model: MODEL,
+        messages: [
+          { role: "system", content: systemPrompt + QA_REVIEW_BLOCK },
+          { role: "user", content: userPrompt },
+        ],
+        tools: EXERCISES_TOOL,
+        tool_choice: { type: "function", function: { name: "generate_exercises" } },
+      });
 
-    const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
-    if (!toolCall) throw new Error("No tool call in AI response");
+      const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
+      if (!toolCall) throw new Error("No tool call in AI response");
 
-    const exercises = JSON.parse(toolCall.function.arguments);
+      const parsed = JSON.parse(toolCall.function.arguments);
+      exercises.exercises = Array.isArray(parsed?.exercises) ? parsed.exercises : [];
+    }
 
     const defaultReviewDirective = buildPedagogicalDirectives({
       targetCompetence: competence,
@@ -888,7 +945,7 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
     const drafts: any[] = Array.isArray(exercises.exercises) ? exercises.exercises : [];
 
     for (const draft of drafts) {
-      if (validatedList.length >= count) break; // on a déjà assez d'exercices
+      if (validatedList.length >= generationCount) break; // on a déjà assez d'exercices
       let current: any = draft;
       let accepted: any = null;
       let lastIssues: ExerciseReviewIssue[] = [];
@@ -944,9 +1001,10 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
       }
     }
 
-    // ── FILET DE SÉCURITÉ : compléter jusqu'à `count` avec des exercices de repli ──
+    // ── FILET DE SÉCURITÉ : compléter jusqu'à `generationCount` avec des exercices de repli ──
     // garantis conformes (jamais de liste vide ni de séance sous-dotée).
-    while (validatedList.length < count) {
+    // (Si la banque a fourni des réutilisations, on ne complète que le solde à générer.)
+    while (validatedList.length < generationCount) {
       const fb = buildFallbackExercise({ competence, niveauVise, diffLevel, pointName, directives: reviewDirective });
       const review = await reviewExercise({
         exercise: fb,
@@ -958,7 +1016,22 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
       });
       validatedList.push(attachReviewMeta(fb, review, { is_fallback: true }));
       fallbackCount++;
-      console.warn(`[generate-exercises] Fallback exercise ${fallbackCount} added to guarantee count=${count}`);
+      console.warn(`[generate-exercises] Fallback exercise ${fallbackCount} added to guarantee generationCount=${generationCount}`);
+    }
+
+    // Chaque exercice GÉNÉRÉ est noté par le MÊME juge unique que la banque,
+    // puis marqué `source: 'genere'` (cohérence du scoring global).
+    for (const ex of validatedList) {
+      try {
+        const s = scoreGeneratedExercise(
+          { competence: ex.competence ?? competence, niveau_vise: ex.niveau_vise ?? niveauVise, format: ex.format, contexte_irn: ex.contexte_irn },
+          { competence, niveauVise: niveauVise || "A1", typeDemarche: demarche, themeId: themeId ?? null },
+        );
+        ex.source = "genere";
+        ex.search_score = s.score;
+      } catch (_scoreErr) {
+        ex.source = "genere";
+      }
     }
 
     exercises.exercises = validatedList;
@@ -967,18 +1040,21 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
       (exercises as any).totalExcluded = excludedList.length;
     }
 
-    // Rapport de génération : demandés vs générés vs repli (évite les échecs silencieux).
+    // Rapport de génération : demandés vs repris de la banque vs générés vs repli.
     const generationReport = {
       requested: count,
+      reused_from_bank: reusedExercises.length,
       generated: validatedList.length,
       ai_passed: aiPassedCount,
       fallback_used: fallbackCount,
       retry_attempts: retryAttempts,
       excluded: excludedList.length,
+      reuse_score_min: typeof reuseScoreMin === "number" ? reuseScoreMin : REUSE_SCORE_MIN,
+      generate_score_min: GENERATE_SCORE_MIN,
     };
     (exercises as any).generation_report = generationReport;
     if (fallbackCount > 0) {
-      (exercises as any).qa_warning = `${fallbackCount}/${count} exercice(s) de repli généré(s) après échec QA (le reste a passé la QA).`;
+      (exercises as any).qa_warning = `${fallbackCount}/${generationCount} exercice(s) de repli généré(s) après échec QA (le reste a passé la QA).`;
     }
     console.log(JSON.stringify({ event: "generation_report", ...generationReport }));
 
@@ -1032,6 +1108,9 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
     // Attach references, scores, metadata, and warnings to the response
     const responsePayload = {
       ...exercises,
+      // Exercices RÉUTILISÉS depuis la banque (références à des exercices existants).
+      reused: reusedExercises,
+      search_report: searchReport,
       references_utilisees: referencesUtilisees,
       reference_scores: referenceScores,
       selection_metadata: selectionMetadata,

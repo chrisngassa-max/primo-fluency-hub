@@ -730,14 +730,31 @@ const SessionPilot = () => {
       const perComp = Math.max(1, Math.floor(count / competences.length));
       const remainder = count - perComp * competences.length;
 
-      const allInserted: any[] = [];
+      // Exercices à NE PAS réutiliser depuis la banque : ceux déjà présents
+      // dans la séance + ceux repris/générés au fil de cette exécution.
+      const excludeExerciceIds: string[] = exercises
+        .map((ex: any) => ex.exercice_id || (ex as any)?.exercice?.id)
+        .filter(Boolean);
+      // Élèves du groupe (croisement de fraîcheur côté Edge Function).
+      const { data: groupMembersForGen } = await supabase
+        .from("group_members")
+        .select("eleve_id")
+        .eq("group_id", (session as any)?.group_id);
+      const eleveIdsForGen = (groupMembersForGen ?? []).map((m: any) => m.eleve_id);
+
+      // Ids d'exercices (banque + générés) à lier à la séance, dans l'ordre.
+      const linkExerciceIds: string[] = [];
+      const generatedDrafts: any[] = []; // pour l'anti-redondance des prompts
+      let totalReused = 0;
+      let totalGenerated = 0;
+
       for (let ci = 0; ci < competences.length; ci++) {
         const comp = competences[ci];
         const compCount = perComp + (ci < remainder ? 1 : 0);
         if (compCount <= 0) continue;
 
         // Build anti-redundancy context from existing + already generated exercises
-        const existingContext = [...exercises, ...allInserted].map((ex: any) => ({
+        const existingContext = [...exercises, ...generatedDrafts].map((ex: any) => ({
           titre: ex.titre || (ex as any)?.exercice?.titre,
           format: ex.format || (ex as any)?.exercice?.format,
           contexte_irn: ex.contexte_irn || (ex as any)?.exercice?.contexte_irn,
@@ -746,49 +763,64 @@ const SessionPilot = () => {
         }));
 
         const { data, error } = await supabase.functions.invoke("generate-exercises", {
-          body: { pointName: objectif, competence: comp, niveauVise, count: compCount, difficultyLevel: generateDifficulty, type_demarche: (session as any)?.group?.type_demarche || "titre_sejour", groupId: (session as any)?.group_id, existingExercises: existingContext },
+          body: { pointName: objectif, competence: comp, niveauVise, count: compCount, difficultyLevel: generateDifficulty, type_demarche: (session as any)?.group?.type_demarche || "titre_sejour", groupId: (session as any)?.group_id, existingExercises: existingContext, eleveIds: eleveIdsForGen, excludeExerciceIds: [...excludeExerciceIds, ...linkExerciceIds] },
         });
 
         if (error) throw error;
         if (data?.error) throw new Error(data.error);
 
+        // ── Exercices RÉUTILISÉS depuis la banque : on ne ré-insère PAS, on
+        //    référence l'exercice existant et on le liera à la séance. ──
+        const reused = Array.isArray(data?.reused) ? data.reused : [];
+        for (const r of reused) {
+          if (r?.id && !linkExerciceIds.includes(r.id)) {
+            linkExerciceIds.push(r.id);
+            totalReused++;
+          }
+        }
+
+        // ── Exercices GÉNÉRÉS par IA : insérés dans la banque comme avant. ──
         const generated = data?.exercises ?? [];
-        if (generated.length === 0) continue;
+        if (generated.length > 0) {
+          generatedDrafts.push(...generated);
+          const exercisesToInsert = generated.map((ex: any) => ({
+            titre: ex.titre,
+            consigne: ex.consigne,
+            competence: comp as any,
+            format: (ex.format || "qcm") as any,
+            difficulte: ex.difficulte || 3,
+            contenu: ex.contenu || {},
+            animation_guide: ex.animation_guide || null,
+            niveau_vise: niveauVise,
+            formateur_id: user.id,
+            point_a_maitriser_id: defaultPoint.id,
+            is_ai_generated: true,
+            is_template: false,
+            is_devoir: false,
+            ...structuredExerciseMetadata(ex),
+          }));
 
-        const exercisesToInsert = generated.map((ex: any) => ({
-          titre: ex.titre,
-          consigne: ex.consigne,
-          competence: comp as any,
-          format: (ex.format || "qcm") as any,
-          difficulte: ex.difficulte || 3,
-          contenu: ex.contenu || {},
-          animation_guide: ex.animation_guide || null,
-          niveau_vise: niveauVise,
-          formateur_id: user.id,
-          point_a_maitriser_id: defaultPoint.id,
-          is_ai_generated: true,
-          is_template: false,
-          is_devoir: false,
-          ...structuredExerciseMetadata(ex),
-        }));
-
-        const { data: inserted, error: insertErr } = await supabase
-          .from("exercices")
-          .insert(exercisesToInsert)
-          .select("id");
-        if (insertErr) throw insertErr;
-        allInserted.push(...(inserted ?? []));
+          const { data: inserted, error: insertErr } = await supabase
+            .from("exercices")
+            .insert(exercisesToInsert)
+            .select("id");
+          if (insertErr) throw insertErr;
+          for (const row of inserted ?? []) {
+            linkExerciceIds.push(row.id);
+            totalGenerated++;
+          }
+        }
       }
 
-      if (allInserted.length === 0) {
-        toast.warning("Aucun exercice généré.");
+      if (linkExerciceIds.length === 0) {
+        toast.warning("Aucun exercice repris ni généré.");
         return;
       }
 
       const currentMax = exercises.length;
-      const sessionExLinks = allInserted.map((ex: any, i: number) => ({
+      const sessionExLinks = linkExerciceIds.map((exerciceId: string, i: number) => ({
         session_id: id!,
-        exercice_id: ex.id,
+        exercice_id: exerciceId,
         ordre: currentMax + i + 1,
         statut: "planifie" as any,
       }));
@@ -798,7 +830,9 @@ const SessionPilot = () => {
 
       qc.invalidateQueries({ queryKey: ["session-exercices", id] });
       const compLabel = competences.length === 1 ? competences[0] : competences.join(", ");
-      toast.success(`${allInserted.length} exercice(s) généré(s) (${compLabel}) !`);
+      toast.success(
+        `${totalReused} repris de la banque, ${totalGenerated} générés (${compLabel}) !`,
+      );
     } catch (e: any) {
       console.error(e);
       toast.error("Erreur de génération", { description: e.message });
