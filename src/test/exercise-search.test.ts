@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  canonicalizeTheme,
   findReusableExercises,
   hasUsableContent,
   niveauWindow,
@@ -130,6 +131,90 @@ describe("exercise-search (search-first)", () => {
       competence: "CE",
       niveauVise: "A1",
       count: 1,
+    });
+
+    expect(res.report.scored_passed_filters).toBe(0);
+    expect(res.reusable).toHaveLength(0);
+  });
+
+  // ─── Thème rebranché (row.theme → scoring) ──────────────────────────────
+  it("canonicalizeTheme normalise vers le vocabulaire canonique (ou null)", () => {
+    expect(canonicalizeTheme("logement")).toBe("logement");
+    expect(canonicalizeTheme(" Préfecture ")).toBe("prefecture");
+    expect(canonicalizeTheme("santé")).toBe("sante");
+    expect(canonicalizeTheme("vie citoyenne")).toBe("vie_citoyenne");
+    expect(canonicalizeTheme(null)).toBeNull();
+    expect(canonicalizeTheme("")).toBeNull();
+    // pas d'inférence floue : un libellé non canonique → null (neutre, jamais exclu)
+    expect(canonicalizeTheme("séance sur le bus de la ville")).toBeNull();
+  });
+
+  it("(a) privilégie un candidat de MÊME thème que la cible (bonus SCORE_01)", async () => {
+    const client = makeClient({
+      exercices: {
+        data: [
+          { ...A1_CE_QCM, id: "ex-sans-theme", theme: null },
+          { ...A1_CE_QCM, id: "ex-meme-theme", theme: "logement" },
+        ],
+        error: null,
+      },
+      devoirs: { data: [], error: null },
+      resultats: { data: [], error: null },
+    });
+
+    const res = await findReusableExercises(client, {
+      competence: "CE",
+      niveauVise: "A1",
+      count: 2,
+      typeDemarche: "titre_sejour",
+      themeId: "logement",
+    });
+
+    const meme = res.candidates.find((c) => c.id === "ex-meme-theme")!;
+    const sans = res.candidates.find((c) => c.id === "ex-sans-theme")!;
+    // le candidat de même thème reçoit le bonus → score strictement supérieur
+    expect(meme.matchedRules).toContain("SCORE_01");
+    expect(meme.score).toBeGreaterThan(sans.score);
+    // il est privilégié (premier réutilisable)
+    expect(res.reusable[0].id).toBe("ex-meme-theme");
+  });
+
+  it("(b) n'EXCLUT PAS un candidat sans thème quand la cible est thémée (perd juste le bonus)", async () => {
+    const client = makeClient({
+      exercices: { data: [{ ...A1_CE_QCM, id: "ex-sans-theme", theme: null }], error: null },
+      devoirs: { data: [], error: null },
+      resultats: { data: [], error: null },
+    });
+
+    const res = await findReusableExercises(client, {
+      competence: "CE",
+      niveauVise: "A1",
+      count: 1,
+      typeDemarche: "titre_sejour",
+      themeId: "logement",
+    });
+
+    // toujours éligible (passe les filtres durs), pas d'exclusion thème
+    expect(res.report.scored_passed_filters).toBe(1);
+    expect(res.candidates[0].excluded).toBe(false);
+    expect(res.candidates[0].id).toBe("ex-sans-theme");
+    // mais SANS bonus thème
+    expect(res.candidates[0].matchedRules).not.toContain("SCORE_01");
+  });
+
+  it("(b-bis) EXCLUT un candidat de thème DIFFÉRENT de la cible (EXCL_01)", async () => {
+    const client = makeClient({
+      exercices: { data: [{ ...A1_CE_QCM, id: "ex-autre-theme", theme: "sante" }], error: null },
+      devoirs: { data: [], error: null },
+      resultats: { data: [], error: null },
+    });
+
+    const res = await findReusableExercises(client, {
+      competence: "CE",
+      niveauVise: "A1",
+      count: 1,
+      typeDemarche: "titre_sejour",
+      themeId: "logement",
     });
 
     expect(res.report.scored_passed_filters).toBe(0);

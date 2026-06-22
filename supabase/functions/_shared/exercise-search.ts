@@ -16,7 +16,7 @@
 // juge, d'ajouter un filet de validité (contenu exploitable) et la fraîcheur.
 // ════════════════════════════════════════════════════════════════════════
 
-import { scoreExerciseCandidate } from "./referential-loader.ts";
+import { getExerciseScoringRules, scoreExerciseCandidate } from "./referential-loader.ts";
 
 // ─── Seuils configurables (juge unique 0-100 + fenêtre de fraîcheur) ───
 export const REUSE_SCORE_MIN = 80; // score ≥ 80 → réutilisable depuis la banque
@@ -106,29 +106,82 @@ export interface SearchTarget {
   studentMode?: string | null;
 }
 
+// ─── Thème : vocabulaire canonique de `exercices.theme` (CHECK chk_exercices_theme_v4) ───
+// La colonne `theme` (backfillée, ~48% de couverture) utilise STRICTEMENT ces
+// valeurs. C'est le vocabulaire commun aux DEUX côtés (candidat + cible).
+const CANONICAL_THEMES = new Set([
+  "logement",
+  "sante",
+  "travail",
+  "transport",
+  "banque",
+  "prefecture",
+  "ecole",
+  "vie_citoyenne",
+]);
+
+// Alias explicites tolérés (variantes/préfixes) → valeur canonique. Volontairement
+// restreint (correspondance EXACTE après normalisation) : on n'infère JAMAIS un
+// thème à partir de texte libre, pour ne pas EXCLURE un candidat à tort (EXCL_01).
+const THEME_ALIASES: Record<string, string> = {
+  sante: "sante",
+  "vie citoyenne": "vie_citoyenne",
+  citoyennete: "vie_citoyenne",
+  ecole: "ecole",
+  education: "ecole",
+  préfecture: "prefecture",
+};
+
+// Sentinelle de neutralité : utilisée DES DEUX CÔTÉS quand la dimension thème
+// ne doit pas s'appliquer (un seul côté renseigné). Identique des deux côtés →
+// EXCL_01 (`!=`) ne déclenche pas (pas d'exclusion injuste). Le bonus SCORE_01
+// qui en résulte est ensuite RETIRÉ (voir scoreCandidateWithTheme).
+const THEME_NEUTRAL = "__theme_neutral__";
+
+// Bonus thème (SCORE_01) lu dynamiquement depuis le référentiel pour rester
+// aligné si le barème évolue (pas de valeur magique en dur).
+const THEME_BONUS_RULE_ID = "SCORE_01";
+const THEME_BONUS_POINTS = getExerciseScoringRules().scoring_rules.find(
+  (r) => r.id === THEME_BONUS_RULE_ID,
+)?.points ?? 40;
+
+/**
+ * Normalise une valeur de thème vers le vocabulaire canonique de `exercices.theme`.
+ * Renvoie la valeur canonique si reconnue (8 valeurs + quelques alias exacts),
+ * sinon `null` (= « pas de thème exploitable »). Aucune inférence floue : une
+ * valeur non reconnue est traitée comme absente (neutralité, jamais d'exclusion).
+ */
+export function canonicalizeTheme(value?: string | null): string | null {
+  if (value == null) return null;
+  const norm = String(value).trim().toLowerCase();
+  if (norm.length === 0) return null;
+  if (CANONICAL_THEMES.has(norm)) return norm;
+  // normalisation sans accents pour matcher le set canonique / alias
+  const noAccents = norm.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  if (CANONICAL_THEMES.has(noAccents)) return noAccents;
+  return THEME_ALIASES[norm] ?? THEME_ALIASES[noAccents] ?? null;
+}
+
 /**
  * Mappe une ligne `exercices` réelle vers l'objet `exercise` attendu par le
  * juge `scoreExerciseCandidate`.
  *
- * NOTE THÈME (important) : la table `exercices` ne renseigne pas de façon
- * fiable `theme`/`contexte_irn` (themes distincts ≈ 1, contexte_irn null ~97%).
- * Le juge applique un FILTRE DUR (EXCL_01) qui exclut tout exercice dont
- * `theme_id != session.theme_id`. Appliqué ici sur des thèmes vides, il
- * exclurait toute la banque et tuerait le « search-first ». On laisse donc
- * `theme_id` indéfini des DEUX côtés (exercise + session) quand aucun thème
- * strict n'est demandé : le juge l'évalue alors comme « concordant » (pas
- * d'exclusion, bonus SCORE_01 uniforme). On NE FORK PAS le juge — on neutralise
- * une dimension non renseignée dans les données.
+ * THÈME (rebranché) : le thème RÉEL du candidat provient de `row.theme`
+ * (colonne backfillée, valeurs canoniques). On ne recopie plus le thème de la
+ * cible sur le candidat (ce qui neutralisait la dimension). Le rapprochement /
+ * filtre thématique vs la cible est géré par `scoreCandidateWithTheme`, qui
+ * n'active EXCL_01/SCORE_01 que lorsque les DEUX côtés ont un thème.
  */
 export function mapRowToScoringExercise(
   row: ExerciseRow,
-  target: SearchTarget,
+  _target: SearchTarget,
 ): Record<string, unknown> {
   const etayage = ["fort", "moyen", "faible"].includes(String(row.niveau_guidage ?? ""))
     ? row.niveau_guidage
     : undefined;
   return {
-    theme_id: target.themeId ?? undefined,
+    // thème canonique du CANDIDAT (depuis row.theme), `undefined` si absent/non reconnu
+    theme_id: canonicalizeTheme(row.theme) ?? undefined,
     // domaine_irn renseigné seulement si présent en base (sinon non noté)
     domaine_irn: row.contexte_irn ?? undefined,
     niveau_cecrl: row.niveau_vise ?? undefined,
@@ -147,8 +200,9 @@ export interface ScoringContexts {
 export function buildScoringContexts(target: SearchTarget): ScoringContexts {
   return {
     session: {
-      // theme_id volontairement omis (voir note dans mapRowToScoringExercise)
-      theme_id: target.themeId ?? undefined,
+      // thème canonique de la CIBLE (séance/compétence), `undefined` si absent/non reconnu.
+      // L'activation effective du thème est décidée par scoreCandidateWithTheme.
+      theme_id: canonicalizeTheme(target.themeId) ?? undefined,
       // sentinelle : empêche un bonus domaine uniforme quand le domaine n'est pas ciblé
       domaine_irn: "__no_domaine_target__",
       current_phase_competence: target.competence,
@@ -159,6 +213,74 @@ export function buildScoringContexts(target: SearchTarget): ScoringContexts {
       mode: target.studentMode ?? undefined,
     },
     matrix: { formats_autorises: formatsAutorisesForCompetence(target.competence) },
+  };
+}
+
+/**
+ * Score un candidat en gérant la dimension THÈME selon la règle :
+ * « contrainte/bonus thème actifs UNIQUEMENT quand le candidat ET la cible ont
+ * un thème renseigné ». On ne FORK PAS le juge : on ajuste seulement ce qu'on
+ * lui passe (et on retire le bonus parasite dans le cas neutralisé).
+ *
+ * Rappel : EXCL_01 (`exercise.theme_id != session.theme_id`) et SCORE_01
+ * (`exercise.theme_id == session.theme_id`) sont des conditions exactement
+ * OPPOSÉES. Pour une même paire de valeurs, l'une OU l'autre se déclenche
+ * toujours — il est donc impossible d'obtenir « ni exclusion ni bonus » en une
+ * seule passe. On procède donc ainsi :
+ *   • candidat ET cible thémés     → valeurs réelles (bonus si égal, sinon exclu)
+ *   • un seul côté thémé           → sentinelle des 2 côtés (pas d'exclusion) PUIS
+ *                                     retrait du bonus SCORE_01 (« perd le bonus »)
+ *   • aucun côté thémé             → thème non ciblé : on laisse le comportement
+ *                                     uniforme historique (les deux `undefined`),
+ *                                     neutre pour le classement et la calibration
+ *                                     du seuil (bonus identique pour tous).
+ */
+export function scoreCandidateWithTheme(
+  exercise: Record<string, unknown>,
+  ctx: ScoringContexts,
+  targetThemeId: string | null,
+): { score: number; excluded: boolean; exclusionReason?: string; matchedRules: string[] } {
+  const candidateTheme = canonicalizeTheme(exercise.theme_id as string | null | undefined);
+  const bothThemed = candidateTheme !== null && targetThemeId !== null;
+  const oneThemed = (candidateTheme !== null) !== (targetThemeId !== null);
+
+  let exerciseThemeId: string | undefined;
+  let sessionThemeId: string | undefined;
+  if (bothThemed) {
+    // Comparaison réelle : EXCL_01 exclut si différent, SCORE_01 bonifie si égal.
+    exerciseThemeId = candidateTheme;
+    sessionThemeId = targetThemeId;
+  } else if (oneThemed) {
+    // Neutralisation : mêmes valeurs → pas d'exclusion ; bonus retiré ensuite.
+    exerciseThemeId = THEME_NEUTRAL;
+    sessionThemeId = THEME_NEUTRAL;
+  } else {
+    // Aucun thème ciblé : comportement uniforme historique (deux `undefined`).
+    exerciseThemeId = undefined;
+    sessionThemeId = undefined;
+  }
+
+  const result = scoreExerciseCandidate({
+    exercise: { ...exercise, theme_id: exerciseThemeId },
+    session: { ...ctx.session, theme_id: sessionThemeId },
+    student: ctx.student,
+    matrix: ctx.matrix,
+  });
+
+  if (oneThemed && result.matchedRules.includes(THEME_BONUS_RULE_ID)) {
+    return {
+      score: Math.max(0, result.score - THEME_BONUS_POINTS),
+      excluded: result.excluded,
+      exclusionReason: result.exclusionReason,
+      matchedRules: result.matchedRules.filter((id) => id !== THEME_BONUS_RULE_ID),
+    };
+  }
+
+  return {
+    score: result.score,
+    excluded: result.excluded,
+    exclusionReason: result.exclusionReason,
+    matchedRules: result.matchedRules,
   };
 }
 
@@ -281,13 +403,13 @@ export async function findReusableExercises(
 
   // ── 3. Scoring via le JUGE UNIQUE (hard filters + score 0-100) ──
   const ctx = buildScoringContexts(params);
+  const targetThemeId = canonicalizeTheme(params.themeId);
   const scored: ScoredCandidate[] = validRows.map((row) => {
-    const result = scoreExerciseCandidate({
-      exercise: mapRowToScoringExercise(row, params),
-      session: ctx.session,
-      student: ctx.student,
-      matrix: ctx.matrix,
-    });
+    const result = scoreCandidateWithTheme(
+      mapRowToScoringExercise(row, params),
+      ctx,
+      targetThemeId,
+    );
     return {
       id: row.id,
       titre: row.titre ?? null,
@@ -399,17 +521,13 @@ export function scoreGeneratedExercise(
 ): { score: number; matchedRules: string[]; excluded: boolean } {
   const ctx = buildScoringContexts(target);
   const exercise = {
-    theme_id: target.themeId ?? undefined,
+    // exercice GÉNÉRÉ pour cette cible → son thème est celui de la cible (canonique)
+    theme_id: canonicalizeTheme(target.themeId) ?? undefined,
     domaine_irn: (draft.contexte_irn as string | undefined) ?? undefined,
     niveau_cecrl: (draft.niveau_vise as string | undefined) ?? target.niveauVise,
     competence: (draft.competence as string | undefined) ?? target.competence,
     format: (draft.format as string | undefined) ?? undefined,
   };
-  const result = scoreExerciseCandidate({
-    exercise,
-    session: ctx.session,
-    student: ctx.student,
-    matrix: ctx.matrix,
-  });
+  const result = scoreCandidateWithTheme(exercise, ctx, canonicalizeTheme(target.themeId));
   return { score: result.score, matchedRules: result.matchedRules, excluded: result.excluded };
 }
