@@ -5013,6 +5013,7 @@ export type Database = {
           context_sentence: string | null
           created_at: string
           id: string
+          is_saved: boolean
           last_reviewed_at: string | null
           normalized_word: string
           review_count: number
@@ -5028,6 +5029,7 @@ export type Database = {
           context_sentence?: string | null
           created_at?: string
           id?: string
+          is_saved?: boolean
           last_reviewed_at?: string | null
           normalized_word: string
           review_count?: number
@@ -5043,6 +5045,7 @@ export type Database = {
           context_sentence?: string | null
           created_at?: string
           id?: string
+          is_saved?: boolean
           last_reviewed_at?: string | null
           normalized_word?: string
           review_count?: number

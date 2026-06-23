@@ -20,6 +20,9 @@ import { cn } from "@/lib/utils";
 import { ExternalResourceViewer, type ExternalResource } from "@/components/ExternalResourceViewer";
 import { ExternalResourceReturnForm } from "@/components/ExternalResourceReturnForm";
 import CompetenceLabel from "@/components/CompetenceLabel";
+import SmartText from "@/components/SmartText";
+import SmartTextHint from "@/components/SmartTextHint";
+import CorrectionDetaillee from "@/components/CorrectionDetaillee";
 import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
 import SessionFeedbackForm from "@/components/SessionFeedbackForm";
 import { logEvent } from "@/lib/analytics";
@@ -228,6 +231,20 @@ const BilanSeance = () => {
   // Filter out exercises already answered
   const alreadyDoneIds = new Set((existingResults ?? []).map((r) => r.exercice_id));
   const pendingExercices = validExercices.filter((se: any) => !alreadyDoneIds.has(se.exercice?.id));
+
+  // Synthèse / replay : résultats déjà enregistrés, joints au titre/compétence de l'exercice.
+  const exerciceById = new Map<string, any>();
+  (exercices ?? []).forEach((se: any) => {
+    if (se.exercice?.id) exerciceById.set(se.exercice.id, se.exercice);
+  });
+  const reviewItems = (existingResults ?? [])
+    .map((r) => ({
+      exerciceId: r.exercice_id as string,
+      score: Number(r.score),
+      correction: (r.correction_detaillee as any[]) ?? [],
+      exercice: exerciceById.get(r.exercice_id),
+    }))
+    .filter((item) => item.exercice);
 
   const doneExternalIds = new Set(
     (existingExternalResults ?? []).map((r) => r.external_resource_id)
@@ -465,16 +482,82 @@ const BilanSeance = () => {
     );
   }
 
-  // All done already (exercices + external)
+  // All done already (exercices + external) → écran de synthèse / révision des corrections.
   if (pendingExercices.length === 0 && pendingExternal.length === 0 && !results) {
+    if (reviewItems.length === 0) {
+      return (
+        <div className="max-w-2xl mx-auto text-center py-12 space-y-4">
+          <CheckCircle2 className="h-12 w-12 mx-auto text-green-500" />
+          <h2 className="text-xl font-bold">Séance déjà complétée</h2>
+          <p className="text-muted-foreground">Tu as déjà fait tous les exercices et ressources de cette séance.</p>
+          <Button variant="outline" onClick={() => navigate("/eleve")}>
+            <ArrowLeft className="h-4 w-4 mr-2" /> Retour au dashboard
+          </Button>
+        </div>
+      );
+    }
+
+    const reviewAverage = Math.round(
+      reviewItems.reduce((acc, item) => acc + item.score, 0) / reviewItems.length
+    );
+    const reviewAcquisition = qualitativeProgress(reviewAverage);
+
     return (
-      <div className="max-w-2xl mx-auto text-center py-12 space-y-4">
-        <CheckCircle2 className="h-12 w-12 mx-auto text-green-500" />
-        <h2 className="text-xl font-bold">Séance déjà complétée</h2>
-        <p className="text-muted-foreground">Tu as déjà fait tous les exercices et ressources de cette séance.</p>
-        <Button variant="outline" onClick={() => navigate("/eleve")}>
-          <ArrowLeft className="h-4 w-4 mr-2" /> Retour au dashboard
-        </Button>
+      <div className="space-y-6 max-w-2xl mx-auto">
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="sm" onClick={() => navigate("/eleve")} className="gap-1.5">
+            <ArrowLeft className="h-4 w-4" /> Dashboard
+          </Button>
+          <div>
+            <h1 className="text-xl font-bold">Révision de la séance</h1>
+            <p className="text-sm text-muted-foreground">
+              Séance déjà complétée — revois tes corrections.
+            </p>
+          </div>
+        </div>
+
+        <Card className={cn("text-center", reviewAcquisition.borderClassName)}>
+          <CardContent className="pt-6 pb-4">
+            <p className={`mx-auto inline-flex rounded-full px-4 py-2 text-lg font-bold ${reviewAcquisition.className}`}>
+              {reviewAcquisition.label}
+            </p>
+            <p className="text-sm text-muted-foreground mt-2">{reviewAcquisition.message}</p>
+          </CardContent>
+        </Card>
+
+        <div className="space-y-6">
+          {reviewItems.map((item) => (
+            <div key={item.exerciceId} className="space-y-3">
+              <div className="flex items-center justify-between gap-2">
+                <p className="font-semibold text-sm flex items-center gap-2">
+                  <ClipboardCheck className="h-4 w-4 text-primary shrink-0" />
+                  {item.exercice.titre}
+                </p>
+                <Badge variant="outline" className="text-xs shrink-0">
+                  <CompetenceLabel code={item.exercice.competence} />
+                </Badge>
+              </div>
+              <CorrectionDetaillee
+                itemResults={item.correction}
+                scoreNormalized={item.score}
+                displayMode="qualitative"
+              />
+            </div>
+          ))}
+        </div>
+
+        {sessionId && user?.id && (
+          <SessionFeedbackForm sessionId={sessionId} eleveId={user.id} />
+        )}
+
+        <div className="grid grid-cols-2 gap-3">
+          <Button variant="outline" onClick={() => navigate("/eleve")}>
+            <ArrowLeft className="h-4 w-4 mr-2" /> Dashboard
+          </Button>
+          <Button onClick={() => navigate("/eleve/devoirs")}>
+            Mes devoirs <ChevronRight className="h-4 w-4 ml-2" />
+          </Button>
+        </div>
       </div>
     );
   }
@@ -597,6 +680,8 @@ const BilanSeance = () => {
         </div>
       </div>
 
+      {user?.id && <SmartTextHint />}
+
       {/* Global progress */}
       <div className="space-y-1">
         <div className="flex justify-between text-xs text-muted-foreground">
@@ -615,7 +700,17 @@ const BilanSeance = () => {
                 <ClipboardCheck className="h-4 w-4 text-primary" />
                 {currentEx?.titre}
               </CardTitle>
-              <CardDescription className="mt-1 text-xl leading-relaxed">{currentEx?.consigne}</CardDescription>
+              <CardDescription className="mt-1 text-xl leading-relaxed">
+                {currentEx?.consigne && user?.id ? (
+                  <SmartText
+                    text={currentEx.consigne}
+                    studentId={user.id}
+                    contextSentence={currentEx.consigne}
+                  />
+                ) : (
+                  currentEx?.consigne
+                )}
+              </CardDescription>
               {currentEx?.consigne && currentEx?.competence !== "CO" && (
                 <TTSAudioPlayer
                   text={currentEx.consigne}
@@ -649,7 +744,15 @@ const BilanSeance = () => {
           {exerciseSupportText && currentEx?.competence !== "CO" && (
             <div className="p-4 rounded-lg bg-muted/50 text-sm whitespace-pre-line border border-border/50 leading-relaxed">
               <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide font-semibold">📄 Document à lire</p>
-              {exerciseSupportText}
+              {user?.id ? (
+                <SmartText
+                  text={exerciseSupportText}
+                  studentId={user.id}
+                  contextSentence={exerciseSupportText}
+                />
+              ) : (
+                exerciseSupportText
+              )}
             </div>
           )}
           {/* Avertissement si CE/EE sans aucun support : éviter de demander à l'élève de répondre dans le vide */}
@@ -673,36 +776,64 @@ const BilanSeance = () => {
               {/* Item-level support text if different from exercise-level */}
               {shouldShowItemSupport && (
                 <div className="p-3 rounded-lg bg-muted/50 text-sm whitespace-pre-line border border-border/50 mb-2">
-                  {itemSupportText}
+                  {user?.id ? (
+                    <SmartText text={itemSupportText} studentId={user.id} contextSentence={itemSupportText} />
+                  ) : (
+                    itemSupportText
+                  )}
                 </div>
               )}
               <p className="font-medium text-sm">
                 <span className="text-primary font-bold mr-2">Q{idx + 1}.</span>
-                {questionText}
+                {user?.id ? (
+                  <SmartText text={questionText} studentId={user.id} contextSentence={questionText} />
+                ) : (
+                  questionText
+                )}
               </p>
               {Array.isArray(item.options) && item.options.length > 0 ? (
                 <div className="space-y-2">
-                  {item.options.map((opt: string, oi: number) => (
-                    <button
-                      key={oi}
-                      className={cn(
-                        "btn-reponse-eleve",
-                        currentAnswers[idx] === opt && "selected"
-                      )}
-                      onClick={() =>
-                        setAnswers((prev) => ({
-                          ...prev,
-                          [currentEx.id]: { ...(prev[currentEx.id] ?? {}), [idx]: opt },
-                        }))
-                      }
-                    >
-                      <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center text-sm">
-                        {String.fromCharCode(65 + oi)}
-                      </span>
-                      <span className="flex-1">{opt}</span>
-                      <TTSAudioPlayer text={opt} size="icon" />
-                    </button>
-                  ))}
+                  {item.options.map((opt: string, oi: number) => {
+                    const selectOption = () =>
+                      setAnswers((prev) => ({
+                        ...prev,
+                        [currentEx.id]: { ...(prev[currentEx.id] ?? {}), [idx]: opt },
+                      }));
+                    return (
+                      <div
+                        key={oi}
+                        role="button"
+                        tabIndex={0}
+                        aria-pressed={currentAnswers[idx] === opt}
+                        className={cn(
+                          "btn-reponse-eleve cursor-pointer",
+                          currentAnswers[idx] === opt && "selected"
+                        )}
+                        onClick={selectOption}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            selectOption();
+                          }
+                        }}
+                      >
+                        <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center text-sm">
+                          {String.fromCharCode(65 + oi)}
+                        </span>
+                        {user?.id ? (
+                          <SmartText
+                            text={opt}
+                            studentId={user.id}
+                            contextSentence={questionText}
+                            className="flex-1"
+                          />
+                        ) : (
+                          <span className="flex-1">{opt}</span>
+                        )}
+                        <TTSAudioPlayer text={opt} size="icon" />
+                      </div>
+                    );
+                  })}
                 </div>
               ) : (
                 <input

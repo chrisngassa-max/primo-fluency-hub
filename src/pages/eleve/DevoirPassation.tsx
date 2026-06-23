@@ -12,7 +12,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import {
-  ArrowLeft, CheckCircle2, XCircle, Loader2, Send, FileText, Mic, Square, Clock, Smile, Meh, Frown,
+  ArrowLeft, CheckCircle2, Loader2, Send, FileText, Mic, Square, Clock, Smile, Meh, Frown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
@@ -48,81 +48,6 @@ import {
   queueSubmission,
   saveExerciseDraft,
 } from "@/lib/offlineExercise";
-
-function CorrectionAccordion({ correction }: { correction: any[] }) {
-  const [openItems, setOpenItems] = useState<number[]>([]);
-  const toggleItem = (i: number) =>
-    setOpenItems(prev => prev.includes(i) ? prev.filter(x => x !== i) : [...prev, i]);
-
-  return (
-    <div className="space-y-2">
-      <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Correction détaillée</h2>
-      {correction.map((c: any, i: number) => (
-        <Card key={i} className={cn("border-l-4", c.correct ? "border-l-green-500" : "border-l-destructive")}>
-          <CardContent className="py-3 px-4">
-            {/* NIVEAU 1 — toujours visible */}
-            <div className="flex items-start gap-2">
-              {c.correct
-                ? <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0 mt-0.5" />
-                : <XCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />}
-              <div className="flex-1 space-y-1">
-                <p className="text-sm font-medium">{c.question}</p>
-                {!c.correct && (
-                  <>
-                    <p className="text-xs text-destructive">Ta réponse : {c.reponse_eleve || "—"}</p>
-                    <p className="text-xs text-green-600 font-medium">Bonne réponse : {c.bonne_reponse}</p>
-                  </>
-                )}
-              </div>
-              {(c.explication || c.justification_pedagogique || c.reformulation_modele || c.criteres_oraux) && (
-                <button
-                  onClick={() => toggleItem(i)}
-                  className="text-xs text-primary underline shrink-0 mt-0.5"
-                >
-                  {openItems.includes(i) ? "Masquer" : "Voir l'explication"}
-                </button>
-              )}
-            </div>
-
-            {/* Reformulation modèle — toujours visible pour EO */}
-            {c.reformulation_modele && (
-              <div className="mt-2 p-2.5 rounded-md bg-blue-50 border border-blue-200 dark:bg-blue-950/30 dark:border-blue-800 text-sm">
-                <p className="text-blue-800 dark:text-blue-300">
-                  💡 <strong>Ce que tu aurais pu dire :</strong> « {c.reformulation_modele} »
-                </p>
-              </div>
-            )}
-
-            {/* NIVEAU 2 — accordéon */}
-            {openItems.includes(i) && (
-              <div className="mt-3 pt-3 border-t space-y-2 text-sm">
-                {c.explication && <p className="text-muted-foreground">{c.explication}</p>}
-                {c.reformulation_modele && (
-                  <p className="text-emerald-700 dark:text-emerald-400">
-                    ✏️ <strong>À retenir :</strong> « {c.reformulation_modele} »
-                  </p>
-                )}
-                {c.encouragement && (
-                  <p className="text-amber-700 dark:text-amber-400 font-medium">💪 {c.encouragement}</p>
-                )}
-                {c.criteres_oraux && (
-                  <div className="grid gap-2 pt-2 sm:grid-cols-2">
-                    {Object.entries(c.criteres_oraux).map(([key, value]: [string, any]) => (
-                      <div key={key} className="border-l-2 border-primary pl-2">
-                        <p className="font-semibold capitalize">{key.replace(/_/g, " ")} · {value.score}/10</p>
-                        {value.commentaire && <p className="text-muted-foreground">{value.commentaire}</p>}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  );
-}
 
 type DifficultyFelt = "facile" | "correct" | "trop_difficile";
 
@@ -960,7 +885,11 @@ const DevoirPassation = () => {
             </div>
             {showTranscript && !transcriptLocked && (
               <div className="mt-3 border-l-4 border-primary bg-background p-3 leading-relaxed">
-                {scriptAudio}
+                {user?.id ? (
+                  <SmartText text={scriptAudio} studentId={user.id} contextSentence={scriptAudio} />
+                ) : (
+                  scriptAudio
+                )}
               </div>
             )}
             {!hasListened && (
@@ -1063,22 +992,43 @@ const DevoirPassation = () => {
                 </p>
                 {Array.isArray(item.options) && item.options.length > 0 ? (
                   <div className="space-y-2">
-                    {item.options.map((opt: string, oi: number) => (
-                      <button
-                        key={oi}
-                        className={cn(
-                          "btn-reponse-eleve",
-                          answers[idx] === opt && "selected"
-                        )}
-                        onClick={() => setAnswers((prev) => ({ ...prev, [idx]: opt }))}
-                      >
-                        <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center text-sm">
-                          {String.fromCharCode(65 + oi)}
-                        </span>
-                        <span className="flex-1">{opt}</span>
-                        <TTSAudioPlayer text={opt} size="icon" />
-                      </button>
-                    ))}
+                    {item.options.map((opt: string, oi: number) => {
+                      const selectOption = () => setAnswers((prev) => ({ ...prev, [idx]: opt }));
+                      return (
+                        <div
+                          key={oi}
+                          role="button"
+                          tabIndex={0}
+                          aria-pressed={answers[idx] === opt}
+                          className={cn(
+                            "btn-reponse-eleve cursor-pointer",
+                            answers[idx] === opt && "selected"
+                          )}
+                          onClick={selectOption}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              selectOption();
+                            }
+                          }}
+                        >
+                          <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center text-sm">
+                            {String.fromCharCode(65 + oi)}
+                          </span>
+                          {user?.id ? (
+                            <SmartText
+                              text={opt}
+                              studentId={user.id}
+                              contextSentence={item.question}
+                              className="flex-1"
+                            />
+                          ) : (
+                            <span className="flex-1">{opt}</span>
+                          )}
+                          <TTSAudioPlayer text={opt} size="icon" />
+                        </div>
+                      );
+                    })}
                   </div>
                 ) : (
                   <input

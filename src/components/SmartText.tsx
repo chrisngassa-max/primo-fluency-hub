@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Plus, Loader2 } from "lucide-react";
+import { Plus, Loader2, Check } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -143,6 +143,7 @@ export default function SmartText({
   const [errorByWord, setErrorByWord] = useState<Record<string, WordErrorKind>>({});
   const [loadingWord, setLoadingWord] = useState<string | null>(null);
   const [savingWord, setSavingWord] = useState<string | null>(null);
+  const [savedByWord, setSavedByWord] = useState<Record<string, boolean>>({});
 
   const loadDetails = async (word: string, language = selectedTranslationLanguage) => {
     const normalized = normalizeWord(word);
@@ -180,6 +181,17 @@ export default function SmartText({
           context_sentence: data.context_sentence ?? contextSentence ?? text,
         },
       }));
+
+      const { data: savedRow } = await supabase
+        .from("student_vocabulary")
+        .select("id")
+        .eq("student_id", studentId)
+        .eq("normalized_word", normalized)
+        .eq("translation_language", language)
+        .eq("is_saved", true)
+        .limit(1)
+        .maybeSingle();
+      if (savedRow) setSavedByWord((prev) => ({ ...prev, [detailsKey]: true }));
     } catch (error) {
       const kind = await classifyWordError(error, null);
       setErrorByWord((prev) => ({ ...prev, [detailsKey]: kind }));
@@ -198,16 +210,50 @@ export default function SmartText({
 
     setSavingWord(detailsKey);
     try {
-      const { error } = await supabase.from("student_vocabulary").insert({
-        student_id: studentId,
-        word,
-        normalized_word: normalized,
-        context_sentence: details.context_sentence ?? contextSentence ?? text,
-        translation: details.translation,
-        translation_language: details.translation_language ?? selectedTranslationLanguage,
-        simple_definition: details.simple_definition,
-      } as any);
-      if (error) throw error;
+      const language = details.translation_language ?? selectedTranslationLanguage;
+      const contextValue = details.context_sentence ?? contextSentence ?? text;
+
+      // Déduplication : si une entrée existe déjà pour ce mot (cache is_saved=false
+      // ou carnet), on la promeut en is_saved=true plutôt que de créer un doublon.
+      const { data: existing, error: lookupError } = await supabase
+        .from("student_vocabulary")
+        .select("id")
+        .eq("student_id", studentId)
+        .eq("normalized_word", normalized)
+        .eq("translation_language", language)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (lookupError) throw lookupError;
+
+      if (existing) {
+        const { error } = await supabase
+          .from("student_vocabulary")
+          .update({
+            word,
+            context_sentence: contextValue,
+            translation: details.translation,
+            simple_definition: details.simple_definition,
+            is_saved: true,
+            updated_at: new Date().toISOString(),
+          } as any)
+          .eq("id", existing.id)
+          .eq("student_id", studentId);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("student_vocabulary").insert({
+          student_id: studentId,
+          word,
+          normalized_word: normalized,
+          context_sentence: contextValue,
+          translation: details.translation,
+          translation_language: language,
+          simple_definition: details.simple_definition,
+          is_saved: true,
+        } as any);
+        if (error) throw error;
+      }
+      setSavedByWord((prev) => ({ ...prev, [detailsKey]: true }));
       toast.success("Mot ajouté au carnet");
     } catch (error: any) {
       toast.error("Impossible d'ajouter le mot", { description: error.message });
@@ -238,6 +284,7 @@ export default function SmartText({
         const errorKind = errorByWord[detailsKey];
         const isLoading = loadingWord === detailsKey;
         const isSaving = savingWord === detailsKey;
+        const isSaved = savedByWord[detailsKey] ?? false;
         const selectedLanguageLabel =
           TRANSLATION_LANGUAGES.find((language) => language.value === selectedTranslationLanguage)?.label ??
           "Langue choisie";
@@ -247,7 +294,16 @@ export default function SmartText({
             <PopoverTrigger asChild>
               <button
                 type="button"
-                onClick={() => void loadDetails(token)}
+                onClick={(event) => {
+                  // Empêche la sélection d'une réponse lorsque le mot est dans une option cliquable.
+                  event.stopPropagation();
+                  void loadDetails(token);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.stopPropagation();
+                  }
+                }}
                 className="inline cursor-help rounded-[3px] border-b border-dotted border-primary/60 bg-primary/5 px-0.5 text-left align-baseline text-inherit transition-colors [font:inherit] [line-height:inherit] hover:border-primary hover:bg-primary/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 focus-visible:ring-offset-1"
                 aria-label={`Comprendre le mot ${token}`}
                 title="Écouter, traduire et ajouter au carnet"
@@ -312,10 +368,17 @@ export default function SmartText({
                     <p>{details.simple_definition || "—"}</p>
                   </div>
                   {allowSave && (
-                    <Button size="sm" className="w-full" onClick={() => saveWord(token)} disabled={isSaving}>
-                      {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
-                      Ajouter à mon carnet
-                    </Button>
+                    isSaved ? (
+                      <Button size="sm" variant="secondary" className="w-full" disabled>
+                        <Check className="mr-2 h-4 w-4" />
+                        Déjà dans le carnet
+                      </Button>
+                    ) : (
+                      <Button size="sm" className="w-full" onClick={() => saveWord(token)} disabled={isSaving}>
+                        {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
+                        Ajouter à mon carnet
+                      </Button>
+                    )
                   )}
                 </div>
               ) : (

@@ -164,10 +164,31 @@ Utilise le contexte de phrase pour choisir le bon sens du mot.`,
     if (!toolCall) throw new Error("No tool call in AI response");
     const details = JSON.parse(toolCall.function.arguments);
 
+    const translation = String(details.translation ?? "");
+    const simpleDefinition = String(details.simple_definition ?? "");
+
+    // Persiste le résultat comme entrée de CACHE (is_saved=false). Le carnet de
+    // l'élève ne contient que les mots ajoutés volontairement (is_saved=true).
+    // Un échec d'écriture ne doit jamais bloquer la réponse à l'élève.
+    try {
+      await supabase.from("student_vocabulary").insert({
+        student_id: studentId,
+        word,
+        normalized_word: normalizedWord,
+        context_sentence: contextSentence || null,
+        translation,
+        translation_language: translationLanguage,
+        simple_definition: simpleDefinition,
+        is_saved: false,
+      });
+    } catch (cacheError) {
+      console.error("get-word-definition cache write failed:", cacheError);
+    }
+
     return new Response(JSON.stringify({
       word,
-      translation: String(details.translation ?? ""),
-      simple_definition: String(details.simple_definition ?? ""),
+      translation,
+      simple_definition: simpleDefinition,
       translation_language: translationLanguage,
       context_sentence: contextSentence || null,
       cache_hit: false,

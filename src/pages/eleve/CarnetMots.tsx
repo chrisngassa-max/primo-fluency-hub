@@ -32,6 +32,7 @@ const CarnetMots = () => {
         .from("student_vocabulary")
         .select("id, word, translation, simple_definition, context_sentence, translation_language, created_at")
         .eq("student_id", user!.id)
+        .eq("is_saved", true)
         .order("created_at", { ascending: false });
 
       if (error) throw error;

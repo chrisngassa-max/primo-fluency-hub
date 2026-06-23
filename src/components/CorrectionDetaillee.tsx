@@ -3,6 +3,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { qualitativeProgress } from "@/lib/qualitativeProgress";
 
+interface OralCriterion {
+  score?: number;
+  commentaire?: string;
+}
+
 interface ItemResult {
   question: string;
   reponse_donnee?: string | number;
@@ -13,6 +18,47 @@ interface ItemResult {
   correct: boolean;
   explication?: string;
   ia_evaluated?: boolean;
+  /** Production orale/écrite : reformulation modèle proposée à l'élève. */
+  reformulation_modele?: string;
+  /** Message d'encouragement pédagogique. */
+  encouragement?: string;
+  /** Critères d'évaluation orale détaillés (clé = critère). */
+  criteres_oraux?: Record<string, OralCriterion>;
+}
+
+function RichItemDetails({ item }: { item: ItemResult }) {
+  const criteres = item.criteres_oraux ? Object.entries(item.criteres_oraux) : [];
+  if (!item.reformulation_modele && !item.encouragement && criteres.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="space-y-2">
+      {item.reformulation_modele && (
+        <div className="p-2.5 rounded-md bg-blue-50 border border-blue-200 dark:bg-blue-950/30 dark:border-blue-800 text-sm">
+          <p className="text-blue-800 dark:text-blue-300">
+            💡 <strong>Ce que tu aurais pu dire :</strong> « {item.reformulation_modele} »
+          </p>
+        </div>
+      )}
+      {item.encouragement && (
+        <p className="text-sm font-medium text-amber-700 dark:text-amber-400">💪 {item.encouragement}</p>
+      )}
+      {criteres.length > 0 && (
+        <div className="grid gap-2 pt-1 sm:grid-cols-2">
+          {criteres.map(([key, value]) => (
+            <div key={key} className="border-l-2 border-primary pl-2 text-sm">
+              <p className="font-semibold capitalize">
+                {key.replace(/_/g, " ")}
+                {typeof value?.score === "number" ? ` · ${value.score}/10` : ""}
+              </p>
+              {value?.commentaire && <p className="text-muted-foreground">{value.commentaire}</p>}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 interface Props {
@@ -97,6 +143,7 @@ export default function CorrectionDetaillee({ itemResults, scoreNormalized, disp
                       <span className="text-blue-800 dark:text-blue-300">{r.explication}</span>
                     </div>
                   )}
+                  <RichItemDetails item={r} />
                 </CardContent>
               </Card>
             );
@@ -115,9 +162,10 @@ export default function CorrectionDetaillee({ itemResults, scoreNormalized, disp
           </button>
           {showCorrect && correctItems.map((r, idx) => (
             <Card key={`correct-${idx}`} className="border-l-4 border-l-green-500">
-              <CardContent className="py-3 px-4">
+              <CardContent className="py-3 px-4 space-y-2">
                 <p className="text-sm font-medium">{r.question}</p>
-                <p className="text-xs text-green-600 mt-1">✅ {String(r.bonne_reponse)}</p>
+                <p className="text-xs text-green-600">✅ {String(r.bonne_reponse)}</p>
+                <RichItemDetails item={r} />
               </CardContent>
             </Card>
           ))}
