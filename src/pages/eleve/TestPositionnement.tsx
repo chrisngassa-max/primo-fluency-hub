@@ -7,8 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -28,7 +26,10 @@ import {
   COMPETENCE_ORDER,
 } from "@/lib/testPositionnement";
 import { Mic, Square, ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
+import SmartText from "@/components/SmartText";
+import SmartTextHint from "@/components/SmartTextHint";
 
 type Screen = "accueil" | "question" | "resultats";
 
@@ -928,6 +929,8 @@ const TestPositionnement = () => {
           <Progress value={progressPct} className="h-2" />
         </div>
 
+        {user?.id && <SmartTextHint />}
+
         <Card>
           <CardContent className="pt-6 space-y-4">
             {/* TTS audio player for CO */}
@@ -957,7 +960,15 @@ const TestPositionnement = () => {
                     /* Longer text = document/notice rendering */
                     <div className="bg-background border-2 border-border rounded-lg p-4 shadow-sm">
                       <p className="text-base whitespace-pre-wrap leading-relaxed">
-                        {currentQuestion.support}
+                        {user?.id ? (
+                          <SmartText
+                            text={currentQuestion.support}
+                            studentId={user.id}
+                            contextSentence={currentQuestion.support}
+                          />
+                        ) : (
+                          currentQuestion.support
+                        )}
                       </p>
                     </div>
                   )}
@@ -967,7 +978,17 @@ const TestPositionnement = () => {
 
             {/* Consigne + TTS */}
             <div className="space-y-2">
-              <p className="text-lg font-medium">{currentQuestion.consigne}</p>
+              <p className="text-lg font-medium">
+                {user?.id ? (
+                  <SmartText
+                    text={currentQuestion.consigne}
+                    studentId={user.id}
+                    contextSentence={currentQuestion.consigne}
+                  />
+                ) : (
+                  currentQuestion.consigne
+                )}
+              </p>
               {!currentQuestion.script_audio && (
                 <TTSAudioPlayer
                   key={`consigne-${currentQuestion.id}`}
@@ -981,11 +1002,7 @@ const TestPositionnement = () => {
             {/* QCM */}
             {currentQuestion.type_reponse === "qcm" && (
               <div className="space-y-4">
-                <RadioGroup
-                  value={selectedAnswer}
-                  onValueChange={setSelectedAnswer}
-                  className="space-y-3"
-                >
+                <div className="space-y-3">
                   {["A", "B", "C"].map((letter) => {
                     const key = `choix_${letter.toLowerCase()}` as
                       | "choix_a"
@@ -993,23 +1010,49 @@ const TestPositionnement = () => {
                       | "choix_c";
                     const text = currentQuestion[key];
                     if (!text) return null;
+                    const selectOption = () => setSelectedAnswer(letter);
+                    const isSelected = selectedAnswer === letter;
                     return (
                       <div
                         key={letter}
-                        className="flex items-center space-x-3 rounded-lg border p-4 cursor-pointer hover:bg-accent/50"
+                        role="button"
+                        tabIndex={0}
+                        aria-pressed={isSelected}
+                        className={cn(
+                          "flex items-center space-x-3 rounded-lg border p-4 cursor-pointer transition-colors hover:bg-accent/50",
+                          isSelected && "border-primary bg-accent"
+                        )}
+                        onClick={selectOption}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            selectOption();
+                          }
+                        }}
                       >
-                        <RadioGroupItem value={letter} id={`opt-${letter}`} />
-                        <Label
-                          htmlFor={`opt-${letter}`}
-                          className="text-base cursor-pointer flex-1"
+                        <div
+                          className={cn(
+                            "h-5 w-5 rounded-full border-2 flex items-center justify-center shrink-0",
+                            isSelected ? "border-primary" : "border-muted-foreground/40"
+                          )}
                         >
-                          {text}
-                        </Label>
+                          {isSelected && <div className="h-2.5 w-2.5 rounded-full bg-primary" />}
+                        </div>
+                        {user?.id ? (
+                          <SmartText
+                            text={text}
+                            studentId={user.id}
+                            contextSentence={currentQuestion.consigne}
+                            className="flex-1 text-base"
+                          />
+                        ) : (
+                          <span className="flex-1 text-base">{text}</span>
+                        )}
                         <TTSAudioPlayer text={text} size="icon" />
                       </div>
                     );
                   })}
-                </RadioGroup>
+                </div>
                 <Button
                   className="w-full"
                   size="xl"

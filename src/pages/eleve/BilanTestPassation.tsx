@@ -19,6 +19,8 @@ import CompetenceLabel from "@/components/CompetenceLabel";
 import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
 import ReportProblemButton from "@/components/ReportProblemButton";
 import RegenerateItemButton from "@/components/RegenerateItemButton";
+import SmartText from "@/components/SmartText";
+import SmartTextHint from "@/components/SmartTextHint";
 
 const BilanTestPassation = () => {
   const { testId } = useParams<{ testId: string }>();
@@ -288,6 +290,8 @@ const BilanTestPassation = () => {
         <Progress value={(answeredCount / Math.max(questions.length, 1)) * 100} className="h-2" />
       </div>
 
+      {user?.id && <SmartTextHint />}
+
       {/* Current question */}
       {currentQ && (
         <Card className="border-primary/20">
@@ -310,10 +314,28 @@ const BilanTestPassation = () => {
             )}
             {currentQ.competence === "CE" && (currentQ.texte_support || currentQ.texte) && (
               <div className="rounded-md border bg-muted/40 p-4 text-base leading-relaxed whitespace-pre-wrap">
-                {currentQ.texte_support || currentQ.texte}
+                {user?.id ? (
+                  <SmartText
+                    text={currentQ.texte_support || currentQ.texte}
+                    studentId={user.id}
+                    contextSentence={currentQ.texte_support || currentQ.texte}
+                  />
+                ) : (
+                  currentQ.texte_support || currentQ.texte
+                )}
               </div>
             )}
-            <p className="font-medium text-xl leading-relaxed">{currentQ.question}</p>
+            <p className="font-medium text-xl leading-relaxed">
+              {user?.id ? (
+                <SmartText
+                  text={currentQ.question}
+                  studentId={user.id}
+                  contextSentence={currentQ.texte_support || currentQ.texte || currentQ.question}
+                />
+              ) : (
+                currentQ.question
+              )}
+            </p>
             {currentQ.competence !== "CO" && (
               <TTSAudioPlayer
                 text={currentQ.consigne || currentQ.question}
@@ -333,22 +355,44 @@ const BilanTestPassation = () => {
               />
             ) : (
               <div className="space-y-2">
-                {currentQ.options.map((opt: string, oi: number) => (
-                  <button
-                    key={oi}
-                    className={cn(
-                      "btn-reponse-eleve",
-                      answers[currentIdx] === opt && "selected"
-                    )}
-                    onClick={() => setAnswers((prev) => ({ ...prev, [currentIdx]: opt }))}
-                  >
-                    <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center text-sm">
-                      {String.fromCharCode(65 + oi)}
-                    </span>
-                    <span className="flex-1">{opt}</span>
-                    <TTSAudioPlayer text={opt} size="icon" />
-                  </button>
-                ))}
+                {currentQ.options.map((opt: string, oi: number) => {
+                  const selectOption = () =>
+                    setAnswers((prev) => ({ ...prev, [currentIdx]: opt }));
+                  return (
+                    <div
+                      key={oi}
+                      role="button"
+                      tabIndex={0}
+                      aria-pressed={answers[currentIdx] === opt}
+                      className={cn(
+                        "btn-reponse-eleve cursor-pointer",
+                        answers[currentIdx] === opt && "selected"
+                      )}
+                      onClick={selectOption}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          selectOption();
+                        }
+                      }}
+                    >
+                      <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center text-sm">
+                        {String.fromCharCode(65 + oi)}
+                      </span>
+                      {user?.id ? (
+                        <SmartText
+                          text={opt}
+                          studentId={user.id}
+                          contextSentence={currentQ.question}
+                          className="flex-1"
+                        />
+                      ) : (
+                        <span className="flex-1">{opt}</span>
+                      )}
+                      <TTSAudioPlayer text={opt} size="icon" />
+                    </div>
+                  );
+                })}
               </div>
             )}
           </CardContent>
