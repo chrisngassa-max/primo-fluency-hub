@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { callAI, AIError } from "../_shared/ai-client.ts";
 import { validateAndFix } from "../_shared/exercise-validator.ts";
+import { computeExerciseDuration } from "../_shared/exercise-duration.ts";
 import { QA_REVIEW_BLOCK, logQaAuto } from "../_shared/qa-prompt.ts";
 import { buildPedagogicalDirectives, formatPedagogicalDirectives } from "../_shared/pedagogical-directives.ts";
 import { computeWeakCompetencesFromResults } from "../_shared/progression.ts";
@@ -546,6 +547,21 @@ Pour chaque élève, cible ses faiblesses spécifiques. Les exercices de tronc c
           }
           const validEx = validated.exercise;
 
+          const computedDurationSeconds = computeExerciseDuration({
+            competence: validEx.competence,
+            format: validEx.format,
+            metadata: validEx.metadata,
+            contenu: validEx.contenu,
+            nombre_ecoutes_max: validEx.nombre_ecoutes_max,
+          });
+          const contenuWithDuration = {
+            ...(validEx.contenu || { items: [] }),
+            metadata: {
+              ...(validEx.contenu?.metadata ?? {}),
+              time_limit_seconds: computedDurationSeconds,
+            },
+          };
+
           const raison = ex.raison === "tronc_commun" ? "consolidation" : (ex.raison === "remediation" ? "remediation" : "consolidation");
           const sourceLabel = ex.raison === "tronc_commun" ? "tronc_commun" : "individualise";
           const cacheKey = ex.raison === "tronc_commun" ? `j${dayOffset}_${validEx.titre}` : "";
@@ -564,7 +580,8 @@ Pour chaque élève, cible ses faiblesses spécifiques. Les exercices de tronc c
                 competence: validEx.competence,
                 format: validEx.format || "qcm",
                 difficulte: validEx.difficulte || 3,
-                contenu: validEx.contenu || { items: [] },
+                contenu: contenuWithDuration,
+                duree_limite_secondes: computedDurationSeconds,
                 niveau_vise: niveauCible,
                 formateur_id: formateurId,
                 point_a_maitriser_id: defaultPoint.id,

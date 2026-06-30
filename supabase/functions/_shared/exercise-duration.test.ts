@@ -19,16 +19,29 @@ describe("computeExerciseDuration", () => {
     expect(duration).toBeLessThanOrEqual(91);
   });
 
-  it("CO sans script_audio, 3 items → duree raisonnable basee sur les items", () => {
+  it("CO sans script_audio, 3 items, 2 ecoutes → fallback ~45s par ecoute + items", () => {
     const duration = computeExerciseDuration({
       competence: "CO",
       contenu: {
         items: [{}, {}, {}],
       },
+      nombre_ecoutes_max: 2,
+    });
+
+    expect(duration).toBe(240);
+    expect(duration).toBeLessThan(300);
+  });
+
+  it("CO sans script_audio, 1 ecoute → duree reduite", () => {
+    const duration = computeExerciseDuration({
+      competence: "CO",
+      contenu: {
+        items: [{}, {}],
+      },
+      nombre_ecoutes_max: 1,
     });
 
     expect(duration).toBe(150);
-    expect(duration).toBeLessThan(300);
   });
 
   it("CE avec texte et items → lecture + items + marge", () => {

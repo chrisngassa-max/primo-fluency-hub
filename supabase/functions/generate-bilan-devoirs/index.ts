@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { callAI, AIError } from "../_shared/ai-client.ts";
 import { validateAndFix } from "../_shared/exercise-validator.ts";
+import { computeExerciseDuration } from "../_shared/exercise-duration.ts";
 import { QA_REVIEW_BLOCK, logQaAuto } from "../_shared/qa-prompt.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { checkConsentBatch, ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth } from "../_shared/check-consent.ts";
@@ -185,6 +186,31 @@ Génère les devoirs ciblés pour chaque compétence en difficulté. Attribue un
       validatedDevoirs.push({ ...devoir, ...validated.exercise });
     }
 
+    for (const devoir of validatedDevoirs) {
+      const contenuBase = devoir.contenu ?? {
+        items: devoir.items || [],
+        ...(devoir.script_audio ? { script_audio: devoir.script_audio } : {}),
+      };
+      const computedDurationSeconds = computeExerciseDuration({
+        competence: devoir.competence,
+        format: devoir.format,
+        metadata: devoir.metadata,
+        contenu: contenuBase,
+        nombre_ecoutes_max: devoir.nombre_ecoutes_max,
+      });
+      devoir.contenu = {
+        ...contenuBase,
+        metadata: {
+          ...(contenuBase.metadata ?? devoir.metadata ?? {}),
+          time_limit_seconds: computedDurationSeconds,
+        },
+      };
+      devoir.metadata = {
+        ...(devoir.metadata ?? {}),
+        time_limit_seconds: computedDurationSeconds,
+      };
+    }
+
     // ── QA gate : ≥60% des devoirs initiaux doivent rester valides ──
     const initial = (result.devoirs || []).length;
     const ratio = initial > 0 ? validatedDevoirs.length / initial : 1;
@@ -232,6 +258,20 @@ Génère les devoirs ciblés pour chaque compétence en difficulté. Attribue un
           const delaiJours = 3;
           const dateEcheance = new Date(Date.now() + delaiJours * 86400000).toISOString();
           for (const devoir of validatedDevoirs) {
+            const contenuWithDuration = devoir.contenu as {
+              items?: unknown[];
+              script_audio?: string;
+              metadata?: { time_limit_seconds?: number; code?: string; skill?: string };
+            };
+            const computedDurationSeconds = contenuWithDuration.metadata?.time_limit_seconds
+              ?? computeExerciseDuration({
+                competence: devoir.competence,
+                format: devoir.format,
+                metadata: devoir.metadata,
+                contenu: contenuWithDuration,
+                nombre_ecoutes_max: devoir.nombre_ecoutes_max,
+              });
+
             const { data: newEx, error: exErr } = await admin
               .from("exercices")
               .insert({
@@ -241,7 +281,10 @@ Génère les devoirs ciblés pour chaque compétence en difficulté. Attribue un
                 competence: devoir.competence,
                 format: devoir.format || "qcm",
                 niveau_vise: devoir.niveau_vise || niveauCible || "A1",
-                contenu: { items: devoir.items || [] },
+                contenu: contenuWithDuration,
+                duree_limite_secondes: computedDurationSeconds,
+                metadata_code: devoir.metadata?.code ?? null,
+                metadata_skill: devoir.metadata?.skill ?? null,
                 point_a_maitriser_id: pointId,
                 is_devoir: true,
                 is_ai_generated: true,

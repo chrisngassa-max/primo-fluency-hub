@@ -74,7 +74,9 @@ export function computeExerciseDuration(ex: DurationInput): number {
   if (competence === "CO") {
     const scriptWords = countWords(ex.contenu?.script_audio);
     const ecoutes = clamp(ex.nombre_ecoutes_max ?? 2, 1, 10);
-    const audioTime = scriptWords > 0 ? (scriptWords / FRENCH_TTS_WORDS_PER_SECOND) * ecoutes : 0;
+    const audioTime = scriptWords > 0
+      ? (scriptWords / FRENCH_TTS_WORDS_PER_SECOND) * ecoutes
+      : SECONDS_PER_ITEM * ecoutes;
     seconds = audioTime + itemsTime + FIXED_MARGIN_SECONDS;
   } else if (competence === "CE") {
     const texteWords = countWords(ex.contenu?.texte);
