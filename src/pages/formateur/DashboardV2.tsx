@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { sendSessionExercisesToStudents } from "@/lib/sessionDistribution";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -173,11 +174,9 @@ export default function FormateurDashboardV2() {
       return;
     }
     const ids = sessionExercises.map((exercise: any) => exercise.sessionExerciceId);
-    const { error } = await supabase
-      .from("session_exercices")
-      .update({ statut: "traite_en_classe" as any, is_sent: true, updated_at: new Date().toISOString() } as any)
-      .in("id", ids);
-    if (error) {
+    try {
+      await sendSessionExercisesToStudents({ sessionId: nextSession.id, sessionExerciceIds: ids });
+    } catch (error: any) {
       toast.error("Erreur d'envoi", { description: error.message });
       return;
     }

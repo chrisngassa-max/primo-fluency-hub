@@ -45,7 +45,7 @@ IMPORTANT : Retourne UNIQUEMENT le JSON via l'outil fourni, pas de texte.`;
     const userPrompt = `Voici le plan de formation à analyser et structurer en séances :\n\n${planText}`;
 
     const data = await callAI({
-          model: "google/gemini-3-flash-preview",
+          model: "google/gemini-2.5-flash",
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: userPrompt },

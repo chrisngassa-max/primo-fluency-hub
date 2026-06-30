@@ -37,7 +37,7 @@ export async function callAI(options: AICallOptions): Promise<any> {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: options.model || "google/gemini-2.5-flash",
+        model: normalizeLovableModel(options.model || "google/gemini-2.5-flash"),
         messages: options.messages,
         ...(options.tools ? { tools: options.tools } : {}),
         ...(options.tool_choice ? { tool_choice: options.tool_choice } : {}),
@@ -114,6 +114,19 @@ async function callGemini(options: AICallOptions): Promise<any> {
   }
 
   return geminiToOpenAI(await response.json(), options);
+}
+
+/**
+ * Certains identifiants de modèle (ex. `gemini-3-flash-preview`) sont des alias instables
+ * que la passerelle Lovable rejette. On les ramène vers un modèle réellement supporté par
+ * Lovable (`google/gemini-2.5-flash`) afin d'éviter un échec qui forcerait le secours Gemini.
+ */
+function normalizeLovableModel(model: string): string {
+  const bare = model.replace(/^google\//, "");
+  if (/gemini-3/.test(bare) || /preview/.test(bare)) {
+    return "google/gemini-2.5-flash";
+  }
+  return model;
 }
 
 /**

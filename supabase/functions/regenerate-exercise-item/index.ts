@@ -59,7 +59,7 @@ Tentative n°${attempt}. Génère une nouvelle question équivalente, claire et 
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      model: "google/gemini-3-flash-preview",
+      model: "google/gemini-2.5-flash",
       messages: [
         { role: "system", content: SYSTEM },
         { role: "user", content: userPrompt },

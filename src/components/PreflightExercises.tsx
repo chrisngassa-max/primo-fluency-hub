@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { sendSessionExercisesToStudents } from "@/lib/sessionDistribution";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -299,12 +300,9 @@ const PreflightExercises = ({ sessionId, session, exercises, formateurId, parcou
   const handleSendOne = async (se: any) => {
     setSendingId(se.id);
     try {
-      const { error } = await supabase
-        .from("session_exercices")
-        .update({ statut: "traite_en_classe" as any, is_sent: true, updated_at: new Date().toISOString() } as any)
-        .eq("id", se.id);
-      if (error) throw error;
+      await sendSessionExercisesToStudents({ sessionId, sessionExerciceIds: [se.id] });
       qc.invalidateQueries({ queryKey: ["session-exercices", sessionId] });
+      qc.invalidateQueries({ queryKey: ["session-info", sessionId] });
       toast.success(`« ${se.exercice?.titre || "Exercice"} » envoyé.`);
     } catch (e: any) {
       toast.error("Erreur d'envoi", { description: e.message });

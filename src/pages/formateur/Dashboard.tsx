@@ -25,6 +25,7 @@ import MicroCompetencesPanel, { type MicroCompetence } from "@/components/MicroC
 import GenerateHomeworkSeriesDialog from "@/components/GenerateHomeworkSeriesDialog";
 import NextSessionCard from "@/components/NextSessionCard";
 import { cn } from "@/lib/utils";
+import { sendSessionExercisesToStudents } from "@/lib/sessionDistribution";
 
 const COMPETENCE_LABELS: Record<string, string> = {
   CO: "Compréhension Orale",
@@ -446,11 +447,7 @@ const FormateurDashboard = () => {
     setSending(true);
     try {
       const ids = sessionExercises.map((e: any) => e.sessionExerciceId);
-      const { error } = await supabase
-        .from("session_exercices")
-        .update({ statut: "traite_en_classe" as any, updated_at: new Date().toISOString() })
-        .in("id", ids);
-      if (error) throw error;
+      await sendSessionExercisesToStudents({ sessionId: nextSession.id, sessionExerciceIds: ids });
       qc.invalidateQueries({ queryKey: ["today-session-exercises"] });
       toast.success(`${sessionExercises.length} ${sessionExercises.length === 1 ? 'exercice envoyé' : 'exercices envoyés'} aux élèves !`, {
         description: "Les ateliers ludiques restent sur votre espace formateur.",

@@ -80,7 +80,7 @@ ${isOral ? `Évalue aussi séparément, chacun de 0 à 3 : réalisation de la co
 Réponds uniquement en JSON : {"score": number, "justification": string${isOral ? ', "criteres_oraux": {"realisation_consigne":{"score":0,"commentaire":""},"lexique":{"score":0,"commentaire":""},"grammaire":{"score":0,"commentaire":""},"prononciation":{"score":0,"commentaire":""},"fluidite":{"score":0,"commentaire":""},"coherence":{"score":0,"commentaire":""}}' : ""}}`;
 
     const data = await callAI({
-      model: "google/gemini-3-flash-preview",
+      model: "google/gemini-2.5-flash",
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: safeReponse },

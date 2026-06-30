@@ -59,7 +59,7 @@ ${(recentResults || []).map((r: any) => `- ${r.titre} (${r.competence}, diff. ${
 ${(failures || []).map((f: any) => `- "${f.titre}" (${f.competence}) : ${f.score}% en moyenne, ${f.count} échec(s)`).join("\n") || "Aucun échec récurrent"}`;
 
     const data = await callAI({
-        model: "google/gemini-3-flash-preview",
+        model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },

@@ -323,7 +323,7 @@ Utilise le tool fourni pour retourner le résultat.` + QA_REVIEW_BLOCK;
     const userPrompt = `Génère le contenu complet de la séance "${titre}" (${duree} min, niveau ${niveau}, compétences : ${competences_cibles.join(", ")}).`;
 
     const data = await callAI({
-        model: "google/gemini-3-flash-preview",
+        model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
@@ -604,7 +604,7 @@ Ne cree pas une activite differente: differencie le chemin d'acces.
 Si le support.contenu change, il doit rester une version etayee du support commun, pas un nouveau support.`;
 
       const variantData = await callAI({
-        model: "google/gemini-3-flash-preview",
+        model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: variantPrompt + QA_REVIEW_BLOCK },
           { role: "user", content: `Genere les variantes pour le cluster ${cluster.niveau_variante}/${cluster.niveau_etayage}.` },

@@ -119,14 +119,19 @@ serve(async (req) => {
     }
 
     const data = await callAI({
-      model: "google/gemini-3-flash-preview",
+      model: "google/gemini-2.5-flash",
       messages: [
         {
           role: "system",
-          content: `Tu es un assistant lexical FLE A0/A1 pour adultes migrants.
+          content: `Tu es un assistant lexical FLE A1/A2 pour adultes migrants.
 Retourne uniquement du JSON strict.
-La definition simple doit faire 5 a 10 mots, vocabulaire A1, structure "C'est un...", "C'est quand..." ou "C'est pour...".
-Utilise le contexte de phrase pour choisir le bon sens du mot.`,
+La definition simple doit etre une vraie definition de dictionnaire, mais en francais facile (niveau A1/A2).
+Donne le sens precis du mot (sa nature et ce qu'il veut dire), en environ 10 a 20 mots.
+Tu peux commencer par "C'est...", "Ca veut dire..." ou nommer la classe du mot, mais reste clair et concret.
+Evite les mots difficiles, le jargon et les definitions circulaires.
+Quand c'est utile, ajoute un synonyme tres simple dans la definition.
+Remplis le champ example avec une phrase d'exemple tres courte et simple qui utilise le mot.
+Utilise toujours le contexte de phrase fourni pour choisir le bon sens du mot.`,
         },
         {
           role: "user",
@@ -137,7 +142,8 @@ Utilise le contexte de phrase pour choisir le bon sens du mot.`,
             translation_language_label: translationLanguageLabel,
             output: {
               translation: "traduction courte dans la langue demandee; si fr, donner un synonyme tres simple. Pour arabe et tamoul, utiliser l'ecriture native.",
-              simple_definition: "definition francaise facile A0/A1",
+              simple_definition: "definition francaise claire et utile, niveau A1/A2, ~10 a 20 mots, donne le sens precis du mot",
+              example: "phrase d'exemple tres simple (A1/A2) qui utilise le mot dans ce sens",
             },
           }),
         },
@@ -146,12 +152,13 @@ Utilise le contexte de phrase pour choisir le bon sens du mot.`,
         type: "function",
         function: {
           name: "define_word",
-          description: "Retourne traduction et definition simple d'un mot FLE A0/A1",
+          description: "Retourne traduction, definition simple et exemple d'un mot FLE A1/A2",
           parameters: {
             type: "object",
             properties: {
               translation: { type: "string" },
               simple_definition: { type: "string" },
+              example: { type: "string" },
             },
             required: ["translation", "simple_definition"],
           },
@@ -166,6 +173,7 @@ Utilise le contexte de phrase pour choisir le bon sens du mot.`,
 
     const translation = String(details.translation ?? "");
     const simpleDefinition = String(details.simple_definition ?? "");
+    const example = details.example ? String(details.example) : null;
 
     // Persiste le résultat comme entrée de CACHE (is_saved=false). Le carnet de
     // l'élève ne contient que les mots ajoutés volontairement (is_saved=true).
@@ -189,6 +197,7 @@ Utilise le contexte de phrase pour choisir le bon sens du mot.`,
       word,
       translation,
       simple_definition: simpleDefinition,
+      example,
       translation_language: translationLanguage,
       context_sentence: contextSentence || null,
       cache_hit: false,

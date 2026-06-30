@@ -474,7 +474,7 @@ Pour chaque élève, génère ${targetCount} exercices respectant strictement la
     for (const eid of eleveIds) shortToFull[eid.slice(0, 8)] = eid;
 
     const data = await callAI({
-      model: "google/gemini-3-flash-preview",
+      model: "google/gemini-2.5-flash",
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },

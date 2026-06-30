@@ -66,6 +66,7 @@ import {
   Rocket, Copy, Send, UserCheck, Link2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { activateSessionForStudents, sendSessionExercisesToStudents } from "@/lib/sessionDistribution";
 import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/DifficultyBadge";
 import FeuilleAppel from "@/components/FeuilleAppel";
 import LivePilotingSection from "@/components/LivePilotingSection";
@@ -623,12 +624,9 @@ const SessionPilot = () => {
     if (checkedIds.length === 0 || sendSelectedIds.size === 0) return;
     setSending(true);
     try {
-      const { error } = await supabase
-        .from("session_exercices")
-        .update({ statut: "traite_en_classe" as any, is_sent: true, updated_at: new Date().toISOString() } as any)
-        .in("id", checkedIds);
-      if (error) throw error;
+      await sendSessionExercisesToStudents({ sessionId: id!, sessionExerciceIds: checkedIds });
       qc.invalidateQueries({ queryKey: ["session-exercices", id] });
+      qc.invalidateQueries({ queryKey: ["session-info", id] });
       setSendDialogOpen(false);
       toast.success(`${checkedIds.length} exercice(s) envoyé(s) à ${sendSelectedIds.size} élève(s) !`);
     } catch (e: any) {
@@ -1144,7 +1142,10 @@ const SessionPilot = () => {
         .from("session_exercices")
         .update({ is_sent: true, updated_at: new Date().toISOString() } as any)
         .eq("id", se.id);
+      // Rend la séance visible côté élève (même mécanisme que l'envoi groupé).
+      await activateSessionForStudents(id!);
       qc.invalidateQueries({ queryKey: ["session-exercices", id] });
+      qc.invalidateQueries({ queryKey: ["session-info", id] });
 
       const skipped = alreadySent.size;
       const recipientText = target?.label ?? `${targetIds.length} élève(s)`;
@@ -1259,11 +1260,7 @@ const SessionPilot = () => {
     try {
       const checkedIdsArr = exercises.filter((e) => checked[e.id]).map((e) => e.id);
       if (checkedIdsArr.length > 0) {
-        const { error } = await supabase
-          .from("session_exercices")
-          .update({ statut: "traite_en_classe" as any, updated_at: new Date().toISOString() })
-          .in("id", checkedIdsArr);
-        if (error) throw error;
+        await sendSessionExercisesToStudents({ sessionId: id!, sessionExerciceIds: checkedIdsArr });
       }
 
       const uncheckedIdsArr = exercises.filter((e) => !checked[e.id]).map((e) => e.id);

@@ -57,7 +57,7 @@ ${(devoirResults || []).map((d: any) => `- ${d.titre} (${d.competence}) : ${d.sc
 Génère les deux bilans.`;
 
     const data = await callAI({
-        model: "google/gemini-3-flash-preview",
+        model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },

@@ -61,7 +61,7 @@ La courbe cible va de 0 (Séance 1) à 10 (Séance ${totalSeances}).
 Identifie les inflexions, les élèves en difficulté, et propose une projection.`;
 
     const data = await callAI({
-        model: "google/gemini-3-flash-preview",
+        model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },

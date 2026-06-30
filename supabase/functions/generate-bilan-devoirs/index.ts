@@ -99,7 +99,7 @@ NIVEAU CIBLE : ${niveauCible || "A1"}
 Génère les devoirs ciblés pour chaque compétence en difficulté. Attribue un code TCF IRN à chaque exercice.`;
 
     const data = await callAI({
-        model: "google/gemini-3-flash-preview",
+        model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },

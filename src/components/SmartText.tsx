@@ -28,6 +28,7 @@ const TRANSLATION_LANGUAGES = [
 interface WordDetails {
   translation: string;
   simple_definition: string;
+  example?: string | null;
   translation_language?: string;
   context_sentence?: string | null;
 }
@@ -177,6 +178,7 @@ export default function SmartText({
         [detailsKey]: {
           translation: data.translation ?? "",
           simple_definition: data.simple_definition ?? "",
+          example: data.example ?? null,
           translation_language: data.translation_language ?? language,
           context_sentence: data.context_sentence ?? contextSentence ?? text,
         },
@@ -367,6 +369,12 @@ export default function SmartText({
                     <p className="text-xs uppercase text-muted-foreground">Définition simple</p>
                     <p>{details.simple_definition || "—"}</p>
                   </div>
+                  {details.example && (
+                    <div>
+                      <p className="text-xs uppercase text-muted-foreground">Exemple</p>
+                      <p className="italic">{details.example}</p>
+                    </div>
+                  )}
                   {allowSave && (
                     isSaved ? (
                       <Button size="sm" variant="secondary" className="w-full" disabled>

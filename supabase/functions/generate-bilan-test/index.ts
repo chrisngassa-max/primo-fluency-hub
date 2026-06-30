@@ -53,7 +53,7 @@ ${exercicesSummary}
 Génère un test de bilan pour vérifier les acquis de cette séance.`;
 
     const data = await callAI({
-        model: "google/gemini-3-flash-preview",
+        model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },

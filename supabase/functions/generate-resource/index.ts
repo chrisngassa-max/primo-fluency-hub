@@ -161,7 +161,7 @@ AVANT de finaliser ta réponse, vérifie chaque texte :
 - Vérifie la clarté → un adulte A0 doit comprendre`;
 
     const data = await callAI({
-        model: "google/gemini-3-flash-preview",
+        model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },

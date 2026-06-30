@@ -178,64 +178,96 @@ async function generateAndAttach(
   const { data: point } = await admin.from("points_a_maitriser").select("id").limit(1).single();
   if (!point?.id) throw new Error("Aucun point a maitriser disponible");
 
-  const generated: any[] = [];
-  for (let index = 0; index < options.count; index++) {
-    const competence = competences[index % competences.length];
-    let generatedExercise: any = null;
-    for (let attempt = 0; attempt < 2 && !generatedExercise; attempt++) {
-      const result = await invokeFunction(supabaseUrl, serviceKey, "generate-exercises", {
-        pointName: options.pointName,
-        competence,
-        niveauVise: session.niveau_cible,
-        count: 1,
-        difficultyLevel: session.difficulte_par_defaut,
-        targetDurationMinutes: options.targetDurationMinutes,
-        groupId: session.group_id,
-        type_demarche: session.group?.type_demarche,
+  const totalCount = Math.max(1, Number(options.count) || 1);
+  const perComp = Math.max(1, Math.floor(totalCount / competences.length));
+  const remainder = totalCount - perComp * competences.length;
+
+  // Exercices deja lies a la seance : on ne les reutilise pas une seconde fois.
+  const { data: existingLinks } = await admin.from("session_exercices")
+    .select("exercice_id").eq("session_id", session.id);
+  const excludeExerciceIds: string[] = (existingLinks ?? [])
+    .map((link: any) => link.exercice_id)
+    .filter(Boolean);
+
+  // Ids d'exercices a lier dans l'ordre : repris de la banque (search-first) +
+  // generes par IA. generate-exercises peut tout couvrir par reutilisation et
+  // renvoyer alors `exercises: []` mais `reused: [...]` — il faut traiter les deux.
+  const linkExerciceIds: string[] = [];
+  const draftsToInsert: any[] = [];
+
+  for (let ci = 0; ci < competences.length; ci++) {
+    const competence = competences[ci];
+    const compCount = perComp + (ci < remainder ? 1 : 0);
+    if (compCount <= 0) continue;
+
+    const result = await invokeFunction(supabaseUrl, serviceKey, "generate-exercises", {
+      pointName: options.pointName,
+      competence,
+      niveauVise: session.niveau_cible,
+      count: compCount,
+      difficultyLevel: session.difficulte_par_defaut,
+      targetDurationMinutes: options.targetDurationMinutes,
+      groupId: session.group_id,
+      type_demarche: session.group?.type_demarche,
+      excludeExerciceIds: [...excludeExerciceIds, ...linkExerciceIds],
+    });
+
+    // Exercices REUTILISES depuis la banque : on reference l'exercice existant.
+    const reused = Array.isArray(result.reused) ? result.reused : [];
+    for (const r of reused) {
+      if (r?.id && !linkExerciceIds.includes(r.id) && !excludeExerciceIds.includes(r.id)) {
+        linkExerciceIds.push(r.id);
+      }
+    }
+
+    // Exercices GENERES par IA : inseres dans la banque puis lies a la seance.
+    const generated = Array.isArray(result.exercises) ? result.exercises : [];
+    for (const ex of generated) {
+      draftsToInsert.push({
+        formateur_id: session.group.formateur_id,
+        point_a_maitriser_id: point.id,
+        competence: ex.competence ?? competence,
+        metadata_code: ex.metadata?.code ?? null,
+        metadata_skill: ex.metadata?.skill ?? null,
+        sous_competence: ex.sous_competence ?? ex.metadata?.sub_skill ?? null,
+        duree_limite_secondes: ex.metadata?.time_limit_seconds ?? ex.contenu?.time_limit_seconds ?? null,
+        aides_disponibles: ex.metadata?.aides_disponibles ?? ex.contenu?.aides_disponibles ?? [],
+        nombre_ecoutes_max: ex.metadata?.nombre_ecoutes_max ?? ex.contenu?.nombre_ecoutes_max ?? null,
+        transcription_verrouillee:
+          ex.metadata?.transcription_verrouillee ?? ex.contenu?.transcription_verrouillee ?? false,
+        objectif_tcf: ex.metadata?.objectif_tcf ?? ex.contenu?.objectif_tcf ?? null,
+        type_differenciation:
+          ex.metadata?.type_differenciation ?? (options.block === "retrospective" ? "consolidation" : "demarrage"),
+        niveau_vise: ex.niveau_vise ?? session.niveau_cible,
+        format: ex.format ?? "qcm",
+        difficulte: ex.difficulte ?? session.difficulte_par_defaut,
+        titre: ex.titre,
+        consigne: ex.consigne,
+        contenu: ex.contenu ?? {},
+        animation_guide: ex.animation_guide ?? null,
+        variante_niveau_bas: ex.variante_niveau_bas ?? null,
+        variante_niveau_haut: ex.variante_niveau_haut ?? null,
+        is_ai_generated: true,
       });
-      generatedExercise = result.exercises?.[0] ?? null;
     }
-    if (!generatedExercise) {
-      throw new Error(`Impossible de generer l'exercice ${index + 1} sur ${options.count} apres deux tentatives`);
-    }
-    generated.push(generatedExercise);
   }
 
-  if (!generated.length) throw new Error("Aucun exercice genere");
-  const { data: inserted, error } = await admin.from("exercices").insert(generated.map((ex: any) => ({
-    formateur_id: session.group.formateur_id,
-    point_a_maitriser_id: point.id,
-    competence: ex.competence,
-    metadata_code: ex.metadata?.code ?? null,
-    metadata_skill: ex.metadata?.skill ?? null,
-    sous_competence: ex.sous_competence ?? ex.metadata?.sub_skill ?? null,
-    duree_limite_secondes: ex.metadata?.time_limit_seconds ?? ex.contenu?.time_limit_seconds ?? null,
-    aides_disponibles: ex.metadata?.aides_disponibles ?? ex.contenu?.aides_disponibles ?? [],
-    nombre_ecoutes_max: ex.metadata?.nombre_ecoutes_max ?? ex.contenu?.nombre_ecoutes_max ?? null,
-    transcription_verrouillee:
-      ex.metadata?.transcription_verrouillee ?? ex.contenu?.transcription_verrouillee ?? false,
-    objectif_tcf: ex.metadata?.objectif_tcf ?? ex.contenu?.objectif_tcf ?? null,
-    type_differenciation:
-      ex.metadata?.type_differenciation ?? (options.block === "retrospective" ? "consolidation" : "demarrage"),
-    niveau_vise: ex.niveau_vise ?? session.niveau_cible,
-    format: ex.format ?? "qcm",
-    difficulte: ex.difficulte ?? session.difficulte_par_defaut,
-    titre: ex.titre,
-    consigne: ex.consigne,
-    contenu: ex.contenu ?? {},
-    animation_guide: ex.animation_guide ?? null,
-    variante_niveau_bas: ex.variante_niveau_bas ?? null,
-    variante_niveau_haut: ex.variante_niveau_haut ?? null,
-    is_ai_generated: true,
-  }))).select("id");
-  if (error) throw error;
+  if (draftsToInsert.length) {
+    const { data: inserted, error } = await admin.from("exercices").insert(draftsToInsert).select("id");
+    if (error) throw error;
+    for (const row of inserted ?? []) linkExerciceIds.push(row.id);
+  }
+
+  if (!linkExerciceIds.length) {
+    throw new Error(`Aucun exercice repris ni genere pour le bloc ${options.block}`);
+  }
 
   const { data: lastLinks } = await admin.from("session_exercices").select("ordre")
     .eq("session_id", session.id).order("ordre", { ascending: false }).limit(1);
   const startOrder = Number(lastLinks?.[0]?.ordre ?? 0) + 1;
   const { error: linkError } = await admin.from("session_exercices").insert(
-    inserted.map((ex: any, index: number) => ({
-      session_id: session.id, exercice_id: ex.id, ordre: startOrder + index,
+    linkExerciceIds.map((exerciceId: string, index: number) => ({
+      session_id: session.id, exercice_id: exerciceId, ordre: startOrder + index,
       statut: "planifie", bloc: options.block,
     })),
   );
