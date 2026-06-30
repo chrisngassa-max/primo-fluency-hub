@@ -117,8 +117,16 @@ export function parseTargetDurationMinutes(value: unknown): number {
 }
 
 export function buildDurationPrompt(targetDurationMinutes: number): string {
-  const seconds = targetDurationMinutes * 60;
+  // NOTE : cette consigne calibre uniquement le VOLUME de contenu demandé à
+  // l'IA (nombre d'items, longueur des productions). Elle ne fixe plus le
+  // minuteur final affiché à l'élève : metadata.time_limit_seconds est
+  // recalculé après coup par computeExerciseDuration() à partir du contenu
+  // réellement produit (cf. generate-exercises/index.ts). Avant ce correctif,
+  // l'instruction "DOIT etre fixe" forçait une valeur arbitraire (ex: 720s
+  // pour 3 questions), déconnectée du contenu réel — d'où les minuteurs
+  // absurdes observés.
   return `DUREE CIBLE PAR EXERCICE : ${targetDurationMinutes} minute(s).
-Adapte le nombre d'items et la longueur des productions a cette duree.
-Le champ metadata.time_limit_seconds DOIT etre fixe a ${seconds}.`;
+Adapte le nombre d'items et la longueur des productions a cette duree :
+plus la duree cible est longue, plus tu dois generer d'items (ou de contenu),
+jamais l'inverse. Ne reduis jamais le nombre d'items pour une duree cible longue.`;
 }

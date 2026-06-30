@@ -3,6 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { MODEL } from "../_shared/system-prompt.ts";
 import { callAI, AIError } from "../_shared/ai-client.ts";
 import { validateAndFix } from "../_shared/exercise-validator.ts";
+import { computeExerciseDuration } from "../_shared/exercise-duration.ts";
 import { QA_REVIEW_BLOCK } from "../_shared/qa-prompt.ts";
 import { buildPedagogicalDirectives, formatPedagogicalDirectives } from "../_shared/pedagogical-directives.ts";
 import type { PedagogicalDirectives } from "../_shared/pedagogical-directives.ts";
@@ -1017,6 +1018,26 @@ Choisis les codes les plus adaptés dans la cartographie (ex: pour CO → CO1/CO
       validatedList.push(attachReviewMeta(fb, review, { is_fallback: true }));
       fallbackCount++;
       console.warn(`[generate-exercises] Fallback exercise ${fallbackCount} added to guarantee generationCount=${generationCount}`);
+    }
+
+    // ── DURÉE FINALE AUTORITATIVE ──
+    // On écrase ici metadata.time_limit_seconds pour TOUT exercice (généré par
+    // l'IA ou de repli), quel que soit ce qui a été produit en amont — y
+    // compris la valeur forcée par buildDurationPrompt (qui restait nécessaire
+    // pour calibrer le VOLUME de contenu demandé à l'IA, mais ne doit plus
+    // déterminer le minuteur final affiché à l'élève). C'est le seul endroit
+    // qui décide de la durée stockée en base.
+    for (const ex of validatedList) {
+      ex.metadata = {
+        ...(ex.metadata ?? {}),
+        time_limit_seconds: computeExerciseDuration({
+          competence: ex.competence ?? competence,
+          format: ex.format,
+          metadata: ex.metadata,
+          contenu: ex.contenu,
+          nombre_ecoutes_max: ex.nombre_ecoutes_max,
+        }),
+      };
     }
 
     // Chaque exercice GÉNÉRÉ est noté par le MÊME juge unique que la banque,

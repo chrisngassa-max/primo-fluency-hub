@@ -20,6 +20,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { callAI, AIError } from "../_shared/ai-client.ts";
 import { validateAndFix } from "../_shared/exercise-validator.ts";
+import { computeExerciseDuration } from "../_shared/exercise-duration.ts";
 import { QA_REVIEW_BLOCK } from "../_shared/qa-prompt.ts";
 import { buildPedagogicalDirectives, formatEpreuvesAutorisees, formatPedagogicalDirectives, type TypeDemarche } from "../_shared/pedagogical-directives.ts";
 import { computeWeakCompetencesFromResults, deriveProgressionFromResults } from "../_shared/progression.ts";
@@ -601,6 +602,29 @@ Pour chaque élève, génère ${targetCount} exercices respectant strictement la
           continue;
         }
         const validEx = validated.exercise;
+
+        // ── Durée finale autoritative ──
+        // Ce pipeline ne demandait jamais de durée à l'IA (aucun champ
+        // time_limit_seconds dans son schéma) : la durée affichée à l'élève
+        // n'avait donc aucune source fiable. On la calcule ici à partir du
+        // contenu réel, et on l'écrit dans la colonne dédiée ET dans
+        // metadata (DevoirPassation.tsx lit la colonne en priorité, cf.
+        // `ex?.duree_limite_secondes || metadata?.time_limit_seconds`).
+        const computedDurationSeconds = computeExerciseDuration({
+          competence: validEx.competence,
+          format: validEx.format,
+          metadata: validEx.metadata,
+          contenu: validEx.contenu,
+          nombre_ecoutes_max: validEx.nombre_ecoutes_max,
+        });
+        const contenuWithDuration = {
+          ...(validEx.contenu || { items: [] }),
+          metadata: {
+            ...(validEx.contenu?.metadata ?? {}),
+            time_limit_seconds: computedDurationSeconds,
+          },
+        };
+
         const routing = routingByEleve[fullEleveId];
         const raison = routing
           ? devoirReasonFromRouting(routing)
@@ -617,7 +641,8 @@ Pour chaque élève, génère ${targetCount} exercices respectant strictement la
             competence: validEx.competence,
             format: validEx.format || "qcm",
             difficulte: validEx.difficulte || 3,
-            contenu: validEx.contenu || { items: [] },
+            contenu: contenuWithDuration,
+            duree_limite_secondes: computedDurationSeconds,
             niveau_vise: niveauCible,
             formateur_id: formateurId,
             point_a_maitriser_id: defaultPoint.id,

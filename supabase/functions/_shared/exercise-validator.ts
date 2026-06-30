@@ -4,6 +4,7 @@
  */
 
 import { callAI } from "./ai-client.ts";
+import { computeExerciseDuration } from "./exercise-duration.ts";
 
 export interface ExerciseLike {
   titre?: string;
@@ -140,6 +141,31 @@ export function validateExercise(ex: ExerciseLike): ValidationResult {
     }
   }
 
+  // ── Cohérence volume/durée (toute compétence, avec ou sans code TCF) ──
+  // Détecte le cas "3 questions / 12 minutes" : compare la durée stockée à la
+  // durée recalculée à partir du contenu réel. Un écart > 2x dans un sens ou
+  // l'autre est une erreur bloquante, pas un simple avertissement — un
+  // minuteur incohérent dégrade directement l'expérience de l'élève.
+  const storedDuration = ex.metadata?.time_limit_seconds;
+  if (typeof storedDuration === "number") {
+    const expectedDuration = computeExerciseDuration({
+      competence: ex.competence,
+      format: ex.format,
+      metadata: ex.metadata,
+      contenu: ex.contenu,
+      nombre_ecoutes_max: ex.nombre_ecoutes_max,
+    });
+    const ratio = storedDuration / Math.max(expectedDuration, 1);
+    if (ratio > 2 || ratio < 0.5) {
+      issues.push({
+        code: "duration_volume_mismatch",
+        severity: "error",
+        field: "metadata.time_limit_seconds",
+        message: `Durée stockée ${storedDuration}s incohérente avec le contenu (attendu ~${expectedDuration}s pour ${items.length} item(s))`,
+      });
+    }
+  }
+
   // ── Difficulté ──
   if (typeof ex.difficulte === "number" && (ex.difficulte < 1 || ex.difficulte > 10)) {
     issues.push({ code: "invalid_difficulty", severity: "error", message: `Difficulté ${ex.difficulte} hors [1-10]` });
@@ -234,8 +260,26 @@ Réécris l'exercice complet en corrigeant tous les problèmes.`;
     const tc = data.choices?.[0]?.message?.tool_calls?.[0];
     if (!tc) return null;
     const fixed = JSON.parse(tc.function.arguments);
-    // Conserve les métadonnées originales
-    return { ...original, ...fixed, metadata: original.metadata };
+    // Conserve les métadonnées originales (code, skill, etc.) MAIS recalcule
+    // systématiquement time_limit_seconds à partir du contenu corrigé : sinon,
+    // si le problème signalé était justement une durée incohérente avec le
+    // nombre d'items, on la fige pour de bon (régénération inutile, 3 tentatives
+    // perdues, exercice exclu en silence — pire que le bug d'origine).
+    const recomputedSeconds = computeExerciseDuration({
+      competence: fixed.competence ?? original.competence,
+      format: fixed.format ?? original.format,
+      metadata: original.metadata,
+      contenu: fixed.contenu,
+      nombre_ecoutes_max: original.nombre_ecoutes_max,
+    });
+    return {
+      ...original,
+      ...fixed,
+      metadata: {
+        ...(original.metadata ?? {}),
+        time_limit_seconds: recomputedSeconds,
+      },
+    };
   } catch (e) {
     console.error("regenerateExercise failed:", e);
     return null;
