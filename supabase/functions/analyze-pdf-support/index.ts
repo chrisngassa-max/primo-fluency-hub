@@ -109,7 +109,10 @@ async function analyzePdfContent(
     console.warn("PDF text extraction failed:", err);
   }
 
-  if (extracted.length >= 80) {
+  if (extracted.length > 0) {
+    const partialNote = extracted.length < 80
+      ? "\n\nNote : le texte extrait est partiel (PDF scanne ou mise en page complexe). Analyse ce qui est disponible."
+      : "";
     const data = await callAI({
       model: "google/gemini-2.5-flash",
       messages: [
@@ -119,7 +122,7 @@ async function analyzePdfContent(
         },
         {
           role: "user",
-          content: `${prompt}\n\nTEXTE EXTRAIT DU PDF:\n${extracted.slice(0, 120_000)}`,
+          content: `${prompt}${partialNote}\n\nTEXTE EXTRAIT DU PDF:\n${extracted.slice(0, 120_000)}`,
         },
       ],
     });
@@ -127,11 +130,7 @@ async function analyzePdfContent(
     if (text) return text;
   }
 
-  console.warn(
-    extracted.length > 0
-      ? "Extracted PDF text too short, trying multimodal Gemini"
-      : "No extractable PDF text, trying multimodal Gemini",
-  );
+  console.warn("No usable text from callAI, trying multimodal Gemini as last resort");
   return await analyzeWithGeminiPdf(pdfBase64, prompt);
 }
 
@@ -180,7 +179,8 @@ serve(async (req) => {
     });
 
     if (error instanceof AIError) {
-      return json(error.status >= 500 ? 502 : error.status, { error: error.message });
+      const status = error.status >= 500 ? 502 : (error.status === 401 || error.status === 403 ? 422 : error.status);
+      return json(status, { error: error.message });
     }
 
     return json(500, { error: error instanceof Error ? error.message : "Erreur inconnue" });
