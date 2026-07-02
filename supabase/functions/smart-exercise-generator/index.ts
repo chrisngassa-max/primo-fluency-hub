@@ -382,9 +382,12 @@ Pour chaque item, fournis TOUJOURS : question, options (tableau de chaînes, vid
     });
   } catch (e) {
     console.error("smart-exercise-generator error:", e);
+    const status = e instanceof AIError
+      ? (e.status >= 500 ? 502 : (e.status === 401 || e.status === 403 ? 422 : e.status))
+      : 500;
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "Erreur inconnue" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 });

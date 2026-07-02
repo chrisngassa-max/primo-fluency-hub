@@ -22,8 +22,20 @@ interface AICallOptions {
   tool_choice?: OpenAIToolChoice;
 }
 
+/** Gemini direct is only used when the Lovable gateway is temporarily unavailable. */
+const GEMINI_FALLBACK_STATUSES = new Set([408, 429, 500, 502, 503, 504]);
+
+function aiAuthErrorMessage(provider: "lovable" | "gemini", status: number): string {
+  if (status === 403 || status === 401) {
+    return provider === "lovable"
+      ? "Le service IA (passerelle Lovable) refuse la requete. Verifiez LOVABLE_API_KEY cote serveur."
+      : "Le service IA (Gemini) refuse la requete. Verifiez GEMINI_API_KEY et l'activation de l'API Generative Language.";
+  }
+  return `Erreur du service IA (${status})`;
+}
+
 /**
- * Call AI via Lovable AI Gateway, then fall back to Gemini direct.
+ * Call AI via Lovable AI Gateway, then fall back to Gemini direct on transient errors only.
  * Returns an OpenAI-compatible response object.
  */
 export async function callAI(options: AICallOptions): Promise<any> {
@@ -49,7 +61,13 @@ export async function callAI(options: AICallOptions): Promise<any> {
     }
 
     const errText = await response.text();
-    console.error("Lovable AI gateway error, falling back to Gemini:", response.status, errText);
+    console.error("Lovable AI gateway error:", response.status, errText);
+
+    if (!GEMINI_FALLBACK_STATUSES.has(response.status)) {
+      throw new AIError(aiAuthErrorMessage("lovable", response.status), response.status, errText);
+    }
+
+    console.warn("Lovable AI gateway unavailable, falling back to Gemini:", response.status);
   } else {
     console.warn("LOVABLE_API_KEY is not configured, using Gemini fallback.");
   }
@@ -110,7 +128,7 @@ async function callGemini(options: AICallOptions): Promise<any> {
   if (!response.ok) {
     const errText = await response.text();
     console.error("Gemini API error:", response.status, errText);
-    throw new AIError(`Erreur du service IA (${response.status})`, response.status, errText);
+    throw new AIError(aiAuthErrorMessage("gemini", response.status), response.status, errText);
   }
 
   return geminiToOpenAI(await response.json(), options);

@@ -13,6 +13,9 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime-version",
 };
 
+/** Keep prompts within Lovable gateway limits (large PDFs were triggering fallback → Gemini 403). */
+const PDF_TEXT_LIMITS = [28_000, 10_000, 4_000] as const;
+
 const json = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), {
     status,
@@ -48,51 +51,54 @@ Retourne uniquement un objet JSON avec :
 N'invente aucun contenu absent du PDF. Le nom du fichier est "${fileName || "support.pdf"}".`;
 }
 
-/** Fallback for scanned PDFs: Gemini multimodal with inline PDF bytes. */
-async function analyzeWithGeminiPdf(pdfBase64: string, prompt: string): Promise<string> {
-  const apiKey = Deno.env.get("GEMINI_API_KEY");
-  if (!apiKey) throw new AIError("GEMINI_API_KEY non configuree.", 500);
+async function analyzeExtractedText(
+  extracted: string,
+  fileName: string,
+  targetLevel: string,
+): Promise<string> {
+  const prompt = buildAnalysisPrompt(fileName, targetLevel);
+  const partialNote = extracted.length < 80
+    ? "\n\nNote : le texte extrait est partiel (PDF scanne ou mise en page complexe). Analyse ce qui est disponible."
+    : "";
 
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{
-          role: "user",
-          parts: [
-            { text: prompt },
-            { inlineData: { mimeType: "application/pdf", data: pdfBase64 } },
-          ],
-        }],
-        generationConfig: {
-          responseMimeType: "application/json",
-          temperature: 0.1,
-        },
-      }),
-    },
-  );
+  let lastError: AIError | null = null;
 
-  if (!response.ok) {
-    const errText = await response.text();
-    console.error("Gemini PDF multimodal error:", response.status, errText);
-    throw new AIError(
-      response.status === 403
-        ? "Le service IA refuse l'analyse directe du PDF. Verifiez la configuration serveur."
-        : "Impossible d'analyser ce PDF.",
-      response.status >= 500 ? 502 : 422,
-      errText,
-    );
+  for (const limit of PDF_TEXT_LIMITS) {
+    const slice = extracted.slice(0, limit);
+    if (!slice) continue;
+
+    try {
+      const data = await callAI({
+        model: "google/gemini-2.5-flash",
+        messages: [
+          {
+            role: "system",
+            content: "Tu analyses des supports pedagogiques FLE. Reponds uniquement en JSON valide, sans markdown.",
+          },
+          {
+            role: "user",
+            content: `${prompt}${partialNote}\n\nTEXTE EXTRAIT DU PDF:\n${slice}`,
+          },
+        ],
+      });
+      const text = data.choices?.[0]?.message?.content?.trim();
+      if (text) return text;
+    } catch (err) {
+      if (err instanceof AIError) {
+        lastError = err;
+        // Retry with a shorter excerpt when the gateway rejects the payload size.
+        if (err.status === 413 || err.status === 400) continue;
+        throw err;
+      }
+      throw err;
+    }
   }
 
-  const payload = await response.json();
-  const text = payload.candidates?.[0]?.content?.parts
-    ?.map((part: { text?: string }) => part.text || "")
-    .join("")
-    .trim();
-  if (!text) throw new AIError("Aucun contenu exploitable detecte dans le PDF.", 422);
-  return text;
+  if (lastError) throw lastError;
+  throw new AIError(
+    "L'IA n'a pas renvoye d'analyse exploitable pour ce PDF.",
+    422,
+  );
 }
 
 async function analyzePdfContent(
@@ -100,8 +106,6 @@ async function analyzePdfContent(
   fileName: string,
   targetLevel: string,
 ): Promise<string> {
-  const prompt = buildAnalysisPrompt(fileName, targetLevel);
-
   let extracted = "";
   try {
     extracted = await extractPdfText(pdfBase64);
@@ -109,29 +113,14 @@ async function analyzePdfContent(
     console.warn("PDF text extraction failed:", err);
   }
 
-  if (extracted.length > 0) {
-    const partialNote = extracted.length < 80
-      ? "\n\nNote : le texte extrait est partiel (PDF scanne ou mise en page complexe). Analyse ce qui est disponible."
-      : "";
-    const data = await callAI({
-      model: "google/gemini-2.5-flash",
-      messages: [
-        {
-          role: "system",
-          content: "Tu analyses des supports pedagogiques FLE. Reponds uniquement en JSON valide, sans markdown.",
-        },
-        {
-          role: "user",
-          content: `${prompt}${partialNote}\n\nTEXTE EXTRAIT DU PDF:\n${extracted.slice(0, 120_000)}`,
-        },
-      ],
-    });
-    const text = data.choices?.[0]?.message?.content?.trim();
-    if (text) return text;
+  if (!extracted) {
+    throw new AIError(
+      "Ce PDF ne contient pas de texte extractible (document scanne ou image). Utilisez un PDF avec du texte selectionnable.",
+      422,
+    );
   }
 
-  console.warn("No usable text from callAI, trying multimodal Gemini as last resort");
-  return await analyzeWithGeminiPdf(pdfBase64, prompt);
+  return await analyzeExtractedText(extracted, fileName, targetLevel);
 }
 
 serve(async (req) => {
