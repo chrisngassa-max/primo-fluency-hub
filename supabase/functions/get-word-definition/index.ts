@@ -38,6 +38,30 @@ function normalizeLanguage(language: string) {
   return LANGUAGE_LABELS[normalized] ? normalized : normalized || "fr";
 }
 
+/** Extrait translation/definition depuis tool_calls, function_call ou JSON texte. */
+function parseDefinitionFromAI(data: unknown): Record<string, unknown> {
+  const message = (data as any)?.choices?.[0]?.message;
+  if (!message) throw new Error("empty_ai_response");
+
+  const toolCall = message.tool_calls?.[0] ?? message.toolCalls?.[0];
+  if (toolCall?.function?.arguments != null) {
+    const args = toolCall.function.arguments;
+    return typeof args === "string" ? JSON.parse(args) : args;
+  }
+
+  const legacyCall = message.function_call ?? message.functionCall;
+  if (legacyCall?.arguments != null) {
+    const args = legacyCall.arguments;
+    return typeof args === "string" ? JSON.parse(args) : args;
+  }
+
+  const content = String(message.content ?? "").trim();
+  if (!content) throw new Error("no_definition_in_ai_response");
+
+  const cleaned = content.replace(/^```(?:json)?/i, "").replace(/```$/i, "").trim();
+  return JSON.parse(cleaned);
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -74,14 +98,6 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
-
-    await logAICall({
-      function_name: "get-word-definition",
-      triggered_by_user_id: triggeredBy,
-      status: "ok",
-      data_categories: ["exercise", "profile"],
-      pseudonymization_level: "none",
-    });
 
     if (contextSentence) {
       const { data: cachedExact } = await supabase
@@ -124,13 +140,15 @@ serve(async (req) => {
         {
           role: "system",
           content: `Tu es un assistant lexical FLE A1/A2 pour adultes migrants.
-Retourne uniquement du JSON strict.
-La definition simple doit etre une vraie definition de dictionnaire, mais en francais facile (niveau A1/A2).
-Donne le sens precis du mot (sa nature et ce qu'il veut dire), en environ 10 a 20 mots.
+Retourne UNIQUEMENT un objet JSON valide (sans markdown, sans commentaire) avec exactement ces cles:
+- translation (string): traduction courte dans la langue demandee; si fr, donner un synonyme tres simple. Pour arabe et tamoul, utiliser l'ecriture native.
+- simple_definition (string): definition francaise claire et utile, niveau A1/A2, environ 10 a 20 mots, donne le sens precis du mot.
+- example (string, optionnel): phrase d'exemple tres simple (A1/A2) qui utilise le mot dans ce sens.
+
+La definition simple doit etre une vraie definition de dictionnaire, mais en francais facile.
+Donne le sens precis du mot (sa nature et ce qu'il veut dire).
 Tu peux commencer par "C'est...", "Ca veut dire..." ou nommer la classe du mot, mais reste clair et concret.
 Evite les mots difficiles, le jargon et les definitions circulaires.
-Quand c'est utile, ajoute un synonyme tres simple dans la definition.
-Remplis le champ example avec une phrase d'exemple tres courte et simple qui utilise le mot.
 Utilise toujours le contexte de phrase fourni pour choisir le bon sens du mot.`,
         },
         {
@@ -140,56 +158,43 @@ Utilise toujours le contexte de phrase fourni pour choisir le bon sens du mot.`,
             context_sentence: contextSentence || null,
             translation_language: translationLanguage,
             translation_language_label: translationLanguageLabel,
-            output: {
-              translation: "traduction courte dans la langue demandee; si fr, donner un synonyme tres simple. Pour arabe et tamoul, utiliser l'ecriture native.",
-              simple_definition: "definition francaise claire et utile, niveau A1/A2, ~10 a 20 mots, donne le sens precis du mot",
-              example: "phrase d'exemple tres simple (A1/A2) qui utilise le mot dans ce sens",
-            },
           }),
         },
       ],
-      tools: [{
-        type: "function",
-        function: {
-          name: "define_word",
-          description: "Retourne traduction, definition simple et exemple d'un mot FLE A1/A2",
-          parameters: {
-            type: "object",
-            properties: {
-              translation: { type: "string" },
-              simple_definition: { type: "string" },
-              example: { type: "string" },
-            },
-            required: ["translation", "simple_definition"],
-          },
-        },
-      }],
-      tool_choice: { type: "function", function: { name: "define_word" } },
     });
 
-    const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
-    if (!toolCall) throw new Error("No tool call in AI response");
-    const details = JSON.parse(toolCall.function.arguments);
+    const details = parseDefinitionFromAI(data);
+    const translation = String(details.translation ?? "").trim();
+    const simpleDefinition = String(details.simple_definition ?? "").trim();
+    const example = details.example ? String(details.example).trim() : null;
 
-    const translation = String(details.translation ?? "");
-    const simpleDefinition = String(details.simple_definition ?? "");
-    const example = details.example ? String(details.example) : null;
+    if (!translation || !simpleDefinition) {
+      throw new Error("incomplete_definition_in_ai_response");
+    }
+
+    await logAICall({
+      function_name: "get-word-definition",
+      triggered_by_user_id: triggeredBy,
+      status: "ok",
+      data_categories: ["exercise", "profile"],
+      pseudonymization_level: "none",
+      model: "google/gemini-2.5-flash",
+    });
 
     // Persiste le résultat comme entrée de CACHE (is_saved=false). Le carnet de
     // l'élève ne contient que les mots ajoutés volontairement (is_saved=true).
     // Un échec d'écriture ne doit jamais bloquer la réponse à l'élève.
-    try {
-      await supabase.from("student_vocabulary").insert({
-        student_id: studentId,
-        word,
-        normalized_word: normalizedWord,
-        context_sentence: contextSentence || null,
-        translation,
-        translation_language: translationLanguage,
-        simple_definition: simpleDefinition,
-        is_saved: false,
-      });
-    } catch (cacheError) {
+    const { error: cacheError } = await supabase.from("student_vocabulary").insert({
+      student_id: studentId,
+      word,
+      normalized_word: normalizedWord,
+      context_sentence: contextSentence || null,
+      translation,
+      translation_language: translationLanguage,
+      simple_definition: simpleDefinition,
+      is_saved: false,
+    });
+    if (cacheError) {
       console.error("get-word-definition cache write failed:", cacheError);
     }
 
