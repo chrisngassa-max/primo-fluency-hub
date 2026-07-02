@@ -23,9 +23,10 @@ interface AICallOptions {
 }
 
 /**
- * Gemini direct fallback is opt-in only (`AI_GEMINI_FALLBACK=true` + valid GEMINI_API_KEY).
- * By default we route exclusively through Lovable (`google/gemini-2.5-flash`) so a broken or
- * missing GEMINI_API_KEY never masks transient Lovable errors with a misleading 403.
+ * Routing priority:
+ * 1. Lovable gateway when LOVABLE_API_KEY is set (preferred).
+ * 2. Gemini direct when only GEMINI_API_KEY is set (maps `google/gemini-2.5-flash` → `gemini-2.5-flash`).
+ * 3. Gemini fallback on transient Lovable errors when AI_GEMINI_FALLBACK=true and GEMINI_API_KEY is set.
  */
 const GEMINI_FALLBACK_STATUSES = new Set([408, 429, 500, 502, 503, 504]);
 
@@ -43,12 +44,12 @@ function aiAuthErrorMessage(provider: "lovable" | "gemini", status: number): str
 }
 
 /**
- * Call AI via Lovable AI Gateway (`google/gemini-2.5-flash`).
- * Gemini direct is opt-in only when `AI_GEMINI_FALLBACK=true` and GEMINI_API_KEY is set.
+ * Call AI via Lovable AI Gateway when configured, otherwise Gemini direct when GEMINI_API_KEY is set.
  * Returns an OpenAI-compatible response object.
  */
 export async function callAI(options: AICallOptions): Promise<any> {
   const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+  const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
 
   if (LOVABLE_API_KEY) {
     const response = await fetch(LOVABLE_GATEWAY, {
@@ -83,8 +84,13 @@ export async function callAI(options: AICallOptions): Promise<any> {
     return await callGemini(options);
   }
 
+  if (GEMINI_API_KEY) {
+    console.log("LOVABLE_API_KEY absent, using Gemini as primary provider");
+    return await callGemini(options);
+  }
+
   throw new AIError(
-    "Le service IA (passerelle Lovable) n'est pas configure. Verifiez LOVABLE_API_KEY cote serveur.",
+    "Aucun service IA configure. Definissez LOVABLE_API_KEY ou GEMINI_API_KEY cote serveur.",
     500,
   );
 }
