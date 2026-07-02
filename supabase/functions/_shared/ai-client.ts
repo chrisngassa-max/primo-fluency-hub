@@ -83,12 +83,10 @@ export async function callAI(options: AICallOptions): Promise<any> {
     return await callGemini(options);
   }
 
-  if (!Deno.env.get("GEMINI_API_KEY")) {
-    throw new AIError("LOVABLE_API_KEY non configuree.", 500);
-  }
-
-  console.warn("LOVABLE_API_KEY is not configured, using Gemini direct.");
-  return await callGemini(options);
+  throw new AIError(
+    "Le service IA (passerelle Lovable) n'est pas configure. Verifiez LOVABLE_API_KEY cote serveur.",
+    500,
+  );
 }
 
 async function callGemini(options: AICallOptions): Promise<any> {
