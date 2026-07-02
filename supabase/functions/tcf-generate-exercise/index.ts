@@ -2,6 +2,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0"
 import { QA_REVIEW_BLOCK } from "../_shared/qa-prompt.ts"
+import { callAI, AIError } from "../_shared/ai-client.ts"
 import { ensurePseudonymSecretOrLog, logAICall, getUserIdFromAuth } from "../_shared/check-consent.ts"
 import { formatEpreuvesAutorisees, type TypeDemarche } from "../_shared/pedagogical-directives.ts"
 
@@ -95,9 +96,6 @@ Deno.serve(async (req) => {
     const body = await req.json()
     const { theme, level, dispositif, apprenant, banque_donnees, type_demarche } = body;
 
-    const apiKey = Deno.env.get('GEMINI_API_KEY')
-    if (!apiKey) throw new Error('La clé GEMINI_API_KEY n\'est pas configurée')
-
     // === RAG : Recherche dans la banque d'exercices existants (327 exercices scannés) ===
     let basePedagogique = banque_donnees || [];
 
@@ -166,23 +164,19 @@ Profil Apprenant: ${JSON.stringify(apprenant || {})}
 Banque de données pédagogique (Ressources Officielles TCF certifiées — inspire-toi en priorité) : ${JSON.stringify(basePedagogique)}
 `;
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
-          contents: [{ parts: [{ text: promptDynamique }] }],
-          generationConfig: { responseMimeType: "application/json", temperature: 0.2 }
-        })
-      }
-    );
+    const aiResult = await callAI({
+      model: "google/gemini-2.5-flash",
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user", content: promptDynamique },
+      ],
+    });
 
-    const data = await response.json();
-    if (!data.candidates) throw new Error("Erreur Gemini: " + JSON.stringify(data));
+    const rawText = aiResult.choices?.[0]?.message?.content?.trim();
+    if (!rawText) throw new AIError("L'IA n'a pas retourne de resultat exploitable.", 422);
 
-    const exercise = JSON.parse(data.candidates[0].content.parts[0].text);
+    const cleaned = rawText.replace(/^```(?:json)?/i, "").replace(/```$/i, "").trim();
+    const exercise = JSON.parse(cleaned);
     if (!exercise.titre) exercise.titre = "Exercice TCF - " + (exercise.epreuve || theme || 'IRN');
     if (!exercise.contenu) exercise.contenu = exercise.support || exercise.contexte || exercise.consigne;
 
@@ -214,6 +208,9 @@ Banque de données pédagogique (Ressources Officielles TCF certifiées — insp
 
     return new Response(JSON.stringify(exercise), { headers: { ...corsHeaders, "Content-Type": "application/json" } })
   } catch (error) {
-    return new Response(JSON.stringify({ error: (error as Error).message }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 })
+    const status = error instanceof AIError
+      ? (error.status >= 500 ? 502 : (error.status === 401 || error.status === 403 ? 422 : error.status))
+      : 400;
+    return new Response(JSON.stringify({ error: (error as Error).message }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status })
   }
 })

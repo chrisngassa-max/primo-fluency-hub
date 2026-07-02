@@ -14,7 +14,7 @@ const corsHeaders = {
 };
 
 /** Keep prompts within Lovable gateway limits (large PDFs were triggering fallback → Gemini 403). */
-const PDF_TEXT_LIMITS = [28_000, 10_000, 4_000] as const;
+const PDF_TEXT_LIMITS = [12_000, 6_000, 3_000] as const;
 
 const json = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), {

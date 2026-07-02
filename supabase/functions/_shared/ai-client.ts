@@ -22,8 +22,16 @@ interface AICallOptions {
   tool_choice?: OpenAIToolChoice;
 }
 
-/** Gemini direct is only used when the Lovable gateway is temporarily unavailable. */
+/**
+ * Gemini direct fallback is opt-in only (`AI_GEMINI_FALLBACK=true` + valid GEMINI_API_KEY).
+ * By default we route exclusively through Lovable (`google/gemini-2.5-flash`) so a broken or
+ * missing GEMINI_API_KEY never masks transient Lovable errors with a misleading 403.
+ */
 const GEMINI_FALLBACK_STATUSES = new Set([408, 429, 500, 502, 503, 504]);
+
+function geminiFallbackEnabled(): boolean {
+  return Deno.env.get("AI_GEMINI_FALLBACK") === "true" && !!Deno.env.get("GEMINI_API_KEY");
+}
 
 function aiAuthErrorMessage(provider: "lovable" | "gemini", status: number): string {
   if (status === 403 || status === 401) {
@@ -35,7 +43,8 @@ function aiAuthErrorMessage(provider: "lovable" | "gemini", status: number): str
 }
 
 /**
- * Call AI via Lovable AI Gateway, then fall back to Gemini direct on transient errors only.
+ * Call AI via Lovable AI Gateway (`google/gemini-2.5-flash`).
+ * Gemini direct is opt-in only when `AI_GEMINI_FALLBACK=true` and GEMINI_API_KEY is set.
  * Returns an OpenAI-compatible response object.
  */
 export async function callAI(options: AICallOptions): Promise<any> {
@@ -63,15 +72,22 @@ export async function callAI(options: AICallOptions): Promise<any> {
     const errText = await response.text();
     console.error("Lovable AI gateway error:", response.status, errText);
 
-    if (!GEMINI_FALLBACK_STATUSES.has(response.status)) {
-      throw new AIError(aiAuthErrorMessage("lovable", response.status), response.status, errText);
+    if (!GEMINI_FALLBACK_STATUSES.has(response.status) || !geminiFallbackEnabled()) {
+      const message = GEMINI_FALLBACK_STATUSES.has(response.status) && !geminiFallbackEnabled()
+        ? `Le service IA (passerelle Lovable) est temporairement indisponible (${response.status}). Reessayez dans quelques instants.`
+        : aiAuthErrorMessage("lovable", response.status);
+      throw new AIError(message, response.status >= 500 ? 502 : response.status, errText);
     }
 
     console.warn("Lovable AI gateway unavailable, falling back to Gemini:", response.status);
-  } else {
-    console.warn("LOVABLE_API_KEY is not configured, using Gemini fallback.");
+    return await callGemini(options);
   }
 
+  if (!Deno.env.get("GEMINI_API_KEY")) {
+    throw new AIError("LOVABLE_API_KEY non configuree.", 500);
+  }
+
+  console.warn("LOVABLE_API_KEY is not configured, using Gemini direct.");
   return await callGemini(options);
 }
 
