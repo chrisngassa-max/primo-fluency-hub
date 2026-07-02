@@ -23,10 +23,11 @@ import { toast } from "sonner";
 import {
   BookOpen, Printer, Search, Eye, Volume2, Circle, Filter, Drama, Package, MessageCircle, Wand2,
   Pencil, Trash2, Plus, CirclePlus, CheckCircle2, Loader2, ChevronLeft, ChevronRight, Save,
-  Brain, FileText, Upload, Clock, Link2, Target, Radio, Copy, UserPlus,
+  Brain, FileText, Upload, Clock, Link2, Target, Radio, Copy, UserPlus, Send, FlaskConical,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { formatExerciseDate } from "@/components/ExerciseStudentPreviewDialog";
+import ExerciseStudentPreviewDialog, { formatExerciseDate } from "@/components/ExerciseStudentPreviewDialog";
+import SendExercisesToStudentsDialog from "@/components/SendExercisesToStudentsDialog";
 import { structuredExerciseMetadata } from "@/lib/exerciseMetadata";
 import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/DifficultyBadge";
 import ImportFromUrlDialog from "@/components/ImportFromUrlDialog";
@@ -63,6 +64,8 @@ const ExercicesPage = () => {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [previewExercise, setPreviewExercise] = useState<any>(null);
   const [previewPage, setPreviewPage] = useState(0);
+  const [testingExercise, setTestingExercise] = useState<any>(null);
+  const [sendDialogOpen, setSendDialogOpen] = useState(false);
   const [animationGuide, setAnimationGuide] = useState<any>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [savingItemId, setSavingItemId] = useState<string | null>(null);
@@ -359,7 +362,7 @@ const ExercicesPage = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("session_exercices")
-        .select("exercice_id, session_id, session:sessions(id, titre, date_seance)")
+        .select("id, exercice_id, session_id, created_at, session:sessions(id, titre, date_seance, statut)")
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data ?? [];
@@ -388,6 +391,16 @@ const ExercicesPage = () => {
       const arr = m.get(link.exercice_id) || [];
       arr.push(link.session_id);
       m.set(link.exercice_id, arr);
+    });
+    return m;
+  }, [sessionExLinks]);
+
+  /** Séance d'origine la plus récente par exercice (pour l'envoi depuis la banque). */
+  const exerciseOriginSessionMap = useMemo(() => {
+    if (!sessionExLinks) return new Map<string, string>();
+    const m = new Map<string, string>();
+    sessionExLinks.forEach((link: any) => {
+      if (!m.has(link.exercice_id)) m.set(link.exercice_id, link.session_id);
     });
     return m;
   }, [sessionExLinks]);
@@ -892,8 +905,14 @@ ${Array.isArray(item.options) && item.options.length > 0
                           <Radio className="h-4 w-4" />
                         </Button>
                         <Button variant="outline" size="icon" className="h-8 w-8"
+                          title="Aperçu élève"
                           onClick={(e) => { e.stopPropagation(); setPreviewExercise(ex); setPreviewPage(0); }}>
                           <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button variant="outline" size="icon" className="h-8 w-8 text-violet-600 border-violet-200 hover:bg-violet-50 dark:border-violet-800 dark:hover:bg-violet-950"
+                          title="Tester l'exercice"
+                          onClick={(e) => { e.stopPropagation(); setTestingExercise(ex); }}>
+                          <FlaskConical className="h-4 w-4" />
                         </Button>
                         <Button variant={isEditing ? "default" : "outline"} size="icon" className="h-8 w-8"
                           onClick={(e) => { e.stopPropagation(); setEditingId(isEditing ? null : ex.id); }}>
@@ -1108,12 +1127,16 @@ ${Array.isArray(item.options) && item.options.length > 0
         ))
       )}
 
-      {/* Floating print button */}
+      {/* Floating selection actions */}
       {selected.size > 0 && (
-        <div className="fixed bottom-6 right-6 z-50">
-          <Button size="lg" onClick={handlePrintSelection} className="gap-2 shadow-lg">
+        <div className="fixed bottom-6 right-6 z-50 flex flex-col sm:flex-row gap-2">
+          <Button size="lg" variant="secondary" onClick={handlePrintSelection} className="gap-2 shadow-lg">
             <Printer className="h-5 w-5" />
-            Imprimer la sélection ({selected.size})
+            Imprimer ({selected.size})
+          </Button>
+          <Button size="lg" onClick={() => setSendDialogOpen(true)} className="gap-2 shadow-lg">
+            <Send className="h-5 w-5" />
+            Envoyer aux élèves ({selected.size})
           </Button>
         </div>
       )}
@@ -1268,6 +1291,15 @@ ${Array.isArray(item.options) && item.options.length > 0
                             >
                               <Eye className="h-3.5 w-3.5" />
                               Aperçu
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="gap-1.5 text-violet-700 border-violet-200 hover:bg-violet-50 dark:border-violet-800"
+                              onClick={() => setTestingExercise(ex)}
+                            >
+                              <FlaskConical className="h-3.5 w-3.5" />
+                              Tester l'exercice
                             </Button>
                             <Button
                               variant="outline"
@@ -1667,6 +1699,24 @@ ${Array.isArray(item.options) && item.options.length > 0
         open={targetedWizardOpen}
         onOpenChange={setTargetedWizardOpen}
         onSuccess={() => qc.invalidateQueries({ queryKey: ["formateur-all-exercices", user?.id] })}
+      />
+
+      <SendExercisesToStudentsDialog
+        open={sendDialogOpen}
+        onOpenChange={setSendDialogOpen}
+        exerciseIds={Array.from(selected)}
+        exerciseOriginSessionMap={exerciseOriginSessionMap}
+        onSent={() => {
+          setSelected(new Set());
+          qc.invalidateQueries({ queryKey: ["formateur-session-exercice-links", user?.id] });
+        }}
+      />
+
+      <ExerciseStudentPreviewDialog
+        open={!!testingExercise}
+        onOpenChange={(open) => { if (!open) setTestingExercise(null); }}
+        exercise={testingExercise}
+        interactive
       />
     </div>
   );

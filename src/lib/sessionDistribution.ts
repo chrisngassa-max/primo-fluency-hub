@@ -65,6 +65,64 @@ export async function sendSessionExercisesToStudents(params: {
   await activateSessionForStudents(sessionId);
 }
 
+/**
+ * Envoie des exercices depuis la banque : crée les liens session_exercices
+ * manquants puis réutilise sendSessionExercisesToStudents.
+ */
+export async function sendLibraryExercisesToStudents(params: {
+  sessionId: string;
+  exerciseIds: string[];
+}): Promise<void> {
+  const { sessionId, exerciseIds } = params;
+  if (exerciseIds.length === 0) return;
+
+  const { data: existing, error: fetchError } = await supabase
+    .from("session_exercices")
+    .select("id, exercice_id")
+    .eq("session_id", sessionId)
+    .in("exercice_id", exerciseIds);
+  if (fetchError) throw fetchError;
+
+  const linkByExercise = new Map(
+    (existing ?? []).map((row) => [row.exercice_id, row.id]),
+  );
+  const missing = exerciseIds.filter((id) => !linkByExercise.has(id));
+
+  if (missing.length > 0) {
+    const { data: lastRow } = await supabase
+      .from("session_exercices")
+      .select("ordre")
+      .eq("session_id", sessionId)
+      .order("ordre", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    const startOrder = (lastRow?.ordre ?? 0) + 1;
+
+    const { data: created, error: insertError } = await supabase
+      .from("session_exercices")
+      .insert(
+        missing.map((exerciceId, index) => ({
+          session_id: sessionId,
+          exercice_id: exerciceId,
+          ordre: startOrder + index,
+          statut: "planifie" as const,
+        })) as never,
+      )
+      .select("id, exercice_id");
+    if (insertError) throw insertError;
+
+    for (const row of created ?? []) {
+      linkByExercise.set(row.exercice_id, row.id);
+    }
+  }
+
+  const sessionExerciceIds = exerciseIds
+    .map((id) => linkByExercise.get(id))
+    .filter((id): id is string => !!id);
+
+  await sendSessionExercisesToStudents({ sessionId, sessionExerciceIds });
+}
+
 /** Envoie une leçon/support aux élèves du groupe via resource_assignments. */
 export async function sendLessonToStudents(params: {
   resourceId: string;
