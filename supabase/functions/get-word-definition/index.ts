@@ -1,7 +1,12 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { AIError, callAI } from "../_shared/ai-client.ts";
-import { ensurePseudonymSecretOrLog, getUserIdFromAuth, logAICall } from "../_shared/check-consent.ts";
+import {
+  canFormateurInvokeForSandboxStudent,
+  ensurePseudonymSecretOrLog,
+  getUserIdFromAuth,
+  logAICall,
+} from "../_shared/check-consent.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -87,10 +92,20 @@ serve(async (req) => {
     }
 
     if (triggeredBy && studentId !== triggeredBy) {
-      return new Response(JSON.stringify({ error: "student_mismatch", code: "student_mismatch" }), {
-        status: 403,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      const sandboxDelegate = await canFormateurInvokeForSandboxStudent(triggeredBy, studentId);
+      if (!sandboxDelegate) {
+        return new Response(
+          JSON.stringify({
+            error: "student_mismatch",
+            code: "student_mismatch",
+            message: "L'identifiant élève ne correspond pas au compte connecté.",
+          }),
+          {
+            status: 403,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
     }
 
     const normalizedWord = normalizeWord(word);

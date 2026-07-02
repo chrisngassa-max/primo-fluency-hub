@@ -154,6 +154,38 @@ export async function ensurePseudonymSecretOrLog(
   return pseudonymSecretMissingResponse(corsHeaders);
 }
 
+/**
+ * A formateur may invoke student-scoped AI helpers (ex. SmartText) on behalf of an
+ * élève sandbox they own while previewing CAP TCF in the formateur UI.
+ */
+export async function canFormateurInvokeForSandboxStudent(
+  formateurId: string,
+  studentId: string,
+): Promise<boolean> {
+  if (!formateurId || !studentId || formateurId === studentId) return false;
+
+  const supa = adminClient();
+  const { data: role } = await supa
+    .from("user_roles")
+    .select("id")
+    .eq("user_id", formateurId)
+    .eq("role", "formateur")
+    .maybeSingle();
+  if (!role) return false;
+
+  const { data: session } = await supa
+    .from("sandbox_sessions")
+    .select("eleve_user_ids")
+    .eq("formateur_id", formateurId)
+    .eq("statut", "active")
+    .gt("expires_at", new Date().toISOString())
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  return (session?.eleve_user_ids ?? []).includes(studentId);
+}
+
 /** Resolve userId from an Authorization Bearer JWT. Returns null if unauthenticated. */
 export async function getUserIdFromAuth(req: Request): Promise<string | null> {
   const auth = req.headers.get("Authorization");

@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import SmartText from "@/components/SmartText";
-import type { SandboxLevel } from "@/contexts/SandboxContext";
+import { useSandbox, type SandboxLevel } from "@/contexts/SandboxContext";
 
 export default function SandboxExerciseRunner({
   niveau,
@@ -22,6 +22,9 @@ export default function SandboxExerciseRunner({
   onCompleted: () => void;
 }) {
   const { user } = useAuth();
+  const { session } = useSandbox();
+  const sandboxStudentId =
+    session?.eleve_emails?.find((student) => student.niveau === niveau)?.user_id ?? user?.id ?? "";
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<any>(null);
@@ -61,10 +64,10 @@ export default function SandboxExerciseRunner({
         <CardHeader>
           <CardTitle>{devoir.exercice?.titre ?? "Exercice sandbox"}</CardTitle>
           <p className="text-sm text-muted-foreground">
-            {user?.id && devoir.exercice?.consigne ? (
+            {sandboxStudentId && devoir.exercice?.consigne ? (
               <SmartText
                 text={devoir.exercice.consigne}
-                studentId={user.id}
+                studentId={sandboxStudentId}
                 allowSave={false}
                 contextSentence={devoir.exercice.consigne}
               />
@@ -80,10 +83,10 @@ export default function SandboxExerciseRunner({
             <div key={item.id ?? index} className="space-y-3 rounded-lg border p-4">
               <p className="font-medium">
                 {index + 1}.{" "}
-                {user?.id ? (
+                {sandboxStudentId ? (
                   <SmartText
                     text={questionText}
-                    studentId={user.id}
+                    studentId={sandboxStudentId}
                     allowSave={false}
                     contextSentence={questionText}
                   />
@@ -101,10 +104,10 @@ export default function SandboxExerciseRunner({
                     <div key={id} className="flex items-center gap-2">
                       <RadioGroupItem id={id} value={option} disabled={!!result} />
                       <Label htmlFor={id}>
-                        {user?.id ? (
+                        {sandboxStudentId ? (
                           <SmartText
                             text={option}
-                            studentId={user.id}
+                            studentId={sandboxStudentId}
                             allowSave={false}
                             contextSentence={questionText}
                           />

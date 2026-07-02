@@ -36,6 +36,7 @@ interface WordDetails {
 const WORD_ERROR_MESSAGES = {
   ai_unavailable: "Traduction momentanément indisponible. Réessaie dans un instant.",
   consent_required: "La traduction nécessite le consentement IA. Active-le dans ton profil.",
+  student_mismatch: "Session incohérente. Recharge la page ou reconnecte-toi, puis réessaie.",
   network: "Connexion impossible. Vérifie ta connexion internet, puis réessaie.",
   generic: "Impossible d'afficher ce mot pour le moment. Réessaie.",
 } as const;
@@ -57,11 +58,11 @@ async function classifyWordError(error: unknown, data: any): Promise<WordErrorKi
   }
 
   const context = (error as any)?.context;
-  if (!code && context && typeof context.json === "function") {
+  if (!code && context instanceof Response) {
     try {
-      const body = await context.json();
+      const body = await context.clone().json();
       code = body?.code ?? body?.reason ?? body?.error;
-      rawMessage = body?.error ?? body?.message ?? rawMessage;
+      rawMessage = body?.message ?? body?.error ?? rawMessage;
     } catch {
       // Corps illisible : on retombe sur le nom/message d'erreur ci-dessous.
     }
@@ -73,6 +74,7 @@ async function classifyWordError(error: unknown, data: any): Promise<WordErrorKi
   }
 
   const haystack = `${code ?? ""} ${rawMessage ?? ""}`.toLowerCase();
+  if (haystack.includes("student_mismatch")) return "student_mismatch";
   if (haystack.includes("consent")) return "consent_required";
   if (
     haystack.includes("ai_unavailable") ||
