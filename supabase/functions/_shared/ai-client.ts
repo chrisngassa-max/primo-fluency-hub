@@ -1,5 +1,7 @@
 const LOVABLE_GATEWAY = "https://ai.gateway.lovable.dev/v1/chat/completions";
 const GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models";
+/** Stable fallbacks when a model id is unavailable on the project's API tier. */
+const GEMINI_MODEL_FALLBACKS = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"] as const;
 
 interface OpenAITool {
   type: "function";
@@ -31,14 +33,20 @@ interface AICallOptions {
 const GEMINI_FALLBACK_STATUSES = new Set([408, 429, 500, 502, 503, 504]);
 
 function geminiFallbackEnabled(): boolean {
-  return Deno.env.get("AI_GEMINI_FALLBACK") === "true" && !!Deno.env.get("GEMINI_API_KEY");
+  return Deno.env.get("AI_GEMINI_FALLBACK") === "true" && !!getGeminiApiKey();
 }
 
-function aiAuthErrorMessage(provider: "lovable" | "gemini", status: number): string {
+function aiAuthErrorMessage(
+  provider: "lovable" | "gemini",
+  status: number,
+  providerDetail?: string,
+): string {
   if (status === 403 || status === 401) {
-    return provider === "lovable"
+    const googleDetail = provider === "gemini" ? parseGoogleError(providerDetail ?? "").message : undefined;
+    const base = provider === "lovable"
       ? "Le service IA (passerelle Lovable) refuse la requete. Verifiez LOVABLE_API_KEY cote serveur."
       : "Le service IA (Gemini) refuse la requete. Verifiez GEMINI_API_KEY et l'activation de l'API Generative Language.";
+    return googleDetail ? `${base} Detail Google: ${googleDetail}` : base;
   }
   return `Erreur du service IA (${status})`;
 }
@@ -49,7 +57,7 @@ function aiAuthErrorMessage(provider: "lovable" | "gemini", status: number): str
  */
 export async function callAI(options: AICallOptions): Promise<any> {
   const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-  const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
+  const GEMINI_API_KEY = getGeminiApiKey();
 
   if (LOVABLE_API_KEY) {
     const response = await fetch(LOVABLE_GATEWAY, {
@@ -76,7 +84,7 @@ export async function callAI(options: AICallOptions): Promise<any> {
     if (!GEMINI_FALLBACK_STATUSES.has(response.status) || !geminiFallbackEnabled()) {
       const message = GEMINI_FALLBACK_STATUSES.has(response.status) && !geminiFallbackEnabled()
         ? `Le service IA (passerelle Lovable) est temporairement indisponible (${response.status}). Reessayez dans quelques instants.`
-        : aiAuthErrorMessage("lovable", response.status);
+        : aiAuthErrorMessage("lovable", response.status, errText);
       throw new AIError(message, response.status >= 500 ? 502 : response.status, errText);
     }
 
@@ -95,8 +103,50 @@ export async function callAI(options: AICallOptions): Promise<any> {
   );
 }
 
+function getGeminiApiKey(): string | null {
+  const raw = Deno.env.get("GEMINI_API_KEY");
+  if (!raw) return null;
+  const trimmed = raw.trim();
+  return trimmed || null;
+}
+
+function geminiKeyDiagnostics(key: string) {
+  return {
+    present: true,
+    length: key.length,
+    hasWhitespace: key !== Deno.env.get("GEMINI_API_KEY"),
+    prefix: key.slice(0, 4),
+    suffix: key.slice(-4),
+  };
+}
+
+function parseGoogleError(errText: string): {
+  httpStatus?: number;
+  code?: number;
+  status?: string;
+  message?: string;
+} {
+  try {
+    const parsed = JSON.parse(errText);
+    return {
+      httpStatus: parsed.error?.code,
+      code: parsed.error?.code,
+      status: parsed.error?.status,
+      message: parsed.error?.message,
+    };
+  } catch {
+    return { message: errText.slice(0, 500) };
+  }
+}
+
+function geminiModelsToTry(requestedModel: string): string[] {
+  const primary = normalizeGeminiModel(requestedModel);
+  const chain = [primary, ...GEMINI_MODEL_FALLBACKS.filter((m) => m !== primary)];
+  return [...new Set(chain)];
+}
+
 async function callGemini(options: AICallOptions): Promise<any> {
-  const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
+  const GEMINI_API_KEY = getGeminiApiKey();
   if (!GEMINI_API_KEY) {
     throw new AIError("GEMINI_API_KEY non configuree.", 500);
   }
@@ -138,20 +188,49 @@ async function callGemini(options: AICallOptions): Promise<any> {
       : {}),
   };
 
-  const model = normalizeGeminiModel(options.model || "google/gemini-2.5-flash");
-  const response = await fetch(`${GEMINI_ENDPOINT}/${model}:generateContent?key=${GEMINI_API_KEY}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
+  const models = geminiModelsToTry(options.model || "google/gemini-2.5-flash");
+  let lastStatus = 500;
+  let lastErrText = "";
 
-  if (!response.ok) {
-    const errText = await response.text();
-    console.error("Gemini API error:", response.status, errText);
-    throw new AIError(aiAuthErrorMessage("gemini", response.status), response.status, errText);
+  for (const model of models) {
+    const url = `${GEMINI_ENDPOINT}/${model}:generateContent`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": GEMINI_API_KEY,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (response.ok) {
+      if (model !== models[0]) {
+        console.warn(`Gemini fallback succeeded with model ${model} (requested ${models[0]})`);
+      }
+      return geminiToOpenAI(await response.json(), options);
+    }
+
+    lastStatus = response.status;
+    lastErrText = await response.text();
+    const googleError = parseGoogleError(lastErrText);
+    console.error("Gemini API error:", {
+      model,
+      url,
+      httpStatus: response.status,
+      googleStatus: googleError.status,
+      googleCode: googleError.code,
+      googleMessage: googleError.message,
+      key: geminiKeyDiagnostics(GEMINI_API_KEY),
+      bodyPreview: lastErrText.slice(0, 1000),
+    });
+
+    // Auth/config errors won't be fixed by switching models.
+    if (response.status === 401 || response.status === 403) break;
+    // Retry another model on 404 (unknown model) or 429 (quota per model).
+    if (response.status !== 404 && response.status !== 429) break;
   }
 
-  return geminiToOpenAI(await response.json(), options);
+  throw new AIError(aiAuthErrorMessage("gemini", lastStatus, lastErrText), lastStatus, lastErrText);
 }
 
 /**

@@ -168,6 +168,9 @@ serve(async (req) => {
     });
 
     if (error instanceof AIError) {
+      if (error.detail) {
+        console.error("analyze-pdf-support AI provider detail:", error.detail.slice(0, 1000));
+      }
       const status = error.status >= 500 ? 502 : (error.status === 401 || error.status === 403 ? 422 : error.status);
       return json(status, { error: error.message });
     }
