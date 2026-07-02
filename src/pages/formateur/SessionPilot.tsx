@@ -83,6 +83,7 @@ import GenerateResourceDialog from "@/components/GenerateResourceDialog";
 import AutoResourceSuggestions from "@/components/AutoResourceSuggestions";
 import SessionExternalResourcesList from "@/components/SessionExternalResourcesList";
 import SessionImportedSupportsList from "@/components/SessionImportedSupportsList";
+import SessionGeneratedDocuments from "@/components/SessionGeneratedDocuments";
 import StartOfSessionBilan from "@/components/StartOfSessionBilan";
 import SessionClosureReminder from "@/components/SessionClosureReminder";
 import PreflightExercises from "@/components/PreflightExercises";
@@ -835,6 +836,7 @@ const SessionPilot = () => {
       if (linkErr) throw linkErr;
 
       qc.invalidateQueries({ queryKey: ["session-exercices", id] });
+      qc.invalidateQueries({ queryKey: ["session-generated-exercices", id] });
       const compLabel = competences.length === 1 ? competences[0] : competences.join(", ");
       toast.success(
         `${totalReused} repris de la banque, ${totalGenerated} générés (${compLabel}) !`,
@@ -1693,6 +1695,15 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
           </CardContent>
         </Card>
       )}
+
+      {/* Documents générés — exercices IA & leçons de la séance */}
+      <SessionGeneratedDocuments
+        sessionId={id!}
+        onPreviewExercise={(ex) => {
+          setPreviewExercise(ex);
+          setPreviewPage(0);
+        }}
+      />
 
       {/* Bloc ressources externes ajoutées à la séance */}
       <SessionExternalResourcesList sessionId={id!} />
@@ -3002,22 +3013,37 @@ ${ficheHtml}</body></html>`;
         onClose={() => {
           setImportUrlOpen(false);
           qc.invalidateQueries({ queryKey: ["session-supports", id] });
+          qc.invalidateQueries({ queryKey: ["session-generated-exercices", id] });
+          qc.invalidateQueries({ queryKey: ["session-generated-lecons", id] });
         }}
         sessionId={id}
-        onExerciseCreated={() => qc.invalidateQueries({ queryKey: ["session-exercices", id] })}
+        onExerciseCreated={() => {
+          qc.invalidateQueries({ queryKey: ["session-exercices", id] });
+          qc.invalidateQueries({ queryKey: ["session-generated-exercices", id] });
+        }}
       />
 
       {/* ─── Generate Resource Dialog (single exercise) ─── */}
       <GenerateResourceDialog
         open={!!resourceExercise && !resourceExercises}
-        onOpenChange={(o) => !o && setResourceExercise(null)}
+        onOpenChange={(o) => {
+          if (!o) {
+            setResourceExercise(null);
+            qc.invalidateQueries({ queryKey: ["session-generated-lecons", id] });
+          }
+        }}
         exercise={resourceExercise || undefined}
         session={session ? { id: session.id, titre: session.titre, objectifs: session.objectifs, niveau_cible: session.niveau_cible } : undefined}
       />
       {/* ─── Generate Resource Dialog (multiple exercises) ─── */}
       <GenerateResourceDialog
         open={!!resourceExercises && resourceExercises.length > 0}
-        onOpenChange={(o) => !o && setResourceExercises(null)}
+        onOpenChange={(o) => {
+          if (!o) {
+            setResourceExercises(null);
+            qc.invalidateQueries({ queryKey: ["session-generated-lecons", id] });
+          }
+        }}
         exercises={resourceExercises || undefined}
         session={session ? { id: session.id, titre: session.titre, objectifs: session.objectifs, niveau_cible: session.niveau_cible } : undefined}
       />

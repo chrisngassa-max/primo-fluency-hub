@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { BookOpen, ChevronDown, ChevronUp, Send, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
+import { sendLessonToStudents } from "@/lib/sessionDistribution";
 
 interface ResourceSection {
   titre: string;
@@ -50,6 +51,7 @@ export default function SessionImportedSupportsList({ sessionId }: Props) {
         .from("ressources_pedagogiques" as any)
         .select("id, titre, type, competence, niveau, contenu, created_at")
         .eq("session_id", sessionId)
+        .neq("type", "lecon")
         .order("created_at", { ascending: false });
       if (error) throw error;
       return (data || []) as unknown as ImportedSupport[];
@@ -60,33 +62,17 @@ export default function SessionImportedSupportsList({ sessionId }: Props) {
     if (!user) return;
     setSending(support.id);
     try {
-      const { data: session } = await supabase
-        .from("sessions")
-        .select("group_id")
-        .eq("id", sessionId)
-        .single();
-      const groupId = (session as any)?.group_id;
-      if (!groupId) throw new Error("Séance sans groupe.");
-
-      const { data: members } = await supabase
-        .from("group_members")
-        .select("eleve_id")
-        .eq("group_id", groupId);
-      const rows = (members || []).map((m: any) => ({
-        resource_id: support.id,
-        learner_id: m.eleve_id,
-        group_id: groupId,
-        assigned_by: user.id,
-      }));
-      if (rows.length === 0) throw new Error("Aucun élève dans le groupe.");
-
-      const { error } = await supabase.from("resource_assignments" as any).insert(rows);
-      if (error) throw error;
-      toast.success(`Leçon envoyée à ${rows.length} élève(s)`, {
-        description: "Ils la verront dans « Mes fiches », sans PDF.",
+      const count = await sendLessonToStudents({
+        resourceId: support.id,
+        sessionId,
+        assignedBy: user.id,
       });
-    } catch (e: any) {
-      toast.error("Envoi impossible", { description: e.message });
+      toast.success(`Support envoyé à ${count} élève(s)`, {
+        description: "Ils le verront dans « Mes fiches ».",
+      });
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Erreur inconnue";
+      toast.error("Envoi impossible", { description: message });
     } finally {
       setSending(null);
     }
@@ -111,7 +97,7 @@ export default function SessionImportedSupportsList({ sessionId }: Props) {
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-lg">
           <BookOpen className="h-5 w-5 text-primary" />
-          Supports & leçons importés
+          Supports importés
           <Badge variant="secondary">{supports.length}</Badge>
         </CardTitle>
       </CardHeader>

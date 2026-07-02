@@ -64,3 +64,41 @@ export async function sendSessionExercisesToStudents(params: {
 
   await activateSessionForStudents(sessionId);
 }
+
+/** Envoie une leçon/support aux élèves du groupe via resource_assignments. */
+export async function sendLessonToStudents(params: {
+  resourceId: string;
+  sessionId: string;
+  assignedBy: string;
+}): Promise<number> {
+  const { resourceId, sessionId, assignedBy } = params;
+
+  const { data: session, error: sessionError } = await supabase
+    .from("sessions")
+    .select("group_id")
+    .eq("id", sessionId)
+    .single();
+  if (sessionError) throw sessionError;
+
+  const groupId = (session as { group_id?: string })?.group_id;
+  if (!groupId) throw new Error("Séance sans groupe.");
+
+  const { data: members, error: membersError } = await supabase
+    .from("group_members")
+    .select("eleve_id")
+    .eq("group_id", groupId);
+  if (membersError) throw membersError;
+
+  const rows = (members || []).map((m: { eleve_id: string }) => ({
+    resource_id: resourceId,
+    learner_id: m.eleve_id,
+    group_id: groupId,
+    assigned_by: assignedBy,
+  }));
+  if (rows.length === 0) throw new Error("Aucun élève dans le groupe.");
+
+  const { error } = await supabase.from("resource_assignments" as never).insert(rows as never);
+  if (error) throw error;
+
+  return rows.length;
+}
