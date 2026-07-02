@@ -11,7 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BookOpen, CheckCircle2, FileText, Link2, Loader2, Save, Upload, Wand2 } from "lucide-react";
+import { BookOpen, CheckCircle2, Eye, FileText, Link2, Loader2, Save, Upload, Wand2 } from "lucide-react";
+import ExerciseStudentPreviewDialog from "@/components/ExerciseStudentPreviewDialog";
 
 interface ImportFromUrlDialogProps {
   open: boolean;
@@ -86,6 +87,8 @@ export default function ImportFromUrlDialog({
   const [analysis, setAnalysis] = useState<any>(null);
   const [exercises, setExercises] = useState<any[]>([]);
   const [lesson, setLesson] = useState<any>(null);
+  const [testingExerciseIndex, setTestingExerciseIndex] = useState<number | null>(null);
+  const [testedExerciseIndexes, setTestedExerciseIndexes] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     if (open) {
@@ -144,7 +147,20 @@ export default function ImportFromUrlDialog({
     setAnalysis(null);
     setExercises([]);
     setLesson(null);
+    setTestingExerciseIndex(null);
+    setTestedExerciseIndexes(new Set());
   };
+
+  const sortedExerciseEntries = useMemo(
+    () =>
+      exercises
+        .map((exercise, index) => ({ exercise, index }))
+        .reverse(),
+    [exercises],
+  );
+
+  const allExercisesTested =
+    exercises.length === 0 || testedExerciseIndexes.size >= exercises.length;
 
   const close = () => {
     if (busy) return;
@@ -235,6 +251,8 @@ export default function ImportFromUrlDialog({
         generated.push(data.exercise);
       }
       setExercises(generated);
+      setTestedExerciseIndexes(new Set());
+      setTestingExerciseIndex(null);
       setStep("preview");
     } catch (error: any) {
       toast.error("Generation impossible", { description: error.message });
@@ -370,44 +388,16 @@ export default function ImportFromUrlDialog({
           })) as any,
         );
         if (linkError) throw linkError;
-
-        if (destination === "homework") {
-          const { data: session } = await supabase
-            .from("sessions")
-            .select("group_id")
-            .eq("id", effectiveSessionId)
-            .single();
-          const { data: members } = await supabase
-            .from("group_members")
-            .select("eleve_id")
-            .eq("group_id", session?.group_id || "");
-          const deadline = new Date(Date.now() + 7 * 86400000).toISOString();
-          const devoirs = (members || []).flatMap((member) =>
-            (created || []).map((exercise) => ({
-              eleve_id: member.eleve_id,
-              exercice_id: exercise.id,
-              formateur_id: user.id,
-              session_id: effectiveSessionId,
-              date_echeance: deadline,
-              statut: "en_attente",
-              raison: "consolidation",
-            })),
-          );
-          if (devoirs.length) {
-            const { error: homeworkError } = await supabase.from("devoirs").insert(devoirs as any);
-            if (homeworkError) throw homeworkError;
-          }
-        }
       }
 
       (created || []).forEach(onExerciseCreated);
-      toast.success(`${created?.length || 0} exercice(s) cree(s)`, {
+      toast.success(`${created?.length || 0} exercice(s) enregistré(s)`, {
         description: destination === "homework"
-          ? "Les exercices ont aussi ete envoyes aux eleves."
+          ? "Ils sont enregistrés dans la séance. Envoyez-les manuellement depuis « Documents générés »."
           : destination === "diagnostic"
-            ? "Ils sont places en diagnostic de debut de seance."
+            ? "Ils sont placés en diagnostic de début de séance."
             : destination === "session" && effectiveSessionId
-              ? "Ils sont ajoutes a la seance."
+              ? "Ils sont ajoutés à la séance (section Documents générés)."
               : "Ils sont disponibles dans la banque.",
       });
       reset();
@@ -566,7 +556,7 @@ export default function ImportFromUrlDialog({
                     <SelectItem value="bank">Banque d'exercices (non lié)</SelectItem>
                     <SelectItem value="session">Exercices de la seance</SelectItem>
                     <SelectItem value="diagnostic">Prediagnostic de la seance</SelectItem>
-                    <SelectItem value="homework">Devoirs des eleves</SelectItem>
+                    <SelectItem value="homework">Devoirs (enregistrer sans envoi auto)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -644,8 +634,11 @@ export default function ImportFromUrlDialog({
           <div className="space-y-4">
             <div className="flex items-center gap-2 text-green-700">
               <CheckCircle2 className="h-5 w-5" />
-              <span className="font-medium">{exercises.length} exercice(s) pret(s)</span>
+              <span className="font-medium">{exercises.length} exercice(s) prêt(s)</span>
             </div>
+            <p className="text-sm text-muted-foreground">
+              Testez chaque exercice comme un élève, puis validez pour l'enregistrer.
+            </p>
             {analysis && (
               <div className="border bg-muted/30 p-4">
                 <p className="font-semibold">{analysis.title || pdf?.name}</p>
@@ -656,28 +649,70 @@ export default function ImportFromUrlDialog({
               </div>
             )}
             <div className="space-y-2">
-              {exercises.map((exercise, index) => (
-                <div key={`${exercise.titre}-${index}`} className="flex items-start justify-between gap-3 border p-3">
-                  <div className="min-w-0">
-                    <p className="font-medium">{exercise.titre}</p>
-                    <p className="mt-1 text-sm text-muted-foreground">{exercise.consigne}</p>
+              {sortedExerciseEntries.map(({ exercise, index }, displayIndex) => {
+                const isTested = testedExerciseIndexes.has(index);
+                return (
+                  <div key={`${exercise.titre}-${index}`} className="flex items-start justify-between gap-3 border p-3">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <p className="font-medium">{exercise.titre}</p>
+                        {isTested && (
+                          <Badge variant="outline" className="gap-1 bg-green-50 text-[10px] text-green-700 dark:bg-green-950 dark:text-green-300">
+                            <CheckCircle2 className="h-3 w-3" />
+                            Testé
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="mt-1 text-sm text-muted-foreground">{exercise.consigne}</p>
+                      <p className="mt-1 text-[10px] text-muted-foreground">
+                        Généré {displayIndex === 0 ? "en dernier" : `— variante ${exercises.length - displayIndex}`}
+                      </p>
+                    </div>
+                    <div className="flex shrink-0 flex-col items-end gap-2">
+                      <div className="flex gap-1">
+                        <Badge>{exercise.competence}</Badge>
+                        <Badge variant="outline">{exercise.niveau_vise}</Badge>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="gap-1.5"
+                        onClick={() => setTestingExerciseIndex(index)}
+                      >
+                        <Eye className="h-3.5 w-3.5" />
+                        Tester l'exercice
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex shrink-0 gap-1">
-                    <Badge>{exercise.competence}</Badge>
-                    <Badge variant="outline">{exercise.niveau_vise}</Badge>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setStep("form")}>Modifier</Button>
-              <Button className="gap-2" onClick={save}>
+              <Button className="gap-2" disabled={!allExercisesTested} onClick={save}>
                 <Save className="h-4 w-4" />
-                Valider et ajouter
+                Valider et enregistrer
               </Button>
             </div>
+            {!allExercisesTested && (
+              <p className="text-right text-xs text-amber-700 dark:text-amber-300">
+                Testez tous les exercices avant de valider ({testedExerciseIndexes.size}/{exercises.length}).
+              </p>
+            )}
           </div>
         )}
+
+        <ExerciseStudentPreviewDialog
+          open={testingExerciseIndex !== null}
+          onOpenChange={(open) => { if (!open) setTestingExerciseIndex(null); }}
+          exercise={testingExerciseIndex !== null ? exercises[testingExerciseIndex] : null}
+          interactive
+          onTestComplete={() => {
+            if (testingExerciseIndex !== null) {
+              setTestedExerciseIndexes((prev) => new Set(prev).add(testingExerciseIndex));
+            }
+          }}
+        />
       </DialogContent>
     </Dialog>
   );

@@ -22,6 +22,7 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { sendLessonToStudents, sendSessionExercisesToStudents } from "@/lib/sessionDistribution";
+import { formatExerciseDate } from "@/components/ExerciseStudentPreviewDialog";
 
 interface ResourceSection {
   titre: string;
@@ -46,6 +47,7 @@ interface SessionGeneratedExercise {
   statut: string;
   is_sent: boolean;
   ordre: number;
+  created_at: string;
   exercice: {
     id: string;
     titre: string;
@@ -53,6 +55,7 @@ interface SessionGeneratedExercise {
     competence: string;
     format: string;
     is_ai_generated: boolean;
+    created_at: string;
   } | null;
 }
 
@@ -83,10 +86,10 @@ export default function SessionGeneratedDocuments({ sessionId, onPreviewExercise
       const { data, error } = await supabase
         .from("session_exercices")
         .select(
-          "id, statut, is_sent, ordre, exercice:exercices(id, titre, consigne, competence, format, is_ai_generated)"
+          "id, statut, is_sent, ordre, created_at, exercice:exercices(id, titre, consigne, competence, format, is_ai_generated, created_at)"
         )
         .eq("session_id", sessionId)
-        .order("ordre");
+        .order("created_at", { ascending: false });
       if (error) throw error;
       return (data ?? []) as unknown as SessionGeneratedExercise[];
     },
@@ -134,7 +137,12 @@ export default function SessionGeneratedDocuments({ sessionId, onPreviewExercise
     return generatedExercises.filter((se) => {
       const titre = se.exercice?.titre?.toLowerCase() ?? "";
       const competence = se.exercice?.competence?.toLowerCase() ?? "";
-      return titre.includes(normalizedSearch) || competence.includes(normalizedSearch);
+      const createdLabel = formatExerciseDate(se.created_at || se.exercice?.created_at)?.toLowerCase() ?? "";
+      return (
+        titre.includes(normalizedSearch) ||
+        competence.includes(normalizedSearch) ||
+        createdLabel.includes(normalizedSearch)
+      );
     });
   }, [generatedExercises, normalizedSearch]);
 
@@ -143,10 +151,12 @@ export default function SessionGeneratedDocuments({ sessionId, onPreviewExercise
     return (lessons ?? []).filter((l) => {
       const titre = (l.contenu?.titre || l.titre).toLowerCase();
       const resume = (l.contenu?.resume || "").toLowerCase();
+      const createdLabel = formatExerciseDate(l.created_at)?.toLowerCase() ?? "";
       return (
         titre.includes(normalizedSearch) ||
         resume.includes(normalizedSearch) ||
-        l.competence.toLowerCase().includes(normalizedSearch)
+        l.competence.toLowerCase().includes(normalizedSearch) ||
+        createdLabel.includes(normalizedSearch)
       );
     });
   }, [lessons, normalizedSearch]);
@@ -212,7 +222,7 @@ export default function SessionGeneratedDocuments({ sessionId, onPreviewExercise
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Rechercher par titre, compétence…"
+            placeholder="Rechercher par titre, compétence, date…"
             className="pl-9"
           />
         </div>
@@ -244,9 +254,10 @@ export default function SessionGeneratedDocuments({ sessionId, onPreviewExercise
                   : "Aucun exercice ne correspond à votre recherche."}
               </p>
             ) : (
-              filteredExercises.map((se, i) => {
+              filteredExercises.map((se) => {
                 const ex = se.exercice;
                 const isSent = se.is_sent || se.statut === "traite_en_classe";
+                const createdLabel = formatExerciseDate(se.created_at || ex?.created_at);
                 return (
                   <div
                     key={se.id}
@@ -255,9 +266,6 @@ export default function SessionGeneratedDocuments({ sessionId, onPreviewExercise
                       isSent && "opacity-75"
                     )}
                   >
-                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border bg-violet-50 text-xs font-bold text-violet-700 dark:bg-violet-950 dark:text-violet-300">
-                      {i + 1}
-                    </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-1.5">
                         <span className={cn("truncate text-sm font-medium", isSent && "line-through")}>
@@ -286,6 +294,9 @@ export default function SessionGeneratedDocuments({ sessionId, onPreviewExercise
                       </div>
                       {ex?.consigne && (
                         <p className="mt-0.5 truncate text-xs text-muted-foreground">{ex.consigne}</p>
+                      )}
+                      {createdLabel && (
+                        <p className="mt-0.5 text-[10px] text-muted-foreground">Créé le {createdLabel}</p>
                       )}
                     </div>
                     <div className="flex shrink-0 items-center gap-1">
@@ -334,6 +345,7 @@ export default function SessionGeneratedDocuments({ sessionId, onPreviewExercise
                 const content = lesson.contenu || {};
                 const isOpen = !!expandedLessons[lesson.id];
                 const isAssigned = assignedLessonIds?.has(lesson.id);
+                const createdLabel = formatExerciseDate(lesson.created_at);
                 return (
                   <div key={lesson.id} className="rounded-md border bg-card">
                     <div className="flex items-center gap-3 p-3">
@@ -361,6 +373,9 @@ export default function SessionGeneratedDocuments({ sessionId, onPreviewExercise
                         </div>
                         {content.resume && (
                           <p className="mt-0.5 truncate text-xs text-muted-foreground">{content.resume}</p>
+                        )}
+                        {createdLabel && (
+                          <p className="mt-0.5 text-[10px] text-muted-foreground">Créé le {createdLabel}</p>
                         )}
                       </div>
                       <div className="flex shrink-0 items-center gap-1">

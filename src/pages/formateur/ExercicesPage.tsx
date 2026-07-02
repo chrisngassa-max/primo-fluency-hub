@@ -26,6 +26,7 @@ import {
   Brain, FileText, Upload, Clock, Link2, Target, Radio, Copy, UserPlus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { formatExerciseDate } from "@/components/ExerciseStudentPreviewDialog";
 import { structuredExerciseMetadata } from "@/lib/exerciseMetadata";
 import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/DifficultyBadge";
 import ImportFromUrlDialog from "@/components/ImportFromUrlDialog";
@@ -403,7 +404,14 @@ const ExercicesPage = () => {
       }
       if (searchTerm) {
         const s = searchTerm.toLowerCase();
-        if (!ex.titre.toLowerCase().includes(s) && !ex.consigne.toLowerCase().includes(s)) return false;
+        const createdLabel = formatExerciseDate(ex.created_at)?.toLowerCase() ?? "";
+        if (
+          !ex.titre.toLowerCase().includes(s) &&
+          !ex.consigne.toLowerCase().includes(s) &&
+          !createdLabel.includes(s)
+        ) {
+          return false;
+        }
       }
       return true;
     });
@@ -734,7 +742,7 @@ ${Array.isArray(item.options) && item.options.length > 0
               <Label className="text-xs">Recherche</Label>
               <div className="relative">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input className="pl-9 h-9" placeholder="Titre ou consigne…"
+                <Input className="pl-9 h-9" placeholder="Titre, consigne ou date…"
                   value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
               </div>
             </div>
@@ -855,6 +863,11 @@ ${Array.isArray(item.options) && item.options.length > 0
                           {ex.is_ai_generated && (
                             <span className="inline-flex items-center gap-1 rounded-full bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-400 px-2 py-0.5 text-[10px] font-semibold">
                               ✨ Généré par IA
+                            </span>
+                          )}
+                          {ex.created_at && (
+                            <span className="text-[10px] text-muted-foreground">
+                              {formatExerciseDate(ex.created_at)}
                             </span>
                           )}
                           {isSaving && <Loader2 className="h-3 w-3 animate-spin text-primary" />}
@@ -1237,6 +1250,11 @@ ${Array.isArray(item.options) && item.options.length > 0
                               {support?.label && (
                                 <Badge variant="outline" className="text-[10px] max-w-[200px] truncate">
                                   {support.label}
+                                </Badge>
+                              )}
+                              {ex.created_at && (
+                                <Badge variant="outline" className="text-[10px]">
+                                  {formatExerciseDate(ex.created_at)}
                                 </Badge>
                               )}
                             </div>
