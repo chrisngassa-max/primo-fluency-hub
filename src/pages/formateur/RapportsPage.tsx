@@ -9,7 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { FileText, Copy, Loader2, Check, User, Users } from "lucide-react";
+import { FileText, Copy, Loader2, Check, User, Users, ShieldAlert } from "lucide-react";
+import { collectQueryErrors, resolveStudentExportLabel } from "@/lib/reportExportPrivacy";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const PERIODES = [
   { value: "7", label: "7 derniers jours" },
@@ -81,19 +83,26 @@ export default function RapportsPage() {
     dateDebut.setDate(dateDebut.getDate() - parseInt(periode));
     const dateDebutStr = dateDebut.toISOString();
 
-    const [profilRes, resultatsRes, devoirsRes, testRes, profileRes] = await Promise.all([
+    const [profilRes, resultatsRes, devoirsRes, testRes] = await Promise.all([
       supabase.from("profils_eleves").select("*").eq("eleve_id", selectedEleve).maybeSingle(),
       supabase.from("resultats").select("*, exercices(competence, titre, format)").eq("eleve_id", selectedEleve).gte("created_at", dateDebutStr).order("created_at", { ascending: true }),
       supabase.from("devoirs").select("*, exercices(competence, titre)").eq("eleve_id", selectedEleve).gte("created_at", dateDebutStr),
       supabase.from("test_resultats_apprenants").select("*").eq("apprenant_id", selectedEleve).order("date_test", { ascending: false }).limit(1).maybeSingle(),
-      supabase.from("profiles").select("prenom, nom").eq("id", selectedEleve).single(),
     ]);
+
+    const queryErrors = collectQueryErrors(
+      [profilRes, resultatsRes, devoirsRes, testRes],
+      ["profil élève", "résultats", "devoirs", "test d'entrée"],
+    );
+    if (queryErrors.length > 0) {
+      throw new Error(queryErrors.join(" ; "));
+    }
 
     const profil = profilRes.data;
     const resultats = resultatsRes.data || [];
     const devoirs = devoirsRes.data || [];
     const testEntree = testRes.data;
-    const studentProfile = profileRes.data;
+    const exportLabel = resolveStudentExportLabel(selectedEleve, eleves);
 
     const nbJoursPeriode = parseInt(periode);
     const joursActifs = new Set(resultats.map((r: any) => r.created_at?.slice(0, 10))).size;
@@ -131,7 +140,7 @@ export default function RapportsPage() {
     return `=== RAPPORT D'ANALYSE PEDAGOGIQUE (Niveau cible: ${niveauCible} TCF IRN) ===
 
 [CONTEXTE APPRENANT]
-ID: ${studentProfile?.prenom || ""} ${studentProfile?.nom || ""} (${selectedEleve.slice(0, 8)})
+Identifiant_export: ${exportLabel}
 L1: À remplir
 Période: ${dateDebutFmt} à ${dateFinFmt}
 
@@ -177,10 +186,11 @@ Niveau_Actuel_Estime: ${profil?.niveau_actuel || testEntree?.profil || "N/A"}
     const dateFinFmt = new Date().toLocaleDateString("fr-FR");
 
     // 1. Get group members
-    const { data: membersData } = await supabase
+    const { data: membersData, error: membersErr } = await supabase
       .from("group_members")
       .select("eleve_id")
       .eq("group_id", selectedGroup);
+    if (membersErr) throw new Error(`membres du groupe: ${membersErr.message}`);
     const eleveIds = (membersData ?? []).map((m) => m.eleve_id);
     const effectif = eleveIds.length;
 
@@ -203,6 +213,14 @@ Note: Aucun élève dans ce groupe.
       supabase.from("devoirs").select("*").in("eleve_id", eleveIds).gte("created_at", dateDebutStr),
       supabase.from("parcours").select("nb_seances_prevues").eq("group_id", selectedGroup),
     ]);
+
+    const queryErrors = collectQueryErrors(
+      [sessionsRes, profilsRes, resultatsRes, devoirsRes, parcoursRes],
+      ["sessions", "profils", "résultats", "devoirs", "parcours"],
+    );
+    if (queryErrors.length > 0) {
+      throw new Error(queryErrors.join(" ; "));
+    }
 
     const sessions = sessionsRes.data || [];
     const profils = profilsRes.data || [];
@@ -270,7 +288,7 @@ Note: Aucun élève dans ce groupe.
       const exId = r.exercice_id;
       if (!exerciceEchecs[exId]) {
         exerciceEchecs[exId] = {
-          titre: r.exercices?.titre || exId.slice(0, 8),
+          titre: r.exercices?.titre || "Exercice",
           competence: r.exercices?.competence || "?",
           echoues: 0,
         };
@@ -325,7 +343,7 @@ Sujets_Echoues_Majoritairement: ${sujetsEchoues.length > 0 ? sujetsEchoues.join(
       }
     } catch (err: any) {
       console.error(err);
-      toast.error("Erreur lors de la génération du rapport");
+      toast.error(err?.message || "Erreur lors de la génération du rapport");
     } finally {
       setGenerating(false);
     }
@@ -349,6 +367,13 @@ Sujets_Echoues_Majoritairement: ${sujetsEchoues.length > 0 ? sujetsEchoues.join(
       <div>
         <h1 className="text-2xl font-bold text-foreground">Rapports IA</h1>
         <p className="text-sm text-muted-foreground">Génère un rapport pédagogique détaillé que vous pouvez soumettre à votre assistant IA (ChatGPT, NotebookLM…) pour obtenir des recommandations approfondies.</p>
+        <Alert className="mt-3 border-amber-500/40 bg-amber-500/5">
+          <ShieldAlert className="h-4 w-4 text-amber-600" />
+          <AlertDescription className="text-sm text-muted-foreground">
+            Les rapports exportés utilisent des identifiants opaques (ex. Apprenant_A) — jamais de prénom, nom ni UUID.
+            Vérifiez avant copie qu&apos;aucune donnée personnelle n&apos;a été ajoutée manuellement.
+          </AlertDescription>
+        </Alert>
       </div>
 
       {/* Filters */}
