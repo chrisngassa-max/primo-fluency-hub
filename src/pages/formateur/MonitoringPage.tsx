@@ -25,11 +25,14 @@ import {
   GraduationCap,
 } from "lucide-react";
 import { DifficultyBadge } from "@/components/DifficultyBadge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { detectAdvancedStudentsBatch, type AdvancedSignal } from "@/lib/detectAdvancedStudent";
 import { AdvancedStudentBadge } from "@/components/AdvancedStudentBadge";
+import { useGroupeReadinessFiche } from "@/hooks/useEleveReadinessFiche";
+import { BANDE_LABELS, type ReadinessBande } from "@/lib/readinessDisplay";
 
 
 // Simple Markdown renderer (bold, headings, bullet lists)
@@ -67,7 +70,7 @@ interface SessionPoint {
   [key: string]: any;
 }
 
-type ViewMode = "hub" | "groupes" | "eleves";
+type ViewMode = "hub" | "groupes" | "eleves" | "preparation";
 
 const MonitoringPage = () => {
   const { user } = useAuth();
@@ -75,6 +78,7 @@ const MonitoringPage = () => {
   const [viewMode, setViewMode] = useState<ViewMode>("hub");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
+  const [preparationGroupId, setPreparationGroupId] = useState<string>("");
   const [selectedEleveId, setSelectedEleveId] = useState<string | null>(null);
   const [aiAdvice, setAiAdvice] = useState<string | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
@@ -158,13 +162,30 @@ const MonitoringPage = () => {
   const { data: allEleves = [], isLoading: loadingAllEleves } = useQuery({
     queryKey: ["monitoring-all-eleves", user?.id],
     queryFn: async () => {
-      const { data: grps } = await supabase.from("groups").select("id").eq("formateur_id", user!.id);
+      const { data: grps } = await supabase.from("groups").select("id, nom").eq("formateur_id", user!.id).eq("is_active", true);
       if (!grps?.length) return [];
-      const { data: members } = await supabase.from("group_members")
-        .select("eleve_id, group_id").in("group_id", grps.map(g => g.id));
+      const { data: members, error: membersErr } = await supabase.from("group_members")
+        .select("eleve_id, group_id, profiles!group_members_eleve_id_fkey(id, nom, prenom)")
+        .in("group_id", grps.map(g => g.id));
+      if (membersErr) throw membersErr;
       if (!members?.length) return [];
-      const ids = [...new Set(members.map(m => m.eleve_id))];
-      const { data: profiles } = await supabase.from("profiles").select("id, nom, prenom").in("id", ids);
+
+      const groupMap = Object.fromEntries(grps.map(g => [g.id, g.nom]));
+      const eleveMap = new Map<string, { id: string; nom: string; prenom: string; groupes: string[] }>();
+      members.forEach(m => {
+        const prof = m.profiles as { id: string; nom: string; prenom: string } | null;
+        if (!prof?.id) return;
+        if (!eleveMap.has(prof.id)) {
+          eleveMap.set(prof.id, { id: prof.id, nom: prof.nom, prenom: prof.prenom, groupes: [] });
+        }
+        const gnom = groupMap[m.group_id];
+        if (gnom && !eleveMap.get(prof.id)!.groupes.includes(gnom)) {
+          eleveMap.get(prof.id)!.groupes.push(gnom);
+        }
+      });
+      const ids = [...eleveMap.keys()];
+      if (!ids.length) return [];
+
       const { data: profils } = await supabase.from("profils_eleves").select("*").in("eleve_id", ids);
       const profilMap = Object.fromEntries((profils ?? []).map(p => [p.eleve_id, p]));
 
@@ -180,13 +201,7 @@ const MonitoringPage = () => {
         if (!resultsByEleve[r.eleve_id].lastActivity) resultsByEleve[r.eleve_id].lastActivity = r.created_at;
       });
 
-      // Map eleve to group names
-      const groupMap = Object.fromEntries(grps.map(g => [g.id, groups.find(gg => gg.id === g.id)?.nom || ""]));
-      const eleveGroups: Record<string, string[]> = {};
-      members.forEach(m => {
-        (eleveGroups[m.eleve_id] = eleveGroups[m.eleve_id] || []).push(groupMap[m.group_id] || "");
-      });
-      return (profiles ?? []).map(p => {
+      return [...eleveMap.values()].map(p => {
         const profil = profilMap[p.id] || null;
         const fallback = resultsByEleve[p.id];
         const fallbackScore = fallback?.scores.length
@@ -195,7 +210,6 @@ const MonitoringPage = () => {
         return {
           ...p,
           profil,
-          groupes: eleveGroups[p.id] || [],
           computedScore: profil && Number(profil.taux_reussite_global) > 0
             ? Math.round(Number(profil.taux_reussite_global))
             : fallbackScore,
@@ -203,7 +217,7 @@ const MonitoringPage = () => {
         };
       });
     },
-    enabled: !!user && groups.length > 0,
+    enabled: !!user,
   });
 
   // ─── Group stats ───
@@ -239,19 +253,31 @@ const MonitoringPage = () => {
   const { data: groupEleves = [], isLoading: loadingEleves } = useQuery({
     queryKey: ["monitoring-group-eleves", selectedGroupId],
     queryFn: async () => {
-      const { data: members } = await supabase.from("group_members").select("eleve_id").eq("group_id", selectedGroupId!);
+      const { data: members, error: membersErr } = await supabase.from("group_members")
+        .select("eleve_id, profiles!group_members_eleve_id_fkey(id, nom, prenom)")
+        .eq("group_id", selectedGroupId!);
+      if (membersErr) throw membersErr;
       if (!members?.length) return [];
       const ids = members.map(m => m.eleve_id);
-      const { data: profiles } = await supabase.from("profiles").select("id, nom, prenom").in("id", ids);
       const { data: profils } = await supabase.from("profils_eleves").select("*").in("eleve_id", ids);
       const { data: levels } = await supabase.from("student_competency_levels").select("*").in("eleve_id", ids);
       const profilMap = Object.fromEntries((profils ?? []).map(p => [p.eleve_id, p]));
       const levelMap: Record<string, any[]> = {};
       (levels ?? []).forEach(l => { (levelMap[l.eleve_id] = levelMap[l.eleve_id] || []).push(l); });
-      return (profiles ?? []).map(p => ({ ...p, profil: profilMap[p.id] || null, levels: levelMap[p.id] || [] }));
+      return members
+        .map(m => {
+          const p = m.profiles as { id: string; nom: string; prenom: string } | null;
+          if (!p?.id) return null;
+          return { ...p, profil: profilMap[p.id] || null, levels: levelMap[p.id] || [] };
+        })
+        .filter(Boolean) as Array<{ id: string; nom: string; prenom: string; profil: any; levels: any[] }>;
     },
     enabled: !!selectedGroupId,
   });
+
+  const { data: preparationData, isLoading: loadingPreparation } = useGroupeReadinessFiche(
+    preparationGroupId || undefined,
+  );
 
   // ─── Détection "élève en avance" (formateur uniquement) ───
   const advancedEleveIds = useMemo(() => {
@@ -911,8 +937,18 @@ const MonitoringPage = () => {
                                 ? <Badge variant="destructive">{Math.round(Number(p.score_risque))}</Badge>
                                 : <Badge variant="secondary">{p ? Math.round(Number(p.score_risque)) : 0}</Badge>}
                             </TableCell>
-                            <TableCell className="text-right">
-                              <Button variant="ghost" size="sm" className="gap-1">Profil <ChevronRight className="h-3.5 w-3.5" /></Button>
+                            <TableCell className="text-right space-x-1">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="gap-1"
+                                onClick={(e) => { e.stopPropagation(); navigate(`/formateur/preparation-examen/eleve/${e.id}`); }}
+                              >
+                                <GraduationCap className="h-3.5 w-3.5" /> IPE
+                              </Button>
+                              <Button variant="ghost" size="sm" className="gap-1" onClick={() => goToEleveDetail(e.id)}>
+                                Profil <ChevronRight className="h-3.5 w-3.5" />
+                              </Button>
                             </TableCell>
                           </TableRow>
                         );
@@ -933,9 +969,20 @@ const MonitoringPage = () => {
   // ══════════════════════════════════════════════════════════════
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Monitoring</h1>
-        <p className="text-muted-foreground mt-1">Analyse comparative de vos groupes et élèves</p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Monitoring</h1>
+          <p className="text-muted-foreground mt-1">Analyse comparative de vos groupes et élèves</p>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-2 shrink-0"
+          onClick={() => navigate("/formateur/preparation-examen")}
+        >
+          <GraduationCap className="h-4 w-4" />
+          Préparation examen (IPE)
+        </Button>
       </div>
 
       {/* Search bar — always visible */}
@@ -951,10 +998,11 @@ const MonitoringPage = () => {
 
       {/* View mode tabs */}
       <Tabs value={viewMode === "hub" ? "hub" : viewMode} onValueChange={(v) => { setViewMode(v as ViewMode); setSearchQuery(""); }}>
-        <TabsList className="w-full sm:w-auto">
+        <TabsList className="w-full sm:w-auto flex-wrap h-auto">
           <TabsTrigger value="hub" className="gap-1.5"><LayoutGrid className="h-4 w-4" /> Hub</TabsTrigger>
           <TabsTrigger value="groupes" className="gap-1.5"><Users className="h-4 w-4" /> Vue par Groupes</TabsTrigger>
           <TabsTrigger value="eleves" className="gap-1.5"><User className="h-4 w-4" /> Vue par Élèves</TabsTrigger>
+          <TabsTrigger value="preparation" className="gap-1.5"><GraduationCap className="h-4 w-4" /> Préparation IPE</TabsTrigger>
         </TabsList>
 
         {/* ─── HUB ─── */}
@@ -1176,6 +1224,98 @@ const MonitoringPage = () => {
                     })}
                   </TableBody>
                 </Table>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* ─── PRÉPARATION IPE ─── */}
+        <TabsContent value="preparation" className="space-y-4">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base flex items-center gap-2">
+                <GraduationCap className="h-4 w-4" />
+                Préparation examen (IPE)
+              </CardTitle>
+              <CardDescription>
+                Sélectionnez un groupe, puis un élève pour consulter sa fiche de progression IPE.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="max-w-md">
+                <p className="text-sm font-medium mb-2">1. Choisir un groupe</p>
+                <Select
+                  value={preparationGroupId}
+                  onValueChange={setPreparationGroupId}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionner un groupe…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {groups.map(g => (
+                      <SelectItem key={g.id} value={g.id}>{g.nom}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {!preparationGroupId ? (
+                <p className="text-sm text-muted-foreground py-6 text-center">
+                  Choisissez un groupe pour afficher la liste des élèves et leurs scores IPE.
+                </p>
+              ) : loadingPreparation ? (
+                <div className="space-y-3">{[1, 2, 3].map(i => <Skeleton key={i} className="h-14 w-full" />)}</div>
+              ) : (preparationData?.students.length ?? 0) === 0 ? (
+                <p className="text-sm text-muted-foreground py-6 text-center">
+                  Aucun élève dans ce groupe. Ajoutez des élèves depuis « Groupes & Élèves ».
+                </p>
+              ) : (
+                <>
+                  <p className="text-sm font-medium">2. Élèves du groupe — cliquez pour ouvrir la fiche IPE</p>
+                  {preparationData?.medianIpe != null && (
+                    <p className="text-sm text-muted-foreground">
+                      IPE médian du groupe : <span className="font-semibold text-foreground">{preparationData.medianIpe}/100</span>
+                    </p>
+                  )}
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Élève</TableHead>
+                        <TableHead className="text-right">IPE global</TableHead>
+                        <TableHead>Bande</TableHead>
+                        <TableHead className="w-10" />
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {preparationData!.students.map(s => (
+                        <TableRow
+                          key={s.eleveId}
+                          className="cursor-pointer hover:bg-muted/50"
+                          onClick={() => navigate(`/formateur/preparation-examen/eleve/${s.eleveId}`)}
+                        >
+                          <TableCell className="font-medium">{s.nom}</TableCell>
+                          <TableCell className="text-right tabular-nums">
+                            {s.confiance === "insuffisante" || s.globalScore == null
+                              ? "—"
+                              : Math.round(s.globalScore)}
+                          </TableCell>
+                          <TableCell>
+                            {s.bande ? (
+                              <Badge variant="outline" className="text-xs">
+                                {BANDE_LABELS[s.bande as ReadinessBande] ?? s.bande}
+                              </Badge>
+                            ) : (
+                              <span className="text-xs text-muted-foreground">Données insuffisantes</span>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </>
               )}
             </CardContent>
           </Card>

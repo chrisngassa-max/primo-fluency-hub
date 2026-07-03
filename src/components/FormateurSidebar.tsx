@@ -66,11 +66,11 @@ const pilotageNav = [
   { title: "Bibliothèque interventions", url: "/formateur/bibliotheque-interventions", icon: BookMarked },
   { title: "Suivi en direct", url: "/formateur/suivi-direct", icon: Eye },
   { title: "Suivi des élèves", url: "/formateur/monitoring", icon: TrendingUp },
+  { title: "Préparation examen (IPE)", url: "/formateur/preparation-examen", icon: GraduationCap },
   { title: "Suivi des devoirs", url: "/formateur/suivi-devoirs", icon: ListChecks },
 ];
 
 const analysesNav = [
-  { title: "Préparation examen", url: "/formateur/preparation-examen", icon: GraduationCap },
   { title: "Positionnement", url: "/formateur/positionnement", icon: ListChecks },
   { title: "Résultats de positionnement", url: "/formateur/test-resultats", icon: GraduationCap },
   { title: "Bilans d'atelier", url: "/formateur/bilans-atelier", icon: BookMarked },
