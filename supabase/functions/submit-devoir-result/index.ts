@@ -18,6 +18,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { corrigerExerciceServer } from "../_shared/correction-server.ts";
 import { classifyAndEmitErrors } from "../_shared/classifyAndEmitErrors.ts";
+import { resolveLiveSessionId } from "../_shared/resolveLiveSessionId.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -243,8 +244,12 @@ Deno.serve(async (req) => {
 
   // Sprint 3 : classification taxonomique + émission live events
   // Fire-and-forget : on ne bloque pas la réponse si ça échoue.
-  const liveSessionId: string | null =
-    (devoir as any)?.session_id ?? body.session_id ?? null;
+  const liveSessionId = await resolveLiveSessionId(admin, {
+    devoirSessionId: (devoir as any)?.session_id ?? null,
+    bodySessionId: body.session_id ?? null,
+    exerciceId: ex.id,
+    eleveId: userId,
+  });
 
   if (liveSessionId) {
     classifyAndEmitErrors({

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Eye, Volume2 } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -9,6 +9,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
+import { emitLiveEvent } from "@/lib/liveEventEmitter";
+import { RandomClickDetector } from "@/lib/randomClickDetector";
 
 export interface PreviewExercise {
   titre?: string;
@@ -26,6 +28,9 @@ interface Props {
   exercise: PreviewExercise | null;
   interactive?: boolean;
   onTestComplete?: () => void;
+  /** Contexte séance live — émission clic_aleatoire_probable si fourni */
+  sessionId?: string | null;
+  eleveId?: string | null;
 }
 
 function getContenu(exercise: PreviewExercise) {
@@ -46,14 +51,18 @@ export default function ExerciseStudentPreviewDialog({
   exercise,
   interactive = false,
   onTestComplete,
+  sessionId,
+  eleveId,
 }: Props) {
   const [page, setPage] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const randomClickRef = useRef(new RandomClickDetector());
 
   useEffect(() => {
     if (open) {
       setPage(0);
       setAnswers({});
+      randomClickRef.current.reset();
     }
   }, [open, exercise]);
 
@@ -63,6 +72,26 @@ export default function ExerciseStudentPreviewDialog({
     : [];
   const totalPages = items.length;
   const currentItem = items[page] as Record<string, unknown> | undefined;
+
+  const handleAnswerChange = (value: string) => {
+    setAnswers((current) => ({ ...current, [String(page)]: value }));
+    if (!interactive || !sessionId || !eleveId || !currentItem) return;
+    const options = currentItem.options as string[] | undefined;
+    if (!Array.isArray(options)) return;
+    const isCorrect = value === String(currentItem.bonne_reponse ?? "");
+    if (!randomClickRef.current.record(page, isCorrect)) return;
+    void emitLiveEvent({
+      sessionId,
+      eleveId,
+      eventType: "clic_aleatoire_probable",
+      payload: {
+        exercice_id: exercise?.titre,
+        item_indices: [page - 2, page - 1, page].filter((n) => n >= 0),
+        pattern: "3_reponses_rapides_score_faible",
+        source: "preview_dialog",
+      },
+    });
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -162,7 +191,7 @@ export default function ExerciseStudentPreviewDialog({
                         <RadioGroup
                           disabled={!interactive}
                           value={answers[String(page)] ?? ""}
-                          onValueChange={(value) => setAnswers((current) => ({ ...current, [String(page)]: value }))}
+                          onValueChange={handleAnswerChange}
                           className="space-y-1"
                         >
                           {(currentItem.options as string[]).map((opt, oi) => {

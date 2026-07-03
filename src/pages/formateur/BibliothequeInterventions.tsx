@@ -83,6 +83,11 @@ const ERREUR_LABELS: Record<string, string> = {
   PRODUCTION_COURTE: "Prod. courte",
   REGISTRE: "Registre",
   COHERENCE_ADMIN: "Cohérence admin.",
+  CO_DISCRIMINATION: "Discrimination CO",
+  METHODO_REPERAGE: "Repérage CE",
+  STRUCT_CONJ: "Conjugaison ST",
+  STRUCT_MORPHO: "Morphosyntaxe ST",
+  STRUCT_CONNECTEURS: "Connecteurs",
 };
 
 const EMPTY_FORM = {

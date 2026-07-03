@@ -93,6 +93,11 @@ const EXERCISES_TOOL = [
                         properties: {
                           question: { type: "string" },
                           options: { type: "array", items: { type: "string" } },
+                          piege_phono: {
+                            type: "array",
+                            items: { type: "boolean" },
+                            description: "CO uniquement : true si l'option correspondante est un piège phonologique",
+                          },
                           bonne_reponse: { type: "string" },
                           explication: { type: "string" },
                         },
@@ -709,6 +714,8 @@ La "question" de chaque item sert uniquement de consigne ("Écoutez l'audio et r
 | CO2  | Sujet global            | Message répondeur : annulation cours, décalage RDV médical   | 50 s      |
 | CO3  | Consignes / Règles      | Instruction directe : "Veuillez patienter…", "Signez le…"   | 45 s      |
 | CO4  | Info chiffrée           | Annonce micro : horaires train, prix au marché, n° de quai  | 50 s      |
+
+Pour les exercices CO (QCM), tague chaque distracteur phonologiquement proche de la bonne réponse avec "piege_phono": true dans l'item (tableau parallèle aux options, ou objet options_meta). Exemple : si la bonne réponse est "lundi" et un distracteur est "dimanche" → pas de piège ; si c'est "lundi" vs "lundis" → piege_phono. Ce tag alimente CO_DISCRIMINATION en correction.
 
 ### COMPRÉHENSION ÉCRITE (CE) — texte support + image OBLIGATOIRES
 Le champ "texte" est OBLIGATOIRE : panneau, SMS, emploi du temps, courrier…

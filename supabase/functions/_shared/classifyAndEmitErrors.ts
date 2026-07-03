@@ -3,7 +3,7 @@
  * classifyAndEmitErrors — Sprint 3
  *
  * Appelle Claude pour classer chaque item incorrect dans la taxonomie
- * des 11 types d'erreur, puis insère les événements session_live_events
+ * des 16 types d'erreur, puis insère les événements session_live_events
  * correspondants (reponse_correcte / reponse_incorrecte avec type_erreur_id).
  *
  * Conçu pour être appelé en fire-and-forget depuis submit-devoir-result
@@ -19,22 +19,9 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { checkConsent, logAICall } from "./check-consent.ts";
 import { hasPseudonymSecret, pseudonymizeProductionText } from "./pseudonymize.ts";
 import { buildLiveEventsToInsert } from "./classifyAndEmitEventsBuilder.ts";
+import { TAXONOMIE_COURTE } from "./taxonomieCourte.ts";
 
 const FUNCTION_NAME = "classifyAndEmitErrors";
-
-const TAXONOMIE_COURTE = `
-LEX_CONFUSION    — Faux ami, paronyme, mot dans le mauvais contexte (CO, CE, EE)
-CONSIGNE_NC      — La réponse ne respecte pas la tâche demandée (toutes compétences)
-GRAM_ACCORD      — Accord sujet-verbe ou nom-adjectif incorrect (EE)
-GRAM_TEMPS       — Temps verbal inadéquat (EE, EO)
-HORS_SUJET       — La production ne répond pas à la situation (EE, EO)
-INTERPRETATION   — Contresens sur un document écrit ou audio (CE, CO)
-JUSTIFICATION    — Absence d'arguments ou justification insuffisante (EE, EO)
-PHONO            — Erreur de son qui gêne la compréhension (EO)
-PRODUCTION_COURTE — Nombre de mots ou durée insuffisants (EE, EO)
-REGISTRE         — Tutoiement au lieu du vouvoiement, ton inadapté (EE, EO)
-COHERENCE_ADMIN  — Incohérence formulaire (ex: date dans champ téléphone)
-`.trim();
 
 export interface ClassifyOpts {
   sessionId: string;

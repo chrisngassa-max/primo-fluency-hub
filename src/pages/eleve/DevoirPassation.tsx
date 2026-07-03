@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { updateProfilEleve } from "@/lib/updateProfilEleve";
@@ -48,6 +48,8 @@ import {
   queueSubmission,
   saveExerciseDraft,
 } from "@/lib/offlineExercise";
+import { eeWordCountStatus, resolveEeMinWords } from "@/lib/eeWordCount";
+import { RandomClickDetector } from "@/lib/randomClickDetector";
 
 type DifficultyFelt = "facile" | "correct" | "trop_difficile";
 
@@ -247,6 +249,24 @@ const DevoirPassation = () => {
 
   const isCompetenceCO = ex?.competence === "CO";
   const isCompetenceEO = ex?.competence === "EO" || contenu?.type_reponse === "oral" || ex?.format === "production_orale";
+  const isCompetenceEE = ex?.competence === "EE" || ex?.format === "production_ecrite";
+  const eeMinWords = useMemo(
+    () => (isCompetenceEE ? resolveEeMinWords({
+      consigne: ex?.consigne,
+      metadataCode: ex?.metadata_code ?? metadata?.code,
+      contenu,
+    }) : null),
+    [isCompetenceEE, ex?.consigne, ex?.metadata_code, metadata?.code, contenu],
+  );
+  const eeProductionText = useMemo(() => {
+    if (!isCompetenceEE) return "";
+    return Object.values(answers).filter((v) => typeof v === "string").join(" ");
+  }, [isCompetenceEE, answers]);
+  const eeWordStatus = useMemo(() => {
+    if (!isCompetenceEE || eeMinWords == null) return null;
+    return eeWordCountStatus(eeProductionText, eeMinWords);
+  }, [isCompetenceEE, eeMinWords, eeProductionText]);
+  const randomClickRef = useRef(new RandomClickDetector());
   const scriptAudio = contenu?.script_audio;
   const maxAudioPlays = ex?.nombre_ecoutes_max ?? metadata?.nombre_ecoutes_max ?? null;
   const transcriptLocked = ex?.transcription_verrouillee
@@ -294,6 +314,7 @@ const DevoirPassation = () => {
     setHasListened(false);
     setAudioPlayCount(0);
     setShowTranscript(false);
+    randomClickRef.current.reset();
   }, [ex?.id]);
 
   // Timer logic
@@ -598,8 +619,29 @@ const DevoirPassation = () => {
     }
   }, [devoir, ex, user, audioBlob, devoirId, contenu, metadata, draftKey, navigate]);
 
+  const maybeEmitRandomClick = useCallback((item: any, idx: number, chosen: string) => {
+    const sessionId = (devoir as any)?.session_id as string | null;
+    if (!sessionId || !user?.id) return;
+    const isCorrect = String(chosen) === String(item.bonne_reponse);
+    if (!randomClickRef.current.record(idx, isCorrect)) return;
+    void emitLiveEvent({
+      sessionId,
+      eleveId: user.id,
+      eventType: "clic_aleatoire_probable",
+      payload: {
+        exercice_id: ex?.id,
+        item_indices: [idx - 2, idx - 1, idx].filter((n) => n >= 0),
+        pattern: "3_reponses_rapides_score_faible",
+      },
+    });
+  }, [devoir, user?.id, ex?.id]);
+
   const handleSubmit = useCallback(async () => {
     if (!devoir || !ex || !user) return;
+    if (eeWordStatus && !eeWordStatus.ok) {
+      toast.error("Production trop courte", { description: eeWordStatus.message });
+      return;
+    }
     if (!navigator.onLine && draftKey) {
       await queueSubmission({
         key: draftKey,
@@ -625,6 +667,7 @@ const DevoirPassation = () => {
           body: {
             devoir_id: devoirId!,
             answers,
+            session_id: (devoir as any)?.session_id ?? undefined,
           },
         }
       );
@@ -691,7 +734,7 @@ const DevoirPassation = () => {
     } finally {
       setSubmitting(false);
     }
-  }, [devoir, ex, user, items, answers, devoirId, draftKey, navigate]);
+  }, [devoir, ex, user, items, answers, devoirId, draftKey, navigate, eeWordStatus]);
 
   // Format timer display
   const formatTime = (seconds: number) => {
@@ -993,7 +1036,10 @@ const DevoirPassation = () => {
                 {Array.isArray(item.options) && item.options.length > 0 ? (
                   <div className="space-y-2">
                     {item.options.map((opt: string, oi: number) => {
-                      const selectOption = () => setAnswers((prev) => ({ ...prev, [idx]: opt }));
+                      const selectOption = () => {
+                        setAnswers((prev) => ({ ...prev, [idx]: opt }));
+                        maybeEmitRandomClick(item, idx, opt);
+                      };
                       return (
                         <div
                           key={oi}
@@ -1084,7 +1130,24 @@ const DevoirPassation = () => {
             </Card>
           ))}
 
-          <Button onClick={handleSubmit} disabled={submitting || coLocked} className="w-full gap-2" size="xxl">
+          {isCompetenceEE && eeWordStatus && (
+            <p
+              className={cn(
+                "text-sm text-center",
+                eeWordStatus.ok ? "text-muted-foreground" : "text-destructive font-medium",
+              )}
+              aria-live="polite"
+            >
+              {eeWordStatus.message}
+            </p>
+          )}
+
+          <Button
+            onClick={handleSubmit}
+            disabled={submitting || coLocked || (eeWordStatus != null && !eeWordStatus.ok)}
+            className="w-full gap-2"
+            size="xxl"
+          >
             {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             Soumettre mes réponses
           </Button>
