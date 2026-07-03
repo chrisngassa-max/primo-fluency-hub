@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
+import { HashRouter, Navigate, Route, Routes, useParams } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -74,8 +74,16 @@ import PlayExercise from "@/pages/PlayExercise";
 import AnalyticsErreursPage from "@/pages/formateur/AnalyticsErreursPage";
 import AuthRelayReset from "@/pages/AuthRelayReset";
 import SandboxControlPanel from "@/pages/formateur/SandboxControlPanel";
+import PreparationExamenHubPage from "@/pages/formateur/PreparationExamenHubPage";
+import FicheEleveIpePage from "@/pages/formateur/FicheEleveIpePage";
+import FicheGroupeIpePage from "@/pages/formateur/FicheGroupeIpePage";
 
 const queryClient = new QueryClient();
+
+function EleveFicheRedirect() {
+  const { eleveId } = useParams<{ eleveId: string }>();
+  return <Navigate to={`/formateur/preparation-examen/eleve/${eleveId}`} replace />;
+}
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -171,6 +179,13 @@ const App = () => (
               <Route path="bilans-atelier" element={<BilansAtelierPage />} />
               <Route path="positionnement" element={<PositionnementPage />} />
               <Route path="analytics-erreurs" element={<AnalyticsErreursPage />} />
+              <Route path="preparation-examen" element={<PreparationExamenHubPage />} />
+              <Route path="preparation-examen/eleve/:eleveId" element={<FicheEleveIpePage />} />
+              <Route path="preparation-examen/groupe/:groupeId" element={<FicheGroupeIpePage />} />
+              <Route
+                path="eleves/:eleveId/fiche"
+                element={<EleveFicheRedirect />}
+              />
               <Route path="parametres" element={<Parametres />} />
               <Route path="sandbox" element={<SandboxControlPanel />} />
             </Route>

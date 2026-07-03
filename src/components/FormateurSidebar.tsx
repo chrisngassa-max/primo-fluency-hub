@@ -70,6 +70,7 @@ const pilotageNav = [
 ];
 
 const analysesNav = [
+  { title: "Préparation examen", url: "/formateur/preparation-examen", icon: GraduationCap },
   { title: "Positionnement", url: "/formateur/positionnement", icon: ListChecks },
   { title: "Résultats de positionnement", url: "/formateur/test-resultats", icon: GraduationCap },
   { title: "Bilans d'atelier", url: "/formateur/bilans-atelier", icon: BookMarked },

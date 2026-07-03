@@ -18,9 +18,11 @@ import {
   RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,
   LineChart, Line, Legend, ReferenceLine,
 } from "recharts";
+import { useNavigate } from "react-router-dom";
 import {
   Users, TrendingUp, Target, AlertTriangle, ChevronRight, Sparkles, Loader2, ArrowLeft,
   Brain, BookOpen, XCircle, GitCompareArrows, Crosshair, Info, Search, LayoutGrid, User,
+  GraduationCap,
 } from "lucide-react";
 import { DifficultyBadge } from "@/components/DifficultyBadge";
 import { format } from "date-fns";
@@ -69,6 +71,7 @@ type ViewMode = "hub" | "groupes" | "eleves";
 
 const MonitoringPage = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [viewMode, setViewMode] = useState<ViewMode>("hub");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
@@ -522,6 +525,15 @@ const MonitoringPage = () => {
             </Button>
             <Button variant="outline" size="sm" onClick={() => { setSelectedEleveId(null); setSelectedGroupId(null); setViewMode("eleves"); }}>
               <User className="h-4 w-4 mr-1" /> Élèves
+            </Button>
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => navigate(`/formateur/preparation-examen/eleve/${selectedEleveId}`)}
+              className="gap-2"
+            >
+              <GraduationCap className="h-4 w-4" />
+              Fiche IPE
             </Button>
             <Button onClick={handleAiAdvice} disabled={aiLoading} className="gap-2">
               {aiLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
