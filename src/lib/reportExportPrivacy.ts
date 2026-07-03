@@ -149,6 +149,11 @@ export async function fetchGroupStudentsForReports(
   supabase: SupabaseClient,
   groupId: string,
 ): Promise<StudentProfile[]> {
+  const edgeProfiles = await fetchProfilesViaEdgeFunction(supabase, groupId);
+  if (edgeProfiles.length > 0) {
+    return sortStudents(edgeProfiles);
+  }
+
   const { data: members, error: membersErr } = await supabase
     .from("group_members")
     .select("eleve_id")
@@ -158,21 +163,12 @@ export async function fetchGroupStudentsForReports(
   const ids = [...new Set(((members ?? []) as { eleve_id: string }[]).map((m) => m.eleve_id).filter(Boolean))];
   if (!ids.length) return [];
 
-  const [directProfiles, joinProfiles, edgeProfiles] = await Promise.all([
+  const [directProfiles, joinProfiles] = await Promise.all([
     fetchProfilesForEleveIds(supabase, ids),
     fetchProfilesViaGroupMembersJoin(supabase, groupId),
-    fetchProfilesViaEdgeFunction(supabase, groupId),
   ]);
 
-  const namedCount = new Set(
-    [...directProfiles, ...joinProfiles, ...edgeProfiles].filter((p) => p.prenom || p.nom).map((p) => p.id),
-  ).size;
-
-  if (namedCount === 0 && directProfiles.length === 0 && joinProfiles.length === 0 && edgeProfiles.length === 0) {
-    return sortStudents(ids.map((id) => ({ id, prenom: null, nom: null })));
-  }
-
-  return mergeStudentProfiles(ids, [directProfiles, joinProfiles, edgeProfiles]);
+  return mergeStudentProfiles(ids, [directProfiles, joinProfiles]);
 }
 
 export const PERIODE_DEPUIS_DEBUT = "depuis_le_debut";

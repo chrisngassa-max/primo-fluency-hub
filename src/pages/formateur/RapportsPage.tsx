@@ -583,8 +583,8 @@ Sujets_Echoues_Majoritairement: ${sujetsEchoues.length > 0 ? sujetsEchoues.join(
                       </SelectContent>
                     </Select>
                     {selectedGroup && !loadingEleves && eleves?.length === 0 && !elevesError && (
-                      <p className="text-xs text-muted-foreground">
-                        Aucun élève trouvé. Ajoutez des membres depuis « Groupes &amp; Élèves ».
+                      <p className="text-xs text-amber-700 dark:text-amber-400">
+                        Aucun élève dans ce groupe — inscrivez des élèves dans Gestion → Groupes.
                       </p>
                     )}
                   </>
