@@ -1,5 +1,7 @@
 /** Labels for reports exported to external AI tools. */
 
+import type { SupabaseClient } from "@supabase/supabase-js";
+
 export type StudentProfile = {
   id: string;
   prenom?: string | null;
@@ -51,16 +53,100 @@ export function collectQueryErrors(
   return errors;
 }
 
-/** Fetch students of a group with join fallback (RLS-safe). */
+type EdgeGroupMember = {
+  group_id: string;
+  eleve_id: string;
+  eleve?: { id: string; prenom?: string | null; nom?: string | null } | null;
+};
+
+function sortStudents(students: StudentProfile[]): StudentProfile[] {
+  return [...students].sort((a, b) =>
+    formatStudentRealName(a).localeCompare(formatStudentRealName(b), "fr"),
+  );
+}
+
+function profileFromMemberRow(row: {
+  eleve_id: string;
+  profiles?: StudentProfile | StudentProfile[] | null;
+  eleve?: StudentProfile | null;
+}): StudentProfile | null {
+  const embedded = row.profiles ?? row.eleve;
+  if (!embedded) return null;
+  if (Array.isArray(embedded)) {
+    const first = embedded.find((p) => p?.id);
+    return first?.id ? first : null;
+  }
+  return embedded.id ? embedded : null;
+}
+
+async function fetchProfilesForEleveIds(
+  supabase: SupabaseClient,
+  ids: string[],
+): Promise<StudentProfile[]> {
+  if (!ids.length) return [];
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id, prenom, nom")
+    .in("id", ids);
+  if (error) throw error;
+  return (data ?? []) as StudentProfile[];
+}
+
+async function fetchProfilesViaGroupMembersJoin(
+  supabase: SupabaseClient,
+  groupId: string,
+): Promise<StudentProfile[]> {
+  const { data, error } = await supabase
+    .from("group_members")
+    .select("eleve_id, profiles!group_members_eleve_id_fkey(id, prenom, nom)")
+    .eq("group_id", groupId);
+  if (error) return [];
+
+  const profiles: StudentProfile[] = [];
+  for (const row of data ?? []) {
+    const profile = profileFromMemberRow(row as { eleve_id: string; profiles?: StudentProfile | null });
+    if (profile) profiles.push(profile);
+  }
+  return profiles;
+}
+
+async function fetchProfilesViaEdgeFunction(
+  supabase: SupabaseClient,
+  groupId: string,
+): Promise<StudentProfile[]> {
+  const { data, error } = await supabase.functions.invoke<{ members?: EdgeGroupMember[]; error?: string }>(
+    "formateur-group-members",
+  );
+  if (error || data?.error) return [];
+
+  return (data?.members ?? [])
+    .filter((member) => member.group_id === groupId && member.eleve?.id)
+    .map((member) => ({
+      id: member.eleve!.id,
+      prenom: member.eleve!.prenom,
+      nom: member.eleve!.nom,
+    }));
+}
+
+function mergeStudentProfiles(
+  ids: string[],
+  sources: StudentProfile[][],
+): StudentProfile[] {
+  const byId = new Map<string, StudentProfile>();
+  for (const source of sources) {
+    for (const profile of source) {
+      if (profile?.id) byId.set(profile.id, profile);
+    }
+  }
+  for (const id of ids) {
+    if (!byId.has(id)) byId.set(id, { id, prenom: null, nom: null });
+  }
+  return sortStudents([...byId.values()]);
+}
+
+/** Fetch students of a group (RLS-safe with edge-function fallback). */
 export async function fetchGroupStudentsForReports(
-  supabase: {
-    from: (table: string) => {
-      select: (cols: string) => {
-        eq: (col: string, val: string) => PromiseLike<{ data: unknown; error: { message: string } | null }>;
-        in: (col: string, vals: string[]) => PromiseLike<{ data: unknown; error: { message: string } | null }>;
-      };
-    };
-  },
+  supabase: SupabaseClient,
   groupId: string,
 ): Promise<StudentProfile[]> {
   const { data: members, error: membersErr } = await supabase
@@ -69,34 +155,24 @@ export async function fetchGroupStudentsForReports(
     .eq("group_id", groupId);
   if (membersErr) throw membersErr;
 
-  const ids = ((members ?? []) as { eleve_id: string }[]).map((m) => m.eleve_id);
+  const ids = [...new Set(((members ?? []) as { eleve_id: string }[]).map((m) => m.eleve_id).filter(Boolean))];
   if (!ids.length) return [];
 
-  const { data: joined, error: joinErr } = await supabase
-    .from("group_members")
-    .select("eleve_id, profiles!group_members_eleve_id_fkey(id, prenom, nom)")
-    .eq("group_id", groupId);
-  if (joinErr) throw joinErr;
+  const [directProfiles, joinProfiles, edgeProfiles] = await Promise.all([
+    fetchProfilesForEleveIds(supabase, ids),
+    fetchProfilesViaGroupMembersJoin(supabase, groupId),
+    fetchProfilesViaEdgeFunction(supabase, groupId),
+  ]);
 
-  const fromJoin = ((joined ?? []) as { profiles: StudentProfile | null }[])
-    .map((m) => m.profiles)
-    .filter((p): p is StudentProfile => !!p?.id);
+  const namedCount = new Set(
+    [...directProfiles, ...joinProfiles, ...edgeProfiles].filter((p) => p.prenom || p.nom).map((p) => p.id),
+  ).size;
 
-  if (fromJoin.length >= ids.length) {
-    return fromJoin.sort((a, b) =>
-      formatStudentRealName(a).localeCompare(formatStudentRealName(b), "fr"),
-    );
+  if (namedCount === 0 && directProfiles.length === 0 && joinProfiles.length === 0 && edgeProfiles.length === 0) {
+    return sortStudents(ids.map((id) => ({ id, prenom: null, nom: null })));
   }
 
-  const { data: profiles, error: profErr } = await supabase
-    .from("profiles")
-    .select("id, prenom, nom")
-    .in("id", ids);
-  if (profErr) throw profErr;
-
-  return ((profiles ?? []) as StudentProfile[]).sort((a, b) =>
-    formatStudentRealName(a).localeCompare(formatStudentRealName(b), "fr"),
-  );
+  return mergeStudentProfiles(ids, [directProfiles, joinProfiles, edgeProfiles]);
 }
 
 export const PERIODE_DEPUIS_DEBUT = "depuis_le_debut";
