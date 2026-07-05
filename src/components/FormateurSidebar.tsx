@@ -66,7 +66,7 @@ const pilotageNav = [
   { title: "Bibliothèque interventions", url: "/formateur/bibliotheque-interventions", icon: BookMarked },
   { title: "Suivi en direct", url: "/formateur/suivi-direct", icon: Eye },
   { title: "Suivi des élèves", url: "/formateur/monitoring", icon: TrendingUp },
-  { title: "Préparation examen (IPE)", url: "/formateur/preparation-examen", icon: GraduationCap },
+  { title: "Préparation séjour / naturalisation", url: "/formateur/preparation-examen", icon: GraduationCap },
   { title: "Suivi des devoirs", url: "/formateur/suivi-devoirs", icon: ListChecks },
 ];
 

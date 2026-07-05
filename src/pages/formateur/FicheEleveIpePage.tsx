@@ -29,6 +29,7 @@ import {
   Sparkles,
   ListChecks,
   Info,
+  Landmark,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -175,8 +176,9 @@ const FicheEleveIpePage = () => {
         </div>
       </div>
 
-      {/* 1. Cap examen */}
-      <Card className={cn("border-2", bandStyle?.border)}>
+      {/* 1. Cap examen — Langue + Civique */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <Card className={cn("border-2 lg:col-span-2", bandStyle?.border)}>
         <CardHeader className={cn("pb-2", bandStyle?.bg)}>
           <div className="flex flex-wrap items-center justify-between gap-2">
             <CardTitle className="text-lg flex items-center gap-2">
@@ -259,6 +261,29 @@ const FicheEleveIpePage = () => {
           </p>
         </CardContent>
       </Card>
+
+      <Card className="border-2 border-dashed border-muted-foreground/30">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Landmark className="h-5 w-5" />
+            IPE Civique
+          </CardTitle>
+          <CardDescription>Examen civique — score distinct de l'IPE Langue</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div>
+            <p className="text-4xl font-bold tabular-nums text-muted-foreground">—</p>
+            <p className="text-xs text-muted-foreground">IPE Civique / 100</p>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Module en construction — QCM bientôt disponibles.
+          </p>
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/formateur/preparation-civique">Voir le parcours civique</Link>
+          </Button>
+        </CardContent>
+      </Card>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* 2. Radar + socle ST */}
