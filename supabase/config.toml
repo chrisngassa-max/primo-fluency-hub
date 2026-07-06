@@ -5,6 +5,9 @@ project_id = "gudcenhmzlcvhgbgklzw"
   additional_redirect_urls = [
     "https://captcf.fr/**",
     "https://www.captcf.fr/**",
+    "https://captcf.lovable.app/**",
+    "https://captcf.lovable.app/#/reset-password",
+    "https://captcf.lovable.app/auth/relay-reset",
     "http://localhost:3000/**",
     "http://localhost:8080/**",
     "http://127.0.0.1:3000/**",
