@@ -1,0 +1,328 @@
+{
+  "session_code": "S27",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Argumenter sur droits et libertés",
+  "support": {
+    "support_id": "S27-support",
+    "situation": "Débat B1 sur laïcité, expression et manifestation : défendre une opinion justifiée tout en connaissant les limites légales.",
+    "personnages": [
+      "Deux apprenants",
+      "Formateur modérateur"
+    ],
+    "faits": [
+      "La liberté d'expression est un droit fondamental avec des limites (diffamation, incitation à la haine).",
+      "La laïcité garantit la liberté de conscience et la neutralité de l'État.",
+      "Le droit de manifester est encadré par la déclaration préalable.",
+      "Les discriminations sont interdites et punies.",
+      "Argumenter suppose des raisons et des exemples, pas des insultes.",
+      "Les libertés s'arrêtent où commencent celles d'autrui."
+    ],
+    "nombres": [],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S27-CO-master",
+    "voice": "fr-FR-Wavenet-C",
+    "speaking_rate": 0.92,
+    "script": "Formateur : Débattez : faut-il limiter certaines manifestations ?\nApprenant A : Oui, quand la sécurité est en danger ou quand on incite à la haine. La liberté d'expression a des limites.\nApprenant B : Je suis d'accord pour la sécurité, mais la manifestation pacifique est un droit. Il faut déclarer, pas interdire sans raison.\nFormateur : Et la laïcité ?\nApprenant A : L'État est neutre. À l'école publique, pas de prosélytisme.\nApprenant B : La liberté de conscience reste. On peut croire, mais on respecte les règles communes.\nFormateur : Comment argumenter sans discriminer ?\nApprenant A : On attaque des idées, pas des personnes. Pas d'insultes.\nApprenant B : Et on cite des faits, des lois. Par exemple, la discrimination est interdite.\nFormateur : Bien. Défendez une opinion, connaissez les limites.",
+    "pauses": [
+      {
+        "after_word": 12,
+        "ms": 400
+      },
+      {
+        "after_word": 60,
+        "ms": 400
+      },
+      {
+        "after_word": 130,
+        "ms": 500
+      }
+    ]
+  },
+  "visual": {
+    "resource_id": "S27-VIS-master",
+    "alt_text": "Balance entre liberté d'expression et limites légales.",
+    "scene": {
+      "title": "Libertés et limites",
+      "width": 900,
+      "height": 240,
+      "background": "#ffffff",
+      "elements": [
+        {
+          "type": "rect",
+          "x": 200,
+          "y": 60,
+          "width": 500,
+          "height": 100,
+          "rx": 10,
+          "fill": "#e0e7ff"
+        },
+        {
+          "type": "text",
+          "x": 450,
+          "y": 115,
+          "anchor": "middle",
+          "fontSize": 16,
+          "text": "Expression · Laïcité · Manifestation"
+        }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S27-LEX-A1-B2",
+    "mots": [
+      {
+        "mot": "liberté",
+        "definition_simple": "Droit d'agir dans le cadre de la loi.",
+        "exemple": "Liberté d'expression."
+      },
+      {
+        "mot": "laïcité",
+        "definition_simple": "Neutralité de l'État, liberté de conscience.",
+        "exemple": "Laïcité à l'école."
+      },
+      {
+        "mot": "manifestation",
+        "definition_simple": "Rassemblement public pour exprimer une opinion.",
+        "exemple": "Manifestation déclarée."
+      },
+      {
+        "mot": "limite",
+        "definition_simple": "Frontière légale d'un droit.",
+        "exemple": "Limites de l'expression."
+      },
+      {
+        "mot": "discrimination",
+        "definition_simple": "Traitement inégal injustifié.",
+        "exemple": "Discrimination interdite."
+      },
+      {
+        "mot": "argument",
+        "definition_simple": "Raison à l'appui d'une opinion.",
+        "exemple": "Argumenter avec des faits."
+      },
+      {
+        "mot": "diffamation",
+        "definition_simple": "Attaque injurieuse contre quelqu'un.",
+        "exemple": "Limite de l'expression."
+      },
+      {
+        "mot": "opinion",
+        "definition_simple": "Point de vue personnel.",
+        "exemple": "Défendre son opinion."
+      },
+      {
+        "mot": "pacifique",
+        "definition_simple": "Sans violence.",
+        "exemple": "Manifestation pacifique."
+      }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Vrai/faux sur libertés et limites.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "La discrimination est :",
+          "options": [
+            "Interdite",
+            "Encouragée",
+            "Obligatoire"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "L'expression a des limites."
+        }
+      ],
+      "corrige": {
+        "q1": "Interdite",
+        "q2": true
+      }
+    },
+    "A2": {
+      "consigne": "Exprimez un avis simple sur la manifestation.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Laïcité à l'école publique :",
+          "options": [
+            "Neutralité de l'État",
+            "Obligation religieuse",
+            "Pas de règles"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Un droit de manifester ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Neutralité de l'État",
+        "q2": "Oui, encadré par déclaration."
+      }
+    },
+    "B1": {
+      "consigne": "Défendez une opinion sur laïcité ou expression.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Opinion argumentée sur un droit."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Citez une limite légale."
+        }
+      ],
+      "corrige": {
+        "q1": "Avis + raisons.",
+        "q2": "Diffamation, haine, sécurité."
+      }
+    },
+    "B2": {
+      "consigne": "Intégrez une objection et concluez.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Répondez à une objection sur la laïcité."
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Nuancez liberté vs sécurité en manifestation."
+        }
+      ],
+      "corrige": {
+        "q1": "Réponse ouverte.",
+        "q2": "Réponse ouverte."
+      }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S27-QCM-civique",
+    "mention": "CR",
+    "theme": "Droits et devoirs",
+    "questions": [
+      {
+        "notion": "expression",
+        "type": "connaissance",
+        "enonce": "La liberté d'expression :",
+        "options": [
+          "A des limites légales",
+          "N'a aucune limite",
+          "N'existe pas"
+        ],
+        "reponse": "A des limites légales",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "laïcité",
+        "type": "connaissance",
+        "enonce": "La laïcité implique :",
+        "options": [
+          "Neutralité de l'État",
+          "Une religion d'État",
+          "Interdiction de croire"
+        ],
+        "reponse": "Neutralité de l'État",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "manifestation",
+        "type": "mise_en_situation",
+        "enonce": "Manifester pacifiquement demande :",
+        "options": [
+          "Un cadre légal (déclaration)",
+          "Aucune règle",
+          "Une armure"
+        ],
+        "reponse": "Un cadre légal (déclaration)",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "discrimination",
+        "type": "connaissance",
+        "enonce": "Discriminer quelqu'un est :",
+        "options": [
+          "Interdit",
+          "Un droit",
+          "Une tradition obligatoire"
+        ],
+        "reponse": "Interdit",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "argumentation",
+        "type": "mise_en_situation",
+        "enonce": "Argumenter civiquement, c'est :",
+        "options": [
+          "Donner des raisons sans insultes",
+          "Insulter l'adversaire",
+          "Rester silencieux"
+        ],
+        "reponse": "Donner des raisons sans insultes",
+        "official_status": "simulation_pedagogique"
+      }
+    ]
+  },
+  "devoirs": {
+    "A1": "Associer droits et limites.",
+    "A2": "Paragraphe opinion simple.",
+    "B1": "Texte argumenté EE.",
+    "B2": "EO3 avec objection."
+  },
+  "formateur": {
+    "fiche_formateur": "B1 CR : argumenter laïcité, expression, manifestation. EO/EE. Limites et discriminations.",
+    "deroule_180min": [
+      {
+        "phase": "Rituel civique",
+        "duree_min": 10,
+        "description": "Droits, libertés et limites."
+      },
+      {
+        "phase": "Activation + lexique",
+        "duree_min": 20,
+        "description": "Découverte et réactivation du lexique de la séance."
+      },
+      {
+        "phase": "Support invariant CO/CE",
+        "duree_min": 50,
+        "description": "Écoute/lecture du support invariant, compréhension globale puis détaillée."
+      },
+      {
+        "phase": "Ateliers différenciés",
+        "duree_min": 60,
+        "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du même support."
+      },
+      {
+        "phase": "Production EE/EO",
+        "duree_min": 30,
+        "description": "Production selon la compétence dominante de la séance."
+      },
+      {
+        "phase": "Fixation",
+        "duree_min": 10,
+        "description": "Synthèse collective, QCM civique, devoir personnalisé."
+      }
+    ],
+    "adaptation_rules": [
+      "Modérer le débat.",
+      "Pas de propos haineux en classe.",
+      "Séparer EE/EO et civique."
+    ]
+  }
+}

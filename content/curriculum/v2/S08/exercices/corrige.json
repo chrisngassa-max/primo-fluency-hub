@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "1958",
+    "q2": true
+  },
+  "A2": {
+    "q1": "Par les citoyens (suffrage universel)",
+    "q2": "Une Constitution organise les pouvoirs et garantit les droits des citoyens."
+  },
+  "B1": {
+    "q1": "Le president est elu au suffrage universel ; le Parlement vote la loi ; le gouvernement l'applique.",
+    "q2": "L'Etat de droit soumet tout le monde a la loi, y compris les gouvernants, ce qui protege les citoyens de l'arbitraire."
+  },
+  "B2": {
+    "q1": "Reponse ouverte : stabilite, clarte, hierarchie des normes, controle de constitutionnalite.",
+    "q2": "Reponse ouverte : arbitraire, abus de pouvoir, perte des libertes ; d'ou l'importance des contre-pouvoirs."
+  }
+}

@@ -1,0 +1,382 @@
+{
+  "session_code": "S31",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Simulation CR et remédiation",
+  "support": {
+    "support_id": "S31-support",
+    "situation": "Simulation CR 40 questions sur 45 minutes, banque verrouillée, puis analyse des distracteurs et remédiation B1 ciblée.",
+    "personnages": [
+      "Apprenants B1",
+      "Formateur"
+    ],
+    "faits": [
+      "La simulation CR utilise une banque verrouillée de quarante questions.",
+      "Durée officielle : quarante-cinq minutes.",
+      "Après la simulation, on analyse les distracteurs des erreurs.",
+      "La remédiation cible les fragilités de la cohorte.",
+      "Langue B1 est réactivée avant la simulation (soixante minutes).",
+      "Aucune aide pendant la simulation CR."
+    ],
+    "nombres": [
+      40,
+      45,
+      60
+    ],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S31-CO-master",
+    "voice": "fr-FR-Wavenet-C",
+    "speaking_rate": 0.92,
+    "script": "Formateur : Séquence simulation CR. Soixante minutes de langue B1, puis quarante-cinq minutes de civique CR, banque verrouillée, sans aide.\nApprenant : Combien de questions ?\nFormateur : Quarante, comme l'examen CR. Ensuite, trente-cinq minutes pour analyser les distracteurs : pourquoi la mauvaise réponse semblait plausible.\nApprenant : Et la remédiation ?\nFormateur : Trente minutes ciblées sur les erreurs dominantes du groupe, pas une révision générale.\nApprenant : Peut-on revoir les items ?\nFormateur : Après le chronomètre seulement. Pendant l'épreuve, stratégie : connaissances rapides, situations plus longues ensuite.\nApprenant : Compris. Banque verrouillée, pas de nouvelles questions.",
+    "pauses": [
+      {
+        "after_word": 12,
+        "ms": 400
+      },
+      {
+        "after_word": 60,
+        "ms": 400
+      },
+      {
+        "after_word": 130,
+        "ms": 500
+      }
+    ]
+  },
+  "visual": {
+    "resource_id": "S31-VIS-master",
+    "alt_text": "Blocs : Langue B1 60, Simulation CR 45, Analyse 35, Remédiation 30.",
+    "scene": {
+      "title": "Simulation CR S31",
+      "width": 900,
+      "height": 240,
+      "background": "#ffffff",
+      "elements": [
+        {
+          "type": "rect",
+          "x": 40,
+          "y": 70,
+          "width": 180,
+          "height": 60,
+          "fill": "#dbeafe"
+        },
+        {
+          "type": "text",
+          "x": 130,
+          "y": 105,
+          "anchor": "middle",
+          "fontSize": 12,
+          "text": "Langue B1 60"
+        },
+        {
+          "type": "rect",
+          "x": 250,
+          "y": 70,
+          "width": 180,
+          "height": 60,
+          "fill": "#fee2e2"
+        },
+        {
+          "type": "text",
+          "x": 340,
+          "y": 105,
+          "anchor": "middle",
+          "fontSize": 12,
+          "text": "Sim CR 45"
+        },
+        {
+          "type": "rect",
+          "x": 460,
+          "y": 70,
+          "width": 200,
+          "height": 60,
+          "fill": "#fef9c3"
+        },
+        {
+          "type": "text",
+          "x": 560,
+          "y": 105,
+          "anchor": "middle",
+          "fontSize": 11,
+          "text": "Distracteurs 35"
+        },
+        {
+          "type": "rect",
+          "x": 690,
+          "y": 70,
+          "width": 170,
+          "height": 60,
+          "fill": "#ede9fe"
+        },
+        {
+          "type": "text",
+          "x": 775,
+          "y": 105,
+          "anchor": "middle",
+          "fontSize": 12,
+          "text": "Reméd. 30"
+        },
+        {
+          "type": "text",
+          "x": 450,
+          "y": 180,
+          "anchor": "middle",
+          "fontSize": 13,
+          "text": "Banque verrouillée 40/45"
+        }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S31-LEX-A1-B2",
+    "mots": [
+      {
+        "mot": "simulation",
+        "definition_simple": "Reproduction de l'examen.",
+        "exemple": "Simulation CR."
+      },
+      {
+        "mot": "verrouillée",
+        "definition_simple": "Fixée, non modifiable.",
+        "exemple": "Banque verrouillée."
+      },
+      {
+        "mot": "distracteur",
+        "definition_simple": "Réponse piège.",
+        "exemple": "Analyser un distracteur."
+      },
+      {
+        "mot": "remédiation",
+        "definition_simple": "Correction ciblée.",
+        "exemple": "Remédiation B1."
+      },
+      {
+        "mot": "cohorte",
+        "definition_simple": "Le groupe d'apprenants.",
+        "exemple": "Fragilités de la cohorte."
+      },
+      {
+        "mot": "chronomètre",
+        "definition_simple": "Mesure du temps imparti.",
+        "exemple": "Quarante-cinq minutes."
+      },
+      {
+        "mot": "stratégie",
+        "definition_simple": "Organisation du temps.",
+        "exemple": "Stratégie CR."
+      },
+      {
+        "mot": "fragilité",
+        "definition_simple": "Point faible récurrent.",
+        "exemple": "Cibler une fragilité."
+      },
+      {
+        "mot": "analyse",
+        "definition_simple": "Examen détaillé des erreurs.",
+        "exemple": "Analyse des distracteurs."
+      }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Lisez le planning simulation CR.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Durée simulation CR :",
+          "options": [
+            "45 min",
+            "10 min",
+            "120 min"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "La banque est verrouillée."
+        }
+      ],
+      "corrige": {
+        "q1": "45 min",
+        "q2": true
+      }
+    },
+    "A2": {
+      "consigne": "Expliquez la phase analyse distracteurs.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Nombre de questions CR :",
+          "options": [
+            "40",
+            "5",
+            "100"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Que fait-on en remédiation ?"
+        }
+      ],
+      "corrige": {
+        "q1": "40",
+        "q2": "Cibler les erreurs dominantes."
+      }
+    },
+    "B1": {
+      "consigne": "Simulez puis analysez trois erreurs.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Décrivez votre stratégie temps."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Analysez un distracteur."
+        }
+      ],
+      "corrige": {
+        "q1": "Priorisation cohérente.",
+        "q2": "Confusion identifiée."
+      }
+    },
+    "B2": {
+      "consigne": "Plan remédiation pour la cohorte.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Intérêt d'analyser les distracteurs ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Limites de la simulation unique ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Réponse ouverte.",
+        "q2": "Réponse ouverte."
+      }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S31-QCM-civique",
+    "mention": "CR",
+    "theme": "Simulation CR et remédiation",
+    "questions": [
+      {
+        "notion": "CR",
+        "type": "connaissance",
+        "enonce": "La simulation CR comporte :",
+        "options": [
+          "40 questions en 45 min",
+          "10 questions en 5 min",
+          "Aucune question"
+        ],
+        "reponse": "40 questions en 45 min",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "banque",
+        "type": "connaissance",
+        "enonce": "Banque verrouillée signifie :",
+        "options": [
+          "Items fixes",
+          "Items aléatoires chaque jour",
+          "Pas d'items"
+        ],
+        "reponse": "Items fixes",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "distracteur",
+        "type": "connaissance",
+        "enonce": "Analyser un distracteur sert à :",
+        "options": [
+          "Comprendre l'erreur",
+          "Tricher",
+          "Supprimer le QCM"
+        ],
+        "reponse": "Comprendre l'erreur",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "simulation",
+        "type": "mise_en_situation",
+        "enonce": "Pendant la simulation :",
+        "options": [
+          "Aucune aide",
+          "Aide permanente",
+          "Correction orale"
+        ],
+        "reponse": "Aucune aide",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "remédiation",
+        "type": "connaissance",
+        "enonce": "La remédiation S31 est :",
+        "options": [
+          "Ciblée sur la cohorte",
+          "Identique pour tous les pays",
+          "Absente"
+        ],
+        "reponse": "Ciblée sur la cohorte",
+        "official_status": "simulation_pedagogique"
+      }
+    ]
+  },
+  "devoirs": {
+    "A1": "Mémoriser planning S31.",
+    "A2": "Fiche stratégie CR.",
+    "B1": "Analyser 3 distracteurs.",
+    "B2": "Proposition remédiation."
+  },
+  "formateur": {
+    "fiche_formateur": "Simulation intégrée B1/CR : langue 60, sim 40/45 verrouillée, distracteurs 35, remédiation 30.",
+    "deroule_180min": [
+      {
+        "phase": "Installation",
+        "duree_min": 10,
+        "description": "Consignes et banque verrouillée."
+      },
+      {
+        "phase": "Langue B1",
+        "duree_min": 60,
+        "description": "Réactivation linguistique B1."
+      },
+      {
+        "phase": "Simulation CR",
+        "duree_min": 45,
+        "description": "40 questions sans aide."
+      },
+      {
+        "phase": "Analyse distracteurs",
+        "duree_min": 35,
+        "description": "Erreurs et pièges."
+      },
+      {
+        "phase": "Remédiation",
+        "duree_min": 30,
+        "description": "Ciblage cohorte."
+      }
+    ],
+    "adaptation_rules": [
+      "Chronomètre strict 45 min.",
+      "Pas de correction pendant sim.",
+      "Remédiation basée sur données réelles."
+    ]
+  }
+}

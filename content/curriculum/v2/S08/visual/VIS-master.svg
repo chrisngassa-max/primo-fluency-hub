@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 320" width="900" height="320" role="img" aria-label="Carte mentale : la Ve République">
+  <title>Carte mentale : la Ve République</title>
+  <rect x="0" y="0" width="900" height="320" fill="#ffffff" />
+  <rect x="350" y="130" width="200" height="70" fill="#dbeafe" rx="10" />
+  <text x="450" y="160" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">Constitution</text>
+  <text x="450" y="180" font-size="13" font-family="sans-serif" fill="#111827" text-anchor="middle">de 1958</text>
+  <line x1="350" y1="165" x2="200" y2="70" stroke="#374151" stroke-width="2" />
+  <line x1="450" y1="130" x2="450" y2="60" stroke="#374151" stroke-width="2" />
+  <line x1="550" y1="165" x2="700" y2="70" stroke="#374151" stroke-width="2" />
+  <rect x="110" y="40" width="180" height="60" fill="#dcfce7" rx="8" />
+  <text x="200" y="75" font-size="13" font-family="sans-serif" fill="#111827" text-anchor="middle">Président (élu)</text>
+  <rect x="360" y="30" width="180" height="60" fill="#fef9c3" rx="8" />
+  <text x="450" y="65" font-size="13" font-family="sans-serif" fill="#111827" text-anchor="middle">Parlement (loi)</text>
+  <rect x="610" y="40" width="190" height="60" fill="#fee2e2" rx="8" />
+  <text x="705" y="75" font-size="13" font-family="sans-serif" fill="#111827" text-anchor="middle">Gouvernement</text>
+  <text x="450" y="260" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">État de droit : personne au-dessus de la loi</text>
+</svg>

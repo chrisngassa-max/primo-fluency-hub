@@ -1,0 +1,45 @@
+{
+  "resource_id": "S03-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "symptôme",
+      "definition_simple": "Un signe qui montre que l'on est malade.",
+      "exemple": "La fièvre est un symptôme."
+    },
+    {
+      "mot": "douleur",
+      "definition_simple": "Une sensation désagréable dans le corps.",
+      "exemple": "Il a une douleur au dos."
+    },
+    {
+      "mot": "urgence",
+      "definition_simple": "Une situation grave qui demande une aide immédiate.",
+      "exemple": "Une difficulté à respirer est une urgence."
+    },
+    {
+      "mot": "médecin traitant",
+      "definition_simple": "Le médecin que l'on consulte habituellement.",
+      "exemple": "Elle a pris rendez-vous avec son médecin traitant."
+    },
+    {
+      "mot": "rendez-vous",
+      "definition_simple": "Un moment fixé pour rencontrer un professionnel.",
+      "exemple": "J'ai un rendez-vous à 15 heures."
+    },
+    {
+      "mot": "ordonnance",
+      "definition_simple": "Le papier du médecin pour acheter des médicaments.",
+      "exemple": "Le pharmacien lit l'ordonnance."
+    },
+    {
+      "mot": "carte Vitale",
+      "definition_simple": "La carte qui sert à être remboursé des soins.",
+      "exemple": "Présentez votre carte Vitale au médecin."
+    },
+    {
+      "mot": "mutuelle",
+      "definition_simple": "Une assurance qui complète le remboursement des soins.",
+      "exemple": "Sa mutuelle rembourse le reste."
+    }
+  ]
+}

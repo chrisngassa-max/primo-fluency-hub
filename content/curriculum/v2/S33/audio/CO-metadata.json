@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Modérateur : Sujet : limites de la liberté d'expression. Position et objection.\nApprenant A : Je défends une expression large, car le débat démocratique en a besoin. Cependant, la diffamation et l'incitation à la haine ne sont pas des opinions.\nApprenant B : Objection : trop de limites étouffent le débat.\nApprenant A : Je vous entends. Pourtant, sans dignité humaine inviolable, le pluralisme devient domination des plus forts.\nModérateur : Conclusion ?\nApprenant A : Liberté oui, mais responsabilité. La loi trace une ligne claire.\nApprenant B : J'ajoute la laïcité : protéger la conscience sans imposer une croyance.\nModérateur : Bonne intégration d'objection et conclusion.",
+  "transcript": "Modérateur : Sujet : limites de la liberté d'expression. Position et objection.\nApprenant A : Je défends une expression large, car le débat démocratique en a besoin. Cependant, la diffamation et l'incitation à la haine ne sont pas des opinions.\nApprenant B : Objection : trop de limites étouffent le débat.\nApprenant A : Je vous entends. Pourtant, sans dignité humaine inviolable, le pluralisme devient domination des plus forts.\nModérateur : Conclusion ?\nApprenant A : Liberté oui, mais responsabilité. La loi trace une ligne claire.\nApprenant B : J'ajoute la laïcité : protéger la conscience sans imposer une croyance.\nModérateur : Bonne intégration d'objection et conclusion.",
+  "voice": "fr-FR-Wavenet-D",
+  "languageCode": "fr-FR",
+  "speaking_rate": 1,
+  "pauses": [
+    {
+      "after_word": 12,
+      "ms": 400
+    },
+    {
+      "after_word": 60,
+      "ms": 400
+    },
+    {
+      "after_word": 130,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 54,
+  "hash": "96e82e45d01c5359c85921f90f7200aa3bdd381787e49df6712d4abaa67ca5ee"
+}

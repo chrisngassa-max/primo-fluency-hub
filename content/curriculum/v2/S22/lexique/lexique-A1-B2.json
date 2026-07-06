@@ -1,0 +1,50 @@
+{
+  "resource_id": "S22-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "message",
+      "definition_simple": "Texte court et fonctionnel.",
+      "exemple": "Message au voisin."
+    },
+    {
+      "mot": "consigne",
+      "definition_simple": "Instruction de l'exercice.",
+      "exemple": "Lire la consigne EE2."
+    },
+    {
+      "mot": "connecteur",
+      "definition_simple": "Mot qui relie les idées.",
+      "exemple": "Cependant, donc, ensuite."
+    },
+    {
+      "mot": "registre",
+      "definition_simple": "Niveau de langue (formel ou familier).",
+      "exemple": "Registre formel à l'administration."
+    },
+    {
+      "mot": "argument",
+      "definition_simple": "Raison qui soutient une opinion.",
+      "exemple": "Un argument pour ou contre."
+    },
+    {
+      "mot": "structure",
+      "definition_simple": "Organisation du texte.",
+      "exemple": "Introduction, développement, conclusion."
+    },
+    {
+      "mot": "autonomie",
+      "definition_simple": "Travail sans aide.",
+      "exemple": "Réaliser les tâches en autonomie."
+    },
+    {
+      "mot": "correction",
+      "definition_simple": "Retour sur les erreurs.",
+      "exemple": "Correction des critères linguistiques."
+    },
+    {
+      "mot": "tâche",
+      "definition_simple": "Exercice d'examen numéroté.",
+      "exemple": "Trois tâches EE."
+    }
+  ]
+}

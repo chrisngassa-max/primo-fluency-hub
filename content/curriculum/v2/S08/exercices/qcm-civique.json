@@ -1,0 +1,67 @@
+{
+  "resource_id": "S08-QCM-civique",
+  "mention": "CSP",
+  "theme": "Système institutionnel et politique",
+  "questions": [
+    {
+      "notion": "Constitution",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "La Ve République est fondée par la Constitution de :",
+      "options": [
+        "1958",
+        "1789",
+        "1905"
+      ],
+      "reponse": "1958"
+    },
+    {
+      "notion": "rôle de la Constitution",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Une Constitution sert à :",
+      "options": [
+        "Organiser les pouvoirs et garantir les droits",
+        "Fixer le prix du pain",
+        "Choisir l'équipe de football"
+      ],
+      "reponse": "Organiser les pouvoirs et garantir les droits"
+    },
+    {
+      "notion": "élection du président",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Le président de la République est élu :",
+      "options": [
+        "Au suffrage universel",
+        "Par tirage au sort",
+        "À vie"
+      ],
+      "reponse": "Au suffrage universel"
+    },
+    {
+      "notion": "vote de la loi",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Qui vote la loi en France ?",
+      "options": [
+        "Le Parlement",
+        "Le président seul",
+        "La préfecture"
+      ],
+      "reponse": "Le Parlement"
+    },
+    {
+      "notion": "État de droit",
+      "type": "mise_en_situation",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Dans un État de droit, un ministre qui commet une infraction :",
+      "options": [
+        "Doit répondre devant la justice",
+        "Est au-dessus de la loi",
+        "N'est jamais concerné"
+      ],
+      "reponse": "Doit répondre devant la justice"
+    }
+  ]
+}

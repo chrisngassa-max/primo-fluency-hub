@@ -1,0 +1,89 @@
+{
+  "session_code": "S17",
+  "variants": [
+    {
+      "niveau": "A1",
+      "consigne": "Écoutez le dialogue. Associez chaque mot (droit, devoir, règle) à sa bonne définition, puis répondez aux questions.",
+      "aides": [
+        "Un droit = une possibilité garantie par la loi",
+        "Un devoir = une obligation",
+        "Une règle = valable dans un lieu précis"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Après combien d'heures a lieu l'évaluation E1 ?",
+          "options": [
+            "Vingt-cinq heures",
+            "Cinquante heures",
+            "Quatre-vingts heures"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "Amadou a bien répondu aux trois exercices sur la distinction droit/devoir."
+        }
+      ]
+    },
+    {
+      "niveau": "A2",
+      "consigne": "Expliquez avec vos mots pourquoi Amadou doit revoir la distinction droit/devoir/règle, et comment cette séance est organisée pour lui.",
+      "aides": [
+        "Pensez à utiliser : évaluation, erreur, progrès"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Combien d'apprenants sur dix confondent droit et devoir dans le groupe ?",
+          "options": [
+            "Deux",
+            "Six",
+            "Huit"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Donnez un exemple de devoir cité par M. Lefèvre."
+        }
+      ]
+    },
+    {
+      "niveau": "B1",
+      "consigne": "Expliquez la différence entre droit, devoir et règle en vous appuyant sur le dialogue, puis analysez l'intérêt d'une remédiation personnalisée fondée sur les erreurs réelles d'un apprenant.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Reformulez la différence entre droit, devoir et règle donnée par M. Lefèvre."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Expliquez pourquoi la séance de remédiation est construite à partir des résultats de l'évaluation E1 d'Amadou."
+        }
+      ]
+    },
+    {
+      "niveau": "B2",
+      "consigne": "Analysez l'intérêt pédagogique d'une remédiation individualisée fondée sur une matrice d'erreurs, et nuancez ses limites pour un groupe hétérogène.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Argumentez : en quoi une remédiation fondée sur les erreurs réelles d'un apprenant est-elle plus efficace qu'une révision générale identique pour tous ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Nuancez : quelles limites une telle remédiation individualisée peut-elle rencontrer dans un groupe très hétérogène ?"
+        }
+      ]
+    }
+  ]
+}

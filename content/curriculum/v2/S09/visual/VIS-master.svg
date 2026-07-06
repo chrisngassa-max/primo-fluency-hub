@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 320" width="900" height="320" role="img" aria-label="Laïcité : quatre situations">
+  <title>Laïcité : quatre situations</title>
+  <rect x="0" y="0" width="900" height="320" fill="#ffffff" />
+  <rect x="40" y="40" width="390" height="110" fill="#dbeafe" rx="8" />
+  <text x="60" y="80" font-size="15" font-family="sans-serif" fill="#111827" text-anchor="start">Agent public au guichet</text>
+  <text x="60" y="110" font-size="13" font-family="sans-serif" fill="#111827" text-anchor="start">→ neutralité pendant le service</text>
+  <rect x="470" y="40" width="390" height="110" fill="#dcfce7" rx="8" />
+  <text x="490" y="80" font-size="15" font-family="sans-serif" fill="#111827" text-anchor="start">Usager du service public</text>
+  <text x="490" y="110" font-size="13" font-family="sans-serif" fill="#111827" text-anchor="start">→ libre de croire ou non</text>
+  <rect x="40" y="170" width="390" height="110" fill="#fef9c3" rx="8" />
+  <text x="60" y="210" font-size="15" font-family="sans-serif" fill="#111827" text-anchor="start">Élève à l&apos;école publique</text>
+  <text x="60" y="240" font-size="13" font-family="sans-serif" fill="#111827" text-anchor="start">→ pas de signe religieux ostensible</text>
+  <rect x="470" y="170" width="390" height="110" fill="#ede9fe" rx="8" />
+  <text x="490" y="210" font-size="15" font-family="sans-serif" fill="#111827" text-anchor="start">Espace privé</text>
+  <text x="490" y="240" font-size="13" font-family="sans-serif" fill="#111827" text-anchor="start">→ liberté de pratiquer sa religion</text>
+</svg>

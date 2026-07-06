@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Formateur : Simulation NAT sous contrainte. Banque gelée, quarante questions, quarante-cinq minutes. Vingt-huit connaissances, douze situations.\nApprenant : Différence avec S31 ?\nFormateur : Niveau NAT, items plus exigeants, même contrainte temps. Pas d'aide.\nApprenant : Après ?\nFormateur : Quarante minutes d'analyse d'erreurs, puis vingt-cinq minutes de comparaison avec votre simulation précédente, et soixante minutes de stratégie personnalisée.\nApprenant : Objectif score ?\nFormateur : Progresser par rapport à votre dernier essai. Notez thèmes faibles.\nApprenant : Banque gelée confirmée ?\nFormateur : Oui. Aucune création d'item le jour J.",
+  "transcript": "Formateur : Simulation NAT sous contrainte. Banque gelée, quarante questions, quarante-cinq minutes. Vingt-huit connaissances, douze situations.\nApprenant : Différence avec S31 ?\nFormateur : Niveau NAT, items plus exigeants, même contrainte temps. Pas d'aide.\nApprenant : Après ?\nFormateur : Quarante minutes d'analyse d'erreurs, puis vingt-cinq minutes de comparaison avec votre simulation précédente, et soixante minutes de stratégie personnalisée.\nApprenant : Objectif score ?\nFormateur : Progresser par rapport à votre dernier essai. Notez thèmes faibles.\nApprenant : Banque gelée confirmée ?\nFormateur : Oui. Aucune création d'item le jour J.",
+  "voice": "fr-FR-Wavenet-D",
+  "languageCode": "fr-FR",
+  "speaking_rate": 1,
+  "pauses": [
+    {
+      "after_word": 12,
+      "ms": 400
+    },
+    {
+      "after_word": 60,
+      "ms": 400
+    },
+    {
+      "after_word": 130,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 46,
+  "hash": "509aad547944a158dd9c4327210b8a4705a5c4b718f1f829dae527ce967f6782"
+}

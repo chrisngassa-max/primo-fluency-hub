@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "La mairie",
+    "q2": true
+  },
+  "A2": {
+    "q1": "La justice",
+    "q2": "L'état civil, les écoles ou l'urbanisme local (une réponse suffit)."
+  },
+  "B1": {
+    "q1": "Ecole -> mairie ; loi -> Parlement ; litige -> justice, chacun selon sa competence.",
+    "q2": "Le maire gere le local (commune) ; le Parlement vote la loi au niveau national."
+  },
+  "B2": {
+    "q1": "Reponse ouverte : proximite, specialisation, controle mutuel, separation des pouvoirs.",
+    "q2": "Reponse ouverte : complexite pour l'usager ; remedes : information, guichets uniques, mediation."
+  }
+}

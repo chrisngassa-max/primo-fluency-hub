@@ -1,0 +1,50 @@
+{
+  "resource_id": "S28-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "réclamation",
+      "definition_simple": "Demande formelle de correction.",
+      "exemple": "Réclamation sur la paie."
+    },
+    {
+      "mot": "syndicat",
+      "definition_simple": "Organisation qui défend les salariés.",
+      "exemple": "Délégué syndical."
+    },
+    {
+      "mot": "impôt",
+      "definition_simple": "Contribution pour financer l'État.",
+      "exemple": "Impôts et services publics."
+    },
+    {
+      "mot": "solidarité",
+      "definition_simple": "Entraide et protection collective.",
+      "exemple": "Solidarité nationale."
+    },
+    {
+      "mot": "fiche de paie",
+      "definition_simple": "Document des salaires et cotisations.",
+      "exemple": "Vérifier la fiche de paie."
+    },
+    {
+      "mot": "contrat",
+      "definition_simple": "Accord de travail écrit.",
+      "exemple": "Contrat à temps plein."
+    },
+    {
+      "mot": "déclaré",
+      "definition_simple": "Travail connu des administrations.",
+      "exemple": "Travail déclaré."
+    },
+    {
+      "mot": "égalité",
+      "definition_simple": "Mêmes droits sans discrimination.",
+      "exemple": "Égalité professionnelle."
+    },
+    {
+      "mot": "régularisation",
+      "definition_simple": "Correction d'une erreur.",
+      "exemple": "Régulariser la paie."
+    }
+  ]
+}

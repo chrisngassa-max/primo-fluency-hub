@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Consignes d'évaluation E2 — tronc commun — document fictif.\n\nDurée totale : cent quatre-vingts minutes. TCF IRN interne complet : compréhension orale, compréhension écrite, expression écrite, expression orale — enchaînement chronométré sans aide.\n\nCivique CSP : quarante questions, quarante-cinq minutes, banque gelée verrouillée. Stratégie conseillée : trente-deux bonnes réponses visées.\n\nRègles : items identiques pour la cohorte, pas de faits nouveaux par niveau, grilles séparées langue et civique.\n\nAprès E2 : orientation vers sortie A2/CSP, extension parcours B1/CR, ou séances de consolidation S25.\n\nBonne épreuve.",
+  "transcript": "Consignes d'évaluation E2 — tronc commun — document fictif.\n\nDurée totale : cent quatre-vingts minutes. TCF IRN interne complet : compréhension orale, compréhension écrite, expression écrite, expression orale — enchaînement chronométré sans aide.\n\nCivique CSP : quarante questions, quarante-cinq minutes, banque gelée verrouillée. Stratégie conseillée : trente-deux bonnes réponses visées.\n\nRègles : items identiques pour la cohorte, pas de faits nouveaux par niveau, grilles séparées langue et civique.\n\nAprès E2 : orientation vers sortie A2/CSP, extension parcours B1/CR, ou séances de consolidation S25.\n\nBonne épreuve.",
+  "voice": "fr-FR-Wavenet-C",
+  "languageCode": "fr-FR",
+  "speaking_rate": 0.92,
+  "pauses": [
+    {
+      "after_word": 12,
+      "ms": 400
+    },
+    {
+      "after_word": 60,
+      "ms": 400
+    },
+    {
+      "after_word": 130,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 43,
+  "hash": "27b27c06c7b435d37e0de8a7b53243d403197323452ea9e4c2d0cc8642104499"
+}

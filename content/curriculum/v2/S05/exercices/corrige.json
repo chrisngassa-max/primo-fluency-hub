@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "Le bruit le soir",
+    "q2": true
+  },
+  "A2": {
+    "q1": "Il aide à trouver une solution à l'amiable",
+    "q2": "Exemple : « Bonjour, pourriez-vous baisser un peu le bruit le soir, s'il vous plaît ? »"
+  },
+  "B1": {
+    "q1": "Etapes : d'abord parler calmement, puis solliciter une mediation, enfin un recours legal si le probleme persiste.",
+    "q2": "La discrimination au logement porte atteinte a l'egalite ; elle est interdite par la loi et ouvre droit a des recours."
+  },
+  "B2": {
+    "q1": "Reponse ouverte : rapidite, cout, preservation du lien social, responsabilisation des parties.",
+    "q2": "Reponse ouverte : en cas de mauvaise foi, de danger, ou de discrimination averee, un recours legal devient necessaire."
+  }
+}

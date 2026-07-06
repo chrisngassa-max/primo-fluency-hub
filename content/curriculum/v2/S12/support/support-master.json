@@ -1,0 +1,19 @@
+{
+  "support_id": "S12-support-protection",
+  "personnages": [
+    "Personne concernée (témoignage sobre)",
+    "Professionnel (conseiller)"
+  ],
+  "situation": "Un témoignage sobre présente une personne victime d'une discrimination au travail. Un professionnel lui explique ses droits, les moyens de signaler et les structures de protection, sans détail traumatisant.",
+  "faits": [
+    "La discrimination consiste à traiter une personne moins bien pour un motif interdit (origine, sexe, religion, handicap...).",
+    "L'égalité femmes-hommes est un principe de la République.",
+    "La dignité de chaque personne doit être respectée.",
+    "On peut signaler une discrimination et être protégé.",
+    "Des associations et des services d'aide accompagnent les victimes."
+  ],
+  "nombres": [],
+  "dates": [],
+  "hash": "c83272ab28754ab78983571320a9b5fc735bc041e27c95e686d5917fd967af59",
+  "version": 1
+}

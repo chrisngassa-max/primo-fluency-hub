@@ -1,0 +1,83 @@
+{
+  "session_code": "S29",
+  "variants": [
+    {
+      "niveau": "A1",
+      "consigne": "Placez des dates sur la frise.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Traité de Rome :",
+          "options": [
+            "1957",
+            "1789",
+            "2020"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "L'Europe vise aussi la paix."
+        }
+      ]
+    },
+    {
+      "niveau": "A2",
+      "consigne": "Racontez oralement un événement.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "IIIe République : école",
+          "options": [
+            "Laïque et obligatoire",
+            "Interdite",
+            "Payante seulement"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Une cause des traités européens ?"
+        }
+      ]
+    },
+    {
+      "niveau": "B1",
+      "consigne": "Expliquez portée historique et européenne.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Récit d'un événement avec contexte."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Lien Europe et mémoire."
+        }
+      ]
+    },
+    {
+      "niveau": "B2",
+      "consigne": "Synthèse multi-périodes.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Pourquoi relier République et Europe ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Limites d'une frise simplifiée ?"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+[
+  {
+    "phase": "Rituel civique",
+    "duree_min": 10,
+    "description": "Rappel des droits de l'usager et obligations documentaires."
+  },
+  {
+    "phase": "Activation + lexique",
+    "duree_min": 20,
+    "description": "Découverte du lexique (objet, pièce jointe, délai, conforme...)."
+  },
+  {
+    "phase": "Support invariant CO/CE",
+    "duree_min": 50,
+    "description": "Écoute du message vocal fictif, lecture de la chronologie et du dossier."
+  },
+  {
+    "phase": "Ateliers différenciés",
+    "duree_min": 60,
+    "description": "Quatre groupes A1/A2/B1/B2 : tâches EE graduées sur le même support."
+  },
+  {
+    "phase": "Production EE/EO",
+    "duree_min": 30,
+    "description": "Rédaction d'un courriel formel avec pièce jointe simulée."
+  },
+  {
+    "phase": "Fixation",
+    "duree_min": 10,
+    "description": "Synthèse, QCM civique CSP, devoir personnalisé."
+  }
+]

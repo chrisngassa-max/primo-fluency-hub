@@ -1,0 +1,32 @@
+[
+  {
+    "phase": "Installation",
+    "duree_min": 10,
+    "description": "Consignes, anonymat, chronomètre."
+  },
+  {
+    "phase": "CO + CE",
+    "duree_min": 40,
+    "description": "Compréhension banque gelée."
+  },
+  {
+    "phase": "EE",
+    "duree_min": 30,
+    "description": "Expression écrite chronométrée."
+  },
+  {
+    "phase": "EO",
+    "duree_min": 15,
+    "description": "Expression orale chronométrée."
+  },
+  {
+    "phase": "Civique CSP abrégé",
+    "duree_min": 20,
+    "description": "Banque gelée civique."
+  },
+  {
+    "phase": "Clôture",
+    "duree_min": 5,
+    "description": "Rappel remédiation à venir."
+  }
+]

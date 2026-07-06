@@ -1,0 +1,45 @@
+{
+  "resource_id": "S11-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "plainte",
+      "definition_simple": "Une déclaration officielle d'une infraction subie.",
+      "exemple": "Elle dépose une plainte."
+    },
+    {
+      "mot": "témoin",
+      "definition_simple": "Une personne qui a vu ce qui s'est passé.",
+      "exemple": "Un témoin a vu le vol."
+    },
+    {
+      "mot": "preuve",
+      "definition_simple": "Un élément qui montre la vérité d'un fait.",
+      "exemple": "La vidéo est une preuve."
+    },
+    {
+      "mot": "infraction",
+      "definition_simple": "Un acte interdit par la loi.",
+      "exemple": "Le vol est une infraction."
+    },
+    {
+      "mot": "contravention",
+      "definition_simple": "Une petite infraction.",
+      "exemple": "Un excès de vitesse léger est une contravention."
+    },
+    {
+      "mot": "délit",
+      "definition_simple": "Une infraction plus grave qu'une contravention.",
+      "exemple": "Le vol est un délit."
+    },
+    {
+      "mot": "crime",
+      "definition_simple": "L'infraction la plus grave.",
+      "exemple": "Le crime est jugé par une cour spéciale."
+    },
+    {
+      "mot": "tribunal",
+      "definition_simple": "Le lieu où la justice est rendue.",
+      "exemple": "L'affaire est jugée au tribunal."
+    }
+  ]
+}

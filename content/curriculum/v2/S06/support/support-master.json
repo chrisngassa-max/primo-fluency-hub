@@ -1,0 +1,25 @@
+{
+  "support_id": "S06-support-emploi",
+  "personnages": [
+    "Mme Okoye (candidate)",
+    "M. Berger (responsable du magasin)"
+  ],
+  "situation": "Mme Okoye passe un entretien pour un poste d'employée de rayon. M. Berger, le responsable, lui présente l'offre, un extrait de contrat et une fiche de paie fictifs mais cohérents, tous issus d'un même jeu de données pédagogique.",
+  "faits": [
+    "La durée légale du travail est de 35 heures par semaine.",
+    "Le salaire brut fictif du poste est de 1800 € par mois pour un temps plein.",
+    "Le salaire net fictif correspondant est d'environ 1400 € par mois.",
+    "Un salarié a droit à 5 semaines de congés payés par an.",
+    "Le travail doit être déclaré et faire l'objet d'un contrat écrit.",
+    "Le salaire brut est supérieur au salaire net à cause des cotisations sociales."
+  ],
+  "nombres": [
+    35,
+    1800,
+    1400,
+    5
+  ],
+  "dates": [],
+  "hash": "0163599f39b0f265244c3a7e842117e523b5ee80ba6038d1a56c557123543649",
+  "version": 1
+}

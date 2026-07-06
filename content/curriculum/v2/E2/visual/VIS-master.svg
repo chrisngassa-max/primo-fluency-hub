@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 220" width="900" height="220" role="img" aria-label="Évaluation E2 — 180 min">
+  <title>Évaluation E2 — 180 min</title>
+  <rect x="0" y="0" width="900" height="220" fill="#ffffff" />
+  <rect x="80" y="60" width="350" height="80" fill="#dbeafe" rx="8" />
+  <text x="255" y="105" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">TCF IRN complet</text>
+  <rect x="470" y="60" width="350" height="80" fill="#fee2e2" rx="8" />
+  <text x="645" y="95" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">Civique CSP</text>
+  <text x="645" y="118" font-size="12" font-family="sans-serif" fill="#111827" text-anchor="middle">40 Q · 45 min</text>
+  <text x="450" y="180" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">Banque gelée · 180 min total</text>
+</svg>

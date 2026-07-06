@@ -1,0 +1,114 @@
+[
+  {
+    "support_id": "S07-support-prefecture",
+    "version": 1,
+    "niveau": "A1",
+    "consigne": "Écoutez le message. Cochez la pièce demandée et complétez le courriel avec les amorces.",
+    "aides": [
+      "« Objet : ... »",
+      "« Veuillez trouver ci-joint... »",
+      "Mots utiles : dossier, pièce, échéance"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Quelle pièce est demandée ?",
+        "options": [
+          "Un justificatif de domicile",
+          "Un billet de train",
+          "Une photo de vacances"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "vrai_faux",
+        "enonce": "Un dossier incomplet ne peut pas être traité."
+      }
+    ],
+    "corrige": {
+      "q1": "Un justificatif de domicile",
+      "q2": true
+    },
+    "invariants_hash": "fb215529a01d4aeba3661baacd85e1decd06652fc4550e050c021d2dd0e6e2cc"
+  },
+  {
+    "support_id": "S07-support-prefecture",
+    "version": 1,
+    "niveau": "A2",
+    "consigne": "Rédigez un courriel simple à la préfecture pour transmettre la pièce demandée avant l'échéance.",
+    "aides": [
+      "Pensez à : objet, pièce jointe, politesse"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Que faut-il respecter pour répondre à la notification ?",
+        "options": [
+          "La date d'échéance",
+          "L'heure du déjeuner",
+          "La météo"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "reponse_courte",
+        "enonce": "Écrivez l'objet d'un courriel de réponse à la préfecture."
+      }
+    ],
+    "corrige": {
+      "q1": "La date d'échéance",
+      "q2": "Exemple : « Objet : transmission d'un justificatif de domicile pour mon dossier de titre de séjour »."
+    },
+    "invariants_hash": "fb215529a01d4aeba3661baacd85e1decd06652fc4550e050c021d2dd0e6e2cc"
+  },
+  {
+    "support_id": "S07-support-prefecture",
+    "version": 1,
+    "niveau": "B1",
+    "consigne": "Rédigez un courriel formel complet à la préfecture (objet, référence, pièce jointe, formule de politesse), puis expliquez les droits et obligations de l'usager face à l'administration.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "reponse_longue",
+        "enonce": "Écrivez un courriel formel de réponse avec tous les éléments attendus."
+      },
+      {
+        "id": "q2",
+        "type": "reponse_longue",
+        "enonce": "Expliquez ce que l'usager doit faire et ce qu'il peut attendre du service public."
+      }
+    ],
+    "corrige": {
+      "q1": "Courriel attendu : objet clair, reference du dossier, corps precisant la piece jointe, formule de politesse.",
+      "q2": "L'usager doit fournir les pieces et respecter les delais ; il peut attendre un traitement egal et une reponse du service public."
+    },
+    "invariants_hash": "fb215529a01d4aeba3661baacd85e1decd06652fc4550e050c021d2dd0e6e2cc"
+  },
+  {
+    "support_id": "S07-support-prefecture",
+    "version": 1,
+    "niveau": "B2",
+    "consigne": "Analysez la relation entre l'usager et l'administration et nuancez les difficultés des démarches en ligne.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "argumentation",
+        "enonce": "Argumentez : pourquoi les délais et les pièces justificatives sont-ils nécessaires dans une démarche administrative ?"
+      },
+      {
+        "id": "q2",
+        "type": "argumentation",
+        "enonce": "Nuancez : quelles difficultés la dématérialisation crée-t-elle et comment y remédier ?"
+      }
+    ],
+    "corrige": {
+      "q1": "Reponse ouverte : securite juridique, egalite de traitement, verification des situations.",
+      "q2": "Reponse ouverte : fracture numerique, complexite ; remedes : accompagnement, points d'accueil, mediation numerique."
+    },
+    "invariants_hash": "fb215529a01d4aeba3661baacd85e1decd06652fc4550e050c021d2dd0e6e2cc"
+  }
+]

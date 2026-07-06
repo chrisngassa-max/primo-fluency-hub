@@ -1,0 +1,55 @@
+{
+  "resource_id": "S01-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "parcours",
+      "definition_simple": "Ensemble des séances et évaluations à suivre du début à la fin.",
+      "exemple": "Le parcours dure quatre-vingts heures."
+    },
+    {
+      "mot": "niveau",
+      "definition_simple": "Le degré de maîtrise du français (A1, A2, B1, B2).",
+      "exemple": "Awa commence au niveau A2."
+    },
+    {
+      "mot": "objectif",
+      "definition_simple": "Le but administratif que l'on veut atteindre.",
+      "exemple": "Son objectif est la carte de séjour pluriannuelle."
+    },
+    {
+      "mot": "démarche",
+      "definition_simple": "Une action à faire auprès d'une administration.",
+      "exemple": "Faire une démarche à la préfecture."
+    },
+    {
+      "mot": "droit",
+      "definition_simple": "Ce qu'une personne peut demander ou faire, garanti par la loi.",
+      "exemple": "Le droit à la santé."
+    },
+    {
+      "mot": "devoir",
+      "definition_simple": "Ce qu'une personne doit faire.",
+      "exemple": "Respecter la loi est un devoir."
+    },
+    {
+      "mot": "République",
+      "definition_simple": "La forme de gouvernement de la France, fondée sur des valeurs communes.",
+      "exemple": "La République française."
+    },
+    {
+      "mot": "examen",
+      "definition_simple": "Une épreuve qui mesure des connaissances ou des compétences.",
+      "exemple": "L'examen civique compte 40 questions."
+    },
+    {
+      "mot": "séance",
+      "definition_simple": "Un cours collectif d'une durée fixe.",
+      "exemple": "Chaque séance dure trois heures."
+    },
+    {
+      "mot": "progresser",
+      "definition_simple": "Avancer, s'améliorer petit à petit.",
+      "exemple": "Awa va progresser en français et en connaissances civiques."
+    }
+  ]
+}

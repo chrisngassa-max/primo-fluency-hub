@@ -1,0 +1,67 @@
+{
+  "resource_id": "S03-QCM-civique",
+  "mention": "CSP",
+  "theme": "Vivre dans la société française",
+  "questions": [
+    {
+      "notion": "numéros d'urgence",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Le numéro du SAMU pour une urgence médicale est le :",
+      "options": [
+        "15",
+        "17",
+        "18"
+      ],
+      "reponse": "15"
+    },
+    {
+      "notion": "numéros d'urgence",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Le numéro d'urgence valable partout en Europe est le :",
+      "options": [
+        "112",
+        "115",
+        "119"
+      ],
+      "reponse": "112"
+    },
+    {
+      "notion": "accès aux soins",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "La carte Vitale sert à :",
+      "options": [
+        "Être remboursé des soins",
+        "Voter aux élections",
+        "Prouver sa nationalité"
+      ],
+      "reponse": "Être remboursé des soins"
+    },
+    {
+      "notion": "parcours de soins",
+      "type": "mise_en_situation",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Pour un mal de gorge sans gravité, la bonne conduite est de :",
+      "options": [
+        "Prendre rendez-vous avec son médecin traitant",
+        "Appeler le 15",
+        "Aller aux urgences la nuit"
+      ],
+      "reponse": "Prendre rendez-vous avec son médecin traitant"
+    },
+    {
+      "notion": "professionnels de santé",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Le document du médecin pour acheter des médicaments s'appelle :",
+      "options": [
+        "Une ordonnance",
+        "Une facture",
+        "Un justificatif"
+      ],
+      "reponse": "Une ordonnance"
+    }
+  ]
+}

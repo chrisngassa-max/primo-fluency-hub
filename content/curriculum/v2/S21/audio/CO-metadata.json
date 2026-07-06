@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Formateur : Aujourd'hui, nous travaillons sur l'arbre de décision civique. Chaque question se lit en deux temps.\nApprenant : En deux temps ?\nFormateur : Oui. D'abord : est-ce un item de connaissance ou de mise en situation ? La connaissance demande un fait : qui vote la loi, qu'est-ce que la laïcité. La situation décrit un cas : que faites-vous au travail, à l'école, dans la rue.\nApprenant : Et l'arbre de décision ?\nFormateur : Si c'est une connaissance, vous cherchez la définition exacte. Si c'est une situation, vous demandez : quelle conduite est conforme à la loi et aux principes républicains ?\nApprenant : Parfois les distracteurs ressemblent à la bonne réponse.\nFormateur : Exactement. Un distracteur joue sur une confusion : droit et devoir, mairie et préfecture. L'arbre vous force à justifier.\nApprenant : Et si je me trompe ?\nFormateur : Vous expliquez pourquoi la conduite proposée est conforme ou non. C'est la preuve de situation, distincte de la connaissance.\nApprenant : Donc je ne mélange pas les deux preuves.\nFormateur : Voilà. Connaissance : c'est vrai ou faux selon les faits. Situation : c'est adapté ou non selon le contexte. Nous allons simuler des items comme à l'examen, sur les cinq thèmes.\nApprenant : D'accord, je comprends la méthode.",
+  "transcript": "Formateur : Aujourd'hui, nous travaillons sur l'arbre de décision civique. Chaque question se lit en deux temps.\nApprenant : En deux temps ?\nFormateur : Oui. D'abord : est-ce un item de connaissance ou de mise en situation ? La connaissance demande un fait : qui vote la loi, qu'est-ce que la laïcité. La situation décrit un cas : que faites-vous au travail, à l'école, dans la rue.\nApprenant : Et l'arbre de décision ?\nFormateur : Si c'est une connaissance, vous cherchez la définition exacte. Si c'est une situation, vous demandez : quelle conduite est conforme à la loi et aux principes républicains ?\nApprenant : Parfois les distracteurs ressemblent à la bonne réponse.\nFormateur : Exactement. Un distracteur joue sur une confusion : droit et devoir, mairie et préfecture. L'arbre vous force à justifier.\nApprenant : Et si je me trompe ?\nFormateur : Vous expliquez pourquoi la conduite proposée est conforme ou non. C'est la preuve de situation, distincte de la connaissance.\nApprenant : Donc je ne mélange pas les deux preuves.\nFormateur : Voilà. Connaissance : c'est vrai ou faux selon les faits. Situation : c'est adapté ou non selon le contexte. Nous allons simuler des items comme à l'examen, sur les cinq thèmes.\nApprenant : D'accord, je comprends la méthode.",
+  "voice": "fr-FR-Wavenet-C",
+  "languageCode": "fr-FR",
+  "speaking_rate": 0.92,
+  "pauses": [
+    {
+      "after_word": 15,
+      "ms": 400
+    },
+    {
+      "after_word": 70,
+      "ms": 400
+    },
+    {
+      "after_word": 145,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 108,
+  "hash": "90beb07e86b6547c89c401edfd9c89ac374b307df8f384a417b837853d0a2afa"
+}

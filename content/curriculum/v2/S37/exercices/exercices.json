@@ -1,0 +1,83 @@
+{
+  "session_code": "S37",
+  "variants": [
+    {
+      "niveau": "A1",
+      "consigne": "Répondez à trois questions simples sur vous.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "L'entretien évalue :",
+          "options": [
+            "Parcours et motivation",
+            "Uniquement la cuisine",
+            "Le code routier seul"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "Les relances sont imprévues."
+        }
+      ]
+    },
+    {
+      "niveau": "A2",
+      "consigne": "Présentez parcours 2 minutes.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Fraternité signifie :",
+          "options": [
+            "Solidarité",
+            "Isolement",
+            "Haine"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Un principe républicain ?"
+        }
+      ]
+    },
+    {
+      "niveau": "B1",
+      "consigne": "Entretien simulé avec deux relances.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Parcours et motivation."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Réponse à relance laïcité."
+        }
+      ]
+    },
+    {
+      "niveau": "B2",
+      "consigne": "Entretien complet relances multiples.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Critique République : réaction ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Éviter script mémorisé ?"
+        }
+      ]
+    }
+  ]
+}

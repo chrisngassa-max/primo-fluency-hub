@@ -1,0 +1,50 @@
+{
+  "resource_id": "S35-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "citoyenneté",
+      "definition_simple": "Statut et pratique du citoyen.",
+      "exemple": "Citoyenneté française."
+    },
+    {
+      "mot": "cohésion",
+      "definition_simple": "Vivre ensemble harmonieusement.",
+      "exemple": "Cohésion sociale."
+    },
+    {
+      "mot": "environnement",
+      "definition_simple": "Cadre naturel à protéger.",
+      "exemple": "Tri sélectif."
+    },
+    {
+      "mot": "francophonie",
+      "definition_simple": "Communauté de pays partageant le français.",
+      "exemple": "Échanges francophones."
+    },
+    {
+      "mot": "prudence",
+      "definition_simple": "Réserve avant de conclure.",
+      "exemple": "Argumenter avec prudence."
+    },
+    {
+      "mot": "fictif",
+      "definition_simple": "Inventé pour l'exercice.",
+      "exemple": "Données fictives."
+    },
+    {
+      "mot": "enjeu",
+      "definition_simple": "Question importante du présent.",
+      "exemple": "Enjeu contemporain."
+    },
+    {
+      "mot": "participation",
+      "definition_simple": "S'impliquer dans la vie civique.",
+      "exemple": "Participation citoyenne."
+    },
+    {
+      "mot": "nuancer",
+      "definition_simple": "Préciser les limites d'une affirmation.",
+      "exemple": "Nuancer sa position."
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "resource_id": "E4-VIS-master",
+  "scene": {
+    "title": "Évaluation E4 — 120 min",
+    "width": 900,
+    "height": 220,
+    "background": "#ffffff",
+    "elements": [
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 70,
+        "width": 240,
+        "height": 70,
+        "fill": "#dbeafe"
+      },
+      {
+        "type": "text",
+        "x": 180,
+        "y": 110,
+        "anchor": "middle",
+        "fontSize": 12,
+        "text": "TCF ciblé"
+      },
+      {
+        "type": "rect",
+        "x": 330,
+        "y": 70,
+        "width": 240,
+        "height": 70,
+        "fill": "#fee2e2"
+      },
+      {
+        "type": "text",
+        "x": 450,
+        "y": 110,
+        "anchor": "middle",
+        "fontSize": 12,
+        "text": "Civique NAT"
+      },
+      {
+        "type": "rect",
+        "x": 600,
+        "y": 70,
+        "width": 240,
+        "height": 70,
+        "fill": "#fef9c3"
+      },
+      {
+        "type": "text",
+        "x": 720,
+        "y": 110,
+        "anchor": "middle",
+        "fontSize": 12,
+        "text": "Entretien"
+      },
+      {
+        "type": "text",
+        "x": 450,
+        "y": 180,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "Banque gelée · 120 min"
+      }
+    ]
+  },
+  "alt_text": "Diagramme E4 120 min : TCF ciblé, NAT, entretien."
+}

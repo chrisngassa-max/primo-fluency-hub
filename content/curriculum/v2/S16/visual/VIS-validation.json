@@ -1,0 +1,60 @@
+{
+  "deterministic": {
+    "validateur": "deterministic",
+    "modele": null,
+    "regles": [
+      "non_vide",
+      "mime_decodable",
+      "hash_attendu",
+      "doublon",
+      "alt_text_present",
+      "transcription_presente",
+      "source_ids_presents",
+      "ratio_image",
+      "duree_audio",
+      "compte_elements",
+      "texte_interdit"
+    ],
+    "scores": {},
+    "bloquants": [],
+    "rapport": {
+      "resource_id": "vis-master-svg",
+      "kind": "vis_master_svg",
+      "checks": {
+        "non_vide": true,
+        "mime_decodable": true,
+        "hash": "a2b9104c07f225e7f2605a36f70464418831cb2067bd7007d8add98b042b12ed",
+        "doublon": false,
+        "forbidden_text_matches": []
+      }
+    }
+  },
+  "ai_review": {
+    "validateur": "ai_review",
+    "modele": "fake-content-model",
+    "regles": [
+      "coherence_support_consigne_corrige",
+      "reponse_unique_defendable",
+      "image_ne_revele_pas_reponse",
+      "absence_stereotype",
+      "lisibilite_a1_b2",
+      "faits_identiques_multi_media"
+    ],
+    "scores": {
+      "quality_score": 5,
+      "pedagogical_relevance_score": 5
+    },
+    "bloquants": [],
+    "rapport": {
+      "resource_id": "vis-master-svg",
+      "commentaire": "Revue factice deterministe (be33fefa)",
+      "raw": {
+        "quality_score": 5,
+        "pedagogical_relevance_score": 5,
+        "bloquants": [],
+        "commentaire": "Revue factice deterministe (be33fefa)"
+      }
+    }
+  },
+  "publishable": true
+}

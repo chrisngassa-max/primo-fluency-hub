@@ -1,0 +1,67 @@
+{
+  "resource_id": "S16-QCM-civique",
+  "mention": "CSP",
+  "theme": "Histoire, géographie, culture",
+  "questions": [
+    {
+      "notion": "organisation territoriale",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Le territoire le plus local est :",
+      "options": [
+        "La commune",
+        "La région",
+        "Le pays"
+      ],
+      "reponse": "La commune"
+    },
+    {
+      "notion": "métropole et outre-mer",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "La France est composée de :",
+      "options": [
+        "La métropole et l'outre-mer",
+        "La métropole seule",
+        "L'outre-mer seul"
+      ],
+      "reponse": "La métropole et l'outre-mer"
+    },
+    {
+      "notion": "appartenance européenne",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "La France est membre de :",
+      "options": [
+        "L'Union européenne",
+        "Aucune union",
+        "Un seul département"
+      ],
+      "reponse": "L'Union européenne"
+    },
+    {
+      "notion": "niveaux territoriaux",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Plusieurs départements forment :",
+      "options": [
+        "Une région",
+        "Une commune",
+        "Une frontière"
+      ],
+      "reponse": "Une région"
+    },
+    {
+      "notion": "patrimoine",
+      "type": "mise_en_situation",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Un monument ancien à préserver fait partie :",
+      "options": [
+        "Du patrimoine",
+        "De l'outre-mer uniquement",
+        "D'une frontière"
+      ],
+      "reponse": "Du patrimoine"
+    }
+  ]
+}

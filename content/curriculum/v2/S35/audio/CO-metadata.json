@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Formateur : Voici un dossier fictif : dans la ville Alpha, 62 pour cent des habitants estiment que la cohésion progresse, mais 38 pour cent citent des tensions autour du logement. Données pédagogiques, pas officielles.\nApprenant : Je prends position avec prudence. La cohésion progresse selon le dossier, mais le logement reste un point de friction.\nFormateur : Environnement ?\nApprenant : Le même dossier indique une hausse fictive de 15 pour cent du tri sélectif. C'est positif, mais insuffisant sans politique globale.\nFormateur : Citoyenneté ?\nApprenant : Participer, respecter la loi, s'informer. La francophonie peut aider les échanges, sans nier les difficultés locales.\nFormateur : Nuance finale ?\nApprenant : Je distingue opinion et faits du dossier. Mes propositions restent conditionnelles.\nFormateur : Bonne prudence argumentative.",
+  "transcript": "Formateur : Voici un dossier fictif : dans la ville Alpha, 62 pour cent des habitants estiment que la cohésion progresse, mais 38 pour cent citent des tensions autour du logement. Données pédagogiques, pas officielles.\nApprenant : Je prends position avec prudence. La cohésion progresse selon le dossier, mais le logement reste un point de friction.\nFormateur : Environnement ?\nApprenant : Le même dossier indique une hausse fictive de 15 pour cent du tri sélectif. C'est positif, mais insuffisant sans politique globale.\nFormateur : Citoyenneté ?\nApprenant : Participer, respecter la loi, s'informer. La francophonie peut aider les échanges, sans nier les difficultés locales.\nFormateur : Nuance finale ?\nApprenant : Je distingue opinion et faits du dossier. Mes propositions restent conditionnelles.\nFormateur : Bonne prudence argumentative.",
+  "voice": "fr-FR-Wavenet-D",
+  "languageCode": "fr-FR",
+  "speaking_rate": 1,
+  "pauses": [
+    {
+      "after_word": 12,
+      "ms": 400
+    },
+    {
+      "after_word": 60,
+      "ms": 400
+    },
+    {
+      "after_word": 130,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 64,
+  "hash": "813d7541845a78b9361689f934964df2b4821fe9272d97c816b59c367b0d41ef"
+}

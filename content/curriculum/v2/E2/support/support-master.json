@@ -1,0 +1,25 @@
+{
+  "support_id": "E2-support",
+  "personnages": [
+    "Apprenants",
+    "Équipe d'évaluation fictive"
+  ],
+  "situation": "Évaluation finale tronc commun : TCF IRN interne complet et civique CSP 40 questions en 45 minutes. Banque gelée. Orientation sortie A2/CSP, extension B1 ou consolidation.",
+  "faits": [
+    "E2 clôt le tronc commun de quatre-vingts heures.",
+    "TCF IRN interne complet en conditions chronométrées.",
+    "Civique CSP : 40 questions en 45 minutes, banque gelée.",
+    "Aucun nouvel item n'est ajouté le jour de l'évaluation.",
+    "Orientation : sortie A2/CSP, extension B1/CR ou consolidation.",
+    "Durée totale de l'évaluation : cent quatre-vingts minutes."
+  ],
+  "nombres": [
+    80,
+    40,
+    45,
+    180
+  ],
+  "dates": [],
+  "hash": "07dcaa0a7f3467225d1ecdd1b62cdaf2bce07df838084d8c14296453364911c6",
+  "version": 1
+}

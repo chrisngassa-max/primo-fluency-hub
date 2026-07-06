@@ -1,0 +1,17 @@
+Mme Rossi : Bonjour, bienvenue dans votre nouveau parcours. Comment vous appelez-vous ?
+Awa : Bonjour madame. Je m'appelle Awa. Awa Diallo.
+Mme Rossi : Enchantée, Awa. Quel est votre objectif aujourd'hui ?
+Awa : Je voudrais avoir ma carte de séjour pluriannuelle.
+Mme Rossi : Très bien. Pour ça, vous allez suivre un parcours de quatre-vingts heures.
+Awa : Quatre-vingts heures ? C'est beaucoup !
+Mme Rossi : Oui, mais c'est réparti sur vingt-cinq séances de trois heures, à raison d'une séance par semaine.
+Awa : D'accord. Et qu'est-ce qu'on va apprendre exactement ?
+Mme Rossi : Vous allez apprendre le français pour la vie quotidienne, et aussi cinq thèmes sur la vie en France : la République, les institutions, les droits et devoirs, l'histoire et la vie en société.
+Awa : Il y a un examen à la fin ?
+Mme Rossi : Il y a deux évaluations : une évaluation intermédiaire après cinquante heures, et une évaluation finale à la fin des quatre-vingts heures.
+Awa : Je comprends. Merci beaucoup madame.
+Mme Rossi : Une dernière chose : connaissez-vous la différence entre un droit, un devoir et une règle ?
+Awa : Pas très bien, madame.
+Mme Rossi : Un droit, c'est quelque chose que vous pouvez demander, comme le droit à la santé. Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. Une règle, c'est une consigne précise, par exemple dans un règlement intérieur.
+Awa : D'accord, je comprends mieux maintenant.
+Mme Rossi : Parfait, nous allons travailler cela ensemble pendant toute la formation. Bienvenue parmi nous, Awa !

@@ -1,0 +1,67 @@
+{
+  "resource_id": "S05-QCM-civique",
+  "mention": "CSP",
+  "theme": "Droits et devoirs",
+  "questions": [
+    {
+      "notion": "médiation",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "La médiation sert à :",
+      "options": [
+        "Trouver une solution à l'amiable",
+        "Punir un voisin",
+        "Augmenter le loyer"
+      ],
+      "reponse": "Trouver une solution à l'amiable"
+    },
+    {
+      "notion": "discrimination",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Refuser un logement à cause de l'origine d'une personne est :",
+      "options": [
+        "Interdit par la loi",
+        "Autorisé",
+        "Laissé au choix du propriétaire"
+      ],
+      "reponse": "Interdit par la loi"
+    },
+    {
+      "notion": "logement",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Le contrat de location d'un logement s'appelle :",
+      "options": [
+        "Le bail",
+        "La facture",
+        "Le règlement"
+      ],
+      "reponse": "Le bail"
+    },
+    {
+      "notion": "vie collective",
+      "type": "mise_en_situation",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Un voisin fait du bruit chaque nuit. La première démarche conseillée est :",
+      "options": [
+        "Lui parler calmement",
+        "Couper son électricité",
+        "Ne plus jamais lui parler"
+      ],
+      "reponse": "Lui parler calmement"
+    },
+    {
+      "notion": "valeurs républicaines",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Aider et respecter ses voisins renvoie surtout à la valeur de :",
+      "options": [
+        "Fraternité",
+        "Rentabilité",
+        "Autorité"
+      ],
+      "reponse": "Fraternité"
+    }
+  ]
+}

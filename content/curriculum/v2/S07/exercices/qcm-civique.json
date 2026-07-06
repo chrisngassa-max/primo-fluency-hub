@@ -1,0 +1,67 @@
+{
+  "resource_id": "S07-QCM-civique",
+  "mention": "CSP",
+  "theme": "Droits et devoirs",
+  "questions": [
+    {
+      "notion": "administration",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "L'administration qui instruit les titres de séjour est :",
+      "options": [
+        "La préfecture",
+        "La mairie",
+        "Le tribunal"
+      ],
+      "reponse": "La préfecture"
+    },
+    {
+      "notion": "obligations de l'usager",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Face à une notification demandant une pièce, l'usager doit :",
+      "options": [
+        "Répondre avant l'échéance",
+        "Ignorer le message",
+        "Changer de préfecture"
+      ],
+      "reponse": "Répondre avant l'échéance"
+    },
+    {
+      "notion": "service public",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Un service public doit traiter les usagers :",
+      "options": [
+        "De façon égale",
+        "Selon leur richesse",
+        "Selon leur origine"
+      ],
+      "reponse": "De façon égale"
+    },
+    {
+      "notion": "démarches",
+      "type": "mise_en_situation",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Un dossier est incomplet. La bonne conduite est de :",
+      "options": [
+        "Transmettre la pièce manquante",
+        "Recommencer tout le dossier ailleurs",
+        "Attendre sans rien faire"
+      ],
+      "reponse": "Transmettre la pièce manquante"
+    },
+    {
+      "notion": "droits de l'usager",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "L'usager d'un service public a le droit :",
+      "options": [
+        "D'obtenir une réponse à sa demande",
+        "De ne jamais fournir de pièce",
+        "De fixer lui-même la loi"
+      ],
+      "reponse": "D'obtenir une réponse à sa demande"
+    }
+  ]
+}

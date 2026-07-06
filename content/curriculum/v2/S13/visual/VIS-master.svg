@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 240" width="900" height="240" role="img" aria-label="De l&apos;opinion à la menace : où sont les limites ?">
+  <title>De l&apos;opinion à la menace : où sont les limites ?</title>
+  <rect x="0" y="0" width="900" height="240" fill="#ffffff" />
+  <rect x="30" y="100" width="200" height="70" fill="#dcfce7" rx="8" />
+  <text x="130" y="140" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">Opinion (permis)</text>
+  <rect x="240" y="100" width="200" height="70" fill="#dcfce7" rx="8" />
+  <text x="340" y="140" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">Critique (permis)</text>
+  <rect x="450" y="100" width="200" height="70" fill="#fee2e2" rx="8" />
+  <text x="550" y="140" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">Insulte (limite)</text>
+  <rect x="660" y="100" width="200" height="70" fill="#fecaca" rx="8" />
+  <text x="760" y="140" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">Menace (interdit)</text>
+  <line x1="30" y1="190" x2="860" y2="190" stroke="#374151" stroke-width="2" />
+  <text x="30" y="60" font-size="16" font-family="sans-serif" fill="#111827" text-anchor="start">Liberté d&apos;expression et ses limites légales</text>
+</svg>

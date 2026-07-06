@@ -1,0 +1,114 @@
+[
+  {
+    "support_id": "S10-support-institutions",
+    "version": 1,
+    "niveau": "A1",
+    "consigne": "Écoutez les demandes. Associez chaque demande à la bonne institution.",
+    "aides": [
+      "École = mairie",
+      "Loi = Parlement",
+      "Litige = justice"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Pour inscrire un enfant à l'école, on s'adresse à :",
+        "options": [
+          "La mairie",
+          "Le Parlement",
+          "La justice"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "vrai_faux",
+        "enonce": "Le Parlement vote la loi."
+      }
+    ],
+    "corrige": {
+      "q1": "La mairie",
+      "q2": true
+    },
+    "invariants_hash": "49718e3147a64b8f3a0ddd35064752965977c5160f15c580375ec44caad457eb"
+  },
+  {
+    "support_id": "S10-support-institutions",
+    "version": 1,
+    "niveau": "A2",
+    "consigne": "Orientez oralement une personne vers la bonne institution et justifiez votre choix.",
+    "aides": [
+      "Pensez à : commune, Parlement, justice"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Qui tranche un litige entre deux personnes ?",
+        "options": [
+          "La justice",
+          "La mairie",
+          "Le gouvernement"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "reponse_courte",
+        "enonce": "Citez une chose que gère la commune."
+      }
+    ],
+    "corrige": {
+      "q1": "La justice",
+      "q2": "L'état civil, les écoles ou l'urbanisme local (une réponse suffit)."
+    },
+    "invariants_hash": "49718e3147a64b8f3a0ddd35064752965977c5160f15c580375ec44caad457eb"
+  },
+  {
+    "support_id": "S10-support-institutions",
+    "version": 1,
+    "niveau": "B1",
+    "consigne": "Classez trois demandes selon l'institution compétente et justifiez chaque choix, puis distinguez le rôle local et national.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "reponse_longue",
+        "enonce": "Orientez trois demandes (école, loi, litige) vers la bonne institution en justifiant."
+      },
+      {
+        "id": "q2",
+        "type": "reponse_longue",
+        "enonce": "Expliquez la différence entre le rôle du maire et celui du Parlement."
+      }
+    ],
+    "corrige": {
+      "q1": "Ecole -> mairie ; loi -> Parlement ; litige -> justice, chacun selon sa competence.",
+      "q2": "Le maire gere le local (commune) ; le Parlement vote la loi au niveau national."
+    },
+    "invariants_hash": "49718e3147a64b8f3a0ddd35064752965977c5160f15c580375ec44caad457eb"
+  },
+  {
+    "support_id": "S10-support-institutions",
+    "version": 1,
+    "niveau": "B2",
+    "consigne": "Analysez la répartition des compétences du local au national et nuancez l'intérêt de cette organisation.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "argumentation",
+        "enonce": "Argumentez : pourquoi séparer les compétences entre commune, Parlement, gouvernement et justice ?"
+      },
+      {
+        "id": "q2",
+        "type": "argumentation",
+        "enonce": "Nuancez : cette organisation peut-elle compliquer les démarches ? Comment aider les usagers ?"
+      }
+    ],
+    "corrige": {
+      "q1": "Reponse ouverte : proximite, specialisation, controle mutuel, separation des pouvoirs.",
+      "q2": "Reponse ouverte : complexite pour l'usager ; remedes : information, guichets uniques, mediation."
+    },
+    "invariants_hash": "49718e3147a64b8f3a0ddd35064752965977c5160f15c580375ec44caad457eb"
+  }
+]

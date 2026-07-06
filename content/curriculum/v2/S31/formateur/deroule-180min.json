@@ -1,0 +1,27 @@
+[
+  {
+    "phase": "Installation",
+    "duree_min": 10,
+    "description": "Consignes et banque verrouillée."
+  },
+  {
+    "phase": "Langue B1",
+    "duree_min": 60,
+    "description": "Réactivation linguistique B1."
+  },
+  {
+    "phase": "Simulation CR",
+    "duree_min": 45,
+    "description": "40 questions sans aide."
+  },
+  {
+    "phase": "Analyse distracteurs",
+    "duree_min": 35,
+    "description": "Erreurs et pièges."
+  },
+  {
+    "phase": "Remédiation",
+    "duree_min": 30,
+    "description": "Ciblage cohorte."
+  }
+]

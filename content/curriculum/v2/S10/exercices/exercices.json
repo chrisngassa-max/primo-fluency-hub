@@ -1,0 +1,89 @@
+{
+  "session_code": "S10",
+  "variants": [
+    {
+      "niveau": "A1",
+      "consigne": "Écoutez les demandes. Associez chaque demande à la bonne institution.",
+      "aides": [
+        "École = mairie",
+        "Loi = Parlement",
+        "Litige = justice"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Pour inscrire un enfant à l'école, on s'adresse à :",
+          "options": [
+            "La mairie",
+            "Le Parlement",
+            "La justice"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "Le Parlement vote la loi."
+        }
+      ]
+    },
+    {
+      "niveau": "A2",
+      "consigne": "Orientez oralement une personne vers la bonne institution et justifiez votre choix.",
+      "aides": [
+        "Pensez à : commune, Parlement, justice"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Qui tranche un litige entre deux personnes ?",
+          "options": [
+            "La justice",
+            "La mairie",
+            "Le gouvernement"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Citez une chose que gère la commune."
+        }
+      ]
+    },
+    {
+      "niveau": "B1",
+      "consigne": "Classez trois demandes selon l'institution compétente et justifiez chaque choix, puis distinguez le rôle local et national.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Orientez trois demandes (école, loi, litige) vers la bonne institution en justifiant."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Expliquez la différence entre le rôle du maire et celui du Parlement."
+        }
+      ]
+    },
+    {
+      "niveau": "B2",
+      "consigne": "Analysez la répartition des compétences du local au national et nuancez l'intérêt de cette organisation.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Argumentez : pourquoi séparer les compétences entre commune, Parlement, gouvernement et justice ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Nuancez : cette organisation peut-elle compliquer les démarches ? Comment aider les usagers ?"
+        }
+      ]
+    }
+  ]
+}

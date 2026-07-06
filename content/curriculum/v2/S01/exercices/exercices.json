@@ -1,0 +1,89 @@
+{
+  "session_code": "S01",
+  "variants": [
+    {
+      "niveau": "A1",
+      "consigne": "Écoutez le dialogue. Associez chaque personnage à son rôle, puis complétez les phrases avec les mots de la liste.",
+      "aides": [
+        "Awa = apprenante",
+        "Mme Rossi = formatrice",
+        "Mots utiles : parcours, objectif, séance"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Combien d'heures dure le parcours d'Awa ?",
+          "options": [
+            "25 heures",
+            "80 heures",
+            "100 heures"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "Awa veut obtenir sa carte de séjour pluriannuelle."
+        }
+      ]
+    },
+    {
+      "niveau": "A2",
+      "consigne": "Racontez avec vos mots ce que veut Awa et comment se déroule son parcours (durée, nombre de séances, évaluations).",
+      "aides": [
+        "Pensez à utiliser : parcours, séance, objectif, examen"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Combien de séances collectives Awa va-t-elle suivre ?",
+          "options": [
+            "18",
+            "25",
+            "31"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Citez un des cinq thèmes civiques mentionnés par Mme Rossi."
+        }
+      ]
+    },
+    {
+      "niveau": "B1",
+      "consigne": "Expliquez avec vos propres mots la différence entre un droit, un devoir et une règle en vous appuyant sur le dialogue, puis justifiez pourquoi le parcours comprend deux évaluations distinctes (E1 et E2).",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Reformulez la différence entre droit, devoir et règle donnée par Mme Rossi."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Comparez le rôle de l'évaluation intermédiaire (E1) et de l'évaluation finale (E2)."
+        }
+      ]
+    },
+    {
+      "niveau": "B2",
+      "consigne": "Analysez l'organisation du parcours d'Awa (progressivité, double évaluation, cinq thèmes civiques) et nuancez son intérêt pour un adulte primo-arrivant ayant peu de temps disponible.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Argumentez : en quoi la distinction entre droit, devoir et règle est-elle utile pour un nouvel arrivant ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Nuancez : quels sont les avantages et les limites d'un parcours de 80 heures reparti sur 25 semaines ?"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Agent : Bonjour, je vais vous aider à trouver la bonne institution.\nPremier habitant : Bonjour. Je veux inscrire mon enfant à l'école. Où dois-je aller ?\nAgent : Pour l'école et l'état civil, c'est la mairie, dans votre commune. Le maire s'en occupe.\nDeuxième habitant : Et moi, je voudrais comprendre qui décide une nouvelle loi nationale ?\nAgent : Les lois sont votées par le Parlement, c'est-à-dire les députés et les sénateurs. Ensuite, le gouvernement les applique.\nTroisième habitant : Moi, j'ai un désaccord sérieux avec quelqu'un. Qui peut trancher ?\nAgent : Pour un litige, c'est la justice. Ce sont les juges qui décident, selon la loi.\nPremier habitant : Et le président de la République, il fait quoi ?\nAgent : Il est élu par les citoyens et joue un rôle national important. Chaque institution a son rôle : du local, la commune, au national, le Parlement, le gouvernement et la justice.\nDeuxième habitant : Merci, c'est beaucoup plus clair maintenant.",
+  "transcript": "Agent : Bonjour, je vais vous aider à trouver la bonne institution.\nPremier habitant : Bonjour. Je veux inscrire mon enfant à l'école. Où dois-je aller ?\nAgent : Pour l'école et l'état civil, c'est la mairie, dans votre commune. Le maire s'en occupe.\nDeuxième habitant : Et moi, je voudrais comprendre qui décide une nouvelle loi nationale ?\nAgent : Les lois sont votées par le Parlement, c'est-à-dire les députés et les sénateurs. Ensuite, le gouvernement les applique.\nTroisième habitant : Moi, j'ai un désaccord sérieux avec quelqu'un. Qui peut trancher ?\nAgent : Pour un litige, c'est la justice. Ce sont les juges qui décident, selon la loi.\nPremier habitant : Et le président de la République, il fait quoi ?\nAgent : Il est élu par les citoyens et joue un rôle national important. Chaque institution a son rôle : du local, la commune, au national, le Parlement, le gouvernement et la justice.\nDeuxième habitant : Merci, c'est beaucoup plus clair maintenant.",
+  "voice": "fr-FR-Wavenet-C",
+  "languageCode": "fr-FR",
+  "speaking_rate": 0.92,
+  "pauses": [
+    {
+      "after_word": 14,
+      "ms": 400
+    },
+    {
+      "after_word": 66,
+      "ms": 400
+    },
+    {
+      "after_word": 120,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 83,
+  "hash": "cec8f4b65d0f17fe87af40025b534142f9945ebc107c2797cbe4484a71a2d45a"
+}

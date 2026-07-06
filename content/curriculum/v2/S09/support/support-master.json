@@ -1,0 +1,20 @@
+{
+  "support_id": "S09-support-laicite",
+  "personnages": [
+    "Narrateur (mises en situation)"
+  ],
+  "situation": "Quatre situations courtes illustrent la laïcité : un agent public au guichet, un usager dans un service public, un élève à l'école publique et une personne dans l'espace privé. Chaque situation montre la différence entre neutralité de l'État et liberté de conscience.",
+  "faits": [
+    "La laïcité repose sur la liberté de conscience et la neutralité de l'État.",
+    "Un agent public doit rester neutre et ne pas afficher ses convictions.",
+    "Un usager d'un service public est libre de croire ou de ne pas croire.",
+    "À l'école publique, les signes religieux ostensibles sont interdits pour les élèves.",
+    "Dans l'espace privé, chacun est libre de pratiquer sa religion."
+  ],
+  "nombres": [
+    4
+  ],
+  "dates": [],
+  "hash": "7b56841e14cf1f69519156c389cb630d666f2a8201662de7fa82bacbdbd0d01c",
+  "version": 1
+}

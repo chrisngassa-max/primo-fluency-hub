@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "Guichet 3",
+    "q2": true
+  },
+  "A2": {
+    "q1": "Dix jours",
+    "q2": "Respecter la loi et rester calme."
+  },
+  "B1": {
+    "q1": "Reformulation, bon guichet, calcul du délai restant.",
+    "q2": "Agent neutre et informatif ; usager informé, peut reformuler et recourir."
+  },
+  "B2": {
+    "q1": "Réponse ouverte évaluée sur l'argumentation.",
+    "q2": "Réponse ouverte : après épuisement des explications, réponse injuste."
+  }
+}

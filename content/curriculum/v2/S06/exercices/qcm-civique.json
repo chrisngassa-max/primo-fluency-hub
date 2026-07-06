@@ -1,0 +1,67 @@
+{
+  "resource_id": "S06-QCM-civique",
+  "mention": "CSP",
+  "theme": "Vivre dans la société française",
+  "questions": [
+    {
+      "notion": "durée du travail",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "La durée légale du travail en France est de :",
+      "options": [
+        "35 heures par semaine",
+        "40 heures par semaine",
+        "45 heures par semaine"
+      ],
+      "reponse": "35 heures par semaine"
+    },
+    {
+      "notion": "salaire",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Le salaire réellement reçu par le salarié s'appelle le salaire :",
+      "options": [
+        "Net",
+        "Brut",
+        "Total"
+      ],
+      "reponse": "Net"
+    },
+    {
+      "notion": "travail déclaré",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Un travail déclaré permet surtout :",
+      "options": [
+        "D'avoir des droits (santé, retraite)",
+        "D'éviter de payer un loyer",
+        "De voter deux fois"
+      ],
+      "reponse": "D'avoir des droits (santé, retraite)"
+    },
+    {
+      "notion": "congés payés",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Le nombre de semaines de congés payés par an est de :",
+      "options": [
+        "5 semaines",
+        "2 semaines",
+        "10 semaines"
+      ],
+      "reponse": "5 semaines"
+    },
+    {
+      "notion": "égalité professionnelle",
+      "type": "mise_en_situation",
+      "official_status": "simulation_pedagogique",
+      "enonce": "À travail égal, femmes et hommes doivent recevoir :",
+      "options": [
+        "Un salaire égal",
+        "Un salaire décidé au hasard",
+        "Un salaire selon l'âge"
+      ],
+      "reponse": "Un salaire égal"
+    }
+  ]
+}

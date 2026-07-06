@@ -1,0 +1,380 @@
+{
+  "session_code": "S29",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Histoire républicaine, Europe et mémoire",
+  "support": {
+    "support_id": "S29-support",
+    "situation": "Les apprenants construisent une frise : République, construction européenne, événement mémoriel, et expliquent la portée historique.",
+    "personnages": [
+      "Groupe B1",
+      "Formateur"
+    ],
+    "faits": [
+      "La IIIe République a établi l'école gratuite, laïque et obligatoire.",
+      "L'Union européenne est née de la volonté de paix après les guerres.",
+      "La mémoire des conflits aide à comprendre l'intégration européenne.",
+      "Un événement historique a des causes et des conséquences.",
+      "La France est membre fondateur de la construction européenne.",
+      "Raconter l'histoire suppose chronologie et contexte."
+    ],
+    "nombres": [],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S29-CO-master",
+    "voice": "fr-FR-Wavenet-C",
+    "speaking_rate": 0.92,
+    "script": "Formateur : Construisez la frise : République, Europe, mémoire.\nApprenant : En mille huit cent soixante-dix, la IIIe République commence. Elle progresse vers l'école laïque pour tous.\nFormateur : Et l'Europe ?\nApprenant : Après deux guerres mondiales, les pays veulent la paix. Le traité de Rome en mille neuf cent cinquante-sept lance la construction européenne.\nFormateur : Lien avec la mémoire ?\nApprenant : On commémore pour ne pas oublier. Ça explique pourquoi l'Europe travaille ensemble économiquement et politiquement.\nFormateur : Portée historique ?\nApprenant : Une loi scolaire change la société ; un traité change les relations entre États.\nFormateur : Présentez oralement un événement et sa conséquence européenne.",
+    "pauses": [
+      {
+        "after_word": 12,
+        "ms": 400
+      },
+      {
+        "after_word": 60,
+        "ms": 400
+      },
+      {
+        "after_word": 130,
+        "ms": 500
+      }
+    ]
+  },
+  "visual": {
+    "resource_id": "S29-VIS-master",
+    "alt_text": "Frise chronologique République, guerres, traités européens.",
+    "scene": {
+      "title": "Frise histoire-Europe",
+      "width": 900,
+      "height": 200,
+      "background": "#ffffff",
+      "elements": [
+        {
+          "type": "line",
+          "x1": 50,
+          "y1": 100,
+          "x2": 850,
+          "y2": 100,
+          "stroke": "#374151",
+          "strokeWidth": 3
+        },
+        {
+          "type": "text",
+          "x": 120,
+          "y": 140,
+          "anchor": "middle",
+          "fontSize": 12,
+          "text": "1870 République"
+        },
+        {
+          "type": "text",
+          "x": 350,
+          "y": 140,
+          "anchor": "middle",
+          "fontSize": 12,
+          "text": "1914-45 Guerres"
+        },
+        {
+          "type": "text",
+          "x": 580,
+          "y": 140,
+          "anchor": "middle",
+          "fontSize": 12,
+          "text": "1957 Europe"
+        },
+        {
+          "type": "text",
+          "x": 780,
+          "y": 140,
+          "anchor": "middle",
+          "fontSize": 12,
+          "text": "Mémoire"
+        },
+        {
+          "type": "circle",
+          "cx": 120,
+          "cy": 100,
+          "r": 8,
+          "fill": "#64748b"
+        },
+        {
+          "type": "circle",
+          "cx": 350,
+          "cy": 100,
+          "r": 8,
+          "fill": "#64748b"
+        },
+        {
+          "type": "circle",
+          "cx": 580,
+          "cy": 100,
+          "r": 8,
+          "fill": "#64748b"
+        },
+        {
+          "type": "circle",
+          "cx": 780,
+          "cy": 100,
+          "r": 8,
+          "fill": "#64748b"
+        }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S29-LEX-A1-B2",
+    "mots": [
+      {
+        "mot": "frise",
+        "definition_simple": "Ligne du temps visuelle.",
+        "exemple": "Frise chronologique."
+      },
+      {
+        "mot": "République",
+        "definition_simple": "Régime politique français.",
+        "exemple": "IIIe République."
+      },
+      {
+        "mot": "Europe",
+        "definition_simple": "Ensemble de pays unis partiellement.",
+        "exemple": "Construction européenne."
+      },
+      {
+        "mot": "traité",
+        "definition_simple": "Accord entre États.",
+        "exemple": "Traité de Rome."
+      },
+      {
+        "mot": "mémoire",
+        "definition_simple": "Rappel du passé.",
+        "exemple": "Mémoire des guerres."
+      },
+      {
+        "mot": "conséquence",
+        "definition_simple": "Effet d'un événement.",
+        "exemple": "Conséquence européenne."
+      },
+      {
+        "mot": "chronologie",
+        "definition_simple": "Ordre des dates.",
+        "exemple": "Respecter la chronologie."
+      },
+      {
+        "mot": "paix",
+        "definition_simple": "Absence de guerre.",
+        "exemple": "Volonté de paix."
+      },
+      {
+        "mot": "portée",
+        "definition_simple": "Importance historique.",
+        "exemple": "Portée d'un événement."
+      }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Placez des dates sur la frise.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Traité de Rome :",
+          "options": [
+            "1957",
+            "1789",
+            "2020"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "L'Europe vise aussi la paix."
+        }
+      ],
+      "corrige": {
+        "q1": "1957",
+        "q2": true
+      }
+    },
+    "A2": {
+      "consigne": "Racontez oralement un événement.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "IIIe République : école",
+          "options": [
+            "Laïque et obligatoire",
+            "Interdite",
+            "Payante seulement"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Une cause des traités européens ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Laïque et obligatoire",
+        "q2": "Volonté de paix après guerres."
+      }
+    },
+    "B1": {
+      "consigne": "Expliquez portée historique et européenne.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Récit d'un événement avec contexte."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Lien Europe et mémoire."
+        }
+      ],
+      "corrige": {
+        "q1": "Chronologie + conséquence.",
+        "q2": "Paix, coopération."
+      }
+    },
+    "B2": {
+      "consigne": "Synthèse multi-périodes.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Pourquoi relier République et Europe ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Limites d'une frise simplifiée ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Réponse ouverte.",
+        "q2": "Réponse ouverte."
+      }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S29-QCM-civique",
+    "mention": "CR",
+    "theme": "Histoire, géographie, culture",
+    "questions": [
+      {
+        "notion": "République",
+        "type": "connaissance",
+        "enonce": "La IIIe République a favorisé :",
+        "options": [
+          "École laïque",
+          "Monarchie absolue",
+          "Suppression du vote"
+        ],
+        "reponse": "École laïque",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "Europe",
+        "type": "connaissance",
+        "enonce": "La construction européenne vise aussi :",
+        "options": [
+          "La paix",
+          "La guerre",
+          "L'isolement"
+        ],
+        "reponse": "La paix",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "mémoire",
+        "type": "connaissance",
+        "enonce": "La mémoire des guerres sert à :",
+        "options": [
+          "Comprendre le présent",
+          "Oublier tout",
+          "Supprimer l'histoire"
+        ],
+        "reponse": "Comprendre le présent",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "chronologie",
+        "type": "mise_en_situation",
+        "enonce": "Raconter un événement demande :",
+        "options": [
+          "Contexte et dates",
+          "Uniquement des opinions",
+          "Aucun fait"
+        ],
+        "reponse": "Contexte et dates",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "traité",
+        "type": "connaissance",
+        "enonce": "Un traité européen est :",
+        "options": [
+          "Un accord entre États",
+          "Une recette",
+          "Un sport"
+        ],
+        "reponse": "Un accord entre États",
+        "official_status": "simulation_pedagogique"
+      }
+    ]
+  },
+  "devoirs": {
+    "A1": "Frise à compléter.",
+    "A2": "Récit oral 2 min.",
+    "B1": "Texte portée historique.",
+    "B2": "Synthèse Europe-mémoire."
+  },
+  "formateur": {
+    "fiche_formateur": "B1 : frise République-Europe-mémoire. CO/EO récit et portée.",
+    "deroule_180min": [
+      {
+        "phase": "Rituel civique",
+        "duree_min": 10,
+        "description": "Histoire républicaine et Europe."
+      },
+      {
+        "phase": "Activation + lexique",
+        "duree_min": 20,
+        "description": "Découverte et réactivation du lexique de la séance."
+      },
+      {
+        "phase": "Support invariant CO/CE",
+        "duree_min": 50,
+        "description": "Écoute/lecture du support invariant, compréhension globale puis détaillée."
+      },
+      {
+        "phase": "Ateliers différenciés",
+        "duree_min": 60,
+        "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du même support."
+      },
+      {
+        "phase": "Production EE/EO",
+        "duree_min": 30,
+        "description": "Production selon la compétence dominante de la séance."
+      },
+      {
+        "phase": "Fixation",
+        "duree_min": 10,
+        "description": "Synthèse collective, QCM civique, devoir personnalisé."
+      }
+    ],
+    "adaptation_rules": [
+      "Frise sans images choquantes.",
+      "Dates clés fournies.",
+      "CO/EO notés séparément."
+    ]
+  }
+}

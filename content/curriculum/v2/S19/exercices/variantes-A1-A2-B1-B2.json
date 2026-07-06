@@ -1,0 +1,113 @@
+[
+  {
+    "support_id": "S19-support-guichet",
+    "version": 1,
+    "niveau": "A1",
+    "consigne": "Écoutez le dialogue. Répondez aux questions.",
+    "aides": [
+      "Karim = usager",
+      "Guichet 3 = dépôt"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Quel guichet pour déposer une pièce ?",
+        "options": [
+          "Guichet 3",
+          "Guichet 1",
+          "Guichet 2"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "vrai_faux",
+        "enonce": "Karim a le droit de demander une reformulation."
+      }
+    ],
+    "corrige": {
+      "q1": "Guichet 3",
+      "q2": true
+    },
+    "invariants_hash": "1e9db5efbb4697c225cd14f55044a1488abc5d609a92acf3b7fe58426405faee"
+  },
+  {
+    "support_id": "S19-support-guichet",
+    "version": 1,
+    "niveau": "A2",
+    "consigne": "Jouez une interaction courte : demander une précision et reformuler.",
+    "aides": [
+      "Délai = quinze jours"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Combien de jours restent si la notification date d'il y a cinq jours ?",
+        "options": [
+          "Dix jours",
+          "Quinze jours",
+          "Cinq jours"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "reponse_courte",
+        "enonce": "Citez un devoir de Karim au guichet."
+      }
+    ],
+    "corrige": {
+      "q1": "Dix jours",
+      "q2": "Respecter la loi et rester calme."
+    },
+    "invariants_hash": "1e9db5efbb4697c225cd14f55044a1488abc5d609a92acf3b7fe58426405faee"
+  },
+  {
+    "support_id": "S19-support-guichet",
+    "version": 1,
+    "niveau": "B1",
+    "consigne": "Expliquez comment Karim résout le malentendu et distinguez droits et neutralité.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "reponse_longue",
+        "enonce": "Décrivez la résolution du malentendu (guichet et délai)."
+      },
+      {
+        "id": "q2",
+        "type": "reponse_longue",
+        "enonce": "Distinguez le rôle neutre de l'agent et les droits de l'usager."
+      }
+    ],
+    "corrige": {
+      "q1": "Reformulation, bon guichet, calcul du délai restant.",
+      "q2": "Agent neutre et informatif ; usager informé, peut reformuler et recourir."
+    },
+    "invariants_hash": "1e9db5efbb4697c225cd14f55044a1488abc5d609a92acf3b7fe58426405faee"
+  },
+  {
+    "support_id": "S19-support-guichet",
+    "version": 1,
+    "niveau": "B2",
+    "consigne": "Argumentez sur reformulation et recours ; nuancez les limites.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "argumentation",
+        "enonce": "Pourquoi reformuler est-il efficace face à un agent ?"
+      },
+      {
+        "id": "q2",
+        "type": "argumentation",
+        "enonce": "Quand un recours administratif devient-il pertinent ?"
+      }
+    ],
+    "corrige": {
+      "q1": "Réponse ouverte évaluée sur l'argumentation.",
+      "q2": "Réponse ouverte : après épuisement des explications, réponse injuste."
+    },
+    "invariants_hash": "1e9db5efbb4697c225cd14f55044a1488abc5d609a92acf3b7fe58426405faee"
+  }
+]

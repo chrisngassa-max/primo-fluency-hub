@@ -1,0 +1,45 @@
+{
+  "resource_id": "S09-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "laïcité",
+      "definition_simple": "La séparation de l'État et des religions, avec liberté de conscience.",
+      "exemple": "La laïcité protège la liberté de croire ou non."
+    },
+    {
+      "mot": "neutralité",
+      "definition_simple": "Le fait de ne pas prendre parti.",
+      "exemple": "L'agent public reste neutre."
+    },
+    {
+      "mot": "conscience",
+      "definition_simple": "Les convictions personnelles d'une personne.",
+      "exemple": "La liberté de conscience est garantie."
+    },
+    {
+      "mot": "croire",
+      "definition_simple": "Avoir une foi religieuse.",
+      "exemple": "Chacun est libre de croire."
+    },
+    {
+      "mot": "ne pas croire",
+      "definition_simple": "Ne pas avoir de religion.",
+      "exemple": "On peut aussi choisir de ne pas croire."
+    },
+    {
+      "mot": "culte",
+      "definition_simple": "La pratique d'une religion.",
+      "exemple": "La liberté de culte existe dans l'espace privé."
+    },
+    {
+      "mot": "agent",
+      "definition_simple": "Une personne qui travaille pour un service public.",
+      "exemple": "L'agent doit rester neutre."
+    },
+    {
+      "mot": "usager",
+      "definition_simple": "Une personne qui utilise un service public.",
+      "exemple": "L'usager est libre de ses convictions."
+    }
+  ]
+}

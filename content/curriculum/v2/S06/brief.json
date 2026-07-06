@@ -1,0 +1,137 @@
+{
+  "session_code": "S06",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Emploi, contrat et fiche de paie",
+  "support": {
+    "support_id": "S06-support-emploi",
+    "situation": "Mme Okoye passe un entretien pour un poste d'employée de rayon. M. Berger, le responsable, lui présente l'offre, un extrait de contrat et une fiche de paie fictifs mais cohérents, tous issus d'un même jeu de données pédagogique.",
+    "personnages": ["Mme Okoye (candidate)", "M. Berger (responsable du magasin)"],
+    "faits": [
+      "La durée légale du travail est de 35 heures par semaine.",
+      "Le salaire brut fictif du poste est de 1800 € par mois pour un temps plein.",
+      "Le salaire net fictif correspondant est d'environ 1400 € par mois.",
+      "Un salarié a droit à 5 semaines de congés payés par an.",
+      "Le travail doit être déclaré et faire l'objet d'un contrat écrit.",
+      "Le salaire brut est supérieur au salaire net à cause des cotisations sociales."
+    ],
+    "nombres": [35, 1800, 1400, 5],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S06-CO-master",
+    "voice": "fr-FR-Wavenet-C",
+    "speaking_rate": 0.92,
+    "script": "M. Berger : Bonjour madame, merci d'être venue pour cet entretien. Le poste est un temps plein, trente-cinq heures par semaine.\nMme Okoye : Bonjour. Très bien. Et pour le salaire ?\nM. Berger : Le salaire brut est de mille huit cents euros par mois. Le net, ce que vous recevez vraiment, est d'environ mille quatre cents euros.\nMme Okoye : Pourquoi cette différence entre le brut et le net ?\nM. Berger : À cause des cotisations sociales : elles financent la santé, la retraite, le chômage. C'est normal et obligatoire.\nMme Okoye : Je comprends. Et les congés ?\nM. Berger : Vous avez droit à cinq semaines de congés payés par an. Tout est écrit dans le contrat.\nMme Okoye : Le travail est bien déclaré ?\nM. Berger : Oui, bien sûr. Un contrat écrit, un travail déclaré : c'est la règle et c'est votre protection.\nMme Okoye : Parfait. Est-ce que je peux vérifier les informations sur la fiche de paie ?\nM. Berger : Bien sûr, prenez le temps de tout vérifier avant de signer.",
+    "pauses": [
+      { "after_word": 22, "ms": 400 },
+      { "after_word": 70, "ms": 400 },
+      { "after_word": 120, "ms": 500 }
+    ]
+  },
+  "visual": {
+    "resource_id": "S06-VIS-master",
+    "alt_text": "Fiche de paie fictive simplifiee en tableau : ligne salaire brut, ligne cotisations, ligne salaire net, avec la mention document pedagogique fictif, sans logo ni nom d'entreprise.",
+    "scene": {
+      "title": "Fiche de paie fictive (jeu de données pédagogique)",
+      "width": 900,
+      "height": 300,
+      "background": "#ffffff",
+      "elements": [
+        { "type": "rect", "x": 120, "y": 40, "width": 660, "height": 220, "rx": 8, "fill": "#f8fafc" },
+        { "type": "text", "x": 150, "y": 75, "fontSize": 16, "text": "Bulletin de paie (document pédagogique fictif)" },
+        { "type": "line", "x1": 150, "y1": 95, "x2": 750, "y2": 95, "stroke": "#94a3b8", "strokeWidth": 2 },
+        { "type": "text", "x": 150, "y": 130, "fontSize": 14, "text": "Durée : 35 h / semaine" },
+        { "type": "text", "x": 150, "y": 165, "fontSize": 14, "text": "Salaire brut : 1800 €" },
+        { "type": "text", "x": 150, "y": 200, "fontSize": 14, "text": "Cotisations sociales : − 400 €" },
+        { "type": "text", "x": 150, "y": 235, "fontSize": 14, "text": "Salaire net : 1400 €" },
+        { "type": "line", "x1": 150, "y1": 212, "x2": 500, "y2": 212, "stroke": "#94a3b8", "strokeWidth": 1 }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S06-LEX-A1-B2",
+    "mots": [
+      { "mot": "offre", "definition_simple": "Une proposition d'emploi.", "exemple": "Elle a répondu à une offre d'emploi." },
+      { "mot": "candidature", "definition_simple": "Le fait de se proposer pour un poste.", "exemple": "Il a envoyé sa candidature." },
+      { "mot": "contrat", "definition_simple": "Le document écrit qui fixe les règles du travail.", "exemple": "Elle a lu son contrat avant de signer." },
+      { "mot": "salaire", "definition_simple": "L'argent payé pour un travail.", "exemple": "Le salaire est versé chaque mois." },
+      { "mot": "brut", "definition_simple": "Le salaire avant les cotisations.", "exemple": "Le salaire brut est de 1800 €." },
+      { "mot": "net", "definition_simple": "Le salaire réellement reçu, après cotisations.", "exemple": "Le salaire net est de 1400 €." },
+      { "mot": "déclaré", "definition_simple": "Un travail connu de l'administration et protégé par la loi.", "exemple": "Un travail déclaré donne des droits." },
+      { "mot": "congé", "definition_simple": "Un temps de repos payé.", "exemple": "Il a cinq semaines de congés par an." }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Lisez la fiche de paie. Associez chaque mot à sa ligne, puis complétez avec les nombres du support.",
+      "aides": ["Brut = avant cotisations", "Net = reçu vraiment", "Mots utiles : salaire, contrat, congé"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "Quelle est la durée légale du travail par semaine ?", "options": ["30 heures", "35 heures", "40 heures"] },
+        { "id": "q2", "type": "vrai_faux", "enonce": "Le salaire brut est plus élevé que le salaire net." }
+      ],
+      "corrige": { "q1": "35 heures", "q2": true }
+    },
+    "A2": {
+      "consigne": "Vérifiez les informations de la fiche de paie et demandez une correction si un chiffre est faux.",
+      "aides": ["Formule utile : « Je crois qu'il y a une erreur sur... »"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "Combien de semaines de congés payés par an ?", "options": ["3 semaines", "5 semaines", "8 semaines"] },
+        { "id": "q2", "type": "reponse_courte", "enonce": "Expliquez avec vos mots la différence entre salaire brut et salaire net." }
+      ],
+      "corrige": { "q1": "5 semaines", "q2": "Le brut est le salaire avant cotisations ; le net est ce que le salarié reçoit vraiment." }
+    },
+    "B1": {
+      "consigne": "Rédigez un message pour demander une correction sur une fiche de paie, puis expliquez pourquoi le travail déclaré protège le salarié.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "reponse_longue", "enonce": "Écrivez un message poli signalant une erreur de salaire et demandant une correction." },
+        { "id": "q2", "type": "reponse_longue", "enonce": "Expliquez le rôle des cotisations sociales et l'intérêt d'un travail déclaré." }
+      ],
+      "corrige": { "q1": "Message attendu : objet clair, rappel du chiffre attendu, demande de correction, politesse.", "q2": "Les cotisations financent sante, retraite et chomage ; le travail declare ouvre des droits et protege le salarie." }
+    },
+    "B2": {
+      "consigne": "Analysez l'intérêt du contrat écrit et du travail déclaré, et nuancez les risques du travail non déclaré.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "argumentation", "enonce": "Argumentez : pourquoi la loi impose-t-elle un contrat écrit et un travail déclaré ?" },
+        { "id": "q2", "type": "argumentation", "enonce": "Nuancez : quels sont les risques du travail non déclaré pour le salarié et pour la société ?" }
+      ],
+      "corrige": { "q1": "Reponse ouverte : protection du salarie, preuve des droits, financement de la protection sociale.", "q2": "Reponse ouverte : perte de droits, absence de protection, fraude aux cotisations, concurrence deloyale." }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S06-QCM-civique",
+    "mention": "CSP",
+    "theme": "Vivre dans la société française",
+    "questions": [
+      { "notion": "durée du travail", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "La durée légale du travail en France est de :", "options": ["35 heures par semaine", "40 heures par semaine", "45 heures par semaine"], "reponse": "35 heures par semaine" },
+      { "notion": "salaire", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Le salaire réellement reçu par le salarié s'appelle le salaire :", "options": ["Net", "Brut", "Total"], "reponse": "Net" },
+      { "notion": "travail déclaré", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Un travail déclaré permet surtout :", "options": ["D'avoir des droits (santé, retraite)", "D'éviter de payer un loyer", "De voter deux fois"], "reponse": "D'avoir des droits (santé, retraite)" },
+      { "notion": "congés payés", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Le nombre de semaines de congés payés par an est de :", "options": ["5 semaines", "2 semaines", "10 semaines"], "reponse": "5 semaines" },
+      { "notion": "égalité professionnelle", "type": "mise_en_situation", "official_status": "simulation_pedagogique", "enonce": "À travail égal, femmes et hommes doivent recevoir :", "options": ["Un salaire égal", "Un salaire décidé au hasard", "Un salaire selon l'âge"], "reponse": "Un salaire égal" }
+    ]
+  },
+  "devoirs": {
+    "A1": "À la maison : associez brut, net et congés aux bons chiffres de la fiche de paie.",
+    "A2": "À la maison : écrivez 5 phrases pour vérifier une fiche de paie et signaler une erreur.",
+    "B1": "À la maison : rédigez un message de demande de correction d'une fiche de paie.",
+    "B2": "À la maison : rédigez un paragraphe argumenté sur les avantages du travail déclaré."
+  },
+  "formateur": {
+    "fiche_formateur": "Séance emploi et fiche de paie : chaque apprenant doit savoir (1) lire une offre, un contrat et une fiche de paie cohérents, (2) vérifier des informations et demander une correction, (3) connaître durée légale, brut/net, congés et travail déclaré. Tous les documents proviennent d'un même jeu de données fictif et cohérent.",
+    "deroule_180min": [
+      { "phase": "Rituel civique", "duree_min": 10, "description": "Rappel du droit du travail declare a partir du visuel maitre." },
+      { "phase": "Activation + lexique", "duree_min": 20, "description": "Decouverte du lexique (contrat, salaire, brut, net, conge...)." },
+      { "phase": "Support invariant CO/CE", "duree_min": 50, "description": "Ecoute de l'entretien et lecture croisee offre/contrat/fiche de paie." },
+      { "phase": "Ateliers differencies", "duree_min": 60, "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du meme support." },
+      { "phase": "Production EE/EO", "duree_min": 30, "description": "Verifier des informations et demander une correction." },
+      { "phase": "Fixation", "duree_min": 10, "description": "Synthese, QCM civique, devoir personnalise." }
+    ],
+    "adaptation_rules": [
+      "Verifier la coherence des chiffres entre offre, contrat et fiche de paie avant l'atelier.",
+      "Rappeler que les montants sont fictifs et servent uniquement d'exemple.",
+      "Ne jamais modifier les chiffres du jeu de donnees d'un niveau a l'autre : ils sont invariants."
+    ]
+  }
+}

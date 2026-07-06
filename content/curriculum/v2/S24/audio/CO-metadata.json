@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Formateur : Bienvenue à la simulation partielle. Règles : banque gelée, chronomètre affiché, aucune aide pendant les épreuves.\nApprenant : Quel est l'ordre ?\nFormateur : Installation, puis compréhension orale et écrite ensemble, expression écrite, expression orale, civique quarante-cinq minutes, enfin remédiation. Total : cent quatre-vingts minutes.\nApprenant : Et le civique ?\nFormateur : Quarante questions, stratégie trente-deux sur quarante. Vous parcourez d'abord les connaissances rapides, vous bloquez les situations longues pour la fin si besoin.\nApprenant : Peut-on revenir en arrière ?\nFormateur : Oui sur le papier, mais le temps continue. Pas de nouveau fait : tout vient des séances précédentes.\nApprenant : Et si je suis fatigué après l'oral ?\nFormateur : C'est pour cela qu'on simule maintenant. Notez où vous perdez du temps. La remédiation ciblera vos erreurs dominantes.\nApprenant : D'accord. Nous commençons sans aide.",
+  "transcript": "Formateur : Bienvenue à la simulation partielle. Règles : banque gelée, chronomètre affiché, aucune aide pendant les épreuves.\nApprenant : Quel est l'ordre ?\nFormateur : Installation, puis compréhension orale et écrite ensemble, expression écrite, expression orale, civique quarante-cinq minutes, enfin remédiation. Total : cent quatre-vingts minutes.\nApprenant : Et le civique ?\nFormateur : Quarante questions, stratégie trente-deux sur quarante. Vous parcourez d'abord les connaissances rapides, vous bloquez les situations longues pour la fin si besoin.\nApprenant : Peut-on revenir en arrière ?\nFormateur : Oui sur le papier, mais le temps continue. Pas de nouveau fait : tout vient des séances précédentes.\nApprenant : Et si je suis fatigué après l'oral ?\nFormateur : C'est pour cela qu'on simule maintenant. Notez où vous perdez du temps. La remédiation ciblera vos erreurs dominantes.\nApprenant : D'accord. Nous commençons sans aide.",
+  "voice": "fr-FR-Wavenet-C",
+  "languageCode": "fr-FR",
+  "speaking_rate": 0.92,
+  "pauses": [
+    {
+      "after_word": 12,
+      "ms": 400
+    },
+    {
+      "after_word": 60,
+      "ms": 400
+    },
+    {
+      "after_word": 130,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 71,
+  "hash": "8c7c2af0ab871e0d674d2d877c06c1b4f8fd54e0b1bce2781b0e5ac5611024eb"
+}

@@ -1,0 +1,20 @@
+{
+  "support_id": "S07-support-prefecture",
+  "personnages": [
+    "M. Haddad (usager)",
+    "Serveur vocal de la préfecture (voix automatique fictive)"
+  ],
+  "situation": "M. Haddad reçoit une notification fictive de la préfecture qui lui demande une pièce manquante pour son dossier de titre de séjour. Il écoute un serveur vocal fictif, comprend le délai et rédige un courriel formel en joignant la bonne pièce.",
+  "faits": [
+    "La préfecture instruit les demandes de titre de séjour.",
+    "Une notification peut demander une pièce justificative manquante.",
+    "L'usager doit répondre avant la date d'échéance indiquée.",
+    "Un rendez-vous peut être nécessaire pour déposer un dossier.",
+    "Le service public traite les usagers de façon égale.",
+    "L'usager a des droits mais aussi des obligations documentaires."
+  ],
+  "nombres": [],
+  "dates": [],
+  "hash": "fb215529a01d4aeba3661baacd85e1decd06652fc4550e050c021d2dd0e6e2cc",
+  "version": 1
+}

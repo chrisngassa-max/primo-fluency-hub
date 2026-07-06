@@ -1,0 +1,395 @@
+{
+  "session_code": "S20",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Mémoire nationale et patrimoine",
+  "support": {
+    "support_id": "S20-support-memoire",
+    "situation": "Lors d'une visite pédagogique fictive au Mémorial de la Shoah (support inventé), Aïcha et son groupe écoutent une médiatrice qui présente avec sobriété la Résistance, les guerres mondiales et un lieu de mémoire national.",
+    "personnages": [
+      "Aïcha (apprenante)",
+      "Médiatrice (guide fictive)"
+    ],
+    "faits": [
+      "La France commémore des événements douloureux avec respect et sobriété.",
+      "La Résistance a combattu l'occupation pendant la Seconde Guerre mondiale.",
+      "La Shoah désigne la persécution et l'extermination des Juifs par le régime nazi.",
+      "Un lieu de mémoire aide à comprendre le passé sans sensationnalisme.",
+      "Le patrimoine national inclut monuments, musées et sites historiques.",
+      "La République affirme des valeurs de liberté, égalité et fraternité après ces épreuves."
+    ],
+    "nombres": [
+      2
+    ],
+    "dates": [
+      "1939-1945"
+    ],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S20-CO-master",
+    "voice": "fr-FR-Wavenet-C",
+    "speaking_rate": 0.92,
+    "script": "Médiatrice : Bienvenue dans ce lieu de mémoire. Nous allons parler avec respect et calme.\nAïcha : Bonjour madame. Pourquoi ce lieu existe-t-il ?\nMédiatrice : Pour transmettre ce qui s'est passé pendant la Seconde Guerre mondiale, entre mille neuf cent trente-neuf et mille neuf cent quarante-cinq. Ici, nous évoquons la Résistance et la Shoah.\nAïcha : Qu'est-ce que la Résistance ?\nMédiatrice : Des hommes et des femmes qui ont refusé l'occupation et risqué leur vie pour la liberté.\nAïcha : Et la Shoah ?\nMédiatrice : C'est la persécution puis l'extermination des Juifs par le régime nazi. Nous en parlons avec grande sobriété, sans images choquantes inutiles.\nAïcha : Pourquoi la sobriété ?\nMédiatrice : Par respect pour les victimes et pour les visiteurs. Un lieu de mémoire n'est pas un spectacle.\nAïcha : Est-ce du patrimoine national ?\nMédiatrice : Oui. Ces lieux font partie de notre mémoire collective, comme d'autres monuments et musées.\nAïcha : Que doit retenir un citoyen ?\nMédiatrice : Que la République défend la liberté et l'égalité, et que l'histoire nous oblige à la vigilance.\nAïcha : Merci madame. C'était clair et respectueux.",
+    "pauses": [
+      {
+        "after_word": 12,
+        "ms": 400
+      },
+      {
+        "after_word": 68,
+        "ms": 400
+      },
+      {
+        "after_word": 140,
+        "ms": 500
+      }
+    ]
+  },
+  "visual": {
+    "resource_id": "S20-VIS-master",
+    "alt_text": "Frise chronologique sobre : Seconde Guerre mondiale, Résistance, lieu de mémoire, sans photographie réelle.",
+    "scene": {
+      "title": "Mémoire nationale (frise sobre)",
+      "width": 900,
+      "height": 200,
+      "background": "#ffffff",
+      "elements": [
+        {
+          "type": "line",
+          "x1": 60,
+          "y1": 100,
+          "x2": 840,
+          "y2": 100,
+          "stroke": "#374151",
+          "strokeWidth": 3
+        },
+        {
+          "type": "circle",
+          "cx": 120,
+          "cy": 100,
+          "r": 10,
+          "fill": "#94a3b8"
+        },
+        {
+          "type": "text",
+          "x": 120,
+          "y": 140,
+          "anchor": "middle",
+          "fontSize": 12,
+          "text": "1939-1945"
+        },
+        {
+          "type": "circle",
+          "cx": 350,
+          "cy": 100,
+          "r": 10,
+          "fill": "#64748b"
+        },
+        {
+          "type": "text",
+          "x": 350,
+          "y": 140,
+          "anchor": "middle",
+          "fontSize": 12,
+          "text": "Résistance"
+        },
+        {
+          "type": "circle",
+          "cx": 580,
+          "cy": 100,
+          "r": 10,
+          "fill": "#64748b"
+        },
+        {
+          "type": "text",
+          "x": 580,
+          "y": 140,
+          "anchor": "middle",
+          "fontSize": 12,
+          "text": "Mémoire"
+        },
+        {
+          "type": "circle",
+          "cx": 780,
+          "cy": 100,
+          "r": 10,
+          "fill": "#64748b"
+        },
+        {
+          "type": "text",
+          "x": 780,
+          "y": 140,
+          "anchor": "middle",
+          "fontSize": 12,
+          "text": "Patrimoine"
+        },
+        {
+          "type": "text",
+          "x": 450,
+          "y": 50,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "Sobriété et respect"
+        }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S20-LEX-A1-B2",
+    "mots": [
+      {
+        "mot": "mémoire",
+        "definition_simple": "Ce qu'une société se rappelle du passé.",
+        "exemple": "La mémoire nationale."
+      },
+      {
+        "mot": "patrimoine",
+        "definition_simple": "Biens culturels et historiques transmis.",
+        "exemple": "Le patrimoine national."
+      },
+      {
+        "mot": "Résistance",
+        "definition_simple": "Combat contre l'occupation pendant la guerre.",
+        "exemple": "La Résistance française."
+      },
+      {
+        "mot": "Shoah",
+        "definition_simple": "Persécution et extermination des Juifs par les nazis.",
+        "exemple": "On en parle avec sobriété."
+      },
+      {
+        "mot": "sobriété",
+        "definition_simple": "Ton calme et respectueux, sans excès.",
+        "exemple": "Une visite sobre au mémorial."
+      },
+      {
+        "mot": "commémorer",
+        "definition_simple": "Rappeler un événement pour ne pas oublier.",
+        "exemple": "Commémorer les victimes."
+      },
+      {
+        "mot": "République",
+        "definition_simple": "Régime fondé sur liberté, égalité, fraternité.",
+        "exemple": "Valeurs de la République."
+      },
+      {
+        "mot": "guerre mondiale",
+        "definition_simple": "Conflit impliquant de nombreux pays.",
+        "exemple": "La Seconde Guerre mondiale."
+      },
+      {
+        "mot": "lieu de mémoire",
+        "definition_simple": "Site qui rappelle un événement historique.",
+        "exemple": "Un mémorial pédagogique."
+      }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Écoutez. Associez les mots aux définitions.",
+      "aides": [
+        "Résistance = contre l'occupation",
+        "Sobriété = ton respectueux"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "La Seconde Guerre mondiale a eu lieu :",
+          "options": [
+            "1939-1945",
+            "1789-1799",
+            "1958-1962"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "On parle de la Shoah avec sobriété."
+        }
+      ],
+      "corrige": {
+        "q1": "1939-1945",
+        "q2": true
+      }
+    },
+    "A2": {
+      "consigne": "Présentez oralement un lieu de mémoire avec respect.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "La Résistance a combattu :",
+          "options": [
+            "L'occupation",
+            "La mairie",
+            "Les impôts"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Pourquoi la sobriété est-elle importante ?"
+        }
+      ],
+      "corrige": {
+        "q1": "L'occupation",
+        "q2": "Par respect pour les victimes et les visiteurs."
+      }
+    },
+    "B1": {
+      "consigne": "Expliquez un repère de mémoire nationale et sa portée civique.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Présentez la Résistance et la Shoah avec contexte."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Reliez mémoire et valeurs républicaines."
+        }
+      ],
+      "corrige": {
+        "q1": "Résistance = refus occupation ; Shoah = persécution des Juifs, ton sobre.",
+        "q2": "Liberté, égalité, vigilance démocratique."
+      }
+    },
+    "B2": {
+      "consigne": "Analysez le rôle du patrimoine mémoriel ; nuancez les risques de maladresse.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Pourquoi transmettre la mémoire nationale ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Quels écueils éviter dans une présentation ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Réponse ouverte.",
+        "q2": "Sensationnalisme, confusion, manque de respect."
+      }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S20-QCM-civique",
+    "mention": "CSP",
+    "theme": "Histoire, géographie, culture",
+    "questions": [
+      {
+        "notion": "Résistance",
+        "type": "connaissance",
+        "enonce": "La Résistance française a combattu :",
+        "options": [
+          "L'occupation nazie",
+          "Le vote des lois",
+          "Les impôts locaux"
+        ],
+        "reponse": "L'occupation nazie",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "Shoah",
+        "type": "connaissance",
+        "enonce": "La Shoah désigne :",
+        "options": [
+          "La persécution des Juifs par le régime nazi",
+          "La fête nationale",
+          "La construction européenne"
+        ],
+        "reponse": "La persécution des Juifs par le régime nazi",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "sobriété",
+        "type": "mise_en_situation",
+        "enonce": "Dans un lieu de mémoire, on adopte un ton :",
+        "options": [
+          "Sobre et respectueux",
+          "Comique et léger",
+          "Agressif"
+        ],
+        "reponse": "Sobre et respectueux",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "patrimoine",
+        "type": "connaissance",
+        "enonce": "Un mémorial fait partie du :",
+        "options": [
+          "Patrimoine national",
+          "Code du travail",
+          "Règlement intérieur"
+        ],
+        "reponse": "Patrimoine national",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "guerre",
+        "type": "connaissance",
+        "enonce": "La Seconde Guerre mondiale s'est déroulée :",
+        "options": [
+          "Entre 1939 et 1945",
+          "En 1789",
+          "En 2001"
+        ],
+        "reponse": "Entre 1939 et 1945",
+        "official_status": "simulation_pedagogique"
+      }
+    ]
+  },
+  "devoirs": {
+    "A1": "Associez mots du lexique et images sobres.",
+    "A2": "Cinq phrases sur un lieu de mémoire.",
+    "B1": "Texte : Résistance et mémoire.",
+    "B2": "Paragraphe sur transmission et sobriété."
+  },
+  "formateur": {
+    "fiche_formateur": "Dominante civique : mémoire nationale, Résistance, Shoah avec sobriété stricte. Aucune image choquante. CO/CE sur patrimoine.",
+    "deroule_180min": [
+      {
+        "phase": "Rituel civique",
+        "duree_min": 10,
+        "description": "Repères mémoire : guerres, Résistance, Shoah."
+      },
+      {
+        "phase": "Activation + lexique",
+        "duree_min": 20,
+        "description": "Découverte et réactivation du lexique de la séance."
+      },
+      {
+        "phase": "Support invariant CO/CE",
+        "duree_min": 50,
+        "description": "Écoute/lecture du support invariant, compréhension globale puis détaillée."
+      },
+      {
+        "phase": "Ateliers différenciés",
+        "duree_min": 60,
+        "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du même support."
+      },
+      {
+        "phase": "Production EE/EO",
+        "duree_min": 30,
+        "description": "Production selon la compétence dominante de la séance."
+      },
+      {
+        "phase": "Fixation",
+        "duree_min": 10,
+        "description": "Synthèse collective, QCM civique, devoir personnalisé."
+      }
+    ],
+    "adaptation_rules": [
+      "Interrompre tout contenu sensationnaliste.",
+      "Adapter le vocabulaire sans banaliser la Shoah.",
+      "Séparer compréhension orale et QCM civique."
+    ]
+  }
+}

@@ -1,0 +1,395 @@
+{
+  "session_code": "S19",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Interagir avec un agent et résoudre un malentendu",
+  "support": {
+    "support_id": "S19-support-guichet",
+    "situation": "Karim Benali se présente au guichet d'accueil d'une préfecture fictive. Un malentendu sur le numéro de guichet et le délai de quinze jours crée une tension qu'il résout en reformulant calmement sa demande.",
+    "personnages": [
+      "Karim Benali (usager)",
+      "Mme Dupont (agent d'accueil)"
+    ],
+    "faits": [
+      "Karim doit transmettre un justificatif de domicile avant l'échéance de quinze jours.",
+      "L'agent reste neutre et respecte la loi, sans donner d'avis personnel.",
+      "Karim a le droit d'être informé et de demander une reformulation.",
+      "Un malentendu sur le guichet peut être résolu par des questions précises.",
+      "L'usager peut utiliser un recours administratif si la réponse lui semble injuste.",
+      "Respecter la loi et rester calme sont des devoirs dans un lieu public."
+    ],
+    "nombres": [
+      15,
+      3
+    ],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S19-CO-master",
+    "voice": "fr-FR-Wavenet-C",
+    "speaking_rate": 0.92,
+    "script": "Mme Dupont : Bonjour, vous êtes à quel guichet, s'il vous plaît ?\nKarim : Bonjour madame. Je viens pour mon dossier de titre de séjour. On m'a dit qu'il manquait un justificatif de domicile.\nMme Dupont : D'accord. Vous avez pris le numéro pour le guichet dépôt de pièces ?\nKarim : Je ne suis pas sûr. J'ai attendu quarante minutes.\nMme Dupont : Je comprends. Ce guichet traite les rendez-vous, pas les dépôts. Pour déposer une pièce, il faut le guichet numéro trois.\nKarim : Ah, je vois. Et le délai de quinze jours, il commence aujourd'hui ou à la date de la notification ?\nMme Dupont : Il commence à la date indiquée sur votre notification. Vous avez encore dix jours si la notification date d'il y a cinq jours.\nKarim : Merci. Pouvez-vous reformuler ce que je dois apporter exactement ?\nMme Dupont : Bien sûr. Un justificatif de domicile de moins de trois mois, à votre nom.\nKarim : Et si je ne comprends pas la réponse, j'ai le droit de demander un recours ?\nMme Dupont : Oui. Vous pouvez demander une explication écrite et, si besoin, saisir le médiateur. Je reste neutre : j'applique les règles.\nKarim : D'accord, merci madame. Je vais au guichet trois avec les bonnes pièces.\nMme Dupont : Très bien. Respectez bien le délai restant.",
+    "pauses": [
+      {
+        "after_word": 14,
+        "ms": 400
+      },
+      {
+        "after_word": 72,
+        "ms": 400
+      },
+      {
+        "after_word": 150,
+        "ms": 500
+      }
+    ]
+  },
+  "visual": {
+    "resource_id": "S19-VIS-master",
+    "alt_text": "Schéma de trois guichets numérotés et une file d'attente, document pédagogique fictif.",
+    "scene": {
+      "title": "Guichet et files (schéma)",
+      "width": 900,
+      "height": 260,
+      "background": "#ffffff",
+      "elements": [
+        {
+          "type": "rect",
+          "x": 80,
+          "y": 50,
+          "width": 160,
+          "height": 70,
+          "rx": 8,
+          "fill": "#dbeafe"
+        },
+        {
+          "type": "text",
+          "x": 160,
+          "y": 90,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "Guichet 1"
+        },
+        {
+          "type": "rect",
+          "x": 280,
+          "y": 50,
+          "width": 160,
+          "height": 70,
+          "rx": 8,
+          "fill": "#dcfce7"
+        },
+        {
+          "type": "text",
+          "x": 360,
+          "y": 90,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "Guichet 2"
+        },
+        {
+          "type": "rect",
+          "x": 480,
+          "y": 50,
+          "width": 160,
+          "height": 70,
+          "rx": 8,
+          "fill": "#fef9c3"
+        },
+        {
+          "type": "text",
+          "x": 560,
+          "y": 85,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "Guichet 3"
+        },
+        {
+          "type": "text",
+          "x": 560,
+          "y": 105,
+          "anchor": "middle",
+          "fontSize": 12,
+          "text": "Dépôt pièces"
+        },
+        {
+          "type": "line",
+          "x1": 100,
+          "y1": 170,
+          "x2": 800,
+          "y2": 170,
+          "stroke": "#374151",
+          "strokeWidth": 2
+        },
+        {
+          "type": "text",
+          "x": 450,
+          "y": 220,
+          "anchor": "middle",
+          "fontSize": 13,
+          "text": "Reformuler · Préciser · Recours"
+        }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S19-LEX-A1-B2",
+    "mots": [
+      {
+        "mot": "reformuler",
+        "definition_simple": "Dire autrement pour être mieux compris.",
+        "exemple": "Karim reformule sa question."
+      },
+      {
+        "mot": "préciser",
+        "definition_simple": "Donner des détails plus exacts.",
+        "exemple": "L'agent précise le délai."
+      },
+      {
+        "mot": "recours",
+        "definition_simple": "Démarche pour contester ou demander réexamen.",
+        "exemple": "Un recours administratif."
+      },
+      {
+        "mot": "neutralité",
+        "definition_simple": "Ne pas donner d'avis personnel.",
+        "exemple": "L'agent reste neutre."
+      },
+      {
+        "mot": "guichet",
+        "definition_simple": "Comptoir d'accueil d'un service public.",
+        "exemple": "Le guichet trois."
+      },
+      {
+        "mot": "échéance",
+        "definition_simple": "Date limite pour une action.",
+        "exemple": "Échéance de quinze jours."
+      },
+      {
+        "mot": "malentendu",
+        "definition_simple": "Confusion entre deux personnes.",
+        "exemple": "Un malentendu sur le guichet."
+      },
+      {
+        "mot": "usager",
+        "definition_simple": "Personne qui utilise un service public.",
+        "exemple": "Les droits de l'usager."
+      },
+      {
+        "mot": "justificatif",
+        "definition_simple": "Document qui prouve une information.",
+        "exemple": "Justificatif de domicile."
+      }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Écoutez le dialogue. Répondez aux questions.",
+      "aides": [
+        "Karim = usager",
+        "Guichet 3 = dépôt"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Quel guichet pour déposer une pièce ?",
+          "options": [
+            "Guichet 3",
+            "Guichet 1",
+            "Guichet 2"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "Karim a le droit de demander une reformulation."
+        }
+      ],
+      "corrige": {
+        "q1": "Guichet 3",
+        "q2": true
+      }
+    },
+    "A2": {
+      "consigne": "Jouez une interaction courte : demander une précision et reformuler.",
+      "aides": [
+        "Délai = quinze jours"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Combien de jours restent si la notification date d'il y a cinq jours ?",
+          "options": [
+            "Dix jours",
+            "Quinze jours",
+            "Cinq jours"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Citez un devoir de Karim au guichet."
+        }
+      ],
+      "corrige": {
+        "q1": "Dix jours",
+        "q2": "Respecter la loi et rester calme."
+      }
+    },
+    "B1": {
+      "consigne": "Expliquez comment Karim résout le malentendu et distinguez droits et neutralité.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Décrivez la résolution du malentendu (guichet et délai)."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Distinguez le rôle neutre de l'agent et les droits de l'usager."
+        }
+      ],
+      "corrige": {
+        "q1": "Reformulation, bon guichet, calcul du délai restant.",
+        "q2": "Agent neutre et informatif ; usager informé, peut reformuler et recourir."
+      }
+    },
+    "B2": {
+      "consigne": "Argumentez sur reformulation et recours ; nuancez les limites.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Pourquoi reformuler est-il efficace face à un agent ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Quand un recours administratif devient-il pertinent ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Réponse ouverte évaluée sur l'argumentation.",
+        "q2": "Réponse ouverte : après épuisement des explications, réponse injuste."
+      }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S19-QCM-civique",
+    "mention": "CSP",
+    "theme": "Droits et devoirs",
+    "questions": [
+      {
+        "notion": "neutralité",
+        "type": "connaissance",
+        "enonce": "Un agent public au guichet doit :",
+        "options": [
+          "Rester neutre et informer",
+          "Donner son avis personnel",
+          "Refuser toute question"
+        ],
+        "reponse": "Rester neutre et informer",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "recours",
+        "type": "connaissance",
+        "enonce": "Pour contester une réponse administrative, l'usager peut :",
+        "options": [
+          "Demander un recours administratif",
+          "Ignorer la procédure",
+          "Insulter l'agent"
+        ],
+        "reponse": "Demander un recours administratif",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "reformulation",
+        "type": "mise_en_situation",
+        "enonce": "Karim ne comprend pas. Il a le droit de :",
+        "options": [
+          "Demander une reformulation",
+          "Quitter sans réponse",
+          "Porter plainte immédiate"
+        ],
+        "reponse": "Demander une reformulation",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "devoirs",
+        "type": "connaissance",
+        "enonce": "Respecter la loi dans un lieu public est :",
+        "options": [
+          "Un devoir",
+          "Un droit optionnel",
+          "Une habitude"
+        ],
+        "reponse": "Un devoir",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "échéance",
+        "type": "mise_en_situation",
+        "enonce": "Un document demandé avec échéance de quinze jours doit être transmis :",
+        "options": [
+          "Avant la date limite",
+          "Quand on veut",
+          "Un an après"
+        ],
+        "reponse": "Avant la date limite",
+        "official_status": "simulation_pedagogique"
+      }
+    ]
+  },
+  "devoirs": {
+    "A1": "Réécoutez et notez le guichet et le délai.",
+    "A2": "Écrivez un dialogue court au guichet.",
+    "B1": "Texte : résoudre un malentendu administratif.",
+    "B2": "Paragraphe argumenté sur neutralité et recours."
+  },
+  "formateur": {
+    "fiche_formateur": "Séance EO : trois tâches orales TCF sur le malentendu au guichet. Reformuler, préciser, neutralité, recours. Séparer EO et civique.",
+    "deroule_180min": [
+      {
+        "phase": "Rituel civique",
+        "duree_min": 10,
+        "description": "Rappel droits de l'usager et neutralité des agents."
+      },
+      {
+        "phase": "Activation + lexique",
+        "duree_min": 20,
+        "description": "Découverte et réactivation du lexique de la séance."
+      },
+      {
+        "phase": "Support invariant CO/CE",
+        "duree_min": 50,
+        "description": "Écoute/lecture du support invariant, compréhension globale puis détaillée."
+      },
+      {
+        "phase": "Ateliers différenciés",
+        "duree_min": 60,
+        "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du même support."
+      },
+      {
+        "phase": "Production EE/EO",
+        "duree_min": 30,
+        "description": "Production selon la compétence dominante de la séance."
+      },
+      {
+        "phase": "Fixation",
+        "duree_min": 10,
+        "description": "Synthèse collective, QCM civique, devoir personnalisé."
+      }
+    ],
+    "adaptation_rules": [
+      "Fournir amorces de reformulation si EO fragile.",
+      "Support fictif uniquement.",
+      "Séparer score EO et civique."
+    ]
+  }
+}

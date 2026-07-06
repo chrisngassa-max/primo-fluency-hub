@@ -1,0 +1,141 @@
+{
+  "session_code": "S08",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Ve République et Constitution",
+  "support": {
+    "support_id": "S08-support-constitution",
+    "situation": "Une capsule pédagogique présente la Constitution de 1958 et la Ve République : ce qu'organise une Constitution, le rôle du président, du Parlement et du gouvernement, et le principe de l'État de droit.",
+    "personnages": ["Narrateur (capsule pédagogique)"],
+    "faits": [
+      "La Constitution de 1958 fonde la Ve République.",
+      "Une Constitution organise les pouvoirs et garantit les droits.",
+      "Le président de la République est élu au suffrage universel.",
+      "Le Parlement vote la loi.",
+      "L'État de droit signifie que tout le monde, gouvernants compris, respecte la loi."
+    ],
+    "nombres": [5, 1958],
+    "dates": ["1958"],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S08-CO-master",
+    "voice": "fr-FR-Wavenet-D",
+    "speaking_rate": 0.9,
+    "script": "Narrateur : Bienvenue dans cette capsule sur la Constitution et la Cinquième République.\nPremier chapitre : qu'est-ce qu'une Constitution ? C'est le texte le plus important d'un pays. Il organise les pouvoirs et garantit les droits des citoyens.\nDeuxième chapitre : la Cinquième République. Elle est née avec la Constitution de mille neuf cent cinquante-huit. C'est le régime politique de la France aujourd'hui.\nTroisième chapitre : qui fait quoi ? Le président de la République est élu par les citoyens, au suffrage universel. Le Parlement vote la loi. Le gouvernement applique la loi.\nQuatrième chapitre : l'État de droit. Cela veut dire que tout le monde respecte la loi, y compris les gouvernants. Personne n'est au-dessus de la loi.\nEn résumé : une Constitution organise le pouvoir et protège les droits. En France, c'est la Constitution de mille neuf cent cinquante-huit qui fonde la Cinquième République.",
+    "pauses": [
+      { "after_word": 12, "ms": 500 },
+      { "after_word": 55, "ms": 400 },
+      { "after_word": 110, "ms": 500 }
+    ]
+  },
+  "visual": {
+    "resource_id": "S08-VIS-master",
+    "alt_text": "Carte mentale de la Ve Republique : au centre la Constitution de 1958, reliee a trois branches president, Parlement, gouvernement, sans portrait ni logo.",
+    "scene": {
+      "title": "Carte mentale : la Ve République",
+      "width": 900,
+      "height": 320,
+      "background": "#ffffff",
+      "elements": [
+        { "type": "rect", "x": 350, "y": 130, "width": 200, "height": 70, "rx": 10, "fill": "#dbeafe" },
+        { "type": "text", "x": 450, "y": 160, "anchor": "middle", "fontSize": 14, "text": "Constitution" },
+        { "type": "text", "x": 450, "y": 180, "anchor": "middle", "fontSize": 13, "text": "de 1958" },
+        { "type": "line", "x1": 350, "y1": 165, "x2": 200, "y2": 70, "stroke": "#374151", "strokeWidth": 2 },
+        { "type": "line", "x1": 450, "y1": 130, "x2": 450, "y2": 60, "stroke": "#374151", "strokeWidth": 2 },
+        { "type": "line", "x1": 550, "y1": 165, "x2": 700, "y2": 70, "stroke": "#374151", "strokeWidth": 2 },
+        { "type": "rect", "x": 110, "y": 40, "width": 180, "height": 60, "rx": 8, "fill": "#dcfce7" },
+        { "type": "text", "x": 200, "y": 75, "anchor": "middle", "fontSize": 13, "text": "Président (élu)" },
+        { "type": "rect", "x": 360, "y": 30, "width": 180, "height": 60, "rx": 8, "fill": "#fef9c3" },
+        { "type": "text", "x": 450, "y": 65, "anchor": "middle", "fontSize": 13, "text": "Parlement (loi)" },
+        { "type": "rect", "x": 610, "y": 40, "width": 190, "height": 60, "rx": 8, "fill": "#fee2e2" },
+        { "type": "text", "x": 705, "y": 75, "anchor": "middle", "fontSize": 13, "text": "Gouvernement" },
+        { "type": "text", "x": 450, "y": 260, "anchor": "middle", "fontSize": 14, "text": "État de droit : personne au-dessus de la loi" }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S08-LEX-A1-B2",
+    "mots": [
+      { "mot": "Constitution", "definition_simple": "Le texte le plus important qui organise un pays.", "exemple": "La Constitution de 1958." },
+      { "mot": "République", "definition_simple": "La forme de gouvernement de la France.", "exemple": "La Cinquième République." },
+      { "mot": "démocratie", "definition_simple": "Un système où le peuple choisit ses représentants.", "exemple": "En démocratie, on vote." },
+      { "mot": "loi", "definition_simple": "Une règle votée qui s'applique à tous.", "exemple": "Le Parlement vote la loi." },
+      { "mot": "pouvoir", "definition_simple": "La capacité de décider ou d'agir.", "exemple": "Les pouvoirs sont séparés." },
+      { "mot": "institution", "definition_simple": "Un organe de l'État (Parlement, gouvernement...).", "exemple": "Le Parlement est une institution." },
+      { "mot": "citoyen", "definition_simple": "Une personne qui a des droits et devoirs dans la cité.", "exemple": "Le citoyen vote." },
+      { "mot": "souveraineté", "definition_simple": "Le pouvoir qui appartient au peuple.", "exemple": "La souveraineté appartient au peuple." }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Écoutez la capsule. Associez chaque mot à sa définition, puis complétez les phrases.",
+      "aides": ["Constitution = texte le plus important", "Parlement = vote la loi", "Mots utiles : loi, citoyen, pouvoir"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "En quelle année est née la Ve République ?", "options": ["1848", "1958", "1989"] },
+        { "id": "q2", "type": "vrai_faux", "enonce": "Le Parlement vote la loi." }
+      ],
+      "corrige": { "q1": "1958", "q2": true }
+    },
+    "A2": {
+      "consigne": "Expliquez simplement, avec vos mots, ce qu'organise une Constitution.",
+      "aides": ["Pensez à : pouvoirs, droits, loi"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "Comment le président de la République est-il choisi ?", "options": ["Par les citoyens (suffrage universel)", "Par le hasard", "Par le Parlement seul"] },
+        { "id": "q2", "type": "reponse_courte", "enonce": "Dites en une phrase ce que fait une Constitution." }
+      ],
+      "corrige": { "q1": "Par les citoyens (suffrage universel)", "q2": "Une Constitution organise les pouvoirs et garantit les droits des citoyens." }
+    },
+    "B1": {
+      "consigne": "Expliquez le rôle respectif du président, du Parlement et du gouvernement, puis justifiez ce qu'apporte l'État de droit.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "reponse_longue", "enonce": "Décrivez qui élit le président, qui vote la loi et qui l'applique." },
+        { "id": "q2", "type": "reponse_longue", "enonce": "Expliquez pourquoi l'État de droit protège les citoyens." }
+      ],
+      "corrige": { "q1": "Le president est elu au suffrage universel ; le Parlement vote la loi ; le gouvernement l'applique.", "q2": "L'Etat de droit soumet tout le monde a la loi, y compris les gouvernants, ce qui protege les citoyens de l'arbitraire." }
+    },
+    "B2": {
+      "consigne": "Analysez l'intérêt d'une Constitution écrite et nuancez le principe de l'État de droit.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "argumentation", "enonce": "Argumentez : pourquoi une Constitution garantit-elle mieux les droits qu'une simple coutume ?" },
+        { "id": "q2", "type": "argumentation", "enonce": "Nuancez : que se passe-t-il quand l'État de droit n'est pas respecté ?" }
+      ],
+      "corrige": { "q1": "Reponse ouverte : stabilite, clarte, hierarchie des normes, controle de constitutionnalite.", "q2": "Reponse ouverte : arbitraire, abus de pouvoir, perte des libertes ; d'ou l'importance des contre-pouvoirs." }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S08-QCM-civique",
+    "mention": "CSP",
+    "theme": "Système institutionnel et politique",
+    "questions": [
+      { "notion": "Constitution", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "La Ve République est fondée par la Constitution de :", "options": ["1958", "1789", "1905"], "reponse": "1958" },
+      { "notion": "rôle de la Constitution", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Une Constitution sert à :", "options": ["Organiser les pouvoirs et garantir les droits", "Fixer le prix du pain", "Choisir l'équipe de football"], "reponse": "Organiser les pouvoirs et garantir les droits" },
+      { "notion": "élection du président", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Le président de la République est élu :", "options": ["Au suffrage universel", "Par tirage au sort", "À vie"], "reponse": "Au suffrage universel" },
+      { "notion": "vote de la loi", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Qui vote la loi en France ?", "options": ["Le Parlement", "Le président seul", "La préfecture"], "reponse": "Le Parlement" },
+      { "notion": "État de droit", "type": "mise_en_situation", "official_status": "simulation_pedagogique", "enonce": "Dans un État de droit, un ministre qui commet une infraction :", "options": ["Doit répondre devant la justice", "Est au-dessus de la loi", "N'est jamais concerné"], "reponse": "Doit répondre devant la justice" }
+    ]
+  },
+  "devoirs": {
+    "A1": "À la maison : associez Constitution, Parlement et président à leur rôle.",
+    "A2": "À la maison : écrivez 4 phrases pour expliquer ce qu'organise une Constitution.",
+    "B1": "À la maison : rédigez un court texte expliquant les rôles du président, du Parlement et du gouvernement.",
+    "B2": "À la maison : rédigez un paragraphe argumenté sur l'intérêt de l'État de droit."
+  },
+  "formateur": {
+    "fiche_formateur": "Séance Constitution et Ve République : chaque apprenant doit savoir (1) dire ce qu'organise une Constitution, (2) distinguer président, Parlement et gouvernement, (3) comprendre l'État de droit. La carte mentale est déterministe et ne contient aucun portrait généré.",
+    "deroule_180min": [
+      { "phase": "Rituel civique", "duree_min": 10, "description": "Lecture de la carte mentale de la Ve Republique." },
+      { "phase": "Activation + lexique", "duree_min": 20, "description": "Decouverte du lexique (Constitution, loi, pouvoir, institution...)." },
+      { "phase": "Support invariant CO/CE", "duree_min": 50, "description": "Ecoute de la capsule en quatre chapitres et reperage des roles." },
+      { "phase": "Ateliers differencies", "duree_min": 60, "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du meme support." },
+      { "phase": "Production EE/EO", "duree_min": 30, "description": "Expliquer simplement ce qu'organise une Constitution." },
+      { "phase": "Fixation", "duree_min": 10, "description": "Synthese, QCM civique CSP, devoir personnalise." }
+    ],
+    "adaptation_rules": [
+      "Si les roles institutionnels sont confondus, reprendre la carte mentale avant l'atelier B1.",
+      "Rester factuel : aucune position partisane, uniquement le fonctionnement des institutions.",
+      "Ne jamais generer de portrait de personnalite : la carte mentale reste schematique."
+    ]
+  }
+}

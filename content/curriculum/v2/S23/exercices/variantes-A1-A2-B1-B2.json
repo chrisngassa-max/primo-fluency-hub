@@ -1,0 +1,108 @@
+[
+  {
+    "support_id": "S23-support",
+    "version": 1,
+    "niveau": "A1",
+    "consigne": "Répondez à trois questions simples (EO1).",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "EO2 est :",
+        "options": [
+          "Une interaction",
+          "Un dictée",
+          "Un QCM"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "vrai_faux",
+        "enonce": "L'EO se juge sur la durée de parole."
+      }
+    ],
+    "corrige": {
+      "q1": "Une interaction",
+      "q2": true
+    },
+    "invariants_hash": "c9f3bec725b4358779f2db7120fe5d2d0a9a79c3546d827e55583ba9e0055b71"
+  },
+  {
+    "support_id": "S23-support",
+    "version": 1,
+    "niveau": "A2",
+    "consigne": "Réalisez EO1 et une interaction courte EO2.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "EO3 demande :",
+        "options": [
+          "Un point de vue argumenté",
+          "Une liste de mots",
+          "Un dessin"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "reponse_courte",
+        "enonce": "Citez un critère oral."
+      }
+    ],
+    "corrige": {
+      "q1": "Un point de vue argumenté",
+      "q2": "Fluidité, interaction ou cohérence."
+    },
+    "invariants_hash": "c9f3bec725b4358779f2db7120fe5d2d0a9a79c3546d827e55583ba9e0055b71"
+  },
+  {
+    "support_id": "S23-support",
+    "version": 1,
+    "niveau": "B1",
+    "consigne": "Enchaînez les trois tâches EO en conditions proches de l'examen.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "reponse_longue",
+        "enonce": "Présentez votre parcours (EO1)."
+      },
+      {
+        "id": "q2",
+        "type": "reponse_longue",
+        "enonce": "Défendez un point de vue sur les démarches (EO3)."
+      }
+    ],
+    "corrige": {
+      "q1": "Parcours clair avec projet.",
+      "q2": "Avis + arguments + nuance."
+    },
+    "invariants_hash": "c9f3bec725b4358779f2db7120fe5d2d0a9a79c3546d827e55583ba9e0055b71"
+  },
+  {
+    "support_id": "S23-support",
+    "version": 1,
+    "niveau": "B2",
+    "consigne": "Auto-évaluez vos productions selon les critères TCF oraux.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "argumentation",
+        "enonce": "Comment améliorer l'interaction en EO2 ?"
+      },
+      {
+        "id": "q2",
+        "type": "argumentation",
+        "enonce": "Quelle stratégie si vous bloquez en EO3 ?"
+      }
+    ],
+    "corrige": {
+      "q1": "Réponse ouverte : questions précises, relances.",
+      "q2": "Réponse ouverte : reformuler, prendre temps, structurer."
+    },
+    "invariants_hash": "c9f3bec725b4358779f2db7120fe5d2d0a9a79c3546d827e55583ba9e0055b71"
+  }
+]

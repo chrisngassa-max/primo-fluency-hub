@@ -1,0 +1,50 @@
+{
+  "resource_id": "S29-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "frise",
+      "definition_simple": "Ligne du temps visuelle.",
+      "exemple": "Frise chronologique."
+    },
+    {
+      "mot": "République",
+      "definition_simple": "Régime politique français.",
+      "exemple": "IIIe République."
+    },
+    {
+      "mot": "Europe",
+      "definition_simple": "Ensemble de pays unis partiellement.",
+      "exemple": "Construction européenne."
+    },
+    {
+      "mot": "traité",
+      "definition_simple": "Accord entre États.",
+      "exemple": "Traité de Rome."
+    },
+    {
+      "mot": "mémoire",
+      "definition_simple": "Rappel du passé.",
+      "exemple": "Mémoire des guerres."
+    },
+    {
+      "mot": "conséquence",
+      "definition_simple": "Effet d'un événement.",
+      "exemple": "Conséquence européenne."
+    },
+    {
+      "mot": "chronologie",
+      "definition_simple": "Ordre des dates.",
+      "exemple": "Respecter la chronologie."
+    },
+    {
+      "mot": "paix",
+      "definition_simple": "Absence de guerre.",
+      "exemple": "Volonté de paix."
+    },
+    {
+      "mot": "portée",
+      "definition_simple": "Importance historique.",
+      "exemple": "Portée d'un événement."
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "resource_id": "S24-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "chronométré",
+      "definition_simple": "Avec un temps limité strict.",
+      "exemple": "Épreuve chronométrée."
+    },
+    {
+      "mot": "banque gelée",
+      "definition_simple": "Ensemble fixe de questions verrouillées.",
+      "exemple": "Banque gelée sans nouvel item."
+    },
+    {
+      "mot": "stratégie",
+      "definition_simple": "Plan pour réussir l'épreuve.",
+      "exemple": "Stratégie 32/40."
+    },
+    {
+      "mot": "enchaînement",
+      "definition_simple": "Succession des épreuves sans pause longue.",
+      "exemple": "Enchaîner CO CE EE EO."
+    },
+    {
+      "mot": "remédiation",
+      "definition_simple": "Travail correctif après la simulation.",
+      "exemple": "Phase remédiation trente minutes."
+    },
+    {
+      "mot": "simulation",
+      "definition_simple": "Reproduction des conditions d'examen.",
+      "exemple": "Simulation partielle S24."
+    },
+    {
+      "mot": "autonomie",
+      "definition_simple": "Sans aide du formateur.",
+      "exemple": "Répondre en autonomie."
+    },
+    {
+      "mot": "civique",
+      "definition_simple": "Épreuve de connaissances et situations.",
+      "exemple": "Quarante questions civiques."
+    },
+    {
+      "mot": "fatigue",
+      "definition_simple": "Baisse d'attention en fin d'épreuve.",
+      "exemple": "Gérer la fatigue au civique."
+    }
+  ]
+}

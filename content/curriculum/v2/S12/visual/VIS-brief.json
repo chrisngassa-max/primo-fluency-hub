@@ -1,0 +1,112 @@
+{
+  "resource_id": "S12-VIS-master",
+  "scene": {
+    "title": "Se protéger : noter, signaler, être accompagné",
+    "width": 900,
+    "height": 240,
+    "background": "#ffffff",
+    "elements": [
+      {
+        "type": "rect",
+        "x": 40,
+        "y": 90,
+        "width": 220,
+        "height": 80,
+        "rx": 8,
+        "fill": "#dbeafe"
+      },
+      {
+        "type": "text",
+        "x": 150,
+        "y": 125,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "1. Noter les faits"
+      },
+      {
+        "type": "text",
+        "x": 150,
+        "y": 148,
+        "anchor": "middle",
+        "fontSize": 12,
+        "text": "dates, preuves"
+      },
+      {
+        "type": "line",
+        "x1": 260,
+        "y1": 130,
+        "x2": 320,
+        "y2": 130,
+        "stroke": "#374151",
+        "strokeWidth": 3
+      },
+      {
+        "type": "rect",
+        "x": 320,
+        "y": 90,
+        "width": 220,
+        "height": 80,
+        "rx": 8,
+        "fill": "#dcfce7"
+      },
+      {
+        "type": "text",
+        "x": 430,
+        "y": 125,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "2. Signaler"
+      },
+      {
+        "type": "text",
+        "x": 430,
+        "y": 148,
+        "anchor": "middle",
+        "fontSize": 12,
+        "text": "service ou association"
+      },
+      {
+        "type": "line",
+        "x1": 540,
+        "y1": 130,
+        "x2": 600,
+        "y2": 130,
+        "stroke": "#374151",
+        "strokeWidth": 3
+      },
+      {
+        "type": "rect",
+        "x": 600,
+        "y": 90,
+        "width": 250,
+        "height": 80,
+        "rx": 8,
+        "fill": "#fef9c3"
+      },
+      {
+        "type": "text",
+        "x": 725,
+        "y": 125,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "3. Être accompagné"
+      },
+      {
+        "type": "text",
+        "x": 725,
+        "y": 148,
+        "anchor": "middle",
+        "fontSize": 12,
+        "text": "et protégé"
+      },
+      {
+        "type": "text",
+        "x": 40,
+        "y": 50,
+        "fontSize": 16,
+        "text": "Égalité et dignité : personne n'est seul"
+      }
+    ]
+  },
+  "alt_text": "Parcours de protection schematique en trois etapes : noter les faits, signaler, etre accompagne, avec des personnages neutres et sans scene violente."
+}

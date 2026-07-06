@@ -1,0 +1,67 @@
+{
+  "resource_id": "S28-QCM-civique",
+  "mention": "CR",
+  "theme": "Vivre dans la société française",
+  "questions": [
+    {
+      "notion": "syndicats",
+      "type": "connaissance",
+      "enonce": "Un syndicat défend :",
+      "options": [
+        "Les salariés",
+        "Uniquement les patrons",
+        "Les animaux"
+      ],
+      "reponse": "Les salariés",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "impôts",
+      "type": "connaissance",
+      "enonce": "Les impôts servent notamment à :",
+      "options": [
+        "Financer les services publics",
+        "Payer les courses",
+        "Supprimer les lois"
+      ],
+      "reponse": "Financer les services publics",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "travail",
+      "type": "connaissance",
+      "enonce": "Le travail déclaré :",
+      "options": [
+        "Ouvre des droits sociaux",
+        "N'a aucun effet",
+        "Est interdit"
+      ],
+      "reponse": "Ouvre des droits sociaux",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "réclamation",
+      "type": "mise_en_situation",
+      "enonce": "Une réclamation formelle doit :",
+      "options": [
+        "Décrire les faits et la demande",
+        "Être une insulte",
+        "Rester vide"
+      ],
+      "reponse": "Décrire les faits et la demande",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "égalité",
+      "type": "connaissance",
+      "enonce": "L'égalité professionnelle est :",
+      "options": [
+        "Un principe républicain",
+        "Interdite",
+        "Facultative seulement"
+      ],
+      "reponse": "Un principe républicain",
+      "official_status": "simulation_pedagogique"
+    }
+  ]
+}

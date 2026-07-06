@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "80 heures",
+    "q2": true
+  },
+  "A2": {
+    "q1": "25",
+    "q2": "Principes et valeurs de la République / Système institutionnel / Droits et devoirs / Histoire, géographie et culture / Vivre dans la société française (une réponse suffit)."
+  },
+  "B1": {
+    "q1": "Un droit est une possibilité garantie par la loi ; un devoir est une obligation ; une règle est une consigne precise et locale.",
+    "q2": "E1 mesure la progression a mi-parcours et adapte la suite (S17-S24) ; E2 valide l'ensemble du tronc commun et oriente vers la sortie ou l'extension B1."
+  },
+  "B2": {
+    "q1": "Reponse ouverte evaluee sur la precision des notions et la qualite de l'argumentation, sans reponse unique imposee.",
+    "q2": "Reponse ouverte : avantages (progressivite, ancrage) vs limites (duree totale, disponibilite) a mettre en balance."
+  }
+}

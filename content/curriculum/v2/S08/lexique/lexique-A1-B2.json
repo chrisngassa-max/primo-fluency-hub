@@ -1,0 +1,45 @@
+{
+  "resource_id": "S08-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "Constitution",
+      "definition_simple": "Le texte le plus important qui organise un pays.",
+      "exemple": "La Constitution de 1958."
+    },
+    {
+      "mot": "République",
+      "definition_simple": "La forme de gouvernement de la France.",
+      "exemple": "La Cinquième République."
+    },
+    {
+      "mot": "démocratie",
+      "definition_simple": "Un système où le peuple choisit ses représentants.",
+      "exemple": "En démocratie, on vote."
+    },
+    {
+      "mot": "loi",
+      "definition_simple": "Une règle votée qui s'applique à tous.",
+      "exemple": "Le Parlement vote la loi."
+    },
+    {
+      "mot": "pouvoir",
+      "definition_simple": "La capacité de décider ou d'agir.",
+      "exemple": "Les pouvoirs sont séparés."
+    },
+    {
+      "mot": "institution",
+      "definition_simple": "Un organe de l'État (Parlement, gouvernement...).",
+      "exemple": "Le Parlement est une institution."
+    },
+    {
+      "mot": "citoyen",
+      "definition_simple": "Une personne qui a des droits et devoirs dans la cité.",
+      "exemple": "Le citoyen vote."
+    },
+    {
+      "mot": "souveraineté",
+      "definition_simple": "Le pouvoir qui appartient au peuple.",
+      "exemple": "La souveraineté appartient au peuple."
+    }
+  ]
+}

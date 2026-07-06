@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "1789",
+    "q2": true
+  },
+  "A2": {
+    "q1": "1792",
+    "q2": "La fin de la monarchie absolue / l'adoption de la Déclaration des droits (une réponse suffit)."
+  },
+  "B1": {
+    "q1": "1789 : Revolution et Declaration des droits, fin de la monarchie absolue ; 1792 : premiere Republique.",
+    "q2": "Elle affirme la liberte et l'egalite des droits, fondement des valeurs republicaines actuelles."
+  },
+  "B2": {
+    "q1": "Reponse ouverte : liberte, egalite des droits, souverainete du peuple, base des textes actuels.",
+    "q2": "Reponse ouverte : principes universels mais application limitee a l'epoque (droits progressivement etendus)."
+  }
+}

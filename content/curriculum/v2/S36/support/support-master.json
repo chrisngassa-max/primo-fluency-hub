@@ -1,0 +1,25 @@
+{
+  "support_id": "S36-support",
+  "personnages": [
+    "Apprenants B2",
+    "Formateur chronométreur"
+  ],
+  "situation": "Simulation NAT 40/45 : 28 connaissances, 12 situations, banque gelée, sous contrainte temps. Comparaison avec simulation précédente.",
+  "faits": [
+    "La simulation NAT compte 40 questions en 45 minutes.",
+    "Répartition indicative : 28 connaissances, 12 mises en situation.",
+    "La banque est gelée : aucun nouvel item.",
+    "Comparaison des scores avec la simulation S31 ou précédente.",
+    "Analyse des erreurs pendant 40 minutes après l'épreuve.",
+    "Stratégie finale de 60 minutes clôt la séance."
+  ],
+  "nombres": [
+    40,
+    45,
+    28,
+    12
+  ],
+  "dates": [],
+  "hash": "e2e6d3c3caeae6ba15f7b37969225341a276dd5256ea498fc6b06f461165fd4c",
+  "version": 1
+}

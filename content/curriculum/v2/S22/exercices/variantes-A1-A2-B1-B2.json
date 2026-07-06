@@ -1,0 +1,108 @@
+[
+  {
+    "support_id": "S22-support",
+    "version": 1,
+    "niveau": "A1",
+    "consigne": "Complétez un message court modèle (EE1).",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Combien de tâches EE ?",
+        "options": [
+          "3",
+          "2",
+          "5"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "vrai_faux",
+        "enonce": "EE2 demande environ 60-80 mots."
+      }
+    ],
+    "corrige": {
+      "q1": "3",
+      "q2": true
+    },
+    "invariants_hash": "ac60f42d1c065e4b6cacdbf83e776ebb4cd6ec126a63e0c77b56344fc3b17c49"
+  },
+  {
+    "support_id": "S22-support",
+    "version": 1,
+    "niveau": "A2",
+    "consigne": "Rédigez EE1 et EE2 sur un contexte civique fictif.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "La séance est surtout :",
+        "options": [
+          "Langue",
+          "Nouveau civique",
+          "Sport"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "reponse_courte",
+        "enonce": "Citez un critère noté en EE."
+      }
+    ],
+    "corrige": {
+      "q1": "Langue",
+      "q2": "Clarté, connecteurs, orthographe (un critère suffit)."
+    },
+    "invariants_hash": "ac60f42d1c065e4b6cacdbf83e776ebb4cd6ec126a63e0c77b56344fc3b17c49"
+  },
+  {
+    "support_id": "S22-support",
+    "version": 1,
+    "niveau": "B1",
+    "consigne": "Réalisez les trois tâches EE avec autonomie croissante.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "reponse_longue",
+        "enonce": "Rédigez EE2 (60-80 mots) sur une démarche administrative fictive."
+      },
+      {
+        "id": "q2",
+        "type": "reponse_longue",
+        "enonce": "EE3 : opinion argumentée sur un sujet de voisinage."
+      }
+    ],
+    "corrige": {
+      "q1": "Texte cohérent 60-80 mots.",
+      "q2": "Avis + au moins deux arguments."
+    },
+    "invariants_hash": "ac60f42d1c065e4b6cacdbf83e776ebb4cd6ec126a63e0c77b56344fc3b17c49"
+  },
+  {
+    "support_id": "S22-support",
+    "version": 1,
+    "niveau": "B2",
+    "consigne": "Analysez vos productions selon les critères TCF EE.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "argumentation",
+        "enonce": "Quels connecteurs renforcent EE3 ?"
+      },
+      {
+        "id": "q2",
+        "type": "argumentation",
+        "enonce": "Comment adapter le registre à l'administration ?"
+      }
+    ],
+    "corrige": {
+      "q1": "Réponse ouverte.",
+      "q2": "Réponse ouverte : formules polies, vocabulaire précis."
+    },
+    "invariants_hash": "ac60f42d1c065e4b6cacdbf83e776ebb4cd6ec126a63e0c77b56344fc3b17c49"
+  }
+]

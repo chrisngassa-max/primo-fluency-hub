@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Formateur : Aujourd'hui, nous enchaînons les trois tâches d'expression écrite du TCF IRN, sans aide, sur des situations de la vie en France.\nApprenant : Quelles sont les trois tâches ?\nFormateur : Tâche un : un message court, par exemple pour prévenir un voisin ou répondre à une convocation fictive. Tâche deux : soixante à quatre-vingts mots pour décrire un problème ou expliquer une démarche à l'école ou à la mairie. Tâche trois : un texte plus long, structuré, où vous donnez votre avis et des arguments.\nApprenant : Le thème est toujours civique ?\nFormateur : Le contexte peut l'être — logement, école, administration — mais je note surtout votre écrit : clarté, connecteurs, registre, orthographe. Pas de nouveau contenu civique à apprendre aujourd'hui.\nApprenant : Combien de temps par tâche ?\nFormateur : Respectez les durées TCF affichées. Vous travaillez en autonomie, puis nous corrigeons les critères linguistiques.\nApprenant : Et le QCM civique ?\nFormateur : Un rappel minimal en fin de séance, cinq questions, pour entretenir les acquis sans mélanger les notes.\nApprenant : D'accord, je commence par la tâche un.",
+  "transcript": "Formateur : Aujourd'hui, nous enchaînons les trois tâches d'expression écrite du TCF IRN, sans aide, sur des situations de la vie en France.\nApprenant : Quelles sont les trois tâches ?\nFormateur : Tâche un : un message court, par exemple pour prévenir un voisin ou répondre à une convocation fictive. Tâche deux : soixante à quatre-vingts mots pour décrire un problème ou expliquer une démarche à l'école ou à la mairie. Tâche trois : un texte plus long, structuré, où vous donnez votre avis et des arguments.\nApprenant : Le thème est toujours civique ?\nFormateur : Le contexte peut l'être — logement, école, administration — mais je note surtout votre écrit : clarté, connecteurs, registre, orthographe. Pas de nouveau contenu civique à apprendre aujourd'hui.\nApprenant : Combien de temps par tâche ?\nFormateur : Respectez les durées TCF affichées. Vous travaillez en autonomie, puis nous corrigeons les critères linguistiques.\nApprenant : Et le QCM civique ?\nFormateur : Un rappel minimal en fin de séance, cinq questions, pour entretenir les acquis sans mélanger les notes.\nApprenant : D'accord, je commence par la tâche un.",
+  "voice": "fr-FR-Wavenet-C",
+  "languageCode": "fr-FR",
+  "speaking_rate": 0.92,
+  "pauses": [
+    {
+      "after_word": 12,
+      "ms": 400
+    },
+    {
+      "after_word": 60,
+      "ms": 400
+    },
+    {
+      "after_word": 130,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 93,
+  "hash": "7066a7a366c32b2ff12847d3e964cd9911a44d8ee33983adea827ebe9ad62a3f"
+}

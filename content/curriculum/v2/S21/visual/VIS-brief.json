@@ -1,0 +1,98 @@
+{
+  "resource_id": "S21-VIS-master",
+  "scene": {
+    "title": "Arbre de décision civique",
+    "width": 900,
+    "height": 320,
+    "background": "#ffffff",
+    "elements": [
+      {
+        "type": "rect",
+        "x": 350,
+        "y": 20,
+        "width": 200,
+        "height": 50,
+        "rx": 8,
+        "fill": "#e0e7ff"
+      },
+      {
+        "type": "text",
+        "x": 450,
+        "y": 50,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "Lire la question"
+      },
+      {
+        "type": "line",
+        "x1": 400,
+        "y1": 70,
+        "x2": 280,
+        "y2": 120,
+        "stroke": "#374151",
+        "strokeWidth": 2
+      },
+      {
+        "type": "line",
+        "x1": 500,
+        "y1": 70,
+        "x2": 620,
+        "y2": 120,
+        "stroke": "#374151",
+        "strokeWidth": 2
+      },
+      {
+        "type": "rect",
+        "x": 180,
+        "y": 120,
+        "width": 200,
+        "height": 50,
+        "rx": 8,
+        "fill": "#dcfce7"
+      },
+      {
+        "type": "text",
+        "x": 280,
+        "y": 150,
+        "anchor": "middle",
+        "fontSize": 13,
+        "text": "Connaissance"
+      },
+      {
+        "type": "rect",
+        "x": 520,
+        "y": 120,
+        "width": 200,
+        "height": 50,
+        "rx": 8,
+        "fill": "#fef9c3"
+      },
+      {
+        "type": "text",
+        "x": 620,
+        "y": 150,
+        "anchor": "middle",
+        "fontSize": 13,
+        "text": "Situation"
+      },
+      {
+        "type": "rect",
+        "x": 520,
+        "y": 220,
+        "width": 200,
+        "height": 50,
+        "rx": 8,
+        "fill": "#fee2e2"
+      },
+      {
+        "type": "text",
+        "x": 620,
+        "y": 245,
+        "anchor": "middle",
+        "fontSize": 12,
+        "text": "Conduite conforme ?"
+      }
+    ]
+  },
+  "alt_text": "Arbre de décision : connaissance ou mise en situation, puis branche conforme ou non."
+}

@@ -1,0 +1,358 @@
+{
+  "session_code": "S23",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Expression orale TCF, trois tâches",
+  "support": {
+    "support_id": "S23-support",
+    "situation": "Simulation des trois tâches EO TCF : entretien dirigé, interaction sans préparation, point de vue argumenté, sur des thèmes de la vie quotidienne en France.",
+    "personnages": [
+      "Apprenant",
+      "Examinateur simulé"
+    ],
+    "faits": [
+      "EO1 est un entretien dirigé sur soi et son parcours.",
+      "EO2 est une interaction à partir d'un document fictif.",
+      "EO3 demande de défendre un point de vue avec arguments.",
+      "La durée de parole prime sur le nombre de mots.",
+      "Les critères oraux incluent fluidité, interaction et cohérence.",
+      "Aucun nouveau fait civique n'est introduit dans cette séance langue."
+    ],
+    "nombres": [
+      3
+    ],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S23-CO-master",
+    "voice": "fr-FR-Wavenet-C",
+    "speaking_rate": 0.92,
+    "script": "Examinateur : Bonjour. Nous allons enchaîner les trois épreuves d'expression orale, comme au TCF IRN.\nApprenant : Bonjour. Je suis prêt.\nExaminateur : Première tâche : entretien dirigé. Parlez-moi de vous, de votre parcours et de votre projet en France.\nApprenant : Je m'appelle Samir. J'habite à Lyon depuis deux ans. Je prépare mon titre de séjour et je travaille dans la restauration.\nExaminateur : Merci. Deuxième tâche : interaction. Voici un document fictif sur une affiche de la mairie. Posez-moi des questions pour obtenir des informations.\nApprenant : D'accord. Quels sont les horaires ? Faut-il un rendez-vous ? Où se déroule l'atelier ?\nExaminateur : Très bien. Troisième tâche : point de vue. Pensez-vous que les démarches administratives doivent être plus simples ? Argumentez.\nApprenant : Oui, je pense que simplifier aiderait les nouveaux arrivants, parce que les délais sont longs et les documents difficiles. Cependant, il faut aussi la sécurité des dossiers.\nExaminateur : Merci. Nous évaluons la durée de parole, l'interaction et la cohérence, pas un compteur de mots.",
+    "pauses": [
+      {
+        "after_word": 12,
+        "ms": 400
+      },
+      {
+        "after_word": 60,
+        "ms": 400
+      },
+      {
+        "after_word": 130,
+        "ms": 500
+      }
+    ]
+  },
+  "visual": {
+    "resource_id": "S23-VIS-master",
+    "alt_text": "Schéma EO1 entretien, EO2 interaction, EO3 point de vue.",
+    "scene": {
+      "title": "Trois tâches EO TCF",
+      "width": 900,
+      "height": 200,
+      "background": "#ffffff",
+      "elements": [
+        {
+          "type": "circle",
+          "cx": 160,
+          "cy": 100,
+          "r": 50,
+          "fill": "#dbeafe"
+        },
+        {
+          "type": "text",
+          "x": 160,
+          "y": 105,
+          "anchor": "middle",
+          "fontSize": 13,
+          "text": "EO1"
+        },
+        {
+          "type": "circle",
+          "cx": 450,
+          "cy": 100,
+          "r": 50,
+          "fill": "#dcfce7"
+        },
+        {
+          "type": "text",
+          "x": 450,
+          "y": 105,
+          "anchor": "middle",
+          "fontSize": 13,
+          "text": "EO2"
+        },
+        {
+          "type": "circle",
+          "cx": 740,
+          "cy": 100,
+          "r": 50,
+          "fill": "#fef9c3"
+        },
+        {
+          "type": "text",
+          "x": 740,
+          "y": 105,
+          "anchor": "middle",
+          "fontSize": 13,
+          "text": "EO3"
+        }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S23-LEX-A1-B2",
+    "mots": [
+      {
+        "mot": "entretien",
+        "definition_simple": "Échange structuré de questions-réponses.",
+        "exemple": "EO1 entretien dirigé."
+      },
+      {
+        "mot": "interaction",
+        "definition_simple": "Échange dynamique entre interlocuteurs.",
+        "exemple": "EO2 interaction."
+      },
+      {
+        "mot": "point de vue",
+        "definition_simple": "Opinion personnelle argumentée.",
+        "exemple": "EO3 point de vue."
+      },
+      {
+        "mot": "fluidité",
+        "definition_simple": "Aisance à parler sans trop d'hésitations.",
+        "exemple": "Critère de fluidité."
+      },
+      {
+        "mot": "cohérence",
+        "definition_simple": "Enchaînement logique des idées.",
+        "exemple": "Cohérence du discours."
+      },
+      {
+        "mot": "argumenter",
+        "definition_simple": "Donner des raisons pour convaincre.",
+        "exemple": "Argumenter pour ou contre."
+      },
+      {
+        "mot": "examinateur",
+        "definition_simple": "Personne qui mène l'épreuve orale.",
+        "exemple": "L'examinateur pose des questions."
+      },
+      {
+        "mot": "parcours",
+        "definition_simple": "Chemin personnel et professionnel.",
+        "exemple": "Présenter son parcours."
+      },
+      {
+        "mot": "simulation",
+        "definition_simple": "Exercice qui reproduit l'examen.",
+        "exemple": "Simulation EO TCF."
+      }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Répondez à trois questions simples (EO1).",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "EO2 est :",
+          "options": [
+            "Une interaction",
+            "Un dictée",
+            "Un QCM"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "L'EO se juge sur la durée de parole."
+        }
+      ],
+      "corrige": {
+        "q1": "Une interaction",
+        "q2": true
+      }
+    },
+    "A2": {
+      "consigne": "Réalisez EO1 et une interaction courte EO2.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "EO3 demande :",
+          "options": [
+            "Un point de vue argumenté",
+            "Une liste de mots",
+            "Un dessin"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Citez un critère oral."
+        }
+      ],
+      "corrige": {
+        "q1": "Un point de vue argumenté",
+        "q2": "Fluidité, interaction ou cohérence."
+      }
+    },
+    "B1": {
+      "consigne": "Enchaînez les trois tâches EO en conditions proches de l'examen.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Présentez votre parcours (EO1)."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Défendez un point de vue sur les démarches (EO3)."
+        }
+      ],
+      "corrige": {
+        "q1": "Parcours clair avec projet.",
+        "q2": "Avis + arguments + nuance."
+      }
+    },
+    "B2": {
+      "consigne": "Auto-évaluez vos productions selon les critères TCF oraux.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Comment améliorer l'interaction en EO2 ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Quelle stratégie si vous bloquez en EO3 ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Réponse ouverte : questions précises, relances.",
+        "q2": "Réponse ouverte : reformuler, prendre temps, structurer."
+      }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S23-QCM-civique",
+    "mention": "CSP",
+    "theme": "Expression orale TCF, trois tâches",
+    "questions": [
+      {
+        "notion": "EO",
+        "type": "connaissance",
+        "enonce": "L'EO TCF comporte :",
+        "options": [
+          "Trois tâches",
+          "Une tâche",
+          "Cinq tâches"
+        ],
+        "reponse": "Trois tâches",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "critères",
+        "type": "connaissance",
+        "enonce": "L'EO est évaluée notamment sur :",
+        "options": [
+          "La fluidité et l'interaction",
+          "Le nombre exact de mots",
+          "La calligraphie"
+        ],
+        "reponse": "La fluidité et l'interaction",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "EO1",
+        "type": "connaissance",
+        "enonce": "EO1 est un :",
+        "options": [
+          "Entretien dirigé",
+          "Exercice écrit",
+          "QCM civique"
+        ],
+        "reponse": "Entretien dirigé",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "langue",
+        "type": "connaissance",
+        "enonce": "Cette séance n'introduit :",
+        "options": [
+          "Aucun nouveau fait civique",
+          "Vingt faits civiques",
+          "Un nouveau thème"
+        ],
+        "reponse": "Aucun nouveau fait civique",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "EO3",
+        "type": "mise_en_situation",
+        "enonce": "En EO3, il est attendu :",
+        "options": [
+          "Un avis argumenté",
+          "Un silence",
+          "Une traduction"
+        ],
+        "reponse": "Un avis argumenté",
+        "official_status": "simulation_pedagogique"
+      }
+    ]
+  },
+  "devoirs": {
+    "A1": "Enregistrez EO1 (1 min).",
+    "A2": "EO1+EO2 enregistrés.",
+    "B1": "Trois tâches EO complètes.",
+    "B2": "EO3 répétée avec auto-correction."
+  },
+  "formateur": {
+    "fiche_formateur": "Langue pure : EO1 entretien, EO2 interaction, EO3 point de vue. Chronométrer. Pas de nouveau civique.",
+    "deroule_180min": [
+      {
+        "phase": "Rituel civique",
+        "duree_min": 10,
+        "description": "Rappel du thème civique de la séance."
+      },
+      {
+        "phase": "Activation + lexique",
+        "duree_min": 20,
+        "description": "Découverte et réactivation du lexique de la séance."
+      },
+      {
+        "phase": "Support invariant CO/CE",
+        "duree_min": 50,
+        "description": "Écoute/lecture du support invariant, compréhension globale puis détaillée."
+      },
+      {
+        "phase": "Ateliers différenciés",
+        "duree_min": 60,
+        "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du même support."
+      },
+      {
+        "phase": "Production EE/EO",
+        "duree_min": 30,
+        "description": "Production selon la compétence dominante de la séance."
+      },
+      {
+        "phase": "Fixation",
+        "duree_min": 10,
+        "description": "Synthèse collective, QCM civique, devoir personnalisé."
+      }
+    ],
+    "adaptation_rules": [
+      "Évaluer durée de parole, pas mots.",
+      "Pair ou formateur comme examinateur.",
+      "Séparer note EO et civique."
+    ]
+  }
+}

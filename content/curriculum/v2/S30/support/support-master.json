@@ -1,0 +1,20 @@
+{
+  "support_id": "S30-support",
+  "personnages": [
+    "Apprenants",
+    "Formateur"
+  ],
+  "situation": "Situations CR où l'indice est implicite : l'apprenant doit expliciter le principe (laïcité, dignité, égalité) et justifier une conduite conforme.",
+  "faits": [
+    "Un indice implicite demande une inférence à partir du contexte.",
+    "La conduite conforme respecte droits, devoirs et principes.",
+    "Prioriser les principes aide quand plusieurs valeurs entrent en jeu.",
+    "La dignité humaine est inviolable.",
+    "Les situations CR mêlent parfois connaissance et implicite.",
+    "Justifier une conduite suppose nommer le principe mobilisé."
+  ],
+  "nombres": [],
+  "dates": [],
+  "hash": "f4575f05f444b9e49d03cc13556f089587ea934d413f3bb3b8f33fd984379f4f",
+  "version": 1
+}

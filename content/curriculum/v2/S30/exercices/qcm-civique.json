@@ -1,0 +1,67 @@
+{
+  "resource_id": "S30-QCM-civique",
+  "mention": "CR",
+  "theme": "Droits et devoirs",
+  "questions": [
+    {
+      "notion": "implicite",
+      "type": "connaissance",
+      "enonce": "Une situation implicite demande :",
+      "options": [
+        "D'inférer le principe",
+        "De deviner au hasard",
+        "De ne rien faire"
+      ],
+      "reponse": "D'inférer le principe",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "dignité",
+      "type": "connaissance",
+      "enonce": "La dignité humaine est :",
+      "options": [
+        "Inviolable",
+        "Facultative",
+        "Supprimée"
+      ],
+      "reponse": "Inviolable",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "conduite",
+      "type": "mise_en_situation",
+      "enonce": "Face à une incitation à la haine :",
+      "options": [
+        "Signaler",
+        "Relayer",
+        "Encourager"
+      ],
+      "reponse": "Signaler",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "justification",
+      "type": "connaissance",
+      "enonce": "Justifier une conduite, c'est :",
+      "options": [
+        "Nommer un principe",
+        "Rester vague",
+        "Insulter"
+      ],
+      "reponse": "Nommer un principe",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "CR",
+      "type": "connaissance",
+      "enonce": "Les situations CR peuvent mêler :",
+      "options": [
+        "Connaissance et implicite",
+        "Uniquement du sport",
+        "Aucun principe"
+      ],
+      "reponse": "Connaissance et implicite",
+      "official_status": "simulation_pedagogique"
+    }
+  ]
+}

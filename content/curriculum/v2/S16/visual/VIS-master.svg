@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 320" width="900" height="320" role="img" aria-label="Organisation territoriale, du local à l&apos;Europe">
+  <title>Organisation territoriale, du local à l&apos;Europe</title>
+  <rect x="0" y="0" width="900" height="320" fill="#ffffff" />
+  <rect x="60" y="240" width="780" height="60" fill="#ede9fe" rx="8" />
+  <text x="450" y="276" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">Union européenne</text>
+  <rect x="120" y="170" width="660" height="55" fill="#dbeafe" rx="8" />
+  <text x="450" y="203" font-size="13" font-family="sans-serif" fill="#111827" text-anchor="middle">France : métropole + outre-mer</text>
+  <rect x="200" y="110" width="500" height="45" fill="#dcfce7" rx="8" />
+  <text x="450" y="138" font-size="13" font-family="sans-serif" fill="#111827" text-anchor="middle">Région</text>
+  <rect x="280" y="60" width="340" height="40" fill="#fef9c3" rx="8" />
+  <text x="450" y="85" font-size="13" font-family="sans-serif" fill="#111827" text-anchor="middle">Département</text>
+  <rect x="360" y="20" width="180" height="35" fill="#fee2e2" rx="8" />
+  <text x="450" y="43" font-size="13" font-family="sans-serif" fill="#111827" text-anchor="middle">Commune</text>
+</svg>

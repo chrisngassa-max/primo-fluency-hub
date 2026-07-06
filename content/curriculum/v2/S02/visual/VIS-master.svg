@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 300" width="900" height="300" role="img" aria-label="Formulaire d&apos;état civil et drapeau tricolore">
+  <title>Formulaire d&apos;état civil et drapeau tricolore</title>
+  <rect x="0" y="0" width="900" height="300" fill="#ffffff" />
+  <rect x="20" y="20" width="520" height="260" fill="#f1f5f9" rx="8" />
+  <text x="40" y="55" font-size="16" font-family="sans-serif" fill="#111827" text-anchor="start">Formulaire d&apos;état civil (document pédagogique fictif)</text>
+  <text x="40" y="100" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="start">Nom : ______________________</text>
+  <text x="40" y="135" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="start">Prénom : ___________________</text>
+  <text x="40" y="170" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="start">Date de naissance : _________</text>
+  <text x="40" y="205" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="start">Adresse : __________________</text>
+  <rect x="620" y="60" width="60" height="160" fill="#1e3a8a" rx="0" />
+  <rect x="680" y="60" width="60" height="160" fill="#f8fafc" rx="0" />
+  <rect x="740" y="60" width="60" height="160" fill="#b91c1c" rx="0" />
+  <text x="710" y="245" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">Drapeau tricolore</text>
+</svg>

@@ -1,0 +1,123 @@
+{
+  "resource_id": "S08-VIS-master",
+  "scene": {
+    "title": "Carte mentale : la Ve République",
+    "width": 900,
+    "height": 320,
+    "background": "#ffffff",
+    "elements": [
+      {
+        "type": "rect",
+        "x": 350,
+        "y": 130,
+        "width": 200,
+        "height": 70,
+        "rx": 10,
+        "fill": "#dbeafe"
+      },
+      {
+        "type": "text",
+        "x": 450,
+        "y": 160,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "Constitution"
+      },
+      {
+        "type": "text",
+        "x": 450,
+        "y": 180,
+        "anchor": "middle",
+        "fontSize": 13,
+        "text": "de 1958"
+      },
+      {
+        "type": "line",
+        "x1": 350,
+        "y1": 165,
+        "x2": 200,
+        "y2": 70,
+        "stroke": "#374151",
+        "strokeWidth": 2
+      },
+      {
+        "type": "line",
+        "x1": 450,
+        "y1": 130,
+        "x2": 450,
+        "y2": 60,
+        "stroke": "#374151",
+        "strokeWidth": 2
+      },
+      {
+        "type": "line",
+        "x1": 550,
+        "y1": 165,
+        "x2": 700,
+        "y2": 70,
+        "stroke": "#374151",
+        "strokeWidth": 2
+      },
+      {
+        "type": "rect",
+        "x": 110,
+        "y": 40,
+        "width": 180,
+        "height": 60,
+        "rx": 8,
+        "fill": "#dcfce7"
+      },
+      {
+        "type": "text",
+        "x": 200,
+        "y": 75,
+        "anchor": "middle",
+        "fontSize": 13,
+        "text": "Président (élu)"
+      },
+      {
+        "type": "rect",
+        "x": 360,
+        "y": 30,
+        "width": 180,
+        "height": 60,
+        "rx": 8,
+        "fill": "#fef9c3"
+      },
+      {
+        "type": "text",
+        "x": 450,
+        "y": 65,
+        "anchor": "middle",
+        "fontSize": 13,
+        "text": "Parlement (loi)"
+      },
+      {
+        "type": "rect",
+        "x": 610,
+        "y": 40,
+        "width": 190,
+        "height": 60,
+        "rx": 8,
+        "fill": "#fee2e2"
+      },
+      {
+        "type": "text",
+        "x": 705,
+        "y": 75,
+        "anchor": "middle",
+        "fontSize": 13,
+        "text": "Gouvernement"
+      },
+      {
+        "type": "text",
+        "x": 450,
+        "y": 260,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "État de droit : personne au-dessus de la loi"
+      }
+    ]
+  },
+  "alt_text": "Carte mentale de la Ve Republique : au centre la Constitution de 1958, reliee a trois branches president, Parlement, gouvernement, sans portrait ni logo."
+}

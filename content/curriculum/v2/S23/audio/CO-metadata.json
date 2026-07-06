@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Examinateur : Bonjour. Nous allons enchaîner les trois épreuves d'expression orale, comme au TCF IRN.\nApprenant : Bonjour. Je suis prêt.\nExaminateur : Première tâche : entretien dirigé. Parlez-moi de vous, de votre parcours et de votre projet en France.\nApprenant : Je m'appelle Samir. J'habite à Lyon depuis deux ans. Je prépare mon titre de séjour et je travaille dans la restauration.\nExaminateur : Merci. Deuxième tâche : interaction. Voici un document fictif sur une affiche de la mairie. Posez-moi des questions pour obtenir des informations.\nApprenant : D'accord. Quels sont les horaires ? Faut-il un rendez-vous ? Où se déroule l'atelier ?\nExaminateur : Très bien. Troisième tâche : point de vue. Pensez-vous que les démarches administratives doivent être plus simples ? Argumentez.\nApprenant : Oui, je pense que simplifier aiderait les nouveaux arrivants, parce que les délais sont longs et les documents difficiles. Cependant, il faut aussi la sécurité des dossiers.\nExaminateur : Merci. Nous évaluons la durée de parole, l'interaction et la cohérence, pas un compteur de mots.",
+  "transcript": "Examinateur : Bonjour. Nous allons enchaîner les trois épreuves d'expression orale, comme au TCF IRN.\nApprenant : Bonjour. Je suis prêt.\nExaminateur : Première tâche : entretien dirigé. Parlez-moi de vous, de votre parcours et de votre projet en France.\nApprenant : Je m'appelle Samir. J'habite à Lyon depuis deux ans. Je prépare mon titre de séjour et je travaille dans la restauration.\nExaminateur : Merci. Deuxième tâche : interaction. Voici un document fictif sur une affiche de la mairie. Posez-moi des questions pour obtenir des informations.\nApprenant : D'accord. Quels sont les horaires ? Faut-il un rendez-vous ? Où se déroule l'atelier ?\nExaminateur : Très bien. Troisième tâche : point de vue. Pensez-vous que les démarches administratives doivent être plus simples ? Argumentez.\nApprenant : Oui, je pense que simplifier aiderait les nouveaux arrivants, parce que les délais sont longs et les documents difficiles. Cependant, il faut aussi la sécurité des dossiers.\nExaminateur : Merci. Nous évaluons la durée de parole, l'interaction et la cohérence, pas un compteur de mots.",
+  "voice": "fr-FR-Wavenet-C",
+  "languageCode": "fr-FR",
+  "speaking_rate": 0.92,
+  "pauses": [
+    {
+      "after_word": 12,
+      "ms": 400
+    },
+    {
+      "after_word": 60,
+      "ms": 400
+    },
+    {
+      "after_word": 130,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 86,
+  "hash": "b84abbfc2ddc27cf335a59ca30fd18cc4462a4232c9b6e7b2833e9637c07437a"
+}

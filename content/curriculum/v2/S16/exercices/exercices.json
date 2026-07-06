@@ -1,0 +1,88 @@
+{
+  "session_code": "S16",
+  "variants": [
+    {
+      "niveau": "A1",
+      "consigne": "Écoutez le récit. Rangez du plus petit au plus grand : commune, département, région.",
+      "aides": [
+        "Commune < département < région",
+        "Mots utiles : territoire, Europe, patrimoine"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Quel est le territoire le plus proche des habitants ?",
+          "options": [
+            "La commune",
+            "La région",
+            "L'Europe"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "La France comprend la métropole et l'outre-mer."
+        }
+      ]
+    },
+    {
+      "niveau": "A2",
+      "consigne": "Situez un lieu (commune, département, région) et présentez un élément de patrimoine.",
+      "aides": [
+        "Pensez à : commune, région, patrimoine"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "La France est membre de :",
+          "options": [
+            "L'Union européenne",
+            "Aucune organisation",
+            "Un seul département"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Citez un élément de patrimoine (monument, paysage ou tradition)."
+        }
+      ]
+    },
+    {
+      "niveau": "B1",
+      "consigne": "Présentez l'organisation territoriale de la France et expliquez ce qu'apporte l'appartenance à l'Europe.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Expliquez comment s'emboîtent commune, département, région et métropole/outre-mer."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Décrivez un avantage concret de l'appartenance de la France à l'Union européenne."
+        }
+      ]
+    },
+    {
+      "niveau": "B2",
+      "consigne": "Analysez l'articulation entre organisation territoriale, appartenance européenne et patrimoine, et nuancez la notion d'unité dans la diversité.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Argumentez : en quoi la diversité des territoires est-elle une richesse pour la France ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Nuancez : comment concilier identité locale, unité nationale et appartenance européenne ?"
+        }
+      ]
+    }
+  ]
+}

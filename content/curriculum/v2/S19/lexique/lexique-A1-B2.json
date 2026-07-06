@@ -1,0 +1,50 @@
+{
+  "resource_id": "S19-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "reformuler",
+      "definition_simple": "Dire autrement pour être mieux compris.",
+      "exemple": "Karim reformule sa question."
+    },
+    {
+      "mot": "préciser",
+      "definition_simple": "Donner des détails plus exacts.",
+      "exemple": "L'agent précise le délai."
+    },
+    {
+      "mot": "recours",
+      "definition_simple": "Démarche pour contester ou demander réexamen.",
+      "exemple": "Un recours administratif."
+    },
+    {
+      "mot": "neutralité",
+      "definition_simple": "Ne pas donner d'avis personnel.",
+      "exemple": "L'agent reste neutre."
+    },
+    {
+      "mot": "guichet",
+      "definition_simple": "Comptoir d'accueil d'un service public.",
+      "exemple": "Le guichet trois."
+    },
+    {
+      "mot": "échéance",
+      "definition_simple": "Date limite pour une action.",
+      "exemple": "Échéance de quinze jours."
+    },
+    {
+      "mot": "malentendu",
+      "definition_simple": "Confusion entre deux personnes.",
+      "exemple": "Un malentendu sur le guichet."
+    },
+    {
+      "mot": "usager",
+      "definition_simple": "Personne qui utilise un service public.",
+      "exemple": "Les droits de l'usager."
+    },
+    {
+      "mot": "justificatif",
+      "definition_simple": "Document qui prouve une information.",
+      "exemple": "Justificatif de domicile."
+    }
+  ]
+}

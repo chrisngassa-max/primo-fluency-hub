@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "45 minutes",
+    "q2": true
+  },
+  "A2": {
+    "q1": "32/40",
+    "q2": "Trente minutes."
+  },
+  "B1": {
+    "q1": "Réponse personnelle argumentée.",
+    "q2": "Connaissances d'abord, situations ensuite, etc."
+  },
+  "B2": {
+    "q1": "Réponse ouverte.",
+    "q2": "Réponse ouverte : priorisation, pas de blocage."
+  }
+}

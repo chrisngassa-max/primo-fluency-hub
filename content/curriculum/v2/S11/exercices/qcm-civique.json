@@ -1,0 +1,67 @@
+{
+  "resource_id": "S11-QCM-civique",
+  "mention": "CSP",
+  "theme": "Droits et devoirs",
+  "questions": [
+    {
+      "notion": "dépôt de plainte",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "En cas de vol, on dépose plainte auprès de :",
+      "options": [
+        "La police ou la gendarmerie",
+        "La mairie",
+        "La banque"
+      ],
+      "reponse": "La police ou la gendarmerie"
+    },
+    {
+      "notion": "gradation des infractions",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "L'infraction la plus grave est :",
+      "options": [
+        "Le crime",
+        "La contravention",
+        "Le délit"
+      ],
+      "reponse": "Le crime"
+    },
+    {
+      "notion": "rôle de la justice",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Qui juge une affaire selon la loi ?",
+      "options": [
+        "La justice (le tribunal)",
+        "La police seule",
+        "Le maire"
+      ],
+      "reponse": "La justice (le tribunal)"
+    },
+    {
+      "notion": "droit de se défendre",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Devant un juge, une personne accusée :",
+      "options": [
+        "A le droit de se défendre",
+        "N'a aucun droit",
+        "Est jugée sans être entendue"
+      ],
+      "reponse": "A le droit de se défendre"
+    },
+    {
+      "notion": "orientation",
+      "type": "mise_en_situation",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Une amie a été victime d'un vol. Vous lui conseillez de :",
+      "options": [
+        "Déposer une plainte",
+        "Se venger elle-même",
+        "Ne rien faire"
+      ],
+      "reponse": "Déposer une plainte"
+    }
+  ]
+}

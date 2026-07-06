@@ -1,0 +1,331 @@
+{
+  "session_code": "S25",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Consolidation, restitution et orientation",
+  "support": {
+    "support_id": "S25-support",
+    "situation": "Après E2, chaque apprenant reçoit un rapport individuel fictif. Il refait deux tâches ciblées sur ses fragilités, construit un contrat personnel et une restitution séparée langue/civique, avec orientation A2/B1/B2.",
+    "personnages": [
+      "Apprenant",
+      "Formateur",
+      "Rapport individuel fictif"
+    ],
+    "faits": [
+      "E2 identifie deux fragilités majeures par apprenant.",
+      "Le rapport individuel fictif détaille scores langue et civique séparément.",
+      "Deux tâches équivalentes sont refaites sans aide sur ces fragilités.",
+      "Le contrat personnel fixe objectifs pour la suite du parcours.",
+      "L'orientation propose sortie A2/CSP, extension B1 ou consolidation.",
+      "La restitution langue et civique ne doit pas être fusionnée."
+    ],
+    "nombres": [
+      2
+    ],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S25-CO-master",
+    "voice": "fr-FR-Wavenet-C",
+    "speaking_rate": 0.92,
+    "script": "Formateur : Voici votre rapport individuel fictif après E2. Regardez la colonne langue et la colonne civique séparément.\nApprenant : J'ai une fragilité en expression écrite et une en thème institutions.\nFormateur : Exactement. Vous allez refaire deux tâches équivalentes, sans aide, sur ces deux points.\nApprenant : Et ensuite ?\nFormateur : Vous rédigez un contrat personnel : trois actions concrètes pour les quatre prochaines semaines. Puis une restitution orale courte : ce que vous avez consolidé en langue, et ce que vous avez consolidé en civique, sans mélanger.\nApprenant : Comment savoir si je vais vers B1 ?\nFormateur : L'orientation dépend de vos scores E2 et de votre projet. Sortie A2 CSP, extension B1 CR, ou consolidation. C'est une proposition, pas une décision automatique.\nApprenant : Je comprends. Je commence par la tâche EE équivalente.\nFormateur : Très bien. Mesurez votre progrès par rapport au rapport initial.",
+    "pauses": [
+      {
+        "after_word": 12,
+        "ms": 400
+      },
+      {
+        "after_word": 60,
+        "ms": 400
+      },
+      {
+        "after_word": 130,
+        "ms": 500
+      }
+    ]
+  },
+  "visual": {
+    "resource_id": "S25-VIS-master",
+    "alt_text": "Deux colonnes rapport : langue et civique, avec orientation A2 B1 B2.",
+    "scene": {
+      "title": "Rapport individuel fictif",
+      "width": 900,
+      "height": 240,
+      "background": "#ffffff",
+      "elements": [
+        {
+          "type": "rect",
+          "x": 200,
+          "y": 60,
+          "width": 500,
+          "height": 100,
+          "rx": 10,
+          "fill": "#e0e7ff"
+        },
+        {
+          "type": "text",
+          "x": 450,
+          "y": 115,
+          "anchor": "middle",
+          "fontSize": 16,
+          "text": "Langue | Civique | Orientation"
+        }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S25-LEX-A1-B2",
+    "mots": [
+      {
+        "mot": "consolidation",
+        "definition_simple": "Renforcer ce qui est fragile.",
+        "exemple": "Consolider après E2."
+      },
+      {
+        "mot": "rapport",
+        "definition_simple": "Document de synthèse des résultats.",
+        "exemple": "Rapport individuel fictif."
+      },
+      {
+        "mot": "fragilité",
+        "definition_simple": "Point faible identifié.",
+        "exemple": "Deux fragilités majeures."
+      },
+      {
+        "mot": "contrat",
+        "definition_simple": "Engagement personnel écrit.",
+        "exemple": "Contrat personnel."
+      },
+      {
+        "mot": "restitution",
+        "definition_simple": "Exposer ce qu'on a appris.",
+        "exemple": "Restitution langue et civique."
+      },
+      {
+        "mot": "orientation",
+        "definition_simple": "Piste proposée pour la suite.",
+        "exemple": "Orientation vers B1."
+      },
+      {
+        "mot": "équivalent",
+        "definition_simple": "De difficulté comparable à l'évaluation.",
+        "exemple": "Tâche équivalente."
+      },
+      {
+        "mot": "séparer",
+        "definition_simple": "Ne pas fusionner deux mesures.",
+        "exemple": "Séparer langue et civique."
+      },
+      {
+        "mot": "progrès",
+        "definition_simple": "Amélioration par rapport au rapport initial.",
+        "exemple": "Mesurer le progrès."
+      }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Lisez le rapport fictif. Identifiez une fragilité langue et une civique.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Le rapport après E2 est :",
+          "options": [
+            "Individuel et fictif",
+            "Collectif et officiel",
+            "Sans score"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "Langue et civique sont séparés."
+        }
+      ],
+      "corrige": {
+        "q1": "Individuel et fictif",
+        "q2": true
+      }
+    },
+    "A2": {
+      "consigne": "Refaites une tâche ciblée et notez une action du contrat.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Combien de tâches équivalentes ?",
+          "options": [
+            "2",
+            "5",
+            "10"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Citez une orientation possible."
+        }
+      ],
+      "corrige": {
+        "q1": "2",
+        "q2": "Sortie A2/CSP, extension B1 ou consolidation."
+      }
+    },
+    "B1": {
+      "consigne": "Construisez contrat et restitution séparée.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Rédigez votre contrat personnel (3 actions)."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Restitution : progrès langue vs civique."
+        }
+      ],
+      "corrige": {
+        "q1": "Trois actions concrètes.",
+        "q2": "Deux volets distincts."
+      }
+    },
+    "B2": {
+      "consigne": "Argumentez votre orientation souhaitée après E2.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Pourquoi viser B1/CR ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Limites d'une consolidation A2 ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Réponse ouverte.",
+        "q2": "Réponse ouverte."
+      }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S25-QCM-civique",
+    "mention": "CSP",
+    "theme": "Consolidation, restitution et orientation",
+    "questions": [
+      {
+        "notion": "E2",
+        "type": "connaissance",
+        "enonce": "S25 s'appuie sur les résultats de :",
+        "options": [
+          "E2",
+          "S01",
+          "E4"
+        ],
+        "reponse": "E2",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "séparation",
+        "type": "connaissance",
+        "enonce": "Le rapport présente langue et civique :",
+        "options": [
+          "Séparément",
+          "En une seule note",
+          "Sans détail"
+        ],
+        "reponse": "Séparément",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "orientation",
+        "type": "mise_en_situation",
+        "enonce": "Une extension B1 vise :",
+        "options": [
+          "Le parcours CR",
+          "L'alphabétisation",
+          "Un concours sportif"
+        ],
+        "reponse": "Le parcours CR",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "contrat",
+        "type": "connaissance",
+        "enonce": "Le contrat personnel contient :",
+        "options": [
+          "Des actions concrètes",
+          "Des secrets",
+          "Rien"
+        ],
+        "reponse": "Des actions concrètes",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "tâches",
+        "type": "connaissance",
+        "enonce": "Deux tâches équivalentes ciblent :",
+        "options": [
+          "Les fragilités majeures",
+          "Des thèmes au hasard",
+          "Uniquement l'oral"
+        ],
+        "reponse": "Les fragilités majeures",
+        "official_status": "simulation_pedagogique"
+      }
+    ]
+  },
+  "devoirs": {
+    "A1": "Lire rapport et souligner fragilités.",
+    "A2": "Contrat 3 actions.",
+    "B1": "Restitution écrite double colonne.",
+    "B2": "Lettre d'orientation argumentée."
+  },
+  "formateur": {
+    "fiche_formateur": "Post-E2 : rapport fictif, 2 tâches équivalentes, contrat, restitution séparée, orientation A2/B1/B2.",
+    "deroule_180min": [
+      {
+        "phase": "Rituel civique",
+        "duree_min": 10,
+        "description": "Consolidation post-E2 et orientation."
+      },
+      {
+        "phase": "Activation + lexique",
+        "duree_min": 20,
+        "description": "Découverte et réactivation du lexique de la séance."
+      },
+      {
+        "phase": "Support invariant CO/CE",
+        "duree_min": 50,
+        "description": "Écoute/lecture du support invariant, compréhension globale puis détaillée."
+      },
+      {
+        "phase": "Ateliers différenciés",
+        "duree_min": 60,
+        "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du même support."
+      },
+      {
+        "phase": "Production EE/EO",
+        "duree_min": 30,
+        "description": "Production selon la compétence dominante de la séance."
+      },
+      {
+        "phase": "Fixation",
+        "duree_min": 10,
+        "description": "Synthèse collective, QCM civique, devoir personnalisé."
+      }
+    ],
+    "adaptation_rules": [
+      "Adapter les 2 tâches aux fragilités réelles du rapport.",
+      "Ne jamais fusionner langue et civique.",
+      "Orientation = proposition, pas sanction."
+    ]
+  }
+}

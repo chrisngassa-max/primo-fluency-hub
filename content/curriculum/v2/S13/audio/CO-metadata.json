@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Animateur : Bonjour à tous. Aujourd'hui, on parle de la liberté d'expression, calmement et sans propos blessants.\nParticipant un : Pour moi, on a le droit de donner son avis, même quand ce n'est pas populaire.\nAnimateur : C'est vrai. Donner une opinion et critiquer, c'est permis. C'est la liberté d'expression.\nParticipant deux : Mais il y a une limite, non ? On ne peut pas dire n'importe quoi.\nAnimateur : Exactement. L'insulte, la diffamation et la menace ne sont pas protégées. Elles peuvent être sanctionnées par la loi.\nParticipant un : Donc critiquer une idée, oui, mais attaquer une personne, non ?\nAnimateur : C'est ça. On peut être en désaccord, mais de façon respectueuse. Chacun est responsable de ce qu'il publie.\nParticipant deux : Et la presse ?\nAnimateur : La liberté de la presse est importante pour la démocratie : elle permet d'informer et de débattre. En résumé : l'opinion et la critique sont libres, l'insulte et la menace sont des limites.",
+  "transcript": "Animateur : Bonjour à tous. Aujourd'hui, on parle de la liberté d'expression, calmement et sans propos blessants.\nParticipant un : Pour moi, on a le droit de donner son avis, même quand ce n'est pas populaire.\nAnimateur : C'est vrai. Donner une opinion et critiquer, c'est permis. C'est la liberté d'expression.\nParticipant deux : Mais il y a une limite, non ? On ne peut pas dire n'importe quoi.\nAnimateur : Exactement. L'insulte, la diffamation et la menace ne sont pas protégées. Elles peuvent être sanctionnées par la loi.\nParticipant un : Donc critiquer une idée, oui, mais attaquer une personne, non ?\nAnimateur : C'est ça. On peut être en désaccord, mais de façon respectueuse. Chacun est responsable de ce qu'il publie.\nParticipant deux : Et la presse ?\nAnimateur : La liberté de la presse est importante pour la démocratie : elle permet d'informer et de débattre. En résumé : l'opinion et la critique sont libres, l'insulte et la menace sont des limites.",
+  "voice": "fr-FR-Wavenet-C",
+  "languageCode": "fr-FR",
+  "speaking_rate": 0.92,
+  "pauses": [
+    {
+      "after_word": 18,
+      "ms": 500
+    },
+    {
+      "after_word": 60,
+      "ms": 400
+    },
+    {
+      "after_word": 110,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 83,
+  "hash": "8ce7034e304bea2bf01c8900a4eb2f9976a71b6326dfe17e59bb234f0e8d3cab"
+}

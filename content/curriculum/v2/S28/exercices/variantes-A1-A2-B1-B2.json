@@ -1,0 +1,108 @@
+[
+  {
+    "support_id": "S28-support",
+    "version": 1,
+    "niveau": "A1",
+    "consigne": "Identifiez l'erreur sur la fiche fictive.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Omar réclame :",
+        "options": [
+          "Une régularisation de paie",
+          "Des vacances",
+          "Un passeport"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "vrai_faux",
+        "enonce": "Les syndicats défendent les salariés."
+      }
+    ],
+    "corrige": {
+      "q1": "Une régularisation de paie",
+      "q2": true
+    },
+    "invariants_hash": "a3fefd099eba57628476a3422e0db073ac7e60f23836ff08b5c84eb90da36025"
+  },
+  {
+    "support_id": "S28-support",
+    "version": 1,
+    "niveau": "A2",
+    "consigne": "Rédigez une réclamation courte.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Les impôts financent :",
+        "options": [
+          "Services publics",
+          "Uniquement les stades privés",
+          "Rien"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "reponse_courte",
+        "enonce": "Un élément d'une réclamation formelle ?"
+      }
+    ],
+    "corrige": {
+      "q1": "Services publics",
+      "q2": "Faits, demande, date."
+    },
+    "invariants_hash": "a3fefd099eba57628476a3422e0db073ac7e60f23836ff08b5c84eb90da36025"
+  },
+  {
+    "support_id": "S28-support",
+    "version": 1,
+    "niveau": "B1",
+    "consigne": "Réclamation complète + interprétation document social.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "reponse_longue",
+        "enonce": "Rédigez la réclamation formelle."
+      },
+      {
+        "id": "q2",
+        "type": "reponse_longue",
+        "enonce": "Reliez impôts et solidarité."
+      }
+    ],
+    "corrige": {
+      "q1": "Forme formelle, faits précis.",
+      "q2": "Financement protection sociale."
+    },
+    "invariants_hash": "a3fefd099eba57628476a3422e0db073ac7e60f23836ff08b5c84eb90da36025"
+  },
+  {
+    "support_id": "S28-support",
+    "version": 1,
+    "niveau": "B2",
+    "consigne": "Analysez droits du salarié et devoirs de l'employeur.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "argumentation",
+        "enonce": "Rôle des syndicats aujourd'hui ?"
+      },
+      {
+        "id": "q2",
+        "type": "argumentation",
+        "enonce": "Solidarité vs individualisme ?"
+      }
+    ],
+    "corrige": {
+      "q1": "Réponse ouverte.",
+      "q2": "Réponse ouverte."
+    },
+    "invariants_hash": "a3fefd099eba57628476a3422e0db073ac7e60f23836ff08b5c84eb90da36025"
+  }
+]

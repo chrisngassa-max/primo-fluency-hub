@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 200" width="900" height="200" role="img" aria-label="Mémoire nationale (frise sobre)">
+  <title>Mémoire nationale (frise sobre)</title>
+  <rect x="0" y="0" width="900" height="200" fill="#ffffff" />
+  <line x1="60" y1="100" x2="840" y2="100" stroke="#374151" stroke-width="3" />
+  <circle cx="120" cy="100" r="10" fill="#94a3b8" />
+  <text x="120" y="140" font-size="12" font-family="sans-serif" fill="#111827" text-anchor="middle">1939-1945</text>
+  <circle cx="350" cy="100" r="10" fill="#64748b" />
+  <text x="350" y="140" font-size="12" font-family="sans-serif" fill="#111827" text-anchor="middle">Résistance</text>
+  <circle cx="580" cy="100" r="10" fill="#64748b" />
+  <text x="580" y="140" font-size="12" font-family="sans-serif" fill="#111827" text-anchor="middle">Mémoire</text>
+  <circle cx="780" cy="100" r="10" fill="#64748b" />
+  <text x="780" y="140" font-size="12" font-family="sans-serif" fill="#111827" text-anchor="middle">Patrimoine</text>
+  <text x="450" y="50" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">Sobriété et respect</text>
+</svg>
