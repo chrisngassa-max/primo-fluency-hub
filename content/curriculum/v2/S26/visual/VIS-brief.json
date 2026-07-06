@@ -1,0 +1,71 @@
+{
+  "resource_id": "S26-VIS-master",
+  "scene": {
+    "title": "Séparation des pouvoirs",
+    "width": 900,
+    "height": 260,
+    "background": "#ffffff",
+    "elements": [
+      {
+        "type": "rect",
+        "x": 80,
+        "y": 80,
+        "width": 200,
+        "height": 70,
+        "rx": 8,
+        "fill": "#dbeafe"
+      },
+      {
+        "type": "text",
+        "x": 180,
+        "y": 120,
+        "anchor": "middle",
+        "fontSize": 13,
+        "text": "Législatif"
+      },
+      {
+        "type": "rect",
+        "x": 350,
+        "y": 80,
+        "width": 200,
+        "height": 70,
+        "rx": 8,
+        "fill": "#dcfce7"
+      },
+      {
+        "type": "text",
+        "x": 450,
+        "y": 120,
+        "anchor": "middle",
+        "fontSize": 13,
+        "text": "Exécutif"
+      },
+      {
+        "type": "rect",
+        "x": 620,
+        "y": 80,
+        "width": 200,
+        "height": 70,
+        "rx": 8,
+        "fill": "#fee2e2"
+      },
+      {
+        "type": "text",
+        "x": 720,
+        "y": 120,
+        "anchor": "middle",
+        "fontSize": 13,
+        "text": "Judiciaire"
+      },
+      {
+        "type": "text",
+        "x": 450,
+        "y": 200,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "État de droit"
+      }
+    ]
+  },
+  "alt_text": "Schéma trois pouvoirs : législatif, exécutif, judiciaire."
+}

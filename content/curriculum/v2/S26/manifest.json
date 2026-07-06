@@ -1,0 +1,637 @@
+{
+  "session_code": "S26",
+  "plan_version": "2026-07-05",
+  "support_id": "S26-support",
+  "type_seance": "dominante civique B1",
+  "objectifs": [
+    "Expliquer une décision publique et ses contrôles institutionnels",
+    "Connaître l'État de droit, la séparation des pouvoirs et les élections"
+  ],
+  "competences": [
+    "CE",
+    "EO"
+  ],
+  "civic_theme": "Système institutionnel et politique",
+  "civic_mention": "CR",
+  "source_ids": [],
+  "resources": [
+    {
+      "resource_id": "support-master-json",
+      "kind": "support_master_json",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/json"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "fdc05cb2ee2642eebd816322af782863115cc5e778139a0ba84dad0b6da5777b",
+      "dependencies": []
+    },
+    {
+      "resource_id": "support-master-html",
+      "kind": "support_master_html",
+      "required": true,
+      "generation_mode": "template",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "text/html"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "14a5dc957069e0aa7d2dda2ab17e8b281b202e7195e038932a7b1853e427f2f9",
+      "dependencies": [
+        "support-master-json"
+      ]
+    },
+    {
+      "resource_id": "support-master-pdf",
+      "kind": "support_master_pdf",
+      "required": true,
+      "generation_mode": "template",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/pdf"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "4cda438c9c74e9535458f20156738052d2fb30f27d538d414980a68008568731",
+      "dependencies": [
+        "support-master-html"
+      ]
+    },
+    {
+      "resource_id": "variantes-a1-a2-b1-b2",
+      "kind": "variantes_json",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/json"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "7aa8b07e0d77b63c467e0c7586df35d723f6fb9b5eb50d55d9c52e227288fd8d",
+      "dependencies": [
+        "support-master-json"
+      ]
+    },
+    {
+      "resource_id": "vis-brief-json",
+      "kind": "vis_brief_json",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/json"
+      },
+      "alt_text": "Schéma trois pouvoirs : législatif, exécutif, judiciaire.",
+      "depends_on_answer": false,
+      "expected_hash": "de2bf73c7669acb11dfa908fd1af427dc7fd102432a869df129cd019ce4dd4fa",
+      "dependencies": [
+        "support-master-json"
+      ]
+    },
+    {
+      "resource_id": "vis-master-svg",
+      "kind": "vis_master_svg",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [
+        "logo",
+        "map",
+        "official_document",
+        "real_photo"
+      ],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "image/svg+xml"
+      },
+      "alt_text": "Schéma trois pouvoirs : législatif, exécutif, judiciaire.",
+      "depends_on_answer": false,
+      "expected_hash": "5c32ad7f548acfc1b6e5ad375622c7e3d51300b820f4708dc60d039086fb289e",
+      "dependencies": [
+        "vis-brief-json"
+      ]
+    },
+    {
+      "resource_id": "vis-master-png",
+      "kind": "vis_master_png",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "image/png"
+      },
+      "alt_text": "Schéma trois pouvoirs : législatif, exécutif, judiciaire.",
+      "depends_on_answer": false,
+      "expected_hash": "5b676ae6fb05d8410f54b7ec83136aa7da5e0cb0b6d21abf2d39f9de120f7387",
+      "dependencies": [
+        "vis-master-svg"
+      ]
+    },
+    {
+      "resource_id": "vis-master-webp",
+      "kind": "vis_master_webp",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "image/png"
+      },
+      "alt_text": "Schéma trois pouvoirs : législatif, exécutif, judiciaire.",
+      "depends_on_answer": false,
+      "expected_hash": "5b676ae6fb05d8410f54b7ec83136aa7da5e0cb0b6d21abf2d39f9de120f7387",
+      "dependencies": [
+        "vis-master-svg"
+      ]
+    },
+    {
+      "resource_id": "co-script-md",
+      "kind": "co_script",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "text/markdown"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "ee58148af0e1fe080f774919ae4ab0a189c749968dcca18b21baf3c1b5bd75ee",
+      "dependencies": []
+    },
+    {
+      "resource_id": "co-transcript-pdf",
+      "kind": "co_transcript",
+      "required": true,
+      "generation_mode": "template",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/pdf"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "e92364a3ba5af393262bbb5f79bff1e9669f47bb37e30d2dfa5fc92d7644f58c",
+      "dependencies": [
+        "co-script-md"
+      ]
+    },
+    {
+      "resource_id": "co-master-mp3",
+      "kind": "co_master",
+      "required": true,
+      "generation_mode": "tts",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "audio/mpeg"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "31ace43ce4fcaa8de7f8ddf161602a8194a672a1e566705752bd12a866f95e84",
+      "dependencies": [
+        "co-script-md"
+      ]
+    },
+    {
+      "resource_id": "co-metadata-json",
+      "kind": "co_metadata",
+      "required": true,
+      "generation_mode": "tts",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/json"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "991fbb5660b9ddc23032bf3b0c4b1942c1eea24557811025e19ca2572bf8946b",
+      "dependencies": [
+        "co-master-mp3"
+      ]
+    },
+    {
+      "resource_id": "lexique-a1-b2-json",
+      "kind": "lexique_json",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/json"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "816c4222badd0443eb779cb32a4c1ddbfc29f731afb924bf836cca34a7e30892",
+      "dependencies": []
+    },
+    {
+      "resource_id": "lexique-a1-b2-pdf",
+      "kind": "lexique_pdf",
+      "required": true,
+      "generation_mode": "template",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/pdf"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "3c6b828deea0982351af3916e3715613dd0f087d9102d01fcd95d65410e71dfb",
+      "dependencies": [
+        "lexique-a1-b2-json"
+      ]
+    },
+    {
+      "resource_id": "exercices-json",
+      "kind": "exercices_json",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/json"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "fdedc6eb84c6b6c27e3f745d7901e10b1b78cc207f75673e6853faafd191fab6",
+      "dependencies": [
+        "variantes-a1-a2-b1-b2"
+      ]
+    },
+    {
+      "resource_id": "corrige-json",
+      "kind": "corrige_json",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/json"
+      },
+      "alt_text": null,
+      "depends_on_answer": true,
+      "expected_hash": "20a3f38f05e777f72049402ef722bba69885bf9653bd191d91417f2d3ffc60aa",
+      "dependencies": [
+        "exercices-json"
+      ]
+    },
+    {
+      "resource_id": "qcm-civique-json",
+      "kind": "qcm_civique_json",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/json"
+      },
+      "alt_text": null,
+      "depends_on_answer": true,
+      "expected_hash": "898c2af1d3e74d8f8fd6a9db59499a35fefb8d3963892c016045004de031024a",
+      "dependencies": []
+    },
+    {
+      "resource_id": "devoir-a1-pdf",
+      "kind": "devoir_pdf",
+      "required": true,
+      "generation_mode": "template",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/pdf"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "e2e11c65c8364dbe488c37aee10a9f42d1a570d93605de84879c01e59d1f6afc",
+      "dependencies": [
+        "exercices-json"
+      ]
+    },
+    {
+      "resource_id": "fiche-a1-pdf",
+      "kind": "fiche_apprenant_pdf",
+      "required": true,
+      "generation_mode": "template",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/pdf"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "24a8a18654b49527c3af2ab057fe6c59fe70e10263d5ec7df50c42338bd843d3",
+      "dependencies": [
+        "variantes-a1-a2-b1-b2"
+      ]
+    },
+    {
+      "resource_id": "devoir-a2-pdf",
+      "kind": "devoir_pdf",
+      "required": true,
+      "generation_mode": "template",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/pdf"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "ca5411dac9c8b92e79b638ee24ab5e5a864918f57a7b00130ce7b01150f83618",
+      "dependencies": [
+        "exercices-json"
+      ]
+    },
+    {
+      "resource_id": "fiche-a2-pdf",
+      "kind": "fiche_apprenant_pdf",
+      "required": true,
+      "generation_mode": "template",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/pdf"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "6647a7e22069531d1d0f381ae4c1f147c782a070a0de5aaa891e0b0c765bc9a4",
+      "dependencies": [
+        "variantes-a1-a2-b1-b2"
+      ]
+    },
+    {
+      "resource_id": "devoir-b1-pdf",
+      "kind": "devoir_pdf",
+      "required": true,
+      "generation_mode": "template",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/pdf"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "df5830efd6ae2086b32b660c50d2018660e88ce80ab021f3f7163b1937a776e2",
+      "dependencies": [
+        "exercices-json"
+      ]
+    },
+    {
+      "resource_id": "fiche-b1-pdf",
+      "kind": "fiche_apprenant_pdf",
+      "required": true,
+      "generation_mode": "template",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/pdf"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "0f8d10b37cb66518e936bbe409127d542f4a6015052ea5b6b9a7d3a482af07c8",
+      "dependencies": [
+        "variantes-a1-a2-b1-b2"
+      ]
+    },
+    {
+      "resource_id": "devoir-b2-pdf",
+      "kind": "devoir_pdf",
+      "required": true,
+      "generation_mode": "template",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/pdf"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "871440d9412f2de9f1a88faa73db792bfdc1cb598589daeed603490dd752ab02",
+      "dependencies": [
+        "exercices-json"
+      ]
+    },
+    {
+      "resource_id": "fiche-b2-pdf",
+      "kind": "fiche_apprenant_pdf",
+      "required": true,
+      "generation_mode": "template",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/pdf"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "ab9a0beb130ef242d20540eaa843e3937404536a7c99ba403082573e14f4b520",
+      "dependencies": [
+        "variantes-a1-a2-b1-b2"
+      ]
+    },
+    {
+      "resource_id": "fiche-formateur-pdf",
+      "kind": "fiche_formateur_pdf",
+      "required": true,
+      "generation_mode": "template",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/pdf"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "cbea890ac66c1d8de8924ec9185e0096a94f2070e608b2ec7ada66c840ca9435",
+      "dependencies": []
+    },
+    {
+      "resource_id": "deroule-180min-json",
+      "kind": "deroule_json",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/json"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "1f8fc2052fcc187f19e7ef2083efdd0048b088a1f64b7be52642bc5872ada5c1",
+      "dependencies": []
+    },
+    {
+      "resource_id": "adaptation-rules-json",
+      "kind": "adaptation_rules_json",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/json"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "a1dc3626514aff25ba5a4735c472e8dc331df1201c0af4a89ca0b3ec35648e0f",
+      "dependencies": []
+    },
+    {
+      "resource_id": "sources-json",
+      "kind": "sources_json",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/json"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "2654c7ffdd85e100eeabc8e3cf763466af68e8750d031cc54cd6b149fb2665a5",
+      "dependencies": []
+    },
+    {
+      "resource_id": "session-yaml",
+      "kind": "session_yaml",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "text/yaml"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "4498a0a3bf8c2b6aaa158b5e9c9426904fba991ddc305d89cb823034f6ed075a",
+      "dependencies": []
+    }
+  ],
+  "variants": [
+    {
+      "niveau": "A1",
+      "resource_id": "variantes-a1-a2-b1-b2"
+    },
+    {
+      "niveau": "A2",
+      "resource_id": "variantes-a1-a2-b1-b2"
+    },
+    {
+      "niveau": "B1",
+      "resource_id": "variantes-a1-a2-b1-b2"
+    },
+    {
+      "niveau": "B2",
+      "resource_id": "variantes-a1-a2-b1-b2"
+    }
+  ],
+  "duration_plan": {
+    "total_minutes": 180
+  },
+  "validation_policy": {
+    "deterministic": true,
+    "ai_review": true,
+    "min_quality_score": 4,
+    "min_pedagogical_relevance_score": 4
+  },
+  "publication_policy": {
+    "auto_publish": true,
+    "max_attempts": 3
+  }
+}

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 340" width="900" height="340" role="img" aria-label="Qui fait quoi : du local au national">
+  <title>Qui fait quoi : du local au national</title>
+  <rect x="0" y="0" width="900" height="340" fill="#ffffff" />
+  <rect x="350" y="30" width="200" height="60" fill="#dbeafe" rx="8" />
+  <text x="450" y="65" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">Président (élu)</text>
+  <rect x="120" y="140" width="190" height="70" fill="#dcfce7" rx="8" />
+  <text x="215" y="170" font-size="13" font-family="sans-serif" fill="#111827" text-anchor="middle">Parlement</text>
+  <text x="215" y="190" font-size="12" font-family="sans-serif" fill="#111827" text-anchor="middle">députés + sénateurs</text>
+  <rect x="355" y="140" width="190" height="70" fill="#fef9c3" rx="8" />
+  <text x="450" y="170" font-size="13" font-family="sans-serif" fill="#111827" text-anchor="middle">Gouvernement</text>
+  <text x="450" y="190" font-size="12" font-family="sans-serif" fill="#111827" text-anchor="middle">applique la loi</text>
+  <rect x="590" y="140" width="190" height="70" fill="#fee2e2" rx="8" />
+  <text x="685" y="170" font-size="13" font-family="sans-serif" fill="#111827" text-anchor="middle">Justice</text>
+  <text x="685" y="190" font-size="12" font-family="sans-serif" fill="#111827" text-anchor="middle">les juges</text>
+  <rect x="355" y="260" width="190" height="60" fill="#ede9fe" rx="8" />
+  <text x="450" y="295" font-size="13" font-family="sans-serif" fill="#111827" text-anchor="middle">Commune (maire)</text>
+  <line x1="450" y1="90" x2="450" y2="140" stroke="#374151" stroke-width="2" />
+  <line x1="450" y1="210" x2="450" y2="260" stroke="#374151" stroke-width="2" />
+</svg>

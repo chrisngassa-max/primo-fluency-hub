@@ -1,0 +1,67 @@
+{
+  "resource_id": "S24-QCM-civique",
+  "mention": "CSP",
+  "theme": "Gestion du temps et répétition générale",
+  "questions": [
+    {
+      "notion": "stratégie",
+      "type": "connaissance",
+      "enonce": "La stratégie 32/40 signifie viser :",
+      "options": [
+        "32 bonnes réponses sur 40",
+        "32 minutes sur 40",
+        "32 thèmes sur 40"
+      ],
+      "reponse": "32 bonnes réponses sur 40",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "banque",
+      "type": "connaissance",
+      "enonce": "Une banque gelée signifie :",
+      "options": [
+        "Questions fixes verrouillées",
+        "Nouvelles questions chaque jour",
+        "Aucune question"
+      ],
+      "reponse": "Questions fixes verrouillées",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "durée",
+      "type": "connaissance",
+      "enonce": "Le civique CSP complet dure :",
+      "options": [
+        "45 minutes",
+        "5 minutes",
+        "120 minutes"
+      ],
+      "reponse": "45 minutes",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "questions",
+      "type": "connaissance",
+      "enonce": "Le civique CSP comporte :",
+      "options": [
+        "40 questions",
+        "10 questions",
+        "100 questions"
+      ],
+      "reponse": "40 questions",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "simulation",
+      "type": "mise_en_situation",
+      "enonce": "Pendant la simulation chronométrée :",
+      "options": [
+        "Aucune aide du formateur",
+        "Aide permanente",
+        "Correction immédiate"
+      ],
+      "reponse": "Aucune aide du formateur",
+      "official_status": "simulation_pedagogique"
+    }
+  ]
+}

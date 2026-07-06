@@ -1,0 +1,19 @@
+{
+  "support_id": "S13-support-expression",
+  "personnages": [
+    "Animateur du débat",
+    "Deux participants (avis contrastés)"
+  ],
+  "situation": "Une publication fictive sur un réseau social provoque des réactions contrastées. Un court débat aide à distinguer opinion, critique, insulte, diffamation et menace, et à comprendre où se situent les limites légales de la liberté d'expression.",
+  "faits": [
+    "La liberté d'expression permet de donner son opinion et de critiquer.",
+    "L'insulte, la diffamation et la menace ne sont pas protégées par la liberté d'expression.",
+    "La liberté de la presse participe au débat démocratique.",
+    "Chacun est responsable de ce qu'il publie.",
+    "Un désaccord peut s'exprimer de façon respectueuse."
+  ],
+  "nombres": [],
+  "dates": [],
+  "hash": "434f5f3a0f45145bed48b5e32b8a50f338cc60cbb325f1b7cd05905328b8747b",
+  "version": 1
+}

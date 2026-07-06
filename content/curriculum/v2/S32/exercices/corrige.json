@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "Peuple",
+    "q2": true
+  },
+  "A2": {
+    "q1": "Conformité des lois",
+    "q2": "1958."
+  },
+  "B1": {
+    "q1": "Structure claire.",
+    "q2": "Contrôle de conformité."
+  },
+  "B2": {
+    "q1": "Réponse ouverte nuancée.",
+    "q2": "Réponse ouverte."
+  }
+}

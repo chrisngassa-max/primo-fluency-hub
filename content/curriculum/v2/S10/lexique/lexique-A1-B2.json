@@ -1,0 +1,45 @@
+{
+  "resource_id": "S10-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "commune",
+      "definition_simple": "La collectivité locale de base (ville ou village).",
+      "exemple": "La commune gère l'école."
+    },
+    {
+      "mot": "maire",
+      "definition_simple": "La personne élue qui dirige la commune.",
+      "exemple": "Le maire signe les documents d'état civil."
+    },
+    {
+      "mot": "député",
+      "definition_simple": "Un élu qui vote la loi à l'Assemblée nationale.",
+      "exemple": "Le député participe au vote de la loi."
+    },
+    {
+      "mot": "sénateur",
+      "definition_simple": "Un élu qui vote la loi au Sénat.",
+      "exemple": "Le sénateur représente les territoires."
+    },
+    {
+      "mot": "ministre",
+      "definition_simple": "Un membre du gouvernement.",
+      "exemple": "Le ministre applique la politique du gouvernement."
+    },
+    {
+      "mot": "président",
+      "definition_simple": "Le chef de l'État, élu par les citoyens.",
+      "exemple": "Le président est élu au suffrage universel."
+    },
+    {
+      "mot": "juge",
+      "definition_simple": "La personne qui tranche un litige selon la loi.",
+      "exemple": "Le juge rend une décision."
+    },
+    {
+      "mot": "élire",
+      "definition_simple": "Choisir par un vote.",
+      "exemple": "Les citoyens élisent le maire."
+    }
+  ]
+}

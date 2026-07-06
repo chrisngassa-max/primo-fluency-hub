@@ -1,0 +1,89 @@
+{
+  "session_code": "S11",
+  "variants": [
+    {
+      "niveau": "A1",
+      "consigne": "Écoutez le récit. Remettez les étapes dans l'ordre : signalement, plainte, enquête, justice.",
+      "aides": [
+        "1 = signalement",
+        "2 = plainte",
+        "Mots utiles : vol, plainte, tribunal"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Que fait la victime après le vol ?",
+          "options": [
+            "Elle dépose une plainte",
+            "Elle paie une amende",
+            "Elle change de ville"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "Toute personne a le droit de se défendre."
+        }
+      ]
+    },
+    {
+      "niveau": "A2",
+      "consigne": "Racontez oralement les faits d'un vol et dites où la personne doit aller.",
+      "aides": [
+        "Pensez à : où, quand, quoi ; puis plainte"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Où peut-on déposer une plainte ?",
+          "options": [
+            "À la police ou à la gendarmerie",
+            "À la boulangerie",
+            "À l'école"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Citez les quatre étapes du parcours d'une plainte."
+        }
+      ]
+    },
+    {
+      "niveau": "B1",
+      "consigne": "Racontez les faits de façon claire et orientez la personne, puis expliquez la différence entre contravention, délit et crime.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Racontez les faits (où, quand, quoi) et dites quelles démarches faire."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Expliquez la différence entre contravention, délit et crime avec un exemple."
+        }
+      ]
+    },
+    {
+      "niveau": "B2",
+      "consigne": "Analysez le rôle respectif de la police, de la gendarmerie et de la justice, et nuancez l'importance du droit de se défendre.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Argumentez : pourquoi séparer l'enquête (police/gendarmerie) et le jugement (justice) ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Nuancez : pourquoi le droit de se défendre est-il essentiel, même pour une personne accusée ?"
+        }
+      ]
+    }
+  ]
+}

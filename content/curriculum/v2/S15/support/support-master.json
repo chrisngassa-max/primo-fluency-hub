@@ -1,0 +1,24 @@
+{
+  "support_id": "S15-support-1789",
+  "personnages": [
+    "Narrateur (récit historique)"
+  ],
+  "situation": "Une narration historique présente des repères validés autour de 1789 : la Révolution française, la Déclaration des droits de l'homme et du citoyen, la fin de la monarchie absolue et la proclamation de la République.",
+  "faits": [
+    "La Révolution française commence en 1789.",
+    "La Déclaration des droits de l'homme et du citoyen est adoptée en 1789.",
+    "La Révolution met fin à la monarchie absolue.",
+    "La Première République est proclamée en 1792.",
+    "La Déclaration affirme la liberté et l'égalité des droits."
+  ],
+  "nombres": [
+    1789,
+    1792
+  ],
+  "dates": [
+    "1789",
+    "1792"
+  ],
+  "hash": "f87c3e8147451a1c23ede43f63f3a9611fdfae71e2dcaf969fcff7a6ca43e99e",
+  "version": 1
+}

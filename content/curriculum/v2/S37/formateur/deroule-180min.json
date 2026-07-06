@@ -1,0 +1,32 @@
+[
+  {
+    "phase": "Installation",
+    "duree_min": 10,
+    "description": "Format entretien, pas de mémorisation."
+  },
+  {
+    "phase": "Rappel principes",
+    "duree_min": 25,
+    "description": "Liberté, égalité, fraternité, laïcité — compréhension."
+  },
+  {
+    "phase": "Ateliers EO différenciés",
+    "duree_min": 55,
+    "description": "A1-B2 : parcours et relances graduées."
+  },
+  {
+    "phase": "Entretiens simulés",
+    "duree_min": 60,
+    "description": "Relances imprévues par binôme."
+  },
+  {
+    "phase": "Feedback",
+    "duree_min": 20,
+    "description": "Critères oraux et authenticité."
+  },
+  {
+    "phase": "Fixation",
+    "duree_min": 10,
+    "description": "QCM NAT principes."
+  }
+]

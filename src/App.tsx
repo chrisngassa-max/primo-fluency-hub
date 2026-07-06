@@ -78,6 +78,7 @@ import PreparationExamenHubPage from "@/pages/formateur/PreparationExamenHubPage
 import PreparationCiviquePage from "@/pages/formateur/PreparationCiviquePage";
 import FicheEleveIpePage from "@/pages/formateur/FicheEleveIpePage";
 import FicheGroupeIpePage from "@/pages/formateur/FicheGroupeIpePage";
+import ProductionParcours from "@/pages/formateur/ProductionParcours";
 
 const queryClient = new QueryClient();
 
@@ -164,6 +165,7 @@ const App = () => (
               <Route path="import-programme" element={<ImportProgramme />} />
               <Route path="parcours" element={<ParcoursPage />} />
               <Route path="parcours/:parcoursId" element={<ParcoursDetail />} />
+              <Route path="production-parcours" element={<ProductionParcours />} />
               <Route path="rapports" element={<RapportsPage />} />
               <Route path="suivi-devoirs" element={<SuiviDevoirsPage />} />
               <Route path="signalements" element={<SignalementsPage />} />

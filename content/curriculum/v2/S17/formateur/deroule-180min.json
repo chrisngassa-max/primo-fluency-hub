@@ -1,0 +1,32 @@
+[
+  {
+    "phase": "Rituel civique",
+    "duree_min": 10,
+    "description": "Rappel bref du thème civique concerné, sans introduire de fait nouveau."
+  },
+  {
+    "phase": "Activation + lexique",
+    "duree_min": 20,
+    "description": "Réactivation du lexique déjà rencontré (droit, devoir, règle, évaluation, erreur, progrès)."
+  },
+  {
+    "phase": "Support invariant CO/CE",
+    "duree_min": 50,
+    "description": "Écoute du dialogue de remédiation Amadou/M. Lefèvre, lecture de la matrice personnelle des erreurs."
+  },
+  {
+    "phase": "Ateliers différenciés",
+    "duree_min": 60,
+    "description": "Chaque apprenant retravaille sa propre matrice d'erreurs dans l'atelier correspondant à son niveau A1-B2."
+  },
+  {
+    "phase": "Production EE/EO",
+    "duree_min": 30,
+    "description": "Réalisation d'une tâche équivalente à celle de l'évaluation E1, pour mesurer le progrès individuel."
+  },
+  {
+    "phase": "Fixation",
+    "duree_min": 10,
+    "description": "Synthèse collective, comparaison avant/après, sans mélanger le score linguistique et le score civique."
+  }
+]

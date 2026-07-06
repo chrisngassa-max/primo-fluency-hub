@@ -1,0 +1,50 @@
+{
+  "resource_id": "S37-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "assimilation",
+      "definition_simple": "Intégration dans la société française.",
+      "exemple": "Entretien d'assimilation."
+    },
+    {
+      "mot": "parcours",
+      "definition_simple": "Chemin personnel en France.",
+      "exemple": "Présenter son parcours."
+    },
+    {
+      "mot": "motivation",
+      "definition_simple": "Raisons personnelles du projet.",
+      "exemple": "Motivation sincère."
+    },
+    {
+      "mot": "relance",
+      "definition_simple": "Question imprévue.",
+      "exemple": "Répondre à une relance."
+    },
+    {
+      "mot": "principe",
+      "definition_simple": "Valeur républicaine fondamentale.",
+      "exemple": "Liberté, égalité, fraternité."
+    },
+    {
+      "mot": "laïcité",
+      "definition_simple": "Neutralité et liberté de conscience.",
+      "exemple": "Laïcité au quotidien."
+    },
+    {
+      "mot": "fraternité",
+      "definition_simple": "Solidarité entre citoyens.",
+      "exemple": "Valeur de fraternité."
+    },
+    {
+      "mot": "mémorisation",
+      "definition_simple": "Apprendre par cœur sans comprendre.",
+      "exemple": "Éviter la mémorisation."
+    },
+    {
+      "mot": "intégration",
+      "definition_simple": "Participation à la vie en société.",
+      "exemple": "S'intégrer durablement."
+    }
+  ]
+}

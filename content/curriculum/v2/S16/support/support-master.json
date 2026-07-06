@@ -1,0 +1,18 @@
+{
+  "support_id": "S16-support-territoires",
+  "personnages": [
+    "Narrateur (récit de voyage informatif)"
+  ],
+  "situation": "Un récit de voyage informatif emmène l'auditeur de la métropole à l'outre-mer, puis vers un pays européen. Il présente l'organisation territoriale (commune, département, région), l'appartenance à l'Europe et des éléments de patrimoine.",
+  "faits": [
+    "La France comprend la métropole et des territoires d'outre-mer.",
+    "Le territoire est organisé en communes, départements et régions.",
+    "La France est membre de l'Union européenne.",
+    "Le patrimoine comprend des monuments, des paysages et des traditions.",
+    "La diversité des territoires fait partie de la richesse de la France."
+  ],
+  "nombres": [],
+  "dates": [],
+  "hash": "0dda74692cf7e63dc758f70bf7c31507f29d5107a8924cbad311bf9d8d2f1c93",
+  "version": 1
+}

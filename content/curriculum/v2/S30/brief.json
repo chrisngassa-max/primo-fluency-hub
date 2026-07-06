@@ -1,0 +1,328 @@
+{
+  "session_code": "S30",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Implicite et conduite conforme",
+  "support": {
+    "support_id": "S30-support",
+    "situation": "Situations CR où l'indice est implicite : l'apprenant doit expliciter le principe (laïcité, dignité, égalité) et justifier une conduite conforme.",
+    "personnages": [
+      "Apprenants",
+      "Formateur"
+    ],
+    "faits": [
+      "Un indice implicite demande une inférence à partir du contexte.",
+      "La conduite conforme respecte droits, devoirs et principes.",
+      "Prioriser les principes aide quand plusieurs valeurs entrent en jeu.",
+      "La dignité humaine est inviolable.",
+      "Les situations CR mêlent parfois connaissance et implicite.",
+      "Justifier une conduite suppose nommer le principe mobilisé."
+    ],
+    "nombres": [],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S30-CO-master",
+    "voice": "fr-FR-Wavenet-C",
+    "speaking_rate": 0.92,
+    "script": "Formateur : Situation un : un collègue refuse de serrer la main pour raison religieuse. Que faites-vous ?\nApprenant : Je respecte sa liberté de conscience, sans moquerie. Au travail, les règles communes s'appliquent : pas de harcèlement.\nFormateur : Quel principe est implicite ?\nApprenant : La laïcité et la liberté de conscience, mais aussi la dignité.\nFormateur : Situation deux : une affiche insulte une communauté dans l'escalier.\nApprenant : Je signale : ce n'est pas une opinion protégée, c'est une incitation à la haine.\nFormateur : Vous explicitez l'implicite : limite de l'expression.\nApprenant : Oui. Conduite conforme : signaler, ne pas relayer.\nFormateur : Très bien. Nommez toujours le principe.",
+    "pauses": [
+      {
+        "after_word": 12,
+        "ms": 400
+      },
+      {
+        "after_word": 60,
+        "ms": 400
+      },
+      {
+        "after_word": 130,
+        "ms": 500
+      }
+    ]
+  },
+  "visual": {
+    "resource_id": "S30-VIS-master",
+    "alt_text": "Deux bulles situation implicite avec principe à expliciter.",
+    "scene": {
+      "title": "Implicite CR",
+      "width": 900,
+      "height": 240,
+      "background": "#ffffff",
+      "elements": [
+        {
+          "type": "rect",
+          "x": 200,
+          "y": 60,
+          "width": 500,
+          "height": 100,
+          "rx": 10,
+          "fill": "#e0e7ff"
+        },
+        {
+          "type": "text",
+          "x": 450,
+          "y": 115,
+          "anchor": "middle",
+          "fontSize": 16,
+          "text": "Contexte → Principe → Conduite"
+        }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S30-LEX-A1-B2",
+    "mots": [
+      {
+        "mot": "implicite",
+        "definition_simple": "Non dit directement, à déduire.",
+        "exemple": "Indice implicite."
+      },
+      {
+        "mot": "expliciter",
+        "definition_simple": "Rendre clair ce qui est caché.",
+        "exemple": "Expliciter un principe."
+      },
+      {
+        "mot": "conforme",
+        "definition_simple": "Qui respecte la loi et les valeurs.",
+        "exemple": "Conduite conforme."
+      },
+      {
+        "mot": "dignité",
+        "definition_simple": "Respect dû à chaque personne.",
+        "exemple": "Dignité humaine."
+      },
+      {
+        "mot": "principe",
+        "definition_simple": "Valeur fondamentale.",
+        "exemple": "Principe républicain."
+      },
+      {
+        "mot": "prioriser",
+        "definition_simple": "Classer par importance.",
+        "exemple": "Prioriser les droits."
+      },
+      {
+        "mot": "inférence",
+        "definition_simple": "Déduction à partir d'indices.",
+        "exemple": "Faire une inférence."
+      },
+      {
+        "mot": "signalement",
+        "definition_simple": "Alerter une autorité compétente.",
+        "exemple": "Signaler une affiche."
+      },
+      {
+        "mot": "harcèlement",
+        "definition_simple": "Comportement répété nuisible.",
+        "exemple": "Pas de harcèlement."
+      }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Choisissez la conduite conforme (QCM).",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Affiche haineuse :",
+          "options": [
+            "Signaler",
+            "Photographier pour rire",
+            "Ajouter des insultes"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "L'implicite doit être explicité."
+        }
+      ],
+      "corrige": {
+        "q1": "Signaler",
+        "q2": true
+      }
+    },
+    "A2": {
+      "consigne": "Justifiez une conduite en une situation implicite.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Dignité humaine est :",
+          "options": [
+            "Inviolable",
+            "Optionnelle",
+            "Supprimée"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Nommez un principe mobilisé."
+        }
+      ],
+      "corrige": {
+        "q1": "Inviolable",
+        "q2": "Laïcité, dignité, égalité (un suffit)."
+      }
+    },
+    "B1": {
+      "consigne": "Deux situations implicites CR : principe + conduite.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Analysez situation travail."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Analysez situation voisinage."
+        }
+      ],
+      "corrige": {
+        "q1": "Principe nommé + conduite.",
+        "q2": "Idem."
+      }
+    },
+    "B2": {
+      "consigne": "Priorisez principes en conflit apparent.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Liberté vs dignité : comment arbitrer ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Risques de mal lire l'implicite ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Réponse ouverte.",
+        "q2": "Réponse ouverte."
+      }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S30-QCM-civique",
+    "mention": "CR",
+    "theme": "Droits et devoirs",
+    "questions": [
+      {
+        "notion": "implicite",
+        "type": "connaissance",
+        "enonce": "Une situation implicite demande :",
+        "options": [
+          "D'inférer le principe",
+          "De deviner au hasard",
+          "De ne rien faire"
+        ],
+        "reponse": "D'inférer le principe",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "dignité",
+        "type": "connaissance",
+        "enonce": "La dignité humaine est :",
+        "options": [
+          "Inviolable",
+          "Facultative",
+          "Supprimée"
+        ],
+        "reponse": "Inviolable",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "conduite",
+        "type": "mise_en_situation",
+        "enonce": "Face à une incitation à la haine :",
+        "options": [
+          "Signaler",
+          "Relayer",
+          "Encourager"
+        ],
+        "reponse": "Signaler",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "justification",
+        "type": "connaissance",
+        "enonce": "Justifier une conduite, c'est :",
+        "options": [
+          "Nommer un principe",
+          "Rester vague",
+          "Insulter"
+        ],
+        "reponse": "Nommer un principe",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "CR",
+        "type": "connaissance",
+        "enonce": "Les situations CR peuvent mêler :",
+        "options": [
+          "Connaissance et implicite",
+          "Uniquement du sport",
+          "Aucun principe"
+        ],
+        "reponse": "Connaissance et implicite",
+        "official_status": "simulation_pedagogique"
+      }
+    ]
+  },
+  "devoirs": {
+    "A1": "QCM conduites conformes.",
+    "A2": "Deux justifications courtes.",
+    "B1": "Analyse écrite deux cas.",
+    "B2": "Cas complexe priorisation."
+  },
+  "formateur": {
+    "fiche_formateur": "B1 CR implicite : expliciter indices, conduite conforme, prioriser principes.",
+    "deroule_180min": [
+      {
+        "phase": "Rituel civique",
+        "duree_min": 10,
+        "description": "Implicite et conduite conforme."
+      },
+      {
+        "phase": "Activation + lexique",
+        "duree_min": 20,
+        "description": "Découverte et réactivation du lexique de la séance."
+      },
+      {
+        "phase": "Support invariant CO/CE",
+        "duree_min": 50,
+        "description": "Écoute/lecture du support invariant, compréhension globale puis détaillée."
+      },
+      {
+        "phase": "Ateliers différenciés",
+        "duree_min": 60,
+        "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du même support."
+      },
+      {
+        "phase": "Production EE/EO",
+        "duree_min": 30,
+        "description": "Production selon la compétence dominante de la séance."
+      },
+      {
+        "phase": "Fixation",
+        "duree_min": 10,
+        "description": "Synthèse collective, QCM civique, devoir personnalisé."
+      }
+    ],
+    "adaptation_rules": [
+      "Situations fictives.",
+      "Pas de débat stigmatisant.",
+      "Forcer explicitation du principe."
+    ]
+  }
+}

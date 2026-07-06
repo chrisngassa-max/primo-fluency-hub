@@ -1,0 +1,55 @@
+{
+  "resource_id": "S02-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "nom",
+      "definition_simple": "Le nom de famille d'une personne.",
+      "exemple": "Écrivez votre nom en majuscules."
+    },
+    {
+      "mot": "prénom",
+      "definition_simple": "Le nom personnel, avant le nom de famille.",
+      "exemple": "Son prénom est Amadou."
+    },
+    {
+      "mot": "naissance",
+      "definition_simple": "Le moment où une personne vient au monde.",
+      "exemple": "Sa date de naissance est indiquée sur la carte."
+    },
+    {
+      "mot": "nationalité",
+      "definition_simple": "L'appartenance à un pays.",
+      "exemple": "Quelle est votre nationalité ?"
+    },
+    {
+      "mot": "adresse",
+      "definition_simple": "Le lieu où l'on habite.",
+      "exemple": "Indiquez votre adresse complète."
+    },
+    {
+      "mot": "mairie",
+      "definition_simple": "Le bâtiment où l'on fait des démarches administratives locales.",
+      "exemple": "Il va à la mairie pour un document."
+    },
+    {
+      "mot": "devise",
+      "definition_simple": "Une phrase qui résume les valeurs d'un pays.",
+      "exemple": "La devise française est Liberté, Égalité, Fraternité."
+    },
+    {
+      "mot": "drapeau",
+      "definition_simple": "Le symbole en tissu coloré d'un pays.",
+      "exemple": "Le drapeau français est bleu, blanc, rouge."
+    },
+    {
+      "mot": "hymne",
+      "definition_simple": "Le chant officiel d'un pays.",
+      "exemple": "La Marseillaise est l'hymne national."
+    },
+    {
+      "mot": "Marianne",
+      "definition_simple": "La figure qui représente la République française.",
+      "exemple": "Le buste de Marianne est dans la mairie."
+    }
+  ]
+}

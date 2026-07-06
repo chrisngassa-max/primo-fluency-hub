@@ -1,0 +1,108 @@
+[
+  {
+    "support_id": "S36-support",
+    "version": 1,
+    "niveau": "A1",
+    "consigne": "Lire planning et répartition 28/12.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Durée simulation NAT :",
+        "options": [
+          "45 min",
+          "5 min",
+          "90 min"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "vrai_faux",
+        "enonce": "Banque gelée."
+      }
+    ],
+    "corrige": {
+      "q1": "45 min",
+      "q2": true
+    },
+    "invariants_hash": "e2e6d3c3caeae6ba15f7b37969225341a276dd5256ea498fc6b06f461165fd4c"
+  },
+  {
+    "support_id": "S36-support",
+    "version": 1,
+    "niveau": "A2",
+    "consigne": "Expliquez comparaison de scores.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Situations NAT :",
+        "options": [
+          "12",
+          "40",
+          "0"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "reponse_courte",
+        "enonce": "Que faire en phase stratégie ?"
+      }
+    ],
+    "corrige": {
+      "q1": "12",
+      "q2": "Plan personnalisé selon erreurs."
+    },
+    "invariants_hash": "e2e6d3c3caeae6ba15f7b37969225341a276dd5256ea498fc6b06f461165fd4c"
+  },
+  {
+    "support_id": "S36-support",
+    "version": 1,
+    "niveau": "B1",
+    "consigne": "Auto-analyse après simulation.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "reponse_longue",
+        "enonce": "Thèmes faibles identifiés."
+      },
+      {
+        "id": "q2",
+        "type": "reponse_longue",
+        "enonce": "Comparaison avec essai précédent."
+      }
+    ],
+    "corrige": {
+      "q1": "Liste argumentée.",
+      "q2": "Progression ou stagnation."
+    },
+    "invariants_hash": "e2e6d3c3caeae6ba15f7b37969225341a276dd5256ea498fc6b06f461165fd4c"
+  },
+  {
+    "support_id": "S36-support",
+    "version": 1,
+    "niveau": "B2",
+    "consigne": "Plan stratégie finale 60 min.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "argumentation",
+        "enonce": "NAT vs CR : différence de préparation ?"
+      },
+      {
+        "id": "q2",
+        "type": "argumentation",
+        "enonce": "Gérer stress 45 min ?"
+      }
+    ],
+    "corrige": {
+      "q1": "Réponse ouverte.",
+      "q2": "Réponse ouverte."
+    },
+    "invariants_hash": "e2e6d3c3caeae6ba15f7b37969225341a276dd5256ea498fc6b06f461165fd4c"
+  }
+]

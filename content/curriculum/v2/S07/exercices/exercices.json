@@ -1,0 +1,89 @@
+{
+  "session_code": "S07",
+  "variants": [
+    {
+      "niveau": "A1",
+      "consigne": "Écoutez le message. Cochez la pièce demandée et complétez le courriel avec les amorces.",
+      "aides": [
+        "« Objet : ... »",
+        "« Veuillez trouver ci-joint... »",
+        "Mots utiles : dossier, pièce, échéance"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Quelle pièce est demandée ?",
+          "options": [
+            "Un justificatif de domicile",
+            "Un billet de train",
+            "Une photo de vacances"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "Un dossier incomplet ne peut pas être traité."
+        }
+      ]
+    },
+    {
+      "niveau": "A2",
+      "consigne": "Rédigez un courriel simple à la préfecture pour transmettre la pièce demandée avant l'échéance.",
+      "aides": [
+        "Pensez à : objet, pièce jointe, politesse"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Que faut-il respecter pour répondre à la notification ?",
+          "options": [
+            "La date d'échéance",
+            "L'heure du déjeuner",
+            "La météo"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Écrivez l'objet d'un courriel de réponse à la préfecture."
+        }
+      ]
+    },
+    {
+      "niveau": "B1",
+      "consigne": "Rédigez un courriel formel complet à la préfecture (objet, référence, pièce jointe, formule de politesse), puis expliquez les droits et obligations de l'usager face à l'administration.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Écrivez un courriel formel de réponse avec tous les éléments attendus."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Expliquez ce que l'usager doit faire et ce qu'il peut attendre du service public."
+        }
+      ]
+    },
+    {
+      "niveau": "B2",
+      "consigne": "Analysez la relation entre l'usager et l'administration et nuancez les difficultés des démarches en ligne.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Argumentez : pourquoi les délais et les pièces justificatives sont-ils nécessaires dans une démarche administrative ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Nuancez : quelles difficultés la dématérialisation crée-t-elle et comment y remédier ?"
+        }
+      ]
+    }
+  ]
+}

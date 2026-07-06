@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Examinateur : Présentez votre parcours en France et votre motivation.\nApprenant : J'arrive depuis quatre ans, j'ai suivi une formation, je travaille dans le soin. Je veux m'intégrer durablement.\nExaminateur : Relance imprévue : que signifie la laïcité pour vous au quotidien ?\nApprenant : Respect des lois communes, liberté de conscience, neutralité de l'État. Au travail, je traite chacun également.\nExaminateur : Un ami critique la République devant vous. Votre réaction ?\nApprenant : J'écoute, je distingue critique et incitation à la haine. Je défends le débat démocratique sans violence.\nExaminateur : Pourquoi la fraternité compte ?\nApprenant : Elle nous oblige à la solidarité, au respect, même avec des différences.\nExaminateur : Merci. Réponses personnelles, pas un texte appris.",
+  "transcript": "Examinateur : Présentez votre parcours en France et votre motivation.\nApprenant : J'arrive depuis quatre ans, j'ai suivi une formation, je travaille dans le soin. Je veux m'intégrer durablement.\nExaminateur : Relance imprévue : que signifie la laïcité pour vous au quotidien ?\nApprenant : Respect des lois communes, liberté de conscience, neutralité de l'État. Au travail, je traite chacun également.\nExaminateur : Un ami critique la République devant vous. Votre réaction ?\nApprenant : J'écoute, je distingue critique et incitation à la haine. Je défends le débat démocratique sans violence.\nExaminateur : Pourquoi la fraternité compte ?\nApprenant : Elle nous oblige à la solidarité, au respect, même avec des différences.\nExaminateur : Merci. Réponses personnelles, pas un texte appris.",
+  "voice": "fr-FR-Wavenet-D",
+  "languageCode": "fr-FR",
+  "speaking_rate": 1,
+  "pauses": [
+    {
+      "after_word": 12,
+      "ms": 400
+    },
+    {
+      "after_word": 60,
+      "ms": 400
+    },
+    {
+      "after_word": 130,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 61,
+  "hash": "8ae5624b5e22bedff2b91239e42bb4bdc476a0852350177658d6198a9a6a84b8"
+}

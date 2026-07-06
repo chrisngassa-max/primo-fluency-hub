@@ -1,0 +1,140 @@
+{
+  "session_code": "S09",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Laïcité en situations",
+  "support": {
+    "support_id": "S09-support-laicite",
+    "situation": "Quatre situations courtes illustrent la laïcité : un agent public au guichet, un usager dans un service public, un élève à l'école publique et une personne dans l'espace privé. Chaque situation montre la différence entre neutralité de l'État et liberté de conscience.",
+    "personnages": ["Narrateur (mises en situation)"],
+    "faits": [
+      "La laïcité repose sur la liberté de conscience et la neutralité de l'État.",
+      "Un agent public doit rester neutre et ne pas afficher ses convictions.",
+      "Un usager d'un service public est libre de croire ou de ne pas croire.",
+      "À l'école publique, les signes religieux ostensibles sont interdits pour les élèves.",
+      "Dans l'espace privé, chacun est libre de pratiquer sa religion."
+    ],
+    "nombres": [4],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S09-CO-master",
+    "voice": "fr-FR-Wavenet-D",
+    "speaking_rate": 0.9,
+    "script": "Narrateur : Voici quatre situations pour comprendre la laïcité. Nous restons factuels, sans caricature.\nSituation une : un agent public au guichet. Il doit rester neutre : il ne montre pas ses convictions religieuses ou politiques pendant son service.\nSituation deux : un usager dans un service public. Il est libre de croire ou de ne pas croire. On ne lui demande jamais sa religion.\nSituation trois : un élève à l'école publique. Pour les élèves, les signes religieux ostensibles ne sont pas autorisés. L'école reste un lieu neutre pour apprendre ensemble.\nSituation quatre : une personne chez elle, dans l'espace privé. Là, chacun est libre de pratiquer sa religion comme il le souhaite.\nEn résumé : l'État est neutre, mais chaque personne est libre de conscience. La laïcité protège cette liberté et le vivre-ensemble.",
+    "pauses": [
+      { "after_word": 16, "ms": 500 },
+      { "after_word": 55, "ms": 400 },
+      { "after_word": 110, "ms": 500 }
+    ]
+  },
+  "visual": {
+    "resource_id": "S09-VIS-master",
+    "alt_text": "Matrice de quatre cases : agent public, usager, eleve, espace prive, chacune indiquant neutralite ou liberte, avec des personnages neutres sans signe distinctif.",
+    "scene": {
+      "title": "Laïcité : quatre situations",
+      "width": 900,
+      "height": 320,
+      "background": "#ffffff",
+      "elements": [
+        { "type": "rect", "x": 40, "y": 40, "width": 390, "height": 110, "rx": 8, "fill": "#dbeafe" },
+        { "type": "text", "x": 60, "y": 80, "fontSize": 15, "text": "Agent public au guichet" },
+        { "type": "text", "x": 60, "y": 110, "fontSize": 13, "text": "→ neutralité pendant le service" },
+        { "type": "rect", "x": 470, "y": 40, "width": 390, "height": 110, "rx": 8, "fill": "#dcfce7" },
+        { "type": "text", "x": 490, "y": 80, "fontSize": 15, "text": "Usager du service public" },
+        { "type": "text", "x": 490, "y": 110, "fontSize": 13, "text": "→ libre de croire ou non" },
+        { "type": "rect", "x": 40, "y": 170, "width": 390, "height": 110, "rx": 8, "fill": "#fef9c3" },
+        { "type": "text", "x": 60, "y": 210, "fontSize": 15, "text": "Élève à l'école publique" },
+        { "type": "text", "x": 60, "y": 240, "fontSize": 13, "text": "→ pas de signe religieux ostensible" },
+        { "type": "rect", "x": 470, "y": 170, "width": 390, "height": 110, "rx": 8, "fill": "#ede9fe" },
+        { "type": "text", "x": 490, "y": 210, "fontSize": 15, "text": "Espace privé" },
+        { "type": "text", "x": 490, "y": 240, "fontSize": 13, "text": "→ liberté de pratiquer sa religion" }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S09-LEX-A1-B2",
+    "mots": [
+      { "mot": "laïcité", "definition_simple": "La séparation de l'État et des religions, avec liberté de conscience.", "exemple": "La laïcité protège la liberté de croire ou non." },
+      { "mot": "neutralité", "definition_simple": "Le fait de ne pas prendre parti.", "exemple": "L'agent public reste neutre." },
+      { "mot": "conscience", "definition_simple": "Les convictions personnelles d'une personne.", "exemple": "La liberté de conscience est garantie." },
+      { "mot": "croire", "definition_simple": "Avoir une foi religieuse.", "exemple": "Chacun est libre de croire." },
+      { "mot": "ne pas croire", "definition_simple": "Ne pas avoir de religion.", "exemple": "On peut aussi choisir de ne pas croire." },
+      { "mot": "culte", "definition_simple": "La pratique d'une religion.", "exemple": "La liberté de culte existe dans l'espace privé." },
+      { "mot": "agent", "definition_simple": "Une personne qui travaille pour un service public.", "exemple": "L'agent doit rester neutre." },
+      { "mot": "usager", "definition_simple": "Une personne qui utilise un service public.", "exemple": "L'usager est libre de ses convictions." }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Écoutez les situations. Associez chaque situation à la bonne règle : neutralité ou liberté.",
+      "aides": ["Agent public = neutralité", "Espace privé = liberté", "Mots utiles : croire, agent, usager"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "Pendant son service, un agent public doit :", "options": ["Rester neutre", "Montrer sa religion", "Choisir les usagers"] },
+        { "id": "q2", "type": "vrai_faux", "enonce": "Un usager du service public est libre de croire ou de ne pas croire." }
+      ],
+      "corrige": { "q1": "Rester neutre", "q2": true }
+    },
+    "A2": {
+      "consigne": "Expliquez à l'oral une règle de laïcité et justifiez une conduite adaptée dans une situation.",
+      "aides": ["Pensez à : neutralité, liberté, espace privé"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "Dans l'espace privé, une personne :", "options": ["Est libre de pratiquer sa religion", "Doit rester neutre", "N'a aucun droit"] },
+        { "id": "q2", "type": "reponse_courte", "enonce": "Expliquez pourquoi un agent public reste neutre." }
+      ],
+      "corrige": { "q1": "Est libre de pratiquer sa religion", "q2": "Parce qu'il représente l'État, qui doit traiter tous les usagers de façon égale et sans favoritisme." }
+    },
+    "B1": {
+      "consigne": "Expliquez la différence entre neutralité de l'État et liberté de conscience, puis justifiez une conduite conforme dans deux situations.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "reponse_longue", "enonce": "Distinguez ce que l'État impose (neutralité) et ce que la personne garde (liberté de conscience)." },
+        { "id": "q2", "type": "reponse_longue", "enonce": "Justifiez la conduite attendue pour un agent public et pour un usager." }
+      ],
+      "corrige": { "q1": "L'Etat et ses agents sont neutres ; les personnes gardent leur liberte de croire ou non.", "q2": "L'agent reste neutre pendant le service ; l'usager conserve sa liberte de conviction et n'a pas a la justifier." }
+    },
+    "B2": {
+      "consigne": "Analysez l'apport de la laïcité au vivre-ensemble et nuancez les malentendus fréquents à son sujet.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "argumentation", "enonce": "Argumentez : en quoi la neutralité de l'État garantit-elle l'égalité de tous les usagers ?" },
+        { "id": "q2", "type": "argumentation", "enonce": "Nuancez : la laïcité est-elle une interdiction des religions ? Justifiez." }
+      ],
+      "corrige": { "q1": "Reponse ouverte : traitement egal, absence de favoritisme, confiance dans le service public.", "q2": "Reponse ouverte : non, la laicite garantit la liberte de conscience et de culte ; elle organise la neutralite de l'Etat, pas l'interdiction de croire." }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S09-QCM-civique",
+    "mention": "CSP",
+    "theme": "Principes et valeurs de la République",
+    "questions": [
+      { "notion": "définition de la laïcité", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "La laïcité repose sur :", "options": ["La liberté de conscience et la neutralité de l'État", "L'interdiction de toute religion", "L'obligation d'une religion"], "reponse": "La liberté de conscience et la neutralité de l'État" },
+      { "notion": "neutralité de l'agent", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Un agent public pendant son service doit :", "options": ["Rester neutre", "Afficher ses convictions", "Refuser certains usagers"], "reponse": "Rester neutre" },
+      { "notion": "liberté de l'usager", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Un usager d'un service public :", "options": ["Est libre de croire ou de ne pas croire", "Doit déclarer sa religion", "Doit être neutre comme l'agent"], "reponse": "Est libre de croire ou de ne pas croire" },
+      { "notion": "école publique", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "À l'école publique, pour les élèves, les signes religieux ostensibles sont :", "options": ["Interdits", "Obligatoires", "Encouragés"], "reponse": "Interdits" },
+      { "notion": "espace privé", "type": "mise_en_situation", "official_status": "simulation_pedagogique", "enonce": "Chez elle, une personne qui souhaite pratiquer sa religion :", "options": ["En a la liberté", "Doit demander une autorisation", "N'en a pas le droit"], "reponse": "En a la liberté" }
+    ]
+  },
+  "devoirs": {
+    "A1": "À la maison : associez chaque situation (agent, usager, élève, espace privé) à sa règle.",
+    "A2": "À la maison : écrivez 4 phrases pour expliquer une règle de laïcité.",
+    "B1": "À la maison : rédigez un court texte distinguant neutralité de l'État et liberté de conscience.",
+    "B2": "À la maison : rédigez un paragraphe argumenté sur l'apport de la laïcité au vivre-ensemble."
+  },
+  "formateur": {
+    "fiche_formateur": "Séance laïcité : chaque apprenant doit savoir (1) expliquer une règle de laïcité, (2) justifier une conduite conforme, (3) distinguer neutralité de l'État et liberté de conscience. Traiter le sujet sans caricature ; personnages neutres et diversité non stéréotypée.",
+    "deroule_180min": [
+      { "phase": "Rituel civique", "duree_min": 10, "description": "Lecture de la matrice des quatre situations." },
+      { "phase": "Activation + lexique", "duree_min": 20, "description": "Decouverte du lexique (laicite, neutralite, conscience, culte...)." },
+      { "phase": "Support invariant CO/CE", "duree_min": 50, "description": "Ecoute des quatre situations et reperage de la regle applicable." },
+      { "phase": "Ateliers differencies", "duree_min": 60, "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du meme support." },
+      { "phase": "Production EE/EO", "duree_min": 30, "description": "Expliquer une regle et justifier une conduite dans une situation." },
+      { "phase": "Fixation", "duree_min": 10, "description": "Synthese, QCM civique, devoir personnalise." }
+    ],
+    "adaptation_rules": [
+      "Rester factuel et bienveillant ; ne jamais caricaturer une religion ou une pratique.",
+      "Bien distinguer ce qui releve de l'Etat (neutralite) et de la personne (liberte).",
+      "Ne jamais representer de signe religieux stereotype dans le visuel : personnages neutres."
+    ]
+  }
+}

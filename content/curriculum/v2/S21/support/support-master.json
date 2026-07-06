@@ -1,0 +1,23 @@
+{
+  "support_id": "S21-support-arbre-decision",
+  "personnages": [
+    "Groupe d'apprenants",
+    "Formateur (animateur)"
+  ],
+  "situation": "Les apprenants reçoivent un arbre de décision fictif pour répondre à des items civiques : chaque question sépare la preuve de connaissance et la preuve de mise en situation.",
+  "faits": [
+    "Un item de connaissance teste un fait ou une définition.",
+    "Un item de mise en situation teste une conduite face à un cas concret.",
+    "L'arbre de décision aide à choisir la bonne branche de réponse.",
+    "Une conduite conforme respecte les principes républicains et la loi.",
+    "Confondre connaissance et situation fausse l'analyse des distracteurs.",
+    "Expliquer pourquoi une réponse est correcte renforce la mémorisation."
+  ],
+  "nombres": [
+    2,
+    40
+  ],
+  "dates": [],
+  "hash": "a3311669bcd4fa446c984cd2ce444e5f4f2a784c5cb63eedb1dd528ada4ae31f",
+  "version": 1
+}

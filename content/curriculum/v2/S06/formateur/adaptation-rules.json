@@ -1,0 +1,5 @@
+[
+  "Verifier la coherence des chiffres entre offre, contrat et fiche de paie avant l'atelier.",
+  "Rappeler que les montants sont fictifs et servent uniquement d'exemple.",
+  "Ne jamais modifier les chiffres du jeu de donnees d'un niveau a l'autre : ils sont invariants."
+]

@@ -1,0 +1,116 @@
+{
+  "resource_id": "S24-VIS-master",
+  "scene": {
+    "title": "Simulation chronométrée S24",
+    "width": 900,
+    "height": 280,
+    "background": "#ffffff",
+    "elements": [
+      {
+        "type": "rect",
+        "x": 40,
+        "y": 40,
+        "width": 120,
+        "height": 50,
+        "fill": "#e0e7ff"
+      },
+      {
+        "type": "text",
+        "x": 100,
+        "y": 70,
+        "anchor": "middle",
+        "fontSize": 12,
+        "text": "Install. 10"
+      },
+      {
+        "type": "rect",
+        "x": 180,
+        "y": 40,
+        "width": 140,
+        "height": 50,
+        "fill": "#dbeafe"
+      },
+      {
+        "type": "text",
+        "x": 250,
+        "y": 70,
+        "anchor": "middle",
+        "fontSize": 11,
+        "text": "CO+CE 55"
+      },
+      {
+        "type": "rect",
+        "x": 340,
+        "y": 40,
+        "width": 100,
+        "height": 50,
+        "fill": "#dcfce7"
+      },
+      {
+        "type": "text",
+        "x": 390,
+        "y": 70,
+        "anchor": "middle",
+        "fontSize": 12,
+        "text": "EE 30"
+      },
+      {
+        "type": "rect",
+        "x": 460,
+        "y": 40,
+        "width": 90,
+        "height": 50,
+        "fill": "#fef9c3"
+      },
+      {
+        "type": "text",
+        "x": 505,
+        "y": 70,
+        "anchor": "middle",
+        "fontSize": 12,
+        "text": "EO 10"
+      },
+      {
+        "type": "rect",
+        "x": 570,
+        "y": 40,
+        "width": 120,
+        "height": 50,
+        "fill": "#fee2e2"
+      },
+      {
+        "type": "text",
+        "x": 630,
+        "y": 70,
+        "anchor": "middle",
+        "fontSize": 11,
+        "text": "Civique 45"
+      },
+      {
+        "type": "rect",
+        "x": 710,
+        "y": 40,
+        "width": 130,
+        "height": 50,
+        "fill": "#ede9fe"
+      },
+      {
+        "type": "text",
+        "x": 775,
+        "y": 70,
+        "anchor": "middle",
+        "fontSize": 11,
+        "text": "Reméd. 30"
+      },
+      {
+        "type": "text",
+        "x": 450,
+        "y": 150,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "Banque gelée · Stratégie 32/40"
+      }
+    ]
+  },
+  "alt_text": "Planning chronométré simulation : CO+CE, EE, EO, civique 45 min, remédiation."
+}

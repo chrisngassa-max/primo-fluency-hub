@@ -1,0 +1,24 @@
+{
+  "support_id": "S31-support",
+  "personnages": [
+    "Apprenants B1",
+    "Formateur"
+  ],
+  "situation": "Simulation CR 40 questions sur 45 minutes, banque verrouillée, puis analyse des distracteurs et remédiation B1 ciblée.",
+  "faits": [
+    "La simulation CR utilise une banque verrouillée de quarante questions.",
+    "Durée officielle : quarante-cinq minutes.",
+    "Après la simulation, on analyse les distracteurs des erreurs.",
+    "La remédiation cible les fragilités de la cohorte.",
+    "Langue B1 est réactivée avant la simulation (soixante minutes).",
+    "Aucune aide pendant la simulation CR."
+  ],
+  "nombres": [
+    40,
+    45,
+    60
+  ],
+  "dates": [],
+  "hash": "151c224f3f3f9a2d5d54678f15d012cf1bb6f6980f9c8038312155d1f0faeac5",
+  "version": 1
+}

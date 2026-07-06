@@ -1,0 +1,372 @@
+{
+  "session_code": "S26",
+  "plan_version": "curriculum-v2.0",
+  "titre": "État de droit et séparation des pouvoirs",
+  "support": {
+    "support_id": "S26-support",
+    "situation": "Un apprenant B1 explique une décision publique fictive (arrêté municipal) et les contrôles institutionnels : qui décide, qui contrôle, rôle du juge.",
+    "personnages": [
+      "Nadia (apprenante B1)",
+      "Formateur"
+    ],
+    "faits": [
+      "L'État de droit soumet tous, y compris l'État, à la loi.",
+      "Le pouvoir législatif vote la loi ; l'exécutif l'applique ; le judiciaire contrôle.",
+      "Une décision publique peut être contestée devant le juge administratif.",
+      "Les élections permettent aux citoyens de choisir leurs représentants.",
+      "La séparation des pouvoirs limite les abus.",
+      "Un arrêté municipal doit respecter la loi supérieure."
+    ],
+    "nombres": [
+      3
+    ],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S26-CO-master",
+    "voice": "fr-FR-Wavenet-C",
+    "speaking_rate": 0.92,
+    "script": "Formateur : Expliquez cette décision publique fictive : la mairie interdit temporairement le stationnement pour des travaux.\nNadia : La mairie, c'est le pouvoir exécutif local. Elle applique et prend des arrêtés, mais dans le cadre de la loi.\nFormateur : Qui contrôle si l'arrêté est légal ?\nNadia : Le juge administratif, donc le pouvoir judiciaire. Un citoyen peut contester s'il estime que ça viole ses droits.\nFormateur : Et le Parlement dans tout ça ?\nNadia : Le Parlement vote la loi nationale. L'arrêté ne peut pas la contredire. C'est l'État de droit : personne n'est au-dessus de la loi.\nFormateur : Les élections ?\nNadia : Les citoyens élisent les maires, les députés. Ça légitime les décisions dans la démocratie.\nFormateur : Très bien. Vous distinguez décision, contrôle et vote.",
+    "pauses": [
+      {
+        "after_word": 12,
+        "ms": 400
+      },
+      {
+        "after_word": 60,
+        "ms": 400
+      },
+      {
+        "after_word": 130,
+        "ms": 500
+      }
+    ]
+  },
+  "visual": {
+    "resource_id": "S26-VIS-master",
+    "alt_text": "Schéma trois pouvoirs : législatif, exécutif, judiciaire.",
+    "scene": {
+      "title": "Séparation des pouvoirs",
+      "width": 900,
+      "height": 260,
+      "background": "#ffffff",
+      "elements": [
+        {
+          "type": "rect",
+          "x": 80,
+          "y": 80,
+          "width": 200,
+          "height": 70,
+          "rx": 8,
+          "fill": "#dbeafe"
+        },
+        {
+          "type": "text",
+          "x": 180,
+          "y": 120,
+          "anchor": "middle",
+          "fontSize": 13,
+          "text": "Législatif"
+        },
+        {
+          "type": "rect",
+          "x": 350,
+          "y": 80,
+          "width": 200,
+          "height": 70,
+          "rx": 8,
+          "fill": "#dcfce7"
+        },
+        {
+          "type": "text",
+          "x": 450,
+          "y": 120,
+          "anchor": "middle",
+          "fontSize": 13,
+          "text": "Exécutif"
+        },
+        {
+          "type": "rect",
+          "x": 620,
+          "y": 80,
+          "width": 200,
+          "height": 70,
+          "rx": 8,
+          "fill": "#fee2e2"
+        },
+        {
+          "type": "text",
+          "x": 720,
+          "y": 120,
+          "anchor": "middle",
+          "fontSize": 13,
+          "text": "Judiciaire"
+        },
+        {
+          "type": "text",
+          "x": 450,
+          "y": 200,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "État de droit"
+        }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S26-LEX-A1-B2",
+    "mots": [
+      {
+        "mot": "État de droit",
+        "definition_simple": "Tous sont soumis à la loi.",
+        "exemple": "L'État de droit en France."
+      },
+      {
+        "mot": "séparation",
+        "definition_simple": "Répartition des pouvoirs.",
+        "exemple": "Séparation des pouvoirs."
+      },
+      {
+        "mot": "législatif",
+        "definition_simple": "Pouvoir qui vote la loi.",
+        "exemple": "Le Parlement."
+      },
+      {
+        "mot": "exécutif",
+        "definition_simple": "Pouvoir qui applique la loi.",
+        "exemple": "Le gouvernement, la mairie."
+      },
+      {
+        "mot": "judiciaire",
+        "definition_simple": "Pouvoir qui juge et contrôle.",
+        "exemple": "Les juges."
+      },
+      {
+        "mot": "arrêté",
+        "definition_simple": "Décision administrative locale.",
+        "exemple": "Arrêté de stationnement."
+      },
+      {
+        "mot": "contester",
+        "definition_simple": "Demander réexamen devant un juge.",
+        "exemple": "Contester une décision."
+      },
+      {
+        "mot": "élection",
+        "definition_simple": "Vote pour choisir des élus.",
+        "exemple": "Élections municipales."
+      },
+      {
+        "mot": "contrôle",
+        "definition_simple": "Vérification de légalité.",
+        "exemple": "Contrôle par le juge."
+      }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Associez pouvoirs et rôles.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Qui vote la loi ?",
+          "options": [
+            "Législatif",
+            "Judiciaire",
+            "Médiateur"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "L'État de droit soumet l'État à la loi."
+        }
+      ],
+      "corrige": {
+        "q1": "Législatif",
+        "q2": true
+      }
+    },
+    "A2": {
+      "consigne": "Expliquez oralement une décision publique et son contrôle.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Contester un arrêté :",
+          "options": [
+            "Juge administratif",
+            "Boulangerie",
+            "Stade"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Rôle du judiciaire ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Juge administratif",
+        "q2": "Trancher et contrôler la légalité."
+      }
+    },
+    "B1": {
+      "consigne": "Expliquez décision publique et contrôles institutionnels.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Décrivez l'arrêté fictif et sa légitimité."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Qui contrôle et comment ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Décision locale dans cadre légal.",
+        "q2": "Juge administratif, recours possible."
+      }
+    },
+    "B2": {
+      "consigne": "Synthèse nuancée État de droit et séparation des pouvoirs.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Pourquoi séparer les pouvoirs ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Limites du contrôle judiciaire ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Réponse ouverte.",
+        "q2": "Réponse ouverte."
+      }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S26-QCM-civique",
+    "mention": "CR",
+    "theme": "Système institutionnel et politique",
+    "questions": [
+      {
+        "notion": "État de droit",
+        "type": "connaissance",
+        "enonce": "L'État de droit signifie :",
+        "options": [
+          "Tous soumis à la loi",
+          "Loi optionnelle",
+          "Pouvoir sans limite"
+        ],
+        "reponse": "Tous soumis à la loi",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "pouvoirs",
+        "type": "connaissance",
+        "enonce": "Le Parlement représente le pouvoir :",
+        "options": [
+          "Législatif",
+          "Judiciaire",
+          "Religieux"
+        ],
+        "reponse": "Législatif",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "contrôle",
+        "type": "mise_en_situation",
+        "enonce": "Un arrêté illégal peut être :",
+        "options": [
+          "Annulé par le juge",
+          "Ignoré sans recours",
+          "Validé par le voisin"
+        ],
+        "reponse": "Annulé par le juge",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "élections",
+        "type": "connaissance",
+        "enonce": "Les élections servent à :",
+        "options": [
+          "Choisir des représentants",
+          "Payer les impôts",
+          "Conduire un bus"
+        ],
+        "reponse": "Choisir des représentants",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "exécutif",
+        "type": "connaissance",
+        "enonce": "La mairie relève surtout du pouvoir :",
+        "options": [
+          "Exécutif local",
+          "Législatif national",
+          "Judiciaire"
+        ],
+        "reponse": "Exécutif local",
+        "official_status": "simulation_pedagogique"
+      }
+    ]
+  },
+  "devoirs": {
+    "A1": "Schéma trois pouvoirs.",
+    "A2": "Texte sur un arrêté fictif.",
+    "B1": "Explication contrôle institutionnel.",
+    "B2": "Synthèse État de droit."
+  },
+  "formateur": {
+    "fiche_formateur": "B1 CR : décision publique, contrôles, séparation des pouvoirs, élections.",
+    "deroule_180min": [
+      {
+        "phase": "Rituel civique",
+        "duree_min": 10,
+        "description": "État de droit et institutions."
+      },
+      {
+        "phase": "Activation + lexique",
+        "duree_min": 20,
+        "description": "Découverte et réactivation du lexique de la séance."
+      },
+      {
+        "phase": "Support invariant CO/CE",
+        "duree_min": 50,
+        "description": "Écoute/lecture du support invariant, compréhension globale puis détaillée."
+      },
+      {
+        "phase": "Ateliers différenciés",
+        "duree_min": 60,
+        "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du même support."
+      },
+      {
+        "phase": "Production EE/EO",
+        "duree_min": 30,
+        "description": "Production selon la compétence dominante de la séance."
+      },
+      {
+        "phase": "Fixation",
+        "duree_min": 10,
+        "description": "Synthèse collective, QCM civique, devoir personnalisé."
+      }
+    ],
+    "adaptation_rules": [
+      "Exemples fictifs uniquement.",
+      "Relances orales B1.",
+      "Mention CR dans QCM."
+    ]
+  }
+}

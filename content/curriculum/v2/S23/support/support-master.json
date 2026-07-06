@@ -1,0 +1,22 @@
+{
+  "support_id": "S23-support",
+  "personnages": [
+    "Apprenant",
+    "Examinateur simulé"
+  ],
+  "situation": "Simulation des trois tâches EO TCF : entretien dirigé, interaction sans préparation, point de vue argumenté, sur des thèmes de la vie quotidienne en France.",
+  "faits": [
+    "EO1 est un entretien dirigé sur soi et son parcours.",
+    "EO2 est une interaction à partir d'un document fictif.",
+    "EO3 demande de défendre un point de vue avec arguments.",
+    "La durée de parole prime sur le nombre de mots.",
+    "Les critères oraux incluent fluidité, interaction et cohérence.",
+    "Aucun nouveau fait civique n'est introduit dans cette séance langue."
+  ],
+  "nombres": [
+    3
+  ],
+  "dates": [],
+  "hash": "c9f3bec725b4358779f2db7120fe5d2d0a9a79c3546d827e55583ba9e0055b71",
+  "version": 1
+}

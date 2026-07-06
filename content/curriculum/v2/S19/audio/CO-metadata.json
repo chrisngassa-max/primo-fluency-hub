@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Mme Dupont : Bonjour, vous êtes à quel guichet, s'il vous plaît ?\nKarim : Bonjour madame. Je viens pour mon dossier de titre de séjour. On m'a dit qu'il manquait un justificatif de domicile.\nMme Dupont : D'accord. Vous avez pris le numéro pour le guichet dépôt de pièces ?\nKarim : Je ne suis pas sûr. J'ai attendu quarante minutes.\nMme Dupont : Je comprends. Ce guichet traite les rendez-vous, pas les dépôts. Pour déposer une pièce, il faut le guichet numéro trois.\nKarim : Ah, je vois. Et le délai de quinze jours, il commence aujourd'hui ou à la date de la notification ?\nMme Dupont : Il commence à la date indiquée sur votre notification. Vous avez encore dix jours si la notification date d'il y a cinq jours.\nKarim : Merci. Pouvez-vous reformuler ce que je dois apporter exactement ?\nMme Dupont : Bien sûr. Un justificatif de domicile de moins de trois mois, à votre nom.\nKarim : Et si je ne comprends pas la réponse, j'ai le droit de demander un recours ?\nMme Dupont : Oui. Vous pouvez demander une explication écrite et, si besoin, saisir le médiateur. Je reste neutre : j'applique les règles.\nKarim : D'accord, merci madame. Je vais au guichet trois avec les bonnes pièces.\nMme Dupont : Très bien. Respectez bien le délai restant.",
+  "transcript": "Mme Dupont : Bonjour, vous êtes à quel guichet, s'il vous plaît ?\nKarim : Bonjour madame. Je viens pour mon dossier de titre de séjour. On m'a dit qu'il manquait un justificatif de domicile.\nMme Dupont : D'accord. Vous avez pris le numéro pour le guichet dépôt de pièces ?\nKarim : Je ne suis pas sûr. J'ai attendu quarante minutes.\nMme Dupont : Je comprends. Ce guichet traite les rendez-vous, pas les dépôts. Pour déposer une pièce, il faut le guichet numéro trois.\nKarim : Ah, je vois. Et le délai de quinze jours, il commence aujourd'hui ou à la date de la notification ?\nMme Dupont : Il commence à la date indiquée sur votre notification. Vous avez encore dix jours si la notification date d'il y a cinq jours.\nKarim : Merci. Pouvez-vous reformuler ce que je dois apporter exactement ?\nMme Dupont : Bien sûr. Un justificatif de domicile de moins de trois mois, à votre nom.\nKarim : Et si je ne comprends pas la réponse, j'ai le droit de demander un recours ?\nMme Dupont : Oui. Vous pouvez demander une explication écrite et, si besoin, saisir le médiateur. Je reste neutre : j'applique les règles.\nKarim : D'accord, merci madame. Je vais au guichet trois avec les bonnes pièces.\nMme Dupont : Très bien. Respectez bien le délai restant.",
+  "voice": "fr-FR-Wavenet-C",
+  "languageCode": "fr-FR",
+  "speaking_rate": 0.92,
+  "pauses": [
+    {
+      "after_word": 14,
+      "ms": 400
+    },
+    {
+      "after_word": 72,
+      "ms": 400
+    },
+    {
+      "after_word": 150,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 114,
+  "hash": "db548f46d83617be2ae0dcb0802f030c8f16e028396cb98ad3a9e1a8a2c8fd6e"
+}

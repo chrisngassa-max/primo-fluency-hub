@@ -1,0 +1,83 @@
+{
+  "session_code": "S34",
+  "variants": [
+    {
+      "niveau": "A1",
+      "consigne": "Associez support et contenu.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Les Lumières défendent :",
+          "options": [
+            "La raison et les droits",
+            "L'absolutisme",
+            "La censure totale"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "La synthèse relie plusieurs supports."
+        }
+      ]
+    },
+    {
+      "niveau": "A2",
+      "consigne": "Ordonnez quatre repères chronologiques.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "1789 est lié à :",
+          "options": [
+            "Révolution française",
+            "Traité de Rome",
+            "Internet"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Une conséquence des guerres mondiales ?"
+        }
+      ]
+    },
+    {
+      "niveau": "B1",
+      "consigne": "Synthèse écrite reliant deux supports.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Lumières et Républiques."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Guerres et Europe."
+        }
+      ]
+    },
+    {
+      "niveau": "B2",
+      "consigne": "Synthèse complète hiérarchisée.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Chaîne causale sur quatre supports ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Limites du corpus fictif ?"
+        }
+      ]
+    }
+  ]
+}

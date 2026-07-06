@@ -1,0 +1,1166 @@
+{
+  "session_code": "E3",
+  "validated_at": "2026-07-06T09:05:08.554Z",
+  "publishable": true,
+  "blocking_resources": [],
+  "resources": {
+    "support-master-json": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "support-master-json",
+          "kind": "support_master_json",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "685cf2010bf94a566d8e4d6cef718d833092006428684e84bf4340b34c37f9ca",
+            "doublon": false,
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": {
+        "validateur": "ai_review",
+        "modele": "fake-content-model",
+        "regles": [
+          "coherence_support_consigne_corrige",
+          "reponse_unique_defendable",
+          "image_ne_revele_pas_reponse",
+          "absence_stereotype",
+          "lisibilite_a1_b2",
+          "faits_identiques_multi_media"
+        ],
+        "scores": {
+          "quality_score": 5,
+          "pedagogical_relevance_score": 5
+        },
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "support-master-json",
+          "commentaire": "Revue factice deterministe (be33fefa)",
+          "raw": {
+            "quality_score": 5,
+            "pedagogical_relevance_score": 5,
+            "bloquants": [],
+            "commentaire": "Revue factice deterministe (be33fefa)"
+          }
+        }
+      },
+      "publishable": true
+    },
+    "support-master-html": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "support-master-html",
+          "kind": "support_master_html",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "9c68485e0ce0c7822fda912169fb44d955349adc990619361638336449e02e7f",
+            "doublon": false,
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": null,
+      "publishable": true
+    },
+    "support-master-pdf": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "support-master-pdf",
+          "kind": "support_master_pdf",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "770e8aea43ec59d6eba2eec9c672b06c20cf7be42130edb315d5e2383f0bd97d",
+            "doublon": false,
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": null,
+      "publishable": true
+    },
+    "variantes-a1-a2-b1-b2": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "variantes-a1-a2-b1-b2",
+          "kind": "variantes_json",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "639e26b3a79b2dd2f081d3c1e89230acad1500ceded2d66320429533aad6d495",
+            "doublon": false,
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": {
+        "validateur": "ai_review",
+        "modele": "fake-content-model",
+        "regles": [
+          "coherence_support_consigne_corrige",
+          "reponse_unique_defendable",
+          "image_ne_revele_pas_reponse",
+          "absence_stereotype",
+          "lisibilite_a1_b2",
+          "faits_identiques_multi_media"
+        ],
+        "scores": {
+          "quality_score": 5,
+          "pedagogical_relevance_score": 5
+        },
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "variantes-a1-a2-b1-b2",
+          "commentaire": "Revue factice deterministe (be33fefa)",
+          "raw": {
+            "quality_score": 5,
+            "pedagogical_relevance_score": 5,
+            "bloquants": [],
+            "commentaire": "Revue factice deterministe (be33fefa)"
+          }
+        }
+      },
+      "publishable": true
+    },
+    "vis-brief-json": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "vis-brief-json",
+          "kind": "vis_brief_json",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "253fb0f9085b0c84178567a8a928289abd8f9eab0dccf991cce81aae6224fca2",
+            "doublon": false,
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": null,
+      "publishable": true
+    },
+    "vis-master-svg": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "vis-master-svg",
+          "kind": "vis_master_svg",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "5a53c8bb19818287743f526f442312df58db0715e3c8881d7b996dd7c6c533d1",
+            "doublon": false,
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": {
+        "validateur": "ai_review",
+        "modele": "fake-content-model",
+        "regles": [
+          "coherence_support_consigne_corrige",
+          "reponse_unique_defendable",
+          "image_ne_revele_pas_reponse",
+          "absence_stereotype",
+          "lisibilite_a1_b2",
+          "faits_identiques_multi_media"
+        ],
+        "scores": {
+          "quality_score": 5,
+          "pedagogical_relevance_score": 5
+        },
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "vis-master-svg",
+          "commentaire": "Revue factice deterministe (be33fefa)",
+          "raw": {
+            "quality_score": 5,
+            "pedagogical_relevance_score": 5,
+            "bloquants": [],
+            "commentaire": "Revue factice deterministe (be33fefa)"
+          }
+        }
+      },
+      "publishable": true
+    },
+    "vis-master-png": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "vis-master-png",
+          "kind": "vis_master_png",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "338f2eafab3f4e772d4b03f698e041005af505a4d6e133f444aa66e0788cd423",
+            "doublon": false,
+            "dimensions": {
+              "width": 900,
+              "height": 240
+            },
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": null,
+      "publishable": true
+    },
+    "vis-master-webp": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "vis-master-webp",
+          "kind": "vis_master_webp",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "338f2eafab3f4e772d4b03f698e041005af505a4d6e133f444aa66e0788cd423",
+            "doublon": false,
+            "dimensions": {
+              "width": 900,
+              "height": 240
+            },
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": null,
+      "publishable": true
+    },
+    "co-script-md": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "co-script-md",
+          "kind": "co_script",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "5f794aefafdfdf55887ec0dac5697e6dc3b6d9d11ffcfde90cf0de0110cbee05",
+            "doublon": false,
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": null,
+      "publishable": true
+    },
+    "co-transcript-pdf": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "co-transcript-pdf",
+          "kind": "co_transcript",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "f31149230f1b4bd9f3f4e3d3348ec20da7afd464aeefd742dd1bf45d1535af69",
+            "doublon": false,
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": null,
+      "publishable": true
+    },
+    "co-master-mp3": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "co-master-mp3",
+          "kind": "co_master",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "77cfc3de59072406106164b7aefbfb2eeb9c11d70bb8ef367a5bb1d3d33d6390",
+            "doublon": false,
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": null,
+      "publishable": true
+    },
+    "co-metadata-json": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "co-metadata-json",
+          "kind": "co_metadata",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "86eef0177c7e3173a3d4d726a53af353b4fa009010a1bab90ed096c52585976b",
+            "doublon": false,
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": null,
+      "publishable": true
+    },
+    "lexique-a1-b2-json": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "lexique-a1-b2-json",
+          "kind": "lexique_json",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "c5833fa97d085cf3000ebc4edac2d6770d280713898914148acee0abb9d8e40b",
+            "doublon": false,
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": null,
+      "publishable": true
+    },
+    "lexique-a1-b2-pdf": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "lexique-a1-b2-pdf",
+          "kind": "lexique_pdf",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "654c8e503412b7fdf40be1db8f823da66313629d325e702b7b71df8892602910",
+            "doublon": false,
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": null,
+      "publishable": true
+    },
+    "exercices-json": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "exercices-json",
+          "kind": "exercices_json",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "dfc7ae247d6471c3bb6f8343172cc9a66f9d74767d0d446c1125532e9052a6c4",
+            "doublon": false,
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": {
+        "validateur": "ai_review",
+        "modele": "fake-content-model",
+        "regles": [
+          "coherence_support_consigne_corrige",
+          "reponse_unique_defendable",
+          "image_ne_revele_pas_reponse",
+          "absence_stereotype",
+          "lisibilite_a1_b2",
+          "faits_identiques_multi_media"
+        ],
+        "scores": {
+          "quality_score": 5,
+          "pedagogical_relevance_score": 5
+        },
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "exercices-json",
+          "commentaire": "Revue factice deterministe (be33fefa)",
+          "raw": {
+            "quality_score": 5,
+            "pedagogical_relevance_score": 5,
+            "bloquants": [],
+            "commentaire": "Revue factice deterministe (be33fefa)"
+          }
+        }
+      },
+      "publishable": true
+    },
+    "corrige-json": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "corrige-json",
+          "kind": "corrige_json",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "d9620bf22c19447c0d2ea0133eebbf91326b70cd805e86ccbce1a353feebe7ff",
+            "doublon": false,
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": null,
+      "publishable": true
+    },
+    "qcm-civique-json": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "qcm-civique-json",
+          "kind": "qcm_civique_json",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "28e84652db7e39790bfca545f7dfe56e2c27dd14b849f214576a6dc5e0660678",
+            "doublon": false,
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": {
+        "validateur": "ai_review",
+        "modele": "fake-content-model",
+        "regles": [
+          "coherence_support_consigne_corrige",
+          "reponse_unique_defendable",
+          "image_ne_revele_pas_reponse",
+          "absence_stereotype",
+          "lisibilite_a1_b2",
+          "faits_identiques_multi_media"
+        ],
+        "scores": {
+          "quality_score": 5,
+          "pedagogical_relevance_score": 5
+        },
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "qcm-civique-json",
+          "commentaire": "Revue factice deterministe (be33fefa)",
+          "raw": {
+            "quality_score": 5,
+            "pedagogical_relevance_score": 5,
+            "bloquants": [],
+            "commentaire": "Revue factice deterministe (be33fefa)"
+          }
+        }
+      },
+      "publishable": true
+    },
+    "devoir-a1-pdf": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "devoir-a1-pdf",
+          "kind": "devoir_pdf",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "e5d7494a5632dce4b68ab849cd30ed4481bf9182ae3990dc1670323d66d11f0b",
+            "doublon": false,
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": null,
+      "publishable": true
+    },
+    "fiche-a1-pdf": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "fiche-a1-pdf",
+          "kind": "fiche_apprenant_pdf",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "ae3d293b2f45deb2d2484ea98fb2b2014b7e06dc25a5523cc9b968a71ef6a2cc",
+            "doublon": false,
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": null,
+      "publishable": true
+    },
+    "devoir-a2-pdf": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "devoir-a2-pdf",
+          "kind": "devoir_pdf",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "c1f850590de08b2490e6179fc3d90e5e6d9ac48fbe67197def6fd3e1cd2ce5ec",
+            "doublon": false,
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": null,
+      "publishable": true
+    },
+    "fiche-a2-pdf": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "fiche-a2-pdf",
+          "kind": "fiche_apprenant_pdf",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "3170abf998fff8387cc1aa9a4db464395595066d200591c71f261ab183ea660f",
+            "doublon": false,
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": null,
+      "publishable": true
+    },
+    "devoir-b1-pdf": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "devoir-b1-pdf",
+          "kind": "devoir_pdf",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "72cea8c6cb5c383985adc7b428d2e5b9cbced5cbce3b3d1b6f97d30bb438d604",
+            "doublon": false,
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": null,
+      "publishable": true
+    },
+    "fiche-b1-pdf": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "fiche-b1-pdf",
+          "kind": "fiche_apprenant_pdf",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "ce68eedbf9025a169c95efc2b4ac7183e0f97a82ba62c37913796eb2af4eba1f",
+            "doublon": false,
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": null,
+      "publishable": true
+    },
+    "devoir-b2-pdf": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "devoir-b2-pdf",
+          "kind": "devoir_pdf",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "c5fcc51e651f44c8f2b72585d1cdabc47996597d16dc1f52fba3744a3d4d9d5a",
+            "doublon": false,
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": null,
+      "publishable": true
+    },
+    "fiche-b2-pdf": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "fiche-b2-pdf",
+          "kind": "fiche_apprenant_pdf",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "1d0b4bf18d6c22cf10020eecf264b12814122c5353994893f96ebe0db25661f5",
+            "doublon": false,
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": null,
+      "publishable": true
+    },
+    "fiche-formateur-pdf": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "fiche-formateur-pdf",
+          "kind": "fiche_formateur_pdf",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "7fed03a41a45667f5f02f3bfdbe693a58498417fbb3693449f0fa8ac9b60ae5a",
+            "doublon": false,
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": null,
+      "publishable": true
+    },
+    "deroule-180min-json": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "deroule-180min-json",
+          "kind": "deroule_json",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "47e88724ebeab718ff180ea52a388a24a6ac80f52cc97eae952efb4a13e0bd0d",
+            "doublon": false,
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": null,
+      "publishable": true
+    },
+    "adaptation-rules-json": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "adaptation-rules-json",
+          "kind": "adaptation_rules_json",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "974642de026b28010595832b649a547d5d401e73d5228556b68b0c73742cc319",
+            "doublon": false,
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": null,
+      "publishable": true
+    },
+    "sources-json": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "sources-json",
+          "kind": "sources_json",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "2654c7ffdd85e100eeabc8e3cf763466af68e8750d031cc54cd6b149fb2665a5",
+            "doublon": false,
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": null,
+      "publishable": true
+    },
+    "session-yaml": {
+      "deterministic": {
+        "validateur": "deterministic",
+        "modele": null,
+        "regles": [
+          "non_vide",
+          "mime_decodable",
+          "hash_attendu",
+          "doublon",
+          "alt_text_present",
+          "transcription_presente",
+          "source_ids_presents",
+          "ratio_image",
+          "duree_audio",
+          "compte_elements",
+          "texte_interdit"
+        ],
+        "scores": {},
+        "bloquants": [],
+        "rapport": {
+          "resource_id": "session-yaml",
+          "kind": "session_yaml",
+          "checks": {
+            "non_vide": true,
+            "mime_decodable": true,
+            "hash": "ff1eb3a78494b2cda99dc8098b13ea8e5d843758efec2a49610e8a1b781abf03",
+            "doublon": false,
+            "forbidden_text_matches": []
+          }
+        }
+      },
+      "ai_review": null,
+      "publishable": true
+    }
+  }
+}

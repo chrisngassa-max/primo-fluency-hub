@@ -1,0 +1,23 @@
+{
+  "support_id": "S25-support",
+  "personnages": [
+    "Apprenant",
+    "Formateur",
+    "Rapport individuel fictif"
+  ],
+  "situation": "Après E2, chaque apprenant reçoit un rapport individuel fictif. Il refait deux tâches ciblées sur ses fragilités, construit un contrat personnel et une restitution séparée langue/civique, avec orientation A2/B1/B2.",
+  "faits": [
+    "E2 identifie deux fragilités majeures par apprenant.",
+    "Le rapport individuel fictif détaille scores langue et civique séparément.",
+    "Deux tâches équivalentes sont refaites sans aide sur ces fragilités.",
+    "Le contrat personnel fixe objectifs pour la suite du parcours.",
+    "L'orientation propose sortie A2/CSP, extension B1 ou consolidation.",
+    "La restitution langue et civique ne doit pas être fusionnée."
+  ],
+  "nombres": [
+    2
+  ],
+  "dates": [],
+  "hash": "4bc580bc861086a736460fa0db3be8302442eda096fb12e1e3b907a96e63639f",
+  "version": 1
+}

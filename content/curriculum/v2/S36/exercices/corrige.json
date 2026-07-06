@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "45 min",
+    "q2": true
+  },
+  "A2": {
+    "q1": "12",
+    "q2": "Plan personnalisé selon erreurs."
+  },
+  "B1": {
+    "q1": "Liste argumentée.",
+    "q2": "Progression ou stagnation."
+  },
+  "B2": {
+    "q1": "Réponse ouverte.",
+    "q2": "Réponse ouverte."
+  }
+}

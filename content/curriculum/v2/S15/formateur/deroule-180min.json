@@ -1,0 +1,32 @@
+[
+  {
+    "phase": "Rituel civique",
+    "duree_min": 10,
+    "description": "Lecture de la frise 1789-1792."
+  },
+  {
+    "phase": "Activation + lexique",
+    "duree_min": 20,
+    "description": "Decouverte du lexique (Revolution, monarchie, declaration, abolir...)."
+  },
+  {
+    "phase": "Support invariant CO/CE",
+    "duree_min": 50,
+    "description": "Ecoute de la narration historique et reperage des dates."
+  },
+  {
+    "phase": "Ateliers differencies",
+    "duree_min": 60,
+    "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du meme support."
+  },
+  {
+    "phase": "Production EE/EO",
+    "duree_min": 30,
+    "description": "Raconter un evenement et expliquer sa consequence."
+  },
+  {
+    "phase": "Fixation",
+    "duree_min": 10,
+    "description": "Synthese, reperes CSP, QCM civique, devoir."
+  }
+]

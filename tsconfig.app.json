@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
     "lib": [
@@ -30,6 +31,7 @@
     "useDefineForClassFields": true
   },
   "include": [
-    "src"
+    "src",
+    "content/curriculum/v2/manifest.json"
   ]
 }

@@ -1,0 +1,114 @@
+[
+  {
+    "support_id": "S13-support-expression",
+    "version": 1,
+    "niveau": "A1",
+    "consigne": "Écoutez le débat. Classez chaque mot dans « permis » ou « limite ».",
+    "aides": [
+      "Opinion, critique = permis",
+      "Insulte, menace = limite",
+      "Mots utiles : avis, respect"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Donner son opinion est :",
+        "options": [
+          "Permis",
+          "Interdit",
+          "Toujours dangereux"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "vrai_faux",
+        "enonce": "La menace n'est pas protégée par la liberté d'expression."
+      }
+    ],
+    "corrige": {
+      "q1": "Permis",
+      "q2": true
+    },
+    "invariants_hash": "434f5f3a0f45145bed48b5e32b8a50f338cc60cbb325f1b7cd05905328b8747b"
+  },
+  {
+    "support_id": "S13-support-expression",
+    "version": 1,
+    "niveau": "A2",
+    "consigne": "Donnez votre avis sur un sujet simple, puis reformulez un désaccord de façon respectueuse.",
+    "aides": [
+      "Formules : « Je pense que... », « Je ne suis pas d'accord, mais... »"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Quel élément n'est PAS protégé par la liberté d'expression ?",
+        "options": [
+          "L'insulte",
+          "La critique d'une idée",
+          "L'opinion"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "reponse_courte",
+        "enonce": "Reformulez « Ton idée est nulle » de façon respectueuse."
+      }
+    ],
+    "corrige": {
+      "q1": "L'insulte",
+      "q2": "Exemple : « Je ne partage pas ton idée, voici pourquoi... »"
+    },
+    "invariants_hash": "434f5f3a0f45145bed48b5e32b8a50f338cc60cbb325f1b7cd05905328b8747b"
+  },
+  {
+    "support_id": "S13-support-expression",
+    "version": 1,
+    "niveau": "B1",
+    "consigne": "Donnez un avis argumenté sur un sujet, puis expliquez la frontière entre critique et attaque personnelle.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "reponse_longue",
+        "enonce": "Exprimez une opinion et un désaccord respectueux sur un sujet de société."
+      },
+      {
+        "id": "q2",
+        "type": "reponse_longue",
+        "enonce": "Expliquez la différence entre critiquer une idée et insulter une personne."
+      }
+    ],
+    "corrige": {
+      "q1": "Avis clair, argument, formulation respectueuse du desaccord.",
+      "q2": "Critiquer une idee porte sur le contenu et reste permis ; insulter vise la personne et depasse la limite legale."
+    },
+    "invariants_hash": "434f5f3a0f45145bed48b5e32b8a50f338cc60cbb325f1b7cd05905328b8747b"
+  },
+  {
+    "support_id": "S13-support-expression",
+    "version": 1,
+    "niveau": "B2",
+    "consigne": "Analysez l'équilibre entre liberté d'expression et respect d'autrui, et nuancez le rôle des réseaux sociaux.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "argumentation",
+        "enonce": "Argumentez : pourquoi la liberté d'expression a-t-elle des limites légales ?"
+      },
+      {
+        "id": "q2",
+        "type": "argumentation",
+        "enonce": "Nuancez : les réseaux sociaux facilitent-ils le débat ou les dérives ? Justifiez."
+      }
+    ],
+    "corrige": {
+      "q1": "Reponse ouverte : protection de la dignite, de la reputation, de la securite d'autrui.",
+      "q2": "Reponse ouverte : diffusion large et rapide, anonymat ; besoin de responsabilite et de moderation."
+    },
+    "invariants_hash": "434f5f3a0f45145bed48b5e32b8a50f338cc60cbb325f1b7cd05905328b8747b"
+  }
+]

@@ -1,0 +1,104 @@
+{
+  "resource_id": "S09-VIS-master",
+  "scene": {
+    "title": "Laïcité : quatre situations",
+    "width": 900,
+    "height": 320,
+    "background": "#ffffff",
+    "elements": [
+      {
+        "type": "rect",
+        "x": 40,
+        "y": 40,
+        "width": 390,
+        "height": 110,
+        "rx": 8,
+        "fill": "#dbeafe"
+      },
+      {
+        "type": "text",
+        "x": 60,
+        "y": 80,
+        "fontSize": 15,
+        "text": "Agent public au guichet"
+      },
+      {
+        "type": "text",
+        "x": 60,
+        "y": 110,
+        "fontSize": 13,
+        "text": "→ neutralité pendant le service"
+      },
+      {
+        "type": "rect",
+        "x": 470,
+        "y": 40,
+        "width": 390,
+        "height": 110,
+        "rx": 8,
+        "fill": "#dcfce7"
+      },
+      {
+        "type": "text",
+        "x": 490,
+        "y": 80,
+        "fontSize": 15,
+        "text": "Usager du service public"
+      },
+      {
+        "type": "text",
+        "x": 490,
+        "y": 110,
+        "fontSize": 13,
+        "text": "→ libre de croire ou non"
+      },
+      {
+        "type": "rect",
+        "x": 40,
+        "y": 170,
+        "width": 390,
+        "height": 110,
+        "rx": 8,
+        "fill": "#fef9c3"
+      },
+      {
+        "type": "text",
+        "x": 60,
+        "y": 210,
+        "fontSize": 15,
+        "text": "Élève à l'école publique"
+      },
+      {
+        "type": "text",
+        "x": 60,
+        "y": 240,
+        "fontSize": 13,
+        "text": "→ pas de signe religieux ostensible"
+      },
+      {
+        "type": "rect",
+        "x": 470,
+        "y": 170,
+        "width": 390,
+        "height": 110,
+        "rx": 8,
+        "fill": "#ede9fe"
+      },
+      {
+        "type": "text",
+        "x": 490,
+        "y": 210,
+        "fontSize": 15,
+        "text": "Espace privé"
+      },
+      {
+        "type": "text",
+        "x": 490,
+        "y": 240,
+        "fontSize": 13,
+        "text": "→ liberté de pratiquer sa religion"
+      }
+    ]
+  },
+  "alt_text": "Matrice de quatre cases : agent public, usager, eleve, espace prive, chacune indiquant neutralite ou liberte, avec des personnages neutres sans signe distinctif."
+}

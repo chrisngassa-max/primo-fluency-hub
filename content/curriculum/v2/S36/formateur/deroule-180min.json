@@ -1,0 +1,27 @@
+[
+  {
+    "phase": "Installation",
+    "duree_min": 10,
+    "description": "Consignes NAT, banque gelée."
+  },
+  {
+    "phase": "Simulation NAT",
+    "duree_min": 45,
+    "description": "40 questions sans aide."
+  },
+  {
+    "phase": "Analyse erreurs",
+    "duree_min": 40,
+    "description": "Thèmes et distracteurs."
+  },
+  {
+    "phase": "Comparaison",
+    "duree_min": 25,
+    "description": "Score vs simulation précédente."
+  },
+  {
+    "phase": "Stratégie",
+    "duree_min": 60,
+    "description": "Plan personnalisé dernière ligne droite."
+  }
+]

@@ -30,3 +30,12 @@ dist-ssr
 .env.production
 .vercel
 .env*
+
+# Curriculum v2 — médias generes par le pipeline (regenerables via
+# `npm run curriculum:generate`). La source de verite pour la diffusion est
+# Supabase Storage (StoragePublisher) ; le JSON/HTML/SVG/YAML reste versionne.
+content/curriculum/v2/**/*.pdf
+content/curriculum/v2/**/*.png
+content/curriculum/v2/**/*.webp
+content/curriculum/v2/**/*.mp3
+.cache/curriculum-sources/

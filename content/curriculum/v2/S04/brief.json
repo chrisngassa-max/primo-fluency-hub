@@ -1,0 +1,139 @@
+{
+  "session_code": "S04",
+  "plan_version": "curriculum-v2.0",
+  "titre": "École, absence et autorité parentale",
+  "support": {
+    "support_id": "S04-support-ecole",
+    "situation": "L'école de la fille de M. Sissoko laisse un message pour signaler une absence non justifiée. M. Sissoko doit comprendre le message, consulter le calendrier scolaire fictif et rédiger un mot pour justifier l'absence.",
+    "personnages": ["M. Sissoko (parent)", "Mme Perez (directrice de l'école)"],
+    "faits": [
+      "En France, l'instruction est obligatoire de 3 à 16 ans.",
+      "L'école publique est gratuite et laïque.",
+      "Les parents exercent l'autorité parentale et doivent justifier les absences.",
+      "La mixité entre filles et garçons est la règle à l'école publique.",
+      "La laïcité garantit la neutralité de l'école en matière de religion."
+    ],
+    "nombres": [3, 16],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S04-CO-master",
+    "voice": "fr-FR-Wavenet-C",
+    "speaking_rate": 0.9,
+    "script": "Message de l'école (voix de Mme Perez) : Bonjour, ceci est un message de l'école pour la famille de votre enfant. Ceci est un message pédagogique fictif, sans nom ni donnée réelle. Votre enfant était absent hier matin et nous n'avons pas reçu de justificatif.\nNous vous rappelons que l'instruction est obligatoire de trois à seize ans et que les parents doivent justifier chaque absence.\nMerci de nous envoyer un mot écrit précisant la date et le motif de l'absence. Vous pouvez aussi consulter le calendrier scolaire affiché à l'entrée.\nSi vous avez une question, l'équipe reste à votre disposition. Bonne journée.",
+    "pauses": [
+      { "after_word": 20, "ms": 500 },
+      { "after_word": 45, "ms": 400 },
+      { "after_word": 75, "ms": 400 }
+    ]
+  },
+  "visual": {
+    "resource_id": "S04-VIS-master",
+    "alt_text": "Parcours scolaire schematique : trois etapes reliees par des fleches, ecole maternelle, ecole elementaire, college, sans logo ni nom d'etablissement.",
+    "scene": {
+      "title": "Parcours scolaire et instruction obligatoire",
+      "width": 900,
+      "height": 260,
+      "background": "#ffffff",
+      "elements": [
+        { "type": "rect", "x": 40, "y": 90, "width": 200, "height": 90, "rx": 8, "fill": "#dcfce7" },
+        { "type": "text", "x": 140, "y": 130, "anchor": "middle", "fontSize": 14, "text": "École maternelle" },
+        { "type": "text", "x": 140, "y": 150, "anchor": "middle", "fontSize": 12, "text": "(dès 3 ans)" },
+        { "type": "line", "x1": 240, "y1": 135, "x2": 320, "y2": 135, "stroke": "#374151", "strokeWidth": 3 },
+        { "type": "rect", "x": 320, "y": 90, "width": 200, "height": 90, "rx": 8, "fill": "#fef9c3" },
+        { "type": "text", "x": 420, "y": 135, "anchor": "middle", "fontSize": 14, "text": "École élémentaire" },
+        { "type": "line", "x1": 520, "y1": 135, "x2": 600, "y2": 135, "stroke": "#374151", "strokeWidth": 3 },
+        { "type": "rect", "x": 600, "y": 90, "width": 200, "height": 90, "rx": 8, "fill": "#fee2e2" },
+        { "type": "text", "x": 700, "y": 130, "anchor": "middle", "fontSize": 14, "text": "Collège" },
+        { "type": "text", "x": 700, "y": 150, "anchor": "middle", "fontSize": 12, "text": "(jusqu'à 16 ans)" },
+        { "type": "text", "x": 40, "y": 50, "fontSize": 16, "text": "Instruction obligatoire de 3 à 16 ans" }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S04-LEX-A1-B2",
+    "mots": [
+      { "mot": "école", "definition_simple": "Le lieu où les enfants apprennent.", "exemple": "Sa fille va à l'école le matin." },
+      { "mot": "classe", "definition_simple": "Le groupe d'élèves et la salle où ils étudient.", "exemple": "Il est dans la classe de CE1." },
+      { "mot": "absence", "definition_simple": "Le fait de ne pas être présent.", "exemple": "L'école signale une absence." },
+      { "mot": "justificatif", "definition_simple": "Un document qui explique une situation.", "exemple": "Il faut un justificatif pour l'absence." },
+      { "mot": "obligatoire", "definition_simple": "Qui doit être fait, imposé par la loi.", "exemple": "L'instruction est obligatoire." },
+      { "mot": "parent", "definition_simple": "La mère ou le père d'un enfant.", "exemple": "Les parents justifient l'absence." },
+      { "mot": "mixité", "definition_simple": "La présence de filles et de garçons ensemble.", "exemple": "La mixité est la règle à l'école publique." },
+      { "mot": "règlement", "definition_simple": "L'ensemble des règles d'un lieu.", "exemple": "Le règlement de l'école." }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Écoutez le message. Complétez le mot d'absence avec la date et le motif, à l'aide des amorces.",
+      "aides": ["« Mon enfant était absent le... »", "« ...parce que... »", "Mots utiles : absence, justificatif, obligatoire"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "Jusqu'à quel âge l'instruction est-elle obligatoire ?", "options": ["14 ans", "16 ans", "18 ans"] },
+        { "id": "q2", "type": "vrai_faux", "enonce": "Les parents doivent justifier une absence." }
+      ],
+      "corrige": { "q1": "16 ans", "q2": true }
+    },
+    "A2": {
+      "consigne": "Rédigez un mot d'absence simple à l'école, avec la date et le motif.",
+      "aides": ["Pensez à : absence, justificatif, motif, date"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "À partir de quel âge l'instruction est-elle obligatoire ?", "options": ["3 ans", "6 ans", "7 ans"] },
+        { "id": "q2", "type": "reponse_courte", "enonce": "Citez une règle de l'école publique mentionnée dans le message." }
+      ],
+      "corrige": { "q1": "3 ans", "q2": "La mixité / la laïcité / l'obligation de justifier les absences (une réponse suffit)." }
+    },
+    "B1": {
+      "consigne": "Rédigez un courrier structuré à l'école pour justifier une absence, puis expliquez ce que signifient l'instruction obligatoire et l'autorité parentale.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "reponse_longue", "enonce": "Écrivez un courrier avec formule d'appel, motif de l'absence, dates et formule de politesse." },
+        { "id": "q2", "type": "reponse_longue", "enonce": "Expliquez le lien entre instruction obligatoire, autorité parentale et justification des absences." }
+      ],
+      "corrige": { "q1": "Courrier structure attendu : appel, objet (justification d'absence), dates precises, motif, politesse.", "q2": "L'instruction est obligatoire de 3 a 16 ans ; les parents, au titre de l'autorite parentale, sont responsables de la presence et justifient les absences." }
+    },
+    "B2": {
+      "consigne": "Analysez les principes de l'école publique (obligation, gratuité, laïcité, mixité) et nuancez leur rôle dans l'intégration.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "argumentation", "enonce": "Argumentez : pourquoi l'instruction est-elle rendue obligatoire par la loi ?" },
+        { "id": "q2", "type": "argumentation", "enonce": "Nuancez : en quoi laïcité et mixité participent-elles au vivre-ensemble à l'école ?" }
+      ],
+      "corrige": { "q1": "Reponse ouverte : egalite des chances, protection de l'enfant, cohesion sociale, acces au savoir.", "q2": "Reponse ouverte : la laicite garantit la neutralite et la liberte de conscience ; la mixite habitue a l'egalite et au respect mutuel." }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S04-QCM-civique",
+    "mention": "CSP",
+    "theme": "Droits et devoirs",
+    "questions": [
+      { "notion": "instruction obligatoire", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "En France, l'instruction est obligatoire :", "options": ["De 3 à 16 ans", "De 6 à 14 ans", "De 5 à 18 ans"], "reponse": "De 3 à 16 ans" },
+      { "notion": "école publique", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "L'école publique est :", "options": ["Gratuite et laïque", "Payante et religieuse", "Réservée aux garçons"], "reponse": "Gratuite et laïque" },
+      { "notion": "autorité parentale", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Justifier l'absence d'un enfant à l'école relève :", "options": ["De l'autorité parentale", "De la mairie", "De la préfecture"], "reponse": "De l'autorité parentale" },
+      { "notion": "mixité", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "À l'école publique, filles et garçons :", "options": ["Étudient ensemble (mixité)", "Sont toujours séparés", "Choisissent leur classe"], "reponse": "Étudient ensemble (mixité)" },
+      { "notion": "laïcité à l'école", "type": "mise_en_situation", "official_status": "simulation_pedagogique", "enonce": "L'école publique, en matière de religion, doit être :", "options": ["Neutre (laïque)", "Favorable à une religion", "Interdite aux croyants"], "reponse": "Neutre (laïque)" }
+    ]
+  },
+  "devoirs": {
+    "A1": "À la maison : recopiez le mot d'absence complété avec une date et un motif.",
+    "A2": "À la maison : écrivez un mot d'absence de 4 phrases pour l'école.",
+    "B1": "À la maison : rédigez un courrier de justification d'absence de 6 à 8 lignes.",
+    "B2": "À la maison : rédigez un paragraphe argumenté sur l'utilité de l'instruction obligatoire."
+  },
+  "formateur": {
+    "fiche_formateur": "Séance école et absence : chaque apprenant doit savoir (1) comprendre un message de l'établissement, (2) rédiger une justification d'absence, (3) connaître instruction obligatoire, autorité parentale, mixité et laïcité. Rappeler que le message vocal et le calendrier sont fictifs, sans nom ni donnée réelle.",
+    "deroule_180min": [
+      { "phase": "Rituel civique", "duree_min": 10, "description": "Rappel des principes de l'ecole publique a partir du visuel maitre." },
+      { "phase": "Activation + lexique", "duree_min": 20, "description": "Decouverte du lexique (absence, justificatif, obligatoire, mixite...)." },
+      { "phase": "Support invariant CO/CE", "duree_min": 50, "description": "Ecoute du message de l'ecole et lecture du calendrier fictif." },
+      { "phase": "Ateliers differencies", "duree_min": 60, "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du meme support." },
+      { "phase": "Production EE/EO", "duree_min": 30, "description": "Chaque apprenant redige une justification ecrite d'absence." },
+      { "phase": "Fixation", "duree_min": 10, "description": "Synthese, cinq QCM civiques CSP, devoir personnalise." }
+    ],
+    "adaptation_rules": [
+      "Si des apprenants confondent instruction obligatoire et gratuite, distinguer clairement les deux notions.",
+      "Rappeler le caractere fictif du message pour eviter toute inquietude reelle.",
+      "Ne jamais improviser un faux message d'ecole nominatif : l'IA peut seulement expliquer le support publie."
+    ]
+  }
+}

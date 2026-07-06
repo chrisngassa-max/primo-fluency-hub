@@ -1,0 +1,23 @@
+{
+  "support_id": "S19-support-guichet",
+  "personnages": [
+    "Karim Benali (usager)",
+    "Mme Dupont (agent d'accueil)"
+  ],
+  "situation": "Karim Benali se présente au guichet d'accueil d'une préfecture fictive. Un malentendu sur le numéro de guichet et le délai de quinze jours crée une tension qu'il résout en reformulant calmement sa demande.",
+  "faits": [
+    "Karim doit transmettre un justificatif de domicile avant l'échéance de quinze jours.",
+    "L'agent reste neutre et respecte la loi, sans donner d'avis personnel.",
+    "Karim a le droit d'être informé et de demander une reformulation.",
+    "Un malentendu sur le guichet peut être résolu par des questions précises.",
+    "L'usager peut utiliser un recours administratif si la réponse lui semble injuste.",
+    "Respecter la loi et rester calme sont des devoirs dans un lieu public."
+  ],
+  "nombres": [
+    15,
+    3
+  ],
+  "dates": [],
+  "hash": "1e9db5efbb4697c225cd14f55044a1488abc5d609a92acf3b7fe58426405faee",
+  "version": 1
+}

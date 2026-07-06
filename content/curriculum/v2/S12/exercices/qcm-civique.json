@@ -1,0 +1,67 @@
+{
+  "resource_id": "S12-QCM-civique",
+  "mention": "CSP",
+  "theme": "Droits et devoirs",
+  "questions": [
+    {
+      "notion": "définition de la discrimination",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Une discrimination, c'est traiter une personne moins bien :",
+      "options": [
+        "Pour un motif interdit (origine, sexe...)",
+        "Parce qu'elle est en retard",
+        "Parce qu'elle a mal travaillé"
+      ],
+      "reponse": "Pour un motif interdit (origine, sexe...)"
+    },
+    {
+      "notion": "égalité femmes-hommes",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "L'égalité femmes-hommes est :",
+      "options": [
+        "Un principe de la République",
+        "Une option",
+        "Interdite"
+      ],
+      "reponse": "Un principe de la République"
+    },
+    {
+      "notion": "protection",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Une personne qui signale une discrimination est :",
+      "options": [
+        "Protégée par la loi",
+        "Toujours licenciée",
+        "Sans recours"
+      ],
+      "reponse": "Protégée par la loi"
+    },
+    {
+      "notion": "recours",
+      "type": "mise_en_situation",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Face à une discrimination, la bonne première démarche est de :",
+      "options": [
+        "Noter les faits et les preuves",
+        "Se venger",
+        "Oublier et se taire"
+      ],
+      "reponse": "Noter les faits et les preuves"
+    },
+    {
+      "notion": "dignité",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Le respect dû à chaque personne s'appelle :",
+      "options": [
+        "La dignité",
+        "La hiérarchie",
+        "La rentabilité"
+      ],
+      "reponse": "La dignité"
+    }
+  ]
+}

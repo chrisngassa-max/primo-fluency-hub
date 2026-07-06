@@ -1,0 +1,89 @@
+{
+  "session_code": "S03",
+  "variants": [
+    {
+      "niveau": "A1",
+      "consigne": "Écoutez le dialogue. Associez chaque symptôme à une image, puis choisissez le bon numéro à appeler dans la liste.",
+      "aides": [
+        "Urgence médicale = 15",
+        "Pompiers = 18",
+        "Mots utiles : douleur, fièvre, rendez-vous"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Quel numéro appelle-t-on pour une urgence médicale ?",
+          "options": [
+            "15",
+            "18",
+            "112"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "Pour une petite fièvre sans gravité, on prend rendez-vous avec son médecin traitant."
+        }
+      ]
+    },
+    {
+      "niveau": "A2",
+      "consigne": "Décrivez oralement des symptômes simples et dites qui vous contactez selon la situation.",
+      "aides": [
+        "Pensez à : symptôme, urgence, rendez-vous, médecin traitant"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Que présente-t-on pour être remboursé des soins ?",
+          "options": [
+            "La carte Vitale",
+            "Le passeport",
+            "Le permis de conduire"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Citez une situation qui est une urgence et une situation qui ne l'est pas."
+        }
+      ]
+    },
+    {
+      "niveau": "B1",
+      "consigne": "Expliquez à une personne comment choisir entre une urgence et un rendez-vous, puis justifiez l'utilité du médecin traitant et de la carte Vitale.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Reformulez la différence entre une situation urgente et une situation non urgente, avec des exemples."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Expliquez le rôle du médecin traitant et de la carte Vitale dans le parcours de soins."
+        }
+      ]
+    },
+    {
+      "niveau": "B2",
+      "consigne": "Analysez l'organisation de l'accès aux soins en France et nuancez les difficultés qu'un nouvel arrivant peut rencontrer.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Argumentez : pourquoi est-il important de ne pas appeler le 15 pour une situation bénigne ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Nuancez : quels obstacles peuvent gêner l'accès aux soins et comment les surmonter ?"
+        }
+      ]
+    }
+  ]
+}

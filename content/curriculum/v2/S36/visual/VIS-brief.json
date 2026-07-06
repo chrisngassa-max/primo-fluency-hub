@@ -1,0 +1,100 @@
+{
+  "resource_id": "S36-VIS-master",
+  "scene": {
+    "title": "Simulation NAT S36",
+    "width": 900,
+    "height": 260,
+    "background": "#ffffff",
+    "elements": [
+      {
+        "type": "rect",
+        "x": 30,
+        "y": 60,
+        "width": 110,
+        "height": 50,
+        "fill": "#e0e7ff"
+      },
+      {
+        "type": "text",
+        "x": 85,
+        "y": 90,
+        "anchor": "middle",
+        "fontSize": 11,
+        "text": "Install 10"
+      },
+      {
+        "type": "rect",
+        "x": 160,
+        "y": 60,
+        "width": 150,
+        "height": 50,
+        "fill": "#fee2e2"
+      },
+      {
+        "type": "text",
+        "x": 235,
+        "y": 90,
+        "anchor": "middle",
+        "fontSize": 11,
+        "text": "NAT 45"
+      },
+      {
+        "type": "rect",
+        "x": 330,
+        "y": 60,
+        "width": 150,
+        "height": 50,
+        "fill": "#fef9c3"
+      },
+      {
+        "type": "text",
+        "x": 405,
+        "y": 90,
+        "anchor": "middle",
+        "fontSize": 11,
+        "text": "Erreurs 40"
+      },
+      {
+        "type": "rect",
+        "x": 500,
+        "y": 60,
+        "width": 130,
+        "height": 50,
+        "fill": "#dcfce7"
+      },
+      {
+        "type": "text",
+        "x": 565,
+        "y": 90,
+        "anchor": "middle",
+        "fontSize": 11,
+        "text": "Compare 25"
+      },
+      {
+        "type": "rect",
+        "x": 650,
+        "y": 60,
+        "width": 150,
+        "height": 50,
+        "fill": "#ede9fe"
+      },
+      {
+        "type": "text",
+        "x": 725,
+        "y": 90,
+        "anchor": "middle",
+        "fontSize": 11,
+        "text": "Stratégie 60"
+      },
+      {
+        "type": "text",
+        "x": 450,
+        "y": 170,
+        "anchor": "middle",
+        "fontSize": 13,
+        "text": "28 connaissances · 12 situations · Banque gelée"
+      }
+    ]
+  },
+  "alt_text": "Planning S36 : Installation, Sim NAT 45, Analyse 40, Comparaison 25, Stratégie 60."
+}

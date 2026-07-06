@@ -1,0 +1,403 @@
+{
+  "session_code": "S21",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Mises en situation civiques simulées",
+  "support": {
+    "support_id": "S21-support-arbre-decision",
+    "situation": "Les apprenants reçoivent un arbre de décision fictif pour répondre à des items civiques : chaque question sépare la preuve de connaissance et la preuve de mise en situation.",
+    "personnages": [
+      "Groupe d'apprenants",
+      "Formateur (animateur)"
+    ],
+    "faits": [
+      "Un item de connaissance teste un fait ou une définition.",
+      "Un item de mise en situation teste une conduite face à un cas concret.",
+      "L'arbre de décision aide à choisir la bonne branche de réponse.",
+      "Une conduite conforme respecte les principes républicains et la loi.",
+      "Confondre connaissance et situation fausse l'analyse des distracteurs.",
+      "Expliquer pourquoi une réponse est correcte renforce la mémorisation."
+    ],
+    "nombres": [
+      2,
+      40
+    ],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S21-CO-master",
+    "voice": "fr-FR-Wavenet-C",
+    "speaking_rate": 0.92,
+    "script": "Formateur : Aujourd'hui, nous travaillons sur l'arbre de décision civique. Chaque question se lit en deux temps.\nApprenant : En deux temps ?\nFormateur : Oui. D'abord : est-ce un item de connaissance ou de mise en situation ? La connaissance demande un fait : qui vote la loi, qu'est-ce que la laïcité. La situation décrit un cas : que faites-vous au travail, à l'école, dans la rue.\nApprenant : Et l'arbre de décision ?\nFormateur : Si c'est une connaissance, vous cherchez la définition exacte. Si c'est une situation, vous demandez : quelle conduite est conforme à la loi et aux principes républicains ?\nApprenant : Parfois les distracteurs ressemblent à la bonne réponse.\nFormateur : Exactement. Un distracteur joue sur une confusion : droit et devoir, mairie et préfecture. L'arbre vous force à justifier.\nApprenant : Et si je me trompe ?\nFormateur : Vous expliquez pourquoi la conduite proposée est conforme ou non. C'est la preuve de situation, distincte de la connaissance.\nApprenant : Donc je ne mélange pas les deux preuves.\nFormateur : Voilà. Connaissance : c'est vrai ou faux selon les faits. Situation : c'est adapté ou non selon le contexte. Nous allons simuler des items comme à l'examen, sur les cinq thèmes.\nApprenant : D'accord, je comprends la méthode.",
+    "pauses": [
+      {
+        "after_word": 15,
+        "ms": 400
+      },
+      {
+        "after_word": 70,
+        "ms": 400
+      },
+      {
+        "after_word": 145,
+        "ms": 500
+      }
+    ]
+  },
+  "visual": {
+    "resource_id": "S21-VIS-master",
+    "alt_text": "Arbre de décision : connaissance ou mise en situation, puis branche conforme ou non.",
+    "scene": {
+      "title": "Arbre de décision civique",
+      "width": 900,
+      "height": 320,
+      "background": "#ffffff",
+      "elements": [
+        {
+          "type": "rect",
+          "x": 350,
+          "y": 20,
+          "width": 200,
+          "height": 50,
+          "rx": 8,
+          "fill": "#e0e7ff"
+        },
+        {
+          "type": "text",
+          "x": 450,
+          "y": 50,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "Lire la question"
+        },
+        {
+          "type": "line",
+          "x1": 400,
+          "y1": 70,
+          "x2": 280,
+          "y2": 120,
+          "stroke": "#374151",
+          "strokeWidth": 2
+        },
+        {
+          "type": "line",
+          "x1": 500,
+          "y1": 70,
+          "x2": 620,
+          "y2": 120,
+          "stroke": "#374151",
+          "strokeWidth": 2
+        },
+        {
+          "type": "rect",
+          "x": 180,
+          "y": 120,
+          "width": 200,
+          "height": 50,
+          "rx": 8,
+          "fill": "#dcfce7"
+        },
+        {
+          "type": "text",
+          "x": 280,
+          "y": 150,
+          "anchor": "middle",
+          "fontSize": 13,
+          "text": "Connaissance"
+        },
+        {
+          "type": "rect",
+          "x": 520,
+          "y": 120,
+          "width": 200,
+          "height": 50,
+          "rx": 8,
+          "fill": "#fef9c3"
+        },
+        {
+          "type": "text",
+          "x": 620,
+          "y": 150,
+          "anchor": "middle",
+          "fontSize": 13,
+          "text": "Situation"
+        },
+        {
+          "type": "rect",
+          "x": 520,
+          "y": 220,
+          "width": 200,
+          "height": 50,
+          "rx": 8,
+          "fill": "#fee2e2"
+        },
+        {
+          "type": "text",
+          "x": 620,
+          "y": 245,
+          "anchor": "middle",
+          "fontSize": 12,
+          "text": "Conduite conforme ?"
+        }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S21-LEX-A1-B2",
+    "mots": [
+      {
+        "mot": "connaissance",
+        "definition_simple": "Un fait ou une définition à savoir.",
+        "exemple": "Item de connaissance."
+      },
+      {
+        "mot": "mise en situation",
+        "definition_simple": "Un cas concret à résoudre.",
+        "exemple": "Item de situation."
+      },
+      {
+        "mot": "conforme",
+        "definition_simple": "Qui respecte la loi et les principes.",
+        "exemple": "Conduite conforme."
+      },
+      {
+        "mot": "distracteur",
+        "definition_simple": "Réponse piège proche de la bonne.",
+        "exemple": "Analyser un distracteur."
+      },
+      {
+        "mot": "arbre de décision",
+        "definition_simple": "Schéma qui guide le choix de réponse.",
+        "exemple": "Suivre l'arbre de décision."
+      },
+      {
+        "mot": "justifier",
+        "definition_simple": "Expliquer pourquoi on choisit une réponse.",
+        "exemple": "Justifier une conduite."
+      },
+      {
+        "mot": "simulation",
+        "definition_simple": "Exercice qui imite l'examen.",
+        "exemple": "Simulation civique."
+      },
+      {
+        "mot": "principe",
+        "definition_simple": "Valeur ou règle fondamentale.",
+        "exemple": "Principes républicains."
+      },
+      {
+        "mot": "thème",
+        "definition_simple": "Grand sujet du programme civique.",
+        "exemple": "Cinq thèmes civiques."
+      }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Lisez l'arbre. Classez deux items : connaissance ou situation.",
+      "aides": [
+        "Connaissance = fait",
+        "Situation = conduite"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "« Qui vote la loi ? » est un item de :",
+          "options": [
+            "Connaissance",
+            "Situation",
+            "Expression orale"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "Une mise en situation teste une conduite."
+        }
+      ],
+      "corrige": {
+        "q1": "Connaissance",
+        "q2": true
+      }
+    },
+    "A2": {
+      "consigne": "Expliquez pourquoi une conduite est conforme ou non.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Un distracteur sert à :",
+          "options": [
+            "Créer une confusion",
+            "Donner la bonne réponse",
+            "Remplacer la loi"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Que demande l'arbre pour une situation ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Créer une confusion",
+        "q2": "Vérifier si la conduite est conforme."
+      }
+    },
+    "B1": {
+      "consigne": "Appliquez l'arbre à trois items fictifs et justifiez.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Distinguez connaissance et situation sur deux exemples."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Expliquez une conduite conforme dans un cas donné."
+        }
+      ],
+      "corrige": {
+        "q1": "Connaissance = fait vérifiable ; situation = conduite contextuelle.",
+        "q2": "Conduite alignée sur loi et principes."
+      }
+    },
+    "B2": {
+      "consigne": "Analysez la méthode arbre de décision et ses limites.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Pourquoi séparer les deux types de preuve ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Comment repérer un distracteur efficace ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Réponse ouverte.",
+        "q2": "Réponse ouverte : confusion de notions proches."
+      }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S21-QCM-civique",
+    "mention": "CSP",
+    "theme": "Méthode civique",
+    "questions": [
+      {
+        "notion": "types d'items",
+        "type": "connaissance",
+        "enonce": "Un item « Qui est élu au suffrage universel ? » est de type :",
+        "options": [
+          "Connaissance",
+          "Mise en situation",
+          "Expression écrite"
+        ],
+        "reponse": "Connaissance",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "situation",
+        "type": "mise_en_situation",
+        "enonce": "« Que faites-vous si un collègue subit une discrimination ? » est :",
+        "options": [
+          "Mise en situation",
+          "Connaissance pure",
+          "Lexique"
+        ],
+        "reponse": "Mise en situation",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "conformité",
+        "type": "mise_en_situation",
+        "enonce": "Une conduite conforme respecte :",
+        "options": [
+          "La loi et les principes républicains",
+          "Uniquement son opinion",
+          "Aucune règle"
+        ],
+        "reponse": "La loi et les principes républicains",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "distracteur",
+        "type": "connaissance",
+        "enonce": "Un distracteur vise surtout à :",
+        "options": [
+          "Induire en erreur",
+          "Aider l'apprenant",
+          "Remplacer le formateur"
+        ],
+        "reponse": "Induire en erreur",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "méthode",
+        "type": "connaissance",
+        "enonce": "L'arbre de décision aide à :",
+        "options": [
+          "Choisir la bonne stratégie de réponse",
+          "Éviter toute justification",
+          "Supprimer les QCM"
+        ],
+        "reponse": "Choisir la bonne stratégie de réponse",
+        "official_status": "simulation_pedagogique"
+      }
+    ]
+  },
+  "devoirs": {
+    "A1": "Classer cinq items (connaissance/situation).",
+    "A2": "Justifier deux conduites conformes.",
+    "B1": "Rédiger une fiche méthode arbre.",
+    "B2": "Analyser trois distracteurs fictifs."
+  },
+  "formateur": {
+    "fiche_formateur": "Dominante civique simulée : arbre de décision, séparation connaissance/situation. Pas de nouveaux faits : réinvestir les cinq thèmes.",
+    "deroule_180min": [
+      {
+        "phase": "Rituel civique",
+        "duree_min": 10,
+        "description": "Méthode : connaissance vs mise en situation."
+      },
+      {
+        "phase": "Activation + lexique",
+        "duree_min": 20,
+        "description": "Découverte et réactivation du lexique de la séance."
+      },
+      {
+        "phase": "Support invariant CO/CE",
+        "duree_min": 50,
+        "description": "Écoute/lecture du support invariant, compréhension globale puis détaillée."
+      },
+      {
+        "phase": "Ateliers différenciés",
+        "duree_min": 60,
+        "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du même support."
+      },
+      {
+        "phase": "Production EE/EO",
+        "duree_min": 30,
+        "description": "Production selon la compétence dominante de la séance."
+      },
+      {
+        "phase": "Fixation",
+        "duree_min": 10,
+        "description": "Synthèse collective, QCM civique, devoir personnalisé."
+      }
+    ],
+    "adaptation_rules": [
+      "Revenir à l'arbre si confusion persistante.",
+      "Ne pas mélanger notation langue et civique.",
+      "Items fictifs uniquement."
+    ]
+  }
+}

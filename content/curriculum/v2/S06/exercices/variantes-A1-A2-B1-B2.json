@@ -1,0 +1,114 @@
+[
+  {
+    "support_id": "S06-support-emploi",
+    "version": 1,
+    "niveau": "A1",
+    "consigne": "Lisez la fiche de paie. Associez chaque mot à sa ligne, puis complétez avec les nombres du support.",
+    "aides": [
+      "Brut = avant cotisations",
+      "Net = reçu vraiment",
+      "Mots utiles : salaire, contrat, congé"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Quelle est la durée légale du travail par semaine ?",
+        "options": [
+          "30 heures",
+          "35 heures",
+          "40 heures"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "vrai_faux",
+        "enonce": "Le salaire brut est plus élevé que le salaire net."
+      }
+    ],
+    "corrige": {
+      "q1": "35 heures",
+      "q2": true
+    },
+    "invariants_hash": "0163599f39b0f265244c3a7e842117e523b5ee80ba6038d1a56c557123543649"
+  },
+  {
+    "support_id": "S06-support-emploi",
+    "version": 1,
+    "niveau": "A2",
+    "consigne": "Vérifiez les informations de la fiche de paie et demandez une correction si un chiffre est faux.",
+    "aides": [
+      "Formule utile : « Je crois qu'il y a une erreur sur... »"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Combien de semaines de congés payés par an ?",
+        "options": [
+          "3 semaines",
+          "5 semaines",
+          "8 semaines"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "reponse_courte",
+        "enonce": "Expliquez avec vos mots la différence entre salaire brut et salaire net."
+      }
+    ],
+    "corrige": {
+      "q1": "5 semaines",
+      "q2": "Le brut est le salaire avant cotisations ; le net est ce que le salarié reçoit vraiment."
+    },
+    "invariants_hash": "0163599f39b0f265244c3a7e842117e523b5ee80ba6038d1a56c557123543649"
+  },
+  {
+    "support_id": "S06-support-emploi",
+    "version": 1,
+    "niveau": "B1",
+    "consigne": "Rédigez un message pour demander une correction sur une fiche de paie, puis expliquez pourquoi le travail déclaré protège le salarié.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "reponse_longue",
+        "enonce": "Écrivez un message poli signalant une erreur de salaire et demandant une correction."
+      },
+      {
+        "id": "q2",
+        "type": "reponse_longue",
+        "enonce": "Expliquez le rôle des cotisations sociales et l'intérêt d'un travail déclaré."
+      }
+    ],
+    "corrige": {
+      "q1": "Message attendu : objet clair, rappel du chiffre attendu, demande de correction, politesse.",
+      "q2": "Les cotisations financent sante, retraite et chomage ; le travail declare ouvre des droits et protege le salarie."
+    },
+    "invariants_hash": "0163599f39b0f265244c3a7e842117e523b5ee80ba6038d1a56c557123543649"
+  },
+  {
+    "support_id": "S06-support-emploi",
+    "version": 1,
+    "niveau": "B2",
+    "consigne": "Analysez l'intérêt du contrat écrit et du travail déclaré, et nuancez les risques du travail non déclaré.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "argumentation",
+        "enonce": "Argumentez : pourquoi la loi impose-t-elle un contrat écrit et un travail déclaré ?"
+      },
+      {
+        "id": "q2",
+        "type": "argumentation",
+        "enonce": "Nuancez : quels sont les risques du travail non déclaré pour le salarié et pour la société ?"
+      }
+    ],
+    "corrige": {
+      "q1": "Reponse ouverte : protection du salarie, preuve des droits, financement de la protection sociale.",
+      "q2": "Reponse ouverte : perte de droits, absence de protection, fraude aux cotisations, concurrence deloyale."
+    },
+    "invariants_hash": "0163599f39b0f265244c3a7e842117e523b5ee80ba6038d1a56c557123543649"
+  }
+]

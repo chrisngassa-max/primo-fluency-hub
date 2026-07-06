@@ -1,0 +1,50 @@
+{
+  "resource_id": "S36-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "NAT",
+      "definition_simple": "Niveau nationalisation, examen civique exigeant.",
+      "exemple": "Simulation NAT."
+    },
+    {
+      "mot": "contrainte",
+      "definition_simple": "Limite stricte de temps ou de ressources.",
+      "exemple": "Sous contrainte."
+    },
+    {
+      "mot": "banque gelée",
+      "definition_simple": "Questions verrouillées.",
+      "exemple": "Banque gelée NAT."
+    },
+    {
+      "mot": "connaissance",
+      "definition_simple": "Item factuel.",
+      "exemple": "28 connaissances."
+    },
+    {
+      "mot": "situation",
+      "definition_simple": "Item de conduite.",
+      "exemple": "12 situations."
+    },
+    {
+      "mot": "comparaison",
+      "definition_simple": "Mise en regard de deux scores.",
+      "exemple": "Comparer avec S31."
+    },
+    {
+      "mot": "stratégie",
+      "definition_simple": "Plan pour la dernière ligne droite.",
+      "exemple": "Stratégie 60 min."
+    },
+    {
+      "mot": "progression",
+      "definition_simple": "Évolution entre deux essais.",
+      "exemple": "Mesurer la progression."
+    },
+    {
+      "mot": "analyse",
+      "definition_simple": "Étude des erreurs.",
+      "exemple": "Analyse des erreurs."
+    }
+  ]
+}

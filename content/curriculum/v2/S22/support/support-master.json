@@ -1,0 +1,24 @@
+{
+  "support_id": "S22-support",
+  "personnages": [
+    "Apprenants",
+    "Formateur"
+  ],
+  "situation": "Les apprenants réalisent trois tâches d'expression écrite TCF (message court, récit/explication, texte argumenté) sur des contextes civiques variés : voisinage, école, administration fictive.",
+  "faits": [
+    "La séance est dominante langue : pas de nouveau fait civique.",
+    "EE1 demande un message court et fonctionnel.",
+    "EE2 demande soixante à quatre-vingts mots pour décrire ou expliquer.",
+    "EE3 demande un texte structuré avec opinion et arguments.",
+    "Les contextes restent civiques mais l'évaluation porte sur l'écrit.",
+    "Un rappel civique minimal clôt la séance sans introduire de faits nouveaux."
+  ],
+  "nombres": [
+    60,
+    80,
+    3
+  ],
+  "dates": [],
+  "hash": "ac60f42d1c065e4b6cacdbf83e776ebb4cd6ec126a63e0c77b56344fc3b17c49",
+  "version": 1
+}

@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Mme Roy : Bonjour à tous les deux. Vous êtes venus pour parler d'un problème entre voisins ?\nMme Costa : Bonjour. Oui, le soir, il y a beaucoup de bruit chez mon voisin, et je n'arrive pas à dormir.\nM. Diop : Bonjour. Je ne savais pas que le bruit dérangeait autant. Je travaille tard et je fais parfois du bruit sans faire attention.\nMme Roy : Merci de vous parler calmement. Le règlement de l'immeuble demande le calme après vingt-deux heures. On peut trouver une solution ensemble.\nMme Costa : Je ne veux pas de conflit. Je veux juste pouvoir dormir.\nM. Diop : Je comprends. Je vais faire attention le soir et prévenir si j'ai un imprévu.\nMme Roy : Très bien. C'est ce qu'on appelle une médiation : on cherche une solution à l'amiable. Si le problème continue, il existe des recours prévus par la loi.\nMme Costa : Merci. C'est plus simple de se parler que de se disputer.\nMme Roy : Exactement. Et rappelez-vous : personne ne peut être traité de façon inégale à cause de son origine. La discrimination au logement est interdite.",
+  "transcript": "Mme Roy : Bonjour à tous les deux. Vous êtes venus pour parler d'un problème entre voisins ?\nMme Costa : Bonjour. Oui, le soir, il y a beaucoup de bruit chez mon voisin, et je n'arrive pas à dormir.\nM. Diop : Bonjour. Je ne savais pas que le bruit dérangeait autant. Je travaille tard et je fais parfois du bruit sans faire attention.\nMme Roy : Merci de vous parler calmement. Le règlement de l'immeuble demande le calme après vingt-deux heures. On peut trouver une solution ensemble.\nMme Costa : Je ne veux pas de conflit. Je veux juste pouvoir dormir.\nM. Diop : Je comprends. Je vais faire attention le soir et prévenir si j'ai un imprévu.\nMme Roy : Très bien. C'est ce qu'on appelle une médiation : on cherche une solution à l'amiable. Si le problème continue, il existe des recours prévus par la loi.\nMme Costa : Merci. C'est plus simple de se parler que de se disputer.\nMme Roy : Exactement. Et rappelez-vous : personne ne peut être traité de façon inégale à cause de son origine. La discrimination au logement est interdite.",
+  "voice": "fr-FR-Wavenet-C",
+  "languageCode": "fr-FR",
+  "speaking_rate": 0.92,
+  "pauses": [
+    {
+      "after_word": 16,
+      "ms": 400
+    },
+    {
+      "after_word": 74,
+      "ms": 400
+    },
+    {
+      "after_word": 128,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 95,
+  "hash": "0a4853268f4c91391eb8f055a6c57be92a0ec0a1939187cd7f405d74d4064559"
+}

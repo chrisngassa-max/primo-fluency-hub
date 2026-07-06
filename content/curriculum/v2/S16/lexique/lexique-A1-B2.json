@@ -1,0 +1,45 @@
+{
+  "resource_id": "S16-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "territoire",
+      "definition_simple": "Une étendue de terre organisée.",
+      "exemple": "La France a de nombreux territoires."
+    },
+    {
+      "mot": "région",
+      "definition_simple": "Un grand territoire regroupant des départements.",
+      "exemple": "La région regroupe plusieurs départements."
+    },
+    {
+      "mot": "département",
+      "definition_simple": "Un territoire regroupant des communes.",
+      "exemple": "Le département a un numéro."
+    },
+    {
+      "mot": "commune",
+      "definition_simple": "Le territoire local de base (ville ou village).",
+      "exemple": "La commune est proche des habitants."
+    },
+    {
+      "mot": "outre-mer",
+      "definition_simple": "Les territoires français situés loin de la métropole.",
+      "exemple": "L'outre-mer fait partie de la France."
+    },
+    {
+      "mot": "frontière",
+      "definition_simple": "La limite entre deux pays.",
+      "exemple": "On passe une frontière en Europe."
+    },
+    {
+      "mot": "Europe",
+      "definition_simple": "Le continent et l'Union de pays dont fait partie la France.",
+      "exemple": "La France est en Europe."
+    },
+    {
+      "mot": "patrimoine",
+      "definition_simple": "L'ensemble des monuments, paysages et traditions à préserver.",
+      "exemple": "Ce château fait partie du patrimoine."
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Consignes E4 — sortie B2/NAT — document fictif.\n\nDurée totale : cent vingt minutes.\n\n1. Échantillon TCF IRN ciblé (CO, CE, EE ou EO selon profil), banque gelée.\n2. Examen civique NAT complet, quarante questions, quarante-cinq minutes, banque verrouillée.\n3. Entretien d'assimilation simulé : parcours, motivation, principes — relances imprévues.\n\nAucun nouvel item. Grilles séparées.\n\nDécision : prêt à l'inscription officielle, consolidation ciblée, ou volume horaire supplémentaire.\n\nBonne épreuve.",
+  "transcript": "Consignes E4 — sortie B2/NAT — document fictif.\n\nDurée totale : cent vingt minutes.\n\n1. Échantillon TCF IRN ciblé (CO, CE, EE ou EO selon profil), banque gelée.\n2. Examen civique NAT complet, quarante questions, quarante-cinq minutes, banque verrouillée.\n3. Entretien d'assimilation simulé : parcours, motivation, principes — relances imprévues.\n\nAucun nouvel item. Grilles séparées.\n\nDécision : prêt à l'inscription officielle, consolidation ciblée, ou volume horaire supplémentaire.\n\nBonne épreuve.",
+  "voice": "fr-FR-Wavenet-D",
+  "languageCode": "fr-FR",
+  "speaking_rate": 1,
+  "pauses": [
+    {
+      "after_word": 12,
+      "ms": 400
+    },
+    {
+      "after_word": 60,
+      "ms": 400
+    },
+    {
+      "after_word": 130,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 35,
+  "hash": "1d93071e9238ba51dff2b71d8836c3e31cb697db9ac84b3291eb3cf639fc12d9"
+}

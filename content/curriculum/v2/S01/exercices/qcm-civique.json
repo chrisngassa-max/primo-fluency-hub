@@ -1,0 +1,67 @@
+{
+  "resource_id": "S01-QCM-civique",
+  "mention": "CSP",
+  "theme": "Droits et devoirs",
+  "questions": [
+    {
+      "notion": "distinction droit/devoir/regle",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Respecter le règlement intérieur d'un centre de formation est avant tout :",
+      "options": [
+        "Un droit",
+        "Un devoir",
+        "Une démarche"
+      ],
+      "reponse": "Un devoir"
+    },
+    {
+      "notion": "distinction droit/devoir/regle",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Le droit à la santé signifie que vous pouvez :",
+      "options": [
+        "Demander l'accès aux soins",
+        "Etre oblige de vous soigner",
+        "Payer une amende"
+      ],
+      "reponse": "Demander l'accès aux soins"
+    },
+    {
+      "notion": "distinction droit/devoir/regle",
+      "type": "mise_en_situation",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Un formateur demande a un apprenant d'arriver a l'heure a chaque seance. Il s'agit :",
+      "options": [
+        "D'une règle du centre de formation",
+        "D'un droit de l'apprenant",
+        "D'une loi nationale"
+      ],
+      "reponse": "D'une règle du centre de formation"
+    },
+    {
+      "notion": "organisation du parcours",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Le parcours vers la carte de séjour pluriannuelle dure :",
+      "options": [
+        "50 heures",
+        "80 heures",
+        "120 heures"
+      ],
+      "reponse": "80 heures"
+    },
+    {
+      "notion": "organisation du parcours",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Combien de thèmes civiques officiels structurent le parcours ?",
+      "options": [
+        "Trois",
+        "Cinq",
+        "Sept"
+      ],
+      "reponse": "Cinq"
+    }
+  ]
+}

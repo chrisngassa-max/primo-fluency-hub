@@ -1,0 +1,50 @@
+{
+  "resource_id": "S23-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "entretien",
+      "definition_simple": "Échange structuré de questions-réponses.",
+      "exemple": "EO1 entretien dirigé."
+    },
+    {
+      "mot": "interaction",
+      "definition_simple": "Échange dynamique entre interlocuteurs.",
+      "exemple": "EO2 interaction."
+    },
+    {
+      "mot": "point de vue",
+      "definition_simple": "Opinion personnelle argumentée.",
+      "exemple": "EO3 point de vue."
+    },
+    {
+      "mot": "fluidité",
+      "definition_simple": "Aisance à parler sans trop d'hésitations.",
+      "exemple": "Critère de fluidité."
+    },
+    {
+      "mot": "cohérence",
+      "definition_simple": "Enchaînement logique des idées.",
+      "exemple": "Cohérence du discours."
+    },
+    {
+      "mot": "argumenter",
+      "definition_simple": "Donner des raisons pour convaincre.",
+      "exemple": "Argumenter pour ou contre."
+    },
+    {
+      "mot": "examinateur",
+      "definition_simple": "Personne qui mène l'épreuve orale.",
+      "exemple": "L'examinateur pose des questions."
+    },
+    {
+      "mot": "parcours",
+      "definition_simple": "Chemin personnel et professionnel.",
+      "exemple": "Présenter son parcours."
+    },
+    {
+      "mot": "simulation",
+      "definition_simple": "Exercice qui reproduit l'examen.",
+      "exemple": "Simulation EO TCF."
+    }
+  ]
+}

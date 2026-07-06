@@ -1,0 +1,23 @@
+{
+  "support_id": "S08-support-constitution",
+  "personnages": [
+    "Narrateur (capsule pédagogique)"
+  ],
+  "situation": "Une capsule pédagogique présente la Constitution de 1958 et la Ve République : ce qu'organise une Constitution, le rôle du président, du Parlement et du gouvernement, et le principe de l'État de droit.",
+  "faits": [
+    "La Constitution de 1958 fonde la Ve République.",
+    "Une Constitution organise les pouvoirs et garantit les droits.",
+    "Le président de la République est élu au suffrage universel.",
+    "Le Parlement vote la loi.",
+    "L'État de droit signifie que tout le monde, gouvernants compris, respecte la loi."
+  ],
+  "nombres": [
+    5,
+    1958
+  ],
+  "dates": [
+    "1958"
+  ],
+  "hash": "25d7a6d5f3d8d153c212230853612fc0d4d0e6046e9319d1cadcca7e3fee6e4d",
+  "version": 1
+}

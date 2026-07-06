@@ -1,0 +1,45 @@
+{
+  "resource_id": "S14-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "impôt",
+      "definition_simple": "L'argent versé à l'État pour financer les services publics.",
+      "exemple": "L'impôt finance les écoles."
+    },
+    {
+      "mot": "taxe",
+      "definition_simple": "Une somme payée pour un service ou un usage précis.",
+      "exemple": "La taxe d'enlèvement des ordures."
+    },
+    {
+      "mot": "service public",
+      "definition_simple": "Un service utile à tous, financé par la collectivité.",
+      "exemple": "L'école est un service public."
+    },
+    {
+      "mot": "solidarité",
+      "definition_simple": "L'aide entre les membres d'une société.",
+      "exemple": "La solidarité finance des services pour tous."
+    },
+    {
+      "mot": "déchet",
+      "definition_simple": "Ce que l'on jette.",
+      "exemple": "On trie les déchets recyclables."
+    },
+    {
+      "mot": "tri",
+      "definition_simple": "Le fait de séparer les déchets selon leur type.",
+      "exemple": "Le tri protège l'environnement."
+    },
+    {
+      "mot": "collecte",
+      "definition_simple": "Le ramassage organisé des déchets.",
+      "exemple": "La collecte a lieu chaque semaine."
+    },
+    {
+      "mot": "intérêt général",
+      "definition_simple": "Ce qui est utile à toute la collectivité.",
+      "exemple": "Les services publics servent l'intérêt général."
+    }
+  ]
+}

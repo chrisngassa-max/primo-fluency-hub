@@ -1,0 +1,32 @@
+[
+  {
+    "phase": "Rituel civique",
+    "duree_min": 10,
+    "description": "Lecture du schema des niveaux territoriaux."
+  },
+  {
+    "phase": "Activation + lexique",
+    "duree_min": 20,
+    "description": "Decouverte du lexique (territoire, region, outre-mer, patrimoine...)."
+  },
+  {
+    "phase": "Support invariant CO/CE",
+    "duree_min": 50,
+    "description": "Ecoute du recit de voyage et reperage de l'organisation territoriale."
+  },
+  {
+    "phase": "Ateliers differencies",
+    "duree_min": 60,
+    "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du meme support."
+  },
+  {
+    "phase": "Production EE/EO",
+    "duree_min": 30,
+    "description": "Situer un lieu et presenter un element culturel."
+  },
+  {
+    "phase": "Fixation",
+    "duree_min": 10,
+    "description": "Synthese, reperes CSP, QCM civique, devoir."
+  }
+]

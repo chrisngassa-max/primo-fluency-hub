@@ -1,0 +1,20 @@
+{
+  "support_id": "S37-support",
+  "personnages": [
+    "Apprenant B2",
+    "Examinateur simulé"
+  ],
+  "situation": "Entretien d'assimilation simulé : parcours personnel, motivation, principes républicains, relances imprévues. Modèle non mémorisable.",
+  "faits": [
+    "L'entretien évalue le parcours et la motivation sincère.",
+    "Les principes républicains doivent être compris, pas récités mécaniquement.",
+    "Les relances sont imprévues pour éviter la mémorisation.",
+    "Liberté, égalité, fraternité et laïcité peuvent être mobilisés.",
+    "Le modèle de réponse n'est pas figé mot à mot.",
+    "L'expression orale B2 prime sur un script appris."
+  ],
+  "nombres": [],
+  "dates": [],
+  "hash": "79c826f4992c426e34dafe9da63b8d8def322ad1ae3191a478c007574bda040e",
+  "version": 1
+}

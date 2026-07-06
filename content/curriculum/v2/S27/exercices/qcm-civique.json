@@ -1,0 +1,67 @@
+{
+  "resource_id": "S27-QCM-civique",
+  "mention": "CR",
+  "theme": "Droits et devoirs",
+  "questions": [
+    {
+      "notion": "expression",
+      "type": "connaissance",
+      "enonce": "La liberté d'expression :",
+      "options": [
+        "A des limites légales",
+        "N'a aucune limite",
+        "N'existe pas"
+      ],
+      "reponse": "A des limites légales",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "laïcité",
+      "type": "connaissance",
+      "enonce": "La laïcité implique :",
+      "options": [
+        "Neutralité de l'État",
+        "Une religion d'État",
+        "Interdiction de croire"
+      ],
+      "reponse": "Neutralité de l'État",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "manifestation",
+      "type": "mise_en_situation",
+      "enonce": "Manifester pacifiquement demande :",
+      "options": [
+        "Un cadre légal (déclaration)",
+        "Aucune règle",
+        "Une armure"
+      ],
+      "reponse": "Un cadre légal (déclaration)",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "discrimination",
+      "type": "connaissance",
+      "enonce": "Discriminer quelqu'un est :",
+      "options": [
+        "Interdit",
+        "Un droit",
+        "Une tradition obligatoire"
+      ],
+      "reponse": "Interdit",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "argumentation",
+      "type": "mise_en_situation",
+      "enonce": "Argumenter civiquement, c'est :",
+      "options": [
+        "Donner des raisons sans insultes",
+        "Insulter l'adversaire",
+        "Rester silencieux"
+      ],
+      "reponse": "Donner des raisons sans insultes",
+      "official_status": "simulation_pedagogique"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "resource_id": "S32-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "Constitution",
+      "definition_simple": "Loi suprême de l'État.",
+      "exemple": "Constitution de 1958."
+    },
+    {
+      "mot": "souveraineté",
+      "definition_simple": "Pouvoir suprême du peuple.",
+      "exemple": "Souveraineté nationale."
+    },
+    {
+      "mot": "Ve République",
+      "definition_simple": "Régime actuel depuis 1958.",
+      "exemple": "Organisation de la Ve République."
+    },
+    {
+      "mot": "contrôle",
+      "definition_simple": "Vérification de conformité.",
+      "exemple": "Conseil constitutionnel."
+    },
+    {
+      "mot": "représentant",
+      "definition_simple": "Élu qui agit pour le peuple.",
+      "exemple": "Représentants du peuple."
+    },
+    {
+      "mot": "synthèse",
+      "definition_simple": "Texte structuré et nuancé.",
+      "exemple": "Synthèse B2."
+    },
+    {
+      "mot": "relance",
+      "definition_simple": "Question imprévue de l'examinateur.",
+      "exemple": "Répondre à une relance."
+    },
+    {
+      "mot": "promulgation",
+      "definition_simple": "Publication officielle d'une loi.",
+      "exemple": "Après promulgation."
+    },
+    {
+      "mot": "nuance",
+      "definition_simple": "Précision qui évite la simplification.",
+      "exemple": "Nuancer la souveraineté."
+    }
+  ]
+}

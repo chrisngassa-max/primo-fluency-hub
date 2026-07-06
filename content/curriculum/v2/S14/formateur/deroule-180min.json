@@ -1,0 +1,32 @@
+[
+  {
+    "phase": "Rituel civique",
+    "duree_min": 10,
+    "description": "Lecture du schema impots -> services publics."
+  },
+  {
+    "phase": "Activation + lexique",
+    "duree_min": 20,
+    "description": "Decouverte du lexique (impot, taxe, service public, tri...)."
+  },
+  {
+    "phase": "Support invariant CO/CE",
+    "duree_min": 50,
+    "description": "Ecoute de l'annonce municipale fictive et reperage des liens."
+  },
+  {
+    "phase": "Ateliers differencies",
+    "duree_min": 60,
+    "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du meme support."
+  },
+  {
+    "phase": "Production EE/EO",
+    "duree_min": 30,
+    "description": "Resumer une consigne et ecrire a la mairie."
+  },
+  {
+    "phase": "Fixation",
+    "duree_min": 10,
+    "description": "Synthese, QCM civique, decisions, devoir personnalise."
+  }
+]

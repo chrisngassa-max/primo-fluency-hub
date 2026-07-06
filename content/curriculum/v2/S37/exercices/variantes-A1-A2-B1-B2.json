@@ -1,0 +1,108 @@
+[
+  {
+    "support_id": "S37-support",
+    "version": 1,
+    "niveau": "A1",
+    "consigne": "Répondez à trois questions simples sur vous.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "L'entretien évalue :",
+        "options": [
+          "Parcours et motivation",
+          "Uniquement la cuisine",
+          "Le code routier seul"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "vrai_faux",
+        "enonce": "Les relances sont imprévues."
+      }
+    ],
+    "corrige": {
+      "q1": "Parcours et motivation",
+      "q2": true
+    },
+    "invariants_hash": "79c826f4992c426e34dafe9da63b8d8def322ad1ae3191a478c007574bda040e"
+  },
+  {
+    "support_id": "S37-support",
+    "version": 1,
+    "niveau": "A2",
+    "consigne": "Présentez parcours 2 minutes.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Fraternité signifie :",
+        "options": [
+          "Solidarité",
+          "Isolement",
+          "Haine"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "reponse_courte",
+        "enonce": "Un principe républicain ?"
+      }
+    ],
+    "corrige": {
+      "q1": "Solidarité",
+      "q2": "Liberté, égalité, fraternité, laïcité."
+    },
+    "invariants_hash": "79c826f4992c426e34dafe9da63b8d8def322ad1ae3191a478c007574bda040e"
+  },
+  {
+    "support_id": "S37-support",
+    "version": 1,
+    "niveau": "B1",
+    "consigne": "Entretien simulé avec deux relances.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "reponse_longue",
+        "enonce": "Parcours et motivation."
+      },
+      {
+        "id": "q2",
+        "type": "reponse_longue",
+        "enonce": "Réponse à relance laïcité."
+      }
+    ],
+    "corrige": {
+      "q1": "Personnel et structuré.",
+      "q2": "Compréhension, pas récitation."
+    },
+    "invariants_hash": "79c826f4992c426e34dafe9da63b8d8def322ad1ae3191a478c007574bda040e"
+  },
+  {
+    "support_id": "S37-support",
+    "version": 1,
+    "niveau": "B2",
+    "consigne": "Entretien complet relances multiples.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "argumentation",
+        "enonce": "Critique République : réaction ?"
+      },
+      {
+        "id": "q2",
+        "type": "argumentation",
+        "enonce": "Éviter script mémorisé ?"
+      }
+    ],
+    "corrige": {
+      "q1": "Réponse ouverte.",
+      "q2": "Réponse ouverte : authenticité."
+    },
+    "invariants_hash": "79c826f4992c426e34dafe9da63b8d8def322ad1ae3191a478c007574bda040e"
+  }
+]

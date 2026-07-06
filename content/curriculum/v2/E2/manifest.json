@@ -1,0 +1,640 @@
+{
+  "session_code": "E2",
+  "plan_version": "2026-07-05",
+  "support_id": "E2-support",
+  "type_seance": "évaluation finale du tronc commun",
+  "objectifs": [
+    "Passer le TCF IRN interne complet et le civique CSP complet (40 questions, 45 min)",
+    "Orienter vers sortie A2/CSP, extension B1/CR ou consolidation"
+  ],
+  "competences": [
+    "CO",
+    "CE",
+    "EE",
+    "EO",
+    "civique"
+  ],
+  "civic_theme": null,
+  "civic_mention": "CSP",
+  "source_ids": [],
+  "resources": [
+    {
+      "resource_id": "support-master-json",
+      "kind": "support_master_json",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/json"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "d07f90e38d464e02117e37f14a5ea10a72b4123138c01359fced0fd95dc481e8",
+      "dependencies": []
+    },
+    {
+      "resource_id": "support-master-html",
+      "kind": "support_master_html",
+      "required": true,
+      "generation_mode": "template",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "text/html"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "5b7293146ff3e0578cbcab21bcb05e0767daf49d78eee7fc3a8d7fc94c8e81d8",
+      "dependencies": [
+        "support-master-json"
+      ]
+    },
+    {
+      "resource_id": "support-master-pdf",
+      "kind": "support_master_pdf",
+      "required": true,
+      "generation_mode": "template",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/pdf"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "04ccdda424762c961924191bb721595a61ccff7a172d296b9311d8604fba9f5a",
+      "dependencies": [
+        "support-master-html"
+      ]
+    },
+    {
+      "resource_id": "variantes-a1-a2-b1-b2",
+      "kind": "variantes_json",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/json"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "5d3f8bf6cf6ab22c8df122c6764d2982952f1be36842ec43671b1f727662495e",
+      "dependencies": [
+        "support-master-json"
+      ]
+    },
+    {
+      "resource_id": "vis-brief-json",
+      "kind": "vis_brief_json",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/json"
+      },
+      "alt_text": "Diagramme E2 180 min : TCF complet + civique 40/45.",
+      "depends_on_answer": false,
+      "expected_hash": "6348bf512db6fa87194497b8a86467b3329a9895a71d992f74e5242f839644de",
+      "dependencies": [
+        "support-master-json"
+      ]
+    },
+    {
+      "resource_id": "vis-master-svg",
+      "kind": "vis_master_svg",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [
+        "logo",
+        "map",
+        "official_document",
+        "real_photo"
+      ],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "image/svg+xml"
+      },
+      "alt_text": "Diagramme E2 180 min : TCF complet + civique 40/45.",
+      "depends_on_answer": false,
+      "expected_hash": "c893f4489d9d4b98d9260f6aa068f2d1c157d5f53f2333f9de435b7a771b1321",
+      "dependencies": [
+        "vis-brief-json"
+      ]
+    },
+    {
+      "resource_id": "vis-master-png",
+      "kind": "vis_master_png",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "image/png"
+      },
+      "alt_text": "Diagramme E2 180 min : TCF complet + civique 40/45.",
+      "depends_on_answer": false,
+      "expected_hash": "c114c7f2de0a953b11a749386a148a0ca8a32f63b9b81724b9b1e10b70fcf579",
+      "dependencies": [
+        "vis-master-svg"
+      ]
+    },
+    {
+      "resource_id": "vis-master-webp",
+      "kind": "vis_master_webp",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "image/png"
+      },
+      "alt_text": "Diagramme E2 180 min : TCF complet + civique 40/45.",
+      "depends_on_answer": false,
+      "expected_hash": "c114c7f2de0a953b11a749386a148a0ca8a32f63b9b81724b9b1e10b70fcf579",
+      "dependencies": [
+        "vis-master-svg"
+      ]
+    },
+    {
+      "resource_id": "co-script-md",
+      "kind": "co_script",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "text/markdown"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "48226e99fa3ba4eef5466af83bbf2ac52b6ddddfd9d2760258a9e003a6d5c72d",
+      "dependencies": []
+    },
+    {
+      "resource_id": "co-transcript-pdf",
+      "kind": "co_transcript",
+      "required": true,
+      "generation_mode": "template",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/pdf"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "84aaeb29ec2615bcfe2edbd0d21b02daab395951eea5069d33a710d517b139a2",
+      "dependencies": [
+        "co-script-md"
+      ]
+    },
+    {
+      "resource_id": "co-master-mp3",
+      "kind": "co_master",
+      "required": true,
+      "generation_mode": "tts",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "audio/mpeg"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "27b27c06c7b435d37e0de8a7b53243d403197323452ea9e4c2d0cc8642104499",
+      "dependencies": [
+        "co-script-md"
+      ]
+    },
+    {
+      "resource_id": "co-metadata-json",
+      "kind": "co_metadata",
+      "required": true,
+      "generation_mode": "tts",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/json"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "4ee8c1968060b6e9783802259e9aab1864764ebb94331227ab609748cdefa149",
+      "dependencies": [
+        "co-master-mp3"
+      ]
+    },
+    {
+      "resource_id": "lexique-a1-b2-json",
+      "kind": "lexique_json",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/json"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "bfdacefcd5620024818721600be04f7210a94ae793640c5fa8a7fb0e6ccb7fe4",
+      "dependencies": []
+    },
+    {
+      "resource_id": "lexique-a1-b2-pdf",
+      "kind": "lexique_pdf",
+      "required": true,
+      "generation_mode": "template",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/pdf"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "2ae5c0f0290de9323d6fdb7ea1a965cde9763e8171a1064df6b65adc5987bbee",
+      "dependencies": [
+        "lexique-a1-b2-json"
+      ]
+    },
+    {
+      "resource_id": "exercices-json",
+      "kind": "exercices_json",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/json"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "fd1024b47945b1ce67feda91a26a4f04b1aafc572950663085a77cd14999d408",
+      "dependencies": [
+        "variantes-a1-a2-b1-b2"
+      ]
+    },
+    {
+      "resource_id": "corrige-json",
+      "kind": "corrige_json",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/json"
+      },
+      "alt_text": null,
+      "depends_on_answer": true,
+      "expected_hash": "d9620bf22c19447c0d2ea0133eebbf91326b70cd805e86ccbce1a353feebe7ff",
+      "dependencies": [
+        "exercices-json"
+      ]
+    },
+    {
+      "resource_id": "qcm-civique-json",
+      "kind": "qcm_civique_json",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/json"
+      },
+      "alt_text": null,
+      "depends_on_answer": true,
+      "expected_hash": "9ba73eeb18c6b06b3a0d421013f0ca0a260ab8a870516a9e5869ab771c1d676b",
+      "dependencies": []
+    },
+    {
+      "resource_id": "devoir-a1-pdf",
+      "kind": "devoir_pdf",
+      "required": true,
+      "generation_mode": "template",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/pdf"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "7125631c6bfb0d1ecbc7ba2750feda8b55cfb99da3e76b0e9fb85fc95c11b3e8",
+      "dependencies": [
+        "exercices-json"
+      ]
+    },
+    {
+      "resource_id": "fiche-a1-pdf",
+      "kind": "fiche_apprenant_pdf",
+      "required": true,
+      "generation_mode": "template",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/pdf"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "c2db3a78d971fe20120bc566156ecb670e5cd418bf97c5f3752bd3438a6dfa92",
+      "dependencies": [
+        "variantes-a1-a2-b1-b2"
+      ]
+    },
+    {
+      "resource_id": "devoir-a2-pdf",
+      "kind": "devoir_pdf",
+      "required": true,
+      "generation_mode": "template",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/pdf"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "ad714439113c02e91c1b96b419524cc1539adefee77ea8c611584e2efd9a828a",
+      "dependencies": [
+        "exercices-json"
+      ]
+    },
+    {
+      "resource_id": "fiche-a2-pdf",
+      "kind": "fiche_apprenant_pdf",
+      "required": true,
+      "generation_mode": "template",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/pdf"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "9ad21323396816dd44b920a1318ed0a6fecca3db83d715d4bd13efd449e09cdb",
+      "dependencies": [
+        "variantes-a1-a2-b1-b2"
+      ]
+    },
+    {
+      "resource_id": "devoir-b1-pdf",
+      "kind": "devoir_pdf",
+      "required": true,
+      "generation_mode": "template",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/pdf"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "9f65790576b3fb358887d13cdabe9809faf66d3cde9cb08d5d9c0c79755c5d9c",
+      "dependencies": [
+        "exercices-json"
+      ]
+    },
+    {
+      "resource_id": "fiche-b1-pdf",
+      "kind": "fiche_apprenant_pdf",
+      "required": true,
+      "generation_mode": "template",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/pdf"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "8ab8b69b2018db5213be4fb31fe6b0d647db1ee30c6a3869267c338aef7b41b7",
+      "dependencies": [
+        "variantes-a1-a2-b1-b2"
+      ]
+    },
+    {
+      "resource_id": "devoir-b2-pdf",
+      "kind": "devoir_pdf",
+      "required": true,
+      "generation_mode": "template",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/pdf"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "b44d14b6a7a07c25cd6199489bddf9697f1c8da53890c3a40a90942fe49831da",
+      "dependencies": [
+        "exercices-json"
+      ]
+    },
+    {
+      "resource_id": "fiche-b2-pdf",
+      "kind": "fiche_apprenant_pdf",
+      "required": true,
+      "generation_mode": "template",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/pdf"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "f494d9fc6aaa1c88a81a23cace2ea45911811376de1bffb540672a3a222defb9",
+      "dependencies": [
+        "variantes-a1-a2-b1-b2"
+      ]
+    },
+    {
+      "resource_id": "fiche-formateur-pdf",
+      "kind": "fiche_formateur_pdf",
+      "required": true,
+      "generation_mode": "template",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/pdf"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "6750790e99fd907e6dc8d6620fadb6d525cb404bfe2886e57eaa33eab2fc55e0",
+      "dependencies": []
+    },
+    {
+      "resource_id": "deroule-180min-json",
+      "kind": "deroule_json",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/json"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "7ec2fe781cc628354b5fbc5557d48c55e682d669684be11869b379be70aac358",
+      "dependencies": []
+    },
+    {
+      "resource_id": "adaptation-rules-json",
+      "kind": "adaptation_rules_json",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/json"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "8d1385e43078286ce337901601c9cc3e58ab2c56201c1beef723a58538ded115",
+      "dependencies": []
+    },
+    {
+      "resource_id": "sources-json",
+      "kind": "sources_json",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "application/json"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "2654c7ffdd85e100eeabc8e3cf763466af68e8750d031cc54cd6b149fb2665a5",
+      "dependencies": []
+    },
+    {
+      "resource_id": "session-yaml",
+      "kind": "session_yaml",
+      "required": true,
+      "generation_mode": "deterministic",
+      "prompt_version": null,
+      "required_elements": [],
+      "forbidden_elements": [],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "mime_type": "text/yaml"
+      },
+      "alt_text": null,
+      "depends_on_answer": false,
+      "expected_hash": "cecaceb316b26d7f79b65495f891b9054d05c26ab98b9d0feb2a997378840140",
+      "dependencies": []
+    }
+  ],
+  "variants": [
+    {
+      "niveau": "A1",
+      "resource_id": "variantes-a1-a2-b1-b2"
+    },
+    {
+      "niveau": "A2",
+      "resource_id": "variantes-a1-a2-b1-b2"
+    },
+    {
+      "niveau": "B1",
+      "resource_id": "variantes-a1-a2-b1-b2"
+    },
+    {
+      "niveau": "B2",
+      "resource_id": "variantes-a1-a2-b1-b2"
+    }
+  ],
+  "duration_plan": {
+    "total_minutes": 180
+  },
+  "validation_policy": {
+    "deterministic": true,
+    "ai_review": true,
+    "min_quality_score": 4,
+    "min_pedagogical_relevance_score": 4
+  },
+  "publication_policy": {
+    "auto_publish": true,
+    "max_attempts": 3
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "Une régularisation de paie",
+    "q2": true
+  },
+  "A2": {
+    "q1": "Services publics",
+    "q2": "Faits, demande, date."
+  },
+  "B1": {
+    "q1": "Forme formelle, faits précis.",
+    "q2": "Financement protection sociale."
+  },
+  "B2": {
+    "q1": "Réponse ouverte.",
+    "q2": "Réponse ouverte."
+  }
+}

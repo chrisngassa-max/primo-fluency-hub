@@ -1,0 +1,326 @@
+{
+  "session_code": "E3",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Évaluation de sortie B1 / CR",
+  "support": {
+    "support_id": "E3-support",
+    "situation": "Évaluation de sortie B1/CR : CO, CE, EE, EO et civique CR ciblé (25 min), banque gelée, 120 minutes total. Décision sortie B1/CR, poursuite B2/NAT ou volume complémentaire.",
+    "personnages": [
+      "Apprenants B1",
+      "Équipe d'évaluation fictive"
+    ],
+    "faits": [
+      "E3 évalue le palier B1 et le civique CR.",
+      "Durée totale : cent vingt minutes.",
+      "Civique CR ciblé : vingt-cinq minutes, banque gelée.",
+      "Les épreuves langue restent chronométrées.",
+      "Pas de nouveaux faits par niveau dans la banque.",
+      "Décision : sortie B1/CR, poursuite B2/NAT ou volume complémentaire."
+    ],
+    "nombres": [
+      120,
+      25
+    ],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "E3-CO-master",
+    "voice": "fr-FR-Wavenet-C",
+    "speaking_rate": 0.92,
+    "script": "Consignes E3 — sortie B1/CR — document fictif.\n\nDurée totale : cent vingt minutes. Épreuves langue B1 : CO, CE, EE, EO chronométrées, banque gelée.\n\nCivique CR ciblé : vingt-cinq minutes, items verrouillés, thèmes du module F.\n\nAucun nouvel item le jour J. Grilles séparées.\n\nAprès E3 : certificatif interne de sortie B1/CR, poursuite B2/NAT (S32+), ou volume complémentaire.\n\nBonne épreuve.",
+    "pauses": [
+      {
+        "after_word": 12,
+        "ms": 400
+      },
+      {
+        "after_word": 60,
+        "ms": 400
+      },
+      {
+        "after_word": 130,
+        "ms": 500
+      }
+    ]
+  },
+  "visual": {
+    "resource_id": "E3-VIS-master",
+    "alt_text": "Diagramme E3 120 min : langue B1 + civique CR 25 min.",
+    "scene": {
+      "title": "Évaluation E3 — 120 min",
+      "width": 900,
+      "height": 240,
+      "background": "#ffffff",
+      "elements": [
+        {
+          "type": "rect",
+          "x": 150,
+          "y": 50,
+          "width": 600,
+          "height": 120,
+          "rx": 10,
+          "fill": "#e0e7ff"
+        },
+        {
+          "type": "text",
+          "x": 450,
+          "y": 115,
+          "anchor": "middle",
+          "fontSize": 16,
+          "text": "Langue B1 · Civique CR 25 min · Banque gelée"
+        }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "E3-LEX-A1-B2",
+    "mots": [
+      {
+        "mot": "banque gelée",
+        "definition_simple": "Questions verrouillées, sans nouvel item par niveau.",
+        "exemple": "Banque gelée E1."
+      },
+      {
+        "mot": "chronométré",
+        "definition_simple": "Temps limité strict.",
+        "exemple": "Épreuve chronométrée."
+      },
+      {
+        "mot": "évaluation",
+        "definition_simple": "Mesure certificative du parcours.",
+        "exemple": "Évaluation intermédiaire."
+      },
+      {
+        "mot": "consigne",
+        "definition_simple": "Instruction officielle de l'épreuve.",
+        "exemple": "Lire la consigne."
+      },
+      {
+        "mot": "remédiation",
+        "definition_simple": "Plan correctif après évaluation.",
+        "exemple": "Plan automatique S17-S24."
+      },
+      {
+        "mot": "tronc commun",
+        "definition_simple": "Partie A2/CSP du parcours.",
+        "exemple": "Évaluation finale tronc commun."
+      },
+      {
+        "mot": "sortie",
+        "definition_simple": "Fin de parcours à un palier.",
+        "exemple": "Sortie B1/CR."
+      },
+      {
+        "mot": "entretien",
+        "definition_simple": "Échange oral structuré.",
+        "exemple": "Entretien d'assimilation simulé."
+      },
+      {
+        "mot": "CR",
+        "definition_simple": "Carte de résident, niveau civique B1.",
+        "exemple": "Sortie B1/CR."
+      }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Lisez les consignes d'évaluation E3. Identifiez les épreuves et durées.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "L'évaluation E3 utilise :",
+          "options": [
+            "Une banque gelée",
+            "Des questions improvisées",
+            "Aucune épreuve"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "Les consignes sont chronométrées."
+        }
+      ],
+      "corrige": {
+        "q1": "Une banque gelée",
+        "q2": true
+      }
+    },
+    "A2": {
+      "consigne": "Expliquez le déroulé de E3 et le format des épreuves.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "La banque gelée signifie :",
+          "options": [
+            "Pas de nouveaux faits par niveau",
+            "Questions au hasard",
+            "Oral seulement"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Citez une règle de l'évaluation."
+        }
+      ],
+      "corrige": {
+        "q1": "Pas de nouveaux faits par niveau",
+        "q2": "Chronométrage, sans aide, séparation langue/civique."
+      }
+    },
+    "B1": {
+      "consigne": "Décrivez comment se préparer à E3 selon le support.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Déroulé et timing de l'évaluation."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Règles de la banque gelée."
+        }
+      ],
+      "corrige": {
+        "q1": "Phases et durées conformes au support.",
+        "q2": "Items verrouillés, pas de nouveaux faits."
+      }
+    },
+    "B2": {
+      "consigne": "Analysez les enjeux de E3 pour votre orientation.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Intérêt d'une banque gelée ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Comment utiliser les résultats ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Réponse ouverte : équité, comparabilité.",
+        "q2": "Réponse ouverte : remédiation, orientation."
+      }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "E3-QCM-civique",
+    "mention": "CR",
+    "theme": "Évaluation CR",
+    "questions": [
+      {
+        "notion": "E3 durée",
+        "type": "connaissance",
+        "enonce": "E3 dure :",
+        "options": [
+          "120 minutes",
+          "180 minutes",
+          "30 minutes"
+        ],
+        "reponse": "120 minutes",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "CR",
+        "type": "connaissance",
+        "enonce": "Le civique E3 est :",
+        "options": [
+          "CR ciblé 25 min",
+          "NAT 45 min",
+          "Absent"
+        ],
+        "reponse": "CR ciblé 25 min",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "banque",
+        "type": "connaissance",
+        "enonce": "La banque E3 :",
+        "options": [
+          "Est gelée",
+          "Est créée le jour J",
+          "N'existe pas"
+        ],
+        "reponse": "Est gelée",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "sortie",
+        "type": "mise_en_situation",
+        "enonce": "Réussite E3 peut mener à :",
+        "options": [
+          "Sortie B1/CR",
+          "Suppression du parcours",
+          "Rien"
+        ],
+        "reponse": "Sortie B1/CR",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "poursuite",
+        "type": "connaissance",
+        "enonce": "Sinon, orientation possible :",
+        "options": [
+          "Poursuite B2/NAT",
+          "Arrêt définitif obligatoire",
+          "Aucune option"
+        ],
+        "reponse": "Poursuite B2/NAT",
+        "official_status": "simulation_pedagogique"
+      }
+    ]
+  },
+  "devoirs": {
+    "A1": "Lire consignes E3.",
+    "A2": "Fiche CR 25 min.",
+    "B1": "Préparation ciblée.",
+    "B2": "Plan B2 ou sortie."
+  },
+  "formateur": {
+    "fiche_formateur": "E3 : 120 min, langue B1 + civique CR 25 min gelé. Décision sortie ou B2.",
+    "deroule_180min": [
+      {
+        "phase": "Installation",
+        "duree_min": 10,
+        "description": "Consignes E3."
+      },
+      {
+        "phase": "CO + CE",
+        "duree_min": 35,
+        "description": "Compréhension B1."
+      },
+      {
+        "phase": "EE + EO",
+        "duree_min": 45,
+        "description": "Productions B1."
+      },
+      {
+        "phase": "Civique CR",
+        "duree_min": 25,
+        "description": "Banque gelée CR."
+      },
+      {
+        "phase": "Clôture",
+        "duree_min": 5,
+        "description": "Information orientation."
+      }
+    ],
+    "adaptation_rules": [
+      "120 min strict.",
+      "CR 25 min gelé.",
+      "Décision tripartite sortie/B2/complément."
+    ]
+  }
+}

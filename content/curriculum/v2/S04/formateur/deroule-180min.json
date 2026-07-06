@@ -1,0 +1,32 @@
+[
+  {
+    "phase": "Rituel civique",
+    "duree_min": 10,
+    "description": "Rappel des principes de l'ecole publique a partir du visuel maitre."
+  },
+  {
+    "phase": "Activation + lexique",
+    "duree_min": 20,
+    "description": "Decouverte du lexique (absence, justificatif, obligatoire, mixite...)."
+  },
+  {
+    "phase": "Support invariant CO/CE",
+    "duree_min": 50,
+    "description": "Ecoute du message de l'ecole et lecture du calendrier fictif."
+  },
+  {
+    "phase": "Ateliers differencies",
+    "duree_min": 60,
+    "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du meme support."
+  },
+  {
+    "phase": "Production EE/EO",
+    "duree_min": 30,
+    "description": "Chaque apprenant redige une justification ecrite d'absence."
+  },
+  {
+    "phase": "Fixation",
+    "duree_min": 10,
+    "description": "Synthese, cinq QCM civiques CSP, devoir personnalise."
+  }
+]

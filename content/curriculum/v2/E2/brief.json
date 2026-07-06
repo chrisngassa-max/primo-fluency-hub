@@ -1,0 +1,361 @@
+{
+  "session_code": "E2",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Évaluation finale du tronc commun",
+  "support": {
+    "support_id": "E2-support",
+    "situation": "Évaluation finale tronc commun : TCF IRN interne complet et civique CSP 40 questions en 45 minutes. Banque gelée. Orientation sortie A2/CSP, extension B1 ou consolidation.",
+    "personnages": [
+      "Apprenants",
+      "Équipe d'évaluation fictive"
+    ],
+    "faits": [
+      "E2 clôt le tronc commun de quatre-vingts heures.",
+      "TCF IRN interne complet en conditions chronométrées.",
+      "Civique CSP : 40 questions en 45 minutes, banque gelée.",
+      "Aucun nouvel item n'est ajouté le jour de l'évaluation.",
+      "Orientation : sortie A2/CSP, extension B1/CR ou consolidation.",
+      "Durée totale de l'évaluation : cent quatre-vingts minutes."
+    ],
+    "nombres": [
+      80,
+      40,
+      45,
+      180
+    ],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "E2-CO-master",
+    "voice": "fr-FR-Wavenet-C",
+    "speaking_rate": 0.92,
+    "script": "Consignes d'évaluation E2 — tronc commun — document fictif.\n\nDurée totale : cent quatre-vingts minutes. TCF IRN interne complet : compréhension orale, compréhension écrite, expression écrite, expression orale — enchaînement chronométré sans aide.\n\nCivique CSP : quarante questions, quarante-cinq minutes, banque gelée verrouillée. Stratégie conseillée : trente-deux bonnes réponses visées.\n\nRègles : items identiques pour la cohorte, pas de faits nouveaux par niveau, grilles séparées langue et civique.\n\nAprès E2 : orientation vers sortie A2/CSP, extension parcours B1/CR, ou séances de consolidation S25.\n\nBonne épreuve.",
+    "pauses": [
+      {
+        "after_word": 12,
+        "ms": 400
+      },
+      {
+        "after_word": 60,
+        "ms": 400
+      },
+      {
+        "after_word": 130,
+        "ms": 500
+      }
+    ]
+  },
+  "visual": {
+    "resource_id": "E2-VIS-master",
+    "alt_text": "Diagramme E2 180 min : TCF complet + civique 40/45.",
+    "scene": {
+      "title": "Évaluation E2 — 180 min",
+      "width": 900,
+      "height": 220,
+      "background": "#ffffff",
+      "elements": [
+        {
+          "type": "rect",
+          "x": 80,
+          "y": 60,
+          "width": 350,
+          "height": 80,
+          "rx": 8,
+          "fill": "#dbeafe"
+        },
+        {
+          "type": "text",
+          "x": 255,
+          "y": 105,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "TCF IRN complet"
+        },
+        {
+          "type": "rect",
+          "x": 470,
+          "y": 60,
+          "width": 350,
+          "height": 80,
+          "rx": 8,
+          "fill": "#fee2e2"
+        },
+        {
+          "type": "text",
+          "x": 645,
+          "y": 95,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "Civique CSP"
+        },
+        {
+          "type": "text",
+          "x": 645,
+          "y": 118,
+          "anchor": "middle",
+          "fontSize": 12,
+          "text": "40 Q · 45 min"
+        },
+        {
+          "type": "text",
+          "x": 450,
+          "y": 180,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "Banque gelée · 180 min total"
+        }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "E2-LEX-A1-B2",
+    "mots": [
+      {
+        "mot": "banque gelée",
+        "definition_simple": "Questions verrouillées, sans nouvel item par niveau.",
+        "exemple": "Banque gelée E1."
+      },
+      {
+        "mot": "chronométré",
+        "definition_simple": "Temps limité strict.",
+        "exemple": "Épreuve chronométrée."
+      },
+      {
+        "mot": "évaluation",
+        "definition_simple": "Mesure certificative du parcours.",
+        "exemple": "Évaluation intermédiaire."
+      },
+      {
+        "mot": "consigne",
+        "definition_simple": "Instruction officielle de l'épreuve.",
+        "exemple": "Lire la consigne."
+      },
+      {
+        "mot": "remédiation",
+        "definition_simple": "Plan correctif après évaluation.",
+        "exemple": "Plan automatique S17-S24."
+      },
+      {
+        "mot": "tronc commun",
+        "definition_simple": "Partie A2/CSP du parcours.",
+        "exemple": "Évaluation finale tronc commun."
+      },
+      {
+        "mot": "sortie",
+        "definition_simple": "Fin de parcours à un palier.",
+        "exemple": "Sortie B1/CR."
+      },
+      {
+        "mot": "entretien",
+        "definition_simple": "Échange oral structuré.",
+        "exemple": "Entretien d'assimilation simulé."
+      },
+      {
+        "mot": "tronc commun",
+        "definition_simple": "Partie A2/CSP obligatoire.",
+        "exemple": "Fin du tronc commun."
+      }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Lisez les consignes d'évaluation E2. Identifiez les épreuves et durées.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "L'évaluation E2 utilise :",
+          "options": [
+            "Une banque gelée",
+            "Des questions improvisées",
+            "Aucune épreuve"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "Les consignes sont chronométrées."
+        }
+      ],
+      "corrige": {
+        "q1": "Une banque gelée",
+        "q2": true
+      }
+    },
+    "A2": {
+      "consigne": "Expliquez le déroulé de E2 et le format des épreuves.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "La banque gelée signifie :",
+          "options": [
+            "Pas de nouveaux faits par niveau",
+            "Questions au hasard",
+            "Oral seulement"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Citez une règle de l'évaluation."
+        }
+      ],
+      "corrige": {
+        "q1": "Pas de nouveaux faits par niveau",
+        "q2": "Chronométrage, sans aide, séparation langue/civique."
+      }
+    },
+    "B1": {
+      "consigne": "Décrivez comment se préparer à E2 selon le support.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Déroulé et timing de l'évaluation."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Règles de la banque gelée."
+        }
+      ],
+      "corrige": {
+        "q1": "Phases et durées conformes au support.",
+        "q2": "Items verrouillés, pas de nouveaux faits."
+      }
+    },
+    "B2": {
+      "consigne": "Analysez les enjeux de E2 pour votre orientation.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Intérêt d'une banque gelée ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Comment utiliser les résultats ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Réponse ouverte : équité, comparabilité.",
+        "q2": "Réponse ouverte : remédiation, orientation."
+      }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "E2-QCM-civique",
+    "mention": "CSP",
+    "theme": "Évaluation CSP complète",
+    "questions": [
+      {
+        "notion": "E2 durée",
+        "type": "connaissance",
+        "enonce": "E2 dure :",
+        "options": [
+          "180 minutes",
+          "120 minutes",
+          "45 minutes"
+        ],
+        "reponse": "180 minutes",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "civique E2",
+        "type": "connaissance",
+        "enonce": "Le civique E2 comporte :",
+        "options": [
+          "40 questions en 45 min",
+          "5 questions en 5 min",
+          "Aucune question"
+        ],
+        "reponse": "40 questions en 45 min",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "banque",
+        "type": "connaissance",
+        "enonce": "La banque E2 est :",
+        "options": [
+          "Gelée et verrouillée",
+          "Improvisée",
+          "Orale seulement"
+        ],
+        "reponse": "Gelée et verrouillée",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "orientation",
+        "type": "mise_en_situation",
+        "enonce": "Après E2, on peut orienter vers :",
+        "options": [
+          "Sortie A2/CSP ou extension B1",
+          "Uniquement le sport",
+          "Rien"
+        ],
+        "reponse": "Sortie A2/CSP ou extension B1",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "stratégie",
+        "type": "connaissance",
+        "enonce": "Stratégie civique conseillée :",
+        "options": [
+          "Viser 32/40",
+          "Répondre à une seule question",
+          "Ne pas chronométrer"
+        ],
+        "reponse": "Viser 32/40",
+        "official_status": "simulation_pedagogique"
+      }
+    ]
+  },
+  "devoirs": {
+    "A1": "Timing E2.",
+    "A2": "Stratégie 32/40.",
+    "B1": "Simulation blanche.",
+    "B2": "Plan orientation."
+  },
+  "formateur": {
+    "fiche_formateur": "E2 : 180 min TCF complet + civique 40/45 gelé. Orientation A2/B1/consolidation.",
+    "deroule_180min": [
+      {
+        "phase": "Installation",
+        "duree_min": 10,
+        "description": "Consignes E2, banque gelée."
+      },
+      {
+        "phase": "CO + CE",
+        "duree_min": 55,
+        "description": "Compréhension TCF."
+      },
+      {
+        "phase": "EE",
+        "duree_min": 40,
+        "description": "Trois tâches EE."
+      },
+      {
+        "phase": "EO",
+        "duree_min": 30,
+        "description": "Trois tâches EO."
+      },
+      {
+        "phase": "Civique CSP",
+        "duree_min": 45,
+        "description": "40 questions gelées."
+      }
+    ],
+    "adaptation_rules": [
+      "180 min strict.",
+      "40 Q civique gelées.",
+      "Résultats → orientation S25."
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Narrateur : Partons pour un petit voyage à travers la France et l'Europe.\nD'abord, la métropole : c'est la partie de la France située en Europe. On y trouve des communes, des départements et des régions.\nMais la France, ce n'est pas seulement la métropole. Il y a aussi l'outre-mer : des territoires situés plus loin, avec leurs propres paysages et cultures.\nLa commune est le territoire le plus proche des habitants. Plusieurs communes forment un département, et plusieurs départements forment une région.\nLa France fait aussi partie de l'Union européenne. On peut voyager plus facilement entre les pays européens.\nEnfin, chaque territoire a son patrimoine : des monuments, des paysages, des traditions.\nEn résumé : la France, c'est la métropole et l'outre-mer ; le territoire s'organise en communes, départements et régions ; et la France appartient à l'Europe.",
+  "transcript": "Narrateur : Partons pour un petit voyage à travers la France et l'Europe.\nD'abord, la métropole : c'est la partie de la France située en Europe. On y trouve des communes, des départements et des régions.\nMais la France, ce n'est pas seulement la métropole. Il y a aussi l'outre-mer : des territoires situés plus loin, avec leurs propres paysages et cultures.\nLa commune est le territoire le plus proche des habitants. Plusieurs communes forment un département, et plusieurs départements forment une région.\nLa France fait aussi partie de l'Union européenne. On peut voyager plus facilement entre les pays européens.\nEnfin, chaque territoire a son patrimoine : des monuments, des paysages, des traditions.\nEn résumé : la France, c'est la métropole et l'outre-mer ; le territoire s'organise en communes, départements et régions ; et la France appartient à l'Europe.",
+  "voice": "fr-FR-Wavenet-D",
+  "languageCode": "fr-FR",
+  "speaking_rate": 0.9,
+  "pauses": [
+    {
+      "after_word": 14,
+      "ms": 500
+    },
+    {
+      "after_word": 60,
+      "ms": 400
+    },
+    {
+      "after_word": 115,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 70,
+  "hash": "2db120618a1823d5653d0d74f3805cdf0114e04695affa06d6d7e9eaf0c69ff7"
+}

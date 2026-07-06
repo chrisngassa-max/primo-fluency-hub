@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Formateur : Situation un : un collègue refuse de serrer la main pour raison religieuse. Que faites-vous ?\nApprenant : Je respecte sa liberté de conscience, sans moquerie. Au travail, les règles communes s'appliquent : pas de harcèlement.\nFormateur : Quel principe est implicite ?\nApprenant : La laïcité et la liberté de conscience, mais aussi la dignité.\nFormateur : Situation deux : une affiche insulte une communauté dans l'escalier.\nApprenant : Je signale : ce n'est pas une opinion protégée, c'est une incitation à la haine.\nFormateur : Vous explicitez l'implicite : limite de l'expression.\nApprenant : Oui. Conduite conforme : signaler, ne pas relayer.\nFormateur : Très bien. Nommez toujours le principe.",
+  "transcript": "Formateur : Situation un : un collègue refuse de serrer la main pour raison religieuse. Que faites-vous ?\nApprenant : Je respecte sa liberté de conscience, sans moquerie. Au travail, les règles communes s'appliquent : pas de harcèlement.\nFormateur : Quel principe est implicite ?\nApprenant : La laïcité et la liberté de conscience, mais aussi la dignité.\nFormateur : Situation deux : une affiche insulte une communauté dans l'escalier.\nApprenant : Je signale : ce n'est pas une opinion protégée, c'est une incitation à la haine.\nFormateur : Vous explicitez l'implicite : limite de l'expression.\nApprenant : Oui. Conduite conforme : signaler, ne pas relayer.\nFormateur : Très bien. Nommez toujours le principe.",
+  "voice": "fr-FR-Wavenet-C",
+  "languageCode": "fr-FR",
+  "speaking_rate": 0.92,
+  "pauses": [
+    {
+      "after_word": 12,
+      "ms": 400
+    },
+    {
+      "after_word": 60,
+      "ms": 400
+    },
+    {
+      "after_word": 130,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 57,
+  "hash": "abc6df4410f8a3452626c41f0dca762e7bbb3a882b81445bb0b77b9fdd707d4a"
+}

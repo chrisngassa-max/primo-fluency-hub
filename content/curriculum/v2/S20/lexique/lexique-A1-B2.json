@@ -1,0 +1,50 @@
+{
+  "resource_id": "S20-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "mémoire",
+      "definition_simple": "Ce qu'une société se rappelle du passé.",
+      "exemple": "La mémoire nationale."
+    },
+    {
+      "mot": "patrimoine",
+      "definition_simple": "Biens culturels et historiques transmis.",
+      "exemple": "Le patrimoine national."
+    },
+    {
+      "mot": "Résistance",
+      "definition_simple": "Combat contre l'occupation pendant la guerre.",
+      "exemple": "La Résistance française."
+    },
+    {
+      "mot": "Shoah",
+      "definition_simple": "Persécution et extermination des Juifs par les nazis.",
+      "exemple": "On en parle avec sobriété."
+    },
+    {
+      "mot": "sobriété",
+      "definition_simple": "Ton calme et respectueux, sans excès.",
+      "exemple": "Une visite sobre au mémorial."
+    },
+    {
+      "mot": "commémorer",
+      "definition_simple": "Rappeler un événement pour ne pas oublier.",
+      "exemple": "Commémorer les victimes."
+    },
+    {
+      "mot": "République",
+      "definition_simple": "Régime fondé sur liberté, égalité, fraternité.",
+      "exemple": "Valeurs de la République."
+    },
+    {
+      "mot": "guerre mondiale",
+      "definition_simple": "Conflit impliquant de nombreux pays.",
+      "exemple": "La Seconde Guerre mondiale."
+    },
+    {
+      "mot": "lieu de mémoire",
+      "definition_simple": "Site qui rappelle un événement historique.",
+      "exemple": "Un mémorial pédagogique."
+    }
+  ]
+}

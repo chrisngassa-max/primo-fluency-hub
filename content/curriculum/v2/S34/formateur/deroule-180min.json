@@ -1,0 +1,32 @@
+[
+  {
+    "phase": "Rituel civique",
+    "duree_min": 10,
+    "description": "Repères historiques NAT."
+  },
+  {
+    "phase": "Activation + lexique",
+    "duree_min": 20,
+    "description": "Lexique historique."
+  },
+  {
+    "phase": "Support invariant CO/CE",
+    "duree_min": 50,
+    "description": "Lecture corpus multi-supports."
+  },
+  {
+    "phase": "Ateliers différenciés",
+    "duree_min": 60,
+    "description": "A1-B2."
+  },
+  {
+    "phase": "Production EE/EO",
+    "duree_min": 30,
+    "description": "Synthèse écrite/orale."
+  },
+  {
+    "phase": "Fixation",
+    "duree_min": 10,
+    "description": "QCM NAT."
+  }
+]

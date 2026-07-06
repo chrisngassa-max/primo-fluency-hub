@@ -1,0 +1,108 @@
+[
+  {
+    "support_id": "S26-support",
+    "version": 1,
+    "niveau": "A1",
+    "consigne": "Associez pouvoirs et rôles.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Qui vote la loi ?",
+        "options": [
+          "Législatif",
+          "Judiciaire",
+          "Médiateur"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "vrai_faux",
+        "enonce": "L'État de droit soumet l'État à la loi."
+      }
+    ],
+    "corrige": {
+      "q1": "Législatif",
+      "q2": true
+    },
+    "invariants_hash": "b60ed6fce7577fcfc80b402a79d2cc91e76011c598d99ce0c7356a80582d2db2"
+  },
+  {
+    "support_id": "S26-support",
+    "version": 1,
+    "niveau": "A2",
+    "consigne": "Expliquez oralement une décision publique et son contrôle.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Contester un arrêté :",
+        "options": [
+          "Juge administratif",
+          "Boulangerie",
+          "Stade"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "reponse_courte",
+        "enonce": "Rôle du judiciaire ?"
+      }
+    ],
+    "corrige": {
+      "q1": "Juge administratif",
+      "q2": "Trancher et contrôler la légalité."
+    },
+    "invariants_hash": "b60ed6fce7577fcfc80b402a79d2cc91e76011c598d99ce0c7356a80582d2db2"
+  },
+  {
+    "support_id": "S26-support",
+    "version": 1,
+    "niveau": "B1",
+    "consigne": "Expliquez décision publique et contrôles institutionnels.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "reponse_longue",
+        "enonce": "Décrivez l'arrêté fictif et sa légitimité."
+      },
+      {
+        "id": "q2",
+        "type": "reponse_longue",
+        "enonce": "Qui contrôle et comment ?"
+      }
+    ],
+    "corrige": {
+      "q1": "Décision locale dans cadre légal.",
+      "q2": "Juge administratif, recours possible."
+    },
+    "invariants_hash": "b60ed6fce7577fcfc80b402a79d2cc91e76011c598d99ce0c7356a80582d2db2"
+  },
+  {
+    "support_id": "S26-support",
+    "version": 1,
+    "niveau": "B2",
+    "consigne": "Synthèse nuancée État de droit et séparation des pouvoirs.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "argumentation",
+        "enonce": "Pourquoi séparer les pouvoirs ?"
+      },
+      {
+        "id": "q2",
+        "type": "argumentation",
+        "enonce": "Limites du contrôle judiciaire ?"
+      }
+    ],
+    "corrige": {
+      "q1": "Réponse ouverte.",
+      "q2": "Réponse ouverte."
+    },
+    "invariants_hash": "b60ed6fce7577fcfc80b402a79d2cc91e76011c598d99ce0c7356a80582d2db2"
+  }
+]

@@ -1,0 +1,399 @@
+{
+  "session_code": "S36",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Simulation NAT sous contrainte",
+  "support": {
+    "support_id": "S36-support",
+    "situation": "Simulation NAT 40/45 : 28 connaissances, 12 situations, banque gelée, sous contrainte temps. Comparaison avec simulation précédente.",
+    "personnages": [
+      "Apprenants B2",
+      "Formateur chronométreur"
+    ],
+    "faits": [
+      "La simulation NAT compte 40 questions en 45 minutes.",
+      "Répartition indicative : 28 connaissances, 12 mises en situation.",
+      "La banque est gelée : aucun nouvel item.",
+      "Comparaison des scores avec la simulation S31 ou précédente.",
+      "Analyse des erreurs pendant 40 minutes après l'épreuve.",
+      "Stratégie finale de 60 minutes clôt la séance."
+    ],
+    "nombres": [
+      40,
+      45,
+      28,
+      12
+    ],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S36-CO-master",
+    "voice": "fr-FR-Wavenet-D",
+    "speaking_rate": 1,
+    "script": "Formateur : Simulation NAT sous contrainte. Banque gelée, quarante questions, quarante-cinq minutes. Vingt-huit connaissances, douze situations.\nApprenant : Différence avec S31 ?\nFormateur : Niveau NAT, items plus exigeants, même contrainte temps. Pas d'aide.\nApprenant : Après ?\nFormateur : Quarante minutes d'analyse d'erreurs, puis vingt-cinq minutes de comparaison avec votre simulation précédente, et soixante minutes de stratégie personnalisée.\nApprenant : Objectif score ?\nFormateur : Progresser par rapport à votre dernier essai. Notez thèmes faibles.\nApprenant : Banque gelée confirmée ?\nFormateur : Oui. Aucune création d'item le jour J.",
+    "pauses": [
+      {
+        "after_word": 12,
+        "ms": 400
+      },
+      {
+        "after_word": 60,
+        "ms": 400
+      },
+      {
+        "after_word": 130,
+        "ms": 500
+      }
+    ]
+  },
+  "visual": {
+    "resource_id": "S36-VIS-master",
+    "alt_text": "Planning S36 : Installation, Sim NAT 45, Analyse 40, Comparaison 25, Stratégie 60.",
+    "scene": {
+      "title": "Simulation NAT S36",
+      "width": 900,
+      "height": 260,
+      "background": "#ffffff",
+      "elements": [
+        {
+          "type": "rect",
+          "x": 30,
+          "y": 60,
+          "width": 110,
+          "height": 50,
+          "fill": "#e0e7ff"
+        },
+        {
+          "type": "text",
+          "x": 85,
+          "y": 90,
+          "anchor": "middle",
+          "fontSize": 11,
+          "text": "Install 10"
+        },
+        {
+          "type": "rect",
+          "x": 160,
+          "y": 60,
+          "width": 150,
+          "height": 50,
+          "fill": "#fee2e2"
+        },
+        {
+          "type": "text",
+          "x": 235,
+          "y": 90,
+          "anchor": "middle",
+          "fontSize": 11,
+          "text": "NAT 45"
+        },
+        {
+          "type": "rect",
+          "x": 330,
+          "y": 60,
+          "width": 150,
+          "height": 50,
+          "fill": "#fef9c3"
+        },
+        {
+          "type": "text",
+          "x": 405,
+          "y": 90,
+          "anchor": "middle",
+          "fontSize": 11,
+          "text": "Erreurs 40"
+        },
+        {
+          "type": "rect",
+          "x": 500,
+          "y": 60,
+          "width": 130,
+          "height": 50,
+          "fill": "#dcfce7"
+        },
+        {
+          "type": "text",
+          "x": 565,
+          "y": 90,
+          "anchor": "middle",
+          "fontSize": 11,
+          "text": "Compare 25"
+        },
+        {
+          "type": "rect",
+          "x": 650,
+          "y": 60,
+          "width": 150,
+          "height": 50,
+          "fill": "#ede9fe"
+        },
+        {
+          "type": "text",
+          "x": 725,
+          "y": 90,
+          "anchor": "middle",
+          "fontSize": 11,
+          "text": "Stratégie 60"
+        },
+        {
+          "type": "text",
+          "x": 450,
+          "y": 170,
+          "anchor": "middle",
+          "fontSize": 13,
+          "text": "28 connaissances · 12 situations · Banque gelée"
+        }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S36-LEX-A1-B2",
+    "mots": [
+      {
+        "mot": "NAT",
+        "definition_simple": "Niveau nationalisation, examen civique exigeant.",
+        "exemple": "Simulation NAT."
+      },
+      {
+        "mot": "contrainte",
+        "definition_simple": "Limite stricte de temps ou de ressources.",
+        "exemple": "Sous contrainte."
+      },
+      {
+        "mot": "banque gelée",
+        "definition_simple": "Questions verrouillées.",
+        "exemple": "Banque gelée NAT."
+      },
+      {
+        "mot": "connaissance",
+        "definition_simple": "Item factuel.",
+        "exemple": "28 connaissances."
+      },
+      {
+        "mot": "situation",
+        "definition_simple": "Item de conduite.",
+        "exemple": "12 situations."
+      },
+      {
+        "mot": "comparaison",
+        "definition_simple": "Mise en regard de deux scores.",
+        "exemple": "Comparer avec S31."
+      },
+      {
+        "mot": "stratégie",
+        "definition_simple": "Plan pour la dernière ligne droite.",
+        "exemple": "Stratégie 60 min."
+      },
+      {
+        "mot": "progression",
+        "definition_simple": "Évolution entre deux essais.",
+        "exemple": "Mesurer la progression."
+      },
+      {
+        "mot": "analyse",
+        "definition_simple": "Étude des erreurs.",
+        "exemple": "Analyse des erreurs."
+      }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Lire planning et répartition 28/12.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Durée simulation NAT :",
+          "options": [
+            "45 min",
+            "5 min",
+            "90 min"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "Banque gelée."
+        }
+      ],
+      "corrige": {
+        "q1": "45 min",
+        "q2": true
+      }
+    },
+    "A2": {
+      "consigne": "Expliquez comparaison de scores.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Situations NAT :",
+          "options": [
+            "12",
+            "40",
+            "0"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Que faire en phase stratégie ?"
+        }
+      ],
+      "corrige": {
+        "q1": "12",
+        "q2": "Plan personnalisé selon erreurs."
+      }
+    },
+    "B1": {
+      "consigne": "Auto-analyse après simulation.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Thèmes faibles identifiés."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Comparaison avec essai précédent."
+        }
+      ],
+      "corrige": {
+        "q1": "Liste argumentée.",
+        "q2": "Progression ou stagnation."
+      }
+    },
+    "B2": {
+      "consigne": "Plan stratégie finale 60 min.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "NAT vs CR : différence de préparation ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Gérer stress 45 min ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Réponse ouverte.",
+        "q2": "Réponse ouverte."
+      }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S36-QCM-civique",
+    "mention": "NAT",
+    "theme": "Simulation NAT sous contrainte",
+    "questions": [
+      {
+        "notion": "NAT",
+        "type": "connaissance",
+        "enonce": "La simulation NAT dure :",
+        "options": [
+          "45 minutes",
+          "10 minutes",
+          "3 heures"
+        ],
+        "reponse": "45 minutes",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "répartition",
+        "type": "connaissance",
+        "enonce": "Indicativement, connaissances NAT :",
+        "options": [
+          "28 sur 40",
+          "5 sur 40",
+          "40 sur 40"
+        ],
+        "reponse": "28 sur 40",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "banque",
+        "type": "connaissance",
+        "enonce": "Banque gelée signifie :",
+        "options": [
+          "Items fixes",
+          "Items aléatoires",
+          "Pas d'items"
+        ],
+        "reponse": "Items fixes",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "comparaison",
+        "type": "mise_en_situation",
+        "enonce": "Après simulation, on compare :",
+        "options": [
+          "Avec un essai précédent",
+          "Avec un match de foot",
+          "Sans analyse"
+        ],
+        "reponse": "Avec un essai précédent",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "simulation",
+        "type": "mise_en_situation",
+        "enonce": "Pendant les 45 minutes :",
+        "options": [
+          "Aucune aide",
+          "Correction live",
+          "Téléphone autorisé"
+        ],
+        "reponse": "Aucune aide",
+        "official_status": "simulation_pedagogique"
+      }
+    ]
+  },
+  "devoirs": {
+    "A1": "Mémoriser planning S36.",
+    "A2": "Tableau comparaison scores.",
+    "B1": "Analyse erreurs.",
+    "B2": "Stratégie écrite finale."
+  },
+  "formateur": {
+    "fiche_formateur": "Simulation NAT : install 10, sim 45, erreurs 40, comparaison 25, stratégie 60. Banque gelée 28/12.",
+    "deroule_180min": [
+      {
+        "phase": "Installation",
+        "duree_min": 10,
+        "description": "Consignes NAT, banque gelée."
+      },
+      {
+        "phase": "Simulation NAT",
+        "duree_min": 45,
+        "description": "40 questions sans aide."
+      },
+      {
+        "phase": "Analyse erreurs",
+        "duree_min": 40,
+        "description": "Thèmes et distracteurs."
+      },
+      {
+        "phase": "Comparaison",
+        "duree_min": 25,
+        "description": "Score vs simulation précédente."
+      },
+      {
+        "phase": "Stratégie",
+        "duree_min": 60,
+        "description": "Plan personnalisé dernière ligne droite."
+      }
+    ],
+    "adaptation_rules": [
+      "Chronomètre strict.",
+      "Banque gelée.",
+      "Voix Wavenet-D pour CO."
+    ]
+  }
+}

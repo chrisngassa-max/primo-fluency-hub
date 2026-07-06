@@ -1,0 +1,1039 @@
+{
+  "converted_from_batch": "gemini-missing-a1-b2-02",
+  "converted_at": "2026-07-05T21:18:12.697Z",
+  "resources": [
+    {
+      "resource_id": "legacy-annonce-gare-retard-train-b1-co-01",
+      "kind": "visual_legacy_raster",
+      "required": false,
+      "generation_mode": "raster_provider",
+      "prompt_version": "legacy-v1",
+      "required_elements": [],
+      "forbidden_elements": [
+        "logo",
+        "watermark",
+        "real_personal_data"
+      ],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "prompt": "Create a realistic photo of a train station information screen, entirely fictitious. Readable French text: \"Train 842\", \"Retard 25 min\", \"Nouveau quai 4\", \"Annonce fictive\". No real railway logo, no real city name, no real company. Useful as a listening comprehension visual support. Horizontal 16:9.",
+        "level_tags": [
+          "B1",
+          "B2"
+        ],
+        "skill_tags": [
+          "CO",
+          "CE",
+          "EO"
+        ],
+        "theme_tags": [
+          "transports",
+          "gare",
+          "retard",
+          "annonce"
+        ],
+        "pedagogical_tags": [
+          "document-fictif",
+          "annonce-audio",
+          "situation-probleme",
+          "TCF-IRN"
+        ],
+        "language_level": "B1",
+        "recommended_exercise_types": [
+          "QCM",
+          "reperage-informations",
+          "jeu-role"
+        ],
+        "legacy_slug": "annonce-gare-retard-train-b1-co-01",
+        "legacy_title": "Annonce fictive de retard a la gare",
+        "legacy_description": "Panneau de gare fictif indiquant un retard et un changement de quai."
+      },
+      "alt_text": "Panneau de gare fictif avec retard de train et changement de quai",
+      "depends_on_answer": false,
+      "expected_hash": null,
+      "dependencies": []
+    },
+    {
+      "resource_id": "legacy-message-vocal-medecin-rappel-b1-co-01",
+      "kind": "visual_legacy_raster",
+      "required": false,
+      "generation_mode": "raster_provider",
+      "prompt_version": "legacy-v1",
+      "required_elements": [],
+      "forbidden_elements": [
+        "logo",
+        "watermark",
+        "real_personal_data"
+      ],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "prompt": "Create a realistic close-up photo of a smartphone on a desk showing a fictitious voicemail notification. Readable French text: \"Cabinet medical\", \"Message vocal\", \"Rappel: rendez-vous jeudi a 9 h 30\", \"Message fictif\". No real phone number, no personal data, no brand logo. Horizontal 16:9.",
+        "level_tags": [
+          "B1",
+          "A2"
+        ],
+        "skill_tags": [
+          "CO",
+          "CE"
+        ],
+        "theme_tags": [
+          "sante",
+          "telephone",
+          "rendez-vous",
+          "message-vocal"
+        ],
+        "pedagogical_tags": [
+          "document-fictif",
+          "message-vocal",
+          "comprehension-orale",
+          "rendez-vous"
+        ],
+        "language_level": "B1",
+        "recommended_exercise_types": [
+          "QCM",
+          "prise-de-notes",
+          "reformulation"
+        ],
+        "legacy_slug": "message-vocal-medecin-rappel-b1-co-01",
+        "legacy_title": "Message vocal fictif du cabinet medical",
+        "legacy_description": "Telephone avec notification de message vocal pour un rappel de rendez-vous medical."
+      },
+      "alt_text": "Telephone montrant un message vocal fictif d'un cabinet medical",
+      "depends_on_answer": false,
+      "expected_hash": null,
+      "dependencies": []
+    },
+    {
+      "resource_id": "legacy-appel-service-client-facture-b1-co-01",
+      "kind": "visual_legacy_raster",
+      "required": false,
+      "generation_mode": "raster_provider",
+      "prompt_version": "legacy-v1",
+      "required_elements": [],
+      "forbidden_elements": [
+        "logo",
+        "watermark",
+        "real_personal_data"
+      ],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "prompt": "Create a realistic photo of an adult making a phone call at a table with a fictitious bill in front of them. The paper can show short readable French words: \"FACTURE FICTIVE\", \"Montant\", \"Erreur\", \"Service client\". No real company, no real logo, no personal data. Natural documentary style, horizontal 16:9.",
+        "level_tags": [
+          "B1",
+          "B2"
+        ],
+        "skill_tags": [
+          "CO",
+          "EO",
+          "EE"
+        ],
+        "theme_tags": [
+          "service-client",
+          "facture",
+          "telephone",
+          "reclamation"
+        ],
+        "pedagogical_tags": [
+          "situation-probleme",
+          "conversation",
+          "argumentation",
+          "TCF-IRN"
+        ],
+        "language_level": "B1",
+        "recommended_exercise_types": [
+          "jeu-role",
+          "QCM",
+          "email-reclamation"
+        ],
+        "legacy_slug": "appel-service-client-facture-b1-co-01",
+        "legacy_title": "Appel fictif au service client",
+        "legacy_description": "Personne au telephone avec une facture fictive, situation de clarification ou reclamation."
+      },
+      "alt_text": "Personne appelant un service client avec une facture fictive devant elle",
+      "depends_on_answer": false,
+      "expected_hash": null,
+      "dependencies": []
+    },
+    {
+      "resource_id": "legacy-conversation-assurance-sinistre-b2-co-01",
+      "kind": "visual_legacy_raster",
+      "required": false,
+      "generation_mode": "raster_provider",
+      "prompt_version": "legacy-v1",
+      "required_elements": [],
+      "forbidden_elements": [
+        "logo",
+        "watermark",
+        "real_personal_data"
+      ],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "prompt": "Create a realistic photo of two adults discussing a fictitious insurance claim file at a small office table. Visible folder text: \"DOSSIER FICTIF\", \"Assurance logement\", \"Degat des eaux\". No real insurer, no logo, no personal data. The mood is serious but calm, suitable for B2 oral argumentation. Horizontal 16:9.",
+        "level_tags": [
+          "B2",
+          "B1"
+        ],
+        "skill_tags": [
+          "CO",
+          "EO",
+          "EE"
+        ],
+        "theme_tags": [
+          "assurance",
+          "logement",
+          "probleme",
+          "reclamation"
+        ],
+        "pedagogical_tags": [
+          "argumentation",
+          "situation-probleme",
+          "conversation",
+          "TCF-IRN"
+        ],
+        "language_level": "B2",
+        "recommended_exercise_types": [
+          "jeu-role",
+          "argumentation",
+          "compte-rendu"
+        ],
+        "legacy_slug": "conversation-assurance-sinistre-b2-co-01",
+        "legacy_title": "Conversation fictive avec une assurance",
+        "legacy_description": "Scene de discussion avec dossier d'assurance fictif apres un probleme dans un logement."
+      },
+      "alt_text": "Deux adultes discutent d'un dossier d'assurance fictif",
+      "depends_on_answer": false,
+      "expected_hash": null,
+      "dependencies": []
+    },
+    {
+      "resource_id": "legacy-reglement-immeuble-bruit-b2-ce-01",
+      "kind": "visual_legacy_raster",
+      "required": false,
+      "generation_mode": "raster_provider",
+      "prompt_version": "legacy-v1",
+      "required_elements": [],
+      "forbidden_elements": [
+        "logo",
+        "watermark",
+        "real_personal_data"
+      ],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "prompt": "Create a realistic photo of a fictitious building rules notice posted in a hallway. Readable French text: \"REGLEMENT FICTIF\", \"Bruit interdit apres 22 h\", \"Respect des voisins\", \"Travaux: horaires limites\". No real address, no real syndicate logo. Horizontal 16:9.",
+        "level_tags": [
+          "B2",
+          "B1"
+        ],
+        "skill_tags": [
+          "CE",
+          "EE",
+          "EO"
+        ],
+        "theme_tags": [
+          "logement",
+          "voisinage",
+          "reglement",
+          "bruit"
+        ],
+        "pedagogical_tags": [
+          "document-fictif",
+          "argumentation",
+          "lecture-detaillee",
+          "TCF-IRN"
+        ],
+        "language_level": "B2",
+        "recommended_exercise_types": [
+          "QCM",
+          "argumentation",
+          "production-ecrite"
+        ],
+        "legacy_slug": "reglement-immeuble-bruit-b2-ce-01",
+        "legacy_title": "Reglement fictif d'immeuble sur le bruit",
+        "legacy_description": "Extrait de reglement fictif pour travailler la comprehension ecrite et l'argumentation."
+      },
+      "alt_text": "Reglement fictif d'immeuble avec consignes sur le bruit",
+      "depends_on_answer": false,
+      "expected_hash": null,
+      "dependencies": []
+    },
+    {
+      "resource_id": "legacy-article-fictif-teletravail-b2-ce-01",
+      "kind": "visual_legacy_raster",
+      "required": false,
+      "generation_mode": "raster_provider",
+      "prompt_version": "legacy-v1",
+      "required_elements": [],
+      "forbidden_elements": [
+        "logo",
+        "watermark",
+        "real_personal_data"
+      ],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "prompt": "Create a realistic photo of a printed fictitious magazine article on a desk. Readable French headline: \"Teletravail: avantages et limites\". Add subheadings: \"Organisation\", \"Isolement\", \"Equilibre\". Mark \"Article fictif\". No real newspaper name, no logo, no author. Horizontal 16:9.",
+        "level_tags": [
+          "B2"
+        ],
+        "skill_tags": [
+          "CE",
+          "EE",
+          "EO"
+        ],
+        "theme_tags": [
+          "travail",
+          "teletravail",
+          "societe",
+          "argumentation"
+        ],
+        "pedagogical_tags": [
+          "document-fictif",
+          "lecture-argumentative",
+          "production-ecrite",
+          "B2"
+        ],
+        "language_level": "B2",
+        "recommended_exercise_types": [
+          "QCM",
+          "resume",
+          "argumentation"
+        ],
+        "legacy_slug": "article-fictif-teletravail-b2-ce-01",
+        "legacy_title": "Article fictif sur le teletravail",
+        "legacy_description": "Article court fictif sur les avantages et limites du teletravail."
+      },
+      "alt_text": "Article fictif imprimé sur le teletravail",
+      "depends_on_answer": false,
+      "expected_hash": null,
+      "dependencies": []
+    },
+    {
+      "resource_id": "legacy-courrier-reclamation-remboursement-b2-ee-01",
+      "kind": "visual_legacy_raster",
+      "required": false,
+      "generation_mode": "raster_provider",
+      "prompt_version": "legacy-v1",
+      "required_elements": [],
+      "forbidden_elements": [
+        "logo",
+        "watermark",
+        "real_personal_data"
+      ],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "prompt": "Create a realistic top-down photo of a fictitious formal complaint letter. Readable French text: \"RECLAMATION FICTIVE\", \"Objet: demande de remboursement\", \"Produit defectueux\", \"Veuillez trouver la facture\". No real company, no address, no personal data. Horizontal 16:9.",
+        "level_tags": [
+          "B2",
+          "B1"
+        ],
+        "skill_tags": [
+          "EE",
+          "CE"
+        ],
+        "theme_tags": [
+          "achats",
+          "reclamation",
+          "remboursement",
+          "courrier"
+        ],
+        "pedagogical_tags": [
+          "document-fictif",
+          "lettre-formelle",
+          "argumentation",
+          "TCF-IRN"
+        ],
+        "language_level": "B2",
+        "recommended_exercise_types": [
+          "production-ecrite",
+          "lettre-formelle",
+          "QCM"
+        ],
+        "legacy_slug": "courrier-reclamation-remboursement-b2-ee-01",
+        "legacy_title": "Courrier fictif de reclamation",
+        "legacy_description": "Lettre de reclamation fictive pour demander un remboursement."
+      },
+      "alt_text": "Courrier fictif de reclamation pour remboursement",
+      "depends_on_answer": false,
+      "expected_hash": null,
+      "dependencies": []
+    },
+    {
+      "resource_id": "legacy-menu-restaurant-prix-a1-ce-01",
+      "kind": "visual_legacy_raster",
+      "required": false,
+      "generation_mode": "raster_provider",
+      "prompt_version": "legacy-v1",
+      "required_elements": [],
+      "forbidden_elements": [
+        "logo",
+        "watermark",
+        "real_personal_data"
+      ],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "prompt": "Create a realistic photo of a simple fictitious restaurant menu on a table. Readable French text: \"Menu du jour\", \"Soupe 5 euros\", \"Poulet riz 12 euros\", \"Dessert 4 euros\", \"Menu fictif\". No real restaurant name, no logo. Horizontal 16:9.",
+        "level_tags": [
+          "A1",
+          "A2"
+        ],
+        "skill_tags": [
+          "CE",
+          "EO",
+          "CO"
+        ],
+        "theme_tags": [
+          "restaurant",
+          "alimentation",
+          "prix",
+          "commande"
+        ],
+        "pedagogical_tags": [
+          "document-fictif",
+          "lecture-simple",
+          "jeu-role",
+          "vie-quotidienne"
+        ],
+        "language_level": "A1",
+        "recommended_exercise_types": [
+          "QCM",
+          "jeu-role",
+          "reperage-informations"
+        ],
+        "legacy_slug": "menu-restaurant-prix-a1-ce-01",
+        "legacy_title": "Menu fictif de restaurant",
+        "legacy_description": "Menu simple avec plats et prix pour les exercices A1/A2."
+      },
+      "alt_text": "Menu fictif avec plats simples et prix",
+      "depends_on_answer": false,
+      "expected_hash": null,
+      "dependencies": []
+    },
+    {
+      "resource_id": "legacy-ticket-caisse-supermarche-a1-ce-01",
+      "kind": "visual_legacy_raster",
+      "required": false,
+      "generation_mode": "raster_provider",
+      "prompt_version": "legacy-v1",
+      "required_elements": [],
+      "forbidden_elements": [
+        "logo",
+        "watermark",
+        "real_personal_data"
+      ],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "prompt": "Create a realistic close-up photo of a fictitious grocery receipt. Readable French text: \"Ticket fictif\", \"Pain 1,20\", \"Lait 1,50\", \"Pommes 3,00\", \"Total 5,70\". No real store name, no logo, no barcode with real data. Horizontal 16:9.",
+        "level_tags": [
+          "A1",
+          "A2"
+        ],
+        "skill_tags": [
+          "CE",
+          "EE"
+        ],
+        "theme_tags": [
+          "achats",
+          "alimentation",
+          "prix",
+          "supermarche"
+        ],
+        "pedagogical_tags": [
+          "document-fictif",
+          "lecture-simple",
+          "budget",
+          "vie-quotidienne"
+        ],
+        "language_level": "A1",
+        "recommended_exercise_types": [
+          "QCM",
+          "calcul-simple",
+          "reperage-informations"
+        ],
+        "legacy_slug": "ticket-caisse-supermarche-a1-ce-01",
+        "legacy_title": "Ticket de caisse fictif",
+        "legacy_description": "Ticket de caisse simple avec quelques achats et un total."
+      },
+      "alt_text": "Ticket de caisse fictif avec pain, lait et pommes",
+      "depends_on_answer": false,
+      "expected_hash": null,
+      "dependencies": []
+    },
+    {
+      "resource_id": "legacy-bulletin-meteo-simple-a1-co-01",
+      "kind": "visual_legacy_raster",
+      "required": false,
+      "generation_mode": "raster_provider",
+      "prompt_version": "legacy-v1",
+      "required_elements": [],
+      "forbidden_elements": [
+        "logo",
+        "watermark",
+        "real_personal_data"
+      ],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "prompt": "Create a realistic photo of a simple fictitious weather forecast screen. Readable French text: \"Meteo fictive\", \"Matin: pluie 12 degres\", \"Apres-midi: soleil 18 degres\". No real TV channel, no real city name, no logo. Horizontal 16:9.",
+        "level_tags": [
+          "A1",
+          "A2"
+        ],
+        "skill_tags": [
+          "CO",
+          "CE",
+          "EO"
+        ],
+        "theme_tags": [
+          "meteo",
+          "quotidien",
+          "ville"
+        ],
+        "pedagogical_tags": [
+          "document-fictif",
+          "annonce-audio",
+          "lecture-simple",
+          "vie-quotidienne"
+        ],
+        "language_level": "A1",
+        "recommended_exercise_types": [
+          "QCM",
+          "description-image",
+          "reperage-informations"
+        ],
+        "legacy_slug": "bulletin-meteo-simple-a1-co-01",
+        "legacy_title": "Bulletin meteo fictif simple",
+        "legacy_description": "Ecran meteo fictif avec temperatures simples pour comprehension orale A1/A2."
+      },
+      "alt_text": "Bulletin meteo fictif avec soleil, pluie et temperatures",
+      "depends_on_answer": false,
+      "expected_hash": null,
+      "dependencies": []
+    },
+    {
+      "resource_id": "legacy-agenda-famille-ecole-a2-ce-01",
+      "kind": "visual_legacy_raster",
+      "required": false,
+      "generation_mode": "raster_provider",
+      "prompt_version": "legacy-v1",
+      "required_elements": [],
+      "forbidden_elements": [
+        "logo",
+        "watermark",
+        "real_personal_data"
+      ],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "prompt": "Create a realistic photo of a fictitious family weekly planner on a fridge or table. Readable French text: \"Lundi: ecole 8 h 30\", \"Mercredi: courses\", \"Vendredi: rendez-vous\". No real names, no personal data. Horizontal 16:9.",
+        "level_tags": [
+          "A2",
+          "B1"
+        ],
+        "skill_tags": [
+          "CE",
+          "EE",
+          "EO"
+        ],
+        "theme_tags": [
+          "famille",
+          "ecole",
+          "organisation",
+          "quotidien"
+        ],
+        "pedagogical_tags": [
+          "document-fictif",
+          "planning",
+          "vie-quotidienne",
+          "production-ecrite"
+        ],
+        "language_level": "A2",
+        "recommended_exercise_types": [
+          "QCM",
+          "message-court",
+          "jeu-role"
+        ],
+        "legacy_slug": "agenda-famille-ecole-a2-ce-01",
+        "legacy_title": "Agenda familial fictif",
+        "legacy_description": "Agenda simple avec rendez-vous d'ecole et activites familiales."
+      },
+      "alt_text": "Agenda fictif avec ecole, courses et rendez-vous",
+      "depends_on_answer": false,
+      "expected_hash": null,
+      "dependencies": []
+    },
+    {
+      "resource_id": "legacy-mot-ecole-sortie-a2-ce-01",
+      "kind": "visual_legacy_raster",
+      "required": false,
+      "generation_mode": "raster_provider",
+      "prompt_version": "legacy-v1",
+      "required_elements": [],
+      "forbidden_elements": [
+        "logo",
+        "watermark",
+        "real_personal_data"
+      ],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "prompt": "Create a realistic photo of a fictitious school note on a table. Readable French text: \"Mot de l'ecole\", \"Sortie jeudi\", \"Depart 9 h\", \"Prevoir un pique-nique\", \"Document fictif\". No real school name, no real teacher name, no logo. Horizontal 16:9.",
+        "level_tags": [
+          "A2",
+          "B1"
+        ],
+        "skill_tags": [
+          "CE",
+          "EE",
+          "CO"
+        ],
+        "theme_tags": [
+          "ecole",
+          "famille",
+          "sortie",
+          "message"
+        ],
+        "pedagogical_tags": [
+          "document-fictif",
+          "lecture-simple",
+          "vie-quotidienne",
+          "TCF-IRN"
+        ],
+        "language_level": "A2",
+        "recommended_exercise_types": [
+          "QCM",
+          "reponse-courte",
+          "prise-de-notes"
+        ],
+        "legacy_slug": "mot-ecole-sortie-a2-ce-01",
+        "legacy_title": "Mot fictif de l'ecole",
+        "legacy_description": "Petit mot fictif de l'ecole pour une sortie scolaire."
+      },
+      "alt_text": "Mot fictif de l'ecole annonçant une sortie scolaire",
+      "depends_on_answer": false,
+      "expected_hash": null,
+      "dependencies": []
+    },
+    {
+      "resource_id": "legacy-affiche-banque-rendez-vous-a2-ce-01",
+      "kind": "visual_legacy_raster",
+      "required": false,
+      "generation_mode": "raster_provider",
+      "prompt_version": "legacy-v1",
+      "required_elements": [],
+      "forbidden_elements": [
+        "logo",
+        "watermark",
+        "real_personal_data"
+      ],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "prompt": "Create a realistic photo of a fictitious bank appointment poster on a neutral office wall. Readable French text: \"Prenez rendez-vous\", \"Conseiller\", \"Documents a apporter\", \"Affiche fictive\". No real bank name, no logo, no phone number. Horizontal 16:9.",
+        "level_tags": [
+          "A2",
+          "B1"
+        ],
+        "skill_tags": [
+          "CE",
+          "EO",
+          "EE"
+        ],
+        "theme_tags": [
+          "banque",
+          "rendez-vous",
+          "service-client",
+          "administration"
+        ],
+        "pedagogical_tags": [
+          "document-fictif",
+          "lecture-simple",
+          "jeu-role",
+          "vie-pratique"
+        ],
+        "language_level": "A2",
+        "recommended_exercise_types": [
+          "QCM",
+          "jeu-role",
+          "message-court"
+        ],
+        "legacy_slug": "affiche-banque-rendez-vous-a2-ce-01",
+        "legacy_title": "Affiche fictive de rendez-vous bancaire",
+        "legacy_description": "Affiche simple pour prendre rendez-vous avec un conseiller bancaire."
+      },
+      "alt_text": "Affiche fictive indiquant comment prendre rendez-vous avec un conseiller",
+      "depends_on_answer": false,
+      "expected_hash": null,
+      "dependencies": []
+    },
+    {
+      "resource_id": "legacy-avis-coupure-eau-b1-ce-01",
+      "kind": "visual_legacy_raster",
+      "required": false,
+      "generation_mode": "raster_provider",
+      "prompt_version": "legacy-v1",
+      "required_elements": [],
+      "forbidden_elements": [
+        "logo",
+        "watermark",
+        "real_personal_data"
+      ],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "prompt": "Create a realistic photo of a fictitious notice posted in an apartment building hallway. Readable French text: \"AVIS FICTIF\", \"Coupure d'eau\", \"Mardi de 9 h a 13 h\", \"Merci de votre comprehension\". No real address, no company logo. Horizontal 16:9.",
+        "level_tags": [
+          "B1",
+          "A2"
+        ],
+        "skill_tags": [
+          "CE",
+          "CO",
+          "EE"
+        ],
+        "theme_tags": [
+          "logement",
+          "immeuble",
+          "information",
+          "probleme"
+        ],
+        "pedagogical_tags": [
+          "document-fictif",
+          "situation-probleme",
+          "lecture-detaillee",
+          "vie-pratique"
+        ],
+        "language_level": "B1",
+        "recommended_exercise_types": [
+          "QCM",
+          "message-voisin",
+          "prise-de-notes"
+        ],
+        "legacy_slug": "avis-coupure-eau-b1-ce-01",
+        "legacy_title": "Avis fictif de coupure d'eau",
+        "legacy_description": "Avis d'immeuble fictif annonçant une coupure d'eau et des horaires."
+      },
+      "alt_text": "Avis fictif de coupure d'eau dans un immeuble",
+      "depends_on_answer": false,
+      "expected_hash": null,
+      "dependencies": []
+    },
+    {
+      "resource_id": "legacy-message-retard-travail-b1-ee-01",
+      "kind": "visual_legacy_raster",
+      "required": false,
+      "generation_mode": "raster_provider",
+      "prompt_version": "legacy-v1",
+      "required_elements": [],
+      "forbidden_elements": [
+        "logo",
+        "watermark",
+        "real_personal_data"
+      ],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "prompt": "Create a realistic photo of a laptop screen showing a fictitious work email draft. Readable French text: \"Objet: retard\", \"Bonjour, mon train est en retard. J'arrive vers 10 h 30.\" Add \"Message fictif\". No real email address, no real names, no logo. Horizontal 16:9.",
+        "level_tags": [
+          "B1",
+          "A2"
+        ],
+        "skill_tags": [
+          "EE",
+          "CE",
+          "CO"
+        ],
+        "theme_tags": [
+          "travail",
+          "email",
+          "retard",
+          "transport"
+        ],
+        "pedagogical_tags": [
+          "document-fictif",
+          "production-ecrite",
+          "situation-probleme",
+          "TCF-IRN"
+        ],
+        "language_level": "B1",
+        "recommended_exercise_types": [
+          "email-court",
+          "QCM",
+          "reformulation"
+        ],
+        "legacy_slug": "message-retard-travail-b1-ee-01",
+        "legacy_title": "Message fictif de retard au travail",
+        "legacy_description": "Ecran d'ordinateur avec un email court pour prevenir d'un retard."
+      },
+      "alt_text": "Email fictif pour prevenir d'un retard au travail",
+      "depends_on_answer": false,
+      "expected_hash": null,
+      "dependencies": []
+    },
+    {
+      "resource_id": "legacy-reunion-association-quartier-b2-eo-01",
+      "kind": "visual_legacy_raster",
+      "required": false,
+      "generation_mode": "raster_provider",
+      "prompt_version": "legacy-v1",
+      "required_elements": [],
+      "forbidden_elements": [
+        "logo",
+        "watermark",
+        "real_personal_data"
+      ],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "prompt": "Create a realistic photo of adults sitting around a table in a community meeting, discussing a local neighborhood project. A whiteboard can show simple fictitious text: \"Projet de quartier\", \"Parking\", \"Securite\", \"Avis des habitants\". No political party, no real logo, no personal data. Horizontal 16:9.",
+        "level_tags": [
+          "B2",
+          "B1"
+        ],
+        "skill_tags": [
+          "EO",
+          "CO",
+          "EE"
+        ],
+        "theme_tags": [
+          "citoyennete",
+          "ville",
+          "quartier",
+          "argumentation"
+        ],
+        "pedagogical_tags": [
+          "debat",
+          "argumentation",
+          "comprehension-orale",
+          "TCF-IRN"
+        ],
+        "language_level": "B2",
+        "recommended_exercise_types": [
+          "debat",
+          "compte-rendu",
+          "argumentation"
+        ],
+        "legacy_slug": "reunion-association-quartier-b2-eo-01",
+        "legacy_title": "Reunion fictive d'association de quartier",
+        "legacy_description": "Scene de reunion citoyenne pour discuter d'un projet local."
+      },
+      "alt_text": "Adultes en reunion discutant d'un projet de quartier",
+      "depends_on_answer": false,
+      "expected_hash": null,
+      "dependencies": []
+    },
+    {
+      "resource_id": "legacy-podcast-fictif-actualite-b2-co-01",
+      "kind": "visual_legacy_raster",
+      "required": false,
+      "generation_mode": "raster_provider",
+      "prompt_version": "legacy-v1",
+      "required_elements": [],
+      "forbidden_elements": [
+        "logo",
+        "watermark",
+        "real_personal_data"
+      ],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "prompt": "Create a realistic photo of a podcast recording setup with a laptop screen showing a fictitious episode page. Readable French text: \"Podcast fictif\", \"Sujet: vivre en ville\", \"Invites\", \"Arguments\". No real media brand, no logo, no real people names. Horizontal 16:9.",
+        "level_tags": [
+          "B2"
+        ],
+        "skill_tags": [
+          "CO",
+          "CE",
+          "EE"
+        ],
+        "theme_tags": [
+          "actualite",
+          "societe",
+          "podcast",
+          "argumentation"
+        ],
+        "pedagogical_tags": [
+          "comprehension-orale",
+          "debat",
+          "prise-de-notes",
+          "B2"
+        ],
+        "language_level": "B2",
+        "recommended_exercise_types": [
+          "QCM",
+          "prise-de-notes",
+          "resume"
+        ],
+        "legacy_slug": "podcast-fictif-actualite-b2-co-01",
+        "legacy_title": "Podcast fictif d'actualite",
+        "legacy_description": "Microphone et ecran montrant un podcast fictif sur un sujet de societe."
+      },
+      "alt_text": "Podcast fictif sur un sujet de societe affiche sur un ecran",
+      "depends_on_answer": false,
+      "expected_hash": null,
+      "dependencies": []
+    },
+    {
+      "resource_id": "legacy-comparatif-abonnements-transport-b2-ce-01",
+      "kind": "visual_legacy_raster",
+      "required": false,
+      "generation_mode": "raster_provider",
+      "prompt_version": "legacy-v1",
+      "required_elements": [],
+      "forbidden_elements": [
+        "logo",
+        "watermark",
+        "real_personal_data"
+      ],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "prompt": "Create a realistic photo of a printed fictitious comparison table for public transport subscriptions. Readable French text: \"Comparatif fictif\", \"Mensuel\", \"Annuel\", \"Tarif reduit\", \"Avantages\", \"Limites\". No real transport logo, no real city name. Horizontal 16:9.",
+        "level_tags": [
+          "B2",
+          "B1"
+        ],
+        "skill_tags": [
+          "CE",
+          "EE",
+          "EO"
+        ],
+        "theme_tags": [
+          "transports",
+          "budget",
+          "comparaison",
+          "ville"
+        ],
+        "pedagogical_tags": [
+          "document-fictif",
+          "lecture-detaillee",
+          "argumentation",
+          "TCF-IRN"
+        ],
+        "language_level": "B2",
+        "recommended_exercise_types": [
+          "QCM",
+          "comparaison",
+          "argumentation"
+        ],
+        "legacy_slug": "comparatif-abonnements-transport-b2-ce-01",
+        "legacy_title": "Comparatif fictif d'abonnements de transport",
+        "legacy_description": "Tableau comparatif fictif pour travailler la lecture et la comparaison."
+      },
+      "alt_text": "Tableau fictif comparant trois abonnements de transport",
+      "depends_on_answer": false,
+      "expected_hash": null,
+      "dependencies": []
+    },
+    {
+      "resource_id": "legacy-conversation-collegues-planning-b1-co-01",
+      "kind": "visual_legacy_raster",
+      "required": false,
+      "generation_mode": "raster_provider",
+      "prompt_version": "legacy-v1",
+      "required_elements": [],
+      "forbidden_elements": [
+        "logo",
+        "watermark",
+        "real_personal_data"
+      ],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "prompt": "Create a realistic photo of two colleagues discussing a printed fictitious work schedule at a desk. Readable French words on the schedule: \"Planning fictif\", \"Lundi\", \"Remplacement\", \"Reunion 14 h\". No company logo, no real names. Horizontal 16:9.",
+        "level_tags": [
+          "B1",
+          "B2"
+        ],
+        "skill_tags": [
+          "CO",
+          "EO",
+          "EE"
+        ],
+        "theme_tags": [
+          "travail",
+          "planning",
+          "organisation",
+          "conversation"
+        ],
+        "pedagogical_tags": [
+          "comprehension-orale",
+          "situation-probleme",
+          "conversation",
+          "TCF-IRN"
+        ],
+        "language_level": "B1",
+        "recommended_exercise_types": [
+          "QCM",
+          "jeu-role",
+          "message-court"
+        ],
+        "legacy_slug": "conversation-collegues-planning-b1-co-01",
+        "legacy_title": "Conversation fictive entre collegues sur un planning",
+        "legacy_description": "Deux collegues discutent d'un planning de travail modifie."
+      },
+      "alt_text": "Deux collegues regardent un planning de travail fictif",
+      "depends_on_answer": false,
+      "expected_hash": null,
+      "dependencies": []
+    },
+    {
+      "resource_id": "legacy-affiche-loisirs-inscription-a1-ce-01",
+      "kind": "visual_legacy_raster",
+      "required": false,
+      "generation_mode": "raster_provider",
+      "prompt_version": "legacy-v1",
+      "required_elements": [],
+      "forbidden_elements": [
+        "logo",
+        "watermark",
+        "real_personal_data"
+      ],
+      "source_ids": [],
+      "rights_status": "cap_tcf_created",
+      "output_spec": {
+        "prompt": "Create a realistic photo of a simple fictitious leisure activity poster on a community board. Readable French text: \"Atelier cuisine\", \"Samedi 10 h\", \"Prix: 8 euros\", \"Inscription\", \"Affiche fictive\". No real association name, no logo, no phone number. Horizontal 16:9.",
+        "level_tags": [
+          "A1",
+          "A2"
+        ],
+        "skill_tags": [
+          "CE",
+          "EO"
+        ],
+        "theme_tags": [
+          "loisirs",
+          "inscription",
+          "prix",
+          "horaire"
+        ],
+        "pedagogical_tags": [
+          "document-fictif",
+          "lecture-simple",
+          "vie-quotidienne",
+          "description-image"
+        ],
+        "language_level": "A1",
+        "recommended_exercise_types": [
+          "QCM",
+          "description-image",
+          "message-court"
+        ],
+        "legacy_slug": "affiche-loisirs-inscription-a1-ce-01",
+        "legacy_title": "Affiche fictive d'inscription a une activite",
+        "legacy_description": "Affiche simple pour une activite de loisir avec jour, heure et prix."
+      },
+      "alt_text": "Affiche fictive pour inscription a une activite de loisir",
+      "depends_on_answer": false,
+      "expected_hash": null,
+      "dependencies": []
+    }
+  ]
+}

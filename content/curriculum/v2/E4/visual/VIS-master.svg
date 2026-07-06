@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 220" width="900" height="220" role="img" aria-label="Évaluation E4 — 120 min">
+  <title>Évaluation E4 — 120 min</title>
+  <rect x="0" y="0" width="900" height="220" fill="#ffffff" />
+  <rect x="60" y="70" width="240" height="70" fill="#dbeafe" rx="0" />
+  <text x="180" y="110" font-size="12" font-family="sans-serif" fill="#111827" text-anchor="middle">TCF ciblé</text>
+  <rect x="330" y="70" width="240" height="70" fill="#fee2e2" rx="0" />
+  <text x="450" y="110" font-size="12" font-family="sans-serif" fill="#111827" text-anchor="middle">Civique NAT</text>
+  <rect x="600" y="70" width="240" height="70" fill="#fef9c3" rx="0" />
+  <text x="720" y="110" font-size="12" font-family="sans-serif" fill="#111827" text-anchor="middle">Entretien</text>
+  <text x="450" y="180" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">Banque gelée · 120 min</text>
+</svg>

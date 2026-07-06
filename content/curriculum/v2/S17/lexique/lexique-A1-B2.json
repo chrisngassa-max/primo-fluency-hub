@@ -1,0 +1,50 @@
+{
+  "resource_id": "S17-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "droit",
+      "definition_simple": "Ce qu'une personne peut demander ou faire, garanti par la loi.",
+      "exemple": "Le droit à la santé."
+    },
+    {
+      "mot": "devoir",
+      "definition_simple": "Ce qu'une personne doit faire.",
+      "exemple": "Respecter la loi est un devoir."
+    },
+    {
+      "mot": "règle",
+      "definition_simple": "Une consigne précise valable dans un lieu donné.",
+      "exemple": "Le règlement intérieur du centre de formation."
+    },
+    {
+      "mot": "évaluation",
+      "definition_simple": "Une épreuve qui mesure des connaissances ou des compétences.",
+      "exemple": "L'évaluation E1 a lieu après cinquante heures."
+    },
+    {
+      "mot": "progrès",
+      "definition_simple": "Une amélioration entre un premier et un deuxième essai.",
+      "exemple": "Amadou fait des progrès après la remédiation."
+    },
+    {
+      "mot": "erreur",
+      "definition_simple": "Une réponse fausse ou une confusion.",
+      "exemple": "Une erreur fréquente : confondre droit et devoir."
+    },
+    {
+      "mot": "réviser",
+      "definition_simple": "Revoir un point déjà étudié pour mieux le comprendre.",
+      "exemple": "Amadou révise la distinction droit/devoir/règle."
+    },
+    {
+      "mot": "corriger",
+      "definition_simple": "Rectifier une erreur.",
+      "exemple": "Le formateur aide Amadou à corriger sa confusion."
+    },
+    {
+      "mot": "comprendre",
+      "definition_simple": "Saisir le sens de quelque chose.",
+      "exemple": "Amadou comprend mieux maintenant la différence."
+    }
+  ]
+}

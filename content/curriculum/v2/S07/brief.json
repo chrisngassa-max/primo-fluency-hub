@@ -1,0 +1,136 @@
+{
+  "session_code": "S07",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Préfecture, notification et rendez-vous",
+  "support": {
+    "support_id": "S07-support-prefecture",
+    "situation": "M. Haddad reçoit une notification fictive de la préfecture qui lui demande une pièce manquante pour son dossier de titre de séjour. Il écoute un serveur vocal fictif, comprend le délai et rédige un courriel formel en joignant la bonne pièce.",
+    "personnages": ["M. Haddad (usager)", "Serveur vocal de la préfecture (voix automatique fictive)"],
+    "faits": [
+      "La préfecture instruit les demandes de titre de séjour.",
+      "Une notification peut demander une pièce justificative manquante.",
+      "L'usager doit répondre avant la date d'échéance indiquée.",
+      "Un rendez-vous peut être nécessaire pour déposer un dossier.",
+      "Le service public traite les usagers de façon égale.",
+      "L'usager a des droits mais aussi des obligations documentaires."
+    ],
+    "nombres": [],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S07-CO-master",
+    "voice": "fr-FR-Wavenet-C",
+    "speaking_rate": 0.9,
+    "script": "Serveur vocal (voix automatique) : Bonjour. Ceci est un message pédagogique fictif ; ce n'est pas une administration réelle. Vous êtes en relation avec le service des titres de séjour.\nVotre dossier a été reçu. Il manque une pièce justificative pour continuer l'instruction.\nMerci de transmettre un justificatif de domicile récent avant la date d'échéance indiquée sur votre notification.\nVous pouvez répondre par courriel en joignant la pièce, ou prendre un rendez-vous en ligne.\nPour rappel, tout dossier incomplet ne peut pas être traité. Pour réécouter ce message, dites « répéter ». Merci et bonne journée.",
+    "pauses": [
+      { "after_word": 22, "ms": 500 },
+      { "after_word": 45, "ms": 400 },
+      { "after_word": 72, "ms": 400 }
+    ]
+  },
+  "visual": {
+    "resource_id": "S07-VIS-master",
+    "alt_text": "Notification administrative fictive en tableau : objet, piece demandee, date d'echeance, avec la mention document pedagogique fictif, sans logo ni en-tete officiel.",
+    "scene": {
+      "title": "Notification et pièce manquante (document fictif)",
+      "width": 900,
+      "height": 300,
+      "background": "#ffffff",
+      "elements": [
+        { "type": "rect", "x": 130, "y": 40, "width": 640, "height": 220, "rx": 8, "fill": "#fef9c3" },
+        { "type": "text", "x": 160, "y": 75, "fontSize": 16, "text": "Notification (document pédagogique fictif)" },
+        { "type": "line", "x1": 160, "y1": 92, "x2": 740, "y2": 92, "stroke": "#a16207", "strokeWidth": 2 },
+        { "type": "text", "x": 160, "y": 130, "fontSize": 14, "text": "Objet : dossier de titre de séjour" },
+        { "type": "text", "x": 160, "y": 165, "fontSize": 14, "text": "Pièce demandée : justificatif de domicile" },
+        { "type": "text", "x": 160, "y": 200, "fontSize": 14, "text": "À transmettre avant : la date d'échéance" },
+        { "type": "text", "x": 160, "y": 235, "fontSize": 14, "text": "Réponse : par courriel ou rendez-vous" }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S07-LEX-A1-B2",
+    "mots": [
+      { "mot": "préfecture", "definition_simple": "L'administration qui gère notamment les titres de séjour.", "exemple": "Il a un dossier à la préfecture." },
+      { "mot": "titre", "definition_simple": "Le document officiel qui autorise à séjourner.", "exemple": "Il attend son titre de séjour." },
+      { "mot": "dossier", "definition_simple": "L'ensemble des documents d'une demande.", "exemple": "Son dossier est presque complet." },
+      { "mot": "justificatif", "definition_simple": "Un document qui prouve une information.", "exemple": "Un justificatif de domicile." },
+      { "mot": "échéance", "definition_simple": "La date limite à ne pas dépasser.", "exemple": "Répondez avant l'échéance." },
+      { "mot": "rendez-vous", "definition_simple": "Un moment fixé pour être reçu.", "exemple": "Il prend un rendez-vous en ligne." },
+      { "mot": "joindre", "definition_simple": "Ajouter un document à un message.", "exemple": "Joignez le justificatif au courriel." },
+      { "mot": "transmettre", "definition_simple": "Envoyer un document à quelqu'un.", "exemple": "Transmettez la pièce demandée." }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Écoutez le message. Cochez la pièce demandée et complétez le courriel avec les amorces.",
+      "aides": ["« Objet : ... »", "« Veuillez trouver ci-joint... »", "Mots utiles : dossier, pièce, échéance"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "Quelle pièce est demandée ?", "options": ["Un justificatif de domicile", "Un billet de train", "Une photo de vacances"] },
+        { "id": "q2", "type": "vrai_faux", "enonce": "Un dossier incomplet ne peut pas être traité." }
+      ],
+      "corrige": { "q1": "Un justificatif de domicile", "q2": true }
+    },
+    "A2": {
+      "consigne": "Rédigez un courriel simple à la préfecture pour transmettre la pièce demandée avant l'échéance.",
+      "aides": ["Pensez à : objet, pièce jointe, politesse"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "Que faut-il respecter pour répondre à la notification ?", "options": ["La date d'échéance", "L'heure du déjeuner", "La météo"] },
+        { "id": "q2", "type": "reponse_courte", "enonce": "Écrivez l'objet d'un courriel de réponse à la préfecture." }
+      ],
+      "corrige": { "q1": "La date d'échéance", "q2": "Exemple : « Objet : transmission d'un justificatif de domicile pour mon dossier de titre de séjour »." }
+    },
+    "B1": {
+      "consigne": "Rédigez un courriel formel complet à la préfecture (objet, référence, pièce jointe, formule de politesse), puis expliquez les droits et obligations de l'usager face à l'administration.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "reponse_longue", "enonce": "Écrivez un courriel formel de réponse avec tous les éléments attendus." },
+        { "id": "q2", "type": "reponse_longue", "enonce": "Expliquez ce que l'usager doit faire et ce qu'il peut attendre du service public." }
+      ],
+      "corrige": { "q1": "Courriel attendu : objet clair, reference du dossier, corps precisant la piece jointe, formule de politesse.", "q2": "L'usager doit fournir les pieces et respecter les delais ; il peut attendre un traitement egal et une reponse du service public." }
+    },
+    "B2": {
+      "consigne": "Analysez la relation entre l'usager et l'administration et nuancez les difficultés des démarches en ligne.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "argumentation", "enonce": "Argumentez : pourquoi les délais et les pièces justificatives sont-ils nécessaires dans une démarche administrative ?" },
+        { "id": "q2", "type": "argumentation", "enonce": "Nuancez : quelles difficultés la dématérialisation crée-t-elle et comment y remédier ?" }
+      ],
+      "corrige": { "q1": "Reponse ouverte : securite juridique, egalite de traitement, verification des situations.", "q2": "Reponse ouverte : fracture numerique, complexite ; remedes : accompagnement, points d'accueil, mediation numerique." }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S07-QCM-civique",
+    "mention": "CSP",
+    "theme": "Droits et devoirs",
+    "questions": [
+      { "notion": "administration", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "L'administration qui instruit les titres de séjour est :", "options": ["La préfecture", "La mairie", "Le tribunal"], "reponse": "La préfecture" },
+      { "notion": "obligations de l'usager", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Face à une notification demandant une pièce, l'usager doit :", "options": ["Répondre avant l'échéance", "Ignorer le message", "Changer de préfecture"], "reponse": "Répondre avant l'échéance" },
+      { "notion": "service public", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Un service public doit traiter les usagers :", "options": ["De façon égale", "Selon leur richesse", "Selon leur origine"], "reponse": "De façon égale" },
+      { "notion": "démarches", "type": "mise_en_situation", "official_status": "simulation_pedagogique", "enonce": "Un dossier est incomplet. La bonne conduite est de :", "options": ["Transmettre la pièce manquante", "Recommencer tout le dossier ailleurs", "Attendre sans rien faire"], "reponse": "Transmettre la pièce manquante" },
+      { "notion": "droits de l'usager", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "L'usager d'un service public a le droit :", "options": ["D'obtenir une réponse à sa demande", "De ne jamais fournir de pièce", "De fixer lui-même la loi"], "reponse": "D'obtenir une réponse à sa demande" }
+    ]
+  },
+  "devoirs": {
+    "A1": "À la maison : complétez le courriel de réponse avec l'objet et la pièce jointe.",
+    "A2": "À la maison : écrivez un courriel de 5 phrases pour transmettre une pièce à la préfecture.",
+    "B1": "À la maison : rédigez un courriel formel complet de réponse à une notification.",
+    "B2": "À la maison : rédigez un paragraphe argumenté sur les droits et obligations de l'usager."
+  },
+  "formateur": {
+    "fiche_formateur": "Séance préfecture et notification : chaque apprenant doit savoir (1) comprendre une notification et un serveur vocal, (2) rédiger un courriel formel avec pièce jointe, (3) connaître service public, échéances, droits et obligations de l'usager. Tout le support est signalé comme fictif et n'imite aucune identité administrative réelle.",
+    "deroule_180min": [
+      { "phase": "Rituel civique", "duree_min": 10, "description": "Rappel du role du service public a partir du visuel maitre." },
+      { "phase": "Activation + lexique", "duree_min": 20, "description": "Decouverte du lexique (prefecture, dossier, echeance, joindre...)." },
+      { "phase": "Support invariant CO/CE", "duree_min": 50, "description": "Ecoute du serveur vocal fictif et lecture de la notification." },
+      { "phase": "Ateliers differencies", "duree_min": 60, "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du meme support." },
+      { "phase": "Production EE/EO", "duree_min": 30, "description": "Chaque apprenant redige un courriel formel de reponse." },
+      { "phase": "Fixation", "duree_min": 10, "description": "Synthese, QCM civique CSP, devoir personnalise." }
+    ],
+    "adaptation_rules": [
+      "Insister sur le caractere fictif du serveur vocal et de la notification.",
+      "Verifier la structure du courriel (objet, corps, politesse) avant l'envoi simule.",
+      "Ne jamais imiter l'identite sonore ou visuelle d'une administration reelle."
+    ]
+  }
+}

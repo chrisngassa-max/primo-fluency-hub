@@ -11,6 +11,7 @@ export default defineConfig({
     include: [
       "src/**/*.{test,spec}.{ts,tsx}",
       "supabase/functions/**/*.{test,spec}.ts",
+      "scripts/curriculum/**/*.{test,spec}.mjs",
     ],
   },
   resolve: {

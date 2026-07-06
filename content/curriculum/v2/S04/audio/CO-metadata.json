@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Message de l'école (voix de Mme Perez) : Bonjour, ceci est un message de l'école pour la famille de votre enfant. Ceci est un message pédagogique fictif, sans nom ni donnée réelle. Votre enfant était absent hier matin et nous n'avons pas reçu de justificatif.\nNous vous rappelons que l'instruction est obligatoire de trois à seize ans et que les parents doivent justifier chaque absence.\nMerci de nous envoyer un mot écrit précisant la date et le motif de l'absence. Vous pouvez aussi consulter le calendrier scolaire affiché à l'entrée.\nSi vous avez une question, l'équipe reste à votre disposition. Bonne journée.",
+  "transcript": "Message de l'école (voix de Mme Perez) : Bonjour, ceci est un message de l'école pour la famille de votre enfant. Ceci est un message pédagogique fictif, sans nom ni donnée réelle. Votre enfant était absent hier matin et nous n'avons pas reçu de justificatif.\nNous vous rappelons que l'instruction est obligatoire de trois à seize ans et que les parents doivent justifier chaque absence.\nMerci de nous envoyer un mot écrit précisant la date et le motif de l'absence. Vous pouvez aussi consulter le calendrier scolaire affiché à l'entrée.\nSi vous avez une question, l'équipe reste à votre disposition. Bonne journée.",
+  "voice": "fr-FR-Wavenet-C",
+  "languageCode": "fr-FR",
+  "speaking_rate": 0.9,
+  "pauses": [
+    {
+      "after_word": 20,
+      "ms": 500
+    },
+    {
+      "after_word": 45,
+      "ms": 400
+    },
+    {
+      "after_word": 75,
+      "ms": 400
+    }
+  ],
+  "duration_seconds": 51,
+  "hash": "5ddedf9efc4fa9622dccb13e019c2590800e1d209c1c5088f2ce5dd0cc9dbac3"
+}

@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Omar : Madame, je vous écris une réclamation formelle : ma fiche de paie de mars compte dix heures en moins.\nRH : Nous allons vérifier. Votre contrat est bien à temps plein ?\nOmar : Oui. Je joins les pointages. Je demande une régularisation avant le dix.\nRH : D'accord. Vous pouvez aussi informer les délégués syndicaux si besoin.\nOmar : Les syndicats aident à défendre les salariés collectivement ?\nRH : Oui, c'est leur rôle. Les impôts, eux, financent la sécurité sociale et les services publics : solidarité nationale.\nOmar : Et l'égalité femmes-hommes au travail ?\nRH : C'est un principe légal. Toute discrimination est interdite.\nOmar : Merci. J'attends votre réponse écrite.",
+  "transcript": "Omar : Madame, je vous écris une réclamation formelle : ma fiche de paie de mars compte dix heures en moins.\nRH : Nous allons vérifier. Votre contrat est bien à temps plein ?\nOmar : Oui. Je joins les pointages. Je demande une régularisation avant le dix.\nRH : D'accord. Vous pouvez aussi informer les délégués syndicaux si besoin.\nOmar : Les syndicats aident à défendre les salariés collectivement ?\nRH : Oui, c'est leur rôle. Les impôts, eux, financent la sécurité sociale et les services publics : solidarité nationale.\nOmar : Et l'égalité femmes-hommes au travail ?\nRH : C'est un principe légal. Toute discrimination est interdite.\nOmar : Merci. J'attends votre réponse écrite.",
+  "voice": "fr-FR-Wavenet-C",
+  "languageCode": "fr-FR",
+  "speaking_rate": 0.92,
+  "pauses": [
+    {
+      "after_word": 12,
+      "ms": 400
+    },
+    {
+      "after_word": 60,
+      "ms": 400
+    },
+    {
+      "after_word": 130,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 58,
+  "hash": "8873d89065d04af2a4aa51dff1e475d4269394b38b69aa16fe617ef2b7b6a414"
+}

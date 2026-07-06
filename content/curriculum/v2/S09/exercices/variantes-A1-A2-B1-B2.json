@@ -1,0 +1,114 @@
+[
+  {
+    "support_id": "S09-support-laicite",
+    "version": 1,
+    "niveau": "A1",
+    "consigne": "Écoutez les situations. Associez chaque situation à la bonne règle : neutralité ou liberté.",
+    "aides": [
+      "Agent public = neutralité",
+      "Espace privé = liberté",
+      "Mots utiles : croire, agent, usager"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Pendant son service, un agent public doit :",
+        "options": [
+          "Rester neutre",
+          "Montrer sa religion",
+          "Choisir les usagers"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "vrai_faux",
+        "enonce": "Un usager du service public est libre de croire ou de ne pas croire."
+      }
+    ],
+    "corrige": {
+      "q1": "Rester neutre",
+      "q2": true
+    },
+    "invariants_hash": "7b56841e14cf1f69519156c389cb630d666f2a8201662de7fa82bacbdbd0d01c"
+  },
+  {
+    "support_id": "S09-support-laicite",
+    "version": 1,
+    "niveau": "A2",
+    "consigne": "Expliquez à l'oral une règle de laïcité et justifiez une conduite adaptée dans une situation.",
+    "aides": [
+      "Pensez à : neutralité, liberté, espace privé"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Dans l'espace privé, une personne :",
+        "options": [
+          "Est libre de pratiquer sa religion",
+          "Doit rester neutre",
+          "N'a aucun droit"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "reponse_courte",
+        "enonce": "Expliquez pourquoi un agent public reste neutre."
+      }
+    ],
+    "corrige": {
+      "q1": "Est libre de pratiquer sa religion",
+      "q2": "Parce qu'il représente l'État, qui doit traiter tous les usagers de façon égale et sans favoritisme."
+    },
+    "invariants_hash": "7b56841e14cf1f69519156c389cb630d666f2a8201662de7fa82bacbdbd0d01c"
+  },
+  {
+    "support_id": "S09-support-laicite",
+    "version": 1,
+    "niveau": "B1",
+    "consigne": "Expliquez la différence entre neutralité de l'État et liberté de conscience, puis justifiez une conduite conforme dans deux situations.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "reponse_longue",
+        "enonce": "Distinguez ce que l'État impose (neutralité) et ce que la personne garde (liberté de conscience)."
+      },
+      {
+        "id": "q2",
+        "type": "reponse_longue",
+        "enonce": "Justifiez la conduite attendue pour un agent public et pour un usager."
+      }
+    ],
+    "corrige": {
+      "q1": "L'Etat et ses agents sont neutres ; les personnes gardent leur liberte de croire ou non.",
+      "q2": "L'agent reste neutre pendant le service ; l'usager conserve sa liberte de conviction et n'a pas a la justifier."
+    },
+    "invariants_hash": "7b56841e14cf1f69519156c389cb630d666f2a8201662de7fa82bacbdbd0d01c"
+  },
+  {
+    "support_id": "S09-support-laicite",
+    "version": 1,
+    "niveau": "B2",
+    "consigne": "Analysez l'apport de la laïcité au vivre-ensemble et nuancez les malentendus fréquents à son sujet.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "argumentation",
+        "enonce": "Argumentez : en quoi la neutralité de l'État garantit-elle l'égalité de tous les usagers ?"
+      },
+      {
+        "id": "q2",
+        "type": "argumentation",
+        "enonce": "Nuancez : la laïcité est-elle une interdiction des religions ? Justifiez."
+      }
+    ],
+    "corrige": {
+      "q1": "Reponse ouverte : traitement egal, absence de favoritisme, confiance dans le service public.",
+      "q2": "Reponse ouverte : non, la laicite garantit la liberte de conscience et de culte ; elle organise la neutralite de l'Etat, pas l'interdiction de croire."
+    },
+    "invariants_hash": "7b56841e14cf1f69519156c389cb630d666f2a8201662de7fa82bacbdbd0d01c"
+  }
+]

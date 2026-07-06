@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 300" width="900" height="300" role="img" aria-label="Fiche de paie fictive (jeu de données pédagogique)">
+  <title>Fiche de paie fictive (jeu de données pédagogique)</title>
+  <rect x="0" y="0" width="900" height="300" fill="#ffffff" />
+  <rect x="120" y="40" width="660" height="220" fill="#f8fafc" rx="8" />
+  <text x="150" y="75" font-size="16" font-family="sans-serif" fill="#111827" text-anchor="start">Bulletin de paie (document pédagogique fictif)</text>
+  <line x1="150" y1="95" x2="750" y2="95" stroke="#94a3b8" stroke-width="2" />
+  <text x="150" y="130" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="start">Durée : 35 h / semaine</text>
+  <text x="150" y="165" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="start">Salaire brut : 1800 €</text>
+  <text x="150" y="200" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="start">Cotisations sociales : − 400 €</text>
+  <text x="150" y="235" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="start">Salaire net : 1400 €</text>
+  <line x1="150" y1="212" x2="500" y2="212" stroke="#94a3b8" stroke-width="1" />
+</svg>

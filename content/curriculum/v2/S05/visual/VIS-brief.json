@@ -1,0 +1,97 @@
+{
+  "resource_id": "S05-VIS-master",
+  "scene": {
+    "title": "Immeuble et médiation de voisinage",
+    "width": 900,
+    "height": 320,
+    "background": "#ffffff",
+    "elements": [
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 40,
+        "width": 240,
+        "height": 240,
+        "rx": 6,
+        "fill": "#eef2ff"
+      },
+      {
+        "type": "line",
+        "x1": 60,
+        "y1": 120,
+        "x2": 300,
+        "y2": 120,
+        "stroke": "#94a3b8",
+        "strokeWidth": 2
+      },
+      {
+        "type": "line",
+        "x1": 60,
+        "y1": 200,
+        "x2": 300,
+        "y2": 200,
+        "stroke": "#94a3b8",
+        "strokeWidth": 2
+      },
+      {
+        "type": "text",
+        "x": 180,
+        "y": 90,
+        "anchor": "middle",
+        "fontSize": 13,
+        "text": "Appartement 3"
+      },
+      {
+        "type": "text",
+        "x": 180,
+        "y": 170,
+        "anchor": "middle",
+        "fontSize": 13,
+        "text": "Appartement 2"
+      },
+      {
+        "type": "text",
+        "x": 180,
+        "y": 250,
+        "anchor": "middle",
+        "fontSize": 13,
+        "text": "Appartement 1"
+      },
+      {
+        "type": "rect",
+        "x": 420,
+        "y": 150,
+        "width": 360,
+        "height": 90,
+        "rx": 8,
+        "fill": "#dcfce7"
+      },
+      {
+        "type": "text",
+        "x": 600,
+        "y": 190,
+        "anchor": "middle",
+        "fontSize": 15,
+        "text": "Table de médiation"
+      },
+      {
+        "type": "text",
+        "x": 600,
+        "y": 215,
+        "anchor": "middle",
+        "fontSize": 12,
+        "text": "(solution à l'amiable)"
+      },
+      {
+        "type": "line",
+        "x1": 300,
+        "y1": 195,
+        "x2": 420,
+        "y2": 195,
+        "stroke": "#374151",
+        "strokeWidth": 3
+      }
+    ]
+  },
+  "alt_text": "Plan simple d'un immeuble en coupe avec trois appartements superposes et une table de mediation au rez-de-chaussee, sans nom ni logo."
+}

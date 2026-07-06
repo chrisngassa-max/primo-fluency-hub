@@ -1,0 +1,67 @@
+{
+  "resource_id": "E1-QCM-civique",
+  "mention": "CSP",
+  "theme": "Évaluation CSP",
+  "questions": [
+    {
+      "notion": "E1 timing",
+      "type": "connaissance",
+      "enonce": "E1 dure :",
+      "options": [
+        "120 minutes",
+        "180 minutes",
+        "30 minutes"
+      ],
+      "reponse": "120 minutes",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "banque",
+      "type": "connaissance",
+      "enonce": "La banque gelée E1 :",
+      "options": [
+        "N'ajoute pas de nouveaux faits par niveau",
+        "Change chaque jour",
+        "N'existe pas"
+      ],
+      "reponse": "N'ajoute pas de nouveaux faits par niveau",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "horaire",
+      "type": "connaissance",
+      "enonce": "E1 a lieu après :",
+      "options": [
+        "50 heures",
+        "80 heures",
+        "10 heures"
+      ],
+      "reponse": "50 heures",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "remédiation",
+      "type": "connaissance",
+      "enonce": "E1 produit un plan :",
+      "options": [
+        "S17-S24",
+        "S01-S05",
+        "Aucun"
+      ],
+      "reponse": "S17-S24",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "civique",
+      "type": "mise_en_situation",
+      "enonce": "Le civique E1 est :",
+      "options": [
+        "CSP abrégé",
+        "NAT complet",
+        "Absent"
+      ],
+      "reponse": "CSP abrégé",
+      "official_status": "simulation_pedagogique"
+    }
+  ]
+}

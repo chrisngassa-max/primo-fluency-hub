@@ -1,0 +1,45 @@
+{
+  "resource_id": "S13-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "opinion",
+      "definition_simple": "Ce qu'une personne pense.",
+      "exemple": "Chacun peut donner son opinion."
+    },
+    {
+      "mot": "critique",
+      "definition_simple": "Un avis qui juge une idée ou une action.",
+      "exemple": "La critique d'une idée est permise."
+    },
+    {
+      "mot": "insulte",
+      "definition_simple": "Une parole qui blesse et attaque une personne.",
+      "exemple": "L'insulte n'est pas protégée par la loi."
+    },
+    {
+      "mot": "diffamation",
+      "definition_simple": "Dire une fausse accusation qui nuit à quelqu'un.",
+      "exemple": "La diffamation peut être sanctionnée."
+    },
+    {
+      "mot": "menace",
+      "definition_simple": "Annoncer un mal à faire à quelqu'un.",
+      "exemple": "La menace est interdite."
+    },
+    {
+      "mot": "presse",
+      "definition_simple": "Les journaux et médias qui informent.",
+      "exemple": "La liberté de la presse est essentielle."
+    },
+    {
+      "mot": "publier",
+      "definition_simple": "Rendre public un texte ou une image.",
+      "exemple": "On est responsable de ce qu'on publie."
+    },
+    {
+      "mot": "responsabilité",
+      "definition_simple": "Le fait de répondre de ses actes.",
+      "exemple": "Chacun a une responsabilité en ligne."
+    }
+  ]
+}

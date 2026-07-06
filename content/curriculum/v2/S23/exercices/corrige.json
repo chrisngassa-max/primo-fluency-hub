@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "Une interaction",
+    "q2": true
+  },
+  "A2": {
+    "q1": "Un point de vue argumenté",
+    "q2": "Fluidité, interaction ou cohérence."
+  },
+  "B1": {
+    "q1": "Parcours clair avec projet.",
+    "q2": "Avis + arguments + nuance."
+  },
+  "B2": {
+    "q1": "Réponse ouverte : questions précises, relances.",
+    "q2": "Réponse ouverte : reformuler, prendre temps, structurer."
+  }
+}

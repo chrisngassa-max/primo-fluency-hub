@@ -1,0 +1,83 @@
+{
+  "session_code": "S35",
+  "variants": [
+    {
+      "niveau": "A1",
+      "consigne": "Lisez les chiffres fictifs du dossier.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Les données sont :",
+          "options": [
+            "Fictives pédagogiques",
+            "Officielles INSEE",
+            "Secrètes"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "Il faut distinguer opinion et fait."
+        }
+      ]
+    },
+    {
+      "niveau": "A2",
+      "consigne": "Position courte avec un chiffre du dossier.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "62% concernent :",
+          "options": [
+            "Cohésion perçue",
+            "Taxe euro",
+            "Score foot"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Un enjeu contemporain cité ?"
+        }
+      ]
+    },
+    {
+      "niveau": "B1",
+      "consigne": "Texte argumenté prudent.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Position sur cohésion/logement."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Nuancer avec données fictives."
+        }
+      ]
+    },
+    {
+      "niveau": "B2",
+      "consigne": "EE B2 : enjeu contemporain documenté.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Citoyenneté et environnement ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Risque des stats non vérifiées ?"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "15",
+    "q2": true
+  },
+  "A2": {
+    "q1": "La carte Vitale",
+    "q2": "Urgence : difficulté à respirer, douleur très forte. Non urgente : petit mal de tête, légère fièvre."
+  },
+  "B1": {
+    "q1": "Une urgence menace la vie ou la sante immediate (appel du 15) ; une situation non urgente se gere par un rendez-vous avec le medecin traitant.",
+    "q2": "Le medecin traitant assure le suivi et oriente ; la carte Vitale permet le remboursement des soins."
+  },
+  "B2": {
+    "q1": "Reponse ouverte : preserver les services d'urgence pour les cas graves, orienter correctement, eviter la saturation.",
+    "q2": "Reponse ouverte : barriere de la langue, meconnaissance du systeme, delais ; solutions : mediation, information, medecin traitant."
+  }
+}

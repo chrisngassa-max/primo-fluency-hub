@@ -1,0 +1,108 @@
+[
+  {
+    "support_id": "E4-support",
+    "version": 1,
+    "niveau": "A1",
+    "consigne": "Lisez les consignes d'évaluation E4. Identifiez les épreuves et durées.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "L'évaluation E4 utilise :",
+        "options": [
+          "Une banque gelée",
+          "Des questions improvisées",
+          "Aucune épreuve"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "vrai_faux",
+        "enonce": "Les consignes sont chronométrées."
+      }
+    ],
+    "corrige": {
+      "q1": "Une banque gelée",
+      "q2": true
+    },
+    "invariants_hash": "abedf3428970bd8ce09c091eaeb1f988155645d9560bfe086e5660bb58c21beb"
+  },
+  {
+    "support_id": "E4-support",
+    "version": 1,
+    "niveau": "A2",
+    "consigne": "Expliquez le déroulé de E4 et le format des épreuves.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "La banque gelée signifie :",
+        "options": [
+          "Pas de nouveaux faits par niveau",
+          "Questions au hasard",
+          "Oral seulement"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "reponse_courte",
+        "enonce": "Citez une règle de l'évaluation."
+      }
+    ],
+    "corrige": {
+      "q1": "Pas de nouveaux faits par niveau",
+      "q2": "Chronométrage, sans aide, séparation langue/civique."
+    },
+    "invariants_hash": "abedf3428970bd8ce09c091eaeb1f988155645d9560bfe086e5660bb58c21beb"
+  },
+  {
+    "support_id": "E4-support",
+    "version": 1,
+    "niveau": "B1",
+    "consigne": "Décrivez comment se préparer à E4 selon le support.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "reponse_longue",
+        "enonce": "Déroulé et timing de l'évaluation."
+      },
+      {
+        "id": "q2",
+        "type": "reponse_longue",
+        "enonce": "Règles de la banque gelée."
+      }
+    ],
+    "corrige": {
+      "q1": "Phases et durées conformes au support.",
+      "q2": "Items verrouillés, pas de nouveaux faits."
+    },
+    "invariants_hash": "abedf3428970bd8ce09c091eaeb1f988155645d9560bfe086e5660bb58c21beb"
+  },
+  {
+    "support_id": "E4-support",
+    "version": 1,
+    "niveau": "B2",
+    "consigne": "Analysez les enjeux de E4 pour votre orientation.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "argumentation",
+        "enonce": "Intérêt d'une banque gelée ?"
+      },
+      {
+        "id": "q2",
+        "type": "argumentation",
+        "enonce": "Comment utiliser les résultats ?"
+      }
+    ],
+    "corrige": {
+      "q1": "Réponse ouverte : équité, comparabilité.",
+      "q2": "Réponse ouverte : remédiation, orientation."
+    },
+    "invariants_hash": "abedf3428970bd8ce09c091eaeb1f988155645d9560bfe086e5660bb58c21beb"
+  }
+]

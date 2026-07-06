@@ -1,0 +1,67 @@
+{
+  "resource_id": "S18-QCM-civique",
+  "mention": "CSP",
+  "theme": "Droits et devoirs",
+  "questions": [
+    {
+      "notion": "droits de l'usager",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Un usager a le droit :",
+      "options": [
+        "D'être informé sur son dossier",
+        "De refuser toute pièce",
+        "De ne jamais répondre"
+      ],
+      "reponse": "D'être informé sur son dossier"
+    },
+    {
+      "notion": "obligations documentaires",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "L'usager doit fournir des pièces :",
+      "options": [
+        "Conformes et complètes",
+        "Uniquement orales",
+        "Sans délai"
+      ],
+      "reponse": "Conformes et complètes"
+    },
+    {
+      "notion": "service public",
+      "type": "mise_en_situation",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Fatou reçoit une demande de justificatif. Elle doit :",
+      "options": [
+        "Répondre dans le délai indiqué",
+        "Ignorer la notification",
+        "Aller au tribunal"
+      ],
+      "reponse": "Répondre dans le délai indiqué"
+    },
+    {
+      "notion": "administration",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "La préfecture instruit notamment :",
+      "options": [
+        "Les demandes de titre de séjour",
+        "Les contrats de travail",
+        "Les actes de naissance"
+      ],
+      "reponse": "Les demandes de titre de séjour"
+    },
+    {
+      "notion": "dossier incomplet",
+      "type": "mise_en_situation",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Un dossier incomplet :",
+      "options": [
+        "Ne peut pas être traité",
+        "Est toujours accepté",
+        "N'a pas besoin de pièces"
+      ],
+      "reponse": "Ne peut pas être traité"
+    }
+  ]
+}

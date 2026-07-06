@@ -1,0 +1,88 @@
+{
+  "session_code": "S19",
+  "variants": [
+    {
+      "niveau": "A1",
+      "consigne": "Écoutez le dialogue. Répondez aux questions.",
+      "aides": [
+        "Karim = usager",
+        "Guichet 3 = dépôt"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Quel guichet pour déposer une pièce ?",
+          "options": [
+            "Guichet 3",
+            "Guichet 1",
+            "Guichet 2"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "Karim a le droit de demander une reformulation."
+        }
+      ]
+    },
+    {
+      "niveau": "A2",
+      "consigne": "Jouez une interaction courte : demander une précision et reformuler.",
+      "aides": [
+        "Délai = quinze jours"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Combien de jours restent si la notification date d'il y a cinq jours ?",
+          "options": [
+            "Dix jours",
+            "Quinze jours",
+            "Cinq jours"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Citez un devoir de Karim au guichet."
+        }
+      ]
+    },
+    {
+      "niveau": "B1",
+      "consigne": "Expliquez comment Karim résout le malentendu et distinguez droits et neutralité.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Décrivez la résolution du malentendu (guichet et délai)."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Distinguez le rôle neutre de l'agent et les droits de l'usager."
+        }
+      ]
+    },
+    {
+      "niveau": "B2",
+      "consigne": "Argumentez sur reformulation et recours ; nuancez les limites.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Pourquoi reformuler est-il efficace face à un agent ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Quand un recours administratif devient-il pertinent ?"
+        }
+      ]
+    }
+  ]
+}

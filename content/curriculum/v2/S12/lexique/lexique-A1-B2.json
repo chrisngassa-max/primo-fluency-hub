@@ -1,0 +1,45 @@
+{
+  "resource_id": "S12-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "victime",
+      "definition_simple": "Une personne qui subit un tort.",
+      "exemple": "La victime peut être aidée."
+    },
+    {
+      "mot": "témoin",
+      "definition_simple": "Une personne qui voit ou constate un fait.",
+      "exemple": "Un témoin peut confirmer les faits."
+    },
+    {
+      "mot": "protéger",
+      "definition_simple": "Mettre à l'abri du danger ou du tort.",
+      "exemple": "La loi protège les victimes."
+    },
+    {
+      "mot": "signaler",
+      "definition_simple": "Faire connaître un problème à qui peut agir.",
+      "exemple": "Elle décide de signaler la discrimination."
+    },
+    {
+      "mot": "égalité",
+      "definition_simple": "Le fait de traiter les personnes de la même façon.",
+      "exemple": "L'égalité femmes-hommes est un principe."
+    },
+    {
+      "mot": "dignité",
+      "definition_simple": "Le respect dû à chaque personne.",
+      "exemple": "La dignité doit être respectée."
+    },
+    {
+      "mot": "aide",
+      "definition_simple": "Un soutien apporté à une personne.",
+      "exemple": "Elle demande de l'aide."
+    },
+    {
+      "mot": "association",
+      "definition_simple": "Un groupe qui agit pour une cause.",
+      "exemple": "Une association accompagne les victimes."
+    }
+  ]
+}

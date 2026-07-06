@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Consignes E3 — sortie B1/CR — document fictif.\n\nDurée totale : cent vingt minutes. Épreuves langue B1 : CO, CE, EE, EO chronométrées, banque gelée.\n\nCivique CR ciblé : vingt-cinq minutes, items verrouillés, thèmes du module F.\n\nAucun nouvel item le jour J. Grilles séparées.\n\nAprès E3 : certificatif interne de sortie B1/CR, poursuite B2/NAT (S32+), ou volume complémentaire.\n\nBonne épreuve.",
+  "transcript": "Consignes E3 — sortie B1/CR — document fictif.\n\nDurée totale : cent vingt minutes. Épreuves langue B1 : CO, CE, EE, EO chronométrées, banque gelée.\n\nCivique CR ciblé : vingt-cinq minutes, items verrouillés, thèmes du module F.\n\nAucun nouvel item le jour J. Grilles séparées.\n\nAprès E3 : certificatif interne de sortie B1/CR, poursuite B2/NAT (S32+), ou volume complémentaire.\n\nBonne épreuve.",
+  "voice": "fr-FR-Wavenet-C",
+  "languageCode": "fr-FR",
+  "speaking_rate": 0.92,
+  "pauses": [
+    {
+      "after_word": 12,
+      "ms": 400
+    },
+    {
+      "after_word": 60,
+      "ms": 400
+    },
+    {
+      "after_word": 130,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 31,
+  "hash": "77cfc3de59072406106164b7aefbfb2eeb9c11d70bb8ef367a5bb1d3d33d6390"
+}

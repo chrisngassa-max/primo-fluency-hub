@@ -1,0 +1,138 @@
+{
+  "session_code": "S16",
+  "plan_version": "curriculum-v2.0",
+  "titre": "France, territoires, Europe et patrimoine",
+  "support": {
+    "support_id": "S16-support-territoires",
+    "situation": "Un récit de voyage informatif emmène l'auditeur de la métropole à l'outre-mer, puis vers un pays européen. Il présente l'organisation territoriale (commune, département, région), l'appartenance à l'Europe et des éléments de patrimoine.",
+    "personnages": ["Narrateur (récit de voyage informatif)"],
+    "faits": [
+      "La France comprend la métropole et des territoires d'outre-mer.",
+      "Le territoire est organisé en communes, départements et régions.",
+      "La France est membre de l'Union européenne.",
+      "Le patrimoine comprend des monuments, des paysages et des traditions.",
+      "La diversité des territoires fait partie de la richesse de la France."
+    ],
+    "nombres": [],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S16-CO-master",
+    "voice": "fr-FR-Wavenet-D",
+    "speaking_rate": 0.9,
+    "script": "Narrateur : Partons pour un petit voyage à travers la France et l'Europe.\nD'abord, la métropole : c'est la partie de la France située en Europe. On y trouve des communes, des départements et des régions.\nMais la France, ce n'est pas seulement la métropole. Il y a aussi l'outre-mer : des territoires situés plus loin, avec leurs propres paysages et cultures.\nLa commune est le territoire le plus proche des habitants. Plusieurs communes forment un département, et plusieurs départements forment une région.\nLa France fait aussi partie de l'Union européenne. On peut voyager plus facilement entre les pays européens.\nEnfin, chaque territoire a son patrimoine : des monuments, des paysages, des traditions.\nEn résumé : la France, c'est la métropole et l'outre-mer ; le territoire s'organise en communes, départements et régions ; et la France appartient à l'Europe.",
+    "pauses": [
+      { "after_word": 14, "ms": 500 },
+      { "after_word": 60, "ms": 400 },
+      { "after_word": 115, "ms": 500 }
+    ]
+  },
+  "visual": {
+    "resource_id": "S16-VIS-master",
+    "alt_text": "Schema en niveaux embreges du plus local au plus large : commune, departement, region, metropole et outre-mer, Union europeenne, sans carte geographique reelle.",
+    "scene": {
+      "title": "Organisation territoriale, du local à l'Europe",
+      "width": 900,
+      "height": 320,
+      "background": "#ffffff",
+      "elements": [
+        { "type": "rect", "x": 60, "y": 240, "width": 780, "height": 60, "rx": 8, "fill": "#ede9fe" },
+        { "type": "text", "x": 450, "y": 276, "anchor": "middle", "fontSize": 14, "text": "Union européenne" },
+        { "type": "rect", "x": 120, "y": 170, "width": 660, "height": 55, "rx": 8, "fill": "#dbeafe" },
+        { "type": "text", "x": 450, "y": 203, "anchor": "middle", "fontSize": 13, "text": "France : métropole + outre-mer" },
+        { "type": "rect", "x": 200, "y": 110, "width": 500, "height": 45, "rx": 8, "fill": "#dcfce7" },
+        { "type": "text", "x": 450, "y": 138, "anchor": "middle", "fontSize": 13, "text": "Région" },
+        { "type": "rect", "x": 280, "y": 60, "width": 340, "height": 40, "rx": 8, "fill": "#fef9c3" },
+        { "type": "text", "x": 450, "y": 85, "anchor": "middle", "fontSize": 13, "text": "Département" },
+        { "type": "rect", "x": 360, "y": 20, "width": 180, "height": 35, "rx": 8, "fill": "#fee2e2" },
+        { "type": "text", "x": 450, "y": 43, "anchor": "middle", "fontSize": 13, "text": "Commune" }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S16-LEX-A1-B2",
+    "mots": [
+      { "mot": "territoire", "definition_simple": "Une étendue de terre organisée.", "exemple": "La France a de nombreux territoires." },
+      { "mot": "région", "definition_simple": "Un grand territoire regroupant des départements.", "exemple": "La région regroupe plusieurs départements." },
+      { "mot": "département", "definition_simple": "Un territoire regroupant des communes.", "exemple": "Le département a un numéro." },
+      { "mot": "commune", "definition_simple": "Le territoire local de base (ville ou village).", "exemple": "La commune est proche des habitants." },
+      { "mot": "outre-mer", "definition_simple": "Les territoires français situés loin de la métropole.", "exemple": "L'outre-mer fait partie de la France." },
+      { "mot": "frontière", "definition_simple": "La limite entre deux pays.", "exemple": "On passe une frontière en Europe." },
+      { "mot": "Europe", "definition_simple": "Le continent et l'Union de pays dont fait partie la France.", "exemple": "La France est en Europe." },
+      { "mot": "patrimoine", "definition_simple": "L'ensemble des monuments, paysages et traditions à préserver.", "exemple": "Ce château fait partie du patrimoine." }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Écoutez le récit. Rangez du plus petit au plus grand : commune, département, région.",
+      "aides": ["Commune < département < région", "Mots utiles : territoire, Europe, patrimoine"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "Quel est le territoire le plus proche des habitants ?", "options": ["La commune", "La région", "L'Europe"] },
+        { "id": "q2", "type": "vrai_faux", "enonce": "La France comprend la métropole et l'outre-mer." }
+      ],
+      "corrige": { "q1": "La commune", "q2": true }
+    },
+    "A2": {
+      "consigne": "Situez un lieu (commune, département, région) et présentez un élément de patrimoine.",
+      "aides": ["Pensez à : commune, région, patrimoine"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "La France est membre de :", "options": ["L'Union européenne", "Aucune organisation", "Un seul département"] },
+        { "id": "q2", "type": "reponse_courte", "enonce": "Citez un élément de patrimoine (monument, paysage ou tradition)." }
+      ],
+      "corrige": { "q1": "L'Union européenne", "q2": "Réponse ouverte : un monument, un paysage ou une tradition de son choix." }
+    },
+    "B1": {
+      "consigne": "Présentez l'organisation territoriale de la France et expliquez ce qu'apporte l'appartenance à l'Europe.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "reponse_longue", "enonce": "Expliquez comment s'emboîtent commune, département, région et métropole/outre-mer." },
+        { "id": "q2", "type": "reponse_longue", "enonce": "Décrivez un avantage concret de l'appartenance de la France à l'Union européenne." }
+      ],
+      "corrige": { "q1": "La commune s'inscrit dans un departement, lui-meme dans une region ; la France reunit metropole et outre-mer.", "q2": "Reponse ouverte : circulation facilitee, cooperation, echanges, projets communs." }
+    },
+    "B2": {
+      "consigne": "Analysez l'articulation entre organisation territoriale, appartenance européenne et patrimoine, et nuancez la notion d'unité dans la diversité.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "argumentation", "enonce": "Argumentez : en quoi la diversité des territoires est-elle une richesse pour la France ?" },
+        { "id": "q2", "type": "argumentation", "enonce": "Nuancez : comment concilier identité locale, unité nationale et appartenance européenne ?" }
+      ],
+      "corrige": { "q1": "Reponse ouverte : diversite des paysages, cultures, savoir-faire, complementarite.", "q2": "Reponse ouverte : articuler proximite locale, cadre national commun et cooperation europeenne sans opposition." }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S16-QCM-civique",
+    "mention": "CSP",
+    "theme": "Histoire, géographie, culture",
+    "questions": [
+      { "notion": "organisation territoriale", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Le territoire le plus local est :", "options": ["La commune", "La région", "Le pays"], "reponse": "La commune" },
+      { "notion": "métropole et outre-mer", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "La France est composée de :", "options": ["La métropole et l'outre-mer", "La métropole seule", "L'outre-mer seul"], "reponse": "La métropole et l'outre-mer" },
+      { "notion": "appartenance européenne", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "La France est membre de :", "options": ["L'Union européenne", "Aucune union", "Un seul département"], "reponse": "L'Union européenne" },
+      { "notion": "niveaux territoriaux", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Plusieurs départements forment :", "options": ["Une région", "Une commune", "Une frontière"], "reponse": "Une région" },
+      { "notion": "patrimoine", "type": "mise_en_situation", "official_status": "simulation_pedagogique", "enonce": "Un monument ancien à préserver fait partie :", "options": ["Du patrimoine", "De l'outre-mer uniquement", "D'une frontière"], "reponse": "Du patrimoine" }
+    ]
+  },
+  "devoirs": {
+    "A1": "À la maison : rangez commune, département et région du plus petit au plus grand.",
+    "A2": "À la maison : écrivez 5 phrases pour situer un lieu et présenter un élément de patrimoine.",
+    "B1": "À la maison : rédigez un court texte sur l'organisation territoriale de la France.",
+    "B2": "À la maison : rédigez un paragraphe argumenté sur la diversité des territoires comme richesse."
+  },
+  "formateur": {
+    "fiche_formateur": "Séance territoires et patrimoine : chaque apprenant doit savoir (1) situer un lieu (commune, département, région), (2) présenter un élément de patrimoine, (3) comprendre métropole/outre-mer et appartenance européenne. Aucune carte géographique n'est générée librement ; le schéma reste en niveaux emboîtés.",
+    "deroule_180min": [
+      { "phase": "Rituel civique", "duree_min": 10, "description": "Lecture du schema des niveaux territoriaux." },
+      { "phase": "Activation + lexique", "duree_min": 20, "description": "Decouverte du lexique (territoire, region, outre-mer, patrimoine...)." },
+      { "phase": "Support invariant CO/CE", "duree_min": 50, "description": "Ecoute du recit de voyage et reperage de l'organisation territoriale." },
+      { "phase": "Ateliers differencies", "duree_min": 60, "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du meme support." },
+      { "phase": "Production EE/EO", "duree_min": 30, "description": "Situer un lieu et presenter un element culturel." },
+      { "phase": "Fixation", "duree_min": 10, "description": "Synthese, reperes CSP, QCM civique, devoir." }
+    ],
+    "adaptation_rules": [
+      "Ne jamais generer de carte geographique libre : utiliser le schema en niveaux emboîtes.",
+      "Valoriser la diversite des territoires sans hierarchiser metropole et outre-mer.",
+      "Relier patrimoine local et appartenance nationale/europeenne lors de la synthese."
+    ]
+  }
+}

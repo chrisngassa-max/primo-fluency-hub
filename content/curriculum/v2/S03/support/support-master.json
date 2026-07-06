@@ -1,0 +1,24 @@
+{
+  "support_id": "S03-support-sante",
+  "personnages": [
+    "Mme Nour (usagère)",
+    "M. Bianchi (conseiller santé)"
+  ],
+  "situation": "Mme Nour explique un problème de santé et hésite sur l'interlocuteur à contacter. Avec l'aide d'un conseiller, M. Bianchi, elle apprend à distinguer une urgence d'une situation non urgente et à choisir le bon numéro.",
+  "faits": [
+    "Le 15 est le numéro du SAMU pour une urgence médicale.",
+    "Le 18 est le numéro des pompiers.",
+    "Le 112 est le numéro d'urgence européen.",
+    "Le médecin traitant est le médecin que l'on consulte habituellement.",
+    "La carte Vitale sert à être remboursé des soins.",
+    "Pour une situation non urgente, on prend un rendez-vous avec son médecin traitant."
+  ],
+  "nombres": [
+    15,
+    18,
+    112
+  ],
+  "dates": [],
+  "hash": "d4562b431104a679d032887a9c8ff86b0ecda7d2123bbec1b44b5e2a175c577c",
+  "version": 1
+}
