@@ -21,6 +21,7 @@ import {
   BookMarked,
   BarChart3,
   FlaskConical,
+  Factory,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
@@ -56,6 +57,7 @@ const pedagogieNav = [
   { title: "Bibliothèque d'exercices", url: "/formateur/exercices", icon: BookOpen },
   { title: "Devoirs envoyés", url: "/formateur/devoirs", icon: ClipboardCheck },
   { title: "Plans de formation", url: "/formateur/parcours", icon: Route },
+  { title: "Production du parcours", url: "/formateur/production-parcours", icon: Factory },
   { title: "Ressources", url: "/formateur/ressources", icon: Library },
   { title: "Ressources pédagogiques", url: "/formateur/banque-activites", icon: Database },
   { title: "Importer programme", url: "/formateur/import-programme", icon: Upload },
