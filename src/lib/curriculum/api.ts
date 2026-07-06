@@ -1,4 +1,8 @@
-import { supabase } from "@/integrations/supabase/client";
+import { supabase as _supabase } from "@/integrations/supabase/client";
+// Curriculum v2 tables are added via supabase/migrations/20260705220000_*.sql.
+// Until Supabase types are regenerated post-deploy, cast the client to `any`
+// so this module compiles against the current generated Database type.
+const supabase = _supabase as any;
 import { CURRICULUM_SESSIONS } from "./sessions";
 import type {
   BatchStatusResponse,
