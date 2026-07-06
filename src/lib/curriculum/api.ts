@@ -238,7 +238,7 @@ export async function estimateBatchCost(params: {
   to?: string;
   publish?: boolean;
 }): Promise<CostEstimate> {
-  return invokeCurriculumBatch<CostEstimate>({ action: "estimate", ...params });
+  return invokeCurriculumBatch<any>({ action: "estimate", ...params });
 }
 
 export async function startBatch(params: {

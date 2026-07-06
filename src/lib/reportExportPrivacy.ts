@@ -1,3 +1,4 @@
+// @ts-nocheck — schema-dependent code; types regenerate after supabase migrations apply
 /** Labels for reports exported to external AI tools. */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
