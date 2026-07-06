@@ -16,7 +16,16 @@ import { createStoragePublisher } from './providers/storage-publisher.mjs';
 import { readSessionManifest, readSessionJsonSibling, readResourceBuffer, relativePathForResource, sessionDir } from './lib/session-fs.mjs';
 import { writeFile } from 'node:fs/promises';
 
-const DEFAULT_BUCKET = process.env.CURRICULUM_STORAGE_BUCKET ?? 'curriculum-v2';
+const PUBLISHED_BUCKET = process.env.CURRICULUM_STORAGE_BUCKET ?? 'curriculum-published';
+const AUDIO_BUCKET = process.env.CURRICULUM_AUDIO_BUCKET ?? 'curriculum-audio';
+
+/** curriculum-published (defaut) ; MP3 TTS -> curriculum-audio (doc curriculum-cloud-setup §3). */
+function bucketForResource(resourceEntry) {
+  if (resourceEntry.kind === 'co_master' || resourceEntry.output_spec?.mime_type === 'audio/mpeg') {
+    return AUDIO_BUCKET;
+  }
+  return PUBLISHED_BUCKET;
+}
 
 /** Publie atomiquement (par seance) toutes les ressources d'une seance deja validee/publiable. */
 export async function publishOneSession({ sessionCode, storagePublisher, planVersionId, baseDir }) {
@@ -41,8 +50,9 @@ export async function publishOneSession({ sessionCode, storagePublisher, planVer
     const storagePath = `${sessionCode}/${relativePath}`;
     const mime = resourceEntry.output_spec?.mime_type ?? null;
 
+    const bucket = bucketForResource(resourceEntry);
     const { publicUrl } = await storagePublisher.upload({
-      bucket: DEFAULT_BUCKET,
+      bucket,
       path: storagePath,
       buffer,
       contentType: mime ?? 'application/octet-stream',
