@@ -1,0 +1,67 @@
+{
+  "resource_id": "S19-QCM-civique",
+  "mention": "CSP",
+  "theme": "Droits et devoirs",
+  "questions": [
+    {
+      "notion": "neutralité",
+      "type": "connaissance",
+      "enonce": "Un agent public au guichet doit :",
+      "options": [
+        "Rester neutre et informer",
+        "Donner son avis personnel",
+        "Refuser toute question"
+      ],
+      "reponse": "Rester neutre et informer",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "recours",
+      "type": "connaissance",
+      "enonce": "Pour contester une réponse administrative, l'usager peut :",
+      "options": [
+        "Demander un recours administratif",
+        "Ignorer la procédure",
+        "Insulter l'agent"
+      ],
+      "reponse": "Demander un recours administratif",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "reformulation",
+      "type": "mise_en_situation",
+      "enonce": "Karim ne comprend pas. Il a le droit de :",
+      "options": [
+        "Demander une reformulation",
+        "Quitter sans réponse",
+        "Porter plainte immédiate"
+      ],
+      "reponse": "Demander une reformulation",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "devoirs",
+      "type": "connaissance",
+      "enonce": "Respecter la loi dans un lieu public est :",
+      "options": [
+        "Un devoir",
+        "Un droit optionnel",
+        "Une habitude"
+      ],
+      "reponse": "Un devoir",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "échéance",
+      "type": "mise_en_situation",
+      "enonce": "Un document demandé avec échéance de quinze jours doit être transmis :",
+      "options": [
+        "Avant la date limite",
+        "Quand on veut",
+        "Un an après"
+      ],
+      "reponse": "Avant la date limite",
+      "official_status": "simulation_pedagogique"
+    }
+  ]
+}

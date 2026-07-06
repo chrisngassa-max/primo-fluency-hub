@@ -1,0 +1,29 @@
+{
+  "resource_id": "E3-VIS-master",
+  "scene": {
+    "title": "Évaluation E3 — 120 min",
+    "width": 900,
+    "height": 240,
+    "background": "#ffffff",
+    "elements": [
+      {
+        "type": "rect",
+        "x": 150,
+        "y": 50,
+        "width": 600,
+        "height": 120,
+        "rx": 10,
+        "fill": "#e0e7ff"
+      },
+      {
+        "type": "text",
+        "x": 450,
+        "y": 115,
+        "anchor": "middle",
+        "fontSize": 16,
+        "text": "Langue B1 · Civique CR 25 min · Banque gelée"
+      }
+    ]
+  },
+  "alt_text": "Diagramme E3 120 min : langue B1 + civique CR 25 min."
+}

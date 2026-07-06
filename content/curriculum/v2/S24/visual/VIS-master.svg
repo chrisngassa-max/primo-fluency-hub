@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 280" width="900" height="280" role="img" aria-label="Simulation chronométrée S24">
+  <title>Simulation chronométrée S24</title>
+  <rect x="0" y="0" width="900" height="280" fill="#ffffff" />
+  <rect x="40" y="40" width="120" height="50" fill="#e0e7ff" rx="0" />
+  <text x="100" y="70" font-size="12" font-family="sans-serif" fill="#111827" text-anchor="middle">Install. 10</text>
+  <rect x="180" y="40" width="140" height="50" fill="#dbeafe" rx="0" />
+  <text x="250" y="70" font-size="11" font-family="sans-serif" fill="#111827" text-anchor="middle">CO+CE 55</text>
+  <rect x="340" y="40" width="100" height="50" fill="#dcfce7" rx="0" />
+  <text x="390" y="70" font-size="12" font-family="sans-serif" fill="#111827" text-anchor="middle">EE 30</text>
+  <rect x="460" y="40" width="90" height="50" fill="#fef9c3" rx="0" />
+  <text x="505" y="70" font-size="12" font-family="sans-serif" fill="#111827" text-anchor="middle">EO 10</text>
+  <rect x="570" y="40" width="120" height="50" fill="#fee2e2" rx="0" />
+  <text x="630" y="70" font-size="11" font-family="sans-serif" fill="#111827" text-anchor="middle">Civique 45</text>
+  <rect x="710" y="40" width="130" height="50" fill="#ede9fe" rx="0" />
+  <text x="775" y="70" font-size="11" font-family="sans-serif" fill="#111827" text-anchor="middle">Reméd. 30</text>
+  <text x="450" y="150" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">Banque gelée · Stratégie 32/40</text>
+</svg>

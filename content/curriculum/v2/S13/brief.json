@@ -1,0 +1,138 @@
+{
+  "session_code": "S13",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Liberté d'expression et limites",
+  "support": {
+    "support_id": "S13-support-expression",
+    "situation": "Une publication fictive sur un réseau social provoque des réactions contrastées. Un court débat aide à distinguer opinion, critique, insulte, diffamation et menace, et à comprendre où se situent les limites légales de la liberté d'expression.",
+    "personnages": ["Animateur du débat", "Deux participants (avis contrastés)"],
+    "faits": [
+      "La liberté d'expression permet de donner son opinion et de critiquer.",
+      "L'insulte, la diffamation et la menace ne sont pas protégées par la liberté d'expression.",
+      "La liberté de la presse participe au débat démocratique.",
+      "Chacun est responsable de ce qu'il publie.",
+      "Un désaccord peut s'exprimer de façon respectueuse."
+    ],
+    "nombres": [],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S13-CO-master",
+    "voice": "fr-FR-Wavenet-C",
+    "speaking_rate": 0.92,
+    "script": "Animateur : Bonjour à tous. Aujourd'hui, on parle de la liberté d'expression, calmement et sans propos blessants.\nParticipant un : Pour moi, on a le droit de donner son avis, même quand ce n'est pas populaire.\nAnimateur : C'est vrai. Donner une opinion et critiquer, c'est permis. C'est la liberté d'expression.\nParticipant deux : Mais il y a une limite, non ? On ne peut pas dire n'importe quoi.\nAnimateur : Exactement. L'insulte, la diffamation et la menace ne sont pas protégées. Elles peuvent être sanctionnées par la loi.\nParticipant un : Donc critiquer une idée, oui, mais attaquer une personne, non ?\nAnimateur : C'est ça. On peut être en désaccord, mais de façon respectueuse. Chacun est responsable de ce qu'il publie.\nParticipant deux : Et la presse ?\nAnimateur : La liberté de la presse est importante pour la démocratie : elle permet d'informer et de débattre. En résumé : l'opinion et la critique sont libres, l'insulte et la menace sont des limites.",
+    "pauses": [
+      { "after_word": 18, "ms": 500 },
+      { "after_word": 60, "ms": 400 },
+      { "after_word": 110, "ms": 500 }
+    ]
+  },
+  "visual": {
+    "resource_id": "S13-VIS-master",
+    "alt_text": "Continuum en quatre etapes de gauche a droite : opinion, critique, insulte, menace, avec une zone permise a gauche et une zone limite a droite, sans propos reel affiche.",
+    "scene": {
+      "title": "De l'opinion à la menace : où sont les limites ?",
+      "width": 900,
+      "height": 240,
+      "background": "#ffffff",
+      "elements": [
+        { "type": "rect", "x": 30, "y": 100, "width": 200, "height": 70, "rx": 8, "fill": "#dcfce7" },
+        { "type": "text", "x": 130, "y": 140, "anchor": "middle", "fontSize": 14, "text": "Opinion (permis)" },
+        { "type": "rect", "x": 240, "y": 100, "width": 200, "height": 70, "rx": 8, "fill": "#dcfce7" },
+        { "type": "text", "x": 340, "y": 140, "anchor": "middle", "fontSize": 14, "text": "Critique (permis)" },
+        { "type": "rect", "x": 450, "y": 100, "width": 200, "height": 70, "rx": 8, "fill": "#fee2e2" },
+        { "type": "text", "x": 550, "y": 140, "anchor": "middle", "fontSize": 14, "text": "Insulte (limite)" },
+        { "type": "rect", "x": 660, "y": 100, "width": 200, "height": 70, "rx": 8, "fill": "#fecaca" },
+        { "type": "text", "x": 760, "y": 140, "anchor": "middle", "fontSize": 14, "text": "Menace (interdit)" },
+        { "type": "line", "x1": 30, "y1": 190, "x2": 860, "y2": 190, "stroke": "#374151", "strokeWidth": 2 },
+        { "type": "text", "x": 30, "y": 60, "fontSize": 16, "text": "Liberté d'expression et ses limites légales" }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S13-LEX-A1-B2",
+    "mots": [
+      { "mot": "opinion", "definition_simple": "Ce qu'une personne pense.", "exemple": "Chacun peut donner son opinion." },
+      { "mot": "critique", "definition_simple": "Un avis qui juge une idée ou une action.", "exemple": "La critique d'une idée est permise." },
+      { "mot": "insulte", "definition_simple": "Une parole qui blesse et attaque une personne.", "exemple": "L'insulte n'est pas protégée par la loi." },
+      { "mot": "diffamation", "definition_simple": "Dire une fausse accusation qui nuit à quelqu'un.", "exemple": "La diffamation peut être sanctionnée." },
+      { "mot": "menace", "definition_simple": "Annoncer un mal à faire à quelqu'un.", "exemple": "La menace est interdite." },
+      { "mot": "presse", "definition_simple": "Les journaux et médias qui informent.", "exemple": "La liberté de la presse est essentielle." },
+      { "mot": "publier", "definition_simple": "Rendre public un texte ou une image.", "exemple": "On est responsable de ce qu'on publie." },
+      { "mot": "responsabilité", "definition_simple": "Le fait de répondre de ses actes.", "exemple": "Chacun a une responsabilité en ligne." }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Écoutez le débat. Classez chaque mot dans « permis » ou « limite ».",
+      "aides": ["Opinion, critique = permis", "Insulte, menace = limite", "Mots utiles : avis, respect"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "Donner son opinion est :", "options": ["Permis", "Interdit", "Toujours dangereux"] },
+        { "id": "q2", "type": "vrai_faux", "enonce": "La menace n'est pas protégée par la liberté d'expression." }
+      ],
+      "corrige": { "q1": "Permis", "q2": true }
+    },
+    "A2": {
+      "consigne": "Donnez votre avis sur un sujet simple, puis reformulez un désaccord de façon respectueuse.",
+      "aides": ["Formules : « Je pense que... », « Je ne suis pas d'accord, mais... »"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "Quel élément n'est PAS protégé par la liberté d'expression ?", "options": ["L'insulte", "La critique d'une idée", "L'opinion"] },
+        { "id": "q2", "type": "reponse_courte", "enonce": "Reformulez « Ton idée est nulle » de façon respectueuse." }
+      ],
+      "corrige": { "q1": "L'insulte", "q2": "Exemple : « Je ne partage pas ton idée, voici pourquoi... »" }
+    },
+    "B1": {
+      "consigne": "Donnez un avis argumenté sur un sujet, puis expliquez la frontière entre critique et attaque personnelle.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "reponse_longue", "enonce": "Exprimez une opinion et un désaccord respectueux sur un sujet de société." },
+        { "id": "q2", "type": "reponse_longue", "enonce": "Expliquez la différence entre critiquer une idée et insulter une personne." }
+      ],
+      "corrige": { "q1": "Avis clair, argument, formulation respectueuse du desaccord.", "q2": "Critiquer une idee porte sur le contenu et reste permis ; insulter vise la personne et depasse la limite legale." }
+    },
+    "B2": {
+      "consigne": "Analysez l'équilibre entre liberté d'expression et respect d'autrui, et nuancez le rôle des réseaux sociaux.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "argumentation", "enonce": "Argumentez : pourquoi la liberté d'expression a-t-elle des limites légales ?" },
+        { "id": "q2", "type": "argumentation", "enonce": "Nuancez : les réseaux sociaux facilitent-ils le débat ou les dérives ? Justifiez." }
+      ],
+      "corrige": { "q1": "Reponse ouverte : protection de la dignite, de la reputation, de la securite d'autrui.", "q2": "Reponse ouverte : diffusion large et rapide, anonymat ; besoin de responsabilite et de moderation." }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S13-QCM-civique",
+    "mention": "CSP",
+    "theme": "Droits et devoirs",
+    "questions": [
+      { "notion": "liberté d'expression", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "La liberté d'expression permet surtout :", "options": ["De donner son opinion et de critiquer", "D'insulter les gens", "De menacer autrui"], "reponse": "De donner son opinion et de critiquer" },
+      { "notion": "limites légales", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Ce qui n'est PAS protégé par la liberté d'expression :", "options": ["L'insulte et la menace", "La critique d'une loi", "Une opinion politique"], "reponse": "L'insulte et la menace" },
+      { "notion": "liberté de la presse", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "La liberté de la presse sert à :", "options": ["Informer et permettre le débat", "Interdire les journaux", "Obliger à une opinion"], "reponse": "Informer et permettre le débat" },
+      { "notion": "responsabilité", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Sur un réseau social, ce que l'on publie :", "options": ["Engage notre responsabilité", "N'a aucune conséquence", "Est toujours anonyme et sans limite"], "reponse": "Engage notre responsabilité" },
+      { "notion": "désaccord respectueux", "type": "mise_en_situation", "official_status": "simulation_pedagogique", "enonce": "Pour exprimer un désaccord, la bonne conduite est de :", "options": ["Critiquer l'idée avec respect", "Insulter la personne", "Menacer l'auteur"], "reponse": "Critiquer l'idée avec respect" }
+    ]
+  },
+  "devoirs": {
+    "A1": "À la maison : classez opinion, critique, insulte, menace dans « permis » ou « limite ».",
+    "A2": "À la maison : écrivez 4 phrases donnant un avis et un désaccord respectueux.",
+    "B1": "À la maison : rédigez un court texte d'opinion argumenté et respectueux.",
+    "B2": "À la maison : rédigez un paragraphe argumenté sur les limites de la liberté d'expression."
+  },
+  "formateur": {
+    "fiche_formateur": "Séance liberté d'expression : chaque apprenant doit savoir (1) donner un avis, (2) reformuler un désaccord respectueux, (3) distinguer opinion, critique, insulte, diffamation et menace. Ne pas reproduire inutilement de propos haineux ; travailler sur des exemples neutres.",
+    "deroule_180min": [
+      { "phase": "Rituel civique", "duree_min": 10, "description": "Lecture du continuum opinion -> menace." },
+      { "phase": "Activation + lexique", "duree_min": 20, "description": "Decouverte du lexique (opinion, critique, diffamation, menace...)." },
+      { "phase": "Support invariant CO/CE", "duree_min": 50, "description": "Ecoute du debat et reperage des limites legales." },
+      { "phase": "Ateliers differencies", "duree_min": 60, "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du meme support." },
+      { "phase": "Production EE/EO", "duree_min": 30, "description": "Donner un avis et reformuler un desaccord respectueux." },
+      { "phase": "Fixation", "duree_min": 10, "description": "Synthese, QCM civique, devoir personnalise." }
+    ],
+    "adaptation_rules": [
+      "Ne jamais reproduire de propos haineux reels : utiliser des exemples neutres.",
+      "Bien distinguer critique d'une idee (permise) et attaque d'une personne (limite).",
+      "Valoriser la reformulation respectueuse plutot que l'evitement du desaccord."
+    ]
+  }
+}

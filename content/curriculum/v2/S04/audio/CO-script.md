@@ -1,0 +1,4 @@
+Message de l'école (voix de Mme Perez) : Bonjour, ceci est un message de l'école pour la famille de votre enfant. Ceci est un message pédagogique fictif, sans nom ni donnée réelle. Votre enfant était absent hier matin et nous n'avons pas reçu de justificatif.
+Nous vous rappelons que l'instruction est obligatoire de trois à seize ans et que les parents doivent justifier chaque absence.
+Merci de nous envoyer un mot écrit précisant la date et le motif de l'absence. Vous pouvez aussi consulter le calendrier scolaire affiché à l'entrée.
+Si vous avez une question, l'équipe reste à votre disposition. Bonne journée.

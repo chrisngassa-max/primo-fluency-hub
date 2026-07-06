@@ -1,0 +1,67 @@
+{
+  "resource_id": "S22-QCM-civique",
+  "mention": "CSP",
+  "theme": "Expression écrite TCF, trois tâches",
+  "questions": [
+    {
+      "notion": "rappel",
+      "type": "connaissance",
+      "enonce": "Cette séance EE n'introduit :",
+      "options": [
+        "Aucun nouveau fait civique",
+        "Trente faits nouveaux",
+        "Un nouveau code civil"
+      ],
+      "reponse": "Aucun nouveau fait civique",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "EE2",
+      "type": "connaissance",
+      "enonce": "EE2 correspond environ à :",
+      "options": [
+        "60-80 mots",
+        "10 mots",
+        "500 mots"
+      ],
+      "reponse": "60-80 mots",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "séparation",
+      "type": "connaissance",
+      "enonce": "La note linguistique EE est :",
+      "options": [
+        "Séparée du rappel civique",
+        "Identique au QCM",
+        "Supprimée"
+      ],
+      "reponse": "Séparée du rappel civique",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "tâches",
+      "type": "connaissance",
+      "enonce": "Le TCF IRN EE comporte :",
+      "options": [
+        "Trois tâches",
+        "Une seule tâche",
+        "Dix tâches"
+      ],
+      "reponse": "Trois tâches",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "contexte",
+      "type": "mise_en_situation",
+      "enonce": "Un courriel à la mairie demande un registre :",
+      "options": [
+        "Formel",
+        "Très familier",
+        "Sans objet"
+      ],
+      "reponse": "Formel",
+      "official_status": "simulation_pedagogique"
+    }
+  ]
+}

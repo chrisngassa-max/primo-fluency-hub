@@ -1,0 +1,83 @@
+{
+  "session_code": "S30",
+  "variants": [
+    {
+      "niveau": "A1",
+      "consigne": "Choisissez la conduite conforme (QCM).",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Affiche haineuse :",
+          "options": [
+            "Signaler",
+            "Photographier pour rire",
+            "Ajouter des insultes"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "L'implicite doit être explicité."
+        }
+      ]
+    },
+    {
+      "niveau": "A2",
+      "consigne": "Justifiez une conduite en une situation implicite.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Dignité humaine est :",
+          "options": [
+            "Inviolable",
+            "Optionnelle",
+            "Supprimée"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Nommez un principe mobilisé."
+        }
+      ]
+    },
+    {
+      "niveau": "B1",
+      "consigne": "Deux situations implicites CR : principe + conduite.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Analysez situation travail."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Analysez situation voisinage."
+        }
+      ]
+    },
+    {
+      "niveau": "B2",
+      "consigne": "Priorisez principes en conflit apparent.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Liberté vs dignité : comment arbitrer ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Risques de mal lire l'implicite ?"
+        }
+      ]
+    }
+  ]
+}

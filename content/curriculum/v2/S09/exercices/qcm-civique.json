@@ -1,0 +1,67 @@
+{
+  "resource_id": "S09-QCM-civique",
+  "mention": "CSP",
+  "theme": "Principes et valeurs de la République",
+  "questions": [
+    {
+      "notion": "définition de la laïcité",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "La laïcité repose sur :",
+      "options": [
+        "La liberté de conscience et la neutralité de l'État",
+        "L'interdiction de toute religion",
+        "L'obligation d'une religion"
+      ],
+      "reponse": "La liberté de conscience et la neutralité de l'État"
+    },
+    {
+      "notion": "neutralité de l'agent",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Un agent public pendant son service doit :",
+      "options": [
+        "Rester neutre",
+        "Afficher ses convictions",
+        "Refuser certains usagers"
+      ],
+      "reponse": "Rester neutre"
+    },
+    {
+      "notion": "liberté de l'usager",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Un usager d'un service public :",
+      "options": [
+        "Est libre de croire ou de ne pas croire",
+        "Doit déclarer sa religion",
+        "Doit être neutre comme l'agent"
+      ],
+      "reponse": "Est libre de croire ou de ne pas croire"
+    },
+    {
+      "notion": "école publique",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "À l'école publique, pour les élèves, les signes religieux ostensibles sont :",
+      "options": [
+        "Interdits",
+        "Obligatoires",
+        "Encouragés"
+      ],
+      "reponse": "Interdits"
+    },
+    {
+      "notion": "espace privé",
+      "type": "mise_en_situation",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Chez elle, une personne qui souhaite pratiquer sa religion :",
+      "options": [
+        "En a la liberté",
+        "Doit demander une autorisation",
+        "N'en a pas le droit"
+      ],
+      "reponse": "En a la liberté"
+    }
+  ]
+}

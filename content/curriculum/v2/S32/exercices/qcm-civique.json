@@ -1,0 +1,67 @@
+{
+  "resource_id": "S32-QCM-civique",
+  "mention": "NAT",
+  "theme": "Système institutionnel et politique",
+  "questions": [
+    {
+      "notion": "Constitution",
+      "type": "connaissance",
+      "enonce": "La Ve République est fondée sur la Constitution de :",
+      "options": [
+        "1958",
+        "1789",
+        "2000"
+      ],
+      "reponse": "1958",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "souveraineté",
+      "type": "connaissance",
+      "enonce": "La souveraineté nationale appartient au :",
+      "options": [
+        "Peuple",
+        "Président seul",
+        "Mairie"
+      ],
+      "reponse": "Peuple",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "contrôle",
+      "type": "connaissance",
+      "enonce": "Le Conseil constitutionnel vérifie :",
+      "options": [
+        "La conformité des lois",
+        "Les menus",
+        "Les matchs"
+      ],
+      "reponse": "La conformité des lois",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "État de droit",
+      "type": "connaissance",
+      "enonce": "L'État de droit signifie :",
+      "options": [
+        "Tous soumis à la loi",
+        "Loi absente",
+        "Pouvoir illimité"
+      ],
+      "reponse": "Tous soumis à la loi",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "relance",
+      "type": "mise_en_situation",
+      "enonce": "En oral B2, une relance demande :",
+      "options": [
+        "Réponse structurée immédiate",
+        "Silence total",
+        "Changement de sujet"
+      ],
+      "reponse": "Réponse structurée immédiate",
+      "official_status": "simulation_pedagogique"
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "resource_id": "E2-VIS-master",
+  "scene": {
+    "title": "Évaluation E2 — 180 min",
+    "width": 900,
+    "height": 220,
+    "background": "#ffffff",
+    "elements": [
+      {
+        "type": "rect",
+        "x": 80,
+        "y": 60,
+        "width": 350,
+        "height": 80,
+        "rx": 8,
+        "fill": "#dbeafe"
+      },
+      {
+        "type": "text",
+        "x": 255,
+        "y": 105,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "TCF IRN complet"
+      },
+      {
+        "type": "rect",
+        "x": 470,
+        "y": 60,
+        "width": 350,
+        "height": 80,
+        "rx": 8,
+        "fill": "#fee2e2"
+      },
+      {
+        "type": "text",
+        "x": 645,
+        "y": 95,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "Civique CSP"
+      },
+      {
+        "type": "text",
+        "x": 645,
+        "y": 118,
+        "anchor": "middle",
+        "fontSize": 12,
+        "text": "40 Q · 45 min"
+      },
+      {
+        "type": "text",
+        "x": 450,
+        "y": 180,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "Banque gelée · 180 min total"
+      }
+    ]
+  },
+  "alt_text": "Diagramme E2 180 min : TCF complet + civique 40/45."
+}

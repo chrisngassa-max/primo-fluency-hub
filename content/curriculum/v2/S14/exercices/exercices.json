@@ -1,0 +1,89 @@
+{
+  "session_code": "S14",
+  "variants": [
+    {
+      "niveau": "A1",
+      "consigne": "Écoutez l'annonce. Associez chaque impôt/taxe à un service public.",
+      "aides": [
+        "Impôts → écoles, routes",
+        "Tri → environnement",
+        "Mots utiles : service public, déchet"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "À quoi servent les impôts ?",
+          "options": [
+            "À financer les services publics",
+            "À payer un voyage",
+            "À rien"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "Le tri des déchets protège l'environnement."
+        }
+      ]
+    },
+    {
+      "niveau": "A2",
+      "consigne": "Résumez la consigne de tri et écrivez un court message à la mairie pour poser une question.",
+      "aides": [
+        "Pensez à : collecte, tri, service public"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Une chose utile à toute la collectivité relève de :",
+          "options": [
+            "L'intérêt général",
+            "L'intérêt privé",
+            "Un choix personnel"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Citez deux services publics financés par les impôts."
+        }
+      ]
+    },
+    {
+      "niveau": "B1",
+      "consigne": "Rédigez un message à la mairie résumant la consigne et posant une question, puis expliquez le lien entre impôts, services publics et solidarité.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Écrivez un message clair résumant la nouvelle collecte et demandant une précision."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Expliquez pourquoi payer l'impôt est une contribution à l'intérêt général."
+        }
+      ]
+    },
+    {
+      "niveau": "B2",
+      "consigne": "Analysez le lien entre fiscalité, services publics et environnement, et nuancez l'acceptation de l'impôt.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Argumentez : en quoi l'impôt est-il un outil de solidarité ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Nuancez : pourquoi l'impôt est-il parfois mal accepté, et comment renforcer son acceptation ?"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "resource_id": "S34-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "corpus",
+      "definition_simple": "Ensemble de documents d'étude.",
+      "exemple": "Corpus multi-supports."
+    },
+    {
+      "mot": "Lumières",
+      "definition_simple": "Mouvement des XVIIIe siècle, raison et droits.",
+      "exemple": "Philosophes des Lumières."
+    },
+    {
+      "mot": "République",
+      "definition_simple": "Régime sans monarchie.",
+      "exemple": "Plusieurs Républiques françaises."
+    },
+    {
+      "mot": "cause",
+      "definition_simple": "Ce qui provoque un événement.",
+      "exemple": "Cause d'une guerre."
+    },
+    {
+      "mot": "conséquence",
+      "definition_simple": "Effet d'un événement.",
+      "exemple": "Conséquence européenne."
+    },
+    {
+      "mot": "hiérarchiser",
+      "definition_simple": "Classer par importance.",
+      "exemple": "Hiérarchiser les infos."
+    },
+    {
+      "mot": "synthèse",
+      "definition_simple": "Mise en relation structurée.",
+      "exemple": "Synthèse B2."
+    },
+    {
+      "mot": "timeline",
+      "definition_simple": "Frise chronologique.",
+      "exemple": "Timeline des guerres."
+    },
+    {
+      "mot": "mémoire",
+      "definition_simple": "Rappel collectif du passé.",
+      "exemple": "Mémoire des conflits."
+    }
+  ]
+}

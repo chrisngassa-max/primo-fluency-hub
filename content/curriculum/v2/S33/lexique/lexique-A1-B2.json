@@ -1,0 +1,50 @@
+{
+  "resource_id": "S33-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "pluralisme",
+      "definition_simple": "Coexistence d'opinions diverses.",
+      "exemple": "Pluralisme démocratique."
+    },
+    {
+      "mot": "dignité",
+      "definition_simple": "Respect fondamental de la personne.",
+      "exemple": "Dignité inviolable."
+    },
+    {
+      "mot": "objection",
+      "definition_simple": "Argument contraire à intégrer.",
+      "exemple": "Répondre à une objection."
+    },
+    {
+      "mot": "conclusion",
+      "definition_simple": "Synthèse finale de la prise de position.",
+      "exemple": "Conclure avec nuance."
+    },
+    {
+      "mot": "liberté",
+      "definition_simple": "Droit fondamental encadré.",
+      "exemple": "Liberté d'expression."
+    },
+    {
+      "mot": "responsabilité",
+      "definition_simple": "Devoir d'usage raisonné d'un droit.",
+      "exemple": "Liberté et responsabilité."
+    },
+    {
+      "mot": "diffamation",
+      "definition_simple": "Attaque injurieuse d'une personne.",
+      "exemple": "Limite légale."
+    },
+    {
+      "mot": "laïcité",
+      "definition_simple": "Neutralité et liberté de conscience.",
+      "exemple": "Laïcité républicaine."
+    },
+    {
+      "mot": "domination",
+      "definition_simple": "Abus de pouvoir sur autrui.",
+      "exemple": "Éviter la domination."
+    }
+  ]
+}

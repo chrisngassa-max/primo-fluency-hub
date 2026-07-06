@@ -1,0 +1,108 @@
+[
+  {
+    "support_id": "S30-support",
+    "version": 1,
+    "niveau": "A1",
+    "consigne": "Choisissez la conduite conforme (QCM).",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Affiche haineuse :",
+        "options": [
+          "Signaler",
+          "Photographier pour rire",
+          "Ajouter des insultes"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "vrai_faux",
+        "enonce": "L'implicite doit être explicité."
+      }
+    ],
+    "corrige": {
+      "q1": "Signaler",
+      "q2": true
+    },
+    "invariants_hash": "f4575f05f444b9e49d03cc13556f089587ea934d413f3bb3b8f33fd984379f4f"
+  },
+  {
+    "support_id": "S30-support",
+    "version": 1,
+    "niveau": "A2",
+    "consigne": "Justifiez une conduite en une situation implicite.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Dignité humaine est :",
+        "options": [
+          "Inviolable",
+          "Optionnelle",
+          "Supprimée"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "reponse_courte",
+        "enonce": "Nommez un principe mobilisé."
+      }
+    ],
+    "corrige": {
+      "q1": "Inviolable",
+      "q2": "Laïcité, dignité, égalité (un suffit)."
+    },
+    "invariants_hash": "f4575f05f444b9e49d03cc13556f089587ea934d413f3bb3b8f33fd984379f4f"
+  },
+  {
+    "support_id": "S30-support",
+    "version": 1,
+    "niveau": "B1",
+    "consigne": "Deux situations implicites CR : principe + conduite.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "reponse_longue",
+        "enonce": "Analysez situation travail."
+      },
+      {
+        "id": "q2",
+        "type": "reponse_longue",
+        "enonce": "Analysez situation voisinage."
+      }
+    ],
+    "corrige": {
+      "q1": "Principe nommé + conduite.",
+      "q2": "Idem."
+    },
+    "invariants_hash": "f4575f05f444b9e49d03cc13556f089587ea934d413f3bb3b8f33fd984379f4f"
+  },
+  {
+    "support_id": "S30-support",
+    "version": 1,
+    "niveau": "B2",
+    "consigne": "Priorisez principes en conflit apparent.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "argumentation",
+        "enonce": "Liberté vs dignité : comment arbitrer ?"
+      },
+      {
+        "id": "q2",
+        "type": "argumentation",
+        "enonce": "Risques de mal lire l'implicite ?"
+      }
+    ],
+    "corrige": {
+      "q1": "Réponse ouverte.",
+      "q2": "Réponse ouverte."
+    },
+    "invariants_hash": "f4575f05f444b9e49d03cc13556f089587ea934d413f3bb3b8f33fd984379f4f"
+  }
+]

@@ -1,0 +1,89 @@
+{
+  "session_code": "S09",
+  "variants": [
+    {
+      "niveau": "A1",
+      "consigne": "Écoutez les situations. Associez chaque situation à la bonne règle : neutralité ou liberté.",
+      "aides": [
+        "Agent public = neutralité",
+        "Espace privé = liberté",
+        "Mots utiles : croire, agent, usager"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Pendant son service, un agent public doit :",
+          "options": [
+            "Rester neutre",
+            "Montrer sa religion",
+            "Choisir les usagers"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "Un usager du service public est libre de croire ou de ne pas croire."
+        }
+      ]
+    },
+    {
+      "niveau": "A2",
+      "consigne": "Expliquez à l'oral une règle de laïcité et justifiez une conduite adaptée dans une situation.",
+      "aides": [
+        "Pensez à : neutralité, liberté, espace privé"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Dans l'espace privé, une personne :",
+          "options": [
+            "Est libre de pratiquer sa religion",
+            "Doit rester neutre",
+            "N'a aucun droit"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Expliquez pourquoi un agent public reste neutre."
+        }
+      ]
+    },
+    {
+      "niveau": "B1",
+      "consigne": "Expliquez la différence entre neutralité de l'État et liberté de conscience, puis justifiez une conduite conforme dans deux situations.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Distinguez ce que l'État impose (neutralité) et ce que la personne garde (liberté de conscience)."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Justifiez la conduite attendue pour un agent public et pour un usager."
+        }
+      ]
+    },
+    {
+      "niveau": "B2",
+      "consigne": "Analysez l'apport de la laïcité au vivre-ensemble et nuancez les malentendus fréquents à son sujet.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Argumentez : en quoi la neutralité de l'État garantit-elle l'égalité de tous les usagers ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Nuancez : la laïcité est-elle une interdiction des religions ? Justifiez."
+        }
+      ]
+    }
+  ]
+}

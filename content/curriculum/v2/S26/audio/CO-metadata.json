@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Formateur : Expliquez cette décision publique fictive : la mairie interdit temporairement le stationnement pour des travaux.\nNadia : La mairie, c'est le pouvoir exécutif local. Elle applique et prend des arrêtés, mais dans le cadre de la loi.\nFormateur : Qui contrôle si l'arrêté est légal ?\nNadia : Le juge administratif, donc le pouvoir judiciaire. Un citoyen peut contester s'il estime que ça viole ses droits.\nFormateur : Et le Parlement dans tout ça ?\nNadia : Le Parlement vote la loi nationale. L'arrêté ne peut pas la contredire. C'est l'État de droit : personne n'est au-dessus de la loi.\nFormateur : Les élections ?\nNadia : Les citoyens élisent les maires, les députés. Ça légitime les décisions dans la démocratie.\nFormateur : Très bien. Vous distinguez décision, contrôle et vote.",
+  "transcript": "Formateur : Expliquez cette décision publique fictive : la mairie interdit temporairement le stationnement pour des travaux.\nNadia : La mairie, c'est le pouvoir exécutif local. Elle applique et prend des arrêtés, mais dans le cadre de la loi.\nFormateur : Qui contrôle si l'arrêté est légal ?\nNadia : Le juge administratif, donc le pouvoir judiciaire. Un citoyen peut contester s'il estime que ça viole ses droits.\nFormateur : Et le Parlement dans tout ça ?\nNadia : Le Parlement vote la loi nationale. L'arrêté ne peut pas la contredire. C'est l'État de droit : personne n'est au-dessus de la loi.\nFormateur : Les élections ?\nNadia : Les citoyens élisent les maires, les députés. Ça légitime les décisions dans la démocratie.\nFormateur : Très bien. Vous distinguez décision, contrôle et vote.",
+  "voice": "fr-FR-Wavenet-C",
+  "languageCode": "fr-FR",
+  "speaking_rate": 0.92,
+  "pauses": [
+    {
+      "after_word": 12,
+      "ms": 400
+    },
+    {
+      "after_word": 60,
+      "ms": 400
+    },
+    {
+      "after_word": 130,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 67,
+  "hash": "31ace43ce4fcaa8de7f8ddf161602a8194a672a1e566705752bd12a866f95e84"
+}

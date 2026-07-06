@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Consignes d'évaluation E1 — document pédagogique fictif.\n\nVous passez l'évaluation intermédiaire après cinquante heures. Durée totale : cent vingt minutes.\n\nÉpreuves : compréhension orale, compréhension écrite, expression écrite, expression orale — toutes chronométrées. Banque gelée : les items sont identiques pour tous les candidats de ce niveau, sans ajout de faits nouveaux.\n\nCivique CSP abrégé : nombre réduit de questions, thèmes déjà vus.\n\nRègles : aucune aide, aucun appareil connecté, respect strict du chronomètre. Les copies anonymes sont corrigées selon grilles TCF et civique séparées.\n\nRésultats : un rapport individuel fictif et un plan automatique de remédiation pour les séances S17 à S24.\n\nBonne épreuve.",
+  "transcript": "Consignes d'évaluation E1 — document pédagogique fictif.\n\nVous passez l'évaluation intermédiaire après cinquante heures. Durée totale : cent vingt minutes.\n\nÉpreuves : compréhension orale, compréhension écrite, expression écrite, expression orale — toutes chronométrées. Banque gelée : les items sont identiques pour tous les candidats de ce niveau, sans ajout de faits nouveaux.\n\nCivique CSP abrégé : nombre réduit de questions, thèmes déjà vus.\n\nRègles : aucune aide, aucun appareil connecté, respect strict du chronomètre. Les copies anonymes sont corrigées selon grilles TCF et civique séparées.\n\nRésultats : un rapport individuel fictif et un plan automatique de remédiation pour les séances S17 à S24.\n\nBonne épreuve.",
+  "voice": "fr-FR-Wavenet-C",
+  "languageCode": "fr-FR",
+  "speaking_rate": 0.92,
+  "pauses": [
+    {
+      "after_word": 12,
+      "ms": 400
+    },
+    {
+      "after_word": 60,
+      "ms": 400
+    },
+    {
+      "after_word": 130,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 53,
+  "hash": "0470d4845605b1bbcee9c8fff921004ab8d786d54d7f1e8a99697dfc57c01279"
+}

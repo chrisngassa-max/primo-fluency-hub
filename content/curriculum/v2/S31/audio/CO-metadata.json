@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Formateur : Séquence simulation CR. Soixante minutes de langue B1, puis quarante-cinq minutes de civique CR, banque verrouillée, sans aide.\nApprenant : Combien de questions ?\nFormateur : Quarante, comme l'examen CR. Ensuite, trente-cinq minutes pour analyser les distracteurs : pourquoi la mauvaise réponse semblait plausible.\nApprenant : Et la remédiation ?\nFormateur : Trente minutes ciblées sur les erreurs dominantes du groupe, pas une révision générale.\nApprenant : Peut-on revoir les items ?\nFormateur : Après le chronomètre seulement. Pendant l'épreuve, stratégie : connaissances rapides, situations plus longues ensuite.\nApprenant : Compris. Banque verrouillée, pas de nouvelles questions.",
+  "transcript": "Formateur : Séquence simulation CR. Soixante minutes de langue B1, puis quarante-cinq minutes de civique CR, banque verrouillée, sans aide.\nApprenant : Combien de questions ?\nFormateur : Quarante, comme l'examen CR. Ensuite, trente-cinq minutes pour analyser les distracteurs : pourquoi la mauvaise réponse semblait plausible.\nApprenant : Et la remédiation ?\nFormateur : Trente minutes ciblées sur les erreurs dominantes du groupe, pas une révision générale.\nApprenant : Peut-on revoir les items ?\nFormateur : Après le chronomètre seulement. Pendant l'épreuve, stratégie : connaissances rapides, situations plus longues ensuite.\nApprenant : Compris. Banque verrouillée, pas de nouvelles questions.",
+  "voice": "fr-FR-Wavenet-C",
+  "languageCode": "fr-FR",
+  "speaking_rate": 0.92,
+  "pauses": [
+    {
+      "after_word": 12,
+      "ms": 400
+    },
+    {
+      "after_word": 60,
+      "ms": 400
+    },
+    {
+      "after_word": 130,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 50,
+  "hash": "eb8cdc76606be851cce47482fcafc0c6b0257dacd4e5ebded910fe7dd39089c6"
+}

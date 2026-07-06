@@ -1,0 +1,57 @@
+{
+  "resource_id": "S23-VIS-master",
+  "scene": {
+    "title": "Trois tâches EO TCF",
+    "width": 900,
+    "height": 200,
+    "background": "#ffffff",
+    "elements": [
+      {
+        "type": "circle",
+        "cx": 160,
+        "cy": 100,
+        "r": 50,
+        "fill": "#dbeafe"
+      },
+      {
+        "type": "text",
+        "x": 160,
+        "y": 105,
+        "anchor": "middle",
+        "fontSize": 13,
+        "text": "EO1"
+      },
+      {
+        "type": "circle",
+        "cx": 450,
+        "cy": 100,
+        "r": 50,
+        "fill": "#dcfce7"
+      },
+      {
+        "type": "text",
+        "x": 450,
+        "y": 105,
+        "anchor": "middle",
+        "fontSize": 13,
+        "text": "EO2"
+      },
+      {
+        "type": "circle",
+        "cx": 740,
+        "cy": 100,
+        "r": 50,
+        "fill": "#fef9c3"
+      },
+      {
+        "type": "text",
+        "x": 740,
+        "y": 105,
+        "anchor": "middle",
+        "fontSize": 13,
+        "text": "EO3"
+      }
+    ]
+  },
+  "alt_text": "Schéma EO1 entretien, EO2 interaction, EO3 point de vue."
+}

@@ -1,0 +1,111 @@
+[
+  {
+    "support_id": "S21-support-arbre-decision",
+    "version": 1,
+    "niveau": "A1",
+    "consigne": "Lisez l'arbre. Classez deux items : connaissance ou situation.",
+    "aides": [
+      "Connaissance = fait",
+      "Situation = conduite"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "« Qui vote la loi ? » est un item de :",
+        "options": [
+          "Connaissance",
+          "Situation",
+          "Expression orale"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "vrai_faux",
+        "enonce": "Une mise en situation teste une conduite."
+      }
+    ],
+    "corrige": {
+      "q1": "Connaissance",
+      "q2": true
+    },
+    "invariants_hash": "a3311669bcd4fa446c984cd2ce444e5f4f2a784c5cb63eedb1dd528ada4ae31f"
+  },
+  {
+    "support_id": "S21-support-arbre-decision",
+    "version": 1,
+    "niveau": "A2",
+    "consigne": "Expliquez pourquoi une conduite est conforme ou non.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Un distracteur sert à :",
+        "options": [
+          "Créer une confusion",
+          "Donner la bonne réponse",
+          "Remplacer la loi"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "reponse_courte",
+        "enonce": "Que demande l'arbre pour une situation ?"
+      }
+    ],
+    "corrige": {
+      "q1": "Créer une confusion",
+      "q2": "Vérifier si la conduite est conforme."
+    },
+    "invariants_hash": "a3311669bcd4fa446c984cd2ce444e5f4f2a784c5cb63eedb1dd528ada4ae31f"
+  },
+  {
+    "support_id": "S21-support-arbre-decision",
+    "version": 1,
+    "niveau": "B1",
+    "consigne": "Appliquez l'arbre à trois items fictifs et justifiez.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "reponse_longue",
+        "enonce": "Distinguez connaissance et situation sur deux exemples."
+      },
+      {
+        "id": "q2",
+        "type": "reponse_longue",
+        "enonce": "Expliquez une conduite conforme dans un cas donné."
+      }
+    ],
+    "corrige": {
+      "q1": "Connaissance = fait vérifiable ; situation = conduite contextuelle.",
+      "q2": "Conduite alignée sur loi et principes."
+    },
+    "invariants_hash": "a3311669bcd4fa446c984cd2ce444e5f4f2a784c5cb63eedb1dd528ada4ae31f"
+  },
+  {
+    "support_id": "S21-support-arbre-decision",
+    "version": 1,
+    "niveau": "B2",
+    "consigne": "Analysez la méthode arbre de décision et ses limites.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "argumentation",
+        "enonce": "Pourquoi séparer les deux types de preuve ?"
+      },
+      {
+        "id": "q2",
+        "type": "argumentation",
+        "enonce": "Comment repérer un distracteur efficace ?"
+      }
+    ],
+    "corrige": {
+      "q1": "Réponse ouverte.",
+      "q2": "Réponse ouverte : confusion de notions proches."
+    },
+    "invariants_hash": "a3311669bcd4fa446c984cd2ce444e5f4f2a784c5cb63eedb1dd528ada4ae31f"
+  }
+]

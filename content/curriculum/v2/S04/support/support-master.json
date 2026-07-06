@@ -1,0 +1,22 @@
+{
+  "support_id": "S04-support-ecole",
+  "personnages": [
+    "M. Sissoko (parent)",
+    "Mme Perez (directrice de l'école)"
+  ],
+  "situation": "L'école de la fille de M. Sissoko laisse un message pour signaler une absence non justifiée. M. Sissoko doit comprendre le message, consulter le calendrier scolaire fictif et rédiger un mot pour justifier l'absence.",
+  "faits": [
+    "En France, l'instruction est obligatoire de 3 à 16 ans.",
+    "L'école publique est gratuite et laïque.",
+    "Les parents exercent l'autorité parentale et doivent justifier les absences.",
+    "La mixité entre filles et garçons est la règle à l'école publique.",
+    "La laïcité garantit la neutralité de l'école en matière de religion."
+  ],
+  "nombres": [
+    3,
+    16
+  ],
+  "dates": [],
+  "hash": "08eca947e774a27b8c9a2c6a69b7e11f1b0066c0c4e51449d1866dff476cecdd",
+  "version": 1
+}

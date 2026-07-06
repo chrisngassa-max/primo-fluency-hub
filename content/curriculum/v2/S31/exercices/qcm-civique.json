@@ -1,0 +1,67 @@
+{
+  "resource_id": "S31-QCM-civique",
+  "mention": "CR",
+  "theme": "Simulation CR et remédiation",
+  "questions": [
+    {
+      "notion": "CR",
+      "type": "connaissance",
+      "enonce": "La simulation CR comporte :",
+      "options": [
+        "40 questions en 45 min",
+        "10 questions en 5 min",
+        "Aucune question"
+      ],
+      "reponse": "40 questions en 45 min",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "banque",
+      "type": "connaissance",
+      "enonce": "Banque verrouillée signifie :",
+      "options": [
+        "Items fixes",
+        "Items aléatoires chaque jour",
+        "Pas d'items"
+      ],
+      "reponse": "Items fixes",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "distracteur",
+      "type": "connaissance",
+      "enonce": "Analyser un distracteur sert à :",
+      "options": [
+        "Comprendre l'erreur",
+        "Tricher",
+        "Supprimer le QCM"
+      ],
+      "reponse": "Comprendre l'erreur",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "simulation",
+      "type": "mise_en_situation",
+      "enonce": "Pendant la simulation :",
+      "options": [
+        "Aucune aide",
+        "Aide permanente",
+        "Correction orale"
+      ],
+      "reponse": "Aucune aide",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "remédiation",
+      "type": "connaissance",
+      "enonce": "La remédiation S31 est :",
+      "options": [
+        "Ciblée sur la cohorte",
+        "Identique pour tous les pays",
+        "Absente"
+      ],
+      "reponse": "Ciblée sur la cohorte",
+      "official_status": "simulation_pedagogique"
+    }
+  ]
+}

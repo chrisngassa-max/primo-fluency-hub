@@ -1,0 +1,67 @@
+{
+  "resource_id": "S21-QCM-civique",
+  "mention": "CSP",
+  "theme": "Méthode civique",
+  "questions": [
+    {
+      "notion": "types d'items",
+      "type": "connaissance",
+      "enonce": "Un item « Qui est élu au suffrage universel ? » est de type :",
+      "options": [
+        "Connaissance",
+        "Mise en situation",
+        "Expression écrite"
+      ],
+      "reponse": "Connaissance",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "situation",
+      "type": "mise_en_situation",
+      "enonce": "« Que faites-vous si un collègue subit une discrimination ? » est :",
+      "options": [
+        "Mise en situation",
+        "Connaissance pure",
+        "Lexique"
+      ],
+      "reponse": "Mise en situation",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "conformité",
+      "type": "mise_en_situation",
+      "enonce": "Une conduite conforme respecte :",
+      "options": [
+        "La loi et les principes républicains",
+        "Uniquement son opinion",
+        "Aucune règle"
+      ],
+      "reponse": "La loi et les principes républicains",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "distracteur",
+      "type": "connaissance",
+      "enonce": "Un distracteur vise surtout à :",
+      "options": [
+        "Induire en erreur",
+        "Aider l'apprenant",
+        "Remplacer le formateur"
+      ],
+      "reponse": "Induire en erreur",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "méthode",
+      "type": "connaissance",
+      "enonce": "L'arbre de décision aide à :",
+      "options": [
+        "Choisir la bonne stratégie de réponse",
+        "Éviter toute justification",
+        "Supprimer les QCM"
+      ],
+      "reponse": "Choisir la bonne stratégie de réponse",
+      "official_status": "simulation_pedagogique"
+    }
+  ]
+}

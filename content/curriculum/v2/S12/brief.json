@@ -1,0 +1,140 @@
+{
+  "session_code": "S12",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Discriminations, violences et protection",
+  "support": {
+    "support_id": "S12-support-protection",
+    "situation": "Un témoignage sobre présente une personne victime d'une discrimination au travail. Un professionnel lui explique ses droits, les moyens de signaler et les structures de protection, sans détail traumatisant.",
+    "personnages": ["Personne concernée (témoignage sobre)", "Professionnel (conseiller)"],
+    "faits": [
+      "La discrimination consiste à traiter une personne moins bien pour un motif interdit (origine, sexe, religion, handicap...).",
+      "L'égalité femmes-hommes est un principe de la République.",
+      "La dignité de chaque personne doit être respectée.",
+      "On peut signaler une discrimination et être protégé.",
+      "Des associations et des services d'aide accompagnent les victimes."
+    ],
+    "nombres": [],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S12-CO-master",
+    "voice": "fr-FR-Wavenet-C",
+    "speaking_rate": 0.9,
+    "script": "Conseiller : Bonjour. Vous vouliez parler d'une situation au travail ?\nPersonne concernée : Bonjour. Oui. Au travail, on m'a refusé une formation, et je pense que c'est à cause de mon origine.\nConseiller : Merci de m'en parler calmement. Si une décision se fonde sur l'origine, c'est une discrimination, et c'est interdit par la loi.\nPersonne concernée : Je ne sais pas quoi faire. Je ne veux pas de problème.\nConseiller : Vous avez des droits. Vous pouvez d'abord noter les faits, garder les preuves, puis signaler la situation.\nPersonne concernée : Signaler où ?\nConseiller : Il existe des associations et des services d'aide qui accompagnent et protègent les victimes. Vous n'êtes pas seule.\nPersonne concernée : Et si on me traite mal après ?\nConseiller : La loi protège aussi les personnes qui signalent. La dignité de chacun doit être respectée, et l'égalité est un principe de la République.\nPersonne concernée : Merci. Je me sens plus en confiance pour agir.",
+    "pauses": [
+      { "after_word": 14, "ms": 500 },
+      { "after_word": 60, "ms": 400 },
+      { "after_word": 110, "ms": 500 }
+    ]
+  },
+  "visual": {
+    "resource_id": "S12-VIS-master",
+    "alt_text": "Parcours de protection schematique en trois etapes : noter les faits, signaler, etre accompagne, avec des personnages neutres et sans scene violente.",
+    "scene": {
+      "title": "Se protéger : noter, signaler, être accompagné",
+      "width": 900,
+      "height": 240,
+      "background": "#ffffff",
+      "elements": [
+        { "type": "rect", "x": 40, "y": 90, "width": 220, "height": 80, "rx": 8, "fill": "#dbeafe" },
+        { "type": "text", "x": 150, "y": 125, "anchor": "middle", "fontSize": 14, "text": "1. Noter les faits" },
+        { "type": "text", "x": 150, "y": 148, "anchor": "middle", "fontSize": 12, "text": "dates, preuves" },
+        { "type": "line", "x1": 260, "y1": 130, "x2": 320, "y2": 130, "stroke": "#374151", "strokeWidth": 3 },
+        { "type": "rect", "x": 320, "y": 90, "width": 220, "height": 80, "rx": 8, "fill": "#dcfce7" },
+        { "type": "text", "x": 430, "y": 125, "anchor": "middle", "fontSize": 14, "text": "2. Signaler" },
+        { "type": "text", "x": 430, "y": 148, "anchor": "middle", "fontSize": 12, "text": "service ou association" },
+        { "type": "line", "x1": 540, "y1": 130, "x2": 600, "y2": 130, "stroke": "#374151", "strokeWidth": 3 },
+        { "type": "rect", "x": 600, "y": 90, "width": 250, "height": 80, "rx": 8, "fill": "#fef9c3" },
+        { "type": "text", "x": 725, "y": 125, "anchor": "middle", "fontSize": 14, "text": "3. Être accompagné" },
+        { "type": "text", "x": 725, "y": 148, "anchor": "middle", "fontSize": 12, "text": "et protégé" },
+        { "type": "text", "x": 40, "y": 50, "fontSize": 16, "text": "Égalité et dignité : personne n'est seul" }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S12-LEX-A1-B2",
+    "mots": [
+      { "mot": "victime", "definition_simple": "Une personne qui subit un tort.", "exemple": "La victime peut être aidée." },
+      { "mot": "témoin", "definition_simple": "Une personne qui voit ou constate un fait.", "exemple": "Un témoin peut confirmer les faits." },
+      { "mot": "protéger", "definition_simple": "Mettre à l'abri du danger ou du tort.", "exemple": "La loi protège les victimes." },
+      { "mot": "signaler", "definition_simple": "Faire connaître un problème à qui peut agir.", "exemple": "Elle décide de signaler la discrimination." },
+      { "mot": "égalité", "definition_simple": "Le fait de traiter les personnes de la même façon.", "exemple": "L'égalité femmes-hommes est un principe." },
+      { "mot": "dignité", "definition_simple": "Le respect dû à chaque personne.", "exemple": "La dignité doit être respectée." },
+      { "mot": "aide", "definition_simple": "Un soutien apporté à une personne.", "exemple": "Elle demande de l'aide." },
+      { "mot": "association", "definition_simple": "Un groupe qui agit pour une cause.", "exemple": "Une association accompagne les victimes." }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Écoutez le témoignage. Remettez dans l'ordre : noter, signaler, être accompagné.",
+      "aides": ["1 = noter les faits", "2 = signaler", "Mots utiles : victime, aide, protéger"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "Traiter une personne moins bien à cause de son origine est :", "options": ["Une discrimination interdite", "Un droit", "Une règle normale"] },
+        { "id": "q2", "type": "vrai_faux", "enonce": "Une personne victime de discrimination peut être aidée et protégée." }
+      ],
+      "corrige": { "q1": "Une discrimination interdite", "q2": true }
+    },
+    "A2": {
+      "consigne": "Écrivez un message simple pour signaler une situation, en restant factuel.",
+      "aides": ["Pensez à : dates, faits, demande d'aide"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "Que faut-il garder pour signaler une discrimination ?", "options": ["Les preuves et les dates", "Rien du tout", "Seulement un avis"] },
+        { "id": "q2", "type": "reponse_courte", "enonce": "Citez une structure qui peut accompagner une victime." }
+      ],
+      "corrige": { "q1": "Les preuves et les dates", "q2": "Une association d'aide aux victimes ou un service d'aide (une réponse suffit)." }
+    },
+    "B1": {
+      "consigne": "Rédigez un message de signalement factuel, puis expliquez pourquoi la loi protège les victimes et ceux qui signalent.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "reponse_longue", "enonce": "Écrivez un message factuel décrivant la situation et demandant de l'aide." },
+        { "id": "q2", "type": "reponse_longue", "enonce": "Expliquez le lien entre égalité, dignité et protection des victimes." }
+      ],
+      "corrige": { "q1": "Message factuel attendu : faits precis, dates, absence de jugement excessif, demande d'accompagnement.", "q2": "L'egalite et la dignite fondent l'interdiction des discriminations ; la loi protege les victimes et ceux qui signalent pour rendre ces principes effectifs." }
+    },
+    "B2": {
+      "consigne": "Analysez les obstacles au signalement des discriminations et nuancez les moyens de les surmonter.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "argumentation", "enonce": "Argumentez : pourquoi de nombreuses victimes hésitent-elles à signaler une discrimination ?" },
+        { "id": "q2", "type": "argumentation", "enonce": "Nuancez : comment la protection des lanceurs d'alerte et l'accompagnement changent-ils la donne ?" }
+      ],
+      "corrige": { "q1": "Reponse ouverte : peur des represailles, meconnaissance des droits, sentiment d'isolement.", "q2": "Reponse ouverte : protection legale, accompagnement associatif, preuve et confidentialite facilitent l'action." }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S12-QCM-civique",
+    "mention": "CSP",
+    "theme": "Droits et devoirs",
+    "questions": [
+      { "notion": "définition de la discrimination", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Une discrimination, c'est traiter une personne moins bien :", "options": ["Pour un motif interdit (origine, sexe...)", "Parce qu'elle est en retard", "Parce qu'elle a mal travaillé"], "reponse": "Pour un motif interdit (origine, sexe...)" },
+      { "notion": "égalité femmes-hommes", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "L'égalité femmes-hommes est :", "options": ["Un principe de la République", "Une option", "Interdite"], "reponse": "Un principe de la République" },
+      { "notion": "protection", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Une personne qui signale une discrimination est :", "options": ["Protégée par la loi", "Toujours licenciée", "Sans recours"], "reponse": "Protégée par la loi" },
+      { "notion": "recours", "type": "mise_en_situation", "official_status": "simulation_pedagogique", "enonce": "Face à une discrimination, la bonne première démarche est de :", "options": ["Noter les faits et les preuves", "Se venger", "Oublier et se taire"], "reponse": "Noter les faits et les preuves" },
+      { "notion": "dignité", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Le respect dû à chaque personne s'appelle :", "options": ["La dignité", "La hiérarchie", "La rentabilité"], "reponse": "La dignité" }
+    ]
+  },
+  "devoirs": {
+    "A1": "À la maison : associez chaque étape (noter, signaler, être accompagné) à sa description.",
+    "A2": "À la maison : écrivez 5 phrases factuelles pour signaler une situation.",
+    "B1": "À la maison : rédigez un message de signalement factuel de 6 à 8 lignes.",
+    "B2": "À la maison : rédigez un paragraphe argumenté sur les moyens de mieux protéger les victimes."
+  },
+  "formateur": {
+    "fiche_formateur": "Séance discriminations et protection : chaque apprenant doit savoir (1) reconnaître une discrimination, (2) rédiger un signalement factuel, (3) connaître égalité, dignité et voies de protection. Traiter le témoignage avec sobriété, sans détail traumatisant.",
+    "deroule_180min": [
+      { "phase": "Rituel civique", "duree_min": 10, "description": "Lecture du parcours de protection (noter, signaler, accompagner)." },
+      { "phase": "Activation + lexique", "duree_min": 20, "description": "Decouverte du lexique (victime, signaler, egalite, dignite...)." },
+      { "phase": "Support invariant CO/CE", "duree_min": 50, "description": "Ecoute du temoignage sobre et reperage des droits et recours." },
+      { "phase": "Ateliers differencies", "duree_min": 60, "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du meme support." },
+      { "phase": "Production EE/EO", "duree_min": 30, "description": "Rediger un message de signalement factuel." },
+      { "phase": "Fixation", "duree_min": 10, "description": "Synthese, QCM civique, choix legal, devoir personnalise." }
+    ],
+    "adaptation_rules": [
+      "Rester sobre et bienveillant ; ne jamais entrer dans des details traumatisants.",
+      "Distinguer discrimination illegale et decision fondee sur un motif legitime (retard, faute).",
+      "Valoriser la posture factuelle du signalement plutot que l'emotion ou la vengeance."
+    ]
+  }
+}

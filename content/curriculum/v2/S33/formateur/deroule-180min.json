@@ -1,0 +1,32 @@
+[
+  {
+    "phase": "Rituel civique",
+    "duree_min": 10,
+    "description": "Libertés et limites NAT."
+  },
+  {
+    "phase": "Activation + lexique",
+    "duree_min": 20,
+    "description": "Lexique pluralisme, dignité."
+  },
+  {
+    "phase": "Support invariant CO/CE",
+    "duree_min": 50,
+    "description": "Débat modéré."
+  },
+  {
+    "phase": "Ateliers différenciés",
+    "duree_min": 60,
+    "description": "A1-B2."
+  },
+  {
+    "phase": "Production EE/EO",
+    "duree_min": 30,
+    "description": "Argumentation B2."
+  },
+  {
+    "phase": "Fixation",
+    "duree_min": 10,
+    "description": "QCM NAT."
+  }
+]

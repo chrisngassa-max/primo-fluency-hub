@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "Un justificatif de domicile",
+    "q2": true
+  },
+  "A2": {
+    "q1": "Quinze jours",
+    "q2": "Le droit d'être informé (ou de répondre à l'administration)."
+  },
+  "B1": {
+    "q1": "Courriel formel avec objet, formule, mention de la pièce jointe et respect du délai.",
+    "q2": "Droit d'être informé et de répondre ; obligation de fournir des pièces conformes et complètes."
+  },
+  "B2": {
+    "q1": "Reponse ouverte : trace ecrite, clarte, respect des formes administratives.",
+    "q2": "Reponse ouverte : retard d'instruction, relance, risque de refus si dossier incomplet."
+  }
+}

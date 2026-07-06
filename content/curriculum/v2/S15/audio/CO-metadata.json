@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Narrateur : Voici un récit sur une période très importante de l'histoire de France.\nEn mille sept cent quatre-vingt-neuf, une grande révolution commence. On l'appelle la Révolution française.\nAvant, le pouvoir appartenait au roi seul : c'était la monarchie absolue.\nLa même année, mille sept cent quatre-vingt-neuf, un texte majeur est adopté : la Déclaration des droits de l'homme et du citoyen. Elle affirme que les hommes naissent libres et égaux en droits.\nLa Révolution met fin à la monarchie absolue et transforme la société.\nEn mille sept cent quatre-vingt-douze, la République est proclamée pour la première fois.\nEn résumé : mille sept cent quatre-vingt-neuf marque la Révolution et la Déclaration des droits ; mille sept cent quatre-vingt-douze marque la première République. Ces repères fondent des valeurs encore présentes aujourd'hui.",
+  "transcript": "Narrateur : Voici un récit sur une période très importante de l'histoire de France.\nEn mille sept cent quatre-vingt-neuf, une grande révolution commence. On l'appelle la Révolution française.\nAvant, le pouvoir appartenait au roi seul : c'était la monarchie absolue.\nLa même année, mille sept cent quatre-vingt-neuf, un texte majeur est adopté : la Déclaration des droits de l'homme et du citoyen. Elle affirme que les hommes naissent libres et égaux en droits.\nLa Révolution met fin à la monarchie absolue et transforme la société.\nEn mille sept cent quatre-vingt-douze, la République est proclamée pour la première fois.\nEn résumé : mille sept cent quatre-vingt-neuf marque la Révolution et la Déclaration des droits ; mille sept cent quatre-vingt-douze marque la première République. Ces repères fondent des valeurs encore présentes aujourd'hui.",
+  "voice": "fr-FR-Wavenet-D",
+  "languageCode": "fr-FR",
+  "speaking_rate": 0.9,
+  "pauses": [
+    {
+      "after_word": 14,
+      "ms": 500
+    },
+    {
+      "after_word": 60,
+      "ms": 400
+    },
+    {
+      "after_word": 110,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 65,
+  "hash": "05b8bf98a49dce175531439dc6456215362723199b65b5bb2533a086be800d2e"
+}

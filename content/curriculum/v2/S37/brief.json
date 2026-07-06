@@ -1,0 +1,328 @@
+{
+  "session_code": "S37",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Parcours, principes et entretien d'assimilation",
+  "support": {
+    "support_id": "S37-support",
+    "situation": "Entretien d'assimilation simulé : parcours personnel, motivation, principes républicains, relances imprévues. Modèle non mémorisable.",
+    "personnages": [
+      "Apprenant B2",
+      "Examinateur simulé"
+    ],
+    "faits": [
+      "L'entretien évalue le parcours et la motivation sincère.",
+      "Les principes républicains doivent être compris, pas récités mécaniquement.",
+      "Les relances sont imprévues pour éviter la mémorisation.",
+      "Liberté, égalité, fraternité et laïcité peuvent être mobilisés.",
+      "Le modèle de réponse n'est pas figé mot à mot.",
+      "L'expression orale B2 prime sur un script appris."
+    ],
+    "nombres": [],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S37-CO-master",
+    "voice": "fr-FR-Wavenet-D",
+    "speaking_rate": 1,
+    "script": "Examinateur : Présentez votre parcours en France et votre motivation.\nApprenant : J'arrive depuis quatre ans, j'ai suivi une formation, je travaille dans le soin. Je veux m'intégrer durablement.\nExaminateur : Relance imprévue : que signifie la laïcité pour vous au quotidien ?\nApprenant : Respect des lois communes, liberté de conscience, neutralité de l'État. Au travail, je traite chacun également.\nExaminateur : Un ami critique la République devant vous. Votre réaction ?\nApprenant : J'écoute, je distingue critique et incitation à la haine. Je défends le débat démocratique sans violence.\nExaminateur : Pourquoi la fraternité compte ?\nApprenant : Elle nous oblige à la solidarité, au respect, même avec des différences.\nExaminateur : Merci. Réponses personnelles, pas un texte appris.",
+    "pauses": [
+      {
+        "after_word": 12,
+        "ms": 400
+      },
+      {
+        "after_word": 60,
+        "ms": 400
+      },
+      {
+        "after_word": 130,
+        "ms": 500
+      }
+    ]
+  },
+  "visual": {
+    "resource_id": "S37-VIS-master",
+    "alt_text": "Schéma entretien : parcours, principes, relances imprévues.",
+    "scene": {
+      "title": "Entretien assimilation",
+      "width": 900,
+      "height": 240,
+      "background": "#ffffff",
+      "elements": [
+        {
+          "type": "rect",
+          "x": 150,
+          "y": 50,
+          "width": 600,
+          "height": 120,
+          "rx": 10,
+          "fill": "#e0e7ff"
+        },
+        {
+          "type": "text",
+          "x": 450,
+          "y": 115,
+          "anchor": "middle",
+          "fontSize": 16,
+          "text": "Parcours · Principes · Relances"
+        }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S37-LEX-A1-B2",
+    "mots": [
+      {
+        "mot": "assimilation",
+        "definition_simple": "Intégration dans la société française.",
+        "exemple": "Entretien d'assimilation."
+      },
+      {
+        "mot": "parcours",
+        "definition_simple": "Chemin personnel en France.",
+        "exemple": "Présenter son parcours."
+      },
+      {
+        "mot": "motivation",
+        "definition_simple": "Raisons personnelles du projet.",
+        "exemple": "Motivation sincère."
+      },
+      {
+        "mot": "relance",
+        "definition_simple": "Question imprévue.",
+        "exemple": "Répondre à une relance."
+      },
+      {
+        "mot": "principe",
+        "definition_simple": "Valeur républicaine fondamentale.",
+        "exemple": "Liberté, égalité, fraternité."
+      },
+      {
+        "mot": "laïcité",
+        "definition_simple": "Neutralité et liberté de conscience.",
+        "exemple": "Laïcité au quotidien."
+      },
+      {
+        "mot": "fraternité",
+        "definition_simple": "Solidarité entre citoyens.",
+        "exemple": "Valeur de fraternité."
+      },
+      {
+        "mot": "mémorisation",
+        "definition_simple": "Apprendre par cœur sans comprendre.",
+        "exemple": "Éviter la mémorisation."
+      },
+      {
+        "mot": "intégration",
+        "definition_simple": "Participation à la vie en société.",
+        "exemple": "S'intégrer durablement."
+      }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Répondez à trois questions simples sur vous.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "L'entretien évalue :",
+          "options": [
+            "Parcours et motivation",
+            "Uniquement la cuisine",
+            "Le code routier seul"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "Les relances sont imprévues."
+        }
+      ],
+      "corrige": {
+        "q1": "Parcours et motivation",
+        "q2": true
+      }
+    },
+    "A2": {
+      "consigne": "Présentez parcours 2 minutes.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Fraternité signifie :",
+          "options": [
+            "Solidarité",
+            "Isolement",
+            "Haine"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Un principe républicain ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Solidarité",
+        "q2": "Liberté, égalité, fraternité, laïcité."
+      }
+    },
+    "B1": {
+      "consigne": "Entretien simulé avec deux relances.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Parcours et motivation."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Réponse à relance laïcité."
+        }
+      ],
+      "corrige": {
+        "q1": "Personnel et structuré.",
+        "q2": "Compréhension, pas récitation."
+      }
+    },
+    "B2": {
+      "consigne": "Entretien complet relances multiples.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Critique République : réaction ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Éviter script mémorisé ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Réponse ouverte.",
+        "q2": "Réponse ouverte : authenticité."
+      }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S37-QCM-civique",
+    "mention": "NAT",
+    "theme": "Principes et valeurs de la République",
+    "questions": [
+      {
+        "notion": "entretien",
+        "type": "connaissance",
+        "enonce": "L'entretien d'assimilation évalue surtout :",
+        "options": [
+          "Parcours et motivation",
+          "Une recette",
+          "Un score sportif"
+        ],
+        "reponse": "Parcours et motivation",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "principes",
+        "type": "connaissance",
+        "enonce": "La devise républicaine comprend :",
+        "options": [
+          "Liberté, égalité, fraternité",
+          "Travail, famille, patrie seulement",
+          "Aucune valeur"
+        ],
+        "reponse": "Liberté, égalité, fraternité",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "relance",
+        "type": "mise_en_situation",
+        "enonce": "Une relance imprévue teste :",
+        "options": [
+          "La compréhension réelle",
+          "La mémorisation mot à mot",
+          "Le silence"
+        ],
+        "reponse": "La compréhension réelle",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "laïcité",
+        "type": "connaissance",
+        "enonce": "La laïcité protège :",
+        "options": [
+          "La liberté de conscience",
+          "Une religion d'État",
+          "L'absence de loi"
+        ],
+        "reponse": "La liberté de conscience",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "modèle",
+        "type": "connaissance",
+        "enonce": "Le modèle d'entretien est :",
+        "options": [
+          "Non mémorisable mot à mot",
+          "Un texte unique à réciter",
+          "Absent"
+        ],
+        "reponse": "Non mémorisable mot à mot",
+        "official_status": "simulation_pedagogique"
+      }
+    ]
+  },
+  "devoirs": {
+    "A1": "Présentation 1 min.",
+    "A2": "Réponses 3 relances.",
+    "B1": "Entretien enregistré.",
+    "B2": "Entretien + auto-évaluation."
+  },
+  "formateur": {
+    "fiche_formateur": "EO B2 + entretien assimilation. Relances imprévues. Pas de script figé. Phases adaptées au groupe.",
+    "deroule_180min": [
+      {
+        "phase": "Installation",
+        "duree_min": 10,
+        "description": "Format entretien, pas de mémorisation."
+      },
+      {
+        "phase": "Rappel principes",
+        "duree_min": 25,
+        "description": "Liberté, égalité, fraternité, laïcité — compréhension."
+      },
+      {
+        "phase": "Ateliers EO différenciés",
+        "duree_min": 55,
+        "description": "A1-B2 : parcours et relances graduées."
+      },
+      {
+        "phase": "Entretiens simulés",
+        "duree_min": 60,
+        "description": "Relances imprévues par binôme."
+      },
+      {
+        "phase": "Feedback",
+        "duree_min": 20,
+        "description": "Critères oraux et authenticité."
+      },
+      {
+        "phase": "Fixation",
+        "duree_min": 10,
+        "description": "QCM NAT principes."
+      }
+    ],
+    "adaptation_rules": [
+      "Relances différentes à chaque passage.",
+      "Pénaliser récitation mécanique.",
+      "Voix Wavenet-D."
+    ]
+  }
+}

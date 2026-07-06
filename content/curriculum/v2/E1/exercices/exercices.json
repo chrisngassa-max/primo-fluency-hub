@@ -1,0 +1,83 @@
+{
+  "session_code": "E1",
+  "variants": [
+    {
+      "niveau": "A1",
+      "consigne": "Lisez les consignes d'évaluation E1. Identifiez les épreuves et durées.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "L'évaluation E1 utilise :",
+          "options": [
+            "Une banque gelée",
+            "Des questions improvisées",
+            "Aucune épreuve"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "Les consignes sont chronométrées."
+        }
+      ]
+    },
+    {
+      "niveau": "A2",
+      "consigne": "Expliquez le déroulé de E1 et le format des épreuves.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "La banque gelée signifie :",
+          "options": [
+            "Pas de nouveaux faits par niveau",
+            "Questions au hasard",
+            "Oral seulement"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Citez une règle de l'évaluation."
+        }
+      ]
+    },
+    {
+      "niveau": "B1",
+      "consigne": "Décrivez comment se préparer à E1 selon le support.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Déroulé et timing de l'évaluation."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Règles de la banque gelée."
+        }
+      ]
+    },
+    {
+      "niveau": "B2",
+      "consigne": "Analysez les enjeux de E1 pour votre orientation.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Intérêt d'une banque gelée ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Comment utiliser les résultats ?"
+        }
+      ]
+    }
+  ]
+}

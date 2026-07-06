@@ -17,7 +17,18 @@
     "generate:pedagogical-images": "node scripts/generate-pedagogical-images-gemini.mjs",
     "import:logement-co-a2-b1": "node scripts/import-logement-co-a2-b2.mjs",
     "import:logement-co-a2-b2": "node scripts/import-logement-co-a2-b2.mjs",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "curriculum:preflight": "node scripts/curriculum/preflight.mjs",
+    "curriculum:convert-legacy-image-plan": "node scripts/curriculum/convert-legacy-image-plan.mjs",
+    "curriculum:generate": "node scripts/curriculum/generate-batch.mjs",
+    "curriculum:validate": "node scripts/curriculum/validate-batch.mjs",
+    "curriculum:publish": "node scripts/curriculum/publish-batch.mjs",
+    "curriculum:batch": "node scripts/curriculum/batch.mjs",
+    "curriculum:worker": "node scripts/curriculum/run-supabase-batch.mjs",
+    "curriculum:resume": "node scripts/curriculum/resume-batch.mjs",
+    "curriculum:report": "node scripts/curriculum/report-batch.mjs",
+    "curriculum:render-documents": "node scripts/curriculum/render-documents.mjs",
+    "curriculum:seed:plan": "node scripts/curriculum/generate-plan-seed-sql.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

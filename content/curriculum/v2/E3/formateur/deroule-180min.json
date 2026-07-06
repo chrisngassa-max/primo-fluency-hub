@@ -1,0 +1,27 @@
+[
+  {
+    "phase": "Installation",
+    "duree_min": 10,
+    "description": "Consignes E3."
+  },
+  {
+    "phase": "CO + CE",
+    "duree_min": 35,
+    "description": "Compréhension B1."
+  },
+  {
+    "phase": "EE + EO",
+    "duree_min": 45,
+    "description": "Productions B1."
+  },
+  {
+    "phase": "Civique CR",
+    "duree_min": 25,
+    "description": "Banque gelée CR."
+  },
+  {
+    "phase": "Clôture",
+    "duree_min": 5,
+    "description": "Information orientation."
+  }
+]

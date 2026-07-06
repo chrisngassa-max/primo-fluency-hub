@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 260" width="900" height="260" role="img" aria-label="Cinq thèmes civiques du parcours CapTCF">
+  <title>Cinq thèmes civiques du parcours CapTCF</title>
+  <rect x="0" y="0" width="900" height="260" fill="#ffffff" />
+  <rect x="20" y="30" width="150" height="180" fill="#dbeafe" rx="10" />
+  <text x="95" y="130" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">Principes et</text>
+  <text x="95" y="150" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">valeurs de la</text>
+  <text x="95" y="170" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">République</text>
+  <rect x="190" y="30" width="150" height="180" fill="#dcfce7" rx="10" />
+  <text x="265" y="130" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">Système</text>
+  <text x="265" y="150" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">institutionnel</text>
+  <text x="265" y="170" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">et politique</text>
+  <rect x="360" y="30" width="150" height="180" fill="#fef9c3" rx="10" />
+  <text x="435" y="130" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">Droits</text>
+  <text x="435" y="150" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">et</text>
+  <text x="435" y="170" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">devoirs</text>
+  <rect x="530" y="30" width="150" height="180" fill="#fee2e2" rx="10" />
+  <text x="605" y="130" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">Histoire,</text>
+  <text x="605" y="150" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">géographie</text>
+  <text x="605" y="170" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">et culture</text>
+  <rect x="700" y="30" width="180" height="180" fill="#ede9fe" rx="10" />
+  <text x="790" y="120" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">Vivre dans</text>
+  <text x="790" y="140" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">la société</text>
+  <text x="790" y="160" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">française</text>
+</svg>

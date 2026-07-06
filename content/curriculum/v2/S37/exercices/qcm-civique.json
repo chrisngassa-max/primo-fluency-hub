@@ -1,0 +1,67 @@
+{
+  "resource_id": "S37-QCM-civique",
+  "mention": "NAT",
+  "theme": "Principes et valeurs de la République",
+  "questions": [
+    {
+      "notion": "entretien",
+      "type": "connaissance",
+      "enonce": "L'entretien d'assimilation évalue surtout :",
+      "options": [
+        "Parcours et motivation",
+        "Une recette",
+        "Un score sportif"
+      ],
+      "reponse": "Parcours et motivation",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "principes",
+      "type": "connaissance",
+      "enonce": "La devise républicaine comprend :",
+      "options": [
+        "Liberté, égalité, fraternité",
+        "Travail, famille, patrie seulement",
+        "Aucune valeur"
+      ],
+      "reponse": "Liberté, égalité, fraternité",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "relance",
+      "type": "mise_en_situation",
+      "enonce": "Une relance imprévue teste :",
+      "options": [
+        "La compréhension réelle",
+        "La mémorisation mot à mot",
+        "Le silence"
+      ],
+      "reponse": "La compréhension réelle",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "laïcité",
+      "type": "connaissance",
+      "enonce": "La laïcité protège :",
+      "options": [
+        "La liberté de conscience",
+        "Une religion d'État",
+        "L'absence de loi"
+      ],
+      "reponse": "La liberté de conscience",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "modèle",
+      "type": "connaissance",
+      "enonce": "Le modèle d'entretien est :",
+      "options": [
+        "Non mémorisable mot à mot",
+        "Un texte unique à réciter",
+        "Absent"
+      ],
+      "reponse": "Non mémorisable mot à mot",
+      "official_status": "simulation_pedagogique"
+    }
+  ]
+}

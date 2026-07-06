@@ -1,0 +1,143 @@
+{
+  "session_code": "S10",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Du local au national : qui fait quoi ?",
+  "support": {
+    "support_id": "S10-support-institutions",
+    "situation": "Trois habitants ont des demandes différentes et ne savent pas à quelle institution s'adresser. Un agent d'information les oriente : mairie pour le local, Parlement pour la loi, justice pour un litige, en expliquant qui fait quoi du local au national.",
+    "personnages": ["Agent d'information", "Trois habitants (demandes fictives)"],
+    "faits": [
+      "La commune, dirigée par le maire, gère l'état civil, les écoles et l'urbanisme local.",
+      "Le Parlement, composé de députés et de sénateurs, vote la loi.",
+      "Le gouvernement, dirigé par le Premier ministre, applique la loi.",
+      "Le président de la République est élu au suffrage universel.",
+      "La justice, rendue par les juges, tranche les litiges."
+    ],
+    "nombres": [3],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S10-CO-master",
+    "voice": "fr-FR-Wavenet-C",
+    "speaking_rate": 0.92,
+    "script": "Agent : Bonjour, je vais vous aider à trouver la bonne institution.\nPremier habitant : Bonjour. Je veux inscrire mon enfant à l'école. Où dois-je aller ?\nAgent : Pour l'école et l'état civil, c'est la mairie, dans votre commune. Le maire s'en occupe.\nDeuxième habitant : Et moi, je voudrais comprendre qui décide une nouvelle loi nationale ?\nAgent : Les lois sont votées par le Parlement, c'est-à-dire les députés et les sénateurs. Ensuite, le gouvernement les applique.\nTroisième habitant : Moi, j'ai un désaccord sérieux avec quelqu'un. Qui peut trancher ?\nAgent : Pour un litige, c'est la justice. Ce sont les juges qui décident, selon la loi.\nPremier habitant : Et le président de la République, il fait quoi ?\nAgent : Il est élu par les citoyens et joue un rôle national important. Chaque institution a son rôle : du local, la commune, au national, le Parlement, le gouvernement et la justice.\nDeuxième habitant : Merci, c'est beaucoup plus clair maintenant.",
+    "pauses": [
+      { "after_word": 14, "ms": 400 },
+      { "after_word": 66, "ms": 400 },
+      { "after_word": 120, "ms": 500 }
+    ]
+  },
+  "visual": {
+    "resource_id": "S10-VIS-master",
+    "alt_text": "Organigramme schematique du local au national : commune (maire), Parlement (deputes et senateurs), gouvernement, president, justice, relies par des lignes, sans logo ni portrait.",
+    "scene": {
+      "title": "Qui fait quoi : du local au national",
+      "width": 900,
+      "height": 340,
+      "background": "#ffffff",
+      "elements": [
+        { "type": "rect", "x": 350, "y": 30, "width": 200, "height": 60, "rx": 8, "fill": "#dbeafe" },
+        { "type": "text", "x": 450, "y": 65, "anchor": "middle", "fontSize": 14, "text": "Président (élu)" },
+        { "type": "rect", "x": 120, "y": 140, "width": 190, "height": 70, "rx": 8, "fill": "#dcfce7" },
+        { "type": "text", "x": 215, "y": 170, "anchor": "middle", "fontSize": 13, "text": "Parlement" },
+        { "type": "text", "x": 215, "y": 190, "anchor": "middle", "fontSize": 12, "text": "députés + sénateurs" },
+        { "type": "rect", "x": 355, "y": 140, "width": 190, "height": 70, "rx": 8, "fill": "#fef9c3" },
+        { "type": "text", "x": 450, "y": 170, "anchor": "middle", "fontSize": 13, "text": "Gouvernement" },
+        { "type": "text", "x": 450, "y": 190, "anchor": "middle", "fontSize": 12, "text": "applique la loi" },
+        { "type": "rect", "x": 590, "y": 140, "width": 190, "height": 70, "rx": 8, "fill": "#fee2e2" },
+        { "type": "text", "x": 685, "y": 170, "anchor": "middle", "fontSize": 13, "text": "Justice" },
+        { "type": "text", "x": 685, "y": 190, "anchor": "middle", "fontSize": 12, "text": "les juges" },
+        { "type": "rect", "x": 355, "y": 260, "width": 190, "height": 60, "rx": 8, "fill": "#ede9fe" },
+        { "type": "text", "x": 450, "y": 295, "anchor": "middle", "fontSize": 13, "text": "Commune (maire)" },
+        { "type": "line", "x1": 450, "y1": 90, "x2": 450, "y2": 140, "stroke": "#374151", "strokeWidth": 2 },
+        { "type": "line", "x1": 450, "y1": 210, "x2": 450, "y2": 260, "stroke": "#374151", "strokeWidth": 2 }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S10-LEX-A1-B2",
+    "mots": [
+      { "mot": "commune", "definition_simple": "La collectivité locale de base (ville ou village).", "exemple": "La commune gère l'école." },
+      { "mot": "maire", "definition_simple": "La personne élue qui dirige la commune.", "exemple": "Le maire signe les documents d'état civil." },
+      { "mot": "député", "definition_simple": "Un élu qui vote la loi à l'Assemblée nationale.", "exemple": "Le député participe au vote de la loi." },
+      { "mot": "sénateur", "definition_simple": "Un élu qui vote la loi au Sénat.", "exemple": "Le sénateur représente les territoires." },
+      { "mot": "ministre", "definition_simple": "Un membre du gouvernement.", "exemple": "Le ministre applique la politique du gouvernement." },
+      { "mot": "président", "definition_simple": "Le chef de l'État, élu par les citoyens.", "exemple": "Le président est élu au suffrage universel." },
+      { "mot": "juge", "definition_simple": "La personne qui tranche un litige selon la loi.", "exemple": "Le juge rend une décision." },
+      { "mot": "élire", "definition_simple": "Choisir par un vote.", "exemple": "Les citoyens élisent le maire." }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Écoutez les demandes. Associez chaque demande à la bonne institution.",
+      "aides": ["École = mairie", "Loi = Parlement", "Litige = justice"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "Pour inscrire un enfant à l'école, on s'adresse à :", "options": ["La mairie", "Le Parlement", "La justice"] },
+        { "id": "q2", "type": "vrai_faux", "enonce": "Le Parlement vote la loi." }
+      ],
+      "corrige": { "q1": "La mairie", "q2": true }
+    },
+    "A2": {
+      "consigne": "Orientez oralement une personne vers la bonne institution et justifiez votre choix.",
+      "aides": ["Pensez à : commune, Parlement, justice"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "Qui tranche un litige entre deux personnes ?", "options": ["La justice", "La mairie", "Le gouvernement"] },
+        { "id": "q2", "type": "reponse_courte", "enonce": "Citez une chose que gère la commune." }
+      ],
+      "corrige": { "q1": "La justice", "q2": "L'état civil, les écoles ou l'urbanisme local (une réponse suffit)." }
+    },
+    "B1": {
+      "consigne": "Classez trois demandes selon l'institution compétente et justifiez chaque choix, puis distinguez le rôle local et national.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "reponse_longue", "enonce": "Orientez trois demandes (école, loi, litige) vers la bonne institution en justifiant." },
+        { "id": "q2", "type": "reponse_longue", "enonce": "Expliquez la différence entre le rôle du maire et celui du Parlement." }
+      ],
+      "corrige": { "q1": "Ecole -> mairie ; loi -> Parlement ; litige -> justice, chacun selon sa competence.", "q2": "Le maire gere le local (commune) ; le Parlement vote la loi au niveau national." }
+    },
+    "B2": {
+      "consigne": "Analysez la répartition des compétences du local au national et nuancez l'intérêt de cette organisation.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "argumentation", "enonce": "Argumentez : pourquoi séparer les compétences entre commune, Parlement, gouvernement et justice ?" },
+        { "id": "q2", "type": "argumentation", "enonce": "Nuancez : cette organisation peut-elle compliquer les démarches ? Comment aider les usagers ?" }
+      ],
+      "corrige": { "q1": "Reponse ouverte : proximite, specialisation, controle mutuel, separation des pouvoirs.", "q2": "Reponse ouverte : complexite pour l'usager ; remedes : information, guichets uniques, mediation." }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S10-QCM-civique",
+    "mention": "CSP",
+    "theme": "Système institutionnel et politique",
+    "questions": [
+      { "notion": "rôle de la commune", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "L'état civil et les écoles sont gérés par :", "options": ["La commune (mairie)", "Le Parlement", "La justice"], "reponse": "La commune (mairie)" },
+      { "notion": "vote de la loi", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "La loi est votée par :", "options": ["Le Parlement", "Le maire", "Le juge"], "reponse": "Le Parlement" },
+      { "notion": "rôle de la justice", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Un litige entre deux personnes est tranché par :", "options": ["La justice", "La préfecture", "Le gouvernement"], "reponse": "La justice" },
+      { "notion": "élection du maire", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Le maire dirige :", "options": ["La commune", "Le pays", "Le tribunal"], "reponse": "La commune" },
+      { "notion": "orientation", "type": "mise_en_situation", "official_status": "simulation_pedagogique", "enonce": "Pour un acte de naissance, il faut s'adresser à :", "options": ["La mairie", "Le Sénat", "Un ministre"], "reponse": "La mairie" }
+    ]
+  },
+  "devoirs": {
+    "A1": "À la maison : associez chaque demande (école, loi, litige) à la bonne institution.",
+    "A2": "À la maison : écrivez 4 phrases pour orienter des personnes vers la bonne institution.",
+    "B1": "À la maison : rédigez un court texte expliquant qui fait quoi, du local au national.",
+    "B2": "À la maison : rédigez un paragraphe argumenté sur l'intérêt de séparer les compétences."
+  },
+  "formateur": {
+    "fiche_formateur": "Séance institutions : chaque apprenant doit savoir (1) orienter une demande vers la bonne institution, (2) justifier son choix, (3) distinguer local (commune) et national (Parlement, gouvernement, justice, président). L'organigramme est déterministe, sans logo ni portrait.",
+    "deroule_180min": [
+      { "phase": "Rituel civique", "duree_min": 10, "description": "Lecture de l'organigramme du local au national." },
+      { "phase": "Activation + lexique", "duree_min": 20, "description": "Decouverte du lexique (commune, depute, ministre, juge...)." },
+      { "phase": "Support invariant CO/CE", "duree_min": 50, "description": "Ecoute des trois demandes et reperage de l'institution competente." },
+      { "phase": "Ateliers differencies", "duree_min": 60, "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du meme support." },
+      { "phase": "Production EE/EO", "duree_min": 30, "description": "Orienter une demande et justifier le choix de l'institution." },
+      { "phase": "Fixation", "duree_min": 10, "description": "Synthese, QCM civique CSP, devoir personnalise." }
+    ],
+    "adaptation_rules": [
+      "Si les niveaux d'institution sont confondus, reprendre l'organigramme avant l'atelier B1.",
+      "Utiliser des demandes concretes et quotidiennes pour ancrer les competences.",
+      "Ne jamais generer de portrait ni de logo institutionnel : l'organigramme reste schematique."
+    ]
+  }
+}

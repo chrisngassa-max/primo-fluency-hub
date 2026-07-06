@@ -1,0 +1,93 @@
+{
+  "resource_id": "S34-VIS-master",
+  "scene": {
+    "title": "Corpus multi-supports",
+    "width": 900,
+    "height": 260,
+    "background": "#ffffff",
+    "elements": [
+      {
+        "type": "rect",
+        "x": 40,
+        "y": 40,
+        "width": 190,
+        "height": 80,
+        "fill": "#dbeafe"
+      },
+      {
+        "type": "text",
+        "x": 135,
+        "y": 85,
+        "anchor": "middle",
+        "fontSize": 13,
+        "text": "Lumières"
+      },
+      {
+        "type": "rect",
+        "x": 250,
+        "y": 40,
+        "width": 190,
+        "height": 80,
+        "fill": "#dcfce7"
+      },
+      {
+        "type": "text",
+        "x": 345,
+        "y": 85,
+        "anchor": "middle",
+        "fontSize": 13,
+        "text": "Républiques"
+      },
+      {
+        "type": "rect",
+        "x": 460,
+        "y": 40,
+        "width": 190,
+        "height": 80,
+        "fill": "#fee2e2"
+      },
+      {
+        "type": "text",
+        "x": 555,
+        "y": 85,
+        "anchor": "middle",
+        "fontSize": 13,
+        "text": "Guerres"
+      },
+      {
+        "type": "rect",
+        "x": 670,
+        "y": 40,
+        "width": 190,
+        "height": 80,
+        "fill": "#fef9c3"
+      },
+      {
+        "type": "text",
+        "x": 765,
+        "y": 85,
+        "anchor": "middle",
+        "fontSize": 13,
+        "text": "Europe"
+      },
+      {
+        "type": "line",
+        "x1": 135,
+        "y1": 120,
+        "x2": 765,
+        "y2": 200,
+        "stroke": "#64748b",
+        "strokeWidth": 2
+      },
+      {
+        "type": "text",
+        "x": 450,
+        "y": 230,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "Synthèse hiérarchisée"
+      }
+    ]
+  },
+  "alt_text": "Quatre panneaux : Lumières, Républiques, guerres, Europe."
+}

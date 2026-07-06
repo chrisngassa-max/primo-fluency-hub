@@ -1,0 +1,32 @@
+[
+  {
+    "phase": "Rituel civique",
+    "duree_min": 10,
+    "description": "Histoire républicaine et Europe."
+  },
+  {
+    "phase": "Activation + lexique",
+    "duree_min": 20,
+    "description": "Découverte et réactivation du lexique de la séance."
+  },
+  {
+    "phase": "Support invariant CO/CE",
+    "duree_min": 50,
+    "description": "Écoute/lecture du support invariant, compréhension globale puis détaillée."
+  },
+  {
+    "phase": "Ateliers différenciés",
+    "duree_min": 60,
+    "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du même support."
+  },
+  {
+    "phase": "Production EE/EO",
+    "duree_min": 30,
+    "description": "Production selon la compétence dominante de la séance."
+  },
+  {
+    "phase": "Fixation",
+    "duree_min": 10,
+    "description": "Synthèse collective, QCM civique, devoir personnalisé."
+  }
+]

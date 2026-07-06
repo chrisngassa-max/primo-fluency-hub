@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Formateur : Débattez : faut-il limiter certaines manifestations ?\nApprenant A : Oui, quand la sécurité est en danger ou quand on incite à la haine. La liberté d'expression a des limites.\nApprenant B : Je suis d'accord pour la sécurité, mais la manifestation pacifique est un droit. Il faut déclarer, pas interdire sans raison.\nFormateur : Et la laïcité ?\nApprenant A : L'État est neutre. À l'école publique, pas de prosélytisme.\nApprenant B : La liberté de conscience reste. On peut croire, mais on respecte les règles communes.\nFormateur : Comment argumenter sans discriminer ?\nApprenant A : On attaque des idées, pas des personnes. Pas d'insultes.\nApprenant B : Et on cite des faits, des lois. Par exemple, la discrimination est interdite.\nFormateur : Bien. Défendez une opinion, connaissez les limites.",
+  "transcript": "Formateur : Débattez : faut-il limiter certaines manifestations ?\nApprenant A : Oui, quand la sécurité est en danger ou quand on incite à la haine. La liberté d'expression a des limites.\nApprenant B : Je suis d'accord pour la sécurité, mais la manifestation pacifique est un droit. Il faut déclarer, pas interdire sans raison.\nFormateur : Et la laïcité ?\nApprenant A : L'État est neutre. À l'école publique, pas de prosélytisme.\nApprenant B : La liberté de conscience reste. On peut croire, mais on respecte les règles communes.\nFormateur : Comment argumenter sans discriminer ?\nApprenant A : On attaque des idées, pas des personnes. Pas d'insultes.\nApprenant B : Et on cite des faits, des lois. Par exemple, la discrimination est interdite.\nFormateur : Bien. Défendez une opinion, connaissez les limites.",
+  "voice": "fr-FR-Wavenet-C",
+  "languageCode": "fr-FR",
+  "speaking_rate": 0.92,
+  "pauses": [
+    {
+      "after_word": 12,
+      "ms": 400
+    },
+    {
+      "after_word": 60,
+      "ms": 400
+    },
+    {
+      "after_word": 130,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 67,
+  "hash": "5e1eaf08e5391fb2094b0aaf8facc04edef0f3ead04f7612e72fdadaf657f4d4"
+}

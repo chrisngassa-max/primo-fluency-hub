@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 300" width="900" height="300" role="img" aria-label="Cabinet médical (scène générique)">
+  <title>Cabinet médical (scène générique)</title>
+  <rect x="0" y="0" width="900" height="300" fill="#ffffff" />
+  <rect x="40" y="40" width="820" height="220" fill="#eff6ff" rx="10" />
+  <text x="60" y="75" font-size="16" font-family="sans-serif" fill="#111827" text-anchor="start">Salle d&apos;attente (scène pédagogique générique)</text>
+  <rect x="80" y="150" width="70" height="70" fill="#bfdbfe" rx="6" />
+  <rect x="170" y="150" width="70" height="70" fill="#bfdbfe" rx="6" />
+  <rect x="260" y="150" width="70" height="70" fill="#bfdbfe" rx="6" />
+  <rect x="720" y="110" width="90" height="150" fill="#dbeafe" rx="6" />
+  <text x="765" y="190" font-size="13" font-family="sans-serif" fill="#111827" text-anchor="middle">Porte</text>
+  <circle cx="500" cy="110" r="34" fill="#dbeafe" />
+  <text x="500" y="115" font-size="13" font-family="sans-serif" fill="#111827" text-anchor="middle">Horloge</text>
+</svg>

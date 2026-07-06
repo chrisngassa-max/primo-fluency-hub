@@ -1,0 +1,89 @@
+{
+  "resource_id": "S20-VIS-master",
+  "scene": {
+    "title": "Mémoire nationale (frise sobre)",
+    "width": 900,
+    "height": 200,
+    "background": "#ffffff",
+    "elements": [
+      {
+        "type": "line",
+        "x1": 60,
+        "y1": 100,
+        "x2": 840,
+        "y2": 100,
+        "stroke": "#374151",
+        "strokeWidth": 3
+      },
+      {
+        "type": "circle",
+        "cx": 120,
+        "cy": 100,
+        "r": 10,
+        "fill": "#94a3b8"
+      },
+      {
+        "type": "text",
+        "x": 120,
+        "y": 140,
+        "anchor": "middle",
+        "fontSize": 12,
+        "text": "1939-1945"
+      },
+      {
+        "type": "circle",
+        "cx": 350,
+        "cy": 100,
+        "r": 10,
+        "fill": "#64748b"
+      },
+      {
+        "type": "text",
+        "x": 350,
+        "y": 140,
+        "anchor": "middle",
+        "fontSize": 12,
+        "text": "Résistance"
+      },
+      {
+        "type": "circle",
+        "cx": 580,
+        "cy": 100,
+        "r": 10,
+        "fill": "#64748b"
+      },
+      {
+        "type": "text",
+        "x": 580,
+        "y": 140,
+        "anchor": "middle",
+        "fontSize": 12,
+        "text": "Mémoire"
+      },
+      {
+        "type": "circle",
+        "cx": 780,
+        "cy": 100,
+        "r": 10,
+        "fill": "#64748b"
+      },
+      {
+        "type": "text",
+        "x": 780,
+        "y": 140,
+        "anchor": "middle",
+        "fontSize": 12,
+        "text": "Patrimoine"
+      },
+      {
+        "type": "text",
+        "x": 450,
+        "y": 50,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "Sobriété et respect"
+      }
+    ]
+  },
+  "alt_text": "Frise chronologique sobre : Seconde Guerre mondiale, Résistance, lieu de mémoire, sans photographie réelle."
+}

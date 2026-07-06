@@ -1,0 +1,67 @@
+{
+  "resource_id": "S10-QCM-civique",
+  "mention": "CSP",
+  "theme": "Système institutionnel et politique",
+  "questions": [
+    {
+      "notion": "rôle de la commune",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "L'état civil et les écoles sont gérés par :",
+      "options": [
+        "La commune (mairie)",
+        "Le Parlement",
+        "La justice"
+      ],
+      "reponse": "La commune (mairie)"
+    },
+    {
+      "notion": "vote de la loi",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "La loi est votée par :",
+      "options": [
+        "Le Parlement",
+        "Le maire",
+        "Le juge"
+      ],
+      "reponse": "Le Parlement"
+    },
+    {
+      "notion": "rôle de la justice",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Un litige entre deux personnes est tranché par :",
+      "options": [
+        "La justice",
+        "La préfecture",
+        "Le gouvernement"
+      ],
+      "reponse": "La justice"
+    },
+    {
+      "notion": "élection du maire",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Le maire dirige :",
+      "options": [
+        "La commune",
+        "Le pays",
+        "Le tribunal"
+      ],
+      "reponse": "La commune"
+    },
+    {
+      "notion": "orientation",
+      "type": "mise_en_situation",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Pour un acte de naissance, il faut s'adresser à :",
+      "options": [
+        "La mairie",
+        "Le Sénat",
+        "Un ministre"
+      ],
+      "reponse": "La mairie"
+    }
+  ]
+}

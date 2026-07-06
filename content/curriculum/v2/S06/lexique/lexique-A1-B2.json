@@ -1,0 +1,45 @@
+{
+  "resource_id": "S06-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "offre",
+      "definition_simple": "Une proposition d'emploi.",
+      "exemple": "Elle a répondu à une offre d'emploi."
+    },
+    {
+      "mot": "candidature",
+      "definition_simple": "Le fait de se proposer pour un poste.",
+      "exemple": "Il a envoyé sa candidature."
+    },
+    {
+      "mot": "contrat",
+      "definition_simple": "Le document écrit qui fixe les règles du travail.",
+      "exemple": "Elle a lu son contrat avant de signer."
+    },
+    {
+      "mot": "salaire",
+      "definition_simple": "L'argent payé pour un travail.",
+      "exemple": "Le salaire est versé chaque mois."
+    },
+    {
+      "mot": "brut",
+      "definition_simple": "Le salaire avant les cotisations.",
+      "exemple": "Le salaire brut est de 1800 €."
+    },
+    {
+      "mot": "net",
+      "definition_simple": "Le salaire réellement reçu, après cotisations.",
+      "exemple": "Le salaire net est de 1400 €."
+    },
+    {
+      "mot": "déclaré",
+      "definition_simple": "Un travail connu de l'administration et protégé par la loi.",
+      "exemple": "Un travail déclaré donne des droits."
+    },
+    {
+      "mot": "congé",
+      "definition_simple": "Un temps de repos payé.",
+      "exemple": "Il a cinq semaines de congés par an."
+    }
+  ]
+}

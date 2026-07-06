@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 200" width="900" height="200" role="img" aria-label="Trois tâches EO TCF">
+  <title>Trois tâches EO TCF</title>
+  <rect x="0" y="0" width="900" height="200" fill="#ffffff" />
+  <circle cx="160" cy="100" r="50" fill="#dbeafe" />
+  <text x="160" y="105" font-size="13" font-family="sans-serif" fill="#111827" text-anchor="middle">EO1</text>
+  <circle cx="450" cy="100" r="50" fill="#dcfce7" />
+  <text x="450" y="105" font-size="13" font-family="sans-serif" fill="#111827" text-anchor="middle">EO2</text>
+  <circle cx="740" cy="100" r="50" fill="#fef9c3" />
+  <text x="740" y="105" font-size="13" font-family="sans-serif" fill="#111827" text-anchor="middle">EO3</text>
+</svg>

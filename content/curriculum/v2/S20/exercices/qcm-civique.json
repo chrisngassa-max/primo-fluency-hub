@@ -1,0 +1,67 @@
+{
+  "resource_id": "S20-QCM-civique",
+  "mention": "CSP",
+  "theme": "Histoire, géographie, culture",
+  "questions": [
+    {
+      "notion": "Résistance",
+      "type": "connaissance",
+      "enonce": "La Résistance française a combattu :",
+      "options": [
+        "L'occupation nazie",
+        "Le vote des lois",
+        "Les impôts locaux"
+      ],
+      "reponse": "L'occupation nazie",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "Shoah",
+      "type": "connaissance",
+      "enonce": "La Shoah désigne :",
+      "options": [
+        "La persécution des Juifs par le régime nazi",
+        "La fête nationale",
+        "La construction européenne"
+      ],
+      "reponse": "La persécution des Juifs par le régime nazi",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "sobriété",
+      "type": "mise_en_situation",
+      "enonce": "Dans un lieu de mémoire, on adopte un ton :",
+      "options": [
+        "Sobre et respectueux",
+        "Comique et léger",
+        "Agressif"
+      ],
+      "reponse": "Sobre et respectueux",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "patrimoine",
+      "type": "connaissance",
+      "enonce": "Un mémorial fait partie du :",
+      "options": [
+        "Patrimoine national",
+        "Code du travail",
+        "Règlement intérieur"
+      ],
+      "reponse": "Patrimoine national",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "guerre",
+      "type": "connaissance",
+      "enonce": "La Seconde Guerre mondiale s'est déroulée :",
+      "options": [
+        "Entre 1939 et 1945",
+        "En 1789",
+        "En 2001"
+      ],
+      "reponse": "Entre 1939 et 1945",
+      "official_status": "simulation_pedagogique"
+    }
+  ]
+}

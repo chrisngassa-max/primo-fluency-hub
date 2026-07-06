@@ -1,0 +1,113 @@
+[
+  {
+    "support_id": "S18-support-administration",
+    "version": 1,
+    "niveau": "A1",
+    "consigne": "Écoutez le message. Complétez les informations : quelle pièce manque et dans combien de jours faut-il répondre ?",
+    "aides": [
+      "Pièce = justificatif de domicile",
+      "Délai = quinze jours"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Quelle pièce Fatou doit-elle transmettre ?",
+        "options": [
+          "Un justificatif de domicile",
+          "Un passeport",
+          "Un certificat médical"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "vrai_faux",
+        "enonce": "Fatou a quinze jours pour répondre."
+      }
+    ],
+    "corrige": {
+      "q1": "Un justificatif de domicile",
+      "q2": true
+    },
+    "invariants_hash": "9ad06fe4ed3033e7009ad8ce08546e183bd0f0c27ec8f64966db237eb4dcfc12"
+  },
+  {
+    "support_id": "S18-support-administration",
+    "version": 1,
+    "niveau": "A2",
+    "consigne": "Rédigez un court courriel formel pour transmettre la pièce demandée. Utilisez : objet, formule de politesse, pièce jointe.",
+    "aides": [
+      "Pensez à : objet, pièce jointe, délai"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Dans combien de jours Fatou doit-elle répondre ?",
+        "options": [
+          "Cinq jours",
+          "Quinze jours",
+          "Trente jours"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "reponse_courte",
+        "enonce": "Citez un droit de l'usager mentionné dans le support."
+      }
+    ],
+    "corrige": {
+      "q1": "Quinze jours",
+      "q2": "Le droit d'être informé (ou de répondre à l'administration)."
+    },
+    "invariants_hash": "9ad06fe4ed3033e7009ad8ce08546e183bd0f0c27ec8f64966db237eb4dcfc12"
+  },
+  {
+    "support_id": "S18-support-administration",
+    "version": 1,
+    "niveau": "B1",
+    "consigne": "Rédigez un courriel formel complet (tâches EE1, EE2, EE3 graduées) : informer, expliquer un problème, argumenter pour une extension de délai si nécessaire.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "reponse_longue",
+        "enonce": "Rédigez un courriel formel transmettant le justificatif de domicile (EE1/EE2)."
+      },
+      {
+        "id": "q2",
+        "type": "reponse_longue",
+        "enonce": "Expliquez les droits et obligations documentaires de Fatou face à la préfecture."
+      }
+    ],
+    "corrige": {
+      "q1": "Courriel formel avec objet, formule, mention de la pièce jointe et respect du délai.",
+      "q2": "Droit d'être informé et de répondre ; obligation de fournir des pièces conformes et complètes."
+    },
+    "invariants_hash": "9ad06fe4ed3033e7009ad8ce08546e183bd0f0c27ec8f64966db237eb4dcfc12"
+  },
+  {
+    "support_id": "S18-support-administration",
+    "version": 1,
+    "niveau": "B2",
+    "consigne": "Analysez la situation administrative de Fatou et rédigez les trois tâches EE TCF avec autonomie croissante, en distinguant droits de l'usager et obligations documentaires.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "argumentation",
+        "enonce": "Argumentez : pourquoi un courriel formel est-il préférable à un message informel dans ce contexte ?"
+      },
+      {
+        "id": "q2",
+        "type": "argumentation",
+        "enonce": "Nuancez : quels risques si Fatou ne respecte pas le délai de quinze jours ?"
+      }
+    ],
+    "corrige": {
+      "q1": "Reponse ouverte : trace ecrite, clarte, respect des formes administratives.",
+      "q2": "Reponse ouverte : retard d'instruction, relance, risque de refus si dossier incomplet."
+    },
+    "invariants_hash": "9ad06fe4ed3033e7009ad8ce08546e183bd0f0c27ec8f64966db237eb4dcfc12"
+  }
+]

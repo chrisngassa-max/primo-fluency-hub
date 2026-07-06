@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "Bleu, blanc, rouge",
+    "q2": true
+  },
+  "A2": {
+    "q1": "La Marseillaise",
+    "q2": "Le 14 juillet."
+  },
+  "B1": {
+    "q1": "Message structure attendu : formule d'appel, objet clair (demande de document d'etat civil), precision de la situation, formule de politesse finale.",
+    "q2": "La devise resume les valeurs (liberte, egalite, fraternite) ; le drapeau tricolore symbolise la nation ; Marianne incarne la Republique."
+  },
+  "B2": {
+    "q1": "Reponse ouverte evaluee sur la precision (symboles = reperes communs, egalite de traitement, neutralite) et la qualite de l'argumentation.",
+    "q2": "Reponse ouverte : les symboles sont des reperes mais ne remplacent pas l'explication des droits et devoirs concrets."
+  }
+}

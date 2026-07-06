@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "Interdite",
+    "q2": true
+  },
+  "A2": {
+    "q1": "Neutralité de l'État",
+    "q2": "Oui, encadré par déclaration."
+  },
+  "B1": {
+    "q1": "Avis + raisons.",
+    "q2": "Diffamation, haine, sécurité."
+  },
+  "B2": {
+    "q1": "Réponse ouverte.",
+    "q2": "Réponse ouverte."
+  }
+}

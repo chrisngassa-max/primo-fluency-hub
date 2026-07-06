@@ -1,0 +1,24 @@
+{
+  "support_id": "S24-support",
+  "personnages": [
+    "Apprenants",
+    "Formateur chronométreur"
+  ],
+  "situation": "Simulation partielle chronométrée du TCF IRN et du civique CSP : banque de questions gelée, stratégie 32/40, enchaînement sans aide des compétences CO, CE, EE, EO.",
+  "faits": [
+    "La banque de questions est gelée : aucun nouvel item n'est créé.",
+    "La stratégie 32/40 vise trente-deux bonnes réponses sur quarante au civique.",
+    "Les épreuves s'enchaînent sans aide en respectant les durées officielles.",
+    "CO et CE sont traités ensemble dans le créneau de compréhension.",
+    "EE et EO ont des durées distinctes et strictes.",
+    "Une phase de remédiation suit la simulation pour analyser les erreurs."
+  ],
+  "nombres": [
+    32,
+    40,
+    180
+  ],
+  "dates": [],
+  "hash": "6889b51dbc7edb0b30ae2d69ad469f48e8222ff8d39b4b6c91ce7b9d0ad18fa0",
+  "version": 1
+}

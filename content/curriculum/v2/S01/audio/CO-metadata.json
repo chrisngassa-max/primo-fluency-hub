@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Mme Rossi : Bonjour, bienvenue dans votre nouveau parcours. Comment vous appelez-vous ?\nAwa : Bonjour madame. Je m'appelle Awa. Awa Diallo.\nMme Rossi : Enchantée, Awa. Quel est votre objectif aujourd'hui ?\nAwa : Je voudrais avoir ma carte de séjour pluriannuelle.\nMme Rossi : Très bien. Pour ça, vous allez suivre un parcours de quatre-vingts heures.\nAwa : Quatre-vingts heures ? C'est beaucoup !\nMme Rossi : Oui, mais c'est réparti sur vingt-cinq séances de trois heures, à raison d'une séance par semaine.\nAwa : D'accord. Et qu'est-ce qu'on va apprendre exactement ?\nMme Rossi : Vous allez apprendre le français pour la vie quotidienne, et aussi cinq thèmes sur la vie en France : la République, les institutions, les droits et devoirs, l'histoire et la vie en société.\nAwa : Il y a un examen à la fin ?\nMme Rossi : Il y a deux évaluations : une évaluation intermédiaire après cinquante heures, et une évaluation finale à la fin des quatre-vingts heures.\nAwa : Je comprends. Merci beaucoup madame.\nMme Rossi : Une dernière chose : connaissez-vous la différence entre un droit, un devoir et une règle ?\nAwa : Pas très bien, madame.\nMme Rossi : Un droit, c'est quelque chose que vous pouvez demander, comme le droit à la santé. Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. Une règle, c'est une consigne précise, par exemple dans un règlement intérieur.\nAwa : D'accord, je comprends mieux maintenant.\nMme Rossi : Parfait, nous allons travailler cela ensemble pendant toute la formation. Bienvenue parmi nous, Awa !",
+  "transcript": "Mme Rossi : Bonjour, bienvenue dans votre nouveau parcours. Comment vous appelez-vous ?\nAwa : Bonjour madame. Je m'appelle Awa. Awa Diallo.\nMme Rossi : Enchantée, Awa. Quel est votre objectif aujourd'hui ?\nAwa : Je voudrais avoir ma carte de séjour pluriannuelle.\nMme Rossi : Très bien. Pour ça, vous allez suivre un parcours de quatre-vingts heures.\nAwa : Quatre-vingts heures ? C'est beaucoup !\nMme Rossi : Oui, mais c'est réparti sur vingt-cinq séances de trois heures, à raison d'une séance par semaine.\nAwa : D'accord. Et qu'est-ce qu'on va apprendre exactement ?\nMme Rossi : Vous allez apprendre le français pour la vie quotidienne, et aussi cinq thèmes sur la vie en France : la République, les institutions, les droits et devoirs, l'histoire et la vie en société.\nAwa : Il y a un examen à la fin ?\nMme Rossi : Il y a deux évaluations : une évaluation intermédiaire après cinquante heures, et une évaluation finale à la fin des quatre-vingts heures.\nAwa : Je comprends. Merci beaucoup madame.\nMme Rossi : Une dernière chose : connaissez-vous la différence entre un droit, un devoir et une règle ?\nAwa : Pas très bien, madame.\nMme Rossi : Un droit, c'est quelque chose que vous pouvez demander, comme le droit à la santé. Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. Une règle, c'est une consigne précise, par exemple dans un règlement intérieur.\nAwa : D'accord, je comprends mieux maintenant.\nMme Rossi : Parfait, nous allons travailler cela ensemble pendant toute la formation. Bienvenue parmi nous, Awa !",
+  "voice": "fr-FR-Wavenet-C",
+  "languageCode": "fr-FR",
+  "speaking_rate": 0.92,
+  "pauses": [
+    {
+      "after_word": 12,
+      "ms": 400
+    },
+    {
+      "after_word": 60,
+      "ms": 400
+    },
+    {
+      "after_word": 140,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 134,
+  "hash": "5614f6281fe545f5f1fc9cf46eb74f814a242d0ffcfec4d1e657be95e0b851c2"
+}

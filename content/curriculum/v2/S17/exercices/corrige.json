@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "Cinquante heures",
+    "q2": false
+  },
+  "A2": {
+    "q1": "Six",
+    "q2": "Respecter la loi (exemple donné dans le dialogue)."
+  },
+  "B1": {
+    "q1": "Un droit est une possibilite garantie par la loi ; un devoir est une obligation ; une regle est une consigne precise valable dans un lieu donne.",
+    "q2": "La matrice des erreurs identifie precisement les confusions d'Amadou (droit/devoir), ce qui permet de cibler la revision sur ce point plutot que de tout reprendre."
+  },
+  "B2": {
+    "q1": "Reponse ouverte evaluee sur la precision des notions et la qualite de l'argumentation, sans reponse unique imposee.",
+    "q2": "Reponse ouverte : avantages (ciblage, gain de temps) vs limites (charge d'organisation, risque d'isolement de l'apprenant) a mettre en balance."
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "resource_id": "S21-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "connaissance",
+      "definition_simple": "Un fait ou une définition à savoir.",
+      "exemple": "Item de connaissance."
+    },
+    {
+      "mot": "mise en situation",
+      "definition_simple": "Un cas concret à résoudre.",
+      "exemple": "Item de situation."
+    },
+    {
+      "mot": "conforme",
+      "definition_simple": "Qui respecte la loi et les principes.",
+      "exemple": "Conduite conforme."
+    },
+    {
+      "mot": "distracteur",
+      "definition_simple": "Réponse piège proche de la bonne.",
+      "exemple": "Analyser un distracteur."
+    },
+    {
+      "mot": "arbre de décision",
+      "definition_simple": "Schéma qui guide le choix de réponse.",
+      "exemple": "Suivre l'arbre de décision."
+    },
+    {
+      "mot": "justifier",
+      "definition_simple": "Expliquer pourquoi on choisit une réponse.",
+      "exemple": "Justifier une conduite."
+    },
+    {
+      "mot": "simulation",
+      "definition_simple": "Exercice qui imite l'examen.",
+      "exemple": "Simulation civique."
+    },
+    {
+      "mot": "principe",
+      "definition_simple": "Valeur ou règle fondamentale.",
+      "exemple": "Principes républicains."
+    },
+    {
+      "mot": "thème",
+      "definition_simple": "Grand sujet du programme civique.",
+      "exemple": "Cinq thèmes civiques."
+    }
+  ]
+}

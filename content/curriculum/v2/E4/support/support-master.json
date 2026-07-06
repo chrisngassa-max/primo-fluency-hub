@@ -1,0 +1,22 @@
+{
+  "support_id": "E4-support",
+  "personnages": [
+    "Apprenants B2",
+    "Jury fictif"
+  ],
+  "situation": "Évaluation sortie B2/NAT : échantillon TCF IRN ciblé, examen civique NAT complet, entretien d'assimilation simulé. 120 minutes. Banque gelée. Décision : prêt inscription, consolidation ou volume supplémentaire.",
+  "faits": [
+    "E4 clôt le parcours B2/NAT.",
+    "Durée totale : cent vingt minutes.",
+    "Échantillon TCF IRN ciblé sur fragilités.",
+    "Civique NAT complet : banque gelée.",
+    "Entretien d'assimilation simulé inclus.",
+    "Décision : prêt à l'inscription, consolidation ciblée ou volume supplémentaire."
+  ],
+  "nombres": [
+    120
+  ],
+  "dates": [],
+  "hash": "abedf3428970bd8ce09c091eaeb1f988155645d9560bfe086e5660bb58c21beb",
+  "version": 1
+}

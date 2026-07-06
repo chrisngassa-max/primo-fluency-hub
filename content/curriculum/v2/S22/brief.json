@@ -1,0 +1,366 @@
+{
+  "session_code": "S22",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Expression écrite TCF, trois tâches",
+  "support": {
+    "support_id": "S22-support",
+    "situation": "Les apprenants réalisent trois tâches d'expression écrite TCF (message court, récit/explication, texte argumenté) sur des contextes civiques variés : voisinage, école, administration fictive.",
+    "personnages": [
+      "Apprenants",
+      "Formateur"
+    ],
+    "faits": [
+      "La séance est dominante langue : pas de nouveau fait civique.",
+      "EE1 demande un message court et fonctionnel.",
+      "EE2 demande soixante à quatre-vingts mots pour décrire ou expliquer.",
+      "EE3 demande un texte structuré avec opinion et arguments.",
+      "Les contextes restent civiques mais l'évaluation porte sur l'écrit.",
+      "Un rappel civique minimal clôt la séance sans introduire de faits nouveaux."
+    ],
+    "nombres": [
+      60,
+      80,
+      3
+    ],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S22-CO-master",
+    "voice": "fr-FR-Wavenet-C",
+    "speaking_rate": 0.92,
+    "script": "Formateur : Aujourd'hui, nous enchaînons les trois tâches d'expression écrite du TCF IRN, sans aide, sur des situations de la vie en France.\nApprenant : Quelles sont les trois tâches ?\nFormateur : Tâche un : un message court, par exemple pour prévenir un voisin ou répondre à une convocation fictive. Tâche deux : soixante à quatre-vingts mots pour décrire un problème ou expliquer une démarche à l'école ou à la mairie. Tâche trois : un texte plus long, structuré, où vous donnez votre avis et des arguments.\nApprenant : Le thème est toujours civique ?\nFormateur : Le contexte peut l'être — logement, école, administration — mais je note surtout votre écrit : clarté, connecteurs, registre, orthographe. Pas de nouveau contenu civique à apprendre aujourd'hui.\nApprenant : Combien de temps par tâche ?\nFormateur : Respectez les durées TCF affichées. Vous travaillez en autonomie, puis nous corrigeons les critères linguistiques.\nApprenant : Et le QCM civique ?\nFormateur : Un rappel minimal en fin de séance, cinq questions, pour entretenir les acquis sans mélanger les notes.\nApprenant : D'accord, je commence par la tâche un.",
+    "pauses": [
+      {
+        "after_word": 12,
+        "ms": 400
+      },
+      {
+        "after_word": 60,
+        "ms": 400
+      },
+      {
+        "after_word": 130,
+        "ms": 500
+      }
+    ]
+  },
+  "visual": {
+    "resource_id": "S22-VIS-master",
+    "alt_text": "Trois blocs chronologiques EE1 EE2 EE3 avec durées indicatives.",
+    "scene": {
+      "title": "Trois tâches EE TCF",
+      "width": 900,
+      "height": 200,
+      "background": "#ffffff",
+      "elements": [
+        {
+          "type": "rect",
+          "x": 40,
+          "y": 60,
+          "width": 240,
+          "height": 80,
+          "rx": 8,
+          "fill": "#dbeafe"
+        },
+        {
+          "type": "text",
+          "x": 160,
+          "y": 105,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "EE1 message"
+        },
+        {
+          "type": "rect",
+          "x": 330,
+          "y": 60,
+          "width": 240,
+          "height": 80,
+          "rx": 8,
+          "fill": "#dcfce7"
+        },
+        {
+          "type": "text",
+          "x": 450,
+          "y": 105,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "EE2 60-80 mots"
+        },
+        {
+          "type": "rect",
+          "x": 620,
+          "y": 60,
+          "width": 240,
+          "height": 80,
+          "rx": 8,
+          "fill": "#fef9c3"
+        },
+        {
+          "type": "text",
+          "x": 740,
+          "y": 105,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "EE3 argumenté"
+        }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S22-LEX-A1-B2",
+    "mots": [
+      {
+        "mot": "message",
+        "definition_simple": "Texte court et fonctionnel.",
+        "exemple": "Message au voisin."
+      },
+      {
+        "mot": "consigne",
+        "definition_simple": "Instruction de l'exercice.",
+        "exemple": "Lire la consigne EE2."
+      },
+      {
+        "mot": "connecteur",
+        "definition_simple": "Mot qui relie les idées.",
+        "exemple": "Cependant, donc, ensuite."
+      },
+      {
+        "mot": "registre",
+        "definition_simple": "Niveau de langue (formel ou familier).",
+        "exemple": "Registre formel à l'administration."
+      },
+      {
+        "mot": "argument",
+        "definition_simple": "Raison qui soutient une opinion.",
+        "exemple": "Un argument pour ou contre."
+      },
+      {
+        "mot": "structure",
+        "definition_simple": "Organisation du texte.",
+        "exemple": "Introduction, développement, conclusion."
+      },
+      {
+        "mot": "autonomie",
+        "definition_simple": "Travail sans aide.",
+        "exemple": "Réaliser les tâches en autonomie."
+      },
+      {
+        "mot": "correction",
+        "definition_simple": "Retour sur les erreurs.",
+        "exemple": "Correction des critères linguistiques."
+      },
+      {
+        "mot": "tâche",
+        "definition_simple": "Exercice d'examen numéroté.",
+        "exemple": "Trois tâches EE."
+      }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Complétez un message court modèle (EE1).",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Combien de tâches EE ?",
+          "options": [
+            "3",
+            "2",
+            "5"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "EE2 demande environ 60-80 mots."
+        }
+      ],
+      "corrige": {
+        "q1": "3",
+        "q2": true
+      }
+    },
+    "A2": {
+      "consigne": "Rédigez EE1 et EE2 sur un contexte civique fictif.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "La séance est surtout :",
+          "options": [
+            "Langue",
+            "Nouveau civique",
+            "Sport"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Citez un critère noté en EE."
+        }
+      ],
+      "corrige": {
+        "q1": "Langue",
+        "q2": "Clarté, connecteurs, orthographe (un critère suffit)."
+      }
+    },
+    "B1": {
+      "consigne": "Réalisez les trois tâches EE avec autonomie croissante.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Rédigez EE2 (60-80 mots) sur une démarche administrative fictive."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "EE3 : opinion argumentée sur un sujet de voisinage."
+        }
+      ],
+      "corrige": {
+        "q1": "Texte cohérent 60-80 mots.",
+        "q2": "Avis + au moins deux arguments."
+      }
+    },
+    "B2": {
+      "consigne": "Analysez vos productions selon les critères TCF EE.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Quels connecteurs renforcent EE3 ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Comment adapter le registre à l'administration ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Réponse ouverte.",
+        "q2": "Réponse ouverte : formules polies, vocabulaire précis."
+      }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S22-QCM-civique",
+    "mention": "CSP",
+    "theme": "Expression écrite TCF, trois tâches",
+    "questions": [
+      {
+        "notion": "rappel",
+        "type": "connaissance",
+        "enonce": "Cette séance EE n'introduit :",
+        "options": [
+          "Aucun nouveau fait civique",
+          "Trente faits nouveaux",
+          "Un nouveau code civil"
+        ],
+        "reponse": "Aucun nouveau fait civique",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "EE2",
+        "type": "connaissance",
+        "enonce": "EE2 correspond environ à :",
+        "options": [
+          "60-80 mots",
+          "10 mots",
+          "500 mots"
+        ],
+        "reponse": "60-80 mots",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "séparation",
+        "type": "connaissance",
+        "enonce": "La note linguistique EE est :",
+        "options": [
+          "Séparée du rappel civique",
+          "Identique au QCM",
+          "Supprimée"
+        ],
+        "reponse": "Séparée du rappel civique",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "tâches",
+        "type": "connaissance",
+        "enonce": "Le TCF IRN EE comporte :",
+        "options": [
+          "Trois tâches",
+          "Une seule tâche",
+          "Dix tâches"
+        ],
+        "reponse": "Trois tâches",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "contexte",
+        "type": "mise_en_situation",
+        "enonce": "Un courriel à la mairie demande un registre :",
+        "options": [
+          "Formel",
+          "Très familier",
+          "Sans objet"
+        ],
+        "reponse": "Formel",
+        "official_status": "simulation_pedagogique"
+      }
+    ]
+  },
+  "devoirs": {
+    "A1": "EE1 message court à la maison.",
+    "A2": "EE1+EE2 rédigés.",
+    "B1": "Trois tâches EE complètes.",
+    "B2": "EE3 réécrit après correction."
+  },
+  "formateur": {
+    "fiche_formateur": "Langue pure : trois tâches EE TCF, contextes civiques variés. QCM civique minimal en fixation. Séparer notes.",
+    "deroule_180min": [
+      {
+        "phase": "Rituel civique",
+        "duree_min": 10,
+        "description": "Rappel du thème civique de la séance."
+      },
+      {
+        "phase": "Activation + lexique",
+        "duree_min": 20,
+        "description": "Découverte et réactivation du lexique de la séance."
+      },
+      {
+        "phase": "Support invariant CO/CE",
+        "duree_min": 50,
+        "description": "Écoute/lecture du support invariant, compréhension globale puis détaillée."
+      },
+      {
+        "phase": "Ateliers différenciés",
+        "duree_min": 60,
+        "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du même support."
+      },
+      {
+        "phase": "Production EE/EO",
+        "duree_min": 30,
+        "description": "Production selon la compétence dominante de la séance."
+      },
+      {
+        "phase": "Fixation",
+        "duree_min": 10,
+        "description": "Synthèse collective, QCM civique, devoir personnalisé."
+      }
+    ],
+    "adaptation_rules": [
+      "Pas de nouveau fait civique.",
+      "Chronométrer chaque tâche.",
+      "Correction linguistique uniquement en atelier EE."
+    ]
+  }
+}

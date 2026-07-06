@@ -1,0 +1,67 @@
+{
+  "resource_id": "S23-QCM-civique",
+  "mention": "CSP",
+  "theme": "Expression orale TCF, trois tâches",
+  "questions": [
+    {
+      "notion": "EO",
+      "type": "connaissance",
+      "enonce": "L'EO TCF comporte :",
+      "options": [
+        "Trois tâches",
+        "Une tâche",
+        "Cinq tâches"
+      ],
+      "reponse": "Trois tâches",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "critères",
+      "type": "connaissance",
+      "enonce": "L'EO est évaluée notamment sur :",
+      "options": [
+        "La fluidité et l'interaction",
+        "Le nombre exact de mots",
+        "La calligraphie"
+      ],
+      "reponse": "La fluidité et l'interaction",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "EO1",
+      "type": "connaissance",
+      "enonce": "EO1 est un :",
+      "options": [
+        "Entretien dirigé",
+        "Exercice écrit",
+        "QCM civique"
+      ],
+      "reponse": "Entretien dirigé",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "langue",
+      "type": "connaissance",
+      "enonce": "Cette séance n'introduit :",
+      "options": [
+        "Aucun nouveau fait civique",
+        "Vingt faits civiques",
+        "Un nouveau thème"
+      ],
+      "reponse": "Aucun nouveau fait civique",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "EO3",
+      "type": "mise_en_situation",
+      "enonce": "En EO3, il est attendu :",
+      "options": [
+        "Un avis argumenté",
+        "Un silence",
+        "Une traduction"
+      ],
+      "reponse": "Un avis argumenté",
+      "official_status": "simulation_pedagogique"
+    }
+  ]
+}

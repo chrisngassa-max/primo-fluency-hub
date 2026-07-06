@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 240" width="900" height="240" role="img" aria-label="Du signalement à la justice">
+  <title>Du signalement à la justice</title>
+  <rect x="0" y="0" width="900" height="240" fill="#ffffff" />
+  <rect x="30" y="90" width="170" height="70" fill="#dbeafe" rx="8" />
+  <text x="115" y="130" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">Signalement</text>
+  <line x1="200" y1="125" x2="250" y2="125" stroke="#374151" stroke-width="3" />
+  <rect x="250" y="90" width="170" height="70" fill="#dcfce7" rx="8" />
+  <text x="335" y="130" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">Plainte</text>
+  <line x1="420" y1="125" x2="470" y2="125" stroke="#374151" stroke-width="3" />
+  <rect x="470" y="90" width="170" height="70" fill="#fef9c3" rx="8" />
+  <text x="555" y="130" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">Enquête</text>
+  <line x1="640" y1="125" x2="690" y2="125" stroke="#374151" stroke-width="3" />
+  <rect x="690" y="90" width="170" height="70" fill="#fee2e2" rx="8" />
+  <text x="775" y="130" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">Justice</text>
+  <text x="30" y="50" font-size="16" font-family="sans-serif" fill="#111827" text-anchor="start">Parcours d&apos;une plainte (schéma pédagogique)</text>
+</svg>

@@ -1,0 +1,26 @@
+{
+  "support_id": "S17-support-remediation-e1",
+  "personnages": [
+    "Amadou Traoré (apprenant)",
+    "M. Lefèvre (formateur)"
+  ],
+  "situation": "Après son évaluation E1 à cinquante heures, Amadou Traoré revoit avec son formateur, M. Lefèvre, un point civique où il a fait plusieurs erreurs : la distinction entre un droit, un devoir et une règle.",
+  "faits": [
+    "L'évaluation E1 a lieu après cinquante heures de formation.",
+    "Amadou a confondu un droit et un devoir dans deux exercices sur trois lors de l'évaluation E1.",
+    "Un droit est une possibilité garantie par la loi, comme le droit à la santé.",
+    "Un devoir est une obligation à respecter, comme respecter la loi.",
+    "Une règle s'applique dans un lieu précis, comme le règlement intérieur d'un centre de formation.",
+    "La matrice des erreurs du groupe montre que six apprenants sur dix confondent droit et devoir."
+  ],
+  "nombres": [
+    50,
+    2,
+    3,
+    6,
+    10
+  ],
+  "dates": [],
+  "hash": "c01b8e28e27d636f4fd2e7b3d587a23818d0903ec97c853d1ef9cca17d461eac",
+  "version": 1
+}

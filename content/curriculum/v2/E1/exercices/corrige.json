@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "Une banque gelée",
+    "q2": true
+  },
+  "A2": {
+    "q1": "Pas de nouveaux faits par niveau",
+    "q2": "Chronométrage, sans aide, séparation langue/civique."
+  },
+  "B1": {
+    "q1": "Phases et durées conformes au support.",
+    "q2": "Items verrouillés, pas de nouveaux faits."
+  },
+  "B2": {
+    "q1": "Réponse ouverte : équité, comparabilité.",
+    "q2": "Réponse ouverte : remédiation, orientation."
+  }
+}

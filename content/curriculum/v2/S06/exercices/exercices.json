@@ -1,0 +1,89 @@
+{
+  "session_code": "S06",
+  "variants": [
+    {
+      "niveau": "A1",
+      "consigne": "Lisez la fiche de paie. Associez chaque mot à sa ligne, puis complétez avec les nombres du support.",
+      "aides": [
+        "Brut = avant cotisations",
+        "Net = reçu vraiment",
+        "Mots utiles : salaire, contrat, congé"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Quelle est la durée légale du travail par semaine ?",
+          "options": [
+            "30 heures",
+            "35 heures",
+            "40 heures"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "Le salaire brut est plus élevé que le salaire net."
+        }
+      ]
+    },
+    {
+      "niveau": "A2",
+      "consigne": "Vérifiez les informations de la fiche de paie et demandez une correction si un chiffre est faux.",
+      "aides": [
+        "Formule utile : « Je crois qu'il y a une erreur sur... »"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Combien de semaines de congés payés par an ?",
+          "options": [
+            "3 semaines",
+            "5 semaines",
+            "8 semaines"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Expliquez avec vos mots la différence entre salaire brut et salaire net."
+        }
+      ]
+    },
+    {
+      "niveau": "B1",
+      "consigne": "Rédigez un message pour demander une correction sur une fiche de paie, puis expliquez pourquoi le travail déclaré protège le salarié.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Écrivez un message poli signalant une erreur de salaire et demandant une correction."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Expliquez le rôle des cotisations sociales et l'intérêt d'un travail déclaré."
+        }
+      ]
+    },
+    {
+      "niveau": "B2",
+      "consigne": "Analysez l'intérêt du contrat écrit et du travail déclaré, et nuancez les risques du travail non déclaré.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Argumentez : pourquoi la loi impose-t-elle un contrat écrit et un travail déclaré ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Nuancez : quels sont les risques du travail non déclaré pour le salarié et pour la société ?"
+        }
+      ]
+    }
+  ]
+}

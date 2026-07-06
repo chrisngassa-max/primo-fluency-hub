@@ -1,0 +1,83 @@
+{
+  "session_code": "S23",
+  "variants": [
+    {
+      "niveau": "A1",
+      "consigne": "Répondez à trois questions simples (EO1).",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "EO2 est :",
+          "options": [
+            "Une interaction",
+            "Un dictée",
+            "Un QCM"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "L'EO se juge sur la durée de parole."
+        }
+      ]
+    },
+    {
+      "niveau": "A2",
+      "consigne": "Réalisez EO1 et une interaction courte EO2.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "EO3 demande :",
+          "options": [
+            "Un point de vue argumenté",
+            "Une liste de mots",
+            "Un dessin"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Citez un critère oral."
+        }
+      ]
+    },
+    {
+      "niveau": "B1",
+      "consigne": "Enchaînez les trois tâches EO en conditions proches de l'examen.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Présentez votre parcours (EO1)."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Défendez un point de vue sur les démarches (EO3)."
+        }
+      ]
+    },
+    {
+      "niveau": "B2",
+      "consigne": "Auto-évaluez vos productions selon les critères TCF oraux.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Comment améliorer l'interaction en EO2 ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Quelle stratégie si vous bloquez en EO3 ?"
+        }
+      ]
+    }
+  ]
+}

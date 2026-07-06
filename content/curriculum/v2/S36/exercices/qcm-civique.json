@@ -1,0 +1,67 @@
+{
+  "resource_id": "S36-QCM-civique",
+  "mention": "NAT",
+  "theme": "Simulation NAT sous contrainte",
+  "questions": [
+    {
+      "notion": "NAT",
+      "type": "connaissance",
+      "enonce": "La simulation NAT dure :",
+      "options": [
+        "45 minutes",
+        "10 minutes",
+        "3 heures"
+      ],
+      "reponse": "45 minutes",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "répartition",
+      "type": "connaissance",
+      "enonce": "Indicativement, connaissances NAT :",
+      "options": [
+        "28 sur 40",
+        "5 sur 40",
+        "40 sur 40"
+      ],
+      "reponse": "28 sur 40",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "banque",
+      "type": "connaissance",
+      "enonce": "Banque gelée signifie :",
+      "options": [
+        "Items fixes",
+        "Items aléatoires",
+        "Pas d'items"
+      ],
+      "reponse": "Items fixes",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "comparaison",
+      "type": "mise_en_situation",
+      "enonce": "Après simulation, on compare :",
+      "options": [
+        "Avec un essai précédent",
+        "Avec un match de foot",
+        "Sans analyse"
+      ],
+      "reponse": "Avec un essai précédent",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "simulation",
+      "type": "mise_en_situation",
+      "enonce": "Pendant les 45 minutes :",
+      "options": [
+        "Aucune aide",
+        "Correction live",
+        "Téléphone autorisé"
+      ],
+      "reponse": "Aucune aide",
+      "official_status": "simulation_pedagogique"
+    }
+  ]
+}

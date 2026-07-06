@@ -1,0 +1,32 @@
+[
+  {
+    "phase": "Rituel civique",
+    "duree_min": 10,
+    "description": "Rappel des valeurs egalite/fraternite a partir du visuel maitre."
+  },
+  {
+    "phase": "Activation + lexique",
+    "duree_min": 20,
+    "description": "Decouverte du lexique (bail, nuisance, mediation, discrimination...)."
+  },
+  {
+    "phase": "Support invariant CO/CE",
+    "duree_min": 50,
+    "description": "Ecoute du dialogue de mediation Costa/Diop/Roy."
+  },
+  {
+    "phase": "Ateliers differencies",
+    "duree_min": 60,
+    "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du meme support."
+  },
+  {
+    "phase": "Production EE/EO",
+    "duree_min": 30,
+    "description": "Jeu de role : signaler un probleme et proposer une solution."
+  },
+  {
+    "phase": "Fixation",
+    "duree_min": 10,
+    "description": "Synthese, QCM civique, qualification des situations, devoir."
+  }
+]

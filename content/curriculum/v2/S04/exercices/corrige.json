@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "16 ans",
+    "q2": true
+  },
+  "A2": {
+    "q1": "3 ans",
+    "q2": "La mixité / la laïcité / l'obligation de justifier les absences (une réponse suffit)."
+  },
+  "B1": {
+    "q1": "Courrier structure attendu : appel, objet (justification d'absence), dates precises, motif, politesse.",
+    "q2": "L'instruction est obligatoire de 3 a 16 ans ; les parents, au titre de l'autorite parentale, sont responsables de la presence et justifient les absences."
+  },
+  "B2": {
+    "q1": "Reponse ouverte : egalite des chances, protection de l'enfant, cohesion sociale, acces au savoir.",
+    "q2": "Reponse ouverte : la laicite garantit la neutralite et la liberte de conscience ; la mixite habitue a l'egalite et au respect mutuel."
+  }
+}

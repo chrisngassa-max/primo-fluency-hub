@@ -1,0 +1,23 @@
+{
+  "support_id": "S02-support-mairie",
+  "personnages": [
+    "M. Traoré (usager)",
+    "Mme Lambert (agent d'accueil)"
+  ],
+  "situation": "M. Traoré se rend à la mairie pour une démarche d'état civil. Un agent d'accueil, Mme Lambert, l'aide à compléter un formulaire fictif et lui rappelle les symboles de la République affichés dans le hall.",
+  "faits": [
+    "La devise de la République française est « Liberté, Égalité, Fraternité ».",
+    "Le drapeau français est tricolore : bleu, blanc, rouge.",
+    "L'hymne national est La Marseillaise.",
+    "La fête nationale a lieu le 14 juillet.",
+    "La langue de la République est le français.",
+    "Marianne est la figure symbolique de la République."
+  ],
+  "nombres": [
+    3,
+    14
+  ],
+  "dates": [],
+  "hash": "fe26e669d6c7a23b8bf86dc439f6f1cbad48b931c70f1f4d4136457f73698798",
+  "version": 1
+}

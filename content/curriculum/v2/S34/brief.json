@@ -1,0 +1,392 @@
+{
+  "session_code": "S34",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Corpus historique multi-supports",
+  "support": {
+    "support_id": "S34-support",
+    "situation": "Corpus fictif : texte sur les Lumières, carte des Républiques, timeline des guerres mondiales, infographie Europe — synthèse hiérarchisée B2.",
+    "personnages": [
+      "Apprenants B2",
+      "Formateur"
+    ],
+    "faits": [
+      "Les Lumières défendent la raison, les droits et la critique de l'absolutisme.",
+      "La France a connu plusieurs régimes républicains après 1792.",
+      "Les guerres mondiales ont restructuré l'Europe et la mémoire.",
+      "Une synthèse multi-supports hiérarchise les informations.",
+      "Relier causes et conséquences est attendu en B2.",
+      "Les supports du corpus sont pédagogiques et fictifs."
+    ],
+    "nombres": [],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S34-CO-master",
+    "voice": "fr-FR-Wavenet-D",
+    "speaking_rate": 1,
+    "script": "Formateur : Vous avez quatre supports : Lumières, Républiques, guerres, Europe. Hiérarchisez.\nApprenant : Support un : les Lumières préparent les idées de droits et de citoyenneté. Support deux : la carte montre la succession des Républiques depuis mille sept cent quatre-vingt-neuf.\nFormateur : Guerres ?\nApprenant : Support trois : timeline 14-18 et 39-45, conséquences sur les frontières et la mémoire.\nFormateur : Europe ?\nApprenant : Support quatre : construction européenne après guerre, lien avec paix et économie.\nFormateur : Synthèse ?\nApprenant : Idées des Lumières → Républiques → guerres bouleversent l'Europe → traités pour la paix. Causes et conséquences en chaîne.\nFormateur : Très bien. Multi-supports hiérarchisé.",
+    "pauses": [
+      {
+        "after_word": 12,
+        "ms": 400
+      },
+      {
+        "after_word": 60,
+        "ms": 400
+      },
+      {
+        "after_word": 130,
+        "ms": 500
+      }
+    ]
+  },
+  "visual": {
+    "resource_id": "S34-VIS-master",
+    "alt_text": "Quatre panneaux : Lumières, Républiques, guerres, Europe.",
+    "scene": {
+      "title": "Corpus multi-supports",
+      "width": 900,
+      "height": 260,
+      "background": "#ffffff",
+      "elements": [
+        {
+          "type": "rect",
+          "x": 40,
+          "y": 40,
+          "width": 190,
+          "height": 80,
+          "fill": "#dbeafe"
+        },
+        {
+          "type": "text",
+          "x": 135,
+          "y": 85,
+          "anchor": "middle",
+          "fontSize": 13,
+          "text": "Lumières"
+        },
+        {
+          "type": "rect",
+          "x": 250,
+          "y": 40,
+          "width": 190,
+          "height": 80,
+          "fill": "#dcfce7"
+        },
+        {
+          "type": "text",
+          "x": 345,
+          "y": 85,
+          "anchor": "middle",
+          "fontSize": 13,
+          "text": "Républiques"
+        },
+        {
+          "type": "rect",
+          "x": 460,
+          "y": 40,
+          "width": 190,
+          "height": 80,
+          "fill": "#fee2e2"
+        },
+        {
+          "type": "text",
+          "x": 555,
+          "y": 85,
+          "anchor": "middle",
+          "fontSize": 13,
+          "text": "Guerres"
+        },
+        {
+          "type": "rect",
+          "x": 670,
+          "y": 40,
+          "width": 190,
+          "height": 80,
+          "fill": "#fef9c3"
+        },
+        {
+          "type": "text",
+          "x": 765,
+          "y": 85,
+          "anchor": "middle",
+          "fontSize": 13,
+          "text": "Europe"
+        },
+        {
+          "type": "line",
+          "x1": 135,
+          "y1": 120,
+          "x2": 765,
+          "y2": 200,
+          "stroke": "#64748b",
+          "strokeWidth": 2
+        },
+        {
+          "type": "text",
+          "x": 450,
+          "y": 230,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "Synthèse hiérarchisée"
+        }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S34-LEX-A1-B2",
+    "mots": [
+      {
+        "mot": "corpus",
+        "definition_simple": "Ensemble de documents d'étude.",
+        "exemple": "Corpus multi-supports."
+      },
+      {
+        "mot": "Lumières",
+        "definition_simple": "Mouvement des XVIIIe siècle, raison et droits.",
+        "exemple": "Philosophes des Lumières."
+      },
+      {
+        "mot": "République",
+        "definition_simple": "Régime sans monarchie.",
+        "exemple": "Plusieurs Républiques françaises."
+      },
+      {
+        "mot": "cause",
+        "definition_simple": "Ce qui provoque un événement.",
+        "exemple": "Cause d'une guerre."
+      },
+      {
+        "mot": "conséquence",
+        "definition_simple": "Effet d'un événement.",
+        "exemple": "Conséquence européenne."
+      },
+      {
+        "mot": "hiérarchiser",
+        "definition_simple": "Classer par importance.",
+        "exemple": "Hiérarchiser les infos."
+      },
+      {
+        "mot": "synthèse",
+        "definition_simple": "Mise en relation structurée.",
+        "exemple": "Synthèse B2."
+      },
+      {
+        "mot": "timeline",
+        "definition_simple": "Frise chronologique.",
+        "exemple": "Timeline des guerres."
+      },
+      {
+        "mot": "mémoire",
+        "definition_simple": "Rappel collectif du passé.",
+        "exemple": "Mémoire des conflits."
+      }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Associez support et contenu.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Les Lumières défendent :",
+          "options": [
+            "La raison et les droits",
+            "L'absolutisme",
+            "La censure totale"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "La synthèse relie plusieurs supports."
+        }
+      ],
+      "corrige": {
+        "q1": "La raison et les droits",
+        "q2": true
+      }
+    },
+    "A2": {
+      "consigne": "Ordonnez quatre repères chronologiques.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "1789 est lié à :",
+          "options": [
+            "Révolution française",
+            "Traité de Rome",
+            "Internet"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Une conséquence des guerres mondiales ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Révolution française",
+        "q2": "Construction européenne, mémoire, etc."
+      }
+    },
+    "B1": {
+      "consigne": "Synthèse écrite reliant deux supports.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Lumières et Républiques."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Guerres et Europe."
+        }
+      ],
+      "corrige": {
+        "q1": "Liens causaux.",
+        "q2": "Paix et intégration."
+      }
+    },
+    "B2": {
+      "consigne": "Synthèse complète hiérarchisée.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Chaîne causale sur quatre supports ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Limites du corpus fictif ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Réponse ouverte.",
+        "q2": "Réponse ouverte."
+      }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S34-QCM-civique",
+    "mention": "NAT",
+    "theme": "Histoire, géographie, culture",
+    "questions": [
+      {
+        "notion": "Lumières",
+        "type": "connaissance",
+        "enonce": "Les Lumières valorisent :",
+        "options": [
+          "La raison et les droits",
+          "Le secret total",
+          "L'absolutisme"
+        ],
+        "reponse": "La raison et les droits",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "Républiques",
+        "type": "connaissance",
+        "enonce": "La Première République française date de :",
+        "options": [
+          "1792",
+          "1958",
+          "2024"
+        ],
+        "reponse": "1792",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "guerres",
+        "type": "connaissance",
+        "enonce": "Les guerres mondiales ont :",
+        "options": [
+          "Restructuré l'Europe",
+          "Supprimé l'histoire",
+          "Créé la Lune"
+        ],
+        "reponse": "Restructuré l'Europe",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "synthèse",
+        "type": "mise_en_situation",
+        "enonce": "Une synthèse multi-supports doit :",
+        "options": [
+          "Hiérarchiser et relier",
+          "Copier un seul texte",
+          "Ignorer les dates"
+        ],
+        "reponse": "Hiérarchiser et relier",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "Europe",
+        "type": "connaissance",
+        "enonce": "La construction européenne vise aussi :",
+        "options": [
+          "La paix",
+          "La guerre permanente",
+          "L'isolement"
+        ],
+        "reponse": "La paix",
+        "official_status": "simulation_pedagogique"
+      }
+    ]
+  },
+  "devoirs": {
+    "A1": "Associer supports.",
+    "A2": "Frise 4 dates.",
+    "B1": "Synthèse 2 supports.",
+    "B2": "Synthèse corpus complet."
+  },
+  "formateur": {
+    "fiche_formateur": "B2 NAT : corpus Lumières, Républiques, guerres, Europe. CO/CE synthèse.",
+    "deroule_180min": [
+      {
+        "phase": "Rituel civique",
+        "duree_min": 10,
+        "description": "Repères historiques NAT."
+      },
+      {
+        "phase": "Activation + lexique",
+        "duree_min": 20,
+        "description": "Lexique historique."
+      },
+      {
+        "phase": "Support invariant CO/CE",
+        "duree_min": 50,
+        "description": "Lecture corpus multi-supports."
+      },
+      {
+        "phase": "Ateliers différenciés",
+        "duree_min": 60,
+        "description": "A1-B2."
+      },
+      {
+        "phase": "Production EE/EO",
+        "duree_min": 30,
+        "description": "Synthèse écrite/orale."
+      },
+      {
+        "phase": "Fixation",
+        "duree_min": 10,
+        "description": "QCM NAT."
+      }
+    ],
+    "adaptation_rules": [
+      "Corpus fictif fourni.",
+      "Hiérarchisation obligatoire B2.",
+      "Voix Wavenet-D."
+    ]
+  }
+}

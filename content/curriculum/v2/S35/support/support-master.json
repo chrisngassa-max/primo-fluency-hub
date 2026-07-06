@@ -1,0 +1,20 @@
+{
+  "support_id": "S35-support",
+  "personnages": [
+    "Apprenant B2",
+    "Formateur"
+  ],
+  "situation": "Prise de position documentée et prudente sur un enjeu contemporain (cohésion, environnement, francophonie) avec données fictives pédagogiques — pas de statistiques officielles.",
+  "faits": [
+    "Les données utilisées sont fictives et signalées comme pédagogiques.",
+    "Une prise de position B2 cite des éléments du support et nuance.",
+    "Citoyenneté implique droits, devoirs et participation.",
+    "Environnement et cohésion sont des enjeux contemporains.",
+    "La francophonie relie la France à d'autres pays.",
+    "Prudence : distinguer opinion et fait vérifié."
+  ],
+  "nombres": [],
+  "dates": [],
+  "hash": "e41446f74efa03d3c9cf31e1fea0440b0cc2f89cd956a33e69c2c83acb08b704",
+  "version": 1
+}

@@ -1,0 +1,67 @@
+{
+  "resource_id": "S02-QCM-civique",
+  "mention": "CSP",
+  "theme": "Principes et valeurs de la République",
+  "questions": [
+    {
+      "notion": "symboles de la République",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "La devise de la République française est :",
+      "options": [
+        "Liberté, Égalité, Fraternité",
+        "Union, Force, Travail",
+        "Paix, Ordre, Progrès"
+      ],
+      "reponse": "Liberté, Égalité, Fraternité"
+    },
+    {
+      "notion": "symboles de la République",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Les couleurs du drapeau français sont :",
+      "options": [
+        "Bleu, blanc, rouge",
+        "Rouge, jaune, vert",
+        "Bleu, jaune, rouge"
+      ],
+      "reponse": "Bleu, blanc, rouge"
+    },
+    {
+      "notion": "fête nationale",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "La fête nationale française est célébrée le :",
+      "options": [
+        "1er mai",
+        "14 juillet",
+        "11 novembre"
+      ],
+      "reponse": "14 juillet"
+    },
+    {
+      "notion": "hymne national",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "L'hymne national de la France s'appelle :",
+      "options": [
+        "La Marseillaise",
+        "Le Chant du départ",
+        "La Carmagnole"
+      ],
+      "reponse": "La Marseillaise"
+    },
+    {
+      "notion": "langue de la République",
+      "type": "mise_en_situation",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Pour une démarche officielle à la mairie, la langue utilisée est :",
+      "options": [
+        "Le français",
+        "La langue de son choix",
+        "L'anglais"
+      ],
+      "reponse": "Le français"
+    }
+  ]
+}

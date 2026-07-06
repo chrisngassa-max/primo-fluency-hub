@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 200" width="900" height="200" role="img" aria-label="Trois tâches EE TCF">
+  <title>Trois tâches EE TCF</title>
+  <rect x="0" y="0" width="900" height="200" fill="#ffffff" />
+  <rect x="40" y="60" width="240" height="80" fill="#dbeafe" rx="8" />
+  <text x="160" y="105" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">EE1 message</text>
+  <rect x="330" y="60" width="240" height="80" fill="#dcfce7" rx="8" />
+  <text x="450" y="105" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">EE2 60-80 mots</text>
+  <rect x="620" y="60" width="240" height="80" fill="#fef9c3" rx="8" />
+  <text x="740" y="105" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">EE3 argumenté</text>
+</svg>

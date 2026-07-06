@@ -1,0 +1,114 @@
+[
+  {
+    "support_id": "S08-support-constitution",
+    "version": 1,
+    "niveau": "A1",
+    "consigne": "Écoutez la capsule. Associez chaque mot à sa définition, puis complétez les phrases.",
+    "aides": [
+      "Constitution = texte le plus important",
+      "Parlement = vote la loi",
+      "Mots utiles : loi, citoyen, pouvoir"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "En quelle année est née la Ve République ?",
+        "options": [
+          "1848",
+          "1958",
+          "1989"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "vrai_faux",
+        "enonce": "Le Parlement vote la loi."
+      }
+    ],
+    "corrige": {
+      "q1": "1958",
+      "q2": true
+    },
+    "invariants_hash": "25d7a6d5f3d8d153c212230853612fc0d4d0e6046e9319d1cadcca7e3fee6e4d"
+  },
+  {
+    "support_id": "S08-support-constitution",
+    "version": 1,
+    "niveau": "A2",
+    "consigne": "Expliquez simplement, avec vos mots, ce qu'organise une Constitution.",
+    "aides": [
+      "Pensez à : pouvoirs, droits, loi"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Comment le président de la République est-il choisi ?",
+        "options": [
+          "Par les citoyens (suffrage universel)",
+          "Par le hasard",
+          "Par le Parlement seul"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "reponse_courte",
+        "enonce": "Dites en une phrase ce que fait une Constitution."
+      }
+    ],
+    "corrige": {
+      "q1": "Par les citoyens (suffrage universel)",
+      "q2": "Une Constitution organise les pouvoirs et garantit les droits des citoyens."
+    },
+    "invariants_hash": "25d7a6d5f3d8d153c212230853612fc0d4d0e6046e9319d1cadcca7e3fee6e4d"
+  },
+  {
+    "support_id": "S08-support-constitution",
+    "version": 1,
+    "niveau": "B1",
+    "consigne": "Expliquez le rôle respectif du président, du Parlement et du gouvernement, puis justifiez ce qu'apporte l'État de droit.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "reponse_longue",
+        "enonce": "Décrivez qui élit le président, qui vote la loi et qui l'applique."
+      },
+      {
+        "id": "q2",
+        "type": "reponse_longue",
+        "enonce": "Expliquez pourquoi l'État de droit protège les citoyens."
+      }
+    ],
+    "corrige": {
+      "q1": "Le president est elu au suffrage universel ; le Parlement vote la loi ; le gouvernement l'applique.",
+      "q2": "L'Etat de droit soumet tout le monde a la loi, y compris les gouvernants, ce qui protege les citoyens de l'arbitraire."
+    },
+    "invariants_hash": "25d7a6d5f3d8d153c212230853612fc0d4d0e6046e9319d1cadcca7e3fee6e4d"
+  },
+  {
+    "support_id": "S08-support-constitution",
+    "version": 1,
+    "niveau": "B2",
+    "consigne": "Analysez l'intérêt d'une Constitution écrite et nuancez le principe de l'État de droit.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "argumentation",
+        "enonce": "Argumentez : pourquoi une Constitution garantit-elle mieux les droits qu'une simple coutume ?"
+      },
+      {
+        "id": "q2",
+        "type": "argumentation",
+        "enonce": "Nuancez : que se passe-t-il quand l'État de droit n'est pas respecté ?"
+      }
+    ],
+    "corrige": {
+      "q1": "Reponse ouverte : stabilite, clarte, hierarchie des normes, controle de constitutionnalite.",
+      "q2": "Reponse ouverte : arbitraire, abus de pouvoir, perte des libertes ; d'ou l'importance des contre-pouvoirs."
+    },
+    "invariants_hash": "25d7a6d5f3d8d153c212230853612fc0d4d0e6046e9319d1cadcca7e3fee6e4d"
+  }
+]

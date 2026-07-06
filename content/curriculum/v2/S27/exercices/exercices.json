@@ -1,0 +1,83 @@
+{
+  "session_code": "S27",
+  "variants": [
+    {
+      "niveau": "A1",
+      "consigne": "Vrai/faux sur libertés et limites.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "La discrimination est :",
+          "options": [
+            "Interdite",
+            "Encouragée",
+            "Obligatoire"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "L'expression a des limites."
+        }
+      ]
+    },
+    {
+      "niveau": "A2",
+      "consigne": "Exprimez un avis simple sur la manifestation.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Laïcité à l'école publique :",
+          "options": [
+            "Neutralité de l'État",
+            "Obligation religieuse",
+            "Pas de règles"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Un droit de manifester ?"
+        }
+      ]
+    },
+    {
+      "niveau": "B1",
+      "consigne": "Défendez une opinion sur laïcité ou expression.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Opinion argumentée sur un droit."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Citez une limite légale."
+        }
+      ]
+    },
+    {
+      "niveau": "B2",
+      "consigne": "Intégrez une objection et concluez.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Répondez à une objection sur la laïcité."
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Nuancez liberté vs sécurité en manifestation."
+        }
+      ]
+    }
+  ]
+}

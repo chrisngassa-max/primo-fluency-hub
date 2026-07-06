@@ -1,0 +1,67 @@
+{
+  "resource_id": "S34-QCM-civique",
+  "mention": "NAT",
+  "theme": "Histoire, géographie, culture",
+  "questions": [
+    {
+      "notion": "Lumières",
+      "type": "connaissance",
+      "enonce": "Les Lumières valorisent :",
+      "options": [
+        "La raison et les droits",
+        "Le secret total",
+        "L'absolutisme"
+      ],
+      "reponse": "La raison et les droits",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "Républiques",
+      "type": "connaissance",
+      "enonce": "La Première République française date de :",
+      "options": [
+        "1792",
+        "1958",
+        "2024"
+      ],
+      "reponse": "1792",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "guerres",
+      "type": "connaissance",
+      "enonce": "Les guerres mondiales ont :",
+      "options": [
+        "Restructuré l'Europe",
+        "Supprimé l'histoire",
+        "Créé la Lune"
+      ],
+      "reponse": "Restructuré l'Europe",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "synthèse",
+      "type": "mise_en_situation",
+      "enonce": "Une synthèse multi-supports doit :",
+      "options": [
+        "Hiérarchiser et relier",
+        "Copier un seul texte",
+        "Ignorer les dates"
+      ],
+      "reponse": "Hiérarchiser et relier",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "Europe",
+      "type": "connaissance",
+      "enonce": "La construction européenne vise aussi :",
+      "options": [
+        "La paix",
+        "La guerre permanente",
+        "L'isolement"
+      ],
+      "reponse": "La paix",
+      "official_status": "simulation_pedagogique"
+    }
+  ]
+}

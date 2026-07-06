@@ -1,0 +1,104 @@
+{
+  "resource_id": "S04-VIS-master",
+  "scene": {
+    "title": "Parcours scolaire et instruction obligatoire",
+    "width": 900,
+    "height": 260,
+    "background": "#ffffff",
+    "elements": [
+      {
+        "type": "rect",
+        "x": 40,
+        "y": 90,
+        "width": 200,
+        "height": 90,
+        "rx": 8,
+        "fill": "#dcfce7"
+      },
+      {
+        "type": "text",
+        "x": 140,
+        "y": 130,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "École maternelle"
+      },
+      {
+        "type": "text",
+        "x": 140,
+        "y": 150,
+        "anchor": "middle",
+        "fontSize": 12,
+        "text": "(dès 3 ans)"
+      },
+      {
+        "type": "line",
+        "x1": 240,
+        "y1": 135,
+        "x2": 320,
+        "y2": 135,
+        "stroke": "#374151",
+        "strokeWidth": 3
+      },
+      {
+        "type": "rect",
+        "x": 320,
+        "y": 90,
+        "width": 200,
+        "height": 90,
+        "rx": 8,
+        "fill": "#fef9c3"
+      },
+      {
+        "type": "text",
+        "x": 420,
+        "y": 135,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "École élémentaire"
+      },
+      {
+        "type": "line",
+        "x1": 520,
+        "y1": 135,
+        "x2": 600,
+        "y2": 135,
+        "stroke": "#374151",
+        "strokeWidth": 3
+      },
+      {
+        "type": "rect",
+        "x": 600,
+        "y": 90,
+        "width": 200,
+        "height": 90,
+        "rx": 8,
+        "fill": "#fee2e2"
+      },
+      {
+        "type": "text",
+        "x": 700,
+        "y": 130,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "Collège"
+      },
+      {
+        "type": "text",
+        "x": 700,
+        "y": 150,
+        "anchor": "middle",
+        "fontSize": 12,
+        "text": "(jusqu'à 16 ans)"
+      },
+      {
+        "type": "text",
+        "x": 40,
+        "y": 50,
+        "fontSize": 16,
+        "text": "Instruction obligatoire de 3 à 16 ans"
+      }
+    ]
+  },
+  "alt_text": "Parcours scolaire schematique : trois etapes reliees par des fleches, ecole maternelle, ecole elementaire, college, sans logo ni nom d'etablissement."
+}

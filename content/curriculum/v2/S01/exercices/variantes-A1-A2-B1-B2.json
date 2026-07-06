@@ -1,0 +1,114 @@
+[
+  {
+    "support_id": "S01-support-accueil",
+    "version": 1,
+    "niveau": "A1",
+    "consigne": "Écoutez le dialogue. Associez chaque personnage à son rôle, puis complétez les phrases avec les mots de la liste.",
+    "aides": [
+      "Awa = apprenante",
+      "Mme Rossi = formatrice",
+      "Mots utiles : parcours, objectif, séance"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Combien d'heures dure le parcours d'Awa ?",
+        "options": [
+          "25 heures",
+          "80 heures",
+          "100 heures"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "vrai_faux",
+        "enonce": "Awa veut obtenir sa carte de séjour pluriannuelle."
+      }
+    ],
+    "corrige": {
+      "q1": "80 heures",
+      "q2": true
+    },
+    "invariants_hash": "903e5738ae417d38d6edcff9a93a533a9a106f5d8d2179ef59b036c9494922ad"
+  },
+  {
+    "support_id": "S01-support-accueil",
+    "version": 1,
+    "niveau": "A2",
+    "consigne": "Racontez avec vos mots ce que veut Awa et comment se déroule son parcours (durée, nombre de séances, évaluations).",
+    "aides": [
+      "Pensez à utiliser : parcours, séance, objectif, examen"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Combien de séances collectives Awa va-t-elle suivre ?",
+        "options": [
+          "18",
+          "25",
+          "31"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "reponse_courte",
+        "enonce": "Citez un des cinq thèmes civiques mentionnés par Mme Rossi."
+      }
+    ],
+    "corrige": {
+      "q1": "25",
+      "q2": "Principes et valeurs de la République / Système institutionnel / Droits et devoirs / Histoire, géographie et culture / Vivre dans la société française (une réponse suffit)."
+    },
+    "invariants_hash": "903e5738ae417d38d6edcff9a93a533a9a106f5d8d2179ef59b036c9494922ad"
+  },
+  {
+    "support_id": "S01-support-accueil",
+    "version": 1,
+    "niveau": "B1",
+    "consigne": "Expliquez avec vos propres mots la différence entre un droit, un devoir et une règle en vous appuyant sur le dialogue, puis justifiez pourquoi le parcours comprend deux évaluations distinctes (E1 et E2).",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "reponse_longue",
+        "enonce": "Reformulez la différence entre droit, devoir et règle donnée par Mme Rossi."
+      },
+      {
+        "id": "q2",
+        "type": "reponse_longue",
+        "enonce": "Comparez le rôle de l'évaluation intermédiaire (E1) et de l'évaluation finale (E2)."
+      }
+    ],
+    "corrige": {
+      "q1": "Un droit est une possibilité garantie par la loi ; un devoir est une obligation ; une règle est une consigne precise et locale.",
+      "q2": "E1 mesure la progression a mi-parcours et adapte la suite (S17-S24) ; E2 valide l'ensemble du tronc commun et oriente vers la sortie ou l'extension B1."
+    },
+    "invariants_hash": "903e5738ae417d38d6edcff9a93a533a9a106f5d8d2179ef59b036c9494922ad"
+  },
+  {
+    "support_id": "S01-support-accueil",
+    "version": 1,
+    "niveau": "B2",
+    "consigne": "Analysez l'organisation du parcours d'Awa (progressivité, double évaluation, cinq thèmes civiques) et nuancez son intérêt pour un adulte primo-arrivant ayant peu de temps disponible.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "argumentation",
+        "enonce": "Argumentez : en quoi la distinction entre droit, devoir et règle est-elle utile pour un nouvel arrivant ?"
+      },
+      {
+        "id": "q2",
+        "type": "argumentation",
+        "enonce": "Nuancez : quels sont les avantages et les limites d'un parcours de 80 heures reparti sur 25 semaines ?"
+      }
+    ],
+    "corrige": {
+      "q1": "Reponse ouverte evaluee sur la precision des notions et la qualite de l'argumentation, sans reponse unique imposee.",
+      "q2": "Reponse ouverte : avantages (progressivite, ancrage) vs limites (duree totale, disponibilite) a mettre en balance."
+    },
+    "invariants_hash": "903e5738ae417d38d6edcff9a93a533a9a106f5d8d2179ef59b036c9494922ad"
+  }
+]

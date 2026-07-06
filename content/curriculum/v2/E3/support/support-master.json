@@ -1,0 +1,23 @@
+{
+  "support_id": "E3-support",
+  "personnages": [
+    "Apprenants B1",
+    "Équipe d'évaluation fictive"
+  ],
+  "situation": "Évaluation de sortie B1/CR : CO, CE, EE, EO et civique CR ciblé (25 min), banque gelée, 120 minutes total. Décision sortie B1/CR, poursuite B2/NAT ou volume complémentaire.",
+  "faits": [
+    "E3 évalue le palier B1 et le civique CR.",
+    "Durée totale : cent vingt minutes.",
+    "Civique CR ciblé : vingt-cinq minutes, banque gelée.",
+    "Les épreuves langue restent chronométrées.",
+    "Pas de nouveaux faits par niveau dans la banque.",
+    "Décision : sortie B1/CR, poursuite B2/NAT ou volume complémentaire."
+  ],
+  "nombres": [
+    120,
+    25
+  ],
+  "dates": [],
+  "hash": "46637fa91c367421f1f13902659b8d98ae5e3c537f4ad872e9528cc9c82420d5",
+  "version": 1
+}

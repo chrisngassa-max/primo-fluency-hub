@@ -1,0 +1,83 @@
+{
+  "session_code": "S33",
+  "variants": [
+    {
+      "niveau": "A1",
+      "consigne": "Vrai/faux dignité et pluralisme.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Dignité humaine :",
+          "options": [
+            "Inviolable",
+            "Optionnelle",
+            "Supprimée"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "Une objection enrichit le débat."
+        }
+      ]
+    },
+    {
+      "niveau": "A2",
+      "consigne": "Donnez une position courte + objection.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Diffamation est :",
+          "options": [
+            "Interdite",
+            "Obligatoire",
+            "Un droit absolu"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Définition pluralisme ?"
+        }
+      ]
+    },
+    {
+      "niveau": "B1",
+      "consigne": "Texte argumenté avec objection intégrée.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Position sur une liberté."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Réponse à une objection."
+        }
+      ]
+    },
+    {
+      "niveau": "B2",
+      "consigne": "EE/EO B2 : position, objection, conclusion.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Liberté vs dignité : arbitrage ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Pluralisme en société diverse ?"
+        }
+      ]
+    }
+  ]
+}

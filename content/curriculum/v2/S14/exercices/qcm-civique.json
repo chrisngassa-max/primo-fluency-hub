@@ -1,0 +1,67 @@
+{
+  "resource_id": "S14-QCM-civique",
+  "mention": "CSP",
+  "theme": "Vivre dans la société française",
+  "questions": [
+    {
+      "notion": "rôle de l'impôt",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Les impôts servent principalement à :",
+      "options": [
+        "Financer les services publics",
+        "Enrichir une personne",
+        "Payer les vacances de l'État"
+      ],
+      "reponse": "Financer les services publics"
+    },
+    {
+      "notion": "services publics",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Parmi ces éléments, lequel est un service public ?",
+      "options": [
+        "L'école",
+        "Un magasin privé",
+        "Une entreprise personnelle"
+      ],
+      "reponse": "L'école"
+    },
+    {
+      "notion": "environnement",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Le tri des déchets a pour but de :",
+      "options": [
+        "Protéger l'environnement",
+        "Augmenter les impôts",
+        "Fermer les écoles"
+      ],
+      "reponse": "Protéger l'environnement"
+    },
+    {
+      "notion": "intérêt général",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Ce qui est utile à toute la collectivité s'appelle :",
+      "options": [
+        "L'intérêt général",
+        "L'intérêt personnel",
+        "Le profit privé"
+      ],
+      "reponse": "L'intérêt général"
+    },
+    {
+      "notion": "solidarité",
+      "type": "mise_en_situation",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Payer ses impôts permet surtout de :",
+      "options": [
+        "Financer des services pour tous",
+        "Éviter de voter",
+        "Obtenir un privilège personnel"
+      ],
+      "reponse": "Financer des services pour tous"
+    }
+  ]
+}

@@ -1,0 +1,328 @@
+{
+  "session_code": "S33",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Libertés, pluralisme et dignité",
+  "support": {
+    "support_id": "S33-support",
+    "situation": "Débat B2 : défendre une position sur une liberté, intégrer une objection, conclure sur limites, pluralisme et dignité.",
+    "personnages": [
+      "Deux apprenants B2",
+      "Modérateur"
+    ],
+    "faits": [
+      "Le pluralisme permet la coexistence d'opinions et de croyances.",
+      "La dignité humaine est inviolable et limite certains discours.",
+      "La liberté d'expression s'arrête devant diffamation et haine.",
+      "Intégrer une objection renforce une argumentation B2.",
+      "La laïcité protège la liberté de conscience.",
+      "Conclure suppose une position claire et nuancée."
+    ],
+    "nombres": [],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S33-CO-master",
+    "voice": "fr-FR-Wavenet-D",
+    "speaking_rate": 1,
+    "script": "Modérateur : Sujet : limites de la liberté d'expression. Position et objection.\nApprenant A : Je défends une expression large, car le débat démocratique en a besoin. Cependant, la diffamation et l'incitation à la haine ne sont pas des opinions.\nApprenant B : Objection : trop de limites étouffent le débat.\nApprenant A : Je vous entends. Pourtant, sans dignité humaine inviolable, le pluralisme devient domination des plus forts.\nModérateur : Conclusion ?\nApprenant A : Liberté oui, mais responsabilité. La loi trace une ligne claire.\nApprenant B : J'ajoute la laïcité : protéger la conscience sans imposer une croyance.\nModérateur : Bonne intégration d'objection et conclusion.",
+    "pauses": [
+      {
+        "after_word": 12,
+        "ms": 400
+      },
+      {
+        "after_word": 60,
+        "ms": 400
+      },
+      {
+        "after_word": 130,
+        "ms": 500
+      }
+    ]
+  },
+  "visual": {
+    "resource_id": "S33-VIS-master",
+    "alt_text": "Balance liberté, pluralisme, dignité.",
+    "scene": {
+      "title": "Libertés B2",
+      "width": 900,
+      "height": 240,
+      "background": "#ffffff",
+      "elements": [
+        {
+          "type": "rect",
+          "x": 150,
+          "y": 50,
+          "width": 600,
+          "height": 120,
+          "rx": 10,
+          "fill": "#e0e7ff"
+        },
+        {
+          "type": "text",
+          "x": 450,
+          "y": 115,
+          "anchor": "middle",
+          "fontSize": 16,
+          "text": "Position · Objection · Conclusion"
+        }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S33-LEX-A1-B2",
+    "mots": [
+      {
+        "mot": "pluralisme",
+        "definition_simple": "Coexistence d'opinions diverses.",
+        "exemple": "Pluralisme démocratique."
+      },
+      {
+        "mot": "dignité",
+        "definition_simple": "Respect fondamental de la personne.",
+        "exemple": "Dignité inviolable."
+      },
+      {
+        "mot": "objection",
+        "definition_simple": "Argument contraire à intégrer.",
+        "exemple": "Répondre à une objection."
+      },
+      {
+        "mot": "conclusion",
+        "definition_simple": "Synthèse finale de la prise de position.",
+        "exemple": "Conclure avec nuance."
+      },
+      {
+        "mot": "liberté",
+        "definition_simple": "Droit fondamental encadré.",
+        "exemple": "Liberté d'expression."
+      },
+      {
+        "mot": "responsabilité",
+        "definition_simple": "Devoir d'usage raisonné d'un droit.",
+        "exemple": "Liberté et responsabilité."
+      },
+      {
+        "mot": "diffamation",
+        "definition_simple": "Attaque injurieuse d'une personne.",
+        "exemple": "Limite légale."
+      },
+      {
+        "mot": "laïcité",
+        "definition_simple": "Neutralité et liberté de conscience.",
+        "exemple": "Laïcité républicaine."
+      },
+      {
+        "mot": "domination",
+        "definition_simple": "Abus de pouvoir sur autrui.",
+        "exemple": "Éviter la domination."
+      }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Vrai/faux dignité et pluralisme.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Dignité humaine :",
+          "options": [
+            "Inviolable",
+            "Optionnelle",
+            "Supprimée"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "Une objection enrichit le débat."
+        }
+      ],
+      "corrige": {
+        "q1": "Inviolable",
+        "q2": true
+      }
+    },
+    "A2": {
+      "consigne": "Donnez une position courte + objection.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Diffamation est :",
+          "options": [
+            "Interdite",
+            "Obligatoire",
+            "Un droit absolu"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Définition pluralisme ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Interdite",
+        "q2": "Coexistence d'opinions/croyances."
+      }
+    },
+    "B1": {
+      "consigne": "Texte argumenté avec objection intégrée.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Position sur une liberté."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Réponse à une objection."
+        }
+      ],
+      "corrige": {
+        "q1": "Structuré.",
+        "q2": "Contre-argument pertinent."
+      }
+    },
+    "B2": {
+      "consigne": "EE/EO B2 : position, objection, conclusion.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Liberté vs dignité : arbitrage ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Pluralisme en société diverse ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Réponse ouverte.",
+        "q2": "Réponse ouverte."
+      }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S33-QCM-civique",
+    "mention": "NAT",
+    "theme": "Droits et devoirs",
+    "questions": [
+      {
+        "notion": "dignité",
+        "type": "connaissance",
+        "enonce": "La dignité humaine est :",
+        "options": [
+          "Inviolable",
+          "Négociable à tout moment",
+          "Absente du droit"
+        ],
+        "reponse": "Inviolable",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "pluralisme",
+        "type": "connaissance",
+        "enonce": "Le pluralisme permet :",
+        "options": [
+          "La coexistence d'opinions",
+          "Une seule opinion",
+          "L'absence de loi"
+        ],
+        "reponse": "La coexistence d'opinions",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "expression",
+        "type": "connaissance",
+        "enonce": "La diffamation est :",
+        "options": [
+          "Interdite",
+          "Un devoir",
+          "Une fête"
+        ],
+        "reponse": "Interdite",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "objection",
+        "type": "mise_en_situation",
+        "enonce": "Intégrer une objection, c'est :",
+        "options": [
+          "Y répondre dans sa conclusion",
+          "L'ignorer",
+          "Insulter"
+        ],
+        "reponse": "Y répondre dans sa conclusion",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "laïcité",
+        "type": "connaissance",
+        "enonce": "La laïcité protège :",
+        "options": [
+          "La liberté de conscience",
+          "Une religion d'État",
+          "L'absence de règles"
+        ],
+        "reponse": "La liberté de conscience",
+        "official_status": "simulation_pedagogique"
+      }
+    ]
+  },
+  "devoirs": {
+    "A1": "Associer libertés/limites.",
+    "A2": "Paragraphe + objection.",
+    "B1": "Texte EE complet.",
+    "B2": "EO3 avec conclusion."
+  },
+  "formateur": {
+    "fiche_formateur": "B2 NAT : argumentation, objection, dignité, pluralisme. EE/EO.",
+    "deroule_180min": [
+      {
+        "phase": "Rituel civique",
+        "duree_min": 10,
+        "description": "Libertés et limites NAT."
+      },
+      {
+        "phase": "Activation + lexique",
+        "duree_min": 20,
+        "description": "Lexique pluralisme, dignité."
+      },
+      {
+        "phase": "Support invariant CO/CE",
+        "duree_min": 50,
+        "description": "Débat modéré."
+      },
+      {
+        "phase": "Ateliers différenciés",
+        "duree_min": 60,
+        "description": "A1-B2."
+      },
+      {
+        "phase": "Production EE/EO",
+        "duree_min": 30,
+        "description": "Argumentation B2."
+      },
+      {
+        "phase": "Fixation",
+        "duree_min": 10,
+        "description": "QCM NAT."
+      }
+    ],
+    "adaptation_rules": [
+      "Modération stricte.",
+      "Objection obligatoire en B2.",
+      "Voix Wavenet-D."
+    ]
+  }
+}
