@@ -65,7 +65,7 @@ export async function fetchBatchJobs(batchId: string): Promise<ResourceGeneratio
 export async function fetchTrainingSessions(planVersionId: string): Promise<TrainingSession[]> {
   const { data, error } = await supabase
     .from("training_sessions")
-    .select("id, plan_version_id, code, ordre, titre, palier, statut")
+    .select("id, plan_version_id, code, ordre, titre, palier, duree_minutes, statut")
     .eq("plan_version_id", planVersionId)
     .order("ordre");
 

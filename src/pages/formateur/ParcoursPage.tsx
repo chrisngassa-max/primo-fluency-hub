@@ -35,11 +35,17 @@ import {
   Landmark,
   CheckCircle2,
   Layers,
+  Factory,
 } from "lucide-react";
+import { fetchActivePlanVersion, fetchTrainingSessions } from "@/lib/curriculum/api";
+import { CURRICULUM_PLAN_VERSION_LABEL } from "@/lib/curriculum/sessions";
+
+const CURRICULUM_V2_VERSION = "curriculum-v2.0";
 
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
 
 type VariantePlan = "enrichi" | "civique";
+type VarianteFilter = VariantePlan | "curriculum-v2" | "tous";
 
 interface VarianteConfig {
   label: string;
@@ -75,6 +81,17 @@ const VARIANTES: Record<VariantePlan, VarianteConfig> = {
   },
 };
 
+const CURRICULUM_V2_CONFIG = {
+  label: "Parcours CapTCF curriculum v2 (120h)",
+  shortLabel: "Curriculum v2",
+  tagline: "Référentiel officiel",
+  description:
+    "41 séances S01–S37 + E1–E4 · Parcours cumulatif A2/CSP (80h) + paliers B1 et B2, aligné sur le manifest curriculum-v2.0.",
+  heuresTotales: 120,
+  badgeClass: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+  cardActiveClass: "ring-2 ring-blue-500 border-blue-500",
+};
+
 const normalizeVariante = (v?: string | null): VariantePlan =>
   v === "civique" ? "civique" : "enrichi";
 
@@ -100,7 +117,7 @@ const ParcoursPage = () => {
   const qc = useQueryClient();
 
   // Variant selection (filter + creation preset)
-  const [selectedVariante, setSelectedVariante] = useState<VariantePlan | "tous">("tous");
+  const [selectedVariante, setSelectedVariante] = useState<VarianteFilter>("tous");
   const [variante, setVariante] = useState<VariantePlan>("enrichi");
 
   // Form state
@@ -148,6 +165,18 @@ const ParcoursPage = () => {
       return data ?? [];
     },
     enabled: !!user,
+  });
+
+  const { data: curriculumPlan, isLoading: curriculumPlanLoading } = useQuery({
+    queryKey: ["curriculum-plan-version"],
+    queryFn: fetchActivePlanVersion,
+    enabled: !!user,
+  });
+
+  const { data: curriculumSessions = [], isLoading: curriculumSessionsLoading } = useQuery({
+    queryKey: ["curriculum-training-sessions", curriculumPlan?.id],
+    queryFn: () => fetchTrainingSessions(curriculumPlan!.id),
+    enabled: !!curriculumPlan?.id,
   });
 
   const handleGenerate = async () => {
@@ -296,7 +325,7 @@ const ParcoursPage = () => {
   };
 
   const openForm = (v?: VariantePlan) => {
-    const variant = v ?? (selectedVariante !== "tous" ? selectedVariante : "enrichi");
+    const variant = v ?? (selectedVariante !== "tous" && selectedVariante !== "curriculum-v2" ? selectedVariante : "enrichi");
     setVariante(variant);
     setHeuresTotales(VARIANTES[variant].heuresDefaut);
     setTypeDemarche(variant === "civique" ? "naturalisation" : "titre_sejour");
@@ -341,9 +370,16 @@ const ParcoursPage = () => {
     civique: allParcours.filter((p: any) => normalizeVariante(p.variante_plan) === "civique").length,
   };
   const filteredParcours =
-    selectedVariante === "tous"
+    selectedVariante === "tous" || selectedVariante === "curriculum-v2"
       ? allParcours
       : allParcours.filter((p: any) => normalizeVariante(p.variante_plan) === selectedVariante);
+
+  const curriculumTotalMinutes = curriculumSessions.reduce(
+    (sum, s) => sum + (s.duree_minutes ?? 0),
+    0,
+  );
+  const showCurriculumPanel = selectedVariante === "curriculum-v2";
+  const showParcoursList = selectedVariante !== "curriculum-v2";
 
   return (
     <div className="space-y-6">
@@ -377,9 +413,9 @@ const ParcoursPage = () => {
           )}
         </div>
         <p className="text-xs text-muted-foreground">
-          Sélectionnez la variante pour filtrer la liste et préparer un nouveau plan. Vous pouvez gérer les deux cohortes en parallèle.
+          Sélectionnez la variante pour filtrer la liste et préparer un nouveau plan. Vous pouvez gérer les trois parcours en parallèle.
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {(Object.keys(VARIANTES) as VariantePlan[]).map((key) => {
             const v = VARIANTES[key];
             const active = selectedVariante === key;
@@ -420,8 +456,128 @@ const ParcoursPage = () => {
               </button>
             );
           })}
+          {(() => {
+            const v = CURRICULUM_V2_CONFIG;
+            const active = selectedVariante === "curriculum-v2";
+            return (
+              <button
+                type="button"
+                onClick={() => setSelectedVariante(active ? "tous" : "curriculum-v2")}
+                className={cn(
+                  "text-left rounded-lg border bg-card p-4 transition-all hover:shadow-md hover:border-primary/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  active && v.cardActiveClass,
+                )}
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <Factory className="h-5 w-5 text-blue-600 shrink-0" />
+                    <div>
+                      <p className="font-semibold leading-tight">{v.label}</p>
+                      <p className="text-xs text-muted-foreground">{v.tagline}</p>
+                    </div>
+                  </div>
+                  {active && <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />}
+                </div>
+                <p className="text-xs text-muted-foreground mt-2">{v.description}</p>
+                <div className="flex items-center gap-2 mt-3 flex-wrap">
+                  <Badge className={cn("text-[10px] gap-1", v.badgeClass)}>
+                    <Factory className="h-3 w-3" />
+                    {curriculumPlan?.version ?? CURRICULUM_V2_VERSION}
+                  </Badge>
+                  <Badge variant="outline" className="text-[10px]">
+                    {curriculumSessions.length || 41} séance{(curriculumSessions.length || 41) > 1 ? "s" : ""}
+                  </Badge>
+                </div>
+              </button>
+            );
+          })()}
         </div>
       </div>
+
+      {/* Curriculum v2 panel */}
+      {showCurriculumPanel && (
+        <Card className="border-blue-200 dark:border-blue-900/50">
+          <CardHeader>
+            <div className="flex items-start justify-between gap-4 flex-wrap">
+              <div className="space-y-1">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Factory className="h-5 w-5 text-blue-600" />
+                  {CURRICULUM_V2_CONFIG.label}
+                </CardTitle>
+                <CardDescription>
+                  Référentiel {curriculumPlan?.version ?? CURRICULUM_V2_VERSION}
+                  {curriculumPlan ? ` (${CURRICULUM_PLAN_VERSION_LABEL})` : ""}
+                  {" · "}A2/CSP 80h + B1 + B2 cumulatif
+                </CardDescription>
+              </div>
+              <Button onClick={() => navigate("/formateur/production-parcours")} className="gap-2 shrink-0">
+                <Factory className="h-4 w-4" />
+                Ouvrir la production
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </div>
+            <div className="flex gap-2 flex-wrap pt-2">
+              <Badge className={cn("text-[10px] gap-1", CURRICULUM_V2_CONFIG.badgeClass)}>
+                {curriculumPlan?.version ?? CURRICULUM_V2_VERSION}
+              </Badge>
+              {curriculumTotalMinutes > 0 && (
+                <Badge variant="outline" className="text-[10px] gap-1">
+                  <Clock className="h-3 w-3" />
+                  {Math.round(curriculumTotalMinutes / 60)}h
+                </Badge>
+              )}
+              <Badge variant="outline" className="text-[10px] gap-1">
+                <BookOpen className="h-3 w-3" />
+                {curriculumSessions.length} séances
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-2 max-h-[480px] overflow-y-auto">
+            {curriculumPlanLoading || curriculumSessionsLoading ? (
+              <div className="space-y-2">
+                <Skeleton className="h-12 w-full" />
+                <Skeleton className="h-12 w-full" />
+                <Skeleton className="h-12 w-full" />
+              </div>
+            ) : curriculumSessions.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-8">
+                Aucune séance trouvée pour le plan actif. Vérifiez le déploiement du curriculum v2.
+              </p>
+            ) : (
+              curriculumSessions.map((s) => (
+                <div
+                  key={s.id}
+                  className="flex items-center gap-3 p-3 rounded-lg border bg-muted/20"
+                >
+                  <div className="flex items-center justify-center h-7 w-7 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs font-bold shrink-0">
+                    {s.ordre}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Badge variant="outline" className="text-[10px] font-mono">
+                        {s.code}
+                      </Badge>
+                      <span className="font-medium text-sm truncate">{s.titre}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
+                      <span>{s.palier}</span>
+                      {s.duree_minutes != null && (
+                        <>
+                          <span>·</span>
+                          <span className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            {s.duree_minutes} min
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Creation form */}
       {showForm && (
@@ -648,7 +804,7 @@ const ParcoursPage = () => {
       )}
 
       {/* Existing parcours list */}
-      {parcoursLoading ? (
+      {showParcoursList && (parcoursLoading ? (
         <div className="space-y-3">
           <Skeleton className="h-24 w-full" />
           <Skeleton className="h-24 w-full" />
@@ -726,7 +882,7 @@ const ParcoursPage = () => {
             );
           })}
         </div>
-      )}
+      ))}
     </div>
   );
 };

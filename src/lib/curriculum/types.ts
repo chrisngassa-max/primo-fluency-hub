@@ -74,6 +74,7 @@ export interface TrainingSession {
   ordre: number;
   titre: string;
   palier: string;
+  duree_minutes?: number;
   statut: CurriculumResourceStatut;
 }
 
