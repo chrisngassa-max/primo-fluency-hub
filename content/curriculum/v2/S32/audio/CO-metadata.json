@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Formateur : Présentez une synthèse : Constitution, souveraineté, contrôles.\nApprenant : La Constitution de mille neuf cent cinquante-huit fonde la Ve République. La souveraineté appartient au peuple, exercée par le vote et les représentants.\nFormateur : Relance : le Conseil constitutionnel ?\nApprenant : Il contrôle les lois avant ou après promulgation. Il peut les censurer si elles violent la Constitution.\nFormateur : Et le président ?\nApprenant : Chef de l'exécutif, élu au suffrage universel direct depuis mille neuf cent soixante-deux. Il nomme le Premier ministre dans le cadre constitutionnel.\nFormateur : Nuance sur la souveraineté ?\nApprenant : Elle est nationale, mais la France partage aussi certaines compétences avec l'Union européenne, sans perdre son identité constitutionnelle.\nFormateur : Merci. Synthèse structurée et nuancée.",
+  "transcript": "Formateur : Présentez une synthèse : Constitution, souveraineté, contrôles.\nApprenant : La Constitution de mille neuf cent cinquante-huit fonde la Ve République. La souveraineté appartient au peuple, exercée par le vote et les représentants.\nFormateur : Relance : le Conseil constitutionnel ?\nApprenant : Il contrôle les lois avant ou après promulgation. Il peut les censurer si elles violent la Constitution.\nFormateur : Et le président ?\nApprenant : Chef de l'exécutif, élu au suffrage universel direct depuis mille neuf cent soixante-deux. Il nomme le Premier ministre dans le cadre constitutionnel.\nFormateur : Nuance sur la souveraineté ?\nApprenant : Elle est nationale, mais la France partage aussi certaines compétences avec l'Union européenne, sans perdre son identité constitutionnelle.\nFormateur : Merci. Synthèse structurée et nuancée.",
+  "voice": "fr-FR-Wavenet-D",
+  "languageCode": "fr-FR",
+  "speaking_rate": 1,
+  "pauses": [
+    {
+      "after_word": 12,
+      "ms": 400
+    },
+    {
+      "after_word": 60,
+      "ms": 400
+    },
+    {
+      "after_word": 130,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 63,
+  "hash": "4cfc7e185dbe2c278c5ec044cc881f33c52d84ec46d95f59ea9e6029e03cd627"
+}

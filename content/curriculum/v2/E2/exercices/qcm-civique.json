@@ -1,0 +1,67 @@
+{
+  "resource_id": "E2-QCM-civique",
+  "mention": "CSP",
+  "theme": "Évaluation CSP complète",
+  "questions": [
+    {
+      "notion": "E2 durée",
+      "type": "connaissance",
+      "enonce": "E2 dure :",
+      "options": [
+        "180 minutes",
+        "120 minutes",
+        "45 minutes"
+      ],
+      "reponse": "180 minutes",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "civique E2",
+      "type": "connaissance",
+      "enonce": "Le civique E2 comporte :",
+      "options": [
+        "40 questions en 45 min",
+        "5 questions en 5 min",
+        "Aucune question"
+      ],
+      "reponse": "40 questions en 45 min",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "banque",
+      "type": "connaissance",
+      "enonce": "La banque E2 est :",
+      "options": [
+        "Gelée et verrouillée",
+        "Improvisée",
+        "Orale seulement"
+      ],
+      "reponse": "Gelée et verrouillée",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "orientation",
+      "type": "mise_en_situation",
+      "enonce": "Après E2, on peut orienter vers :",
+      "options": [
+        "Sortie A2/CSP ou extension B1",
+        "Uniquement le sport",
+        "Rien"
+      ],
+      "reponse": "Sortie A2/CSP ou extension B1",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "stratégie",
+      "type": "connaissance",
+      "enonce": "Stratégie civique conseillée :",
+      "options": [
+        "Viser 32/40",
+        "Répondre à une seule question",
+        "Ne pas chronométrer"
+      ],
+      "reponse": "Viser 32/40",
+      "official_status": "simulation_pedagogique"
+    }
+  ]
+}

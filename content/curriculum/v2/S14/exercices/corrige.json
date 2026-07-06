@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "À financer les services publics",
+    "q2": true
+  },
+  "A2": {
+    "q1": "L'intérêt général",
+    "q2": "Les écoles, les routes, la santé, la collecte des déchets (deux réponses suffisent)."
+  },
+  "B1": {
+    "q1": "Message attendu : rappel de la consigne, question precise, politesse.",
+    "q2": "L'impot finance des services utiles a tous ; le payer est une contribution solidaire a l'interet general."
+  },
+  "B2": {
+    "q1": "Reponse ouverte : redistribution, financement de services communs, egalite d'acces.",
+    "q2": "Reponse ouverte : sentiment d'injustice ou d'opacite ; remedes : transparence, equite, information sur l'usage."
+  }
+}

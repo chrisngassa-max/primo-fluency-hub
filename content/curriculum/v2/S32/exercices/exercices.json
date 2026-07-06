@@ -1,0 +1,83 @@
+{
+  "session_code": "S32",
+  "variants": [
+    {
+      "niveau": "A1",
+      "consigne": "Associez institutions et rôles.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Souveraineté appartient au :",
+          "options": [
+            "Peuple",
+            "Juge seul",
+            "Entreprise"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "La Constitution organise la Ve République."
+        }
+      ]
+    },
+    {
+      "niveau": "A2",
+      "consigne": "Répondez à des relances simples.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Conseil constitutionnel contrôle :",
+          "options": [
+            "Conformité des lois",
+            "Les recettes",
+            "Le bus"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Date Constitution actuelle ?"
+        }
+      ]
+    },
+    {
+      "niveau": "B1",
+      "consigne": "Synthèse structurée avec exemples.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Synthèse Constitution et pouvoirs."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Rôle du Conseil constitutionnel."
+        }
+      ]
+    },
+    {
+      "niveau": "B2",
+      "consigne": "Synthèse nuancée + relances orales.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Souveraineté vs compétences européennes ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Équilibre des pouvoirs en 2020s ?"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "resource_id": "S25-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "consolidation",
+      "definition_simple": "Renforcer ce qui est fragile.",
+      "exemple": "Consolider après E2."
+    },
+    {
+      "mot": "rapport",
+      "definition_simple": "Document de synthèse des résultats.",
+      "exemple": "Rapport individuel fictif."
+    },
+    {
+      "mot": "fragilité",
+      "definition_simple": "Point faible identifié.",
+      "exemple": "Deux fragilités majeures."
+    },
+    {
+      "mot": "contrat",
+      "definition_simple": "Engagement personnel écrit.",
+      "exemple": "Contrat personnel."
+    },
+    {
+      "mot": "restitution",
+      "definition_simple": "Exposer ce qu'on a appris.",
+      "exemple": "Restitution langue et civique."
+    },
+    {
+      "mot": "orientation",
+      "definition_simple": "Piste proposée pour la suite.",
+      "exemple": "Orientation vers B1."
+    },
+    {
+      "mot": "équivalent",
+      "definition_simple": "De difficulté comparable à l'évaluation.",
+      "exemple": "Tâche équivalente."
+    },
+    {
+      "mot": "séparer",
+      "definition_simple": "Ne pas fusionner deux mesures.",
+      "exemple": "Séparer langue et civique."
+    },
+    {
+      "mot": "progrès",
+      "definition_simple": "Amélioration par rapport au rapport initial.",
+      "exemple": "Mesurer le progrès."
+    }
+  ]
+}

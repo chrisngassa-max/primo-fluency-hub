@@ -1,0 +1,190 @@
+{
+  "session_code": "S17",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Remédiation fondée sur E1",
+  "support": {
+    "support_id": "S17-support-remediation-e1",
+    "situation": "Après son évaluation E1 à cinquante heures, Amadou Traoré revoit avec son formateur, M. Lefèvre, un point civique où il a fait plusieurs erreurs : la distinction entre un droit, un devoir et une règle.",
+    "personnages": ["Amadou Traoré (apprenant)", "M. Lefèvre (formateur)"],
+    "faits": [
+      "L'évaluation E1 a lieu après cinquante heures de formation.",
+      "Amadou a confondu un droit et un devoir dans deux exercices sur trois lors de l'évaluation E1.",
+      "Un droit est une possibilité garantie par la loi, comme le droit à la santé.",
+      "Un devoir est une obligation à respecter, comme respecter la loi.",
+      "Une règle s'applique dans un lieu précis, comme le règlement intérieur d'un centre de formation.",
+      "La matrice des erreurs du groupe montre que six apprenants sur dix confondent droit et devoir."
+    ],
+    "nombres": [50, 2, 3, 6, 10],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S17-CO-master",
+    "voice": "fr-FR-Wavenet-C",
+    "speaking_rate": 0.92,
+    "script": "M. Lefèvre : Bonjour Amadou. J'ai regardé les résultats de votre évaluation E1, après cinquante heures de formation.\nAmadou : Bonjour monsieur. J'ai eu des difficultés, je crois.\nM. Lefèvre : Oui, vous avez confondu un droit et un devoir dans deux exercices sur trois. C'est très fréquent : dans le groupe, six apprenants sur dix ont fait la même erreur.\nAmadou : Je ne suis pas sûr de bien comprendre la différence.\nM. Lefèvre : Reprenons ensemble. Un droit, c'est une possibilité garantie par la loi, comme le droit à la santé. Vous pouvez le demander, personne ne peut vous l'interdire.\nAmadou : Et un devoir ?\nM. Lefèvre : Un devoir, c'est une obligation. Vous devez le faire, comme respecter la loi.\nAmadou : Et une règle, c'est pareil ?\nM. Lefèvre : Non. Une règle s'applique dans un lieu précis, par exemple le règlement intérieur de notre centre de formation. Elle ne s'applique pas partout.\nAmadou : D'accord, je comprends mieux maintenant.\nM. Lefèvre : Très bien. Nous allons refaire un exercice proche de celui de l'évaluation, pour mesurer votre progrès.\nAmadou : D'accord, je suis prêt.\nM. Lefèvre : Parfait. Cette séance est construite pour vous, à partir de vos propres résultats.",
+    "pauses": [
+      { "after_word": 12, "ms": 400 },
+      { "after_word": 55, "ms": 400 },
+      { "after_word": 130, "ms": 500 }
+    ]
+  },
+  "visual": {
+    "resource_id": "S17-VIS-master",
+    "alt_text": "Tableau à deux colonnes représentant la matrice personnelle des erreurs d'Amadou, avec trois notions civiques et le nombre d'erreurs constatées pour chacune.",
+    "scene": {
+      "title": "Matrice personnelle des erreurs",
+      "width": 900,
+      "height": 260,
+      "background": "#ffffff",
+      "elements": [
+        { "type": "rect", "x": 40, "y": 30, "width": 400, "height": 40, "fill": "#e0e7ff" },
+        { "type": "rect", "x": 440, "y": 30, "width": 200, "height": 40, "fill": "#e0e7ff" },
+        { "type": "text", "x": 240, "y": 55, "anchor": "middle", "fontSize": 15, "text": "Notion civique" },
+        { "type": "text", "x": 540, "y": 55, "anchor": "middle", "fontSize": 15, "text": "Erreurs" },
+
+        { "type": "rect", "x": 40, "y": 70, "width": 400, "height": 40, "fill": "#f8fafc" },
+        { "type": "rect", "x": 440, "y": 70, "width": 200, "height": 40, "fill": "#f8fafc" },
+        { "type": "text", "x": 240, "y": 95, "anchor": "middle", "fontSize": 14, "text": "Droit / devoir" },
+        { "type": "text", "x": 540, "y": 95, "anchor": "middle", "fontSize": 14, "text": "2 sur 3" },
+
+        { "type": "rect", "x": 40, "y": 110, "width": 400, "height": 40, "fill": "#ffffff" },
+        { "type": "rect", "x": 440, "y": 110, "width": 200, "height": 40, "fill": "#ffffff" },
+        { "type": "text", "x": 240, "y": 135, "anchor": "middle", "fontSize": 14, "text": "Devoir / règle" },
+        { "type": "text", "x": 540, "y": 135, "anchor": "middle", "fontSize": 14, "text": "1 sur 3" },
+
+        { "type": "rect", "x": 40, "y": 150, "width": 400, "height": 40, "fill": "#f8fafc" },
+        { "type": "rect", "x": 440, "y": 150, "width": 200, "height": 40, "fill": "#f8fafc" },
+        { "type": "text", "x": 240, "y": 175, "anchor": "middle", "fontSize": 14, "text": "Organisation du parcours" },
+        { "type": "text", "x": 540, "y": 175, "anchor": "middle", "fontSize": 14, "text": "0 sur 3" },
+
+        { "type": "line", "x1": 40, "y1": 30, "x2": 640, "y2": 30, "stroke": "#94a3b8" },
+        { "type": "line", "x1": 40, "y1": 190, "x2": 640, "y2": 190, "stroke": "#94a3b8" },
+        { "type": "line", "x1": 40, "y1": 30, "x2": 40, "y2": 190, "stroke": "#94a3b8" },
+        { "type": "line", "x1": 440, "y1": 30, "x2": 440, "y2": 190, "stroke": "#94a3b8" },
+        { "type": "line", "x1": 640, "y1": 30, "x2": 640, "y2": 190, "stroke": "#94a3b8" }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S17-LEX-A1-B2",
+    "mots": [
+      { "mot": "droit", "definition_simple": "Ce qu'une personne peut demander ou faire, garanti par la loi.", "exemple": "Le droit à la santé." },
+      { "mot": "devoir", "definition_simple": "Ce qu'une personne doit faire.", "exemple": "Respecter la loi est un devoir." },
+      { "mot": "règle", "definition_simple": "Une consigne précise valable dans un lieu donné.", "exemple": "Le règlement intérieur du centre de formation." },
+      { "mot": "évaluation", "definition_simple": "Une épreuve qui mesure des connaissances ou des compétences.", "exemple": "L'évaluation E1 a lieu après cinquante heures." },
+      { "mot": "progrès", "definition_simple": "Une amélioration entre un premier et un deuxième essai.", "exemple": "Amadou fait des progrès après la remédiation." },
+      { "mot": "erreur", "definition_simple": "Une réponse fausse ou une confusion.", "exemple": "Une erreur fréquente : confondre droit et devoir." },
+      { "mot": "réviser", "definition_simple": "Revoir un point déjà étudié pour mieux le comprendre.", "exemple": "Amadou révise la distinction droit/devoir/règle." },
+      { "mot": "corriger", "definition_simple": "Rectifier une erreur.", "exemple": "Le formateur aide Amadou à corriger sa confusion." },
+      { "mot": "comprendre", "definition_simple": "Saisir le sens de quelque chose.", "exemple": "Amadou comprend mieux maintenant la différence." }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Écoutez le dialogue. Associez chaque mot (droit, devoir, règle) à sa bonne définition, puis répondez aux questions.",
+      "aides": ["Un droit = une possibilité garantie par la loi", "Un devoir = une obligation", "Une règle = valable dans un lieu précis"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "Après combien d'heures a lieu l'évaluation E1 ?", "options": ["Vingt-cinq heures", "Cinquante heures", "Quatre-vingts heures"] },
+        { "id": "q2", "type": "vrai_faux", "enonce": "Amadou a bien répondu aux trois exercices sur la distinction droit/devoir." }
+      ],
+      "corrige": { "q1": "Cinquante heures", "q2": false }
+    },
+    "A2": {
+      "consigne": "Expliquez avec vos mots pourquoi Amadou doit revoir la distinction droit/devoir/règle, et comment cette séance est organisée pour lui.",
+      "aides": ["Pensez à utiliser : évaluation, erreur, progrès"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "Combien d'apprenants sur dix confondent droit et devoir dans le groupe ?", "options": ["Deux", "Six", "Huit"] },
+        { "id": "q2", "type": "reponse_courte", "enonce": "Donnez un exemple de devoir cité par M. Lefèvre." }
+      ],
+      "corrige": { "q1": "Six", "q2": "Respecter la loi (exemple donné dans le dialogue)." }
+    },
+    "B1": {
+      "consigne": "Expliquez la différence entre droit, devoir et règle en vous appuyant sur le dialogue, puis analysez l'intérêt d'une remédiation personnalisée fondée sur les erreurs réelles d'un apprenant.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "reponse_longue", "enonce": "Reformulez la différence entre droit, devoir et règle donnée par M. Lefèvre." },
+        { "id": "q2", "type": "reponse_longue", "enonce": "Expliquez pourquoi la séance de remédiation est construite à partir des résultats de l'évaluation E1 d'Amadou." }
+      ],
+      "corrige": { "q1": "Un droit est une possibilite garantie par la loi ; un devoir est une obligation ; une regle est une consigne precise valable dans un lieu donne.", "q2": "La matrice des erreurs identifie precisement les confusions d'Amadou (droit/devoir), ce qui permet de cibler la revision sur ce point plutot que de tout reprendre." }
+    },
+    "B2": {
+      "consigne": "Analysez l'intérêt pédagogique d'une remédiation individualisée fondée sur une matrice d'erreurs, et nuancez ses limites pour un groupe hétérogène.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "argumentation", "enonce": "Argumentez : en quoi une remédiation fondée sur les erreurs réelles d'un apprenant est-elle plus efficace qu'une révision générale identique pour tous ?" },
+        { "id": "q2", "type": "argumentation", "enonce": "Nuancez : quelles limites une telle remédiation individualisée peut-elle rencontrer dans un groupe très hétérogène ?" }
+      ],
+      "corrige": { "q1": "Reponse ouverte evaluee sur la precision des notions et la qualite de l'argumentation, sans reponse unique imposee.", "q2": "Reponse ouverte : avantages (ciblage, gain de temps) vs limites (charge d'organisation, risque d'isolement de l'apprenant) a mettre en balance." }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S17-QCM-civique",
+    "mention": "CSP",
+    "theme": "Droits et devoirs",
+    "questions": [
+      {
+        "notion": "distinction droit/devoir",
+        "type": "connaissance",
+        "official_status": "simulation_pedagogique",
+        "enonce": "Le droit à la santé signifie que vous pouvez :",
+        "options": ["Demander l'accès aux soins", "Payer une taxe obligatoire", "Suivre un règlement intérieur"],
+        "reponse": "Demander l'accès aux soins"
+      },
+      {
+        "notion": "distinction devoir/règle",
+        "type": "connaissance",
+        "official_status": "simulation_pedagogique",
+        "enonce": "Respecter la loi est avant tout :",
+        "options": ["Une règle locale", "Un devoir", "Une démarche administrative"],
+        "reponse": "Un devoir"
+      },
+      {
+        "notion": "distinction droit/devoir/règle",
+        "type": "mise_en_situation",
+        "official_status": "simulation_pedagogique",
+        "enonce": "Un centre de formation demande à ses apprenants d'arriver à l'heure à chaque séance. Il s'agit :",
+        "options": ["D'une règle du centre de formation", "D'un droit de l'apprenant", "D'une loi nationale"],
+        "reponse": "D'une règle du centre de formation"
+      },
+      {
+        "notion": "organisation de l'évaluation",
+        "type": "connaissance",
+        "official_status": "simulation_pedagogique",
+        "enonce": "L'évaluation E1 a lieu après combien d'heures de formation ?",
+        "options": ["Vingt-cinq heures", "Cinquante heures", "Soixante-dix heures"],
+        "reponse": "Cinquante heures"
+      },
+      {
+        "notion": "principe de remédiation",
+        "type": "connaissance",
+        "official_status": "simulation_pedagogique",
+        "enonce": "Une remédiation individualisée est construite à partir de :",
+        "options": ["Les résultats réels de l'apprenant", "Un programme identique pour tous", "Une note tirée au hasard"],
+        "reponse": "Les résultats réels de l'apprenant"
+      }
+    ]
+  },
+  "devoirs": {
+    "A1": "À la maison : réécoutez l'audio et associez chaque mot (droit, devoir, règle) à son exemple.",
+    "A2": "À la maison : rédigez cinq phrases expliquant avec vos propres mots la différence entre droit, devoir et règle.",
+    "B1": "À la maison : rédigez un court texte expliquant à un ami pourquoi une remédiation personnalisée est utile après une évaluation.",
+    "B2": "À la maison : rédigez un paragraphe argumenté sur les avantages et les limites d'un enseignement individualisé fondé sur les erreurs."
+  },
+  "formateur": {
+    "fiche_formateur": "Séance adaptative : ne pas introduire de nouveaux faits civiques, mais reprendre un point déjà vu (ici droit/devoir/règle) à partir de la matrice d'erreurs issue de l'évaluation E1. L'objectif est de mesurer un gain avant/après sur une tâche équivalente, sans mélanger la mesure linguistique et la mesure civique. Adapter le choix du point revu selon les erreurs dominantes réelles de chaque cohorte.",
+    "deroule_180min": [
+      { "phase": "Rituel civique", "duree_min": 10, "description": "Rappel bref du thème civique concerné, sans introduire de fait nouveau." },
+      { "phase": "Activation + lexique", "duree_min": 20, "description": "Réactivation du lexique déjà rencontré (droit, devoir, règle, évaluation, erreur, progrès)." },
+      { "phase": "Support invariant CO/CE", "duree_min": 50, "description": "Écoute du dialogue de remédiation Amadou/M. Lefèvre, lecture de la matrice personnelle des erreurs." },
+      { "phase": "Ateliers différenciés", "duree_min": 60, "description": "Chaque apprenant retravaille sa propre matrice d'erreurs dans l'atelier correspondant à son niveau A1-B2." },
+      { "phase": "Production EE/EO", "duree_min": 30, "description": "Réalisation d'une tâche équivalente à celle de l'évaluation E1, pour mesurer le progrès individuel." },
+      { "phase": "Fixation", "duree_min": 10, "description": "Synthèse collective, comparaison avant/après, sans mélanger le score linguistique et le score civique." }
+    ],
+    "adaptation_rules": [
+      "Choisir le point civique à réviser en fonction des erreurs réellement dominantes de la cohorte, pas d'un point fixe imposé à l'avance.",
+      "Ne jamais fusionner la mesure du gain linguistique et la mesure du gain civique : les présenter comme deux résultats séparés.",
+      "Si un apprenant n'a fait aucune erreur sur ce point, lui proposer un atelier d'approfondissement plutôt qu'une simple répétition."
+    ]
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "resource_id": "S18-VIS-master",
+  "scene": {
+    "title": "Répondre à une administration (document fictif)",
+    "width": 900,
+    "height": 260,
+    "background": "#ffffff",
+    "elements": [
+      {
+        "type": "rect",
+        "x": 40,
+        "y": 80,
+        "width": 200,
+        "height": 70,
+        "rx": 8,
+        "fill": "#dbeafe"
+      },
+      {
+        "type": "text",
+        "x": 140,
+        "y": 120,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "Notification"
+      },
+      {
+        "type": "line",
+        "x1": 240,
+        "y1": 115,
+        "x2": 300,
+        "y2": 115,
+        "stroke": "#374151",
+        "strokeWidth": 3
+      },
+      {
+        "type": "rect",
+        "x": 300,
+        "y": 80,
+        "width": 260,
+        "height": 70,
+        "rx": 8,
+        "fill": "#dcfce7"
+      },
+      {
+        "type": "text",
+        "x": 430,
+        "y": 110,
+        "anchor": "middle",
+        "fontSize": 13,
+        "text": "Courriel + pièce"
+      },
+      {
+        "type": "text",
+        "x": 430,
+        "y": 130,
+        "anchor": "middle",
+        "fontSize": 12,
+        "text": "jointe"
+      },
+      {
+        "type": "line",
+        "x1": 560,
+        "y1": 115,
+        "x2": 620,
+        "y2": 115,
+        "stroke": "#374151",
+        "strokeWidth": 3
+      },
+      {
+        "type": "rect",
+        "x": 620,
+        "y": 80,
+        "width": 240,
+        "height": 70,
+        "rx": 8,
+        "fill": "#fef9c3"
+      },
+      {
+        "type": "text",
+        "x": 740,
+        "y": 120,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "Accusé réception"
+      },
+      {
+        "type": "text",
+        "x": 450,
+        "y": 200,
+        "anchor": "middle",
+        "fontSize": 13,
+        "text": "Échéance : 15 jours (exemple pédagogique)"
+      }
+    ]
+  },
+  "alt_text": "Chronologie schematique en trois etapes : notification, reponse par courriel avec piece jointe, accuse de reception, document pedagogique fictif sans en-tete officiel."
+}

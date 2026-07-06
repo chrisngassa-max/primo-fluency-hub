@@ -1,0 +1,108 @@
+[
+  {
+    "support_id": "S27-support",
+    "version": 1,
+    "niveau": "A1",
+    "consigne": "Vrai/faux sur libertés et limites.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "La discrimination est :",
+        "options": [
+          "Interdite",
+          "Encouragée",
+          "Obligatoire"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "vrai_faux",
+        "enonce": "L'expression a des limites."
+      }
+    ],
+    "corrige": {
+      "q1": "Interdite",
+      "q2": true
+    },
+    "invariants_hash": "1ef998760e9a2c7252611576d64d9176b71e4c336030ce2027a220464b200f14"
+  },
+  {
+    "support_id": "S27-support",
+    "version": 1,
+    "niveau": "A2",
+    "consigne": "Exprimez un avis simple sur la manifestation.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Laïcité à l'école publique :",
+        "options": [
+          "Neutralité de l'État",
+          "Obligation religieuse",
+          "Pas de règles"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "reponse_courte",
+        "enonce": "Un droit de manifester ?"
+      }
+    ],
+    "corrige": {
+      "q1": "Neutralité de l'État",
+      "q2": "Oui, encadré par déclaration."
+    },
+    "invariants_hash": "1ef998760e9a2c7252611576d64d9176b71e4c336030ce2027a220464b200f14"
+  },
+  {
+    "support_id": "S27-support",
+    "version": 1,
+    "niveau": "B1",
+    "consigne": "Défendez une opinion sur laïcité ou expression.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "reponse_longue",
+        "enonce": "Opinion argumentée sur un droit."
+      },
+      {
+        "id": "q2",
+        "type": "reponse_longue",
+        "enonce": "Citez une limite légale."
+      }
+    ],
+    "corrige": {
+      "q1": "Avis + raisons.",
+      "q2": "Diffamation, haine, sécurité."
+    },
+    "invariants_hash": "1ef998760e9a2c7252611576d64d9176b71e4c336030ce2027a220464b200f14"
+  },
+  {
+    "support_id": "S27-support",
+    "version": 1,
+    "niveau": "B2",
+    "consigne": "Intégrez une objection et concluez.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "argumentation",
+        "enonce": "Répondez à une objection sur la laïcité."
+      },
+      {
+        "id": "q2",
+        "type": "argumentation",
+        "enonce": "Nuancez liberté vs sécurité en manifestation."
+      }
+    ],
+    "corrige": {
+      "q1": "Réponse ouverte.",
+      "q2": "Réponse ouverte."
+    },
+    "invariants_hash": "1ef998760e9a2c7252611576d64d9176b71e4c336030ce2027a220464b200f14"
+  }
+]

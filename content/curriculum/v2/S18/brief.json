@@ -1,0 +1,140 @@
+{
+  "session_code": "S18",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Répondre à une administration",
+  "support": {
+    "support_id": "S18-support-administration",
+    "situation": "Fatou Ndiaye a reçu une notification fictive de la préfecture qui lui demande un justificatif de domicile manquant pour son dossier de titre de séjour. Elle doit répondre par courriel formel avant l'échéance de quinze jours.",
+    "personnages": ["Fatou Ndiaye (usagère)", "Message vocal fictif (rappel du dossier)"],
+    "faits": [
+      "La préfecture instruit les demandes de titre de séjour.",
+      "Une notification peut demander une pièce justificative manquante.",
+      "Fatou doit transmettre un justificatif de domicile avant l'échéance.",
+      "L'échéance est fixée à quinze jours après la notification.",
+      "L'usager a le droit d'être informé et de répondre à l'administration.",
+      "L'usager a l'obligation de fournir des pièces conformes et complètes."
+    ],
+    "nombres": [15],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S18-CO-master",
+    "voice": "fr-FR-Wavenet-C",
+    "speaking_rate": 0.92,
+    "script": "Message vocal (fictif) : Bonjour. Ceci est un rappel pédagogique fictif. Votre dossier de titre de séjour a été reçu par la préfecture.\nIl manque un justificatif de domicile pour continuer l'instruction.\nMerci de transmettre ce document avant l'échéance, dans un délai de quinze jours.\nVous pouvez répondre par courriel en joignant la pièce demandée.\nFatou : D'accord. Je vais préparer un courriel formel et joindre mon justificatif de domicile.\nMessage vocal : Pour rappel, un dossier incomplet ne peut pas être traité. L'usager a le droit d'être informé et l'obligation de fournir des pièces conformes.\nFatou : Je comprends. Je vais respecter le délai de quinze jours.",
+    "pauses": [
+      { "after_word": 18, "ms": 400 },
+      { "after_word": 55, "ms": 400 },
+      { "after_word": 95, "ms": 500 }
+    ]
+  },
+  "visual": {
+    "resource_id": "S18-VIS-master",
+    "alt_text": "Chronologie schematique en trois etapes : notification, reponse par courriel avec piece jointe, accuse de reception, document pedagogique fictif sans en-tete officiel.",
+    "scene": {
+      "title": "Répondre à une administration (document fictif)",
+      "width": 900,
+      "height": 260,
+      "background": "#ffffff",
+      "elements": [
+        { "type": "rect", "x": 40, "y": 80, "width": 200, "height": 70, "rx": 8, "fill": "#dbeafe" },
+        { "type": "text", "x": 140, "y": 120, "anchor": "middle", "fontSize": 14, "text": "Notification" },
+        { "type": "line", "x1": 240, "y1": 115, "x2": 300, "y2": 115, "stroke": "#374151", "strokeWidth": 3 },
+        { "type": "rect", "x": 300, "y": 80, "width": 260, "height": 70, "rx": 8, "fill": "#dcfce7" },
+        { "type": "text", "x": 430, "y": 110, "anchor": "middle", "fontSize": 13, "text": "Courriel + pièce" },
+        { "type": "text", "x": 430, "y": 130, "anchor": "middle", "fontSize": 12, "text": "jointe" },
+        { "type": "line", "x1": 560, "y1": 115, "x2": 620, "y2": 115, "stroke": "#374151", "strokeWidth": 3 },
+        { "type": "rect", "x": 620, "y": 80, "width": 240, "height": 70, "rx": 8, "fill": "#fef9c3" },
+        { "type": "text", "x": 740, "y": 120, "anchor": "middle", "fontSize": 14, "text": "Accusé réception" },
+        { "type": "text", "x": 450, "y": 200, "anchor": "middle", "fontSize": 13, "text": "Échéance : 15 jours (exemple pédagogique)" }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S18-LEX-A1-B2",
+    "mots": [
+      { "mot": "objet", "definition_simple": "Le sujet d'un courriel ou d'une lettre.", "exemple": "Objet : transmission du justificatif de domicile." },
+      { "mot": "référence", "definition_simple": "Un numéro ou code qui identifie un dossier.", "exemple": "Référence du dossier de titre de séjour." },
+      { "mot": "pièce jointe", "definition_simple": "Un document envoyé avec un courriel.", "exemple": "Joindre le justificatif de domicile en pièce jointe." },
+      { "mot": "délai", "definition_simple": "Le temps accordé pour faire une action.", "exemple": "Le délai est de quinze jours." },
+      { "mot": "relancer", "definition_simple": "Demander à nouveau une réponse ou une pièce.", "exemple": "Relancer l'administration si besoin." },
+      { "mot": "accuser réception", "definition_simple": "Confirmer qu'un message ou document a été reçu.", "exemple": "L'administration accuse réception du courriel." },
+      { "mot": "incomplet", "definition_simple": "Qui manque d'éléments nécessaires.", "exemple": "Un dossier incomplet ne peut pas être traité." },
+      { "mot": "conforme", "definition_simple": "Qui respecte les règles demandées.", "exemple": "Fournir une pièce conforme et récente." },
+      { "mot": "usager", "definition_simple": "Une personne qui utilise un service public.", "exemple": "L'usager a des droits et des obligations." }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Écoutez le message. Complétez les informations : quelle pièce manque et dans combien de jours faut-il répondre ?",
+      "aides": ["Pièce = justificatif de domicile", "Délai = quinze jours"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "Quelle pièce Fatou doit-elle transmettre ?", "options": ["Un justificatif de domicile", "Un passeport", "Un certificat médical"] },
+        { "id": "q2", "type": "vrai_faux", "enonce": "Fatou a quinze jours pour répondre." }
+      ],
+      "corrige": { "q1": "Un justificatif de domicile", "q2": true }
+    },
+    "A2": {
+      "consigne": "Rédigez un court courriel formel pour transmettre la pièce demandée. Utilisez : objet, formule de politesse, pièce jointe.",
+      "aides": ["Pensez à : objet, pièce jointe, délai"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "Dans combien de jours Fatou doit-elle répondre ?", "options": ["Cinq jours", "Quinze jours", "Trente jours"] },
+        { "id": "q2", "type": "reponse_courte", "enonce": "Citez un droit de l'usager mentionné dans le support." }
+      ],
+      "corrige": { "q1": "Quinze jours", "q2": "Le droit d'être informé (ou de répondre à l'administration)." }
+    },
+    "B1": {
+      "consigne": "Rédigez un courriel formel complet (tâches EE1, EE2, EE3 graduées) : informer, expliquer un problème, argumenter pour une extension de délai si nécessaire.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "reponse_longue", "enonce": "Rédigez un courriel formel transmettant le justificatif de domicile (EE1/EE2)." },
+        { "id": "q2", "type": "reponse_longue", "enonce": "Expliquez les droits et obligations documentaires de Fatou face à la préfecture." }
+      ],
+      "corrige": { "q1": "Courriel formel avec objet, formule, mention de la pièce jointe et respect du délai.", "q2": "Droit d'être informé et de répondre ; obligation de fournir des pièces conformes et complètes." }
+    },
+    "B2": {
+      "consigne": "Analysez la situation administrative de Fatou et rédigez les trois tâches EE TCF avec autonomie croissante, en distinguant droits de l'usager et obligations documentaires.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "argumentation", "enonce": "Argumentez : pourquoi un courriel formel est-il préférable à un message informel dans ce contexte ?" },
+        { "id": "q2", "type": "argumentation", "enonce": "Nuancez : quels risques si Fatou ne respecte pas le délai de quinze jours ?" }
+      ],
+      "corrige": { "q1": "Reponse ouverte : trace ecrite, clarte, respect des formes administratives.", "q2": "Reponse ouverte : retard d'instruction, relance, risque de refus si dossier incomplet." }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S18-QCM-civique",
+    "mention": "CSP",
+    "theme": "Droits et devoirs",
+    "questions": [
+      { "notion": "droits de l'usager", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Un usager a le droit :", "options": ["D'être informé sur son dossier", "De refuser toute pièce", "De ne jamais répondre"], "reponse": "D'être informé sur son dossier" },
+      { "notion": "obligations documentaires", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "L'usager doit fournir des pièces :", "options": ["Conformes et complètes", "Uniquement orales", "Sans délai"], "reponse": "Conformes et complètes" },
+      { "notion": "service public", "type": "mise_en_situation", "official_status": "simulation_pedagogique", "enonce": "Fatou reçoit une demande de justificatif. Elle doit :", "options": ["Répondre dans le délai indiqué", "Ignorer la notification", "Aller au tribunal"], "reponse": "Répondre dans le délai indiqué" },
+      { "notion": "administration", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "La préfecture instruit notamment :", "options": ["Les demandes de titre de séjour", "Les contrats de travail", "Les actes de naissance"], "reponse": "Les demandes de titre de séjour" },
+      { "notion": "dossier incomplet", "type": "mise_en_situation", "official_status": "simulation_pedagogique", "enonce": "Un dossier incomplet :", "options": ["Ne peut pas être traité", "Est toujours accepté", "N'a pas besoin de pièces"], "reponse": "Ne peut pas être traité" }
+    ]
+  },
+  "devoirs": {
+    "A1": "À la maison : réécoutez l'audio et notez la pièce demandée et le délai.",
+    "A2": "À la maison : rédigez un court courriel formel (cinq phrases) pour transmettre une pièce.",
+    "B1": "À la maison : rédigez un courriel complet avec objet, corps et formule de politesse.",
+    "B2": "À la maison : rédigez les trois tâches EE sur le même thème administratif."
+  },
+  "formateur": {
+    "fiche_formateur": "Séance EE : chaque apprenant doit savoir (1) rédiger un courriel formel à une administration, (2) joindre la bonne pièce, (3) distinguer droits de l'usager et obligations documentaires. Les trois tâches EE sont graduées proches du TCF IRN. Aucun document officiel imité.",
+    "deroule_180min": [
+      { "phase": "Rituel civique", "duree_min": 10, "description": "Rappel des droits de l'usager et obligations documentaires." },
+      { "phase": "Activation + lexique", "duree_min": 20, "description": "Découverte du lexique (objet, pièce jointe, délai, conforme...)." },
+      { "phase": "Support invariant CO/CE", "duree_min": 50, "description": "Écoute du message vocal fictif, lecture de la chronologie et du dossier." },
+      { "phase": "Ateliers différenciés", "duree_min": 60, "description": "Quatre groupes A1/A2/B1/B2 : tâches EE graduées sur le même support." },
+      { "phase": "Production EE/EO", "duree_min": 30, "description": "Rédaction d'un courriel formel avec pièce jointe simulée." },
+      { "phase": "Fixation", "duree_min": 10, "description": "Synthèse, QCM civique CSP, devoir personnalisé." }
+    ],
+    "adaptation_rules": [
+      "Si les formules de politesse sont faibles, fournir un gabarit avant la production B1.",
+      "Ne jamais utiliser de vraie adresse ou référence administrative : tout reste fictif et pédagogique.",
+      "Séparer la notation linguistique (EE) et la preuve civique (QCM distinct)."
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "Individuel et fictif",
+    "q2": true
+  },
+  "A2": {
+    "q1": "2",
+    "q2": "Sortie A2/CSP, extension B1 ou consolidation."
+  },
+  "B1": {
+    "q1": "Trois actions concrètes.",
+    "q2": "Deux volets distincts."
+  },
+  "B2": {
+    "q1": "Réponse ouverte.",
+    "q2": "Réponse ouverte."
+  }
+}

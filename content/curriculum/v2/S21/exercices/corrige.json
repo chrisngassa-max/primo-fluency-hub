@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "Connaissance",
+    "q2": true
+  },
+  "A2": {
+    "q1": "Créer une confusion",
+    "q2": "Vérifier si la conduite est conforme."
+  },
+  "B1": {
+    "q1": "Connaissance = fait vérifiable ; situation = conduite contextuelle.",
+    "q2": "Conduite alignée sur loi et principes."
+  },
+  "B2": {
+    "q1": "Réponse ouverte.",
+    "q2": "Réponse ouverte : confusion de notions proches."
+  }
+}

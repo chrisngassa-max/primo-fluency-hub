@@ -1,0 +1,32 @@
+[
+  {
+    "phase": "Rituel civique",
+    "duree_min": 10,
+    "description": "Constitution et souveraineté."
+  },
+  {
+    "phase": "Activation + lexique",
+    "duree_min": 20,
+    "description": "Lexique institutionnel B2."
+  },
+  {
+    "phase": "Support invariant CO/CE",
+    "duree_min": 50,
+    "description": "Synthèse et relances."
+  },
+  {
+    "phase": "Ateliers différenciés",
+    "duree_min": 60,
+    "description": "A1-B2 sur même support."
+  },
+  {
+    "phase": "Production EE/EO",
+    "duree_min": 30,
+    "description": "EO avec relances."
+  },
+  {
+    "phase": "Fixation",
+    "duree_min": 10,
+    "description": "QCM NAT."
+  }
+]

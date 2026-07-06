@@ -1,0 +1,114 @@
+[
+  {
+    "support_id": "S15-support-1789",
+    "version": 1,
+    "niveau": "A1",
+    "consigne": "Écoutez le récit. Placez les deux repères (1789, 1792) sur la frise.",
+    "aides": [
+      "1789 = Révolution",
+      "1792 = République",
+      "Mots utiles : roi, droit, déclaration"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "En quelle année commence la Révolution française ?",
+        "options": [
+          "1789",
+          "1848",
+          "1958"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "vrai_faux",
+        "enonce": "La Déclaration des droits de l'homme date de 1789."
+      }
+    ],
+    "corrige": {
+      "q1": "1789",
+      "q2": true
+    },
+    "invariants_hash": "f87c3e8147451a1c23ede43f63f3a9611fdfae71e2dcaf969fcff7a6ca43e99e"
+  },
+  {
+    "support_id": "S15-support-1789",
+    "version": 1,
+    "niveau": "A2",
+    "consigne": "Racontez un événement de 1789 et expliquez une de ses conséquences.",
+    "aides": [
+      "Pensez à : Révolution, droits, monarchie"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "En quelle année la République est-elle proclamée pour la première fois ?",
+        "options": [
+          "1789",
+          "1792",
+          "1804"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "reponse_courte",
+        "enonce": "Citez une conséquence de la Révolution."
+      }
+    ],
+    "corrige": {
+      "q1": "1792",
+      "q2": "La fin de la monarchie absolue / l'adoption de la Déclaration des droits (une réponse suffit)."
+    },
+    "invariants_hash": "f87c3e8147451a1c23ede43f63f3a9611fdfae71e2dcaf969fcff7a6ca43e99e"
+  },
+  {
+    "support_id": "S15-support-1789",
+    "version": 1,
+    "niveau": "B1",
+    "consigne": "Racontez la période 1789-1792 et expliquez pourquoi la Déclaration des droits est un texte fondateur.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "reponse_longue",
+        "enonce": "Racontez, dans l'ordre, les repères de 1789 à 1792."
+      },
+      {
+        "id": "q2",
+        "type": "reponse_longue",
+        "enonce": "Expliquez ce que change la Déclaration des droits de l'homme et du citoyen."
+      }
+    ],
+    "corrige": {
+      "q1": "1789 : Revolution et Declaration des droits, fin de la monarchie absolue ; 1792 : premiere Republique.",
+      "q2": "Elle affirme la liberte et l'egalite des droits, fondement des valeurs republicaines actuelles."
+    },
+    "invariants_hash": "f87c3e8147451a1c23ede43f63f3a9611fdfae71e2dcaf969fcff7a6ca43e99e"
+  },
+  {
+    "support_id": "S15-support-1789",
+    "version": 1,
+    "niveau": "B2",
+    "consigne": "Analysez l'héritage de 1789 dans les valeurs actuelles de la République et nuancez la portée de la Déclaration à son époque.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "argumentation",
+        "enonce": "Argumentez : en quoi 1789 influence-t-il encore les droits d'aujourd'hui ?"
+      },
+      {
+        "id": "q2",
+        "type": "argumentation",
+        "enonce": "Nuancez : la Déclaration de 1789 était-elle appliquée à tous à l'époque ? Justifiez."
+      }
+    ],
+    "corrige": {
+      "q1": "Reponse ouverte : liberte, egalite des droits, souverainete du peuple, base des textes actuels.",
+      "q2": "Reponse ouverte : principes universels mais application limitee a l'epoque (droits progressivement etendus)."
+    },
+    "invariants_hash": "f87c3e8147451a1c23ede43f63f3a9611fdfae71e2dcaf969fcff7a6ca43e99e"
+  }
+]

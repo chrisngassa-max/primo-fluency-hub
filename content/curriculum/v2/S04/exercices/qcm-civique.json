@@ -1,0 +1,67 @@
+{
+  "resource_id": "S04-QCM-civique",
+  "mention": "CSP",
+  "theme": "Droits et devoirs",
+  "questions": [
+    {
+      "notion": "instruction obligatoire",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "En France, l'instruction est obligatoire :",
+      "options": [
+        "De 3 à 16 ans",
+        "De 6 à 14 ans",
+        "De 5 à 18 ans"
+      ],
+      "reponse": "De 3 à 16 ans"
+    },
+    {
+      "notion": "école publique",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "L'école publique est :",
+      "options": [
+        "Gratuite et laïque",
+        "Payante et religieuse",
+        "Réservée aux garçons"
+      ],
+      "reponse": "Gratuite et laïque"
+    },
+    {
+      "notion": "autorité parentale",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Justifier l'absence d'un enfant à l'école relève :",
+      "options": [
+        "De l'autorité parentale",
+        "De la mairie",
+        "De la préfecture"
+      ],
+      "reponse": "De l'autorité parentale"
+    },
+    {
+      "notion": "mixité",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "À l'école publique, filles et garçons :",
+      "options": [
+        "Étudient ensemble (mixité)",
+        "Sont toujours séparés",
+        "Choisissent leur classe"
+      ],
+      "reponse": "Étudient ensemble (mixité)"
+    },
+    {
+      "notion": "laïcité à l'école",
+      "type": "mise_en_situation",
+      "official_status": "simulation_pedagogique",
+      "enonce": "L'école publique, en matière de religion, doit être :",
+      "options": [
+        "Neutre (laïque)",
+        "Favorable à une religion",
+        "Interdite aux croyants"
+      ],
+      "reponse": "Neutre (laïque)"
+    }
+  ]
+}

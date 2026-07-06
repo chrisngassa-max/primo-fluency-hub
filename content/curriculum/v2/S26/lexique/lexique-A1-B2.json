@@ -1,0 +1,50 @@
+{
+  "resource_id": "S26-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "État de droit",
+      "definition_simple": "Tous sont soumis à la loi.",
+      "exemple": "L'État de droit en France."
+    },
+    {
+      "mot": "séparation",
+      "definition_simple": "Répartition des pouvoirs.",
+      "exemple": "Séparation des pouvoirs."
+    },
+    {
+      "mot": "législatif",
+      "definition_simple": "Pouvoir qui vote la loi.",
+      "exemple": "Le Parlement."
+    },
+    {
+      "mot": "exécutif",
+      "definition_simple": "Pouvoir qui applique la loi.",
+      "exemple": "Le gouvernement, la mairie."
+    },
+    {
+      "mot": "judiciaire",
+      "definition_simple": "Pouvoir qui juge et contrôle.",
+      "exemple": "Les juges."
+    },
+    {
+      "mot": "arrêté",
+      "definition_simple": "Décision administrative locale.",
+      "exemple": "Arrêté de stationnement."
+    },
+    {
+      "mot": "contester",
+      "definition_simple": "Demander réexamen devant un juge.",
+      "exemple": "Contester une décision."
+    },
+    {
+      "mot": "élection",
+      "definition_simple": "Vote pour choisir des élus.",
+      "exemple": "Élections municipales."
+    },
+    {
+      "mot": "contrôle",
+      "definition_simple": "Vérification de légalité.",
+      "exemple": "Contrôle par le juge."
+    }
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "session_code": "S03",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Santé et urgences",
+  "support": {
+    "support_id": "S03-support-sante",
+    "situation": "Mme Nour explique un problème de santé et hésite sur l'interlocuteur à contacter. Avec l'aide d'un conseiller, M. Bianchi, elle apprend à distinguer une urgence d'une situation non urgente et à choisir le bon numéro.",
+    "personnages": ["Mme Nour (usagère)", "M. Bianchi (conseiller santé)"],
+    "faits": [
+      "Le 15 est le numéro du SAMU pour une urgence médicale.",
+      "Le 18 est le numéro des pompiers.",
+      "Le 112 est le numéro d'urgence européen.",
+      "Le médecin traitant est le médecin que l'on consulte habituellement.",
+      "La carte Vitale sert à être remboursé des soins.",
+      "Pour une situation non urgente, on prend un rendez-vous avec son médecin traitant."
+    ],
+    "nombres": [15, 18, 112],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S03-CO-master",
+    "voice": "fr-FR-Wavenet-C",
+    "speaking_rate": 0.92,
+    "script": "M. Bianchi : Bonjour madame. Vous m'avez dit que vous ne vous sentez pas bien ?\nMme Nour : Bonjour. Oui, depuis hier j'ai mal à la tête et un peu de fièvre.\nM. Bianchi : Est-ce que vous avez du mal à respirer ou une douleur très forte ?\nMme Nour : Non, ça va, je respire normalement.\nM. Bianchi : Alors ce n'est pas une urgence vitale. Dans ce cas, vous prenez un rendez-vous avec votre médecin traitant.\nMme Nour : Et si c'était très grave, une nuit, par exemple ?\nM. Bianchi : Pour une urgence médicale, vous appelez le 15, le SAMU. Pour un incendie ou un accident, c'est le 18, les pompiers. Et le 112 fonctionne partout en Europe.\nMme Nour : D'accord. Et pour être remboursée ?\nM. Bianchi : Vous présentez votre carte Vitale. Le médecin vous donne aussi une ordonnance si vous avez besoin de médicaments.\nMme Nour : Merci beaucoup, je comprends mieux maintenant.\nM. Bianchi : Je vous en prie. Reposez-vous bien et prenez rendez-vous dès demain.",
+    "pauses": [
+      { "after_word": 16, "ms": 400 },
+      { "after_word": 66, "ms": 400 },
+      { "after_word": 120, "ms": 500 }
+    ]
+  },
+  "visual": {
+    "resource_id": "S03-VIS-master",
+    "alt_text": "Salle d'attente generique d'un cabinet medical : chaises alignees, une porte, une horloge, sans aucun numero ni logo.",
+    "scene": {
+      "title": "Cabinet médical (scène générique)",
+      "width": 900,
+      "height": 300,
+      "background": "#ffffff",
+      "elements": [
+        { "type": "rect", "x": 40, "y": 40, "width": 820, "height": 220, "rx": 10, "fill": "#eff6ff" },
+        { "type": "text", "x": 60, "y": 75, "fontSize": 16, "text": "Salle d'attente (scène pédagogique générique)" },
+        { "type": "rect", "x": 80, "y": 150, "width": 70, "height": 70, "rx": 6, "fill": "#bfdbfe" },
+        { "type": "rect", "x": 170, "y": 150, "width": 70, "height": 70, "rx": 6, "fill": "#bfdbfe" },
+        { "type": "rect", "x": 260, "y": 150, "width": 70, "height": 70, "rx": 6, "fill": "#bfdbfe" },
+        { "type": "rect", "x": 720, "y": 110, "width": 90, "height": 150, "rx": 6, "fill": "#dbeafe" },
+        { "type": "text", "x": 765, "y": 190, "anchor": "middle", "fontSize": 13, "text": "Porte" },
+        { "type": "circle", "cx": 500, "cy": 110, "r": 34, "fill": "#dbeafe" },
+        { "type": "text", "x": 500, "y": 115, "anchor": "middle", "fontSize": 13, "text": "Horloge" }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S03-LEX-A1-B2",
+    "mots": [
+      { "mot": "symptôme", "definition_simple": "Un signe qui montre que l'on est malade.", "exemple": "La fièvre est un symptôme." },
+      { "mot": "douleur", "definition_simple": "Une sensation désagréable dans le corps.", "exemple": "Il a une douleur au dos." },
+      { "mot": "urgence", "definition_simple": "Une situation grave qui demande une aide immédiate.", "exemple": "Une difficulté à respirer est une urgence." },
+      { "mot": "médecin traitant", "definition_simple": "Le médecin que l'on consulte habituellement.", "exemple": "Elle a pris rendez-vous avec son médecin traitant." },
+      { "mot": "rendez-vous", "definition_simple": "Un moment fixé pour rencontrer un professionnel.", "exemple": "J'ai un rendez-vous à 15 heures." },
+      { "mot": "ordonnance", "definition_simple": "Le papier du médecin pour acheter des médicaments.", "exemple": "Le pharmacien lit l'ordonnance." },
+      { "mot": "carte Vitale", "definition_simple": "La carte qui sert à être remboursé des soins.", "exemple": "Présentez votre carte Vitale au médecin." },
+      { "mot": "mutuelle", "definition_simple": "Une assurance qui complète le remboursement des soins.", "exemple": "Sa mutuelle rembourse le reste." }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Écoutez le dialogue. Associez chaque symptôme à une image, puis choisissez le bon numéro à appeler dans la liste.",
+      "aides": ["Urgence médicale = 15", "Pompiers = 18", "Mots utiles : douleur, fièvre, rendez-vous"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "Quel numéro appelle-t-on pour une urgence médicale ?", "options": ["15", "18", "112"] },
+        { "id": "q2", "type": "vrai_faux", "enonce": "Pour une petite fièvre sans gravité, on prend rendez-vous avec son médecin traitant." }
+      ],
+      "corrige": { "q1": "15", "q2": true }
+    },
+    "A2": {
+      "consigne": "Décrivez oralement des symptômes simples et dites qui vous contactez selon la situation.",
+      "aides": ["Pensez à : symptôme, urgence, rendez-vous, médecin traitant"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "Que présente-t-on pour être remboursé des soins ?", "options": ["La carte Vitale", "Le passeport", "Le permis de conduire"] },
+        { "id": "q2", "type": "reponse_courte", "enonce": "Citez une situation qui est une urgence et une situation qui ne l'est pas." }
+      ],
+      "corrige": { "q1": "La carte Vitale", "q2": "Urgence : difficulté à respirer, douleur très forte. Non urgente : petit mal de tête, légère fièvre." }
+    },
+    "B1": {
+      "consigne": "Expliquez à une personne comment choisir entre une urgence et un rendez-vous, puis justifiez l'utilité du médecin traitant et de la carte Vitale.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "reponse_longue", "enonce": "Reformulez la différence entre une situation urgente et une situation non urgente, avec des exemples." },
+        { "id": "q2", "type": "reponse_longue", "enonce": "Expliquez le rôle du médecin traitant et de la carte Vitale dans le parcours de soins." }
+      ],
+      "corrige": { "q1": "Une urgence menace la vie ou la sante immediate (appel du 15) ; une situation non urgente se gere par un rendez-vous avec le medecin traitant.", "q2": "Le medecin traitant assure le suivi et oriente ; la carte Vitale permet le remboursement des soins." }
+    },
+    "B2": {
+      "consigne": "Analysez l'organisation de l'accès aux soins en France et nuancez les difficultés qu'un nouvel arrivant peut rencontrer.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "argumentation", "enonce": "Argumentez : pourquoi est-il important de ne pas appeler le 15 pour une situation bénigne ?" },
+        { "id": "q2", "type": "argumentation", "enonce": "Nuancez : quels obstacles peuvent gêner l'accès aux soins et comment les surmonter ?" }
+      ],
+      "corrige": { "q1": "Reponse ouverte : preserver les services d'urgence pour les cas graves, orienter correctement, eviter la saturation.", "q2": "Reponse ouverte : barriere de la langue, meconnaissance du systeme, delais ; solutions : mediation, information, medecin traitant." }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S03-QCM-civique",
+    "mention": "CSP",
+    "theme": "Vivre dans la société française",
+    "questions": [
+      { "notion": "numéros d'urgence", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Le numéro du SAMU pour une urgence médicale est le :", "options": ["15", "17", "18"], "reponse": "15" },
+      { "notion": "numéros d'urgence", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Le numéro d'urgence valable partout en Europe est le :", "options": ["112", "115", "119"], "reponse": "112" },
+      { "notion": "accès aux soins", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "La carte Vitale sert à :", "options": ["Être remboursé des soins", "Voter aux élections", "Prouver sa nationalité"], "reponse": "Être remboursé des soins" },
+      { "notion": "parcours de soins", "type": "mise_en_situation", "official_status": "simulation_pedagogique", "enonce": "Pour un mal de gorge sans gravité, la bonne conduite est de :", "options": ["Prendre rendez-vous avec son médecin traitant", "Appeler le 15", "Aller aux urgences la nuit"], "reponse": "Prendre rendez-vous avec son médecin traitant" },
+      { "notion": "professionnels de santé", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Le document du médecin pour acheter des médicaments s'appelle :", "options": ["Une ordonnance", "Une facture", "Un justificatif"], "reponse": "Une ordonnance" }
+    ]
+  },
+  "devoirs": {
+    "A1": "À la maison : réécoutez l'audio et associez chaque numéro utile (15, 18, 112) à sa situation.",
+    "A2": "À la maison : écrivez 5 phrases pour décrire des symptômes et dire qui vous contactez.",
+    "B1": "À la maison : rédigez un court texte expliquant à un ami comment choisir entre urgence et rendez-vous.",
+    "B2": "À la maison : rédigez un paragraphe argumenté sur le bon usage des services d'urgence."
+  },
+  "formateur": {
+    "fiche_formateur": "Séance santé et urgences : chaque apprenant doit savoir (1) décrire des symptômes simples, (2) distinguer urgence et non-urgence, (3) choisir le bon interlocuteur (15/18/112, médecin traitant). Traiter le sujet sans dramatisation. Les numéros sont réels et présentés comme information de sécurité ; l'image reste générique et ne contient aucun numéro.",
+    "deroule_180min": [
+      { "phase": "Rituel civique", "duree_min": 10, "description": "Rappel des numeros utiles et de leur usage, sans dramatisation." },
+      { "phase": "Activation + lexique", "duree_min": 20, "description": "Decouverte du lexique (symptome, urgence, ordonnance, carte Vitale...)." },
+      { "phase": "Support invariant CO/CE", "duree_min": 50, "description": "Ecoute du dialogue Nour/Bianchi, reperage urgence vs non-urgence." },
+      { "phase": "Ateliers differencies", "duree_min": 60, "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du meme support." },
+      { "phase": "Production EE/EO", "duree_min": 30, "description": "Jeu de role : decrire des symptomes et demander de l'aide." },
+      { "phase": "Fixation", "duree_min": 10, "description": "Synthese, QCM civique, devoir personnalise." }
+    ],
+    "adaptation_rules": [
+      "Si un apprenant est anxieux face au theme, rester factuel et rassurant, sans scenario dramatique.",
+      "Verifier que personne ne confond 15 (SAMU) et 18 (pompiers) avant la production orale.",
+      "Ne jamais faire figurer un numero dans l'image : il reste dans le texte et le lexique."
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "Rester neutre",
+    "q2": true
+  },
+  "A2": {
+    "q1": "Est libre de pratiquer sa religion",
+    "q2": "Parce qu'il représente l'État, qui doit traiter tous les usagers de façon égale et sans favoritisme."
+  },
+  "B1": {
+    "q1": "L'Etat et ses agents sont neutres ; les personnes gardent leur liberte de croire ou non.",
+    "q2": "L'agent reste neutre pendant le service ; l'usager conserve sa liberte de conviction et n'a pas a la justifier."
+  },
+  "B2": {
+    "q1": "Reponse ouverte : traitement egal, absence de favoritisme, confiance dans le service public.",
+    "q2": "Reponse ouverte : non, la laicite garantit la liberte de conscience et de culte ; elle organise la neutralite de l'Etat, pas l'interdiction de croire."
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "resource_id": "S15-QCM-civique",
+  "mention": "CSP",
+  "theme": "Histoire, géographie, culture",
+  "questions": [
+    {
+      "notion": "date de la Révolution",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "La Révolution française commence en :",
+      "options": [
+        "1789",
+        "1815",
+        "1914"
+      ],
+      "reponse": "1789"
+    },
+    {
+      "notion": "Déclaration des droits",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "La Déclaration des droits de l'homme et du citoyen affirme :",
+      "options": [
+        "La liberté et l'égalité des droits",
+        "Le pouvoir absolu du roi",
+        "L'interdiction de voter"
+      ],
+      "reponse": "La liberté et l'égalité des droits"
+    },
+    {
+      "notion": "fin de la monarchie absolue",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "La Révolution met fin à :",
+      "options": [
+        "La monarchie absolue",
+        "La République",
+        "La démocratie"
+      ],
+      "reponse": "La monarchie absolue"
+    },
+    {
+      "notion": "première République",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "La première République est proclamée en :",
+      "options": [
+        "1792",
+        "1789",
+        "1848"
+      ],
+      "reponse": "1792"
+    },
+    {
+      "notion": "héritage",
+      "type": "mise_en_situation",
+      "official_status": "simulation_pedagogique",
+      "enonce": "La devise « Liberté, Égalité, Fraternité » puise ses racines dans :",
+      "options": [
+        "Les idées de 1789",
+        "Le Moyen Âge",
+        "L'Antiquité romaine seule"
+      ],
+      "reponse": "Les idées de 1789"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "resource_id": "S05-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "bail",
+      "definition_simple": "Le contrat de location d'un logement.",
+      "exemple": "Elle a signé un bail d'un an."
+    },
+    {
+      "mot": "locataire",
+      "definition_simple": "La personne qui loue et habite le logement.",
+      "exemple": "Le locataire paie un loyer."
+    },
+    {
+      "mot": "propriétaire",
+      "definition_simple": "La personne qui possède le logement.",
+      "exemple": "Le propriétaire entretient l'immeuble."
+    },
+    {
+      "mot": "nuisance",
+      "definition_simple": "Une gêne, par exemple du bruit.",
+      "exemple": "Le bruit la nuit est une nuisance."
+    },
+    {
+      "mot": "voisin",
+      "definition_simple": "La personne qui habite à côté.",
+      "exemple": "Son voisin fait du bruit le soir."
+    },
+    {
+      "mot": "règlement",
+      "definition_simple": "L'ensemble des règles de l'immeuble.",
+      "exemple": "Le règlement demande le calme la nuit."
+    },
+    {
+      "mot": "médiation",
+      "definition_simple": "Une aide pour trouver une solution à l'amiable.",
+      "exemple": "La médiation évite le conflit."
+    },
+    {
+      "mot": "discrimination",
+      "definition_simple": "Traiter une personne moins bien à cause de son origine, son sexe, etc.",
+      "exemple": "La discrimination au logement est interdite."
+    }
+  ]
+}

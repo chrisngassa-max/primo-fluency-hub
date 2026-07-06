@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "Une discrimination interdite",
+    "q2": true
+  },
+  "A2": {
+    "q1": "Les preuves et les dates",
+    "q2": "Une association d'aide aux victimes ou un service d'aide (une réponse suffit)."
+  },
+  "B1": {
+    "q1": "Message factuel attendu : faits precis, dates, absence de jugement excessif, demande d'accompagnement.",
+    "q2": "L'egalite et la dignite fondent l'interdiction des discriminations ; la loi protege les victimes et ceux qui signalent pour rendre ces principes effectifs."
+  },
+  "B2": {
+    "q1": "Reponse ouverte : peur des represailles, meconnaissance des droits, sentiment d'isolement.",
+    "q2": "Reponse ouverte : protection legale, accompagnement associatif, preuve et confidentialite facilitent l'action."
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "resource_id": "E3-QCM-civique",
+  "mention": "CR",
+  "theme": "Évaluation CR",
+  "questions": [
+    {
+      "notion": "E3 durée",
+      "type": "connaissance",
+      "enonce": "E3 dure :",
+      "options": [
+        "120 minutes",
+        "180 minutes",
+        "30 minutes"
+      ],
+      "reponse": "120 minutes",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "CR",
+      "type": "connaissance",
+      "enonce": "Le civique E3 est :",
+      "options": [
+        "CR ciblé 25 min",
+        "NAT 45 min",
+        "Absent"
+      ],
+      "reponse": "CR ciblé 25 min",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "banque",
+      "type": "connaissance",
+      "enonce": "La banque E3 :",
+      "options": [
+        "Est gelée",
+        "Est créée le jour J",
+        "N'existe pas"
+      ],
+      "reponse": "Est gelée",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "sortie",
+      "type": "mise_en_situation",
+      "enonce": "Réussite E3 peut mener à :",
+      "options": [
+        "Sortie B1/CR",
+        "Suppression du parcours",
+        "Rien"
+      ],
+      "reponse": "Sortie B1/CR",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "poursuite",
+      "type": "connaissance",
+      "enonce": "Sinon, orientation possible :",
+      "options": [
+        "Poursuite B2/NAT",
+        "Arrêt définitif obligatoire",
+        "Aucune option"
+      ],
+      "reponse": "Poursuite B2/NAT",
+      "official_status": "simulation_pedagogique"
+    }
+  ]
+}

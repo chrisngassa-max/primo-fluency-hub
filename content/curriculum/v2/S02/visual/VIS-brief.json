@@ -1,0 +1,88 @@
+{
+  "resource_id": "S02-VIS-master",
+  "scene": {
+    "title": "Formulaire d'état civil et drapeau tricolore",
+    "width": 900,
+    "height": 300,
+    "background": "#ffffff",
+    "elements": [
+      {
+        "type": "rect",
+        "x": 20,
+        "y": 20,
+        "width": 520,
+        "height": 260,
+        "rx": 8,
+        "fill": "#f1f5f9"
+      },
+      {
+        "type": "text",
+        "x": 40,
+        "y": 55,
+        "fontSize": 16,
+        "text": "Formulaire d'état civil (document pédagogique fictif)"
+      },
+      {
+        "type": "text",
+        "x": 40,
+        "y": 100,
+        "fontSize": 14,
+        "text": "Nom : ______________________"
+      },
+      {
+        "type": "text",
+        "x": 40,
+        "y": 135,
+        "fontSize": 14,
+        "text": "Prénom : ___________________"
+      },
+      {
+        "type": "text",
+        "x": 40,
+        "y": 170,
+        "fontSize": 14,
+        "text": "Date de naissance : _________"
+      },
+      {
+        "type": "text",
+        "x": 40,
+        "y": 205,
+        "fontSize": 14,
+        "text": "Adresse : __________________"
+      },
+      {
+        "type": "rect",
+        "x": 620,
+        "y": 60,
+        "width": 60,
+        "height": 160,
+        "fill": "#1e3a8a"
+      },
+      {
+        "type": "rect",
+        "x": 680,
+        "y": 60,
+        "width": 60,
+        "height": 160,
+        "fill": "#f8fafc"
+      },
+      {
+        "type": "rect",
+        "x": 740,
+        "y": 60,
+        "width": 60,
+        "height": 160,
+        "fill": "#b91c1c"
+      },
+      {
+        "type": "text",
+        "x": 710,
+        "y": 245,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "Drapeau tricolore"
+      }
+    ]
+  },
+  "alt_text": "Formulaire d'etat civil vierge a gauche avec les champs nom, prenom, naissance et adresse, et a droite trois bandes verticales de couleur representant le drapeau tricolore."
+}

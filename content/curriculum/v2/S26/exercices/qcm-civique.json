@@ -1,0 +1,67 @@
+{
+  "resource_id": "S26-QCM-civique",
+  "mention": "CR",
+  "theme": "Système institutionnel et politique",
+  "questions": [
+    {
+      "notion": "État de droit",
+      "type": "connaissance",
+      "enonce": "L'État de droit signifie :",
+      "options": [
+        "Tous soumis à la loi",
+        "Loi optionnelle",
+        "Pouvoir sans limite"
+      ],
+      "reponse": "Tous soumis à la loi",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "pouvoirs",
+      "type": "connaissance",
+      "enonce": "Le Parlement représente le pouvoir :",
+      "options": [
+        "Législatif",
+        "Judiciaire",
+        "Religieux"
+      ],
+      "reponse": "Législatif",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "contrôle",
+      "type": "mise_en_situation",
+      "enonce": "Un arrêté illégal peut être :",
+      "options": [
+        "Annulé par le juge",
+        "Ignoré sans recours",
+        "Validé par le voisin"
+      ],
+      "reponse": "Annulé par le juge",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "élections",
+      "type": "connaissance",
+      "enonce": "Les élections servent à :",
+      "options": [
+        "Choisir des représentants",
+        "Payer les impôts",
+        "Conduire un bus"
+      ],
+      "reponse": "Choisir des représentants",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "exécutif",
+      "type": "connaissance",
+      "enonce": "La mairie relève surtout du pouvoir :",
+      "options": [
+        "Exécutif local",
+        "Législatif national",
+        "Judiciaire"
+      ],
+      "reponse": "Exécutif local",
+      "official_status": "simulation_pedagogique"
+    }
+  ]
+}

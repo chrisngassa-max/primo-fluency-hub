@@ -1,0 +1,328 @@
+{
+  "session_code": "S35",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Citoyenneté et enjeu contemporain",
+  "support": {
+    "support_id": "S35-support",
+    "situation": "Prise de position documentée et prudente sur un enjeu contemporain (cohésion, environnement, francophonie) avec données fictives pédagogiques — pas de statistiques officielles.",
+    "personnages": [
+      "Apprenant B2",
+      "Formateur"
+    ],
+    "faits": [
+      "Les données utilisées sont fictives et signalées comme pédagogiques.",
+      "Une prise de position B2 cite des éléments du support et nuance.",
+      "Citoyenneté implique droits, devoirs et participation.",
+      "Environnement et cohésion sont des enjeux contemporains.",
+      "La francophonie relie la France à d'autres pays.",
+      "Prudence : distinguer opinion et fait vérifié."
+    ],
+    "nombres": [],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S35-CO-master",
+    "voice": "fr-FR-Wavenet-D",
+    "speaking_rate": 1,
+    "script": "Formateur : Voici un dossier fictif : dans la ville Alpha, 62 pour cent des habitants estiment que la cohésion progresse, mais 38 pour cent citent des tensions autour du logement. Données pédagogiques, pas officielles.\nApprenant : Je prends position avec prudence. La cohésion progresse selon le dossier, mais le logement reste un point de friction.\nFormateur : Environnement ?\nApprenant : Le même dossier indique une hausse fictive de 15 pour cent du tri sélectif. C'est positif, mais insuffisant sans politique globale.\nFormateur : Citoyenneté ?\nApprenant : Participer, respecter la loi, s'informer. La francophonie peut aider les échanges, sans nier les difficultés locales.\nFormateur : Nuance finale ?\nApprenant : Je distingue opinion et faits du dossier. Mes propositions restent conditionnelles.\nFormateur : Bonne prudence argumentative.",
+    "pauses": [
+      {
+        "after_word": 12,
+        "ms": 400
+      },
+      {
+        "after_word": 60,
+        "ms": 400
+      },
+      {
+        "after_word": 130,
+        "ms": 500
+      }
+    ]
+  },
+  "visual": {
+    "resource_id": "S35-VIS-master",
+    "alt_text": "Graphique fictif cohésion et environnement, étiquette pédagogique.",
+    "scene": {
+      "title": "Enjeu contemporain (fictif)",
+      "width": 900,
+      "height": 240,
+      "background": "#ffffff",
+      "elements": [
+        {
+          "type": "rect",
+          "x": 150,
+          "y": 50,
+          "width": 600,
+          "height": 120,
+          "rx": 10,
+          "fill": "#e0e7ff"
+        },
+        {
+          "type": "text",
+          "x": 450,
+          "y": 115,
+          "anchor": "middle",
+          "fontSize": 16,
+          "text": "Données pédagogiques · Prudence"
+        }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S35-LEX-A1-B2",
+    "mots": [
+      {
+        "mot": "citoyenneté",
+        "definition_simple": "Statut et pratique du citoyen.",
+        "exemple": "Citoyenneté française."
+      },
+      {
+        "mot": "cohésion",
+        "definition_simple": "Vivre ensemble harmonieusement.",
+        "exemple": "Cohésion sociale."
+      },
+      {
+        "mot": "environnement",
+        "definition_simple": "Cadre naturel à protéger.",
+        "exemple": "Tri sélectif."
+      },
+      {
+        "mot": "francophonie",
+        "definition_simple": "Communauté de pays partageant le français.",
+        "exemple": "Échanges francophones."
+      },
+      {
+        "mot": "prudence",
+        "definition_simple": "Réserve avant de conclure.",
+        "exemple": "Argumenter avec prudence."
+      },
+      {
+        "mot": "fictif",
+        "definition_simple": "Inventé pour l'exercice.",
+        "exemple": "Données fictives."
+      },
+      {
+        "mot": "enjeu",
+        "definition_simple": "Question importante du présent.",
+        "exemple": "Enjeu contemporain."
+      },
+      {
+        "mot": "participation",
+        "definition_simple": "S'impliquer dans la vie civique.",
+        "exemple": "Participation citoyenne."
+      },
+      {
+        "mot": "nuancer",
+        "definition_simple": "Préciser les limites d'une affirmation.",
+        "exemple": "Nuancer sa position."
+      }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Lisez les chiffres fictifs du dossier.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Les données sont :",
+          "options": [
+            "Fictives pédagogiques",
+            "Officielles INSEE",
+            "Secrètes"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "Il faut distinguer opinion et fait."
+        }
+      ],
+      "corrige": {
+        "q1": "Fictives pédagogiques",
+        "q2": true
+      }
+    },
+    "A2": {
+      "consigne": "Position courte avec un chiffre du dossier.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "62% concernent :",
+          "options": [
+            "Cohésion perçue",
+            "Taxe euro",
+            "Score foot"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Un enjeu contemporain cité ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Cohésion perçue",
+        "q2": "Logement, environnement, francophonie."
+      }
+    },
+    "B1": {
+      "consigne": "Texte argumenté prudent.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Position sur cohésion/logement."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Nuancer avec données fictives."
+        }
+      ],
+      "corrige": {
+        "q1": "Avis + données.",
+        "q2": "Limites reconnues."
+      }
+    },
+    "B2": {
+      "consigne": "EE B2 : enjeu contemporain documenté.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Citoyenneté et environnement ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Risque des stats non vérifiées ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Réponse ouverte.",
+        "q2": "Réponse ouverte : prudence, sources."
+      }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S35-QCM-civique",
+    "mention": "NAT",
+    "theme": "Vivre dans la société française",
+    "questions": [
+      {
+        "notion": "données",
+        "type": "connaissance",
+        "enonce": "Les chiffres du dossier S35 sont :",
+        "options": [
+          "Fictifs pédagogiques",
+          "Officiels",
+          "Interdits"
+        ],
+        "reponse": "Fictifs pédagogiques",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "citoyenneté",
+        "type": "connaissance",
+        "enonce": "La citoyenneté implique :",
+        "options": [
+          "Droits et devoirs",
+          "Aucune règle",
+          "Uniquement voter"
+        ],
+        "reponse": "Droits et devoirs",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "cohésion",
+        "type": "connaissance",
+        "enonce": "La cohésion sociale concerne :",
+        "options": [
+          "Vivre ensemble",
+          "Cuisiner",
+          "Conduire vite"
+        ],
+        "reponse": "Vivre ensemble",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "prudence",
+        "type": "mise_en_situation",
+        "enonce": "Argumenter prudemment, c'est :",
+        "options": [
+          "Distinguer opinion et fait",
+          "Affirmer sans preuve",
+          "Copier sans lire"
+        ],
+        "reponse": "Distinguer opinion et fait",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "francophonie",
+        "type": "connaissance",
+        "enonce": "La francophonie relie :",
+        "options": [
+          "Des pays partageant le français",
+          "Uniquement Paris",
+          "Les planètes"
+        ],
+        "reponse": "Des pays partageant le français",
+        "official_status": "simulation_pedagogique"
+      }
+    ]
+  },
+  "devoirs": {
+    "A1": "Lire graphique fictif.",
+    "A2": "Paragraphe prudent.",
+    "B1": "Texte EE enjeu local.",
+    "B2": "EE argumentée complète."
+  },
+  "formateur": {
+    "fiche_formateur": "B2 mixte : enjeu contemporain, données fictives, prudence, citoyenneté.",
+    "deroule_180min": [
+      {
+        "phase": "Rituel civique",
+        "duree_min": 10,
+        "description": "Citoyenneté contemporaine."
+      },
+      {
+        "phase": "Activation + lexique",
+        "duree_min": 20,
+        "description": "Lexique enjeux."
+      },
+      {
+        "phase": "Support invariant CO/CE",
+        "duree_min": 50,
+        "description": "Dossier fictif."
+      },
+      {
+        "phase": "Ateliers différenciés",
+        "duree_min": 60,
+        "description": "A1-B2."
+      },
+      {
+        "phase": "Production EE/EO",
+        "duree_min": 30,
+        "description": "Prise de position EE."
+      },
+      {
+        "phase": "Fixation",
+        "duree_min": 10,
+        "description": "QCM NAT."
+      }
+    ],
+    "adaptation_rules": [
+      "Jamais de stats officielles présentées comme réelles.",
+      "Étiquette fictif visible.",
+      "Voix Wavenet-D."
+    ]
+  }
+}

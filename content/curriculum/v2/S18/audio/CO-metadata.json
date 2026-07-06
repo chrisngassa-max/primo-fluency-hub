@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Message vocal (fictif) : Bonjour. Ceci est un rappel pédagogique fictif. Votre dossier de titre de séjour a été reçu par la préfecture.\nIl manque un justificatif de domicile pour continuer l'instruction.\nMerci de transmettre ce document avant l'échéance, dans un délai de quinze jours.\nVous pouvez répondre par courriel en joignant la pièce demandée.\nFatou : D'accord. Je vais préparer un courriel formel et joindre mon justificatif de domicile.\nMessage vocal : Pour rappel, un dossier incomplet ne peut pas être traité. L'usager a le droit d'être informé et l'obligation de fournir des pièces conformes.\nFatou : Je comprends. Je vais respecter le délai de quinze jours.",
+  "transcript": "Message vocal (fictif) : Bonjour. Ceci est un rappel pédagogique fictif. Votre dossier de titre de séjour a été reçu par la préfecture.\nIl manque un justificatif de domicile pour continuer l'instruction.\nMerci de transmettre ce document avant l'échéance, dans un délai de quinze jours.\nVous pouvez répondre par courriel en joignant la pièce demandée.\nFatou : D'accord. Je vais préparer un courriel formel et joindre mon justificatif de domicile.\nMessage vocal : Pour rappel, un dossier incomplet ne peut pas être traité. L'usager a le droit d'être informé et l'obligation de fournir des pièces conformes.\nFatou : Je comprends. Je vais respecter le délai de quinze jours.",
+  "voice": "fr-FR-Wavenet-C",
+  "languageCode": "fr-FR",
+  "speaking_rate": 0.92,
+  "pauses": [
+    {
+      "after_word": 18,
+      "ms": 400
+    },
+    {
+      "after_word": 55,
+      "ms": 400
+    },
+    {
+      "after_word": 95,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 54,
+  "hash": "75604f8bff1ed0d94ddd9519afc8111cb679fb1fb4d7da534f53ea1ee96ba95f"
+}

@@ -1,0 +1,74 @@
+{
+  "resource_id": "S06-VIS-master",
+  "scene": {
+    "title": "Fiche de paie fictive (jeu de données pédagogique)",
+    "width": 900,
+    "height": 300,
+    "background": "#ffffff",
+    "elements": [
+      {
+        "type": "rect",
+        "x": 120,
+        "y": 40,
+        "width": 660,
+        "height": 220,
+        "rx": 8,
+        "fill": "#f8fafc"
+      },
+      {
+        "type": "text",
+        "x": 150,
+        "y": 75,
+        "fontSize": 16,
+        "text": "Bulletin de paie (document pédagogique fictif)"
+      },
+      {
+        "type": "line",
+        "x1": 150,
+        "y1": 95,
+        "x2": 750,
+        "y2": 95,
+        "stroke": "#94a3b8",
+        "strokeWidth": 2
+      },
+      {
+        "type": "text",
+        "x": 150,
+        "y": 130,
+        "fontSize": 14,
+        "text": "Durée : 35 h / semaine"
+      },
+      {
+        "type": "text",
+        "x": 150,
+        "y": 165,
+        "fontSize": 14,
+        "text": "Salaire brut : 1800 €"
+      },
+      {
+        "type": "text",
+        "x": 150,
+        "y": 200,
+        "fontSize": 14,
+        "text": "Cotisations sociales : − 400 €"
+      },
+      {
+        "type": "text",
+        "x": 150,
+        "y": 235,
+        "fontSize": 14,
+        "text": "Salaire net : 1400 €"
+      },
+      {
+        "type": "line",
+        "x1": 150,
+        "y1": 212,
+        "x2": 500,
+        "y2": 212,
+        "stroke": "#94a3b8",
+        "strokeWidth": 1
+      }
+    ]
+  },
+  "alt_text": "Fiche de paie fictive simplifiee en tableau : ligne salaire brut, ligne cotisations, ligne salaire net, avec la mention document pedagogique fictif, sans logo ni nom d'entreprise."
+}

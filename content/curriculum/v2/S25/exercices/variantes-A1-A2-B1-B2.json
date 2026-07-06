@@ -1,0 +1,108 @@
+[
+  {
+    "support_id": "S25-support",
+    "version": 1,
+    "niveau": "A1",
+    "consigne": "Lisez le rapport fictif. Identifiez une fragilité langue et une civique.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Le rapport après E2 est :",
+        "options": [
+          "Individuel et fictif",
+          "Collectif et officiel",
+          "Sans score"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "vrai_faux",
+        "enonce": "Langue et civique sont séparés."
+      }
+    ],
+    "corrige": {
+      "q1": "Individuel et fictif",
+      "q2": true
+    },
+    "invariants_hash": "4bc580bc861086a736460fa0db3be8302442eda096fb12e1e3b907a96e63639f"
+  },
+  {
+    "support_id": "S25-support",
+    "version": 1,
+    "niveau": "A2",
+    "consigne": "Refaites une tâche ciblée et notez une action du contrat.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Combien de tâches équivalentes ?",
+        "options": [
+          "2",
+          "5",
+          "10"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "reponse_courte",
+        "enonce": "Citez une orientation possible."
+      }
+    ],
+    "corrige": {
+      "q1": "2",
+      "q2": "Sortie A2/CSP, extension B1 ou consolidation."
+    },
+    "invariants_hash": "4bc580bc861086a736460fa0db3be8302442eda096fb12e1e3b907a96e63639f"
+  },
+  {
+    "support_id": "S25-support",
+    "version": 1,
+    "niveau": "B1",
+    "consigne": "Construisez contrat et restitution séparée.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "reponse_longue",
+        "enonce": "Rédigez votre contrat personnel (3 actions)."
+      },
+      {
+        "id": "q2",
+        "type": "reponse_longue",
+        "enonce": "Restitution : progrès langue vs civique."
+      }
+    ],
+    "corrige": {
+      "q1": "Trois actions concrètes.",
+      "q2": "Deux volets distincts."
+    },
+    "invariants_hash": "4bc580bc861086a736460fa0db3be8302442eda096fb12e1e3b907a96e63639f"
+  },
+  {
+    "support_id": "S25-support",
+    "version": 1,
+    "niveau": "B2",
+    "consigne": "Argumentez votre orientation souhaitée après E2.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "argumentation",
+        "enonce": "Pourquoi viser B1/CR ?"
+      },
+      {
+        "id": "q2",
+        "type": "argumentation",
+        "enonce": "Limites d'une consolidation A2 ?"
+      }
+    ],
+    "corrige": {
+      "q1": "Réponse ouverte.",
+      "q2": "Réponse ouverte."
+    },
+    "invariants_hash": "4bc580bc861086a736460fa0db3be8302442eda096fb12e1e3b907a96e63639f"
+  }
+]

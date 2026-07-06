@@ -1,0 +1,67 @@
+{
+  "resource_id": "S35-QCM-civique",
+  "mention": "NAT",
+  "theme": "Vivre dans la société française",
+  "questions": [
+    {
+      "notion": "données",
+      "type": "connaissance",
+      "enonce": "Les chiffres du dossier S35 sont :",
+      "options": [
+        "Fictifs pédagogiques",
+        "Officiels",
+        "Interdits"
+      ],
+      "reponse": "Fictifs pédagogiques",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "citoyenneté",
+      "type": "connaissance",
+      "enonce": "La citoyenneté implique :",
+      "options": [
+        "Droits et devoirs",
+        "Aucune règle",
+        "Uniquement voter"
+      ],
+      "reponse": "Droits et devoirs",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "cohésion",
+      "type": "connaissance",
+      "enonce": "La cohésion sociale concerne :",
+      "options": [
+        "Vivre ensemble",
+        "Cuisiner",
+        "Conduire vite"
+      ],
+      "reponse": "Vivre ensemble",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "prudence",
+      "type": "mise_en_situation",
+      "enonce": "Argumenter prudemment, c'est :",
+      "options": [
+        "Distinguer opinion et fait",
+        "Affirmer sans preuve",
+        "Copier sans lire"
+      ],
+      "reponse": "Distinguer opinion et fait",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "francophonie",
+      "type": "connaissance",
+      "enonce": "La francophonie relie :",
+      "options": [
+        "Des pays partageant le français",
+        "Uniquement Paris",
+        "Les planètes"
+      ],
+      "reponse": "Des pays partageant le français",
+      "official_status": "simulation_pedagogique"
+    }
+  ]
+}

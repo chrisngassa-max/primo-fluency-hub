@@ -1,0 +1,785 @@
+{
+  "version": "curriculum-v2.0",
+  "plan_version": "2026-07-05",
+  "generated_at": "2026-07-05T00:00:00.000Z",
+  "entries": [
+    {
+      "session_code": "S01",
+      "ordre": 1,
+      "kind": "session",
+      "module": "A",
+      "palier": "A2",
+      "type_seance": "mixte, diagnostic non certificatif",
+      "duree_minutes": 180,
+      "titre": "Accueil, objectifs et cinq thèmes",
+      "competences": ["CO", "EO"],
+      "civic_theme": "Droits et devoirs",
+      "civic_mention": "CSP",
+      "objectifs": [
+        "Présenter le parcours cumulatif A2/B1/B2 et les cinq thèmes civiques",
+        "Réaliser un diagnostic non certificatif A1-B2",
+        "Distinguer droit, devoir et règle"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S02",
+      "ordre": 2,
+      "kind": "session",
+      "module": "A",
+      "palier": "A2",
+      "type_seance": "mixte",
+      "duree_minutes": 180,
+      "titre": "État civil, mairie et symboles",
+      "competences": ["CE", "EE"],
+      "civic_theme": "Principes et valeurs de la République",
+      "civic_mention": "CSP",
+      "objectifs": [
+        "Compléter un formulaire fictif d'état civil et échanger avec une mairie",
+        "Identifier République, devise, langue, fête nationale et symboles"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S03",
+      "ordre": 3,
+      "kind": "session",
+      "module": "A",
+      "palier": "A2",
+      "type_seance": "mixte",
+      "duree_minutes": 180,
+      "titre": "Santé et urgences",
+      "competences": ["CO", "EO"],
+      "civic_theme": "Vivre dans la société française",
+      "civic_mention": "CSP",
+      "objectifs": [
+        "Décrire des symptômes et choisir l'interlocuteur adapté (urgence ou non)",
+        "Connaître l'accès aux soins, le médecin traitant et la carte Vitale"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S04",
+      "ordre": 4,
+      "kind": "session",
+      "module": "A",
+      "palier": "A2",
+      "type_seance": "dominante civique intégrée",
+      "duree_minutes": 180,
+      "titre": "École, absence et autorité parentale",
+      "competences": ["CE", "EE"],
+      "civic_theme": "Droits et devoirs",
+      "civic_mention": "CSP",
+      "objectifs": [
+        "Expliquer et justifier une absence scolaire par écrit",
+        "Connaître l'instruction obligatoire, l'école publique, l'autorité parentale et la laïcité"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S05",
+      "ordre": 5,
+      "kind": "session",
+      "module": "A",
+      "palier": "A2",
+      "type_seance": "mixte",
+      "duree_minutes": 180,
+      "titre": "Logement, voisinage et discrimination",
+      "competences": ["CO", "EO"],
+      "civic_theme": "Droits et devoirs",
+      "civic_mention": "CSP",
+      "objectifs": [
+        "Signaler un conflit de voisinage et proposer une solution légale",
+        "Mobiliser égalité, fraternité, associations et recours face à la discrimination"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S06",
+      "ordre": 6,
+      "kind": "session",
+      "module": "B",
+      "palier": "A2",
+      "type_seance": "mixte",
+      "duree_minutes": 180,
+      "titre": "Emploi, contrat et fiche de paie",
+      "competences": ["CE", "structures"],
+      "civic_theme": "Vivre dans la société française",
+      "civic_mention": "CSP",
+      "objectifs": [
+        "Vérifier une offre, un contrat et une fiche de paie cohérents",
+        "Connaître le travail déclaré, la durée légale et l'égalité professionnelle"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S07",
+      "ordre": 7,
+      "kind": "session",
+      "module": "B",
+      "palier": "A2",
+      "type_seance": "mixte",
+      "duree_minutes": 180,
+      "titre": "Préfecture, notification et rendez-vous",
+      "competences": ["CE", "EE"],
+      "civic_theme": "Droits et devoirs",
+      "civic_mention": "CSP",
+      "objectifs": [
+        "Écrire un courriel formel à la préfecture et joindre la bonne pièce",
+        "Comprendre loi, administration, service public et droits de l'usager"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S08",
+      "ordre": 8,
+      "kind": "session",
+      "module": "B",
+      "palier": "A2",
+      "type_seance": "dominante civique",
+      "duree_minutes": 180,
+      "titre": "Ve République et Constitution",
+      "competences": ["CO", "CE"],
+      "civic_theme": "Système institutionnel et politique",
+      "civic_mention": "CSP",
+      "objectifs": [
+        "Expliquer simplement ce qu'organise la Constitution de 1958",
+        "Connaître la Ve République et l'État de droit"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S09",
+      "ordre": 9,
+      "kind": "session",
+      "module": "B",
+      "palier": "A2",
+      "type_seance": "dominante civique",
+      "duree_minutes": 180,
+      "titre": "Laïcité en situations",
+      "competences": ["EO", "EE"],
+      "civic_theme": "Principes et valeurs de la République",
+      "civic_mention": "CSP",
+      "objectifs": [
+        "Expliquer une règle de laïcité et justifier une conduite dans quatre situations",
+        "Distinguer liberté de conscience et neutralité de l'État"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S10",
+      "ordre": 10,
+      "kind": "session",
+      "module": "B",
+      "palier": "A2",
+      "type_seance": "dominante civique",
+      "duree_minutes": 180,
+      "titre": "Du local au national : qui fait quoi ?",
+      "competences": ["CO", "CE"],
+      "civic_theme": "Système institutionnel et politique",
+      "civic_mention": "CSP",
+      "objectifs": [
+        "Orienter une demande d'habitant vers la bonne institution",
+        "Distinguer les rôles du local (commune) au national (président, Parlement, justice)"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S11",
+      "ordre": 11,
+      "kind": "session",
+      "module": "C",
+      "palier": "A2",
+      "type_seance": "mixte",
+      "duree_minutes": 180,
+      "titre": "Police, gendarmerie et justice",
+      "competences": ["CE", "EO"],
+      "civic_theme": "Droits et devoirs",
+      "civic_mention": "CSP",
+      "objectifs": [
+        "Raconter les faits d'un vol et orienter la personne vers police, gendarmerie ou justice",
+        "Connaître le droit de se défendre"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S12",
+      "ordre": 12,
+      "kind": "session",
+      "module": "C",
+      "palier": "A2",
+      "type_seance": "dominante civique",
+      "duree_minutes": 180,
+      "titre": "Discriminations, violences et protection",
+      "competences": ["CO", "EE"],
+      "civic_theme": "Droits et devoirs",
+      "civic_mention": "CSP",
+      "objectifs": [
+        "Rédiger un message de signalement factuel d'une discrimination",
+        "Connaître l'égalité femmes-hommes, la dignité et la protection"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S13",
+      "ordre": 13,
+      "kind": "session",
+      "module": "C",
+      "palier": "A2",
+      "type_seance": "dominante civique",
+      "duree_minutes": 180,
+      "titre": "Liberté d'expression et limites",
+      "competences": ["CE", "EO"],
+      "civic_theme": "Droits et devoirs",
+      "civic_mention": "CSP",
+      "objectifs": [
+        "Donner un avis et reformuler un désaccord respectueux",
+        "Distinguer opinion, critique, insulte, diffamation et menace"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S14",
+      "ordre": 14,
+      "kind": "session",
+      "module": "C",
+      "palier": "A2",
+      "type_seance": "mixte",
+      "duree_minutes": 180,
+      "titre": "Impôts, services publics et environnement",
+      "competences": ["CE", "EE"],
+      "civic_theme": "Vivre dans la société française",
+      "civic_mention": "CSP",
+      "objectifs": [
+        "Résumer une consigne locale et écrire à la mairie",
+        "Comprendre le financement public, l'environnement et la solidarité"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S15",
+      "ordre": 15,
+      "kind": "session",
+      "module": "C",
+      "palier": "A2",
+      "type_seance": "dominante civique",
+      "duree_minutes": 180,
+      "titre": "1789, droits et République",
+      "competences": ["CO", "CE"],
+      "civic_theme": "Histoire, géographie, culture",
+      "civic_mention": "CSP",
+      "objectifs": [
+        "Raconter 1789 et la Déclaration des droits de l'homme et du citoyen",
+        "Expliquer la conséquence d'un événement historique fondateur"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S16",
+      "ordre": 16,
+      "kind": "session",
+      "module": "C",
+      "palier": "A2",
+      "type_seance": "dominante civique",
+      "duree_minutes": 180,
+      "titre": "France, territoires, Europe et patrimoine",
+      "competences": ["CO", "EO"],
+      "civic_theme": "Histoire, géographie, culture",
+      "civic_mention": "CSP",
+      "objectifs": [
+        "Situer un lieu entre métropole, outre-mer et Europe",
+        "Présenter un élément de patrimoine et l'organisation territoriale"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "E1",
+      "ordre": 17,
+      "kind": "evaluation",
+      "module": null,
+      "palier": "A2",
+      "type_seance": "évaluation intermédiaire à 50h",
+      "duree_minutes": 120,
+      "titre": "Évaluation intermédiaire à 50 h",
+      "competences": ["CO", "CE", "EE", "EO", "civique"],
+      "civic_theme": null,
+      "civic_mention": "CSP",
+      "objectifs": [
+        "Évaluer CO, CE, EE, EO chronométrées et le civique CSP abrégé à 50h",
+        "Produire un plan automatique de remédiation S17-S24"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S17",
+      "ordre": 18,
+      "kind": "session",
+      "module": "D",
+      "palier": "A2",
+      "type_seance": "adaptative",
+      "duree_minutes": 180,
+      "titre": "Remédiation fondée sur E1",
+      "competences": ["structures"],
+      "civic_theme": null,
+      "civic_mention": "CSP",
+      "objectifs": [
+        "Réviser une situation civique commune selon les erreurs dominantes de la cohorte",
+        "Mesurer le gain avant/après remédiation sans mélanger langue et civique"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S18",
+      "ordre": 19,
+      "kind": "session",
+      "module": "D",
+      "palier": "A2",
+      "type_seance": "mixte",
+      "duree_minutes": 180,
+      "titre": "Répondre à une administration",
+      "competences": ["EE"],
+      "civic_theme": "Droits et devoirs",
+      "civic_mention": "CSP",
+      "objectifs": [
+        "Répondre à une administration avec trois tâches graduées proches de l'EE TCF",
+        "Comprendre droits de l'usager et obligations documentaires"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S19",
+      "ordre": 20,
+      "kind": "session",
+      "module": "D",
+      "palier": "A2",
+      "type_seance": "mixte",
+      "duree_minutes": 180,
+      "titre": "Interagir avec un agent et résoudre un malentendu",
+      "competences": ["EO"],
+      "civic_theme": "Droits et devoirs",
+      "civic_mention": "CSP",
+      "objectifs": [
+        "Résoudre un malentendu au guichet avec trois tâches orales TCF",
+        "Connaître la neutralité des agents, le respect de la loi et les recours"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S20",
+      "ordre": 21,
+      "kind": "session",
+      "module": "D",
+      "palier": "A2",
+      "type_seance": "dominante civique",
+      "duree_minutes": 180,
+      "titre": "Mémoire nationale et patrimoine",
+      "competences": ["CO", "CE"],
+      "civic_theme": "Histoire, géographie, culture",
+      "civic_mention": "CSP",
+      "objectifs": [
+        "Présenter un repère de mémoire nationale avec sobriété et contexte",
+        "Connaître République, guerres, Résistance et Shoah"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S21",
+      "ordre": 22,
+      "kind": "session",
+      "module": "E",
+      "palier": "A2",
+      "type_seance": "dominante civique",
+      "duree_minutes": 180,
+      "titre": "Mises en situation civiques simulées",
+      "competences": ["CO", "CE"],
+      "civic_theme": null,
+      "civic_mention": "CSP",
+      "objectifs": [
+        "Distinguer mise en situation civique et connaissance dans des items séparant les deux preuves",
+        "Expliquer pourquoi une conduite est conforme ou non"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S22",
+      "ordre": 23,
+      "kind": "session",
+      "module": "E",
+      "palier": "A2",
+      "type_seance": "langue",
+      "duree_minutes": 180,
+      "titre": "Expression écrite TCF, trois tâches",
+      "competences": ["EE"],
+      "civic_theme": null,
+      "civic_mention": "CSP",
+      "objectifs": [
+        "Réaliser les trois tâches d'expression écrite TCF dans des contextes civiques variés"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S23",
+      "ordre": 24,
+      "kind": "session",
+      "module": "E",
+      "palier": "A2",
+      "type_seance": "langue",
+      "duree_minutes": 180,
+      "titre": "Expression orale TCF, trois tâches",
+      "competences": ["EO"],
+      "civic_theme": null,
+      "civic_mention": "CSP",
+      "objectifs": [
+        "Réaliser les trois tâches d'expression orale TCF (entretien dirigé, interaction, point de vue)"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S24",
+      "ordre": 25,
+      "kind": "session",
+      "module": "E",
+      "palier": "A2",
+      "type_seance": "simulation partielle, mixte",
+      "duree_minutes": 180,
+      "titre": "Gestion du temps et répétition générale",
+      "competences": ["CO", "CE", "EE", "EO"],
+      "civic_theme": null,
+      "civic_mention": "CSP",
+      "objectifs": [
+        "Enchaîner les tâches TCF sans aide en conditions chronométrées",
+        "Réviser les cinq thèmes civiques et la stratégie 32/40"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "E2",
+      "ordre": 26,
+      "kind": "evaluation",
+      "module": null,
+      "palier": "A2",
+      "type_seance": "évaluation finale du tronc commun",
+      "duree_minutes": 180,
+      "titre": "Évaluation finale du tronc commun",
+      "competences": ["CO", "CE", "EE", "EO", "civique"],
+      "civic_theme": null,
+      "civic_mention": "CSP",
+      "objectifs": [
+        "Passer le TCF IRN interne complet et le civique CSP complet (40 questions, 45 min)",
+        "Orienter vers sortie A2/CSP, extension B1/CR ou consolidation"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S25",
+      "ordre": 27,
+      "kind": "session",
+      "module": "E",
+      "palier": "A2",
+      "type_seance": "remédiation + orientation, mixte",
+      "duree_minutes": 180,
+      "titre": "Consolidation, restitution et orientation",
+      "competences": ["CE", "EO"],
+      "civic_theme": null,
+      "civic_mention": "CSP",
+      "objectifs": [
+        "Refaire deux tâches équivalentes aux fragilités majeures identifiées par E2",
+        "Construire un contrat personnel et une restitution séparée langue/civique"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S26",
+      "ordre": 28,
+      "kind": "session",
+      "module": "F",
+      "palier": "B1",
+      "type_seance": "dominante civique B1",
+      "duree_minutes": 180,
+      "titre": "État de droit et séparation des pouvoirs",
+      "competences": ["CE", "EO"],
+      "civic_theme": "Système institutionnel et politique",
+      "civic_mention": "CR",
+      "objectifs": [
+        "Expliquer une décision publique et ses contrôles institutionnels",
+        "Connaître l'État de droit, la séparation des pouvoirs et les élections"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S27",
+      "ordre": 29,
+      "kind": "session",
+      "module": "F",
+      "palier": "B1",
+      "type_seance": "dominante civique B1",
+      "duree_minutes": 180,
+      "titre": "Argumenter sur droits et libertés",
+      "competences": ["EO", "EE"],
+      "civic_theme": "Droits et devoirs",
+      "civic_mention": "CR",
+      "objectifs": [
+        "Défendre une opinion justifiée sur laïcité, expression ou manifestation",
+        "Connaître les droits, leurs limites et les discriminations"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S28",
+      "ordre": 30,
+      "kind": "session",
+      "module": "F",
+      "palier": "B1",
+      "type_seance": "mixte B1",
+      "duree_minutes": 180,
+      "titre": "Travail, syndicats, impôts et solidarité",
+      "competences": ["CE", "EE"],
+      "civic_theme": "Vivre dans la société française",
+      "civic_mention": "CR",
+      "objectifs": [
+        "Rédiger une réclamation formelle et interpréter un document social",
+        "Connaître travail, syndicats, impôts et environnement"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S29",
+      "ordre": 31,
+      "kind": "session",
+      "module": "F",
+      "palier": "B1",
+      "type_seance": "dominante civique B1",
+      "duree_minutes": 180,
+      "titre": "Histoire républicaine, Europe et mémoire",
+      "competences": ["CO", "EO"],
+      "civic_theme": "Histoire, géographie, culture",
+      "civic_mention": "CR",
+      "objectifs": [
+        "Raconter un événement et expliquer sa portée historique et européenne",
+        "Relier histoire républicaine, construction européenne et mémoire"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S30",
+      "ordre": 32,
+      "kind": "session",
+      "module": "F",
+      "palier": "B1",
+      "type_seance": "dominante civique B1",
+      "duree_minutes": 180,
+      "titre": "Implicite et conduite conforme",
+      "competences": ["CO", "CE"],
+      "civic_theme": "Droits et devoirs",
+      "civic_mention": "CR",
+      "objectifs": [
+        "Expliciter un indice implicite et justifier une conduite conforme",
+        "Prioriser principes et droits dans des situations CR"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S31",
+      "ordre": 33,
+      "kind": "session",
+      "module": "F",
+      "palier": "B1",
+      "type_seance": "simulation intégrée B1",
+      "duree_minutes": 180,
+      "titre": "Simulation CR et remédiation",
+      "competences": ["CE", "civique"],
+      "civic_theme": null,
+      "civic_mention": "CR",
+      "objectifs": [
+        "Réaliser une simulation CR 40/45 sans aide puis analyser les distracteurs",
+        "Cibler une remédiation B1 selon les fragilités de la cohorte"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "E3",
+      "ordre": 34,
+      "kind": "evaluation",
+      "module": null,
+      "palier": "B1",
+      "type_seance": "évaluation de sortie B1/CR",
+      "duree_minutes": 120,
+      "titre": "Évaluation de sortie B1 / CR",
+      "competences": ["CO", "CE", "EE", "EO", "civique"],
+      "civic_theme": null,
+      "civic_mention": "CR",
+      "objectifs": [
+        "Évaluer CO, CE, EE, EO et le civique CR ciblé (25 min)",
+        "Décider sortie B1/CR, poursuite B2/NAT ou volume complémentaire"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S32",
+      "ordre": 35,
+      "kind": "session",
+      "module": "G",
+      "palier": "B2",
+      "type_seance": "dominante civique B2",
+      "duree_minutes": 180,
+      "titre": "Système constitutionnel et souveraineté",
+      "competences": ["CE", "EO"],
+      "civic_theme": "Système institutionnel et politique",
+      "civic_mention": "NAT",
+      "objectifs": [
+        "Produire une synthèse nuancée sur Constitution, souveraineté et contrôles institutionnels",
+        "Répondre à des relances sur l'État de droit et les pouvoirs"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S33",
+      "ordre": 36,
+      "kind": "session",
+      "module": "G",
+      "palier": "B2",
+      "type_seance": "dominante civique B2",
+      "duree_minutes": 180,
+      "titre": "Libertés, pluralisme et dignité",
+      "competences": ["EE", "EO"],
+      "civic_theme": "Droits et devoirs",
+      "civic_mention": "NAT",
+      "objectifs": [
+        "Défendre une position, intégrer une objection et conclure sur une liberté et ses limites",
+        "Connaître expression, laïcité, pluralisme et dignité"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S34",
+      "ordre": 37,
+      "kind": "session",
+      "module": "G",
+      "palier": "B2",
+      "type_seance": "dominante civique B2",
+      "duree_minutes": 180,
+      "titre": "Corpus historique multi-supports",
+      "competences": ["CO", "CE"],
+      "civic_theme": "Histoire, géographie, culture",
+      "civic_mention": "NAT",
+      "objectifs": [
+        "Réaliser une synthèse multi-supports hiérarchisée (Lumières, Républiques, guerres, Europe)",
+        "Relier causes et conséquences historiques"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S35",
+      "ordre": 38,
+      "kind": "session",
+      "module": "G",
+      "palier": "B2",
+      "type_seance": "mixte B2",
+      "duree_minutes": 180,
+      "titre": "Citoyenneté et enjeu contemporain",
+      "competences": ["CE", "EE"],
+      "civic_theme": "Vivre dans la société française",
+      "civic_mention": "NAT",
+      "objectifs": [
+        "Prendre position de façon documentée et prudente sur un enjeu contemporain",
+        "Connaître citoyenneté, environnement, francophonie et cohésion"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S36",
+      "ordre": 39,
+      "kind": "session",
+      "module": "G",
+      "palier": "B2",
+      "type_seance": "simulation civique NAT",
+      "duree_minutes": 180,
+      "titre": "Simulation NAT sous contrainte",
+      "competences": ["civique"],
+      "civic_theme": null,
+      "civic_mention": "NAT",
+      "objectifs": [
+        "Réaliser une simulation NAT sous contrainte (40/45, 28 connaissances, 12 situations)",
+        "Comparer le score et les erreurs à la simulation précédente"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "S37",
+      "ordre": 40,
+      "kind": "session",
+      "module": "G",
+      "palier": "B2",
+      "type_seance": "EO B2 + entretien",
+      "duree_minutes": 180,
+      "titre": "Parcours, principes et entretien d'assimilation",
+      "competences": ["EO"],
+      "civic_theme": "Principes et valeurs de la République",
+      "civic_mention": "NAT",
+      "objectifs": [
+        "Présenter son parcours et répondre à des relances imprévues en entretien simulé",
+        "Mobiliser les principes républicains et la motivation"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    },
+    {
+      "session_code": "E4",
+      "ordre": 41,
+      "kind": "evaluation",
+      "module": null,
+      "palier": "B2",
+      "type_seance": "évaluation de sortie B2/NAT",
+      "duree_minutes": 120,
+      "titre": "Évaluation de sortie B2 / NAT",
+      "competences": ["EO", "civique"],
+      "civic_theme": null,
+      "civic_mention": "NAT",
+      "objectifs": [
+        "Passer un échantillon TCF IRN ciblé, l'examen civique NAT complet et un entretien d'assimilation simulé",
+        "Décider : prêt à l'inscription, consolidation ciblée ou volume supplémentaire"
+      ],
+      "source_ids": [],
+      "statut": "planned"
+    }
+  ]
+}

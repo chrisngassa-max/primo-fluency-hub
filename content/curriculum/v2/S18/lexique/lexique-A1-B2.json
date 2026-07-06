@@ -1,0 +1,50 @@
+{
+  "resource_id": "S18-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "objet",
+      "definition_simple": "Le sujet d'un courriel ou d'une lettre.",
+      "exemple": "Objet : transmission du justificatif de domicile."
+    },
+    {
+      "mot": "référence",
+      "definition_simple": "Un numéro ou code qui identifie un dossier.",
+      "exemple": "Référence du dossier de titre de séjour."
+    },
+    {
+      "mot": "pièce jointe",
+      "definition_simple": "Un document envoyé avec un courriel.",
+      "exemple": "Joindre le justificatif de domicile en pièce jointe."
+    },
+    {
+      "mot": "délai",
+      "definition_simple": "Le temps accordé pour faire une action.",
+      "exemple": "Le délai est de quinze jours."
+    },
+    {
+      "mot": "relancer",
+      "definition_simple": "Demander à nouveau une réponse ou une pièce.",
+      "exemple": "Relancer l'administration si besoin."
+    },
+    {
+      "mot": "accuser réception",
+      "definition_simple": "Confirmer qu'un message ou document a été reçu.",
+      "exemple": "L'administration accuse réception du courriel."
+    },
+    {
+      "mot": "incomplet",
+      "definition_simple": "Qui manque d'éléments nécessaires.",
+      "exemple": "Un dossier incomplet ne peut pas être traité."
+    },
+    {
+      "mot": "conforme",
+      "definition_simple": "Qui respecte les règles demandées.",
+      "exemple": "Fournir une pièce conforme et récente."
+    },
+    {
+      "mot": "usager",
+      "definition_simple": "Une personne qui utilise un service public.",
+      "exemple": "L'usager a des droits et des obligations."
+    }
+  ]
+}

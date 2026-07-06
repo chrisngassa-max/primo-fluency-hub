@@ -1,0 +1,141 @@
+{
+  "session_code": "S11",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Police, gendarmerie et justice",
+  "support": {
+    "support_id": "S11-support-justice",
+    "situation": "Mme Lopez a été victime d'un vol de sac dans la rue. Elle raconte les faits à un agent, qui l'oriente vers le dépôt de plainte, puis lui explique le parcours : signalement, plainte, enquête et justice.",
+    "personnages": ["Mme Lopez (victime)", "Agent d'accueil"],
+    "faits": [
+      "En cas de vol, on peut déposer une plainte auprès de la police ou de la gendarmerie.",
+      "La police intervient surtout en ville, la gendarmerie surtout en zone rurale.",
+      "Une infraction peut être une contravention, un délit ou un crime.",
+      "Après la plainte, une enquête peut être ouverte.",
+      "La justice, avec le tribunal, juge les affaires selon la loi.",
+      "Toute personne a le droit de se défendre."
+    ],
+    "nombres": [],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S11-CO-master",
+    "voice": "fr-FR-Wavenet-C",
+    "speaking_rate": 0.92,
+    "script": "Agent : Bonjour madame. Que s'est-il passé ?\nMme Lopez : Bonjour. On m'a volé mon sac dans la rue, il y a une heure.\nAgent : Je suis désolé. Pouvez-vous me raconter les faits calmement ? Où et quand exactement ?\nMme Lopez : Devant la boulangerie, vers dix heures. Une personne a pris mon sac et est partie en courant.\nAgent : D'accord. Vous pouvez déposer une plainte, ici ou à la gendarmerie. C'est une infraction, un vol.\nMme Lopez : Et après, que se passe-t-il ?\nAgent : Après la plainte, une enquête peut être ouverte pour retrouver l'auteur. Ensuite, si nécessaire, l'affaire va devant la justice, au tribunal.\nMme Lopez : Est-ce que la personne pourra se défendre ?\nAgent : Oui, bien sûr. En France, toute personne a le droit de se défendre devant un juge.\nMme Lopez : Merci. Je vais déposer plainte maintenant.\nAgent : Très bien, je vous accompagne pour enregistrer votre déclaration.",
+    "pauses": [
+      { "after_word": 12, "ms": 400 },
+      { "after_word": 62, "ms": 400 },
+      { "after_word": 120, "ms": 500 }
+    ]
+  },
+  "visual": {
+    "resource_id": "S11-VIS-master",
+    "alt_text": "Parcours schematique en quatre etapes reliees par des fleches : signalement, plainte, enquete, justice, sans scene violente ni logo.",
+    "scene": {
+      "title": "Du signalement à la justice",
+      "width": 900,
+      "height": 240,
+      "background": "#ffffff",
+      "elements": [
+        { "type": "rect", "x": 30, "y": 90, "width": 170, "height": 70, "rx": 8, "fill": "#dbeafe" },
+        { "type": "text", "x": 115, "y": 130, "anchor": "middle", "fontSize": 14, "text": "Signalement" },
+        { "type": "line", "x1": 200, "y1": 125, "x2": 250, "y2": 125, "stroke": "#374151", "strokeWidth": 3 },
+        { "type": "rect", "x": 250, "y": 90, "width": 170, "height": 70, "rx": 8, "fill": "#dcfce7" },
+        { "type": "text", "x": 335, "y": 130, "anchor": "middle", "fontSize": 14, "text": "Plainte" },
+        { "type": "line", "x1": 420, "y1": 125, "x2": 470, "y2": 125, "stroke": "#374151", "strokeWidth": 3 },
+        { "type": "rect", "x": 470, "y": 90, "width": 170, "height": 70, "rx": 8, "fill": "#fef9c3" },
+        { "type": "text", "x": 555, "y": 130, "anchor": "middle", "fontSize": 14, "text": "Enquête" },
+        { "type": "line", "x1": 640, "y1": 125, "x2": 690, "y2": 125, "stroke": "#374151", "strokeWidth": 3 },
+        { "type": "rect", "x": 690, "y": 90, "width": 170, "height": 70, "rx": 8, "fill": "#fee2e2" },
+        { "type": "text", "x": 775, "y": 130, "anchor": "middle", "fontSize": 14, "text": "Justice" },
+        { "type": "text", "x": 30, "y": 50, "fontSize": 16, "text": "Parcours d'une plainte (schéma pédagogique)" }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S11-LEX-A1-B2",
+    "mots": [
+      { "mot": "plainte", "definition_simple": "Une déclaration officielle d'une infraction subie.", "exemple": "Elle dépose une plainte." },
+      { "mot": "témoin", "definition_simple": "Une personne qui a vu ce qui s'est passé.", "exemple": "Un témoin a vu le vol." },
+      { "mot": "preuve", "definition_simple": "Un élément qui montre la vérité d'un fait.", "exemple": "La vidéo est une preuve." },
+      { "mot": "infraction", "definition_simple": "Un acte interdit par la loi.", "exemple": "Le vol est une infraction." },
+      { "mot": "contravention", "definition_simple": "Une petite infraction.", "exemple": "Un excès de vitesse léger est une contravention." },
+      { "mot": "délit", "definition_simple": "Une infraction plus grave qu'une contravention.", "exemple": "Le vol est un délit." },
+      { "mot": "crime", "definition_simple": "L'infraction la plus grave.", "exemple": "Le crime est jugé par une cour spéciale." },
+      { "mot": "tribunal", "definition_simple": "Le lieu où la justice est rendue.", "exemple": "L'affaire est jugée au tribunal." }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Écoutez le récit. Remettez les étapes dans l'ordre : signalement, plainte, enquête, justice.",
+      "aides": ["1 = signalement", "2 = plainte", "Mots utiles : vol, plainte, tribunal"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "Que fait la victime après le vol ?", "options": ["Elle dépose une plainte", "Elle paie une amende", "Elle change de ville"] },
+        { "id": "q2", "type": "vrai_faux", "enonce": "Toute personne a le droit de se défendre." }
+      ],
+      "corrige": { "q1": "Elle dépose une plainte", "q2": true }
+    },
+    "A2": {
+      "consigne": "Racontez oralement les faits d'un vol et dites où la personne doit aller.",
+      "aides": ["Pensez à : où, quand, quoi ; puis plainte"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "Où peut-on déposer une plainte ?", "options": ["À la police ou à la gendarmerie", "À la boulangerie", "À l'école"] },
+        { "id": "q2", "type": "reponse_courte", "enonce": "Citez les quatre étapes du parcours d'une plainte." }
+      ],
+      "corrige": { "q1": "À la police ou à la gendarmerie", "q2": "Signalement, plainte, enquête, justice." }
+    },
+    "B1": {
+      "consigne": "Racontez les faits de façon claire et orientez la personne, puis expliquez la différence entre contravention, délit et crime.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "reponse_longue", "enonce": "Racontez les faits (où, quand, quoi) et dites quelles démarches faire." },
+        { "id": "q2", "type": "reponse_longue", "enonce": "Expliquez la différence entre contravention, délit et crime avec un exemple." }
+      ],
+      "corrige": { "q1": "Recit clair (lieu, moment, faits) suivi du conseil de deposer plainte a la police ou a la gendarmerie.", "q2": "La contravention est une petite infraction, le delit est plus grave (ex. vol), le crime est le plus grave ; chacun releve d'une juridiction differente." }
+    },
+    "B2": {
+      "consigne": "Analysez le rôle respectif de la police, de la gendarmerie et de la justice, et nuancez l'importance du droit de se défendre.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "argumentation", "enonce": "Argumentez : pourquoi séparer l'enquête (police/gendarmerie) et le jugement (justice) ?" },
+        { "id": "q2", "type": "argumentation", "enonce": "Nuancez : pourquoi le droit de se défendre est-il essentiel, même pour une personne accusée ?" }
+      ],
+      "corrige": { "q1": "Reponse ouverte : impartialite, separation des roles, garantie d'un proces equitable.", "q2": "Reponse ouverte : presomption d'innocence, egalite devant la loi, protection contre l'erreur judiciaire." }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S11-QCM-civique",
+    "mention": "CSP",
+    "theme": "Droits et devoirs",
+    "questions": [
+      { "notion": "dépôt de plainte", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "En cas de vol, on dépose plainte auprès de :", "options": ["La police ou la gendarmerie", "La mairie", "La banque"], "reponse": "La police ou la gendarmerie" },
+      { "notion": "gradation des infractions", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "L'infraction la plus grave est :", "options": ["Le crime", "La contravention", "Le délit"], "reponse": "Le crime" },
+      { "notion": "rôle de la justice", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Qui juge une affaire selon la loi ?", "options": ["La justice (le tribunal)", "La police seule", "Le maire"], "reponse": "La justice (le tribunal)" },
+      { "notion": "droit de se défendre", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Devant un juge, une personne accusée :", "options": ["A le droit de se défendre", "N'a aucun droit", "Est jugée sans être entendue"], "reponse": "A le droit de se défendre" },
+      { "notion": "orientation", "type": "mise_en_situation", "official_status": "simulation_pedagogique", "enonce": "Une amie a été victime d'un vol. Vous lui conseillez de :", "options": ["Déposer une plainte", "Se venger elle-même", "Ne rien faire"], "reponse": "Déposer une plainte" }
+    ]
+  },
+  "devoirs": {
+    "A1": "À la maison : remettez dans l'ordre les quatre étapes du parcours d'une plainte.",
+    "A2": "À la maison : écrivez 5 phrases pour raconter un vol et dire où aller.",
+    "B1": "À la maison : rédigez un court texte racontant des faits et orientant la personne.",
+    "B2": "À la maison : rédigez un paragraphe argumenté sur l'importance du droit de se défendre."
+  },
+  "formateur": {
+    "fiche_formateur": "Séance police, gendarmerie et justice : chaque apprenant doit savoir (1) raconter des faits clairement, (2) orienter vers police/gendarmerie/justice, (3) distinguer contravention, délit et crime et connaître le droit de se défendre. Traiter le récit sans violence ni détail traumatisant.",
+    "deroule_180min": [
+      { "phase": "Rituel civique", "duree_min": 10, "description": "Lecture du parcours signalement -> justice." },
+      { "phase": "Activation + lexique", "duree_min": 20, "description": "Decouverte du lexique (plainte, infraction, tribunal...)." },
+      { "phase": "Support invariant CO/CE", "duree_min": 50, "description": "Ecoute du recit de Mme Lopez et reperage des etapes." },
+      { "phase": "Ateliers differencies", "duree_min": 60, "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du meme support." },
+      { "phase": "Production EE/EO", "duree_min": 30, "description": "Raconter des faits et orienter la personne." },
+      { "phase": "Fixation", "duree_min": 10, "description": "Synthese, QCM civique, devoir personnalise." }
+    ],
+    "adaptation_rules": [
+      "Traiter le vol de facon factuelle, sans dramatisation ni details violents.",
+      "Distinguer clairement enquete (police/gendarmerie) et jugement (justice).",
+      "Rappeler le droit de se defendre pour eviter toute logique de vengeance."
+    ]
+  }
+}

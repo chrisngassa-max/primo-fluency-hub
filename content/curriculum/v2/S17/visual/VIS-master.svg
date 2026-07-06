@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 260" width="900" height="260" role="img" aria-label="Matrice personnelle des erreurs">
+  <title>Matrice personnelle des erreurs</title>
+  <rect x="0" y="0" width="900" height="260" fill="#ffffff" />
+  <rect x="40" y="30" width="400" height="40" fill="#e0e7ff" rx="0" />
+  <rect x="440" y="30" width="200" height="40" fill="#e0e7ff" rx="0" />
+  <text x="240" y="55" font-size="15" font-family="sans-serif" fill="#111827" text-anchor="middle">Notion civique</text>
+  <text x="540" y="55" font-size="15" font-family="sans-serif" fill="#111827" text-anchor="middle">Erreurs</text>
+  <rect x="40" y="70" width="400" height="40" fill="#f8fafc" rx="0" />
+  <rect x="440" y="70" width="200" height="40" fill="#f8fafc" rx="0" />
+  <text x="240" y="95" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">Droit / devoir</text>
+  <text x="540" y="95" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">2 sur 3</text>
+  <rect x="40" y="110" width="400" height="40" fill="#ffffff" rx="0" />
+  <rect x="440" y="110" width="200" height="40" fill="#ffffff" rx="0" />
+  <text x="240" y="135" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">Devoir / règle</text>
+  <text x="540" y="135" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">1 sur 3</text>
+  <rect x="40" y="150" width="400" height="40" fill="#f8fafc" rx="0" />
+  <rect x="440" y="150" width="200" height="40" fill="#f8fafc" rx="0" />
+  <text x="240" y="175" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">Organisation du parcours</text>
+  <text x="540" y="175" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">0 sur 3</text>
+  <line x1="40" y1="30" x2="640" y2="30" stroke="#94a3b8" stroke-width="2" />
+  <line x1="40" y1="190" x2="640" y2="190" stroke="#94a3b8" stroke-width="2" />
+  <line x1="40" y1="30" x2="40" y2="190" stroke="#94a3b8" stroke-width="2" />
+  <line x1="440" y1="30" x2="440" y2="190" stroke="#94a3b8" stroke-width="2" />
+  <line x1="640" y1="30" x2="640" y2="190" stroke="#94a3b8" stroke-width="2" />
+</svg>

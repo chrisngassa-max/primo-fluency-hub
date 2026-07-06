@@ -1,0 +1,67 @@
+{
+  "resource_id": "S29-QCM-civique",
+  "mention": "CR",
+  "theme": "Histoire, géographie, culture",
+  "questions": [
+    {
+      "notion": "République",
+      "type": "connaissance",
+      "enonce": "La IIIe République a favorisé :",
+      "options": [
+        "École laïque",
+        "Monarchie absolue",
+        "Suppression du vote"
+      ],
+      "reponse": "École laïque",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "Europe",
+      "type": "connaissance",
+      "enonce": "La construction européenne vise aussi :",
+      "options": [
+        "La paix",
+        "La guerre",
+        "L'isolement"
+      ],
+      "reponse": "La paix",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "mémoire",
+      "type": "connaissance",
+      "enonce": "La mémoire des guerres sert à :",
+      "options": [
+        "Comprendre le présent",
+        "Oublier tout",
+        "Supprimer l'histoire"
+      ],
+      "reponse": "Comprendre le présent",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "chronologie",
+      "type": "mise_en_situation",
+      "enonce": "Raconter un événement demande :",
+      "options": [
+        "Contexte et dates",
+        "Uniquement des opinions",
+        "Aucun fait"
+      ],
+      "reponse": "Contexte et dates",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "traité",
+      "type": "connaissance",
+      "enonce": "Un traité européen est :",
+      "options": [
+        "Un accord entre États",
+        "Une recette",
+        "Un sport"
+      ],
+      "reponse": "Un accord entre États",
+      "official_status": "simulation_pedagogique"
+    }
+  ]
+}

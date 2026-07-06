@@ -1,0 +1,328 @@
+{
+  "session_code": "S32",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Système constitutionnel et souveraineté",
+  "support": {
+    "support_id": "S32-support",
+    "situation": "Synthèse B2 sur Constitution, souveraineté nationale, contrôles du Conseil constitutionnel et relances orales imprévues.",
+    "personnages": [
+      "Apprenant B2",
+      "Formateur examinateur"
+    ],
+    "faits": [
+      "La Constitution de 1958 organise la Ve République.",
+      "La souveraineté nationale appartient au peuple qui l'exerce par ses représentants.",
+      "Le Conseil constitutionnel vérifie la conformité des lois à la Constitution.",
+      "Le président et le Parlement ont des rôles distincts définis par la Constitution.",
+      "L'État de droit encadre tous les pouvoirs.",
+      "Une synthèse B2 intègre nuances et exemples fictifs."
+    ],
+    "nombres": [],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S32-CO-master",
+    "voice": "fr-FR-Wavenet-D",
+    "speaking_rate": 1,
+    "script": "Formateur : Présentez une synthèse : Constitution, souveraineté, contrôles.\nApprenant : La Constitution de mille neuf cent cinquante-huit fonde la Ve République. La souveraineté appartient au peuple, exercée par le vote et les représentants.\nFormateur : Relance : le Conseil constitutionnel ?\nApprenant : Il contrôle les lois avant ou après promulgation. Il peut les censurer si elles violent la Constitution.\nFormateur : Et le président ?\nApprenant : Chef de l'exécutif, élu au suffrage universel direct depuis mille neuf cent soixante-deux. Il nomme le Premier ministre dans le cadre constitutionnel.\nFormateur : Nuance sur la souveraineté ?\nApprenant : Elle est nationale, mais la France partage aussi certaines compétences avec l'Union européenne, sans perdre son identité constitutionnelle.\nFormateur : Merci. Synthèse structurée et nuancée.",
+    "pauses": [
+      {
+        "after_word": 12,
+        "ms": 400
+      },
+      {
+        "after_word": 60,
+        "ms": 400
+      },
+      {
+        "after_word": 130,
+        "ms": 500
+      }
+    ]
+  },
+  "visual": {
+    "resource_id": "S32-VIS-master",
+    "alt_text": "Schéma Constitution, peuple, institutions de contrôle.",
+    "scene": {
+      "title": "Constitution et souveraineté",
+      "width": 900,
+      "height": 240,
+      "background": "#ffffff",
+      "elements": [
+        {
+          "type": "rect",
+          "x": 150,
+          "y": 50,
+          "width": 600,
+          "height": 120,
+          "rx": 10,
+          "fill": "#e0e7ff"
+        },
+        {
+          "type": "text",
+          "x": 450,
+          "y": 115,
+          "anchor": "middle",
+          "fontSize": 16,
+          "text": "Peuple · Constitution · Contrôles"
+        }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S32-LEX-A1-B2",
+    "mots": [
+      {
+        "mot": "Constitution",
+        "definition_simple": "Loi suprême de l'État.",
+        "exemple": "Constitution de 1958."
+      },
+      {
+        "mot": "souveraineté",
+        "definition_simple": "Pouvoir suprême du peuple.",
+        "exemple": "Souveraineté nationale."
+      },
+      {
+        "mot": "Ve République",
+        "definition_simple": "Régime actuel depuis 1958.",
+        "exemple": "Organisation de la Ve République."
+      },
+      {
+        "mot": "contrôle",
+        "definition_simple": "Vérification de conformité.",
+        "exemple": "Conseil constitutionnel."
+      },
+      {
+        "mot": "représentant",
+        "definition_simple": "Élu qui agit pour le peuple.",
+        "exemple": "Représentants du peuple."
+      },
+      {
+        "mot": "synthèse",
+        "definition_simple": "Texte structuré et nuancé.",
+        "exemple": "Synthèse B2."
+      },
+      {
+        "mot": "relance",
+        "definition_simple": "Question imprévue de l'examinateur.",
+        "exemple": "Répondre à une relance."
+      },
+      {
+        "mot": "promulgation",
+        "definition_simple": "Publication officielle d'une loi.",
+        "exemple": "Après promulgation."
+      },
+      {
+        "mot": "nuance",
+        "definition_simple": "Précision qui évite la simplification.",
+        "exemple": "Nuancer la souveraineté."
+      }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Associez institutions et rôles.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Souveraineté appartient au :",
+          "options": [
+            "Peuple",
+            "Juge seul",
+            "Entreprise"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "La Constitution organise la Ve République."
+        }
+      ],
+      "corrige": {
+        "q1": "Peuple",
+        "q2": true
+      }
+    },
+    "A2": {
+      "consigne": "Répondez à des relances simples.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Conseil constitutionnel contrôle :",
+          "options": [
+            "Conformité des lois",
+            "Les recettes",
+            "Le bus"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Date Constitution actuelle ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Conformité des lois",
+        "q2": "1958."
+      }
+    },
+    "B1": {
+      "consigne": "Synthèse structurée avec exemples.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Synthèse Constitution et pouvoirs."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Rôle du Conseil constitutionnel."
+        }
+      ],
+      "corrige": {
+        "q1": "Structure claire.",
+        "q2": "Contrôle de conformité."
+      }
+    },
+    "B2": {
+      "consigne": "Synthèse nuancée + relances orales.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Souveraineté vs compétences européennes ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Équilibre des pouvoirs en 2020s ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Réponse ouverte nuancée.",
+        "q2": "Réponse ouverte."
+      }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S32-QCM-civique",
+    "mention": "NAT",
+    "theme": "Système institutionnel et politique",
+    "questions": [
+      {
+        "notion": "Constitution",
+        "type": "connaissance",
+        "enonce": "La Ve République est fondée sur la Constitution de :",
+        "options": [
+          "1958",
+          "1789",
+          "2000"
+        ],
+        "reponse": "1958",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "souveraineté",
+        "type": "connaissance",
+        "enonce": "La souveraineté nationale appartient au :",
+        "options": [
+          "Peuple",
+          "Président seul",
+          "Mairie"
+        ],
+        "reponse": "Peuple",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "contrôle",
+        "type": "connaissance",
+        "enonce": "Le Conseil constitutionnel vérifie :",
+        "options": [
+          "La conformité des lois",
+          "Les menus",
+          "Les matchs"
+        ],
+        "reponse": "La conformité des lois",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "État de droit",
+        "type": "connaissance",
+        "enonce": "L'État de droit signifie :",
+        "options": [
+          "Tous soumis à la loi",
+          "Loi absente",
+          "Pouvoir illimité"
+        ],
+        "reponse": "Tous soumis à la loi",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "relance",
+        "type": "mise_en_situation",
+        "enonce": "En oral B2, une relance demande :",
+        "options": [
+          "Réponse structurée immédiate",
+          "Silence total",
+          "Changement de sujet"
+        ],
+        "reponse": "Réponse structurée immédiate",
+        "official_status": "simulation_pedagogique"
+      }
+    ]
+  },
+  "devoirs": {
+    "A1": "Schéma institutions.",
+    "A2": "Oral 3 relances.",
+    "B1": "Synthèse écrite.",
+    "B2": "Synthèse + objections."
+  },
+  "formateur": {
+    "fiche_formateur": "B2 NAT : Constitution, souveraineté, contrôles. EO relances. Voix Wavenet-D.",
+    "deroule_180min": [
+      {
+        "phase": "Rituel civique",
+        "duree_min": 10,
+        "description": "Constitution et souveraineté."
+      },
+      {
+        "phase": "Activation + lexique",
+        "duree_min": 20,
+        "description": "Lexique institutionnel B2."
+      },
+      {
+        "phase": "Support invariant CO/CE",
+        "duree_min": 50,
+        "description": "Synthèse et relances."
+      },
+      {
+        "phase": "Ateliers différenciés",
+        "duree_min": 60,
+        "description": "A1-B2 sur même support."
+      },
+      {
+        "phase": "Production EE/EO",
+        "duree_min": 30,
+        "description": "EO avec relances."
+      },
+      {
+        "phase": "Fixation",
+        "duree_min": 10,
+        "description": "QCM NAT."
+      }
+    ],
+    "adaptation_rules": [
+      "Relances imprévues B2.",
+      "Voix fr-FR-Wavenet-D.",
+      "Exemples fictifs."
+    ]
+  }
+}

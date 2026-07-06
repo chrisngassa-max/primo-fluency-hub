@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Serveur vocal (voix automatique) : Bonjour. Ceci est un message pédagogique fictif ; ce n'est pas une administration réelle. Vous êtes en relation avec le service des titres de séjour.\nVotre dossier a été reçu. Il manque une pièce justificative pour continuer l'instruction.\nMerci de transmettre un justificatif de domicile récent avant la date d'échéance indiquée sur votre notification.\nVous pouvez répondre par courriel en joignant la pièce, ou prendre un rendez-vous en ligne.\nPour rappel, tout dossier incomplet ne peut pas être traité. Pour réécouter ce message, dites « répéter ». Merci et bonne journée.",
+  "transcript": "Serveur vocal (voix automatique) : Bonjour. Ceci est un message pédagogique fictif ; ce n'est pas une administration réelle. Vous êtes en relation avec le service des titres de séjour.\nVotre dossier a été reçu. Il manque une pièce justificative pour continuer l'instruction.\nMerci de transmettre un justificatif de domicile récent avant la date d'échéance indiquée sur votre notification.\nVous pouvez répondre par courriel en joignant la pièce, ou prendre un rendez-vous en ligne.\nPour rappel, tout dossier incomplet ne peut pas être traité. Pour réécouter ce message, dites « répéter ». Merci et bonne journée.",
+  "voice": "fr-FR-Wavenet-C",
+  "languageCode": "fr-FR",
+  "speaking_rate": 0.9,
+  "pauses": [
+    {
+      "after_word": 22,
+      "ms": 500
+    },
+    {
+      "after_word": 45,
+      "ms": 400
+    },
+    {
+      "after_word": 72,
+      "ms": 400
+    }
+  ],
+  "duration_seconds": 48,
+  "hash": "5217c53930a709d25afce17406b6cc0a461ed1dd94dbde9cbe785c73c8b6c781"
+}

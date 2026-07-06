@@ -1,0 +1,19 @@
+{
+  "support_id": "S14-support-impots",
+  "personnages": [
+    "Voix municipale (annonce fictive)",
+    "Habitant qui s'informe"
+  ],
+  "situation": "Une annonce municipale fictive informe les habitants d'une nouvelle collecte de déchets. Un budget pédagogique simple relie les impôts payés par tous aux services publics et à la protection de l'environnement.",
+  "faits": [
+    "Les impôts et les taxes financent les services publics.",
+    "Les services publics profitent à toute la collectivité (écoles, routes, santé...).",
+    "Le tri et la collecte des déchets protègent l'environnement.",
+    "Payer l'impôt est une contribution à l'intérêt général.",
+    "La solidarité permet de financer des services pour tous."
+  ],
+  "nombres": [],
+  "dates": [],
+  "hash": "54e7d81a6660e32fc67e6dfbd08583e7efe35d3f6a991f87ac3b4273560fa702",
+  "version": 1
+}

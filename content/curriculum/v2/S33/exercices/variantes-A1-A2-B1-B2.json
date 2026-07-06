@@ -1,0 +1,108 @@
+[
+  {
+    "support_id": "S33-support",
+    "version": 1,
+    "niveau": "A1",
+    "consigne": "Vrai/faux dignité et pluralisme.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Dignité humaine :",
+        "options": [
+          "Inviolable",
+          "Optionnelle",
+          "Supprimée"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "vrai_faux",
+        "enonce": "Une objection enrichit le débat."
+      }
+    ],
+    "corrige": {
+      "q1": "Inviolable",
+      "q2": true
+    },
+    "invariants_hash": "eef66d07bd3bfe0b0aeb626f928792ff58264eb6fe84b461672ccf2df87b2c08"
+  },
+  {
+    "support_id": "S33-support",
+    "version": 1,
+    "niveau": "A2",
+    "consigne": "Donnez une position courte + objection.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Diffamation est :",
+        "options": [
+          "Interdite",
+          "Obligatoire",
+          "Un droit absolu"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "reponse_courte",
+        "enonce": "Définition pluralisme ?"
+      }
+    ],
+    "corrige": {
+      "q1": "Interdite",
+      "q2": "Coexistence d'opinions/croyances."
+    },
+    "invariants_hash": "eef66d07bd3bfe0b0aeb626f928792ff58264eb6fe84b461672ccf2df87b2c08"
+  },
+  {
+    "support_id": "S33-support",
+    "version": 1,
+    "niveau": "B1",
+    "consigne": "Texte argumenté avec objection intégrée.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "reponse_longue",
+        "enonce": "Position sur une liberté."
+      },
+      {
+        "id": "q2",
+        "type": "reponse_longue",
+        "enonce": "Réponse à une objection."
+      }
+    ],
+    "corrige": {
+      "q1": "Structuré.",
+      "q2": "Contre-argument pertinent."
+    },
+    "invariants_hash": "eef66d07bd3bfe0b0aeb626f928792ff58264eb6fe84b461672ccf2df87b2c08"
+  },
+  {
+    "support_id": "S33-support",
+    "version": 1,
+    "niveau": "B2",
+    "consigne": "EE/EO B2 : position, objection, conclusion.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "argumentation",
+        "enonce": "Liberté vs dignité : arbitrage ?"
+      },
+      {
+        "id": "q2",
+        "type": "argumentation",
+        "enonce": "Pluralisme en société diverse ?"
+      }
+    ],
+    "corrige": {
+      "q1": "Réponse ouverte.",
+      "q2": "Réponse ouverte."
+    },
+    "invariants_hash": "eef66d07bd3bfe0b0aeb626f928792ff58264eb6fe84b461672ccf2df87b2c08"
+  }
+]

@@ -1,0 +1,114 @@
+[
+  {
+    "support_id": "S03-support-sante",
+    "version": 1,
+    "niveau": "A1",
+    "consigne": "Écoutez le dialogue. Associez chaque symptôme à une image, puis choisissez le bon numéro à appeler dans la liste.",
+    "aides": [
+      "Urgence médicale = 15",
+      "Pompiers = 18",
+      "Mots utiles : douleur, fièvre, rendez-vous"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Quel numéro appelle-t-on pour une urgence médicale ?",
+        "options": [
+          "15",
+          "18",
+          "112"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "vrai_faux",
+        "enonce": "Pour une petite fièvre sans gravité, on prend rendez-vous avec son médecin traitant."
+      }
+    ],
+    "corrige": {
+      "q1": "15",
+      "q2": true
+    },
+    "invariants_hash": "d4562b431104a679d032887a9c8ff86b0ecda7d2123bbec1b44b5e2a175c577c"
+  },
+  {
+    "support_id": "S03-support-sante",
+    "version": 1,
+    "niveau": "A2",
+    "consigne": "Décrivez oralement des symptômes simples et dites qui vous contactez selon la situation.",
+    "aides": [
+      "Pensez à : symptôme, urgence, rendez-vous, médecin traitant"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Que présente-t-on pour être remboursé des soins ?",
+        "options": [
+          "La carte Vitale",
+          "Le passeport",
+          "Le permis de conduire"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "reponse_courte",
+        "enonce": "Citez une situation qui est une urgence et une situation qui ne l'est pas."
+      }
+    ],
+    "corrige": {
+      "q1": "La carte Vitale",
+      "q2": "Urgence : difficulté à respirer, douleur très forte. Non urgente : petit mal de tête, légère fièvre."
+    },
+    "invariants_hash": "d4562b431104a679d032887a9c8ff86b0ecda7d2123bbec1b44b5e2a175c577c"
+  },
+  {
+    "support_id": "S03-support-sante",
+    "version": 1,
+    "niveau": "B1",
+    "consigne": "Expliquez à une personne comment choisir entre une urgence et un rendez-vous, puis justifiez l'utilité du médecin traitant et de la carte Vitale.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "reponse_longue",
+        "enonce": "Reformulez la différence entre une situation urgente et une situation non urgente, avec des exemples."
+      },
+      {
+        "id": "q2",
+        "type": "reponse_longue",
+        "enonce": "Expliquez le rôle du médecin traitant et de la carte Vitale dans le parcours de soins."
+      }
+    ],
+    "corrige": {
+      "q1": "Une urgence menace la vie ou la sante immediate (appel du 15) ; une situation non urgente se gere par un rendez-vous avec le medecin traitant.",
+      "q2": "Le medecin traitant assure le suivi et oriente ; la carte Vitale permet le remboursement des soins."
+    },
+    "invariants_hash": "d4562b431104a679d032887a9c8ff86b0ecda7d2123bbec1b44b5e2a175c577c"
+  },
+  {
+    "support_id": "S03-support-sante",
+    "version": 1,
+    "niveau": "B2",
+    "consigne": "Analysez l'organisation de l'accès aux soins en France et nuancez les difficultés qu'un nouvel arrivant peut rencontrer.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "argumentation",
+        "enonce": "Argumentez : pourquoi est-il important de ne pas appeler le 15 pour une situation bénigne ?"
+      },
+      {
+        "id": "q2",
+        "type": "argumentation",
+        "enonce": "Nuancez : quels obstacles peuvent gêner l'accès aux soins et comment les surmonter ?"
+      }
+    ],
+    "corrige": {
+      "q1": "Reponse ouverte : preserver les services d'urgence pour les cas graves, orienter correctement, eviter la saturation.",
+      "q2": "Reponse ouverte : barriere de la langue, meconnaissance du systeme, delais ; solutions : mediation, information, medecin traitant."
+    },
+    "invariants_hash": "d4562b431104a679d032887a9c8ff86b0ecda7d2123bbec1b44b5e2a175c577c"
+  }
+]

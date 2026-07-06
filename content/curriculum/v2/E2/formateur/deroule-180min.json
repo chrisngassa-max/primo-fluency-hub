@@ -1,0 +1,27 @@
+[
+  {
+    "phase": "Installation",
+    "duree_min": 10,
+    "description": "Consignes E2, banque gelée."
+  },
+  {
+    "phase": "CO + CE",
+    "duree_min": 55,
+    "description": "Compréhension TCF."
+  },
+  {
+    "phase": "EE",
+    "duree_min": 40,
+    "description": "Trois tâches EE."
+  },
+  {
+    "phase": "EO",
+    "duree_min": 30,
+    "description": "Trois tâches EO."
+  },
+  {
+    "phase": "Civique CSP",
+    "duree_min": 45,
+    "description": "40 questions gelées."
+  }
+]

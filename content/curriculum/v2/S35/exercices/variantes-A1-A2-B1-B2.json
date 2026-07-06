@@ -1,0 +1,108 @@
+[
+  {
+    "support_id": "S35-support",
+    "version": 1,
+    "niveau": "A1",
+    "consigne": "Lisez les chiffres fictifs du dossier.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "Les données sont :",
+        "options": [
+          "Fictives pédagogiques",
+          "Officielles INSEE",
+          "Secrètes"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "vrai_faux",
+        "enonce": "Il faut distinguer opinion et fait."
+      }
+    ],
+    "corrige": {
+      "q1": "Fictives pédagogiques",
+      "q2": true
+    },
+    "invariants_hash": "e41446f74efa03d3c9cf31e1fea0440b0cc2f89cd956a33e69c2c83acb08b704"
+  },
+  {
+    "support_id": "S35-support",
+    "version": 1,
+    "niveau": "A2",
+    "consigne": "Position courte avec un chiffre du dossier.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "62% concernent :",
+        "options": [
+          "Cohésion perçue",
+          "Taxe euro",
+          "Score foot"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "reponse_courte",
+        "enonce": "Un enjeu contemporain cité ?"
+      }
+    ],
+    "corrige": {
+      "q1": "Cohésion perçue",
+      "q2": "Logement, environnement, francophonie."
+    },
+    "invariants_hash": "e41446f74efa03d3c9cf31e1fea0440b0cc2f89cd956a33e69c2c83acb08b704"
+  },
+  {
+    "support_id": "S35-support",
+    "version": 1,
+    "niveau": "B1",
+    "consigne": "Texte argumenté prudent.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "reponse_longue",
+        "enonce": "Position sur cohésion/logement."
+      },
+      {
+        "id": "q2",
+        "type": "reponse_longue",
+        "enonce": "Nuancer avec données fictives."
+      }
+    ],
+    "corrige": {
+      "q1": "Avis + données.",
+      "q2": "Limites reconnues."
+    },
+    "invariants_hash": "e41446f74efa03d3c9cf31e1fea0440b0cc2f89cd956a33e69c2c83acb08b704"
+  },
+  {
+    "support_id": "S35-support",
+    "version": 1,
+    "niveau": "B2",
+    "consigne": "EE B2 : enjeu contemporain documenté.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "argumentation",
+        "enonce": "Citoyenneté et environnement ?"
+      },
+      {
+        "id": "q2",
+        "type": "argumentation",
+        "enonce": "Risque des stats non vérifiées ?"
+      }
+    ],
+    "corrige": {
+      "q1": "Réponse ouverte.",
+      "q2": "Réponse ouverte : prudence, sources."
+    },
+    "invariants_hash": "e41446f74efa03d3c9cf31e1fea0440b0cc2f89cd956a33e69c2c83acb08b704"
+  }
+]

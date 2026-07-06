@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 260" width="900" height="260" role="img" aria-label="Simulation NAT S36">
+  <title>Simulation NAT S36</title>
+  <rect x="0" y="0" width="900" height="260" fill="#ffffff" />
+  <rect x="30" y="60" width="110" height="50" fill="#e0e7ff" rx="0" />
+  <text x="85" y="90" font-size="11" font-family="sans-serif" fill="#111827" text-anchor="middle">Install 10</text>
+  <rect x="160" y="60" width="150" height="50" fill="#fee2e2" rx="0" />
+  <text x="235" y="90" font-size="11" font-family="sans-serif" fill="#111827" text-anchor="middle">NAT 45</text>
+  <rect x="330" y="60" width="150" height="50" fill="#fef9c3" rx="0" />
+  <text x="405" y="90" font-size="11" font-family="sans-serif" fill="#111827" text-anchor="middle">Erreurs 40</text>
+  <rect x="500" y="60" width="130" height="50" fill="#dcfce7" rx="0" />
+  <text x="565" y="90" font-size="11" font-family="sans-serif" fill="#111827" text-anchor="middle">Compare 25</text>
+  <rect x="650" y="60" width="150" height="50" fill="#ede9fe" rx="0" />
+  <text x="725" y="90" font-size="11" font-family="sans-serif" fill="#111827" text-anchor="middle">Stratégie 60</text>
+  <text x="450" y="170" font-size="13" font-family="sans-serif" fill="#111827" text-anchor="middle">28 connaissances · 12 situations · Banque gelée</text>
+</svg>

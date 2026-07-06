@@ -1,0 +1,369 @@
+{
+  "session_code": "E4",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Évaluation de sortie B2 / NAT",
+  "support": {
+    "support_id": "E4-support",
+    "situation": "Évaluation sortie B2/NAT : échantillon TCF IRN ciblé, examen civique NAT complet, entretien d'assimilation simulé. 120 minutes. Banque gelée. Décision : prêt inscription, consolidation ou volume supplémentaire.",
+    "personnages": [
+      "Apprenants B2",
+      "Jury fictif"
+    ],
+    "faits": [
+      "E4 clôt le parcours B2/NAT.",
+      "Durée totale : cent vingt minutes.",
+      "Échantillon TCF IRN ciblé sur fragilités.",
+      "Civique NAT complet : banque gelée.",
+      "Entretien d'assimilation simulé inclus.",
+      "Décision : prêt à l'inscription, consolidation ciblée ou volume supplémentaire."
+    ],
+    "nombres": [
+      120
+    ],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "E4-CO-master",
+    "voice": "fr-FR-Wavenet-D",
+    "speaking_rate": 1,
+    "script": "Consignes E4 — sortie B2/NAT — document fictif.\n\nDurée totale : cent vingt minutes.\n\n1. Échantillon TCF IRN ciblé (CO, CE, EE ou EO selon profil), banque gelée.\n2. Examen civique NAT complet, quarante questions, quarante-cinq minutes, banque verrouillée.\n3. Entretien d'assimilation simulé : parcours, motivation, principes — relances imprévues.\n\nAucun nouvel item. Grilles séparées.\n\nDécision : prêt à l'inscription officielle, consolidation ciblée, ou volume horaire supplémentaire.\n\nBonne épreuve.",
+    "pauses": [
+      {
+        "after_word": 12,
+        "ms": 400
+      },
+      {
+        "after_word": 60,
+        "ms": 400
+      },
+      {
+        "after_word": 130,
+        "ms": 500
+      }
+    ]
+  },
+  "visual": {
+    "resource_id": "E4-VIS-master",
+    "alt_text": "Diagramme E4 120 min : TCF ciblé, NAT, entretien.",
+    "scene": {
+      "title": "Évaluation E4 — 120 min",
+      "width": 900,
+      "height": 220,
+      "background": "#ffffff",
+      "elements": [
+        {
+          "type": "rect",
+          "x": 60,
+          "y": 70,
+          "width": 240,
+          "height": 70,
+          "fill": "#dbeafe"
+        },
+        {
+          "type": "text",
+          "x": 180,
+          "y": 110,
+          "anchor": "middle",
+          "fontSize": 12,
+          "text": "TCF ciblé"
+        },
+        {
+          "type": "rect",
+          "x": 330,
+          "y": 70,
+          "width": 240,
+          "height": 70,
+          "fill": "#fee2e2"
+        },
+        {
+          "type": "text",
+          "x": 450,
+          "y": 110,
+          "anchor": "middle",
+          "fontSize": 12,
+          "text": "Civique NAT"
+        },
+        {
+          "type": "rect",
+          "x": 600,
+          "y": 70,
+          "width": 240,
+          "height": 70,
+          "fill": "#fef9c3"
+        },
+        {
+          "type": "text",
+          "x": 720,
+          "y": 110,
+          "anchor": "middle",
+          "fontSize": 12,
+          "text": "Entretien"
+        },
+        {
+          "type": "text",
+          "x": 450,
+          "y": 180,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "Banque gelée · 120 min"
+        }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "E4-LEX-A1-B2",
+    "mots": [
+      {
+        "mot": "banque gelée",
+        "definition_simple": "Questions verrouillées, sans nouvel item par niveau.",
+        "exemple": "Banque gelée E1."
+      },
+      {
+        "mot": "chronométré",
+        "definition_simple": "Temps limité strict.",
+        "exemple": "Épreuve chronométrée."
+      },
+      {
+        "mot": "évaluation",
+        "definition_simple": "Mesure certificative du parcours.",
+        "exemple": "Évaluation intermédiaire."
+      },
+      {
+        "mot": "consigne",
+        "definition_simple": "Instruction officielle de l'épreuve.",
+        "exemple": "Lire la consigne."
+      },
+      {
+        "mot": "remédiation",
+        "definition_simple": "Plan correctif après évaluation.",
+        "exemple": "Plan automatique S17-S24."
+      },
+      {
+        "mot": "tronc commun",
+        "definition_simple": "Partie A2/CSP du parcours.",
+        "exemple": "Évaluation finale tronc commun."
+      },
+      {
+        "mot": "sortie",
+        "definition_simple": "Fin de parcours à un palier.",
+        "exemple": "Sortie B1/CR."
+      },
+      {
+        "mot": "entretien",
+        "definition_simple": "Échange oral structuré.",
+        "exemple": "Entretien d'assimilation simulé."
+      },
+      {
+        "mot": "NAT",
+        "definition_simple": "Niveau nationalisation civique.",
+        "exemple": "Sortie B2/NAT."
+      },
+      {
+        "mot": "jury",
+        "definition_simple": "Personnes qui évaluent l'entretien.",
+        "exemple": "Jury fictif."
+      }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Lisez les consignes d'évaluation E4. Identifiez les épreuves et durées.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "L'évaluation E4 utilise :",
+          "options": [
+            "Une banque gelée",
+            "Des questions improvisées",
+            "Aucune épreuve"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "Les consignes sont chronométrées."
+        }
+      ],
+      "corrige": {
+        "q1": "Une banque gelée",
+        "q2": true
+      }
+    },
+    "A2": {
+      "consigne": "Expliquez le déroulé de E4 et le format des épreuves.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "La banque gelée signifie :",
+          "options": [
+            "Pas de nouveaux faits par niveau",
+            "Questions au hasard",
+            "Oral seulement"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Citez une règle de l'évaluation."
+        }
+      ],
+      "corrige": {
+        "q1": "Pas de nouveaux faits par niveau",
+        "q2": "Chronométrage, sans aide, séparation langue/civique."
+      }
+    },
+    "B1": {
+      "consigne": "Décrivez comment se préparer à E4 selon le support.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Déroulé et timing de l'évaluation."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Règles de la banque gelée."
+        }
+      ],
+      "corrige": {
+        "q1": "Phases et durées conformes au support.",
+        "q2": "Items verrouillés, pas de nouveaux faits."
+      }
+    },
+    "B2": {
+      "consigne": "Analysez les enjeux de E4 pour votre orientation.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Intérêt d'une banque gelée ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Comment utiliser les résultats ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Réponse ouverte : équité, comparabilité.",
+        "q2": "Réponse ouverte : remédiation, orientation."
+      }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "E4-QCM-civique",
+    "mention": "NAT",
+    "theme": "Évaluation NAT",
+    "questions": [
+      {
+        "notion": "E4 durée",
+        "type": "connaissance",
+        "enonce": "E4 dure :",
+        "options": [
+          "120 minutes",
+          "180 minutes",
+          "15 minutes"
+        ],
+        "reponse": "120 minutes",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "NAT",
+        "type": "connaissance",
+        "enonce": "E4 inclut civique :",
+        "options": [
+          "NAT complet gelé",
+          "CSP abrégé",
+          "Aucun civique"
+        ],
+        "reponse": "NAT complet gelé",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "entretien",
+        "type": "connaissance",
+        "enonce": "E4 comprend :",
+        "options": [
+          "Entretien d'assimilation simulé",
+          "Uniquement un dessin",
+          "Rien d'oral"
+        ],
+        "reponse": "Entretien d'assimilation simulé",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "banque",
+        "type": "connaissance",
+        "enonce": "La banque E4 :",
+        "options": [
+          "Est gelée",
+          "Change en direct",
+          "Est vide"
+        ],
+        "reponse": "Est gelée",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "décision",
+        "type": "mise_en_situation",
+        "enonce": "Après E4, une issue possible :",
+        "options": [
+          "Prêt à l'inscription",
+          "Exclusion automatique",
+          "Aucun suivi"
+        ],
+        "reponse": "Prêt à l'inscription",
+        "official_status": "simulation_pedagogique"
+      }
+    ]
+  },
+  "devoirs": {
+    "A1": "Lire consignes E4.",
+    "A2": "Préparer entretien 2 min.",
+    "B1": "Simulation NAT + entretien.",
+    "B2": "Plan consolidation ou inscription."
+  },
+  "formateur": {
+    "fiche_formateur": "E4 : 120 min, TCF ciblé, NAT gelé, entretien assimilation. Décision inscription/consolidation/volume.",
+    "deroule_180min": [
+      {
+        "phase": "Installation",
+        "duree_min": 10,
+        "description": "Consignes E4, banque gelée."
+      },
+      {
+        "phase": "TCF ciblé",
+        "duree_min": 35,
+        "description": "Échantillon selon profil."
+      },
+      {
+        "phase": "Civique NAT",
+        "duree_min": 45,
+        "description": "40 questions gelées."
+      },
+      {
+        "phase": "Entretien simulé",
+        "duree_min": 25,
+        "description": "Assimilation, relances."
+      },
+      {
+        "phase": "Clôture",
+        "duree_min": 5,
+        "description": "Information décision."
+      }
+    ],
+    "adaptation_rules": [
+      "120 min strict.",
+      "Entretien non scripté.",
+      "Voix Wavenet-D pour consignes CO."
+    ]
+  }
+}

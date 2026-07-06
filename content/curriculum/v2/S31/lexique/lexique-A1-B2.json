@@ -1,0 +1,50 @@
+{
+  "resource_id": "S31-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "simulation",
+      "definition_simple": "Reproduction de l'examen.",
+      "exemple": "Simulation CR."
+    },
+    {
+      "mot": "verrouillée",
+      "definition_simple": "Fixée, non modifiable.",
+      "exemple": "Banque verrouillée."
+    },
+    {
+      "mot": "distracteur",
+      "definition_simple": "Réponse piège.",
+      "exemple": "Analyser un distracteur."
+    },
+    {
+      "mot": "remédiation",
+      "definition_simple": "Correction ciblée.",
+      "exemple": "Remédiation B1."
+    },
+    {
+      "mot": "cohorte",
+      "definition_simple": "Le groupe d'apprenants.",
+      "exemple": "Fragilités de la cohorte."
+    },
+    {
+      "mot": "chronomètre",
+      "definition_simple": "Mesure du temps imparti.",
+      "exemple": "Quarante-cinq minutes."
+    },
+    {
+      "mot": "stratégie",
+      "definition_simple": "Organisation du temps.",
+      "exemple": "Stratégie CR."
+    },
+    {
+      "mot": "fragilité",
+      "definition_simple": "Point faible récurrent.",
+      "exemple": "Cibler une fragilité."
+    },
+    {
+      "mot": "analyse",
+      "definition_simple": "Examen détaillé des erreurs.",
+      "exemple": "Analyse des distracteurs."
+    }
+  ]
+}

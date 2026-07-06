@@ -1,0 +1,81 @@
+{
+  "resource_id": "S29-VIS-master",
+  "scene": {
+    "title": "Frise histoire-Europe",
+    "width": 900,
+    "height": 200,
+    "background": "#ffffff",
+    "elements": [
+      {
+        "type": "line",
+        "x1": 50,
+        "y1": 100,
+        "x2": 850,
+        "y2": 100,
+        "stroke": "#374151",
+        "strokeWidth": 3
+      },
+      {
+        "type": "text",
+        "x": 120,
+        "y": 140,
+        "anchor": "middle",
+        "fontSize": 12,
+        "text": "1870 République"
+      },
+      {
+        "type": "text",
+        "x": 350,
+        "y": 140,
+        "anchor": "middle",
+        "fontSize": 12,
+        "text": "1914-45 Guerres"
+      },
+      {
+        "type": "text",
+        "x": 580,
+        "y": 140,
+        "anchor": "middle",
+        "fontSize": 12,
+        "text": "1957 Europe"
+      },
+      {
+        "type": "text",
+        "x": 780,
+        "y": 140,
+        "anchor": "middle",
+        "fontSize": 12,
+        "text": "Mémoire"
+      },
+      {
+        "type": "circle",
+        "cx": 120,
+        "cy": 100,
+        "r": 8,
+        "fill": "#64748b"
+      },
+      {
+        "type": "circle",
+        "cx": 350,
+        "cy": 100,
+        "r": 8,
+        "fill": "#64748b"
+      },
+      {
+        "type": "circle",
+        "cx": 580,
+        "cy": 100,
+        "r": 8,
+        "fill": "#64748b"
+      },
+      {
+        "type": "circle",
+        "cx": 780,
+        "cy": 100,
+        "r": 8,
+        "fill": "#64748b"
+      }
+    ]
+  },
+  "alt_text": "Frise chronologique République, guerres, traités européens."
+}

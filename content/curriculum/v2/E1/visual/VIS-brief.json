@@ -1,0 +1,108 @@
+{
+  "resource_id": "E1-VIS-master",
+  "scene": {
+    "title": "Évaluation E1 — 120 min",
+    "width": 900,
+    "height": 220,
+    "background": "#ffffff",
+    "elements": [
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 70,
+        "width": 130,
+        "height": 55,
+        "fill": "#dbeafe"
+      },
+      {
+        "type": "text",
+        "x": 115,
+        "y": 100,
+        "anchor": "middle",
+        "fontSize": 11,
+        "text": "CO"
+      },
+      {
+        "type": "rect",
+        "x": 200,
+        "y": 70,
+        "width": 130,
+        "height": 55,
+        "fill": "#dcfce7"
+      },
+      {
+        "type": "text",
+        "x": 265,
+        "y": 100,
+        "anchor": "middle",
+        "fontSize": 11,
+        "text": "CE"
+      },
+      {
+        "type": "rect",
+        "x": 350,
+        "y": 70,
+        "width": 130,
+        "height": 55,
+        "fill": "#fef9c3"
+      },
+      {
+        "type": "text",
+        "x": 415,
+        "y": 100,
+        "anchor": "middle",
+        "fontSize": 11,
+        "text": "EE"
+      },
+      {
+        "type": "rect",
+        "x": 500,
+        "y": 70,
+        "width": 130,
+        "height": 55,
+        "fill": "#fee2e2"
+      },
+      {
+        "type": "text",
+        "x": 565,
+        "y": 100,
+        "anchor": "middle",
+        "fontSize": 11,
+        "text": "EO"
+      },
+      {
+        "type": "rect",
+        "x": 650,
+        "y": 70,
+        "width": 200,
+        "height": 55,
+        "fill": "#ede9fe"
+      },
+      {
+        "type": "text",
+        "x": 750,
+        "y": 95,
+        "anchor": "middle",
+        "fontSize": 11,
+        "text": "Civique CSP"
+      },
+      {
+        "type": "text",
+        "x": 750,
+        "y": 112,
+        "anchor": "middle",
+        "fontSize": 10,
+        "text": "abrégé"
+      },
+      {
+        "type": "text",
+        "x": 450,
+        "y": 170,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "Banque gelée · Total 120 min"
+      }
+    ]
+  },
+  "alt_text": "Diagramme timing E1 120 min : CO, CE, EE, EO, civique abrégé."
+}

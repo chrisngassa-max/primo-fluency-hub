@@ -1,0 +1,60 @@
+name: curriculum-worker
+
+# Runs the curriculum generation worker against Supabase.
+# - `repository_dispatch` (event_type: curriculum-batch) is fired right after
+#   a batch is started from the UI (via the `curriculum-batch` edge function),
+#   so the worker picks it up within seconds.
+# - `schedule` runs every 5 minutes as a safety net in case a dispatch is missed.
+# - `workflow_dispatch` allows manual re-runs from the Actions tab.
+
+on:
+  repository_dispatch:
+    types: [curriculum-batch]
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+    inputs:
+      batch_id:
+        description: "Optional batch UUID to target"
+        required: false
+        type: string
+
+concurrency:
+  group: curriculum-worker
+  cancel-in-progress: false
+
+jobs:
+  run-worker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    env:
+      # Storage layer — everything writes to Supabase, nothing to local disk
+      BATCH_STORE: supabase
+      STORAGE_PUBLISHER: supabase
+
+      # Supabase credentials (service role is required to write to storage + tables)
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+      # Optional AI providers — if unset, the worker falls back to fake/svg
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      GOOGLE_TTS_API_KEY: ${{ secrets.GOOGLE_TTS_API_KEY }}
+
+      # Batch targeting — dispatch payload wins over manual input
+      BATCH_ID: ${{ github.event.client_payload.batch_id || inputs.batch_id }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Run curriculum worker
+        run: npm run curriculum:worker

@@ -1,0 +1,111 @@
+[
+  {
+    "support_id": "S20-support-memoire",
+    "version": 1,
+    "niveau": "A1",
+    "consigne": "Écoutez. Associez les mots aux définitions.",
+    "aides": [
+      "Résistance = contre l'occupation",
+      "Sobriété = ton respectueux"
+    ],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "La Seconde Guerre mondiale a eu lieu :",
+        "options": [
+          "1939-1945",
+          "1789-1799",
+          "1958-1962"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "vrai_faux",
+        "enonce": "On parle de la Shoah avec sobriété."
+      }
+    ],
+    "corrige": {
+      "q1": "1939-1945",
+      "q2": true
+    },
+    "invariants_hash": "5ea1c81373a919b16c9ae0e1523546fd44b060842e344d169d67cac3629c29db"
+  },
+  {
+    "support_id": "S20-support-memoire",
+    "version": 1,
+    "niveau": "A2",
+    "consigne": "Présentez oralement un lieu de mémoire avec respect.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "qcm",
+        "enonce": "La Résistance a combattu :",
+        "options": [
+          "L'occupation",
+          "La mairie",
+          "Les impôts"
+        ]
+      },
+      {
+        "id": "q2",
+        "type": "reponse_courte",
+        "enonce": "Pourquoi la sobriété est-elle importante ?"
+      }
+    ],
+    "corrige": {
+      "q1": "L'occupation",
+      "q2": "Par respect pour les victimes et les visiteurs."
+    },
+    "invariants_hash": "5ea1c81373a919b16c9ae0e1523546fd44b060842e344d169d67cac3629c29db"
+  },
+  {
+    "support_id": "S20-support-memoire",
+    "version": 1,
+    "niveau": "B1",
+    "consigne": "Expliquez un repère de mémoire nationale et sa portée civique.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "reponse_longue",
+        "enonce": "Présentez la Résistance et la Shoah avec contexte."
+      },
+      {
+        "id": "q2",
+        "type": "reponse_longue",
+        "enonce": "Reliez mémoire et valeurs républicaines."
+      }
+    ],
+    "corrige": {
+      "q1": "Résistance = refus occupation ; Shoah = persécution des Juifs, ton sobre.",
+      "q2": "Liberté, égalité, vigilance démocratique."
+    },
+    "invariants_hash": "5ea1c81373a919b16c9ae0e1523546fd44b060842e344d169d67cac3629c29db"
+  },
+  {
+    "support_id": "S20-support-memoire",
+    "version": 1,
+    "niveau": "B2",
+    "consigne": "Analysez le rôle du patrimoine mémoriel ; nuancez les risques de maladresse.",
+    "aides": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "argumentation",
+        "enonce": "Pourquoi transmettre la mémoire nationale ?"
+      },
+      {
+        "id": "q2",
+        "type": "argumentation",
+        "enonce": "Quels écueils éviter dans une présentation ?"
+      }
+    ],
+    "corrige": {
+      "q1": "Réponse ouverte.",
+      "q2": "Sensationnalisme, confusion, manque de respect."
+    },
+    "invariants_hash": "5ea1c81373a919b16c9ae0e1523546fd44b060842e344d169d67cac3629c29db"
+  }
+]

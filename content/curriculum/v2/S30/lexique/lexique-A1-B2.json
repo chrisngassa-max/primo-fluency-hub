@@ -1,0 +1,50 @@
+{
+  "resource_id": "S30-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "implicite",
+      "definition_simple": "Non dit directement, à déduire.",
+      "exemple": "Indice implicite."
+    },
+    {
+      "mot": "expliciter",
+      "definition_simple": "Rendre clair ce qui est caché.",
+      "exemple": "Expliciter un principe."
+    },
+    {
+      "mot": "conforme",
+      "definition_simple": "Qui respecte la loi et les valeurs.",
+      "exemple": "Conduite conforme."
+    },
+    {
+      "mot": "dignité",
+      "definition_simple": "Respect dû à chaque personne.",
+      "exemple": "Dignité humaine."
+    },
+    {
+      "mot": "principe",
+      "definition_simple": "Valeur fondamentale.",
+      "exemple": "Principe républicain."
+    },
+    {
+      "mot": "prioriser",
+      "definition_simple": "Classer par importance.",
+      "exemple": "Prioriser les droits."
+    },
+    {
+      "mot": "inférence",
+      "definition_simple": "Déduction à partir d'indices.",
+      "exemple": "Faire une inférence."
+    },
+    {
+      "mot": "signalement",
+      "definition_simple": "Alerter une autorité compétente.",
+      "exemple": "Signaler une affiche."
+    },
+    {
+      "mot": "harcèlement",
+      "definition_simple": "Comportement répété nuisible.",
+      "exemple": "Pas de harcèlement."
+    }
+  ]
+}

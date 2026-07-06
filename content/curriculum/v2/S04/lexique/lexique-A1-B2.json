@@ -1,0 +1,45 @@
+{
+  "resource_id": "S04-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "école",
+      "definition_simple": "Le lieu où les enfants apprennent.",
+      "exemple": "Sa fille va à l'école le matin."
+    },
+    {
+      "mot": "classe",
+      "definition_simple": "Le groupe d'élèves et la salle où ils étudient.",
+      "exemple": "Il est dans la classe de CE1."
+    },
+    {
+      "mot": "absence",
+      "definition_simple": "Le fait de ne pas être présent.",
+      "exemple": "L'école signale une absence."
+    },
+    {
+      "mot": "justificatif",
+      "definition_simple": "Un document qui explique une situation.",
+      "exemple": "Il faut un justificatif pour l'absence."
+    },
+    {
+      "mot": "obligatoire",
+      "definition_simple": "Qui doit être fait, imposé par la loi.",
+      "exemple": "L'instruction est obligatoire."
+    },
+    {
+      "mot": "parent",
+      "definition_simple": "La mère ou le père d'un enfant.",
+      "exemple": "Les parents justifient l'absence."
+    },
+    {
+      "mot": "mixité",
+      "definition_simple": "La présence de filles et de garçons ensemble.",
+      "exemple": "La mixité est la règle à l'école publique."
+    },
+    {
+      "mot": "règlement",
+      "definition_simple": "L'ensemble des règles d'un lieu.",
+      "exemple": "Le règlement de l'école."
+    }
+  ]
+}

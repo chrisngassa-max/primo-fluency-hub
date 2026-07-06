@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "Inviolable",
+    "q2": true
+  },
+  "A2": {
+    "q1": "Interdite",
+    "q2": "Coexistence d'opinions/croyances."
+  },
+  "B1": {
+    "q1": "Structuré.",
+    "q2": "Contre-argument pertinent."
+  },
+  "B2": {
+    "q1": "Réponse ouverte.",
+    "q2": "Réponse ouverte."
+  }
+}

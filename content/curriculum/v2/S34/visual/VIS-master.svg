@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 260" width="900" height="260" role="img" aria-label="Corpus multi-supports">
+  <title>Corpus multi-supports</title>
+  <rect x="0" y="0" width="900" height="260" fill="#ffffff" />
+  <rect x="40" y="40" width="190" height="80" fill="#dbeafe" rx="0" />
+  <text x="135" y="85" font-size="13" font-family="sans-serif" fill="#111827" text-anchor="middle">Lumières</text>
+  <rect x="250" y="40" width="190" height="80" fill="#dcfce7" rx="0" />
+  <text x="345" y="85" font-size="13" font-family="sans-serif" fill="#111827" text-anchor="middle">Républiques</text>
+  <rect x="460" y="40" width="190" height="80" fill="#fee2e2" rx="0" />
+  <text x="555" y="85" font-size="13" font-family="sans-serif" fill="#111827" text-anchor="middle">Guerres</text>
+  <rect x="670" y="40" width="190" height="80" fill="#fef9c3" rx="0" />
+  <text x="765" y="85" font-size="13" font-family="sans-serif" fill="#111827" text-anchor="middle">Europe</text>
+  <line x1="135" y1="120" x2="765" y2="200" stroke="#64748b" stroke-width="2" />
+  <text x="450" y="230" font-size="14" font-family="sans-serif" fill="#111827" text-anchor="middle">Synthèse hiérarchisée</text>
+</svg>

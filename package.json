@@ -17,11 +17,21 @@
     "generate:pedagogical-images": "node scripts/generate-pedagogical-images-gemini.mjs",
     "import:logement-co-a2-b1": "node scripts/import-logement-co-a2-b2.mjs",
     "import:logement-co-a2-b2": "node scripts/import-logement-co-a2-b2.mjs",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "curriculum:preflight": "node scripts/curriculum/preflight.mjs",
+    "curriculum:convert-legacy-image-plan": "node scripts/curriculum/convert-legacy-image-plan.mjs",
+    "curriculum:generate": "node scripts/curriculum/generate-batch.mjs",
+    "curriculum:validate": "node scripts/curriculum/validate-batch.mjs",
+    "curriculum:publish": "node scripts/curriculum/publish-batch.mjs",
+    "curriculum:batch": "node scripts/curriculum/batch.mjs",
+    "curriculum:worker": "node scripts/curriculum/run-supabase-batch.mjs",
+    "curriculum:resume": "node scripts/curriculum/resume-batch.mjs",
+    "curriculum:report": "node scripts/curriculum/report-batch.mjs",
+    "curriculum:render-documents": "node scripts/curriculum/render-documents.mjs",
+    "curriculum:seed:plan": "node scripts/curriculum/generate-plan-seed-sql.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
-    "@lovable.dev/mcp-js": "^0.20.0",
     "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-alert-dialog": "^1.1.14",
     "@radix-ui/react-aspect-ratio": "^1.1.7",
@@ -73,7 +83,7 @@
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.9",
-    "zod": "^4.4.3"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",

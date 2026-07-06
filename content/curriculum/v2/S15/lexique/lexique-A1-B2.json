@@ -1,0 +1,45 @@
+{
+  "resource_id": "S15-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "Révolution",
+      "definition_simple": "Un grand changement politique et social.",
+      "exemple": "La Révolution française de 1789."
+    },
+    {
+      "mot": "monarchie",
+      "definition_simple": "Un système où un roi détient le pouvoir.",
+      "exemple": "La monarchie absolue prend fin."
+    },
+    {
+      "mot": "République",
+      "definition_simple": "Un régime sans roi, fondé sur des valeurs communes.",
+      "exemple": "La République est proclamée en 1792."
+    },
+    {
+      "mot": "déclaration",
+      "definition_simple": "Un texte solennel qui affirme des principes.",
+      "exemple": "La Déclaration des droits de l'homme."
+    },
+    {
+      "mot": "citoyen",
+      "definition_simple": "Une personne qui a des droits et des devoirs.",
+      "exemple": "Le citoyen a des droits garantis."
+    },
+    {
+      "mot": "droit",
+      "definition_simple": "Ce qui est garanti à une personne par la loi.",
+      "exemple": "La liberté est un droit."
+    },
+    {
+      "mot": "abolir",
+      "definition_simple": "Supprimer une règle ou un privilège.",
+      "exemple": "On abolit les privilèges."
+    },
+    {
+      "mot": "adopter",
+      "definition_simple": "Approuver officiellement un texte.",
+      "exemple": "On adopte la Déclaration."
+    }
+  ]
+}

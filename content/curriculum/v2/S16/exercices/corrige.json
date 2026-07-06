@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "La commune",
+    "q2": true
+  },
+  "A2": {
+    "q1": "L'Union européenne",
+    "q2": "Réponse ouverte : un monument, un paysage ou une tradition de son choix."
+  },
+  "B1": {
+    "q1": "La commune s'inscrit dans un departement, lui-meme dans une region ; la France reunit metropole et outre-mer.",
+    "q2": "Reponse ouverte : circulation facilitee, cooperation, echanges, projets communs."
+  },
+  "B2": {
+    "q1": "Reponse ouverte : diversite des paysages, cultures, savoir-faire, complementarite.",
+    "q2": "Reponse ouverte : articuler proximite locale, cadre national commun et cooperation europeenne sans opposition."
+  }
+}

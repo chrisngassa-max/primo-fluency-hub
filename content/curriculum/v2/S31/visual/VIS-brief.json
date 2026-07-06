@@ -1,0 +1,84 @@
+{
+  "resource_id": "S31-VIS-master",
+  "scene": {
+    "title": "Simulation CR S31",
+    "width": 900,
+    "height": 240,
+    "background": "#ffffff",
+    "elements": [
+      {
+        "type": "rect",
+        "x": 40,
+        "y": 70,
+        "width": 180,
+        "height": 60,
+        "fill": "#dbeafe"
+      },
+      {
+        "type": "text",
+        "x": 130,
+        "y": 105,
+        "anchor": "middle",
+        "fontSize": 12,
+        "text": "Langue B1 60"
+      },
+      {
+        "type": "rect",
+        "x": 250,
+        "y": 70,
+        "width": 180,
+        "height": 60,
+        "fill": "#fee2e2"
+      },
+      {
+        "type": "text",
+        "x": 340,
+        "y": 105,
+        "anchor": "middle",
+        "fontSize": 12,
+        "text": "Sim CR 45"
+      },
+      {
+        "type": "rect",
+        "x": 460,
+        "y": 70,
+        "width": 200,
+        "height": 60,
+        "fill": "#fef9c3"
+      },
+      {
+        "type": "text",
+        "x": 560,
+        "y": 105,
+        "anchor": "middle",
+        "fontSize": 11,
+        "text": "Distracteurs 35"
+      },
+      {
+        "type": "rect",
+        "x": 690,
+        "y": 70,
+        "width": 170,
+        "height": 60,
+        "fill": "#ede9fe"
+      },
+      {
+        "type": "text",
+        "x": 775,
+        "y": 105,
+        "anchor": "middle",
+        "fontSize": 12,
+        "text": "Reméd. 30"
+      },
+      {
+        "type": "text",
+        "x": 450,
+        "y": 180,
+        "anchor": "middle",
+        "fontSize": 13,
+        "text": "Banque verrouillée 40/45"
+      }
+    ]
+  },
+  "alt_text": "Blocs : Langue B1 60, Simulation CR 45, Analyse 35, Remédiation 30."
+}

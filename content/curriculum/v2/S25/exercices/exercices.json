@@ -1,0 +1,83 @@
+{
+  "session_code": "S25",
+  "variants": [
+    {
+      "niveau": "A1",
+      "consigne": "Lisez le rapport fictif. Identifiez une fragilité langue et une civique.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Le rapport après E2 est :",
+          "options": [
+            "Individuel et fictif",
+            "Collectif et officiel",
+            "Sans score"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "Langue et civique sont séparés."
+        }
+      ]
+    },
+    {
+      "niveau": "A2",
+      "consigne": "Refaites une tâche ciblée et notez une action du contrat.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Combien de tâches équivalentes ?",
+          "options": [
+            "2",
+            "5",
+            "10"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Citez une orientation possible."
+        }
+      ]
+    },
+    {
+      "niveau": "B1",
+      "consigne": "Construisez contrat et restitution séparée.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Rédigez votre contrat personnel (3 actions)."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Restitution : progrès langue vs civique."
+        }
+      ]
+    },
+    {
+      "niveau": "B2",
+      "consigne": "Argumentez votre orientation souhaitée après E2.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Pourquoi viser B1/CR ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Limites d'une consolidation A2 ?"
+        }
+      ]
+    }
+  ]
+}

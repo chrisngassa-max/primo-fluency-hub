@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Médiatrice : Bienvenue dans ce lieu de mémoire. Nous allons parler avec respect et calme.\nAïcha : Bonjour madame. Pourquoi ce lieu existe-t-il ?\nMédiatrice : Pour transmettre ce qui s'est passé pendant la Seconde Guerre mondiale, entre mille neuf cent trente-neuf et mille neuf cent quarante-cinq. Ici, nous évoquons la Résistance et la Shoah.\nAïcha : Qu'est-ce que la Résistance ?\nMédiatrice : Des hommes et des femmes qui ont refusé l'occupation et risqué leur vie pour la liberté.\nAïcha : Et la Shoah ?\nMédiatrice : C'est la persécution puis l'extermination des Juifs par le régime nazi. Nous en parlons avec grande sobriété, sans images choquantes inutiles.\nAïcha : Pourquoi la sobriété ?\nMédiatrice : Par respect pour les victimes et pour les visiteurs. Un lieu de mémoire n'est pas un spectacle.\nAïcha : Est-ce du patrimoine national ?\nMédiatrice : Oui. Ces lieux font partie de notre mémoire collective, comme d'autres monuments et musées.\nAïcha : Que doit retenir un citoyen ?\nMédiatrice : Que la République défend la liberté et l'égalité, et que l'histoire nous oblige à la vigilance.\nAïcha : Merci madame. C'était clair et respectueux.",
+  "transcript": "Médiatrice : Bienvenue dans ce lieu de mémoire. Nous allons parler avec respect et calme.\nAïcha : Bonjour madame. Pourquoi ce lieu existe-t-il ?\nMédiatrice : Pour transmettre ce qui s'est passé pendant la Seconde Guerre mondiale, entre mille neuf cent trente-neuf et mille neuf cent quarante-cinq. Ici, nous évoquons la Résistance et la Shoah.\nAïcha : Qu'est-ce que la Résistance ?\nMédiatrice : Des hommes et des femmes qui ont refusé l'occupation et risqué leur vie pour la liberté.\nAïcha : Et la Shoah ?\nMédiatrice : C'est la persécution puis l'extermination des Juifs par le régime nazi. Nous en parlons avec grande sobriété, sans images choquantes inutiles.\nAïcha : Pourquoi la sobriété ?\nMédiatrice : Par respect pour les victimes et pour les visiteurs. Un lieu de mémoire n'est pas un spectacle.\nAïcha : Est-ce du patrimoine national ?\nMédiatrice : Oui. Ces lieux font partie de notre mémoire collective, comme d'autres monuments et musées.\nAïcha : Que doit retenir un citoyen ?\nMédiatrice : Que la République défend la liberté et l'égalité, et que l'histoire nous oblige à la vigilance.\nAïcha : Merci madame. C'était clair et respectueux.",
+  "voice": "fr-FR-Wavenet-C",
+  "languageCode": "fr-FR",
+  "speaking_rate": 0.92,
+  "pauses": [
+    {
+      "after_word": 12,
+      "ms": 400
+    },
+    {
+      "after_word": 68,
+      "ms": 400
+    },
+    {
+      "after_word": 140,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 96,
+  "hash": "2b589da10c550773d55b3fdce9450802a7667891bdab97b3413de2c8e1bdca37"
+}

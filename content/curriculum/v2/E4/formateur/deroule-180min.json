@@ -1,0 +1,27 @@
+[
+  {
+    "phase": "Installation",
+    "duree_min": 10,
+    "description": "Consignes E4, banque gelée."
+  },
+  {
+    "phase": "TCF ciblé",
+    "duree_min": 35,
+    "description": "Échantillon selon profil."
+  },
+  {
+    "phase": "Civique NAT",
+    "duree_min": 45,
+    "description": "40 questions gelées."
+  },
+  {
+    "phase": "Entretien simulé",
+    "duree_min": 25,
+    "description": "Assimilation, relances."
+  },
+  {
+    "phase": "Clôture",
+    "duree_min": 5,
+    "description": "Information décision."
+  }
+]

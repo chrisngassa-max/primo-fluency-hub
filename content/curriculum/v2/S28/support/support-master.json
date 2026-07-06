@@ -1,0 +1,20 @@
+{
+  "support_id": "S28-support",
+  "personnages": [
+    "Omar (salarié fictif)",
+    "Représentant RH fictif"
+  ],
+  "situation": "Un salarié fictif rédige une réclamation formelle après une erreur sur sa fiche de paie et lit un document sur syndicats, impôts et solidarité.",
+  "faits": [
+    "Le travail déclaré ouvre des droits sociaux.",
+    "Les syndicats défendent les salariés collectivement.",
+    "Les impôts financent les services publics et la solidarité.",
+    "Une réclamation formelle décrit les faits et la demande.",
+    "L'environnement et la cohésion relèvent du vivre ensemble.",
+    "L'égalité professionnelle est un principe républicain."
+  ],
+  "nombres": [],
+  "dates": [],
+  "hash": "a3fefd099eba57628476a3422e0db073ac7e60f23836ff08b5c84eb90da36025",
+  "version": 1
+}

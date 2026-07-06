@@ -1,0 +1,67 @@
+{
+  "resource_id": "S25-QCM-civique",
+  "mention": "CSP",
+  "theme": "Consolidation, restitution et orientation",
+  "questions": [
+    {
+      "notion": "E2",
+      "type": "connaissance",
+      "enonce": "S25 s'appuie sur les résultats de :",
+      "options": [
+        "E2",
+        "S01",
+        "E4"
+      ],
+      "reponse": "E2",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "séparation",
+      "type": "connaissance",
+      "enonce": "Le rapport présente langue et civique :",
+      "options": [
+        "Séparément",
+        "En une seule note",
+        "Sans détail"
+      ],
+      "reponse": "Séparément",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "orientation",
+      "type": "mise_en_situation",
+      "enonce": "Une extension B1 vise :",
+      "options": [
+        "Le parcours CR",
+        "L'alphabétisation",
+        "Un concours sportif"
+      ],
+      "reponse": "Le parcours CR",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "contrat",
+      "type": "connaissance",
+      "enonce": "Le contrat personnel contient :",
+      "options": [
+        "Des actions concrètes",
+        "Des secrets",
+        "Rien"
+      ],
+      "reponse": "Des actions concrètes",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "tâches",
+      "type": "connaissance",
+      "enonce": "Deux tâches équivalentes ciblent :",
+      "options": [
+        "Les fragilités majeures",
+        "Des thèmes au hasard",
+        "Uniquement l'oral"
+      ],
+      "reponse": "Les fragilités majeures",
+      "official_status": "simulation_pedagogique"
+    }
+  ]
+}

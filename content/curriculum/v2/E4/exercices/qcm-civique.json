@@ -1,0 +1,67 @@
+{
+  "resource_id": "E4-QCM-civique",
+  "mention": "NAT",
+  "theme": "Évaluation NAT",
+  "questions": [
+    {
+      "notion": "E4 durée",
+      "type": "connaissance",
+      "enonce": "E4 dure :",
+      "options": [
+        "120 minutes",
+        "180 minutes",
+        "15 minutes"
+      ],
+      "reponse": "120 minutes",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "NAT",
+      "type": "connaissance",
+      "enonce": "E4 inclut civique :",
+      "options": [
+        "NAT complet gelé",
+        "CSP abrégé",
+        "Aucun civique"
+      ],
+      "reponse": "NAT complet gelé",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "entretien",
+      "type": "connaissance",
+      "enonce": "E4 comprend :",
+      "options": [
+        "Entretien d'assimilation simulé",
+        "Uniquement un dessin",
+        "Rien d'oral"
+      ],
+      "reponse": "Entretien d'assimilation simulé",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "banque",
+      "type": "connaissance",
+      "enonce": "La banque E4 :",
+      "options": [
+        "Est gelée",
+        "Change en direct",
+        "Est vide"
+      ],
+      "reponse": "Est gelée",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "décision",
+      "type": "mise_en_situation",
+      "enonce": "Après E4, une issue possible :",
+      "options": [
+        "Prêt à l'inscription",
+        "Exclusion automatique",
+        "Aucun suivi"
+      ],
+      "reponse": "Prêt à l'inscription",
+      "official_status": "simulation_pedagogique"
+    }
+  ]
+}

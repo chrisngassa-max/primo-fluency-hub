@@ -1,0 +1,419 @@
+{
+  "session_code": "S24",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Gestion du temps et répétition générale",
+  "support": {
+    "support_id": "S24-support",
+    "situation": "Simulation partielle chronométrée du TCF IRN et du civique CSP : banque de questions gelée, stratégie 32/40, enchaînement sans aide des compétences CO, CE, EE, EO.",
+    "personnages": [
+      "Apprenants",
+      "Formateur chronométreur"
+    ],
+    "faits": [
+      "La banque de questions est gelée : aucun nouvel item n'est créé.",
+      "La stratégie 32/40 vise trente-deux bonnes réponses sur quarante au civique.",
+      "Les épreuves s'enchaînent sans aide en respectant les durées officielles.",
+      "CO et CE sont traités ensemble dans le créneau de compréhension.",
+      "EE et EO ont des durées distinctes et strictes.",
+      "Une phase de remédiation suit la simulation pour analyser les erreurs."
+    ],
+    "nombres": [
+      32,
+      40,
+      180
+    ],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S24-CO-master",
+    "voice": "fr-FR-Wavenet-C",
+    "speaking_rate": 0.92,
+    "script": "Formateur : Bienvenue à la simulation partielle. Règles : banque gelée, chronomètre affiché, aucune aide pendant les épreuves.\nApprenant : Quel est l'ordre ?\nFormateur : Installation, puis compréhension orale et écrite ensemble, expression écrite, expression orale, civique quarante-cinq minutes, enfin remédiation. Total : cent quatre-vingts minutes.\nApprenant : Et le civique ?\nFormateur : Quarante questions, stratégie trente-deux sur quarante. Vous parcourez d'abord les connaissances rapides, vous bloquez les situations longues pour la fin si besoin.\nApprenant : Peut-on revenir en arrière ?\nFormateur : Oui sur le papier, mais le temps continue. Pas de nouveau fait : tout vient des séances précédentes.\nApprenant : Et si je suis fatigué après l'oral ?\nFormateur : C'est pour cela qu'on simule maintenant. Notez où vous perdez du temps. La remédiation ciblera vos erreurs dominantes.\nApprenant : D'accord. Nous commençons sans aide.",
+    "pauses": [
+      {
+        "after_word": 12,
+        "ms": 400
+      },
+      {
+        "after_word": 60,
+        "ms": 400
+      },
+      {
+        "after_word": 130,
+        "ms": 500
+      }
+    ]
+  },
+  "visual": {
+    "resource_id": "S24-VIS-master",
+    "alt_text": "Planning chronométré simulation : CO+CE, EE, EO, civique 45 min, remédiation.",
+    "scene": {
+      "title": "Simulation chronométrée S24",
+      "width": 900,
+      "height": 280,
+      "background": "#ffffff",
+      "elements": [
+        {
+          "type": "rect",
+          "x": 40,
+          "y": 40,
+          "width": 120,
+          "height": 50,
+          "fill": "#e0e7ff"
+        },
+        {
+          "type": "text",
+          "x": 100,
+          "y": 70,
+          "anchor": "middle",
+          "fontSize": 12,
+          "text": "Install. 10"
+        },
+        {
+          "type": "rect",
+          "x": 180,
+          "y": 40,
+          "width": 140,
+          "height": 50,
+          "fill": "#dbeafe"
+        },
+        {
+          "type": "text",
+          "x": 250,
+          "y": 70,
+          "anchor": "middle",
+          "fontSize": 11,
+          "text": "CO+CE 55"
+        },
+        {
+          "type": "rect",
+          "x": 340,
+          "y": 40,
+          "width": 100,
+          "height": 50,
+          "fill": "#dcfce7"
+        },
+        {
+          "type": "text",
+          "x": 390,
+          "y": 70,
+          "anchor": "middle",
+          "fontSize": 12,
+          "text": "EE 30"
+        },
+        {
+          "type": "rect",
+          "x": 460,
+          "y": 40,
+          "width": 90,
+          "height": 50,
+          "fill": "#fef9c3"
+        },
+        {
+          "type": "text",
+          "x": 505,
+          "y": 70,
+          "anchor": "middle",
+          "fontSize": 12,
+          "text": "EO 10"
+        },
+        {
+          "type": "rect",
+          "x": 570,
+          "y": 40,
+          "width": 120,
+          "height": 50,
+          "fill": "#fee2e2"
+        },
+        {
+          "type": "text",
+          "x": 630,
+          "y": 70,
+          "anchor": "middle",
+          "fontSize": 11,
+          "text": "Civique 45"
+        },
+        {
+          "type": "rect",
+          "x": 710,
+          "y": 40,
+          "width": 130,
+          "height": 50,
+          "fill": "#ede9fe"
+        },
+        {
+          "type": "text",
+          "x": 775,
+          "y": 70,
+          "anchor": "middle",
+          "fontSize": 11,
+          "text": "Reméd. 30"
+        },
+        {
+          "type": "text",
+          "x": 450,
+          "y": 150,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "Banque gelée · Stratégie 32/40"
+        }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S24-LEX-A1-B2",
+    "mots": [
+      {
+        "mot": "chronométré",
+        "definition_simple": "Avec un temps limité strict.",
+        "exemple": "Épreuve chronométrée."
+      },
+      {
+        "mot": "banque gelée",
+        "definition_simple": "Ensemble fixe de questions verrouillées.",
+        "exemple": "Banque gelée sans nouvel item."
+      },
+      {
+        "mot": "stratégie",
+        "definition_simple": "Plan pour réussir l'épreuve.",
+        "exemple": "Stratégie 32/40."
+      },
+      {
+        "mot": "enchaînement",
+        "definition_simple": "Succession des épreuves sans pause longue.",
+        "exemple": "Enchaîner CO CE EE EO."
+      },
+      {
+        "mot": "remédiation",
+        "definition_simple": "Travail correctif après la simulation.",
+        "exemple": "Phase remédiation trente minutes."
+      },
+      {
+        "mot": "simulation",
+        "definition_simple": "Reproduction des conditions d'examen.",
+        "exemple": "Simulation partielle S24."
+      },
+      {
+        "mot": "autonomie",
+        "definition_simple": "Sans aide du formateur.",
+        "exemple": "Répondre en autonomie."
+      },
+      {
+        "mot": "civique",
+        "definition_simple": "Épreuve de connaissances et situations.",
+        "exemple": "Quarante questions civiques."
+      },
+      {
+        "mot": "fatigue",
+        "definition_simple": "Baisse d'attention en fin d'épreuve.",
+        "exemple": "Gérer la fatigue au civique."
+      }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Lisez le planning. Associez durées et épreuves.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Durée civique :",
+          "options": [
+            "45 minutes",
+            "10 minutes",
+            "90 minutes"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "La banque est gelée."
+        }
+      ],
+      "corrige": {
+        "q1": "45 minutes",
+        "q2": true
+      }
+    },
+    "A2": {
+      "consigne": "Expliquez la stratégie 32/40.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Objectif civique stratégie :",
+          "options": [
+            "32/40",
+            "20/40",
+            "40/40"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Combien de minutes pour EE ?"
+        }
+      ],
+      "corrige": {
+        "q1": "32/40",
+        "q2": "Trente minutes."
+      }
+    },
+    "B1": {
+      "consigne": "Réalisez la simulation partielle et analysez votre gestion du temps.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Où avez-vous perdu le plus de temps ?"
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Quelle stratégie civique appliquée ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Réponse personnelle argumentée.",
+        "q2": "Connaissances d'abord, situations ensuite, etc."
+      }
+    },
+    "B2": {
+      "consigne": "Évaluez la simulation et proposez un plan de remédiation.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "La simulation sans aide est-elle utile ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Comment optimiser le créneau civique 45 min ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Réponse ouverte.",
+        "q2": "Réponse ouverte : priorisation, pas de blocage."
+      }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S24-QCM-civique",
+    "mention": "CSP",
+    "theme": "Gestion du temps et répétition générale",
+    "questions": [
+      {
+        "notion": "stratégie",
+        "type": "connaissance",
+        "enonce": "La stratégie 32/40 signifie viser :",
+        "options": [
+          "32 bonnes réponses sur 40",
+          "32 minutes sur 40",
+          "32 thèmes sur 40"
+        ],
+        "reponse": "32 bonnes réponses sur 40",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "banque",
+        "type": "connaissance",
+        "enonce": "Une banque gelée signifie :",
+        "options": [
+          "Questions fixes verrouillées",
+          "Nouvelles questions chaque jour",
+          "Aucune question"
+        ],
+        "reponse": "Questions fixes verrouillées",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "durée",
+        "type": "connaissance",
+        "enonce": "Le civique CSP complet dure :",
+        "options": [
+          "45 minutes",
+          "5 minutes",
+          "120 minutes"
+        ],
+        "reponse": "45 minutes",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "questions",
+        "type": "connaissance",
+        "enonce": "Le civique CSP comporte :",
+        "options": [
+          "40 questions",
+          "10 questions",
+          "100 questions"
+        ],
+        "reponse": "40 questions",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "simulation",
+        "type": "mise_en_situation",
+        "enonce": "Pendant la simulation chronométrée :",
+        "options": [
+          "Aucune aide du formateur",
+          "Aide permanente",
+          "Correction immédiate"
+        ],
+        "reponse": "Aucune aide du formateur",
+        "official_status": "simulation_pedagogique"
+      }
+    ]
+  },
+  "devoirs": {
+    "A1": "Mémoriser le planning S24.",
+    "A2": "Fiche stratégie 32/40.",
+    "B1": "Auto-bilan après simulation.",
+    "B2": "Plan remédiation personnel."
+  },
+  "formateur": {
+    "fiche_formateur": "Simulation partielle chronométrée 180 min. Banque gelée. CO+CE 55, EE 30, EO 10, Civique 45, Remédiation 30. Stratégie 32/40.",
+    "deroule_180min": [
+      {
+        "phase": "Installation",
+        "duree_min": 10,
+        "description": "Consignes, chronomètre, banque gelée affichée."
+      },
+      {
+        "phase": "CO + CE",
+        "duree_min": 55,
+        "description": "Compréhension orale et écrite enchaînées, sans aide."
+      },
+      {
+        "phase": "EE",
+        "duree_min": 30,
+        "description": "Trois tâches expression écrite chronométrées."
+      },
+      {
+        "phase": "EO",
+        "duree_min": 10,
+        "description": "Échantillon expression orale chronométré."
+      },
+      {
+        "phase": "Civique",
+        "duree_min": 45,
+        "description": "40 questions CSP, stratégie 32/40."
+      },
+      {
+        "phase": "Remédiation",
+        "duree_min": 30,
+        "description": "Analyse erreurs et plan correctif."
+      }
+    ],
+    "adaptation_rules": [
+      "Strict chronométrage.",
+      "Banque gelée : zéro nouvel item.",
+      "Remédiation après correction, pas pendant."
+    ]
+  }
+}

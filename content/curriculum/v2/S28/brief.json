@@ -1,0 +1,328 @@
+{
+  "session_code": "S28",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Travail, syndicats, impôts et solidarité",
+  "support": {
+    "support_id": "S28-support",
+    "situation": "Un salarié fictif rédige une réclamation formelle après une erreur sur sa fiche de paie et lit un document sur syndicats, impôts et solidarité.",
+    "personnages": [
+      "Omar (salarié fictif)",
+      "Représentant RH fictif"
+    ],
+    "faits": [
+      "Le travail déclaré ouvre des droits sociaux.",
+      "Les syndicats défendent les salariés collectivement.",
+      "Les impôts financent les services publics et la solidarité.",
+      "Une réclamation formelle décrit les faits et la demande.",
+      "L'environnement et la cohésion relèvent du vivre ensemble.",
+      "L'égalité professionnelle est un principe républicain."
+    ],
+    "nombres": [],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S28-CO-master",
+    "voice": "fr-FR-Wavenet-C",
+    "speaking_rate": 0.92,
+    "script": "Omar : Madame, je vous écris une réclamation formelle : ma fiche de paie de mars compte dix heures en moins.\nRH : Nous allons vérifier. Votre contrat est bien à temps plein ?\nOmar : Oui. Je joins les pointages. Je demande une régularisation avant le dix.\nRH : D'accord. Vous pouvez aussi informer les délégués syndicaux si besoin.\nOmar : Les syndicats aident à défendre les salariés collectivement ?\nRH : Oui, c'est leur rôle. Les impôts, eux, financent la sécurité sociale et les services publics : solidarité nationale.\nOmar : Et l'égalité femmes-hommes au travail ?\nRH : C'est un principe légal. Toute discrimination est interdite.\nOmar : Merci. J'attends votre réponse écrite.",
+    "pauses": [
+      {
+        "after_word": 12,
+        "ms": 400
+      },
+      {
+        "after_word": 60,
+        "ms": 400
+      },
+      {
+        "after_word": 130,
+        "ms": 500
+      }
+    ]
+  },
+  "visual": {
+    "resource_id": "S28-VIS-master",
+    "alt_text": "Document fiche de paie fictive et modèle de réclamation.",
+    "scene": {
+      "title": "Travail et solidarité",
+      "width": 900,
+      "height": 240,
+      "background": "#ffffff",
+      "elements": [
+        {
+          "type": "rect",
+          "x": 200,
+          "y": 60,
+          "width": 500,
+          "height": 100,
+          "rx": 10,
+          "fill": "#e0e7ff"
+        },
+        {
+          "type": "text",
+          "x": 450,
+          "y": 115,
+          "anchor": "middle",
+          "fontSize": 16,
+          "text": "Contrat · Syndicats · Impôts"
+        }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S28-LEX-A1-B2",
+    "mots": [
+      {
+        "mot": "réclamation",
+        "definition_simple": "Demande formelle de correction.",
+        "exemple": "Réclamation sur la paie."
+      },
+      {
+        "mot": "syndicat",
+        "definition_simple": "Organisation qui défend les salariés.",
+        "exemple": "Délégué syndical."
+      },
+      {
+        "mot": "impôt",
+        "definition_simple": "Contribution pour financer l'État.",
+        "exemple": "Impôts et services publics."
+      },
+      {
+        "mot": "solidarité",
+        "definition_simple": "Entraide et protection collective.",
+        "exemple": "Solidarité nationale."
+      },
+      {
+        "mot": "fiche de paie",
+        "definition_simple": "Document des salaires et cotisations.",
+        "exemple": "Vérifier la fiche de paie."
+      },
+      {
+        "mot": "contrat",
+        "definition_simple": "Accord de travail écrit.",
+        "exemple": "Contrat à temps plein."
+      },
+      {
+        "mot": "déclaré",
+        "definition_simple": "Travail connu des administrations.",
+        "exemple": "Travail déclaré."
+      },
+      {
+        "mot": "égalité",
+        "definition_simple": "Mêmes droits sans discrimination.",
+        "exemple": "Égalité professionnelle."
+      },
+      {
+        "mot": "régularisation",
+        "definition_simple": "Correction d'une erreur.",
+        "exemple": "Régulariser la paie."
+      }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Identifiez l'erreur sur la fiche fictive.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Omar réclame :",
+          "options": [
+            "Une régularisation de paie",
+            "Des vacances",
+            "Un passeport"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "Les syndicats défendent les salariés."
+        }
+      ],
+      "corrige": {
+        "q1": "Une régularisation de paie",
+        "q2": true
+      }
+    },
+    "A2": {
+      "consigne": "Rédigez une réclamation courte.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Les impôts financent :",
+          "options": [
+            "Services publics",
+            "Uniquement les stades privés",
+            "Rien"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Un élément d'une réclamation formelle ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Services publics",
+        "q2": "Faits, demande, date."
+      }
+    },
+    "B1": {
+      "consigne": "Réclamation complète + interprétation document social.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Rédigez la réclamation formelle."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Reliez impôts et solidarité."
+        }
+      ],
+      "corrige": {
+        "q1": "Forme formelle, faits précis.",
+        "q2": "Financement protection sociale."
+      }
+    },
+    "B2": {
+      "consigne": "Analysez droits du salarié et devoirs de l'employeur.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Rôle des syndicats aujourd'hui ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Solidarité vs individualisme ?"
+        }
+      ],
+      "corrige": {
+        "q1": "Réponse ouverte.",
+        "q2": "Réponse ouverte."
+      }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S28-QCM-civique",
+    "mention": "CR",
+    "theme": "Vivre dans la société française",
+    "questions": [
+      {
+        "notion": "syndicats",
+        "type": "connaissance",
+        "enonce": "Un syndicat défend :",
+        "options": [
+          "Les salariés",
+          "Uniquement les patrons",
+          "Les animaux"
+        ],
+        "reponse": "Les salariés",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "impôts",
+        "type": "connaissance",
+        "enonce": "Les impôts servent notamment à :",
+        "options": [
+          "Financer les services publics",
+          "Payer les courses",
+          "Supprimer les lois"
+        ],
+        "reponse": "Financer les services publics",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "travail",
+        "type": "connaissance",
+        "enonce": "Le travail déclaré :",
+        "options": [
+          "Ouvre des droits sociaux",
+          "N'a aucun effet",
+          "Est interdit"
+        ],
+        "reponse": "Ouvre des droits sociaux",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "réclamation",
+        "type": "mise_en_situation",
+        "enonce": "Une réclamation formelle doit :",
+        "options": [
+          "Décrire les faits et la demande",
+          "Être une insulte",
+          "Rester vide"
+        ],
+        "reponse": "Décrire les faits et la demande",
+        "official_status": "simulation_pedagogique"
+      },
+      {
+        "notion": "égalité",
+        "type": "connaissance",
+        "enonce": "L'égalité professionnelle est :",
+        "options": [
+          "Un principe républicain",
+          "Interdite",
+          "Facultative seulement"
+        ],
+        "reponse": "Un principe républicain",
+        "official_status": "simulation_pedagogique"
+      }
+    ]
+  },
+  "devoirs": {
+    "A1": "Souligner l'erreur paie fictive.",
+    "A2": "Réclamation 5 phrases.",
+    "B1": "Réclamation + courriel RH.",
+    "B2": "Texte syndicats/impôts."
+  },
+  "formateur": {
+    "fiche_formateur": "B1 mixte : réclamation formelle, document social, syndicats, impôts, solidarité.",
+    "deroule_180min": [
+      {
+        "phase": "Rituel civique",
+        "duree_min": 10,
+        "description": "Travail et vivre en société."
+      },
+      {
+        "phase": "Activation + lexique",
+        "duree_min": 20,
+        "description": "Découverte et réactivation du lexique de la séance."
+      },
+      {
+        "phase": "Support invariant CO/CE",
+        "duree_min": 50,
+        "description": "Écoute/lecture du support invariant, compréhension globale puis détaillée."
+      },
+      {
+        "phase": "Ateliers différenciés",
+        "duree_min": 60,
+        "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du même support."
+      },
+      {
+        "phase": "Production EE/EO",
+        "duree_min": 30,
+        "description": "Production selon la compétence dominante de la séance."
+      },
+      {
+        "phase": "Fixation",
+        "duree_min": 10,
+        "description": "Synthèse collective, QCM civique, devoir personnalisé."
+      }
+    ],
+    "adaptation_rules": [
+      "Documents paie fictifs.",
+      "Modèle réclamation avant production.",
+      "Pas de vraies entreprises."
+    ]
+  }
+}

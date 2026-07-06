@@ -1,0 +1,138 @@
+{
+  "session_code": "S15",
+  "plan_version": "curriculum-v2.0",
+  "titre": "1789, droits et République",
+  "support": {
+    "support_id": "S15-support-1789",
+    "situation": "Une narration historique présente des repères validés autour de 1789 : la Révolution française, la Déclaration des droits de l'homme et du citoyen, la fin de la monarchie absolue et la proclamation de la République.",
+    "personnages": ["Narrateur (récit historique)"],
+    "faits": [
+      "La Révolution française commence en 1789.",
+      "La Déclaration des droits de l'homme et du citoyen est adoptée en 1789.",
+      "La Révolution met fin à la monarchie absolue.",
+      "La Première République est proclamée en 1792.",
+      "La Déclaration affirme la liberté et l'égalité des droits."
+    ],
+    "nombres": [1789, 1792],
+    "dates": ["1789", "1792"],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S15-CO-master",
+    "voice": "fr-FR-Wavenet-D",
+    "speaking_rate": 0.9,
+    "script": "Narrateur : Voici un récit sur une période très importante de l'histoire de France.\nEn mille sept cent quatre-vingt-neuf, une grande révolution commence. On l'appelle la Révolution française.\nAvant, le pouvoir appartenait au roi seul : c'était la monarchie absolue.\nLa même année, mille sept cent quatre-vingt-neuf, un texte majeur est adopté : la Déclaration des droits de l'homme et du citoyen. Elle affirme que les hommes naissent libres et égaux en droits.\nLa Révolution met fin à la monarchie absolue et transforme la société.\nEn mille sept cent quatre-vingt-douze, la République est proclamée pour la première fois.\nEn résumé : mille sept cent quatre-vingt-neuf marque la Révolution et la Déclaration des droits ; mille sept cent quatre-vingt-douze marque la première République. Ces repères fondent des valeurs encore présentes aujourd'hui.",
+    "pauses": [
+      { "after_word": 14, "ms": 500 },
+      { "after_word": 60, "ms": 400 },
+      { "after_word": 110, "ms": 500 }
+    ]
+  },
+  "visual": {
+    "resource_id": "S15-VIS-master",
+    "alt_text": "Frise chronologique schematique avec deux reperes : 1789 Revolution et Declaration des droits, 1792 premiere Republique, reliés sur une ligne du temps, sans image d'archive.",
+    "scene": {
+      "title": "Repères de 1789 à 1792",
+      "width": 900,
+      "height": 240,
+      "background": "#ffffff",
+      "elements": [
+        { "type": "line", "x1": 60, "y1": 140, "x2": 840, "y2": 140, "stroke": "#374151", "strokeWidth": 3 },
+        { "type": "circle", "cx": 220, "cy": 140, "r": 8, "fill": "#1e3a8a" },
+        { "type": "rect", "x": 110, "y": 60, "width": 240, "height": 60, "rx": 8, "fill": "#dbeafe" },
+        { "type": "text", "x": 230, "y": 85, "anchor": "middle", "fontSize": 14, "text": "1789 — Révolution" },
+        { "type": "text", "x": 230, "y": 105, "anchor": "middle", "fontSize": 12, "text": "Déclaration des droits" },
+        { "type": "circle", "cx": 640, "cy": 140, "r": 8, "fill": "#b91c1c" },
+        { "type": "rect", "x": 520, "y": 60, "width": 240, "height": 60, "rx": 8, "fill": "#fee2e2" },
+        { "type": "text", "x": 640, "y": 85, "anchor": "middle", "fontSize": 14, "text": "1792 — République" },
+        { "type": "text", "x": 640, "y": 105, "anchor": "middle", "fontSize": 12, "text": "première proclamation" },
+        { "type": "text", "x": 220, "y": 180, "anchor": "middle", "fontSize": 12, "text": "fin de la monarchie absolue" }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S15-LEX-A1-B2",
+    "mots": [
+      { "mot": "Révolution", "definition_simple": "Un grand changement politique et social.", "exemple": "La Révolution française de 1789." },
+      { "mot": "monarchie", "definition_simple": "Un système où un roi détient le pouvoir.", "exemple": "La monarchie absolue prend fin." },
+      { "mot": "République", "definition_simple": "Un régime sans roi, fondé sur des valeurs communes.", "exemple": "La République est proclamée en 1792." },
+      { "mot": "déclaration", "definition_simple": "Un texte solennel qui affirme des principes.", "exemple": "La Déclaration des droits de l'homme." },
+      { "mot": "citoyen", "definition_simple": "Une personne qui a des droits et des devoirs.", "exemple": "Le citoyen a des droits garantis." },
+      { "mot": "droit", "definition_simple": "Ce qui est garanti à une personne par la loi.", "exemple": "La liberté est un droit." },
+      { "mot": "abolir", "definition_simple": "Supprimer une règle ou un privilège.", "exemple": "On abolit les privilèges." },
+      { "mot": "adopter", "definition_simple": "Approuver officiellement un texte.", "exemple": "On adopte la Déclaration." }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Écoutez le récit. Placez les deux repères (1789, 1792) sur la frise.",
+      "aides": ["1789 = Révolution", "1792 = République", "Mots utiles : roi, droit, déclaration"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "En quelle année commence la Révolution française ?", "options": ["1789", "1848", "1958"] },
+        { "id": "q2", "type": "vrai_faux", "enonce": "La Déclaration des droits de l'homme date de 1789." }
+      ],
+      "corrige": { "q1": "1789", "q2": true }
+    },
+    "A2": {
+      "consigne": "Racontez un événement de 1789 et expliquez une de ses conséquences.",
+      "aides": ["Pensez à : Révolution, droits, monarchie"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "En quelle année la République est-elle proclamée pour la première fois ?", "options": ["1789", "1792", "1804"] },
+        { "id": "q2", "type": "reponse_courte", "enonce": "Citez une conséquence de la Révolution." }
+      ],
+      "corrige": { "q1": "1792", "q2": "La fin de la monarchie absolue / l'adoption de la Déclaration des droits (une réponse suffit)." }
+    },
+    "B1": {
+      "consigne": "Racontez la période 1789-1792 et expliquez pourquoi la Déclaration des droits est un texte fondateur.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "reponse_longue", "enonce": "Racontez, dans l'ordre, les repères de 1789 à 1792." },
+        { "id": "q2", "type": "reponse_longue", "enonce": "Expliquez ce que change la Déclaration des droits de l'homme et du citoyen." }
+      ],
+      "corrige": { "q1": "1789 : Revolution et Declaration des droits, fin de la monarchie absolue ; 1792 : premiere Republique.", "q2": "Elle affirme la liberte et l'egalite des droits, fondement des valeurs republicaines actuelles." }
+    },
+    "B2": {
+      "consigne": "Analysez l'héritage de 1789 dans les valeurs actuelles de la République et nuancez la portée de la Déclaration à son époque.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "argumentation", "enonce": "Argumentez : en quoi 1789 influence-t-il encore les droits d'aujourd'hui ?" },
+        { "id": "q2", "type": "argumentation", "enonce": "Nuancez : la Déclaration de 1789 était-elle appliquée à tous à l'époque ? Justifiez." }
+      ],
+      "corrige": { "q1": "Reponse ouverte : liberte, egalite des droits, souverainete du peuple, base des textes actuels.", "q2": "Reponse ouverte : principes universels mais application limitee a l'epoque (droits progressivement etendus)." }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S15-QCM-civique",
+    "mention": "CSP",
+    "theme": "Histoire, géographie, culture",
+    "questions": [
+      { "notion": "date de la Révolution", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "La Révolution française commence en :", "options": ["1789", "1815", "1914"], "reponse": "1789" },
+      { "notion": "Déclaration des droits", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "La Déclaration des droits de l'homme et du citoyen affirme :", "options": ["La liberté et l'égalité des droits", "Le pouvoir absolu du roi", "L'interdiction de voter"], "reponse": "La liberté et l'égalité des droits" },
+      { "notion": "fin de la monarchie absolue", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "La Révolution met fin à :", "options": ["La monarchie absolue", "La République", "La démocratie"], "reponse": "La monarchie absolue" },
+      { "notion": "première République", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "La première République est proclamée en :", "options": ["1792", "1789", "1848"], "reponse": "1792" },
+      { "notion": "héritage", "type": "mise_en_situation", "official_status": "simulation_pedagogique", "enonce": "La devise « Liberté, Égalité, Fraternité » puise ses racines dans :", "options": ["Les idées de 1789", "Le Moyen Âge", "L'Antiquité romaine seule"], "reponse": "Les idées de 1789" }
+    ]
+  },
+  "devoirs": {
+    "A1": "À la maison : placez 1789 et 1792 sur une frise et associez chacun à un événement.",
+    "A2": "À la maison : écrivez 5 phrases pour raconter un événement de 1789 et sa conséquence.",
+    "B1": "À la maison : rédigez un court récit chronologique de 1789 à 1792.",
+    "B2": "À la maison : rédigez un paragraphe argumenté sur l'héritage de 1789 aujourd'hui."
+  },
+  "formateur": {
+    "fiche_formateur": "Séance 1789 : chaque apprenant doit savoir (1) situer 1789 et 1792, (2) raconter un événement et sa conséquence, (3) comprendre la portée de la Déclaration des droits. La frise est déterministe ; aucune fausse photographie historique n'est utilisée.",
+    "deroule_180min": [
+      { "phase": "Rituel civique", "duree_min": 10, "description": "Lecture de la frise 1789-1792." },
+      { "phase": "Activation + lexique", "duree_min": 20, "description": "Decouverte du lexique (Revolution, monarchie, declaration, abolir...)." },
+      { "phase": "Support invariant CO/CE", "duree_min": 50, "description": "Ecoute de la narration historique et reperage des dates." },
+      { "phase": "Ateliers differencies", "duree_min": 60, "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du meme support." },
+      { "phase": "Production EE/EO", "duree_min": 30, "description": "Raconter un evenement et expliquer sa consequence." },
+      { "phase": "Fixation", "duree_min": 10, "description": "Synthese, reperes CSP, QCM civique, devoir." }
+    ],
+    "adaptation_rules": [
+      "S'en tenir aux reperes valides (1789, 1792) sans surcharge de dates secondaires.",
+      "Ne jamais generer de fausse image d'archive : la frise reste schematique.",
+      "Distinguer le fait historique de son heritage actuel lors de la synthese."
+    ]
+  }
+}

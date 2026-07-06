@@ -1,0 +1,67 @@
+{
+  "resource_id": "S33-QCM-civique",
+  "mention": "NAT",
+  "theme": "Droits et devoirs",
+  "questions": [
+    {
+      "notion": "dignité",
+      "type": "connaissance",
+      "enonce": "La dignité humaine est :",
+      "options": [
+        "Inviolable",
+        "Négociable à tout moment",
+        "Absente du droit"
+      ],
+      "reponse": "Inviolable",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "pluralisme",
+      "type": "connaissance",
+      "enonce": "Le pluralisme permet :",
+      "options": [
+        "La coexistence d'opinions",
+        "Une seule opinion",
+        "L'absence de loi"
+      ],
+      "reponse": "La coexistence d'opinions",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "expression",
+      "type": "connaissance",
+      "enonce": "La diffamation est :",
+      "options": [
+        "Interdite",
+        "Un devoir",
+        "Une fête"
+      ],
+      "reponse": "Interdite",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "objection",
+      "type": "mise_en_situation",
+      "enonce": "Intégrer une objection, c'est :",
+      "options": [
+        "Y répondre dans sa conclusion",
+        "L'ignorer",
+        "Insulter"
+      ],
+      "reponse": "Y répondre dans sa conclusion",
+      "official_status": "simulation_pedagogique"
+    },
+    {
+      "notion": "laïcité",
+      "type": "connaissance",
+      "enonce": "La laïcité protège :",
+      "options": [
+        "La liberté de conscience",
+        "Une religion d'État",
+        "L'absence de règles"
+      ],
+      "reponse": "La liberté de conscience",
+      "official_status": "simulation_pedagogique"
+    }
+  ]
+}

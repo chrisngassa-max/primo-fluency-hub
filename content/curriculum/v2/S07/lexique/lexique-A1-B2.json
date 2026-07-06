@@ -1,0 +1,45 @@
+{
+  "resource_id": "S07-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "préfecture",
+      "definition_simple": "L'administration qui gère notamment les titres de séjour.",
+      "exemple": "Il a un dossier à la préfecture."
+    },
+    {
+      "mot": "titre",
+      "definition_simple": "Le document officiel qui autorise à séjourner.",
+      "exemple": "Il attend son titre de séjour."
+    },
+    {
+      "mot": "dossier",
+      "definition_simple": "L'ensemble des documents d'une demande.",
+      "exemple": "Son dossier est presque complet."
+    },
+    {
+      "mot": "justificatif",
+      "definition_simple": "Un document qui prouve une information.",
+      "exemple": "Un justificatif de domicile."
+    },
+    {
+      "mot": "échéance",
+      "definition_simple": "La date limite à ne pas dépasser.",
+      "exemple": "Répondez avant l'échéance."
+    },
+    {
+      "mot": "rendez-vous",
+      "definition_simple": "Un moment fixé pour être reçu.",
+      "exemple": "Il prend un rendez-vous en ligne."
+    },
+    {
+      "mot": "joindre",
+      "definition_simple": "Ajouter un document à un message.",
+      "exemple": "Joignez le justificatif au courriel."
+    },
+    {
+      "mot": "transmettre",
+      "definition_simple": "Envoyer un document à quelqu'un.",
+      "exemple": "Transmettez la pièce demandée."
+    }
+  ]
+}

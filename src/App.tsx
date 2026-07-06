@@ -75,8 +75,10 @@ import AnalyticsErreursPage from "@/pages/formateur/AnalyticsErreursPage";
 import AuthRelayReset from "@/pages/AuthRelayReset";
 import SandboxControlPanel from "@/pages/formateur/SandboxControlPanel";
 import PreparationExamenHubPage from "@/pages/formateur/PreparationExamenHubPage";
+import PreparationCiviquePage from "@/pages/formateur/PreparationCiviquePage";
 import FicheEleveIpePage from "@/pages/formateur/FicheEleveIpePage";
 import FicheGroupeIpePage from "@/pages/formateur/FicheGroupeIpePage";
+import ProductionParcours from "@/pages/formateur/ProductionParcours";
 
 const queryClient = new QueryClient();
 
@@ -163,6 +165,7 @@ const App = () => (
               <Route path="import-programme" element={<ImportProgramme />} />
               <Route path="parcours" element={<ParcoursPage />} />
               <Route path="parcours/:parcoursId" element={<ParcoursDetail />} />
+              <Route path="production-parcours" element={<ProductionParcours />} />
               <Route path="rapports" element={<RapportsPage />} />
               <Route path="suivi-devoirs" element={<SuiviDevoirsPage />} />
               <Route path="signalements" element={<SignalementsPage />} />
@@ -180,6 +183,7 @@ const App = () => (
               <Route path="positionnement" element={<PositionnementPage />} />
               <Route path="analytics-erreurs" element={<AnalyticsErreursPage />} />
               <Route path="preparation-examen" element={<PreparationExamenHubPage />} />
+              <Route path="preparation-civique" element={<PreparationCiviquePage />} />
               <Route path="preparation-examen/eleve/:eleveId" element={<FicheEleveIpePage />} />
               <Route path="preparation-examen/groupe/:groupeId" element={<FicheGroupeIpePage />} />
               <Route

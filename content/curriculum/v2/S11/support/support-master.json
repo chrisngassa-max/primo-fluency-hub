@@ -1,0 +1,20 @@
+{
+  "support_id": "S11-support-justice",
+  "personnages": [
+    "Mme Lopez (victime)",
+    "Agent d'accueil"
+  ],
+  "situation": "Mme Lopez a été victime d'un vol de sac dans la rue. Elle raconte les faits à un agent, qui l'oriente vers le dépôt de plainte, puis lui explique le parcours : signalement, plainte, enquête et justice.",
+  "faits": [
+    "En cas de vol, on peut déposer une plainte auprès de la police ou de la gendarmerie.",
+    "La police intervient surtout en ville, la gendarmerie surtout en zone rurale.",
+    "Une infraction peut être une contravention, un délit ou un crime.",
+    "Après la plainte, une enquête peut être ouverte.",
+    "La justice, avec le tribunal, juge les affaires selon la loi.",
+    "Toute personne a le droit de se défendre."
+  ],
+  "nombres": [],
+  "dates": [],
+  "hash": "926c1ef99ab1c1f8de4bc690d967659cf9a63c31fe479cacef00f82fd91e4d64",
+  "version": 1
+}

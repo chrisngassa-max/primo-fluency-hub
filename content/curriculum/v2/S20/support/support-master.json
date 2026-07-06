@@ -1,0 +1,24 @@
+{
+  "support_id": "S20-support-memoire",
+  "personnages": [
+    "Aïcha (apprenante)",
+    "Médiatrice (guide fictive)"
+  ],
+  "situation": "Lors d'une visite pédagogique fictive au Mémorial de la Shoah (support inventé), Aïcha et son groupe écoutent une médiatrice qui présente avec sobriété la Résistance, les guerres mondiales et un lieu de mémoire national.",
+  "faits": [
+    "La France commémore des événements douloureux avec respect et sobriété.",
+    "La Résistance a combattu l'occupation pendant la Seconde Guerre mondiale.",
+    "La Shoah désigne la persécution et l'extermination des Juifs par le régime nazi.",
+    "Un lieu de mémoire aide à comprendre le passé sans sensationnalisme.",
+    "Le patrimoine national inclut monuments, musées et sites historiques.",
+    "La République affirme des valeurs de liberté, égalité et fraternité après ces épreuves."
+  ],
+  "nombres": [
+    2
+  ],
+  "dates": [
+    "1939-1945"
+  ],
+  "hash": "5ea1c81373a919b16c9ae0e1523546fd44b060842e344d169d67cac3629c29db",
+  "version": 1
+}

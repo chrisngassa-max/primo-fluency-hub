@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 200" width="900" height="200" role="img" aria-label="Frise histoire-Europe">
+  <title>Frise histoire-Europe</title>
+  <rect x="0" y="0" width="900" height="200" fill="#ffffff" />
+  <line x1="50" y1="100" x2="850" y2="100" stroke="#374151" stroke-width="3" />
+  <text x="120" y="140" font-size="12" font-family="sans-serif" fill="#111827" text-anchor="middle">1870 République</text>
+  <text x="350" y="140" font-size="12" font-family="sans-serif" fill="#111827" text-anchor="middle">1914-45 Guerres</text>
+  <text x="580" y="140" font-size="12" font-family="sans-serif" fill="#111827" text-anchor="middle">1957 Europe</text>
+  <text x="780" y="140" font-size="12" font-family="sans-serif" fill="#111827" text-anchor="middle">Mémoire</text>
+  <circle cx="120" cy="100" r="8" fill="#64748b" />
+  <circle cx="350" cy="100" r="8" fill="#64748b" />
+  <circle cx="580" cy="100" r="8" fill="#64748b" />
+  <circle cx="780" cy="100" r="8" fill="#64748b" />
+</svg>

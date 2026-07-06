@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Formateur : Voici votre rapport individuel fictif après E2. Regardez la colonne langue et la colonne civique séparément.\nApprenant : J'ai une fragilité en expression écrite et une en thème institutions.\nFormateur : Exactement. Vous allez refaire deux tâches équivalentes, sans aide, sur ces deux points.\nApprenant : Et ensuite ?\nFormateur : Vous rédigez un contrat personnel : trois actions concrètes pour les quatre prochaines semaines. Puis une restitution orale courte : ce que vous avez consolidé en langue, et ce que vous avez consolidé en civique, sans mélanger.\nApprenant : Comment savoir si je vais vers B1 ?\nFormateur : L'orientation dépend de vos scores E2 et de votre projet. Sortie A2 CSP, extension B1 CR, ou consolidation. C'est une proposition, pas une décision automatique.\nApprenant : Je comprends. Je commence par la tâche EE équivalente.\nFormateur : Très bien. Mesurez votre progrès par rapport au rapport initial.",
+  "transcript": "Formateur : Voici votre rapport individuel fictif après E2. Regardez la colonne langue et la colonne civique séparément.\nApprenant : J'ai une fragilité en expression écrite et une en thème institutions.\nFormateur : Exactement. Vous allez refaire deux tâches équivalentes, sans aide, sur ces deux points.\nApprenant : Et ensuite ?\nFormateur : Vous rédigez un contrat personnel : trois actions concrètes pour les quatre prochaines semaines. Puis une restitution orale courte : ce que vous avez consolidé en langue, et ce que vous avez consolidé en civique, sans mélanger.\nApprenant : Comment savoir si je vais vers B1 ?\nFormateur : L'orientation dépend de vos scores E2 et de votre projet. Sortie A2 CSP, extension B1 CR, ou consolidation. C'est une proposition, pas une décision automatique.\nApprenant : Je comprends. Je commence par la tâche EE équivalente.\nFormateur : Très bien. Mesurez votre progrès par rapport au rapport initial.",
+  "voice": "fr-FR-Wavenet-C",
+  "languageCode": "fr-FR",
+  "speaking_rate": 0.92,
+  "pauses": [
+    {
+      "after_word": 12,
+      "ms": 400
+    },
+    {
+      "after_word": 60,
+      "ms": 400
+    },
+    {
+      "after_word": 130,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 75,
+  "hash": "9c5b02f8d78141c2323f50f2425edda5081cc9e8ad41708ba970da80817a4d7c"
+}

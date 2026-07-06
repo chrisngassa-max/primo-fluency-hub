@@ -1,0 +1,67 @@
+{
+  "resource_id": "S13-QCM-civique",
+  "mention": "CSP",
+  "theme": "Droits et devoirs",
+  "questions": [
+    {
+      "notion": "liberté d'expression",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "La liberté d'expression permet surtout :",
+      "options": [
+        "De donner son opinion et de critiquer",
+        "D'insulter les gens",
+        "De menacer autrui"
+      ],
+      "reponse": "De donner son opinion et de critiquer"
+    },
+    {
+      "notion": "limites légales",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Ce qui n'est PAS protégé par la liberté d'expression :",
+      "options": [
+        "L'insulte et la menace",
+        "La critique d'une loi",
+        "Une opinion politique"
+      ],
+      "reponse": "L'insulte et la menace"
+    },
+    {
+      "notion": "liberté de la presse",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "La liberté de la presse sert à :",
+      "options": [
+        "Informer et permettre le débat",
+        "Interdire les journaux",
+        "Obliger à une opinion"
+      ],
+      "reponse": "Informer et permettre le débat"
+    },
+    {
+      "notion": "responsabilité",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Sur un réseau social, ce que l'on publie :",
+      "options": [
+        "Engage notre responsabilité",
+        "N'a aucune conséquence",
+        "Est toujours anonyme et sans limite"
+      ],
+      "reponse": "Engage notre responsabilité"
+    },
+    {
+      "notion": "désaccord respectueux",
+      "type": "mise_en_situation",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Pour exprimer un désaccord, la bonne conduite est de :",
+      "options": [
+        "Critiquer l'idée avec respect",
+        "Insulter la personne",
+        "Menacer l'auteur"
+      ],
+      "reponse": "Critiquer l'idée avec respect"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "support_id": "E1-support",
+  "personnages": [
+    "Apprenants",
+    "Équipe d'évaluation fictive"
+  ],
+  "situation": "Évaluation intermédiaire à cinquante heures : banque gelée CO, CE, EE, EO chronométrées et civique CSP abrégé. Aucun nouvel item par niveau. Produit un plan de remédiation S17-S24.",
+  "faits": [
+    "E1 a lieu après cinquante heures de formation.",
+    "La banque de questions est gelée et verrouillée.",
+    "CO, CE, EE et EO sont chronométrées séparément.",
+    "Le civique CSP est abrégé par rapport à E2.",
+    "Aucun nouveau fait civique n'est introduit par niveau.",
+    "Les résultats déclenchent un plan de remédiation S17-S24."
+  ],
+  "nombres": [
+    50,
+    120
+  ],
+  "dates": [],
+  "hash": "ae00cb46e8ef799547bd3b97288385d0f117345177696923691ddad0606712eb",
+  "version": 1
+}

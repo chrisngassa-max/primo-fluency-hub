@@ -1,0 +1,25 @@
+{
+  "support_id": "S01-support-accueil",
+  "personnages": [
+    "Awa Diallo (apprenante)",
+    "Mme Rossi (formatrice)"
+  ],
+  "situation": "Awa Diallo, apprenante primo-arrivante, se présente le premier jour de sa formation. Elle explique à sa formatrice, Mme Rossi, son objectif administratif (la carte de séjour pluriannuelle) et découvre l'organisation du parcours.",
+  "faits": [
+    "Le parcours vers la carte de séjour pluriannuelle (CSP) dure 80 heures.",
+    "Il comprend 25 séances collectives de 3 heures chacune.",
+    "Il comprend deux évaluations hors séances : E1 et E2.",
+    "Le parcours couvre cinq thèmes civiques officiels.",
+    "Un droit, un devoir et une règle sont trois notions différentes."
+  ],
+  "nombres": [
+    80,
+    25,
+    3,
+    5,
+    2
+  ],
+  "dates": [],
+  "hash": "903e5738ae417d38d6edcff9a93a533a9a106f5d8d2179ef59b036c9494922ad",
+  "version": 1
+}

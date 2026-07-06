@@ -1,0 +1,20 @@
+{
+  "support_id": "S32-support",
+  "personnages": [
+    "Apprenant B2",
+    "Formateur examinateur"
+  ],
+  "situation": "Synthèse B2 sur Constitution, souveraineté nationale, contrôles du Conseil constitutionnel et relances orales imprévues.",
+  "faits": [
+    "La Constitution de 1958 organise la Ve République.",
+    "La souveraineté nationale appartient au peuple qui l'exerce par ses représentants.",
+    "Le Conseil constitutionnel vérifie la conformité des lois à la Constitution.",
+    "Le président et le Parlement ont des rôles distincts définis par la Constitution.",
+    "L'État de droit encadre tous les pouvoirs.",
+    "Une synthèse B2 intègre nuances et exemples fictifs."
+  ],
+  "nombres": [],
+  "dates": [],
+  "hash": "0b2f65e0dc98b5dadda8f8e77465e9bff32416e44ce0fb859211eda2ad7a7389",
+  "version": 1
+}

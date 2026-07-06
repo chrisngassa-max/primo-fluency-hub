@@ -1,0 +1,86 @@
+{
+  "session_code": "S21",
+  "variants": [
+    {
+      "niveau": "A1",
+      "consigne": "Lisez l'arbre. Classez deux items : connaissance ou situation.",
+      "aides": [
+        "Connaissance = fait",
+        "Situation = conduite"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "« Qui vote la loi ? » est un item de :",
+          "options": [
+            "Connaissance",
+            "Situation",
+            "Expression orale"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "Une mise en situation teste une conduite."
+        }
+      ]
+    },
+    {
+      "niveau": "A2",
+      "consigne": "Expliquez pourquoi une conduite est conforme ou non.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Un distracteur sert à :",
+          "options": [
+            "Créer une confusion",
+            "Donner la bonne réponse",
+            "Remplacer la loi"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Que demande l'arbre pour une situation ?"
+        }
+      ]
+    },
+    {
+      "niveau": "B1",
+      "consigne": "Appliquez l'arbre à trois items fictifs et justifiez.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Distinguez connaissance et situation sur deux exemples."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Expliquez une conduite conforme dans un cas donné."
+        }
+      ]
+    },
+    {
+      "niveau": "B2",
+      "consigne": "Analysez la méthode arbre de décision et ses limites.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Pourquoi séparer les deux types de preuve ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Comment repérer un distracteur efficace ?"
+        }
+      ]
+    }
+  ]
+}

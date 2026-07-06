@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "3",
+    "q2": true
+  },
+  "A2": {
+    "q1": "Langue",
+    "q2": "Clarté, connecteurs, orthographe (un critère suffit)."
+  },
+  "B1": {
+    "q1": "Texte cohérent 60-80 mots.",
+    "q2": "Avis + au moins deux arguments."
+  },
+  "B2": {
+    "q1": "Réponse ouverte.",
+    "q2": "Réponse ouverte : formules polies, vocabulaire précis."
+  }
+}

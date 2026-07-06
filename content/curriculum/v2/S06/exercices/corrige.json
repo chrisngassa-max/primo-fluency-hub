@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "35 heures",
+    "q2": true
+  },
+  "A2": {
+    "q1": "5 semaines",
+    "q2": "Le brut est le salaire avant cotisations ; le net est ce que le salarié reçoit vraiment."
+  },
+  "B1": {
+    "q1": "Message attendu : objet clair, rappel du chiffre attendu, demande de correction, politesse.",
+    "q2": "Les cotisations financent sante, retraite et chomage ; le travail declare ouvre des droits et protege le salarie."
+  },
+  "B2": {
+    "q1": "Reponse ouverte : protection du salarie, preuve des droits, financement de la protection sociale.",
+    "q2": "Reponse ouverte : perte de droits, absence de protection, fraude aux cotisations, concurrence deloyale."
+  }
+}

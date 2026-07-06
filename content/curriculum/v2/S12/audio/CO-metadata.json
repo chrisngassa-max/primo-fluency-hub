@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "Conseiller : Bonjour. Vous vouliez parler d'une situation au travail ?\nPersonne concernée : Bonjour. Oui. Au travail, on m'a refusé une formation, et je pense que c'est à cause de mon origine.\nConseiller : Merci de m'en parler calmement. Si une décision se fonde sur l'origine, c'est une discrimination, et c'est interdit par la loi.\nPersonne concernée : Je ne sais pas quoi faire. Je ne veux pas de problème.\nConseiller : Vous avez des droits. Vous pouvez d'abord noter les faits, garder les preuves, puis signaler la situation.\nPersonne concernée : Signaler où ?\nConseiller : Il existe des associations et des services d'aide qui accompagnent et protègent les victimes. Vous n'êtes pas seule.\nPersonne concernée : Et si on me traite mal après ?\nConseiller : La loi protège aussi les personnes qui signalent. La dignité de chacun doit être respectée, et l'égalité est un principe de la République.\nPersonne concernée : Merci. Je me sens plus en confiance pour agir.",
+  "transcript": "Conseiller : Bonjour. Vous vouliez parler d'une situation au travail ?\nPersonne concernée : Bonjour. Oui. Au travail, on m'a refusé une formation, et je pense que c'est à cause de mon origine.\nConseiller : Merci de m'en parler calmement. Si une décision se fonde sur l'origine, c'est une discrimination, et c'est interdit par la loi.\nPersonne concernée : Je ne sais pas quoi faire. Je ne veux pas de problème.\nConseiller : Vous avez des droits. Vous pouvez d'abord noter les faits, garder les preuves, puis signaler la situation.\nPersonne concernée : Signaler où ?\nConseiller : Il existe des associations et des services d'aide qui accompagnent et protègent les victimes. Vous n'êtes pas seule.\nPersonne concernée : Et si on me traite mal après ?\nConseiller : La loi protège aussi les personnes qui signalent. La dignité de chacun doit être respectée, et l'égalité est un principe de la République.\nPersonne concernée : Merci. Je me sens plus en confiance pour agir.",
+  "voice": "fr-FR-Wavenet-C",
+  "languageCode": "fr-FR",
+  "speaking_rate": 0.9,
+  "pauses": [
+    {
+      "after_word": 14,
+      "ms": 500
+    },
+    {
+      "after_word": 60,
+      "ms": 400
+    },
+    {
+      "after_word": 110,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 82,
+  "hash": "3510b4afb06c2414c4c3d16075877e4dca55ff3c8d43b0eb1c682d7b5c5e25e0"
+}

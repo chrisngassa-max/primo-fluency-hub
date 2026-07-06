@@ -1,0 +1,50 @@
+{
+  "resource_id": "E3-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "banque gelée",
+      "definition_simple": "Questions verrouillées, sans nouvel item par niveau.",
+      "exemple": "Banque gelée E1."
+    },
+    {
+      "mot": "chronométré",
+      "definition_simple": "Temps limité strict.",
+      "exemple": "Épreuve chronométrée."
+    },
+    {
+      "mot": "évaluation",
+      "definition_simple": "Mesure certificative du parcours.",
+      "exemple": "Évaluation intermédiaire."
+    },
+    {
+      "mot": "consigne",
+      "definition_simple": "Instruction officielle de l'épreuve.",
+      "exemple": "Lire la consigne."
+    },
+    {
+      "mot": "remédiation",
+      "definition_simple": "Plan correctif après évaluation.",
+      "exemple": "Plan automatique S17-S24."
+    },
+    {
+      "mot": "tronc commun",
+      "definition_simple": "Partie A2/CSP du parcours.",
+      "exemple": "Évaluation finale tronc commun."
+    },
+    {
+      "mot": "sortie",
+      "definition_simple": "Fin de parcours à un palier.",
+      "exemple": "Sortie B1/CR."
+    },
+    {
+      "mot": "entretien",
+      "definition_simple": "Échange oral structuré.",
+      "exemple": "Entretien d'assimilation simulé."
+    },
+    {
+      "mot": "CR",
+      "definition_simple": "Carte de résident, niveau civique B1.",
+      "exemple": "Sortie B1/CR."
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "session_code": "S12",
+  "variants": [
+    {
+      "niveau": "A1",
+      "consigne": "Écoutez le témoignage. Remettez dans l'ordre : noter, signaler, être accompagné.",
+      "aides": [
+        "1 = noter les faits",
+        "2 = signaler",
+        "Mots utiles : victime, aide, protéger"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Traiter une personne moins bien à cause de son origine est :",
+          "options": [
+            "Une discrimination interdite",
+            "Un droit",
+            "Une règle normale"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "vrai_faux",
+          "enonce": "Une personne victime de discrimination peut être aidée et protégée."
+        }
+      ]
+    },
+    {
+      "niveau": "A2",
+      "consigne": "Écrivez un message simple pour signaler une situation, en restant factuel.",
+      "aides": [
+        "Pensez à : dates, faits, demande d'aide"
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "qcm",
+          "enonce": "Que faut-il garder pour signaler une discrimination ?",
+          "options": [
+            "Les preuves et les dates",
+            "Rien du tout",
+            "Seulement un avis"
+          ]
+        },
+        {
+          "id": "q2",
+          "type": "reponse_courte",
+          "enonce": "Citez une structure qui peut accompagner une victime."
+        }
+      ]
+    },
+    {
+      "niveau": "B1",
+      "consigne": "Rédigez un message de signalement factuel, puis expliquez pourquoi la loi protège les victimes et ceux qui signalent.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "reponse_longue",
+          "enonce": "Écrivez un message factuel décrivant la situation et demandant de l'aide."
+        },
+        {
+          "id": "q2",
+          "type": "reponse_longue",
+          "enonce": "Expliquez le lien entre égalité, dignité et protection des victimes."
+        }
+      ]
+    },
+    {
+      "niveau": "B2",
+      "consigne": "Analysez les obstacles au signalement des discriminations et nuancez les moyens de les surmonter.",
+      "aides": [],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "argumentation",
+          "enonce": "Argumentez : pourquoi de nombreuses victimes hésitent-elles à signaler une discrimination ?"
+        },
+        {
+          "id": "q2",
+          "type": "argumentation",
+          "enonce": "Nuancez : comment la protection des lanceurs d'alerte et l'accompagnement changent-ils la donne ?"
+        }
+      ]
+    }
+  ]
+}

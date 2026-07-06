@@ -1,0 +1,24 @@
+{
+  "provider": "fake-tts",
+  "script": "M. Berger : Bonjour madame, merci d'être venue pour cet entretien. Le poste est un temps plein, trente-cinq heures par semaine.\nMme Okoye : Bonjour. Très bien. Et pour le salaire ?\nM. Berger : Le salaire brut est de mille huit cents euros par mois. Le net, ce que vous recevez vraiment, est d'environ mille quatre cents euros.\nMme Okoye : Pourquoi cette différence entre le brut et le net ?\nM. Berger : À cause des cotisations sociales : elles financent la santé, la retraite, le chômage. C'est normal et obligatoire.\nMme Okoye : Je comprends. Et les congés ?\nM. Berger : Vous avez droit à cinq semaines de congés payés par an. Tout est écrit dans le contrat.\nMme Okoye : Le travail est bien déclaré ?\nM. Berger : Oui, bien sûr. Un contrat écrit, un travail déclaré : c'est la règle et c'est votre protection.\nMme Okoye : Parfait. Est-ce que je peux vérifier les informations sur la fiche de paie ?\nM. Berger : Bien sûr, prenez le temps de tout vérifier avant de signer.",
+  "transcript": "M. Berger : Bonjour madame, merci d'être venue pour cet entretien. Le poste est un temps plein, trente-cinq heures par semaine.\nMme Okoye : Bonjour. Très bien. Et pour le salaire ?\nM. Berger : Le salaire brut est de mille huit cents euros par mois. Le net, ce que vous recevez vraiment, est d'environ mille quatre cents euros.\nMme Okoye : Pourquoi cette différence entre le brut et le net ?\nM. Berger : À cause des cotisations sociales : elles financent la santé, la retraite, le chômage. C'est normal et obligatoire.\nMme Okoye : Je comprends. Et les congés ?\nM. Berger : Vous avez droit à cinq semaines de congés payés par an. Tout est écrit dans le contrat.\nMme Okoye : Le travail est bien déclaré ?\nM. Berger : Oui, bien sûr. Un contrat écrit, un travail déclaré : c'est la règle et c'est votre protection.\nMme Okoye : Parfait. Est-ce que je peux vérifier les informations sur la fiche de paie ?\nM. Berger : Bien sûr, prenez le temps de tout vérifier avant de signer.",
+  "voice": "fr-FR-Wavenet-C",
+  "languageCode": "fr-FR",
+  "speaking_rate": 0.92,
+  "pauses": [
+    {
+      "after_word": 22,
+      "ms": 400
+    },
+    {
+      "after_word": 70,
+      "ms": 400
+    },
+    {
+      "after_word": 120,
+      "ms": 500
+    }
+  ],
+  "duration_seconds": 91,
+  "hash": "860a98b5f502c9e3fc941f54d909bca3ccbb4b308a39373de102ac15adc14b87"
+}

@@ -1,0 +1,177 @@
+{
+  "resource_id": "S01-VIS-master",
+  "scene": {
+    "title": "Cinq thèmes civiques du parcours CapTCF",
+    "width": 900,
+    "height": 260,
+    "background": "#ffffff",
+    "elements": [
+      {
+        "type": "rect",
+        "x": 20,
+        "y": 30,
+        "width": 150,
+        "height": 180,
+        "rx": 10,
+        "fill": "#dbeafe"
+      },
+      {
+        "type": "text",
+        "x": 95,
+        "y": 130,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "Principes et"
+      },
+      {
+        "type": "text",
+        "x": 95,
+        "y": 150,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "valeurs de la"
+      },
+      {
+        "type": "text",
+        "x": 95,
+        "y": 170,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "République"
+      },
+      {
+        "type": "rect",
+        "x": 190,
+        "y": 30,
+        "width": 150,
+        "height": 180,
+        "rx": 10,
+        "fill": "#dcfce7"
+      },
+      {
+        "type": "text",
+        "x": 265,
+        "y": 130,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "Système"
+      },
+      {
+        "type": "text",
+        "x": 265,
+        "y": 150,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "institutionnel"
+      },
+      {
+        "type": "text",
+        "x": 265,
+        "y": 170,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "et politique"
+      },
+      {
+        "type": "rect",
+        "x": 360,
+        "y": 30,
+        "width": 150,
+        "height": 180,
+        "rx": 10,
+        "fill": "#fef9c3"
+      },
+      {
+        "type": "text",
+        "x": 435,
+        "y": 130,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "Droits"
+      },
+      {
+        "type": "text",
+        "x": 435,
+        "y": 150,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "et"
+      },
+      {
+        "type": "text",
+        "x": 435,
+        "y": 170,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "devoirs"
+      },
+      {
+        "type": "rect",
+        "x": 530,
+        "y": 30,
+        "width": 150,
+        "height": 180,
+        "rx": 10,
+        "fill": "#fee2e2"
+      },
+      {
+        "type": "text",
+        "x": 605,
+        "y": 130,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "Histoire,"
+      },
+      {
+        "type": "text",
+        "x": 605,
+        "y": 150,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "géographie"
+      },
+      {
+        "type": "text",
+        "x": 605,
+        "y": 170,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "et culture"
+      },
+      {
+        "type": "rect",
+        "x": 700,
+        "y": 30,
+        "width": 180,
+        "height": 180,
+        "rx": 10,
+        "fill": "#ede9fe"
+      },
+      {
+        "type": "text",
+        "x": 790,
+        "y": 120,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "Vivre dans"
+      },
+      {
+        "type": "text",
+        "x": 790,
+        "y": 140,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "la société"
+      },
+      {
+        "type": "text",
+        "x": 790,
+        "y": 160,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "française"
+      }
+    ]
+  },
+  "alt_text": "Cinq panneaux de couleur representant les cinq themes civiques : principes et valeurs de la Republique, systeme institutionnel, droits et devoirs, histoire et geographie, vie en societe."
+}

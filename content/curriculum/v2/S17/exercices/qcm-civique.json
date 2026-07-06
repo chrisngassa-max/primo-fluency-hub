@@ -1,0 +1,67 @@
+{
+  "resource_id": "S17-QCM-civique",
+  "mention": "CSP",
+  "theme": "Droits et devoirs",
+  "questions": [
+    {
+      "notion": "distinction droit/devoir",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Le droit à la santé signifie que vous pouvez :",
+      "options": [
+        "Demander l'accès aux soins",
+        "Payer une taxe obligatoire",
+        "Suivre un règlement intérieur"
+      ],
+      "reponse": "Demander l'accès aux soins"
+    },
+    {
+      "notion": "distinction devoir/règle",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Respecter la loi est avant tout :",
+      "options": [
+        "Une règle locale",
+        "Un devoir",
+        "Une démarche administrative"
+      ],
+      "reponse": "Un devoir"
+    },
+    {
+      "notion": "distinction droit/devoir/règle",
+      "type": "mise_en_situation",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Un centre de formation demande à ses apprenants d'arriver à l'heure à chaque séance. Il s'agit :",
+      "options": [
+        "D'une règle du centre de formation",
+        "D'un droit de l'apprenant",
+        "D'une loi nationale"
+      ],
+      "reponse": "D'une règle du centre de formation"
+    },
+    {
+      "notion": "organisation de l'évaluation",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "L'évaluation E1 a lieu après combien d'heures de formation ?",
+      "options": [
+        "Vingt-cinq heures",
+        "Cinquante heures",
+        "Soixante-dix heures"
+      ],
+      "reponse": "Cinquante heures"
+    },
+    {
+      "notion": "principe de remédiation",
+      "type": "connaissance",
+      "official_status": "simulation_pedagogique",
+      "enonce": "Une remédiation individualisée est construite à partir de :",
+      "options": [
+        "Les résultats réels de l'apprenant",
+        "Un programme identique pour tous",
+        "Une note tirée au hasard"
+      ],
+      "reponse": "Les résultats réels de l'apprenant"
+    }
+  ]
+}

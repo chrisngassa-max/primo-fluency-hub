@@ -1,0 +1,32 @@
+[
+  {
+    "phase": "Installation",
+    "duree_min": 10,
+    "description": "Consignes, chronomètre, banque gelée affichée."
+  },
+  {
+    "phase": "CO + CE",
+    "duree_min": 55,
+    "description": "Compréhension orale et écrite enchaînées, sans aide."
+  },
+  {
+    "phase": "EE",
+    "duree_min": 30,
+    "description": "Trois tâches expression écrite chronométrées."
+  },
+  {
+    "phase": "EO",
+    "duree_min": 10,
+    "description": "Échantillon expression orale chronométré."
+  },
+  {
+    "phase": "Civique",
+    "duree_min": 45,
+    "description": "40 questions CSP, stratégie 32/40."
+  },
+  {
+    "phase": "Remédiation",
+    "duree_min": 30,
+    "description": "Analyse erreurs et plan correctif."
+  }
+]

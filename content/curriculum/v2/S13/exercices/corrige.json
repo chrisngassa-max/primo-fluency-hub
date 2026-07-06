@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "Permis",
+    "q2": true
+  },
+  "A2": {
+    "q1": "L'insulte",
+    "q2": "Exemple : « Je ne partage pas ton idée, voici pourquoi... »"
+  },
+  "B1": {
+    "q1": "Avis clair, argument, formulation respectueuse du desaccord.",
+    "q2": "Critiquer une idee porte sur le contenu et reste permis ; insulter vise la personne et depasse la limite legale."
+  },
+  "B2": {
+    "q1": "Reponse ouverte : protection de la dignite, de la reputation, de la securite d'autrui.",
+    "q2": "Reponse ouverte : diffusion large et rapide, anonymat ; besoin de responsabilite et de moderation."
+  }
+}

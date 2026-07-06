@@ -1,0 +1,50 @@
+{
+  "resource_id": "S27-LEX-A1-B2",
+  "mots": [
+    {
+      "mot": "liberté",
+      "definition_simple": "Droit d'agir dans le cadre de la loi.",
+      "exemple": "Liberté d'expression."
+    },
+    {
+      "mot": "laïcité",
+      "definition_simple": "Neutralité de l'État, liberté de conscience.",
+      "exemple": "Laïcité à l'école."
+    },
+    {
+      "mot": "manifestation",
+      "definition_simple": "Rassemblement public pour exprimer une opinion.",
+      "exemple": "Manifestation déclarée."
+    },
+    {
+      "mot": "limite",
+      "definition_simple": "Frontière légale d'un droit.",
+      "exemple": "Limites de l'expression."
+    },
+    {
+      "mot": "discrimination",
+      "definition_simple": "Traitement inégal injustifié.",
+      "exemple": "Discrimination interdite."
+    },
+    {
+      "mot": "argument",
+      "definition_simple": "Raison à l'appui d'une opinion.",
+      "exemple": "Argumenter avec des faits."
+    },
+    {
+      "mot": "diffamation",
+      "definition_simple": "Attaque injurieuse contre quelqu'un.",
+      "exemple": "Limite de l'expression."
+    },
+    {
+      "mot": "opinion",
+      "definition_simple": "Point de vue personnel.",
+      "exemple": "Défendre son opinion."
+    },
+    {
+      "mot": "pacifique",
+      "definition_simple": "Sans violence.",
+      "exemple": "Manifestation pacifique."
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "support_id": "S29-support",
+  "personnages": [
+    "Groupe B1",
+    "Formateur"
+  ],
+  "situation": "Les apprenants construisent une frise : République, construction européenne, événement mémoriel, et expliquent la portée historique.",
+  "faits": [
+    "La IIIe République a établi l'école gratuite, laïque et obligatoire.",
+    "L'Union européenne est née de la volonté de paix après les guerres.",
+    "La mémoire des conflits aide à comprendre l'intégration européenne.",
+    "Un événement historique a des causes et des conséquences.",
+    "La France est membre fondateur de la construction européenne.",
+    "Raconter l'histoire suppose chronologie et contexte."
+  ],
+  "nombres": [],
+  "dates": [],
+  "hash": "35bd32da489ae9d313271f596acbfcd5ac26fbd42f6e69d6514c85b02227eca5",
+  "version": 1
+}

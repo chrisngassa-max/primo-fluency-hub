@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "Un justificatif de domicile",
+    "q2": true
+  },
+  "A2": {
+    "q1": "La date d'échéance",
+    "q2": "Exemple : « Objet : transmission d'un justificatif de domicile pour mon dossier de titre de séjour »."
+  },
+  "B1": {
+    "q1": "Courriel attendu : objet clair, reference du dossier, corps precisant la piece jointe, formule de politesse.",
+    "q2": "L'usager doit fournir les pieces et respecter les delais ; il peut attendre un traitement egal et une reponse du service public."
+  },
+  "B2": {
+    "q1": "Reponse ouverte : securite juridique, egalite de traitement, verification des situations.",
+    "q2": "Reponse ouverte : fracture numerique, complexite ; remedes : accompagnement, points d'accueil, mediation numerique."
+  }
+}

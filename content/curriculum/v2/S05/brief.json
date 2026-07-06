@@ -1,0 +1,139 @@
+{
+  "session_code": "S05",
+  "plan_version": "curriculum-v2.0",
+  "titre": "Logement, voisinage et discrimination",
+  "support": {
+    "support_id": "S05-support-logement",
+    "situation": "Dans un immeuble, Mme Costa subit des nuisances sonores de son voisin M. Diop. Plutôt que le conflit, ils rencontrent une médiatrice, Mme Roy, pour trouver une solution légale et respectueuse.",
+    "personnages": ["Mme Costa (locataire)", "M. Diop (voisin)", "Mme Roy (médiatrice)"],
+    "faits": [
+      "Le bail est le contrat de location entre le locataire et le propriétaire.",
+      "Le règlement de copropriété fixe les règles de vie dans l'immeuble.",
+      "Les nuisances sonores répétées peuvent faire l'objet d'un recours.",
+      "La médiation cherche une solution à l'amiable avant tout conflit.",
+      "La discrimination au logement est interdite par la loi.",
+      "L'égalité et la fraternité sont des valeurs de la République."
+    ],
+    "nombres": [],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S05-CO-master",
+    "voice": "fr-FR-Wavenet-C",
+    "speaking_rate": 0.92,
+    "script": "Mme Roy : Bonjour à tous les deux. Vous êtes venus pour parler d'un problème entre voisins ?\nMme Costa : Bonjour. Oui, le soir, il y a beaucoup de bruit chez mon voisin, et je n'arrive pas à dormir.\nM. Diop : Bonjour. Je ne savais pas que le bruit dérangeait autant. Je travaille tard et je fais parfois du bruit sans faire attention.\nMme Roy : Merci de vous parler calmement. Le règlement de l'immeuble demande le calme après vingt-deux heures. On peut trouver une solution ensemble.\nMme Costa : Je ne veux pas de conflit. Je veux juste pouvoir dormir.\nM. Diop : Je comprends. Je vais faire attention le soir et prévenir si j'ai un imprévu.\nMme Roy : Très bien. C'est ce qu'on appelle une médiation : on cherche une solution à l'amiable. Si le problème continue, il existe des recours prévus par la loi.\nMme Costa : Merci. C'est plus simple de se parler que de se disputer.\nMme Roy : Exactement. Et rappelez-vous : personne ne peut être traité de façon inégale à cause de son origine. La discrimination au logement est interdite.",
+    "pauses": [
+      { "after_word": 16, "ms": 400 },
+      { "after_word": 74, "ms": 400 },
+      { "after_word": 128, "ms": 500 }
+    ]
+  },
+  "visual": {
+    "resource_id": "S05-VIS-master",
+    "alt_text": "Plan simple d'un immeuble en coupe avec trois appartements superposes et une table de mediation au rez-de-chaussee, sans nom ni logo.",
+    "scene": {
+      "title": "Immeuble et médiation de voisinage",
+      "width": 900,
+      "height": 320,
+      "background": "#ffffff",
+      "elements": [
+        { "type": "rect", "x": 60, "y": 40, "width": 240, "height": 240, "rx": 6, "fill": "#eef2ff" },
+        { "type": "line", "x1": 60, "y1": 120, "x2": 300, "y2": 120, "stroke": "#94a3b8", "strokeWidth": 2 },
+        { "type": "line", "x1": 60, "y1": 200, "x2": 300, "y2": 200, "stroke": "#94a3b8", "strokeWidth": 2 },
+        { "type": "text", "x": 180, "y": 90, "anchor": "middle", "fontSize": 13, "text": "Appartement 3" },
+        { "type": "text", "x": 180, "y": 170, "anchor": "middle", "fontSize": 13, "text": "Appartement 2" },
+        { "type": "text", "x": 180, "y": 250, "anchor": "middle", "fontSize": 13, "text": "Appartement 1" },
+        { "type": "rect", "x": 420, "y": 150, "width": 360, "height": 90, "rx": 8, "fill": "#dcfce7" },
+        { "type": "text", "x": 600, "y": 190, "anchor": "middle", "fontSize": 15, "text": "Table de médiation" },
+        { "type": "text", "x": 600, "y": 215, "anchor": "middle", "fontSize": 12, "text": "(solution à l'amiable)" },
+        { "type": "line", "x1": 300, "y1": 195, "x2": 420, "y2": 195, "stroke": "#374151", "strokeWidth": 3 }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S05-LEX-A1-B2",
+    "mots": [
+      { "mot": "bail", "definition_simple": "Le contrat de location d'un logement.", "exemple": "Elle a signé un bail d'un an." },
+      { "mot": "locataire", "definition_simple": "La personne qui loue et habite le logement.", "exemple": "Le locataire paie un loyer." },
+      { "mot": "propriétaire", "definition_simple": "La personne qui possède le logement.", "exemple": "Le propriétaire entretient l'immeuble." },
+      { "mot": "nuisance", "definition_simple": "Une gêne, par exemple du bruit.", "exemple": "Le bruit la nuit est une nuisance." },
+      { "mot": "voisin", "definition_simple": "La personne qui habite à côté.", "exemple": "Son voisin fait du bruit le soir." },
+      { "mot": "règlement", "definition_simple": "L'ensemble des règles de l'immeuble.", "exemple": "Le règlement demande le calme la nuit." },
+      { "mot": "médiation", "definition_simple": "Une aide pour trouver une solution à l'amiable.", "exemple": "La médiation évite le conflit." },
+      { "mot": "discrimination", "definition_simple": "Traiter une personne moins bien à cause de son origine, son sexe, etc.", "exemple": "La discrimination au logement est interdite." }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Écoutez le dialogue. Associez chaque personne à son rôle, puis complétez les phrases avec les mots de la liste.",
+      "aides": ["Mme Costa = locataire", "Mme Roy = médiatrice", "Mots utiles : bruit, voisin, calme"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "Quel est le problème entre les voisins ?", "options": ["Le bruit le soir", "Un problème d'argent", "Une fuite d'eau"] },
+        { "id": "q2", "type": "vrai_faux", "enonce": "La médiation cherche une solution à l'amiable." }
+      ],
+      "corrige": { "q1": "Le bruit le soir", "q2": true }
+    },
+    "A2": {
+      "consigne": "Signalez un problème de voisinage à l'oral, sans agresser, et proposez une solution.",
+      "aides": ["Formules utiles : « Est-ce que vous pourriez... ? », « On pourrait peut-être... »"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "Que fait un médiateur ?", "options": ["Il aide à trouver une solution à l'amiable", "Il décide qui a raison", "Il expulse un voisin"] },
+        { "id": "q2", "type": "reponse_courte", "enonce": "Proposez une phrase polie pour demander à un voisin de faire moins de bruit." }
+      ],
+      "corrige": { "q1": "Il aide à trouver une solution à l'amiable", "q2": "Exemple : « Bonjour, pourriez-vous baisser un peu le bruit le soir, s'il vous plaît ? »" }
+    },
+    "B1": {
+      "consigne": "Expliquez comment résoudre un conflit de voisinage de façon légale, puis justifiez pourquoi la discrimination au logement est interdite.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "reponse_longue", "enonce": "Décrivez les étapes possibles : dialogue, médiation, recours légal." },
+        { "id": "q2", "type": "reponse_longue", "enonce": "Expliquez pourquoi refuser un logement à cause de l'origine d'une personne est interdit." }
+      ],
+      "corrige": { "q1": "Etapes : d'abord parler calmement, puis solliciter une mediation, enfin un recours legal si le probleme persiste.", "q2": "La discrimination au logement porte atteinte a l'egalite ; elle est interdite par la loi et ouvre droit a des recours." }
+    },
+    "B2": {
+      "consigne": "Analysez l'intérêt de la médiation face aux conflits de voisinage et nuancez ses limites.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "argumentation", "enonce": "Argumentez : pourquoi privilégier le dialogue et la médiation avant un recours judiciaire ?" },
+        { "id": "q2", "type": "argumentation", "enonce": "Nuancez : dans quels cas la médiation ne suffit-elle pas ?" }
+      ],
+      "corrige": { "q1": "Reponse ouverte : rapidite, cout, preservation du lien social, responsabilisation des parties.", "q2": "Reponse ouverte : en cas de mauvaise foi, de danger, ou de discrimination averee, un recours legal devient necessaire." }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S05-QCM-civique",
+    "mention": "CSP",
+    "theme": "Droits et devoirs",
+    "questions": [
+      { "notion": "médiation", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "La médiation sert à :", "options": ["Trouver une solution à l'amiable", "Punir un voisin", "Augmenter le loyer"], "reponse": "Trouver une solution à l'amiable" },
+      { "notion": "discrimination", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Refuser un logement à cause de l'origine d'une personne est :", "options": ["Interdit par la loi", "Autorisé", "Laissé au choix du propriétaire"], "reponse": "Interdit par la loi" },
+      { "notion": "logement", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Le contrat de location d'un logement s'appelle :", "options": ["Le bail", "La facture", "Le règlement"], "reponse": "Le bail" },
+      { "notion": "vie collective", "type": "mise_en_situation", "official_status": "simulation_pedagogique", "enonce": "Un voisin fait du bruit chaque nuit. La première démarche conseillée est :", "options": ["Lui parler calmement", "Couper son électricité", "Ne plus jamais lui parler"], "reponse": "Lui parler calmement" },
+      { "notion": "valeurs républicaines", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Aider et respecter ses voisins renvoie surtout à la valeur de :", "options": ["Fraternité", "Rentabilité", "Autorité"], "reponse": "Fraternité" }
+    ]
+  },
+  "devoirs": {
+    "A1": "À la maison : associez chaque mot (bail, voisin, médiation) à sa définition.",
+    "A2": "À la maison : écrivez 5 phrases pour signaler poliment un problème de voisinage et proposer une solution.",
+    "B1": "À la maison : rédigez un court texte expliquant les étapes pour résoudre un conflit de voisinage.",
+    "B2": "À la maison : rédigez un paragraphe argumenté sur l'intérêt de la médiation dans la vie collective."
+  },
+  "formateur": {
+    "fiche_formateur": "Séance logement et voisinage : chaque apprenant doit savoir (1) signaler un problème sans agresser, (2) proposer une solution légale, (3) connaître médiation, recours et interdiction de la discrimination. Insister sur la posture non violente et le vocabulaire du respect.",
+    "deroule_180min": [
+      { "phase": "Rituel civique", "duree_min": 10, "description": "Rappel des valeurs egalite/fraternite a partir du visuel maitre." },
+      { "phase": "Activation + lexique", "duree_min": 20, "description": "Decouverte du lexique (bail, nuisance, mediation, discrimination...)." },
+      { "phase": "Support invariant CO/CE", "duree_min": 50, "description": "Ecoute du dialogue de mediation Costa/Diop/Roy." },
+      { "phase": "Ateliers differencies", "duree_min": 60, "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du meme support." },
+      { "phase": "Production EE/EO", "duree_min": 30, "description": "Jeu de role : signaler un probleme et proposer une solution." },
+      { "phase": "Fixation", "duree_min": 10, "description": "Synthese, QCM civique, qualification des situations, devoir." }
+    ],
+    "adaptation_rules": [
+      "Si le jeu de role derape vers l'agressivite, recentrer sur les formules de politesse et la mediation.",
+      "Distinguer clairement conflit de voisinage ordinaire et discrimination illegale.",
+      "Ne jamais transformer le support en scenario dramatique : rester dans une situation ordinaire et resolue."
+    ]
+  }
+}

@@ -1,0 +1,114 @@
+{
+  "resource_id": "S11-VIS-master",
+  "scene": {
+    "title": "Du signalement à la justice",
+    "width": 900,
+    "height": 240,
+    "background": "#ffffff",
+    "elements": [
+      {
+        "type": "rect",
+        "x": 30,
+        "y": 90,
+        "width": 170,
+        "height": 70,
+        "rx": 8,
+        "fill": "#dbeafe"
+      },
+      {
+        "type": "text",
+        "x": 115,
+        "y": 130,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "Signalement"
+      },
+      {
+        "type": "line",
+        "x1": 200,
+        "y1": 125,
+        "x2": 250,
+        "y2": 125,
+        "stroke": "#374151",
+        "strokeWidth": 3
+      },
+      {
+        "type": "rect",
+        "x": 250,
+        "y": 90,
+        "width": 170,
+        "height": 70,
+        "rx": 8,
+        "fill": "#dcfce7"
+      },
+      {
+        "type": "text",
+        "x": 335,
+        "y": 130,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "Plainte"
+      },
+      {
+        "type": "line",
+        "x1": 420,
+        "y1": 125,
+        "x2": 470,
+        "y2": 125,
+        "stroke": "#374151",
+        "strokeWidth": 3
+      },
+      {
+        "type": "rect",
+        "x": 470,
+        "y": 90,
+        "width": 170,
+        "height": 70,
+        "rx": 8,
+        "fill": "#fef9c3"
+      },
+      {
+        "type": "text",
+        "x": 555,
+        "y": 130,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "Enquête"
+      },
+      {
+        "type": "line",
+        "x1": 640,
+        "y1": 125,
+        "x2": 690,
+        "y2": 125,
+        "stroke": "#374151",
+        "strokeWidth": 3
+      },
+      {
+        "type": "rect",
+        "x": 690,
+        "y": 90,
+        "width": 170,
+        "height": 70,
+        "rx": 8,
+        "fill": "#fee2e2"
+      },
+      {
+        "type": "text",
+        "x": 775,
+        "y": 130,
+        "anchor": "middle",
+        "fontSize": 14,
+        "text": "Justice"
+      },
+      {
+        "type": "text",
+        "x": 30,
+        "y": 50,
+        "fontSize": 16,
+        "text": "Parcours d'une plainte (schéma pédagogique)"
+      }
+    ]
+  },
+  "alt_text": "Parcours schematique en quatre etapes reliees par des fleches : signalement, plainte, enquete, justice, sans scene violente ni logo."
+}

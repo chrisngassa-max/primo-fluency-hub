@@ -1,0 +1,141 @@
+{
+  "session_code": "S02",
+  "plan_version": "curriculum-v2.0",
+  "titre": "État civil, mairie et symboles",
+  "support": {
+    "support_id": "S02-support-mairie",
+    "situation": "M. Traoré se rend à la mairie pour une démarche d'état civil. Un agent d'accueil, Mme Lambert, l'aide à compléter un formulaire fictif et lui rappelle les symboles de la République affichés dans le hall.",
+    "personnages": ["M. Traoré (usager)", "Mme Lambert (agent d'accueil)"],
+    "faits": [
+      "La devise de la République française est « Liberté, Égalité, Fraternité ».",
+      "Le drapeau français est tricolore : bleu, blanc, rouge.",
+      "L'hymne national est La Marseillaise.",
+      "La fête nationale a lieu le 14 juillet.",
+      "La langue de la République est le français.",
+      "Marianne est la figure symbolique de la République."
+    ],
+    "nombres": [3, 14],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S02-CO-master",
+    "voice": "fr-FR-Wavenet-C",
+    "speaking_rate": 0.92,
+    "script": "Mme Lambert : Bonjour monsieur, bienvenue à la mairie. Que puis-je faire pour vous ?\nM. Traoré : Bonjour madame. Je voudrais un document d'état civil, s'il vous plaît.\nMme Lambert : Bien sûr. Je vous précise que les horaires affichés ici sont des horaires d'exemple pour la formation. Vous avez une pièce d'identité ?\nM. Traoré : Oui, la voici.\nMme Lambert : Merci. Pouvez-vous compléter ce formulaire : votre nom, votre prénom, votre date de naissance et votre adresse ?\nM. Traoré : D'accord. Une question : sur le mur, il y a écrit « Liberté, Égalité, Fraternité ». Qu'est-ce que c'est ?\nMme Lambert : C'est la devise de la République française. Vous voyez aussi le drapeau tricolore, bleu, blanc, rouge, et le buste de Marianne.\nM. Traoré : Et la musique qu'on entend le 14 juillet ?\nMme Lambert : C'est La Marseillaise, l'hymne national. Le 14 juillet, c'est la fête nationale.\nM. Traoré : Merci beaucoup pour ces explications, madame.\nMme Lambert : Je vous en prie. Ici, la langue des démarches est le français. N'hésitez pas si vous avez besoin d'aide pour remplir le formulaire.",
+    "pauses": [
+      { "after_word": 14, "ms": 400 },
+      { "after_word": 70, "ms": 400 },
+      { "after_word": 120, "ms": 500 }
+    ]
+  },
+  "visual": {
+    "resource_id": "S02-VIS-master",
+    "alt_text": "Formulaire d'etat civil vierge a gauche avec les champs nom, prenom, naissance et adresse, et a droite trois bandes verticales de couleur representant le drapeau tricolore.",
+    "scene": {
+      "title": "Formulaire d'état civil et drapeau tricolore",
+      "width": 900,
+      "height": 300,
+      "background": "#ffffff",
+      "elements": [
+        { "type": "rect", "x": 20, "y": 20, "width": 520, "height": 260, "rx": 8, "fill": "#f1f5f9" },
+        { "type": "text", "x": 40, "y": 55, "fontSize": 16, "text": "Formulaire d'état civil (document pédagogique fictif)" },
+        { "type": "text", "x": 40, "y": 100, "fontSize": 14, "text": "Nom : ______________________" },
+        { "type": "text", "x": 40, "y": 135, "fontSize": 14, "text": "Prénom : ___________________" },
+        { "type": "text", "x": 40, "y": 170, "fontSize": 14, "text": "Date de naissance : _________" },
+        { "type": "text", "x": 40, "y": 205, "fontSize": 14, "text": "Adresse : __________________" },
+        { "type": "rect", "x": 620, "y": 60, "width": 60, "height": 160, "fill": "#1e3a8a" },
+        { "type": "rect", "x": 680, "y": 60, "width": 60, "height": 160, "fill": "#f8fafc" },
+        { "type": "rect", "x": 740, "y": 60, "width": 60, "height": 160, "fill": "#b91c1c" },
+        { "type": "text", "x": 710, "y": 245, "anchor": "middle", "fontSize": 14, "text": "Drapeau tricolore" }
+      ]
+    }
+  },
+  "lexique": {
+    "resource_id": "S02-LEX-A1-B2",
+    "mots": [
+      { "mot": "nom", "definition_simple": "Le nom de famille d'une personne.", "exemple": "Écrivez votre nom en majuscules." },
+      { "mot": "prénom", "definition_simple": "Le nom personnel, avant le nom de famille.", "exemple": "Son prénom est Amadou." },
+      { "mot": "naissance", "definition_simple": "Le moment où une personne vient au monde.", "exemple": "Sa date de naissance est indiquée sur la carte." },
+      { "mot": "nationalité", "definition_simple": "L'appartenance à un pays.", "exemple": "Quelle est votre nationalité ?" },
+      { "mot": "adresse", "definition_simple": "Le lieu où l'on habite.", "exemple": "Indiquez votre adresse complète." },
+      { "mot": "mairie", "definition_simple": "Le bâtiment où l'on fait des démarches administratives locales.", "exemple": "Il va à la mairie pour un document." },
+      { "mot": "devise", "definition_simple": "Une phrase qui résume les valeurs d'un pays.", "exemple": "La devise française est Liberté, Égalité, Fraternité." },
+      { "mot": "drapeau", "definition_simple": "Le symbole en tissu coloré d'un pays.", "exemple": "Le drapeau français est bleu, blanc, rouge." },
+      { "mot": "hymne", "definition_simple": "Le chant officiel d'un pays.", "exemple": "La Marseillaise est l'hymne national." },
+      { "mot": "Marianne", "definition_simple": "La figure qui représente la République française.", "exemple": "Le buste de Marianne est dans la mairie." }
+    ]
+  },
+  "variants": {
+    "A1": {
+      "consigne": "Lisez le formulaire. Associez chaque symbole à son nom, puis complétez les champs avec les mots de la liste.",
+      "aides": ["Devise = Liberté, Égalité, Fraternité", "Drapeau = bleu, blanc, rouge", "Mots utiles : nom, prénom, adresse"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "Quelles sont les trois couleurs du drapeau français ?", "options": ["Vert, blanc, rouge", "Bleu, blanc, rouge", "Bleu, blanc, vert"] },
+        { "id": "q2", "type": "vrai_faux", "enonce": "La devise de la République est « Liberté, Égalité, Fraternité »." }
+      ],
+      "corrige": { "q1": "Bleu, blanc, rouge", "q2": true }
+    },
+    "A2": {
+      "consigne": "Complétez le formulaire d'état civil et écrivez une phrase polie pour demander une information à la mairie.",
+      "aides": ["Formule utile : « Pourriez-vous m'indiquer... ? »"],
+      "questions": [
+        { "id": "q1", "type": "qcm", "enonce": "Quel est l'hymne national de la France ?", "options": ["La Marseillaise", "L'Internationale", "Le Chant des partisans"] },
+        { "id": "q2", "type": "reponse_courte", "enonce": "À quelle date a lieu la fête nationale ?" }
+      ],
+      "corrige": { "q1": "La Marseillaise", "q2": "Le 14 juillet." }
+    },
+    "B1": {
+      "consigne": "Rédigez un court message écrit à la mairie pour demander un document d'état civil, en expliquant votre situation, puis citez trois symboles de la République et leur signification.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "reponse_longue", "enonce": "Écrivez un message poli et structuré (objet, demande, formule de politesse) pour obtenir un document." },
+        { "id": "q2", "type": "reponse_longue", "enonce": "Expliquez ce que représentent la devise, le drapeau et Marianne." }
+      ],
+      "corrige": { "q1": "Message structure attendu : formule d'appel, objet clair (demande de document d'etat civil), precision de la situation, formule de politesse finale.", "q2": "La devise resume les valeurs (liberte, egalite, fraternite) ; le drapeau tricolore symbolise la nation ; Marianne incarne la Republique." }
+    },
+    "B2": {
+      "consigne": "Analysez le rôle des symboles républicains dans l'accueil en mairie et nuancez leur importance pour un nouvel arrivant.",
+      "aides": [],
+      "questions": [
+        { "id": "q1", "type": "argumentation", "enonce": "Argumentez : pourquoi une administration affiche-t-elle les symboles de la République ?" },
+        { "id": "q2", "type": "argumentation", "enonce": "Nuancez : les symboles suffisent-ils à faire comprendre les valeurs de la République ? Justifiez." }
+      ],
+      "corrige": { "q1": "Reponse ouverte evaluee sur la precision (symboles = reperes communs, egalite de traitement, neutralite) et la qualite de l'argumentation.", "q2": "Reponse ouverte : les symboles sont des reperes mais ne remplacent pas l'explication des droits et devoirs concrets." }
+    }
+  },
+  "civic_qcm": {
+    "resource_id": "S02-QCM-civique",
+    "mention": "CSP",
+    "theme": "Principes et valeurs de la République",
+    "questions": [
+      { "notion": "symboles de la République", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "La devise de la République française est :", "options": ["Liberté, Égalité, Fraternité", "Union, Force, Travail", "Paix, Ordre, Progrès"], "reponse": "Liberté, Égalité, Fraternité" },
+      { "notion": "symboles de la République", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "Les couleurs du drapeau français sont :", "options": ["Bleu, blanc, rouge", "Rouge, jaune, vert", "Bleu, jaune, rouge"], "reponse": "Bleu, blanc, rouge" },
+      { "notion": "fête nationale", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "La fête nationale française est célébrée le :", "options": ["1er mai", "14 juillet", "11 novembre"], "reponse": "14 juillet" },
+      { "notion": "hymne national", "type": "connaissance", "official_status": "simulation_pedagogique", "enonce": "L'hymne national de la France s'appelle :", "options": ["La Marseillaise", "Le Chant du départ", "La Carmagnole"], "reponse": "La Marseillaise" },
+      { "notion": "langue de la République", "type": "mise_en_situation", "official_status": "simulation_pedagogique", "enonce": "Pour une démarche officielle à la mairie, la langue utilisée est :", "options": ["Le français", "La langue de son choix", "L'anglais"], "reponse": "Le français" }
+    ]
+  },
+  "devoirs": {
+    "A1": "À la maison : recopiez les cinq symboles de la République et associez chacun à une image ou à un mot.",
+    "A2": "À la maison : complétez un formulaire d'état civil fictif avec vos informations, puis écrivez une phrase de demande polie.",
+    "B1": "À la maison : rédigez un message de 5 à 6 lignes à une mairie pour demander un document, avec objet et formule de politesse.",
+    "B2": "À la maison : rédigez un paragraphe argumenté sur le rôle des symboles républicains dans l'intégration."
+  },
+  "formateur": {
+    "fiche_formateur": "Séance état civil et symboles : chaque apprenant doit repartir avec (1) la capacité à compléter un formulaire d'état civil, (2) une demande écrite polie à une administration, (3) la connaissance des cinq symboles de la République. Rappeler que le formulaire et les horaires sont fictifs et signalés comme tels ; aucun document officiel n'est imité.",
+    "deroule_180min": [
+      { "phase": "Rituel civique", "duree_min": 10, "description": "Reperage des symboles de la Republique a partir du visuel maitre." },
+      { "phase": "Activation + lexique", "duree_min": 20, "description": "Decouverte du lexique (nom, prenom, devise, drapeau, hymne...)." },
+      { "phase": "Support invariant CO/CE", "duree_min": 50, "description": "Ecoute du dialogue en mairie et lecture du formulaire fictif." },
+      { "phase": "Ateliers differencies", "duree_min": 60, "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante du meme support." },
+      { "phase": "Production EE/EO", "duree_min": 30, "description": "Chaque apprenant redige une demande ecrite polie a la mairie." },
+      { "phase": "Fixation", "duree_min": 10, "description": "Synthese, QCM civique CSP, devoir personnalise." }
+    ],
+    "adaptation_rules": [
+      "Si le groupe confond devise et hymne, reprendre le lexique avant l'atelier B1.",
+      "Insister sur le caractere fictif du formulaire pour eviter toute confusion avec un document officiel.",
+      "Ne jamais remplacer l'audio publie par une improvisation : l'IA peut seulement l'expliquer ou le simplifier."
+    ]
+  }
+}

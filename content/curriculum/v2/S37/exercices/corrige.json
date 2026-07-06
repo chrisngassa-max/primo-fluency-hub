@@ -1,0 +1,18 @@
+{
+  "A1": {
+    "q1": "Parcours et motivation",
+    "q2": true
+  },
+  "A2": {
+    "q1": "Solidarité",
+    "q2": "Liberté, égalité, fraternité, laïcité."
+  },
+  "B1": {
+    "q1": "Personnel et structuré.",
+    "q2": "Compréhension, pas récitation."
+  },
+  "B2": {
+    "q1": "Réponse ouverte.",
+    "q2": "Réponse ouverte : authenticité."
+  }
+}
