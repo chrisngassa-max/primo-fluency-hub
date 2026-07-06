@@ -25,6 +25,50 @@ function json(status: number, body: unknown) {
 }
 
 const WORKER_HINT = "BATCH_STORE=supabase npm run curriculum:worker -- --once";
+const GITHUB_DISPATCH_EVENT = "curriculum-batch";
+
+type WorkerDispatchResult =
+  | { dispatched: true }
+  | { dispatched: false; reason: string };
+
+async function dispatchCurriculumBatchWorker(batchId: string): Promise<WorkerDispatchResult> {
+  const token = Deno.env.get("GITHUB_TOKEN");
+  const repo = Deno.env.get("GITHUB_REPO");
+
+  if (!token || !repo) {
+    const missing = [!token && "GITHUB_TOKEN", !repo && "GITHUB_REPO"].filter(Boolean).join(", ");
+    return { dispatched: false, reason: `Secrets manquants : ${missing}` };
+  }
+
+  const repoPath = repo.trim().replace(/^https:\/\/github\.com\//, "").replace(/\.git$/, "");
+  if (!/^[^/]+\/[^/]+$/.test(repoPath)) {
+    return { dispatched: false, reason: `GITHUB_REPO invalide : ${repo}` };
+  }
+
+  const response = await fetch(`https://api.github.com/repos/${repoPath}/dispatches`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      event_type: GITHUB_DISPATCH_EVENT,
+      client_payload: { batch_id: batchId },
+    }),
+  });
+
+  if (response.ok || response.status === 204) {
+    return { dispatched: true };
+  }
+
+  const detail = await response.text().catch(() => "");
+  return {
+    dispatched: false,
+    reason: `GitHub API ${response.status}${detail ? ` : ${detail.slice(0, 200)}` : ""}`,
+  };
+}
 
 async function assertPlanVersion(admin: ReturnType<typeof createClient>, planVersionId: string) {
   const { data, error } = await admin
@@ -182,10 +226,15 @@ async function handleStart(
   });
   if (jobsError) throw jobsError;
 
+  const dispatch = await dispatchCurriculumBatchWorker(batch.id);
+
   return json(200, {
     batch_id: batch.id,
-    message: `Batch créé (${sessionCodes.length} séances). Lancez le worker pour l'orchestration complète.`,
-    worker_hint: WORKER_HINT,
+    message: dispatch.dispatched
+      ? `Batch créé (${sessionCodes.length} séances). Worker GitHub Actions déclenché.`
+      : `Batch créé (${sessionCodes.length} séances). Lancez le worker pour l'orchestration complète.`,
+    worker_dispatched: dispatch.dispatched,
+    ...(dispatch.dispatched ? {} : { worker_hint: WORKER_HINT, dispatch_reason: dispatch.reason }),
     cli_hint: `BATCH_STORE=supabase CURRICULUM_PLAN_VERSION_ID=${planVersionId} npm run curriculum:worker -- --batch-id ${batch.id}`,
     action: "start",
   });
