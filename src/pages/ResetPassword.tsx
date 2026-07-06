@@ -3,9 +3,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { translateAuthError } from "@/lib/authErrors";
 
 const getRecoveryParams = () => {
   const searchParams = new URLSearchParams(window.location.search);
@@ -30,31 +31,39 @@ const getRecoveryParams = () => {
   };
 };
 
+const resetRedirectUrl = () => `${window.location.origin}/#/reset-password`;
+
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
+  const [forgotEmail, setForgotEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const [ready, setReady] = useState(false);
+  const [mode, setMode] = useState<"loading" | "recovery" | "request">("loading");
   const navigate = useNavigate();
 
   useEffect(() => {
     const syncRecoveryState = async () => {
       const recovery = getRecoveryParams();
       if (recovery.type === "recovery" || recovery.hasToken) {
-        setReady(true);
+        setMode("recovery");
         return;
       }
 
       const { data } = await supabase.auth.getSession();
-      setReady(Boolean(data.session));
+      if (data.session) {
+        setMode("recovery");
+        return;
+      }
+
+      setMode("request");
     };
 
-    syncRecoveryState();
+    void syncRecoveryState();
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event) => {
       if (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") {
-        setReady(true);
+        setMode("recovery");
       }
     });
 
@@ -78,13 +87,59 @@ const ResetPassword = () => {
     setLoading(false);
   };
 
-  if (!ready) {
+  const handleForgot = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
+      redirectTo: resetRedirectUrl(),
+    });
+    if (error) {
+      toast.error("Erreur", { description: translateAuthError(error.message) });
+    } else {
+      toast.success("Email envoyé", { description: "Consultez votre boîte mail pour réinitialiser votre mot de passe." });
+    }
+    setLoading(false);
+  };
+
+  if (mode === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background p-4">
         <Card className="w-full max-w-md">
           <CardContent className="pt-6 text-center">
-            <p className="text-muted-foreground">Lien de réinitialisation invalide ou expiré.</p>
-            <Button variant="link" onClick={() => navigate("/")}>Retour à la connexion</Button>
+            <p className="text-muted-foreground">Chargement…</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (mode === "request") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl">Mot de passe oublié</CardTitle>
+            <CardDescription>Entrez votre email pour recevoir un lien de réinitialisation.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleForgot} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="forgot-email">Adresse email</Label>
+                <Input
+                  id="forgot-email"
+                  type="email"
+                  value={forgotEmail}
+                  onChange={(e) => setForgotEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Envoi…" : "Envoyer le lien"}
+              </Button>
+              <Button type="button" variant="ghost" className="w-full" asChild>
+                <Link to="/formateur/login">Retour à la connexion</Link>
+              </Button>
+            </form>
           </CardContent>
         </Card>
       </div>

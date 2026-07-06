@@ -943,7 +943,7 @@ const MonitoringPage = () => {
                                 variant="ghost"
                                 size="sm"
                                 className="gap-1"
-                                onClick={(e) => { e.stopPropagation(); navigate(`/formateur/preparation-examen/eleve/${e.id}`); }}
+                                onClick={(ev) => { ev.stopPropagation(); navigate(`/formateur/preparation-examen/eleve/${e.id}`); }}
                               >
                                 <GraduationCap className="h-3.5 w-3.5" /> IPE
                               </Button>

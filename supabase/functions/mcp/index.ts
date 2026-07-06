@@ -65,7 +65,7 @@ var list_my_sessions_default = defineTool2({
     if (!ctx.isAuthenticated())
       return { content: [{ type: "text", text: "Non authentifi\xE9" }], isError: true };
     const supa = supabaseForUser2(ctx);
-    let q = supa.from("sessions").select("id, titre, date, statut, group_id, niveau_cible").order("date", { ascending: false }).limit(limit);
+    let q = supa.from("sessions").select("id, titre, date_seance, statut, group_id, niveau_cible").order("date_seance", { ascending: false }).limit(limit);
     if (statut) q = q.eq("statut", statut);
     const { data, error } = await q;
     if (error)

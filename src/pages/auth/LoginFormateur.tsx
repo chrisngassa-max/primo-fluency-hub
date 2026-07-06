@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Navigate, Link } from "react-router-dom";
+import { useNavigate, Navigate, Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,12 +12,25 @@ import AppFooter from "@/components/AppFooter";
 const LoginFormateur = () => {
   const { session, role, loading, signIn } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const nextUrl = searchParams.get("next");
   const [busy, setBusy] = useState(false);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  if (!loading && session && role === "formateur") return <Navigate to="/formateur" replace />;
+  const redirectToNext = () => {
+    if (nextUrl?.startsWith("/")) {
+      window.location.href = nextUrl;
+      return true;
+    }
+    return false;
+  };
+
+  if (!loading && session && role === "formateur") {
+    if (redirectToNext()) return null;
+    return <Navigate to="/formateur" replace />;
+  }
   if (!loading && session && role === "eleve") return <Navigate to="/eleve" replace />;
 
   const handleLogin = async (e: React.FormEvent) => {

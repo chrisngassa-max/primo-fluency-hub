@@ -31,8 +31,8 @@ export default defineTool({
     const supa = supabaseForUser(ctx);
     let q = supa
       .from("sessions")
-      .select("id, titre, date, statut, group_id, niveau_cible")
-      .order("date", { ascending: false })
+      .select("id, titre, date_seance, statut, group_id, niveau_cible")
+      .order("date_seance", { ascending: false })
       .limit(limit);
     if (statut) q = q.eq("statut", statut);
     const { data, error } = await q;
