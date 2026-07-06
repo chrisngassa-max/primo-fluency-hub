@@ -225,7 +225,7 @@ export async function loadBatchStatus(batchId: string): Promise<BatchStatusRespo
 export async function invokeCurriculumBatch<T extends Record<string, unknown>>(
   body: Record<string, unknown>,
 ): Promise<T> {
-  const { data, error } = await supabase.functions.invoke<T>(BATCH_FN, { body });
+  const { data, error } = await supabase.functions.invoke(BATCH_FN, { body });
   if (error) throw error;
   const payload = data as T & { error?: string };
   if (payload?.error) throw new Error(payload.error);
