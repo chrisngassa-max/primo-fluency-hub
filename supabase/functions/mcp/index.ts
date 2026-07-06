@@ -41,7 +41,7 @@ var list_my_groups_default = defineTool({
 // src/lib/mcp/tools/list_my_sessions.ts
 import { createClient as createClient2 } from "npm:@supabase/supabase-js@^2.99.2";
 import { defineTool as defineTool2 } from "npm:@lovable.dev/mcp-js@0.20.0";
-import { z } from "npm:zod@^4.4.3";
+import { z } from "npm:zod@^4.3.6";
 function supabaseForUser2(ctx) {
   return createClient2(
     process.env.SUPABASE_URL,
@@ -80,7 +80,7 @@ var list_my_sessions_default = defineTool2({
 // src/lib/mcp/tools/get_my_progression.ts
 import { createClient as createClient3 } from "npm:@supabase/supabase-js@^2.99.2";
 import { defineTool as defineTool3 } from "npm:@lovable.dev/mcp-js@0.20.0";
-import { z as z2 } from "npm:zod@^4.4.3";
+import { z as z2 } from "npm:zod@^4.3.6";
 function supabaseForUser3(ctx) {
   return createClient3(
     process.env.SUPABASE_URL,
