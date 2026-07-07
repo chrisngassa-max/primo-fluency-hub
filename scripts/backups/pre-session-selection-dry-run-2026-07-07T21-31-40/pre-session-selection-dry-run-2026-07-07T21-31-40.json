@@ -1,0 +1,2357 @@
+{
+  "generated_at": "2026-07-07T21:31:40.970Z",
+  "mode": "dry-run",
+  "supabase_writes": 0,
+  "ai_generation": 0,
+  "bank_total": 621,
+  "runs": [
+    {
+      "scenario_id": "A1_CE",
+      "label": "A1 CE quota 5 (scénario A)",
+      "report": {
+        "params": {
+          "niveauVise": "A1",
+          "competence": "CE",
+          "themeId": null,
+          "quota": 5
+        },
+        "retained": [
+          {
+            "exercice_id": "8f4bbd3b-01e5-4913-a20f-8a118bea863c",
+            "titre": "L'interrogation personnelle",
+            "competence": "CE",
+            "niveau_vise": "A1",
+            "format": "texte_lacunaire",
+            "theme": null,
+            "validation_status": "validated_auto",
+            "selection_tier": "P1_validated",
+            "score": 100,
+            "fresh": true,
+            "matched_rules": [
+              "SCORE_01",
+              "SCORE_03",
+              "SCORE_05",
+              "SCORE_06",
+              "SCORE_09",
+              "SCORE_10",
+              "SCORE_11",
+              "SCORE_14"
+            ],
+            "source": "banque"
+          },
+          {
+            "exercice_id": "e54114ba-790d-45f6-9bde-a84deaf4c71b",
+            "titre": "Le portrait de Sonia",
+            "competence": "CE",
+            "niveau_vise": "A1",
+            "format": "texte_lacunaire",
+            "theme": null,
+            "validation_status": "validated_auto",
+            "selection_tier": "P1_validated",
+            "score": 100,
+            "fresh": true,
+            "matched_rules": [
+              "SCORE_01",
+              "SCORE_03",
+              "SCORE_05",
+              "SCORE_06",
+              "SCORE_09",
+              "SCORE_10",
+              "SCORE_11",
+              "SCORE_14"
+            ],
+            "source": "banque"
+          },
+          {
+            "exercice_id": "a73172a8-c1b6-45c2-aaea-3aaf76ebafad",
+            "titre": "La liste des participants",
+            "competence": "CE",
+            "niveau_vise": "A1",
+            "format": "qcm",
+            "theme": null,
+            "validation_status": "validated_auto",
+            "selection_tier": "P1_validated",
+            "score": 100,
+            "fresh": true,
+            "matched_rules": [
+              "SCORE_01",
+              "SCORE_03",
+              "SCORE_05",
+              "SCORE_06",
+              "SCORE_09",
+              "SCORE_10",
+              "SCORE_11",
+              "SCORE_14"
+            ],
+            "source": "banque"
+          },
+          {
+            "exercice_id": "472ee216-fe08-431f-93da-7d57a25f6eea",
+            "titre": "Le dossier de Youssef",
+            "competence": "CE",
+            "niveau_vise": "A1",
+            "format": "vrai_faux",
+            "theme": null,
+            "validation_status": "validated_auto",
+            "selection_tier": "P1_validated",
+            "score": 100,
+            "fresh": true,
+            "matched_rules": [
+              "SCORE_01",
+              "SCORE_03",
+              "SCORE_05",
+              "SCORE_06",
+              "SCORE_09",
+              "SCORE_10",
+              "SCORE_11",
+              "SCORE_14"
+            ],
+            "source": "banque"
+          },
+          {
+            "exercice_id": "a4220295-a2a3-4772-8178-dda3a98ad827",
+            "titre": "La fiche d'identité de Jean",
+            "competence": "CE",
+            "niveau_vise": "A1",
+            "format": "qcm",
+            "theme": null,
+            "validation_status": "validated_auto",
+            "selection_tier": "P1_validated",
+            "score": 100,
+            "fresh": true,
+            "matched_rules": [
+              "SCORE_01",
+              "SCORE_03",
+              "SCORE_05",
+              "SCORE_06",
+              "SCORE_09",
+              "SCORE_10",
+              "SCORE_11",
+              "SCORE_14"
+            ],
+            "source": "banque"
+          }
+        ],
+        "excluded": {
+          "counts": {
+            "EXCL_COMPETENCE": 291,
+            "EXCL_NIVEAU": 14,
+            "EXCL_FORMAT": 6,
+            "EXCL_NR_TIER_ROUGE": 58,
+            "EXCL_SCORE_LOW": 73,
+            "EXCL_VALIDATION_REJECTED": 26,
+            "EXCL_NR_THEME_SENSIBLE": 26
+          },
+          "samples": [
+            {
+              "exercice_id": "f96c1529-fd95-46d7-93be-5f26725c6104",
+              "titre": "Vocabulaire et expressions du contexte médical en France",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "fa43fca5-1cd8-4d5a-b71a-a6cec384812a",
+              "titre": "Rendez-vous médical : prendre une consultation",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "04285c19-75b6-4f11-8952-09ecf56e06e3",
+              "titre": "Mon appartement",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "fb7f5239-449d-4814-8600-6b17f3236017",
+              "titre": "Comprendre une enquête à la préfecture",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "ff1ad7c9-1228-4a14-9f83-bd77aa5ccaff",
+              "titre": "Consultation médicale : description des symptômes",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "ffffe409-af1e-42f0-bd49-d3dc5dbf6036",
+              "titre": "S'installer dans un logement - Production orale",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "1354365c-779a-4715-a48a-d8de386c34f4",
+              "titre": "Création d'un badge",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "136a1d26-05f6-40b9-acbc-f9871268f0f3",
+              "titre": "Annonce Gare : Train Paris-Lyon",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "19f7c554-5870-4d0d-a57d-287d868ac6bc",
+              "titre": "Comprendre un SMS simple",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "1c62a3f2-704c-4244-9473-b8bd51b40357",
+              "titre": "Horaires de la mairie",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "6bf144ff-efbf-444e-9458-2667492c4426",
+              "titre": "Articles définis et administration",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "9892321c-b58a-437c-866d-40c470fa8ede",
+              "titre": "Aller à la pharmacie",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "1f917846-27dd-49fa-823e-da32a1fe5f90",
+              "titre": "Compléter un formulaire d'inscription",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "282c5bc1-4500-40a5-b69d-f196d90e3bd8",
+              "titre": "Compléter son identité (Révision)",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "2b21e3a7-e119-44ec-8a15-cd03f5f66318",
+              "titre": "SMS d'annulation de RDV",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "4411731d-b178-4337-9790-c219be52b7a9",
+              "titre": "S01 · variante B1",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "2758482c-8474-4de4-9b4a-24cc5ceeb09d",
+              "titre": "S01 · variante B2",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "32d1ffdb-1b1d-45fa-97a5-3ed1dfe0efd2",
+              "titre": "Comprendre les horaires de transport",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "c751c736-9b16-4c78-9d7c-1795fb5b7ae3",
+              "titre": "Remplir un formulaire de contact",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "4530184c-dfb6-4b5d-9b82-a837b9be2ccb",
+              "titre": "Rendez-vous à la préfecture",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "482117d0-103f-4cb9-bddf-a28266b283d1",
+              "titre": "L'agence d'intérim",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "4c983a50-bcce-4b70-b0bf-974c5cb211d5",
+              "titre": "Épeler son nom (CO)",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "f411b6b7-539a-4bd0-9a15-279b83ed84a2",
+              "titre": "Inscription au sport municipal",
+              "reason": "EXCL_FORMAT"
+            },
+            {
+              "exercice_id": "287669a3-cdd1-44ca-99b1-fbeef461a945",
+              "titre": "Localiser des services administratifs",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "294c2fc9-11f6-449a-b3ac-1dc65b491342",
+              "titre": "Appel au médecin - Discours rapporté",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "3175ff5e-4499-454a-99fd-28eef5cd9737",
+              "titre": "Dialoguer avec un médecin - Production orale",
+              "reason": "EXCL_FORMAT"
+            },
+            {
+              "exercice_id": "5b456fc4-770a-42eb-9488-791d3b190301",
+              "titre": "Échanger un article à la boutique : Texte lacunaire",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "6ea666fe-708e-4535-ac03-11f4031b630d",
+              "titre": "Compréhension - L'entretien d'embauche de Virginie",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "7c0b20c1-4f66-42da-9d9b-3ec3212601de",
+              "titre": "Comprendre une demande de renseignement à la préfecture",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "b314e99b-86bf-4c89-b3e5-d6f9947954e9",
+              "titre": "Échange à la CAF : Exprimer une gêne et confirmer",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "8706c89a-6c4e-4cbf-afa1-4fa166549c72",
+              "titre": "Situation médicale - Complétez le dialogue",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "8c4e55c6-b631-4caa-8957-a0b988658588",
+              "titre": "Production écrite - Demande de rendez-vous au médecin",
+              "reason": "EXCL_FORMAT"
+            },
+            {
+              "exercice_id": "6a432366-93b8-47ff-aa0b-98562833332a",
+              "titre": "Production écrite - Raconter un souvenir d'enfance (contexte personnel/social)",
+              "reason": "EXCL_FORMAT"
+            },
+            {
+              "exercice_id": "955f5e32-c42f-48b7-aa15-dc8bab29e67d",
+              "titre": "Vocabulaire administratif : démarches à la préfecture",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "dbcd89c9-1140-48fc-857b-4921d53a72f8",
+              "titre": "Répondre à une invitation pour une activité",
+              "reason": "EXCL_FORMAT"
+            },
+            {
+              "exercice_id": "f425f84e-9347-43ea-b46f-da11e3b8b96f",
+              "titre": "Refuser un logement à l'agence immobilière",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "fc87243f-4594-46ec-acdd-2dec6c5e561b",
+              "titre": "Exprimer le refus dans un contexte administratif français",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "e22892b4-4b6a-4dd0-a879-64b57a893eb4",
+              "titre": "Situation à la CAF : comprendre les aides sociales",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "f806b0d2-b3a8-443a-af28-8647e1ee8d28",
+              "titre": "Le contrôle d'identité oral",
+              "reason": "EXCL_FORMAT"
+            },
+            {
+              "exercice_id": "087e0509-3cc7-4df6-99ac-50fcba6b0872",
+              "titre": "Exercice de grammaire - La négation avec les articles",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "f6b769fd-6685-4b3a-a13d-9cce64e68c52",
+              "titre": "Comprendre une offre administrative : voyage gratuit pour enfants",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "002136d5-072f-4a05-a876-476ab6ae62be",
+              "titre": "Invitation du voisinage",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "044e8dfc-1932-41b9-9907-00aff55b2c49",
+              "titre": "Vocabulaire du formulaire CAF",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "05cf4f35-4df0-4e40-bcf4-13a6734689e7",
+              "titre": "Ma profession",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "0a49970b-fa44-43a8-9dd1-bfd50f99e7e9",
+              "titre": "La nouvelle voisine",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "0f46fda3-8187-4766-a691-c0d207df7229",
+              "titre": "Lire une notice de santé",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "8f15ebab-5f34-4ef1-beb9-5899c2f62284",
+              "titre": "Comprendre un formulaire scolaire",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "923047ad-9735-4436-a34a-13eca7b6cd8d",
+              "titre": "Le badge de l'entreprise",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "2056fe03-a27e-4b7c-8f79-6be3d5d98049",
+              "titre": "Se repérer à la préfecture",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "20c09288-e717-46ec-ac5a-dbe84cdb7474",
+              "titre": "Déclarer un changement à la CAF",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "9a3e6119-0a20-492a-b614-599a6b688b40",
+              "titre": "Comprendre un message familial",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "a2c5b1e7-4132-4cd4-b6d3-921dd536d327",
+              "titre": "Comprendre une annonce de logement",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "2863358b-1910-49d1-afa6-98c5f3cdce7a",
+              "titre": "Identifier les équipements d'un logement",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "28fadee8-fcd8-4a0a-9e0e-521d0ca13c13",
+              "titre": "Comprendre un itinéraire simple",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "a474ed73-3816-42b2-a3a9-31e64bf19dc4",
+              "titre": "Identifier les rubriques d'un document scolaire",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "b5d8b240-aa1d-4d97-a65e-182874ff18c3",
+              "titre": "Comprendre et exprimer l'heure",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "2d77b285-8040-42c8-8d40-4eb70d58ef6f",
+              "titre": "Formulaire de livraison",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "2e6f7505-66a6-4c9b-bc8c-2126d1312bf2",
+              "titre": "Sécurité au travail",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "a96c77d6-9de5-4058-b03c-c141df6cc9f4",
+              "titre": "Lire un ticket de caisse",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "b14233da-69cf-47bd-83cc-dcd19ff9ebec",
+              "titre": "Classer les informations d'identité",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "b4417d9e-a8c6-45eb-8be2-5e8ed5abc3ab",
+              "titre": "S01 · variante A2",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "b8acef4a-062e-45fc-8144-828fd287e9d0",
+              "titre": "Remplir sa fiche AMELI",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "ce45893f-649e-4263-8d5f-8a4249466d07",
+              "titre": "S01 · civique 3",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "767a328b-8524-49f9-96de-16e813a8ac00",
+              "titre": "S01 · civique 4",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "9032499c-4ede-487f-b042-78f73a95fc8d",
+              "titre": "S01 · civique 5",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "bb5efbe9-1eb2-4630-9b74-7f5da7dde7dc",
+              "titre": "Le formulaire de sport",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "bc60429d-873a-4573-9625-c3057ee7e2dc",
+              "titre": "Mon logement : Vrai ou Faux ?",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "3c14cf30-971b-4a3b-9223-2421661baa5d",
+              "titre": "Comprendre le portrait d'une personne",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "e30ed0f7-5a25-4880-8101-abe0209b7f7a",
+              "titre": "Le formulaire de La Poste",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "7d157417-f7af-485d-a427-934e942c5a79",
+              "titre": "Informations sur le livret de famille",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "57a6759c-1c6c-4c55-9ff2-6e6f2e29aa74",
+              "titre": "Les nationalités au féminin et masculin",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "00cf5938-6b24-41e1-a608-6ae2975b477d",
+              "titre": "Comprendre une annonce à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "0252ac11-48b3-4cd2-87be-43965f543b9e",
+              "titre": "Répondre à une demande d'information - Logement et allocations",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "0deb2039-d9fb-41f2-9206-44892352b926",
+              "titre": "Condition avec « si » - Logement en France",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "0eab511e-8524-4998-9bce-daf23aa5912d",
+              "titre": "Prendre rendez-vous chez le médecin",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "101d1444-f6f5-406d-9855-459f5e6f62b0",
+              "titre": "Compréhension écrite - Email administratif à la CAF",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "11c56ae4-0e09-46f5-9277-55bba1b3ec0b",
+              "titre": "S01 · variante A1",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "e3d7d31e-99f1-45a8-a052-d06219828d97",
+              "titre": "Sons et Prénoms (Le son AN/EN)",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "1c66c72e-bbc0-4706-bcff-2f354059b2a3",
+              "titre": "Demander des informations à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "35943339-9b4b-4c79-898a-92222ffba4bf",
+              "titre": "Lire une carte de résident",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "48c36037-aed8-4ff8-ae56-9833ff7f8c87",
+              "titre": "Comprendre un avis d'absence",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "7de22aa0-7629-4419-9537-fdebc99d6fdb",
+              "titre": "Compléter un formulaire d'inscription simple",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "3067cf3c-d70b-405c-826e-63b65ce4201e",
+              "titre": "Les numéros de téléphone",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "3b6511c4-c322-4e7b-8483-214023fde39f",
+              "titre": "Demande d'allocation à la CAF - Remplir un formulaire",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "41a5dd63-8128-4a47-9c2d-c7b3df3737f8",
+              "titre": "Fiche de contact finale",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "00938c7c-55ee-4374-8069-34df987f5d90",
+              "titre": "Comprendre une annonce médicale",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "92f95bfe-c820-42ee-af6d-2adf3f3bcc84",
+              "titre": "La fiche de renseignements吹吹吹吹/td>,}]}",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "c78cdee7-cbd1-4052-92d3-ec2ba4e493bf",
+              "titre": "L'avis de passage du facteur",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "0bb81227-d5d1-44d9-a3f4-ccdc01ca7f70",
+              "titre": "Réservation et informations administratives à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "1b700ea1-2877-4569-8b55-2566a2d32873",
+              "titre": "Comprendre une annonce à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "647fc278-effa-42c7-824e-ad72ad58cfb7",
+              "titre": "Rendez-vous à la préfecture - Comprendre les consignes",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "75a37690-33fd-428c-90a7-8a00a304653f",
+              "titre": "Demander des informations à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "47428015-9cb3-441f-bcb6-83e53280fc83",
+              "titre": "Comprendre une demande administrative à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "569692e7-5f18-4daf-b2d5-ae3c2deb7136",
+              "titre": "Reconnaître les objets de lettre formelle",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "8f900054-b82a-4ab5-a4cc-fe900fd04536",
+              "titre": "Discrimination sons [j], [ɥ], [w] - Contexte résidentiel",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "8d831309-6bbb-4c7e-925c-81f739c7b17c",
+              "titre": "Lire une fiche d'inscription",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "fc4ece3b-841f-4a89-9238-31f896a3c439",
+              "titre": "Le tri des déchets",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "5fbf1e86-0ac2-48d2-9872-654fbda528a9",
+              "titre": "Comprendre une invitation administrative - Rendez-vous à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "8ae595e8-58f0-4a41-8fba-f45adcce08c7",
+              "titre": "Un message de Lucie (Lecture rapide)",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "6086f4fe-efaa-474c-81e5-860b9d91f1af",
+              "titre": "Conditions avec « si » - Logement en France",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "21a8e43a-6d06-4746-a92e-27c53efb5ed5",
+              "titre": "Complétez le texte sur les jeunes et les médias",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "95aa6805-5a06-42b2-80ab-f14ef2c8aa9d",
+              "titre": "Consignes de sécurité incendie : Comprendre les actions à faire",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "48c22bc1-408d-4b31-bbc8-d0ee3fc7f464",
+              "titre": "Identifier les rubriques d'un journal : contextes de vie en France",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "8f75baab-153b-40ed-8bb6-a501c3894e55",
+              "titre": "CV et expérience professionnelle - Compréhension écrite",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "bfff2dfd-d573-4f9c-a083-40471a39fc76",
+              "titre": "Comprendre une demande administrative à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "67887044-7683-4426-9a1d-1305a7fb9e77",
+              "titre": "Matching films et préférences cinéma",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "9445e75e-0b2d-4061-b2a6-dc5a22fe0703",
+              "titre": "Comprendre une annonce administrative à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "d501e653-0013-40a3-a19e-ef9d8db3278a",
+              "titre": "Remplir un formulaire administratif (CAF/Préfecture)",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "de70c4b8-57e3-4f4f-bee7-94923127b909",
+              "titre": "Compléter une conversation à la CAF",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "e5cb7373-206d-41fd-a794-e8ef9c583310",
+              "titre": "Identifier les formules de clôture dans une lettre administrative",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "9db3c203-0446-4f17-8eac-9cc1dc74b16e",
+              "titre": "Le Titre de Séjour",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "aa43d22d-968a-4865-8271-e87613cc3d8b",
+              "titre": "Le dossier de la CAF",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "bbcbcbbf-0ce3-4922-bdbf-5026eafb7f5f",
+              "titre": "Lire une annonce de logement",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "cc17e5c7-7cf3-4a92-8234-4c803df9286b",
+              "titre": "Lire un badge professionnel",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "0904ec17-9b03-465a-9c3f-bd7d53dbd26b",
+              "titre": "Lire une affiche",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "95ec5ce9-7464-423b-a42d-049ddb8d5dc8",
+              "titre": "Le planning de l'association",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "eefa6ec4-75d2-45fb-9e46-4c1a3b9e90c7",
+              "titre": "La fiche de la bibliothèque",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "d5583da1-ca3a-4a73-8e2c-bd2817a0d1b9",
+              "titre": "Un SMS de présentation",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "ae3a684a-c59e-447d-95b7-c06aed8e313b",
+              "titre": "Un SMS de suivi de dossier",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "3b63dbcc-0728-4525-8400-020c82ba2a54",
+              "titre": "S'orienter dans la médiathèque",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            }
+          ]
+        },
+        "remaining_gaps": [
+          {
+            "cell_key": "A1:CE",
+            "requested": 5,
+            "retained_va": 5,
+            "retained_nr": 0,
+            "gap": 0,
+            "is_p0_cell": false,
+            "va_in_bank": 200,
+            "severity": "none"
+          }
+        ],
+        "generation_need": {
+          "required": false,
+          "total_gap": 0,
+          "slots": [],
+          "estimated_generation_count": 0,
+          "defer_to_lot8_p0": false
+        },
+        "human_review_items": [
+          {
+            "type": "AMBIGUOUS_CORRECTION_NEARBY",
+            "cell_key": "A1:CE",
+            "message": "Cellule avec ≥ 5 NR ambigus en banque (40)",
+            "priority": "moyenne"
+          }
+        ],
+        "meta": {
+          "generated_at": "2026-07-07T21:31:40.966Z",
+          "p1_pool": 127,
+          "p2_pool_vert": 0,
+          "p2_pool_orange": 0,
+          "nr_fallback_allowed": true
+        }
+      }
+    },
+    {
+      "scenario_id": "A2_CO_PREF",
+      "label": "A2 CO thème prefecture quota 5 (scénario B)",
+      "report": {
+        "params": {
+          "niveauVise": "A2",
+          "competence": "CO",
+          "themeId": "prefecture",
+          "quota": 5
+        },
+        "retained": [
+          {
+            "exercice_id": "4530184c-dfb6-4b5d-9b82-a837b9be2ccb",
+            "titre": "Rendez-vous à la préfecture",
+            "competence": "CO",
+            "niveau_vise": "A1",
+            "format": "qcm",
+            "theme": "prefecture",
+            "validation_status": "validated_auto",
+            "selection_tier": "P1_validated",
+            "score": 100,
+            "fresh": true,
+            "matched_rules": [
+              "SCORE_01",
+              "SCORE_04",
+              "SCORE_05",
+              "SCORE_06",
+              "SCORE_09",
+              "SCORE_10",
+              "SCORE_11",
+              "SCORE_14"
+            ],
+            "source": "banque"
+          },
+          {
+            "exercice_id": "5a76c6e0-2749-4be9-9c62-6589d154f509",
+            "titre": "Problème d'orientation à la préfecture",
+            "competence": "CO",
+            "niveau_vise": "A1",
+            "format": "qcm",
+            "theme": "prefecture",
+            "validation_status": "validated_auto",
+            "selection_tier": "P1_validated",
+            "score": 100,
+            "fresh": true,
+            "matched_rules": [
+              "SCORE_01",
+              "SCORE_04",
+              "SCORE_05",
+              "SCORE_06",
+              "SCORE_09",
+              "SCORE_10",
+              "SCORE_11",
+              "SCORE_14"
+            ],
+            "source": "banque"
+          },
+          {
+            "exercice_id": "86130260-e23d-478e-ba40-2c87b2d0ab99",
+            "titre": "Prendre rendez-vous à la mairie",
+            "competence": "CO",
+            "niveau_vise": "A1",
+            "format": "qcm",
+            "theme": "prefecture",
+            "validation_status": "validated_auto",
+            "selection_tier": "P1_validated",
+            "score": 100,
+            "fresh": true,
+            "matched_rules": [
+              "SCORE_01",
+              "SCORE_04",
+              "SCORE_05",
+              "SCORE_06",
+              "SCORE_09",
+              "SCORE_10",
+              "SCORE_11",
+              "SCORE_14"
+            ],
+            "source": "banque"
+          },
+          {
+            "exercice_id": "75b18bcc-2b35-4407-bf1d-c8cfba274250",
+            "titre": "Où est le bureau des impôts ?",
+            "competence": "CO",
+            "niveau_vise": "A1",
+            "format": "qcm",
+            "theme": "prefecture",
+            "validation_status": "validated_auto",
+            "selection_tier": "P1_validated",
+            "score": 100,
+            "fresh": true,
+            "matched_rules": [
+              "SCORE_01",
+              "SCORE_04",
+              "SCORE_05",
+              "SCORE_06",
+              "SCORE_09",
+              "SCORE_10",
+              "SCORE_11",
+              "SCORE_14"
+            ],
+            "source": "banque"
+          }
+        ],
+        "excluded": {
+          "counts": {
+            "EXCL_COMPETENCE": 491,
+            "EXCL_FORMAT": 1,
+            "EXCL_NIVEAU": 15,
+            "EXCL_NR_TIER_ROUGE": 28,
+            "EXCL_SCORE_LOW": 49,
+            "EXCL_NR_THEME_SENSIBLE": 25,
+            "EXCL_VALIDATION_REJECTED": 8
+          },
+          "samples": [
+            {
+              "exercice_id": "f6b769fd-6685-4b3a-a13d-9cce64e68c52",
+              "titre": "Comprendre une offre administrative : voyage gratuit pour enfants",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "002136d5-072f-4a05-a876-476ab6ae62be",
+              "titre": "Invitation du voisinage",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "04285c19-75b6-4f11-8952-09ecf56e06e3",
+              "titre": "Mon appartement",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "044e8dfc-1932-41b9-9907-00aff55b2c49",
+              "titre": "Vocabulaire du formulaire CAF",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "ff1ad7c9-1228-4a14-9f83-bd77aa5ccaff",
+              "titre": "Consultation médicale : description des symptômes",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "05cf4f35-4df0-4e40-bcf4-13a6734689e7",
+              "titre": "Ma profession",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "0a49970b-fa44-43a8-9dd1-bfd50f99e7e9",
+              "titre": "La nouvelle voisine",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "ffffe409-af1e-42f0-bd49-d3dc5dbf6036",
+              "titre": "S'installer dans un logement - Production orale",
+              "reason": "EXCL_FORMAT"
+            },
+            {
+              "exercice_id": "0f46fda3-8187-4766-a691-c0d207df7229",
+              "titre": "Lire une notice de santé",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "1354365c-779a-4715-a48a-d8de386c34f4",
+              "titre": "Création d'un badge",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "8f15ebab-5f34-4ef1-beb9-5899c2f62284",
+              "titre": "Comprendre un formulaire scolaire",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "19f7c554-5870-4d0d-a57d-287d868ac6bc",
+              "titre": "Comprendre un SMS simple",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "6bf144ff-efbf-444e-9458-2667492c4426",
+              "titre": "Articles définis et administration",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "923047ad-9735-4436-a34a-13eca7b6cd8d",
+              "titre": "Le badge de l'entreprise",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "1f917846-27dd-49fa-823e-da32a1fe5f90",
+              "titre": "Compléter un formulaire d'inscription",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "2056fe03-a27e-4b7c-8f79-6be3d5d98049",
+              "titre": "Se repérer à la préfecture",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "20c09288-e717-46ec-ac5a-dbe84cdb7474",
+              "titre": "Déclarer un changement à la CAF",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "9a3e6119-0a20-492a-b614-599a6b688b40",
+              "titre": "Comprendre un message familial",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "a2c5b1e7-4132-4cd4-b6d3-921dd536d327",
+              "titre": "Comprendre une annonce de logement",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "282c5bc1-4500-40a5-b69d-f196d90e3bd8",
+              "titre": "Compléter son identité (Révision)",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "2863358b-1910-49d1-afa6-98c5f3cdce7a",
+              "titre": "Identifier les équipements d'un logement",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "3ae5e71b-ccce-4af9-8d5b-ac16fd741b96",
+              "titre": "Contextes administratifs en France : situations courantes",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "2c67bae7-2b96-4c29-a1f7-58c5935d5858",
+              "titre": "Rédiger un courrier à la CAF concernant un logement",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "8dc40198-db88-4da4-99df-993a5153754b",
+              "titre": "Vrai/Faux : Droits et obligations pour accéder aux services sociaux en France",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "9567217e-4ef3-45f6-895d-071ed663c7da",
+              "titre": "Comprendre une demande administrative à la préfecture",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "a723f47f-50c3-4ee5-9c85-517fecdd72ef",
+              "titre": "Comprendre une demande administrative à la préfecture",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "22b2bc30-2f26-45f7-8ff7-d31d7ee3c029",
+              "titre": "Comprendre les engagements du commerce équitable",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "a980aa48-05cb-4ed9-b901-e477870dc7a4",
+              "titre": "Comprendre une demande administrative à la préfecture",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "b16bea72-4bdf-4e8a-bb79-1d164e537a13",
+              "titre": "Compréhension écrite : Technologies et entretiens d'embauche en France",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "e472061e-095f-4052-8512-d7c755cdcb83",
+              "titre": "Comprendre les droits sociaux à la CAF",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "50b4f7da-646c-4f51-a88b-b5d269ff1e63",
+              "titre": "Compréhension écrite : Informations pratiques sur le festival Les Francos gourmands",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "ea95f59a-bc36-4ee5-8fc4-65143788efab",
+              "titre": "Comprendre les conditions pour l'énergie solaire",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "a075525b-f67f-4bf3-985b-40410dd555ec",
+              "titre": "Vrai/Faux - Histoire et popularité du vélo en France",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "7be960c1-2847-4322-9e2f-245d0913fdf6",
+              "titre": "Comprendre le statut de freelance en France",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "09837c3f-8139-4372-804b-0bed502e3b89",
+              "titre": "Évolutions dans la gestion des freelances en entreprise",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "ae9d7816-68bb-4379-bfea-75558a54d81b",
+              "titre": "Comprendre les informations administratives : la mobilité électrique",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "f96c1529-fd95-46d7-93be-5f26725c6104",
+              "titre": "Vocabulaire et expressions du contexte médical en France",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "fa43fca5-1cd8-4d5a-b71a-a6cec384812a",
+              "titre": "Rendez-vous médical : prendre une consultation",
+              "reason": "EXCL_SCORE_LOW",
+              "detail": "Rupture du tronc commun thématique"
+            },
+            {
+              "exercice_id": "fb7f5239-449d-4814-8600-6b17f3236017",
+              "titre": "Comprendre une enquête à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "136a1d26-05f6-40b9-acbc-f9871268f0f3",
+              "titre": "Annonce Gare : Train Paris-Lyon",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "1c62a3f2-704c-4244-9473-b8bd51b40357",
+              "titre": "Horaires de la mairie",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "9892321c-b58a-437c-866d-40c470fa8ede",
+              "titre": "Aller à la pharmacie",
+              "reason": "EXCL_SCORE_LOW",
+              "detail": "Rupture du tronc commun thématique"
+            },
+            {
+              "exercice_id": "32d1ffdb-1b1d-45fa-97a5-3ed1dfe0efd2",
+              "titre": "Comprendre les horaires de transport",
+              "reason": "EXCL_SCORE_LOW",
+              "detail": "Rupture du tronc commun thématique"
+            },
+            {
+              "exercice_id": "4c983a50-bcce-4b70-b0bf-974c5cb211d5",
+              "titre": "Épeler son nom (CO)",
+              "reason": "EXCL_SCORE_LOW",
+              "detail": "Rupture du tronc commun thématique"
+            },
+            {
+              "exercice_id": "b3c31e26-c9f1-4e8f-bf18-fb86be2fe6a4",
+              "titre": "Écoutez les messages et identifiez les heures importantes",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "5665dc85-e5f2-4faf-ae8c-252225f2fb22",
+              "titre": "Annonce de la gare : Départ du train",
+              "reason": "EXCL_SCORE_LOW",
+              "detail": "Rupture du tronc commun thématique"
+            },
+            {
+              "exercice_id": "efd95cf3-818d-4338-af4d-ccdbbd84d5a8",
+              "titre": "CO - Documents officiels",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "60ed11de-5b5f-402d-a138-f4ec319182c9",
+              "titre": "Où est la gare routière ?",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "fa0227c3-29db-4a4a-a9ee-012ea1c04f4d",
+              "titre": "Où prendre le bus numéro 7 ?",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "048100b6-2595-43c2-8aca-3104307e7ee5",
+              "titre": "Message vocal du médecin",
+              "reason": "EXCL_SCORE_LOW",
+              "detail": "Rupture du tronc commun thématique"
+            },
+            {
+              "exercice_id": "14ee9ec2-09ac-4afa-ad86-27cc58dd5b59",
+              "titre": "Les consignes de la préfecture",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "81a82a3b-025c-4409-884a-8a69777d8206",
+              "titre": "Un message de la CAF concernant le dossier logement",
+              "reason": "EXCL_SCORE_LOW",
+              "detail": "Rupture du tronc commun thématique"
+            },
+            {
+              "exercice_id": "85654fd7-5f70-4f13-8829-0c291dc0d022",
+              "titre": "Comprendre les annonces de la gare",
+              "reason": "EXCL_SCORE_LOW",
+              "detail": "Rupture du tronc commun thématique"
+            },
+            {
+              "exercice_id": "15002bf9-c30f-411e-9528-18bf8ed9f0f3",
+              "titre": "Trouver la sortie du métro",
+              "reason": "EXCL_SCORE_LOW",
+              "detail": "Rupture du tronc commun thématique"
+            },
+            {
+              "exercice_id": "12ede1af-823b-4284-a22b-777572c9e900",
+              "titre": "Comprendre une demande administrative à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "2b41a0f8-1e24-4f65-bfbc-9ef73218d1c1",
+              "titre": "Comprendre un rendez-vous à la préfecture",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "e3457a11-542c-4176-9a32-6aad37a2d361",
+              "titre": "Les heures en gare",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "3136af07-6d8a-41ea-8c34-7be16c843df8",
+              "titre": "Comprendre une demande administrative à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "dfe1ca1e-171f-4096-9c21-731c3135b757",
+              "titre": "Nouveau rendez-vous pour la formation",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "a933ccc2-b1f3-4545-91df-4bdc6f8b1266",
+              "titre": "Préfecture : Comprendre les consignes orales",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "51ca0951-1392-4399-b554-d94ad7f63fcb",
+              "titre": "Message du médecin : instructions pour une consultation",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "5448c46f-27cb-4add-8c67-9b3e4953d05c",
+              "titre": "Demande de logement social à la mairie",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "06be5180-3260-43bd-9b97-b908a11f6a68",
+              "titre": "Comprendre une demande administrative à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "16ea8cbd-36a7-4131-90d1-a07f131e8541",
+              "titre": "Identifier les verbes du présent dans un contexte administratif",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "a834be5d-8222-4d42-9c81-5c2c1bb95e31",
+              "titre": "Comprendre un contrôle d'identité (Oral)",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "1b4d279d-6552-4e01-8d9b-5c5d426ddc36",
+              "titre": "Comprendre les documents administratifs français",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "f9035bfa-73cc-4d51-8878-88b2c9915833",
+              "titre": "CO - Comprendre une adresse",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "1e3ff1eb-0028-4284-97c8-357669d73a9c",
+              "titre": "Comprendre une demande administrative à la CAF",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "2ba3c9c4-1be3-4c99-9c86-0e4e8c85d9d1",
+              "titre": "CO - Les nombres et l'âge",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "73fa072e-8136-4552-ab8e-9f38de873464",
+              "titre": "Le pronom EN - Contexte alimentaire et CAF",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "7a05e456-ad16-4a90-8669-8ff3947e90f9",
+              "titre": "Lexique médical et prise de rendez-vous chez le médecin",
+              "reason": "EXCL_SCORE_LOW",
+              "detail": "Rupture du tronc commun thématique"
+            },
+            {
+              "exercice_id": "1e3e0f5b-7947-4a93-9db2-0fd992d489be",
+              "titre": "CO - Comprendre des coordonnées",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "33382dd4-67d1-4435-8d69-890ac3e0ced8",
+              "titre": "Le pronom relatif « qui » dans les contextes administratifs",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "3ea5f382-39ec-40eb-b2df-594f582e3eec",
+              "titre": "Comprendre une démarche administrative à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "50c9d01d-3c79-4de0-bf58-b7fc1784b0fe",
+              "titre": "Conseils du médecin - Impératif",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "556cba0c-d037-4684-8ada-a5c2e97f6e52",
+              "titre": "Demande d'allocation familiale à la CAF",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "4e72b1c6-4231-4333-aeb5-e6bc323ad5ce",
+              "titre": "Comprendre les dates de rendez-vous",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "49ba6ff0-6fcd-4f26-8632-871673324d76",
+              "titre": "Comprendre les consignes chiffrées (durée, quantité)",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "8c4a82ee-81c2-46db-af6f-415ed6d08d08",
+              "titre": "Informations personnelles à la CAF",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "bf02a920-ecdd-4244-a096-fd7b425a4649",
+              "titre": "Où est le cabinet du docteur ?",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "913a5b72-73ff-43f0-a7dd-a149d4e73050",
+              "titre": "Identifier les informations dans un message de la CAF",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "5e1834e3-b2d9-472e-977c-42774a8437d9",
+              "titre": "Demande de logement social à la CAF",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "9469de1a-f470-4e11-9b46-d5102d302a73",
+              "titre": "Démarches administratives à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "c27c0b88-fd75-4b0e-bced-057a7055a480",
+              "titre": "Expressions de l'avis et conseils à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "911ba239-e1a0-4280-bff5-7f37610fde92",
+              "titre": "Rendez-vous chez le médecin en France",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "8068c301-82ac-4d78-9bca-4fa8432f8c30",
+              "titre": "Comprendre les moyens de transport en France",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "91cefa80-42ec-4166-a41e-df5915b1c451",
+              "titre": "Comprendre une demande administrative à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "063eacda-8620-4d33-91d3-4770e6f3a4bb",
+              "titre": "Comprendre une météo - Bulletin radio",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "f373e932-cdf1-4404-8fab-2d3324cbe907",
+              "titre": "Vocabulaire des sports extrêmes - Vrai ou Faux",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "cf6f5de6-0338-40a4-9d23-56b6394200c9",
+              "titre": "Demande de logement social et CAF",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "d88de779-5bd1-4981-9d7b-6f1cd37b9484",
+              "titre": "Rendez-vous à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "a51e30f5-35c0-479e-ba67-a19cc8126911",
+              "titre": "Dialoguer avec un médecin : symptômes et conseils",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "ad0f1e82-f166-4322-a237-ec4921f1fd6a",
+              "titre": "Rendez-vous à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "90c05bb0-3344-4ab7-9d48-3e422b5689f4",
+              "titre": "Annonce de gare : départ",
+              "reason": "EXCL_SCORE_LOW",
+              "detail": "Rupture du tronc commun thématique"
+            },
+            {
+              "exercice_id": "944ac479-2a0a-4a86-925e-0a3b45cb7f5c",
+              "titre": "Annonce à la gare : Horaires de train",
+              "reason": "EXCL_SCORE_LOW",
+              "detail": "Rupture du tronc commun thématique"
+            },
+            {
+              "exercice_id": "9f207a0a-3fb5-426b-9800-8e6891abb578",
+              "titre": "Départ du bus",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "406d8725-87af-4f51-a5e4-824a68f64727",
+              "titre": "Comprendre des coordonnées au téléphone",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "7b57c0de-c501-48c4-b6c4-ef3237594722",
+              "titre": "Comprendre des informations pratiques au quotidien",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "bd8567cc-537a-473a-8222-dccf282df37d",
+              "titre": "Consignes de sécurité à la piscine",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "e50f3fbe-ac39-4a0a-baf3-913c428fb22a",
+              "titre": "Comprendre des numéros de téléphone (Remédiation)",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "2c3fe13d-b67c-470b-b24b-7be5a0240c1f",
+              "titre": "Message du docteur Dupont",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "820c265c-40fb-45b5-acc7-7c62e6c41828",
+              "titre": "Vie quotidienne et fréquence",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "fead9085-1736-44d8-9334-448f2ea66bdf",
+              "titre": "Vocabulaire du repas et expressions de goût - Contexte social en France",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "4fd26792-1258-4620-b75e-3c886816f770",
+              "titre": "Prépositions et destinations en France",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            }
+          ]
+        },
+        "remaining_gaps": [
+          {
+            "cell_key": "A2:CO",
+            "requested": 5,
+            "retained_va": 4,
+            "retained_nr": 0,
+            "gap": 1,
+            "is_p0_cell": false,
+            "va_in_bank": 53,
+            "severity": "partial"
+          }
+        ],
+        "generation_need": {
+          "required": true,
+          "total_gap": 1,
+          "slots": [
+            {
+              "competence": "CO",
+              "niveau_vise": "A2",
+              "gap": 1,
+              "reason": "PARTIAL_GAP"
+            }
+          ],
+          "estimated_generation_count": 1,
+          "defer_to_lot8_p0": false
+        },
+        "human_review_items": [
+          {
+            "type": "AMBIGUOUS_CORRECTION_NEARBY",
+            "cell_key": "A2:CO",
+            "message": "Cellule avec ≥ 5 NR ambigus en banque (15)",
+            "priority": "moyenne"
+          }
+        ],
+        "meta": {
+          "generated_at": "2026-07-07T21:31:40.968Z",
+          "p1_pool": 4,
+          "p2_pool_vert": 0,
+          "p2_pool_orange": 0,
+          "nr_fallback_allowed": true
+        }
+      }
+    },
+    {
+      "scenario_id": "B2_CE",
+      "label": "B2 CE quota 5 cellule P0 (scénario C)",
+      "report": {
+        "params": {
+          "niveauVise": "B2",
+          "competence": "CE",
+          "themeId": null,
+          "quota": 5
+        },
+        "retained": [],
+        "excluded": {
+          "counts": {
+            "EXCL_NIVEAU": 316,
+            "EXCL_COMPETENCE": 291,
+            "EXCL_FORMAT": 2,
+            "EXCL_NR_THEME_SENSIBLE": 6,
+            "EXCL_NR_TIER_ROUGE": 6
+          },
+          "samples": [
+            {
+              "exercice_id": "f6b769fd-6685-4b3a-a13d-9cce64e68c52",
+              "titre": "Comprendre une offre administrative : voyage gratuit pour enfants",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "002136d5-072f-4a05-a876-476ab6ae62be",
+              "titre": "Invitation du voisinage",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "f96c1529-fd95-46d7-93be-5f26725c6104",
+              "titre": "Vocabulaire et expressions du contexte médical en France",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "fa43fca5-1cd8-4d5a-b71a-a6cec384812a",
+              "titre": "Rendez-vous médical : prendre une consultation",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "04285c19-75b6-4f11-8952-09ecf56e06e3",
+              "titre": "Mon appartement",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "044e8dfc-1932-41b9-9907-00aff55b2c49",
+              "titre": "Vocabulaire du formulaire CAF",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "fb7f5239-449d-4814-8600-6b17f3236017",
+              "titre": "Comprendre une enquête à la préfecture",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "ff1ad7c9-1228-4a14-9f83-bd77aa5ccaff",
+              "titre": "Consultation médicale : description des symptômes",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "05cf4f35-4df0-4e40-bcf4-13a6734689e7",
+              "titre": "Ma profession",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "0a49970b-fa44-43a8-9dd1-bfd50f99e7e9",
+              "titre": "La nouvelle voisine",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "ffffe409-af1e-42f0-bd49-d3dc5dbf6036",
+              "titre": "S'installer dans un logement - Production orale",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "0f46fda3-8187-4766-a691-c0d207df7229",
+              "titre": "Lire une notice de santé",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "1354365c-779a-4715-a48a-d8de386c34f4",
+              "titre": "Création d'un badge",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "136a1d26-05f6-40b9-acbc-f9871268f0f3",
+              "titre": "Annonce Gare : Train Paris-Lyon",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "8f15ebab-5f34-4ef1-beb9-5899c2f62284",
+              "titre": "Comprendre un formulaire scolaire",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "19f7c554-5870-4d0d-a57d-287d868ac6bc",
+              "titre": "Comprendre un SMS simple",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "1c62a3f2-704c-4244-9473-b8bd51b40357",
+              "titre": "Horaires de la mairie",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "6bf144ff-efbf-444e-9458-2667492c4426",
+              "titre": "Articles définis et administration",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "923047ad-9735-4436-a34a-13eca7b6cd8d",
+              "titre": "Le badge de l'entreprise",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "9892321c-b58a-437c-866d-40c470fa8ede",
+              "titre": "Aller à la pharmacie",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "1f917846-27dd-49fa-823e-da32a1fe5f90",
+              "titre": "Compléter un formulaire d'inscription",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "2056fe03-a27e-4b7c-8f79-6be3d5d98049",
+              "titre": "Se repérer à la préfecture",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "20c09288-e717-46ec-ac5a-dbe84cdb7474",
+              "titre": "Déclarer un changement à la CAF",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "9a3e6119-0a20-492a-b614-599a6b688b40",
+              "titre": "Comprendre un message familial",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "a2c5b1e7-4132-4cd4-b6d3-921dd536d327",
+              "titre": "Comprendre une annonce de logement",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "282c5bc1-4500-40a5-b69d-f196d90e3bd8",
+              "titre": "Compléter son identité (Révision)",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "2863358b-1910-49d1-afa6-98c5f3cdce7a",
+              "titre": "Identifier les équipements d'un logement",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "28fadee8-fcd8-4a0a-9e0e-521d0ca13c13",
+              "titre": "Comprendre un itinéraire simple",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "a474ed73-3816-42b2-a3a9-31e64bf19dc4",
+              "titre": "Identifier les rubriques d'un document scolaire",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "2b21e3a7-e119-44ec-8a15-cd03f5f66318",
+              "titre": "SMS d'annulation de RDV",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "b5d8b240-aa1d-4d97-a65e-182874ff18c3",
+              "titre": "Comprendre et exprimer l'heure",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "2d77b285-8040-42c8-8d40-4eb70d58ef6f",
+              "titre": "Formulaire de livraison",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "2e6f7505-66a6-4c9b-bc8c-2126d1312bf2",
+              "titre": "Sécurité au travail",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "a96c77d6-9de5-4058-b03c-c141df6cc9f4",
+              "titre": "Lire un ticket de caisse",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "b14233da-69cf-47bd-83cc-dcd19ff9ebec",
+              "titre": "Classer les informations d'identité",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "4411731d-b178-4337-9790-c219be52b7a9",
+              "titre": "S01 · variante B1",
+              "reason": "EXCL_FORMAT"
+            },
+            {
+              "exercice_id": "2758482c-8474-4de4-9b4a-24cc5ceeb09d",
+              "titre": "S01 · variante B2",
+              "reason": "EXCL_FORMAT"
+            },
+            {
+              "exercice_id": "32d1ffdb-1b1d-45fa-97a5-3ed1dfe0efd2",
+              "titre": "Comprendre les horaires de transport",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "c751c736-9b16-4c78-9d7c-1795fb5b7ae3",
+              "titre": "Remplir un formulaire de contact",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "4530184c-dfb6-4b5d-9b82-a837b9be2ccb",
+              "titre": "Rendez-vous à la préfecture",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "482117d0-103f-4cb9-bddf-a28266b283d1",
+              "titre": "L'agence d'intérim",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "4c983a50-bcce-4b70-b0bf-974c5cb211d5",
+              "titre": "Épeler son nom (CO)",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "287669a3-cdd1-44ca-99b1-fbeef461a945",
+              "titre": "Localiser des services administratifs",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "294c2fc9-11f6-449a-b3ac-1dc65b491342",
+              "titre": "Appel au médecin - Discours rapporté",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "5b456fc4-770a-42eb-9488-791d3b190301",
+              "titre": "Échanger un article à la boutique : Texte lacunaire",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "6ea666fe-708e-4535-ac03-11f4031b630d",
+              "titre": "Compréhension - L'entretien d'embauche de Virginie",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "7c0b20c1-4f66-42da-9d9b-3ec3212601de",
+              "titre": "Comprendre une demande de renseignement à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "b314e99b-86bf-4c89-b3e5-d6f9947954e9",
+              "titre": "Échange à la CAF : Exprimer une gêne et confirmer",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "8706c89a-6c4e-4cbf-afa1-4fa166549c72",
+              "titre": "Situation médicale - Complétez le dialogue",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "955f5e32-c42f-48b7-aa15-dc8bab29e67d",
+              "titre": "Vocabulaire administratif : démarches à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "f425f84e-9347-43ea-b46f-da11e3b8b96f",
+              "titre": "Refuser un logement à l'agence immobilière",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "fc87243f-4594-46ec-acdd-2dec6c5e561b",
+              "titre": "Exprimer le refus dans un contexte administratif français",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "e22892b4-4b6a-4dd0-a879-64b57a893eb4",
+              "titre": "Situation à la CAF : comprendre les aides sociales",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "087e0509-3cc7-4df6-99ac-50fcba6b0872",
+              "titre": "Exercice de grammaire - La négation avec les articles",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            }
+          ]
+        },
+        "remaining_gaps": [
+          {
+            "cell_key": "B2:CE",
+            "requested": 5,
+            "retained_va": 0,
+            "retained_nr": 0,
+            "gap": 5,
+            "is_p0_cell": true,
+            "va_in_bank": 0,
+            "severity": "critical"
+          }
+        ],
+        "generation_need": {
+          "required": true,
+          "total_gap": 5,
+          "slots": [
+            {
+              "competence": "CE",
+              "niveau_vise": "B2",
+              "gap": 5,
+              "reason": "P0_CELL_ZERO_VA"
+            }
+          ],
+          "estimated_generation_count": 5,
+          "defer_to_lot8_p0": true
+        },
+        "human_review_items": [
+          {
+            "type": "NR_TIER_ROUGE_SKIPPED",
+            "cell_key": "B2:CE",
+            "message": "NR tier rouge exclus mais seuls candidats disponibles",
+            "priority": "haute"
+          },
+          {
+            "type": "P0_BLOCKING",
+            "cell_key": "B2:CE",
+            "message": "Séance cible cellule P0 Lot 8 — génération intégrale signalée",
+            "priority": "haute"
+          }
+        ],
+        "meta": {
+          "generated_at": "2026-07-07T21:31:40.968Z",
+          "p1_pool": 0,
+          "p2_pool_vert": 0,
+          "p2_pool_orange": 0,
+          "nr_fallback_allowed": false
+        }
+      }
+    },
+    {
+      "scenario_id": "B1_CO_PREF",
+      "label": "B1 CO thème prefecture quota 5 (scénario D)",
+      "report": {
+        "params": {
+          "niveauVise": "B1",
+          "competence": "CO",
+          "themeId": "prefecture",
+          "quota": 5
+        },
+        "retained": [],
+        "excluded": {
+          "counts": {
+            "EXCL_COMPETENCE": 491,
+            "EXCL_FORMAT": 2,
+            "EXCL_NIVEAU": 59,
+            "EXCL_NR_TIER_ROUGE": 28,
+            "EXCL_SCORE_LOW": 8,
+            "EXCL_NR_THEME_SENSIBLE": 28,
+            "EXCL_VALIDATION_REJECTED": 5
+          },
+          "samples": [
+            {
+              "exercice_id": "f6b769fd-6685-4b3a-a13d-9cce64e68c52",
+              "titre": "Comprendre une offre administrative : voyage gratuit pour enfants",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "002136d5-072f-4a05-a876-476ab6ae62be",
+              "titre": "Invitation du voisinage",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "04285c19-75b6-4f11-8952-09ecf56e06e3",
+              "titre": "Mon appartement",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "044e8dfc-1932-41b9-9907-00aff55b2c49",
+              "titre": "Vocabulaire du formulaire CAF",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "ff1ad7c9-1228-4a14-9f83-bd77aa5ccaff",
+              "titre": "Consultation médicale : description des symptômes",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "05cf4f35-4df0-4e40-bcf4-13a6734689e7",
+              "titre": "Ma profession",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "0a49970b-fa44-43a8-9dd1-bfd50f99e7e9",
+              "titre": "La nouvelle voisine",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "ffffe409-af1e-42f0-bd49-d3dc5dbf6036",
+              "titre": "S'installer dans un logement - Production orale",
+              "reason": "EXCL_FORMAT"
+            },
+            {
+              "exercice_id": "0f46fda3-8187-4766-a691-c0d207df7229",
+              "titre": "Lire une notice de santé",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "1354365c-779a-4715-a48a-d8de386c34f4",
+              "titre": "Création d'un badge",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "136a1d26-05f6-40b9-acbc-f9871268f0f3",
+              "titre": "Annonce Gare : Train Paris-Lyon",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "8f15ebab-5f34-4ef1-beb9-5899c2f62284",
+              "titre": "Comprendre un formulaire scolaire",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "19f7c554-5870-4d0d-a57d-287d868ac6bc",
+              "titre": "Comprendre un SMS simple",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "1c62a3f2-704c-4244-9473-b8bd51b40357",
+              "titre": "Horaires de la mairie",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "6bf144ff-efbf-444e-9458-2667492c4426",
+              "titre": "Articles définis et administration",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "923047ad-9735-4436-a34a-13eca7b6cd8d",
+              "titre": "Le badge de l'entreprise",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "9892321c-b58a-437c-866d-40c470fa8ede",
+              "titre": "Aller à la pharmacie",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "1f917846-27dd-49fa-823e-da32a1fe5f90",
+              "titre": "Compléter un formulaire d'inscription",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "2056fe03-a27e-4b7c-8f79-6be3d5d98049",
+              "titre": "Se repérer à la préfecture",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "20c09288-e717-46ec-ac5a-dbe84cdb7474",
+              "titre": "Déclarer un changement à la CAF",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "9a3e6119-0a20-492a-b614-599a6b688b40",
+              "titre": "Comprendre un message familial",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "a2c5b1e7-4132-4cd4-b6d3-921dd536d327",
+              "titre": "Comprendre une annonce de logement",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "282c5bc1-4500-40a5-b69d-f196d90e3bd8",
+              "titre": "Compléter son identité (Révision)",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "2863358b-1910-49d1-afa6-98c5f3cdce7a",
+              "titre": "Identifier les équipements d'un logement",
+              "reason": "EXCL_COMPETENCE"
+            },
+            {
+              "exercice_id": "32d1ffdb-1b1d-45fa-97a5-3ed1dfe0efd2",
+              "titre": "Comprendre les horaires de transport",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "4530184c-dfb6-4b5d-9b82-a837b9be2ccb",
+              "titre": "Rendez-vous à la préfecture",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "4c983a50-bcce-4b70-b0bf-974c5cb211d5",
+              "titre": "Épeler son nom (CO)",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "b3c31e26-c9f1-4e8f-bf18-fb86be2fe6a4",
+              "titre": "Écoutez les messages et identifiez les heures importantes",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "5665dc85-e5f2-4faf-ae8c-252225f2fb22",
+              "titre": "Annonce de la gare : Départ du train",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "efd95cf3-818d-4338-af4d-ccdbbd84d5a8",
+              "titre": "CO - Documents officiels",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "5a76c6e0-2749-4be9-9c62-6589d154f509",
+              "titre": "Problème d'orientation à la préfecture",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "60ed11de-5b5f-402d-a138-f4ec319182c9",
+              "titre": "Où est la gare routière ?",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "fa0227c3-29db-4a4a-a9ee-012ea1c04f4d",
+              "titre": "Où prendre le bus numéro 7 ?",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "048100b6-2595-43c2-8aca-3104307e7ee5",
+              "titre": "Message vocal du médecin",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "14ee9ec2-09ac-4afa-ad86-27cc58dd5b59",
+              "titre": "Les consignes de la préfecture",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "85654fd7-5f70-4f13-8829-0c291dc0d022",
+              "titre": "Comprendre les annonces de la gare",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "86130260-e23d-478e-ba40-2c87b2d0ab99",
+              "titre": "Prendre rendez-vous à la mairie",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "15002bf9-c30f-411e-9528-18bf8ed9f0f3",
+              "titre": "Trouver la sortie du métro",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "e3457a11-542c-4176-9a32-6aad37a2d361",
+              "titre": "Les heures en gare",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "75b18bcc-2b35-4407-bf1d-c8cfba274250",
+              "titre": "Où est le bureau des impôts ?",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "a834be5d-8222-4d42-9c81-5c2c1bb95e31",
+              "titre": "Comprendre un contrôle d'identité (Oral)",
+              "reason": "EXCL_NIVEAU"
+            },
+            {
+              "exercice_id": "2c67bae7-2b96-4c29-a1f7-58c5935d5858",
+              "titre": "Rédiger un courrier à la CAF concernant un logement",
+              "reason": "EXCL_FORMAT"
+            },
+            {
+              "exercice_id": "f96c1529-fd95-46d7-93be-5f26725c6104",
+              "titre": "Vocabulaire et expressions du contexte médical en France",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "fa43fca5-1cd8-4d5a-b71a-a6cec384812a",
+              "titre": "Rendez-vous médical : prendre une consultation",
+              "reason": "EXCL_SCORE_LOW",
+              "detail": "Rupture du tronc commun thématique"
+            },
+            {
+              "exercice_id": "fb7f5239-449d-4814-8600-6b17f3236017",
+              "titre": "Comprendre une enquête à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "81a82a3b-025c-4409-884a-8a69777d8206",
+              "titre": "Un message de la CAF concernant le dossier logement",
+              "reason": "EXCL_SCORE_LOW",
+              "detail": "Rupture du tronc commun thématique"
+            },
+            {
+              "exercice_id": "12ede1af-823b-4284-a22b-777572c9e900",
+              "titre": "Comprendre une demande administrative à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "2b41a0f8-1e24-4f65-bfbc-9ef73218d1c1",
+              "titre": "Comprendre un rendez-vous à la préfecture",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "3136af07-6d8a-41ea-8c34-7be16c843df8",
+              "titre": "Comprendre une demande administrative à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "dfe1ca1e-171f-4096-9c21-731c3135b757",
+              "titre": "Nouveau rendez-vous pour la formation",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "3ae5e71b-ccce-4af9-8d5b-ac16fd741b96",
+              "titre": "Contextes administratifs en France : situations courantes",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "a933ccc2-b1f3-4545-91df-4bdc6f8b1266",
+              "titre": "Préfecture : Comprendre les consignes orales",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "51ca0951-1392-4399-b554-d94ad7f63fcb",
+              "titre": "Message du médecin : instructions pour une consultation",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "5448c46f-27cb-4add-8c67-9b3e4953d05c",
+              "titre": "Demande de logement social à la mairie",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "06be5180-3260-43bd-9b97-b908a11f6a68",
+              "titre": "Comprendre une demande administrative à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "16ea8cbd-36a7-4131-90d1-a07f131e8541",
+              "titre": "Identifier les verbes du présent dans un contexte administratif",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "1b4d279d-6552-4e01-8d9b-5c5d426ddc36",
+              "titre": "Comprendre les documents administratifs français",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "1e3ff1eb-0028-4284-97c8-357669d73a9c",
+              "titre": "Comprendre une demande administrative à la CAF",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "73fa072e-8136-4552-ab8e-9f38de873464",
+              "titre": "Le pronom EN - Contexte alimentaire et CAF",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "7a05e456-ad16-4a90-8669-8ff3947e90f9",
+              "titre": "Lexique médical et prise de rendez-vous chez le médecin",
+              "reason": "EXCL_SCORE_LOW",
+              "detail": "Rupture du tronc commun thématique"
+            },
+            {
+              "exercice_id": "33382dd4-67d1-4435-8d69-890ac3e0ced8",
+              "titre": "Le pronom relatif « qui » dans les contextes administratifs",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "3ea5f382-39ec-40eb-b2df-594f582e3eec",
+              "titre": "Comprendre une démarche administrative à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "50c9d01d-3c79-4de0-bf58-b7fc1784b0fe",
+              "titre": "Conseils du médecin - Impératif",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "556cba0c-d037-4684-8ada-a5c2e97f6e52",
+              "titre": "Demande d'allocation familiale à la CAF",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "8c4a82ee-81c2-46db-af6f-415ed6d08d08",
+              "titre": "Informations personnelles à la CAF",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "8dc40198-db88-4da4-99df-993a5153754b",
+              "titre": "Vrai/Faux : Droits et obligations pour accéder aux services sociaux en France",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "913a5b72-73ff-43f0-a7dd-a149d4e73050",
+              "titre": "Identifier les informations dans un message de la CAF",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "5e1834e3-b2d9-472e-977c-42774a8437d9",
+              "titre": "Demande de logement social à la CAF",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "9469de1a-f470-4e11-9b46-d5102d302a73",
+              "titre": "Démarches administratives à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "9567217e-4ef3-45f6-895d-071ed663c7da",
+              "titre": "Comprendre une demande administrative à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "a723f47f-50c3-4ee5-9c85-517fecdd72ef",
+              "titre": "Comprendre une demande administrative à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "c27c0b88-fd75-4b0e-bced-057a7055a480",
+              "titre": "Expressions de l'avis et conseils à la préfecture",
+              "reason": "EXCL_NR_THEME_SENSIBLE"
+            },
+            {
+              "exercice_id": "911ba239-e1a0-4280-bff5-7f37610fde92",
+              "titre": "Rendez-vous chez le médecin en France",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "8068c301-82ac-4d78-9bca-4fa8432f8c30",
+              "titre": "Comprendre les moyens de transport en France",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "063eacda-8620-4d33-91d3-4770e6f3a4bb",
+              "titre": "Comprendre une météo - Bulletin radio",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "f373e932-cdf1-4404-8fab-2d3324cbe907",
+              "titre": "Vocabulaire des sports extrêmes - Vrai ou Faux",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "cf6f5de6-0338-40a4-9d23-56b6394200c9",
+              "titre": "Demande de logement social et CAF",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "22b2bc30-2f26-45f7-8ff7-d31d7ee3c029",
+              "titre": "Comprendre les engagements du commerce équitable",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "a51e30f5-35c0-479e-ba67-a19cc8126911",
+              "titre": "Dialoguer avec un médecin : symptômes et conseils",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "a980aa48-05cb-4ed9-b901-e477870dc7a4",
+              "titre": "Comprendre une demande administrative à la préfecture",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "b16bea72-4bdf-4e8a-bb79-1d164e537a13",
+              "titre": "Compréhension écrite : Technologies et entretiens d'embauche en France",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "e472061e-095f-4052-8512-d7c755cdcb83",
+              "titre": "Comprendre les droits sociaux à la CAF",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "820c265c-40fb-45b5-acc7-7c62e6c41828",
+              "titre": "Vie quotidienne et fréquence",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "fead9085-1736-44d8-9334-448f2ea66bdf",
+              "titre": "Vocabulaire du repas et expressions de goût - Contexte social en France",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "4fd26792-1258-4620-b75e-3c886816f770",
+              "titre": "Prépositions et destinations en France",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "33a9ed74-f650-446d-b824-034b3655fb34",
+              "titre": "Comprendre une commande au restaurant",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "7132a092-1be5-4346-bff5-04f8f5209939",
+              "titre": "Vocabulaire du petit-déjeuner et des repas en France",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "2fd1f981-2cfd-4ec8-995d-4c99eeb40380",
+              "titre": "Tâches ménagères - Compréhension écrite",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "4b7382ac-27ec-4b10-a966-3aee3f5860a6",
+              "titre": "Comprendre les horaires et activités quotidiennes",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "70ebaa61-5119-49cb-be0d-1c34ca44174d",
+              "titre": "Règles de politesse en France - Vrai ou Faux",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "6a43191d-a613-436c-ac57-90893433f2d8",
+              "titre": "Vacances et destinations - Comprendre les préférences",
+              "reason": "EXCL_NR_TIER_ROUGE"
+            },
+            {
+              "exercice_id": "a4dfbdf1-15ce-466e-a4a6-3a9da9266e8c",
+              "titre": "Comprendre les nouveaux sports en France",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "634e81c6-fbd1-4c96-afb9-8d122e4f5610",
+              "titre": "QCM : Démarches administratives en France",
+              "reason": "EXCL_SCORE_LOW"
+            },
+            {
+              "exercice_id": "50b4f7da-646c-4f51-a88b-b5d269ff1e63",
+              "titre": "Compréhension écrite : Informations pratiques sur le festival Les Francos gourmands",
+              "reason": "EXCL_VALIDATION_REJECTED"
+            },
+            {
+              "exercice_id": "09837c3f-8139-4372-804b-0bed502e3b89",
+              "titre": "Évolutions dans la gestion des freelances en entreprise",
+              "reason": "EXCL_SCORE_LOW",
+              "detail": "Titre de séjour ne nécessite pas B2"
+            }
+          ]
+        },
+        "remaining_gaps": [
+          {
+            "cell_key": "B1:CO",
+            "requested": 5,
+            "retained_va": 0,
+            "retained_nr": 0,
+            "gap": 5,
+            "is_p0_cell": false,
+            "va_in_bank": 8,
+            "severity": "partial"
+          }
+        ],
+        "generation_need": {
+          "required": true,
+          "total_gap": 5,
+          "slots": [
+            {
+              "competence": "CO",
+              "niveau_vise": "B1",
+              "gap": 5,
+              "reason": "ALL_REJECTED_OR_STALE"
+            }
+          ],
+          "estimated_generation_count": 5,
+          "defer_to_lot8_p0": false
+        },
+        "human_review_items": [],
+        "meta": {
+          "generated_at": "2026-07-07T21:31:40.969Z",
+          "p1_pool": 0,
+          "p2_pool_vert": 0,
+          "p2_pool_orange": 0,
+          "nr_fallback_allowed": false
+        }
+      }
+    }
+  ]
+}

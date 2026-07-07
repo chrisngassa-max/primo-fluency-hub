@@ -30,7 +30,8 @@
     "curriculum:render-documents": "node scripts/curriculum/render-documents.mjs",
     "curriculum:seed:plan": "node scripts/curriculum/generate-plan-seed-sql.mjs",
     "audit:validation": "node --import tsx scripts/audit-exercices-validation.mjs --dry-run",
-    "backfill:validation": "node --import tsx scripts/backfill-exercices-validation.mjs --dry-run"
+    "backfill:validation": "node --import tsx scripts/backfill-exercices-validation.mjs --dry-run",
+    "dry-run:pre-session-selection": "node --import tsx scripts/pre-session-selection-dry-run.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
