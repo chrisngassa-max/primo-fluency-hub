@@ -25,8 +25,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PreSessionSelectionReport } from "@/components/PreSessionSelectionReport";
-import { preSessionSelectExercises } from "@/lib/pre-session-selection";
-import { MOCK_PRE_SESSION_CANDIDATES } from "@/lib/pre-session-selection-mock";
+import { usePreSessionSelectionReport } from "@/hooks/usePreSessionSelectionReport";
 
 // ─── Types ───
 type PreflightStatus = "ready" | "to_fix" | "pending";
@@ -325,10 +324,19 @@ const PreflightExercises = ({ sessionId, session, exercises, formateurId, parcou
     [session, parcoursSeance, exercises],
   );
 
-  const preSessionReport = useMemo(
-    () => preSessionSelectExercises(MOCK_PRE_SESSION_CANDIDATES, selectionParams),
-    [selectionParams],
-  );
+  const groupId = (session as { group_id?: string; group?: { id?: string } })?.group?.id
+    ?? (session as { group_id?: string })?.group_id
+    ?? null;
+
+  const {
+    report: preSessionReport,
+    isLoading: preSessionLoading,
+    error: preSessionError,
+  } = usePreSessionSelectionReport({
+    selectionParams,
+    groupId,
+    enabled: !!session,
+  });
 
   const linkedExerciceIds = useMemo(
     () => exercises.map((se: any) => se.exercice_id).filter(Boolean),
@@ -423,6 +431,8 @@ const PreflightExercises = ({ sessionId, session, exercises, formateurId, parcou
             <PreSessionSelectionReport
               report={preSessionReport}
               selectionParams={selectionParams}
+              isLoading={preSessionLoading}
+              error={preSessionError}
               linkedExerciceIds={linkedExerciceIds}
               lot8ComplementEnabled={false}
               onApplySelection={() => {}}
