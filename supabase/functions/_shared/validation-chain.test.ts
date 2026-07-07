@@ -193,8 +193,11 @@ describe("validation-chain L7 correction", () => {
 describe("validation-chain runValidationChain", () => {
   it("T15: fixture valide CE → validated_auto, ok: true", async () => {
     const result = await runValidationChain(VALID_CE_QCM, {
-      targetNiveauVise: VALID_CE_QCM.niveau_vise,
-      targetThemeId: VALID_CE_QCM.theme,
+      profile: "generated_strict",
+      context: {
+        targetNiveauVise: VALID_CE_QCM.niveau_vise,
+        targetThemeId: VALID_CE_QCM.theme,
+      },
     });
     expect(result.ok).toBe(true);
     expect(result.status).toBe("validated_auto");
@@ -214,9 +217,160 @@ describe("validation-chain runValidationChain", () => {
         theme: "prefecture",
         contexte_irn: "logement",
       },
-      { targetNiveauVise: "B2", targetThemeId: "prefecture" },
+      {
+        context: { targetNiveauVise: "B2", targetThemeId: "prefecture" },
+      },
     );
     expect(result.status).toBe("needs_review");
+  });
+});
+
+describe("validation-chain profiles P1-P10", () => {
+  const CE_QCM_NO_TEXTE = {
+    ...VALID_CE_QCM,
+    contenu: {
+      items: [
+        {
+          question: "Où va Marie ?",
+          options: ["À la banque", "À l'école", "Au travail"],
+          bonne_reponse: "À la banque",
+        },
+      ],
+    },
+  };
+
+  const CE_QCM_INFERENTIAL = {
+    ...VALID_CE_QCM,
+    contenu: {
+      texte: "Marie va à la banque pour ouvrir un compte.",
+      items: [
+        {
+          question: "Où ?",
+          options: ["À l'école", "Au travail", "À la banque"],
+          bonne_reponse: "À l'école",
+        },
+      ],
+    },
+  };
+
+  it("P1: legacy_bank CE sans texte mais items[] → warning, pas rejected", async () => {
+    const result = await runValidationChain(CE_QCM_NO_TEXTE, { profile: "legacy_bank" });
+    const hit = result.issues.find((i) => i.code === "missing_ce_text");
+    expect(hit?.severity).toBe("warning");
+    expect(result.status).not.toBe("rejected");
+  });
+
+  it("P2: legacy_bank CE sans items → missing_ce_text error + not_usable_content", async () => {
+    const result = await runValidationChain(
+      {
+        ...CE_QCM_NO_TEXTE,
+        contenu: { items: [] },
+      },
+      { profile: "legacy_bank" },
+    );
+    expect(result.issues.some((i) => i.code === "not_usable_content" && i.severity === "error")).toBe(
+      true,
+    );
+    expect(result.issues.some((i) => i.code === "missing_ce_text" && i.severity === "error")).toBe(
+      true,
+    );
+    expect(result.status).toBe("rejected");
+  });
+
+  it("P3: legacy_bank correction_not_in_text → warning, pas rejected seul", async () => {
+    const result = await runValidationChain(CE_QCM_INFERENTIAL, { profile: "legacy_bank" });
+    const hit = result.issues.find((i) => i.code === "correction_not_in_text");
+    expect(hit?.severity).toBe("warning");
+    expect(result.status).not.toBe("rejected");
+  });
+
+  it("P4: generated_strict correction_not_in_text → error, rejected", async () => {
+    const result = await runValidationChain(CE_QCM_INFERENTIAL, {
+      profile: "generated_strict",
+    });
+    const hit = result.issues.find((i) => i.code === "correction_not_in_text");
+    expect(hit?.severity).toBe("error");
+    expect(result.status).toBe("rejected");
+  });
+
+  it("P5: generated_strict CE sans texte → error (régression Lot 8)", async () => {
+    const result = await runValidationChain(CE_QCM_NO_TEXTE, {
+      profile: "generated_strict",
+    });
+    expect(result.issues.some((i) => i.code === "missing_ce_text" && i.severity === "error")).toBe(
+      true,
+    );
+    expect(result.status).toBe("rejected");
+  });
+
+  it("P6: legacy_bank qcm_answer_not_in_options + correction_not_in_text → rejected", async () => {
+    const result = await runValidationChain(
+      {
+        ...CE_QCM_INFERENTIAL,
+        contenu: {
+          texte: "Marie travaille chaque jour.",
+          items: [
+            {
+              question: "Où va-t-elle ?",
+              options: ["À l'école", "Au travail"],
+              bonne_reponse: "À la banque",
+            },
+          ],
+        },
+      },
+      { profile: "legacy_bank" },
+    );
+    expect(
+      result.issues.some((i) => i.code === "qcm_answer_not_in_options" && i.severity === "error"),
+    ).toBe(true);
+    expect(
+      result.issues.some((i) => i.code === "correction_not_in_text" && i.severity === "error"),
+    ).toBe(true);
+    expect(result.status).toBe("rejected");
+  });
+
+  it("P7: generated_strict VF sans correction_not_in_text sur vrai/faux", () => {
+    const issues = runLayerL7Correction({
+      ...VALID_CE_QCM,
+      format: "vrai_faux",
+      contenu: {
+        texte: "Marie va à la banque.",
+        items: [{ question: "Marie va à la banque ?", bonne_reponse: "vrai" }],
+      },
+    });
+    expect(issues.some((i) => i.code === "correction_not_in_text")).toBe(false);
+  });
+
+  it("P8: même exercice, statuts différents selon profil", async () => {
+    const legacy = await runValidationChain(CE_QCM_NO_TEXTE, { profile: "legacy_bank" });
+    const strict = await runValidationChain(CE_QCM_NO_TEXTE, { profile: "generated_strict" });
+    expect(legacy.status).not.toBe(strict.status);
+    expect(strict.status).toBe("rejected");
+  });
+
+  it("P9: legacy déduplique missing_ce_text L1+L2", async () => {
+    const result = await runValidationChain(CE_QCM_NO_TEXTE, { profile: "legacy_bank" });
+    expect(result.issues.filter((i) => i.code === "missing_ce_text")).toHaveLength(1);
+  });
+
+  it("P10: legacy_bank CO missing_audio_script → warning", async () => {
+    const result = await runValidationChain(
+      {
+        id: "co-1",
+        titre: "Écoute",
+        consigne: "Écoutez et répondez.",
+        competence: "CO",
+        format: "qcm",
+        niveau_vise: "A1",
+        contenu: {
+          items: [{ question: "Q ?", options: ["a", "b"], bonne_reponse: "a" }],
+        },
+      },
+      { profile: "legacy_bank" },
+    );
+    const hit = result.issues.find((i) => i.code === "missing_audio_script");
+    expect(hit?.severity).toBe("warning");
+    expect(result.status).not.toBe("rejected");
   });
 });
 

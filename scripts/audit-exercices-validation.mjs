@@ -5,7 +5,7 @@
  * USAGE :
  *   npm run audit:validation
  *   node --import tsx scripts/audit-exercices-validation.mjs --dry-run
- *   node --import tsx scripts/audit-exercices-validation.mjs --dry-run --limit 50
+ *   node --import tsx scripts/audit-exercices-validation.mjs --dry-run --profile legacy_bank
  *
  * INTERDIT Lot 9 : --apply (erreur explicite)
  */
@@ -51,12 +51,21 @@ function parseArgs(argv) {
     outputDir: null,
     limit: null,
     formats: ["json", "md"],
+    profile: "generated_strict",
   };
 
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     if (arg === "--apply") args.apply = true;
     if (arg === "--dry-run") args.dryRun = true;
+    if (arg === "--profile" && argv[i + 1]) {
+      const profile = argv[++i];
+      if (profile !== "legacy_bank" && profile !== "generated_strict") {
+        console.error(`ERREUR : --profile invalide "${profile}" (legacy_bank | generated_strict).`);
+        process.exit(1);
+      }
+      args.profile = profile;
+    }
     if (arg === "--output-dir" && argv[i + 1]) {
       args.outputDir = argv[++i];
     }
@@ -107,6 +116,7 @@ function buildMarkdown(report) {
     "",
     `**Généré :** ${report.generated_at}`,
     `**Mode :** dry-run (0 écriture Supabase)`,
+    `**Profil :** ${report.validation_profile}`,
     `**Pipeline :** ${report.pipeline_version}`,
     "",
     "## Métriques globales",
@@ -249,8 +259,11 @@ async function main() {
           : undefined,
     };
     const result = await runValidationChain(exercise, {
-      targetNiveauVise: row.niveau_vise,
-      targetThemeId: row.theme,
+      profile: args.profile,
+      context: {
+        targetNiveauVise: row.niveau_vise,
+        targetThemeId: row.theme,
+      },
     });
 
     summary[result.status]++;
@@ -297,13 +310,15 @@ async function main() {
   const generatedAt = new Date().toISOString();
   const slug = timestampSlug();
   const outputDir =
-    args.outputDir ?? resolve(__dirname, "backups", `validation-audit-${slug}`);
+    args.outputDir ??
+    resolve(__dirname, "backups", `validation-audit-${args.profile}-${slug}`);
   await mkdir(outputDir, { recursive: true });
 
   const report = {
     lot: "9-validation-socle",
     generated_at: generatedAt,
     dry_run: true,
+    validation_profile: args.profile,
     bank_total: bankTotal,
     pipeline_version: "L1-L7-deterministic",
     summary,
@@ -325,6 +340,7 @@ async function main() {
   }
 
   console.log("\nRésumé :");
+  console.log(`  profile         : ${args.profile}`);
   console.log(`  bank_total      : ${bankTotal}`);
   console.log(`  validated_auto  : ${summary.validated_auto}`);
   console.log(`  needs_review    : ${summary.needs_review}`);

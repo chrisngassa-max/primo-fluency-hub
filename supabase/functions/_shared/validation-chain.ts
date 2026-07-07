@@ -32,11 +32,18 @@ export interface ChainIssue {
   layer: ValidationLayer;
 }
 
+export type ValidationProfile = "legacy_bank" | "generated_strict";
+
 export interface ValidationChainContext {
   targetNiveauVise?: string;
   targetThemeId?: string;
   targetTypeDemarche?: string;
   pedagogicalDirectives?: PedagogicalDirectives | null;
+}
+
+export interface ValidationChainOptions {
+  profile?: ValidationProfile;
+  context?: ValidationChainContext;
 }
 
 export type SimulatedValidationStatus =
@@ -57,7 +64,10 @@ export interface ValidationChainResult {
 const VALID_LEVELS = new Set(["A0", "A1", "A2", "B1", "B2"]);
 const SENSITIVE_THEMES = new Set(["prefecture", "vie_citoyenne"]);
 const PRODUCTION_FORMATS = new Set(["production_ecrite", "production_orale"]);
-const INTERACTIVE_FORMATS = new Set(["qcm", "vrai_faux"]);
+const STRUCTURAL_QCM_ERROR_CODES = new Set([
+  "qcm_no_options",
+  "qcm_answer_not_in_options",
+]);
 
 const ALL_LAYERS: ValidationLayer[] = [
   "L1_structure",
@@ -306,7 +316,7 @@ export function runLayerL7Correction(exercise: ExerciseLike): ChainIssue[] {
   const texteNorm = normalizeText(contenu.texte);
   const format = String(exercise.format ?? "");
 
-  if (exercise.competence === "CE" && INTERACTIVE_FORMATS.has(format)) {
+  if (exercise.competence === "CE" && format === "qcm") {
     for (let idx = 0; idx < items.length; idx++) {
       const item = items[idx] as Record<string, unknown>;
       const answers = Array.isArray(item.bonne_reponse)
@@ -379,6 +389,53 @@ export function runLayerL7Correction(exercise: ExerciseLike): ChainIssue[] {
   return issues;
 }
 
+function dedupeMissingCeTextIssues(issues: ChainIssue[]): ChainIssue[] {
+  const hits = issues.filter((i) => i.code === "missing_ce_text");
+  if (hits.length <= 1) return issues;
+  const keep = hits[0];
+  return [...issues.filter((i) => i.code !== "missing_ce_text"), keep];
+}
+
+function hasStructuralQcmError(issues: ChainIssue[]): boolean {
+  return issues.some(
+    (i) => STRUCTURAL_QCM_ERROR_CODES.has(i.code) && i.severity === "error",
+  );
+}
+
+/** Applique la sévérité effective selon le profil (détection inchangée en amont). */
+export function applyProfileSeverity(
+  issues: ChainIssue[],
+  profile: ValidationProfile,
+  exercise: ExerciseRow,
+): ChainIssue[] {
+  const base =
+    profile === "legacy_bank" ? dedupeMissingCeTextIssues(issues) : issues;
+  const structuralQcm = hasStructuralQcmError(base);
+
+  return base.map((issue) => {
+    if (profile === "generated_strict") {
+      return issue;
+    }
+
+    let severity = issue.severity;
+    switch (issue.code) {
+      case "missing_ce_text":
+        severity = hasUsableContent(exercise) ? "warning" : "error";
+        break;
+      case "correction_not_in_text":
+        severity = structuralQcm ? "error" : "warning";
+        break;
+      case "missing_audio_script":
+        severity = "warning";
+        break;
+      default:
+        break;
+    }
+
+    return severity === issue.severity ? issue : { ...issue, severity };
+  });
+}
+
 export function hasBlockingChainIssue(issues: ChainIssue[]): boolean {
   return issues.some((i) => i.severity === "error");
 }
@@ -425,8 +482,10 @@ export function decideValidationStatus(
 /** Point d'entrée principal — pipeline L1–L7 déterministe. */
 export async function runValidationChain(
   exercise: ExerciseLike & ExerciseRow,
-  context?: ValidationChainContext,
+  options?: ValidationChainOptions,
 ): Promise<ValidationChainResult> {
+  const profile = options?.profile ?? "generated_strict";
+  const context = options?.context;
   const issues: ChainIssue[] = [];
   const flags: string[] = [];
 
@@ -442,14 +501,15 @@ export async function runValidationChain(
   issues.push(...await runLayerL6Pedagogie(exercise, context));
   issues.push(...runLayerL7Correction(exercise));
 
-  const status = decideValidationStatus(issues, flags);
-  const ok = !hasBlockingChainIssue(issues);
+  const effectiveIssues = applyProfileSeverity(issues, profile, exercise);
+  const status = decideValidationStatus(effectiveIssues, flags);
+  const ok = !hasBlockingChainIssue(effectiveIssues);
 
   return {
     ok,
     status,
-    issues,
-    layers: summarizeLayers(issues),
+    issues: effectiveIssues,
+    layers: summarizeLayers(effectiveIssues),
     flags: [...new Set(flags)],
     structuralScore: null,
     checkedAt: new Date().toISOString(),
