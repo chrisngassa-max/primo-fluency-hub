@@ -202,7 +202,7 @@ Le préfet`,
   },
   "sf-p0:B2:CE:005": {
     titre: "Formulaire CAF — compléter une information",
-    consigne: "Lisez le document et complétez la lacune avec un mot ou groupe de mots du texte.",
+    consigne: "Lisez le document et complétez la lacune.",
     contenu: {
       texte: `Avis aux allocataires de la Caisse d'allocations familiales
 

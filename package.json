@@ -32,7 +32,9 @@
     "audit:validation": "node --import tsx scripts/audit-exercices-validation.mjs --dry-run",
     "backfill:validation": "node --import tsx scripts/backfill-exercices-validation.mjs --dry-run",
     "dry-run:pre-session-selection": "node --import tsx scripts/pre-session-selection-dry-run.mjs",
-    "dry-run:lot8-b2-ce": "node --import tsx scripts/generate-lot8-b2-ce-dry-run.mjs"
+    "dry-run:lot8-b2-ce": "node --import tsx scripts/generate-lot8-b2-ce-dry-run.mjs",
+    "revalidate:lot8-b2-ce": "node --import tsx scripts/revalidate-lot8-b2-ce.mjs",
+    "dry-run:apply-lot8-b2-ce": "node --import tsx scripts/apply-lot8-b2-ce.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

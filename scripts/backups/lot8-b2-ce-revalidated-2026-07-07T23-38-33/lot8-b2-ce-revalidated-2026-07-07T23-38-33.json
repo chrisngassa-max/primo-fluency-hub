@@ -1,0 +1,501 @@
+{
+  "lot": "8-p0-pilot",
+  "cell": "B2:CE",
+  "generated_at": "2026-07-07T23:38:33.607Z",
+  "commit_ref": "aad5f46",
+  "mode": "revalidated",
+  "dry_run": true,
+  "validation_profile": "generated_strict",
+  "generation_limit": 5,
+  "db_writes": 0,
+  "source_manifest": "C:\\Users\\Sofiane\\Projects\\primo-fluency-hub\\scripts\\backups\\lot8-b2-ce-dry-run-2026-07-07T23-31-48\\lot8-b2-ce-dry-run-2026-07-07T23-31-48.json",
+  "corrections": [
+    {
+      "metadata_code": "sf-p0:B2:CE:005",
+      "field": "consigne",
+      "before": "Lisez le document et complétez la lacune avec un mot ou groupe de mots du texte.",
+      "beforeWords": 16,
+      "after": "Lisez le document et complétez la lacune.",
+      "afterWords": 7
+    }
+  ],
+  "entries": [
+    {
+      "metadata_code": "sf-p0:B2:CE:001",
+      "generation_mode": "deterministic_skip_ai",
+      "draft": {
+        "titre": "Courrier préfectoral : comprendre la convocation",
+        "consigne": "Lisez le courrier et répondez à la question.",
+        "competence": "CE",
+        "format": "qcm",
+        "niveau_vise": "B2",
+        "difficulte": 5,
+        "niveau_guidage": "autonome",
+        "theme": "prefecture",
+        "contexte_irn": "prefecture",
+        "source": "search_first_p0",
+        "metadata_code": "sf-p0:B2:CE:001",
+        "objectif_tcf": "comprendre_info_implicite",
+        "validation_profile": "generated_strict",
+        "is_ai_generated": false,
+        "is_template": false,
+        "is_devoir": false,
+        "contenu": {
+          "texte": "Madame, Monsieur,\n\nNous avons examiné votre dossier de demande de renouvellement de titre de séjour déposé le 12 mars 2026. Après vérification de vos justificatifs, nous vous informons que votre demande est recevable. Vous êtes convoqué le 28 avril 2026 à 9 h 30 au guichet des étrangers de la préfecture du Val-de-Marne, situé au 2, avenue du Général de Gaulle à Créteil. Vous devez vous présenter muni de votre passeport, de votre titre de séjour actuel, de trois photos d'identité récentes, de votre attestation d'hébergement et de vos trois derniers bulletins de salaire. En l'absence de pièces complémentaires demandées lors de l'entretien, le traitement de votre dossier pourrait être retardé. La décision définitive vous sera notifiée par courrier recommandé dans un délai maximal de quatre mois. Pour toute information complémentaire, vous pouvez consulter le site service-public.fr ou appeler le numéro d'information de la préfecture du lundi au vendredi de 9 h à 17 h. Nous vous prions d'agréer, Madame, Monsieur, l'expression de nos salutations distinguées.\n\nLe préfet",
+          "items": [
+            {
+              "question": "À quelle date l'intéressé est-il convoqué au guichet des étrangers ?",
+              "options": [
+                "28 avril 2026",
+                "12 mars 2026",
+                "dans quatre mois",
+                "le lundi au vendredi"
+              ],
+              "bonne_reponse": "28 avril 2026",
+              "explication": "La convocation indique explicitement le 28 avril 2026 à 9 h 30."
+            }
+          ],
+          "metadata": {
+            "code": "CE3",
+            "objectif_tcf": "comprendre_info_implicite",
+            "time_limit_seconds": 130
+          }
+        }
+      },
+      "validation": {
+        "ok": true,
+        "status": "validated_auto",
+        "hasUsableContent": true,
+        "issue_codes": {},
+        "issues": [],
+        "layers": {
+          "L1_structure": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L2_usable_content": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L3_format_competence": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L4_niveau": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L5_theme": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L6_pedagogie": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L7_correction": {
+            "passed": true,
+            "issueCount": 0
+          }
+        },
+        "flags": [
+          "sensitive_admin"
+        ],
+        "checkedAt": "2026-07-07T23:38:33.603Z"
+      },
+      "checks": {
+        "hasUsableContent": true,
+        "notRejected": true,
+        "noForbiddenCodes": true,
+        "textWordCountOk": true,
+        "themePresent": true,
+        "metadataCodeOk": true,
+        "allOk": true
+      }
+    },
+    {
+      "metadata_code": "sf-p0:B2:CE:002",
+      "generation_mode": "deterministic_skip_ai",
+      "draft": {
+        "titre": "Article presse — laïcité et école publique",
+        "consigne": "Lisez l'article et répondez à la question.",
+        "competence": "CE",
+        "format": "qcm",
+        "niveau_vise": "B2",
+        "difficulte": 5,
+        "niveau_guidage": "autonome",
+        "theme": "vie_citoyenne",
+        "contexte_irn": "vie_citoyenne",
+        "source": "search_first_p0",
+        "metadata_code": "sf-p0:B2:CE:002",
+        "objectif_tcf": "comprendre_info_implicite",
+        "validation_profile": "generated_strict",
+        "is_ai_generated": false,
+        "is_template": false,
+        "is_devoir": false,
+        "contenu": {
+          "texte": "La laïcité à l'école publique française repose sur le principe de neutralité de l'État et sur le respect de toutes les convictions. Depuis la loi de 1905, aucun élève ne peut être contraint de manifester une appartenance religieuse dans l'enceinte de l'établissement. Les signes ostentatoires sont interdits afin de préserver un climat d'apprentissage commun. Les enseignants transmettent les valeurs de la République : liberté, égalité, fraternité. Ils organisent des débats sur la citoyenneté pour aider les jeunes à comprendre leurs droits et leurs devoirs. Les familles sont associées à cette mission par des réunions d'information et des projets interculturels. La laïcité ne signifie pas l'opposition aux religions, mais la séparation des institutions publiques et des cultes. Elle garantit à chaque enfant un accès égal à l'éducation, quelle que soit son origine. Les chefs d'établissement veillent à l'application de ces règles et peuvent solliciter l'inspection académique en cas de difficulté. Cette exigence civique prépare les élèves à vivre ensemble dans une société diverse et respectueuse.",
+          "items": [
+            {
+              "question": "Selon l'article, quelles valeurs les enseignants transmettent-ils ?",
+              "options": [
+                "liberté, égalité, fraternité",
+                "travail, famille, patrie",
+                "unité, discipline, obéissance",
+                "commerce, industrie, agriculture"
+              ],
+              "bonne_reponse": "liberté, égalité, fraternité",
+              "explication": "Le texte cite explicitement liberté, égalité, fraternité."
+            }
+          ],
+          "metadata": {
+            "code": "CE3",
+            "objectif_tcf": "comprendre_info_implicite",
+            "time_limit_seconds": 130
+          }
+        }
+      },
+      "validation": {
+        "ok": true,
+        "status": "validated_auto",
+        "hasUsableContent": true,
+        "issue_codes": {},
+        "issues": [],
+        "layers": {
+          "L1_structure": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L2_usable_content": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L3_format_competence": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L4_niveau": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L5_theme": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L6_pedagogie": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L7_correction": {
+            "passed": true,
+            "issueCount": 0
+          }
+        },
+        "flags": [
+          "sensitive_admin"
+        ],
+        "checkedAt": "2026-07-07T23:38:33.604Z"
+      },
+      "checks": {
+        "hasUsableContent": true,
+        "notRejected": true,
+        "noForbiddenCodes": true,
+        "textWordCountOk": true,
+        "themePresent": true,
+        "metadataCodeOk": true,
+        "allOk": true
+      }
+    },
+    {
+      "metadata_code": "sf-p0:B2:CE:003",
+      "generation_mode": "deterministic_skip_ai",
+      "draft": {
+        "titre": "Offre d'emploi — comprendre les conditions",
+        "consigne": "Lisez l'annonce et répondez à la question.",
+        "competence": "CE",
+        "format": "qcm",
+        "niveau_vise": "B2",
+        "difficulte": 5,
+        "niveau_guidage": "autonome",
+        "theme": "travail",
+        "contexte_irn": "travail",
+        "source": "search_first_p0",
+        "metadata_code": "sf-p0:B2:CE:003",
+        "objectif_tcf": "comprendre_info_implicite",
+        "validation_profile": "generated_strict",
+        "is_ai_generated": false,
+        "is_template": false,
+        "is_devoir": false,
+        "contenu": {
+          "texte": "L'entreprise LogiTrans, spécialisée dans la logistique urbaine, recrute un coordinateur de quai en CDI à temps plein. Le poste est basé à Lyon et nécessite une expérience minimale de trois ans dans la gestion d'équipes. Le candidat devra maîtriser les outils numériques de planification et posséder le permis B. La rémunération annuelle brute est comprise entre 32 000 et 36 000 euros, selon le profil. Les horaires incluent des déplacements occasionnels le week-end. L'entreprise propose une mutuelle, un ticket restaurant et un accord de télétravail partiel après la période d'essai de quatre mois. Les candidatures doivent être envoyées avant le 15 juin 2026 à l'adresse recrutement@logitrans.fr, accompagnées d'un CV et d'une lettre de motivation. Un entretien en présentiel sera organisé avec le responsable des ressources humaines. France Travail référence cette offre sous le numéro 2026-LYO-8842. Les personnes en situation de handicap sont encouragées à postuler : des aménagements de poste peuvent être étudiés. L'embauche est prévue pour le 1er septembre 2026.",
+          "items": [
+            {
+              "question": "Quelle est la durée de la période d'essai mentionnée ?",
+              "options": [
+                "quatre mois",
+                "trois ans",
+                "un week-end",
+                "quinze jours"
+              ],
+              "bonne_reponse": "quatre mois",
+              "explication": "L'annonce précise une période d'essai de quatre mois."
+            }
+          ],
+          "metadata": {
+            "code": "CE3",
+            "objectif_tcf": "comprendre_info_implicite",
+            "time_limit_seconds": 130
+          }
+        }
+      },
+      "validation": {
+        "ok": true,
+        "status": "validated_auto",
+        "hasUsableContent": true,
+        "issue_codes": {},
+        "issues": [],
+        "layers": {
+          "L1_structure": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L2_usable_content": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L3_format_competence": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L4_niveau": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L5_theme": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L6_pedagogie": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L7_correction": {
+            "passed": true,
+            "issueCount": 0
+          }
+        },
+        "flags": [],
+        "checkedAt": "2026-07-07T23:38:33.605Z"
+      },
+      "checks": {
+        "hasUsableContent": true,
+        "notRejected": true,
+        "noForbiddenCodes": true,
+        "textWordCountOk": true,
+        "themePresent": true,
+        "metadataCodeOk": true,
+        "allOk": true
+      }
+    },
+    {
+      "metadata_code": "sf-p0:B2:CE:004",
+      "generation_mode": "deterministic_skip_ai",
+      "draft": {
+        "titre": "Notice locative — droits du locataire",
+        "consigne": "Lisez le texte et indiquez si l'affirmation est vraie ou fausse.",
+        "competence": "CE",
+        "format": "vrai_faux",
+        "niveau_vise": "B2",
+        "difficulte": 5,
+        "niveau_guidage": "autonome",
+        "theme": "logement",
+        "contexte_irn": "logement",
+        "source": "search_first_p0",
+        "metadata_code": "sf-p0:B2:CE:004",
+        "objectif_tcf": "comprendre_info_implicite",
+        "validation_profile": "generated_strict",
+        "is_ai_generated": false,
+        "is_template": false,
+        "is_devoir": false,
+        "contenu": {
+          "texte": "En France, le bail d'habitation encadre les relations entre propriétaire et locataire. Le locataire dispose d'un droit au logement décent et le bailleur doit entretenir les parties communes et les équipements essentiels. Le propriétaire ne peut pas pénétrer dans le logement sans l'accord du locataire, sauf urgence avérée ou visite annuelle préalablement annoncée par écrit au moins quarante-huit heures à l'avance. Le dépôt de garantie est plafonné à un mois de loyer hors charges pour un bail vide. En cas de vente du bien, le locataire bénéficie d'un droit de préemption dans certaines situations. Le préavis de départ est en principe de trois mois pour un bailleur et d'un mois pour un locataire en zone tendue, sauf accord contraire. Le non-paiement du loyer peut conduire à une procédure devant la commission départementale de conciliation avant toute expulsion. Les aides au logement de la CAF peuvent réduire le reste à charge du locataire. Toute augmentation de loyer hors révision annuelle encadrée est interdite pendant la durée du bail.",
+          "items": [
+            {
+              "question": "Le propriétaire peut entrer dans le logement à tout moment sans prévenir le locataire.",
+              "bonne_reponse": "faux",
+              "explication": "Le texte exige un accord ou une visite annoncée quarante-huit heures à l'avance.",
+              "options": [
+                "vrai",
+                "faux"
+              ]
+            }
+          ],
+          "metadata": {
+            "code": "CE3",
+            "objectif_tcf": "comprendre_info_implicite",
+            "time_limit_seconds": 130
+          }
+        }
+      },
+      "validation": {
+        "ok": true,
+        "status": "validated_auto",
+        "hasUsableContent": true,
+        "issue_codes": {},
+        "issues": [],
+        "layers": {
+          "L1_structure": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L2_usable_content": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L3_format_competence": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L4_niveau": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L5_theme": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L6_pedagogie": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L7_correction": {
+            "passed": true,
+            "issueCount": 0
+          }
+        },
+        "flags": [],
+        "checkedAt": "2026-07-07T23:38:33.605Z"
+      },
+      "checks": {
+        "hasUsableContent": true,
+        "notRejected": true,
+        "noForbiddenCodes": true,
+        "textWordCountOk": true,
+        "themePresent": true,
+        "metadataCodeOk": true,
+        "allOk": true
+      }
+    },
+    {
+      "metadata_code": "sf-p0:B2:CE:005",
+      "generation_mode": "deterministic_skip_ai",
+      "draft": {
+        "titre": "Formulaire CAF — compléter une information",
+        "consigne": "Lisez le document et complétez la lacune.",
+        "competence": "CE",
+        "format": "texte_lacunaire",
+        "niveau_vise": "B2",
+        "difficulte": 5,
+        "niveau_guidage": "autonome",
+        "theme": "prefecture",
+        "contexte_irn": "prefecture",
+        "source": "search_first_p0",
+        "metadata_code": "sf-p0:B2:CE:005",
+        "objectif_tcf": "comprendre_info_implicite",
+        "validation_profile": "generated_strict",
+        "is_ai_generated": false,
+        "is_template": false,
+        "is_devoir": false,
+        "contenu": {
+          "texte": "Avis aux allocataires de la Caisse d'allocations familiales\n\nVous avez déclaré un changement de situation professionnelle le 3 mai 2026. Conformément à la réglementation, vous devez transmettre votre attestation employeur et votre dernier avis d'imposition avant le 20 mai 2026. Le traitement de votre dossier nécessite une vérification de vos ressources sur les douze derniers mois. Si les pièces manquent, vos droits aux aides au logement pourraient être suspendus provisoirement. Vous pouvez déposer vos documents sur votre espace personnel caf.fr ou les envoyer par courrier recommandé à votre centre de gestion. En cas de difficulté, un travailleur social peut vous accompagner sur rendez-vous. Le délai moyen de traitement est de quinze jours ouvrés après réception complète du dossier. Pour toute question, contactez le 3230 du lundi au vendredi. Cette démarche s'inscrit dans le cadre de la lutte contre la fraude et garantit une attribution équitable des prestations. Nous vous remercions de votre coopération.",
+          "items": [
+            {
+              "question": "Complétez : Le délai moyen de traitement est de ___ après réception complète du dossier.",
+              "bonne_reponse": "quinze jours ouvrés",
+              "explication": "Le document indique quinze jours ouvrés."
+            }
+          ],
+          "metadata": {
+            "code": "CE3",
+            "objectif_tcf": "comprendre_info_implicite",
+            "time_limit_seconds": 130
+          }
+        }
+      },
+      "validation": {
+        "ok": true,
+        "status": "validated_auto",
+        "hasUsableContent": true,
+        "issue_codes": {},
+        "issues": [],
+        "layers": {
+          "L1_structure": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L2_usable_content": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L3_format_competence": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L4_niveau": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L5_theme": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L6_pedagogie": {
+            "passed": true,
+            "issueCount": 0
+          },
+          "L7_correction": {
+            "passed": true,
+            "issueCount": 0
+          }
+        },
+        "flags": [
+          "sensitive_admin"
+        ],
+        "checkedAt": "2026-07-07T23:38:33.605Z"
+      },
+      "checks": {
+        "hasUsableContent": true,
+        "notRejected": true,
+        "noForbiddenCodes": true,
+        "textWordCountOk": true,
+        "themePresent": true,
+        "metadataCodeOk": true,
+        "allOk": true
+      }
+    }
+  ],
+  "summary": {
+    "planned": 5,
+    "valid": 5,
+    "invalid": 0,
+    "distinct_themes": 4,
+    "themes": [
+      "prefecture",
+      "vie_citoyenne",
+      "travail",
+      "logement"
+    ],
+    "formats": {
+      "qcm": 3,
+      "vrai_faux": 1,
+      "texte_lacunaire": 1
+    },
+    "db_writes": 0,
+    "validated_auto": 5,
+    "needs_review": 0,
+    "rejected": 0,
+    "all_checks_ok": true
+  },
+  "manifest_path": "C:\\Users\\Sofiane\\Projects\\primo-fluency-hub\\scripts\\backups\\lot8-b2-ce-revalidated-2026-07-07T23-38-33\\lot8-b2-ce-revalidated-2026-07-07T23-38-33.json",
+  "report_path": "C:\\Users\\Sofiane\\Projects\\primo-fluency-hub\\docs\\lot8-b2-ce-revalidation-report.md"
+}
