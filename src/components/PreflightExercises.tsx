@@ -24,6 +24,9 @@ import {
   CheckCircle2, AlertTriangle, Clock, ChevronDown, ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { PreSessionSelectionReport } from "@/components/PreSessionSelectionReport";
+import { preSessionSelectExercises } from "@/lib/pre-session-selection";
+import { MOCK_PRE_SESSION_CANDIDATES } from "@/lib/pre-session-selection-mock";
 
 // ─── Types ───
 type PreflightStatus = "ready" | "to_fix" | "pending";
@@ -311,6 +314,27 @@ const PreflightExercises = ({ sessionId, session, exercises, formateurId, parcou
     }
   };
 
+  const selectionParams = useMemo(
+    () => ({
+      niveauVise: session?.niveau_cible ?? parcoursSeance?.parcours?.niveau_cible ?? "A1",
+      competence: (session?.competences_cibles?.[0] as string) ?? "CE",
+      quota: 5,
+      excludeExerciceIds: exercises.map((se: any) => se.exercice_id).filter(Boolean),
+      typeDemarche: (session as any)?.group?.type_demarche ?? "titre_sejour",
+    }),
+    [session, parcoursSeance, exercises],
+  );
+
+  const preSessionReport = useMemo(
+    () => preSessionSelectExercises(MOCK_PRE_SESSION_CANDIDATES, selectionParams),
+    [selectionParams],
+  );
+
+  const linkedExerciceIds = useMemo(
+    () => exercises.map((se: any) => se.exercice_id).filter(Boolean),
+    [exercises],
+  );
+
   // ─── Regenerate single exercise ───
   const handleRegenerate = async (se: any) => {
     const ex = se.exercice;
@@ -396,6 +420,15 @@ const PreflightExercises = ({ sessionId, session, exercises, formateurId, parcou
 
         <CollapsibleContent>
           <CardContent className="space-y-4 pt-0">
+            <PreSessionSelectionReport
+              report={preSessionReport}
+              selectionParams={selectionParams}
+              linkedExerciceIds={linkedExerciceIds}
+              lot8ComplementEnabled={false}
+              onApplySelection={() => {}}
+              onRequestComplement={() => {}}
+            />
+
             {/* ── Action bar ── */}
             <div className="flex flex-wrap items-center gap-2 border-t pt-3">
               <div className="flex items-center gap-2">
