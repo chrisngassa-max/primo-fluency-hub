@@ -1,6 +1,6 @@
 # Rapport UX / data validation — PreSessionSelectionReport
 
-**Généré :** 2026-07-07T23:21:41.970Z
+**Généré :** 2026-07-07T23:25:49.099Z
 **Commit de référence :** 15073de (banque Supabase réelle via `fetchPreSessionBankCandidates`)
 **Mode :** read-only — 0 écriture Supabase, 0 génération IA
 **Banque lue (globale) :** 621 exercices `legacy_bank`
