@@ -136,9 +136,8 @@ WHERE id = ANY (ARRAY[
   AND validation_status = 'approved_human';
 -- Attendu : 0
 
-ROLLBACK;
--- GO explicite : remplacer ROLLBACK par COMMIT après validation
---   docs/bank-recovery-co-prefecture-apply-report.md
+COMMIT;
+-- Appliqué après GO dry-run (docs/bank-recovery-co-prefecture-post-apply-report.md)
 
 -- DOWN (si migration appliquée par erreur) :
 -- Revert promotions :

@@ -1,6 +1,6 @@
 # Rapport UX / data validation — PreSessionSelectionReport
 
-**Généré :** 2026-07-07T21:59:48.364Z
+**Généré :** 2026-07-07T23:21:41.970Z
 **Commit de référence :** 15073de (banque Supabase réelle via `fetchPreSessionBankCandidates`)
 **Mode :** read-only — 0 écriture Supabase, 0 génération IA
 **Banque lue (globale) :** 621 exercices `legacy_bank`
@@ -10,8 +10,8 @@
 | Scénario | Banque | Retenus | P1 | P2 | Gap | Gen. need | Human review | Conformité |
 |----------|--------|---------|----|----|-----|-----------|--------------|------------|
 | A1 / CE / quota 5 | 621 | 5/5 | 5 | 0 | 0 | non | 1 | ✅ |
-| A2 / CO / prefecture / quota 5 | 621 | 4/5 | 4 | 0 | 1 | oui | 1 | ✅ |
-| B1 / CO / prefecture / quota 5 | 621 | 0/5 | 0 | 0 | 5 | oui | 0 | ✅ |
+| A2 / CO / prefecture / quota 5 | 621 | 5/5 | 5 | 0 | 0 | non | 1 | ✅ |
+| B1 / CO / prefecture / quota 5 | 621 | 5/5 | 5 | 0 | 0 | non | 0 | ✅ |
 | B2 / CE / quota 5 | 621 | 0/5 | 0 | 0 | 5 | oui | 2 | ✅ |
 | A2 / Structures / quota 5 | 621 | 5/5 | 5 | 0 | 0 | non | 1 | ✅ |
 | B1 / EE / quota 5 | 621 | 1/5 | 1 | 0 | 4 | oui | 1 | ✅ |
@@ -60,30 +60,30 @@
 | Métrique | Valeur |
 |----------|--------|
 | total banque lue | 621 |
-| retained count | 4 / 5 |
-| P1 count | 4 |
+| retained count | 5 / 5 |
+| P1 count | 5 |
 | P2 count used | 0 |
-| P1 pool (éligibles) | 4 |
+| P1 pool (éligibles) | 26 |
 | P2 pool vert | 0 |
 | P2 pool orange | 0 |
 | nr_fallback_allowed | true |
-| VA en banque (cellule) | 53 |
+| VA en banque (cellule) | 74 |
 | cellule P0 | non |
-| remaining_gap | 1 |
-| generation_need | true |
-| generation total_gap | 1 |
-| generation reason | PARTIAL_GAP |
+| remaining_gap | 0 |
+| generation_need | false |
+| generation total_gap | 0 |
+| generation reason | — |
 | defer_to_lot8_p0 | non |
-| severity | partial |
+| severity | none |
 | human_review_items | 1 |
 | human_review types | AMBIGUOUS_CORRECTION_NEARBY |
 
 **Exclusions principales :**
 - `EXCL_COMPETENCE` : 491
-- `EXCL_SCORE_LOW` : 49
+- `EXCL_SCORE_LOW` : 48
 - `EXCL_NR_TIER_ROUGE` : 28
-- `EXCL_NR_THEME_SENSIBLE` : 25
 - `EXCL_NIVEAU` : 15
+- `EXCL_VALIDATION_REJECTED` : 8
 
 **Conformité règles :**
 - Pas de rejected dans retained : ✅
@@ -96,29 +96,29 @@
 | Métrique | Valeur |
 |----------|--------|
 | total banque lue | 621 |
-| retained count | 0 / 5 |
-| P1 count | 0 |
+| retained count | 5 / 5 |
+| P1 count | 5 |
 | P2 count used | 0 |
-| P1 pool (éligibles) | 0 |
+| P1 pool (éligibles) | 22 |
 | P2 pool vert | 0 |
 | P2 pool orange | 0 |
 | nr_fallback_allowed | false |
-| VA en banque (cellule) | 8 |
+| VA en banque (cellule) | 29 |
 | cellule P0 | non |
-| remaining_gap | 5 |
-| generation_need | true |
-| generation total_gap | 5 |
-| generation reason | ALL_REJECTED_OR_STALE |
+| remaining_gap | 0 |
+| generation_need | false |
+| generation total_gap | 0 |
+| generation reason | — |
 | defer_to_lot8_p0 | non |
-| severity | partial |
+| severity | none |
 | human_review_items | 0 |
 
 **Exclusions principales :**
 - `EXCL_COMPETENCE` : 491
 - `EXCL_NIVEAU` : 59
 - `EXCL_NR_TIER_ROUGE` : 28
-- `EXCL_NR_THEME_SENSIBLE` : 28
-- `EXCL_SCORE_LOW` : 8
+- `EXCL_SCORE_LOW` : 7
+- `EXCL_NR_THEME_SENSIBLE` : 7
 
 **Conformité règles :**
 - Pas de rejected dans retained : ✅

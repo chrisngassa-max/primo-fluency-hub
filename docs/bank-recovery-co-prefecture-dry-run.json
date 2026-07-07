@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-07-07T23:17:14.730Z",
-  "commit_ref": "5e5683d",
+  "generated_at": "2026-07-07T23:21:24.847Z",
+  "commit_ref": "d7ba6cb",
   "mode": "read-only dry-run",
   "migration": "supabase/migrations/20260708150000_bank_recovery_co_prefecture.sql",
   "counts": {
     "theme_backfill_expected": 1,
-    "theme_backfill_eligible": 1,
+    "theme_backfill_eligible": 0,
     "approved_human_expected": 21,
-    "approved_human_eligible": 21,
+    "approved_human_eligible": 0,
     "ambiguous_unchanged_expected": 4,
     "ambiguous_unchanged_current": 4
   },
@@ -49,18 +49,18 @@
     },
     {
       "label": "backfill_eligible",
-      "pass": true,
-      "detail": "CO B1 validated_auto theme vide — OK"
+      "pass": false,
+      "detail": "CO B1 validated_auto theme vide — KO"
     },
     {
       "label": "backfill_contexte_coherent",
       "pass": true,
-      "detail": "contexte_irn=null → prefecture autorisé"
+      "detail": "contexte_irn=prefecture → prefecture autorisé"
     },
     {
       "label": "promote_count_21",
-      "pass": true,
-      "detail": "21/21 éligibles needs_review legacy_bank CO A2/B1 prefecture"
+      "pass": false,
+      "detail": "0/21 éligibles needs_review legacy_bank CO A2/B1 prefecture"
     },
     {
       "label": "excluded_unchanged_4",
@@ -78,5 +78,5 @@
       "detail": "Migration ne modifie pas : contenu, consigne, format, niveau_vise, competence"
     }
   ],
-  "verdict": "GO"
+  "verdict": "NO-GO"
 }
