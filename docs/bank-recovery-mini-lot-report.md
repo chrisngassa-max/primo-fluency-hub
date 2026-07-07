@@ -1,7 +1,7 @@
 # Rapport mini-lot récupération banque — préfecture CO
 
-**Généré :** 2026-07-07T22:58:44.052Z
-**Commit :** 9630f48
+**Généré :** 2026-07-07T23:16:13.344Z
+**Commit :** 5e5683d
 **Mode :** read-only — 0 écriture Supabase, 0 backfill appliqué, 0 génération
 **Banque lue :** 621 exercices
 **Seuil réutilisation :** REUSE_SCORE_MIN = 80

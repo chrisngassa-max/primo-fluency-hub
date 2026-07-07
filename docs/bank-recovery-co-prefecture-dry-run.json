@@ -1,0 +1,82 @@
+{
+  "generated_at": "2026-07-07T23:17:14.730Z",
+  "commit_ref": "5e5683d",
+  "mode": "read-only dry-run",
+  "migration": "supabase/migrations/20260708150000_bank_recovery_co_prefecture.sql",
+  "counts": {
+    "theme_backfill_expected": 1,
+    "theme_backfill_eligible": 1,
+    "approved_human_expected": 21,
+    "approved_human_eligible": 21,
+    "ambiguous_unchanged_expected": 4,
+    "ambiguous_unchanged_current": 4
+  },
+  "backfill_id": "634e81c6-fbd1-4c96-afb9-8d122e4f5610",
+  "promote_ids": [
+    "fb7f5239-449d-4814-8600-6b17f3236017",
+    "12ede1af-823b-4284-a22b-777572c9e900",
+    "3136af07-6d8a-41ea-8c34-7be16c843df8",
+    "5448c46f-27cb-4add-8c67-9b3e4953d05c",
+    "06be5180-3260-43bd-9b97-b908a11f6a68",
+    "1b4d279d-6552-4e01-8d9b-5c5d426ddc36",
+    "1e3ff1eb-0028-4284-97c8-357669d73a9c",
+    "33382dd4-67d1-4435-8d69-890ac3e0ced8",
+    "3ea5f382-39ec-40eb-b2df-594f582e3eec",
+    "556cba0c-d037-4684-8ada-a5c2e97f6e52",
+    "8c4a82ee-81c2-46db-af6f-415ed6d08d08",
+    "913a5b72-73ff-43f0-a7dd-a149d4e73050",
+    "9469de1a-f470-4e11-9b46-d5102d302a73",
+    "91cefa80-42ec-4166-a41e-df5915b1c451",
+    "d88de779-5bd1-4981-9d7b-6f1cd37b9484",
+    "ad0f1e82-f166-4322-a237-ec4921f1fd6a",
+    "c255174e-a56e-4f52-99d2-b652a5a84e50",
+    "c5e62f1c-c187-4d90-bcfd-4ac281a7d730",
+    "d41f46b7-dbe3-4dce-b717-076debcfb022",
+    "de62e8d3-2561-4b58-883f-93d3391b9809",
+    "e64b08bc-c725-4eb5-b6a2-55c0d10f19f5"
+  ],
+  "excluded_ids": [
+    "16ea8cbd-36a7-4131-90d1-a07f131e8541",
+    "73fa072e-8136-4552-ab8e-9f38de873464",
+    "5e1834e3-b2d9-472e-977c-42774a8437d9",
+    "c27c0b88-fd75-4b0e-bced-057a7055a480"
+  ],
+  "checks": [
+    {
+      "label": "backfill_id_found",
+      "pass": true,
+      "detail": "634e81c6 — QCM : Démarches administratives en France"
+    },
+    {
+      "label": "backfill_eligible",
+      "pass": true,
+      "detail": "CO B1 validated_auto theme vide — OK"
+    },
+    {
+      "label": "backfill_contexte_coherent",
+      "pass": true,
+      "detail": "contexte_irn=null → prefecture autorisé"
+    },
+    {
+      "label": "promote_count_21",
+      "pass": true,
+      "detail": "21/21 éligibles needs_review legacy_bank CO A2/B1 prefecture"
+    },
+    {
+      "label": "excluded_unchanged_4",
+      "pass": true,
+      "detail": "4/4 restent needs_review (ambiguous_correction)"
+    },
+    {
+      "label": "validation_issues_preserved",
+      "pass": true,
+      "detail": "validation_issues jsonb présent sur les 21 candidats"
+    },
+    {
+      "label": "no_forbidden_fields_touched",
+      "pass": true,
+      "detail": "Migration ne modifie pas : contenu, consigne, format, niveau_vise, competence"
+    }
+  ],
+  "verdict": "GO"
+}
