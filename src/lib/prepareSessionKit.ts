@@ -5,6 +5,11 @@ import {
   buildAdaptiveExercisePlan,
   type CompetencePerf,
 } from "@/lib/adaptiveExercisePlan";
+import {
+  fetchCurriculumExercicesForTrainingSession,
+  linkCurriculumExercicesToSession,
+  pickCurriculumExercicesForPilot,
+} from "@/lib/curriculum/exerciseBridge";
 
 interface PrepareArgs {
   sessionId: string;
@@ -151,6 +156,26 @@ async function generateFiveExercises({
     .eq("session_id", targetSessionId);
   if ((count ?? 0) > 0) return;
 
+  const { data: sessionRow } = await supabase
+    .from("sessions")
+    .select("training_session_id, curriculum_palier_cible, training_session:training_sessions(code)")
+    .eq("id", targetSessionId)
+    .maybeSingle();
+
+  const trainingSessionId = (sessionRow as any)?.training_session_id as string | null | undefined;
+  const curriculumPalier = (sessionRow as any)?.curriculum_palier_cible as string | null | undefined;
+  const curriculumCode = (sessionRow as any)?.training_session?.code as string | null | undefined;
+
+  if (trainingSessionId) {
+    const linked = await tryLinkCurriculumExercises({
+      targetSessionId,
+      trainingSessionId,
+      curriculumCode,
+      curriculumPalier,
+    });
+    if (linked) return;
+  }
+
   const { data: defaultPoint } = await supabase
     .from("points_a_maitriser")
     .select("id")
@@ -242,6 +267,38 @@ async function generateFiveExercises({
 
   const { error: linkErr } = await supabase.from("session_exercices").insert(links);
   if (linkErr) throw linkErr;
+}
+
+async function tryLinkCurriculumExercises({
+  targetSessionId,
+  trainingSessionId,
+  curriculumCode,
+  curriculumPalier,
+}: {
+  targetSessionId: string;
+  trainingSessionId: string;
+  curriculumCode?: string | null;
+  curriculumPalier?: string | null;
+}): Promise<boolean> {
+  try {
+    const bankRows = await fetchCurriculumExercicesForTrainingSession(
+      trainingSessionId,
+      curriculumCode,
+    );
+    if (bankRows.length === 0) return false;
+
+    const picked = pickCurriculumExercicesForPilot(bankRows, curriculumPalier, true);
+    if (picked.length === 0) return false;
+
+    await linkCurriculumExercicesToSession(
+      targetSessionId,
+      picked.map((row) => row.id),
+    );
+    return true;
+  } catch (error) {
+    console.warn("[prepareSessionKit] curriculum bridge fallback to AI:", error);
+    return false;
+  }
 }
 
 async function generateHomeworkSeriesForPreviousSession({

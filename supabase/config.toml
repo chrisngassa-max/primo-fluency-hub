@@ -63,5 +63,7 @@ project_id = "gudcenhmzlcvhgbgklzw"
     verify_jwt = true
   [functions.analyze-pdf-support]
     verify_jwt = false
+  [functions.curriculum-adapt]
+    verify_jwt = true
   [functions.resolve-eleve-login]
     verify_jwt = false

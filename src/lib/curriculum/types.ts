@@ -158,3 +158,58 @@ export interface BatchStatusResponse {
     progress_pct: number;
   };
 }
+
+export interface AggregatedLearnerError {
+  competence: string;
+  taxonomy: string;
+  count: number;
+}
+
+export interface CurriculumAdaptRequest {
+  sessionId: string;
+  trainingSessionId: string;
+  sessionCode: string;
+  palierCible?: string;
+  phase?: string;
+  eleveIds?: string[];
+  aggregatedErrors?: AggregatedLearnerError[];
+  exercicesNonTraites?: string[];
+  tempsRestantMin?: number;
+}
+
+export interface CurriculumAdaptRecommendation {
+  type: string;
+  description: string;
+  resource_id?: string;
+  duree_minutes?: number;
+}
+
+export interface CurriculumAdaptDerouleAdjustment {
+  phase: string;
+  action: string;
+  duree_delta_min?: number;
+}
+
+export interface CurriculumAdaptResult {
+  analyse: string;
+  recommandations: CurriculumAdaptRecommendation[];
+  resource_ids: string[];
+  variantes_par_niveau: Record<string, string>;
+  ajustements_deroule: CurriculumAdaptDerouleAdjustment[];
+  message_formateur: string;
+}
+
+export interface PublishedResourceUsed {
+  id: string;
+  resource_id: string;
+  kind: string;
+}
+
+export interface CurriculumAdaptResponse {
+  adaptation: CurriculumAdaptResult;
+  published_resources_used: PublishedResourceUsed[];
+  degraded_mode: boolean;
+  message?: string;
+  excludedIds?: string[];
+  error?: string;
+}

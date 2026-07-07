@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { prepareSessionKit } from "@/lib/prepareSessionKit";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -103,6 +104,21 @@ export function CurriculumPilotButton({
         palierCible,
         dateSeance: new Date(dateSeance).toISOString(),
       });
+
+      if (created && user) {
+        const targetGroup = groups.find((g) => g.id === groupId);
+        prepareSessionKit({
+          sessionId: id,
+          groupId,
+          niveauCible: palierCible,
+          competencesCibles: ["CE", "CO"],
+          objectifs: trainingSession.titre,
+          titre: `${trainingSession.code} : ${trainingSession.titre}`,
+          formateurId: user.id,
+          typeDemarche: (targetGroup as { type_demarche?: string } | undefined)?.type_demarche,
+        });
+      }
+
       toast.success(
         created ? "Séance curriculum créée" : "Séance curriculum existante ouverte",
         { description: `${trainingSession.code} · palier cible ${palierCible}` },

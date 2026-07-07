@@ -89,6 +89,8 @@ import SessionClosureReminder from "@/components/SessionClosureReminder";
 import PreflightExercises from "@/components/PreflightExercises";
 import SessionToolbox, { type SessionTool } from "@/components/SessionToolbox";
 import { CurriculumBadge } from "@/components/curriculum/CurriculumBadge";
+import { CurriculumAdaptPanel } from "@/components/curriculum/CurriculumAdaptPanel";
+import type { AggregatedLearnerError } from "@/lib/curriculum/types";
 import VigilanceDrawer from "@/components/VigilanceDrawer";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
@@ -471,6 +473,20 @@ const SessionPilot = () => {
     );
   }, [groupMembers, routerStudentData, session]);
 
+  const curriculumAggregatedErrors = useMemo((): AggregatedLearnerError[] => {
+    const byKey = new Map<string, number>();
+    (routerStudentData?.results ?? []).forEach((result: any) => {
+      if (typeof result.score !== "number" || result.score >= 50) return;
+      const competence = result.exercice?.competence ?? "Structures";
+      const key = `${competence}:acquis`;
+      byKey.set(key, (byKey.get(key) ?? 0) + 1);
+    });
+    return Array.from(byKey.entries()).map(([key, count]) => {
+      const [competence, taxonomy] = key.split(":");
+      return { competence, taxonomy, count };
+    });
+  }, [routerStudentData]);
+
   // Fetch presences for this session
   const { data: presences } = useQuery({
     queryKey: ["presences-pilot", id],
@@ -578,6 +594,16 @@ const SessionPilot = () => {
   const checkedCount = useMemo(
     () => exercises.filter((ex) => checked[ex.id]).length,
     [checked, exercises]
+  );
+
+  const curriculumExercicesNonTraites = useMemo(
+    () =>
+      exercises
+        .filter((ex) => !checked[ex.id])
+        .map((ex: any) => ex.exercice?.titre ?? ex.exercice_id ?? ex.id)
+        .filter(Boolean)
+        .slice(0, 20) as string[],
+    [checked, exercises],
   );
 
   const toggleExercise = useCallback((exerciseId: string) => {
@@ -1703,6 +1729,18 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
             </div>
           </CardContent>
         </Card>
+      )}
+
+      {(session as any)?.training_session_id && (
+        <CurriculumAdaptPanel
+          sessionId={id!}
+          trainingSessionId={(session as any).training_session_id}
+          sessionCode={(session as any)?.training_session?.code ?? "?"}
+          palierCible={(session as any)?.curriculum_palier_cible}
+          eleveIds={memberIds}
+          aggregatedErrors={curriculumAggregatedErrors}
+          exercicesNonTraites={curriculumExercicesNonTraites}
+        />
       )}
 
       {/* Documents générés — exercices IA & leçons de la séance */}
