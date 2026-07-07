@@ -1,9 +1,8 @@
 -- =============================================================================
--- DRAFT — Ne pas exécuter via supabase db push
--- DO NOT APPLY — Lot 9 socle
 -- Lot 9 : colonnes validation sur public.exercices
--- Revue requise après audit dry-run (scripts/audit-exercices-validation.mjs)
--- Default : ROLLBACK ; décommenter COMMIT après GO explicite
+-- Revue requise après backfill dry-run (scripts/backfill-exercices-validation.mjs)
+-- Default : ROLLBACK ; décommenter COMMIT après GO explicite (docs/lot9-validation-backfill-report.md)
+-- NE PAS APPLIQUER via supabase db push tant que GO non validé
 -- =============================================================================
 
 BEGIN;
@@ -62,7 +61,7 @@ WHERE is_template = false AND eleve_id IS NULL;
 -- Attendu post-migration : bank_total = 621, still_draft = 621
 
 ROLLBACK;
--- COMMIT;  -- décommenter uniquement après GO §7 lot9-validation-socle-plan.md
+-- COMMIT;  -- décommenter uniquement après GO docs/lot9-validation-backfill-report.md
 
 -- DOWN (si migration appliquée par erreur) :
 -- DROP INDEX IF EXISTS idx_exercices_validation_reuse;

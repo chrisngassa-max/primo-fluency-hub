@@ -29,7 +29,8 @@
     "curriculum:report": "node scripts/curriculum/report-batch.mjs",
     "curriculum:render-documents": "node scripts/curriculum/render-documents.mjs",
     "curriculum:seed:plan": "node scripts/curriculum/generate-plan-seed-sql.mjs",
-    "audit:validation": "node --import tsx scripts/audit-exercices-validation.mjs --dry-run"
+    "audit:validation": "node --import tsx scripts/audit-exercices-validation.mjs --dry-run",
+    "backfill:validation": "node --import tsx scripts/backfill-exercices-validation.mjs --dry-run"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
