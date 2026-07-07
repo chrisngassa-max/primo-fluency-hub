@@ -60,8 +60,7 @@ FROM public.exercices
 WHERE is_template = false AND eleve_id IS NULL;
 -- Attendu post-migration : bank_total = 621, still_draft = 621
 
-ROLLBACK;
--- COMMIT;  -- décommenter uniquement après GO docs/lot9-validation-backfill-report.md
+COMMIT;
 
 -- DOWN (si migration appliquée par erreur) :
 -- DROP INDEX IF EXISTS idx_exercices_validation_reuse;
