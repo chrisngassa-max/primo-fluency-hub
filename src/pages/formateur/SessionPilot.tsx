@@ -88,6 +88,7 @@ import StartOfSessionBilan from "@/components/StartOfSessionBilan";
 import SessionClosureReminder from "@/components/SessionClosureReminder";
 import PreflightExercises from "@/components/PreflightExercises";
 import SessionToolbox, { type SessionTool } from "@/components/SessionToolbox";
+import { CurriculumBadge } from "@/components/curriculum/CurriculumBadge";
 import VigilanceDrawer from "@/components/VigilanceDrawer";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
@@ -162,7 +163,7 @@ const SessionPilot = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("sessions")
-        .select("*, group:groups(nom, id, type_demarche)")
+        .select("*, group:groups(nom, id, type_demarche), training_session:training_sessions(code, palier, titre)")
         .eq("id", id!)
         .single();
       if (error) throw error;
@@ -1576,9 +1577,17 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold">Pilote de séance</h1>
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="text-2xl font-bold">Pilote de séance</h1>
+            {(session as any)?.training_session_id && (
+              <CurriculumBadge sessionCode={(session as any)?.training_session?.code} />
+            )}
+          </div>
           <p className="text-sm text-muted-foreground">
             {session?.titre || "Séance"} · {(session as any)?.group?.nom} · {exercises.length} exercice(s)
+            {(session as any)?.curriculum_palier_cible && (
+              <span> · Palier cible {(session as any).curriculum_palier_cible}</span>
+            )}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
