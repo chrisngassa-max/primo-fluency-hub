@@ -88,6 +88,9 @@ import StartOfSessionBilan from "@/components/StartOfSessionBilan";
 import SessionClosureReminder from "@/components/SessionClosureReminder";
 import PreflightExercises from "@/components/PreflightExercises";
 import SessionToolbox, { type SessionTool } from "@/components/SessionToolbox";
+import { CurriculumBadge } from "@/components/curriculum/CurriculumBadge";
+import { CurriculumAdaptPanel } from "@/components/curriculum/CurriculumAdaptPanel";
+import type { AggregatedLearnerError } from "@/lib/curriculum/types";
 import VigilanceDrawer from "@/components/VigilanceDrawer";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
@@ -162,7 +165,7 @@ const SessionPilot = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("sessions")
-        .select("*, group:groups(nom, id, type_demarche)")
+        .select("*, group:groups(nom, id, type_demarche), training_session:training_sessions(code, palier, titre)")
         .eq("id", id!)
         .single();
       if (error) throw error;
@@ -470,6 +473,20 @@ const SessionPilot = () => {
     );
   }, [groupMembers, routerStudentData, session]);
 
+  const curriculumAggregatedErrors = useMemo((): AggregatedLearnerError[] => {
+    const byKey = new Map<string, number>();
+    (routerStudentData?.results ?? []).forEach((result: any) => {
+      if (typeof result.score !== "number" || result.score >= 50) return;
+      const competence = result.exercice?.competence ?? "Structures";
+      const key = `${competence}:acquis`;
+      byKey.set(key, (byKey.get(key) ?? 0) + 1);
+    });
+    return Array.from(byKey.entries()).map(([key, count]) => {
+      const [competence, taxonomy] = key.split(":");
+      return { competence, taxonomy, count };
+    });
+  }, [routerStudentData]);
+
   // Fetch presences for this session
   const { data: presences } = useQuery({
     queryKey: ["presences-pilot", id],
@@ -577,6 +594,16 @@ const SessionPilot = () => {
   const checkedCount = useMemo(
     () => exercises.filter((ex) => checked[ex.id]).length,
     [checked, exercises]
+  );
+
+  const curriculumExercicesNonTraites = useMemo(
+    () =>
+      exercises
+        .filter((ex) => !checked[ex.id])
+        .map((ex: any) => ex.exercice?.titre ?? ex.exercice_id ?? ex.id)
+        .filter(Boolean)
+        .slice(0, 20) as string[],
+    [checked, exercises],
   );
 
   const toggleExercise = useCallback((exerciseId: string) => {
@@ -1576,9 +1603,17 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold">Pilote de séance</h1>
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="text-2xl font-bold">Pilote de séance</h1>
+            {(session as any)?.training_session_id && (
+              <CurriculumBadge sessionCode={(session as any)?.training_session?.code} />
+            )}
+          </div>
           <p className="text-sm text-muted-foreground">
             {session?.titre || "Séance"} · {(session as any)?.group?.nom} · {exercises.length} exercice(s)
+            {(session as any)?.curriculum_palier_cible && (
+              <span> · Palier cible {(session as any).curriculum_palier_cible}</span>
+            )}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -1694,6 +1729,18 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
             </div>
           </CardContent>
         </Card>
+      )}
+
+      {(session as any)?.training_session_id && (
+        <CurriculumAdaptPanel
+          sessionId={id!}
+          trainingSessionId={(session as any).training_session_id}
+          sessionCode={(session as any)?.training_session?.code ?? "?"}
+          palierCible={(session as any)?.curriculum_palier_cible}
+          eleveIds={memberIds}
+          aggregatedErrors={curriculumAggregatedErrors}
+          exercicesNonTraites={curriculumExercicesNonTraites}
+        />
       )}
 
       {/* Documents générés — exercices IA & leçons de la séance */}

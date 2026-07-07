@@ -15,6 +15,7 @@ import { createBatchStore } from './lib/batch-store.mjs';
 import { createStoragePublisher } from './providers/storage-publisher.mjs';
 import { readSessionManifest, readSessionJsonSibling, readResourceBuffer, relativePathForResource, sessionDir } from './lib/session-fs.mjs';
 import { writeFile } from 'node:fs/promises';
+import { syncPublishBridge } from './lib/publish-bridge.mjs';
 
 const PUBLISHED_BUCKET = process.env.CURRICULUM_STORAGE_BUCKET ?? 'curriculum-published';
 const AUDIO_BUCKET = process.env.CURRICULUM_AUDIO_BUCKET ?? 'curriculum-audio';
@@ -106,7 +107,20 @@ export async function publishOneSession({ sessionCode, storagePublisher, planVer
   };
   await writeFile(path.join(sessionDir(sessionCode, baseDir), 'publication.json'), `${JSON.stringify(publicationRecord, null, 2)}\n`, 'utf8');
 
-  return { sessionCode, published: true, publishedResources };
+  let bridgeResult = null;
+  try {
+    bridgeResult = await syncPublishBridge({
+      storagePublisher,
+      sessionCode,
+      sessionId,
+      baseDir,
+      publishedResources,
+    });
+  } catch (bridgeError) {
+    console.warn(`  ${sessionCode} : pont exercices echoue (publication storage OK) :`, bridgeError.message);
+  }
+
+  return { sessionCode, published: true, publishedResources, bridge: bridgeResult };
 }
 
 async function main() {
@@ -144,7 +158,12 @@ async function main() {
 
     if (result.published) {
       publishedCount += 1;
-      console.log(`  ${sessionCode} : PUBLIÃ‰ (${result.publishedResources.length} ressources).`);
+      const bridgeNote = result.bridge?.bridged
+        ? ` · pont exercices : ${result.bridge.exercice_ids?.length ?? 0} ligne(s)`
+        : result.bridge?.reason
+          ? ` · pont exercices ignore (${result.bridge.reason})`
+          : '';
+      console.log(`  ${sessionCode} : PUBLIÃ‰ (${result.publishedResources.length} ressources)${bridgeNote}.`);
     } else if (result.reason === 'not_generated') {
       console.log(`  ${sessionCode} : pas encore gÃ©nÃ©rÃ© â€” exÃ©cutez curriculum:generate d'abord.`);
     } else if (result.reason === 'not_validated') {

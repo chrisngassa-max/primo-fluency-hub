@@ -4740,6 +4740,7 @@ export type Database = {
           competences_autorisees: string[]
           competences_cibles: string[] | null
           created_at: string
+          curriculum_palier_cible: string | null
           date_seance: string
           difficulte_par_defaut: number
           duree_minutes: number
@@ -4758,12 +4759,14 @@ export type Database = {
           session_template_v4_id: string | null
           statut: Database["public"]["Enums"]["session_statut"]
           titre: string
+          training_session_id: string | null
           updated_at: string
         }
         Insert: {
           competences_autorisees?: string[]
           competences_cibles?: string[] | null
           created_at?: string
+          curriculum_palier_cible?: string | null
           date_seance: string
           difficulte_par_defaut?: number
           duree_minutes?: number
@@ -4782,12 +4785,14 @@ export type Database = {
           session_template_v4_id?: string | null
           statut?: Database["public"]["Enums"]["session_statut"]
           titre: string
+          training_session_id?: string | null
           updated_at?: string
         }
         Update: {
           competences_autorisees?: string[]
           competences_cibles?: string[] | null
           created_at?: string
+          curriculum_palier_cible?: string | null
           date_seance?: string
           difficulte_par_defaut?: number
           duree_minutes?: number
@@ -4806,6 +4811,7 @@ export type Database = {
           session_template_v4_id?: string | null
           statut?: Database["public"]["Enums"]["session_statut"]
           titre?: string
+          training_session_id?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -4814,6 +4820,13 @@ export type Database = {
             columns: ["group_id"]
             isOneToOne: false
             referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sessions_training_session_id_fkey"
+            columns: ["training_session_id"]
+            isOneToOne: false
+            referencedRelation: "training_sessions"
             referencedColumns: ["id"]
           },
           {

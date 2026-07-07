@@ -24,6 +24,7 @@ export const GENERATE_SCORE_MIN = 60; // score 60-79 → on préfère générer 
 export const FRESHNESS_WINDOW_DAYS = 30; // fenêtre « vu récemment » (en jours)
 export const FRESHNESS_MAX_OCCURRENCES = 1; // ≥ N occurrences récentes → considéré « vu récemment »
 export const DEFAULT_CANDIDATE_LIMIT = 200; // garde-fou sur le volume requêté
+export const CURRICULUM_SOURCE_BOOST = 15; // bonus search-first si exercice curriculum de la séance
 
 const LEVEL_ORDER = ["A0", "A1", "A2", "B1", "B2"];
 
@@ -93,6 +94,7 @@ export interface ExerciseRow {
   mode?: string | null;
   objectif_tcf?: string | null;
   is_ai_generated?: boolean | null;
+  source?: string | null;
   [key: string]: unknown;
 }
 
@@ -104,6 +106,10 @@ export interface SearchTarget {
   themeId?: string | null;
   /** Optionnel : démarche pédagogique de l'élève cible (remediation/augmente…). */
   studentMode?: string | null;
+  /** Optionnel : code séance curriculum (S01…) pour booster les exercices publiés. */
+  preferCurriculumSessionCode?: string | null;
+  /** Optionnel : uuid training_sessions pour filtrer le pont curriculum. */
+  preferCurriculumTrainingSessionId?: string | null;
 }
 
 // ─── Thème : vocabulaire canonique de `exercices.theme` (CHECK chk_exercices_theme_v4) ───
@@ -333,6 +339,23 @@ export interface FindReusableParams extends SearchTarget {
   candidateLimit?: number;
 }
 
+function curriculumMatchBoost(row: ExerciseRow, params: FindReusableParams): number {
+  if (row.source !== "curriculum_v2") return 0;
+  const meta = (row.contenu ?? {}) as { metadata?: Record<string, unknown> };
+  const sessionCode = meta.metadata?.session_code;
+  const trainingId = meta.metadata?.training_session_id;
+  if (params.preferCurriculumSessionCode && sessionCode === params.preferCurriculumSessionCode) {
+    return CURRICULUM_SOURCE_BOOST;
+  }
+  if (
+    params.preferCurriculumTrainingSessionId &&
+    trainingId === params.preferCurriculumTrainingSessionId
+  ) {
+    return CURRICULUM_SOURCE_BOOST;
+  }
+  return 0;
+}
+
 /**
  * Cœur du moteur search-first : requête la banque, score via le juge unique,
  * croise la fraîcheur, applique la logique de décision et renvoie jusqu'à
@@ -373,7 +396,7 @@ export async function findReusableExercises(
   let query = supabase
     .from("exercices")
     .select(
-      "id, titre, consigne, competence, niveau_vise, format, difficulte, contenu, contexte_irn, theme, niveau_guidage, sous_competence, metadata_code, metadata_skill, mode, objectif_tcf, animation_guide, variante_niveau_bas, variante_niveau_haut, is_ai_generated",
+      "id, titre, consigne, competence, niveau_vise, format, difficulte, contenu, contexte_irn, theme, niveau_guidage, sous_competence, metadata_code, metadata_skill, mode, objectif_tcf, animation_guide, variante_niveau_bas, variante_niveau_haut, is_ai_generated, source",
     )
     .eq("competence", competence)
     .eq("is_template", false)
@@ -410,6 +433,7 @@ export async function findReusableExercises(
       ctx,
       targetThemeId,
     );
+    const boost = curriculumMatchBoost(row, params);
     return {
       id: row.id,
       titre: row.titre ?? null,
@@ -417,7 +441,7 @@ export async function findReusableExercises(
       format: row.format ?? null,
       niveau_vise: row.niveau_vise ?? null,
       difficulte: row.difficulte ?? null,
-      score: result.score,
+      score: Math.min(100, result.score + boost),
       excluded: result.excluded,
       exclusionReason: result.exclusionReason,
       matchedRules: result.matchedRules,

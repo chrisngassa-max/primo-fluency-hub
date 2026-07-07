@@ -7,7 +7,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import type { SessionProgressRow, SessionResource, ValidationReport } from "@/lib/curriculum/types";
+import type { SessionProgressRow, SessionResource, TrainingSession, ValidationReport } from "@/lib/curriculum/types";
+import { formatPalierParcoursLabel, type CurriculumPalier } from "@/lib/curriculum/pilot";
+import { CurriculumPilotButton } from "@/components/curriculum/CurriculumPilotButton";
 import { cn } from "@/lib/utils";
 import {
   AlertTriangle,
@@ -32,6 +34,8 @@ interface ResourceReviewProps {
   sessionProgress: SessionProgressRow[];
   reports: ValidationReport[];
   resourcesBySessionCode: Map<string, SessionResource[]>;
+  trainingSessionsByCode?: Map<string, TrainingSession>;
+  palierCible?: CurriculumPalier;
   selectedSession?: string | null;
   onSelectSession?: (code: string | null) => void;
   onRestoreSession?: (sessionCode: string) => void;
@@ -42,6 +46,8 @@ export function ResourceReview({
   sessionProgress,
   reports,
   resourcesBySessionCode,
+  trainingSessionsByCode,
+  palierCible,
   selectedSession,
   onSelectSession,
   onRestoreSession,
@@ -120,6 +126,7 @@ export function ResourceReview({
 
           {filteredSessions.map((session) => {
             const sessionResources = resourcesBySessionCode.get(session.session_code) ?? [];
+            const trainingSession = trainingSessionsByCode?.get(session.session_code);
             const isOpen = expanded === session.session_code;
             const hasIssue = session.quarantined > 0 || session.version_mismatch;
 
@@ -151,7 +158,12 @@ export function ResourceReview({
                       )}
                       <span className="font-mono text-sm font-medium w-12">{session.session_code}</span>
                       <span className="flex-1 truncate text-sm">{session.titre}</span>
-                      <Badge variant="outline">{session.palier}</Badge>
+                      <Badge variant="outline" title={formatPalierParcoursLabel(session.palier)}>
+                        {session.palier}
+                      </Badge>
+                      <span className="text-[10px] text-muted-foreground hidden sm:inline">
+                        n°{session.ordre}
+                      </span>
                       {session.quarantined > 0 && (
                         <Badge variant="destructive">Quarantaine</Badge>
                       )}
@@ -164,6 +176,13 @@ export function ResourceReview({
                       <span className="text-xs text-muted-foreground">
                         {sessionResources.length} ressource(s)
                       </span>
+                      {trainingSession && (
+                        <CurriculumPilotButton
+                          trainingSession={trainingSession}
+                          palierCible={palierCible}
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      )}
                     </button>
                   </CollapsibleTrigger>
                   <CollapsibleContent>
@@ -248,9 +267,9 @@ export function ResourceReview({
                         <ExercisePreview resources={sessionResources} reports={reportsByResource} />
                       )}
 
-                      {onRestoreSession &&
-                        sessionResources.some((r) => r.statut === "published" && r.version > 1) && (
-                          <div className="mt-3 flex justify-end">
+                      <div className="mt-3 flex justify-end gap-2 flex-wrap">
+                        {onRestoreSession &&
+                          sessionResources.some((r) => r.statut === "published" && r.version > 1) && (
                             <Button
                               variant="outline"
                               size="sm"
@@ -265,8 +284,8 @@ export function ResourceReview({
                               )}
                               Restaurer la séance
                             </Button>
-                          </div>
-                        )}
+                          )}
+                      </div>
                     </div>
                   </CollapsibleContent>
                 </div>

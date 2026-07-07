@@ -39,6 +39,8 @@ import {
 } from "lucide-react";
 import { fetchActivePlanVersion, fetchTrainingSessions } from "@/lib/curriculum/api";
 import { CURRICULUM_PLAN_VERSION_LABEL } from "@/lib/curriculum/sessions";
+import { CURRICULUM_PALIERS, formatPalierParcoursLabel, type CurriculumPalier } from "@/lib/curriculum/pilot";
+import { CurriculumPilotButton } from "@/components/curriculum/CurriculumPilotButton";
 
 const CURRICULUM_V2_VERSION = "curriculum-v2.0";
 
@@ -132,6 +134,8 @@ const ParcoursPage = () => {
   const [typeDemarche, setTypeDemarche] = useState<"titre_sejour" | "naturalisation">("titre_sejour");
   const [isTemplate, setIsTemplate] = useState(false);
   const [dateExamenCible, setDateExamenCible] = useState<Date | undefined>(undefined);
+
+  const [curriculumPalierCible, setCurriculumPalierCible] = useState<CurriculumPalier>("B2");
 
   // Generation state
   const [generating, setGenerating] = useState(false);
@@ -531,6 +535,27 @@ const ParcoursPage = () => {
                 {curriculumSessions.length} séances
               </Badge>
             </div>
+            <div className="flex flex-col sm:flex-row sm:items-end gap-3 pt-3 border-t mt-3">
+              <div className="space-y-1.5 flex-1 max-w-xs">
+                <Label className="text-xs">Palier cible par défaut (variantes)</Label>
+                <Select
+                  value={curriculumPalierCible}
+                  onValueChange={(v) => setCurriculumPalierCible(v as CurriculumPalier)}
+                >
+                  <SelectTrigger className="h-9">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CURRICULUM_PALIERS.map((p) => (
+                      <SelectItem key={p} value={p}>{p}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-[11px] text-muted-foreground leading-snug">
+                  Distinct du n° de séance et du niveau actuel des élèves. Parcours cumulatif vers B2.
+                </p>
+              </div>
+            </div>
           </CardHeader>
           <CardContent className="space-y-2 max-h-[480px] overflow-y-auto">
             {curriculumPlanLoading || curriculumSessionsLoading ? (
@@ -549,18 +574,20 @@ const ParcoursPage = () => {
                   key={s.id}
                   className="flex items-center gap-3 p-3 rounded-lg border bg-muted/20"
                 >
-                  <div className="flex items-center justify-center h-7 w-7 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs font-bold shrink-0">
-                    {s.ordre}
-                  </div>
+                  <Badge
+                    variant="outline"
+                    className="font-mono text-xs shrink-0 bg-blue-50 dark:bg-blue-950/40 border-blue-200"
+                  >
+                    {s.code}
+                  </Badge>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <Badge variant="outline" className="text-[10px] font-mono">
-                        {s.code}
-                      </Badge>
                       <span className="font-medium text-sm truncate">{s.titre}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
-                      <span>{s.palier}</span>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5 flex-wrap">
+                      <span>{formatPalierParcoursLabel(s.palier)}</span>
+                      <span>·</span>
+                      <span>Séance n°{s.ordre}</span>
                       {s.duree_minutes != null && (
                         <>
                           <span>·</span>
@@ -572,6 +599,10 @@ const ParcoursPage = () => {
                       )}
                     </div>
                   </div>
+                  <CurriculumPilotButton
+                    trainingSession={s}
+                    palierCible={curriculumPalierCible}
+                  />
                 </div>
               ))
             )}

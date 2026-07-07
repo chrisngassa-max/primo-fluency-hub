@@ -15,9 +15,12 @@ import type {
   TrainingPlanVersion,
   TrainingSession,
   ValidationReport,
+  CurriculumAdaptRequest,
+  CurriculumAdaptResponse,
 } from "./types";
 
 const BATCH_FN = "curriculum-batch";
+const ADAPT_FN = "curriculum-adapt";
 
 export async function fetchActivePlanVersion(): Promise<TrainingPlanVersion | null> {
   const { data: active } = await supabase
@@ -220,6 +223,21 @@ export async function loadBatchStatus(batchId: string): Promise<BatchStatusRespo
   };
 
   return { batch: batch as ResourceGenerationBatch, jobs, session_progress, global };
+}
+
+export async function fetchPublishedSessionResources(trainingSessionId: string): Promise<SessionResource[]> {
+  const resources = await fetchSessionResources([trainingSessionId]);
+  return resources.filter((r) => r.statut === "published");
+}
+
+export async function invokeCurriculumAdapt(body: CurriculumAdaptRequest): Promise<CurriculumAdaptResponse> {
+  const { data, error } = await supabase.functions.invoke(ADAPT_FN, { body });
+  if (error) throw error;
+  const payload = data as CurriculumAdaptResponse & { error?: string; message?: string };
+  if (payload?.error && !payload.adaptation) {
+    throw new Error(payload.message ?? payload.error);
+  }
+  return payload;
 }
 
 export async function invokeCurriculumBatch<T extends Record<string, unknown>>(

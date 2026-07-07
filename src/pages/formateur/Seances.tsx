@@ -27,6 +27,7 @@ import {
 import { COMPETENCES_ORDER, COMPETENCE_COLORS, resolveSessionCompetences } from "@/lib/competences";
 import { cn } from "@/lib/utils";
 import { prepareSessionKit } from "@/lib/prepareSessionKit";
+import { CurriculumBadge } from "@/components/curriculum/CurriculumBadge";
 
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
 
@@ -339,7 +340,7 @@ const SeancesPage = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("sessions")
-        .select("*, group:groups(nom, formateur_id)")
+        .select("*, group:groups(nom, formateur_id), training_session:training_sessions(code, palier)")
         .order("date_seance", { ascending: false });
       if (error) throw error;
       const filtered = (data ?? []).filter((s: any) => s.group?.formateur_id === user!.id);
@@ -1059,11 +1060,15 @@ const SeancesPage = () => {
             ? `Demain, ${timeRange}`
             : `${format(startDate, "EEEE d MMMM", { locale: fr })}, ${timeRange}`;
 
+          const isCurriculum = !!(s as any).training_session_id;
+          const curriculumCode = (s as any).training_session?.code as string | undefined;
+
           return (
             <div
               key={s.id}
               className={cn(
                 "rounded-2xl border p-5 cursor-pointer transition-colors shadow-md group",
+                isCurriculum && !isEnCours && !isToday && !isDone && !isCancelled && "border-blue-200 bg-blue-50/40 hover:bg-blue-50/70",
                 isEnCours ? "bg-green-50 border-green-200 hover:bg-green-100/70"
                   : isToday ? "bg-blue-50 border-blue-200 hover:bg-blue-100/70"
                   : isDone ? "bg-muted/30 border-border"
@@ -1075,7 +1080,8 @@ const SeancesPage = () => {
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0 space-y-2">
                   {/* Status badge */}
-                  <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {isCurriculum && <CurriculumBadge sessionCode={curriculumCode} />}
                     {isEnCours ? (
                       <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700 border border-green-200">
                         Séance en cours

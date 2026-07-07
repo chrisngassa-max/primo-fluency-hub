@@ -180,7 +180,7 @@ export function BatchProgress({ batch, status, costEstimate, isLoading, onResume
                   <TableRow>
                     <TableHead className="w-16">Code</TableHead>
                     <TableHead>Titre</TableHead>
-                    <TableHead className="w-14">Palier</TableHead>
+                    <TableHead className="w-14" title="Palier parcours (A2/B1/B2)">Palier</TableHead>
                     <TableHead className="w-24 text-center">Gén.</TableHead>
                     <TableHead className="w-24 text-center">Valid.</TableHead>
                     <TableHead className="w-24 text-center">Publ.</TableHead>
@@ -202,7 +202,7 @@ export function BatchProgress({ batch, status, costEstimate, isLoading, onResume
                         {row.titre}
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-xs" title={`Palier parcours · n°${row.ordre}`}>
                           {row.palier}
                         </Badge>
                       </TableCell>

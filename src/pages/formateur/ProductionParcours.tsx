@@ -28,6 +28,14 @@ import {
   startBatch,
 } from "@/lib/curriculum/api";
 import { CURRICULUM_PLAN_VERSION_LABEL, CURRICULUM_SESSIONS } from "@/lib/curriculum/sessions";
+import { CURRICULUM_PALIERS, type CurriculumPalier } from "@/lib/curriculum/pilot";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Factory,
   Info,
@@ -50,6 +58,7 @@ export default function ProductionParcours() {
   const [selectedSession, setSelectedSession] = useState<string | null>(null);
   const [restoringId, setRestoringId] = useState<string | null>(null);
   const [restoringSession, setRestoringSession] = useState<string | null>(null);
+  const [palierCible, setPalierCible] = useState<CurriculumPalier>("B2");
 
   const { data: plan, isLoading: planLoading } = useQuery({
     queryKey: ["curriculum-plan-version"],
@@ -120,6 +129,11 @@ export default function ProductionParcours() {
     }
     return map;
   }, [dbSessions, resources]);
+
+  const trainingSessionsByCode = useMemo(
+    () => new Map(dbSessions.map((s) => [s.code, s])),
+    [dbSessions],
+  );
 
   const sessionProgress = batchStatus?.session_progress ?? [];
 
@@ -345,11 +359,31 @@ export default function ProductionParcours() {
           <TabsTrigger value="review">Revue des ressources</TabsTrigger>
           <TabsTrigger value="history">Historique & restauration</TabsTrigger>
         </TabsList>
-        <TabsContent value="review" className="mt-4">
+        <TabsContent value="review" className="mt-4 space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-end gap-3 max-w-md">
+            <div className="space-y-1.5 flex-1">
+              <Label className="text-xs">Palier cible par défaut (variantes)</Label>
+              <Select value={palierCible} onValueChange={(v) => setPalierCible(v as CurriculumPalier)}>
+                <SelectTrigger className="h-9">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {CURRICULUM_PALIERS.map((p) => (
+                    <SelectItem key={p} value={p}>{p}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-[11px] text-muted-foreground">
+                Appliqué aux boutons « Ouvrir le pilote ». Distinct du palier parcours et du n° de séance.
+              </p>
+            </div>
+          </div>
           <ResourceReview
             sessionProgress={sessionProgress}
             reports={reports}
             resourcesBySessionCode={resourcesBySessionCode}
+            trainingSessionsByCode={trainingSessionsByCode}
+            palierCible={palierCible}
             selectedSession={selectedSession}
             onSelectSession={setSelectedSession}
             onRestoreSession={handleRestoreSession}
