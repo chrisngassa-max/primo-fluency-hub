@@ -213,3 +213,68 @@ export interface CurriculumAdaptResponse {
   excludedIds?: string[];
   error?: string;
 }
+
+// ------------------------------------------------------------
+// Documents de séance (MVP éditeur) — table session_documents,
+// distincte du pipeline session_resources : brouillons formateur
+// éditables en direct, jamais exposés aux élèves.
+// ------------------------------------------------------------
+export type SessionDocumentType =
+  | "fiche_formateur"
+  | "fiche_apprenant"
+  | "dialogue_transcription"
+  | "audio_mp3"
+  | "qcm_tcf"
+  | "qcm_civique"
+  | "corrige_formateur"
+  | "lexique"
+  | "support_visuel"
+  | "document_transforme"
+  | "document_importe"
+  | "exercice_interactif";
+
+export type SessionDocumentStatus =
+  | "brouillon"
+  | "a_completer"
+  | "relu"
+  | "valide"
+  | "remplace";
+
+export interface SessionDocument {
+  id: string;
+  session_code: string;
+  document_type: SessionDocumentType;
+  title: string;
+  level: string | null;
+  competence: string[];
+  status: SessionDocumentStatus;
+  content_html: string | null;
+  content_json: Record<string, unknown> | null;
+  source_file_path: string | null;
+  file_url: string | null;
+  version: number;
+  updated_at: string;
+}
+
+export const SESSION_DOCUMENT_TYPE_LABELS: Record<SessionDocumentType, string> = {
+  fiche_formateur: "Fiche Formateur",
+  fiche_apprenant: "Fiche Apprenant",
+  dialogue_transcription: "Dialogue / Transcription",
+  audio_mp3: "Audio (MP3)",
+  qcm_tcf: "QCM TCF",
+  qcm_civique: "QCM Civique",
+  corrige_formateur: "Corrigé Formateur",
+  lexique: "Lexique",
+  support_visuel: "Support Visuel",
+  document_transforme: "Document Transformé",
+  document_importe: "Document Importé",
+  exercice_interactif: "Exercice Interactif",
+};
+
+export const SESSION_DOCUMENT_STATUS_LABELS: Record<SessionDocumentStatus, string> = {
+  brouillon: "Brouillon",
+  a_completer: "Socle à compléter",
+  relu: "Relu",
+  valide: "Validé",
+  remplace: "Remplacé",
+};

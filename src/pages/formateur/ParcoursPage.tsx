@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -36,11 +37,18 @@ import {
   CheckCircle2,
   Layers,
   Factory,
+  FileText,
 } from "lucide-react";
 import { fetchActivePlanVersion, fetchTrainingSessions } from "@/lib/curriculum/api";
 import { CURRICULUM_PLAN_VERSION_LABEL } from "@/lib/curriculum/sessions";
 import { CURRICULUM_PALIERS, formatPalierParcoursLabel, type CurriculumPalier } from "@/lib/curriculum/pilot";
 import { CurriculumPilotButton } from "@/components/curriculum/CurriculumPilotButton";
+import { SessionDocumentsPanel } from "@/components/curriculum/SessionDocumentsPanel";
+
+// MVP "Documents de séance" : seul S01 (v3) a des documents éditables pour
+// l'instant (docs/seance-1-v3-validation/). Ne pas étendre à S02-S37 tant
+// que l'éditeur n'a pas été validé sur ce périmètre restreint.
+const SESSIONS_WITH_DOCUMENTS = new Set(["S01"]);
 
 const CURRICULUM_V2_VERSION = "curriculum-v2.0";
 
@@ -121,6 +129,7 @@ const ParcoursPage = () => {
   // Variant selection (filter + creation preset)
   const [selectedVariante, setSelectedVariante] = useState<VarianteFilter>("tous");
   const [variante, setVariante] = useState<VariantePlan>("enrichi");
+  const [documentsSessionCode, setDocumentsSessionCode] = useState<string | null>(null);
 
   // Form state
   const [showForm, setShowForm] = useState(false);
@@ -599,6 +608,17 @@ const ParcoursPage = () => {
                       )}
                     </div>
                   </div>
+                  {SESSIONS_WITH_DOCUMENTS.has(s.code) && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-8 gap-1.5 text-xs shrink-0"
+                      onClick={() => setDocumentsSessionCode(s.code)}
+                    >
+                      <FileText className="h-3.5 w-3.5" />
+                      Documents
+                    </Button>
+                  )}
                   <CurriculumPilotButton
                     trainingSession={s}
                     palierCible={curriculumPalierCible}
@@ -609,6 +629,23 @@ const ParcoursPage = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* Documents de séance — MVP éditeur (S01 v3 uniquement pour l'instant) */}
+      <Dialog open={documentsSessionCode !== null} onOpenChange={(open) => !open && setDocumentsSessionCode(null)}>
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5 text-blue-600" />
+              Documents de séance — {documentsSessionCode}
+            </DialogTitle>
+            <DialogDescription>
+              Brouillons pédagogiques éditables directement dans l'application, distincts des ressources
+              publiées par la pipeline de génération automatique.
+            </DialogDescription>
+          </DialogHeader>
+          {documentsSessionCode && <SessionDocumentsPanel sessionCode={documentsSessionCode} />}
+        </DialogContent>
+      </Dialog>
 
       {/* Creation form */}
       {showForm && (
