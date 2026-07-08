@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CAP TCF — Visualiseur de Packs de Séances</title>
+<style>
+  :root {
+    --primary: #0b234a;
+    --accent: #f47b20;
+    --accent-hover: #ea6815;
+    --primary-light: rgba(11,35,74,0.05);
+    --text: #0b234a;
+    --text-light: #64748b;
+    --border: rgba(11,35,74,0.1);
+    --success: #059669;
+    --danger: #dc2626;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--text);
+    background:
+      radial-gradient(circle at top left, hsl(215 65% 92% / 0.65), transparent 34rem),
+      radial-gradient(circle at top right, hsl(28 90% 86% / 0.55), transparent 30rem),
+      linear-gradient(180deg, hsl(39 62% 94%) 0%, hsl(44 42% 97%) 48%, hsl(38 42% 94%) 100%);
+    min-height: 100vh;
+    padding: 32px 24px 64px;
+  }
+  .page { max-width: 1080px; margin: 0 auto; }
+  header.top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+  .logo-container { display: flex; align-items: center; gap: 10px; }
+  .logo-container h1 { font-size: 26px; font-weight: 900; color: var(--primary); letter-spacing: -0.5px; }
+  .logo-container h1 span { color: var(--accent); }
+  .subtitle { color: var(--text-light); font-size: 13.5px; font-weight: 500; margin-top: 2px; }
+  .meta-note {
+    font-size: 12.5px;
+    color: var(--text-light);
+    background: rgba(255,255,255,0.7);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+  }
+  .intro {
+    background: rgba(255,255,255,0.6);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin: 20px 0 32px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: #334155;
+  }
+  .intro strong { color: var(--primary); }
+  .session-card {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(15,23,42,0.06);
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .session-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, #fbfbfd 0%, #ffffff 100%);
+  }
+  .session-title-row { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .session-code {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--primary);
+    letter-spacing: -0.5px;
+  }
+  .session-titre { font-size: 16px; font-weight: 700; color: #1e293b; }
+  .session-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .badge {
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 4px 9px;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    background: #fdfbf7;
+    color: var(--primary);
+    white-space: nowrap;
+  }
+  .badge.civic { color: #b45309; border-color: rgba(180,83,9,0.25); background: #fffbeb; }
+  .session-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .btn-dashboard {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--accent);
+    color: #ffffff;
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 9px 16px;
+    border-radius: 20px;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(244,123,32,0.28);
+    transition: background 0.15s;
+  }
+  .btn-dashboard:hover { background: var(--accent-hover); }
+  .btn-report {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #ffffff;
+    color: var(--primary);
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 9px 16px;
+    border-radius: 20px;
+    text-decoration: none;
+    border: 1px solid var(--border);
+  }
+  .btn-report:hover { border-color: var(--accent); background: var(--primary-light); }
+  .doc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 10px;
+    padding: 20px 24px 24px;
+  }
+  .doc-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #fafbfd;
+  }
+  .doc-label {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #334155;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .doc-links { display: flex; gap: 6px; flex-shrink: 0; }
+  .doc-links a {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.3px;
+  }
+  .link-pdf { background: #fee2e2; color: #991b1b; }
+  .link-pdf:hover { background: #fecaca; }
+  .link-docx { background: #dbeafe; color: #1e40af; }
+  .link-docx:hover { background: #bfdbfe; }
+  .link-disabled { background: #f1f5f9; color: #94a3b8; cursor: default; pointer-events: none; }
+  footer.note {
+    margin-top: 32px;
+    font-size: 12px;
+    color: var(--text-light);
+    text-align: center;
+    line-height: 1.6;
+  }
+  code {
+    background: rgba(11,35,74,0.06);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 11.5px;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="top">
+    <div>
+      <div class="logo-container">
+        <svg style="height: 30px; width: 30px; fill: none; stroke: var(--primary); stroke-width: 2.2;" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479L12 21l-6.825-4a12.083 12.083 0 01.665-6.479L12 14z"/>
+        </svg>
+        <h1>CAP <span>TCF</span> — Visualiseur de Packs</h1>
+      </div>
+      <div class="subtitle">Consultation locale des séances produites (S01–S05)</div>
+    </div>
+    <div class="meta-note">Ouvert en local — aucun fichier n'est envoyé sur le réseau</div>
+  </header>
+
+  <div class="intro">
+    Cette page liste les packs déjà générés dans <code>docs/seance-N-modele-validation/</code>. Clique sur
+    <strong>Dashboard de validation</strong> pour l'aperçu interactif complet (checklist + rapport d'audit + prévisualisation A4),
+    ou directement sur un badge <strong>PDF</strong> / <strong>DOCX</strong> pour ouvrir un document précis. Les DOCX se
+    téléchargent (ou s'ouvrent dans Word selon ton navigateur) ; les PDF s'ouvrent dans un nouvel onglet.
+  </div>
+
+  <main id="sessions"></main>
+
+  <footer class="note">
+    Généré localement — voir <code>docs/session-pack-viewer/</code>. Aucune donnée Supabase, aucun MP3 réel n'est référencé ici.
+  </footer>
+</div>
+
+<script>
+  const SESSIONS = [
+    {
+      code: 'S01',
+      titre: 'Accueil, objectifs et cinq thèmes',
+      niveau: 'A1-B2',
+      competences: 'CO / EO',
+      civique: 'Droits et devoirs',
+      dir: '../seance-1-modele-validation'
+    },
+    {
+      code: 'S02',
+      titre: 'État civil, mairie et symboles',
+      niveau: 'A1-B2',
+      competences: 'CE / EE',
+      civique: 'Principes et valeurs de la République',
+      dir: '../seance-2-modele-validation'
+    },
+    {
+      code: 'S03',
+      titre: 'Santé et urgences',
+      niveau: 'A1-B2',
+      competences: 'CO / EO',
+      civique: 'Vivre dans la société française',
+      dir: '../seance-3-modele-validation'
+    },
+    {
+      code: 'S04',
+      titre: 'École, absence et autorité parentale',
+      niveau: 'A1-B2',
+      competences: 'CE / EE',
+      civique: 'Droits et devoirs',
+      dir: '../seance-4-modele-validation'
+    },
+    {
+      code: 'S05',
+      titre: 'Logement, voisinage et discrimination',
+      niveau: 'A1-B2',
+      competences: 'CO / EO',
+      civique: 'Droits et devoirs',
+      dir: '../seance-5-modele-validation'
+    }
+  ];
+
+  // [label, filename-base-without-extension]
+  const DOCS = [
+    ['Fiche Formateur (déroulé 180 min)', '{S}_FOR_FI_ALL_deroule-180min'],
+    ['Fiche Apprenant A2', '{S}_APP_CO_A2_fiche-activites'],
+    ['Dialogue / Transcription', '{S}_APP_CO_ALL_dialogue-transcription'],
+    ['QCM type TCF', '{S}_APP_QC_ALL_qcm-tcf'],
+    ['QCM Civique', '{S}_APP_QC_ALL_qcm-civique'],
+    ['Corrigé Formateur', '{S}_COR_ALL_corrige-formateur'],
+    ['Lexique de Séance', '{S}_APP_LX_ALL_lexique'],
+    ['Support Visuel', '{S}_APP_VI_ALL_support-visuel'],
+    ['Document Transformé', '{S}_APP_CV_ALL_document-transforme']
+  ];
+
+  function el(tag, props, children) {
+    const node = document.createElement(tag);
+    if (props) for (const k in props) {
+      if (k === 'class') node.className = props[k];
+      else if (k === 'text') node.textContent = props[k];
+      else node.setAttribute(k, props[k]);
+    }
+    (children || []).forEach(c => node.appendChild(c));
+    return node;
+  }
+
+  function docLink(href, label, cls) {
+    const a = el('a', { href, class: cls, target: '_blank', rel: 'noopener' });
+    a.textContent = label;
+    return a;
+  }
+
+  const container = document.getElementById('sessions');
+
+  SESSIONS.forEach(session => {
+    const base = session.dir;
+    const S = session.code;
+
+    const titleBlock = el('div', {}, [
+      el('div', { class: 'session-title-row' }, [
+        el('span', { class: 'session-code', text: S }),
+        el('span', { class: 'session-titre', text: session.titre })
+      ]),
+      el('div', { class: 'session-badges' }, [
+        el('span', { class: 'badge', text: 'Niveau ' + session.niveau }),
+        el('span', { class: 'badge', text: session.competences }),
+        el('span', { class: 'badge civic', text: 'Civique : ' + session.civique })
+      ])
+    ]);
+
+    const actionsBlock = el('div', { class: 'session-actions' }, [
+      docLink(base + '/index.html', '📋 Dashboard de validation', 'btn-dashboard'),
+      docLink(base + '/' + S + '_conformity-report.md', 'Rapport de conformité', 'btn-report')
+    ]);
+
+    const head = el('div', { class: 'session-head' }, [titleBlock, actionsBlock]);
+
+    const grid = el('div', { class: 'doc-grid' });
+    DOCS.forEach(([label, pattern]) => {
+      const filenameBase = pattern.replace('{S}', S);
+      const pdfHref = base + '/' + filenameBase + '.pdf';
+      const docxHref = base + '/' + filenameBase + '.docx';
+      const item = el('div', { class: 'doc-item' }, [
+        el('span', { class: 'doc-label', text: label }),
+        el('div', { class: 'doc-links' }, [
+          docLink(pdfHref, 'PDF', 'link-pdf'),
+          docLink(docxHref, 'DOCX', 'link-docx')
+        ])
+      ]);
+      grid.appendChild(item);
+    });
+
+    const card = el('section', { class: 'session-card' }, [head, grid]);
+    container.appendChild(card);
+  });
+</script>
+</body>
+</html>
