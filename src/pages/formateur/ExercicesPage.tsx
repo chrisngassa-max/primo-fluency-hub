@@ -32,6 +32,7 @@ import { structuredExerciseMetadata } from "@/lib/exerciseMetadata";
 import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/DifficultyBadge";
 import ImportFromUrlDialog from "@/components/ImportFromUrlDialog";
 import GenerateTargetedExerciseWizard from "@/components/formateur/GenerateTargetedExerciseWizard";
+import DocumentGenerationDialog from "@/components/DocumentGenerationDialog";
 
 const COMPETENCES = ["CO", "CE", "EE", "EO", "Structures"] as const;
 const NIVEAUX = ["A0", "A1", "A2", "B1", "B2", "C1"] as const;
@@ -77,6 +78,7 @@ const ExercicesPage = () => {
   const [importUrlOpen, setImportUrlOpen] = useState(false);
   const [importSourceMode, setImportSourceMode] = useState<"pdf" | "url">("pdf");
   const [targetedWizardOpen, setTargetedWizardOpen] = useState(false);
+  const [documentDialogOpen, setDocumentDialogOpen] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
 
   // RAG Test state
@@ -447,6 +449,11 @@ const ExercicesPage = () => {
     [exercices],
   );
 
+  const documentExercises = useMemo(() => {
+    const source = selected.size > 0 ? (exercices ?? []).filter((ex: any) => selected.has(ex.id)) : [];
+    return source.slice(0, 12);
+  }, [exercices, selected]);
+
   const toggle = (id: string) => {
     setSelected((prev) => {
       const next = new Set(prev);
@@ -684,6 +691,10 @@ ${Array.isArray(item.options) && item.options.length > 0
           <Button size="xl" className="gap-2" onClick={() => setTargetedWizardOpen(true)}>
             <Target className="h-5 w-5" />
             🎯 Générer exercice ciblé
+          </Button>
+          <Button size="lg" variant="secondary" className="gap-2" onClick={() => setDocumentDialogOpen(true)}>
+            <FileText className="h-5 w-5" />
+            Créer un document
           </Button>
           <Button
             size="lg"
@@ -1692,6 +1703,13 @@ ${Array.isArray(item.options) && item.options.length > 0
         onClose={() => setImportUrlOpen(false)}
         defaultSourceMode={importSourceMode}
         onExerciseCreated={() => qc.invalidateQueries({ queryKey: ["formateur-all-exercices", user?.id] })}
+      />
+
+      {/* ─── Document Generation Dialog ─── */}
+      <DocumentGenerationDialog
+        open={documentDialogOpen}
+        onOpenChange={setDocumentDialogOpen}
+        exercises={documentExercises}
       />
 
       {/* ─── Targeted Exercise Wizard ─── */}
