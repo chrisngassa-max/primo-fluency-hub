@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Planche Visuelle & Design System — CapTCF</title>
+  
+  <!-- Polices Google Fonts pour l'interface de contrôle -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ----------------------------------------------------
+       1. VARIABLES & RÈGLES DE DESIGN SYSTEM
+       ---------------------------------------------------- */
+    :root {
+      /* Palette de l'application (Dashboard) */
+      --app-bg: #0f172a;
+      --app-sidebar-bg: rgba(30, 41, 59, 0.7);
+      --app-card-bg: rgba(30, 41, 59, 0.4);
+      --app-accent: #3b82f6;
+      --app-text-light: #f8fafc;
+      --app-text-muted: #94a3b8;
+      
+      /* Palette des Documents Imprimables (A4) */
+      --doc-text: #1e293b;
+      --doc-border: #cbd5e1;
+      --doc-bg: #ffffff;
+      --doc-navy: #1e3a8a;
+      
+      /* Couleurs secondaires des documents */
+      --color-formateur: #065f46;
+      --color-apprenant: #2563eb;
+      --color-co: #6b21a8;
+      --color-qcm: #d97706;
+      --color-corrige: #991b1b;
+      --color-lexique: #475569;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--app-bg);
+      color: var(--app-text-light);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ----------------------------------------------------
+       2. LAYOUT DU TABLEAU DE BORD (DASHBOARD)
+       ---------------------------------------------------- */
+    #sidebar {
+      width: 320px;
+      background: var(--app-sidebar-bg);
+      backdrop-filter: blur(12px);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 100;
+      padding: 24px;
+      overflow-y: auto;
+      transition: transform 0.3s ease;
+    }
+
+    .brand-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: white;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .brand-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .menu-section {
+      margin-bottom: 24px;
+    }
+
+    .menu-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--app-text-muted);
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .menu-btn {
+      width: 100%;
+      background: transparent;
+      border: 1px solid transparent;
+      padding: 12px 16px;
+      border-radius: 8px;
+      color: var(--app-text-muted);
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.2s ease;
+      margin-bottom: 6px;
+    }
+
+    .menu-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--app-text-light);
+    }
+
+    .menu-btn.active {
+      background: rgba(59, 130, 246, 0.15);
+      border-color: rgba(59, 130, 246, 0.3);
+      color: #60a5fa;
+      font-weight: 600;
+    }
+
+    .menu-btn svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+    }
+
+    #main-content {
+      margin-left: 320px;
+      flex: 1;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-y: auto;
+      height: 100vh;
+    }
+
+    .action-bar {
+      width: 840px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .toggle-print-btn {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      transition: all 0.2s ease;
+    }
+
+    .toggle-print-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+    }
+
+    .toggle-print-btn.active {
+      background: #dc2626;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+    }
+
+    /* ----------------------------------------------------
+       3. CONTENEUR ET PAGES A4 (APERCU DANS L'APP)
+       ---------------------------------------------------- */
+    .a4-container {
+      background: var(--doc-bg);
+      color: var(--doc-text);
+      width: 210mm;
+      min-height: 297mm;
+      padding: 15mm;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
+      border-radius: 4px;
+      font-family: system-ui, -apple-system, sans-serif;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 40px;
+    }
+
+    /* ----------------------------------------------------
+       4. ÉLÉMENTS DU SYSTEME DE SPECIFICATIONS DES DOCUMENTS
+       ---------------------------------------------------- */
+    
+    /* En-tête Commun */
+    .doc-header {
+      width: 100%;
+      border-bottom: 1.5pt solid var(--doc-navy);
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    .doc-header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .doc-header-logo {
+      font-weight: 800;
+      font-size: 11pt;
+      color: var(--doc-navy);
+      letter-spacing: 0.5px;
+    }
+
+    .doc-badges-group {
+      display: flex;
+      gap: 6px;
+    }
+
+    .doc-badge {
+      border: 0.75pt solid var(--doc-border);
+      padding: 2px 6px;
+      font-size: 8.5pt;
+      font-weight: 600;
+      color: #475569;
+      border-radius: 3px;
+      background-color: #f8fafc;
+    }
+
+    .doc-title {
+      font-size: 16pt;
+      font-weight: 700;
+      color: var(--doc-navy);
+      line-height: 1.2;
+    }
+
+    /* Styles généraux intérieurs des documents */
+    .section-title {
+      font-size: 12pt;
+      font-weight: 700;
+      color: #0f172a;
+      margin-top: 15px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 0.75pt solid var(--doc-border);
+      padding-bottom: 4px;
+    }
+
+    .section-title svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .consigne-box {
+      background-color: #f1f5f9;
+      border-left: 3px solid var(--color-apprenant);
+      padding: 8px 12px;
+      margin-bottom: 15px;
+      font-size: 10pt;
+      font-weight: 600;
+      line-height: 1.4;
+      color: #334155;
+    }
+
+    .aides-box {
+      border: 0.75pt dashed var(--doc-border);
+      padding: 8px 12px;
+      margin-bottom: 15px;
+      font-size: 9pt;
+      color: #64748b;
+    }
+
+    .aides-title {
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: #475569;
+    }
+
+    .qa-block {
+      margin-bottom: 15px;
+    }
+
+    .question-label {
+      font-size: 10pt;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .response-line {
+      border-bottom: 1px dotted #94a3b8;
+      height: 30px;
+      margin-bottom: 8px;
+      width: 100%;
+    }
+
+    .response-lines-container {
+      margin-top: 8px;
+      margin-bottom: 12px;
+    }
+
+    /* ----------------------------------------------------
+       5. DESIGN D'EXEMPLES SPECIFIQUES DE PAGES A4
+       ---------------------------------------------------- */
+    
+    /* FICHE FORMATEUR : Layout 2 colonnes */
+    .trainer-grid {
+      display: grid;
+      grid-template-columns: 2.2fr 3.8fr;
+      gap: 15px;
+      flex: 1;
+    }
+
+    .trainer-left-col {
+      border-right: 0.75pt solid var(--doc-border);
+      padding-right: 12px;
+    }
+
+    .trainer-right-col {
+      padding-left: 4px;
+    }
+
+    .phase-card {
+      border: 0.75pt solid var(--doc-border);
+      border-radius: 4px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .phase-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 700;
+      font-size: 9.5pt;
+      border-bottom: 0.75pt solid var(--doc-border);
+      padding-bottom: 4px;
+      margin-bottom: 6px;
+      color: var(--color-formateur);
+    }
+
+    .phase-duration {
+      background-color: #ecfdf5;
+      color: #065f46;
+      padding: 1px 4px;
+      border-radius: 3px;
+      font-size: 8.5pt;
+    }
+
+    .phase-desc {
+      font-size: 9.0pt;
+      line-height: 1.35;
+      color: #475569;
+    }
+
+    .trainer-instruction-block {
+      margin-bottom: 15px;
+      font-size: 9.5pt;
+      line-height: 1.4;
+    }
+
+    .trainer-instruction-block h4 {
+      font-size: 10.5pt;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: var(--color-formateur);
+    }
+
+    .adaptation-rule-box {
+      border: 0.75pt solid #a7f3d0;
+      background-color: #f0fdf4;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 9pt;
+      line-height: 1.35;
+      color: #065f46;
+      margin-top: 15px;
+    }
+
+    /* DIALOGUE CO : Style répliques */
+    .dialogue-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .dialogue-turn {
+      border-left: 2px solid var(--color-co);
+      padding-left: 12px;
+      font-size: 10pt;
+      line-height: 1.4;
+    }
+
+    .dialogue-character {
+      font-weight: 700;
+      color: #3b0764;
+      margin-bottom: 2px;
+    }
+
+    .dialogue-text {
+      color: #1e293b;
+    }
+
+    /* QCM CIVIQUE */
+    .civic-disclaimer {
+      font-size: 8pt;
+      font-style: italic;
+      color: #64748b;
+      margin-top: auto;
+      text-align: center;
+      border-top: 0.75pt solid var(--doc-border);
+      padding-top: 8px;
+    }
+
+    .qcm-options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 6px;
+      margin-bottom: 12px;
+    }
+
+    .qcm-option-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 9.5pt;
+    }
+
+    .qcm-checkbox {
+      width: 14px;
+      height: 14px;
+      border: 0.75pt solid var(--doc-border);
+      border-radius: 2px;
+    }
+
+    /* CORRIGÉ FORMATEUR */
+    .corrige-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .corrige-level-card {
+      border: 0.75pt solid var(--doc-border);
+      border-radius: 4px;
+      padding: 10px;
+      background-color: #fffafb;
+      border-top: 3px solid var(--color-corrige);
+    }
+
+    .corrige-level-title {
+      font-weight: 700;
+      font-size: 10pt;
+      margin-bottom: 6px;
+      color: var(--color-corrige);
+    }
+
+    .corrige-item {
+      font-size: 9pt;
+      line-height: 1.35;
+      margin-bottom: 6px;
+    }
+
+    .corrige-item strong {
+      color: #991b1b;
+    }
+
+    .corrige-vigilance-card {
+      grid-column: 1 / span 2;
+      background-color: #fff5f5;
+      border: 0.75pt solid #fca5a5;
+      border-radius: 4px;
+      padding: 10px;
+      font-size: 9pt;
+      line-height: 1.35;
+      color: #991b1b;
+    }
+
+    /* LEXIQUE TABLE */
+    .lexique-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .lexique-table th {
+      border-bottom: 1.5pt solid var(--color-lexique);
+      text-align: left;
+      padding: 6px 8px;
+      font-size: 9.5pt;
+      font-weight: 700;
+      color: #334155;
+    }
+
+    .lexique-table td {
+      border-bottom: 0.75pt solid var(--doc-border);
+      padding: 8px;
+      font-size: 9.5pt;
+      line-height: 1.35;
+      vertical-align: top;
+    }
+
+    .lexique-word {
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .lexique-def {
+      color: #475569;
+    }
+
+    .lexique-ex {
+      font-style: italic;
+      color: #64748b;
+    }
+
+    /* ----------------------------------------------------
+       6. GUIDE DE STYLE DE LA CHARTE (PAGE PRINCIPALE)
+       ---------------------------------------------------- */
+    .guide-container {
+      width: 100%;
+      max-width: 840px;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .guide-card {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .guide-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 8px;
+    }
+
+    .color-swatch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 16px;
+      margin-top: 15px;
+    }
+
+    .color-swatch-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .color-swatch-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      margin: 0 auto 10px auto;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .color-swatch-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .color-swatch-hex {
+      font-size: 0.75rem;
+      color: var(--app-text-muted);
+    }
+
+    .icon-reference-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 12px;
+    }
+
+    .icon-reference-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-reference-card svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    .icon-reference-name {
+      font-size: 0.75rem;
+      color: var(--app-text-muted);
+    }
+
+    /* ----------------------------------------------------
+       7. DIRECTIVES D'IMPRESSION RÉELLES (CSS PAGE BREAKS)
+       ---------------------------------------------------- */
+    @media print {
+      body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        display: block !important;
+      }
+      
+      #sidebar, .action-bar, .guide-container {
+        display: none !important;
+      }
+      
+      #main-content {
+        margin-left: 0 !important;
+        padding: 0 !important;
+        height: auto !important;
+        overflow: visible !important;
+        display: block !important;
+      }
+
+      .a4-container {
+        margin: 0 !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        page-break-after: always;
+        break-after: page;
+        width: 100% !important;
+        height: 100% !important;
+        padding: 15mm !important;
+      }
+
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    }
+
+    /* Style temporaire pour forcer le mode impression virtuel dans le navigateur */
+    body.print-preview-mode {
+      background-color: #475569;
+    }
+
+    body.print-preview-mode #sidebar {
+      transform: translateX(-320px);
+    }
+
+    body.print-preview-mode #main-content {
+      margin-left: 0;
+      padding: 20px;
+    }
+
+    body.print-preview-mode .guide-container {
+      display: none;
+    }
+
+    body.print-preview-mode .action-bar {
+      width: 210mm;
+      background: rgba(15, 23, 42, 0.8);
+      padding: 12px;
+      border-radius: 8px;
+      backdrop-filter: blur(12px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ----------------------------------------------------
+       PANNEAU DE CONTRÔLE LATÉRAL (SIDEBAR)
+       ---------------------------------------------------- -->
+  <aside id="sidebar">
+    <div class="brand-container">
+      <div class="brand-logo">C</div>
+      <h1 class="brand-title">CapTCF Spec</h1>
+    </div>
+    
+    <nav class="menu-section">
+      <h2 class="menu-title">Système Visuel</h2>
+      <button class="menu-btn active" onclick="showTemplate('guide')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Guide du Design System
+      </button>
+    </nav>
+    
+    <nav class="menu-section">
+      <h2 class="menu-title">Maquettes de Séance (S01)</h2>
+      
+      <button class="menu-btn" onclick="showTemplate('fiche-formateur')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        Fiche Formateur
+      </button>
+      
+      <button class="menu-btn" onclick="showTemplate('fiche-apprenant')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+        Fiche Apprenant A2
+      </button>
+      
+      <button class="menu-btn" onclick="showTemplate('dialogue-co')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z"/><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3Z"/></svg>
+        Transcription CO
+      </button>
+      
+      <button class="menu-btn" onclick="showTemplate('qcm-civique')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="22"/><line x1="5" y1="7" x2="19" y2="7"/><path d="M5 7c0 5 2.5 7 5 7s5-2 5-7"/><path d="M14 7c0 5 2.5 7 5 7s5-2 5-7"/><path d="M9 22h6"/></svg>
+        QCM Civique (CSP)
+      </button>
+      
+      <button class="menu-btn" onclick="showTemplate('corrige-formateur')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 11 2 2 4-4"/></svg>
+        Corrigé Formateur
+      </button>
+      
+      <button class="menu-btn" onclick="showTemplate('lexique-seance')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
+        Lexique de Séance
+      </button>
+    </nav>
+  </aside>
+
+  <!-- ----------------------------------------------------
+       CONTENU PRINCIPAL (MAIN CONTENT)
+       ---------------------------------------------------- -->
+  <main id="main-content">
+    <div class="action-bar">
+      <div>
+        <h2 style="font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 1.1rem; color: var(--app-text-muted);" id="current-template-title">Guide du Design System</h2>
+      </div>
+      <button class="toggle-print-btn" onclick="togglePrintPreview()" id="print-toggle-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Aperçu Impression A4
+      </button>
+    </div>
+
+    <!-- 1. ZONE GUIDE DU DESIGN SYSTEM (AFFICHEE PAR DEFAUT) -->
+    <div class="guide-container" id="guide-sec">
+      <div class="guide-card">
+        <h3 class="guide-title">Palette de Couleurs</h3>
+        <p style="font-size: 0.9rem; color: var(--app-text-muted); line-height: 1.5; margin-bottom: 15px;">
+          Toutes les couleurs secondaires sont désaturées et réservées exclusivement aux icônes, bordures fines, ou petits bandeaux de métadonnées afin d'économiser l'encre.
+        </p>
+        <div class="color-swatch-grid">
+          <div class="color-swatch-card">
+            <div class="color-swatch-circle" style="background-color: var(--doc-navy);"></div>
+            <div class="color-swatch-name">Accent Navy</div>
+            <div class="color-swatch-hex">#1e3a8a</div>
+          </div>
+          <div class="color-swatch-card">
+            <div class="color-swatch-circle" style="background-color: var(--color-formateur);"></div>
+            <div class="color-swatch-name">Fiche Formateur</div>
+            <div class="color-swatch-hex">#065f46</div>
+          </div>
+          <div class="color-swatch-card">
+            <div class="color-swatch-circle" style="background-color: var(--color-apprenant);"></div>
+            <div class="color-swatch-name">Fiche Apprenant</div>
+            <div class="color-swatch-hex">#2563eb</div>
+          </div>
+          <div class="color-swatch-card">
+            <div class="color-swatch-circle" style="background-color: var(--color-co);"></div>
+            <div class="color-swatch-name">Dialogue CO</div>
+            <div class="color-swatch-hex">#6b21a8</div>
+          </div>
+          <div class="color-swatch-card">
+            <div class="color-swatch-circle" style="background-color: var(--color-qcm);"></div>
+            <div class="color-swatch-name">QCM Civique</div>
+            <div class="color-swatch-hex">#d97706</div>
+          </div>
+          <div class="color-swatch-card">
+            <div class="color-swatch-circle" style="background-color: var(--color-corrige);"></div>
+            <div class="color-swatch-name">Corrigé Formateur</div>
+            <div class="color-swatch-hex">#991b1b</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="guide-card">
+        <h3 class="guide-title">Système d'Icônes SVG Sobres</h3>
+        <p style="font-size: 0.9rem; color: var(--app-text-muted); line-height: 1.5; margin-bottom: 15px;">
+          Icônes linéaires unies, intégrées au format vectoriel pour éviter la pixellisation et le surcoût d'impression.
+        </p>
+        <div class="icon-reference-grid">
+          <div class="icon-reference-card">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#065f46" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            <div class="icon-reference-name">Guide / Livre</div>
+          </div>
+          <div class="icon-reference-card">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+            <div class="icon-reference-name">Crayon / Remplir</div>
+          </div>
+          <div class="icon-reference-card">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#6b21a8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z"/><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3Z"/></svg>
+            <div class="icon-reference-name">Casque / Audio</div>
+          </div>
+          <div class="icon-reference-card">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="22"/><line x1="5" y1="7" x2="19" y2="7"/><path d="M5 7c0 5 2.5 7 5 7s5-2 5-7"/><path d="M14 7c0 5 2.5 7 5 7s5-2 5-7"/><path d="M9 22h6"/></svg>
+            <div class="icon-reference-name">Balance / Justice</div>
+          </div>
+          <div class="icon-reference-card">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#991b1b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 11 2 2 4-4"/></svg>
+            <div class="icon-reference-name">Bouclier / Corrigé</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="guide-card">
+        <h3 class="guide-title">Nomenclature des Fichiers</h3>
+        <p style="font-size: 0.9rem; color: var(--app-text-muted); line-height: 1.6;">
+          Modèle de nommage : <code style="color: #60a5fa; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;">[Séance]_[Destinataire]_[Type]_[Niveau]_[Nom-Ressource].[ext]</code><br><br>
+          • <strong>Fiche Formateur</strong> : <code style="color: var(--app-text-muted);">S01_FOR_FI_ALL_deroule-180min.pdf</code><br>
+          • <strong>Fiche Apprenant A2</strong> : <code style="color: var(--app-text-muted);">S01_APP_FI_A2_fiche-activites.pdf</code><br>
+          • <strong>Corrigé Global</strong> : <code style="color: var(--app-text-muted);">S01_COR_FI_ALL_corrige-seance.pdf</code>
+        </p>
+      </div>
+    </div>
+
+    <!-- 2. MAQUETTE A4 DYNAMIQUE -->
+    <div class="a4-container" id="a4-preview-card" style="display: none;">
+      <!-- L'en-tête commun injecté dynamiquement -->
+      <header class="doc-header">
+        <div class="doc-header-top">
+          <span class="doc-header-logo">CapTCF</span>
+          <div class="doc-badges-group" id="doc-badges-container">
+            <!-- Badges spécifiques -->
+          </div>
+        </div>
+        <h2 class="doc-title" id="doc-title-text">Titre du document</h2>
+      </header>
+
+      <!-- Zone de contenu interne à la page (mise à jour par Javascript) -->
+      <div id="doc-content-body" style="flex: 1; display: flex; flex-direction: column;">
+        <!-- Contenu injecté dynamiquement -->
+      </div>
+    </div>
+  </main>
+
+  <!-- ----------------------------------------------------
+       8. BASES DE DONNÉES INVARIANTES DU TEMPLATE (DATA S01)
+       ---------------------------------------------------- -->
+  <script>
+    const templatesData = {
+      'fiche-formateur': {
+        badges: ['S01', 'A1-B2', '180 min', 'CO / EO', 'FOR'],
+        title: 'Fiche Formateur — Séance d\'accueil & Diagnostic',
+        html: `
+          <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#065f46" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            Objectifs opérationnels & Organisation
+          </div>
+          <div class="trainer-grid">
+            <div class="trainer-left-col">
+              <div class="phase-card">
+                <div class="phase-header">
+                  <span>1. Rituel Civique</span>
+                  <span class="phase-duration">10 min</span>
+                </div>
+                <div class="phase-desc">Présentation des 5 thèmes civiques CapTCF à partir de l'infographie maîtresse.</div>
+              </div>
+              <div class="phase-card">
+                <div class="phase-header">
+                  <span>2. Activation Lexique</span>
+                  <span class="phase-duration">20 min</span>
+                </div>
+                <div class="phase-desc">Découverte interactive des 10 termes clés (parcours, droit, devoir, règle...).</div>
+              </div>
+              <div class="phase-card">
+                <div class="phase-header">
+                  <span>3. Invariant CO/CE</span>
+                  <span class="phase-duration">50 min</span>
+                </div>
+                <div class="phase-desc">Écoute active du dialogue Awa / Mme Rossi. Diagnostic de compréhension globale.</div>
+              </div>
+              <div class="phase-card">
+                <div class="phase-header">
+                  <span>4. Ateliers Différenciés</span>
+                  <span class="phase-duration">60 min</span>
+                </div>
+                <div class="phase-desc">Répartition A1/A2/B1/B2. Travail spécifique sur le support commun.</div>
+              </div>
+            </div>
+            
+            <div class="trainer-right-col">
+              <div class="trainer-instruction-block">
+                <h4>Consigne d'accueil en classe</h4>
+                <p>Souhaiter la bienvenue. Expliquer de manière rassurante que le premier jour comprend un mini-diagnostic linguistique et civique sans valeur certificative, destiné à organiser les groupes.</p>
+              </div>
+              <div class="trainer-instruction-block">
+                <h4>Gestion de l'écoute du dialogue audio</h4>
+                <p>Faire écouter le dialogue 2 fois de suite au rythme normal (speaking_rate 0.92). Ne distribuer la transcription écrite qu'après l'écoute pour forcer le décodage phonologique.</p>
+              </div>
+              
+              <div class="adaptation-rule-box">
+                <strong>Règle d'adaptation en séance :</strong><br>
+                Si plus de la moitié du groupe confond la notion de <em>droit</em> et de <em>devoir</em> lors de la phase 2, suspendre la progression et ré-expliquer le lexique à l'aide d'exemples locaux avant de lancer les ateliers différenciés.
+              </div>
+            </div>
+          </div>
+        `
+      },
+      'fiche-apprenant': {
+        badges: ['S01', 'A2 Cible', '60 min', 'CO / CE', 'APP'],
+        title: 'Fiche Apprenant A2 — Activités Différenciées',
+        html: `
+          <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+            Activités sur le dialogue : Awa se présente
+          </div>
+          
+          <div class="consigne-box">
+            Consigne : Racontez avec vos mots ce que veut Awa et comment se déroule son parcours (durée, séances, examens).
+          </div>
+          
+          <div class="aides-box">
+            <div class="aides-title">Aides et mots à utiliser :</div>
+            parcours (m.), séance (f.), objectif (m.), examen (m.).
+          </div>
+          
+          <div class="qa-block">
+            <div class="question-label">q1. Combien de séances collectives Awa va-t-elle suivre en tout ?</div>
+            <div class="qcm-options-grid">
+              <div class="qcm-option-row"><span class="qcm-checkbox"></span> 18 séances</div>
+              <div class="qcm-option-row"><span class="qcm-checkbox"></span> 25 séances</div>
+              <div class="qcm-option-row"><span class="qcm-checkbox"></span> 31 séances</div>
+            </div>
+          </div>
+          
+          <div class="qa-block">
+            <div class="question-label">q2. Citez un des cinq thèmes civiques officiels mentionnés par la formatrice :</div>
+            <div class="response-lines-container">
+              <div class="response-line"></div>
+              <div class="response-line"></div>
+            </div>
+          </div>
+
+          <div class="section-title" style="margin-top: 30px;">
+            Expression Écrite — Mon objectif personnel
+          </div>
+          <div class="consigne-box" style="border-left-color: #0d9488;">
+            Consigne : Présentez-vous par écrit en rédigeant 5 phrases sur votre propre objectif administratif (sur le modèle d'Awa).
+          </div>
+          <div class="response-lines-container">
+            <div class="response-line"></div>
+            <div class="response-line"></div>
+            <div class="response-line"></div>
+            <div class="response-line"></div>
+            <div class="response-line"></div>
+          </div>
+        `
+      },
+      'dialogue-co': {
+        badges: ['S01', 'A1-B2 Invariant', '2.5 min', 'CO / CE', 'APP'],
+        title: 'Transcription du Dialogue — Awa Diallo et Mme Rossi',
+        html: `
+          <div class="consigne-box" style="border-left-color: var(--color-co); background-color: #faf5ff;">
+            Contexte de la situation : Awa Diallo, apprenante primo-arrivante, se présente à la préfecture ou au centre de formation pour son premier jour. Elle s'entretient avec Mme Rossi, sa formatrice.
+          </div>
+          
+          <div class="dialogue-container">
+            <div class="dialogue-turn">
+              <div class="dialogue-character">Mme Rossi</div>
+              <div class="dialogue-text">Bonjour, bienvenue dans votre nouveau parcours. Comment vous appelez-vous ?</div>
+            </div>
+            
+            <div class="dialogue-turn">
+              <div class="dialogue-character">Awa</div>
+              <div class="dialogue-text">Bonjour madame. Je m'appelle Awa. Awa Diallo.</div>
+            </div>
+            
+            <div class="dialogue-turn">
+              <div class="dialogue-character">Mme Rossi</div>
+              <div class="dialogue-text">Enchantée, Awa. Quel est votre objectif aujourd'hui ?</div>
+            </div>
+            
+            <div class="dialogue-turn">
+              <div class="dialogue-character">Awa</div>
+              <div class="dialogue-text">Je voudrais avoir ma carte de séjour pluriannuelle.</div>
+            </div>
+            
+            <div class="dialogue-turn">
+              <div class="dialogue-character">Mme Rossi</div>
+              <div class="dialogue-text">Très bien. Pour ça, vous allez suivre un parcours de quatre-vingts heures.</div>
+            </div>
+            
+            <div class="dialogue-turn">
+              <div class="dialogue-character">Awa</div>
+              <div class="dialogue-text">Quatre-vingts heures ? C'est beaucoup !</div>
+            </div>
+            
+            <div class="dialogue-turn">
+              <div class="dialogue-character">Mme Rossi</div>
+              <div class="dialogue-text">Oui, mais c'est réparti sur vingt-cinq séances de trois heures, à raison d'une séance par semaine.</div>
+            </div>
+            
+            <div class="dialogue-turn">
+              <div class="dialogue-character">Awa</div>
+              <div class="dialogue-text">D'accord. Et qu'est-ce qu'on va apprendre exactement ?</div>
+            </div>
+            
+            <div class="dialogue-turn">
+              <div class="dialogue-character">Mme Rossi</div>
+              <div class="dialogue-text">Vous allez apprendre le français pour la vie quotidienne, et aussi cinq thèmes sur la vie en France : la République, les institutions, les droits et devoirs, l'histoire et la vie en société.</div>
+            </div>
+          </div>
+        `
+      },
+      'qcm-civique': {
+        badges: ['S01', 'A1-B2', '10 min', 'CIVIQUE', 'APP'],
+        title: 'Diagnostic Civique — Notions de base et parcours',
+        html: `
+          <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="22"/><line x1="5" y1="7" x2="19" y2="7"/><path d="M5 7c0 5 2.5 7 5 7s5-2 5-7"/><path d="M14 7c0 5 2.5 7 5 7s5-2 5-7"/><path d="M9 22h6"/></svg>
+            Questions de Connaissances & Mises en situation
+          </div>
+          
+          <div class="qa-block">
+            <div class="question-label">1. Respecter le règlement intérieur d'un centre de formation est avant tout :</div>
+            <div class="qcm-options-grid">
+              <div class="qcm-option-row"><span class="qcm-checkbox"></span> Un droit</div>
+              <div class="qcm-option-row"><span class="qcm-checkbox"></span> Un devoir</div>
+              <div class="qcm-option-row"><span class="qcm-checkbox"></span> Une démarche administrative</div>
+            </div>
+          </div>
+          
+          <div class="qa-block">
+            <div class="question-label">2. Le droit à la santé signifie réglementairement que vous pouvez :</div>
+            <div class="qcm-options-grid">
+              <div class="qcm-option-row"><span class="qcm-checkbox"></span> Demander l'accès aux soins de santé</div>
+              <div class="qcm-option-row"><span class="qcm-checkbox"></span> Être obligé de vous faire soigner</div>
+              <div class="qcm-option-row"><span class="qcm-checkbox"></span> Devoir payer une amende d'office</div>
+            </div>
+          </div>
+          
+          <div class="qa-block">
+            <div class="question-label">3. Un formateur demande à un apprenant d'arriver à l'heure à chaque séance. Il s'agit :</div>
+            <div class="qcm-options-grid">
+              <div class="qcm-option-row"><span class="qcm-checkbox"></span> D'une règle interne du centre de formation</div>
+              <div class="qcm-option-row"><span class="qcm-checkbox"></span> D'un droit universel de l'apprenant</div>
+              <div class="qcm-option-row"><span class="qcm-checkbox"></span> D'une loi nationale obligatoire</div>
+            </div>
+          </div>
+          
+          <div class="civic-disclaimer">
+            Simulation pédagogique CapTCF. Les questions présentées ci-dessus ne préjugent pas des questions officielles de l'examen d'État.
+          </div>
+        `
+      },
+      'corrige-formateur': {
+        badges: ['S01', 'A1-B2', 'N/A', 'CORRECTION', 'COR'],
+        title: 'Corrigé de Séance — Clés de réponses S01',
+        html: `
+          <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#991b1b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 11 2 2 4-4"/></svg>
+            Réponses aux activités par niveau
+          </div>
+          
+          <div class="corrige-grid">
+            <div class="corrige-level-card">
+              <div class="corrige-level-title">Niveau A1</div>
+              <div class="corrige-item">q1 (Durée) : <strong>80 heures</strong></div>
+              <div class="corrige-item">q2 (Objectif) : <strong>Vrai (VRAI/FAUX)</strong></div>
+            </div>
+            
+            <div class="corrige-level-card" style="border-top-color: var(--color-apprenant);">
+              <div class="corrige-level-title">Niveau A2 (Cible)</div>
+              <div class="corrige-item">q1 (Séances) : <strong>25</strong></div>
+              <div class="corrige-item">q2 (Thèmes) : <strong>Droits et Devoirs</strong> (ou un des 5 thèmes cités)</div>
+            </div>
+
+            <div class="corrige-level-card" style="border-top-color: var(--color-co);">
+              <div class="corrige-level-title">Niveau B1</div>
+              <div class="corrige-item">q1 (Droit/Devoir) : Droit = possibilité légale, Devoir = obligation légale, Règle = consigne interne.</div>
+            </div>
+
+            <div class="corrige-level-card" style="border-top-color: #0d9488;">
+              <div class="corrige-level-title">Niveau B2</div>
+              <div class="corrige-item">q1 (Utilité notions) : Permet de connaître ses marges d'action et d'éviter les sanctions.</div>
+            </div>
+
+            <div class="corrige-vigilance-card">
+              <strong>Points de vigilance formateur :</strong><br>
+              Pour les réponses ouvertes (B1/B2), accorder le point si les notions de contrainte (devoir) et de liberté garantie (droit) sont présentes, même si la syntaxe est perfectible.
+            </div>
+          </div>
+        `
+      },
+      'lexique-seance': {
+        badges: ['S01', 'A1-B2', '20 min', 'LEXIQUE', 'APP'],
+        title: 'Glossaire Vocabulaire — Lexique de la séance',
+        html: `
+          <table class="lexique-table">
+            <thead>
+              <tr>
+                <th style="width: 25%;">Mot clé</th>
+                <th style="width: 45%;">Définition simplifiée</th>
+                <th style="width: 30%;">Exemple contextuel</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="lexique-word">parcours</td>
+                <td class="lexique-def">Ensemble des cours et des examens à suivre du début à la fin de la formation.</td>
+                <td class="lexique-ex">« Le parcours dure 80 heures. »</td>
+              </tr>
+              <tr>
+                <td class="lexique-word">objectif</td>
+                <td class="lexique-def">Le but administratif que l'on veut atteindre auprès d'une préfecture ou d'une mairie.</td>
+                <td class="lexique-ex">« Son objectif est la carte de séjour. »</td>
+              </tr>
+              <tr>
+                <td class="lexique-word">droit</td>
+                <td class="lexique-def">Ce qu'une personne peut faire ou demander, qui est garanti et protégé par la loi.</td>
+                <td class="lexique-ex">« Le droit à la santé. »</td>
+              </tr>
+              <tr>
+                <td class="lexique-word">devoir</td>
+                <td class="lexique-def">Ce qu'une personne doit obligatoirement faire pour respecter la loi ou autrui.</td>
+                <td class="lexique-ex">« Respecter la loi est un devoir. »</td>
+              </tr>
+              <tr>
+                <td class="lexique-word">séance</td>
+                <td class="lexique-def">Un cours collectif qui a une durée fixe dans la semaine.</td>
+                <td class="lexique-ex">« Chaque séance dure trois heures. »</td>
+              </tr>
+            </tbody>
+          </table>
+        `
+      }
+    };
+
+    function showTemplate(templateId) {
+      // Retirer l'état actif des boutons
+      const buttons = document.querySelectorAll('.menu-btn');
+      buttons.forEach(btn => btn.classList.remove('active'));
+
+      // Fermer le mode guide si autre template sélectionné
+      const guideSec = document.getElementById('guide-sec');
+      const a4Preview = document.getElementById('a4-preview-card');
+      const headerTitle = document.getElementById('current-template-title');
+
+      if (templateId === 'guide') {
+        guideSec.style.display = 'flex';
+        a4Preview.style.display = 'none';
+        headerTitle.innerText = 'Guide du Design System';
+        // Activer le bouton de guide
+        const guideBtn = Array.from(buttons).find(btn => btn.innerText.includes('Guide'));
+        if (guideBtn) guideBtn.classList.add('active');
+        return;
+      }
+
+      // Charger les données du template A4
+      const data = templatesData[templateId];
+      if (!data) return;
+
+      guideSec.style.display = 'none';
+      a4Preview.style.display = 'flex';
+      headerTitle.innerText = `Maquette A4 : ${templateId.replace('-', ' ').toUpperCase()}`;
+
+      // Activer le bon bouton dans la barre latérale
+      const activeBtn = Array.from(buttons).find(btn => btn.outerHTML.includes(templateId));
+      if (activeBtn) activeBtn.classList.add('active');
+
+      // Mettre à jour l'en-tête commun
+      const badgeContainer = document.getElementById('doc-badges-container');
+      badgeContainer.innerHTML = data.badges.map(b => `<span class="doc-badge">${b}</span>`).join('');
+
+      document.getElementById('doc-title-text').innerText = data.title;
+      document.getElementById('doc-content-body').innerHTML = data.html;
+    }
+
+    function togglePrintPreview() {
+      const body = document.body;
+      const btn = document.getElementById('print-toggle-btn');
+      
+      body.classList.toggle('print-preview-mode');
+      
+      if (body.classList.contains('print-preview-mode')) {
+        btn.classList.add('active');
+        btn.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          Quitter l'Aperçu
+        `;
+        // Si on est sur le guide, on bascule d'office sur une fiche pour montrer l'impression
+        const guideSec = document.getElementById('guide-sec');
+        if (guideSec.style.display !== 'none') {
+          showTemplate('fiche-formateur');
+        }
+      } else {
+        btn.classList.remove('active');
+        btn.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Aperçu Impression A4
+        `;
+      }
+    }
+  </script>
+</body>
+</html>

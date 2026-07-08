@@ -18,10 +18,20 @@ export class PlaywrightRenderer {
     const browser = await chromium.launch();
     try {
       const page = await browser.newPage();
-      await page.setContent(`<html><head><title>${title}</title></head><body>${html}</body></html>`, {
-        waitUntil: 'networkidle',
+      if (html.trim().toLowerCase().startsWith('<!doctype') || html.trim().toLowerCase().startsWith('<html')) {
+        await page.setContent(html, {
+          waitUntil: 'networkidle',
+        });
+      } else {
+        await page.setContent(`<html><head><title>${title}</title><style>body { margin: 0; }</style></head><body>${html}</body></html>`, {
+          waitUntil: 'networkidle',
+        });
+      }
+      const buffer = await page.pdf({ 
+        format: 'A4', 
+        printBackground,
+        margin: { top: '15mm', bottom: '15mm', left: '15mm', right: '15mm' }
       });
-      const buffer = await page.pdf({ format: 'A4', printBackground });
       return { buffer, mimeType: 'application/pdf' };
     } finally {
       await browser.close();
