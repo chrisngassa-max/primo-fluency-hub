@@ -1,0 +1,2164 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>CAP TCF — Modèle de Validation S02 (Pilote)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0b234a;
+      --accent: #f47b20;
+      --accent-hover: #ea6815;
+      --primary-light: rgba(11,35,74,0.05);
+      --text: #0b234a;
+      --text-dark: #071328;
+      --text-light: #64748b;
+      --border: rgba(11,35,74,0.08);
+      --bg-card: #ffffff;
+      --success: #059669;
+      --warning: #d97706;
+      --danger: #dc2626;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, hsl(215 65% 92% / 0.65), transparent 34rem),
+        radial-gradient(circle at top right, hsl(28 90% 86% / 0.55), transparent 30rem),
+        linear-gradient(180deg, hsl(39 62% 94%) 0%, hsl(44 42% 97%) 48%, hsl(38 42% 94%) 100%);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .sidebar {
+      width: 340px;
+      border-right: 1px solid var(--border);
+      background-color: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(8px);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      z-index: 10;
+    }
+    .sidebar-header { padding: 24px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; }
+    .logo-container { display: flex; align-items: center; gap: 10px; }
+    .logo-container h1 { font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 900; color: var(--primary); letter-spacing: -0.5px; }
+    .logo-container h1 span { color: var(--accent); }
+    .sidebar-header p { font-size: 12px; color: var(--text-light); font-weight: 500; }
+    .menu-section { flex: 1; overflow-y: auto; padding: 16px 12px; }
+    .menu-title { font-size: 11px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.75px; margin-bottom: 8px; padding-left: 12px; }
+    .menu-item { display: flex; align-items: center; padding: 10px 12px; border-radius: 8px; cursor: pointer; font-size: 13.5px; font-weight: 600; color: #3b4e6d; transition: all 0.2s ease; margin-bottom: 4px; }
+    .menu-item:hover { background-color: var(--primary-light); color: var(--primary); }
+    .menu-item.active { background-color: var(--primary); color: #ffffff; box-shadow: 0 4px 12px rgba(11, 35, 74, 0.15); }
+    .menu-item svg { width: 18px; height: 18px; margin-right: 10px; stroke-width: 2.2px; }
+    .downloads-box { padding: 20px; border-top: 1px solid var(--border); background-color: rgba(255, 255, 255, 0.5); max-height: 320px; overflow-y: auto; }
+    .downloads-box h3 { font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 800; color: var(--primary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .download-link { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background-color: #ffffff; border: 1px solid var(--border); border-radius: 6px; margin-bottom: 6px; font-size: 11.5px; color: var(--primary); text-decoration: none; transition: all 0.2s; }
+    .download-link:hover { border-color: var(--accent); background-color: var(--primary-light); }
+    .download-link span { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 8px; }
+    .download-actions { display: flex; gap: 4px; }
+    .btn-dl { font-size: 9.5px; font-weight: 700; padding: 3px 6px; border-radius: 3px; text-transform: uppercase; text-decoration: none; }
+    .btn-pdf { background-color: #fee2e2; color: #991b1b; }
+    .btn-docx { background-color: #dbeafe; color: #1e40af; }
+    .main { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+    .main-header { height: 74px; border-bottom: 1px solid var(--border); background-color: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; box-shadow: 0 2px 10px rgba(11,35,74,0.02); }
+    .main-header h2 { font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 800; color: var(--primary); }
+    .view-toggles { display: flex; background-color: rgba(11,35,74,0.05); padding: 3px; border-radius: 8px; }
+    .toggle-btn { font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 6px; cursor: pointer; border: none; background: none; color: var(--text-light); transition: all 0.15s; }
+    .toggle-btn.active { background-color: #ffffff; color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .content-area { flex: 1; padding: 32px; overflow-y: auto; display: flex; justify-content: center; align-items: flex-start; }
+    .preview-frame { background-color: #ffffff; width: 100%; max-width: 820px; min-height: 1160px; border: 1px solid var(--border); box-shadow: 0 8px 30px rgba(15,23,42,0.08); border-radius: 12px; padding: 15mm; position: relative; transition: all 0.3s ease; }
+    .preview-frame.full-screen { max-width: 100%; box-shadow: none; border-radius: 0; border: none; min-height: auto; padding: 0; }
+    iframe { width: 100%; height: 100%; min-height: 900px; border: none; }
+    .checklist-page { width: 100%; max-width: 800px; background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 32px; box-shadow: 0 8px 30px rgba(15,23,42,0.08); }
+    .checklist-page h2 { font-family: 'Outfit', sans-serif; font-size: 22px; color: var(--primary); margin-bottom: 8px; border-bottom: 2px solid var(--primary-light); padding-bottom: 12px; }
+    .checklist-intro { font-size: 14px; color: var(--text-light); line-height: 1.5; margin-bottom: 24px; }
+    .checklist-item { display: flex; align-items: flex-start; margin-bottom: 16px; padding: 16px; border: 1px solid var(--border); border-radius: 10px; background-color: #fafbfd; transition: all 0.2s; }
+    .checklist-item:hover { border-color: var(--accent); background-color: var(--primary-light); }
+    .custom-cb { margin-top: 3px; margin-right: 14px; width: 22px; height: 22px; border: 2px solid #94a3b8; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; background-color: #ffffff; transition: all 0.15s; }
+    .checklist-item.checked .custom-cb { background-color: var(--success); border-color: var(--success); }
+    .custom-cb svg { width: 12px; height: 12px; stroke: #ffffff; display: none; }
+    .checklist-item.checked .custom-cb svg { display: block; }
+    .checklist-content { flex: 1; }
+    .checklist-title { font-size: 15px; font-weight: 700; color: var(--primary); margin-bottom: 4px; }
+    .checklist-desc { font-size: 13px; color: #475569; line-height: 1.45; }
+    .feedback-box { margin-top: 12px; }
+    .feedback-input { width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-family: inherit; font-size: 13px; resize: vertical; min-height: 55px; margin-top: 8px; outline: none; color: var(--text-dark); }
+    .feedback-input:focus { border-color: var(--accent); }
+    .btn-action { background-color: var(--accent); color: #ffffff; border: none; padding: 12px 24px; font-size: 14px; font-weight: 700; border-radius: 20px; cursor: pointer; margin-top: 16px; transition: all 0.2s; box-shadow: 0 6px 16px rgba(244,123,32,0.28); }
+    .btn-action:hover { background-color: var(--accent-hover); }
+    .report-page { width: 100%; max-width: 800px; background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 32px; font-size: 14px; line-height: 1.6; box-shadow: 0 8px 30px rgba(15,23,42,0.08); }
+    .report-page h1, .report-page h2, .report-page h3 { font-family: 'Outfit', sans-serif; color: var(--primary); margin-top: 24px; margin-bottom: 12px; }
+    .report-page h1 { font-size: 22px; border-bottom: 2px solid var(--primary-light); padding-bottom: 10px; margin-top: 0; }
+    .report-page h2 { font-size: 16px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+    .badge-report { display: inline-block; padding: 4px 10px; background-color: var(--danger); color: #ffffff; font-weight: 700; font-size: 12px; border-radius: 4px; margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-container">
+        <svg style="height: 32px; width: 32px; fill: none; stroke: var(--primary); stroke-width: 2.2;" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479L12 21l-6.825-4a12.083 12.083 0 01.665-6.479L12 14z"/>
+        </svg>
+        <h1>CAP <span>TCF</span></h1>
+      </div>
+      <p>Cabinet de Validation Pédagogique — Séance S02 (Pilote)</p>
+    </div>
+
+    <nav class="menu-section">
+      <div class="menu-title">Validation</div>
+      <div class="menu-item active" onclick="showTab('sofiane-checklist')">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+        </svg>
+        À Valider par Sofiane
+      </div>
+      <div class="menu-item" onclick="showTab('conformity-report')">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        </svg>
+        Rapport d'Audit
+      </div>
+
+      <div class="menu-title" style="margin-top: 24px;">Gabarits Documentaires</div>
+      <div class="menu-item" onclick="showTab('trainer-sheet')">Fiche Formateur</div>
+      <div class="menu-item" onclick="showTab('student-sheet')">Fiche Apprenant A2</div>
+      <div class="menu-item" onclick="showTab('dialogue-sheet')">Transcription Audio</div>
+      <div class="menu-item" onclick="showTab('qcm-tcf-sheet')">QCM type TCF</div>
+      <div class="menu-item" onclick="showTab('qcm-sheet')">QCM civique</div>
+      <div class="menu-item" onclick="showTab('corrige-sheet')">Corrigé Formateur</div>
+      <div class="menu-item" onclick="showTab('lexique-sheet')">Lexique de Séance</div>
+      <div class="menu-item" onclick="showTab('visual-sheet')">Document avec Image</div>
+      <div class="menu-item" onclick="showTab('convert-sheet')">Document Transformé</div>
+    </nav>
+
+    <div class="downloads-box">
+      <h3>Documents prêts à imprimer</h3>
+      <div class="download-link"><span>Formateur (Déroulé)</span><div class="download-actions"><a href="S02_FOR_FI_ALL_deroule-180min.pdf" class="download-link btn-dl btn-pdf" target="_blank">PDF</a><a href="S02_FOR_FI_ALL_deroule-180min.docx" class="download-link btn-dl btn-docx" download>Word</a></div></div>
+      <div class="download-link"><span>Apprenant A2</span><div class="download-actions"><a href="S02_APP_CO_A2_fiche-activites.pdf" class="download-link btn-dl btn-pdf" target="_blank">PDF</a><a href="S02_APP_CO_A2_fiche-activites.docx" class="download-link btn-dl btn-docx" download>Word</a></div></div>
+      <div class="download-link"><span>Dialogue (Script)</span><div class="download-actions"><a href="S02_APP_CO_ALL_dialogue-transcription.pdf" class="download-link btn-dl btn-pdf" target="_blank">PDF</a><a href="S02_APP_CO_ALL_dialogue-transcription.docx" class="download-link btn-dl btn-docx" download>Word</a></div></div>
+      <div class="download-link"><span>QCM type TCF</span><div class="download-actions"><a href="S02_APP_QC_ALL_qcm-tcf.pdf" class="download-link btn-dl btn-pdf" target="_blank">PDF</a><a href="S02_APP_QC_ALL_qcm-tcf.docx" class="download-link btn-dl btn-docx" download>Word</a></div></div>
+      <div class="download-link"><span>QCM Civique</span><div class="download-actions"><a href="S02_APP_QC_ALL_qcm-civique.pdf" class="download-link btn-dl btn-pdf" target="_blank">PDF</a><a href="S02_APP_QC_ALL_qcm-civique.docx" class="download-link btn-dl btn-docx" download>Word</a></div></div>
+      <div class="download-link"><span>Corrigé Formateur</span><div class="download-actions"><a href="S02_COR_ALL_corrige-formateur.pdf" class="download-link btn-dl btn-pdf" target="_blank">PDF</a><a href="S02_COR_ALL_corrige-formateur.docx" class="download-link btn-dl btn-docx" download>Word</a></div></div>
+      <div class="download-link"><span>Lexique</span><div class="download-actions"><a href="S02_APP_LX_ALL_lexique.pdf" class="download-link btn-dl btn-pdf" target="_blank">PDF</a><a href="S02_APP_LX_ALL_lexique.docx" class="download-link btn-dl btn-docx" download>Word</a></div></div>
+      <div class="download-link"><span>Support Visuel</span><div class="download-actions"><a href="S02_APP_VI_ALL_support-visuel.pdf" class="download-link btn-dl btn-pdf" target="_blank">PDF</a><a href="S02_APP_VI_ALL_support-visuel.docx" class="download-link btn-dl btn-docx" download>Word</a></div></div>
+      <div class="download-link"><span>Document Transformé</span><div class="download-actions"><a href="S02_APP_CV_ALL_document-transforme.pdf" class="download-link btn-dl btn-pdf" target="_blank">PDF</a><a href="S02_APP_CV_ALL_document-transforme.docx" class="download-link btn-dl btn-docx" download>Word</a></div></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="main-header">
+      <h2 id="view-title">Points à valider par Sofiane — Séance S02</h2>
+      <div class="view-toggles" id="toggle-container" style="display:none;">
+        <button class="toggle-btn active" id="toggle-a4" onclick="setViewMode('a4')">Aperçu A4</button>
+        <button class="toggle-btn" id="toggle-full" onclick="setViewMode('full')">Plein Écran</button>
+      </div>
+    </header>
+
+    <div class="content-area">
+      <div id="sofiane-checklist" class="checklist-page">
+        <h2>Pack Pilote S02 — État civil, mairie et symboles</h2>
+        <p class="checklist-intro">
+          Séance S02 générée selon le modèle S01 validé, sans aucune modification de la charte graphique. Le dialogue audio a été allongé et sa durée estimée est désormais dans la plage cible (voir Rapport d'Audit). Validez chaque point avant production.
+        </p>
+
+        <div class="checklist-group">
+          <div class="checklist-item" id="item-visuel">
+            <div class="custom-cb" onclick="toggleCheck('item-visuel')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg></div>
+            <div class="checklist-content">
+              <div class="checklist-title">1. Cohérence Visuelle & Charte Graphique</div>
+              <div class="checklist-desc">Rendu identique au modèle S01 : bleu CapTCF, orange action, cartes blanches contrastées.</div>
+              <div class="feedback-box"><textarea class="feedback-input" placeholder="Remarques..."></textarea></div>
+            </div>
+          </div>
+          <div class="checklist-item" id="item-print">
+            <div class="custom-cb" onclick="toggleCheck('item-print')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg></div>
+            <div class="checklist-content">
+              <div class="checklist-title">2. Imprimabilité & Lisibilité</div>
+              <div class="checklist-desc">A4, marges 15mm, faible consommation d'encre.</div>
+              <div class="feedback-box"><textarea class="feedback-input" placeholder="Remarques..."></textarea></div>
+            </div>
+          </div>
+          <div class="checklist-item" id="item-timing">
+            <div class="custom-cb" onclick="toggleCheck('item-timing')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg></div>
+            <div class="checklist-content">
+              <div class="checklist-title">3. Tenue des 180 minutes</div>
+              <div class="checklist-desc">6 phases chronométrées couvrant l'intégralité des 180 minutes.</div>
+              <div class="feedback-box"><textarea class="feedback-input" placeholder="Remarques..."></textarea></div>
+            </div>
+          </div>
+          <div class="checklist-item" id="item-audio">
+            <div class="custom-cb" onclick="toggleCheck('item-audio')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg></div>
+            <div class="checklist-content">
+              <div class="checklist-title">4. Règle Stricte Durée Audio (2 min 30 s) — GO</div>
+              <div class="checklist-desc">Cible 2 min 30 s (tolérance 2m25–2m35). L'audio S02 actuel dure 2 min 33 s (GO, écart de +3 s). Durée conforme sur la base de l'estimation fake-tts ; à reconfirmer avec la voix de synthèse réelle.</div>
+              <div class="feedback-box"><textarea class="feedback-input" placeholder="Décision (allonger le script / dérogation)..."></textarea></div>
+            </div>
+          </div>
+          <div class="checklist-item" id="item-qcm">
+            <div class="custom-cb" onclick="toggleCheck('item-qcm')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg></div>
+            <div class="checklist-content">
+              <div class="checklist-title">5. Alignement Format QCM type TCF</div>
+              <div class="checklist-desc">Lettres d'options A, B, C, D et mise en page calquée sur l'examen réel.</div>
+              <div class="feedback-box"><textarea class="feedback-input" placeholder="Remarques..."></textarea></div>
+            </div>
+          </div>
+          <div class="checklist-item" id="item-image">
+            <div class="custom-cb" onclick="toggleCheck('item-image')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg></div>
+            <div class="checklist-content">
+              <div class="checklist-title">6. Intégration du Gabarit Image</div>
+              <div class="checklist-desc">Schéma formulaire d'état civil fictif + drapeau tricolore, questions d'observation.</div>
+              <div class="feedback-box"><textarea class="feedback-input" placeholder="Remarques..."></textarea></div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-action" onclick="exportFeedback()">Exporter les validations</button>
+      </div>
+
+      <div id="conformity-report" class="report-page" style="display:none;">
+        <h1>Rapport d'Audit de Conformité S02</h1>
+        <div class="badge-report" style="background-color: var(--success);">Statut : GO (durée audio conforme)</div>
+
+        <h2 style="margin-top:20px;">1. Alignement Visuel & Identité Application</h2>
+        <ul>
+          <li><strong>Codes Couleurs :</strong> identiques au modèle S01 validé (#0b234a / #f47b20), aucune modification de charte.</li>
+          <li><strong>Mise en Page :</strong> mêmes gabarits HTML/DOCX que S01 (fonctions partagées de <code>generate-session-pack.mjs</code>).</li>
+        </ul>
+
+        <h2>2. Les 9 Gabarits Créés</h2>
+        <ol>
+          <li><strong>Fiche Formateur :</strong> déroulé 180 min, thème état civil / mairie / symboles.</li>
+          <li><strong>Fiche Apprenant A2 :</strong> formulaire d'état civil + phrase de demande polie.</li>
+          <li><strong>Transcription :</strong> dialogue M. Traoré / Mme Lambert à la mairie.</li>
+          <li><strong>QCM type TCF :</strong> question sur l'hymne national, format A/B/C/D.</li>
+          <li><strong>QCM Civique :</strong> 5 questions sur les symboles de la République (mention CSP).</li>
+          <li><strong>Corrigé Formateur :</strong> grille de réponses A1–B2 + corrigé QCM civique.</li>
+          <li><strong>Lexique :</strong> 10 mots (nom, prénom, devise, drapeau, hymne, Marianne...).</li>
+          <li><strong>Document avec Image :</strong> formulaire d'état civil + drapeau tricolore.</li>
+          <li><strong>Document Transformé :</strong> notice d'accueil du parcours d'intégration.</li>
+        </ol>
+
+        <h2>3. Point audio (résolu)</h2>
+        <ul>
+          <li><strong>Dialogue Audio :</strong> durée déclarée 2 min 33 s contre 2 min 30 s cible (tolérance 2m25–2m35). Écart de +3 s. <strong>GO</strong> — durée conforme (estimation fake-tts), à reconfirmer avec la voix de synthèse réelle.</li>
+        </ul>
+
+        <h2>4. Points restant à valider par Sofiane</h2>
+        <ul>
+          <li>Confirmer la durée réelle une fois la voix de synthèse générée (l'estimation fake-tts sert de garde-fou avant production).</li>
+          <li>Validation du formulaire d'état civil fictif (mention explicite du caractère non-officiel).</li>
+          <li>Validation du format QCM type TCF et du QCM civique.</li>
+        </ul>
+      </div>
+
+      <div id="iframe-view" class="preview-frame" style="display:none;">
+        <iframe id="preview-iframe"></iframe>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const templates = {
+      'trainer-sheet': `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        body {
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
+          color: #0b234a; /* Brand dark blue text */
+          background-color: #ffffff;
+          margin: 0;
+          padding: 0;
+          font-size: 10pt;
+          line-height: 1.5;
+        }
+        .section-title {
+          font-size: 11.5pt;
+          font-weight: 800;
+          color: #0b234a;
+          margin-top: 20px;
+          margin-bottom: 10px;
+          border-bottom: 1.5px solid #e2e8f0;
+          border-left: 4px solid #f47b20; /* Orange actions theme */
+          padding-left: 10px;
+          padding-bottom: 4px;
+        }
+        .consigne-box {
+          background-color: #fff7f0; /* Very light orange background */
+          border-left: 4px solid #f47b20; /* Orange border left */
+          padding: 12px 16px;
+          margin-bottom: 14px;
+          border-radius: 0 6px 6px 0;
+          color: #0b234a; /* Dark blue text */
+        }
+        .consigne-title {
+          font-size: 8.5pt;
+          font-weight: 800;
+          color: #f47b20;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 6px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .consigne-title svg {
+          stroke: #f47b20;
+          vertical-align: middle;
+        }
+        .aides-box {
+          border: 1px dashed #cbd5e1;
+          padding: 10px 14px;
+          margin-bottom: 14px;
+          font-size: 9pt;
+          color: #475569;
+          background-color: #fafbfc;
+          border-radius: 6px;
+        }
+        .response-line {
+          border-bottom: 1.5px dotted #cbd5e1;
+          height: 28px;
+          margin-bottom: 8px;
+        }
+        .checkbox-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 8px;
+          font-size: 9.5pt;
+          cursor: pointer;
+        }
+        .checkbox {
+          width: 14px;
+          height: 14px;
+          border: 1.5px solid #0b234a;
+          border-radius: 3px;
+          display: inline-block;
+          background-color: #ffffff;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 12px;
+          margin-bottom: 12px;
+          box-shadow: 0 2px 5px rgba(11,35,74,0.02);
+        }
+        th {
+          background-color: #f7f5f0; /* Warm clear grey */
+          border-bottom: 2.5px solid #065F46;
+          text-align: left;
+          padding: 10px;
+          font-size: 9.5pt;
+          font-weight: 800;
+          color: #0b234a;
+        }
+        td {
+          border-bottom: 1px solid #e8e6e0;
+          padding: 10px;
+          font-size: 9pt;
+          line-height: 1.45;
+          vertical-align: top;
+          color: #1e293b;
+        }
+        .tip-box {
+          background-color: #f0fdf4;
+          border: 1px solid #a7f3d0;
+          padding: 12px;
+          border-radius: 6px;
+          font-size: 9pt;
+          color: #065f46;
+          margin-top: 12px;
+          line-height: 1.5;
+        }
+      </style>
+    </head>
+    <body>
+      
+    
+    <header style="border-bottom: 2pt solid #f47b20; padding-bottom: 10px; margin-bottom: 22px; font-family: 'Inter', system-ui, -apple-system, sans-serif;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="display:flex;align-items:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:13pt;color:#0b234a;letter-spacing:-0.5px;"><svg style="width:20px;height:20px;fill:none;stroke:#0b234a;stroke-width:2.2;margin-right:6px;vertical-align:middle" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479L12 21l-6.825-4a12.083 12.083 0 01.665-6.479L12 14z"/></svg>CAP&nbsp;<span style="color:#f47b20">TCF</span></span>
+        <div style="display: flex; gap: 6px;">
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Séance S02</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Niveau A1-B2</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Durée 180 min</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Compétence CE / EE</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 800; color: #fff; border-radius: 4px; background-color: #065F46;">FOR</span>
+        </div>
+      </div>
+      <h2 style="font-size: 14pt; font-weight: 800; color: #0b234a; margin: 0; line-height: 1.25;">
+        Fiche Formateur — Déroulé Pédagogique S02
+      </h2>
+    </header>
+  
+    
+    
+    <div class="consigne-box">
+      <div class="consigne-title"><svg style="width:14px;height:14px;fill:none;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg><span>GUIDE PÉDAGOGIQUE</span></div>
+      <div style="font-size: 9.5pt; font-weight: 600; line-height: 1.4; color: #0b234a;">Déroulé et timings obligatoires de 180 minutes. Adapter selon les profils.</div>
+    </div>
+  
+
+    <div class="section-title">Objectifs opérationnels de la séance</div>
+    <div style="font-size: 9.5pt; margin-bottom: 15px; line-height: 1.45;">
+      <strong>Description globale :</strong> Séance état civil et symboles : chaque apprenant doit repartir avec (1) la capacité à compléter un formulaire d'état civil, (2) une demande écrite polie à une administration, (3) la connaissance des cinq symboles de la République. Rappeler que le formulaire et les horaires sont fictifs et signalés comme tels ; aucun document officiel n'est imité.<br><br>
+      <strong>Objectifs du manifeste :</strong><br>
+      • Compléter un formulaire fictif d'état civil et échanger avec une mairie<br>• Identifier République, devise, langue, fête nationale et symboles<br>
+    </div>
+
+    <div class="section-title">Déroulé Détaillé & Timing (180 minutes)</div>
+    
+    <div style="margin-bottom: 12px;">
+      <div style="font-weight: 800; color: #065f46; margin-bottom: 2px;">Phase 1 : Rituel civique (10 min)</div>
+      <div style="font-size: 9pt; padding-left: 10px; border-left: 3px solid #a7f3d0;">
+        <strong>Description :</strong> Reperage des symboles de la Republique a partir du visuel maitre.<br>
+        <strong>Déroulement :</strong> Accueil (2 min) | Présentation collective du support visuel et des thèmes (5 min) | Questions-réponses libres (3 min).<br>
+        <strong>Vigilance :</strong> Aucun test de connaissance n'est requis à ce stade. Rassurer les apprenants.
+      </div>
+    </div>
+
+    <div style="margin-bottom: 12px;">
+      <div style="font-weight: 800; color: #065f46; margin-bottom: 2px;">Phase 2 : Activation & Lexique (20 min)</div>
+      <div style="font-size: 9pt; padding-left: 10px; border-left: 3px solid #a7f3d0;">
+        <strong>Description :</strong> Decouverte du lexique (nom, prenom, devise, drapeau, hymne...).<br>
+        <strong>Déroulement :</strong> Lecture silencieuse du lexique (5 min) | Lecture à voix haute par les élèves volontaires (5 min) | Explication des notions de <em>droit</em>, <em>devoir</em> et <em>règle</em> (5 min) | Jeu oral de oui/non sur des actions courantes (5 min).<br>
+        <strong>Consigne formateur :</strong> Valoriser la prononciation et l'appropriation des termes.
+      </div>
+    </div>
+
+    <div style="margin-bottom: 12px;">
+      <div style="font-weight: 800; color: #065f46; margin-bottom: 2px;">Phase 3 : Support Invariant CO/CE (50 min)</div>
+      <div style="font-size: 9pt; padding-left: 10px; border-left: 3px solid #a7f3d0;">
+        <strong>Description :</strong> Ecoute du dialogue en mairie et lecture du formulaire fictif.<br>
+        <strong>Déroulement :</strong>
+        <ul style="margin-left: 15px; margin-top: 4px;">
+          <li><strong>1ère écoute (10 min) :</strong> Écoute globale sans transcription. Demander d'identifier les interlocuteurs et le sujet.</li>
+          <li><strong>2ème écoute (15 min) :</strong> Repérage des mots du lexique entendus. Analyse des éléments de durée (80h, 25 séances).</li>
+          <li><strong>3ème écoute (10 min) :</strong> Distribution de la transcription. Lecture silencieuse puis correction phonétique des liaisons.</li>
+          <li><strong>Exploitation écrite (15 min) :</strong> Résolution collective des questions de compréhension globale.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 12px;">
+      <div style="font-weight: 800; color: #065f46; margin-bottom: 2px;">Phase 4 : Ateliers Différenciés (60 min)</div>
+      <div style="font-size: 9pt; padding-left: 10px; border-left: 3px solid #a7f3d0;">
+        <strong>Description :</strong> Quatre groupes A1/A2/B1/B2 travaillent leur variante du meme support.<br>
+        <strong>Déroulement :</strong> Répartition par groupes de niveau (5 min) | Travail en autonomie sur les fiches d'activités (30 min) | Rotation du formateur pour étayer les groupes (A1 et A2 en priorité) (15 min) | Correction croisée et retour métacognitif (10 min).
+      </div>
+    </div>
+
+    <div style="margin-bottom: 12px;">
+      <div style="font-weight: 800; color: #065f46; margin-bottom: 2px;">Phase 5 : Production EE/EO (30 min)</div>
+      <div style="font-size: 9pt; padding-left: 10px; border-left: 3px solid #a7f3d0;">
+        <strong>Description :</strong> Chaque apprenant redige une demande ecrite polie a la mairie.<br>
+        <strong>Déroulement :</strong> Rédaction individuelle de l'objectif administratif (10 min) | Lecture croisée en binômes et correction réciproque par les pairs (10 min) | Restitution orale volontaire devant la classe (10 min).
+      </div>
+    </div>
+
+    <div style="margin-bottom: 12px;">
+      <div style="font-weight: 800; color: #065f46; margin-bottom: 2px;">Phase 6 : Fixation & Diagnostic (10 min)</div>
+      <div style="font-size: 9pt; padding-left: 10px; border-left: 3px solid #a7f3d0;">
+        <strong>Description :</strong> Synthese, QCM civique CSP, devoir personnalise.<br>
+        <strong>Déroulement :</strong> Passation individuelle du QCM diagnostic civique (5 min) | Correction flash collective (3 min) | Explication des devoirs différenciés à la maison (2 min).
+      </div>
+    </div>
+
+    <div class="section-title">Exploitation Pédagogique & Conseil Formateur</div>
+    <div style="font-size: 9.5pt; line-height: 1.45;">
+      • **Pédagogie de la CO** : Il est indispensable de procéder aux premières écoutes *sans* le support écrit afin de stimuler le décodage phonologique. La transcription sert d'outil de remédiation et de confirmation.<br>
+      • **Gestion de l'hétérogénéité** : Si les apprenants A1 éprouvent des difficultés, s'appuyer sur le lexique simplifié illustré au tableau ou les faire travailler en binôme mixte avec un apprenant A2/B1.
+    </div>
+
+    <div class="section-title">Règles d'Adaptation & Vigilance</div>
+    <div class="tip-box">
+      • Si le groupe confond devise et hymne, reprendre le lexique avant l'atelier B1.<br>• Insister sur le caractere fictif du formulaire pour eviter toute confusion avec un document officiel.<br>• Ne jamais remplacer l'audio publie par une improvisation : l'IA peut seulement l'expliquer ou le simplifier.<br>
+    </div>
+  
+    </body>
+    </html>
+  `,
+      'student-sheet': `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        body {
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
+          color: #0b234a; /* Brand dark blue text */
+          background-color: #ffffff;
+          margin: 0;
+          padding: 0;
+          font-size: 10pt;
+          line-height: 1.5;
+        }
+        .section-title {
+          font-size: 11.5pt;
+          font-weight: 800;
+          color: #0b234a;
+          margin-top: 20px;
+          margin-bottom: 10px;
+          border-bottom: 1.5px solid #e2e8f0;
+          border-left: 4px solid #f47b20; /* Orange actions theme */
+          padding-left: 10px;
+          padding-bottom: 4px;
+        }
+        .consigne-box {
+          background-color: #fff7f0; /* Very light orange background */
+          border-left: 4px solid #f47b20; /* Orange border left */
+          padding: 12px 16px;
+          margin-bottom: 14px;
+          border-radius: 0 6px 6px 0;
+          color: #0b234a; /* Dark blue text */
+        }
+        .consigne-title {
+          font-size: 8.5pt;
+          font-weight: 800;
+          color: #f47b20;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 6px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .consigne-title svg {
+          stroke: #f47b20;
+          vertical-align: middle;
+        }
+        .aides-box {
+          border: 1px dashed #cbd5e1;
+          padding: 10px 14px;
+          margin-bottom: 14px;
+          font-size: 9pt;
+          color: #475569;
+          background-color: #fafbfc;
+          border-radius: 6px;
+        }
+        .response-line {
+          border-bottom: 1.5px dotted #cbd5e1;
+          height: 28px;
+          margin-bottom: 8px;
+        }
+        .checkbox-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 8px;
+          font-size: 9.5pt;
+          cursor: pointer;
+        }
+        .checkbox {
+          width: 14px;
+          height: 14px;
+          border: 1.5px solid #0b234a;
+          border-radius: 3px;
+          display: inline-block;
+          background-color: #ffffff;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 12px;
+          margin-bottom: 12px;
+          box-shadow: 0 2px 5px rgba(11,35,74,0.02);
+        }
+        th {
+          background-color: #f7f5f0; /* Warm clear grey */
+          border-bottom: 2.5px solid #2563EB;
+          text-align: left;
+          padding: 10px;
+          font-size: 9.5pt;
+          font-weight: 800;
+          color: #0b234a;
+        }
+        td {
+          border-bottom: 1px solid #e8e6e0;
+          padding: 10px;
+          font-size: 9pt;
+          line-height: 1.45;
+          vertical-align: top;
+          color: #1e293b;
+        }
+        .tip-box {
+          background-color: #f0fdf4;
+          border: 1px solid #a7f3d0;
+          padding: 12px;
+          border-radius: 6px;
+          font-size: 9pt;
+          color: #065f46;
+          margin-top: 12px;
+          line-height: 1.5;
+        }
+      </style>
+    </head>
+    <body>
+      
+    
+    <header style="border-bottom: 2pt solid #f47b20; padding-bottom: 10px; margin-bottom: 22px; font-family: 'Inter', system-ui, -apple-system, sans-serif;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="display:flex;align-items:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:13pt;color:#0b234a;letter-spacing:-0.5px;"><svg style="width:20px;height:20px;fill:none;stroke:#0b234a;stroke-width:2.2;margin-right:6px;vertical-align:middle" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479L12 21l-6.825-4a12.083 12.083 0 01.665-6.479L12 14z"/></svg>CAP&nbsp;<span style="color:#f47b20">TCF</span></span>
+        <div style="display: flex; gap: 6px;">
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Séance S02</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Niveau A2 Cible</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Durée 60 min</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Compétence CE / EE</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 800; color: #fff; border-radius: 4px; background-color: #2563EB;">APP</span>
+        </div>
+      </div>
+      <h2 style="font-size: 14pt; font-weight: 800; color: #0b234a; margin: 0; line-height: 1.25;">
+        Fiche Apprenant A2 — Séance S02
+      </h2>
+    </header>
+  
+    
+    
+    <div class="consigne-box">
+      <div class="consigne-title"><svg style="width:14px;height:14px;fill:none;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0118 0v6M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3M3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3v5z"/></svg><span>CONSIGNE</span></div>
+      <div style="font-size: 9.5pt; font-weight: 600; line-height: 1.4; color: #0b234a;">Complétez le formulaire d'état civil et écrivez une phrase polie pour demander une information à la mairie.</div>
+    </div>
+  
+
+    <div style="margin-bottom: 20px; padding-left: 8px;">
+      <div style="font-weight: 800; margin-bottom: 10px; color: #0b234a;">Question 1 : Quel est l'hymne national de la France ?</div>
+      <div class="checkbox-row"><span class="checkbox"></span> <strong>A.</strong> La Marseillaise</div><div class="checkbox-row"><span class="checkbox"></span> <strong>B.</strong> L'Internationale</div><div class="checkbox-row"><span class="checkbox"></span> <strong>C.</strong> Le Chant des partisans</div>
+    </div>
+
+    <div style="margin-bottom: 20px; padding-left: 8px;">
+      <div style="font-weight: 800; margin-bottom: 10px; color: #0b234a;">Question 2 : À quelle date a lieu la fête nationale ?</div>
+      <div class="response-line"></div>
+      <div class="response-line"></div>
+    </div>
+
+    <div class="section-title">Production Écrite — Mon objectif personnel</div>
+    
+    
+    <div class="consigne-box">
+      <div class="consigne-title"><svg style="width:14px;height:14px;fill:none;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg><span>CONSIGNE</span></div>
+      <div style="font-size: 9.5pt; font-weight: 600; line-height: 1.4; color: #0b234a;">Racontez votre objectif administratif personnel (ex: titre de séjour, travail). Écrivez 5 phrases courtes.</div>
+    </div>
+  
+
+    <div class="aides-box">
+      <strong>Mots utiles pour vous aider :</strong> nom, prénom, naissance, nationalité, adresse.
+    </div>
+    <div class="response-line"></div>
+    <div class="response-line"></div>
+    <div class="response-line"></div>
+    <div class="response-line"></div>
+    <div class="response-line"></div>
+
+    <div class="section-title">Travail à la maison (Devoir)</div>
+    
+    
+    <div class="consigne-box">
+      <div class="consigne-title"><svg style="width:14px;height:14px;fill:none;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3m10-11v11a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg><span>TRAVAIL À LA MAISON</span></div>
+      <div style="font-size: 9.5pt; font-weight: 600; line-height: 1.4; color: #0b234a;">À la maison : complétez un formulaire d'état civil fictif avec vos informations, puis écrivez une phrase de demande polie.</div>
+    </div>
+  
+
+    <div class="response-line"></div>
+    <div class="response-line"></div>
+    <div class="response-line"></div>
+  
+    </body>
+    </html>
+  `,
+      'dialogue-sheet': `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        body {
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
+          color: #0b234a; /* Brand dark blue text */
+          background-color: #ffffff;
+          margin: 0;
+          padding: 0;
+          font-size: 10pt;
+          line-height: 1.5;
+        }
+        .section-title {
+          font-size: 11.5pt;
+          font-weight: 800;
+          color: #0b234a;
+          margin-top: 20px;
+          margin-bottom: 10px;
+          border-bottom: 1.5px solid #e2e8f0;
+          border-left: 4px solid #f47b20; /* Orange actions theme */
+          padding-left: 10px;
+          padding-bottom: 4px;
+        }
+        .consigne-box {
+          background-color: #fff7f0; /* Very light orange background */
+          border-left: 4px solid #f47b20; /* Orange border left */
+          padding: 12px 16px;
+          margin-bottom: 14px;
+          border-radius: 0 6px 6px 0;
+          color: #0b234a; /* Dark blue text */
+        }
+        .consigne-title {
+          font-size: 8.5pt;
+          font-weight: 800;
+          color: #f47b20;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 6px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .consigne-title svg {
+          stroke: #f47b20;
+          vertical-align: middle;
+        }
+        .aides-box {
+          border: 1px dashed #cbd5e1;
+          padding: 10px 14px;
+          margin-bottom: 14px;
+          font-size: 9pt;
+          color: #475569;
+          background-color: #fafbfc;
+          border-radius: 6px;
+        }
+        .response-line {
+          border-bottom: 1.5px dotted #cbd5e1;
+          height: 28px;
+          margin-bottom: 8px;
+        }
+        .checkbox-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 8px;
+          font-size: 9.5pt;
+          cursor: pointer;
+        }
+        .checkbox {
+          width: 14px;
+          height: 14px;
+          border: 1.5px solid #0b234a;
+          border-radius: 3px;
+          display: inline-block;
+          background-color: #ffffff;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 12px;
+          margin-bottom: 12px;
+          box-shadow: 0 2px 5px rgba(11,35,74,0.02);
+        }
+        th {
+          background-color: #f7f5f0; /* Warm clear grey */
+          border-bottom: 2.5px solid #6B21A8;
+          text-align: left;
+          padding: 10px;
+          font-size: 9.5pt;
+          font-weight: 800;
+          color: #0b234a;
+        }
+        td {
+          border-bottom: 1px solid #e8e6e0;
+          padding: 10px;
+          font-size: 9pt;
+          line-height: 1.45;
+          vertical-align: top;
+          color: #1e293b;
+        }
+        .tip-box {
+          background-color: #f0fdf4;
+          border: 1px solid #a7f3d0;
+          padding: 12px;
+          border-radius: 6px;
+          font-size: 9pt;
+          color: #065f46;
+          margin-top: 12px;
+          line-height: 1.5;
+        }
+      </style>
+    </head>
+    <body>
+      
+    
+    <header style="border-bottom: 2pt solid #f47b20; padding-bottom: 10px; margin-bottom: 22px; font-family: 'Inter', system-ui, -apple-system, sans-serif;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="display:flex;align-items:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:13pt;color:#0b234a;letter-spacing:-0.5px;"><svg style="width:20px;height:20px;fill:none;stroke:#0b234a;stroke-width:2.2;margin-right:6px;vertical-align:middle" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479L12 21l-6.825-4a12.083 12.083 0 01.665-6.479L12 14z"/></svg>CAP&nbsp;<span style="color:#f47b20">TCF</span></span>
+        <div style="display: flex; gap: 6px;">
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Séance S02</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Niveau A1-B2 Invariant</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Durée 2.5 min</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Compétence CO / CE</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 800; color: #fff; border-radius: 4px; background-color: #6B21A8;">APP</span>
+        </div>
+      </div>
+      <h2 style="font-size: 14pt; font-weight: 800; color: #0b234a; margin: 0; line-height: 1.25;">
+        Transcription Audio — Séance S02
+      </h2>
+    </header>
+  
+    
+    
+    <div class="consigne-box">
+      <div class="consigne-title"><svg style="width:14px;height:14px;fill:none;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg><span>CONTEXTE D'ÉCOUTE</span></div>
+      <div style="font-size: 9.5pt; font-weight: 600; line-height: 1.4; color: #0b234a;">M. Traoré se rend à la mairie pour une démarche d'état civil. Un agent d'accueil, Mme Lambert, l'aide à compléter un formulaire fictif et lui rappelle les symboles de la République affichés dans le hall.</div>
+    </div>
+  
+
+    <div style="margin-top: 20px;">
+      
+      <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 12px; font-size: 9.5pt;">
+        <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">Mme Lambert</div>
+        <div style="color: #1e293b; line-height: 1.45;">Bonjour monsieur, bienvenue à la mairie. Que puis-je faire pour vous ?</div>
+      </div>
+    
+      <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 12px; font-size: 9.5pt;">
+        <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">M. Traoré</div>
+        <div style="color: #1e293b; line-height: 1.45;">Bonjour madame. Je voudrais un document d'état civil, s'il vous plaît.</div>
+      </div>
+    
+      <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 12px; font-size: 9.5pt;">
+        <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">Mme Lambert</div>
+        <div style="color: #1e293b; line-height: 1.45;">Bien sûr. Je vous précise que les horaires affichés ici sont des horaires d'exemple pour la formation. Vous avez une pièce d'identité ?</div>
+      </div>
+    
+      <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 12px; font-size: 9.5pt;">
+        <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">M. Traoré</div>
+        <div style="color: #1e293b; line-height: 1.45;">Oui, la voici. C'est ma carte de séjour.</div>
+      </div>
+    
+      <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 12px; font-size: 9.5pt;">
+        <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">Mme Lambert</div>
+        <div style="color: #1e293b; line-height: 1.45;">Merci. Une carte de séjour valide suffit pour cette démarche. Pouvez-vous compléter ce formulaire : votre nom, votre prénom, votre date de naissance et votre adresse ?</div>
+      </div>
+    
+      <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 12px; font-size: 9.5pt;">
+        <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">M. Traoré</div>
+        <div style="color: #1e293b; line-height: 1.45;">D'accord. Une question : sur le mur, il y a écrit « Liberté, Égalité, Fraternité ». Qu'est-ce que c'est ?</div>
+      </div>
+    
+      <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 12px; font-size: 9.5pt;">
+        <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">Mme Lambert</div>
+        <div style="color: #1e293b; line-height: 1.45;">C'est la devise de la République française. Elle résume trois valeurs : la liberté, l'égalité et la fraternité, c'est-à-dire l'entraide. Vous voyez aussi le drapeau tricolore, bleu, blanc, rouge, et le buste de Marianne.</div>
+      </div>
+    
+      <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 12px; font-size: 9.5pt;">
+        <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">M. Traoré</div>
+        <div style="color: #1e293b; line-height: 1.45;">Marianne, c'est une personne réelle ?</div>
+      </div>
+    
+      <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 12px; font-size: 9.5pt;">
+        <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">Mme Lambert</div>
+        <div style="color: #1e293b; line-height: 1.45;">Non, c'est un symbole qui représente la République française, présent dans presque toutes les mairies.</div>
+      </div>
+    
+      <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 12px; font-size: 9.5pt;">
+        <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">M. Traoré</div>
+        <div style="color: #1e293b; line-height: 1.45;">Et la musique qu'on entend le 14 juillet ?</div>
+      </div>
+    
+      <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 12px; font-size: 9.5pt;">
+        <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">Mme Lambert</div>
+        <div style="color: #1e293b; line-height: 1.45;">C'est La Marseillaise, l'hymne national. On la joue lors des cérémonies officielles. Le 14 juillet, c'est la fête nationale : il y a des défilés et des feux d'artifice.</div>
+      </div>
+    
+      <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 12px; font-size: 9.5pt;">
+        <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">M. Traoré</div>
+        <div style="color: #1e293b; line-height: 1.45;">Combien de temps faut-il pour recevoir mon document ?</div>
+      </div>
+    
+      <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 12px; font-size: 9.5pt;">
+        <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">Mme Lambert</div>
+        <div style="color: #1e293b; line-height: 1.45;">En général, comptez environ deux semaines. Vous recevrez un message pour venir le récupérer ici, à l'accueil.</div>
+      </div>
+    
+      <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 12px; font-size: 9.5pt;">
+        <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">M. Traoré</div>
+        <div style="color: #1e293b; line-height: 1.45;">Merci beaucoup pour ces explications, madame.</div>
+      </div>
+    
+      <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 12px; font-size: 9.5pt;">
+        <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">Mme Lambert</div>
+        <div style="color: #1e293b; line-height: 1.45;">Je vous en prie. Ici, la langue des démarches est le français. N'hésitez pas si vous avez besoin d'aide pour remplir le formulaire. Bonne journée à vous, monsieur.</div>
+      </div>
+    
+      <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 12px; font-size: 9.5pt;">
+        <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">M. Traoré</div>
+        <div style="color: #1e293b; line-height: 1.45;">Merci, bonne journée, madame.</div>
+      </div>
+    
+    </div>
+  
+    </body>
+    </html>
+  `,
+      'qcm-tcf-sheet': `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        body {
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
+          color: #0b234a; /* Brand dark blue text */
+          background-color: #ffffff;
+          margin: 0;
+          padding: 0;
+          font-size: 10pt;
+          line-height: 1.5;
+        }
+        .section-title {
+          font-size: 11.5pt;
+          font-weight: 800;
+          color: #0b234a;
+          margin-top: 20px;
+          margin-bottom: 10px;
+          border-bottom: 1.5px solid #e2e8f0;
+          border-left: 4px solid #f47b20; /* Orange actions theme */
+          padding-left: 10px;
+          padding-bottom: 4px;
+        }
+        .consigne-box {
+          background-color: #fff7f0; /* Very light orange background */
+          border-left: 4px solid #f47b20; /* Orange border left */
+          padding: 12px 16px;
+          margin-bottom: 14px;
+          border-radius: 0 6px 6px 0;
+          color: #0b234a; /* Dark blue text */
+        }
+        .consigne-title {
+          font-size: 8.5pt;
+          font-weight: 800;
+          color: #f47b20;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 6px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .consigne-title svg {
+          stroke: #f47b20;
+          vertical-align: middle;
+        }
+        .aides-box {
+          border: 1px dashed #cbd5e1;
+          padding: 10px 14px;
+          margin-bottom: 14px;
+          font-size: 9pt;
+          color: #475569;
+          background-color: #fafbfc;
+          border-radius: 6px;
+        }
+        .response-line {
+          border-bottom: 1.5px dotted #cbd5e1;
+          height: 28px;
+          margin-bottom: 8px;
+        }
+        .checkbox-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 8px;
+          font-size: 9.5pt;
+          cursor: pointer;
+        }
+        .checkbox {
+          width: 14px;
+          height: 14px;
+          border: 1.5px solid #0b234a;
+          border-radius: 3px;
+          display: inline-block;
+          background-color: #ffffff;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 12px;
+          margin-bottom: 12px;
+          box-shadow: 0 2px 5px rgba(11,35,74,0.02);
+        }
+        th {
+          background-color: #f7f5f0; /* Warm clear grey */
+          border-bottom: 2.5px solid #F47B20;
+          text-align: left;
+          padding: 10px;
+          font-size: 9.5pt;
+          font-weight: 800;
+          color: #0b234a;
+        }
+        td {
+          border-bottom: 1px solid #e8e6e0;
+          padding: 10px;
+          font-size: 9pt;
+          line-height: 1.45;
+          vertical-align: top;
+          color: #1e293b;
+        }
+        .tip-box {
+          background-color: #f0fdf4;
+          border: 1px solid #a7f3d0;
+          padding: 12px;
+          border-radius: 6px;
+          font-size: 9pt;
+          color: #065f46;
+          margin-top: 12px;
+          line-height: 1.5;
+        }
+      </style>
+    </head>
+    <body>
+      
+    
+    <header style="border-bottom: 2pt solid #f47b20; padding-bottom: 10px; margin-bottom: 22px; font-family: 'Inter', system-ui, -apple-system, sans-serif;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="display:flex;align-items:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:13pt;color:#0b234a;letter-spacing:-0.5px;"><svg style="width:20px;height:20px;fill:none;stroke:#0b234a;stroke-width:2.2;margin-right:6px;vertical-align:middle" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479L12 21l-6.825-4a12.083 12.083 0 01.665-6.479L12 14z"/></svg>CAP&nbsp;<span style="color:#f47b20">TCF</span></span>
+        <div style="display: flex; gap: 6px;">
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Séance S02</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Niveau A2 Cible</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Durée 15 min</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Compétence CO</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 800; color: #fff; border-radius: 4px; background-color: #F47B20;">QCM</span>
+        </div>
+      </div>
+      <h2 style="font-size: 14pt; font-weight: 800; color: #0b234a; margin: 0; line-height: 1.25;">
+        Préparation TCF — Test Compréhension Orale
+      </h2>
+    </header>
+  
+    
+    
+    <div class="consigne-box">
+      <div class="consigne-title"><svg style="width:14px;height:14px;fill:none;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0118 0v6M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3M3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3v5z"/></svg><span>CONSIGNE EXAMEN TCF</span></div>
+      <div style="font-size: 9.5pt; font-weight: 600; line-height: 1.4; color: #0b234a;">Écoutez attentivement le document sonore et cochez la case de l'option correcte sur votre grille de réponse.</div>
+    </div>
+  
+
+    <div style="margin-top: 25px; padding: 15px; border: 1px solid #cbd5e1; border-radius: 8px; background-color: #fafbfc;">
+      <div style="font-weight: 800; font-size: 11pt; margin-bottom: 12px; color: #0b234a;">Question 1 : Quel est l'hymne national de la France ?</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        
+          <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px;">
+            <span class="checkbox"></span>
+            <span><strong>A.</strong> La Marseillaise</span>
+          </div>
+        
+          <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px;">
+            <span class="checkbox"></span>
+            <span><strong>B.</strong> L'Internationale</span>
+          </div>
+        
+          <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px;">
+            <span class="checkbox"></span>
+            <span><strong>C.</strong> Le Chant des partisans</span>
+          </div>
+        
+          <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px;">
+            <span class="checkbox"></span>
+            <span><strong>D.</strong> 40</span>
+          </div>
+        
+      </div>
+    </div>
+
+    <div style="font-size: 8.5pt; color: #64748b; margin-top: 40px; border-top: 1px solid #cbd5e1; padding-top: 8px; text-align: center;">
+      Examen Blanc CapTCF — Format officiel du Test de Connaissance du Français (TCF).
+    </div>
+  
+    </body>
+    </html>
+  `,
+      'qcm-sheet': `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        body {
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
+          color: #0b234a; /* Brand dark blue text */
+          background-color: #ffffff;
+          margin: 0;
+          padding: 0;
+          font-size: 10pt;
+          line-height: 1.5;
+        }
+        .section-title {
+          font-size: 11.5pt;
+          font-weight: 800;
+          color: #0b234a;
+          margin-top: 20px;
+          margin-bottom: 10px;
+          border-bottom: 1.5px solid #e2e8f0;
+          border-left: 4px solid #f47b20; /* Orange actions theme */
+          padding-left: 10px;
+          padding-bottom: 4px;
+        }
+        .consigne-box {
+          background-color: #fff7f0; /* Very light orange background */
+          border-left: 4px solid #f47b20; /* Orange border left */
+          padding: 12px 16px;
+          margin-bottom: 14px;
+          border-radius: 0 6px 6px 0;
+          color: #0b234a; /* Dark blue text */
+        }
+        .consigne-title {
+          font-size: 8.5pt;
+          font-weight: 800;
+          color: #f47b20;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 6px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .consigne-title svg {
+          stroke: #f47b20;
+          vertical-align: middle;
+        }
+        .aides-box {
+          border: 1px dashed #cbd5e1;
+          padding: 10px 14px;
+          margin-bottom: 14px;
+          font-size: 9pt;
+          color: #475569;
+          background-color: #fafbfc;
+          border-radius: 6px;
+        }
+        .response-line {
+          border-bottom: 1.5px dotted #cbd5e1;
+          height: 28px;
+          margin-bottom: 8px;
+        }
+        .checkbox-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 8px;
+          font-size: 9.5pt;
+          cursor: pointer;
+        }
+        .checkbox {
+          width: 14px;
+          height: 14px;
+          border: 1.5px solid #0b234a;
+          border-radius: 3px;
+          display: inline-block;
+          background-color: #ffffff;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 12px;
+          margin-bottom: 12px;
+          box-shadow: 0 2px 5px rgba(11,35,74,0.02);
+        }
+        th {
+          background-color: #f7f5f0; /* Warm clear grey */
+          border-bottom: 2.5px solid #F47B20;
+          text-align: left;
+          padding: 10px;
+          font-size: 9.5pt;
+          font-weight: 800;
+          color: #0b234a;
+        }
+        td {
+          border-bottom: 1px solid #e8e6e0;
+          padding: 10px;
+          font-size: 9pt;
+          line-height: 1.45;
+          vertical-align: top;
+          color: #1e293b;
+        }
+        .tip-box {
+          background-color: #f0fdf4;
+          border: 1px solid #a7f3d0;
+          padding: 12px;
+          border-radius: 6px;
+          font-size: 9pt;
+          color: #065f46;
+          margin-top: 12px;
+          line-height: 1.5;
+        }
+      </style>
+    </head>
+    <body>
+      
+    
+    <header style="border-bottom: 2pt solid #f47b20; padding-bottom: 10px; margin-bottom: 22px; font-family: 'Inter', system-ui, -apple-system, sans-serif;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="display:flex;align-items:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:13pt;color:#0b234a;letter-spacing:-0.5px;"><svg style="width:20px;height:20px;fill:none;stroke:#0b234a;stroke-width:2.2;margin-right:6px;vertical-align:middle" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479L12 21l-6.825-4a12.083 12.083 0 01.665-6.479L12 14z"/></svg>CAP&nbsp;<span style="color:#f47b20">TCF</span></span>
+        <div style="display: flex; gap: 6px;">
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Séance S02</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Niveau A1-B2</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Durée 10 min</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Compétence CIVIQUE</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 800; color: #fff; border-radius: 4px; background-color: #F47B20;">APP</span>
+        </div>
+      </div>
+      <h2 style="font-size: 14pt; font-weight: 800; color: #0b234a; margin: 0; line-height: 1.25;">
+        Diagnostic Civique — Questionnaire CSP
+      </h2>
+    </header>
+  
+    
+    
+    <div class="consigne-box">
+      <div class="consigne-title"><svg style="width:14px;height:14px;fill:none;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg><span>DIAGNOSTIC CIVIQUE (CSP)</span></div>
+      <div style="font-size: 9.5pt; font-weight: 600; line-height: 1.4; color: #0b234a;">Thème : Principes et valeurs de la République | Mention officielle : CSP</div>
+    </div>
+  
+
+    <div>
+      
+      <div style="margin-bottom: 18px; padding-left: 8px;">
+        <div style="font-weight: 800; font-size: 10pt; margin-bottom: 6px; color: #0b234a;">La devise de la République française est :</div>
+        <div style="padding-left: 10px;">
+          <div class="checkbox-row"><span class="checkbox"></span> <strong>A.</strong> Liberté, Égalité, Fraternité</div><div class="checkbox-row"><span class="checkbox"></span> <strong>B.</strong> Union, Force, Travail</div><div class="checkbox-row"><span class="checkbox"></span> <strong>C.</strong> Paix, Ordre, Progrès</div>
+        </div>
+      </div>
+    
+      <div style="margin-bottom: 18px; padding-left: 8px;">
+        <div style="font-weight: 800; font-size: 10pt; margin-bottom: 6px; color: #0b234a;">Les couleurs du drapeau français sont :</div>
+        <div style="padding-left: 10px;">
+          <div class="checkbox-row"><span class="checkbox"></span> <strong>A.</strong> Bleu, blanc, rouge</div><div class="checkbox-row"><span class="checkbox"></span> <strong>B.</strong> Rouge, jaune, vert</div><div class="checkbox-row"><span class="checkbox"></span> <strong>C.</strong> Bleu, jaune, rouge</div>
+        </div>
+      </div>
+    
+      <div style="margin-bottom: 18px; padding-left: 8px;">
+        <div style="font-weight: 800; font-size: 10pt; margin-bottom: 6px; color: #0b234a;">La fête nationale française est célébrée le :</div>
+        <div style="padding-left: 10px;">
+          <div class="checkbox-row"><span class="checkbox"></span> <strong>A.</strong> 1er mai</div><div class="checkbox-row"><span class="checkbox"></span> <strong>B.</strong> 14 juillet</div><div class="checkbox-row"><span class="checkbox"></span> <strong>C.</strong> 11 novembre</div>
+        </div>
+      </div>
+    
+      <div style="margin-bottom: 18px; padding-left: 8px;">
+        <div style="font-weight: 800; font-size: 10pt; margin-bottom: 6px; color: #0b234a;">L'hymne national de la France s'appelle :</div>
+        <div style="padding-left: 10px;">
+          <div class="checkbox-row"><span class="checkbox"></span> <strong>A.</strong> La Marseillaise</div><div class="checkbox-row"><span class="checkbox"></span> <strong>B.</strong> Le Chant du départ</div><div class="checkbox-row"><span class="checkbox"></span> <strong>C.</strong> La Carmagnole</div>
+        </div>
+      </div>
+    
+      <div style="margin-bottom: 18px; padding-left: 8px;">
+        <div style="font-weight: 800; font-size: 10pt; margin-bottom: 6px; color: #0b234a;">Pour une démarche officielle à la mairie, la langue utilisée est :</div>
+        <div style="padding-left: 10px;">
+          <div class="checkbox-row"><span class="checkbox"></span> <strong>A.</strong> Le français</div><div class="checkbox-row"><span class="checkbox"></span> <strong>B.</strong> La langue de son choix</div><div class="checkbox-row"><span class="checkbox"></span> <strong>C.</strong> L'anglais</div>
+        </div>
+      </div>
+    
+    </div>
+
+    <div style="font-size: 8pt; font-style: italic; color: #64748b; text-align: center; border-top: 0.75pt solid #cbd5e1; padding-top: 8px; margin-top: 30px;">
+      Simulation pédagogique CapTCF. Les questions présentées ne préjugent pas des questions officielles de l'examen d'État.
+    </div>
+  
+    </body>
+    </html>
+  `,
+      'corrige-sheet': `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        body {
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
+          color: #0b234a; /* Brand dark blue text */
+          background-color: #ffffff;
+          margin: 0;
+          padding: 0;
+          font-size: 10pt;
+          line-height: 1.5;
+        }
+        .section-title {
+          font-size: 11.5pt;
+          font-weight: 800;
+          color: #0b234a;
+          margin-top: 20px;
+          margin-bottom: 10px;
+          border-bottom: 1.5px solid #e2e8f0;
+          border-left: 4px solid #f47b20; /* Orange actions theme */
+          padding-left: 10px;
+          padding-bottom: 4px;
+        }
+        .consigne-box {
+          background-color: #fff7f0; /* Very light orange background */
+          border-left: 4px solid #f47b20; /* Orange border left */
+          padding: 12px 16px;
+          margin-bottom: 14px;
+          border-radius: 0 6px 6px 0;
+          color: #0b234a; /* Dark blue text */
+        }
+        .consigne-title {
+          font-size: 8.5pt;
+          font-weight: 800;
+          color: #f47b20;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 6px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .consigne-title svg {
+          stroke: #f47b20;
+          vertical-align: middle;
+        }
+        .aides-box {
+          border: 1px dashed #cbd5e1;
+          padding: 10px 14px;
+          margin-bottom: 14px;
+          font-size: 9pt;
+          color: #475569;
+          background-color: #fafbfc;
+          border-radius: 6px;
+        }
+        .response-line {
+          border-bottom: 1.5px dotted #cbd5e1;
+          height: 28px;
+          margin-bottom: 8px;
+        }
+        .checkbox-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 8px;
+          font-size: 9.5pt;
+          cursor: pointer;
+        }
+        .checkbox {
+          width: 14px;
+          height: 14px;
+          border: 1.5px solid #0b234a;
+          border-radius: 3px;
+          display: inline-block;
+          background-color: #ffffff;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 12px;
+          margin-bottom: 12px;
+          box-shadow: 0 2px 5px rgba(11,35,74,0.02);
+        }
+        th {
+          background-color: #f7f5f0; /* Warm clear grey */
+          border-bottom: 2.5px solid #991B1B;
+          text-align: left;
+          padding: 10px;
+          font-size: 9.5pt;
+          font-weight: 800;
+          color: #0b234a;
+        }
+        td {
+          border-bottom: 1px solid #e8e6e0;
+          padding: 10px;
+          font-size: 9pt;
+          line-height: 1.45;
+          vertical-align: top;
+          color: #1e293b;
+        }
+        .tip-box {
+          background-color: #f0fdf4;
+          border: 1px solid #a7f3d0;
+          padding: 12px;
+          border-radius: 6px;
+          font-size: 9pt;
+          color: #065f46;
+          margin-top: 12px;
+          line-height: 1.5;
+        }
+      </style>
+    </head>
+    <body>
+      
+    
+    <header style="border-bottom: 2pt solid #f47b20; padding-bottom: 10px; margin-bottom: 22px; font-family: 'Inter', system-ui, -apple-system, sans-serif;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="display:flex;align-items:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:13pt;color:#0b234a;letter-spacing:-0.5px;"><svg style="width:20px;height:20px;fill:none;stroke:#0b234a;stroke-width:2.2;margin-right:6px;vertical-align:middle" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479L12 21l-6.825-4a12.083 12.083 0 01.665-6.479L12 14z"/></svg>CAP&nbsp;<span style="color:#f47b20">TCF</span></span>
+        <div style="display: flex; gap: 6px;">
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Séance S02</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Niveau A1-B2</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Durée N/A</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Compétence CORRECTION</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 800; color: #fff; border-radius: 4px; background-color: #991B1B;">COR</span>
+        </div>
+      </div>
+      <h2 style="font-size: 14pt; font-weight: 800; color: #0b234a; margin: 0; line-height: 1.25;">
+        Corrigé Formateur — Séance S02
+      </h2>
+    </header>
+  
+    
+    
+    <div class="consigne-box">
+      <div class="consigne-title"><svg style="width:14px;height:14px;fill:none;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg><span>GUIDE DE CORRECTION PÉDAGOGIQUE</span></div>
+      <div style="font-size: 9.5pt; font-weight: 600; line-height: 1.4; color: #0b234a;">Veuillez adapter la sévérité de l'évaluation selon le niveau CECRL cible.</div>
+    </div>
+  
+
+    <div class="section-title">Corrigé des Activités de Compréhension (Par niveau)</div>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px;">
+      <div style="border: 0.75pt solid #cbd5e1; padding: 8px; border-radius: 4px; background-color: #fffafb; border-top: 2.5px solid #991b1b;">
+        <div style="font-weight: 800; color: #991b1b; font-size: 9.5pt; margin-bottom: 4px;">Niveau A1</div>
+        <div style="font-size: 9pt;">• q1 (Réponse) : <strong>Bleu, blanc, rouge</strong></div>
+        <div style="font-size: 9pt;">• q2 (Vrai/Faux) : <strong>Vrai / Oui</strong></div>
+      </div>
+      <div style="border: 0.75pt solid #cbd5e1; padding: 8px; border-radius: 4px; background-color: #fbfdff; border-top: 2.5px solid #2563eb;">
+        <div style="font-weight: 800; color: #2563eb; font-size: 9.5pt; margin-bottom: 4px;">Niveau A2 (Cible)</div>
+        <div style="font-size: 9pt;">• q1 (Séances) : <strong>La Marseillaise</strong></div>
+        <div style="font-size: 9pt;">• q2 (Thèmes) : <strong>Le 14 juillet.</strong></div>
+      </div>
+      <div style="border: 0.75pt solid #cbd5e1; padding: 8px; border-radius: 4px; background-color: #faf5ff; border-top: 2.5px solid #6b21a8;">
+        <div style="font-weight: 800; color: #6b21a8; font-size: 9.5pt; margin-bottom: 4px;">Niveau B1</div>
+        <div style="font-size: 9pt;">• q1 : <strong>Message structure attendu : formule d'appel, objet clair (demande de document d'etat civil), precision de la situation, formule de politesse finale.</strong></div>
+        <div style="font-size: 9pt;">• q2 : <strong>La devise resume les valeurs (liberte, egalite, fraternite) ; le drapeau tricolore symbolise la nation ; Marianne incarne la Republique.</strong></div>
+      </div>
+      <div style="border: 0.75pt solid #cbd5e1; padding: 8px; border-radius: 4px; background-color: #fbfdfc; border-top: 2.5px solid #047857;">
+        <div style="font-weight: 800; color: #047857; font-size: 9.5pt; margin-bottom: 4px;">Niveau B2</div>
+        <div style="font-size: 9pt;">• q1 : <strong>Reponse ouverte evaluee sur la precision (symboles = reperes communs, egalite de traitement, neutralite) et la qualite de l'argumentation.</strong></div>
+        <div style="font-size: 9pt;">• q2 : <strong>Reponse ouverte : les symboles sont des reperes mais ne remplacent pas l'explication des droits et devoirs concrets.</strong></div>
+      </div>
+    </div>
+
+    <div class="section-title">Corrigé Explicité du QCM Civique (CSP)</div>
+    <table>
+      <thead>
+        <tr style="color: #991b1b;">
+          <th style="width: 8%;">#</th>
+          <th style="width: 42%;">Question</th>
+          <th style="width: 25%;">Réponse attendue</th>
+          <th style="width: 25%;">Justification pédagogique</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            <td>1</td>
+            <td>La devise de la République française est :</td>
+            <td><strong>Liberté, Égalité, Fraternité</strong></td>
+            <td style="font-size: 8.5pt; color: #475569;">
+              Le parcours d'accueil et d'intégration dure obligatoirement 80h.
+              
+              
+              
+              
+            </td>
+          </tr>
+        
+          <tr>
+            <td>2</td>
+            <td>Les couleurs du drapeau français sont :</td>
+            <td><strong>Bleu, blanc, rouge</strong></td>
+            <td style="font-size: 8.5pt; color: #475569;">
+              
+              La formation collective est structurée sur exactement 25 séances de 3h.
+              
+              
+              
+            </td>
+          </tr>
+        
+          <tr>
+            <td>3</td>
+            <td>La fête nationale française est célébrée le :</td>
+            <td><strong>14 juillet</strong></td>
+            <td style="font-size: 8.5pt; color: #475569;">
+              
+              
+              L'évaluation intermédiaire après 50h et l'évaluation finale se déroulent hors séances.
+              
+              
+            </td>
+          </tr>
+        
+          <tr>
+            <td>4</td>
+            <td>L'hymne national de la France s'appelle :</td>
+            <td><strong>La Marseillaise</strong></td>
+            <td style="font-size: 8.5pt; color: #475569;">
+              
+              
+              
+              L'apprentissage civique est centré sur 5 thèmes réglementaires obligatoires.
+              
+            </td>
+          </tr>
+        
+          <tr>
+            <td>5</td>
+            <td>Pour une démarche officielle à la mairie, la langue utilisée est :</td>
+            <td><strong>Le français</strong></td>
+            <td style="font-size: 8.5pt; color: #475569;">
+              
+              
+              
+              
+              Un droit, un devoir et une règle sont des notions juridiques distinctes.
+            </td>
+          </tr>
+        
+      </tbody>
+    </table>
+
+    <div class="section-title">Grille d'Évaluation & Conseils Formateur</div>
+    <div style="font-size: 9pt; line-height: 1.45; color: #475569;">
+      • <strong>Niveaux A1/A2 :</strong> Tolérer les fautes de grammaire et d'orthographe (ex: <em>sejour</em> au lieu de <em>séjour</em>) si le sens communicatif est préservé. L'objectif est de vérifier l'autonomie pratique.<br>
+      • <strong>Niveaux B1/B2 :</strong> Attendre une structure textuelle fluide (connecteurs logiques, formules de politesse) et une argumentation développée sur le sens historique des thèmes civiques.
+    </div>
+  
+    </body>
+    </html>
+  `,
+      'lexique-sheet': `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        body {
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
+          color: #0b234a; /* Brand dark blue text */
+          background-color: #ffffff;
+          margin: 0;
+          padding: 0;
+          font-size: 10pt;
+          line-height: 1.5;
+        }
+        .section-title {
+          font-size: 11.5pt;
+          font-weight: 800;
+          color: #0b234a;
+          margin-top: 20px;
+          margin-bottom: 10px;
+          border-bottom: 1.5px solid #e2e8f0;
+          border-left: 4px solid #f47b20; /* Orange actions theme */
+          padding-left: 10px;
+          padding-bottom: 4px;
+        }
+        .consigne-box {
+          background-color: #fff7f0; /* Very light orange background */
+          border-left: 4px solid #f47b20; /* Orange border left */
+          padding: 12px 16px;
+          margin-bottom: 14px;
+          border-radius: 0 6px 6px 0;
+          color: #0b234a; /* Dark blue text */
+        }
+        .consigne-title {
+          font-size: 8.5pt;
+          font-weight: 800;
+          color: #f47b20;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 6px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .consigne-title svg {
+          stroke: #f47b20;
+          vertical-align: middle;
+        }
+        .aides-box {
+          border: 1px dashed #cbd5e1;
+          padding: 10px 14px;
+          margin-bottom: 14px;
+          font-size: 9pt;
+          color: #475569;
+          background-color: #fafbfc;
+          border-radius: 6px;
+        }
+        .response-line {
+          border-bottom: 1.5px dotted #cbd5e1;
+          height: 28px;
+          margin-bottom: 8px;
+        }
+        .checkbox-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 8px;
+          font-size: 9.5pt;
+          cursor: pointer;
+        }
+        .checkbox {
+          width: 14px;
+          height: 14px;
+          border: 1.5px solid #0b234a;
+          border-radius: 3px;
+          display: inline-block;
+          background-color: #ffffff;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 12px;
+          margin-bottom: 12px;
+          box-shadow: 0 2px 5px rgba(11,35,74,0.02);
+        }
+        th {
+          background-color: #f7f5f0; /* Warm clear grey */
+          border-bottom: 2.5px solid #475569;
+          text-align: left;
+          padding: 10px;
+          font-size: 9.5pt;
+          font-weight: 800;
+          color: #0b234a;
+        }
+        td {
+          border-bottom: 1px solid #e8e6e0;
+          padding: 10px;
+          font-size: 9pt;
+          line-height: 1.45;
+          vertical-align: top;
+          color: #1e293b;
+        }
+        .tip-box {
+          background-color: #f0fdf4;
+          border: 1px solid #a7f3d0;
+          padding: 12px;
+          border-radius: 6px;
+          font-size: 9pt;
+          color: #065f46;
+          margin-top: 12px;
+          line-height: 1.5;
+        }
+      </style>
+    </head>
+    <body>
+      
+    
+    <header style="border-bottom: 2pt solid #f47b20; padding-bottom: 10px; margin-bottom: 22px; font-family: 'Inter', system-ui, -apple-system, sans-serif;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="display:flex;align-items:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:13pt;color:#0b234a;letter-spacing:-0.5px;"><svg style="width:20px;height:20px;fill:none;stroke:#0b234a;stroke-width:2.2;margin-right:6px;vertical-align:middle" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479L12 21l-6.825-4a12.083 12.083 0 01.665-6.479L12 14z"/></svg>CAP&nbsp;<span style="color:#f47b20">TCF</span></span>
+        <div style="display: flex; gap: 6px;">
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Séance S02</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Niveau A1-B2</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Durée 20 min</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Compétence LEXIQUE</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 800; color: #fff; border-radius: 4px; background-color: #475569;">APP</span>
+        </div>
+      </div>
+      <h2 style="font-size: 14pt; font-weight: 800; color: #0b234a; margin: 0; line-height: 1.25;">
+        Glossaire Vocabulaire — Lexique S02
+      </h2>
+    </header>
+  
+    
+    
+    <div class="consigne-box">
+      <div class="consigne-title"><svg style="width:14px;height:14px;fill:none;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg><span>GLOSSAIRE DES MOTS CLÉS</span></div>
+      <div style="font-size: 9.5pt; font-weight: 600; line-height: 1.4; color: #0b234a;">Ces mots constituent le socle de vocabulaire de la séance. Les apprendre pour faciliter vos démarches.</div>
+    </div>
+  
+
+    <table>
+      <thead>
+        <tr style="color: #475569;">
+          <th>Mot</th>
+          <th>Définition simplifiée</th>
+          <th>Exemple d'utilisation</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+      <tr>
+        <td style="font-weight: 800; color: #0b234a; width: 25%;">nom</td>
+        <td style="color: #334155; width: 45%;">Le nom de famille d'une personne.</td>
+        <td style="font-style: italic; color: #475569; width: 30%;">« Écrivez votre nom en majuscules. »</td>
+      </tr>
+    
+      <tr>
+        <td style="font-weight: 800; color: #0b234a; width: 25%;">prénom</td>
+        <td style="color: #334155; width: 45%;">Le nom personnel, avant le nom de famille.</td>
+        <td style="font-style: italic; color: #475569; width: 30%;">« Son prénom est Amadou. »</td>
+      </tr>
+    
+      <tr>
+        <td style="font-weight: 800; color: #0b234a; width: 25%;">naissance</td>
+        <td style="color: #334155; width: 45%;">Le moment où une personne vient au monde.</td>
+        <td style="font-style: italic; color: #475569; width: 30%;">« Sa date de naissance est indiquée sur la carte. »</td>
+      </tr>
+    
+      <tr>
+        <td style="font-weight: 800; color: #0b234a; width: 25%;">nationalité</td>
+        <td style="color: #334155; width: 45%;">L'appartenance à un pays.</td>
+        <td style="font-style: italic; color: #475569; width: 30%;">« Quelle est votre nationalité ? »</td>
+      </tr>
+    
+      <tr>
+        <td style="font-weight: 800; color: #0b234a; width: 25%;">adresse</td>
+        <td style="color: #334155; width: 45%;">Le lieu où l'on habite.</td>
+        <td style="font-style: italic; color: #475569; width: 30%;">« Indiquez votre adresse complète. »</td>
+      </tr>
+    
+      <tr>
+        <td style="font-weight: 800; color: #0b234a; width: 25%;">mairie</td>
+        <td style="color: #334155; width: 45%;">Le bâtiment où l'on fait des démarches administratives locales.</td>
+        <td style="font-style: italic; color: #475569; width: 30%;">« Il va à la mairie pour un document. »</td>
+      </tr>
+    
+      <tr>
+        <td style="font-weight: 800; color: #0b234a; width: 25%;">devise</td>
+        <td style="color: #334155; width: 45%;">Une phrase qui résume les valeurs d'un pays.</td>
+        <td style="font-style: italic; color: #475569; width: 30%;">« La devise française est Liberté, Égalité, Fraternité. »</td>
+      </tr>
+    
+      <tr>
+        <td style="font-weight: 800; color: #0b234a; width: 25%;">drapeau</td>
+        <td style="color: #334155; width: 45%;">Le symbole en tissu coloré d'un pays.</td>
+        <td style="font-style: italic; color: #475569; width: 30%;">« Le drapeau français est bleu, blanc, rouge. »</td>
+      </tr>
+    
+      <tr>
+        <td style="font-weight: 800; color: #0b234a; width: 25%;">hymne</td>
+        <td style="color: #334155; width: 45%;">Le chant officiel d'un pays.</td>
+        <td style="font-style: italic; color: #475569; width: 30%;">« La Marseillaise est l'hymne national. »</td>
+      </tr>
+    
+      <tr>
+        <td style="font-weight: 800; color: #0b234a; width: 25%;">Marianne</td>
+        <td style="color: #334155; width: 45%;">La figure qui représente la République française.</td>
+        <td style="font-style: italic; color: #475569; width: 30%;">« Le buste de Marianne est dans la mairie. »</td>
+      </tr>
+    
+      </tbody>
+    </table>
+  
+    </body>
+    </html>
+  `,
+      'visual-sheet': `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        body {
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
+          color: #0b234a; /* Brand dark blue text */
+          background-color: #ffffff;
+          margin: 0;
+          padding: 0;
+          font-size: 10pt;
+          line-height: 1.5;
+        }
+        .section-title {
+          font-size: 11.5pt;
+          font-weight: 800;
+          color: #0b234a;
+          margin-top: 20px;
+          margin-bottom: 10px;
+          border-bottom: 1.5px solid #e2e8f0;
+          border-left: 4px solid #f47b20; /* Orange actions theme */
+          padding-left: 10px;
+          padding-bottom: 4px;
+        }
+        .consigne-box {
+          background-color: #fff7f0; /* Very light orange background */
+          border-left: 4px solid #f47b20; /* Orange border left */
+          padding: 12px 16px;
+          margin-bottom: 14px;
+          border-radius: 0 6px 6px 0;
+          color: #0b234a; /* Dark blue text */
+        }
+        .consigne-title {
+          font-size: 8.5pt;
+          font-weight: 800;
+          color: #f47b20;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 6px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .consigne-title svg {
+          stroke: #f47b20;
+          vertical-align: middle;
+        }
+        .aides-box {
+          border: 1px dashed #cbd5e1;
+          padding: 10px 14px;
+          margin-bottom: 14px;
+          font-size: 9pt;
+          color: #475569;
+          background-color: #fafbfc;
+          border-radius: 6px;
+        }
+        .response-line {
+          border-bottom: 1.5px dotted #cbd5e1;
+          height: 28px;
+          margin-bottom: 8px;
+        }
+        .checkbox-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 8px;
+          font-size: 9.5pt;
+          cursor: pointer;
+        }
+        .checkbox {
+          width: 14px;
+          height: 14px;
+          border: 1.5px solid #0b234a;
+          border-radius: 3px;
+          display: inline-block;
+          background-color: #ffffff;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 12px;
+          margin-bottom: 12px;
+          box-shadow: 0 2px 5px rgba(11,35,74,0.02);
+        }
+        th {
+          background-color: #f7f5f0; /* Warm clear grey */
+          border-bottom: 2.5px solid #2563EB;
+          text-align: left;
+          padding: 10px;
+          font-size: 9.5pt;
+          font-weight: 800;
+          color: #0b234a;
+        }
+        td {
+          border-bottom: 1px solid #e8e6e0;
+          padding: 10px;
+          font-size: 9pt;
+          line-height: 1.45;
+          vertical-align: top;
+          color: #1e293b;
+        }
+        .tip-box {
+          background-color: #f0fdf4;
+          border: 1px solid #a7f3d0;
+          padding: 12px;
+          border-radius: 6px;
+          font-size: 9pt;
+          color: #065f46;
+          margin-top: 12px;
+          line-height: 1.5;
+        }
+      </style>
+    </head>
+    <body>
+      
+    
+    <header style="border-bottom: 2pt solid #f47b20; padding-bottom: 10px; margin-bottom: 22px; font-family: 'Inter', system-ui, -apple-system, sans-serif;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="display:flex;align-items:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:13pt;color:#0b234a;letter-spacing:-0.5px;"><svg style="width:20px;height:20px;fill:none;stroke:#0b234a;stroke-width:2.2;margin-right:6px;vertical-align:middle" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479L12 21l-6.825-4a12.083 12.083 0 01.665-6.479L12 14z"/></svg>CAP&nbsp;<span style="color:#f47b20">TCF</span></span>
+        <div style="display: flex; gap: 6px;">
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Séance S02</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Niveau A1-B2</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Durée 30 min</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Compétence CIVIQUE</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 800; color: #fff; border-radius: 4px; background-color: #2563EB;">APP</span>
+        </div>
+      </div>
+      <h2 style="font-size: 14pt; font-weight: 800; color: #0b234a; margin: 0; line-height: 1.25;">
+        Fiche Activité — Exploitation du Support Visuel
+      </h2>
+    </header>
+  
+    
+    
+    <div class="consigne-box">
+      <div class="consigne-title"><svg style="width:14px;height:14px;fill:none;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg><span>À FAIRE</span></div>
+      <div style="font-size: 9.5pt; font-weight: 600; line-height: 1.4; color: #0b234a;">Observez attentivement le schéma ci-dessous, puis répondez aux questions.</div>
+    </div>
+  
+
+    <div style="margin: 20px 0; text-align: center;">
+      
+    <svg width="100%" viewBox="0 0 900 300" style="background-color: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 8px; max-width: 100%; height: auto; display: block; margin: 12px auto; box-shadow: 0 4px 12px rgba(11,35,74,0.05);">
+      <rect x="20" y="20" width="520" height="260" rx="8" fill="#f1f5f9" stroke="#0b234a" stroke-width="1.5" />
+<text x="40" y="55"  font-family="system-ui, -apple-system, sans-serif" font-size="16px" font-weight="700" fill="#0b234a">Formulaire d'état civil (document pédagogique fictif)</text>
+<text x="40" y="100"  font-family="system-ui, -apple-system, sans-serif" font-size="14px" font-weight="700" fill="#0b234a">Nom : ______________________</text>
+<text x="40" y="135"  font-family="system-ui, -apple-system, sans-serif" font-size="14px" font-weight="700" fill="#0b234a">Prénom : ___________________</text>
+<text x="40" y="170"  font-family="system-ui, -apple-system, sans-serif" font-size="14px" font-weight="700" fill="#0b234a">Date de naissance : _________</text>
+<text x="40" y="205"  font-family="system-ui, -apple-system, sans-serif" font-size="14px" font-weight="700" fill="#0b234a">Adresse : __________________</text>
+<rect x="620" y="60" width="60" height="160" rx="0" fill="#1e3a8a" stroke="#0b234a" stroke-width="1.5" />
+<rect x="680" y="60" width="60" height="160" rx="0" fill="#f8fafc" stroke="#0b234a" stroke-width="1.5" />
+<rect x="740" y="60" width="60" height="160" rx="0" fill="#b91c1c" stroke="#0b234a" stroke-width="1.5" />
+<text x="710" y="245" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="14px" font-weight="700" fill="#0b234a">Drapeau tricolore</text>
+
+    </svg>
+  
+      <div style="font-size: 8.5pt; font-style: italic; color: #475569; margin-top: 6px;">
+        <strong>Figure 1 :</strong> Formulaire d'état civil et drapeau tricolore
+      </div>
+      <div style="font-size: 7.5pt; color: #64748b; margin-top: 2px;">
+        Source : CapTCF Curriculum Authority | Droits d'usage pédagogique réservés.
+      </div>
+    </div>
+
+    <div class="section-title">Questions d'observation</div>
+
+    <div style="margin-bottom: 16px; padding-left: 8px;">
+      <div style="font-weight: 700; margin-bottom: 6px; color: #0b234a;">q1. Citez les trois premiers thèmes civiques mentionnés sur le schéma :</div>
+      <div class="response-line"></div>
+      <div class="response-line"></div>
+    </div>
+
+    <div style="margin-bottom: 16px; padding-left: 8px;">
+      <div style="font-weight: 700; margin-bottom: 6px; color: #0b234a;">q2. Quel est le rôle principal de ces thèmes civiques d'après le formateur ?</div>
+      <div class="response-line"></div>
+      <div class="response-line"></div>
+    </div>
+  
+    </body>
+    </html>
+  `,
+      'convert-sheet': `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        body {
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
+          color: #0b234a; /* Brand dark blue text */
+          background-color: #ffffff;
+          margin: 0;
+          padding: 0;
+          font-size: 10pt;
+          line-height: 1.5;
+        }
+        .section-title {
+          font-size: 11.5pt;
+          font-weight: 800;
+          color: #0b234a;
+          margin-top: 20px;
+          margin-bottom: 10px;
+          border-bottom: 1.5px solid #e2e8f0;
+          border-left: 4px solid #f47b20; /* Orange actions theme */
+          padding-left: 10px;
+          padding-bottom: 4px;
+        }
+        .consigne-box {
+          background-color: #fff7f0; /* Very light orange background */
+          border-left: 4px solid #f47b20; /* Orange border left */
+          padding: 12px 16px;
+          margin-bottom: 14px;
+          border-radius: 0 6px 6px 0;
+          color: #0b234a; /* Dark blue text */
+        }
+        .consigne-title {
+          font-size: 8.5pt;
+          font-weight: 800;
+          color: #f47b20;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 6px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .consigne-title svg {
+          stroke: #f47b20;
+          vertical-align: middle;
+        }
+        .aides-box {
+          border: 1px dashed #cbd5e1;
+          padding: 10px 14px;
+          margin-bottom: 14px;
+          font-size: 9pt;
+          color: #475569;
+          background-color: #fafbfc;
+          border-radius: 6px;
+        }
+        .response-line {
+          border-bottom: 1.5px dotted #cbd5e1;
+          height: 28px;
+          margin-bottom: 8px;
+        }
+        .checkbox-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 8px;
+          font-size: 9.5pt;
+          cursor: pointer;
+        }
+        .checkbox {
+          width: 14px;
+          height: 14px;
+          border: 1.5px solid #0b234a;
+          border-radius: 3px;
+          display: inline-block;
+          background-color: #ffffff;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 12px;
+          margin-bottom: 12px;
+          box-shadow: 0 2px 5px rgba(11,35,74,0.02);
+        }
+        th {
+          background-color: #f7f5f0; /* Warm clear grey */
+          border-bottom: 2.5px solid #475569;
+          text-align: left;
+          padding: 10px;
+          font-size: 9.5pt;
+          font-weight: 800;
+          color: #0b234a;
+        }
+        td {
+          border-bottom: 1px solid #e8e6e0;
+          padding: 10px;
+          font-size: 9pt;
+          line-height: 1.45;
+          vertical-align: top;
+          color: #1e293b;
+        }
+        .tip-box {
+          background-color: #f0fdf4;
+          border: 1px solid #a7f3d0;
+          padding: 12px;
+          border-radius: 6px;
+          font-size: 9pt;
+          color: #065f46;
+          margin-top: 12px;
+          line-height: 1.5;
+        }
+      </style>
+    </head>
+    <body>
+      
+    
+    <header style="border-bottom: 2pt solid #f47b20; padding-bottom: 10px; margin-bottom: 22px; font-family: 'Inter', system-ui, -apple-system, sans-serif;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="display:flex;align-items:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:13pt;color:#0b234a;letter-spacing:-0.5px;"><svg style="width:20px;height:20px;fill:none;stroke:#0b234a;stroke-width:2.2;margin-right:6px;vertical-align:middle" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479L12 21l-6.825-4a12.083 12.083 0 01.665-6.479L12 14z"/></svg>CAP&nbsp;<span style="color:#f47b20">TCF</span></span>
+        <div style="display: flex; gap: 6px;">
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Séance S02</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Niveau A1-B2 Invariant</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Durée N/A</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Compétence LECTURE</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 800; color: #fff; border-radius: 4px; background-color: #475569;">APP</span>
+        </div>
+      </div>
+      <h2 style="font-size: 14pt; font-weight: 800; color: #0b234a; margin: 0; line-height: 1.25;">
+        Notice d'Accueil — Structure du Parcours d'Intégration
+      </h2>
+    </header>
+  
+    
+    
+    <div class="consigne-box">
+      <div class="consigne-title"><svg style="width:14px;height:14px;fill:none;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg><span>DOCUMENT TRANSFORMÉ (NOTICE D'ORIENTATION)</span></div>
+      <div style="font-size: 9.5pt; font-weight: 600; line-height: 1.4; color: #0b234a;">Ce document est un extrait de la notice officielle d'accueil, restructuré selon la charte d'impression CapTCF pour une lisibilité maximale.</div>
+    </div>
+  
+
+    <div style="margin-top: 20px; line-height: 1.6; color: #1e293b;">
+      <h3 style="font-size: 12pt; color: #0b234a; margin-bottom: 10px; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px;">1. Bienvenue dans votre parcours d'intégration</h3>
+      <p style="margin-bottom: 12px;">
+        Chaque primo-arrivant signataire du contrat d'intégration républicaine s'engage dans un parcours de formation linguistique et civique de **80 heures** (réparties sur **25 séances** de trois heures).
+      </p>
+
+      <h3 style="font-size: 12pt; color: #0b234a; margin-bottom: 10px; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px;">2. Les Objectifs d'Apprentissage</h3>
+      <p style="margin-bottom: 12px;">
+        La formation vise l'acquisition de repères sur la société française à travers cinq thèmes civiques :
+      </p>
+      <ul style="margin-left: 20px; margin-bottom: 15px;">
+        <li>Principes et valeurs de la République</li>
+        <li>Système institutionnel et politique</li>
+        <li>Droits et devoirs en France</li>
+        <li>Histoire, géographie et culture</li>
+        <li>Vie en société et démarches quotidiennes</li>
+      </ul>
+
+      <h3 style="font-size: 12pt; color: #0b234a; margin-bottom: 10px; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px;">3. Présence et Assiduité</h3>
+      <p style="margin-bottom: 12px; background-color: #fffbeb; border-left: 3px solid #f59e0b; padding: 10px; border-radius: 4px;">
+        La présence à chaque séance est obligatoire et contrôlée par émargement. Deux évaluations nationales hors séances mesurent vos progrès : l'évaluation intermédiaire et l'évaluation finale.
+      </p>
+    </div>
+  
+    </body>
+    </html>
+  `
+    };
+
+    let activeTab = 'sofiane-checklist';
+    let viewMode = 'a4';
+
+    function showTab(tabId) {
+      const items = document.querySelectorAll('.menu-item');
+      items.forEach(it => it.classList.remove('active'));
+      const activeItem = Array.from(items).find(it => it.getAttribute('onclick') && it.getAttribute('onclick').includes(tabId));
+      if (activeItem) activeItem.classList.add('active');
+
+      document.getElementById('sofiane-checklist').style.display = 'none';
+      document.getElementById('conformity-report').style.display = 'none';
+      document.getElementById('iframe-view').style.display = 'none';
+      document.getElementById('toggle-container').style.display = 'none';
+
+      activeTab = tabId;
+
+      if (tabId === 'sofiane-checklist') {
+        document.getElementById('sofiane-checklist').style.display = 'block';
+        document.getElementById('view-title').innerText = 'Points à valider par Sofiane — Séance S02';
+      } else if (tabId === 'conformity-report') {
+        document.getElementById('conformity-report').style.display = 'block';
+        document.getElementById('view-title').innerText = "Rapport d'Audit & Conformité S02";
+      } else {
+        document.getElementById('iframe-view').style.display = 'block';
+        document.getElementById('toggle-container').style.display = 'flex';
+        document.getElementById('view-title').innerText = 'Prévisualisation A4 : ' + tabId.replace('-sheet', '').replace('-', ' ');
+        const doc = document.getElementById('preview-iframe').contentWindow.document;
+        doc.open();
+        doc.write(templates[tabId]);
+        doc.close();
+      }
+    }
+
+    function setViewMode(mode) {
+      viewMode = mode;
+      const frame = document.getElementById('iframe-view');
+      const btnA4 = document.getElementById('toggle-a4');
+      const btnFull = document.getElementById('toggle-full');
+      if (mode === 'full') {
+        frame.classList.add('full-screen');
+        btnFull.classList.add('active');
+        btnA4.classList.remove('active');
+      } else {
+        frame.classList.remove('full-screen');
+        btnA4.classList.add('active');
+        btnFull.classList.remove('active');
+      }
+    }
+
+    function toggleCheck(itemId) {
+      document.getElementById(itemId).classList.toggle('checked');
+    }
+
+    function exportFeedback() {
+      const results = {};
+      document.querySelectorAll('.checklist-item').forEach(it => {
+        results[it.id] = { checked: it.classList.contains('checked'), feedback: it.querySelector('.feedback-input').value };
+      });
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(results, null, 2));
+      const a = document.createElement('a');
+      a.setAttribute("href", dataStr);
+      a.setAttribute("download", "sofiane_validation_S02.json");
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      alert("Validation exportée avec succès !");
+    }
+  </script>
+</body>
+</html>

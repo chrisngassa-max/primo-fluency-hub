@@ -2,9 +2,9 @@ import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { PlaywrightRenderer } from './providers/playwright-renderer.mjs';
-import { 
-  Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, 
-  BorderStyle, AlignmentType, WidthType
+import {
+  Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
+  BorderStyle, AlignmentType, WidthType, ImageRun
 } from 'docx';
 
 // Brand colors matching the app
@@ -962,33 +962,31 @@ async function buildLexiqueDocx(brief, session) {
 async function buildSupportVisuelDocx(brief, session) {
   const children = [
     ...createDocxHeader(session, 'A1-B2', '30 min', 'CIVIQUE', 'APP', `Fiche Activité — Exploitation du Support Visuel`, COLORS.apprenant),
-    createDocxConsigne('À FAIRE', 'Observez le schéma représentatif des 5 thèmes civiques et répondez aux questions.')
+    createDocxConsigne('À FAIRE', 'Observez attentivement le schéma ci-dessous, puis répondez aux questions.')
   ];
 
-  // Render visual schema representation as a clean 5-column table in Word
-  const cols = brief.visual.scene.elements.filter(el => el.type === 'rect');
-  const txts = brief.visual.scene.elements.filter(el => el.type === 'text');
-  
-  const cells = cols.map((col, idx) => {
-    const matchingTexts = txts.filter(t => Math.abs(t.x - (col.x + col.width / 2)) < 50);
-    const label = matchingTexts.map(t => t.text).join(' ');
-    return new TableCell({
-      children: [
-        new Paragraph({
-          children: [
-            new TextRun({ text: `Thème ${idx + 1}\n`, bold: true, size: 16 }),
-            new TextRun({ text: label, size: 14 })
-          ]
-        })
-      ],
-      width: { size: 20, type: WidthType.PERCENTAGE }
-    });
-  });
-
-  const row = new TableRow({ children: cells });
-  children.push(new Table({ rows: [row], width: { size: 100, type: WidthType.PERCENTAGE } }));
+  // Rendu du schéma réel (SVG -> PNG) et insertion comme image, plutôt qu'un
+  // tableau texte heuristique qui ne generalise pas d'une séance à l'autre.
+  const scene = brief.visual.scene;
+  const visualSvg = renderVisualSVG(brief.visual);
+  const renderer = new PlaywrightRenderer();
+  const { buffer: imageBuffer } = await renderer.renderSvgToRaster({ svg: visualSvg, format: 'png' });
+  const displayWidth = 500;
+  const displayHeight = Math.round(displayWidth * (scene.height / scene.width));
 
   children.push(
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      spacing: { before: 150, after: 100 },
+      children: [
+        new ImageRun({
+          data: imageBuffer,
+          type: 'png',
+          transformation: { width: displayWidth, height: displayHeight }
+        })
+      ]
+    }),
+    createDocxParagraph(`Figure 1 : ${scene.title}`, false, 9, '475569', 0),
     createDocxParagraph('Questions d\'observation :', true, 12, COLORS.text, 200),
     createDocxParagraph('q1. Citez les trois premiers thèmes civiques mentionnés sur le schéma :', true, 11),
     createDocxParagraph('......................................................................................................................', false, 11, '94A3B8'),

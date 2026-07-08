@@ -40,3 +40,9 @@
 1. **Papier** : Utiliser du papier standard A4 80g blanc mat pour un contraste optimal.
 2. **Impression** : Imprimer en mode standard ou "brouillon" (économie de toner), la charte ayant été spécialement conçue pour rester parfaitement lisible avec un faible débit d'encre.
 3. **Cartes de rôles (Expression Orale)** : Prévoir une découpe propre selon les repères pointillés.
+
+---
+
+## 5. Correctif appliqué (8 juillet 2026) — Support visuel DOCX
+
+`S01_APP_VI_ALL_support-visuel.docx` a été remplacé : il contient désormais une **vraie image intégrée** (`word/media/*.png`, schéma des cinq thèmes civiques) au lieu de l'ancien tableau texte heuristique. Le PDF associé n'a pas été modifié (checksum inchangé). Aucun autre document de la séance S01 n'a été régénéré ni modifié. Détail du diagnostic et de la comparaison : voir le contrôle mené sur S02 (bug identique détecté lors de la production S02, corrigé dans `scripts/curriculum/generate-session-pack.mjs`, puis appliqué ici après validation).
