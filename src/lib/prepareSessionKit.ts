@@ -10,6 +10,7 @@ import {
   linkCurriculumExercicesToSession,
   pickCurriculumExercicesForPilot,
 } from "@/lib/curriculum/exerciseBridge";
+import { getCaptcfLevelProfileSummary } from "@/lib/captcf-level-profiles";
 
 interface PrepareArgs {
   sessionId: string;
@@ -196,6 +197,7 @@ async function generateFiveExercises({
   const plan = buildAdaptiveExercisePlan(perf, fallbackCompetences, totalCount);
 
   const niveau = niveauCible || "A1";
+  const levelProfile = getCaptcfLevelProfileSummary(niveau);
   const objectif = objectifs || titre || "Exercice de séance";
 
   // Lance les générations IA EN PARALLÈLE (au lieu de séquentiel)
@@ -210,6 +212,7 @@ async function generateFiveExercises({
             : objectif,
           competence: slot.competence,
           niveauVise: niveau,
+          levelProfile,
           count: slot.count,
           difficultyLevel: slot.difficultyLevel,
           // groupId permet au moteur d'exploiter les profils élèves et les

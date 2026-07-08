@@ -21,6 +21,7 @@ import {
   safeDocumentFilename,
 } from "@/lib/document-templates/captcfDocumentTemplates";
 import { cn } from "@/lib/utils";
+import { getCaptcfLevelProfileSummary, resolveCaptcfDocumentLevel } from "@/lib/captcf-level-profiles";
 
 type DocumentGenerationDialogProps = {
   open: boolean;
@@ -47,13 +48,21 @@ export default function DocumentGenerationDialog({ open, onOpenChange, exercises
         },
       ];
 
+  const targetLevel = useMemo(() => resolveCaptcfDocumentLevel({
+    exerciseLevel: selectedExercises[0]?.niveau_vise,
+    fallback: "A2",
+  }), [selectedExercises]);
+
+  const levelProfile = useMemo(() => getCaptcfLevelProfileSummary(targetLevel), [targetLevel]);
+
   const input = useMemo(
     () => ({
       type: documentType,
       title,
       exercises: selectedExercises,
+      level: targetLevel,
     }),
-    [documentType, selectedExercises, title],
+    [documentType, selectedExercises, targetLevel, title],
   );
 
   const previewHtml = useMemo(() => buildCaptcfDocumentHtml(input), [input]);
@@ -170,9 +179,12 @@ export default function DocumentGenerationDialog({ open, onOpenChange, exercises
             </div>
 
             <div className="rounded-lg border bg-[#fff7f0] p-3 text-sm text-[#0b234a]">
-              <p className="font-bold text-[#f47b20]">Regles appliquees</p>
+              <p className="font-bold text-[#f47b20]">Regles appliquees automatiquement</p>
               <p className="mt-1">
-                Logo CAP TCF, consignes orange, bleu #0b234a, export ecran/impression. Aucun enregistrement Supabase dans cette version.
+                Niveau {levelProfile.level} : {levelProfile.questionStyle}. {levelProfile.supportLevel}.
+              </p>
+              <p className="mt-1 text-xs text-[#475569]">
+                Logo CAP TCF, consignes orange, export ecran/impression. Aucun enregistrement Supabase dans cette version.
               </p>
             </div>
 

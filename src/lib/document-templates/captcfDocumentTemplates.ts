@@ -1,4 +1,4 @@
-import {
+﻿import {
   AlignmentType,
   BorderStyle,
   Document,
@@ -11,6 +11,11 @@ import {
   TextRun,
   WidthType,
 } from "docx";
+import {
+  getCaptcfLevelProfile,
+  getCaptcfLevelProfileSummary,
+  resolveCaptcfDocumentLevel,
+} from "@/lib/captcf-level-profiles";
 
 export type CaptcfDocumentType =
   | "fiche_formateur"
@@ -40,6 +45,9 @@ export type CaptcfDocumentInput = {
   type: CaptcfDocumentType;
   title?: string;
   exercises: CaptcfExerciseLike[];
+  level?: string | null;
+  sessionLevel?: string | null;
+  groupLevel?: string | null;
 };
 
 export const CAPTCF_DOCUMENT_TYPES: Array<{
@@ -130,10 +138,18 @@ function getItems(exercise: CaptcfExerciseLike) {
 function getDocumentMeta(input: CaptcfDocumentInput) {
   const option = CAPTCF_DOCUMENT_TYPES.find((item) => item.value === input.type) ?? CAPTCF_DOCUMENT_TYPES[1];
   const first = input.exercises[0];
+  const level = resolveCaptcfDocumentLevel({
+    explicitLevel: input.level,
+    exerciseLevel: first?.niveau_vise,
+    sessionLevel: input.sessionLevel,
+    groupLevel: input.groupLevel,
+    fallback: "A2",
+  });
   return {
     option,
     title: input.title?.trim() || option.label,
-    level: first?.niveau_vise || "A2",
+    level,
+    profile: getCaptcfLevelProfile(level),
     competence: first?.competence || "TCF",
   };
 }
@@ -201,6 +217,9 @@ function exerciseCard(exercise: CaptcfExerciseLike, index: number, withAnswers =
 function buildTypeSpecificContent(input: CaptcfDocumentInput) {
   const exercises = input.exercises.length ? input.exercises : [{ titre: "Document CapTCF", niveau_vise: "A2", competence: "TCF" }];
   const first = exercises[0];
+  const meta = getDocumentMeta(input);
+  const profile = meta.profile;
+  const levelBox = levelProfileBox(profile);
 
   switch (input.type) {
     case "fiche_formateur":
@@ -218,7 +237,8 @@ function buildTypeSpecificContent(input: CaptcfDocumentInput) {
       `;
     case "dialogue_transcription":
       return `
-        ${consigne("CONTEXTE D'ECOUTE", "La duree audio cible est de 2 min 30. La plage acceptable est de 2 min 25 a 2 min 35.")}
+        ${levelBox}
+        ${consigne("CONTEXTE D'ECOUTE", `Niveau ${profile.level}. La duree audio cible est de 2 min 30. La plage acceptable est de 2 min 25 a 2 min 35. ${profile.dialogueRule}`)}
         <section class="captcf-card">
           <h2>${escapeHtml(first.titre || "Dialogue")}</h2>
           <p class="captcf-dialogue-line"><strong>Personne A :</strong> Bonjour, je viens pour une demarche administrative.</p>
@@ -229,7 +249,8 @@ function buildTypeSpecificContent(input: CaptcfDocumentInput) {
       `;
     case "qcm_tcf":
       return `
-        ${consigne("CONSIGNE EXAMEN TCF", "Lisez ou ecoutez le document. Pour chaque question, cochez la bonne reponse A, B, C ou D.")}
+        ${levelBox}
+        ${consigne("CONSIGNE EXAMEN TCF", `Lisez ou ecoutez le document. Pour chaque question, cochez la bonne reponse. Cadrage ${profile.level} : ${profile.qcmRule}`)}
         ${exercises.map((exercise, index) => exerciseCard(exercise, index, false)).join("")}
       `;
     case "qcm_civique":
@@ -279,6 +300,17 @@ function buildTypeSpecificContent(input: CaptcfDocumentInput) {
         ${exercises.map((exercise, index) => exerciseCard(exercise, index, false)).join("")}
       `;
   }
+}
+
+function levelProfileBox(profile: ReturnType<typeof getCaptcfLevelProfile>) {
+  return `
+    <section class="captcf-level-profile">
+      <strong>${escapeHtml(profile.label)}</strong>
+      <span>${escapeHtml(profile.questionStyle)}</span>
+      <span>${escapeHtml(profile.supportLevel)}</span>
+      <span>${escapeHtml(profile.expectedProduction)}</span>
+    </section>
+  `;
 }
 
 export const CAPTCF_DOCUMENT_CSS = `
@@ -381,6 +413,23 @@ export const CAPTCF_DOCUMENT_CSS = `
   }
   .captcf-question {
     margin: 13px 0;
+  }
+  .captcf-level-profile {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr 1fr 1fr;
+    gap: 8px;
+    margin: 0 0 14px;
+    padding: 9px 10px;
+    border: 1px solid ${BRAND.border};
+    border-left: 4px solid ${BRAND.accent};
+    border-radius: 8px;
+    background: #fffdf8;
+    color: ${BRAND.primary};
+    font-size: 11px;
+    line-height: 1.35;
+  }
+  .captcf-level-profile span {
+    color: ${BRAND.muted};
   }
   .captcf-question h3 {
     margin: 0 0 4px;
@@ -569,6 +618,7 @@ export async function buildCaptcfDocumentDocxBlob(input: CaptcfDocumentInput) {
   const meta = getDocumentMeta(input);
   const exercises = input.exercises.length ? input.exercises : [{ titre: meta.title, niveau_vise: meta.level, competence: meta.competence }];
   const withAnswers = input.type === "corrige_formateur";
+  const profileSummary = getCaptcfLevelProfileSummary(meta.level);
   const children: any[] = [
     new Paragraph({
       alignment: AlignmentType.LEFT,

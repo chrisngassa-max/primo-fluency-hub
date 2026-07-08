@@ -26,6 +26,7 @@ import {
 import { cn } from "@/lib/utils";
 import { PreSessionSelectionReport } from "@/components/PreSessionSelectionReport";
 import { usePreSessionSelectionReport } from "@/hooks/usePreSessionSelectionReport";
+import { getCaptcfLevelProfileSummary } from "@/lib/captcf-level-profiles";
 
 // ─── Types ───
 type PreflightStatus = "ready" | "to_fix" | "pending";
@@ -161,6 +162,7 @@ const PreflightExercises = ({ sessionId, session, exercises, formateurId, parcou
     setGenerating(true);
     try {
       const niveauVise = session.niveau_cible || parcoursSeance?.parcours?.niveau_cible || "A1";
+      const levelProfile = getCaptcfLevelProfileSummary(niveauVise);
       const sessionComps: string[] = (session as any)?.competences_cibles ?? [];
       const competences = sessionComps.length > 0 ? sessionComps : ["CE"];
       const objectif = parcoursSeance?.objectif_principal || session.objectifs || "Exercice de séance";
@@ -186,6 +188,7 @@ const PreflightExercises = ({ sessionId, session, exercises, formateurId, parcou
             pointName: objectif,
             competence: comp,
             niveauVise,
+            levelProfile,
             count: compCount,
             difficultyLevel: 5,
             type_demarche: (session as any)?.group?.type_demarche || "titre_sejour",
@@ -350,11 +353,13 @@ const PreflightExercises = ({ sessionId, session, exercises, formateurId, parcou
     setRegeneratingId(se.id);
     try {
       const niveauVise = ex.niveau_vise || session?.niveau_cible || "A1";
+      const levelProfile = getCaptcfLevelProfileSummary(niveauVise);
       const { data, error } = await supabase.functions.invoke("generate-exercises", {
         body: {
           pointName: ex.titre || "Régénération",
           competence: ex.competence,
           niveauVise,
+          levelProfile,
           count: 1,
           difficultyLevel: ex.difficulte ?? 5,
           type_demarche: (session as any)?.group?.type_demarche || "titre_sejour",

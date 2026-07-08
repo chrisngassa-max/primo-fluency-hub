@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -22,6 +22,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { BookOpen, FileText, RotateCcw, Image, Loader2, Save, Printer, Eye, Check, ExternalLink, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { getCaptcfLevelProfileSummary, resolveCaptcfDocumentLevel } from "@/lib/captcf-level-profiles";
 
 type ResourceType = "lecon" | "vocabulaire" | "rappel_methodo" | "rappel_visuel";
 
@@ -129,7 +130,8 @@ export default function GenerateResourceDialog({
         body: {
           type: selectedType,
           competence: primaryExercise?.competence || "CE",
-          niveau: primaryExercise?.niveau_vise || session?.niveau_cible || "A1",
+          niveau: resolvedLevel,
+          levelProfile,
           mode: "manual",
           exerciseContext: primaryExercise
             ? { titre: primaryExercise.titre, consigne: primaryExercise.consigne, competence: primaryExercise.competence, format: primaryExercise.format }
@@ -164,9 +166,9 @@ export default function GenerateResourceDialog({
         exercice_id: primaryExercise?.id || null,
         type: selectedType,
         competence: primaryExercise?.competence || "CE",
-        niveau: primaryExercise?.niveau_vise || session?.niveau_cible || "A1",
+        niveau: resolvedLevel,
         titre: generatedResource.titre,
-        contenu: generatedResource as any,
+        contenu: { ...generatedResource, levelProfile } as any,
         source: "manuel",
         statut,
       }).select("id").single();
@@ -260,7 +262,7 @@ export default function GenerateResourceDialog({
     if (!printWindow || !generatedResource) return;
     
     const competenceLabel = primaryExercise?.competence || "CE";
-    const niveau = primaryExercise?.niveau_vise || session?.niveau_cible || "A1";
+    const niveau = resolvedLevel;
     
     printWindow.document.write(`
       <html><head><title>${generatedResource.titre}</title>
@@ -426,7 +428,8 @@ export default function GenerateResourceDialog({
           <div className="flex flex-col gap-3 flex-1 min-h-0">
             <ScrollArea className="flex-1 border rounded-lg p-4">
               <h2 className="text-lg font-bold mb-1">{generatedResource.titre}</h2>
-              <p className="text-sm text-muted-foreground mb-4">{generatedResource.resume}</p>
+              <p className="text-sm text-muted-foreground mb-2">{generatedResource.resume}</p>
+              <Badge variant="outline" className="mb-4 w-fit">Profil {levelProfile.level} - {levelProfile.questionStyle}</Badge>
               <Separator className="mb-4" />
               {generatedResource.sections.map((section, i) => (
                 <div key={i} className={`mb-4 ${
@@ -522,3 +525,4 @@ export default function GenerateResourceDialog({
     </Dialog>
   );
 }
+

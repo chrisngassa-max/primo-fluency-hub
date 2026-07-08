@@ -797,7 +797,7 @@ const SessionPilot = () => {
         }));
 
         const { data, error } = await supabase.functions.invoke("generate-exercises", {
-          body: { pointName: objectif, competence: comp, niveauVise, count: compCount, difficultyLevel: generateDifficulty, type_demarche: (session as any)?.group?.type_demarche || "titre_sejour", groupId: (session as any)?.group_id, existingExercises: existingContext, eleveIds: eleveIdsForGen, excludeExerciceIds: [...excludeExerciceIds, ...linkExerciceIds] },
+          body: { pointName: objectif, competence: comp, niveauVise, levelProfile, count: compCount, difficultyLevel: generateDifficulty, type_demarche: (session as any)?.group?.type_demarche || "titre_sejour", groupId: (session as any)?.group_id, existingExercises: existingContext, eleveIds: eleveIdsForGen, excludeExerciceIds: [...excludeExerciceIds, ...linkExerciceIds] },
         });
 
         if (error) throw error;
@@ -1073,7 +1073,7 @@ const SessionPilot = () => {
             difficulte: duplicateDifficulty,
             contenu: generated.contenu || {},
             animation_guide: generated.animation_guide || null,
-            niveau_vise: ex.niveau_vise || session.niveau_cible || "A1",
+            niveau_vise: duplicateNiveauVise,
             formateur_id: user.id,
             point_a_maitriser_id: ex.point_a_maitriser_id || defaultPoint?.id,
             is_ai_generated: true,
