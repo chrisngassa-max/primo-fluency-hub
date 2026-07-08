@@ -54,6 +54,7 @@ import ImportProgramme from "@/pages/formateur/ImportProgramme";
 import Parametres from "@/pages/formateur/Parametres";
 import ParcoursPage from "@/pages/formateur/ParcoursPage";
 import ParcoursDetail from "@/pages/formateur/ParcoursDetail";
+import SessionDocumentsPage from "@/pages/formateur/SessionDocumentsPage";
 import RapportsPage from "@/pages/formateur/RapportsPage";
 import SessionSupermarket from "@/pages/formateur/SessionSupermarket";
 import SuiviDevoirsPage from "@/pages/formateur/SuiviDevoirsPage";
@@ -164,6 +165,7 @@ const App = () => (
               <Route path="tests" element={<TestsEntreePage />} />
               <Route path="import-programme" element={<ImportProgramme />} />
               <Route path="parcours" element={<ParcoursPage />} />
+              <Route path="parcours/:sessionCode/documents" element={<SessionDocumentsPage />} />
               <Route path="parcours/:parcoursId" element={<ParcoursDetail />} />
               <Route path="production-parcours" element={<ProductionParcours />} />
               <Route path="rapports" element={<RapportsPage />} />

@@ -14,6 +14,7 @@ import {
   SESSION_DOCUMENT_TYPE_LABELS,
   type SessionDocument,
   type SessionDocumentStatus,
+  type SessionDocumentType,
 } from "@/lib/curriculum/types";
 
 // Fichiers PDF/DOCX déjà générés et publiés (docs/ -> GitHub Pages).
@@ -157,9 +158,14 @@ function DocumentEditorCard({ doc, onSaved }: DocumentEditorCardProps) {
 
 interface SessionDocumentsPanelProps {
   sessionCode: string;
+  /** Si fourni, n'affiche que les documents dont le type est dans cette liste
+   *  (utilisé par les onglets Formateur/Apprenant/Ressources de SessionDocumentsPage). */
+  documentTypes?: SessionDocumentType[];
+  /** Message affiché quand la liste (filtrée) est vide, à la place du message par défaut. */
+  emptyMessage?: string;
 }
 
-export function SessionDocumentsPanel({ sessionCode }: SessionDocumentsPanelProps) {
+export function SessionDocumentsPanel({ sessionCode, documentTypes, emptyMessage }: SessionDocumentsPanelProps) {
   const queryClient = useQueryClient();
   const queryKey = ["session-documents", sessionCode];
 
@@ -190,10 +196,14 @@ export function SessionDocumentsPanel({ sessionCode }: SessionDocumentsPanelProp
     );
   }
 
-  if (!documents || documents.length === 0) {
+  const filteredDocuments = documentTypes
+    ? (documents ?? []).filter((doc) => documentTypes.includes(doc.document_type))
+    : documents ?? [];
+
+  if (filteredDocuments.length === 0) {
     return (
       <p className="text-sm text-muted-foreground text-center py-8">
-        Aucun document de séance pour {sessionCode} pour l'instant. Le module MVP ne couvre que S01 v3.
+        {emptyMessage ?? `Aucun document de séance pour ${sessionCode} pour l'instant. Le module MVP ne couvre que S01 v3.`}
       </p>
     );
   }
@@ -205,7 +215,7 @@ export function SessionDocumentsPanel({ sessionCode }: SessionDocumentsPanelProp
         Ils sont modifiables ici et enregistrés automatiquement. Les PDF/DOCX déjà publiés restent
         inchangés et accessibles via les boutons ci-dessus.
       </p>
-      {documents.map((doc) => (
+      {filteredDocuments.map((doc) => (
         <DocumentEditorCard key={doc.id} doc={doc} onSaved={handleSaved} />
       ))}
     </div>
