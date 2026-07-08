@@ -231,7 +231,17 @@ export type SessionDocumentType =
   | "support_visuel"
   | "document_transforme"
   | "document_importe"
-  | "exercice_interactif";
+  | "exercice_interactif"
+  | "note_formateur"
+  | "consigne_apprenant"
+  | "activite_ecrite"
+  | "activite_orale"
+  | "support_libre";
+
+// Audience : détermine l'onglet d'affichage. Ordre global (display_order)
+// partagé par toute la séance, indépendant de l'audience — un document
+// "both" doit avoir une seule position valable dans les deux vues.
+export type SessionDocumentAudience = "formateur" | "apprenant" | "both" | "staging";
 
 export type SessionDocumentStatus =
   | "brouillon"
@@ -253,6 +263,8 @@ export interface SessionDocument {
   source_file_path: string | null;
   file_url: string | null;
   version: number;
+  display_order: number;
+  audience: SessionDocumentAudience;
   updated_at: string;
 }
 
@@ -269,6 +281,30 @@ export const SESSION_DOCUMENT_TYPE_LABELS: Record<SessionDocumentType, string> =
   document_transforme: "Document Transformé",
   document_importe: "Document Importé",
   exercice_interactif: "Exercice Interactif",
+  note_formateur: "Note Formateur",
+  consigne_apprenant: "Consigne Apprenant",
+  activite_ecrite: "Activité Écrite",
+  activite_orale: "Activité Orale",
+  support_libre: "Support Libre",
+};
+
+// Types de blocs vierges proposés par "Insérer avant/après" (Lot 2).
+// L'audience du document créé est celle de l'onglet depuis lequel on
+// insère (pas une audience fixe par type) : ces types ne sont que des
+// gabarits de contenu.
+export const BLANK_DOCUMENT_TYPES: SessionDocumentType[] = [
+  "note_formateur",
+  "consigne_apprenant",
+  "activite_ecrite",
+  "activite_orale",
+  "support_libre",
+];
+
+export const SESSION_DOCUMENT_AUDIENCE_LABELS: Record<SessionDocumentAudience, string> = {
+  formateur: "Formateur",
+  apprenant: "Apprenant",
+  both: "Formateur + Apprenant",
+  staging: "Ressources à classer",
 };
 
 export const SESSION_DOCUMENT_STATUS_LABELS: Record<SessionDocumentStatus, string> = {
