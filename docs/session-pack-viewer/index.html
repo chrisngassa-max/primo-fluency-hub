@@ -97,6 +97,7 @@
     white-space: nowrap;
   }
   .badge.civic { color: #b45309; border-color: rgba(180,83,9,0.25); background: #fffbeb; }
+  .badge.pilote { color: #fff; background: #7c3aed; border-color: #7c3aed; }
   .session-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
   .btn-dashboard {
     display: inline-flex;
@@ -223,6 +224,17 @@
       dir: '../seance-1-modele-validation'
     },
     {
+      code: 'S01 v3',
+      filePrefix: 'S01',
+      titre: 'Accueil, objectifs et cinq thèmes — dense 180 min',
+      niveau: 'A1-B2',
+      competences: 'CO/CE/EO/EE/CIVIQUE',
+      civique: 'Droits et devoirs',
+      dir: '../seance-1-v3-validation',
+      reportFile: 'S01_v3_conformity-report.md',
+      pilote: true
+    },
+    {
       code: 'S02',
       titre: 'État civil, mairie et symboles',
       niveau: 'A1-B2',
@@ -290,23 +302,29 @@
 
   SESSIONS.forEach(session => {
     const base = session.dir;
-    const S = session.code;
+    const S = session.filePrefix || session.code;
+    const reportFile = session.reportFile || (S + '_conformity-report.md');
+
+    const badges = [
+      el('span', { class: 'badge', text: 'Niveau ' + session.niveau }),
+      el('span', { class: 'badge', text: session.competences }),
+      el('span', { class: 'badge civic', text: 'Civique : ' + session.civique })
+    ];
+    if (session.pilote) {
+      badges.push(el('span', { class: 'badge pilote', text: '🧪 Pilote — ne remplace pas ' + S }));
+    }
 
     const titleBlock = el('div', {}, [
       el('div', { class: 'session-title-row' }, [
-        el('span', { class: 'session-code', text: S }),
+        el('span', { class: 'session-code', text: session.code }),
         el('span', { class: 'session-titre', text: session.titre })
       ]),
-      el('div', { class: 'session-badges' }, [
-        el('span', { class: 'badge', text: 'Niveau ' + session.niveau }),
-        el('span', { class: 'badge', text: session.competences }),
-        el('span', { class: 'badge civic', text: 'Civique : ' + session.civique })
-      ])
+      el('div', { class: 'session-badges' }, badges)
     ]);
 
     const actionsBlock = el('div', { class: 'session-actions' }, [
       docLink(base + '/index.html', '📋 Dashboard de validation', 'btn-dashboard'),
-      docLink(base + '/' + S + '_conformity-report.md', 'Rapport de conformité', 'btn-report')
+      docLink(base + '/' + reportFile, 'Rapport de conformité', 'btn-report')
     ]);
 
     const head = el('div', { class: 'session-head' }, [titleBlock, actionsBlock]);
