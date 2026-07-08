@@ -1,0 +1,1467 @@
+{
+  "session_code": "S01",
+  "plan_version": "s01-v3-conception-pedagogique",
+  "source_doc": "docs/s01-v3-conception-pedagogique.md",
+  "titre": "Accueil, objectifs et cinq thèmes — v3 dense",
+  "manifest": {
+    "competences": [
+      "CO",
+      "CE",
+      "EO",
+      "EE",
+      "Structures",
+      "CIVIQUE"
+    ],
+    "objectifs": [
+      "Comprendre son parcours de formation et ses modalités (durée, séances, évaluations)",
+      "Se présenter et présenter un tiers (identité, nationalité, parcours)",
+      "Distinguer droit, devoir et règle",
+      "Découvrir les cinq thèmes civiques officiels du parcours"
+    ]
+  },
+  "support": {
+    "support_id": "S01-support-accueil",
+    "situation": "Awa Diallo, apprenante primo-arrivante, se présente le premier jour de sa formation. Elle explique à sa formatrice, Mme Rossi, son objectif administratif (la carte de séjour pluriannuelle) et découvre l'organisation du parcours.",
+    "personnages": [
+      "Awa Diallo (apprenante)",
+      "Mme Rossi (formatrice)"
+    ],
+    "faits": [
+      "Le parcours vers la carte de séjour pluriannuelle (CSP) dure 80 heures.",
+      "Il comprend 25 séances collectives de 3 heures chacune.",
+      "Une séance a lieu une fois par semaine.",
+      "Il comprend deux évaluations hors séances : E1 après 50 heures, E2 à la fin des 80 heures.",
+      "Le parcours couvre cinq thèmes civiques officiels.",
+      "Un droit, un devoir et une règle sont trois notions différentes."
+    ],
+    "nombres": [
+      80,
+      25,
+      3,
+      50,
+      5,
+      2
+    ],
+    "dates": [],
+    "source_ids": []
+  },
+  "co": {
+    "resource_id": "S01-CO-master-v3",
+    "voice": "fr-FR-Wavenet-C",
+    "speaking_rate": 0.92,
+    "script": "Mme Rossi : Bonjour, bienvenue dans votre nouveau parcours. Comment vous appelez-vous ?\nAwa : Bonjour madame. Je m'appelle Awa. Awa Diallo.\nMme Rossi : Enchantée, Awa. Pouvez-vous épeler votre nom de famille, s'il vous plaît ?\nAwa : Oui, bien sûr : D-I-A-L-L-O.\nMme Rossi : Merci. Quel est votre objectif aujourd'hui ?\nAwa : Je voudrais avoir ma carte de séjour pluriannuelle.\nMme Rossi : Très bien. Pour ça, vous allez suivre un parcours de quatre-vingts heures.\nAwa : Quatre-vingts heures ? C'est beaucoup !\nMme Rossi : Oui, mais c'est réparti sur vingt-cinq séances de trois heures, à raison d'une séance par semaine.\nAwa : D'accord. Et qu'est-ce qu'on va apprendre exactement ?\nMme Rossi : Vous allez apprendre le français pour la vie quotidienne, et aussi cinq thèmes sur la vie en France : la République, les institutions, les droits et devoirs, l'histoire et la vie en société.\nAwa : Il y a un examen à la fin ?\nMme Rossi : Il y a deux évaluations : une évaluation intermédiaire après cinquante heures, et une évaluation finale à la fin des quatre-vingts heures.\nAwa : Je comprends. Merci beaucoup madame.\nMme Rossi : Une dernière chose : connaissez-vous la différence entre un droit, un devoir et une règle ?\nAwa : Pas très bien, madame.\nMme Rossi : Un droit, c'est quelque chose que vous pouvez demander, comme le droit à la santé. Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation.\nAwa : D'accord, je comprends mieux maintenant.\nMme Rossi : Parfait, nous allons travailler cela ensemble pendant toute la formation. Bienvenue parmi nous, Awa !\nAwa : Merci madame, je suis contente de commencer.",
+    "pauses": [
+      {
+        "after_word": 60,
+        "ms": 400
+      },
+      {
+        "after_word": 150,
+        "ms": 400
+      },
+      {
+        "after_word": 230,
+        "ms": 500
+      }
+    ]
+  },
+  "co_questions": [
+    {
+      "id": 1,
+      "categorie": "Compréhension globale",
+      "question": "Qui sont les deux personnes qui parlent ?",
+      "reponse": "Awa Diallo (apprenante) et Mme Rossi (formatrice)",
+      "niveaux": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ]
+    },
+    {
+      "id": 2,
+      "categorie": "Compréhension globale",
+      "question": "À votre avis, à quel moment de la formation se passe cette scène ?",
+      "reponse": "Le premier jour",
+      "niveaux": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ]
+    },
+    {
+      "id": 3,
+      "categorie": "Compréhension globale",
+      "question": "Quel est l'objectif principal d'Awa ?",
+      "reponse": "Obtenir sa carte de séjour pluriannuelle",
+      "niveaux": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ]
+    },
+    {
+      "id": 4,
+      "categorie": "Repérage d'information",
+      "question": "Combien d'heures dure le parcours d'Awa ?",
+      "reponse": "80 heures",
+      "niveaux": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ]
+    },
+    {
+      "id": 5,
+      "categorie": "Repérage d'information",
+      "question": "Combien de séances va-t-elle suivre ?",
+      "reponse": "25 séances",
+      "niveaux": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ]
+    },
+    {
+      "id": 6,
+      "categorie": "Repérage d'information",
+      "question": "Combien de temps dure chaque séance ?",
+      "reponse": "3 heures",
+      "niveaux": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ]
+    },
+    {
+      "id": 7,
+      "categorie": "Repérage d'information",
+      "question": "À quel rythme ont lieu les séances ?",
+      "reponse": "Une par semaine",
+      "niveaux": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ]
+    },
+    {
+      "id": 8,
+      "categorie": "Repérage d'information",
+      "question": "Après combien d'heures a lieu la première évaluation (E1) ?",
+      "reponse": "50 heures",
+      "niveaux": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ]
+    },
+    {
+      "id": 9,
+      "categorie": "Lexique",
+      "question": "Que signifie le mot « parcours » dans le dialogue ?",
+      "reponse": "L'ensemble du chemin de formation à suivre",
+      "niveaux": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ]
+    },
+    {
+      "id": 10,
+      "categorie": "Lexique",
+      "question": "Que veut dire « épeler » son nom ?",
+      "reponse": "Dire chaque lettre du nom une par une",
+      "niveaux": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ]
+    },
+    {
+      "id": 11,
+      "categorie": "Vrai/Faux",
+      "question": "Awa connaît déjà bien la différence entre droit, devoir et règle.",
+      "reponse": "Faux (« Pas très bien, madame »)",
+      "niveaux": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ]
+    },
+    {
+      "id": 12,
+      "categorie": "Vrai/Faux",
+      "question": "Le parcours couvre cinq thèmes sur la vie en France.",
+      "reponse": "Vrai",
+      "niveaux": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ]
+    },
+    {
+      "id": 13,
+      "categorie": "Vrai/Faux",
+      "question": "Il y a une seule évaluation à la fin du parcours.",
+      "reponse": "Faux — il y en a deux (E1 et E2)",
+      "niveaux": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ]
+    },
+    {
+      "id": 14,
+      "categorie": "Reformulation",
+      "question": "Reformulez avec vos mots ce qu'est un « droit » selon Mme Rossi.",
+      "reponse": "Quelque chose qu'on peut demander (ex. droit à la santé)",
+      "niveaux": [
+        "A2",
+        "B1",
+        "B2"
+      ]
+    },
+    {
+      "id": 15,
+      "categorie": "Reformulation",
+      "question": "Reformulez avec vos mots ce qu'est un « devoir » selon Mme Rossi.",
+      "reponse": "Quelque chose qu'on doit faire (ex. respecter la loi)",
+      "niveaux": [
+        "A2",
+        "B1",
+        "B2"
+      ]
+    },
+    {
+      "id": 16,
+      "categorie": "Reformulation",
+      "question": "Reformulez ce qu'est une « règle », avec l'exemple donné.",
+      "reponse": "Une consigne précise (ex. arriver à l'heure)",
+      "niveaux": [
+        "A2",
+        "B1",
+        "B2"
+      ]
+    },
+    {
+      "id": 17,
+      "categorie": "Justification",
+      "question": "Pourquoi Mme Rossi demande-t-elle à Awa d'épeler son nom ?",
+      "reponse": "Pour bien noter l'orthographe exacte — important dans les démarches administratives",
+      "niveaux": [
+        "A2",
+        "B1",
+        "B2"
+      ]
+    },
+    {
+      "id": 18,
+      "categorie": "Justification",
+      "question": "À votre avis, pourquoi le parcours comprend-il deux évaluations plutôt qu'une seule ?",
+      "reponse": "Réponse ouverte (ex. mesurer la progression à mi-parcours puis valider l'ensemble)",
+      "niveaux": [
+        "B1",
+        "B2"
+      ]
+    },
+    {
+      "id": 19,
+      "categorie": "Extension orale",
+      "question": "À votre tour : présentez-vous comme Awa (nom, objectif administratif).",
+      "reponse": "Réponse libre",
+      "niveaux": [
+        "B1",
+        "B2"
+      ]
+    },
+    {
+      "id": 20,
+      "categorie": "Extension orale",
+      "question": "Imaginez une question supplémentaire qu'Awa pourrait poser à Mme Rossi sur le parcours.",
+      "reponse": "Réponse libre",
+      "niveaux": [
+        "B1",
+        "B2"
+      ]
+    }
+  ],
+  "lexique": {
+    "resource_id": "S01-LEX-A1-B2",
+    "mots": [
+      {
+        "mot": "parcours",
+        "definition_simple": "Ensemble des séances à suivre pour atteindre un objectif.",
+        "exemple": "Awa suit un parcours de 80 heures."
+      },
+      {
+        "mot": "niveau",
+        "definition_simple": "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+        "exemple": "Son niveau de français progresse."
+      },
+      {
+        "mot": "objectif",
+        "definition_simple": "Le but que l'on veut atteindre.",
+        "exemple": "Son objectif est d'avoir sa carte de séjour."
+      },
+      {
+        "mot": "démarche",
+        "definition_simple": "Une action pour obtenir un document ou un droit.",
+        "exemple": "Elle fait une démarche à la préfecture."
+      },
+      {
+        "mot": "droit",
+        "definition_simple": "Quelque chose qu'on peut demander, garanti par la loi.",
+        "exemple": "Le droit à la santé permet de se soigner."
+      },
+      {
+        "mot": "devoir",
+        "definition_simple": "Une obligation, quelque chose qu'on doit faire.",
+        "exemple": "Respecter la loi est un devoir."
+      },
+      {
+        "mot": "République",
+        "definition_simple": "La forme de gouvernement de la France.",
+        "exemple": "La République française a une devise."
+      },
+      {
+        "mot": "examen",
+        "definition_simple": "Une épreuve qui évalue les connaissances.",
+        "exemple": "L'examen final a lieu après 80 heures."
+      },
+      {
+        "mot": "séance",
+        "definition_simple": "Une réunion de formation à une date précise.",
+        "exemple": "Chaque séance dure 3 heures."
+      },
+      {
+        "mot": "progresser",
+        "definition_simple": "Avancer, s'améliorer petit à petit.",
+        "exemple": "Elle progresse en français chaque semaine."
+      }
+    ]
+  },
+  "lexique_exercices": [
+    {
+      "type": "association",
+      "titre": "Exercice 1 — Association",
+      "consigne": "Associez chaque mot à sa définition simplifiée.",
+      "items": [
+        {
+          "mot": "parcours",
+          "definition": "Ensemble des séances à suivre pour atteindre un objectif"
+        },
+        {
+          "mot": "démarche",
+          "definition": "Une action pour obtenir un document ou un droit"
+        },
+        {
+          "mot": "progresser",
+          "definition": "Avancer, s'améliorer petit à petit"
+        }
+      ],
+      "source": "Créé, format inspiré de la banque (appariement, cf. exercice 4a85ed79 « Questions/Réponses sur l'identité »)"
+    },
+    {
+      "type": "texte_lacunaire",
+      "titre": "Exercice 2 — Phrase à compléter",
+      "consigne": "Complétez le texte avec les mots manquants.",
+      "texte": "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure.",
+      "reponses": [
+        "parcours",
+        "objectif",
+        "règles"
+      ],
+      "source": "Adapté du format banque (id 2a162e99 « Présentation simple »)"
+    },
+    {
+      "type": "reemploi_oral",
+      "titre": "Exercice 3 — Réemploi oral",
+      "consigne": "En une phrase, expliquez pourquoi vous suivez ce parcours, en utilisant le mot « objectif » ou « démarche ».",
+      "critere": "Usage correct du mot dans une phrase complète.",
+      "source": "Créé, inspiré de l'activité pedagogical_activities « tcf_oral_guide_task1_act1 »"
+    }
+  ],
+  "grammaire": [
+    {
+      "niveau": "A1",
+      "point": "Verbe être au présent",
+      "consigne": "Conjuguez le verbe être.",
+      "items": [
+        "Elle ___ française.",
+        "Je ___ marié.",
+        "Le dossier ___ complet."
+      ],
+      "reponses": [
+        "est",
+        "suis",
+        "est"
+      ],
+      "source": "Banque exercices, id 26254e2b-63e0-440e-ae49-9373ea5e9e5a (réutilisé tel quel)"
+    },
+    {
+      "niveau": "A1",
+      "point": "Pronoms personnels d'identité",
+      "consigne": "Complétez avec le pronom correct (Je, Tu, Il, Elle).",
+      "items": [
+        "___ m'appelle Ahmed.",
+        "___ habite à Marseille. (Sonia)",
+        "___ est né en 1985. (Marc)"
+      ],
+      "reponses": [
+        "Je",
+        "Elle",
+        "Il"
+      ],
+      "source": "Banque exercices, id f4fe558a-43dc-4768-b5bb-4d5393557e98 (réutilisé tel quel)"
+    },
+    {
+      "niveau": "A1",
+      "point": "Verbes s'appeler / habiter au présent",
+      "consigne": "Choisissez la forme correcte.",
+      "items": [
+        "Comment tu ________ ? (t'appelles / t'appelle)",
+        "Il ________ à Paris. (habite / habitent)"
+      ],
+      "reponses": [
+        "t'appelles",
+        "habite"
+      ],
+      "source": "Banque exercices, id 19a3f6b2-58ae-428e-b9d8-fa6ffdfaec2f (réutilisé tel quel)"
+    },
+    {
+      "niveau": "A2",
+      "point": "Adjectifs possessifs (identité/papiers)",
+      "consigne": "Complétez avec 'mon', 'ma' ou 'mes'.",
+      "items": [
+        "Je vous présente ___ passeport.",
+        "C'est ___ carte d'identité.",
+        "Je cherche ___ papiers."
+      ],
+      "reponses": [
+        "mon",
+        "ma",
+        "mes"
+      ],
+      "source": "Banque exercices, id 475e1e27-d7d0-4ecd-b003-b5b84537d530 (réutilisé tel quel)"
+    },
+    {
+      "niveau": "A2",
+      "point": "Structure « je m'appelle / je suis / j'habite »",
+      "consigne": "Complétez le texte de présentation.",
+      "items": [
+        "Bonjour, je (1)________ Thomas Martin. Je (2)________ boulanger. J'(3)________ à Lyon. J'ai 34 (4)________."
+      ],
+      "reponses": [
+        "m'appelle",
+        "suis",
+        "habite",
+        "ans"
+      ],
+      "source": "Banque exercices, id 2a162e99-ea0d-4eda-ac92-e9a5149ec2da (réutilisé tel quel)"
+    },
+    {
+      "niveau": "B1",
+      "point": "Nationalité / pays-ville (« venir de » + « habiter à »)",
+      "consigne": "Transformez sur le modèle donné.",
+      "items": [
+        "Il est né en Algérie, il vit à Lyon. → C'est un Algérien qui habite à Lyon.",
+        "Elle est née au Sénégal, elle vit à Paris. → ?",
+        "Il est né au Maroc, il vit à Nice. → ?"
+      ],
+      "reponses": [
+        "(modèle)",
+        "C'est une Sénégalaise qui habite à Paris.",
+        "C'est un Marocain qui habite à Nice."
+      ],
+      "source": "Créé (banque B1 pauvre sur ce point précis, cf. audit lot9)"
+    },
+    {
+      "niveau": "B1",
+      "point": "Discours rapporté simple (identité)",
+      "consigne": "Complétez au discours rapporté.",
+      "items": [
+        "Awa a dit qu'elle ________ (s'appeler) Awa Diallo et qu'elle ________ (vouloir) sa carte de séjour."
+      ],
+      "reponses": [
+        "s'appelait",
+        "voulait"
+      ],
+      "source": "Créé, inspiré de la structure du dialogue"
+    },
+    {
+      "niveau": "B2",
+      "point": "Nominalisation droits/devoirs",
+      "consigne": "Reformulez avec une nominalisation.",
+      "items": [
+        "Vous pouvez demander l'accès aux soins. → Vous avez ___ à ___."
+      ],
+      "reponses": [
+        "le droit",
+        "l'accès aux soins"
+      ],
+      "source": "Créé"
+    },
+    {
+      "niveau": "B2",
+      "point": "Connecteurs argumentatifs (nuance)",
+      "consigne": "Complétez avec un connecteur (cependant / par conséquent / en revanche).",
+      "items": [
+        "Un parcours long permet d'apprendre en profondeur, ___ il demande de la disponibilité."
+      ],
+      "reponses": [
+        "cependant"
+      ],
+      "source": "Créé"
+    }
+  ],
+  "qcm_tcf": {
+    "resource_id": "S01-QCM-TCF-v3",
+    "consigne": "Écoutez attentivement le document sonore et cochez la case de l'option correcte sur votre grille de réponse.",
+    "questions": [
+      {
+        "id": 1,
+        "enonce": "Comment s'appelle l'apprenante du dialogue ?",
+        "options": [
+          "Awa Diallo",
+          "Awa Rossi",
+          "Fatou Diallo",
+          "Awa Camara"
+        ],
+        "reponse": "Awa Diallo",
+        "justification": "Elle se présente : « Je m'appelle Awa. Awa Diallo. »"
+      },
+      {
+        "id": 2,
+        "enonce": "Quel est l'objectif administratif d'Awa ?",
+        "options": [
+          "La carte de séjour pluriannuelle",
+          "La nationalité française",
+          "Un visa touristique",
+          "Un titre de travail"
+        ],
+        "reponse": "La carte de séjour pluriannuelle",
+        "justification": "« Je voudrais avoir ma carte de séjour pluriannuelle. »"
+      },
+      {
+        "id": 3,
+        "enonce": "Combien d'heures dure le parcours d'Awa ?",
+        "options": [
+          "50 heures",
+          "80 heures",
+          "100 heures",
+          "120 heures"
+        ],
+        "reponse": "80 heures",
+        "justification": "« Vous allez suivre un parcours de quatre-vingts heures. »"
+      },
+      {
+        "id": 4,
+        "enonce": "Combien de séances collectives sont prévues ?",
+        "options": [
+          "18",
+          "25",
+          "31",
+          "37"
+        ],
+        "reponse": "25",
+        "justification": "« réparti sur vingt-cinq séances de trois heures »"
+      },
+      {
+        "id": 5,
+        "enonce": "Combien de temps dure chaque séance ?",
+        "options": [
+          "2 heures",
+          "3 heures",
+          "4 heures",
+          "5 heures"
+        ],
+        "reponse": "3 heures",
+        "justification": "« vingt-cinq séances de trois heures »"
+      },
+      {
+        "id": 6,
+        "enonce": "À quel rythme les séances ont-elles lieu ?",
+        "options": [
+          "Une par semaine",
+          "Deux par semaine",
+          "Une par mois"
+        ],
+        "reponse": "Une par semaine",
+        "justification": "« à raison d'une séance par semaine »"
+      },
+      {
+        "id": 7,
+        "enonce": "Après combien d'heures a lieu l'évaluation intermédiaire (E1) ?",
+        "options": [
+          "25 heures",
+          "50 heures",
+          "80 heures",
+          "100 heures"
+        ],
+        "reponse": "50 heures",
+        "justification": "« une évaluation intermédiaire après cinquante heures »"
+      },
+      {
+        "id": 8,
+        "enonce": "Combien de thèmes civiques structurent le parcours ?",
+        "options": [
+          "Trois",
+          "Cinq",
+          "Sept",
+          "Dix"
+        ],
+        "reponse": "Cinq",
+        "justification": "« cinq thèmes sur la vie en France »"
+      },
+      {
+        "id": 9,
+        "enonce": "D'après Mme Rossi, qu'est-ce qu'un « devoir » ?",
+        "options": [
+          "Quelque chose qu'on peut demander",
+          "Quelque chose qu'on doit faire",
+          "Une consigne propre à un lieu",
+          "Une évaluation finale"
+        ],
+        "reponse": "Quelque chose qu'on doit faire",
+        "justification": "« Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. »"
+      },
+      {
+        "id": 10,
+        "enonce": "D'après Mme Rossi, qu'est-ce qu'une « règle » ?",
+        "options": [
+          "Une consigne précise (ex. arriver à l'heure)",
+          "Une possibilité garantie par la loi",
+          "Une obligation nationale",
+          "Un examen final"
+        ],
+        "reponse": "Une consigne précise (ex. arriver à l'heure)",
+        "justification": "« Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. »"
+      }
+    ]
+  },
+  "qcm_civique": {
+    "resource_id": "S01-QCM-civique-v3",
+    "mention": "CSP",
+    "theme": "Droits et devoirs",
+    "questions": [
+      {
+        "id_supabase": "6388cb45-2648-42d4-b865-38bd5e2661d3",
+        "metadata_code": "cv2:S01:civic:0",
+        "enonce": "Respecter le règlement intérieur d'un centre de formation est avant tout :",
+        "options": [
+          "Un droit",
+          "Un devoir",
+          "Une démarche"
+        ],
+        "reponse": "Un devoir",
+        "justification": "C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option.",
+        "source": "Supabase — réutilisé tel quel (validated_auto)"
+      },
+      {
+        "id_supabase": "5f6f5af1-f958-4261-9253-395ef0d1708a",
+        "metadata_code": "cv2:S01:civic:1",
+        "enonce": "Le droit à la santé signifie que vous pouvez :",
+        "options": [
+          "Demander l'accès aux soins",
+          "Être obligé de vous soigner",
+          "Payer une amende"
+        ],
+        "reponse": "Demander l'accès aux soins",
+        "justification": "Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation.",
+        "source": "Supabase — réutilisé tel quel (validated_auto)"
+      },
+      {
+        "id_supabase": "ce45893f-649e-4263-8d5f-8a4249466d07",
+        "metadata_code": "cv2:S01:civic:2",
+        "enonce": "Un formateur demande à un apprenant d'arriver à l'heure à chaque séance. Il s'agit :",
+        "options": [
+          "D'une règle du centre de formation",
+          "D'un droit de l'apprenant",
+          "D'une loi nationale"
+        ],
+        "reponse": "D'une règle du centre de formation",
+        "justification": "Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale.",
+        "source": "Supabase — réutilisé tel quel (needs_review)"
+      },
+      {
+        "id_supabase": "767a328b-8524-49f9-96de-16e813a8ac00",
+        "metadata_code": "cv2:S01:civic:3",
+        "enonce": "Le parcours vers la carte de séjour pluriannuelle dure :",
+        "options": [
+          "50 heures",
+          "80 heures",
+          "120 heures"
+        ],
+        "reponse": "80 heures",
+        "justification": "Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue.",
+        "source": "Supabase — réutilisé tel quel (validated_auto)"
+      },
+      {
+        "id_supabase": "9032499c-4ede-487f-b042-78f73a95fc8d",
+        "metadata_code": "cv2:S01:civic:4",
+        "enonce": "Combien de thèmes civiques officiels structurent le parcours ?",
+        "options": [
+          "Trois",
+          "Cinq",
+          "Sept"
+        ],
+        "reponse": "Cinq",
+        "justification": "Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société).",
+        "source": "Supabase — réutilisé tel quel (validated_auto)"
+      },
+      {
+        "id_supabase": null,
+        "enonce": "Un devoir, c'est :",
+        "options": [
+          "Une obligation à respecter",
+          "Un choix libre sans conséquence",
+          "Un avantage optionnel"
+        ],
+        "reponse": "Une obligation à respecter",
+        "justification": "Un devoir engage la personne à agir, contrairement à un simple choix.",
+        "source": "Créé (complément)"
+      },
+      {
+        "id_supabase": null,
+        "enonce": "L'évaluation finale (E2) a lieu :",
+        "options": [
+          "Après 25 heures",
+          "Après 50 heures",
+          "À la fin des 80 heures"
+        ],
+        "reponse": "À la fin des 80 heures",
+        "justification": "E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet.",
+        "source": "Créé (complément)"
+      },
+      {
+        "id_supabase": null,
+        "enonce": "Pourquoi le parcours comprend-il une évaluation intermédiaire (E1) ?",
+        "options": [
+          "Pour sanctionner les absences",
+          "Pour mesurer la progression à mi-parcours",
+          "Pour remplacer l'évaluation finale"
+        ],
+        "reponse": "Pour mesurer la progression à mi-parcours",
+        "justification": "E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant.",
+        "source": "Créé (complément)"
+      },
+      {
+        "id_supabase": null,
+        "enonce": "Une règle se distingue d'un devoir car :",
+        "options": [
+          "Une règle est propre à un lieu précis, un devoir est une obligation plus générale",
+          "Une règle est facultative",
+          "Un devoir n'a aucune conséquence"
+        ],
+        "reponse": "Une règle est propre à un lieu précis, un devoir est une obligation plus générale",
+        "justification": "Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général.",
+        "source": "Créé (complément)"
+      },
+      {
+        "id_supabase": null,
+        "enonce": "Combien d'évaluations rythment le parcours de 80 heures ?",
+        "options": [
+          "Une seule",
+          "Deux (E1 et E2)",
+          "Quatre"
+        ],
+        "reponse": "Deux (E1 et E2)",
+        "justification": "Le dialogue mentionne explicitement deux évaluations distinctes.",
+        "source": "Créé (complément)"
+      }
+    ]
+  },
+  "corrige_co": {
+    "A1": {
+      "q1": "80 heures",
+      "q2": true,
+      "notes": "Répond aux questions 1-13 (compréhension globale, repérage, lexique, vrai/faux)."
+    },
+    "A2": {
+      "q1": "25 séances",
+      "q2": "Réponse ouverte : un des cinq thèmes civiques mentionnés (Principes et valeurs de la République / Système institutionnel / Droits et devoirs / Histoire, géographie et culture / Vivre dans la société française).",
+      "notes": "Répond aux questions 1-17 (+ reformulation guidée)."
+    },
+    "B1": {
+      "q1": "Un droit est une possibilité garantie par la loi ; un devoir est une obligation ; une règle est une consigne précise et locale.",
+      "q2": "E1 mesure la progression à mi-parcours et adapte la suite ; E2 valide l'ensemble du tronc commun et oriente vers la sortie ou l'extension B1.",
+      "notes": "Répond à l'intégralité des 20 questions, reformulation autonome."
+    },
+    "B2": {
+      "q1": "Réponse ouverte évaluée sur la précision des notions et la qualité de l'argumentation.",
+      "q2": "Réponse ouverte : avantages (progressivité, ancrage) vs limites (durée totale, disponibilité) à mettre en balance.",
+      "notes": "Répond à l'intégralité des 20 questions + question 18 développée à l'écrit (150 mots)."
+    }
+  },
+  "eo_prompts": [
+    {
+      "id": 1,
+      "niveau": "A1",
+      "prompt": "Dites votre nom et votre ville en une phrase.",
+      "consigne_formateur": "Laisser 30 secondes de préparation silencieuse.",
+      "criteres": "Nom + ville énoncés clairement, phrase simple correcte.",
+      "source": "Inspiré banque exercices, id 59592128-eec4-4e5a-8786-59750f4f91e7"
+    },
+    {
+      "id": 2,
+      "niveau": "A1",
+      "prompt": "Épelez votre nom de famille lettre par lettre.",
+      "consigne_formateur": "Écrire l'alphabet au tableau en support.",
+      "criteres": "Épellation correcte, débit compréhensible.",
+      "source": "Banque exercices, id 7509dee3 / e0a01c8e (réutilisés)"
+    },
+    {
+      "id": 3,
+      "niveau": "A2",
+      "prompt": "Présentez-vous : nom, nationalité/origine, âge.",
+      "consigne_formateur": "Modèle au tableau : « Je m'appelle... Je viens de... J'ai... ans. »",
+      "criteres": "Trois informations correctes, verbes conjugués correctement.",
+      "source": "Inspiré banque exercices, id 67dab702-654c-431c-bc6c-367be1b4e874 (sous-questions 1-3)"
+    },
+    {
+      "id": 4,
+      "niveau": "A2",
+      "prompt": "Présentez un camarade du groupe (nom, ville, nationalité).",
+      "consigne_formateur": "Binôme : s'interviewer puis se présenter mutuellement.",
+      "criteres": "Troisième personne correcte (« il/elle s'appelle... »).",
+      "source": "Inspiré pedagogical_activities, id GEF_A1_p23_ex11_parole_groupe"
+    },
+    {
+      "id": 5,
+      "niveau": "B1",
+      "prompt": "Présentez-vous en 1 minute : âge, origine, famille, étude ou travail.",
+      "consigne_formateur": "Chronométrer, un seul essai puis feedback.",
+      "criteres": "Enchaînement fluide, connecteurs simples (et, mais, donc).",
+      "source": "Inspiré pedagogical_activities, id tcf_act1_se_presenter"
+    },
+    {
+      "id": 6,
+      "niveau": "B1",
+      "prompt": "Décrivez votre parcours personnel et pourquoi vous suivez cette formation.",
+      "consigne_formateur": "Amorce : « Je suis venu(e) en France parce que... »",
+      "criteres": "Structure avec au moins un exemple concret.",
+      "source": "Inspiré pedagogical_activities, id tcf_oral_guide_task1_act1"
+    },
+    {
+      "id": 7,
+      "niveau": "B2",
+      "prompt": "Présentez-vous en détail : identité, parcours de vie, un trait de personnalité, un projet.",
+      "consigne_formateur": "Aucune préparation écrite autorisée.",
+      "criteres": "Richesse lexicale, nuance, cohérence temporelle (passé/présent/futur).",
+      "source": "Inspiré pedagogical_activities, id sim_glob_phase2_identites"
+    },
+    {
+      "id": 8,
+      "niveau": "B2",
+      "prompt": "Argumentez : pourquoi est-il utile de bien distinguer droit, devoir et règle dès le début d'un parcours d'intégration ?",
+      "consigne_formateur": "Relance possible : « Donnez un exemple concret. »",
+      "criteres": "Argumentation structurée, au moins un exemple personnel.",
+      "source": "Créé (lien direct avec le civique de S01)"
+    }
+  ],
+  "ee_productions": {
+    "guidee_1": {
+      "titre": "Production guidée 1 (A1/A2) — texte à trous",
+      "consigne": "Complétez le texte de présentation : Bonjour, je (........) Awa. Je (........) 28 ans. Je (........) du Sénégal. J'(........) à Paris.",
+      "reponses": [
+        "m'appelle",
+        "ai",
+        "viens",
+        "habite"
+      ],
+      "criteres": "4 verbes corrects (m'appelle / ai / viens / habite).",
+      "source": "Format inspiré banque exercices, id c1fa478c / 2a162e99, adapté au personnage Awa"
+    },
+    "guidee_2": {
+      "titre": "Production guidée 2 (A2/B1) — à partir d'une fiche",
+      "consigne": "À partir de cette fiche, rédigez 5 phrases complètes : NOM : Diallo — PRÉNOM : Awa — NÉE LE : 14/03/1995 — NATIONALITÉ : Sénégalaise — VILLE : Paris.",
+      "criteres": "5 phrases complètes, informations toutes exactes et correctement reformulées (pas de recopiage brut).",
+      "source": "Format inspiré pedagogical_activities « Présentez Sébastien Badou » + banque exercices id 95f4746e"
+    },
+    "autonome": {
+      "titre": "Production autonome (B1/B2)",
+      "consigne": "Rédigez un texte de 8 à 10 phrases présentant votre propre parcours et votre objectif administratif, sur le modèle d'Awa.",
+      "variante_niveau_bas": "B1 : amorces fournies (« Je m'appelle... / Mon objectif est... / Le parcours dure... »), 8 phrases minimum.",
+      "variante_niveau_haut": "B2 : sans amorce, 10 phrases minimum, au moins un connecteur argumentatif exigé.",
+      "criteres": "Cohérence informationnelle, conjugaison au présent correcte, structure en paragraphe (B2).",
+      "source": "Prolongement du devoir A2 existant (brief.devoirs.A2), étendu et rendu autonome pour B1/B2"
+    }
+  },
+  "visual": {
+    "resource_id": "S01-VIS-master",
+    "alt_text": "Cinq panneaux de couleur representant les cinq themes civiques : principes et valeurs de la Republique, systeme institutionnel, droits et devoirs, histoire et geographie, vie en societe.",
+    "scene": {
+      "title": "Cinq thèmes civiques du parcours CapTCF",
+      "width": 900,
+      "height": 260,
+      "background": "#ffffff",
+      "elements": [
+        {
+          "type": "rect",
+          "x": 20,
+          "y": 30,
+          "width": 150,
+          "height": 180,
+          "rx": 10,
+          "fill": "#dbeafe"
+        },
+        {
+          "type": "text",
+          "x": 95,
+          "y": 130,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "Principes et"
+        },
+        {
+          "type": "text",
+          "x": 95,
+          "y": 150,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "valeurs de la"
+        },
+        {
+          "type": "text",
+          "x": 95,
+          "y": 170,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "République"
+        },
+        {
+          "type": "rect",
+          "x": 190,
+          "y": 30,
+          "width": 150,
+          "height": 180,
+          "rx": 10,
+          "fill": "#dcfce7"
+        },
+        {
+          "type": "text",
+          "x": 265,
+          "y": 130,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "Système"
+        },
+        {
+          "type": "text",
+          "x": 265,
+          "y": 150,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "institutionnel"
+        },
+        {
+          "type": "text",
+          "x": 265,
+          "y": 170,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "et politique"
+        },
+        {
+          "type": "rect",
+          "x": 360,
+          "y": 30,
+          "width": 150,
+          "height": 180,
+          "rx": 10,
+          "fill": "#fef9c3"
+        },
+        {
+          "type": "text",
+          "x": 435,
+          "y": 130,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "Droits"
+        },
+        {
+          "type": "text",
+          "x": 435,
+          "y": 150,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "et"
+        },
+        {
+          "type": "text",
+          "x": 435,
+          "y": 170,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "devoirs"
+        },
+        {
+          "type": "rect",
+          "x": 530,
+          "y": 30,
+          "width": 150,
+          "height": 180,
+          "rx": 10,
+          "fill": "#fee2e2"
+        },
+        {
+          "type": "text",
+          "x": 605,
+          "y": 130,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "Histoire,"
+        },
+        {
+          "type": "text",
+          "x": 605,
+          "y": 150,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "géographie"
+        },
+        {
+          "type": "text",
+          "x": 605,
+          "y": 170,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "et culture"
+        },
+        {
+          "type": "rect",
+          "x": 700,
+          "y": 30,
+          "width": 180,
+          "height": 180,
+          "rx": 10,
+          "fill": "#ede9fe"
+        },
+        {
+          "type": "text",
+          "x": 790,
+          "y": 120,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "Vivre dans"
+        },
+        {
+          "type": "text",
+          "x": 790,
+          "y": 140,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "la société"
+        },
+        {
+          "type": "text",
+          "x": 790,
+          "y": 160,
+          "anchor": "middle",
+          "fontSize": 14,
+          "text": "française"
+        }
+      ]
+    }
+  },
+  "visual_questions": [
+    "Combien de thèmes sont représentés sur le schéma ?",
+    "Nommez les cinq thèmes dans l'ordre, de gauche à droite.",
+    "Quel thème correspond au panneau de couleur rouge clair ?",
+    "Pourquoi ces cinq thèmes sont-ils réunis sur un même schéma, selon vous ?",
+    "Lequel de ces cinq thèmes vous semble le plus utile pour votre vie quotidienne en France ? Justifiez votre réponse en une phrase."
+  ],
+  "devoirs": {
+    "A1": "À la maison : relisez la transcription et associez chaque mot du lexique à sa définition.",
+    "A2": "À la maison : racontez par écrit (5 phrases) votre propre objectif administratif, sur le modèle d'Awa.",
+    "B1": "À la maison : rédigez un court texte expliquant à un ami la différence entre droit, devoir et règle.",
+    "B2": "À la maison : rédigez un paragraphe argumenté sur l'intérêt d'un parcours progressif de formation pour un adulte."
+  },
+  "formateur": {
+    "fiche_formateur": "Séance d'accueil dense : chaque apprenant repart avec (1) la compréhension complète de son parcours (durée, séances, évaluations), (2) la capacité à se présenter et présenter un tiers, (3) la distinction claire entre droit, devoir et règle, étayée par 20 questions sur le dialogue, un bloc grammaire gradé, un QCM TCF de 10 questions et un QCM civique de 10 questions avec justifications réelles.",
+    "deroule_180min": [
+      {
+        "phase": "Rituel civique",
+        "duree_min": 10,
+        "description": "Observation collective du support visuel (5 thèmes civiques), 3 questions d'amorce, sans notation."
+      },
+      {
+        "phase": "Activation + lexique",
+        "duree_min": 20,
+        "description": "10 mots-clés + 3 exercices (association, texte à trous, réemploi oral)."
+      },
+      {
+        "phase": "Support invariant CO/CE",
+        "duree_min": 50,
+        "description": "Dialogue Awa/Mme Rossi (2 min 29 s) en 3 écoutes progressives + 20 questions/micro-tâches réparties par niveau."
+      },
+      {
+        "phase": "Ateliers différenciés",
+        "duree_min": 60,
+        "description": "4 groupes A1/A2/B1/B2 : bloc grammaire gradé + exercices banque + variantes corrigées."
+      },
+      {
+        "phase": "Production EE/EO",
+        "duree_min": 30,
+        "description": "8 prompts EO gradés + 2 productions EE guidées + 1 autonome."
+      },
+      {
+        "phase": "Fixation",
+        "duree_min": 10,
+        "description": "QCM civique 10 questions, correction flash, devoirs différenciés."
+      }
+    ],
+    "adaptation_rules": [
+      "Si plus de la moitié du groupe confond droit et devoir, reprendre le lexique avant l'atelier B1.",
+      "Si le groupe est très hétérogène, prolonger l'atelier différencié de 10 minutes au détriment de la fixation.",
+      "Ne jamais remplacer le dialogue audio publié par une improvisation en direct : l'IA peut seulement l'expliquer ou le simplifier.",
+      "Les 3 variantes A2/B1/B2 ont été recréées (les originales étaient rejetées en base pour non-conformité de schéma) — vérifier leur validation avant réinsertion Supabase."
+    ]
+  },
+  "ateliers": {
+    "A1": {
+      "duree_min": 45,
+      "contenu_formateur": "Bloc grammaire A1 (être, pronoms, s'appeler/habiter) + 3 exercices banque identité (épeler son nom CO, carte d'identité V/F, Q/R identité) + variante A1 (corrigée le 2026-07-08 : consigne raccourcie, texte support ajouté ; remplace cv2:S01:variant:A1 needs_review).",
+      "contenu_apprenant": "Grammaire du verbe être et des pronoms d'identité. Puis trois exercices : épeler un nom de famille à l'oral, lire une carte d'identité officielle, associer une question et sa réponse. Enfin, un exercice de compréhension sur le dialogue d'ouverture.",
+      "exercices": [
+        {
+          "format": "qcm",
+          "competence": "CO",
+          "consigne": "Écoutez la phrase, puis choisissez l'orthographe correcte du nom de famille.",
+          "texte": "🔊 « Mon nom s'écrit B-E-L-K-A-S-S-E-M. »",
+          "question": "Comment s'écrit le nom de famille ?",
+          "options": [
+            "B-E-L-K-A-S-S-E-M",
+            "B-E-L-K-A-C-E-M",
+            "B-E-L-G-A-S-S-E-M"
+          ],
+          "reponse": "B-E-L-K-A-S-S-E-M",
+          "source": "Banque exercices, id 4c983a50 (réutilisé tel quel)"
+        },
+        {
+          "format": "appariement",
+          "competence": "CE",
+          "consigne": "Pour chaque question, cochez la bonne réponse.",
+          "items": [
+            {
+              "question": "Où habitez-vous ?",
+              "options": [
+                "J'habite à Nice.",
+                "Je suis Italien.",
+                "C'est le 06 00 00 00 00."
+              ],
+              "reponse": "J'habite à Nice."
+            },
+            {
+              "question": "Quelle est votre nationalité ?",
+              "options": [
+                "Je suis Italien.",
+                "Enchanté.",
+                "Marc Petit."
+              ],
+              "reponse": "Je suis Italien."
+            },
+            {
+              "question": "Quel est votre numéro de téléphone ?",
+              "options": [
+                "C'est le 06 00 00 00 00.",
+                "C'est le 12 rue de la Paix.",
+                "En 1985."
+              ],
+              "reponse": "C'est le 06 00 00 00 00."
+            }
+          ],
+          "source": "Banque exercices, id 4a85ed79 (réutilisé tel quel)"
+        },
+        {
+          "format": "vrai_faux",
+          "competence": "CE",
+          "consigne": "Lisez la carte d'identité, puis répondez par Vrai ou Faux.",
+          "texte": "RÉPUBLIQUE FRANÇAISE\nNOM : BENALI\nPRÉNOM : Yasmine\nNÉ(E) LE : 12/05/1995\nÀ : Marseille\nSEXE : F",
+          "items": [
+            {
+              "question": "Yasmine est née à Marseille.",
+              "options": [
+                "Vrai",
+                "Faux"
+              ],
+              "reponse": "Vrai"
+            },
+            {
+              "question": "Son nom de famille est Yasmine.",
+              "options": [
+                "Vrai",
+                "Faux"
+              ],
+              "reponse": "Faux"
+            }
+          ],
+          "source": "Banque exercices, id 77dcd9d8 (réutilisé tel quel)"
+        },
+        {
+          "format": "vrai_faux",
+          "competence": "CE",
+          "consigne": "Relisez le début du dialogue (fiche Dialogue), puis répondez par Vrai ou Faux.",
+          "texte": "« Bonjour madame. Je m'appelle Awa. Awa Diallo. » — « Oui, bien sûr : D-I-A-L-L-O. »",
+          "items": [
+            {
+              "question": "Awa épelle son prénom.",
+              "options": [
+                "Vrai",
+                "Faux"
+              ],
+              "reponse": "Faux"
+            },
+            {
+              "question": "Le nom de famille d'Awa est Diallo.",
+              "options": [
+                "Vrai",
+                "Faux"
+              ],
+              "reponse": "Vrai"
+            }
+          ],
+          "source": "Variante A1, corrigée le 2026-07-08 (consigne raccourcie, texte support ajouté ; remplace cv2:S01:variant:A1 needs_review)"
+        }
+      ],
+      "sources": [
+        "26254e2b",
+        "f4fe558a",
+        "19a3f6b2",
+        "4c983a50",
+        "77dcd9d8",
+        "4a85ed79",
+        "cv2:S01:variant:A1 (corrigée 2026-07-08)"
+      ]
+    },
+    "A2": {
+      "duree_min": 45,
+      "contenu_formateur": "Bloc grammaire A2 (possessifs, texte lacunaire présentation) + fiche identité (texte lacunaire + QCM 2 fiches) + variante A2 recréée le 2026-07-08 (remplace l'originale rejected : qcm_no_options).",
+      "contenu_apprenant": "Grammaire des adjectifs possessifs et de la présentation. Puis un texte à compléter et deux fiches à lire pour répondre à des questions. Enfin, un exercice sur l'objectif administratif d'Awa.",
+      "exercices": [
+        {
+          "format": "texte_lacunaire",
+          "competence": "CE",
+          "consigne": "Complétez le texte avec les mots proposés.",
+          "texte": "Bonjour,\nJe ... Youcef.\nJe ... d'Algérie.\nJ' ... 28 ans.\nCordialement.",
+          "items": [
+            {
+              "question": "Bonjour, je ... Youcef.",
+              "options": [
+                "m'appelle",
+                "habite"
+              ],
+              "reponse": "m'appelle"
+            },
+            {
+              "question": "Je ... d'Algérie.",
+              "options": [
+                "viens",
+                "suis"
+              ],
+              "reponse": "viens"
+            },
+            {
+              "question": "J' ... 28 ans.",
+              "options": [
+                "suis",
+                "ai"
+              ],
+              "reponse": "ai"
+            }
+          ],
+          "source": "Banque exercices, id afd658af (réutilisé tel quel)"
+        },
+        {
+          "format": "qcm",
+          "competence": "CE",
+          "consigne": "Lisez les deux fiches, puis répondez aux questions.",
+          "texte": "FICHE 1 :\nNOM : BENALI | PRÉNOM : Mehdi | ÂGE : 32 ans | NATIONALITÉ : Algérienne | VILLE : Bordeaux\n\nFICHE 2 :\nNOM : RICCI | PRÉNOM : Elena | ÂGE : 28 ans | NATIONALITÉ : Italienne | VILLE : Marseille",
+          "items": [
+            {
+              "question": "Quel est le nom de famille de la première personne ?",
+              "options": [
+                "Mehdi",
+                "BENALI",
+                "Algérienne"
+              ],
+              "reponse": "BENALI"
+            },
+            {
+              "question": "Dans quelle ville habite Mehdi ?",
+              "options": [
+                "Paris",
+                "Bordeaux",
+                "Marseille"
+              ],
+              "reponse": "Bordeaux"
+            },
+            {
+              "question": "Quelle est la nationalité d'Elena ?",
+              "options": [
+                "Espagnole",
+                "Italienne",
+                "Française"
+              ],
+              "reponse": "Italienne"
+            },
+            {
+              "question": "Mehdi est plus âgé qu'Elena.",
+              "options": [
+                "Vrai",
+                "Faux"
+              ],
+              "reponse": "Vrai"
+            }
+          ],
+          "source": "Banque exercices, id 95f4746e (réutilisé tel quel, sélection de 4 questions sur 8)"
+        },
+        {
+          "format": "qcm",
+          "competence": "CE",
+          "consigne": "D'après le dialogue, choisissez la bonne réponse.",
+          "question": "Quel est l'objectif d'Awa au début de sa formation ?",
+          "options": [
+            "Obtenir sa carte de séjour pluriannuelle.",
+            "Trouver un emploi de formatrice.",
+            "Passer le TCF pour partir à l'étranger."
+          ],
+          "reponse": "Obtenir sa carte de séjour pluriannuelle.",
+          "source": "Variante A2, recréée le 2026-07-08 (remplace l'original rejeté : qcm_no_options)"
+        }
+      ],
+      "sources": [
+        "475e1e27",
+        "2a162e99",
+        "afd658af",
+        "95f4746e",
+        "variante A2 recréée (corrigée 2026-07-08)"
+      ]
+    },
+    "B1": {
+      "duree_min": 40,
+      "contenu_formateur": "Bloc grammaire B1 (nationalité/pays-ville, discours rapporté) + lecture approfondie sur le parcours (QCM) + variante B1 recréée le 2026-07-08 en compétence CE (remplace l'originale rejected : format production_ecrite incompatible avec CE).",
+      "contenu_apprenant": "Grammaire de la nationalité et du discours rapporté. Puis un exercice de lecture sur le parcours d'Awa, et un exercice d'association sur droit / devoir / règle.",
+      "exercices": [
+        {
+          "format": "qcm",
+          "competence": "CE",
+          "consigne": "Lisez, puis répondez aux questions.",
+          "texte": "Le parcours vers la carte de séjour pluriannuelle dure 80 heures. Il comprend 25 séances collectives de 3 heures, à raison d'une séance par semaine. Deux évaluations ont lieu hors séances : une évaluation intermédiaire (E1) après 50 heures, et une évaluation finale (E2) à la fin des 80 heures.",
+          "items": [
+            {
+              "question": "Combien de séances comprend le parcours ?",
+              "options": [
+                "20 séances",
+                "25 séances",
+                "30 séances"
+              ],
+              "reponse": "25 séances"
+            },
+            {
+              "question": "Quand a lieu l'évaluation E1 ?",
+              "options": [
+                "Après 50 heures",
+                "Après 80 heures",
+                "Après 25 séances"
+              ],
+              "reponse": "Après 50 heures"
+            }
+          ],
+          "source": "Créé à partir de support.faits (approfondissement présentation)"
+        },
+        {
+          "format": "appariement",
+          "competence": "CE",
+          "consigne": "Associez chaque terme à sa définition, d'après les explications de Mme Rossi.",
+          "items": [
+            {
+              "question": "Un droit",
+              "options": [
+                "Quelque chose que vous pouvez demander, comme le droit à la santé.",
+                "Quelque chose que vous devez faire, comme respecter la loi.",
+                "Une consigne précise, par exemple arriver à l'heure."
+              ],
+              "reponse": "Quelque chose que vous pouvez demander, comme le droit à la santé."
+            },
+            {
+              "question": "Un devoir",
+              "options": [
+                "Quelque chose que vous pouvez demander, comme le droit à la santé.",
+                "Quelque chose que vous devez faire, comme respecter la loi.",
+                "Une consigne précise, par exemple arriver à l'heure."
+              ],
+              "reponse": "Quelque chose que vous devez faire, comme respecter la loi."
+            },
+            {
+              "question": "Une règle",
+              "options": [
+                "Quelque chose que vous pouvez demander, comme le droit à la santé.",
+                "Quelque chose que vous devez faire, comme respecter la loi.",
+                "Une consigne précise, par exemple arriver à l'heure."
+              ],
+              "reponse": "Une consigne précise, par exemple arriver à l'heure."
+            }
+          ],
+          "source": "Variante B1, recréée le 2026-07-08 en compétence CE (remplace l'originale rejetée : format production_ecrite incompatible avec CE)"
+        }
+      ],
+      "sources": [
+        "création grammaire B1",
+        "inspiré tcf_act1_se_presenter",
+        "variante B1 recréée en CE (corrigée 2026-07-08)"
+      ]
+    },
+    "B2": {
+      "duree_min": 40,
+      "contenu_formateur": "Bloc grammaire B2 (nominalisation, connecteurs) + lecture argumentative sur l'organisation du parcours (QCM) + variante B2 recréée le 2026-07-08 en compétence CE (remplace l'originale rejected : même cause que B1).",
+      "contenu_apprenant": "Grammaire de la nominalisation et des connecteurs. Puis un exercice de lecture argumentative sur l'organisation du parcours.",
+      "exercices": [
+        {
+          "format": "qcm",
+          "competence": "CE",
+          "consigne": "Lisez le paragraphe, puis répondez aux questions.",
+          "texte": "Un parcours de 80 heures réparti sur 25 séances hebdomadaires permet d'apprendre le français en profondeur, avec deux évaluations pour mesurer les progrès. Cependant, ce rythme demande une disponibilité régulière sur plusieurs mois. Par conséquent, l'organisation en amont — garde d'enfants, horaires de travail — est essentielle pour suivre l'ensemble du parcours sans interruption.",
+          "items": [
+            {
+              "question": "Quel connecteur introduit la limite du parcours long ?",
+              "options": [
+                "Cependant",
+                "Par conséquent",
+                "En revanche"
+              ],
+              "reponse": "Cependant"
+            },
+            {
+              "question": "Que faut-il organiser en amont, selon le texte ?",
+              "options": [
+                "Le transport uniquement",
+                "La garde d'enfants et les horaires de travail",
+                "Le paiement de la formation"
+              ],
+              "reponse": "La garde d'enfants et les horaires de travail"
+            }
+          ],
+          "source": "Variante B2, recréée le 2026-07-08 en compétence CE (remplace l'originale rejetée : même cause que B1)"
+        }
+      ],
+      "sources": [
+        "création grammaire B2",
+        "inspiré sim_glob_phase2_identites",
+        "variante B2 recréée en CE (corrigée 2026-07-08)"
+      ]
+    }
+  }
+}

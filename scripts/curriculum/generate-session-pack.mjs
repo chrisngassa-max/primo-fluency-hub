@@ -1216,6 +1216,12 @@ async function main() {
 export {
   loadData,
   getHTMLHeader,
+  wrapHTML,
+  getConsigneBoxHTML,
+  renderVisualSVG,
+  createDocxHeader,
+  createDocxConsigne,
+  createDocxParagraph,
   getTrainerHTML,
   getStudentA2HTML,
   getDialogueHTML,

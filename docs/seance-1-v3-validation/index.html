@@ -1,0 +1,2913 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>CAP TCF — Validation S01 v3</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root { --primary:#0b234a; --accent:#f47b20; --accent-hover:#ea6815; --primary-light:rgba(11,35,74,0.05); --text:#0b234a; --text-light:#64748b; --border:rgba(11,35,74,0.1); --success:#059669; --danger:#dc2626; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; color:var(--text);
+    background: radial-gradient(circle at top left, hsl(215 65% 92% / 0.65), transparent 34rem),
+      radial-gradient(circle at top right, hsl(28 90% 86% / 0.55), transparent 30rem),
+      linear-gradient(180deg, hsl(39 62% 94%) 0%, hsl(44 42% 97%) 48%, hsl(38 42% 94%) 100%);
+    display:flex; height:100vh; overflow:hidden; }
+  .sidebar { width:340px; border-right:1px solid var(--border); background-color:rgba(255,255,255,0.9); backdrop-filter:blur(8px); display:flex; flex-direction:column; height:100%; z-index:10; }
+  .sidebar-header { padding:24px; border-bottom:1px solid var(--border); display:flex; flex-direction:column; gap:6px; }
+  .logo-container { display:flex; align-items:center; gap:10px; }
+  .logo-container h1 { font-family:'Outfit',sans-serif; font-size:24px; font-weight:900; color:var(--primary); letter-spacing:-0.5px; }
+  .logo-container h1 span { color:var(--accent); }
+  .sidebar-header p { font-size:12px; color:var(--text-light); font-weight:500; }
+  .badge-v3 { display:inline-block; margin-top:6px; font-size:10.5px; font-weight:800; color:#fff; background:#7c3aed; padding:3px 8px; border-radius:10px; letter-spacing:0.3px; }
+  .menu-section { flex:1; overflow-y:auto; padding:16px 12px; }
+  .menu-title { font-size:11px; font-weight:700; color:var(--text-light); text-transform:uppercase; letter-spacing:0.75px; margin-bottom:8px; padding-left:12px; }
+  .menu-item { display:flex; align-items:center; padding:10px 12px; border-radius:8px; cursor:pointer; font-size:13.5px; font-weight:600; color:#3b4e6d; transition:all 0.2s ease; margin-bottom:4px; }
+  .menu-item:hover { background-color:var(--primary-light); color:var(--primary); }
+  .menu-item.active { background-color:var(--primary); color:#fff; box-shadow:0 4px 12px rgba(11,35,74,0.15); }
+  .downloads-box { padding:20px; border-top:1px solid var(--border); background-color:rgba(255,255,255,0.5); max-height:320px; overflow-y:auto; }
+  .downloads-box h3 { font-family:'Outfit',sans-serif; font-size:13px; font-weight:800; color:var(--primary); margin-bottom:12px; text-transform:uppercase; letter-spacing:0.5px; }
+  .download-link { display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background-color:#fff; border:1px solid var(--border); border-radius:6px; margin-bottom:6px; font-size:11.5px; color:var(--primary); text-decoration:none; }
+  .download-actions { display:flex; gap:4px; }
+  .btn-dl { font-size:9.5px; font-weight:700; padding:3px 6px; border-radius:3px; text-transform:uppercase; text-decoration:none; }
+  .btn-pdf { background-color:#fee2e2; color:#991b1b; }
+  .btn-docx { background-color:#dbeafe; color:#1e40af; }
+  .main { flex:1; display:flex; flex-direction:column; height:100%; overflow:hidden; }
+  .main-header { height:74px; border-bottom:1px solid var(--border); background-color:rgba(255,255,255,0.8); backdrop-filter:blur(8px); display:flex; align-items:center; justify-content:space-between; padding:0 32px; }
+  .main-header h2 { font-family:'Outfit',sans-serif; font-size:20px; font-weight:800; color:var(--primary); }
+  .view-toggles { display:flex; background-color:rgba(11,35,74,0.05); padding:3px; border-radius:8px; }
+  .toggle-btn { font-size:12px; font-weight:700; padding:6px 14px; border-radius:6px; cursor:pointer; border:none; background:none; color:var(--text-light); }
+  .toggle-btn.active { background-color:#fff; color:var(--primary); box-shadow:0 2px 5px rgba(0,0,0,0.05); }
+  .content-area { flex:1; padding:32px; overflow-y:auto; display:flex; justify-content:center; align-items:flex-start; }
+  .preview-frame { background-color:#fff; width:100%; max-width:820px; min-height:1160px; border:1px solid var(--border); box-shadow:0 8px 30px rgba(15,23,42,0.08); border-radius:12px; padding:15mm; }
+  .preview-frame.full-screen { max-width:100%; box-shadow:none; border-radius:0; border:none; min-height:auto; padding:0; }
+  iframe { width:100%; height:100%; min-height:900px; border:none; }
+  .checklist-page, .report-page { width:100%; max-width:800px; background:#fff; border:1px solid var(--border); border-radius:12px; padding:32px; box-shadow:0 8px 30px rgba(15,23,42,0.08); }
+  .checklist-page h2 { font-family:'Outfit',sans-serif; font-size:22px; color:var(--primary); margin-bottom:8px; border-bottom:2px solid var(--primary-light); padding-bottom:12px; }
+  .checklist-intro { font-size:14px; color:var(--text-light); line-height:1.5; margin-bottom:24px; }
+  .checklist-item { display:flex; align-items:flex-start; margin-bottom:16px; padding:16px; border:1px solid var(--border); border-radius:10px; background-color:#fafbfd; }
+  .custom-cb { margin-top:3px; margin-right:14px; width:22px; height:22px; border:2px solid #94a3b8; border-radius:6px; display:flex; align-items:center; justify-content:center; cursor:pointer; background-color:#fff; }
+  .checklist-item.checked .custom-cb { background-color:var(--success); border-color:var(--success); }
+  .custom-cb svg { width:12px; height:12px; stroke:#fff; display:none; }
+  .checklist-item.checked .custom-cb svg { display:block; }
+  .checklist-title { font-size:15px; font-weight:700; color:var(--primary); margin-bottom:4px; }
+  .checklist-desc { font-size:13px; color:#475569; line-height:1.45; }
+  .feedback-input { width:100%; border:1px solid var(--border); border-radius:8px; padding:10px 14px; font-family:inherit; font-size:13px; resize:vertical; min-height:55px; margin-top:8px; }
+  .btn-action { background-color:var(--accent); color:#fff; border:none; padding:12px 24px; font-size:14px; font-weight:700; border-radius:20px; cursor:pointer; margin-top:16px; box-shadow:0 6px 16px rgba(244,123,32,0.28); }
+  .report-page { font-size:14px; line-height:1.6; }
+  .report-page h1, .report-page h2 { font-family:'Outfit',sans-serif; color:var(--primary); margin-top:24px; margin-bottom:12px; }
+  .report-page h1 { font-size:22px; border-bottom:2px solid var(--primary-light); padding-bottom:10px; margin-top:0; }
+  .report-page h2 { font-size:16px; border-bottom:1px solid var(--border); padding-bottom:6px; }
+  .badge-report { display:inline-block; padding:4px 10px; color:#fff; font-weight:700; font-size:12px; border-radius:4px; margin-top:6px; }
+  table.compare { width:100%; border-collapse:collapse; margin-top:12px; }
+  table.compare th, table.compare td { border:1px solid var(--border); padding:8px 10px; font-size:12.5px; text-align:left; }
+  table.compare th { background:#f7f5f0; }
+</style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-container">
+        <svg style="height:32px;width:32px;fill:none;stroke:var(--primary);stroke-width:2.2;" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5z"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479L12 21l-6.825-4a12.083 12.083 0 01.665-6.479L12 14z"/></svg>
+        <h1>CAP <span>TCF</span></h1>
+      </div>
+      <p>Cabinet de Validation Pédagogique — Séance S01 v3</p>
+      <span class="badge-v3">PILOTE REFONTE — NE REMPLACE PAS S01 VALIDÉE</span>
+    </div>
+    <nav class="menu-section">
+      <div class="menu-title">Validation</div>
+      <div class="menu-item active" onclick="showTab('sofiane-checklist')">À Valider par Sofiane</div>
+      <div class="menu-item" onclick="showTab('conformity-report')">Rapport d'Audit</div>
+      <div class="menu-item" onclick="showTab('comparison')">Comparaison S01 vs S01 v3</div>
+      <div class="menu-title" style="margin-top:24px;">Gabarits Documentaires</div>
+      <div class="menu-item" onclick="showTab('trainer-sheet')">Fiche Formateur</div>
+      <div class="menu-item" onclick="showTab('student-sheet')">Fiche Apprenant Dense</div>
+      <div class="menu-item" onclick="showTab('dialogue-sheet')">Dialogue + 20 Questions</div>
+      <div class="menu-item" onclick="showTab('qcm-tcf-sheet')">QCM TCF (10 Q)</div>
+      <div class="menu-item" onclick="showTab('qcm-sheet')">QCM Civique (10 Q)</div>
+      <div class="menu-item" onclick="showTab('corrige-sheet')">Corrigé Formateur</div>
+      <div class="menu-item" onclick="showTab('lexique-sheet')">Lexique + 3 Exercices</div>
+      <div class="menu-item" onclick="showTab('visual-sheet')">Support Visuel</div>
+      <div class="menu-item" onclick="showTab('convert-sheet')">Document Transformé</div>
+    </nav>
+    <div class="downloads-box">
+      <h3>Documents prêts à imprimer</h3>
+      
+      <div class="download-link"><span>Formateur (Déroulé)</span><div class="download-actions"><a href="S01_FOR_FI_ALL_deroule-180min.pdf" class="download-link btn-dl btn-pdf" target="_blank">PDF</a><a href="S01_FOR_FI_ALL_deroule-180min.docx" class="download-link btn-dl btn-docx" download>Word</a></div></div>
+      <div class="download-link"><span>Fiche Apprenant Dense</span><div class="download-actions"><a href="S01_APP_CO_A2_fiche-activites.pdf" class="download-link btn-dl btn-pdf" target="_blank">PDF</a><a href="S01_APP_CO_A2_fiche-activites.docx" class="download-link btn-dl btn-docx" download>Word</a></div></div>
+      <div class="download-link"><span>Dialogue + 20 Questions</span><div class="download-actions"><a href="S01_APP_CO_ALL_dialogue-transcription.pdf" class="download-link btn-dl btn-pdf" target="_blank">PDF</a><a href="S01_APP_CO_ALL_dialogue-transcription.docx" class="download-link btn-dl btn-docx" download>Word</a></div></div>
+      <div class="download-link"><span>QCM TCF (10 Q)</span><div class="download-actions"><a href="S01_APP_QC_ALL_qcm-tcf.pdf" class="download-link btn-dl btn-pdf" target="_blank">PDF</a><a href="S01_APP_QC_ALL_qcm-tcf.docx" class="download-link btn-dl btn-docx" download>Word</a></div></div>
+      <div class="download-link"><span>QCM Civique (10 Q)</span><div class="download-actions"><a href="S01_APP_QC_ALL_qcm-civique.pdf" class="download-link btn-dl btn-pdf" target="_blank">PDF</a><a href="S01_APP_QC_ALL_qcm-civique.docx" class="download-link btn-dl btn-docx" download>Word</a></div></div>
+      <div class="download-link"><span>Corrigé Formateur</span><div class="download-actions"><a href="S01_COR_ALL_corrige-formateur.pdf" class="download-link btn-dl btn-pdf" target="_blank">PDF</a><a href="S01_COR_ALL_corrige-formateur.docx" class="download-link btn-dl btn-docx" download>Word</a></div></div>
+      <div class="download-link"><span>Lexique</span><div class="download-actions"><a href="S01_APP_LX_ALL_lexique.pdf" class="download-link btn-dl btn-pdf" target="_blank">PDF</a><a href="S01_APP_LX_ALL_lexique.docx" class="download-link btn-dl btn-docx" download>Word</a></div></div>
+      <div class="download-link"><span>Support Visuel</span><div class="download-actions"><a href="S01_APP_VI_ALL_support-visuel.pdf" class="download-link btn-dl btn-pdf" target="_blank">PDF</a><a href="S01_APP_VI_ALL_support-visuel.docx" class="download-link btn-dl btn-docx" download>Word</a></div></div>
+      <div class="download-link"><span>Document Transformé</span><div class="download-actions"><a href="S01_APP_CV_ALL_document-transforme.pdf" class="download-link btn-dl btn-pdf" target="_blank">PDF</a><a href="S01_APP_CV_ALL_document-transforme.docx" class="download-link btn-dl btn-docx" download>Word</a></div></div>
+    </div>
+  </aside>
+  <main class="main">
+    <header class="main-header">
+      <h2 id="view-title">Points à valider par Sofiane — Séance S01 v3</h2>
+      <div class="view-toggles" id="toggle-container" style="display:none;">
+        <button class="toggle-btn active" id="toggle-a4" onclick="setViewMode('a4')">Aperçu A4</button>
+        <button class="toggle-btn" id="toggle-full" onclick="setViewMode('full')">Plein Écran</button>
+      </div>
+    </header>
+    <div class="content-area">
+      <div id="sofiane-checklist" class="checklist-page">
+        <h2>Pack Pilote S01 v3 — Refonte densifiée</h2>
+        <p class="checklist-intro">
+          Généré à partir de <code>docs/s01-v3-conception-pedagogique.md</code>. Dossier séparé, ne remplace pas <code>docs/seance-1-modele-validation/</code>. Statut global : <strong>GO</strong> sur l'audio, volume d'activité densifié pour couvrir les 180 minutes réellement.
+        </p>
+        <div class="checklist-item" id="item-visuel"><div class="custom-cb" onclick="toggleCheck('item-visuel')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div><div><div class="checklist-title">1. Cohérence visuelle CapTCF</div><div class="checklist-desc">Mêmes fonctions de rendu partagées que S01-S05 (getHTMLHeader, wrapHTML, COLORS) — aucune charte modifiée.</div><textarea class="feedback-input" placeholder="Remarques..."></textarea></div></div>
+        <div class="checklist-item" id="item-timing"><div class="custom-cb" onclick="toggleCheck('item-timing')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div><div><div class="checklist-title">2. Volume réaliste 180 min</div><div class="checklist-desc">6 phases, total 180 min. Densification : 20 questions CO, 10 QCM TCF, 10 QCM civique, 9 blocs grammaire, 8 prompts EO, 3 productions EE.</div><textarea class="feedback-input" placeholder="Remarques..."></textarea></div></div>
+        <div class="checklist-item" id="item-audio"><div class="custom-cb" onclick="toggleCheck('item-audio')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div><div><div class="checklist-title">3. Durée audio (cible 2 min 30 s) — GO</div><div class="checklist-desc">Dialogue enrichi : 2 min 29 s (estimation fake-tts), écart -1 s. Dans la plage de tolérance.</div><textarea class="feedback-input" placeholder="Remarques..."></textarea></div></div>
+        <div class="checklist-item" id="item-qcm"><div class="custom-cb" onclick="toggleCheck('item-qcm')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div><div><div class="checklist-title">4. QCM TCF sans option inventée</div><div class="checklist-desc">10 questions, toutes options réelles ancrées dans le dialogue — plus de "D. 40".</div><textarea class="feedback-input" placeholder="Remarques..."></textarea></div></div>
+        <div class="checklist-item" id="item-civique"><div class="custom-cb" onclick="toggleCheck('item-civique')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div><div><div class="checklist-title">5. QCM civique — justifications spécifiques</div><div class="checklist-desc">10 questions (5 Supabase cv2:S01:civic:0-4 réutilisées + 5 créées), chaque justification réécrite spécifiquement — plus de texte générique répété.</div><textarea class="feedback-input" placeholder="Remarques..."></textarea></div></div>
+        <button class="btn-action" onclick="exportFeedback()">Exporter les validations</button>
+      </div>
+
+      <div id="conformity-report" class="report-page" style="display:none;">
+        <h1>Rapport d'Audit de Conformité S01 v3</h1>
+        <div class="badge-report" style="background-color:var(--success);">Statut audio : GO</div>
+        <h2>1. Contrôles automatisés</h2>
+        <ul>
+          <li><strong>180 min :</strong> 180 min sur 6 phases — CONFORME.</li>
+          <li><strong>Dialogue :</strong> 2 min 29 s, cible 2 min 30 s (tolérance 2m25-2m35) — <strong>GO</strong>.</li>
+          <li><strong>QCM TCF :</strong> 10 questions, aucune option "D. 40" — CONFORME.</li>
+          <li><strong>QCM civique :</strong> 10 questions avec justification spécifique par question — CONFORME.</li>
+          <li><strong>Support visuel DOCX :</strong> image réelle intégrée (w:drawing), pas de tableau hacké — CONFORME.</li>
+          <li><strong>docs/seance-1-modele-validation/ :</strong> non modifié — CONFORME.</li>
+        </ul>
+        <h2>2. Rappel des sources</h2>
+        <p>Contenu construit à partir de <code>docs/s01-v3-conception-pedagogique.md</code>, réutilisant 5 QCM civiques Supabase (cv2:S01:civic:0-4) et des exercices banque identité/présentation A1 (ids détaillés dans le document de conception), complétés par de la création ciblée là où la banque était insuffisante (grammaire B1/B2, 20 questions CO propres au dialogue, QCM TCF).</p>
+      </div>
+
+      <div id="comparison" class="report-page" style="display:none;">
+        <h1>Comparaison S01 actuelle vs S01 v3</h1>
+        <table class="compare">
+          <thead><tr><th>Élément</th><th>S01 actuelle</th><th>S01 v3</th></tr></thead>
+          <tbody>
+            <tr><td>Questions sur le dialogue CO</td><td>2 par niveau (8 total)</td><td>20 questions, réparties par niveau</td></tr>
+            <tr><td>QCM TCF</td><td>1 question (+ option "D. 40")</td><td>10 questions, options réelles</td></tr>
+            <tr><td>QCM civique</td><td>5 questions, justifications génériques (bug)</td><td>10 questions, justifications spécifiques</td></tr>
+            <tr><td>Bloc grammaire dédié</td><td>Aucun</td><td>9 exercices gradués A1→B2</td></tr>
+            <tr><td>Expression orale</td><td>1 consigne générique par niveau</td><td>8 prompts gradés avec critères</td></tr>
+            <tr><td>Expression écrite</td><td>1 tâche par niveau</td><td>2 productions guidées + 1 autonome, variantes bas/haut</td></tr>
+            <tr><td>Lexique</td><td>10 mots, 0 exercice dédié</td><td>10 mots + 3 exercices (association, texte à trous, réemploi oral)</td></tr>
+            <tr><td>Support visuel</td><td>2 questions</td><td>5 questions</td></tr>
+            <tr><td>Variantes A2/B1/B2 (banque Supabase)</td><td>3 des 4 en base : rejected</td><td>Recréées avec format valide (à re-valider)</td></tr>
+            <tr><td>Durée dialogue</td><td>267 mots (~2 min 14 s, NO-GO jamais corrigé)</td><td>298 mots (~2 min 29 s, GO)</td></tr>
+            <tr><td>Volume réaliste estimé / 180 min</td><td>~70-85 min</td><td>~170-185 min</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="iframe-view" class="preview-frame" style="display:none;"><iframe id="preview-iframe"></iframe></div>
+    </div>
+  </main>
+  <script>
+    const templates = {
+      'trainer-sheet': `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        body {
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
+          color: #0b234a; /* Brand dark blue text */
+          background-color: #ffffff;
+          margin: 0;
+          padding: 0;
+          font-size: 10pt;
+          line-height: 1.5;
+        }
+        .section-title {
+          font-size: 11.5pt;
+          font-weight: 800;
+          color: #0b234a;
+          margin-top: 20px;
+          margin-bottom: 10px;
+          border-bottom: 1.5px solid #e2e8f0;
+          border-left: 4px solid #f47b20; /* Orange actions theme */
+          padding-left: 10px;
+          padding-bottom: 4px;
+        }
+        .consigne-box {
+          background-color: #fff7f0; /* Very light orange background */
+          border-left: 4px solid #f47b20; /* Orange border left */
+          padding: 12px 16px;
+          margin-bottom: 14px;
+          border-radius: 0 6px 6px 0;
+          color: #0b234a; /* Dark blue text */
+        }
+        .consigne-title {
+          font-size: 8.5pt;
+          font-weight: 800;
+          color: #f47b20;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 6px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .consigne-title svg {
+          stroke: #f47b20;
+          vertical-align: middle;
+        }
+        .aides-box {
+          border: 1px dashed #cbd5e1;
+          padding: 10px 14px;
+          margin-bottom: 14px;
+          font-size: 9pt;
+          color: #475569;
+          background-color: #fafbfc;
+          border-radius: 6px;
+        }
+        .response-line {
+          border-bottom: 1.5px dotted #cbd5e1;
+          height: 28px;
+          margin-bottom: 8px;
+        }
+        .checkbox-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 8px;
+          font-size: 9.5pt;
+          cursor: pointer;
+        }
+        .checkbox {
+          width: 14px;
+          height: 14px;
+          border: 1.5px solid #0b234a;
+          border-radius: 3px;
+          display: inline-block;
+          background-color: #ffffff;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 12px;
+          margin-bottom: 12px;
+          box-shadow: 0 2px 5px rgba(11,35,74,0.02);
+        }
+        th {
+          background-color: #f7f5f0; /* Warm clear grey */
+          border-bottom: 2.5px solid #065F46;
+          text-align: left;
+          padding: 10px;
+          font-size: 9.5pt;
+          font-weight: 800;
+          color: #0b234a;
+        }
+        td {
+          border-bottom: 1px solid #e8e6e0;
+          padding: 10px;
+          font-size: 9pt;
+          line-height: 1.45;
+          vertical-align: top;
+          color: #1e293b;
+        }
+        .tip-box {
+          background-color: #f0fdf4;
+          border: 1px solid #a7f3d0;
+          padding: 12px;
+          border-radius: 6px;
+          font-size: 9pt;
+          color: #065f46;
+          margin-top: 12px;
+          line-height: 1.5;
+        }
+      </style>
+    </head>
+    <body>
+      
+    
+    <header style="border-bottom: 2pt solid #f47b20; padding-bottom: 10px; margin-bottom: 22px; font-family: 'Inter', system-ui, -apple-system, sans-serif;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="display:flex;align-items:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:13pt;color:#0b234a;letter-spacing:-0.5px;"><svg style="width:20px;height:20px;fill:none;stroke:#0b234a;stroke-width:2.2;margin-right:6px;vertical-align:middle" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479L12 21l-6.825-4a12.083 12.083 0 01.665-6.479L12 14z"/></svg>CAP&nbsp;<span style="color:#f47b20">TCF</span></span>
+        <div style="display: flex; gap: 6px;">
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Séance S01</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Niveau A1-B2</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Durée 180 min</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Compétence CO/CE/EO/EE/CIVIQUE</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 800; color: #fff; border-radius: 4px; background-color: #065F46;">FOR</span>
+        </div>
+      </div>
+      <h2 style="font-size: 14pt; font-weight: 800; color: #0b234a; margin: 0; line-height: 1.25;">
+        Fiche Formateur — Déroulé Pédagogique S01 (v3 dense)
+      </h2>
+    </header>
+  
+    
+    <div class="consigne-box">
+      <div class="consigne-title"><svg style="width:14px;height:14px;fill:none;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg><span>GUIDE PÉDAGOGIQUE — VERSION 3 DENSE</span></div>
+      <div style="font-size: 9.5pt; font-weight: 600; line-height: 1.4; color: #0b234a;">Séance d'accueil dense : chaque apprenant repart avec (1) la compréhension complète de son parcours (durée, séances, évaluations), (2) la capacité à se présenter et présenter un tiers, (3) la distinction claire entre droit, devoir et règle, étayée par 20 questions sur le dialogue, un bloc grammaire gradé, un QCM TCF de 10 questions et un QCM civique de 10 questions avec justifications réelles.</div>
+    </div>
+  
+    <div class="section-title">Objectifs opérationnels</div>
+    <div style="font-size: 9.5pt; margin-bottom: 15px; line-height: 1.45;">
+      • Comprendre son parcours de formation et ses modalités (durée, séances, évaluations)<br>• Se présenter et présenter un tiers (identité, nationalité, parcours)<br>• Distinguer droit, devoir et règle<br>• Découvrir les cinq thèmes civiques officiels du parcours<br>
+    </div>
+    <div class="section-title">Déroulé détaillé (180 minutes)</div>
+    
+      <div style="margin-bottom: 14px; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px 12px;">
+        <div style="font-weight: 800; color: #065f46; margin-bottom: 4px;">Phase 1 : Rituel civique (10 min)</div>
+        <div style="font-size: 9pt; line-height: 1.5;">Observation collective du support visuel (5 thèmes civiques), 3 questions d'amorce, sans notation.</div>
+      </div>
+    
+      <div style="margin-bottom: 14px; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px 12px;">
+        <div style="font-weight: 800; color: #065f46; margin-bottom: 4px;">Phase 2 : Activation + lexique (20 min)</div>
+        <div style="font-size: 9pt; line-height: 1.5;">10 mots-clés + 3 exercices (association, texte à trous, réemploi oral).</div>
+      </div>
+    
+      <div style="margin-bottom: 14px; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px 12px;">
+        <div style="font-weight: 800; color: #065f46; margin-bottom: 4px;">Phase 3 : Support invariant CO/CE (50 min)</div>
+        <div style="font-size: 9pt; line-height: 1.5;">Dialogue Awa/Mme Rossi (2 min 29 s) en 3 écoutes progressives + 20 questions/micro-tâches réparties par niveau.</div>
+      </div>
+    
+      <div style="margin-bottom: 14px; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px 12px;">
+        <div style="font-weight: 800; color: #065f46; margin-bottom: 4px;">Phase 4 : Ateliers différenciés (60 min)</div>
+        <div style="font-size: 9pt; line-height: 1.5;">4 groupes A1/A2/B1/B2 : bloc grammaire gradé + exercices banque + variantes corrigées.</div>
+      </div>
+    
+      <div style="margin-bottom: 14px; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px 12px;">
+        <div style="font-weight: 800; color: #065f46; margin-bottom: 4px;">Phase 5 : Production EE/EO (30 min)</div>
+        <div style="font-size: 9pt; line-height: 1.5;">8 prompts EO gradés + 2 productions EE guidées + 1 autonome.</div>
+      </div>
+    
+      <div style="margin-bottom: 14px; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px 12px;">
+        <div style="font-weight: 800; color: #065f46; margin-bottom: 4px;">Phase 6 : Fixation (10 min)</div>
+        <div style="font-size: 9pt; line-height: 1.5;">QCM civique 10 questions, correction flash, devoirs différenciés.</div>
+      </div>
+    
+    <div class="section-title">Détail Phase 1 — Rituel civique (10 min)</div>
+    <div style="font-size: 9pt; line-height: 1.5;">
+      <strong>Consigne formateur :</strong> « Aujourd'hui, avant de commencer, regardons ensemble les cinq grands thèmes que nous allons voir pendant toute la formation. Ce n'est pas un test, juste une découverte. »<br>
+      <strong>Activité apprenant :</strong> observation collective du support visuel, lecture à voix haute des cinq intitulés.<br>
+      <strong>Questions exactes :</strong> « Combien de panneaux voyez-vous ? » / « Quel est le premier thème, à gauche ? » / « Selon vous, que veut dire 'vivre dans la société française' ? »<br>
+      <strong>Relance :</strong> « Est-ce qu'un de ces mots vous fait déjà penser à quelque chose que vous connaissez dans votre pays ? »<br>
+      <strong>Adaptation :</strong> A1 — pointer les couleurs plutôt que lire ; B1/B2 — reformulation complète de chaque intitulé.
+    </div>
+    <div class="section-title">Détail Phase 2 — Activation + lexique (20 min)</div>
+    <div style="font-size: 9pt; line-height: 1.5;">
+      <strong>Consigne formateur :</strong> « Voici les mots importants d'aujourd'hui. On va les lire, les comprendre, puis les utiliser. »<br>
+      <strong>Déroulement :</strong> lecture silencieuse (3 min) → lecture à voix haute par binômes (5 min) → 3 exercices lexicaux (12 min, cf. fiche Lexique).<br>
+      <strong>Adaptation :</strong> A1 — appui sur les exercices Structures les plus simples ; B1/B2 — réemploi oral libre en plus.
+    </div>
+    <div class="section-title">Détail Phase 3 — Support invariant CO/CE (50 min)</div>
+    <div style="font-size: 9pt; line-height: 1.5;">
+      <strong>1ère écoute globale (10 min) :</strong> sans transcription, questions 1-3.<br>
+      <strong>2ème écoute ciblée (15 min) :</strong> repérage chiffres et lexique, questions 4-10.<br>
+      <strong>3ème écoute + transcription (10 min) :</strong> lecture silencieuse, correction phonétique des liaisons.<br>
+      <strong>Exploitation écrite (15 min) :</strong> questions 11-20, correction collective avec citation exacte de la réplique.<br>
+      <strong>Relance :</strong> « Pourquoi Mme Rossi demande-t-elle à Awa d'épeler son nom ? »<br>
+      <strong>Adaptation :</strong> A1 → questions 1-13 ; A2 → 1-17 ; B1/B2 → 1-20 (détail : fiche Dialogue/Transcription).
+    </div>
+    <div class="section-title">Détail Phase 4 — Ateliers différenciés (60 min)</div>
+    <table>
+      <thead><tr><th>Niveau</th><th>Durée</th><th>Contenu</th></tr></thead>
+      <tbody>
+        
+          <tr><td><strong>A1</strong></td><td>45 min</td><td>Bloc grammaire A1 (être, pronoms, s'appeler/habiter) + 3 exercices banque identité (épeler son nom CO, carte d'identité V/F, Q/R identité) + variante A1 (corrigée le 2026-07-08 : consigne raccourcie, texte support ajouté ; remplace cv2:S01:variant:A1 needs_review).</td></tr>
+        
+          <tr><td><strong>A2</strong></td><td>45 min</td><td>Bloc grammaire A2 (possessifs, texte lacunaire présentation) + fiche identité (texte lacunaire + QCM 2 fiches) + variante A2 recréée le 2026-07-08 (remplace l'originale rejected : qcm_no_options).</td></tr>
+        
+          <tr><td><strong>B1</strong></td><td>40 min</td><td>Bloc grammaire B1 (nationalité/pays-ville, discours rapporté) + lecture approfondie sur le parcours (QCM) + variante B1 recréée le 2026-07-08 en compétence CE (remplace l'originale rejected : format production_ecrite incompatible avec CE).</td></tr>
+        
+          <tr><td><strong>B2</strong></td><td>40 min</td><td>Bloc grammaire B2 (nominalisation, connecteurs) + lecture argumentative sur l'organisation du parcours (QCM) + variante B2 recréée le 2026-07-08 en compétence CE (remplace l'originale rejected : même cause que B1).</td></tr>
+        
+      </tbody>
+    </table>
+    <div class="section-title">Ateliers différenciés — exercices et corrigé (pour le formateur)</div>
+    
+      <div style="margin: 12px 0 6px 0; font-weight: 800; color: #065f46; font-size: 10.5pt;">Niveau A1</div>
+      
+    <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; background:#fafbfc;">
+      <div style="font-size: 9pt; margin-bottom: 6px;"><strong>Consigne :</strong> Écoutez la phrase, puis choisissez l'orthographe correcte du nom de famille.</div>
+      <div style="font-size:9pt; font-style:italic; background:#ffffff; padding:8px; border-radius:4px; white-space:pre-line; margin-bottom:8px;">🔊 « Mon nom s'écrit B-E-L-K-A-S-S-E-M. »</div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Comment s'écrit le nom de famille ?</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> B-E-L-K-A-S-S-E-M <strong style="color:#047857;">&#10003; réponse</strong></div><div class="checkbox-row"><span class="checkbox"></span> B-E-L-K-A-C-E-M</div><div class="checkbox-row"><span class="checkbox"></span> B-E-L-G-A-S-S-E-M</div></div>
+        </div>
+      
+      <div style="font-size:7.5pt; color:#94a3b8; margin-top:4px;">Banque exercices, id 4c983a50 (réutilisé tel quel)</div>
+    </div>
+  
+    <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; background:#fafbfc;">
+      <div style="font-size: 9pt; margin-bottom: 6px;"><strong>Consigne :</strong> Pour chaque question, cochez la bonne réponse.</div>
+      
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Où habitez-vous ?</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> J'habite à Nice. <strong style="color:#047857;">&#10003; réponse</strong></div><div class="checkbox-row"><span class="checkbox"></span> Je suis Italien.</div><div class="checkbox-row"><span class="checkbox"></span> C'est le 06 00 00 00 00.</div></div>
+        </div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Quelle est votre nationalité ?</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Je suis Italien. <strong style="color:#047857;">&#10003; réponse</strong></div><div class="checkbox-row"><span class="checkbox"></span> Enchanté.</div><div class="checkbox-row"><span class="checkbox"></span> Marc Petit.</div></div>
+        </div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Quel est votre numéro de téléphone ?</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> C'est le 06 00 00 00 00. <strong style="color:#047857;">&#10003; réponse</strong></div><div class="checkbox-row"><span class="checkbox"></span> C'est le 12 rue de la Paix.</div><div class="checkbox-row"><span class="checkbox"></span> En 1985.</div></div>
+        </div>
+      
+      <div style="font-size:7.5pt; color:#94a3b8; margin-top:4px;">Banque exercices, id 4a85ed79 (réutilisé tel quel)</div>
+    </div>
+  
+    <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; background:#fafbfc;">
+      <div style="font-size: 9pt; margin-bottom: 6px;"><strong>Consigne :</strong> Lisez la carte d'identité, puis répondez par Vrai ou Faux.</div>
+      <div style="font-size:9pt; font-style:italic; background:#ffffff; padding:8px; border-radius:4px; white-space:pre-line; margin-bottom:8px;">RÉPUBLIQUE FRANÇAISE
+NOM : BENALI
+PRÉNOM : Yasmine
+NÉ(E) LE : 12/05/1995
+À : Marseille
+SEXE : F</div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Yasmine est née à Marseille.</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Vrai <strong style="color:#047857;">&#10003; réponse</strong></div><div class="checkbox-row"><span class="checkbox"></span> Faux</div></div>
+        </div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Son nom de famille est Yasmine.</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Vrai</div><div class="checkbox-row"><span class="checkbox"></span> Faux <strong style="color:#047857;">&#10003; réponse</strong></div></div>
+        </div>
+      
+      <div style="font-size:7.5pt; color:#94a3b8; margin-top:4px;">Banque exercices, id 77dcd9d8 (réutilisé tel quel)</div>
+    </div>
+  
+    <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; background:#fafbfc;">
+      <div style="font-size: 9pt; margin-bottom: 6px;"><strong>Consigne :</strong> Relisez le début du dialogue (fiche Dialogue), puis répondez par Vrai ou Faux.</div>
+      <div style="font-size:9pt; font-style:italic; background:#ffffff; padding:8px; border-radius:4px; white-space:pre-line; margin-bottom:8px;">« Bonjour madame. Je m'appelle Awa. Awa Diallo. » — « Oui, bien sûr : D-I-A-L-L-O. »</div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Awa épelle son prénom.</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Vrai</div><div class="checkbox-row"><span class="checkbox"></span> Faux <strong style="color:#047857;">&#10003; réponse</strong></div></div>
+        </div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Le nom de famille d'Awa est Diallo.</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Vrai <strong style="color:#047857;">&#10003; réponse</strong></div><div class="checkbox-row"><span class="checkbox"></span> Faux</div></div>
+        </div>
+      
+      <div style="font-size:7.5pt; color:#94a3b8; margin-top:4px;">Variante A1, corrigée le 2026-07-08 (consigne raccourcie, texte support ajouté ; remplace cv2:S01:variant:A1 needs_review)</div>
+    </div>
+  
+    
+      <div style="margin: 12px 0 6px 0; font-weight: 800; color: #065f46; font-size: 10.5pt;">Niveau A2</div>
+      
+    <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; background:#fafbfc;">
+      <div style="font-size: 9pt; margin-bottom: 6px;"><strong>Consigne :</strong> Complétez le texte avec les mots proposés.</div>
+      <div style="font-size:9pt; font-style:italic; background:#ffffff; padding:8px; border-radius:4px; white-space:pre-line; margin-bottom:8px;">Bonjour,
+Je ... Youcef.
+Je ... d'Algérie.
+J' ... 28 ans.
+Cordialement.</div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Bonjour, je ... Youcef.</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> m'appelle <strong style="color:#047857;">&#10003; réponse</strong></div><div class="checkbox-row"><span class="checkbox"></span> habite</div></div>
+        </div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Je ... d'Algérie.</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> viens <strong style="color:#047857;">&#10003; réponse</strong></div><div class="checkbox-row"><span class="checkbox"></span> suis</div></div>
+        </div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">J' ... 28 ans.</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> suis</div><div class="checkbox-row"><span class="checkbox"></span> ai <strong style="color:#047857;">&#10003; réponse</strong></div></div>
+        </div>
+      
+      <div style="font-size:7.5pt; color:#94a3b8; margin-top:4px;">Banque exercices, id afd658af (réutilisé tel quel)</div>
+    </div>
+  
+    <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; background:#fafbfc;">
+      <div style="font-size: 9pt; margin-bottom: 6px;"><strong>Consigne :</strong> Lisez les deux fiches, puis répondez aux questions.</div>
+      <div style="font-size:9pt; font-style:italic; background:#ffffff; padding:8px; border-radius:4px; white-space:pre-line; margin-bottom:8px;">FICHE 1 :
+NOM : BENALI | PRÉNOM : Mehdi | ÂGE : 32 ans | NATIONALITÉ : Algérienne | VILLE : Bordeaux
+
+FICHE 2 :
+NOM : RICCI | PRÉNOM : Elena | ÂGE : 28 ans | NATIONALITÉ : Italienne | VILLE : Marseille</div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Quel est le nom de famille de la première personne ?</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Mehdi</div><div class="checkbox-row"><span class="checkbox"></span> BENALI <strong style="color:#047857;">&#10003; réponse</strong></div><div class="checkbox-row"><span class="checkbox"></span> Algérienne</div></div>
+        </div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Dans quelle ville habite Mehdi ?</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Paris</div><div class="checkbox-row"><span class="checkbox"></span> Bordeaux <strong style="color:#047857;">&#10003; réponse</strong></div><div class="checkbox-row"><span class="checkbox"></span> Marseille</div></div>
+        </div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Quelle est la nationalité d'Elena ?</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Espagnole</div><div class="checkbox-row"><span class="checkbox"></span> Italienne <strong style="color:#047857;">&#10003; réponse</strong></div><div class="checkbox-row"><span class="checkbox"></span> Française</div></div>
+        </div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Mehdi est plus âgé qu'Elena.</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Vrai <strong style="color:#047857;">&#10003; réponse</strong></div><div class="checkbox-row"><span class="checkbox"></span> Faux</div></div>
+        </div>
+      
+      <div style="font-size:7.5pt; color:#94a3b8; margin-top:4px;">Banque exercices, id 95f4746e (réutilisé tel quel, sélection de 4 questions sur 8)</div>
+    </div>
+  
+    <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; background:#fafbfc;">
+      <div style="font-size: 9pt; margin-bottom: 6px;"><strong>Consigne :</strong> D'après le dialogue, choisissez la bonne réponse.</div>
+      
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Quel est l'objectif d'Awa au début de sa formation ?</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Obtenir sa carte de séjour pluriannuelle. <strong style="color:#047857;">&#10003; réponse</strong></div><div class="checkbox-row"><span class="checkbox"></span> Trouver un emploi de formatrice.</div><div class="checkbox-row"><span class="checkbox"></span> Passer le TCF pour partir à l'étranger.</div></div>
+        </div>
+      
+      <div style="font-size:7.5pt; color:#94a3b8; margin-top:4px;">Variante A2, recréée le 2026-07-08 (remplace l'original rejeté : qcm_no_options)</div>
+    </div>
+  
+    
+      <div style="margin: 12px 0 6px 0; font-weight: 800; color: #065f46; font-size: 10.5pt;">Niveau B1</div>
+      
+    <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; background:#fafbfc;">
+      <div style="font-size: 9pt; margin-bottom: 6px;"><strong>Consigne :</strong> Lisez, puis répondez aux questions.</div>
+      <div style="font-size:9pt; font-style:italic; background:#ffffff; padding:8px; border-radius:4px; white-space:pre-line; margin-bottom:8px;">Le parcours vers la carte de séjour pluriannuelle dure 80 heures. Il comprend 25 séances collectives de 3 heures, à raison d'une séance par semaine. Deux évaluations ont lieu hors séances : une évaluation intermédiaire (E1) après 50 heures, et une évaluation finale (E2) à la fin des 80 heures.</div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Combien de séances comprend le parcours ?</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> 20 séances</div><div class="checkbox-row"><span class="checkbox"></span> 25 séances <strong style="color:#047857;">&#10003; réponse</strong></div><div class="checkbox-row"><span class="checkbox"></span> 30 séances</div></div>
+        </div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Quand a lieu l'évaluation E1 ?</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Après 50 heures <strong style="color:#047857;">&#10003; réponse</strong></div><div class="checkbox-row"><span class="checkbox"></span> Après 80 heures</div><div class="checkbox-row"><span class="checkbox"></span> Après 25 séances</div></div>
+        </div>
+      
+      <div style="font-size:7.5pt; color:#94a3b8; margin-top:4px;">Créé à partir de support.faits (approfondissement présentation)</div>
+    </div>
+  
+    <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; background:#fafbfc;">
+      <div style="font-size: 9pt; margin-bottom: 6px;"><strong>Consigne :</strong> Associez chaque terme à sa définition, d'après les explications de Mme Rossi.</div>
+      
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Un droit</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Quelque chose que vous pouvez demander, comme le droit à la santé. <strong style="color:#047857;">&#10003; réponse</strong></div><div class="checkbox-row"><span class="checkbox"></span> Quelque chose que vous devez faire, comme respecter la loi.</div><div class="checkbox-row"><span class="checkbox"></span> Une consigne précise, par exemple arriver à l'heure.</div></div>
+        </div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Un devoir</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Quelque chose que vous pouvez demander, comme le droit à la santé.</div><div class="checkbox-row"><span class="checkbox"></span> Quelque chose que vous devez faire, comme respecter la loi. <strong style="color:#047857;">&#10003; réponse</strong></div><div class="checkbox-row"><span class="checkbox"></span> Une consigne précise, par exemple arriver à l'heure.</div></div>
+        </div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Une règle</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Quelque chose que vous pouvez demander, comme le droit à la santé.</div><div class="checkbox-row"><span class="checkbox"></span> Quelque chose que vous devez faire, comme respecter la loi.</div><div class="checkbox-row"><span class="checkbox"></span> Une consigne précise, par exemple arriver à l'heure. <strong style="color:#047857;">&#10003; réponse</strong></div></div>
+        </div>
+      
+      <div style="font-size:7.5pt; color:#94a3b8; margin-top:4px;">Variante B1, recréée le 2026-07-08 en compétence CE (remplace l'originale rejetée : format production_ecrite incompatible avec CE)</div>
+    </div>
+  
+    
+      <div style="margin: 12px 0 6px 0; font-weight: 800; color: #065f46; font-size: 10.5pt;">Niveau B2</div>
+      
+    <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; background:#fafbfc;">
+      <div style="font-size: 9pt; margin-bottom: 6px;"><strong>Consigne :</strong> Lisez le paragraphe, puis répondez aux questions.</div>
+      <div style="font-size:9pt; font-style:italic; background:#ffffff; padding:8px; border-radius:4px; white-space:pre-line; margin-bottom:8px;">Un parcours de 80 heures réparti sur 25 séances hebdomadaires permet d'apprendre le français en profondeur, avec deux évaluations pour mesurer les progrès. Cependant, ce rythme demande une disponibilité régulière sur plusieurs mois. Par conséquent, l'organisation en amont — garde d'enfants, horaires de travail — est essentielle pour suivre l'ensemble du parcours sans interruption.</div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Quel connecteur introduit la limite du parcours long ?</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Cependant <strong style="color:#047857;">&#10003; réponse</strong></div><div class="checkbox-row"><span class="checkbox"></span> Par conséquent</div><div class="checkbox-row"><span class="checkbox"></span> En revanche</div></div>
+        </div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Que faut-il organiser en amont, selon le texte ?</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Le transport uniquement</div><div class="checkbox-row"><span class="checkbox"></span> La garde d'enfants et les horaires de travail <strong style="color:#047857;">&#10003; réponse</strong></div><div class="checkbox-row"><span class="checkbox"></span> Le paiement de la formation</div></div>
+        </div>
+      
+      <div style="font-size:7.5pt; color:#94a3b8; margin-top:4px;">Variante B2, recréée le 2026-07-08 en compétence CE (remplace l'originale rejetée : même cause que B1)</div>
+    </div>
+  
+    
+    <div class="section-title">Détail Phase 5 — Production EE/EO (30 min)</div>
+    <div style="font-size: 9pt; line-height: 1.5;">
+      EO (15 min) : 8 prompts gradés A1→B2 (fiche EO). EE (15 min) : 2 productions guidées + 1 autonome (fiche EE).
+    </div>
+    <div class="section-title">Détail Phase 6 — Fixation (10 min)</div>
+    <div style="font-size: 9pt; line-height: 1.5;">
+      QCM civique 10 questions (5 min), correction flash collective (3 min), explication des devoirs différenciés (2 min).
+    </div>
+    <div class="section-title">Règles d'adaptation & vigilance</div>
+    <div class="tip-box">
+      • Si plus de la moitié du groupe confond droit et devoir, reprendre le lexique avant l'atelier B1.<br>• Si le groupe est très hétérogène, prolonger l'atelier différencié de 10 minutes au détriment de la fixation.<br>• Ne jamais remplacer le dialogue audio publié par une improvisation en direct : l'IA peut seulement l'expliquer ou le simplifier.<br>• Les 3 variantes A2/B1/B2 ont été recréées (les originales étaient rejetées en base pour non-conformité de schéma) — vérifier leur validation avant réinsertion Supabase.<br>
+    </div>
+  
+    </body>
+    </html>
+  `,
+      'student-sheet': `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        body {
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
+          color: #0b234a; /* Brand dark blue text */
+          background-color: #ffffff;
+          margin: 0;
+          padding: 0;
+          font-size: 10pt;
+          line-height: 1.5;
+        }
+        .section-title {
+          font-size: 11.5pt;
+          font-weight: 800;
+          color: #0b234a;
+          margin-top: 20px;
+          margin-bottom: 10px;
+          border-bottom: 1.5px solid #e2e8f0;
+          border-left: 4px solid #f47b20; /* Orange actions theme */
+          padding-left: 10px;
+          padding-bottom: 4px;
+        }
+        .consigne-box {
+          background-color: #fff7f0; /* Very light orange background */
+          border-left: 4px solid #f47b20; /* Orange border left */
+          padding: 12px 16px;
+          margin-bottom: 14px;
+          border-radius: 0 6px 6px 0;
+          color: #0b234a; /* Dark blue text */
+        }
+        .consigne-title {
+          font-size: 8.5pt;
+          font-weight: 800;
+          color: #f47b20;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 6px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .consigne-title svg {
+          stroke: #f47b20;
+          vertical-align: middle;
+        }
+        .aides-box {
+          border: 1px dashed #cbd5e1;
+          padding: 10px 14px;
+          margin-bottom: 14px;
+          font-size: 9pt;
+          color: #475569;
+          background-color: #fafbfc;
+          border-radius: 6px;
+        }
+        .response-line {
+          border-bottom: 1.5px dotted #cbd5e1;
+          height: 28px;
+          margin-bottom: 8px;
+        }
+        .checkbox-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 8px;
+          font-size: 9.5pt;
+          cursor: pointer;
+        }
+        .checkbox {
+          width: 14px;
+          height: 14px;
+          border: 1.5px solid #0b234a;
+          border-radius: 3px;
+          display: inline-block;
+          background-color: #ffffff;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 12px;
+          margin-bottom: 12px;
+          box-shadow: 0 2px 5px rgba(11,35,74,0.02);
+        }
+        th {
+          background-color: #f7f5f0; /* Warm clear grey */
+          border-bottom: 2.5px solid #2563EB;
+          text-align: left;
+          padding: 10px;
+          font-size: 9.5pt;
+          font-weight: 800;
+          color: #0b234a;
+        }
+        td {
+          border-bottom: 1px solid #e8e6e0;
+          padding: 10px;
+          font-size: 9pt;
+          line-height: 1.45;
+          vertical-align: top;
+          color: #1e293b;
+        }
+        .tip-box {
+          background-color: #f0fdf4;
+          border: 1px solid #a7f3d0;
+          padding: 12px;
+          border-radius: 6px;
+          font-size: 9pt;
+          color: #065f46;
+          margin-top: 12px;
+          line-height: 1.5;
+        }
+      </style>
+    </head>
+    <body>
+      
+    
+    <header style="border-bottom: 2pt solid #f47b20; padding-bottom: 10px; margin-bottom: 22px; font-family: 'Inter', system-ui, -apple-system, sans-serif;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="display:flex;align-items:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:13pt;color:#0b234a;letter-spacing:-0.5px;"><svg style="width:20px;height:20px;fill:none;stroke:#0b234a;stroke-width:2.2;margin-right:6px;vertical-align:middle" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479L12 21l-6.825-4a12.083 12.083 0 01.665-6.479L12 14z"/></svg>CAP&nbsp;<span style="color:#f47b20">TCF</span></span>
+        <div style="display: flex; gap: 6px;">
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Séance S01</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Niveau A1-B2 gradué</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Durée 60 min (ateliers)</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Compétence Structures/CE/EE</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 800; color: #fff; border-radius: 4px; background-color: #2563EB;">APP</span>
+        </div>
+      </div>
+      <h2 style="font-size: 14pt; font-weight: 800; color: #0b234a; margin: 0; line-height: 1.25;">
+        Fiche Apprenant Dense — Ateliers différenciés S01 (v3)
+      </h2>
+    </header>
+  
+    
+    <div class="consigne-box">
+      <div class="consigne-title"><svg style="width:14px;height:14px;fill:none;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg><span>CONSIGNE</span></div>
+      <div style="font-size: 9.5pt; font-weight: 600; line-height: 1.4; color: #0b234a;">Travaillez les exercices correspondant à votre niveau. Le formateur passera vous aider.</div>
+    </div>
+  
+    <div class="section-title">Bloc grammaire / structures — se présenter, identité, parcours</div>
+    
+      <div style="margin-bottom: 14px; padding-left: 8px; border-left: 3px solid #a7f3d0;">
+        <div style="font-weight: 800; color: #0b234a;">A1 — Verbe être au présent</div>
+        <div style="font-size: 9pt; margin: 4px 0;">Conjuguez le verbe être.</div>
+        <div class="response-line" style="height:auto; border:none; font-size:9pt; margin-bottom:4px;">• Elle ___ française.</div><div class="response-line" style="height:auto; border:none; font-size:9pt; margin-bottom:4px;">• Je ___ marié.</div><div class="response-line" style="height:auto; border:none; font-size:9pt; margin-bottom:4px;">• Le dossier ___ complet.</div>
+      </div>
+    
+      <div style="margin-bottom: 14px; padding-left: 8px; border-left: 3px solid #a7f3d0;">
+        <div style="font-weight: 800; color: #0b234a;">A1 — Pronoms personnels d'identité</div>
+        <div style="font-size: 9pt; margin: 4px 0;">Complétez avec le pronom correct (Je, Tu, Il, Elle).</div>
+        <div class="response-line" style="height:auto; border:none; font-size:9pt; margin-bottom:4px;">• ___ m'appelle Ahmed.</div><div class="response-line" style="height:auto; border:none; font-size:9pt; margin-bottom:4px;">• ___ habite à Marseille. (Sonia)</div><div class="response-line" style="height:auto; border:none; font-size:9pt; margin-bottom:4px;">• ___ est né en 1985. (Marc)</div>
+      </div>
+    
+      <div style="margin-bottom: 14px; padding-left: 8px; border-left: 3px solid #a7f3d0;">
+        <div style="font-weight: 800; color: #0b234a;">A1 — Verbes s'appeler / habiter au présent</div>
+        <div style="font-size: 9pt; margin: 4px 0;">Choisissez la forme correcte.</div>
+        <div class="response-line" style="height:auto; border:none; font-size:9pt; margin-bottom:4px;">• Comment tu ________ ? (t'appelles / t'appelle)</div><div class="response-line" style="height:auto; border:none; font-size:9pt; margin-bottom:4px;">• Il ________ à Paris. (habite / habitent)</div>
+      </div>
+    
+      <div style="margin-bottom: 14px; padding-left: 8px; border-left: 3px solid #a7f3d0;">
+        <div style="font-weight: 800; color: #0b234a;">A2 — Adjectifs possessifs (identité/papiers)</div>
+        <div style="font-size: 9pt; margin: 4px 0;">Complétez avec 'mon', 'ma' ou 'mes'.</div>
+        <div class="response-line" style="height:auto; border:none; font-size:9pt; margin-bottom:4px;">• Je vous présente ___ passeport.</div><div class="response-line" style="height:auto; border:none; font-size:9pt; margin-bottom:4px;">• C'est ___ carte d'identité.</div><div class="response-line" style="height:auto; border:none; font-size:9pt; margin-bottom:4px;">• Je cherche ___ papiers.</div>
+      </div>
+    
+      <div style="margin-bottom: 14px; padding-left: 8px; border-left: 3px solid #a7f3d0;">
+        <div style="font-weight: 800; color: #0b234a;">A2 — Structure « je m'appelle / je suis / j'habite »</div>
+        <div style="font-size: 9pt; margin: 4px 0;">Complétez le texte de présentation.</div>
+        <div class="response-line" style="height:auto; border:none; font-size:9pt; margin-bottom:4px;">• Bonjour, je (1)________ Thomas Martin. Je (2)________ boulanger. J'(3)________ à Lyon. J'ai 34 (4)________.</div>
+      </div>
+    
+      <div style="margin-bottom: 14px; padding-left: 8px; border-left: 3px solid #a7f3d0;">
+        <div style="font-weight: 800; color: #0b234a;">B1 — Nationalité / pays-ville (« venir de » + « habiter à »)</div>
+        <div style="font-size: 9pt; margin: 4px 0;">Transformez sur le modèle donné.</div>
+        <div class="response-line" style="height:auto; border:none; font-size:9pt; margin-bottom:4px;">• Il est né en Algérie, il vit à Lyon. → C'est un Algérien qui habite à Lyon.</div><div class="response-line" style="height:auto; border:none; font-size:9pt; margin-bottom:4px;">• Elle est née au Sénégal, elle vit à Paris. → ?</div><div class="response-line" style="height:auto; border:none; font-size:9pt; margin-bottom:4px;">• Il est né au Maroc, il vit à Nice. → ?</div>
+      </div>
+    
+      <div style="margin-bottom: 14px; padding-left: 8px; border-left: 3px solid #a7f3d0;">
+        <div style="font-weight: 800; color: #0b234a;">B1 — Discours rapporté simple (identité)</div>
+        <div style="font-size: 9pt; margin: 4px 0;">Complétez au discours rapporté.</div>
+        <div class="response-line" style="height:auto; border:none; font-size:9pt; margin-bottom:4px;">• Awa a dit qu'elle ________ (s'appeler) Awa Diallo et qu'elle ________ (vouloir) sa carte de séjour.</div>
+      </div>
+    
+      <div style="margin-bottom: 14px; padding-left: 8px; border-left: 3px solid #a7f3d0;">
+        <div style="font-weight: 800; color: #0b234a;">B2 — Nominalisation droits/devoirs</div>
+        <div style="font-size: 9pt; margin: 4px 0;">Reformulez avec une nominalisation.</div>
+        <div class="response-line" style="height:auto; border:none; font-size:9pt; margin-bottom:4px;">• Vous pouvez demander l'accès aux soins. → Vous avez ___ à ___.</div>
+      </div>
+    
+      <div style="margin-bottom: 14px; padding-left: 8px; border-left: 3px solid #a7f3d0;">
+        <div style="font-weight: 800; color: #0b234a;">B2 — Connecteurs argumentatifs (nuance)</div>
+        <div style="font-size: 9pt; margin: 4px 0;">Complétez avec un connecteur (cependant / par conséquent / en revanche).</div>
+        <div class="response-line" style="height:auto; border:none; font-size:9pt; margin-bottom:4px;">• Un parcours long permet d'apprendre en profondeur, ___ il demande de la disponibilité.</div>
+      </div>
+    
+    <div class="section-title">Ateliers différenciés — repères par niveau (60 min)</div>
+    <table>
+      <thead><tr><th>Niveau</th><th>Contenu de l'atelier</th></tr></thead>
+      <tbody>
+        <tr><td><strong>A1</strong></td><td style="font-size:9pt;">Grammaire du verbe être et des pronoms d'identité. Puis trois exercices : épeler un nom de famille à l'oral, lire une carte d'identité officielle, associer une question et sa réponse. Enfin, un exercice de compréhension sur le dialogue d'ouverture.</td></tr><tr><td><strong>A2</strong></td><td style="font-size:9pt;">Grammaire des adjectifs possessifs et de la présentation. Puis un texte à compléter et deux fiches à lire pour répondre à des questions. Enfin, un exercice sur l'objectif administratif d'Awa.</td></tr><tr><td><strong>B1</strong></td><td style="font-size:9pt;">Grammaire de la nationalité et du discours rapporté. Puis un exercice de lecture sur le parcours d'Awa, et un exercice d'association sur droit / devoir / règle.</td></tr><tr><td><strong>B2</strong></td><td style="font-size:9pt;">Grammaire de la nominalisation et des connecteurs. Puis un exercice de lecture argumentative sur l'organisation du parcours.</td></tr>
+      </tbody>
+    </table>
+    <div class="section-title">Exercices d'atelier — faites les exercices de votre niveau</div>
+    
+      <div style="margin: 14px 0 6px 0; font-weight: 800; color: #0b234a; font-size: 10.5pt;">Niveau A1</div>
+      
+    <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; background:#fafbfc;">
+      <div style="font-size: 9pt; margin-bottom: 6px;"><strong>Consigne :</strong> Écoutez la phrase, puis choisissez l'orthographe correcte du nom de famille.</div>
+      <div style="font-size:9pt; font-style:italic; background:#ffffff; padding:8px; border-radius:4px; white-space:pre-line; margin-bottom:8px;">🔊 « Mon nom s'écrit B-E-L-K-A-S-S-E-M. »</div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Comment s'écrit le nom de famille ?</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> B-E-L-K-A-S-S-E-M</div><div class="checkbox-row"><span class="checkbox"></span> B-E-L-K-A-C-E-M</div><div class="checkbox-row"><span class="checkbox"></span> B-E-L-G-A-S-S-E-M</div></div>
+        </div>
+      
+      
+    </div>
+  
+    <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; background:#fafbfc;">
+      <div style="font-size: 9pt; margin-bottom: 6px;"><strong>Consigne :</strong> Pour chaque question, cochez la bonne réponse.</div>
+      
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Où habitez-vous ?</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> J'habite à Nice.</div><div class="checkbox-row"><span class="checkbox"></span> Je suis Italien.</div><div class="checkbox-row"><span class="checkbox"></span> C'est le 06 00 00 00 00.</div></div>
+        </div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Quelle est votre nationalité ?</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Je suis Italien.</div><div class="checkbox-row"><span class="checkbox"></span> Enchanté.</div><div class="checkbox-row"><span class="checkbox"></span> Marc Petit.</div></div>
+        </div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Quel est votre numéro de téléphone ?</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> C'est le 06 00 00 00 00.</div><div class="checkbox-row"><span class="checkbox"></span> C'est le 12 rue de la Paix.</div><div class="checkbox-row"><span class="checkbox"></span> En 1985.</div></div>
+        </div>
+      
+      
+    </div>
+  
+    <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; background:#fafbfc;">
+      <div style="font-size: 9pt; margin-bottom: 6px;"><strong>Consigne :</strong> Lisez la carte d'identité, puis répondez par Vrai ou Faux.</div>
+      <div style="font-size:9pt; font-style:italic; background:#ffffff; padding:8px; border-radius:4px; white-space:pre-line; margin-bottom:8px;">RÉPUBLIQUE FRANÇAISE
+NOM : BENALI
+PRÉNOM : Yasmine
+NÉ(E) LE : 12/05/1995
+À : Marseille
+SEXE : F</div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Yasmine est née à Marseille.</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Vrai</div><div class="checkbox-row"><span class="checkbox"></span> Faux</div></div>
+        </div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Son nom de famille est Yasmine.</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Vrai</div><div class="checkbox-row"><span class="checkbox"></span> Faux</div></div>
+        </div>
+      
+      
+    </div>
+  
+    <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; background:#fafbfc;">
+      <div style="font-size: 9pt; margin-bottom: 6px;"><strong>Consigne :</strong> Relisez le début du dialogue (fiche Dialogue), puis répondez par Vrai ou Faux.</div>
+      <div style="font-size:9pt; font-style:italic; background:#ffffff; padding:8px; border-radius:4px; white-space:pre-line; margin-bottom:8px;">« Bonjour madame. Je m'appelle Awa. Awa Diallo. » — « Oui, bien sûr : D-I-A-L-L-O. »</div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Awa épelle son prénom.</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Vrai</div><div class="checkbox-row"><span class="checkbox"></span> Faux</div></div>
+        </div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Le nom de famille d'Awa est Diallo.</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Vrai</div><div class="checkbox-row"><span class="checkbox"></span> Faux</div></div>
+        </div>
+      
+      
+    </div>
+  
+    
+      <div style="margin: 14px 0 6px 0; font-weight: 800; color: #0b234a; font-size: 10.5pt;">Niveau A2</div>
+      
+    <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; background:#fafbfc;">
+      <div style="font-size: 9pt; margin-bottom: 6px;"><strong>Consigne :</strong> Complétez le texte avec les mots proposés.</div>
+      <div style="font-size:9pt; font-style:italic; background:#ffffff; padding:8px; border-radius:4px; white-space:pre-line; margin-bottom:8px;">Bonjour,
+Je ... Youcef.
+Je ... d'Algérie.
+J' ... 28 ans.
+Cordialement.</div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Bonjour, je ... Youcef.</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> m'appelle</div><div class="checkbox-row"><span class="checkbox"></span> habite</div></div>
+        </div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Je ... d'Algérie.</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> viens</div><div class="checkbox-row"><span class="checkbox"></span> suis</div></div>
+        </div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">J' ... 28 ans.</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> suis</div><div class="checkbox-row"><span class="checkbox"></span> ai</div></div>
+        </div>
+      
+      
+    </div>
+  
+    <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; background:#fafbfc;">
+      <div style="font-size: 9pt; margin-bottom: 6px;"><strong>Consigne :</strong> Lisez les deux fiches, puis répondez aux questions.</div>
+      <div style="font-size:9pt; font-style:italic; background:#ffffff; padding:8px; border-radius:4px; white-space:pre-line; margin-bottom:8px;">FICHE 1 :
+NOM : BENALI | PRÉNOM : Mehdi | ÂGE : 32 ans | NATIONALITÉ : Algérienne | VILLE : Bordeaux
+
+FICHE 2 :
+NOM : RICCI | PRÉNOM : Elena | ÂGE : 28 ans | NATIONALITÉ : Italienne | VILLE : Marseille</div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Quel est le nom de famille de la première personne ?</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Mehdi</div><div class="checkbox-row"><span class="checkbox"></span> BENALI</div><div class="checkbox-row"><span class="checkbox"></span> Algérienne</div></div>
+        </div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Dans quelle ville habite Mehdi ?</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Paris</div><div class="checkbox-row"><span class="checkbox"></span> Bordeaux</div><div class="checkbox-row"><span class="checkbox"></span> Marseille</div></div>
+        </div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Quelle est la nationalité d'Elena ?</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Espagnole</div><div class="checkbox-row"><span class="checkbox"></span> Italienne</div><div class="checkbox-row"><span class="checkbox"></span> Française</div></div>
+        </div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Mehdi est plus âgé qu'Elena.</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Vrai</div><div class="checkbox-row"><span class="checkbox"></span> Faux</div></div>
+        </div>
+      
+      
+    </div>
+  
+    <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; background:#fafbfc;">
+      <div style="font-size: 9pt; margin-bottom: 6px;"><strong>Consigne :</strong> D'après le dialogue, choisissez la bonne réponse.</div>
+      
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Quel est l'objectif d'Awa au début de sa formation ?</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Obtenir sa carte de séjour pluriannuelle.</div><div class="checkbox-row"><span class="checkbox"></span> Trouver un emploi de formatrice.</div><div class="checkbox-row"><span class="checkbox"></span> Passer le TCF pour partir à l'étranger.</div></div>
+        </div>
+      
+      
+    </div>
+  
+    
+      <div style="margin: 14px 0 6px 0; font-weight: 800; color: #0b234a; font-size: 10.5pt;">Niveau B1</div>
+      
+    <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; background:#fafbfc;">
+      <div style="font-size: 9pt; margin-bottom: 6px;"><strong>Consigne :</strong> Lisez, puis répondez aux questions.</div>
+      <div style="font-size:9pt; font-style:italic; background:#ffffff; padding:8px; border-radius:4px; white-space:pre-line; margin-bottom:8px;">Le parcours vers la carte de séjour pluriannuelle dure 80 heures. Il comprend 25 séances collectives de 3 heures, à raison d'une séance par semaine. Deux évaluations ont lieu hors séances : une évaluation intermédiaire (E1) après 50 heures, et une évaluation finale (E2) à la fin des 80 heures.</div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Combien de séances comprend le parcours ?</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> 20 séances</div><div class="checkbox-row"><span class="checkbox"></span> 25 séances</div><div class="checkbox-row"><span class="checkbox"></span> 30 séances</div></div>
+        </div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Quand a lieu l'évaluation E1 ?</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Après 50 heures</div><div class="checkbox-row"><span class="checkbox"></span> Après 80 heures</div><div class="checkbox-row"><span class="checkbox"></span> Après 25 séances</div></div>
+        </div>
+      
+      
+    </div>
+  
+    <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; background:#fafbfc;">
+      <div style="font-size: 9pt; margin-bottom: 6px;"><strong>Consigne :</strong> Associez chaque terme à sa définition, d'après les explications de Mme Rossi.</div>
+      
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Un droit</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Quelque chose que vous pouvez demander, comme le droit à la santé.</div><div class="checkbox-row"><span class="checkbox"></span> Quelque chose que vous devez faire, comme respecter la loi.</div><div class="checkbox-row"><span class="checkbox"></span> Une consigne précise, par exemple arriver à l'heure.</div></div>
+        </div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Un devoir</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Quelque chose que vous pouvez demander, comme le droit à la santé.</div><div class="checkbox-row"><span class="checkbox"></span> Quelque chose que vous devez faire, comme respecter la loi.</div><div class="checkbox-row"><span class="checkbox"></span> Une consigne précise, par exemple arriver à l'heure.</div></div>
+        </div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Une règle</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Quelque chose que vous pouvez demander, comme le droit à la santé.</div><div class="checkbox-row"><span class="checkbox"></span> Quelque chose que vous devez faire, comme respecter la loi.</div><div class="checkbox-row"><span class="checkbox"></span> Une consigne précise, par exemple arriver à l'heure.</div></div>
+        </div>
+      
+      
+    </div>
+  
+    
+      <div style="margin: 14px 0 6px 0; font-weight: 800; color: #0b234a; font-size: 10.5pt;">Niveau B2</div>
+      
+    <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; background:#fafbfc;">
+      <div style="font-size: 9pt; margin-bottom: 6px;"><strong>Consigne :</strong> Lisez le paragraphe, puis répondez aux questions.</div>
+      <div style="font-size:9pt; font-style:italic; background:#ffffff; padding:8px; border-radius:4px; white-space:pre-line; margin-bottom:8px;">Un parcours de 80 heures réparti sur 25 séances hebdomadaires permet d'apprendre le français en profondeur, avec deux évaluations pour mesurer les progrès. Cependant, ce rythme demande une disponibilité régulière sur plusieurs mois. Par conséquent, l'organisation en amont — garde d'enfants, horaires de travail — est essentielle pour suivre l'ensemble du parcours sans interruption.</div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Quel connecteur introduit la limite du parcours long ?</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Cependant</div><div class="checkbox-row"><span class="checkbox"></span> Par conséquent</div><div class="checkbox-row"><span class="checkbox"></span> En revanche</div></div>
+        </div>
+      
+        <div style="margin-bottom:6px;">
+          <div style="font-weight:700; font-size:9pt; color:#0b234a;">Que faut-il organiser en amont, selon le texte ?</div>
+          <div style="padding-left:8px;"><div class="checkbox-row"><span class="checkbox"></span> Le transport uniquement</div><div class="checkbox-row"><span class="checkbox"></span> La garde d'enfants et les horaires de travail</div><div class="checkbox-row"><span class="checkbox"></span> Le paiement de la formation</div></div>
+        </div>
+      
+      
+    </div>
+  
+    
+    <div class="section-title">Travail à la maison (Devoir)</div>
+    
+      <div style="margin-bottom: 8px; font-size: 9pt;"><strong>A1 :</strong> À la maison : relisez la transcription et associez chaque mot du lexique à sa définition.</div>
+    
+      <div style="margin-bottom: 8px; font-size: 9pt;"><strong>A2 :</strong> À la maison : racontez par écrit (5 phrases) votre propre objectif administratif, sur le modèle d'Awa.</div>
+    
+      <div style="margin-bottom: 8px; font-size: 9pt;"><strong>B1 :</strong> À la maison : rédigez un court texte expliquant à un ami la différence entre droit, devoir et règle.</div>
+    
+      <div style="margin-bottom: 8px; font-size: 9pt;"><strong>B2 :</strong> À la maison : rédigez un paragraphe argumenté sur l'intérêt d'un parcours progressif de formation pour un adulte.</div>
+    
+  
+    </body>
+    </html>
+  `,
+      'dialogue-sheet': `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        body {
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
+          color: #0b234a; /* Brand dark blue text */
+          background-color: #ffffff;
+          margin: 0;
+          padding: 0;
+          font-size: 10pt;
+          line-height: 1.5;
+        }
+        .section-title {
+          font-size: 11.5pt;
+          font-weight: 800;
+          color: #0b234a;
+          margin-top: 20px;
+          margin-bottom: 10px;
+          border-bottom: 1.5px solid #e2e8f0;
+          border-left: 4px solid #f47b20; /* Orange actions theme */
+          padding-left: 10px;
+          padding-bottom: 4px;
+        }
+        .consigne-box {
+          background-color: #fff7f0; /* Very light orange background */
+          border-left: 4px solid #f47b20; /* Orange border left */
+          padding: 12px 16px;
+          margin-bottom: 14px;
+          border-radius: 0 6px 6px 0;
+          color: #0b234a; /* Dark blue text */
+        }
+        .consigne-title {
+          font-size: 8.5pt;
+          font-weight: 800;
+          color: #f47b20;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 6px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .consigne-title svg {
+          stroke: #f47b20;
+          vertical-align: middle;
+        }
+        .aides-box {
+          border: 1px dashed #cbd5e1;
+          padding: 10px 14px;
+          margin-bottom: 14px;
+          font-size: 9pt;
+          color: #475569;
+          background-color: #fafbfc;
+          border-radius: 6px;
+        }
+        .response-line {
+          border-bottom: 1.5px dotted #cbd5e1;
+          height: 28px;
+          margin-bottom: 8px;
+        }
+        .checkbox-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 8px;
+          font-size: 9.5pt;
+          cursor: pointer;
+        }
+        .checkbox {
+          width: 14px;
+          height: 14px;
+          border: 1.5px solid #0b234a;
+          border-radius: 3px;
+          display: inline-block;
+          background-color: #ffffff;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 12px;
+          margin-bottom: 12px;
+          box-shadow: 0 2px 5px rgba(11,35,74,0.02);
+        }
+        th {
+          background-color: #f7f5f0; /* Warm clear grey */
+          border-bottom: 2.5px solid #6B21A8;
+          text-align: left;
+          padding: 10px;
+          font-size: 9.5pt;
+          font-weight: 800;
+          color: #0b234a;
+        }
+        td {
+          border-bottom: 1px solid #e8e6e0;
+          padding: 10px;
+          font-size: 9pt;
+          line-height: 1.45;
+          vertical-align: top;
+          color: #1e293b;
+        }
+        .tip-box {
+          background-color: #f0fdf4;
+          border: 1px solid #a7f3d0;
+          padding: 12px;
+          border-radius: 6px;
+          font-size: 9pt;
+          color: #065f46;
+          margin-top: 12px;
+          line-height: 1.5;
+        }
+      </style>
+    </head>
+    <body>
+      
+    
+    <header style="border-bottom: 2pt solid #f47b20; padding-bottom: 10px; margin-bottom: 22px; font-family: 'Inter', system-ui, -apple-system, sans-serif;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="display:flex;align-items:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:13pt;color:#0b234a;letter-spacing:-0.5px;"><svg style="width:20px;height:20px;fill:none;stroke:#0b234a;stroke-width:2.2;margin-right:6px;vertical-align:middle" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479L12 21l-6.825-4a12.083 12.083 0 01.665-6.479L12 14z"/></svg>CAP&nbsp;<span style="color:#f47b20">TCF</span></span>
+        <div style="display: flex; gap: 6px;">
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Séance S01</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Niveau A1-B2 Invariant</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Durée 2.5 min</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Compétence CO / CE</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 800; color: #fff; border-radius: 4px; background-color: #6B21A8;">APP</span>
+        </div>
+      </div>
+      <h2 style="font-size: 14pt; font-weight: 800; color: #0b234a; margin: 0; line-height: 1.25;">
+        Transcription Audio + 20 Questions — Séance S01 (v3)
+      </h2>
+    </header>
+  
+    
+    <div class="consigne-box">
+      <div class="consigne-title"><svg style="width:14px;height:14px;fill:none;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg><span>CONTEXTE D'ÉCOUTE</span></div>
+      <div style="font-size: 9.5pt; font-weight: 600; line-height: 1.4; color: #0b234a;">Awa Diallo, apprenante primo-arrivante, se présente le premier jour de sa formation. Elle explique à sa formatrice, Mme Rossi, son objectif administratif (la carte de séjour pluriannuelle) et découvre l'organisation du parcours.</div>
+    </div>
+  
+    <div style="margin-top: 16px;">
+    <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 10px; font-size: 9.5pt;">
+      <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">Mme Rossi</div>
+      <div style="color: #1e293b; line-height: 1.45;">Bonjour, bienvenue dans votre nouveau parcours. Comment vous appelez-vous ?</div>
+    </div>
+  
+    <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 10px; font-size: 9.5pt;">
+      <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">Awa</div>
+      <div style="color: #1e293b; line-height: 1.45;">Bonjour madame. Je m'appelle Awa. Awa Diallo.</div>
+    </div>
+  
+    <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 10px; font-size: 9.5pt;">
+      <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">Mme Rossi</div>
+      <div style="color: #1e293b; line-height: 1.45;">Enchantée, Awa. Pouvez-vous épeler votre nom de famille, s'il vous plaît ?</div>
+    </div>
+  
+    <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 10px; font-size: 9.5pt;">
+      <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">Awa</div>
+      <div style="color: #1e293b; line-height: 1.45;">Oui, bien sûr : D-I-A-L-L-O.</div>
+    </div>
+  
+    <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 10px; font-size: 9.5pt;">
+      <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">Mme Rossi</div>
+      <div style="color: #1e293b; line-height: 1.45;">Merci. Quel est votre objectif aujourd'hui ?</div>
+    </div>
+  
+    <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 10px; font-size: 9.5pt;">
+      <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">Awa</div>
+      <div style="color: #1e293b; line-height: 1.45;">Je voudrais avoir ma carte de séjour pluriannuelle.</div>
+    </div>
+  
+    <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 10px; font-size: 9.5pt;">
+      <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">Mme Rossi</div>
+      <div style="color: #1e293b; line-height: 1.45;">Très bien. Pour ça, vous allez suivre un parcours de quatre-vingts heures.</div>
+    </div>
+  
+    <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 10px; font-size: 9.5pt;">
+      <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">Awa</div>
+      <div style="color: #1e293b; line-height: 1.45;">Quatre-vingts heures ? C'est beaucoup !</div>
+    </div>
+  
+    <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 10px; font-size: 9.5pt;">
+      <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">Mme Rossi</div>
+      <div style="color: #1e293b; line-height: 1.45;">Oui, mais c'est réparti sur vingt-cinq séances de trois heures, à raison d'une séance par semaine.</div>
+    </div>
+  
+    <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 10px; font-size: 9.5pt;">
+      <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">Awa</div>
+      <div style="color: #1e293b; line-height: 1.45;">D'accord. Et qu'est-ce qu'on va apprendre exactement ?</div>
+    </div>
+  
+    <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 10px; font-size: 9.5pt;">
+      <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">Mme Rossi</div>
+      <div style="color: #1e293b; line-height: 1.45;">Vous allez apprendre le français pour la vie quotidienne, et aussi cinq thèmes sur la vie en France : la République, les institutions, les droits et devoirs, l'histoire et la vie en société.</div>
+    </div>
+  
+    <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 10px; font-size: 9.5pt;">
+      <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">Awa</div>
+      <div style="color: #1e293b; line-height: 1.45;">Il y a un examen à la fin ?</div>
+    </div>
+  
+    <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 10px; font-size: 9.5pt;">
+      <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">Mme Rossi</div>
+      <div style="color: #1e293b; line-height: 1.45;">Il y a deux évaluations : une évaluation intermédiaire après cinquante heures, et une évaluation finale à la fin des quatre-vingts heures.</div>
+    </div>
+  
+    <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 10px; font-size: 9.5pt;">
+      <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">Awa</div>
+      <div style="color: #1e293b; line-height: 1.45;">Je comprends. Merci beaucoup madame.</div>
+    </div>
+  
+    <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 10px; font-size: 9.5pt;">
+      <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">Mme Rossi</div>
+      <div style="color: #1e293b; line-height: 1.45;">Une dernière chose : connaissez-vous la différence entre un droit, un devoir et une règle ?</div>
+    </div>
+  
+    <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 10px; font-size: 9.5pt;">
+      <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">Awa</div>
+      <div style="color: #1e293b; line-height: 1.45;">Pas très bien, madame.</div>
+    </div>
+  
+    <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 10px; font-size: 9.5pt;">
+      <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">Mme Rossi</div>
+      <div style="color: #1e293b; line-height: 1.45;">Un droit, c'est quelque chose que vous pouvez demander, comme le droit à la santé. Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation.</div>
+    </div>
+  
+    <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 10px; font-size: 9.5pt;">
+      <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">Awa</div>
+      <div style="color: #1e293b; line-height: 1.45;">D'accord, je comprends mieux maintenant.</div>
+    </div>
+  
+    <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 10px; font-size: 9.5pt;">
+      <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">Mme Rossi</div>
+      <div style="color: #1e293b; line-height: 1.45;">Parfait, nous allons travailler cela ensemble pendant toute la formation. Bienvenue parmi nous, Awa !</div>
+    </div>
+  
+    <div style="border-left: 3px solid #6b21a8; padding-left: 12px; margin-bottom: 10px; font-size: 9.5pt;">
+      <div style="font-weight: 800; color: #0b234a; margin-bottom: 2px;">Awa</div>
+      <div style="color: #1e293b; line-height: 1.45;">Merci madame, je suis contente de commencer.</div>
+    </div>
+  </div>
+    <div class="section-title">Questions de compréhension (20 items)</div>
+    
+    <div class="section-title" style="margin-top:14px;">Compréhension globale</div>
+    
+      <div style="margin-bottom: 10px; padding-left: 8px;">
+        <div style="font-weight: 700; font-size: 9.5pt; color: #0b234a;">q1. Qui sont les deux personnes qui parlent ? <span style="font-weight:400; color:#64748b; font-size:8pt;">(niveaux : A1, A2, B1, B2)</span></div>
+        <div class="response-line"></div>
+      </div>
+    
+      <div style="margin-bottom: 10px; padding-left: 8px;">
+        <div style="font-weight: 700; font-size: 9.5pt; color: #0b234a;">q2. À votre avis, à quel moment de la formation se passe cette scène ? <span style="font-weight:400; color:#64748b; font-size:8pt;">(niveaux : A1, A2, B1, B2)</span></div>
+        <div class="response-line"></div>
+      </div>
+    
+      <div style="margin-bottom: 10px; padding-left: 8px;">
+        <div style="font-weight: 700; font-size: 9.5pt; color: #0b234a;">q3. Quel est l'objectif principal d'Awa ? <span style="font-weight:400; color:#64748b; font-size:8pt;">(niveaux : A1, A2, B1, B2)</span></div>
+        <div class="response-line"></div>
+      </div>
+    
+  
+    <div class="section-title" style="margin-top:14px;">Repérage d'information</div>
+    
+      <div style="margin-bottom: 10px; padding-left: 8px;">
+        <div style="font-weight: 700; font-size: 9.5pt; color: #0b234a;">q4. Combien d'heures dure le parcours d'Awa ? <span style="font-weight:400; color:#64748b; font-size:8pt;">(niveaux : A1, A2, B1, B2)</span></div>
+        <div class="response-line"></div>
+      </div>
+    
+      <div style="margin-bottom: 10px; padding-left: 8px;">
+        <div style="font-weight: 700; font-size: 9.5pt; color: #0b234a;">q5. Combien de séances va-t-elle suivre ? <span style="font-weight:400; color:#64748b; font-size:8pt;">(niveaux : A1, A2, B1, B2)</span></div>
+        <div class="response-line"></div>
+      </div>
+    
+      <div style="margin-bottom: 10px; padding-left: 8px;">
+        <div style="font-weight: 700; font-size: 9.5pt; color: #0b234a;">q6. Combien de temps dure chaque séance ? <span style="font-weight:400; color:#64748b; font-size:8pt;">(niveaux : A1, A2, B1, B2)</span></div>
+        <div class="response-line"></div>
+      </div>
+    
+      <div style="margin-bottom: 10px; padding-left: 8px;">
+        <div style="font-weight: 700; font-size: 9.5pt; color: #0b234a;">q7. À quel rythme ont lieu les séances ? <span style="font-weight:400; color:#64748b; font-size:8pt;">(niveaux : A1, A2, B1, B2)</span></div>
+        <div class="response-line"></div>
+      </div>
+    
+      <div style="margin-bottom: 10px; padding-left: 8px;">
+        <div style="font-weight: 700; font-size: 9.5pt; color: #0b234a;">q8. Après combien d'heures a lieu la première évaluation (E1) ? <span style="font-weight:400; color:#64748b; font-size:8pt;">(niveaux : A1, A2, B1, B2)</span></div>
+        <div class="response-line"></div>
+      </div>
+    
+  
+    <div class="section-title" style="margin-top:14px;">Lexique</div>
+    
+      <div style="margin-bottom: 10px; padding-left: 8px;">
+        <div style="font-weight: 700; font-size: 9.5pt; color: #0b234a;">q9. Que signifie le mot « parcours » dans le dialogue ? <span style="font-weight:400; color:#64748b; font-size:8pt;">(niveaux : A1, A2, B1, B2)</span></div>
+        <div class="response-line"></div>
+      </div>
+    
+      <div style="margin-bottom: 10px; padding-left: 8px;">
+        <div style="font-weight: 700; font-size: 9.5pt; color: #0b234a;">q10. Que veut dire « épeler » son nom ? <span style="font-weight:400; color:#64748b; font-size:8pt;">(niveaux : A1, A2, B1, B2)</span></div>
+        <div class="response-line"></div>
+      </div>
+    
+  
+    <div class="section-title" style="margin-top:14px;">Vrai/Faux</div>
+    
+      <div style="margin-bottom: 10px; padding-left: 8px;">
+        <div style="font-weight: 700; font-size: 9.5pt; color: #0b234a;">q11. Awa connaît déjà bien la différence entre droit, devoir et règle. <span style="font-weight:400; color:#64748b; font-size:8pt;">(niveaux : A1, A2, B1, B2)</span></div>
+        <div class="response-line"></div>
+      </div>
+    
+      <div style="margin-bottom: 10px; padding-left: 8px;">
+        <div style="font-weight: 700; font-size: 9.5pt; color: #0b234a;">q12. Le parcours couvre cinq thèmes sur la vie en France. <span style="font-weight:400; color:#64748b; font-size:8pt;">(niveaux : A1, A2, B1, B2)</span></div>
+        <div class="response-line"></div>
+      </div>
+    
+      <div style="margin-bottom: 10px; padding-left: 8px;">
+        <div style="font-weight: 700; font-size: 9.5pt; color: #0b234a;">q13. Il y a une seule évaluation à la fin du parcours. <span style="font-weight:400; color:#64748b; font-size:8pt;">(niveaux : A1, A2, B1, B2)</span></div>
+        <div class="response-line"></div>
+      </div>
+    
+  
+    <div class="section-title" style="margin-top:14px;">Reformulation</div>
+    
+      <div style="margin-bottom: 10px; padding-left: 8px;">
+        <div style="font-weight: 700; font-size: 9.5pt; color: #0b234a;">q14. Reformulez avec vos mots ce qu'est un « droit » selon Mme Rossi. <span style="font-weight:400; color:#64748b; font-size:8pt;">(niveaux : A2, B1, B2)</span></div>
+        <div class="response-line"></div>
+      </div>
+    
+      <div style="margin-bottom: 10px; padding-left: 8px;">
+        <div style="font-weight: 700; font-size: 9.5pt; color: #0b234a;">q15. Reformulez avec vos mots ce qu'est un « devoir » selon Mme Rossi. <span style="font-weight:400; color:#64748b; font-size:8pt;">(niveaux : A2, B1, B2)</span></div>
+        <div class="response-line"></div>
+      </div>
+    
+      <div style="margin-bottom: 10px; padding-left: 8px;">
+        <div style="font-weight: 700; font-size: 9.5pt; color: #0b234a;">q16. Reformulez ce qu'est une « règle », avec l'exemple donné. <span style="font-weight:400; color:#64748b; font-size:8pt;">(niveaux : A2, B1, B2)</span></div>
+        <div class="response-line"></div>
+      </div>
+    
+  
+    <div class="section-title" style="margin-top:14px;">Justification</div>
+    
+      <div style="margin-bottom: 10px; padding-left: 8px;">
+        <div style="font-weight: 700; font-size: 9.5pt; color: #0b234a;">q17. Pourquoi Mme Rossi demande-t-elle à Awa d'épeler son nom ? <span style="font-weight:400; color:#64748b; font-size:8pt;">(niveaux : A2, B1, B2)</span></div>
+        <div class="response-line"></div>
+      </div>
+    
+      <div style="margin-bottom: 10px; padding-left: 8px;">
+        <div style="font-weight: 700; font-size: 9.5pt; color: #0b234a;">q18. À votre avis, pourquoi le parcours comprend-il deux évaluations plutôt qu'une seule ? <span style="font-weight:400; color:#64748b; font-size:8pt;">(niveaux : B1, B2)</span></div>
+        <div class="response-line"></div>
+      </div>
+    
+  
+    <div class="section-title" style="margin-top:14px;">Extension orale</div>
+    
+      <div style="margin-bottom: 10px; padding-left: 8px;">
+        <div style="font-weight: 700; font-size: 9.5pt; color: #0b234a;">q19. À votre tour : présentez-vous comme Awa (nom, objectif administratif). <span style="font-weight:400; color:#64748b; font-size:8pt;">(niveaux : B1, B2)</span></div>
+        <div class="response-line"></div>
+      </div>
+    
+      <div style="margin-bottom: 10px; padding-left: 8px;">
+        <div style="font-weight: 700; font-size: 9.5pt; color: #0b234a;">q20. Imaginez une question supplémentaire qu'Awa pourrait poser à Mme Rossi sur le parcours. <span style="font-weight:400; color:#64748b; font-size:8pt;">(niveaux : B1, B2)</span></div>
+        <div class="response-line"></div>
+      </div>
+    
+  
+  
+    </body>
+    </html>
+  `,
+      'qcm-tcf-sheet': `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        body {
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
+          color: #0b234a; /* Brand dark blue text */
+          background-color: #ffffff;
+          margin: 0;
+          padding: 0;
+          font-size: 10pt;
+          line-height: 1.5;
+        }
+        .section-title {
+          font-size: 11.5pt;
+          font-weight: 800;
+          color: #0b234a;
+          margin-top: 20px;
+          margin-bottom: 10px;
+          border-bottom: 1.5px solid #e2e8f0;
+          border-left: 4px solid #f47b20; /* Orange actions theme */
+          padding-left: 10px;
+          padding-bottom: 4px;
+        }
+        .consigne-box {
+          background-color: #fff7f0; /* Very light orange background */
+          border-left: 4px solid #f47b20; /* Orange border left */
+          padding: 12px 16px;
+          margin-bottom: 14px;
+          border-radius: 0 6px 6px 0;
+          color: #0b234a; /* Dark blue text */
+        }
+        .consigne-title {
+          font-size: 8.5pt;
+          font-weight: 800;
+          color: #f47b20;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 6px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .consigne-title svg {
+          stroke: #f47b20;
+          vertical-align: middle;
+        }
+        .aides-box {
+          border: 1px dashed #cbd5e1;
+          padding: 10px 14px;
+          margin-bottom: 14px;
+          font-size: 9pt;
+          color: #475569;
+          background-color: #fafbfc;
+          border-radius: 6px;
+        }
+        .response-line {
+          border-bottom: 1.5px dotted #cbd5e1;
+          height: 28px;
+          margin-bottom: 8px;
+        }
+        .checkbox-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 8px;
+          font-size: 9.5pt;
+          cursor: pointer;
+        }
+        .checkbox {
+          width: 14px;
+          height: 14px;
+          border: 1.5px solid #0b234a;
+          border-radius: 3px;
+          display: inline-block;
+          background-color: #ffffff;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 12px;
+          margin-bottom: 12px;
+          box-shadow: 0 2px 5px rgba(11,35,74,0.02);
+        }
+        th {
+          background-color: #f7f5f0; /* Warm clear grey */
+          border-bottom: 2.5px solid #F47B20;
+          text-align: left;
+          padding: 10px;
+          font-size: 9.5pt;
+          font-weight: 800;
+          color: #0b234a;
+        }
+        td {
+          border-bottom: 1px solid #e8e6e0;
+          padding: 10px;
+          font-size: 9pt;
+          line-height: 1.45;
+          vertical-align: top;
+          color: #1e293b;
+        }
+        .tip-box {
+          background-color: #f0fdf4;
+          border: 1px solid #a7f3d0;
+          padding: 12px;
+          border-radius: 6px;
+          font-size: 9pt;
+          color: #065f46;
+          margin-top: 12px;
+          line-height: 1.5;
+        }
+      </style>
+    </head>
+    <body>
+      
+    
+    <header style="border-bottom: 2pt solid #f47b20; padding-bottom: 10px; margin-bottom: 22px; font-family: 'Inter', system-ui, -apple-system, sans-serif;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="display:flex;align-items:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:13pt;color:#0b234a;letter-spacing:-0.5px;"><svg style="width:20px;height:20px;fill:none;stroke:#0b234a;stroke-width:2.2;margin-right:6px;vertical-align:middle" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479L12 21l-6.825-4a12.083 12.083 0 01.665-6.479L12 14z"/></svg>CAP&nbsp;<span style="color:#f47b20">TCF</span></span>
+        <div style="display: flex; gap: 6px;">
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Séance S01</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Niveau A2 Cible</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Durée 20 min</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Compétence CO</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 800; color: #fff; border-radius: 4px; background-color: #F47B20;">QCM</span>
+        </div>
+      </div>
+      <h2 style="font-size: 14pt; font-weight: 800; color: #0b234a; margin: 0; line-height: 1.25;">
+        Préparation TCF — 10 Questions Compréhension Orale (v3)
+      </h2>
+    </header>
+  
+    
+    <div class="consigne-box">
+      <div class="consigne-title"><svg style="width:14px;height:14px;fill:none;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0118 0v6M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3M3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3v5z"/></svg><span>CONSIGNE EXAMEN TCF</span></div>
+      <div style="font-size: 9.5pt; font-weight: 600; line-height: 1.4; color: #0b234a;">Écoutez attentivement le document sonore et cochez la case de l'option correcte sur votre grille de réponse.</div>
+    </div>
+  
+    
+      <div style="margin-top: 16px; padding: 14px; border: 1px solid #cbd5e1; border-radius: 8px; background-color: #fafbfc;">
+        <div style="font-weight: 800; font-size: 10.5pt; margin-bottom: 10px; color: #0b234a;">Question 1 : Comment s'appelle l'apprenante du dialogue ?</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>A.</strong> Awa Diallo</span>
+            </div>
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>B.</strong> Awa Rossi</span>
+            </div>
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>C.</strong> Fatou Diallo</span>
+            </div>
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>D.</strong> Awa Camara</span>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div style="margin-top: 16px; padding: 14px; border: 1px solid #cbd5e1; border-radius: 8px; background-color: #fafbfc;">
+        <div style="font-weight: 800; font-size: 10.5pt; margin-bottom: 10px; color: #0b234a;">Question 2 : Quel est l'objectif administratif d'Awa ?</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>A.</strong> La carte de séjour pluriannuelle</span>
+            </div>
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>B.</strong> La nationalité française</span>
+            </div>
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>C.</strong> Un visa touristique</span>
+            </div>
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>D.</strong> Un titre de travail</span>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div style="margin-top: 16px; padding: 14px; border: 1px solid #cbd5e1; border-radius: 8px; background-color: #fafbfc;">
+        <div style="font-weight: 800; font-size: 10.5pt; margin-bottom: 10px; color: #0b234a;">Question 3 : Combien d'heures dure le parcours d'Awa ?</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>A.</strong> 50 heures</span>
+            </div>
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>B.</strong> 80 heures</span>
+            </div>
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>C.</strong> 100 heures</span>
+            </div>
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>D.</strong> 120 heures</span>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div style="margin-top: 16px; padding: 14px; border: 1px solid #cbd5e1; border-radius: 8px; background-color: #fafbfc;">
+        <div style="font-weight: 800; font-size: 10.5pt; margin-bottom: 10px; color: #0b234a;">Question 4 : Combien de séances collectives sont prévues ?</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>A.</strong> 18</span>
+            </div>
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>B.</strong> 25</span>
+            </div>
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>C.</strong> 31</span>
+            </div>
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>D.</strong> 37</span>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div style="margin-top: 16px; padding: 14px; border: 1px solid #cbd5e1; border-radius: 8px; background-color: #fafbfc;">
+        <div style="font-weight: 800; font-size: 10.5pt; margin-bottom: 10px; color: #0b234a;">Question 5 : Combien de temps dure chaque séance ?</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>A.</strong> 2 heures</span>
+            </div>
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>B.</strong> 3 heures</span>
+            </div>
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>C.</strong> 4 heures</span>
+            </div>
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>D.</strong> 5 heures</span>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div style="margin-top: 16px; padding: 14px; border: 1px solid #cbd5e1; border-radius: 8px; background-color: #fafbfc;">
+        <div style="font-weight: 800; font-size: 10.5pt; margin-bottom: 10px; color: #0b234a;">Question 6 : À quel rythme les séances ont-elles lieu ?</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>A.</strong> Une par semaine</span>
+            </div>
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>B.</strong> Deux par semaine</span>
+            </div>
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>C.</strong> Une par mois</span>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div style="margin-top: 16px; padding: 14px; border: 1px solid #cbd5e1; border-radius: 8px; background-color: #fafbfc;">
+        <div style="font-weight: 800; font-size: 10.5pt; margin-bottom: 10px; color: #0b234a;">Question 7 : Après combien d'heures a lieu l'évaluation intermédiaire (E1) ?</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>A.</strong> 25 heures</span>
+            </div>
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>B.</strong> 50 heures</span>
+            </div>
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>C.</strong> 80 heures</span>
+            </div>
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>D.</strong> 100 heures</span>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div style="margin-top: 16px; padding: 14px; border: 1px solid #cbd5e1; border-radius: 8px; background-color: #fafbfc;">
+        <div style="font-weight: 800; font-size: 10.5pt; margin-bottom: 10px; color: #0b234a;">Question 8 : Combien de thèmes civiques structurent le parcours ?</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>A.</strong> Trois</span>
+            </div>
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>B.</strong> Cinq</span>
+            </div>
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>C.</strong> Sept</span>
+            </div>
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>D.</strong> Dix</span>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div style="margin-top: 16px; padding: 14px; border: 1px solid #cbd5e1; border-radius: 8px; background-color: #fafbfc;">
+        <div style="font-weight: 800; font-size: 10.5pt; margin-bottom: 10px; color: #0b234a;">Question 9 : D'après Mme Rossi, qu'est-ce qu'un « devoir » ?</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>A.</strong> Quelque chose qu'on peut demander</span>
+            </div>
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>B.</strong> Quelque chose qu'on doit faire</span>
+            </div>
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>C.</strong> Une consigne propre à un lieu</span>
+            </div>
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>D.</strong> Une évaluation finale</span>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div style="margin-top: 16px; padding: 14px; border: 1px solid #cbd5e1; border-radius: 8px; background-color: #fafbfc;">
+        <div style="font-weight: 800; font-size: 10.5pt; margin-bottom: 10px; color: #0b234a;">Question 10 : D'après Mme Rossi, qu'est-ce qu'une « règle » ?</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>A.</strong> Une consigne précise (ex. arriver à l'heure)</span>
+            </div>
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>B.</strong> Une possibilité garantie par la loi</span>
+            </div>
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>C.</strong> Une obligation nationale</span>
+            </div>
+          
+            <div class="checkbox-row" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px;">
+              <span class="checkbox"></span><span><strong>D.</strong> Un examen final</span>
+            </div>
+          
+        </div>
+      </div>
+    
+    <div style="font-size: 8.5pt; color: #64748b; margin-top: 30px; border-top: 1px solid #cbd5e1; padding-top: 8px; text-align: center;">
+      Examen Blanc CapTCF — Format officiel du Test de Connaissance du Français (TCF). Chaque question a exactement une bonne réponse parmi des options réelles.
+    </div>
+  
+    </body>
+    </html>
+  `,
+      'qcm-sheet': `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        body {
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
+          color: #0b234a; /* Brand dark blue text */
+          background-color: #ffffff;
+          margin: 0;
+          padding: 0;
+          font-size: 10pt;
+          line-height: 1.5;
+        }
+        .section-title {
+          font-size: 11.5pt;
+          font-weight: 800;
+          color: #0b234a;
+          margin-top: 20px;
+          margin-bottom: 10px;
+          border-bottom: 1.5px solid #e2e8f0;
+          border-left: 4px solid #f47b20; /* Orange actions theme */
+          padding-left: 10px;
+          padding-bottom: 4px;
+        }
+        .consigne-box {
+          background-color: #fff7f0; /* Very light orange background */
+          border-left: 4px solid #f47b20; /* Orange border left */
+          padding: 12px 16px;
+          margin-bottom: 14px;
+          border-radius: 0 6px 6px 0;
+          color: #0b234a; /* Dark blue text */
+        }
+        .consigne-title {
+          font-size: 8.5pt;
+          font-weight: 800;
+          color: #f47b20;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 6px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .consigne-title svg {
+          stroke: #f47b20;
+          vertical-align: middle;
+        }
+        .aides-box {
+          border: 1px dashed #cbd5e1;
+          padding: 10px 14px;
+          margin-bottom: 14px;
+          font-size: 9pt;
+          color: #475569;
+          background-color: #fafbfc;
+          border-radius: 6px;
+        }
+        .response-line {
+          border-bottom: 1.5px dotted #cbd5e1;
+          height: 28px;
+          margin-bottom: 8px;
+        }
+        .checkbox-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 8px;
+          font-size: 9.5pt;
+          cursor: pointer;
+        }
+        .checkbox {
+          width: 14px;
+          height: 14px;
+          border: 1.5px solid #0b234a;
+          border-radius: 3px;
+          display: inline-block;
+          background-color: #ffffff;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 12px;
+          margin-bottom: 12px;
+          box-shadow: 0 2px 5px rgba(11,35,74,0.02);
+        }
+        th {
+          background-color: #f7f5f0; /* Warm clear grey */
+          border-bottom: 2.5px solid #F47B20;
+          text-align: left;
+          padding: 10px;
+          font-size: 9.5pt;
+          font-weight: 800;
+          color: #0b234a;
+        }
+        td {
+          border-bottom: 1px solid #e8e6e0;
+          padding: 10px;
+          font-size: 9pt;
+          line-height: 1.45;
+          vertical-align: top;
+          color: #1e293b;
+        }
+        .tip-box {
+          background-color: #f0fdf4;
+          border: 1px solid #a7f3d0;
+          padding: 12px;
+          border-radius: 6px;
+          font-size: 9pt;
+          color: #065f46;
+          margin-top: 12px;
+          line-height: 1.5;
+        }
+      </style>
+    </head>
+    <body>
+      
+    
+    <header style="border-bottom: 2pt solid #f47b20; padding-bottom: 10px; margin-bottom: 22px; font-family: 'Inter', system-ui, -apple-system, sans-serif;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="display:flex;align-items:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:13pt;color:#0b234a;letter-spacing:-0.5px;"><svg style="width:20px;height:20px;fill:none;stroke:#0b234a;stroke-width:2.2;margin-right:6px;vertical-align:middle" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479L12 21l-6.825-4a12.083 12.083 0 01.665-6.479L12 14z"/></svg>CAP&nbsp;<span style="color:#f47b20">TCF</span></span>
+        <div style="display: flex; gap: 6px;">
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Séance S01</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Niveau A1-B2</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Durée 15 min</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Compétence CIVIQUE</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 800; color: #fff; border-radius: 4px; background-color: #F47B20;">APP</span>
+        </div>
+      </div>
+      <h2 style="font-size: 14pt; font-weight: 800; color: #0b234a; margin: 0; line-height: 1.25;">
+        Diagnostic Civique — 10 Questions (CSP) (v3)
+      </h2>
+    </header>
+  
+    
+    <div class="consigne-box">
+      <div class="consigne-title"><svg style="width:14px;height:14px;fill:none;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg><span>DIAGNOSTIC CIVIQUE (CSP)</span></div>
+      <div style="font-size: 9.5pt; font-weight: 600; line-height: 1.4; color: #0b234a;">Thème : Droits et devoirs | Mention officielle : CSP</div>
+    </div>
+  
+    
+      <div style="margin-bottom: 16px; padding-left: 8px;">
+        <div style="font-weight: 800; font-size: 10pt; margin-bottom: 6px; color: #0b234a;">1. Respecter le règlement intérieur d'un centre de formation est avant tout :</div>
+        <div style="padding-left: 10px;">
+          <div class="checkbox-row"><span class="checkbox"></span> <strong>A.</strong> Un droit</div><div class="checkbox-row"><span class="checkbox"></span> <strong>B.</strong> Un devoir</div><div class="checkbox-row"><span class="checkbox"></span> <strong>C.</strong> Une démarche</div>
+        </div>
+      </div>
+    
+      <div style="margin-bottom: 16px; padding-left: 8px;">
+        <div style="font-weight: 800; font-size: 10pt; margin-bottom: 6px; color: #0b234a;">2. Le droit à la santé signifie que vous pouvez :</div>
+        <div style="padding-left: 10px;">
+          <div class="checkbox-row"><span class="checkbox"></span> <strong>A.</strong> Demander l'accès aux soins</div><div class="checkbox-row"><span class="checkbox"></span> <strong>B.</strong> Être obligé de vous soigner</div><div class="checkbox-row"><span class="checkbox"></span> <strong>C.</strong> Payer une amende</div>
+        </div>
+      </div>
+    
+      <div style="margin-bottom: 16px; padding-left: 8px;">
+        <div style="font-weight: 800; font-size: 10pt; margin-bottom: 6px; color: #0b234a;">3. Un formateur demande à un apprenant d'arriver à l'heure à chaque séance. Il s'agit :</div>
+        <div style="padding-left: 10px;">
+          <div class="checkbox-row"><span class="checkbox"></span> <strong>A.</strong> D'une règle du centre de formation</div><div class="checkbox-row"><span class="checkbox"></span> <strong>B.</strong> D'un droit de l'apprenant</div><div class="checkbox-row"><span class="checkbox"></span> <strong>C.</strong> D'une loi nationale</div>
+        </div>
+      </div>
+    
+      <div style="margin-bottom: 16px; padding-left: 8px;">
+        <div style="font-weight: 800; font-size: 10pt; margin-bottom: 6px; color: #0b234a;">4. Le parcours vers la carte de séjour pluriannuelle dure :</div>
+        <div style="padding-left: 10px;">
+          <div class="checkbox-row"><span class="checkbox"></span> <strong>A.</strong> 50 heures</div><div class="checkbox-row"><span class="checkbox"></span> <strong>B.</strong> 80 heures</div><div class="checkbox-row"><span class="checkbox"></span> <strong>C.</strong> 120 heures</div>
+        </div>
+      </div>
+    
+      <div style="margin-bottom: 16px; padding-left: 8px;">
+        <div style="font-weight: 800; font-size: 10pt; margin-bottom: 6px; color: #0b234a;">5. Combien de thèmes civiques officiels structurent le parcours ?</div>
+        <div style="padding-left: 10px;">
+          <div class="checkbox-row"><span class="checkbox"></span> <strong>A.</strong> Trois</div><div class="checkbox-row"><span class="checkbox"></span> <strong>B.</strong> Cinq</div><div class="checkbox-row"><span class="checkbox"></span> <strong>C.</strong> Sept</div>
+        </div>
+      </div>
+    
+      <div style="margin-bottom: 16px; padding-left: 8px;">
+        <div style="font-weight: 800; font-size: 10pt; margin-bottom: 6px; color: #0b234a;">6. Un devoir, c'est :</div>
+        <div style="padding-left: 10px;">
+          <div class="checkbox-row"><span class="checkbox"></span> <strong>A.</strong> Une obligation à respecter</div><div class="checkbox-row"><span class="checkbox"></span> <strong>B.</strong> Un choix libre sans conséquence</div><div class="checkbox-row"><span class="checkbox"></span> <strong>C.</strong> Un avantage optionnel</div>
+        </div>
+      </div>
+    
+      <div style="margin-bottom: 16px; padding-left: 8px;">
+        <div style="font-weight: 800; font-size: 10pt; margin-bottom: 6px; color: #0b234a;">7. L'évaluation finale (E2) a lieu :</div>
+        <div style="padding-left: 10px;">
+          <div class="checkbox-row"><span class="checkbox"></span> <strong>A.</strong> Après 25 heures</div><div class="checkbox-row"><span class="checkbox"></span> <strong>B.</strong> Après 50 heures</div><div class="checkbox-row"><span class="checkbox"></span> <strong>C.</strong> À la fin des 80 heures</div>
+        </div>
+      </div>
+    
+      <div style="margin-bottom: 16px; padding-left: 8px;">
+        <div style="font-weight: 800; font-size: 10pt; margin-bottom: 6px; color: #0b234a;">8. Pourquoi le parcours comprend-il une évaluation intermédiaire (E1) ?</div>
+        <div style="padding-left: 10px;">
+          <div class="checkbox-row"><span class="checkbox"></span> <strong>A.</strong> Pour sanctionner les absences</div><div class="checkbox-row"><span class="checkbox"></span> <strong>B.</strong> Pour mesurer la progression à mi-parcours</div><div class="checkbox-row"><span class="checkbox"></span> <strong>C.</strong> Pour remplacer l'évaluation finale</div>
+        </div>
+      </div>
+    
+      <div style="margin-bottom: 16px; padding-left: 8px;">
+        <div style="font-weight: 800; font-size: 10pt; margin-bottom: 6px; color: #0b234a;">9. Une règle se distingue d'un devoir car :</div>
+        <div style="padding-left: 10px;">
+          <div class="checkbox-row"><span class="checkbox"></span> <strong>A.</strong> Une règle est propre à un lieu précis, un devoir est une obligation plus générale</div><div class="checkbox-row"><span class="checkbox"></span> <strong>B.</strong> Une règle est facultative</div><div class="checkbox-row"><span class="checkbox"></span> <strong>C.</strong> Un devoir n'a aucune conséquence</div>
+        </div>
+      </div>
+    
+      <div style="margin-bottom: 16px; padding-left: 8px;">
+        <div style="font-weight: 800; font-size: 10pt; margin-bottom: 6px; color: #0b234a;">10. Combien d'évaluations rythment le parcours de 80 heures ?</div>
+        <div style="padding-left: 10px;">
+          <div class="checkbox-row"><span class="checkbox"></span> <strong>A.</strong> Une seule</div><div class="checkbox-row"><span class="checkbox"></span> <strong>B.</strong> Deux (E1 et E2)</div><div class="checkbox-row"><span class="checkbox"></span> <strong>C.</strong> Quatre</div>
+        </div>
+      </div>
+    
+    <div style="font-size: 8pt; font-style: italic; color: #64748b; text-align: center; border-top: 0.75pt solid #cbd5e1; padding-top: 8px; margin-top: 20px;">
+      Simulation pédagogique CapTCF. Les questions présentées ne préjugent pas des questions officielles de l'examen d'État.
+    </div>
+  
+    </body>
+    </html>
+  `,
+      'corrige-sheet': `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        body {
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
+          color: #0b234a; /* Brand dark blue text */
+          background-color: #ffffff;
+          margin: 0;
+          padding: 0;
+          font-size: 10pt;
+          line-height: 1.5;
+        }
+        .section-title {
+          font-size: 11.5pt;
+          font-weight: 800;
+          color: #0b234a;
+          margin-top: 20px;
+          margin-bottom: 10px;
+          border-bottom: 1.5px solid #e2e8f0;
+          border-left: 4px solid #f47b20; /* Orange actions theme */
+          padding-left: 10px;
+          padding-bottom: 4px;
+        }
+        .consigne-box {
+          background-color: #fff7f0; /* Very light orange background */
+          border-left: 4px solid #f47b20; /* Orange border left */
+          padding: 12px 16px;
+          margin-bottom: 14px;
+          border-radius: 0 6px 6px 0;
+          color: #0b234a; /* Dark blue text */
+        }
+        .consigne-title {
+          font-size: 8.5pt;
+          font-weight: 800;
+          color: #f47b20;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 6px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .consigne-title svg {
+          stroke: #f47b20;
+          vertical-align: middle;
+        }
+        .aides-box {
+          border: 1px dashed #cbd5e1;
+          padding: 10px 14px;
+          margin-bottom: 14px;
+          font-size: 9pt;
+          color: #475569;
+          background-color: #fafbfc;
+          border-radius: 6px;
+        }
+        .response-line {
+          border-bottom: 1.5px dotted #cbd5e1;
+          height: 28px;
+          margin-bottom: 8px;
+        }
+        .checkbox-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 8px;
+          font-size: 9.5pt;
+          cursor: pointer;
+        }
+        .checkbox {
+          width: 14px;
+          height: 14px;
+          border: 1.5px solid #0b234a;
+          border-radius: 3px;
+          display: inline-block;
+          background-color: #ffffff;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 12px;
+          margin-bottom: 12px;
+          box-shadow: 0 2px 5px rgba(11,35,74,0.02);
+        }
+        th {
+          background-color: #f7f5f0; /* Warm clear grey */
+          border-bottom: 2.5px solid #991B1B;
+          text-align: left;
+          padding: 10px;
+          font-size: 9.5pt;
+          font-weight: 800;
+          color: #0b234a;
+        }
+        td {
+          border-bottom: 1px solid #e8e6e0;
+          padding: 10px;
+          font-size: 9pt;
+          line-height: 1.45;
+          vertical-align: top;
+          color: #1e293b;
+        }
+        .tip-box {
+          background-color: #f0fdf4;
+          border: 1px solid #a7f3d0;
+          padding: 12px;
+          border-radius: 6px;
+          font-size: 9pt;
+          color: #065f46;
+          margin-top: 12px;
+          line-height: 1.5;
+        }
+      </style>
+    </head>
+    <body>
+      
+    
+    <header style="border-bottom: 2pt solid #f47b20; padding-bottom: 10px; margin-bottom: 22px; font-family: 'Inter', system-ui, -apple-system, sans-serif;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="display:flex;align-items:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:13pt;color:#0b234a;letter-spacing:-0.5px;"><svg style="width:20px;height:20px;fill:none;stroke:#0b234a;stroke-width:2.2;margin-right:6px;vertical-align:middle" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479L12 21l-6.825-4a12.083 12.083 0 01.665-6.479L12 14z"/></svg>CAP&nbsp;<span style="color:#f47b20">TCF</span></span>
+        <div style="display: flex; gap: 6px;">
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Séance S01</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Niveau A1-B2</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Durée N/A</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Compétence CORRECTION</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 800; color: #fff; border-radius: 4px; background-color: #991B1B;">COR</span>
+        </div>
+      </div>
+      <h2 style="font-size: 14pt; font-weight: 800; color: #0b234a; margin: 0; line-height: 1.25;">
+        Corrigé Formateur — Séance S01 (v3)
+      </h2>
+    </header>
+  
+    
+    <div class="consigne-box">
+      <div class="consigne-title"><svg style="width:14px;height:14px;fill:none;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg><span>GUIDE DE CORRECTION PÉDAGOGIQUE</span></div>
+      <div style="font-size: 9.5pt; font-weight: 600; line-height: 1.4; color: #0b234a;">Veuillez adapter la sévérité de l'évaluation selon le niveau CECRL cible.</div>
+    </div>
+  
+    <div class="section-title">Corrigé des questions de compréhension (par niveau)</div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px;">
+      
+        <div style="border: 0.75pt solid #cbd5e1; padding: 8px; border-radius: 4px; border-top: 2.5px solid #991b1b;">
+          <div style="font-weight: 800; color: #991b1b; font-size: 9.5pt; margin-bottom: 4px;">Niveau A1</div>
+          <div style="font-size: 9pt;">• q1 : <strong>80 heures</strong></div>
+          <div style="font-size: 9pt;">• q2 : <strong>Vrai</strong></div>
+          <div style="font-size: 8pt; color: #64748b; margin-top: 4px;">Répond aux questions 1-13 (compréhension globale, repérage, lexique, vrai/faux).</div>
+        </div>
+      
+        <div style="border: 0.75pt solid #cbd5e1; padding: 8px; border-radius: 4px; border-top: 2.5px solid #2563eb;">
+          <div style="font-weight: 800; color: #2563eb; font-size: 9.5pt; margin-bottom: 4px;">Niveau A2</div>
+          <div style="font-size: 9pt;">• q1 : <strong>25 séances</strong></div>
+          <div style="font-size: 9pt;">• q2 : <strong>Réponse ouverte : un des cinq thèmes civiques mentionnés (Principes et valeurs de la République / Système institutionnel / Droits et devoirs / Histoire, géographie et culture / Vivre dans la société française).</strong></div>
+          <div style="font-size: 8pt; color: #64748b; margin-top: 4px;">Répond aux questions 1-17 (+ reformulation guidée).</div>
+        </div>
+      
+        <div style="border: 0.75pt solid #cbd5e1; padding: 8px; border-radius: 4px; border-top: 2.5px solid #6b21a8;">
+          <div style="font-weight: 800; color: #6b21a8; font-size: 9.5pt; margin-bottom: 4px;">Niveau B1</div>
+          <div style="font-size: 9pt;">• q1 : <strong>Un droit est une possibilité garantie par la loi ; un devoir est une obligation ; une règle est une consigne précise et locale.</strong></div>
+          <div style="font-size: 9pt;">• q2 : <strong>E1 mesure la progression à mi-parcours et adapte la suite ; E2 valide l'ensemble du tronc commun et oriente vers la sortie ou l'extension B1.</strong></div>
+          <div style="font-size: 8pt; color: #64748b; margin-top: 4px;">Répond à l'intégralité des 20 questions, reformulation autonome.</div>
+        </div>
+      
+        <div style="border: 0.75pt solid #cbd5e1; padding: 8px; border-radius: 4px; border-top: 2.5px solid #047857;">
+          <div style="font-weight: 800; color: #047857; font-size: 9.5pt; margin-bottom: 4px;">Niveau B2</div>
+          <div style="font-size: 9pt;">• q1 : <strong>Réponse ouverte évaluée sur la précision des notions et la qualité de l'argumentation.</strong></div>
+          <div style="font-size: 9pt;">• q2 : <strong>Réponse ouverte : avantages (progressivité, ancrage) vs limites (durée totale, disponibilité) à mettre en balance.</strong></div>
+          <div style="font-size: 8pt; color: #64748b; margin-top: 4px;">Répond à l'intégralité des 20 questions + question 18 développée à l'écrit (150 mots).</div>
+        </div>
+      
+    </div>
+
+    <div class="section-title">Corrigé QCM TCF (10 questions)</div>
+    <table>
+      <thead><tr><th style="width:5%;">#</th><th style="width:45%;">Question</th><th style="width:20%;">Réponse</th><th style="width:30%;">Justification (extrait du dialogue)</th></tr></thead>
+      <tbody>
+        
+          <tr><td>1</td><td>Comment s'appelle l'apprenante du dialogue ?</td><td><strong>Awa Diallo</strong></td><td style="font-size:8.5pt; color:#475569;">Elle se présente : « Je m'appelle Awa. Awa Diallo. »</td></tr>
+        
+          <tr><td>2</td><td>Quel est l'objectif administratif d'Awa ?</td><td><strong>La carte de séjour pluriannuelle</strong></td><td style="font-size:8.5pt; color:#475569;">« Je voudrais avoir ma carte de séjour pluriannuelle. »</td></tr>
+        
+          <tr><td>3</td><td>Combien d'heures dure le parcours d'Awa ?</td><td><strong>80 heures</strong></td><td style="font-size:8.5pt; color:#475569;">« Vous allez suivre un parcours de quatre-vingts heures. »</td></tr>
+        
+          <tr><td>4</td><td>Combien de séances collectives sont prévues ?</td><td><strong>25</strong></td><td style="font-size:8.5pt; color:#475569;">« réparti sur vingt-cinq séances de trois heures »</td></tr>
+        
+          <tr><td>5</td><td>Combien de temps dure chaque séance ?</td><td><strong>3 heures</strong></td><td style="font-size:8.5pt; color:#475569;">« vingt-cinq séances de trois heures »</td></tr>
+        
+          <tr><td>6</td><td>À quel rythme les séances ont-elles lieu ?</td><td><strong>Une par semaine</strong></td><td style="font-size:8.5pt; color:#475569;">« à raison d'une séance par semaine »</td></tr>
+        
+          <tr><td>7</td><td>Après combien d'heures a lieu l'évaluation intermédiaire (E1) ?</td><td><strong>50 heures</strong></td><td style="font-size:8.5pt; color:#475569;">« une évaluation intermédiaire après cinquante heures »</td></tr>
+        
+          <tr><td>8</td><td>Combien de thèmes civiques structurent le parcours ?</td><td><strong>Cinq</strong></td><td style="font-size:8.5pt; color:#475569;">« cinq thèmes sur la vie en France »</td></tr>
+        
+          <tr><td>9</td><td>D'après Mme Rossi, qu'est-ce qu'un « devoir » ?</td><td><strong>Quelque chose qu'on doit faire</strong></td><td style="font-size:8.5pt; color:#475569;">« Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. »</td></tr>
+        
+          <tr><td>10</td><td>D'après Mme Rossi, qu'est-ce qu'une « règle » ?</td><td><strong>Une consigne précise (ex. arriver à l'heure)</strong></td><td style="font-size:8.5pt; color:#475569;">« Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. »</td></tr>
+        
+      </tbody>
+    </table>
+
+    <div class="section-title">Corrigé explicité du QCM Civique (CSP)</div>
+    <table>
+      <thead><tr><th style="width:5%;">#</th><th style="width:35%;">Question</th><th style="width:20%;">Réponse attendue</th><th style="width:40%;">Justification pédagogique</th></tr></thead>
+      <tbody>
+        
+          <tr>
+            <td>1</td>
+            <td>Respecter le règlement intérieur d'un centre de formation est avant tout :</td>
+            <td><strong>Un devoir</strong></td>
+            <td style="font-size: 8.5pt; color: #475569;">C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option.</td>
+          </tr>
+        
+          <tr>
+            <td>2</td>
+            <td>Le droit à la santé signifie que vous pouvez :</td>
+            <td><strong>Demander l'accès aux soins</strong></td>
+            <td style="font-size: 8.5pt; color: #475569;">Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation.</td>
+          </tr>
+        
+          <tr>
+            <td>3</td>
+            <td>Un formateur demande à un apprenant d'arriver à l'heure à chaque séance. Il s'agit :</td>
+            <td><strong>D'une règle du centre de formation</strong></td>
+            <td style="font-size: 8.5pt; color: #475569;">Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale.</td>
+          </tr>
+        
+          <tr>
+            <td>4</td>
+            <td>Le parcours vers la carte de séjour pluriannuelle dure :</td>
+            <td><strong>80 heures</strong></td>
+            <td style="font-size: 8.5pt; color: #475569;">Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue.</td>
+          </tr>
+        
+          <tr>
+            <td>5</td>
+            <td>Combien de thèmes civiques officiels structurent le parcours ?</td>
+            <td><strong>Cinq</strong></td>
+            <td style="font-size: 8.5pt; color: #475569;">Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société).</td>
+          </tr>
+        
+          <tr>
+            <td>6</td>
+            <td>Un devoir, c'est :</td>
+            <td><strong>Une obligation à respecter</strong></td>
+            <td style="font-size: 8.5pt; color: #475569;">Un devoir engage la personne à agir, contrairement à un simple choix.</td>
+          </tr>
+        
+          <tr>
+            <td>7</td>
+            <td>L'évaluation finale (E2) a lieu :</td>
+            <td><strong>À la fin des 80 heures</strong></td>
+            <td style="font-size: 8.5pt; color: #475569;">E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet.</td>
+          </tr>
+        
+          <tr>
+            <td>8</td>
+            <td>Pourquoi le parcours comprend-il une évaluation intermédiaire (E1) ?</td>
+            <td><strong>Pour mesurer la progression à mi-parcours</strong></td>
+            <td style="font-size: 8.5pt; color: #475569;">E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant.</td>
+          </tr>
+        
+          <tr>
+            <td>9</td>
+            <td>Une règle se distingue d'un devoir car :</td>
+            <td><strong>Une règle est propre à un lieu précis, un devoir est une obligation plus générale</strong></td>
+            <td style="font-size: 8.5pt; color: #475569;">Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général.</td>
+          </tr>
+        
+          <tr>
+            <td>10</td>
+            <td>Combien d'évaluations rythment le parcours de 80 heures ?</td>
+            <td><strong>Deux (E1 et E2)</strong></td>
+            <td style="font-size: 8.5pt; color: #475569;">Le dialogue mentionne explicitement deux évaluations distinctes.</td>
+          </tr>
+        
+      </tbody>
+    </table>
+
+    <div class="section-title">Grille d'évaluation & conseils formateur</div>
+    <div style="font-size: 9pt; line-height: 1.45; color: #475569;">
+      • <strong>Niveaux A1/A2 :</strong> tolérer les fautes de grammaire et d'orthographe si le sens communicatif est préservé.<br>
+      • <strong>Niveaux B1/B2 :</strong> attendre une structure textuelle fluide (connecteurs logiques) et une argumentation développée.<br>
+      • <strong>Variantes A2/B1/B2 recréées :</strong> à faire re-passer par la chaîne de validation Supabase avant toute réinsertion en base (non testées automatiquement dans cette maquette).
+    </div>
+  
+    </body>
+    </html>
+  `,
+      'lexique-sheet': `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        body {
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
+          color: #0b234a; /* Brand dark blue text */
+          background-color: #ffffff;
+          margin: 0;
+          padding: 0;
+          font-size: 10pt;
+          line-height: 1.5;
+        }
+        .section-title {
+          font-size: 11.5pt;
+          font-weight: 800;
+          color: #0b234a;
+          margin-top: 20px;
+          margin-bottom: 10px;
+          border-bottom: 1.5px solid #e2e8f0;
+          border-left: 4px solid #f47b20; /* Orange actions theme */
+          padding-left: 10px;
+          padding-bottom: 4px;
+        }
+        .consigne-box {
+          background-color: #fff7f0; /* Very light orange background */
+          border-left: 4px solid #f47b20; /* Orange border left */
+          padding: 12px 16px;
+          margin-bottom: 14px;
+          border-radius: 0 6px 6px 0;
+          color: #0b234a; /* Dark blue text */
+        }
+        .consigne-title {
+          font-size: 8.5pt;
+          font-weight: 800;
+          color: #f47b20;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 6px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .consigne-title svg {
+          stroke: #f47b20;
+          vertical-align: middle;
+        }
+        .aides-box {
+          border: 1px dashed #cbd5e1;
+          padding: 10px 14px;
+          margin-bottom: 14px;
+          font-size: 9pt;
+          color: #475569;
+          background-color: #fafbfc;
+          border-radius: 6px;
+        }
+        .response-line {
+          border-bottom: 1.5px dotted #cbd5e1;
+          height: 28px;
+          margin-bottom: 8px;
+        }
+        .checkbox-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 8px;
+          font-size: 9.5pt;
+          cursor: pointer;
+        }
+        .checkbox {
+          width: 14px;
+          height: 14px;
+          border: 1.5px solid #0b234a;
+          border-radius: 3px;
+          display: inline-block;
+          background-color: #ffffff;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 12px;
+          margin-bottom: 12px;
+          box-shadow: 0 2px 5px rgba(11,35,74,0.02);
+        }
+        th {
+          background-color: #f7f5f0; /* Warm clear grey */
+          border-bottom: 2.5px solid #475569;
+          text-align: left;
+          padding: 10px;
+          font-size: 9.5pt;
+          font-weight: 800;
+          color: #0b234a;
+        }
+        td {
+          border-bottom: 1px solid #e8e6e0;
+          padding: 10px;
+          font-size: 9pt;
+          line-height: 1.45;
+          vertical-align: top;
+          color: #1e293b;
+        }
+        .tip-box {
+          background-color: #f0fdf4;
+          border: 1px solid #a7f3d0;
+          padding: 12px;
+          border-radius: 6px;
+          font-size: 9pt;
+          color: #065f46;
+          margin-top: 12px;
+          line-height: 1.5;
+        }
+      </style>
+    </head>
+    <body>
+      
+    
+    <header style="border-bottom: 2pt solid #f47b20; padding-bottom: 10px; margin-bottom: 22px; font-family: 'Inter', system-ui, -apple-system, sans-serif;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="display:flex;align-items:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:13pt;color:#0b234a;letter-spacing:-0.5px;"><svg style="width:20px;height:20px;fill:none;stroke:#0b234a;stroke-width:2.2;margin-right:6px;vertical-align:middle" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479L12 21l-6.825-4a12.083 12.083 0 01.665-6.479L12 14z"/></svg>CAP&nbsp;<span style="color:#f47b20">TCF</span></span>
+        <div style="display: flex; gap: 6px;">
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Séance S01</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Niveau A1-B2</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Durée 20 min</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Compétence LEXIQUE</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 800; color: #fff; border-radius: 4px; background-color: #475569;">APP</span>
+        </div>
+      </div>
+      <h2 style="font-size: 14pt; font-weight: 800; color: #0b234a; margin: 0; line-height: 1.25;">
+        Glossaire + 3 Exercices — Lexique S01 (v3)
+      </h2>
+    </header>
+  
+    
+    <div class="consigne-box">
+      <div class="consigne-title"><svg style="width:14px;height:14px;fill:none;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg><span>GLOSSAIRE DES MOTS CLÉS</span></div>
+      <div style="font-size: 9.5pt; font-weight: 600; line-height: 1.4; color: #0b234a;">Ces mots constituent le socle de vocabulaire de la séance.</div>
+    </div>
+  
+    <table><thead><tr><th>Mot</th><th>Définition simplifiée</th><th>Exemple d'utilisation</th></tr></thead><tbody>
+    <tr>
+      <td style="font-weight: 800; color: #0b234a; width: 20%;">parcours</td>
+      <td style="color: #334155; width: 45%;">Ensemble des séances à suivre pour atteindre un objectif.</td>
+      <td style="font-style: italic; color: #475569; width: 35%;">« Awa suit un parcours de 80 heures. »</td>
+    </tr>
+  
+    <tr>
+      <td style="font-weight: 800; color: #0b234a; width: 20%;">niveau</td>
+      <td style="color: #334155; width: 45%;">Le degré de connaissance d'une langue (A1, A2, B1, B2).</td>
+      <td style="font-style: italic; color: #475569; width: 35%;">« Son niveau de français progresse. »</td>
+    </tr>
+  
+    <tr>
+      <td style="font-weight: 800; color: #0b234a; width: 20%;">objectif</td>
+      <td style="color: #334155; width: 45%;">Le but que l'on veut atteindre.</td>
+      <td style="font-style: italic; color: #475569; width: 35%;">« Son objectif est d'avoir sa carte de séjour. »</td>
+    </tr>
+  
+    <tr>
+      <td style="font-weight: 800; color: #0b234a; width: 20%;">démarche</td>
+      <td style="color: #334155; width: 45%;">Une action pour obtenir un document ou un droit.</td>
+      <td style="font-style: italic; color: #475569; width: 35%;">« Elle fait une démarche à la préfecture. »</td>
+    </tr>
+  
+    <tr>
+      <td style="font-weight: 800; color: #0b234a; width: 20%;">droit</td>
+      <td style="color: #334155; width: 45%;">Quelque chose qu'on peut demander, garanti par la loi.</td>
+      <td style="font-style: italic; color: #475569; width: 35%;">« Le droit à la santé permet de se soigner. »</td>
+    </tr>
+  
+    <tr>
+      <td style="font-weight: 800; color: #0b234a; width: 20%;">devoir</td>
+      <td style="color: #334155; width: 45%;">Une obligation, quelque chose qu'on doit faire.</td>
+      <td style="font-style: italic; color: #475569; width: 35%;">« Respecter la loi est un devoir. »</td>
+    </tr>
+  
+    <tr>
+      <td style="font-weight: 800; color: #0b234a; width: 20%;">République</td>
+      <td style="color: #334155; width: 45%;">La forme de gouvernement de la France.</td>
+      <td style="font-style: italic; color: #475569; width: 35%;">« La République française a une devise. »</td>
+    </tr>
+  
+    <tr>
+      <td style="font-weight: 800; color: #0b234a; width: 20%;">examen</td>
+      <td style="color: #334155; width: 45%;">Une épreuve qui évalue les connaissances.</td>
+      <td style="font-style: italic; color: #475569; width: 35%;">« L'examen final a lieu après 80 heures. »</td>
+    </tr>
+  
+    <tr>
+      <td style="font-weight: 800; color: #0b234a; width: 20%;">séance</td>
+      <td style="color: #334155; width: 45%;">Une réunion de formation à une date précise.</td>
+      <td style="font-style: italic; color: #475569; width: 35%;">« Chaque séance dure 3 heures. »</td>
+    </tr>
+  
+    <tr>
+      <td style="font-weight: 800; color: #0b234a; width: 20%;">progresser</td>
+      <td style="color: #334155; width: 45%;">Avancer, s'améliorer petit à petit.</td>
+      <td style="font-style: italic; color: #475569; width: 35%;">« Elle progresse en français chaque semaine. »</td>
+    </tr>
+  </tbody></table>
+    <div class="section-title">Exercices de réemploi (minimum 3)</div>
+    
+    <div style="margin-bottom: 14px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px;">
+      <div style="font-weight: 800; color: #475569; margin-bottom: 4px;">Exercice 1 — Association</div>
+      <div style="font-size: 9pt; margin-bottom: 6px;">Associez chaque mot à sa définition simplifiée.</div>
+      <ul style="margin-left:16px; font-size:9pt;"><li>parcours → ______________</li><li>démarche → ______________</li><li>progresser → ______________</li></ul>
+      
+      
+    </div>
+  
+    <div style="margin-bottom: 14px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px;">
+      <div style="font-weight: 800; color: #475569; margin-bottom: 4px;">Exercice 2 — Phrase à compléter</div>
+      <div style="font-size: 9pt; margin-bottom: 6px;">Complétez le texte avec les mots manquants.</div>
+      
+      <div style="font-size:9pt; font-style:italic; background:#fafbfc; padding:8px; border-radius:4px;">Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure.</div>
+      
+    </div>
+  
+    <div style="margin-bottom: 14px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px;">
+      <div style="font-weight: 800; color: #475569; margin-bottom: 4px;">Exercice 3 — Réemploi oral</div>
+      <div style="font-size: 9pt; margin-bottom: 6px;">En une phrase, expliquez pourquoi vous suivez ce parcours, en utilisant le mot « objectif » ou « démarche ».</div>
+      
+      
+      <div style="font-size:8pt; color:#64748b; margin-top:4px;">Critère : Usage correct du mot dans une phrase complète.</div>
+    </div>
+  
+  
+    </body>
+    </html>
+  `,
+      'visual-sheet': `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        body {
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
+          color: #0b234a; /* Brand dark blue text */
+          background-color: #ffffff;
+          margin: 0;
+          padding: 0;
+          font-size: 10pt;
+          line-height: 1.5;
+        }
+        .section-title {
+          font-size: 11.5pt;
+          font-weight: 800;
+          color: #0b234a;
+          margin-top: 20px;
+          margin-bottom: 10px;
+          border-bottom: 1.5px solid #e2e8f0;
+          border-left: 4px solid #f47b20; /* Orange actions theme */
+          padding-left: 10px;
+          padding-bottom: 4px;
+        }
+        .consigne-box {
+          background-color: #fff7f0; /* Very light orange background */
+          border-left: 4px solid #f47b20; /* Orange border left */
+          padding: 12px 16px;
+          margin-bottom: 14px;
+          border-radius: 0 6px 6px 0;
+          color: #0b234a; /* Dark blue text */
+        }
+        .consigne-title {
+          font-size: 8.5pt;
+          font-weight: 800;
+          color: #f47b20;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 6px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .consigne-title svg {
+          stroke: #f47b20;
+          vertical-align: middle;
+        }
+        .aides-box {
+          border: 1px dashed #cbd5e1;
+          padding: 10px 14px;
+          margin-bottom: 14px;
+          font-size: 9pt;
+          color: #475569;
+          background-color: #fafbfc;
+          border-radius: 6px;
+        }
+        .response-line {
+          border-bottom: 1.5px dotted #cbd5e1;
+          height: 28px;
+          margin-bottom: 8px;
+        }
+        .checkbox-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 8px;
+          font-size: 9.5pt;
+          cursor: pointer;
+        }
+        .checkbox {
+          width: 14px;
+          height: 14px;
+          border: 1.5px solid #0b234a;
+          border-radius: 3px;
+          display: inline-block;
+          background-color: #ffffff;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 12px;
+          margin-bottom: 12px;
+          box-shadow: 0 2px 5px rgba(11,35,74,0.02);
+        }
+        th {
+          background-color: #f7f5f0; /* Warm clear grey */
+          border-bottom: 2.5px solid #2563EB;
+          text-align: left;
+          padding: 10px;
+          font-size: 9.5pt;
+          font-weight: 800;
+          color: #0b234a;
+        }
+        td {
+          border-bottom: 1px solid #e8e6e0;
+          padding: 10px;
+          font-size: 9pt;
+          line-height: 1.45;
+          vertical-align: top;
+          color: #1e293b;
+        }
+        .tip-box {
+          background-color: #f0fdf4;
+          border: 1px solid #a7f3d0;
+          padding: 12px;
+          border-radius: 6px;
+          font-size: 9pt;
+          color: #065f46;
+          margin-top: 12px;
+          line-height: 1.5;
+        }
+      </style>
+    </head>
+    <body>
+      
+    
+    <header style="border-bottom: 2pt solid #f47b20; padding-bottom: 10px; margin-bottom: 22px; font-family: 'Inter', system-ui, -apple-system, sans-serif;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="display:flex;align-items:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:13pt;color:#0b234a;letter-spacing:-0.5px;"><svg style="width:20px;height:20px;fill:none;stroke:#0b234a;stroke-width:2.2;margin-right:6px;vertical-align:middle" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479L12 21l-6.825-4a12.083 12.083 0 01.665-6.479L12 14z"/></svg>CAP&nbsp;<span style="color:#f47b20">TCF</span></span>
+        <div style="display: flex; gap: 6px;">
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Séance S01</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Niveau A1-B2</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Durée 10 min</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Compétence CIVIQUE</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 800; color: #fff; border-radius: 4px; background-color: #2563EB;">APP</span>
+        </div>
+      </div>
+      <h2 style="font-size: 14pt; font-weight: 800; color: #0b234a; margin: 0; line-height: 1.25;">
+        Fiche Activité — Exploitation du Support Visuel (v3)
+      </h2>
+    </header>
+  
+    
+    <div class="consigne-box">
+      <div class="consigne-title"><svg style="width:14px;height:14px;fill:none;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg><span>À FAIRE</span></div>
+      <div style="font-size: 9.5pt; font-weight: 600; line-height: 1.4; color: #0b234a;">Observez attentivement le schéma ci-dessous, puis répondez aux questions.</div>
+    </div>
+  
+    <div style="margin: 16px 0; text-align: center;">
+      
+    <svg width="100%" viewBox="0 0 900 260" style="background-color: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 8px; max-width: 100%; height: auto; display: block; margin: 12px auto; box-shadow: 0 4px 12px rgba(11,35,74,0.05);">
+      <rect x="20" y="30" width="150" height="180" rx="10" fill="#dbeafe" stroke="#0b234a" stroke-width="1.5" />
+<text x="95" y="130" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="14px" font-weight="700" fill="#0b234a">Principes et</text>
+<text x="95" y="150" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="14px" font-weight="700" fill="#0b234a">valeurs de la</text>
+<text x="95" y="170" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="14px" font-weight="700" fill="#0b234a">République</text>
+<rect x="190" y="30" width="150" height="180" rx="10" fill="#dcfce7" stroke="#0b234a" stroke-width="1.5" />
+<text x="265" y="130" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="14px" font-weight="700" fill="#0b234a">Système</text>
+<text x="265" y="150" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="14px" font-weight="700" fill="#0b234a">institutionnel</text>
+<text x="265" y="170" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="14px" font-weight="700" fill="#0b234a">et politique</text>
+<rect x="360" y="30" width="150" height="180" rx="10" fill="#fef9c3" stroke="#0b234a" stroke-width="1.5" />
+<text x="435" y="130" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="14px" font-weight="700" fill="#0b234a">Droits</text>
+<text x="435" y="150" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="14px" font-weight="700" fill="#0b234a">et</text>
+<text x="435" y="170" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="14px" font-weight="700" fill="#0b234a">devoirs</text>
+<rect x="530" y="30" width="150" height="180" rx="10" fill="#fee2e2" stroke="#0b234a" stroke-width="1.5" />
+<text x="605" y="130" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="14px" font-weight="700" fill="#0b234a">Histoire,</text>
+<text x="605" y="150" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="14px" font-weight="700" fill="#0b234a">géographie</text>
+<text x="605" y="170" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="14px" font-weight="700" fill="#0b234a">et culture</text>
+<rect x="700" y="30" width="180" height="180" rx="10" fill="#ede9fe" stroke="#0b234a" stroke-width="1.5" />
+<text x="790" y="120" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="14px" font-weight="700" fill="#0b234a">Vivre dans</text>
+<text x="790" y="140" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="14px" font-weight="700" fill="#0b234a">la société</text>
+<text x="790" y="160" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="14px" font-weight="700" fill="#0b234a">française</text>
+
+    </svg>
+  
+      <div style="font-size: 8.5pt; font-style: italic; color: #475569; margin-top: 6px;"><strong>Figure 1 :</strong> Cinq thèmes civiques du parcours CapTCF</div>
+    </div>
+    <div class="section-title">Questions d'observation (5 questions)</div>
+    
+      <div style="margin-bottom: 14px; padding-left: 8px;">
+        <div style="font-weight: 700; margin-bottom: 6px; color: #0b234a;">q1. Combien de thèmes sont représentés sur le schéma ?</div>
+        <div class="response-line"></div>
+      </div>
+    
+      <div style="margin-bottom: 14px; padding-left: 8px;">
+        <div style="font-weight: 700; margin-bottom: 6px; color: #0b234a;">q2. Nommez les cinq thèmes dans l'ordre, de gauche à droite.</div>
+        <div class="response-line"></div>
+      </div>
+    
+      <div style="margin-bottom: 14px; padding-left: 8px;">
+        <div style="font-weight: 700; margin-bottom: 6px; color: #0b234a;">q3. Quel thème correspond au panneau de couleur rouge clair ?</div>
+        <div class="response-line"></div>
+      </div>
+    
+      <div style="margin-bottom: 14px; padding-left: 8px;">
+        <div style="font-weight: 700; margin-bottom: 6px; color: #0b234a;">q4. Pourquoi ces cinq thèmes sont-ils réunis sur un même schéma, selon vous ?</div>
+        <div class="response-line"></div>
+      </div>
+    
+      <div style="margin-bottom: 14px; padding-left: 8px;">
+        <div style="font-weight: 700; margin-bottom: 6px; color: #0b234a;">q5. Lequel de ces cinq thèmes vous semble le plus utile pour votre vie quotidienne en France ? Justifiez votre réponse en une phrase.</div>
+        <div class="response-line"></div>
+      </div>
+    
+  
+    </body>
+    </html>
+  `,
+      'convert-sheet': `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        body {
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
+          color: #0b234a; /* Brand dark blue text */
+          background-color: #ffffff;
+          margin: 0;
+          padding: 0;
+          font-size: 10pt;
+          line-height: 1.5;
+        }
+        .section-title {
+          font-size: 11.5pt;
+          font-weight: 800;
+          color: #0b234a;
+          margin-top: 20px;
+          margin-bottom: 10px;
+          border-bottom: 1.5px solid #e2e8f0;
+          border-left: 4px solid #f47b20; /* Orange actions theme */
+          padding-left: 10px;
+          padding-bottom: 4px;
+        }
+        .consigne-box {
+          background-color: #fff7f0; /* Very light orange background */
+          border-left: 4px solid #f47b20; /* Orange border left */
+          padding: 12px 16px;
+          margin-bottom: 14px;
+          border-radius: 0 6px 6px 0;
+          color: #0b234a; /* Dark blue text */
+        }
+        .consigne-title {
+          font-size: 8.5pt;
+          font-weight: 800;
+          color: #f47b20;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 6px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .consigne-title svg {
+          stroke: #f47b20;
+          vertical-align: middle;
+        }
+        .aides-box {
+          border: 1px dashed #cbd5e1;
+          padding: 10px 14px;
+          margin-bottom: 14px;
+          font-size: 9pt;
+          color: #475569;
+          background-color: #fafbfc;
+          border-radius: 6px;
+        }
+        .response-line {
+          border-bottom: 1.5px dotted #cbd5e1;
+          height: 28px;
+          margin-bottom: 8px;
+        }
+        .checkbox-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 8px;
+          font-size: 9.5pt;
+          cursor: pointer;
+        }
+        .checkbox {
+          width: 14px;
+          height: 14px;
+          border: 1.5px solid #0b234a;
+          border-radius: 3px;
+          display: inline-block;
+          background-color: #ffffff;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 12px;
+          margin-bottom: 12px;
+          box-shadow: 0 2px 5px rgba(11,35,74,0.02);
+        }
+        th {
+          background-color: #f7f5f0; /* Warm clear grey */
+          border-bottom: 2.5px solid #475569;
+          text-align: left;
+          padding: 10px;
+          font-size: 9.5pt;
+          font-weight: 800;
+          color: #0b234a;
+        }
+        td {
+          border-bottom: 1px solid #e8e6e0;
+          padding: 10px;
+          font-size: 9pt;
+          line-height: 1.45;
+          vertical-align: top;
+          color: #1e293b;
+        }
+        .tip-box {
+          background-color: #f0fdf4;
+          border: 1px solid #a7f3d0;
+          padding: 12px;
+          border-radius: 6px;
+          font-size: 9pt;
+          color: #065f46;
+          margin-top: 12px;
+          line-height: 1.5;
+        }
+      </style>
+    </head>
+    <body>
+      
+    
+    <header style="border-bottom: 2pt solid #f47b20; padding-bottom: 10px; margin-bottom: 22px; font-family: 'Inter', system-ui, -apple-system, sans-serif;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="display:flex;align-items:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:13pt;color:#0b234a;letter-spacing:-0.5px;"><svg style="width:20px;height:20px;fill:none;stroke:#0b234a;stroke-width:2.2;margin-right:6px;vertical-align:middle" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479L12 21l-6.825-4a12.083 12.083 0 01.665-6.479L12 14z"/></svg>CAP&nbsp;<span style="color:#f47b20">TCF</span></span>
+        <div style="display: flex; gap: 6px;">
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Séance S01</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Niveau A1-B2 Invariant</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Durée N/A</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 700; color: #0b234a; border-radius: 4px; background-color: #fdfbf7;">Compétence LECTURE</span>
+          <span style="border: 1px solid #cbd5e1; padding: 3px 7px; font-size: 8.5pt; font-weight: 800; color: #fff; border-radius: 4px; background-color: #475569;">APP</span>
+        </div>
+      </div>
+      <h2 style="font-size: 14pt; font-weight: 800; color: #0b234a; margin: 0; line-height: 1.25;">
+        Notice d'Accueil — Structure du Parcours d'Intégration
+      </h2>
+    </header>
+  
+    
+    <div class="consigne-box">
+      <div class="consigne-title"><svg style="width:14px;height:14px;fill:none;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg><span>DOCUMENT TRANSFORMÉ (NOTICE D'ORIENTATION)</span></div>
+      <div style="font-size: 9.5pt; font-weight: 600; line-height: 1.4; color: #0b234a;">Ce document est un extrait de la notice officielle d'accueil, restructuré selon la charte d'impression CapTCF pour une lisibilité maximale.</div>
+    </div>
+  
+    <div style="margin-top: 20px; line-height: 1.6; color: #1e293b;">
+      <h3 style="font-size: 12pt; color: #0b234a; margin-bottom: 10px; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px;">1. Bienvenue dans votre parcours d'intégration</h3>
+      <p style="margin-bottom: 12px;">Chaque primo-arrivant signataire du contrat d'intégration républicaine s'engage dans un parcours de formation linguistique et civique de <strong>80 heures</strong> (réparties sur <strong>25 séances</strong> de trois heures).</p>
+      <h3 style="font-size: 12pt; color: #0b234a; margin-bottom: 10px; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px;">2. Les Objectifs d'Apprentissage</h3>
+      <p style="margin-bottom: 12px;">La formation vise l'acquisition de repères sur la société française à travers cinq thèmes civiques :</p>
+      <ul style="margin-left: 20px; margin-bottom: 15px;">
+        <li>Principes et valeurs de la République</li><li>Système institutionnel et politique</li>
+        <li>Droits et devoirs en France</li><li>Histoire, géographie et culture</li>
+        <li>Vie en société et démarches quotidiennes</li>
+      </ul>
+      <h3 style="font-size: 12pt; color: #0b234a; margin-bottom: 10px; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px;">3. Présence et Assiduité</h3>
+      <p style="margin-bottom: 12px; background-color: #fffbeb; border-left: 3px solid #f59e0b; padding: 10px; border-radius: 4px;">
+        La présence à chaque séance est obligatoire et contrôlée par émargement. Deux évaluations nationales hors séances mesurent vos progrès : l'évaluation intermédiaire et l'évaluation finale.
+      </p>
+    </div>
+  
+    </body>
+    </html>
+  `
+    };
+    function showTab(tabId) {
+      document.querySelectorAll('.menu-item').forEach(it => it.classList.remove('active'));
+      const active = Array.from(document.querySelectorAll('.menu-item')).find(it => it.getAttribute('onclick') && it.getAttribute('onclick').includes(tabId));
+      if (active) active.classList.add('active');
+      ['sofiane-checklist','conformity-report','comparison','iframe-view'].forEach(id => document.getElementById(id).style.display = 'none');
+      document.getElementById('toggle-container').style.display = 'none';
+      if (tabId === 'sofiane-checklist') { document.getElementById('sofiane-checklist').style.display = 'block'; document.getElementById('view-title').innerText = 'Points à valider par Sofiane — Séance S01 v3'; }
+      else if (tabId === 'conformity-report') { document.getElementById('conformity-report').style.display = 'block'; document.getElementById('view-title').innerText = "Rapport d'Audit S01 v3"; }
+      else if (tabId === 'comparison') { document.getElementById('comparison').style.display = 'block'; document.getElementById('view-title').innerText = 'Comparaison S01 vs S01 v3'; }
+      else {
+        document.getElementById('iframe-view').style.display = 'block';
+        document.getElementById('toggle-container').style.display = 'flex';
+        document.getElementById('view-title').innerText = 'Prévisualisation A4 : ' + tabId.replace('-sheet','').replace('-',' ');
+        const doc = document.getElementById('preview-iframe').contentWindow.document;
+        doc.open(); doc.write(templates[tabId]); doc.close();
+      }
+    }
+    function setViewMode(mode) {
+      const frame = document.getElementById('iframe-view');
+      const a4 = document.getElementById('toggle-a4'), full = document.getElementById('toggle-full');
+      if (mode === 'full') { frame.classList.add('full-screen'); full.classList.add('active'); a4.classList.remove('active'); }
+      else { frame.classList.remove('full-screen'); a4.classList.add('active'); full.classList.remove('active'); }
+    }
+    function toggleCheck(id) { document.getElementById(id).classList.toggle('checked'); }
+    function exportFeedback() {
+      const results = {};
+      document.querySelectorAll('.checklist-item').forEach(it => { results[it.id] = { checked: it.classList.contains('checked'), feedback: it.querySelector('.feedback-input').value }; });
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(results, null, 2));
+      const a = document.createElement('a'); a.setAttribute("href", dataStr); a.setAttribute("download", "sofiane_validation_S01v3.json");
+      document.body.appendChild(a); a.click(); a.remove();
+      alert("Validation exportée avec succès !");
+    }
+  </script>
+</body>
+</html>
