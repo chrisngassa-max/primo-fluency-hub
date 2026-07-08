@@ -73,6 +73,45 @@ function renderVisualSVG(visual) {
   `;
 }
 
+// Questions d'observation du Support Visuel : dépendent du schéma réellement
+// affiché par chaque séance (jamais un texte "5 thèmes civiques" générique
+// hérité de S01 réutilisé tel quel sur un formulaire, un cabinet médical, etc.).
+const SUPPORT_VISUEL_OBSERVATION_QUESTIONS = {
+  S01: {
+    q1: 'Citez les trois premiers thèmes civiques mentionnés sur le schéma :',
+    q2: 'Quel est le rôle principal de ces thèmes civiques d\'après le formateur ?'
+  },
+  S02: {
+    q1: 'Citez les quatre informations demandées dans le formulaire d\'état civil :',
+    q2: 'Que représente le drapeau tricolore affiché à côté du formulaire ?'
+  },
+  S03: {
+    q1: 'Décrivez les éléments que vous observez dans cette salle d\'attente (mobilier, porte, horloge) :',
+    q2: 'Pourquoi patiente-t-on dans une salle d\'attente avant de voir un médecin ?'
+  },
+  S04: {
+    q1: 'Citez les étapes du parcours scolaire représentées sur le schéma :',
+    q2: 'Entre quel âge et quel âge l\'instruction est-elle obligatoire en France, d\'après le schéma ?'
+  },
+  S05: {
+    q1: 'Combien d\'appartements sont représentés dans l\'immeuble, et que symbolise la table de médiation ?',
+    q2: 'Pourquoi privilégier la médiation plutôt qu\'un conflit direct entre voisins ?'
+  }
+};
+
+// Repli générique (séances non encore répertoriées) : dérivé du titre réel du
+// schéma plutôt que d'un texte fixe sans rapport avec l'image affichée.
+function getObservationQuestions(session, brief) {
+  if (SUPPORT_VISUEL_OBSERVATION_QUESTIONS[session]) {
+    return SUPPORT_VISUEL_OBSERVATION_QUESTIONS[session];
+  }
+  const title = (brief && brief.visual && brief.visual.scene && brief.visual.scene.title) || 'ce schéma';
+  return {
+    q1: `Décrivez les éléments principaux que vous observez sur ce schéma : ${title}.`,
+    q2: 'Quel est le lien entre ce schéma et le thème de la séance ?'
+  };
+}
+
 // Helper to generate Common HTML Header with brand logo (embedded SVG) and colors
 function getHTMLHeader(session, level, duration, skill, status, title, colorAccent) {
   const logoSvg = `<svg style="width:20px;height:20px;fill:none;stroke:#0b234a;stroke-width:2.2;margin-right:6px;vertical-align:middle" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479L12 21l-6.825-4a12.083 12.083 0 01.665-6.479L12 14z"/></svg>`;
@@ -609,7 +648,8 @@ function getLexiqueHTML(brief, session) {
 // 8. Document avec Image HTML (Support Visuel)
 function getSupportVisuelHTML(brief, session) {
   const visualSvg = renderVisualSVG(brief.visual);
-  
+  const observationQuestions = getObservationQuestions(session, brief);
+
   const content = `
     ${getHTMLHeader(session, 'A1-B2', '30 min', 'CIVIQUE', 'APP', `Fiche Activité — Exploitation du Support Visuel`, COLORS.apprenant)}
     
@@ -632,13 +672,13 @@ function getSupportVisuelHTML(brief, session) {
     <div class="section-title">Questions d'observation</div>
 
     <div style="margin-bottom: 16px; padding-left: 8px;">
-      <div style="font-weight: 700; margin-bottom: 6px; color: #0b234a;">q1. Citez les trois premiers thèmes civiques mentionnés sur le schéma :</div>
+      <div style="font-weight: 700; margin-bottom: 6px; color: #0b234a;">q1. ${observationQuestions.q1}</div>
       <div class="response-line"></div>
       <div class="response-line"></div>
     </div>
 
     <div style="margin-bottom: 16px; padding-left: 8px;">
-      <div style="font-weight: 700; margin-bottom: 6px; color: #0b234a;">q2. Quel est le rôle principal de ces thèmes civiques d'après le formateur ?</div>
+      <div style="font-weight: 700; margin-bottom: 6px; color: #0b234a;">q2. ${observationQuestions.q2}</div>
       <div class="response-line"></div>
       <div class="response-line"></div>
     </div>
@@ -988,9 +1028,9 @@ async function buildSupportVisuelDocx(brief, session) {
     }),
     createDocxParagraph(`Figure 1 : ${scene.title}`, false, 9, '475569', 0),
     createDocxParagraph('Questions d\'observation :', true, 12, COLORS.text, 200),
-    createDocxParagraph('q1. Citez les trois premiers thèmes civiques mentionnés sur le schéma :', true, 11),
+    createDocxParagraph(`q1. ${getObservationQuestions(session, brief).q1}`, true, 11),
     createDocxParagraph('......................................................................................................................', false, 11, '94A3B8'),
-    createDocxParagraph('q2. Quel est le rôle principal de ces thèmes civiques d\'après le formateur ?', true, 11),
+    createDocxParagraph(`q2. ${getObservationQuestions(session, brief).q2}`, true, 11),
     createDocxParagraph('......................................................................................................................', false, 11, '94A3B8')
   );
 
