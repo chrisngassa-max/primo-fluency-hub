@@ -1,21 +1,21 @@
 # Rapport UX / data validation — PreSessionSelectionReport
 
-**Généré :** 2026-07-07T23:25:49.099Z
+**Généré :** 2026-07-08T00:03:45.591Z
 **Commit de référence :** 15073de (banque Supabase réelle via `fetchPreSessionBankCandidates`)
 **Mode :** read-only — 0 écriture Supabase, 0 génération IA
-**Banque lue (globale) :** 621 exercices `legacy_bank`
+**Banque lue (globale) :** 626 exercices `legacy_bank`
 
 ## Synthèse
 
 | Scénario | Banque | Retenus | P1 | P2 | Gap | Gen. need | Human review | Conformité |
 |----------|--------|---------|----|----|-----|-----------|--------------|------------|
-| A1 / CE / quota 5 | 621 | 5/5 | 5 | 0 | 0 | non | 1 | ✅ |
-| A2 / CO / prefecture / quota 5 | 621 | 5/5 | 5 | 0 | 0 | non | 1 | ✅ |
-| B1 / CO / prefecture / quota 5 | 621 | 5/5 | 5 | 0 | 0 | non | 0 | ✅ |
-| B2 / CE / quota 5 | 621 | 0/5 | 0 | 0 | 5 | oui | 2 | ✅ |
-| A2 / Structures / quota 5 | 621 | 5/5 | 5 | 0 | 0 | non | 1 | ✅ |
-| B1 / EE / quota 5 | 621 | 1/5 | 1 | 0 | 4 | oui | 1 | ✅ |
-| B2 / Structures / quota 5 | 621 | 0/5 | 0 | 0 | 5 | oui | 1 | ✅ |
+| A1 / CE / quota 5 | 626 | 5/5 | 5 | 0 | 0 | non | 1 | ✅ |
+| A2 / CO / prefecture / quota 5 | 626 | 5/5 | 5 | 0 | 0 | non | 1 | ✅ |
+| B1 / CO / prefecture / quota 5 | 626 | 5/5 | 5 | 0 | 0 | non | 0 | ✅ |
+| B2 / CE / quota 5 | 626 | 5/5 | 5 | 0 | 0 | non | 0 | ✅ |
+| A2 / Structures / quota 5 | 626 | 5/5 | 5 | 0 | 0 | non | 1 | ✅ |
+| B1 / EE / quota 5 | 626 | 1/5 | 1 | 0 | 4 | oui | 1 | ✅ |
+| B2 / Structures / quota 5 | 626 | 0/5 | 0 | 0 | 5 | oui | 1 | ✅ |
 
 ## Détail par scénario
 
@@ -23,7 +23,7 @@
 
 | Métrique | Valeur |
 |----------|--------|
-| total banque lue | 621 |
+| total banque lue | 626 |
 | retained count | 5 / 5 |
 | P1 count | 5 |
 | P2 count used | 0 |
@@ -59,7 +59,7 @@
 
 | Métrique | Valeur |
 |----------|--------|
-| total banque lue | 621 |
+| total banque lue | 626 |
 | retained count | 5 / 5 |
 | P1 count | 5 |
 | P2 count used | 0 |
@@ -79,7 +79,7 @@
 | human_review types | AMBIGUOUS_CORRECTION_NEARBY |
 
 **Exclusions principales :**
-- `EXCL_COMPETENCE` : 491
+- `EXCL_COMPETENCE` : 496
 - `EXCL_SCORE_LOW` : 48
 - `EXCL_NR_TIER_ROUGE` : 28
 - `EXCL_NIVEAU` : 15
@@ -95,7 +95,7 @@
 
 | Métrique | Valeur |
 |----------|--------|
-| total banque lue | 621 |
+| total banque lue | 626 |
 | retained count | 5 / 5 |
 | P1 count | 5 |
 | P2 count used | 0 |
@@ -114,7 +114,7 @@
 | human_review_items | 0 |
 
 **Exclusions principales :**
-- `EXCL_COMPETENCE` : 491
+- `EXCL_COMPETENCE` : 496
 - `EXCL_NIVEAU` : 59
 - `EXCL_NR_TIER_ROUGE` : 28
 - `EXCL_SCORE_LOW` : 7
@@ -130,24 +130,23 @@
 
 | Métrique | Valeur |
 |----------|--------|
-| total banque lue | 621 |
-| retained count | 0 / 5 |
-| P1 count | 0 |
+| total banque lue | 626 |
+| retained count | 5 / 5 |
+| P1 count | 5 |
 | P2 count used | 0 |
-| P1 pool (éligibles) | 0 |
+| P1 pool (éligibles) | 5 |
 | P2 pool vert | 0 |
 | P2 pool orange | 0 |
-| nr_fallback_allowed | false |
-| VA en banque (cellule) | 0 |
+| nr_fallback_allowed | true |
+| VA en banque (cellule) | 5 |
 | cellule P0 | oui |
-| remaining_gap | 5 |
-| generation_need | true |
-| generation total_gap | 5 |
-| generation reason | P0_CELL_ZERO_VA |
-| defer_to_lot8_p0 | oui |
-| severity | critical |
-| human_review_items | 2 |
-| human_review types | NR_TIER_ROUGE_SKIPPED, P0_BLOCKING |
+| remaining_gap | 0 |
+| generation_need | false |
+| generation total_gap | 0 |
+| generation reason | — |
+| defer_to_lot8_p0 | non |
+| severity | none |
+| human_review_items | 0 |
 
 **Exclusions principales :**
 - `EXCL_NIVEAU` : 316
@@ -166,7 +165,7 @@
 
 | Métrique | Valeur |
 |----------|--------|
-| total banque lue | 621 |
+| total banque lue | 626 |
 | retained count | 5 / 5 |
 | P1 count | 5 |
 | P2 count used | 0 |
@@ -186,7 +185,7 @@
 | human_review types | AMBIGUOUS_CORRECTION_NEARBY |
 
 **Exclusions principales :**
-- `EXCL_COMPETENCE` : 600
+- `EXCL_COMPETENCE` : 605
 - `EXCL_NR_TIER_ROUGE` : 3
 - `EXCL_VALIDATION_REJECTED` : 2
 - `EXCL_SCORE_LOW` : 1
@@ -201,7 +200,7 @@
 
 | Métrique | Valeur |
 |----------|--------|
-| total banque lue | 621 |
+| total banque lue | 626 |
 | retained count | 1 / 5 |
 | P1 count | 1 |
 | P2 count used | 0 |
@@ -221,7 +220,7 @@
 | human_review types | P0_BLOCKING |
 
 **Exclusions principales :**
-- `EXCL_COMPETENCE` : 554
+- `EXCL_COMPETENCE` : 559
 - `EXCL_NIVEAU` : 52
 - `EXCL_NR_THEME_SENSIBLE` : 9
 - `EXCL_SCORE_LOW` : 4
@@ -237,7 +236,7 @@
 
 | Métrique | Valeur |
 |----------|--------|
-| total banque lue | 621 |
+| total banque lue | 626 |
 | retained count | 0 / 5 |
 | P1 count | 0 |
 | P2 count used | 0 |
@@ -257,7 +256,7 @@
 | human_review types | P0_BLOCKING |
 
 **Exclusions principales :**
-- `EXCL_COMPETENCE` : 600
+- `EXCL_COMPETENCE` : 605
 - `EXCL_NIVEAU` : 21
 
 **Conformité règles :**

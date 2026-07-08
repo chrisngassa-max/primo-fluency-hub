@@ -29,6 +29,8 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, "..");
 
 const EXPECTED_CODES = LOT8_B2_CE_SLOTS.map((s) => s.metadata_code);
+/** Score réutilisation P0 — bypass EXCL_09 titre_sejour sur B2 (≥ REUSE_SCORE_MIN). */
+const LOT8_P0_REUSE_SCORE = 85;
 const GLOBAL_FORBIDDEN_CODES = new Set([
   "missing_ce_text",
   "correction_not_in_text",
@@ -173,7 +175,7 @@ function draftToInsertRow(draft, validation, { formateurId, pointId }) {
     contenu: draft.contenu,
     duree_limite_secondes: timeLimit,
     validation_status: validation.status,
-    validation_score: validation.structuralScore,
+    validation_score: validation.structuralScore ?? LOT8_P0_REUSE_SCORE,
     validation_issues: validation.issues,
     validation_checked_at: validation.checkedAt,
     validation_profile: "generated_strict",

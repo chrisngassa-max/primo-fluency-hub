@@ -154,20 +154,35 @@ export async function fetchPreSessionBankCandidates(
     candidateLimit = 5000,
   } = options;
 
-  const { data: rows, error } = await supabase
-    .from("exercices")
-    .select(PRE_SESSION_BANK_SELECT)
-    .eq("is_template", false)
-    .is("eleve_id", null)
-    .eq("validation_profile", "legacy_bank")
-    .in("validation_status", [...PRE_SESSION_BANK_VALIDATION_STATUSES])
-    .limit(candidateLimit);
+  const statusFilter = [...PRE_SESSION_BANK_VALIDATION_STATUSES];
+  const baseFilter = (query: ReturnType<SupabaseClientLike["from"]>) =>
+    query
+      .eq("is_template", false)
+      .is("eleve_id", null)
+      .in("validation_status", statusFilter)
+      .limit(candidateLimit);
 
-  if (error) {
-    throw new Error(error.message);
+  const [{ data: legacyRows, error: legacyError }, { data: lot8Rows, error: lot8Error }] =
+    await Promise.all([
+      baseFilter(supabase.from("exercices").select(PRE_SESSION_BANK_SELECT)).eq(
+        "validation_profile",
+        "legacy_bank",
+      ),
+      baseFilter(supabase.from("exercices").select(PRE_SESSION_BANK_SELECT))
+        .eq("validation_profile", "generated_strict")
+        .like("metadata_code", "sf-p0:%"),
+    ]);
+
+  if (legacyError) throw new Error(legacyError.message);
+  if (lot8Error) throw new Error(lot8Error.message);
+
+  const seen = new Set<string>();
+  const bankRows: BankExerciseRow[] = [];
+  for (const row of [...(legacyRows ?? []), ...(lot8Rows ?? [])]) {
+    if (!row?.id || seen.has(row.id)) continue;
+    seen.add(row.id);
+    bankRows.push(row);
   }
-
-  const bankRows: BankExerciseRow[] = Array.isArray(rows) ? rows : [];
   if (bankRows.length === 0) return [];
 
   const exerciceIds = bankRows.map((r) => r.id);
