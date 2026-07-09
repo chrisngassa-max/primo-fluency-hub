@@ -34,6 +34,7 @@ import {
 } from "@/lib/curriculum/types";
 import { InsertMenu, SessionDocumentsPanel } from "@/components/curriculum/SessionDocumentsPanel";
 import { ExerciseLibraryTab } from "@/components/curriculum/ExerciseLibraryTab";
+import { PdfExerciseTransformDialog } from "@/components/curriculum/PdfExerciseTransformDialog";
 
 type AudienceTab = "formateur" | "apprenant" | "staging";
 
@@ -53,6 +54,7 @@ const SessionDocumentsPage = () => {
   const [busy, setBusy] = useState(false);
   const [importing, setImporting] = useState(false);
   const [exporting, setExporting] = useState<BookletAudience | null>(null);
+  const [transformLink, setTransformLink] = useState<SessionDocumentLink | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: plan } = useQuery({
@@ -264,6 +266,20 @@ const SessionDocumentsPage = () => {
     }
   }
 
+  async function handlePdfExerciseCreated(newLink: SessionDocumentLink) {
+    const newOrderRefs = allFlowItems.map(toFlowRef);
+    const sourceIndex = transformLink
+      ? newOrderRefs.findIndex((ref) => ref.kind === "link" && ref.id === transformLink.id)
+      : -1;
+    newOrderRefs.splice(
+      sourceIndex >= 0 ? sourceIndex + 1 : newOrderRefs.length,
+      0,
+      { kind: "link", id: newLink.id, display_order: 0 },
+    );
+    await reorderSessionFlow(newOrderRefs);
+    invalidate();
+    setTransformLink(null);
+  }
   async function handleExportBooklet(audience: BookletAudience) {
     setExporting(audience);
     try {
@@ -402,6 +418,7 @@ const SessionDocumentsPage = () => {
               onDelete={handleDelete}
               onRemoveLink={handleRemoveLink}
               onAssignLinkAudience={handleAssignLinkAudience}
+              onTransformPdf={setTransformLink}
               busy={busy}
             />
           </TabsContent>
@@ -417,6 +434,7 @@ const SessionDocumentsPage = () => {
               onDelete={handleDelete}
               onRemoveLink={handleRemoveLink}
               onAssignLinkAudience={handleAssignLinkAudience}
+              onTransformPdf={setTransformLink}
               busy={busy}
             />
           </TabsContent>
@@ -451,6 +469,7 @@ const SessionDocumentsPage = () => {
               onDelete={handleDelete}
               onRemoveLink={handleRemoveLink}
               onAssignLinkAudience={handleAssignLinkAudience}
+              onTransformPdf={setTransformLink}
               busy={busy}
             />
           </TabsContent>
@@ -460,6 +479,15 @@ const SessionDocumentsPage = () => {
           </TabsContent>
         </Tabs>
       )}
+
+      <PdfExerciseTransformDialog
+        open={!!transformLink}
+        onOpenChange={(open) => !open && setTransformLink(null)}
+        sessionCode={sessionCode}
+        sourceLink={transformLink}
+        displayOrder={nextDisplayOrder(allFlowItems)}
+        onCreated={handlePdfExerciseCreated}
+      />
     </div>
   );
 };

@@ -24,6 +24,7 @@ import {
   Image as ImageIcon,
   GraduationCap,
   Users,
+  Wand2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { updateSessionDocumentContent } from "@/lib/curriculum/documents";
@@ -448,10 +449,11 @@ interface ImportedFileCardProps {
   onMoveDown: () => void;
   onRemove: () => void;
   onAssign: (audience: SessionDocumentAudience) => void;
+  onTransformPdf?: (link: SessionDocumentLink) => void;
   busy: boolean;
 }
 
-function ImportedFileCard({ link, canMoveUp, canMoveDown, onMoveUp, onMoveDown, onRemove, onAssign, busy }: ImportedFileCardProps) {
+function ImportedFileCard({ link, canMoveUp, canMoveDown, onMoveUp, onMoveDown, onRemove, onAssign, onTransformPdf, busy }: ImportedFileCardProps) {
   const [opening, setOpening] = useState(false);
   const meta = link.metadata as unknown as Partial<ImportedFileMetadata>;
   const title = link.title || meta.original_filename || "Fichier importé";
@@ -528,6 +530,17 @@ function ImportedFileCard({ link, canMoveUp, canMoveDown, onMoveUp, onMoveDown, 
             <Button variant="outline" size="sm" className="h-7 text-xs gap-1 shrink-0" disabled={opening || !meta.storage_path} onClick={handleOpen}>
               {opening ? <Loader2 className="h-3 w-3 animate-spin" /> : <Eye className="h-3 w-3" />} Ouvrir
             </Button>
+            {link.linked_type === "pdf" && onTransformPdf && (
+              <Button
+                variant="default"
+                size="sm"
+                className="h-7 text-xs gap-1 shrink-0"
+                disabled={busy}
+                onClick={() => onTransformPdf(link)}
+              >
+                <Wand2 className="h-3 w-3" /> Transformer en exercice
+              </Button>
+            )}
           </div>
         </CardHeader>
       </Card>
@@ -546,6 +559,7 @@ interface SessionDocumentsPanelProps {
   onDelete: (doc: SessionDocument) => void;
   onRemoveLink: (link: SessionDocumentLink) => void;
   onAssignLinkAudience: (link: SessionDocumentLink, audience: SessionDocumentAudience) => void;
+  onTransformPdf?: (link: SessionDocumentLink) => void;
   /** true pendant un déplacement/insertion/suppression en cours (désactive les boutons). */
   busy: boolean;
 }
@@ -559,6 +573,7 @@ export function SessionDocumentsPanel({
   onDelete,
   onRemoveLink,
   onAssignLinkAudience,
+  onTransformPdf,
   busy,
 }: SessionDocumentsPanelProps) {
   if (items.length === 0) {
@@ -616,6 +631,7 @@ export function SessionDocumentsPanel({
             onMoveDown={() => onMove(item, "down")}
             onRemove={() => onRemoveLink(item.link)}
             onAssign={(audience) => onAssignLinkAudience(item.link, audience)}
+            onTransformPdf={onTransformPdf}
             busy={busy}
           />
         );
