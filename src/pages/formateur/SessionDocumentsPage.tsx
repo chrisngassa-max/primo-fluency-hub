@@ -13,25 +13,34 @@ import {
   createBlankSessionDocument,
   deleteSessionDocument,
   fetchSessionDocuments,
-  reorderSessionDocuments,
-  swapSessionDocumentOrder,
 } from "@/lib/curriculum/documents";
 import {
+  addExerciseLink,
+  fetchSessionDocumentLinks,
+  removeExerciseLink,
+} from "@/lib/curriculum/exerciseLinks";
+import { buildFlowItems, reorderSessionFlow, swapSessionFlowOrder, toFlowRef } from "@/lib/curriculum/sessionFlow";
+import {
   SESSION_DOCUMENT_STATUS_LABELS,
+  type ExerciseBankPreview,
   type SessionDocument,
   type SessionDocumentAudience,
+  type SessionDocumentLink,
   type SessionDocumentType,
+  type SessionFlowItem,
 } from "@/lib/curriculum/types";
 import { InsertMenu, SessionDocumentsPanel } from "@/components/curriculum/SessionDocumentsPanel";
+import { ExerciseLibraryTab } from "@/components/curriculum/ExerciseLibraryTab";
 
 type AudienceTab = "formateur" | "apprenant" | "staging";
 
 // audience='both' est visible à la fois dans Formateur et Apprenant ;
-// l'ordre global (display_order) reste le même dans les deux vues.
-function matchesTab(doc: SessionDocument, tab: AudienceTab): boolean {
-  if (tab === "staging") return doc.audience === "staging";
-  if (tab === "formateur") return doc.audience === "formateur" || doc.audience === "both";
-  return doc.audience === "apprenant" || doc.audience === "both";
+// l'ordre global (display_order fusionné documents + liens) reste le
+// même dans les deux vues.
+function matchesTab(item: SessionFlowItem, tab: AudienceTab): boolean {
+  if (tab === "staging") return item.audience === "staging";
+  if (tab === "formateur") return item.audience === "formateur" || item.audience === "both";
+  return item.audience === "apprenant" || item.audience === "both";
 }
 
 const SessionDocumentsPage = () => {
@@ -67,22 +76,46 @@ const SessionDocumentsPage = () => {
     enabled: !!sessionCode,
   });
 
+  const linksQueryKey = ["session-document-links", sessionCode];
+  const {
+    data: linksWithExercise,
+    isLoading: linksLoading,
+    error: linksError,
+  } = useQuery({
+    queryKey: linksQueryKey,
+    queryFn: () => fetchSessionDocumentLinks(sessionCode!),
+    enabled: !!sessionCode,
+  });
+
   const allDocuments = useMemo(() => documents ?? [], [documents]);
+  const allLinks = useMemo(() => linksWithExercise ?? [], [linksWithExercise]);
+  const addedExerciseIds = useMemo(() => new Set(allLinks.map((l) => l.link.linked_id)), [allLinks]);
+
+  // Déroulé fusionné : documents (session_documents) + exercices liés
+  // (session_document_links), triés par le même display_order global.
+  const allFlowItems = useMemo(
+    () => buildFlowItems(allDocuments, allLinks),
+    [allDocuments, allLinks],
+  );
 
   function invalidate() {
     queryClient.invalidateQueries({ queryKey: documentsQueryKey });
+    queryClient.invalidateQueries({ queryKey: linksQueryKey });
   }
 
-  async function handleMove(doc: SessionDocument, direction: "up" | "down", visibleList: SessionDocument[]) {
-    const index = visibleList.findIndex((d) => d.id === doc.id);
+  async function handleMove(item: SessionFlowItem, direction: "up" | "down", visibleList: SessionFlowItem[]) {
+    const index = visibleList.findIndex((it) =>
+      it.kind === "document" && item.kind === "document"
+        ? it.document.id === item.document.id
+        : it.kind === "link" && item.kind === "link"
+          ? it.link.id === item.link.id
+          : false,
+    );
     const neighbor = visibleList[direction === "up" ? index - 1 : index + 1];
     if (!neighbor) return;
     setBusy(true);
     try {
-      await swapSessionDocumentOrder(
-        { id: doc.id, display_order: doc.display_order },
-        { id: neighbor.id, display_order: neighbor.display_order },
-      );
+      await swapSessionFlowOrder(toFlowRef(item), toFlowRef(neighbor));
       invalidate();
     } catch (e: any) {
       toast.error("Erreur", { description: e.message });
@@ -102,11 +135,11 @@ const SessionDocumentsPage = () => {
         sessionCode: sessionCode!,
         documentType: type,
         audience,
-        displayOrder: allDocuments.length + 1,
+        displayOrder: allFlowItems.length + 1,
       });
-      const newOrderIds = allDocuments.map((d) => d.id);
-      newOrderIds.splice(insertionIndex, 0, newDoc.id);
-      await reorderSessionDocuments(newOrderIds);
+      const newOrderRefs = allFlowItems.map(toFlowRef);
+      newOrderRefs.splice(insertionIndex, 0, { kind: "document", id: newDoc.id, display_order: 0 });
+      await reorderSessionFlow(newOrderRefs);
       invalidate();
       toast.success("Document ajouté.");
     } catch (e: any) {
@@ -125,13 +158,13 @@ const SessionDocumentsPage = () => {
     position: "before" | "after",
     type: SessionDocumentType,
   ) {
-    const globalIndex = allDocuments.findIndex((d) => d.id === referenceDoc.id);
+    const globalIndex = allFlowItems.findIndex((it) => it.kind === "document" && it.document.id === referenceDoc.id);
     const insertionIndex = position === "before" ? globalIndex : globalIndex + 1;
     void insertBlank(type, tabAudience, insertionIndex);
   }
 
   function handleInsertAtEnd(tabAudience: SessionDocumentAudience, type: SessionDocumentType) {
-    void insertBlank(type, tabAudience, allDocuments.length);
+    void insertBlank(type, tabAudience, allFlowItems.length);
   }
 
   async function handleDelete(doc: SessionDocument) {
@@ -147,11 +180,43 @@ const SessionDocumentsPage = () => {
     }
   }
 
+  async function handleAddExercise(exercise: ExerciseBankPreview) {
+    setBusy(true);
+    try {
+      await addExerciseLink({
+        sessionCode: sessionCode!,
+        exerciseId: exercise.id,
+        title: exercise.titre,
+        audience: "apprenant",
+        displayOrder: allFlowItems.length + 1,
+      });
+      invalidate();
+      toast.success("Exercice ajouté à la séance.");
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleRemoveLink(link: SessionDocumentLink) {
+    setBusy(true);
+    try {
+      await removeExerciseLink(link.id);
+      invalidate();
+      toast.success("Exercice retiré de la séance.");
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    } finally {
+      setBusy(false);
+    }
+  }
+
   if (!sessionCode) return null;
 
-  const formateurDocs = allDocuments.filter((d) => matchesTab(d, "formateur"));
-  const apprenantDocs = allDocuments.filter((d) => matchesTab(d, "apprenant"));
-  const stagingDocs = allDocuments.filter((d) => matchesTab(d, "staging"));
+  const formateurItems = allFlowItems.filter((it) => matchesTab(it, "formateur"));
+  const apprenantItems = allFlowItems.filter((it) => matchesTab(it, "apprenant"));
+  const stagingItems = allFlowItems.filter((it) => matchesTab(it, "staging"));
 
   function renderAddButton(tabAudience: SessionDocumentAudience) {
     return (
@@ -167,6 +232,9 @@ const SessionDocumentsPage = () => {
       </div>
     );
   }
+
+  const loading = documentsLoading || linksLoading;
+  const error = documentsError || linksError;
 
   return (
     <div className="max-w-[1400px] mx-auto space-y-6">
@@ -196,16 +264,16 @@ const SessionDocumentsPage = () => {
       </div>
 
       <p className="text-sm text-muted-foreground">
-        Déroulé de la séance : brouillons pédagogiques éditables, distincts des ressources publiées par la
-        pipeline de génération automatique. L'ordre est commun à tous les onglets. Modifications
-        enregistrées automatiquement.
+        Déroulé de la séance : brouillons pédagogiques éditables et exercices de la bibliothèque liés
+        (sans duplication), distincts des ressources publiées par la pipeline de génération automatique.
+        L'ordre est commun à tous les onglets. Modifications enregistrées automatiquement.
       </p>
 
-      {documentsError ? (
+      {error ? (
         <p className="text-sm text-destructive">
-          Impossible de charger les documents de séance ({(documentsError as Error).message}).
+          Impossible de charger les documents de séance ({(error as Error).message}).
         </p>
-      ) : documentsLoading ? (
+      ) : loading ? (
         <div className="space-y-3">
           <Skeleton className="h-24 w-full" />
           <Skeleton className="h-24 w-full" />
@@ -231,12 +299,13 @@ const SessionDocumentsPage = () => {
           <TabsContent value="formateur" className="mt-4 space-y-3">
             {renderAddButton("formateur")}
             <SessionDocumentsPanel
-              documents={formateurDocs}
+              items={formateurItems}
               emptyMessage="Aucun document formateur pour l'instant."
               onSaved={invalidate}
-              onMove={(doc, dir) => handleMove(doc, dir, formateurDocs)}
+              onMove={(item, dir) => handleMove(item, dir, formateurItems)}
               onInsert={(doc, pos, type) => handleInsertRelative("formateur", doc, pos, type)}
               onDelete={handleDelete}
+              onRemoveLink={handleRemoveLink}
               busy={busy}
             />
           </TabsContent>
@@ -244,12 +313,13 @@ const SessionDocumentsPage = () => {
           <TabsContent value="apprenant" className="mt-4 space-y-3">
             {renderAddButton("apprenant")}
             <SessionDocumentsPanel
-              documents={apprenantDocs}
+              items={apprenantItems}
               emptyMessage="Aucun document apprenant pour l'instant."
               onSaved={invalidate}
-              onMove={(doc, dir) => handleMove(doc, dir, apprenantDocs)}
+              onMove={(item, dir) => handleMove(item, dir, apprenantItems)}
               onInsert={(doc, pos, type) => handleInsertRelative("apprenant", doc, pos, type)}
               onDelete={handleDelete}
+              onRemoveLink={handleRemoveLink}
               busy={busy}
             />
           </TabsContent>
@@ -257,21 +327,19 @@ const SessionDocumentsPage = () => {
           <TabsContent value="ressources" className="mt-4 space-y-3">
             {renderAddButton("staging")}
             <SessionDocumentsPanel
-              documents={stagingDocs}
+              items={stagingItems}
               emptyMessage="Les PDF, Word, images ou exercices ajoutés apparaîtront ici avant classement."
               onSaved={invalidate}
-              onMove={(doc, dir) => handleMove(doc, dir, stagingDocs)}
+              onMove={(item, dir) => handleMove(item, dir, stagingItems)}
               onInsert={(doc, pos, type) => handleInsertRelative("staging", doc, pos, type)}
               onDelete={handleDelete}
+              onRemoveLink={handleRemoveLink}
               busy={busy}
             />
           </TabsContent>
 
           <TabsContent value="bibliotheque" className="mt-4">
-            <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
-              Cette zone permettra de rechercher dans la banque d'exercices et d'ajouter un exercice à la
-              séance sans le dupliquer.
-            </div>
+            <ExerciseLibraryTab onAdd={handleAddExercise} busy={busy} addedIds={addedExerciseIds} />
           </TabsContent>
         </Tabs>
       )}

@@ -52,30 +52,10 @@ export async function updateSessionDocumentStatus(
   if (error) throw error;
 }
 
-/**
- * Renumérote 1..N les display_order de la séance selon l'ordre du tableau
- * reçu (ordre global, toutes audiences confondues). Utilisé après une
- * insertion pour spliced le nouveau document à la bonne position sans
- * gérer d'ordre fractionnaire.
- */
-export async function reorderSessionDocuments(orderedIds: string[]): Promise<void> {
-  await Promise.all(
-    orderedIds.map((id, index) =>
-      supabase.from("session_documents").update({ display_order: index + 1 }).eq("id", id),
-    ),
-  );
-}
-
-/** Échange le display_order de deux documents (bouton Monter/Descendre). */
-export async function swapSessionDocumentOrder(
-  docA: { id: string; display_order: number },
-  docB: { id: string; display_order: number },
-): Promise<void> {
-  await Promise.all([
-    supabase.from("session_documents").update({ display_order: docB.display_order }).eq("id", docA.id),
-    supabase.from("session_documents").update({ display_order: docA.display_order }).eq("id", docB.id),
-  ]);
-}
+// Le déplacement/renumérotation (Monter/Descendre, insertion) passe par
+// src/lib/curriculum/sessionFlow.ts depuis le Lot 3 : l'ordre est partagé
+// avec session_document_links (exercices liés), donc il ne peut plus être
+// géré uniquement au niveau de cette table.
 
 export async function createBlankSessionDocument(params: {
   sessionCode: string;

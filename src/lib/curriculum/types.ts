@@ -314,3 +314,63 @@ export const SESSION_DOCUMENT_STATUS_LABELS: Record<SessionDocumentStatus, strin
   valide: "Validé",
   remplace: "Remplacé",
 };
+
+// ------------------------------------------------------------
+// Lot 3 — pont vers la bibliothèque d'exercices (session_document_links).
+// Ne duplique jamais un exercice : linked_id pointe vers exercices.id,
+// le contenu reste lu depuis la table exercices (jamais copié). Seul
+// linked_type='exercise' est actif pour l'instant ; les autres valeurs
+// sont réservées pour de futurs lots (import PDF/DOCX/HTML, notes...).
+// ------------------------------------------------------------
+export type SessionDocumentLinkType =
+  | "exercise"
+  | "pdf"
+  | "docx"
+  | "html"
+  | "note"
+  | "generated_document";
+
+export interface SessionDocumentLink {
+  id: string;
+  session_code: string;
+  linked_type: SessionDocumentLinkType;
+  linked_id: string;
+  audience: SessionDocumentAudience;
+  display_order: number;
+  title: string | null;
+  metadata: Record<string, unknown>;
+  updated_at: string;
+}
+
+// Aperçu en lecture seule d'un exercice de la banque — jamais le contenu
+// complet (contenu jsonb) dans la liste de recherche, seulement dans "Voir".
+export interface ExerciseBankPreview {
+  id: string;
+  titre: string;
+  niveau_vise: string;
+  competence: string;
+  format: string;
+  theme: string | null;
+  validation_status: string;
+  validation_score: number | null;
+}
+
+export interface ExerciseBankDetail extends ExerciseBankPreview {
+  consigne: string;
+  contenu: Record<string, unknown>;
+}
+
+export interface ExerciseBankFilters {
+  niveau_vise?: string;
+  competence?: string;
+  theme?: string;
+  format?: string;
+  validation_status?: string[];
+}
+
+// Un item du déroulé fusionné : soit un document éditable (session_documents),
+// soit un exercice lié en lecture seule (session_document_links + exercices).
+// Les deux partagent le même espace de numérotation display_order.
+export type SessionFlowItem =
+  | { kind: "document"; display_order: number; audience: SessionDocumentAudience; document: SessionDocument }
+  | { kind: "link"; display_order: number; audience: SessionDocumentAudience; link: SessionDocumentLink; exercise: ExerciseBankPreview | null };
