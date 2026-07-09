@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
-import { ArrowLeft, FileText, GraduationCap, FolderOpen, Library, Plus } from "lucide-react";
+import { ArrowLeft, FileText, GraduationCap, FolderOpen, Library, Plus, Upload, Loader2 } from "lucide-react";
 import { fetchActivePlanVersion, fetchTrainingSessions } from "@/lib/curriculum/api";
 import {
   createBlankSessionDocument,
@@ -17,9 +17,11 @@ import {
 import {
   addExerciseLink,
   fetchSessionDocumentLinks,
-  removeExerciseLink,
+  removeSessionDocumentLink,
+  updateSessionDocumentLinkAudience,
 } from "@/lib/curriculum/exerciseLinks";
-import { buildFlowItems, reorderSessionFlow, swapSessionFlowOrder, toFlowRef } from "@/lib/curriculum/sessionFlow";
+import { addFileLink, linkTypeForFilename, uploadSessionFile } from "@/lib/curriculum/importedFiles";
+import { buildFlowItems, nextDisplayOrder, reorderSessionFlow, swapSessionFlowOrder, toFlowRef } from "@/lib/curriculum/sessionFlow";
 import {
   SESSION_DOCUMENT_STATUS_LABELS,
   type ExerciseBankPreview,
@@ -48,6 +50,8 @@ const SessionDocumentsPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [busy, setBusy] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: plan } = useQuery({
     queryKey: ["curriculum-plan-version"],
@@ -135,7 +139,7 @@ const SessionDocumentsPage = () => {
         sessionCode: sessionCode!,
         documentType: type,
         audience,
-        displayOrder: allFlowItems.length + 1,
+        displayOrder: nextDisplayOrder(allFlowItems),
       });
       const newOrderRefs = allFlowItems.map(toFlowRef);
       newOrderRefs.splice(insertionIndex, 0, { kind: "document", id: newDoc.id, display_order: 0 });
@@ -188,7 +192,7 @@ const SessionDocumentsPage = () => {
         exerciseId: exercise.id,
         title: exercise.titre,
         audience: "apprenant",
-        displayOrder: allFlowItems.length + 1,
+        displayOrder: nextDisplayOrder(allFlowItems),
       });
       invalidate();
       toast.success("Exercice ajouté à la séance.");
@@ -202,13 +206,59 @@ const SessionDocumentsPage = () => {
   async function handleRemoveLink(link: SessionDocumentLink) {
     setBusy(true);
     try {
-      await removeExerciseLink(link.id);
+      await removeSessionDocumentLink(link.id);
       invalidate();
-      toast.success("Exercice retiré de la séance.");
+      // Décision produit Lot 4 : on ne supprime que la liaison. Le fichier
+      // reste dans Supabase Storage (nettoyage prévu dans un lot ultérieur).
+      toast.success("Retiré de la séance.");
     } catch (e: any) {
       toast.error("Erreur", { description: e.message });
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function handleAssignLinkAudience(link: SessionDocumentLink, audience: SessionDocumentAudience) {
+    setBusy(true);
+    try {
+      await updateSessionDocumentLinkAudience(link.id, audience);
+      invalidate();
+      toast.success("Affectation mise à jour.");
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const ACCEPTED_EXTENSIONS = [".pdf", ".docx", ".png", ".jpg", ".jpeg"];
+
+  async function handleImportFile(fileList: FileList | null) {
+    const file = fileList?.[0];
+    if (!file) return;
+    const linkedType = linkTypeForFilename(file.name);
+    if (!linkedType) {
+      toast.error("Format non accepté", { description: "Utilisez un PDF, DOCX, PNG, JPG ou JPEG." });
+      return;
+    }
+    setImporting(true);
+    try {
+      const { storagePath } = await uploadSessionFile(file, sessionCode!);
+      await addFileLink({
+        sessionCode: sessionCode!,
+        file,
+        storagePath,
+        linkedType,
+        audience: "staging",
+        displayOrder: nextDisplayOrder(allFlowItems),
+      });
+      invalidate();
+      toast.success("Fichier importé dans Ressources à classer.");
+    } catch (e: any) {
+      toast.error("Erreur d'import", { description: e.message });
+    } finally {
+      setImporting(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   }
 
@@ -306,6 +356,7 @@ const SessionDocumentsPage = () => {
               onInsert={(doc, pos, type) => handleInsertRelative("formateur", doc, pos, type)}
               onDelete={handleDelete}
               onRemoveLink={handleRemoveLink}
+              onAssignLinkAudience={handleAssignLinkAudience}
               busy={busy}
             />
           </TabsContent>
@@ -320,12 +371,32 @@ const SessionDocumentsPage = () => {
               onInsert={(doc, pos, type) => handleInsertRelative("apprenant", doc, pos, type)}
               onDelete={handleDelete}
               onRemoveLink={handleRemoveLink}
+              onAssignLinkAudience={handleAssignLinkAudience}
               busy={busy}
             />
           </TabsContent>
 
           <TabsContent value="ressources" className="mt-4 space-y-3">
-            {renderAddButton("staging")}
+            <div className="flex justify-end gap-2">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf,.docx,.png,.jpg,.jpeg"
+                className="hidden"
+                onChange={(e) => void handleImportFile(e.target.files)}
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 gap-1.5 text-xs"
+                disabled={importing}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                {importing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Upload className="h-3.5 w-3.5" />}
+                Importer un fichier
+              </Button>
+              {renderAddButton("staging")}
+            </div>
             <SessionDocumentsPanel
               items={stagingItems}
               emptyMessage="Les PDF, Word, images ou exercices ajoutés apparaîtront ici avant classement."
@@ -334,6 +405,7 @@ const SessionDocumentsPage = () => {
               onInsert={(doc, pos, type) => handleInsertRelative("staging", doc, pos, type)}
               onDelete={handleDelete}
               onRemoveLink={handleRemoveLink}
+              onAssignLinkAudience={handleAssignLinkAudience}
               busy={busy}
             />
           </TabsContent>

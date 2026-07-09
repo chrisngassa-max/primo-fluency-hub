@@ -20,16 +20,23 @@ import {
   Library,
   Eye,
   X,
+  Paperclip,
+  Image as ImageIcon,
+  GraduationCap,
+  Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { updateSessionDocumentContent } from "@/lib/curriculum/documents";
 import { fetchExerciseBankDetail } from "@/lib/curriculum/exerciseLinks";
+import { getFileSignedUrl } from "@/lib/curriculum/importedFiles";
 import {
   BLANK_DOCUMENT_TYPES,
   SESSION_DOCUMENT_STATUS_LABELS,
   SESSION_DOCUMENT_TYPE_LABELS,
   type ExerciseBankDetail,
+  type ImportedFileMetadata,
   type SessionDocument,
+  type SessionDocumentAudience,
   type SessionDocumentLink,
   type SessionDocumentStatus,
   type SessionDocumentType,
@@ -425,6 +432,109 @@ function LinkedExerciseCard({ link, exercise, canMoveUp, canMoveDown, onMoveUp, 
   );
 }
 
+const FILE_TYPE_LABEL: Record<string, string> = { pdf: "PDF", docx: "DOCX", image: "Image" };
+
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} o`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} Ko`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} Mo`;
+}
+
+interface ImportedFileCardProps {
+  link: SessionDocumentLink;
+  canMoveUp: boolean;
+  canMoveDown: boolean;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
+  onRemove: () => void;
+  onAssign: (audience: SessionDocumentAudience) => void;
+  busy: boolean;
+}
+
+function ImportedFileCard({ link, canMoveUp, canMoveDown, onMoveUp, onMoveDown, onRemove, onAssign, busy }: ImportedFileCardProps) {
+  const [opening, setOpening] = useState(false);
+  const meta = link.metadata as unknown as Partial<ImportedFileMetadata>;
+  const title = link.title || meta.original_filename || "Fichier importé";
+
+  async function handleOpen() {
+    if (!meta.storage_path) return;
+    setOpening(true);
+    try {
+      const url = await getFileSignedUrl(meta.storage_path);
+      window.open(url, "_blank", "noopener,noreferrer");
+    } finally {
+      setOpening(false);
+    }
+  }
+
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-center gap-1 flex-wrap">
+        <Button variant="outline" size="icon" className="h-6 w-6 shrink-0" disabled={!canMoveUp || busy} onClick={onMoveUp} title="Monter">
+          <ArrowUp className="h-3 w-3" />
+        </Button>
+        <Button variant="outline" size="icon" className="h-6 w-6 shrink-0" disabled={!canMoveDown || busy} onClick={onMoveDown} title="Descendre">
+          <ArrowDown className="h-3 w-3" />
+        </Button>
+        {link.audience !== "formateur" && (
+          <Button variant="ghost" size="sm" className="h-6 text-[11px] gap-1 px-2" disabled={busy} onClick={() => onAssign("formateur")} title="Affecter à Formateur">
+            <GraduationCap className="h-3 w-3" /> Formateur
+          </Button>
+        )}
+        {link.audience !== "apprenant" && (
+          <Button variant="ghost" size="sm" className="h-6 text-[11px] gap-1 px-2" disabled={busy} onClick={() => onAssign("apprenant")} title="Affecter à Apprenant">
+            <FileText className="h-3 w-3" /> Apprenant
+          </Button>
+        )}
+        {link.audience !== "both" && (
+          <Button variant="ghost" size="sm" className="h-6 text-[11px] gap-1 px-2" disabled={busy} onClick={() => onAssign("both")} title="Affecter aux deux">
+            <Users className="h-3 w-3" /> Les deux
+          </Button>
+        )}
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-6 text-[11px] gap-1 px-2 ml-auto text-destructive hover:text-destructive"
+          disabled={busy}
+          onClick={onRemove}
+          title="Retirer de la séance"
+        >
+          <X className="h-3 w-3" /> Retirer de la séance
+        </Button>
+      </div>
+
+      <Card className="border-amber-200 dark:border-amber-900/50">
+        <CardHeader className="pb-3">
+          <div className="flex items-start justify-between gap-3 flex-wrap">
+            <div className="space-y-1 min-w-0">
+              <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                {link.linked_type === "image" ? (
+                  <ImageIcon className="h-4 w-4 text-amber-600 shrink-0" />
+                ) : (
+                  <Paperclip className="h-4 w-4 text-amber-600 shrink-0" />
+                )}
+                <span className="truncate">{title}</span>
+              </CardTitle>
+              <div className="flex items-center gap-2 flex-wrap">
+                <Badge className="text-[10px] border-amber-300 bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300" variant="outline">
+                  Fichier importé
+                </Badge>
+                <Badge variant="outline" className="text-[10px]">{FILE_TYPE_LABEL[link.linked_type] ?? link.linked_type}</Badge>
+                {typeof meta.size === "number" && (
+                  <Badge variant="outline" className="text-[10px]">{formatFileSize(meta.size)}</Badge>
+                )}
+              </div>
+            </div>
+            <Button variant="outline" size="sm" className="h-7 text-xs gap-1 shrink-0" disabled={opening || !meta.storage_path} onClick={handleOpen}>
+              {opening ? <Loader2 className="h-3 w-3 animate-spin" /> : <Eye className="h-3 w-3" />} Ouvrir
+            </Button>
+          </div>
+        </CardHeader>
+      </Card>
+    </div>
+  );
+}
+
 interface SessionDocumentsPanelProps {
   /** Items déjà filtrés (audience) et triés (display_order global fusionné) pour cet onglet. */
   items: SessionFlowItem[];
@@ -435,6 +545,7 @@ interface SessionDocumentsPanelProps {
   onInsert: (referenceDoc: SessionDocument, position: "before" | "after", type: SessionDocumentType) => void;
   onDelete: (doc: SessionDocument) => void;
   onRemoveLink: (link: SessionDocumentLink) => void;
+  onAssignLinkAudience: (link: SessionDocumentLink, audience: SessionDocumentAudience) => void;
   /** true pendant un déplacement/insertion/suppression en cours (désactive les boutons). */
   busy: boolean;
 }
@@ -447,6 +558,7 @@ export function SessionDocumentsPanel({
   onInsert,
   onDelete,
   onRemoveLink,
+  onAssignLinkAudience,
   busy,
 }: SessionDocumentsPanelProps) {
   if (items.length === 0) {
@@ -462,34 +574,52 @@ export function SessionDocumentsPanel({
         lecture seule ici (pas de duplication). L'ordre est celui du déroulé de séance (commun à tous
         les onglets).
       </p>
-      {items.map((item, index) =>
-        item.kind === "document" ? (
-          <DocumentEditorCard
-            key={item.document.id}
-            doc={item.document}
-            onSaved={onSaved}
-            canMoveUp={index > 0}
-            canMoveDown={index < items.length - 1}
-            onMoveUp={() => onMove(item, "up")}
-            onMoveDown={() => onMove(item, "down")}
-            onInsert={(position, type) => onInsert(item.document, position, type)}
-            onDelete={() => onDelete(item.document)}
-            busy={busy}
-          />
-        ) : (
-          <LinkedExerciseCard
+      {items.map((item, index) => {
+        if (item.kind === "document") {
+          return (
+            <DocumentEditorCard
+              key={item.document.id}
+              doc={item.document}
+              onSaved={onSaved}
+              canMoveUp={index > 0}
+              canMoveDown={index < items.length - 1}
+              onMoveUp={() => onMove(item, "up")}
+              onMoveDown={() => onMove(item, "down")}
+              onInsert={(position, type) => onInsert(item.document, position, type)}
+              onDelete={() => onDelete(item.document)}
+              busy={busy}
+            />
+          );
+        }
+        if (item.link.linked_type === "exercise") {
+          return (
+            <LinkedExerciseCard
+              key={item.link.id}
+              link={item.link}
+              exercise={item.exercise}
+              canMoveUp={index > 0}
+              canMoveDown={index < items.length - 1}
+              onMoveUp={() => onMove(item, "up")}
+              onMoveDown={() => onMove(item, "down")}
+              onRemove={() => onRemoveLink(item.link)}
+              busy={busy}
+            />
+          );
+        }
+        return (
+          <ImportedFileCard
             key={item.link.id}
             link={item.link}
-            exercise={item.exercise}
             canMoveUp={index > 0}
             canMoveDown={index < items.length - 1}
             onMoveUp={() => onMove(item, "up")}
             onMoveDown={() => onMove(item, "down")}
             onRemove={() => onRemoveLink(item.link)}
+            onAssign={(audience) => onAssignLinkAudience(item.link, audience)}
             busy={busy}
           />
-        ),
-      )}
+        );
+      })}
     </div>
   );
 }

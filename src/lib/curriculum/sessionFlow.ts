@@ -44,6 +44,16 @@ export function buildFlowItems(
   return [...docItems, ...linkItems].sort((a, b) => a.display_order - b.display_order);
 }
 
+/** display_order à utiliser pour ajouter un élément en fin de déroulé.
+ * Ne PAS utiliser items.length + 1 : après des suppressions ou des tests
+ * antérieurs, la séquence peut avoir des trous ou des doublons (ex.
+ * deux documents formateur-only à la même valeur car jamais renumérotés
+ * ensemble) — seul max(display_order) + 1 garantit une position
+ * strictement après tout ce qui existe déjà, quelle que soit l'historique. */
+export function nextDisplayOrder(items: SessionFlowItem[]): number {
+  return items.reduce((max, item) => Math.max(max, item.display_order), 0) + 1;
+}
+
 function tableFor(kind: FlowRef["kind"]) {
   return kind === "document" ? "session_documents" : "session_document_links";
 }

@@ -58,7 +58,10 @@ interface LinkWithExercise {
   exercise: ExerciseBankPreview | null;
 }
 
-/** Liens de la séance + aperçu de l'exercice pointé (jamais son contenu). */
+/** Liens de la séance + aperçu de l'exercice pointé (jamais son contenu).
+ * Depuis le Lot 4, tous les liens ne sont pas des exercices (pdf/docx/image) :
+ * `exercise` reste null pour ceux-là, leur affichage se construit depuis
+ * link.metadata (voir ImportedFileCard). */
 export async function fetchSessionDocumentLinks(sessionCode: string): Promise<LinkWithExercise[]> {
   const { data: links, error } = await supabase
     .from("session_document_links")
@@ -70,14 +73,17 @@ export async function fetchSessionDocumentLinks(sessionCode: string): Promise<Li
   const rows = (links ?? []) as SessionDocumentLink[];
   if (rows.length === 0) return [];
 
-  const exerciseIds = [...new Set(rows.map((l) => l.linked_id))];
-  const { data: exercises, error: exError } = await supabase
-    .from("exercices")
-    .select(BANK_PREVIEW_COLUMNS)
-    .in("id", exerciseIds);
-  if (exError) throw exError;
+  const exerciseIds = [...new Set(rows.filter((l) => l.linked_type === "exercise").map((l) => l.linked_id))];
+  const byId = new Map<string, ExerciseBankPreview>();
+  if (exerciseIds.length > 0) {
+    const { data: exercises, error: exError } = await supabase
+      .from("exercices")
+      .select(BANK_PREVIEW_COLUMNS)
+      .in("id", exerciseIds);
+    if (exError) throw exError;
+    for (const e of (exercises ?? []) as ExerciseBankPreview[]) byId.set(e.id, e);
+  }
 
-  const byId = new Map((exercises ?? []).map((e: ExerciseBankPreview) => [e.id, e]));
   return rows.map((link) => ({ link, exercise: byId.get(link.linked_id) ?? null }));
 }
 
@@ -106,13 +112,20 @@ export async function addExerciseLink(params: {
   return data as SessionDocumentLink;
 }
 
-/** Retire l'exercice du déroulé. Supprime uniquement la liaison, jamais l'exercice. */
-export async function removeExerciseLink(id: string): Promise<void> {
+/** Retire un lien (exercice ou fichier importé) du déroulé. Supprime
+ * uniquement la liaison — jamais l'exercice, jamais le fichier Storage
+ * (nettoyage Storage prévu dans un lot ultérieur, voir Lot 4). */
+export async function removeSessionDocumentLink(id: string): Promise<void> {
   const { error } = await supabase.from("session_document_links").delete().eq("id", id);
   if (error) throw error;
 }
 
-export async function updateExerciseLinkOrder(id: string, display_order: number): Promise<void> {
-  const { error } = await supabase.from("session_document_links").update({ display_order }).eq("id", id);
+/** Affecte un lien (exercice ou fichier importé) à un public sans le
+ * dupliquer : ne met à jour que audience (staging -> formateur/apprenant/both). */
+export async function updateSessionDocumentLinkAudience(
+  id: string,
+  audience: SessionDocumentAudience,
+): Promise<void> {
+  const { error } = await supabase.from("session_document_links").update({ audience }).eq("id", id);
   if (error) throw error;
 }

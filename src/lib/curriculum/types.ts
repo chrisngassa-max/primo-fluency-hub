@@ -318,17 +318,23 @@ export const SESSION_DOCUMENT_STATUS_LABELS: Record<SessionDocumentStatus, strin
 // ------------------------------------------------------------
 // Lot 3 — pont vers la bibliothèque d'exercices (session_document_links).
 // Ne duplique jamais un exercice : linked_id pointe vers exercices.id,
-// le contenu reste lu depuis la table exercices (jamais copié). Seul
-// linked_type='exercise' est actif pour l'instant ; les autres valeurs
-// sont réservées pour de futurs lots (import PDF/DOCX/HTML, notes...).
+// le contenu reste lu depuis la table exercices (jamais copié).
+// Lot 4 ajoute pdf/docx/image (fichiers importés dans Storage) : pour
+// ces types, linked_id est un uuid synthétique (pas de FK), la vraie
+// référence est metadata.storage_path. html/note/generated_document
+// restent réservés à de futurs lots, non actifs.
 // ------------------------------------------------------------
 export type SessionDocumentLinkType =
   | "exercise"
   | "pdf"
   | "docx"
+  | "image"
   | "html"
   | "note"
   | "generated_document";
+
+// Types de liens actuellement supportés par l'UI (Lot 3 + Lot 4).
+export const IMPLEMENTED_LINK_TYPES: SessionDocumentLinkType[] = ["exercise", "pdf", "docx", "image"];
 
 export interface SessionDocumentLink {
   id: string;
@@ -340,6 +346,17 @@ export interface SessionDocumentLink {
   title: string | null;
   metadata: Record<string, unknown>;
   updated_at: string;
+}
+
+// Structure de session_document_links.metadata pour un fichier importé
+// (linked_type pdf/docx/image). Toujours présente pour ces types.
+export interface ImportedFileMetadata {
+  storage_bucket: string;
+  storage_path: string;
+  original_filename: string;
+  mime_type: string;
+  size: number;
+  uploaded_at: string;
 }
 
 // Aperçu en lecture seule d'un exercice de la banque — jamais le contenu
