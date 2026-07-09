@@ -38,9 +38,19 @@ interface ExerciseLibraryTabProps {
   onAdd: (exercise: ExerciseBankPreview) => void;
   busy: boolean;
   addedIds: Set<string>;
+  introText?: string;
+  addLabel?: string;
+  alreadyAddedLabel?: string;
 }
 
-export function ExerciseLibraryTab({ onAdd, busy, addedIds }: ExerciseLibraryTabProps) {
+export function ExerciseLibraryTab({
+  onAdd,
+  busy,
+  addedIds,
+  introText = "Recherche dans la banque partagee uniquement (jamais les devoirs ou copies d'eleves). Ajouter un exercice cree un lien vers la seance ; l'exercice lui-meme n'est ni duplique ni modifie.",
+  addLabel = "Ajouter a la seance",
+  alreadyAddedLabel = "Deja dans la seance",
+}: ExerciseLibraryTabProps) {
   const [niveau, setNiveau] = useState("A2");
   const [competence, setCompetence] = useState<string>(ALL);
   const [format, setFormat] = useState<string>(ALL);
@@ -62,10 +72,7 @@ export function ExerciseLibraryTab({ onAdd, busy, addedIds }: ExerciseLibraryTab
 
   return (
     <div className="space-y-4">
-      <p className="text-xs text-muted-foreground">
-        Recherche dans la banque partagée uniquement (jamais les devoirs ou copies d'élèves). Ajouter un
-        exercice crée un lien vers la séance ; l'exercice lui-même n'est ni dupliqué ni modifié.
-      </p>
+      <p className="text-xs text-muted-foreground">{introText}</p>
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         <div className="space-y-1">
@@ -160,7 +167,7 @@ export function ExerciseLibraryTab({ onAdd, busy, addedIds }: ExerciseLibraryTab
                     onClick={() => onAdd(ex)}
                   >
                     <Plus className="h-3.5 w-3.5" />
-                    {alreadyAdded ? "Déjà dans la séance" : "Ajouter à la séance"}
+                    {alreadyAdded ? alreadyAddedLabel : addLabel}
                   </Button>
                 </CardContent>
               </Card>

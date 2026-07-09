@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { Close as PopoverClose } from "@radix-ui/react-popover";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Popover, PopoverTrigger } from "@/components/ui/popover";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   FileText,
@@ -26,6 +25,7 @@ import {
   Users,
   Wand2,
 } from "lucide-react";
+import { RichInsertMenu, type RichInsertAction } from "@/components/curriculum/RichInsertMenu";
 import { cn } from "@/lib/utils";
 import { updateSessionDocumentContent } from "@/lib/curriculum/documents";
 import { fetchExerciseBankDetail } from "@/lib/curriculum/exerciseLinks";
@@ -73,25 +73,6 @@ const AUTOSAVE_DELAY_MS = 800;
 // pédagogiques seedés (fiche_formateur, corrigé, etc.).
 const DELETABLE_TYPES = new Set<SessionDocumentType>(BLANK_DOCUMENT_TYPES);
 
-export function InsertMenu({ onPick }: { onPick: (type: SessionDocumentType) => void }) {
-  return (
-    <PopoverContent className="w-56 p-1" align="start">
-      {BLANK_DOCUMENT_TYPES.map((type) => (
-        <PopoverClose key={type} asChild>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start text-xs h-8"
-            onClick={() => onPick(type)}
-          >
-            {SESSION_DOCUMENT_TYPE_LABELS[type]}
-          </Button>
-        </PopoverClose>
-      ))}
-    </PopoverContent>
-  );
-}
-
 interface DocumentEditorCardProps {
   doc: SessionDocument;
   onSaved: () => void;
@@ -99,7 +80,7 @@ interface DocumentEditorCardProps {
   canMoveDown: boolean;
   onMoveUp: () => void;
   onMoveDown: () => void;
-  onInsert: (position: "before" | "after", type: SessionDocumentType) => void;
+  onInsert: (position: "before" | "after", action: RichInsertAction) => void;
   onDelete: () => void;
   busy: boolean;
 }
@@ -179,7 +160,7 @@ function DocumentEditorCard({
               <Plus className="h-3 w-3" /> Insérer avant
             </Button>
           </PopoverTrigger>
-          <InsertMenu onPick={(type) => onInsert("before", type)} />
+          <RichInsertMenu onPick={(action) => onInsert("before", action)} />
         </Popover>
         <Popover>
           <PopoverTrigger asChild>
@@ -187,7 +168,7 @@ function DocumentEditorCard({
               <Plus className="h-3 w-3" /> Insérer après
             </Button>
           </PopoverTrigger>
-          <InsertMenu onPick={(type) => onInsert("after", type)} />
+          <RichInsertMenu onPick={(action) => onInsert("after", action)} />
         </Popover>
         {canDelete && (
           <Button
@@ -433,7 +414,7 @@ function LinkedExerciseCard({ link, exercise, canMoveUp, canMoveDown, onMoveUp, 
   );
 }
 
-const FILE_TYPE_LABEL: Record<string, string> = { pdf: "PDF", docx: "DOCX", image: "Image" };
+const FILE_TYPE_LABEL: Record<string, string> = { pdf: "PDF", docx: "DOCX", image: "Image", audio: "Audio", video: "Video" };
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} o`;
@@ -555,7 +536,7 @@ interface SessionDocumentsPanelProps {
   emptyMessage: string;
   onSaved: () => void;
   onMove: (item: SessionFlowItem, direction: "up" | "down") => void;
-  onInsert: (referenceDoc: SessionDocument, position: "before" | "after", type: SessionDocumentType) => void;
+  onInsert: (referenceDoc: SessionDocument, position: "before" | "after", action: RichInsertAction) => void;
   onDelete: (doc: SessionDocument) => void;
   onRemoveLink: (link: SessionDocumentLink) => void;
   onAssignLinkAudience: (link: SessionDocumentLink, audience: SessionDocumentAudience) => void;
@@ -600,7 +581,7 @@ export function SessionDocumentsPanel({
               canMoveDown={index < items.length - 1}
               onMoveUp={() => onMove(item, "up")}
               onMoveDown={() => onMove(item, "down")}
-              onInsert={(position, type) => onInsert(item.document, position, type)}
+              onInsert={(position, action) => onInsert(item.document, position, action)}
               onDelete={() => onDelete(item.document)}
               busy={busy}
             />

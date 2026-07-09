@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ArrowLeft, BookOpen, FileText, GraduationCap, FolderOpen, Library, Plus, Upload, Loader2, Printer } from "lucide-react";
 import { fetchActivePlanVersion, fetchTrainingSessions } from "@/lib/curriculum/api";
 import {
@@ -32,12 +33,14 @@ import {
   type SessionDocumentType,
   type SessionFlowItem,
 } from "@/lib/curriculum/types";
-import { InsertMenu, SessionDocumentsPanel } from "@/components/curriculum/SessionDocumentsPanel";
+import { SessionDocumentsPanel } from "@/components/curriculum/SessionDocumentsPanel";
+import { RichInsertMenu, type RichInsertAction } from "@/components/curriculum/RichInsertMenu";
 import { ExerciseLibraryTab } from "@/components/curriculum/ExerciseLibraryTab";
 import { PdfExerciseTransformDialog } from "@/components/curriculum/PdfExerciseTransformDialog";
 import { SessionPedagogicalSourcesTab } from "@/components/curriculum/SessionPedagogicalSourcesTab";
 
 type AudienceTab = "formateur" | "apprenant" | "staging";
+type InsertTarget = { audience: SessionDocumentAudience; insertionIndex: number };
 
 // audience='both' est visible à la fois dans Formateur et Apprenant ;
 // l'ordre global (display_order fusionné documents + liens) reste le
@@ -56,6 +59,8 @@ const SessionDocumentsPage = () => {
   const [importing, setImporting] = useState(false);
   const [exporting, setExporting] = useState<BookletAudience | null>(null);
   const [transformLink, setTransformLink] = useState<SessionDocumentLink | null>(null);
+  const [exerciseInsertTarget, setExerciseInsertTarget] = useState<InsertTarget | null>(null);
+  const [fileInsertTarget, setFileInsertTarget] = useState<InsertTarget | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: plan } = useQuery({
@@ -158,22 +163,32 @@ const SessionDocumentsPage = () => {
     }
   }
 
-  // L'audience du bloc créé est celle de l'onglet depuis lequel on insère
-  // (pas une audience propre au type choisi) : ainsi le document apparaît
-  // toujours immédiatement dans l'onglet où l'utilisateur vient de cliquer.
+  function handleInsertAction(action: RichInsertAction, audience: SessionDocumentAudience, insertionIndex: number) {
+    if (action.kind === "blank") {
+      void insertBlank(action.documentType, audience, insertionIndex);
+      return;
+    }
+    if (action.kind === "exercise") {
+      setExerciseInsertTarget({ audience, insertionIndex });
+      return;
+    }
+    setFileInsertTarget({ audience, insertionIndex });
+    window.setTimeout(() => fileInputRef.current?.click(), 0);
+  }
+
   function handleInsertRelative(
     tabAudience: SessionDocumentAudience,
     referenceDoc: SessionDocument,
     position: "before" | "after",
-    type: SessionDocumentType,
+    action: RichInsertAction,
   ) {
     const globalIndex = allFlowItems.findIndex((it) => it.kind === "document" && it.document.id === referenceDoc.id);
     const insertionIndex = position === "before" ? globalIndex : globalIndex + 1;
-    void insertBlank(type, tabAudience, insertionIndex);
+    handleInsertAction(action, tabAudience, insertionIndex);
   }
 
-  function handleInsertAtEnd(tabAudience: SessionDocumentAudience, type: SessionDocumentType) {
-    void insertBlank(type, tabAudience, allFlowItems.length);
+  function handleInsertAtEnd(tabAudience: SessionDocumentAudience, action: RichInsertAction) {
+    handleInsertAction(action, tabAudience, allFlowItems.length);
   }
 
   async function handleDelete(doc: SessionDocument) {
@@ -208,6 +223,31 @@ const SessionDocumentsPage = () => {
     }
   }
 
+
+  async function handleAddExerciseAtTarget(exercise: ExerciseBankPreview) {
+    const target = exerciseInsertTarget;
+    if (!target) return;
+    setBusy(true);
+    try {
+      const newLink = await addExerciseLink({
+        sessionCode: sessionCode!,
+        exerciseId: exercise.id,
+        title: exercise.titre,
+        audience: target.audience,
+        displayOrder: nextDisplayOrder(allFlowItems),
+      });
+      const newOrderRefs = allFlowItems.map(toFlowRef);
+      newOrderRefs.splice(target.insertionIndex, 0, { kind: "link", id: newLink.id, display_order: 0 });
+      await reorderSessionFlow(newOrderRefs);
+      invalidate();
+      setExerciseInsertTarget(null);
+      toast.success("Exercice interactif insere.");
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    } finally {
+      setBusy(false);
+    }
+  }
   async function handleRemoveLink(link: SessionDocumentLink) {
     setBusy(true);
     try {
@@ -236,33 +276,41 @@ const SessionDocumentsPage = () => {
     }
   }
 
-  const ACCEPTED_EXTENSIONS = [".pdf", ".docx", ".png", ".jpg", ".jpeg"];
+  const ACCEPTED_EXTENSIONS = [".pdf", ".docx", ".png", ".jpg", ".jpeg", ".mp3", ".wav", ".m4a", ".ogg", ".mp4", ".webm"];
 
   async function handleImportFile(fileList: FileList | null) {
     const file = fileList?.[0];
     if (!file) return;
+    const target = fileInsertTarget;
     const linkedType = linkTypeForFilename(file.name);
     if (!linkedType) {
-      toast.error("Format non accepté", { description: "Utilisez un PDF, DOCX, PNG, JPG ou JPEG." });
+      toast.error("Format non accepte", { description: "Utilisez un PDF, DOCX, image, audio ou video." });
+      setFileInsertTarget(null);
       return;
     }
     setImporting(true);
     try {
       const { storagePath } = await uploadSessionFile(file, sessionCode!);
-      await addFileLink({
+      const newLink = await addFileLink({
         sessionCode: sessionCode!,
         file,
         storagePath,
         linkedType,
-        audience: "staging",
+        audience: target?.audience ?? "staging",
         displayOrder: nextDisplayOrder(allFlowItems),
       });
+      if (target) {
+        const newOrderRefs = allFlowItems.map(toFlowRef);
+        newOrderRefs.splice(target.insertionIndex, 0, { kind: "link", id: newLink.id, display_order: 0 });
+        await reorderSessionFlow(newOrderRefs);
+      }
       invalidate();
-      toast.success("Fichier importé dans Ressources à classer.");
+      toast.success(target ? "Fichier insere dans le deroule." : "Fichier importe dans Ressources a classer.");
     } catch (e: any) {
-      toast.error("Erreur d'import", { description: e.message });
+      toast.error("Erreur import", { description: e.message });
     } finally {
       setImporting(false);
+      setFileInsertTarget(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
   }
@@ -316,7 +364,7 @@ const SessionDocumentsPage = () => {
               <Plus className="h-3.5 w-3.5" /> Ajouter un document
             </Button>
           </PopoverTrigger>
-          <InsertMenu onPick={(docType) => handleInsertAtEnd(tabAudience, docType)} />
+          <RichInsertMenu onPick={(action) => handleInsertAtEnd(tabAudience, action)} />
         </Popover>
       </div>
     );
@@ -374,6 +422,13 @@ const SessionDocumentsPage = () => {
           Exporter livret apprenant
         </Button>
       </div>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept={ACCEPTED_EXTENSIONS.join(",")}
+        className="hidden"
+        onChange={(e) => void handleImportFile(e.target.files)}
+      />
 
       <p className="text-sm text-muted-foreground">
         Déroulé de la séance : brouillons pédagogiques éditables et exercices de la bibliothèque liés
@@ -445,13 +500,6 @@ const SessionDocumentsPage = () => {
 
           <TabsContent value="ressources" className="mt-4 space-y-3">
             <div className="flex justify-end gap-2">
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".pdf,.docx,.png,.jpg,.jpeg"
-                className="hidden"
-                onChange={(e) => void handleImportFile(e.target.files)}
-              />
               <Button
                 variant="outline"
                 size="sm"
@@ -488,6 +536,24 @@ const SessionDocumentsPage = () => {
         </Tabs>
       )}
 
+      <Dialog open={!!exerciseInsertTarget} onOpenChange={(open) => !open && setExerciseInsertTarget(null)}>
+        <DialogContent className="max-w-5xl max-h-[88vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Inserer un exercice interactif</DialogTitle>
+            <DialogDescription>
+              Choisissez un exercice de la banque. Il sera lie a cette position du deroule, sans duplication ni modification de l'exercice source.
+            </DialogDescription>
+          </DialogHeader>
+          <ExerciseLibraryTab
+            onAdd={handleAddExerciseAtTarget}
+            busy={busy}
+            addedIds={addedExerciseIds}
+            introText="Recherche dans la banque partagee. L'exercice choisi sera insere exactement a l'emplacement selectionne dans le deroule."
+            addLabel="Inserer ici"
+            alreadyAddedLabel="Deja dans la seance"
+          />
+        </DialogContent>
+      </Dialog>
       <PdfExerciseTransformDialog
         open={!!transformLink}
         onOpenChange={(open) => !open && setTransformLink(null)}

@@ -329,12 +329,14 @@ export type SessionDocumentLinkType =
   | "pdf"
   | "docx"
   | "image"
+  | "audio"
+  | "video"
   | "html"
   | "note"
   | "generated_document";
 
 // Types de liens actuellement supportés par l'UI (Lot 3 + Lot 4).
-export const IMPLEMENTED_LINK_TYPES: SessionDocumentLinkType[] = ["exercise", "pdf", "docx", "image"];
+export const IMPLEMENTED_LINK_TYPES: SessionDocumentLinkType[] = ["exercise", "pdf", "docx", "image", "audio", "video"];
 
 export interface SessionDocumentLink {
   id: string;
@@ -349,7 +351,7 @@ export interface SessionDocumentLink {
 }
 
 // Structure de session_document_links.metadata pour un fichier importé
-// (linked_type pdf/docx/image). Toujours présente pour ces types.
+// (linked_type pdf/docx/image/audio/video). Toujours présente pour ces types.
 export interface ImportedFileMetadata {
   storage_bucket: string;
   storage_path: string;

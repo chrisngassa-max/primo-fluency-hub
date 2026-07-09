@@ -11,6 +11,12 @@ const EXTENSION_TO_LINK_TYPE: Record<string, SessionDocumentLinkType> = {
   png: "image",
   jpg: "image",
   jpeg: "image",
+  mp3: "audio",
+  wav: "audio",
+  m4a: "audio",
+  ogg: "audio",
+  mp4: "video",
+  webm: "video",
 };
 
 export function linkTypeForFilename(filename: string): SessionDocumentLinkType | null {
