@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
-import { ArrowLeft, FileText, GraduationCap, FolderOpen, Library, Plus, Upload, Loader2 } from "lucide-react";
+import { ArrowLeft, FileText, GraduationCap, FolderOpen, Library, Plus, Upload, Loader2, Printer } from "lucide-react";
 import { fetchActivePlanVersion, fetchTrainingSessions } from "@/lib/curriculum/api";
 import {
   createBlankSessionDocument,
@@ -22,6 +22,7 @@ import {
 } from "@/lib/curriculum/exerciseLinks";
 import { addFileLink, linkTypeForFilename, uploadSessionFile } from "@/lib/curriculum/importedFiles";
 import { buildFlowItems, nextDisplayOrder, reorderSessionFlow, swapSessionFlowOrder, toFlowRef } from "@/lib/curriculum/sessionFlow";
+import { buildSessionBooklet, type BookletAudience } from "@/lib/curriculum/sessionExport";
 import {
   SESSION_DOCUMENT_STATUS_LABELS,
   type ExerciseBankPreview,
@@ -51,6 +52,7 @@ const SessionDocumentsPage = () => {
   const queryClient = useQueryClient();
   const [busy, setBusy] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [exporting, setExporting] = useState<BookletAudience | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: plan } = useQuery({
@@ -262,6 +264,26 @@ const SessionDocumentsPage = () => {
     }
   }
 
+  async function handleExportBooklet(audience: BookletAudience) {
+    setExporting(audience);
+    try {
+      const html = await buildSessionBooklet(
+        sessionCode!,
+        trainingSession?.titre ?? "Curriculum v2",
+        audience,
+      );
+      const blob = new Blob([html], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+      window.open(url, "_blank", "noopener,noreferrer");
+      // Révoque l'URL après laisser au navigateur le temps d'ouvrir l'onglet.
+      setTimeout(() => URL.revokeObjectURL(url), 30000);
+    } catch (e: any) {
+      toast.error("Erreur d'export", { description: e.message });
+    } finally {
+      setExporting(null);
+    }
+  }
+
   if (!sessionCode) return null;
 
   const formateurItems = allFlowItems.filter((it) => matchesTab(it, "formateur"));
@@ -311,6 +333,29 @@ const SessionDocumentsPage = () => {
         >
           {SESSION_DOCUMENT_STATUS_LABELS.a_completer}
         </Badge>
+      </div>
+
+      <div className="flex items-center justify-end gap-2 flex-wrap">
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-8 gap-1.5 text-xs"
+          disabled={exporting !== null}
+          onClick={() => handleExportBooklet("formateur")}
+        >
+          {exporting === "formateur" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Printer className="h-3.5 w-3.5" />}
+          Exporter livret formateur
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-8 gap-1.5 text-xs"
+          disabled={exporting !== null}
+          onClick={() => handleExportBooklet("apprenant")}
+        >
+          {exporting === "apprenant" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Printer className="h-3.5 w-3.5" />}
+          Exporter livret apprenant
+        </Button>
       </div>
 
       <p className="text-sm text-muted-foreground">
