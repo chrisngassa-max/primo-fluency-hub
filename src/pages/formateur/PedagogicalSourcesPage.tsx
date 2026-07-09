@@ -26,6 +26,7 @@ import {
   type PedagogicalSource,
   type PedagogicalSourceKind,
 } from "@/lib/pedagogicalSources";
+import { SourceAnalysisActions } from "@/components/pedagogical-sources/SourceAnalysisActions";
 import { BookOpen, Eye, FileArchive, Filter, Image, Loader2, Search, Upload } from "lucide-react";
 
 const LEVELS = ["A0", "A1", "A2", "B1", "B2", "C1", "C2"];
@@ -128,7 +129,7 @@ function ImportSourceDialog({ open, onOpenChange }: { open: boolean; onOpenChang
         <DialogHeader>
           <DialogTitle>Importer une source pédagogique</DialogTitle>
           <DialogDescription>
-            Lot A : stockage et classement manuel uniquement. L'analyse IA viendra dans un lot séparé.
+            Importez la source, puis lancez son analyse pour creer les morceaux reutilisables par le moteur.
           </DialogDescription>
         </DialogHeader>
 
@@ -374,6 +375,7 @@ export default function PedagogicalSourcesPage() {
                   {openingId === source.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Eye className="h-4 w-4" />}
                   Ouvrir
                 </Button>
+                <SourceAnalysisActions source={source} />
               </CardContent>
             </Card>
           ))}
