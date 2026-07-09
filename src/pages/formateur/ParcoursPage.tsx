@@ -43,10 +43,11 @@ import { CURRICULUM_PLAN_VERSION_LABEL } from "@/lib/curriculum/sessions";
 import { CURRICULUM_PALIERS, formatPalierParcoursLabel, type CurriculumPalier } from "@/lib/curriculum/pilot";
 import { CurriculumPilotButton } from "@/components/curriculum/CurriculumPilotButton";
 
-// MVP "Documents de séance" : seul S01 (v3) a des documents éditables pour
-// l'instant (docs/seance-1-v3-validation/). Ne pas étendre à S02-S37 tant
-// que l'éditeur n'a pas été validé sur ce périmètre restreint.
-const SESSIONS_WITH_DOCUMENTS = new Set(["S01"]);
+// Atelier "Documents de séance" (Lots 1-6) : S01-S05 ont des documents
+// seedés (S01 = pack v3 riche, S02-S05 = socles légers "a_completer" en
+// attente d'enrichissement). Ne pas étendre à S06-S37 tant qu'ils n'ont
+// pas été seedés à leur tour.
+const SESSIONS_WITH_DOCUMENTS = new Set(["S01", "S02", "S03", "S04", "S05"]);
 
 const CURRICULUM_V2_VERSION = "curriculum-v2.0";
 
