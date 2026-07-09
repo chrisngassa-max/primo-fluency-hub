@@ -68,6 +68,7 @@ import TestPositionnement from "@/pages/eleve/TestPositionnement";
 import PositionnementPassation from "@/pages/eleve/PositionnementPassation";
 import PositionnementResultat from "@/pages/eleve/PositionnementResultat";
 import RessourcesPage from "@/pages/formateur/RessourcesPage";
+import PedagogicalSourcesPage from "@/pages/formateur/PedagogicalSourcesPage";
 import BanqueActivites from "@/pages/formateur/BanqueActivites";
 import BilansAtelierPage from "@/pages/formateur/BilansAtelierPage";
 import PositionnementPage from "@/pages/formateur/PositionnementPage";
@@ -178,6 +179,7 @@ const App = () => (
               <Route path="test-resultats/groupes" element={<TestResultatGroupes />} />
               <Route path="test-resultats/:apprenantId" element={<TestResultatDetail />} />
               <Route path="ressources" element={<RessourcesPage />} />
+              <Route path="sources-pedagogiques" element={<PedagogicalSourcesPage />} />
               <Route path="intervention" element={<InterventionRapidePage />} />
               <Route path="bibliotheque-interventions" element={<BibliothequeInterventions />} />
               <Route path="banque-activites" element={<BanqueActivites />} />

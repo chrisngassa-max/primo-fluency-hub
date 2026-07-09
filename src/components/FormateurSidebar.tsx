@@ -59,6 +59,7 @@ const pedagogieNav = [
   { title: "Plans de formation", url: "/formateur/parcours", icon: Route },
   { title: "Production du parcours", url: "/formateur/production-parcours", icon: Factory },
   { title: "Ressources", url: "/formateur/ressources", icon: Library },
+  { title: "Sources pedagogiques", url: "/formateur/sources-pedagogiques", icon: FileText },
   { title: "Ressources pédagogiques", url: "/formateur/banque-activites", icon: Database },
   { title: "Importer programme", url: "/formateur/import-programme", icon: Upload },
 ];

@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
-import { ArrowLeft, FileText, GraduationCap, FolderOpen, Library, Plus, Upload, Loader2, Printer } from "lucide-react";
+import { ArrowLeft, BookOpen, FileText, GraduationCap, FolderOpen, Library, Plus, Upload, Loader2, Printer } from "lucide-react";
 import { fetchActivePlanVersion, fetchTrainingSessions } from "@/lib/curriculum/api";
 import {
   createBlankSessionDocument,
@@ -35,6 +35,7 @@ import {
 import { InsertMenu, SessionDocumentsPanel } from "@/components/curriculum/SessionDocumentsPanel";
 import { ExerciseLibraryTab } from "@/components/curriculum/ExerciseLibraryTab";
 import { PdfExerciseTransformDialog } from "@/components/curriculum/PdfExerciseTransformDialog";
+import { SessionPedagogicalSourcesTab } from "@/components/curriculum/SessionPedagogicalSourcesTab";
 
 type AudienceTab = "formateur" | "apprenant" | "staging";
 
@@ -402,6 +403,9 @@ const SessionDocumentsPage = () => {
             <TabsTrigger value="ressources" className="gap-1.5">
               <FolderOpen className="h-3.5 w-3.5" /> Ressources à classer
             </TabsTrigger>
+            <TabsTrigger value="sources" className="gap-1.5">
+              <BookOpen className="h-3.5 w-3.5" /> Sources d'appui
+            </TabsTrigger>
             <TabsTrigger value="bibliotheque" className="gap-1.5">
               <Library className="h-3.5 w-3.5" /> Bibliothèque
             </TabsTrigger>
@@ -472,6 +476,10 @@ const SessionDocumentsPage = () => {
               onTransformPdf={setTransformLink}
               busy={busy}
             />
+          </TabsContent>
+
+          <TabsContent value="sources" className="mt-4">
+            <SessionPedagogicalSourcesTab sessionCode={sessionCode} />
           </TabsContent>
 
           <TabsContent value="bibliotheque" className="mt-4">
