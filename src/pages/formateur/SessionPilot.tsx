@@ -734,6 +734,7 @@ const SessionPilot = () => {
     setGenerating(true);
     try {
       const niveauVise = session.niveau_cible || (parcoursSeance as any)?.parcours?.niveau_cible || "A1";
+      const levelProfile = getCaptcfLevelProfileSummary(niveauVise);
       // Use explicitly selected competences, or fallback to session/parcours/CE
       const sessionComps = (session as any)?.competences_cibles;
       const parcoursComps = (parcoursSeance as any)?.competences_cibles;
