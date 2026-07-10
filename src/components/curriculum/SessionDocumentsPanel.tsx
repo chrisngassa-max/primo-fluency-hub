@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
@@ -70,6 +71,39 @@ const VALIDATION_BADGE_CLASS: Record<string, string> = {
 
 const AUTOSAVE_DELAY_MS = 800;
 
+function stripHtmlToText(html: string): string {
+  if (!html.trim()) return "";
+  if (typeof window !== "undefined" && "DOMParser" in window) {
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const paragraphs = Array.from(doc.body.querySelectorAll("p, li"))
+      .map((node) => node.textContent?.replace(/\s+/g, " ").trim() ?? "")
+      .filter(Boolean);
+    return paragraphs.join("\n");
+  }
+  return html
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/p>|<\/li>/gi, "\n")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+\n/g, "\n")
+    .replace(/[ \t]+/g, " ")
+    .trim();
+}
+
+function getDialogueAudioText(html: string): string {
+  if (!html.trim()) return "";
+
+  if (typeof window !== "undefined" && "DOMParser" in window) {
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const dialogueLines = Array.from(doc.body.querySelectorAll("p"))
+      .map((node) => node.textContent?.replace(/\s+/g, " ").trim() ?? "")
+      .filter((line) => /^[^:]{1,80}:\s+/.test(line));
+
+    if (dialogueLines.length >= 2) return dialogueLines.join("\n");
+  }
+
+  return stripHtmlToText(html);
+}
+
 // Seuls les blocs vierges (créés depuis "Insérer") sont supprimables ici,
 // pour ne pas exposer un risque de suppression accidentelle des documents
 // pédagogiques seedés (fiche_formateur, corrigé, etc.).
@@ -132,6 +166,8 @@ function DocumentEditorCard({
   const pdfHref = doc.source_file_path ? `${DOCS_BASE_URL}${doc.source_file_path}.pdf` : null;
   const docxHref = doc.source_file_path ? `${DOCS_BASE_URL}${doc.source_file_path}.docx` : null;
   const canDelete = DELETABLE_TYPES.has(doc.document_type);
+  const hasAudioPreview = doc.document_type === "dialogue_transcription" || doc.document_type === "audio_mp3";
+  const audioText = hasAudioPreview ? getDialogueAudioText(draft) : "";
 
   return (
     <div className="space-y-1.5">
@@ -227,6 +263,23 @@ function DocumentEditorCard({
           </div>
         </CardHeader>
         <CardContent>
+          {hasAudioPreview && (
+            <div className="mb-3 rounded-lg border border-primary/20 bg-primary/5 p-3">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-primary">
+                Audio de la transcription
+              </p>
+              {audioText ? (
+                <TTSAudioPlayer text={audioText} label="Ecouter la transcription" showSpeedControl />
+              ) : (
+                <p className="text-xs text-muted-foreground">
+                  Ajoutez une transcription dans le document pour pouvoir l'ecouter.
+                </p>
+              )}
+              <p className="mt-2 text-[11px] text-muted-foreground">
+                Lecture de controle generee depuis le texte editable. Le MP3 definitif pourra etre ajoute comme fichier audio si besoin.
+              </p>
+            </div>
+          )}
           <Tabs defaultValue="apercu">
             <div className="flex items-center justify-between gap-2">
               <TabsList className="h-8">
