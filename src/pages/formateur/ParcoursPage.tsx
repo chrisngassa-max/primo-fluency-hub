@@ -149,7 +149,7 @@ const ParcoursPage = () => {
   const qc = useQueryClient();
 
   // Variant selection (filter + creation preset)
-  const [selectedVariante, setSelectedVariante] = useState<VarianteFilter>("tous");
+  const [selectedVariante, setSelectedVariante] = useState<VarianteFilter>("curriculum-v2");
   const [variante, setVariante] = useState<VariantePlan>("enrichi");
 
   // Form state
@@ -444,12 +444,12 @@ const ParcoursPage = () => {
         </Button>
       </div>
 
-      {/* Variant selector: deux cohortes en parallèle */}
-      <div className="space-y-2">
+      {/* Structure du parcours CapTCF : curriculum v2 en avant, anciens parcours en secondaire */}
+      <div className="space-y-3">
         <div className="flex items-center justify-between gap-2">
           <p className="text-sm font-medium flex items-center gap-2">
             <Layers className="h-4 w-4 text-primary" />
-            Variante de parcours
+            Structure du parcours CapTCF
           </p>
           {selectedVariante !== "tous" && (
             <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => setSelectedVariante("tous")}>
@@ -458,84 +458,92 @@ const ParcoursPage = () => {
           )}
         </div>
         <p className="text-xs text-muted-foreground">
-          Sélectionnez la variante pour filtrer la liste et préparer un nouveau plan. Vous pouvez gérer les trois parcours en parallèle.
+          Parcours cumulatif officiel : tronc commun 80h, extension B1 (+20h → 100h), extension B2 (+20h → 120h).
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          {(Object.keys(VARIANTES) as VariantePlan[]).map((key) => {
-            const v = VARIANTES[key];
-            const active = selectedVariante === key;
-            return (
-              <button
-                key={key}
-                type="button"
-                onClick={() => setSelectedVariante(active ? "tous" : key)}
-                className={cn(
-                  "text-left rounded-lg border bg-card p-4 transition-all hover:shadow-md hover:border-primary/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                  active && v.cardActiveClass,
-                )}
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    {v.civique ? (
-                      <Landmark className="h-5 w-5 text-amber-600 shrink-0" />
-                    ) : (
-                      <GraduationCap className="h-5 w-5 text-emerald-600 shrink-0" />
-                    )}
-                    <div>
-                      <p className="font-semibold leading-tight">{v.label}</p>
-                      <p className="text-xs text-muted-foreground">{v.tagline}</p>
-                    </div>
+
+        {/* Carte principale : curriculum v2, structure officielle */}
+        {(() => {
+          const v = CURRICULUM_V2_CONFIG;
+          const active = selectedVariante === "curriculum-v2";
+          return (
+            <button
+              type="button"
+              onClick={() => setSelectedVariante(active ? "tous" : "curriculum-v2")}
+              className={cn(
+                "w-full text-left rounded-lg border-2 bg-card p-5 transition-all hover:shadow-md hover:border-primary/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                active ? v.cardActiveClass : "border-blue-200 dark:border-blue-900/50",
+              )}
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex items-center gap-3">
+                  <Factory className="h-6 w-6 text-blue-600 shrink-0" />
+                  <div>
+                    <p className="font-semibold text-base leading-tight">{v.label}</p>
+                    <p className="text-xs text-muted-foreground">{v.tagline}</p>
                   </div>
-                  {active && <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />}
                 </div>
-                <p className="text-xs text-muted-foreground mt-2">{v.description}</p>
-                <div className="flex items-center gap-2 mt-3 flex-wrap">
-                  <Badge className={cn("text-[10px] gap-1", v.badgeClass)}>
-                    {v.civique ? <Landmark className="h-3 w-3" /> : null}
-                    {v.civique ? "Module civique inclus" : "Sans module civique"}
-                  </Badge>
-                  <Badge variant="outline" className="text-[10px]">
-                    {varianteCounts[key]} plan{varianteCounts[key] > 1 ? "s" : ""}
-                  </Badge>
-                </div>
-              </button>
-            );
-          })}
-          {(() => {
-            const v = CURRICULUM_V2_CONFIG;
-            const active = selectedVariante === "curriculum-v2";
-            return (
-              <button
-                type="button"
-                onClick={() => setSelectedVariante(active ? "tous" : "curriculum-v2")}
-                className={cn(
-                  "text-left rounded-lg border bg-card p-4 transition-all hover:shadow-md hover:border-primary/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                  active && v.cardActiveClass,
-                )}
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <Factory className="h-5 w-5 text-blue-600 shrink-0" />
-                    <div>
-                      <p className="font-semibold leading-tight">{v.label}</p>
-                      <p className="text-xs text-muted-foreground">{v.tagline}</p>
+                {active && <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />}
+              </div>
+              <p className="text-sm text-muted-foreground mt-2">{v.description}</p>
+              <div className="flex items-center gap-2 mt-3 flex-wrap">
+                <Badge className={cn("text-[10px] gap-1", v.badgeClass)}>
+                  <Factory className="h-3 w-3" />
+                  {curriculumPlan?.version ?? CURRICULUM_V2_VERSION}
+                </Badge>
+                <Badge variant="outline" className="text-[10px]">
+                  {curriculumSessions.length || 41} séance{(curriculumSessions.length || 41) > 1 ? "s" : ""}
+                </Badge>
+              </div>
+            </button>
+          );
+        })()}
+
+        {/* Anciens parcours : accès secondaire, conservés sans modification */}
+        <div className="space-y-1.5 pt-1">
+          <p className="text-xs font-medium text-muted-foreground">Anciens parcours</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {(Object.keys(VARIANTES) as VariantePlan[]).map((key) => {
+              const v = VARIANTES[key];
+              const active = selectedVariante === key;
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setSelectedVariante(active ? "tous" : key)}
+                  className={cn(
+                    "text-left rounded-lg border bg-card/60 p-3 opacity-80 transition-all hover:opacity-100 hover:shadow-sm hover:border-primary/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                    active && "opacity-100",
+                    active && v.cardActiveClass,
+                  )}
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      {v.civique ? (
+                        <Landmark className="h-4 w-4 text-amber-600 shrink-0" />
+                      ) : (
+                        <GraduationCap className="h-4 w-4 text-emerald-600 shrink-0" />
+                      )}
+                      <div>
+                        <p className="font-medium text-sm leading-tight">{v.label}</p>
+                        <p className="text-[11px] text-muted-foreground">{v.tagline}</p>
+                      </div>
                     </div>
+                    {active && <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />}
                   </div>
-                  {active && <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />}
-                </div>
-                <p className="text-xs text-muted-foreground mt-2">{v.description}</p>
-                <div className="flex items-center gap-2 mt-3 flex-wrap">
-                  <Badge className={cn("text-[10px] gap-1", v.badgeClass)}>
-                    <Factory className="h-3 w-3" />
-                    {curriculumPlan?.version ?? CURRICULUM_V2_VERSION}
-                  </Badge>
-                  <Badge variant="outline" className="text-[10px]">
-                    {curriculumSessions.length || 41} séance{(curriculumSessions.length || 41) > 1 ? "s" : ""}
-                  </Badge>
-                </div>
-              </button>
-            );
-          })()}
+                  <p className="text-[11px] text-muted-foreground mt-1.5">{v.description}</p>
+                  <div className="flex items-center gap-2 mt-2 flex-wrap">
+                    <Badge className={cn("text-[10px] gap-1", v.badgeClass)}>
+                      {v.civique ? <Landmark className="h-3 w-3" /> : null}
+                      {v.civique ? "Module civique inclus" : "Sans module civique"}
+                    </Badge>
+                    <Badge variant="outline" className="text-[10px]">
+                      {varianteCounts[key]} plan{varianteCounts[key] > 1 ? "s" : ""}
+                    </Badge>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
