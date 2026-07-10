@@ -10,7 +10,7 @@ Deno.serve(async (req) => {
 
   const startedAt = Date.now();
   try {
-    const { action, text, audioBase64 } = await req.json()
+    const { action, text, audioBase64, voiceName } = await req.json()
     const userId = await getUserIdFromAuth(req);
 
     // TTS for the consent modal itself is generic and allowed without consent.
@@ -43,18 +43,37 @@ Deno.serve(async (req) => {
       const apiKey = Deno.env.get('GOOGLE_TTS_API_KEY')
       if (!apiKey) throw new Error('GOOGLE_TTS_API_KEY non configurée')
 
-      const response = await fetch(
-        `https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            input: { text },
-            voice: { languageCode: 'fr-FR', name: 'fr-FR-Standard-F' },
-            audioConfig: { audioEncoding: 'MP3' },
-          }),
-        }
-      );
+      const requestedVoice = typeof voiceName === 'string' && voiceName.trim()
+        ? voiceName.trim()
+        : 'fr-FR-Wavenet-D';
+
+      async function synthesizeWithVoice(name: string) {
+        return fetch(
+          `https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              input: { text },
+              voice: { languageCode: 'fr-FR', name },
+              audioConfig: {
+                audioEncoding: 'MP3',
+                speakingRate: 0.92,
+                pitch: 0,
+              },
+            }),
+          }
+        );
+      }
+
+      let response = await synthesizeWithVoice(requestedVoice);
+      let model = requestedVoice;
+
+      if (!response.ok && requestedVoice !== 'fr-FR-Standard-F') {
+        console.warn(`TTS voice ${requestedVoice} unavailable, fallback to fr-FR-Standard-F`);
+        response = await synthesizeWithVoice('fr-FR-Standard-F');
+        model = 'fr-FR-Standard-F';
+      }
 
       if (!response.ok) {
         const errText = await response.text();
@@ -65,7 +84,7 @@ Deno.serve(async (req) => {
       if (!isConsentTTS && userId) {
         await logAICall({
           subject_user_id: userId, triggered_by_user_id: userId,
-          function_name: 'tcf-process-audio', provider: 'google', model: 'fr-FR-Standard-F',
+          function_name: 'tcf-process-audio', provider: 'google', model,
           data_categories: ['text'], status: 'ok', duration_ms: Date.now() - startedAt,
         });
       }

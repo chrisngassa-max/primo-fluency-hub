@@ -269,7 +269,7 @@ function DocumentEditorCard({
                 Audio de la transcription
               </p>
               {audioText ? (
-                <TTSAudioPlayer text={audioText} label="Ecouter la transcription" showSpeedControl />
+                <TTSAudioPlayer text={audioText} label="Ecouter la transcription" showSpeedControl dialogueMode />
               ) : (
                 <p className="text-xs text-muted-foreground">
                   Ajoutez une transcription dans le document pour pouvoir l'ecouter.

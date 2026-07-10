@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Volume2, Loader2, RotateCcw } from "lucide-react";
+import { Volume2, Loader2, RotateCcw, Square } from "lucide-react";
 import { toast } from "sonner";
 import { PLAYBACK_RATES, canStartAudioPlay } from "@/lib/audioAccess";
 
@@ -17,6 +17,56 @@ interface TTSAudioPlayerProps {
   maxPlays?: number | null;
   showSpeedControl?: boolean;
   language?: string;
+  voiceName?: string;
+  dialogueMode?: boolean;
+}
+
+type TtsSegment = {
+  speaker?: string;
+  text: string;
+  voiceName: string;
+};
+
+const DEFAULT_VOICE = "fr-FR-Wavenet-D";
+const DIALOGUE_VOICES = ["fr-FR-Wavenet-D", "fr-FR-Wavenet-B", "fr-FR-Wavenet-A", "fr-FR-Wavenet-C"];
+
+function base64ToAudioUrl(audioBase64: string): string {
+  const byteCharacters = atob(audioBase64);
+  const byteNumbers = new Array(byteCharacters.length);
+  for (let i = 0; i < byteCharacters.length; i++) {
+    byteNumbers[i] = byteCharacters.charCodeAt(i);
+  }
+  const byteArray = new Uint8Array(byteNumbers);
+  const blob = new Blob([byteArray], { type: "audio/mpeg" });
+  return URL.createObjectURL(blob);
+}
+
+function parseDialogueSegments(rawText: string, defaultVoice: string): TtsSegment[] | null {
+  const speakerVoices = new Map<string, string>();
+  const segments = rawText
+    .split(/\r?\n+/)
+    .map((line) => line.replace(/\s+/g, " ").trim())
+    .filter(Boolean)
+    .map((line) => {
+      const match = line.match(/^([^:]{1,80})\s*:\s*(.+)$/);
+      if (!match) return null;
+      const speaker = match[1].trim();
+      const spokenText = match[2].trim();
+      if (!spokenText) return null;
+
+      if (!speakerVoices.has(speaker)) {
+        speakerVoices.set(speaker, DIALOGUE_VOICES[speakerVoices.size % DIALOGUE_VOICES.length] ?? defaultVoice);
+      }
+
+      return {
+        speaker,
+        text: spokenText,
+        voiceName: speakerVoices.get(speaker) ?? defaultVoice,
+      };
+    })
+    .filter((segment): segment is TtsSegment => Boolean(segment));
+
+  return segments.length >= 2 ? segments : null;
 }
 
 const TTSAudioPlayer = ({
@@ -31,14 +81,25 @@ const TTSAudioPlayer = ({
   maxPlays = null,
   showSpeedControl = false,
   language = "fr-FR",
+  voiceName = DEFAULT_VOICE,
+  dialogueMode = false,
 }: TTSAudioPlayerProps) => {
   const [loading, setLoading] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [dialogueUrls, setDialogueUrls] = useState<string[] | null>(null);
   const [playing, setPlaying] = useState(false);
   const [playbackRate, setPlaybackRate] = useState<number>(1);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const objectUrlRef = useRef<string | null>(null);
+  const objectUrlsRef = useRef<string[]>([]);
   const autoPlayTriggered = useRef(false);
+  const playbackTokenRef = useRef(0);
+
+  const dialogueSegments = dialogueMode ? parseDialogueSegments(text, voiceName) : null;
+
+  const revokeGeneratedUrls = useCallback(() => {
+    for (const url of objectUrlsRef.current) URL.revokeObjectURL(url);
+    objectUrlsRef.current = [];
+  }, []);
 
   const ensureAudioElement = useCallback(() => {
     if (audioRef.current) return audioRef.current;
@@ -46,10 +107,6 @@ const TTSAudioPlayer = ({
     const audio = new Audio();
     audio.preload = "auto";
     audio.playbackRate = playbackRate;
-    audio.onended = () => {
-      setPlaying(false);
-      onPlayComplete?.();
-    };
     audio.onerror = () => {
       setPlaying(false);
       toast.error("Erreur de lecture audio");
@@ -57,12 +114,25 @@ const TTSAudioPlayer = ({
 
     audioRef.current = audio;
     return audio;
-  }, [onPlayComplete, playbackRate]);
+  }, [playbackRate]);
 
-  const speakWithBrowserFallback = useCallback((utterance: SpeechSynthesisUtterance | null, message?: string) => {
-    if (!utterance || !("speechSynthesis" in window)) return false;
+  const stopPlayback = useCallback(() => {
+    playbackTokenRef.current += 1;
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      audioRef.current.onended = null;
+    }
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+    setPlaying(false);
+  }, []);
 
-    utterance.text = message || text;
+  const speakWithBrowserFallback = useCallback((message?: string) => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) return false;
+
+    const utterance = new SpeechSynthesisUtterance(message || text);
     if (!utterance.text.trim()) return false;
 
     utterance.lang = language;
@@ -86,123 +156,123 @@ const TTSAudioPlayer = ({
     return true;
   }, [language, onPlayComplete, onPlayStart, playbackRate, text]);
 
+  const synthesizeSegment = useCallback(async (segment: TtsSegment) => {
+    const { data, error } = await supabase.functions.invoke("tcf-process-audio", {
+      body: { action: "tts", text: segment.text, voiceName: segment.voiceName },
+    });
+
+    if (error) throw error;
+    if (data?.error) throw new Error(data.error);
+    if (!data?.audioBase64) throw new Error("Aucun audio retourne");
+
+    const url = base64ToAudioUrl(data.audioBase64);
+    objectUrlsRef.current.push(url);
+    return url;
+  }, []);
+
+  const playUrls = useCallback(async (urls: string[]) => {
+    if (!urls.length) return;
+
+    const audio = ensureAudioElement();
+    const token = playbackTokenRef.current + 1;
+    playbackTokenRef.current = token;
+    let started = false;
+
+    for (const url of urls) {
+      if (playbackTokenRef.current !== token) return;
+
+      await new Promise<void>((resolve, reject) => {
+        audio.pause();
+        audio.currentTime = 0;
+        audio.src = url;
+        audio.playbackRate = playbackRate;
+        audio.onended = () => resolve();
+        audio.onerror = () => reject(new Error("Erreur de lecture audio"));
+
+        audio.play()
+          .then(() => {
+            setPlaying(true);
+            if (!started) {
+              started = true;
+              onPlayStart?.();
+            }
+          })
+          .catch(reject);
+      });
+    }
+
+    if (playbackTokenRef.current === token) {
+      setPlaying(false);
+      onPlayComplete?.();
+    }
+  }, [ensureAudioElement, onPlayComplete, onPlayStart, playbackRate]);
+
   useEffect(() => {
     return () => {
-      audioRef.current?.pause();
-      if (audioRef.current) {
-        audioRef.current.src = "";
-      }
-      if (objectUrlRef.current) {
-        URL.revokeObjectURL(objectUrlRef.current);
-      }
-      if (typeof window !== "undefined" && "speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-      }
+      stopPlayback();
+      if (audioRef.current) audioRef.current.src = "";
+      revokeGeneratedUrls();
     };
-  }, []);
+  }, [revokeGeneratedUrls, stopPlayback]);
+
+  useEffect(() => {
+    stopPlayback();
+    revokeGeneratedUrls();
+    setAudioUrl(null);
+    setDialogueUrls(null);
+  }, [text, voiceName, dialogueMode, revokeGeneratedUrls, stopPlayback]);
 
   const generateAndPlay = useCallback(async () => {
     if (!canStartAudioPlay(playCount, maxPlays)) {
-      toast.info("Nombre maximal d’écoutes atteint");
+      toast.info("Nombre maximal d'ecoutes atteint");
       return;
     }
-    const audio = ensureAudioElement();
-    const browserUtterance = typeof window !== "undefined" && "SpeechSynthesisUtterance" in window
-      ? new SpeechSynthesisUtterance("")
-      : null;
 
     if (!language.toLowerCase().startsWith("fr")) {
-      setLoading(false);
-      if (!speakWithBrowserFallback(browserUtterance)) {
-        toast.error("Voix indisponible sur cet appareil");
-      }
+      if (!speakWithBrowserFallback()) toast.error("Voix indisponible sur cet appareil");
       return;
     }
 
-    if (audioUrl) {
+    const cachedUrls = dialogueSegments ? dialogueUrls : audioUrl ? [audioUrl] : null;
+    if (cachedUrls) {
       try {
-        if (typeof window !== "undefined" && "speechSynthesis" in window) {
-          window.speechSynthesis.cancel();
-        }
-        audio.currentTime = 0;
-        audio.playbackRate = playbackRate;
-        await audio.play();
-        setPlaying(true);
-        onPlayStart?.();
+        await playUrls(cachedUrls);
       } catch (err: any) {
         console.error("Audio replay error:", err);
-        const didFallback = speakWithBrowserFallback(browserUtterance);
-        if (!didFallback) {
-          toast.error("Lecture audio bloquée", {
-            description: "Appuyez de nouveau sur le bouton pour relancer l'audio.",
-          });
-        }
+        toast.error("Lecture audio bloquee", { description: "Appuyez de nouveau sur le bouton pour relancer l'audio." });
       }
       return;
     }
 
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("tcf-process-audio", {
-        body: { action: "tts", text },
-      });
-
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
-      if (!data?.audioBase64) throw new Error("Aucun audio retourné");
-
-      const byteCharacters = atob(data.audioBase64);
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-      }
-      const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: "audio/mpeg" });
-
-      if (objectUrlRef.current) {
-        URL.revokeObjectURL(objectUrlRef.current);
-      }
-
-      const url = URL.createObjectURL(blob);
-      objectUrlRef.current = url;
-      audio.src = url;
-      audio.load();
-      setAudioUrl(url);
-
-      try {
-        if (typeof window !== "undefined" && "speechSynthesis" in window) {
-          window.speechSynthesis.cancel();
+      let urls: string[];
+      if (dialogueSegments) {
+        urls = [];
+        for (const segment of dialogueSegments) {
+          urls.push(await synthesizeSegment(segment));
         }
-        audio.currentTime = 0;
-        audio.playbackRate = playbackRate;
-        await audio.play();
-        setPlaying(true);
-        onPlayStart?.();
-      } catch (playErr: any) {
-        console.error("Audio play error:", playErr);
-        const didFallback = speakWithBrowserFallback(browserUtterance);
-        if (!didFallback) {
-          toast.error("Lecture audio bloquée", {
-            description: "Le son a bien été généré. Appuyez à nouveau sur Écouter pour lancer la lecture.",
-          });
-        }
+        setDialogueUrls(urls);
+      } else {
+        const url = await synthesizeSegment({ text, voiceName });
+        setAudioUrl(url);
+        urls = [url];
       }
+
+      await playUrls(urls);
     } catch (err: any) {
       console.error("TTS error:", err);
-      const didFallback = speakWithBrowserFallback(browserUtterance);
-      if (!didFallback) {
-        toast.error("Impossible de générer l'audio", { description: err.message });
-      }
+      const fallbackText = dialogueSegments?.map((segment) => segment.text).join(" ");
+      const didFallback = speakWithBrowserFallback(fallbackText);
+      if (!didFallback) toast.error("Impossible de generer l'audio", { description: err.message });
     } finally {
       setLoading(false);
     }
-  }, [audioUrl, ensureAudioElement, maxPlays, onPlayStart, playCount, playbackRate, speakWithBrowserFallback, text]);
+  }, [audioUrl, dialogueSegments, dialogueUrls, language, maxPlays, playCount, playUrls, speakWithBrowserFallback, synthesizeSegment, text, voiceName]);
 
-  // Auto-play on mount when autoPlay is true
   useEffect(() => {
     if (autoPlay && !autoPlayTriggered.current && text) {
       autoPlayTriggered.current = true;
-      // Small delay to allow the component to mount and user gesture context
       const timer = setTimeout(() => {
         generateAndPlay();
       }, 500);
@@ -210,7 +280,6 @@ const TTSAudioPlayer = ({
     }
   }, [autoPlay, text, generateAndPlay]);
 
-  // Reset autoPlay trigger when text changes
   useEffect(() => {
     autoPlayTriggered.current = false;
   }, [text]);
@@ -223,16 +292,20 @@ const TTSAudioPlayer = ({
         size="icon"
         onClick={(e) => {
           e.stopPropagation();
+          if (playing) {
+            stopPlayback();
+            return;
+          }
           generateAndPlay();
         }}
-        disabled={loading || playing || !canStartAudioPlay(playCount, maxPlays)}
+        disabled={loading || (!playing && !canStartAudioPlay(playCount, maxPlays))}
         className={`h-7 w-7 shrink-0 ${className}`}
-        title="Écouter"
+        title={playing ? "Arreter" : "Ecouter"}
       >
         {loading ? (
           <Loader2 className="h-3.5 w-3.5 animate-spin" />
         ) : playing ? (
-          <Volume2 className="h-3.5 w-3.5 animate-pulse text-primary" />
+          <Square className="h-3.5 w-3.5 fill-current text-primary" />
         ) : (
           <Volume2 className="h-3.5 w-3.5 text-muted-foreground" />
         )}
@@ -240,7 +313,8 @@ const TTSAudioPlayer = ({
     );
   }
 
-  const defaultLabel = audioUrl ? "Réécouter" : "Écouter";
+  const hasGeneratedAudio = Boolean(audioUrl || dialogueUrls);
+  const defaultLabel = hasGeneratedAudio ? "Reecouter" : "Ecouter";
   const displayLabel = label || defaultLabel;
 
   return (
@@ -249,24 +323,24 @@ const TTSAudioPlayer = ({
         type="button"
         variant={playing ? "default" : "outline"}
         size="sm"
-        onClick={generateAndPlay}
-        disabled={loading || playing || !canStartAudioPlay(playCount, maxPlays)}
+        onClick={playing ? stopPlayback : generateAndPlay}
+        disabled={loading || (!playing && !canStartAudioPlay(playCount, maxPlays))}
         className="gap-2"
       >
         {loading ? (
           <>
             <Loader2 className="h-4 w-4 animate-spin" />
-            Chargement…
+            Chargement...
           </>
         ) : playing ? (
           <>
-            <Volume2 className="h-4 w-4 animate-pulse" />
-            Lecture en cours…
+            <Square className="h-4 w-4 fill-current" />
+            Arreter
           </>
-        ) : audioUrl ? (
+        ) : hasGeneratedAudio ? (
           <>
             <RotateCcw className="h-4 w-4" />
-            {label || "Réécouter"}
+            {label || "Reecouter"}
           </>
         ) : (
           <>
