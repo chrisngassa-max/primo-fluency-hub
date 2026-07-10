@@ -2,6 +2,7 @@ import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { getCaptcfLevelProfileSummary } from "@/lib/captcf-level-profiles";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -734,6 +735,7 @@ const SessionPilot = () => {
     setGenerating(true);
     try {
       const niveauVise = session.niveau_cible || (parcoursSeance as any)?.parcours?.niveau_cible || "A1";
+      const levelProfile = getCaptcfLevelProfileSummary(niveauVise);
       // Use explicitly selected competences, or fallback to session/parcours/CE
       const sessionComps = (session as any)?.competences_cibles;
       const parcoursComps = (parcoursSeance as any)?.competences_cibles;
@@ -1073,7 +1075,7 @@ const SessionPilot = () => {
             difficulte: duplicateDifficulty,
             contenu: generated.contenu || {},
             animation_guide: generated.animation_guide || null,
-            niveau_vise: duplicateNiveauVise,
+            niveau_vise: ex.niveau_vise || session.niveau_cible || "A1",
             formateur_id: user.id,
             point_a_maitriser_id: ex.point_a_maitriser_id || defaultPoint?.id,
             is_ai_generated: true,

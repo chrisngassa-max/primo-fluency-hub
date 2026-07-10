@@ -433,16 +433,18 @@ const PreflightExercises = ({ sessionId, session, exercises, formateurId, parcou
 
         <CollapsibleContent>
           <CardContent className="space-y-4 pt-0">
-            <PreSessionSelectionReport
-              report={preSessionReport}
-              selectionParams={selectionParams}
-              isLoading={preSessionLoading}
-              error={preSessionError}
-              linkedExerciceIds={linkedExerciceIds}
-              lot8ComplementEnabled={false}
-              onApplySelection={() => {}}
-              onRequestComplement={() => {}}
-            />
+            {linkedExerciceIds.length === 0 && (
+              <PreSessionSelectionReport
+                report={preSessionReport}
+                selectionParams={selectionParams}
+                isLoading={preSessionLoading}
+                error={preSessionError}
+                linkedExerciceIds={linkedExerciceIds}
+                lot8ComplementEnabled={false}
+                onApplySelection={() => {}}
+                onRequestComplement={() => {}}
+              />
+            )}
 
             {/* ── Action bar ── */}
             <div className="flex flex-wrap items-center gap-2 border-t pt-3">

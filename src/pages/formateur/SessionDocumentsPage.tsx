@@ -280,7 +280,11 @@ const SessionDocumentsPage = () => {
 
   async function handleImportFile(fileList: FileList | null) {
     const file = fileList?.[0];
-    if (!file) return;
+    if (!file) {
+      setFileInsertTarget(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
     const target = fileInsertTarget;
     const linkedType = linkTypeForFilename(file.name);
     if (!linkedType) {

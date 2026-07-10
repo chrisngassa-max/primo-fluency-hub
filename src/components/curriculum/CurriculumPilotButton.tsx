@@ -107,16 +107,23 @@ export function CurriculumPilotButton({
 
       if (created && user) {
         const targetGroup = groups.find((g) => g.id === groupId);
-        prepareSessionKit({
-          sessionId: id,
-          groupId,
-          niveauCible: palierCible,
-          competencesCibles: ["CE", "CO"],
-          objectifs: trainingSession.titre,
-          titre: `${trainingSession.code} : ${trainingSession.titre}`,
-          formateurId: user.id,
-          typeDemarche: (targetGroup as { type_demarche?: string } | undefined)?.type_demarche,
-        });
+        try {
+          await prepareSessionKit({
+            sessionId: id,
+            groupId,
+            niveauCible: palierCible,
+            competencesCibles: ["CE", "CO"],
+            objectifs: trainingSession.titre,
+            titre: `${trainingSession.code} : ${trainingSession.titre}`,
+            formateurId: user.id,
+            typeDemarche: (targetGroup as { type_demarche?: string } | undefined)?.type_demarche,
+          });
+        } catch (kitError) {
+          console.error("prepareSessionKit failed", kitError);
+          toast.error("Séance créée, mais la préparation des exercices a échoué.", {
+            description: kitError instanceof Error ? kitError.message : undefined,
+          });
+        }
       }
 
       toast.success(
