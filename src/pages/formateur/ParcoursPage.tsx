@@ -40,7 +40,17 @@ import {
 } from "lucide-react";
 import { fetchActivePlanVersion, fetchTrainingSessions } from "@/lib/curriculum/api";
 import { CURRICULUM_PLAN_VERSION_LABEL } from "@/lib/curriculum/sessions";
-import { CURRICULUM_PALIERS, formatPalierParcoursLabel, type CurriculumPalier } from "@/lib/curriculum/pilot";
+import {
+  CURRICULUM_PALIERS,
+  formatPalierParcoursLabel,
+  type CurriculumPalier,
+  CURRICULUM_TIER_FILTERS,
+  type CurriculumTierFilter,
+  matchesCurriculumTierFilter,
+  getSessionTierBadgeLabel,
+  getSessionTier,
+  isEvaluationSession,
+} from "@/lib/curriculum/pilot";
 import { CurriculumPilotButton } from "@/components/curriculum/CurriculumPilotButton";
 
 // Atelier "Documents de séance" (Lots 1-6) : S01-S05 ont des documents
@@ -120,6 +130,19 @@ const competenceColors: Record<string, string> = {
   Structures: "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400",
 };
 
+// Couleur du badge de palier pédagogique (plan cumulatif 80h/100h/120h),
+// indexée sur getSessionTierBadgeLabel : tronc commun / extension B1-B2 /
+// extension B2 / évaluation.
+const tierBadgeClass = (session: { code: string; palier: string }): string => {
+  if (isEvaluationSession(session)) {
+    return "bg-slate-200 text-slate-800 dark:bg-slate-800 dark:text-slate-200";
+  }
+  const tier = getSessionTier(session);
+  if (tier === "extension_b2") return "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400";
+  if (tier === "extension_b1") return "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400";
+  return "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400";
+};
+
 const ParcoursPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -143,6 +166,9 @@ const ParcoursPage = () => {
   const [dateExamenCible, setDateExamenCible] = useState<Date | undefined>(undefined);
 
   const [curriculumPalierCible, setCurriculumPalierCible] = useState<CurriculumPalier>("B2");
+  // Filtre d'affichage de la liste (lecture 80h/100h/120h), indépendant du
+  // "palier cible par défaut" ci-dessus qui pilote uniquement la génération.
+  const [curriculumTierFilter, setCurriculumTierFilter] = useState<CurriculumTierFilter>("tous");
 
   // Generation state
   const [generating, setGenerating] = useState(false);
@@ -389,6 +415,14 @@ const ParcoursPage = () => {
     (sum, s) => sum + (s.duree_minutes ?? 0),
     0,
   );
+  // L'ordre du manifest (tri "ordre" en base) est préservé par filter().
+  const filteredCurriculumSessions = curriculumSessions.filter((s) =>
+    matchesCurriculumTierFilter(s, curriculumTierFilter),
+  );
+  const filteredCurriculumTotalMinutes = filteredCurriculumSessions.reduce(
+    (sum, s) => sum + (s.duree_minutes ?? 0),
+    0,
+  );
   const showCurriculumPanel = selectedVariante === "curriculum-v2";
   const showParcoursList = selectedVariante !== "curriculum-v2";
 
@@ -531,20 +565,48 @@ const ParcoursPage = () => {
               <Badge className={cn("text-[10px] gap-1", CURRICULUM_V2_CONFIG.badgeClass)}>
                 {curriculumPlan?.version ?? CURRICULUM_V2_VERSION}
               </Badge>
-              {curriculumTotalMinutes > 0 && (
+              {filteredCurriculumTotalMinutes > 0 && (
                 <Badge variant="outline" className="text-[10px] gap-1">
                   <Clock className="h-3 w-3" />
-                  {Math.round(curriculumTotalMinutes / 60)}h
+                  {Math.round(filteredCurriculumTotalMinutes / 60)}h
                 </Badge>
               )}
               <Badge variant="outline" className="text-[10px] gap-1">
                 <BookOpen className="h-3 w-3" />
-                {curriculumSessions.length} séances
+                {filteredCurriculumSessions.length} séance{filteredCurriculumSessions.length > 1 ? "s" : ""}
               </Badge>
+              {curriculumTierFilter !== "tous" && curriculumTierFilter !== "b2_120" && (
+                <span className="text-[11px] text-muted-foreground self-center">
+                  sur {curriculumSessions.length} séances / {Math.round(curriculumTotalMinutes / 60)}h au total
+                </span>
+              )}
+            </div>
+            <div className="pt-3 border-t mt-3 space-y-1.5">
+              <Label className="text-xs">Filtre d'affichage (parcours 80h / 100h / 120h)</Label>
+              <div className="flex gap-1.5 flex-wrap">
+                {CURRICULUM_TIER_FILTERS.map((f) => (
+                  <button
+                    key={f.value}
+                    type="button"
+                    onClick={() => setCurriculumTierFilter(f.value)}
+                    className={cn(
+                      "rounded-full border px-3 py-1 text-xs transition-colors hover:border-primary/40",
+                      curriculumTierFilter === f.value
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-background text-muted-foreground",
+                    )}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+              <p className="text-[11px] text-muted-foreground leading-snug">
+                Ce filtre ne change que l'affichage de la liste ci-dessous.
+              </p>
             </div>
             <div className="flex flex-col sm:flex-row sm:items-end gap-3 pt-3 border-t mt-3">
               <div className="space-y-1.5 flex-1 max-w-xs">
-                <Label className="text-xs">Palier cible par défaut (variantes)</Label>
+                <Label className="text-xs">Palier cible par défaut (génération)</Label>
                 <Select
                   value={curriculumPalierCible}
                   onValueChange={(v) => setCurriculumPalierCible(v as CurriculumPalier)}
@@ -559,7 +621,7 @@ const ParcoursPage = () => {
                   </SelectContent>
                 </Select>
                 <p className="text-[11px] text-muted-foreground leading-snug">
-                  Distinct du n° de séance et du niveau actuel des élèves. Parcours cumulatif vers B2.
+                  Distinct du filtre d'affichage ci-dessus : ce réglage pilote uniquement la génération de contenu par séance, pas la liste visible.
                 </p>
               </div>
             </div>
@@ -575,8 +637,12 @@ const ParcoursPage = () => {
               <p className="text-sm text-muted-foreground text-center py-8">
                 Aucune séance trouvée pour le plan actif. Vérifiez le déploiement du curriculum v2.
               </p>
+            ) : filteredCurriculumSessions.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-8">
+                Aucune séance pour ce filtre.
+              </p>
             ) : (
-              curriculumSessions.map((s) => (
+              filteredCurriculumSessions.map((s) => (
                 <div
                   key={s.id}
                   className="flex items-center gap-3 p-3 rounded-lg border bg-muted/20"
@@ -590,6 +656,9 @@ const ParcoursPage = () => {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-medium text-sm truncate">{s.titre}</span>
+                      <Badge className={cn("text-[10px] gap-1 shrink-0", tierBadgeClass(s))}>
+                        {getSessionTierBadgeLabel(s)}
+                      </Badge>
                     </div>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5 flex-wrap">
                       <span>{formatPalierParcoursLabel(s.palier)}</span>
