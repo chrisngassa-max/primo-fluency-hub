@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, Eye, Volume2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Eye } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +11,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 import { emitLiveEvent } from "@/lib/liveEventEmitter";
 import { RandomClickDetector } from "@/lib/randomClickDetector";
+import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
 
 export interface PreviewExercise {
   titre?: string;
@@ -31,6 +32,37 @@ interface Props {
   /** Contexte séance live — émission clic_aleatoire_probable si fourni */
   sessionId?: string | null;
   eleveId?: string | null;
+}
+
+function pickString(...values: unknown[]) {
+  for (const value of values) {
+    if (typeof value === "string" && value.trim()) return value.trim();
+  }
+  return null;
+}
+
+function getAudioText(contenu: Record<string, unknown>, item?: Record<string, unknown>) {
+  return pickString(
+    item?.script_audio,
+    item?.audio_script,
+    item?.audio,
+    item?.support_audio,
+    contenu.script_audio,
+    contenu.audio_script,
+    contenu.audio,
+    contenu.support_audio,
+  );
+}
+
+function getAudioUrl(contenu: Record<string, unknown>, item?: Record<string, unknown>) {
+  return pickString(
+    item?.audio_url,
+    item?.audioUrl,
+    item?.audio_src,
+    contenu.audio_url,
+    contenu.audioUrl,
+    contenu.audio_src,
+  );
 }
 
 function getContenu(exercise: PreviewExercise) {
@@ -181,12 +213,38 @@ export default function ExerciseStudentPreviewDialog({
                         <span className="mr-2 font-bold text-primary">Q{page + 1}.</span>
                         {String(currentItem.question ?? currentItem.consigne ?? currentItem.texte ?? "")}
                       </p>
-                      {exercise.competence === "CO" && (
-                        <Button variant="outline" size="sm" className="gap-2" disabled={!interactive}>
-                          <Volume2 className="h-4 w-4" />
-                          Écouter l'audio
-                        </Button>
-                      )}
+                      {exercise.competence === "CO" && (() => {
+                        const audioText = getAudioText(pc as Record<string, unknown>, currentItem);
+                        const audioUrl = getAudioUrl(pc as Record<string, unknown>, currentItem);
+
+                        if (audioUrl) {
+                          return (
+                            <div className="rounded-lg border border-primary/20 bg-primary/5 p-3">
+                              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-primary">
+                                Audio de comprehension orale
+                              </p>
+                              <audio controls src={audioUrl} className="w-full" />
+                            </div>
+                          );
+                        }
+
+                        if (audioText) {
+                          return (
+                            <div className="rounded-lg border border-primary/20 bg-primary/5 p-3">
+                              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-primary">
+                                Audio de comprehension orale
+                              </p>
+                              <TTSAudioPlayer text={audioText} label="Ecouter l'audio" showSpeedControl />
+                            </div>
+                          );
+                        }
+
+                        return (
+                          <p className="rounded-md border border-amber-200 bg-amber-50 p-2 text-xs text-amber-800">
+                            Aucun audio ou script audio exploitable n'est associe a cette question.
+                          </p>
+                        );
+                      })()}
                       {Array.isArray(currentItem.options) && currentItem.options.length > 0 ? (
                         <RadioGroup
                           disabled={!interactive}
