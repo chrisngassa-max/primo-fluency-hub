@@ -7,10 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Library, Plus, Search } from "lucide-react";
+import { FlaskConical, Library, Plus, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { searchExerciseBank } from "@/lib/curriculum/exerciseLinks";
 import type { ExerciseBankFilters, ExerciseBankPreview } from "@/lib/curriculum/types";
+import { ExerciseInteractiveTestDialog } from "@/components/curriculum/ExerciseInteractiveTestDialog";
 
 const NIVEAUX = ["A1", "A2", "B1", "B2"];
 const COMPETENCES = ["CO", "CE", "EE", "EO", "Structures"];
@@ -56,6 +57,7 @@ export function ExerciseLibraryTab({
   const [format, setFormat] = useState<string>(ALL);
   const [theme, setTheme] = useState("");
   const [preset, setPreset] = useState<ValidationPreset>("valides");
+  const [testingExerciseId, setTestingExerciseId] = useState<string | null>(null);
 
   const filters: ExerciseBankFilters = {
     niveau_vise: niveau,
@@ -71,6 +73,7 @@ export function ExerciseLibraryTab({
   });
 
   return (
+    <>
     <div className="space-y-4">
       <p className="text-xs text-muted-foreground">{introText}</p>
 
@@ -160,15 +163,26 @@ export function ExerciseLibraryTab({
                       )}
                     </div>
                   </div>
-                  <Button
-                    size="sm"
-                    className="h-8 gap-1.5 text-xs shrink-0"
-                    disabled={busy || alreadyAdded}
-                    onClick={() => onAdd(ex)}
-                  >
-                    <Plus className="h-3.5 w-3.5" />
-                    {alreadyAdded ? alreadyAddedLabel : addLabel}
-                  </Button>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-8 gap-1.5 text-xs"
+                      onClick={() => setTestingExerciseId(ex.id)}
+                    >
+                      <FlaskConical className="h-3.5 w-3.5" />
+                      Tester
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="h-8 gap-1.5 text-xs"
+                      disabled={busy || alreadyAdded}
+                      onClick={() => onAdd(ex)}
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                      {alreadyAdded ? alreadyAddedLabel : addLabel}
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             );
@@ -176,5 +190,11 @@ export function ExerciseLibraryTab({
         </div>
       )}
     </div>
+      <ExerciseInteractiveTestDialog
+        open={!!testingExerciseId}
+        onOpenChange={(open) => !open && setTestingExerciseId(null)}
+        exerciseId={testingExerciseId}
+      />
+    </>
   );
 }

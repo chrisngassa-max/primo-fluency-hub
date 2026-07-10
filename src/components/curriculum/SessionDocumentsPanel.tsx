@@ -18,6 +18,7 @@ import {
   Trash2,
   Library,
   Eye,
+  FlaskConical,
   X,
   Paperclip,
   Image as ImageIcon,
@@ -25,6 +26,7 @@ import {
   Users,
   Wand2,
 } from "lucide-react";
+import { ExerciseInteractiveTestDialog } from "@/components/curriculum/ExerciseInteractiveTestDialog";
 import { RichInsertMenu, type RichInsertAction } from "@/components/curriculum/RichInsertMenu";
 import { cn } from "@/lib/utils";
 import { updateSessionDocumentContent } from "@/lib/curriculum/documents";
@@ -348,6 +350,7 @@ interface LinkedExerciseCardProps {
 
 function LinkedExerciseCard({ link, exercise, canMoveUp, canMoveDown, onMoveUp, onMoveDown, onRemove, busy }: LinkedExerciseCardProps) {
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [testOpen, setTestOpen] = useState(false);
   const title = link.title || exercise?.titre || "Exercice";
 
   return (
@@ -402,14 +405,26 @@ function LinkedExerciseCard({ link, exercise, canMoveUp, canMoveDown, onMoveUp, 
               </div>
             </div>
             {exercise && (
-              <Button variant="outline" size="sm" className="h-7 text-xs gap-1 shrink-0" onClick={() => setPreviewOpen(true)}>
-                <Eye className="h-3 w-3" /> Voir
-              </Button>
+              <div className="flex items-center gap-2 shrink-0">
+                <Button variant="outline" size="sm" className="h-7 text-xs gap-1" onClick={() => setPreviewOpen(true)}>
+                  <Eye className="h-3 w-3" /> Voir
+                </Button>
+                <Button variant="default" size="sm" className="h-7 text-xs gap-1" onClick={() => setTestOpen(true)}>
+                  <FlaskConical className="h-3 w-3" /> Tester
+                </Button>
+              </div>
             )}
           </div>
         </CardHeader>
       </Card>
       {exercise && <ExercisePreviewDialog exerciseId={exercise.id} open={previewOpen} onOpenChange={setPreviewOpen} />}
+      {exercise && (
+        <ExerciseInteractiveTestDialog
+          exerciseId={exercise.id}
+          open={testOpen}
+          onOpenChange={setTestOpen}
+        />
+      )}
     </div>
   );
 }
