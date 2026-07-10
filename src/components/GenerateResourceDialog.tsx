@@ -100,6 +100,12 @@ export default function GenerateResourceDialog({
   const [eleves, setEleves] = useState<any[]>([]);
   const [groupes, setGroupes] = useState<any[]>([]);
 
+  const resolvedLevel = resolveCaptcfDocumentLevel(
+    primaryExercise?.niveau_vise || (session as any)?.niveau_cible || "A1",
+  );
+  const levelProfile = getCaptcfLevelProfileSummary(resolvedLevel);
+
+
   // Load eleves and groupes when needed
   useEffect(() => {
     if (!user || step !== "assign") return;
