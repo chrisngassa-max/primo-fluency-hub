@@ -1075,7 +1075,7 @@ const SessionPilot = () => {
             difficulte: duplicateDifficulty,
             contenu: generated.contenu || {},
             animation_guide: generated.animation_guide || null,
-            niveau_vise: duplicateNiveauVise,
+            niveau_vise: ex.niveau_vise || session.niveau_cible || "A1",
             formateur_id: user.id,
             point_a_maitriser_id: ex.point_a_maitriser_id || defaultPoint?.id,
             is_ai_generated: true,
