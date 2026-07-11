@@ -109,6 +109,42 @@ function getDialogueAudioText(html: string): string {
 // pédagogiques seedés (fiche_formateur, corrigé, etc.).
 const DELETABLE_TYPES = new Set<SessionDocumentType>(BLANK_DOCUMENT_TYPES);
 
+interface PositionPickerProps {
+  currentPosition: number;
+  totalPositions: number;
+  disabled?: boolean;
+  onMoveToPosition: (position: number) => void;
+}
+
+function PositionPicker({ currentPosition, totalPositions, disabled, onMoveToPosition }: PositionPickerProps) {
+  if (totalPositions <= 1) {
+    return (
+      <span className="rounded-md border px-2 py-1 text-[11px] text-muted-foreground">
+        {currentPosition} / {totalPositions}
+      </span>
+    );
+  }
+
+  return (
+    <label className="flex items-center gap-1 text-[11px] text-muted-foreground">
+      Position
+      <select
+        className="h-6 rounded-md border bg-background px-1.5 text-[11px] text-foreground disabled:opacity-50"
+        value={currentPosition}
+        disabled={disabled}
+        onChange={(event) => onMoveToPosition(Number(event.target.value))}
+        title={`Position ${currentPosition} sur ${totalPositions}`}
+      >
+        {Array.from({ length: totalPositions }, (_, index) => index + 1).map((position) => (
+          <option key={position} value={position}>
+            {position} / {totalPositions}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
 interface DocumentEditorCardProps {
   doc: SessionDocument;
   onSaved: () => void;
@@ -116,6 +152,9 @@ interface DocumentEditorCardProps {
   canMoveDown: boolean;
   onMoveUp: () => void;
   onMoveDown: () => void;
+  onMoveToPosition: (position: number) => void;
+  currentPosition: number;
+  totalPositions: number;
   onInsert: (position: "before" | "after", action: RichInsertAction) => void;
   onDelete: () => void;
   busy: boolean;
@@ -128,6 +167,9 @@ function DocumentEditorCard({
   canMoveDown,
   onMoveUp,
   onMoveDown,
+  onMoveToPosition,
+  currentPosition,
+  totalPositions,
   onInsert,
   onDelete,
   busy,
@@ -192,6 +234,12 @@ function DocumentEditorCard({
         >
           <ArrowDown className="h-3 w-3" />
         </Button>
+        <PositionPicker
+          currentPosition={currentPosition}
+          totalPositions={totalPositions}
+          disabled={busy}
+          onMoveToPosition={onMoveToPosition}
+        />
         <Popover>
           <PopoverTrigger asChild>
             <Button variant="ghost" size="sm" className="h-6 text-[11px] gap-1 px-2 text-muted-foreground" disabled={busy}>
@@ -397,11 +445,14 @@ interface LinkedExerciseCardProps {
   canMoveDown: boolean;
   onMoveUp: () => void;
   onMoveDown: () => void;
+  onMoveToPosition: (position: number) => void;
+  currentPosition: number;
+  totalPositions: number;
   onRemove: () => void;
   busy: boolean;
 }
 
-function LinkedExerciseCard({ link, exercise, canMoveUp, canMoveDown, onMoveUp, onMoveDown, onRemove, busy }: LinkedExerciseCardProps) {
+function LinkedExerciseCard({ link, exercise, canMoveUp, canMoveDown, onMoveUp, onMoveDown, onMoveToPosition, currentPosition, totalPositions, onRemove, busy }: LinkedExerciseCardProps) {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [testOpen, setTestOpen] = useState(false);
   const title = link.title || exercise?.titre || "Exercice";
@@ -415,6 +466,12 @@ function LinkedExerciseCard({ link, exercise, canMoveUp, canMoveDown, onMoveUp, 
         <Button variant="outline" size="icon" className="h-6 w-6 shrink-0" disabled={!canMoveDown || busy} onClick={onMoveDown} title="Descendre">
           <ArrowDown className="h-3 w-3" />
         </Button>
+        <PositionPicker
+          currentPosition={currentPosition}
+          totalPositions={totalPositions}
+          disabled={busy}
+          onMoveToPosition={onMoveToPosition}
+        />
         <Button
           variant="ghost"
           size="sm"
@@ -496,13 +553,16 @@ interface ImportedFileCardProps {
   canMoveDown: boolean;
   onMoveUp: () => void;
   onMoveDown: () => void;
+  onMoveToPosition: (position: number) => void;
+  currentPosition: number;
+  totalPositions: number;
   onRemove: () => void;
   onAssign: (audience: SessionDocumentAudience) => void;
   onTransformPdf?: (link: SessionDocumentLink) => void;
   busy: boolean;
 }
 
-function ImportedFileCard({ link, canMoveUp, canMoveDown, onMoveUp, onMoveDown, onRemove, onAssign, onTransformPdf, busy }: ImportedFileCardProps) {
+function ImportedFileCard({ link, canMoveUp, canMoveDown, onMoveUp, onMoveDown, onMoveToPosition, currentPosition, totalPositions, onRemove, onAssign, onTransformPdf, busy }: ImportedFileCardProps) {
   const [opening, setOpening] = useState(false);
   const meta = link.metadata as unknown as Partial<ImportedFileMetadata>;
   const title = link.title || meta.original_filename || "Fichier importé";
@@ -527,6 +587,12 @@ function ImportedFileCard({ link, canMoveUp, canMoveDown, onMoveUp, onMoveDown, 
         <Button variant="outline" size="icon" className="h-6 w-6 shrink-0" disabled={!canMoveDown || busy} onClick={onMoveDown} title="Descendre">
           <ArrowDown className="h-3 w-3" />
         </Button>
+        <PositionPicker
+          currentPosition={currentPosition}
+          totalPositions={totalPositions}
+          disabled={busy}
+          onMoveToPosition={onMoveToPosition}
+        />
         {link.audience !== "formateur" && (
           <Button variant="ghost" size="sm" className="h-6 text-[11px] gap-1 px-2" disabled={busy} onClick={() => onAssign("formateur")} title="Affecter à Formateur">
             <GraduationCap className="h-3 w-3" /> Formateur
@@ -598,18 +664,19 @@ function ImportedFileCard({ link, canMoveUp, canMoveDown, onMoveUp, onMoveDown, 
 }
 
 interface SessionDocumentsPanelProps {
-  /** Items déjà filtrés (audience) et triés (display_order global fusionné) pour cet onglet. */
+  /** Items deja filtres (audience) et tries (display_order global fusionne) pour cet onglet. */
   items: SessionFlowItem[];
-  /** Message affiché quand la liste (filtrée) est vide. */
+  /** Message affiche quand la liste filtree est vide. */
   emptyMessage: string;
   onSaved: () => void;
   onMove: (item: SessionFlowItem, direction: "up" | "down") => void;
+  onMoveToPosition: (item: SessionFlowItem, position: number) => void;
   onInsert: (referenceDoc: SessionDocument, position: "before" | "after", action: RichInsertAction) => void;
   onDelete: (doc: SessionDocument) => void;
   onRemoveLink: (link: SessionDocumentLink) => void;
   onAssignLinkAudience: (link: SessionDocumentLink, audience: SessionDocumentAudience) => void;
   onTransformPdf?: (link: SessionDocumentLink) => void;
-  /** true pendant un déplacement/insertion/suppression en cours (désactive les boutons). */
+  /** true pendant un deplacement/insertion/suppression en cours (desactive les boutons). */
   busy: boolean;
 }
 
@@ -618,6 +685,7 @@ export function SessionDocumentsPanel({
   emptyMessage,
   onSaved,
   onMove,
+  onMoveToPosition,
   onInsert,
   onDelete,
   onRemoveLink,
@@ -649,6 +717,9 @@ export function SessionDocumentsPanel({
               canMoveDown={index < items.length - 1}
               onMoveUp={() => onMove(item, "up")}
               onMoveDown={() => onMove(item, "down")}
+              onMoveToPosition={(position) => onMoveToPosition(item, position)}
+              currentPosition={index + 1}
+              totalPositions={items.length}
               onInsert={(position, action) => onInsert(item.document, position, action)}
               onDelete={() => onDelete(item.document)}
               busy={busy}
@@ -665,6 +736,9 @@ export function SessionDocumentsPanel({
               canMoveDown={index < items.length - 1}
               onMoveUp={() => onMove(item, "up")}
               onMoveDown={() => onMove(item, "down")}
+              onMoveToPosition={(position) => onMoveToPosition(item, position)}
+              currentPosition={index + 1}
+              totalPositions={items.length}
               onRemove={() => onRemoveLink(item.link)}
               busy={busy}
             />
@@ -678,6 +752,9 @@ export function SessionDocumentsPanel({
             canMoveDown={index < items.length - 1}
             onMoveUp={() => onMove(item, "up")}
             onMoveDown={() => onMove(item, "down")}
+            onMoveToPosition={(position) => onMoveToPosition(item, position)}
+            currentPosition={index + 1}
+            totalPositions={items.length}
             onRemove={() => onRemoveLink(item.link)}
             onAssign={(audience) => onAssignLinkAudience(item.link, audience)}
             onTransformPdf={onTransformPdf}

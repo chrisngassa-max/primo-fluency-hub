@@ -45,6 +45,12 @@ type InsertTarget = { audience: SessionDocumentAudience; insertionIndex: number 
 // audience='both' est visible à la fois dans Formateur et Apprenant ;
 // l'ordre global (display_order fusionné documents + liens) reste le
 // même dans les deux vues.
+
+function sameFlowItem(a: SessionFlowItem, b: SessionFlowItem): boolean {
+  if (a.kind !== b.kind) return false;
+  return a.kind === "document" ? a.document.id === (b as Extract<SessionFlowItem, { kind: "document" }>).document.id : a.link.id === (b as Extract<SessionFlowItem, { kind: "link" }>).link.id;
+}
+
 function matchesTab(item: SessionFlowItem, tab: AudienceTab): boolean {
   if (tab === "staging") return item.audience === "staging";
   if (tab === "formateur") return item.audience === "formateur" || item.audience === "both";
@@ -118,19 +124,41 @@ const SessionDocumentsPage = () => {
   }
 
   async function handleMove(item: SessionFlowItem, direction: "up" | "down", visibleList: SessionFlowItem[]) {
-    const index = visibleList.findIndex((it) =>
-      it.kind === "document" && item.kind === "document"
-        ? it.document.id === item.document.id
-        : it.kind === "link" && item.kind === "link"
-          ? it.link.id === item.link.id
-          : false,
-    );
+    const index = visibleList.findIndex((it) => sameFlowItem(it, item));
     const neighbor = visibleList[direction === "up" ? index - 1 : index + 1];
     if (!neighbor) return;
     setBusy(true);
     try {
       await swapSessionFlowOrder(toFlowRef(item), toFlowRef(neighbor));
       invalidate();
+    } catch (e: any) {
+      toast.error("Erreur", { description: e.message });
+    } finally {
+      setBusy(false);
+    }
+  }
+
+
+  async function handleMoveToPosition(item: SessionFlowItem, targetPosition: number, visibleList: SessionFlowItem[]) {
+    const currentIndex = visibleList.findIndex((it) => sameFlowItem(it, item));
+    const targetIndex = targetPosition - 1;
+    if (currentIndex < 0 || targetIndex < 0 || targetIndex >= visibleList.length || currentIndex === targetIndex) return;
+
+    const reorderedVisible = [...visibleList];
+    const [moved] = reorderedVisible.splice(currentIndex, 1);
+    reorderedVisible.splice(targetIndex, 0, moved);
+
+    const visibleQueue = [...reorderedVisible];
+    const reorderedAll = allFlowItems.map((flowItem) => {
+      const isVisibleSlot = visibleList.some((visibleItem) => sameFlowItem(visibleItem, flowItem));
+      return isVisibleSlot ? visibleQueue.shift()! : flowItem;
+    });
+
+    setBusy(true);
+    try {
+      await reorderSessionFlow(reorderedAll.map(toFlowRef));
+      invalidate();
+      toast.success("Position mise a jour : " + targetPosition + " / " + visibleList.length + ".");
     } catch (e: any) {
       toast.error("Erreur", { description: e.message });
     } finally {
@@ -477,6 +505,7 @@ const SessionDocumentsPage = () => {
               emptyMessage="Aucun document formateur pour l'instant."
               onSaved={invalidate}
               onMove={(item, dir) => handleMove(item, dir, formateurItems)}
+              onMoveToPosition={(item, position) => handleMoveToPosition(item, position, formateurItems)}
               onInsert={(doc, pos, type) => handleInsertRelative("formateur", doc, pos, type)}
               onDelete={handleDelete}
               onRemoveLink={handleRemoveLink}
@@ -493,6 +522,7 @@ const SessionDocumentsPage = () => {
               emptyMessage="Aucun document apprenant pour l'instant."
               onSaved={invalidate}
               onMove={(item, dir) => handleMove(item, dir, apprenantItems)}
+              onMoveToPosition={(item, position) => handleMoveToPosition(item, position, apprenantItems)}
               onInsert={(doc, pos, type) => handleInsertRelative("apprenant", doc, pos, type)}
               onDelete={handleDelete}
               onRemoveLink={handleRemoveLink}
@@ -521,6 +551,7 @@ const SessionDocumentsPage = () => {
               emptyMessage="Les PDF, Word, images ou exercices ajoutés apparaîtront ici avant classement."
               onSaved={invalidate}
               onMove={(item, dir) => handleMove(item, dir, stagingItems)}
+              onMoveToPosition={(item, position) => handleMoveToPosition(item, position, stagingItems)}
               onInsert={(doc, pos, type) => handleInsertRelative("staging", doc, pos, type)}
               onDelete={handleDelete}
               onRemoveLink={handleRemoveLink}
