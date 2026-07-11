@@ -12,6 +12,7 @@ export default defineConfig({
       "src/**/*.{test,spec}.{ts,tsx}",
       "supabase/functions/**/*.{test,spec}.ts",
       "scripts/lib/**/*.{test,spec}.mjs",
+      "scripts/curriculum/lib/**/*.{test,spec}.mjs",
     ],
   },
   resolve: {

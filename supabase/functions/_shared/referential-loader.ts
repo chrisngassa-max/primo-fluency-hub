@@ -13,6 +13,7 @@ import sessionBlockRulesData from "./referential/session_block_rules.json" with 
 import themeSessionTemplatesData from "./referential/theme_session_templates.json" with { type: "json" };
 import clusterVariantRulesData from "./referential/cluster_variant_rules.json" with { type: "json" };
 import exerciseScoringRulesData from "./referential/exercise_scoring_rules.json" with { type: "json" };
+import differentiationTransformationRulesData from "./referential/differentiation_transformation_rules_v1.json" with { type: "json" };
 
 export type NiveauBand = "A0_A1" | "A2_B1" | "B2";
 export type PilierId = "conjugaison" | "grammaire" | "phonetique" | "vocabulaire";
@@ -20,6 +21,20 @@ export type TypeDemarche = "titre_sejour" | "naturalisation";
 export type ProgressionMode = "demarrage" | "remediation" | "consolide" | "augmente";
 export type ClusterVariantId = "bas" | "standard" | "haut";
 export type EtayageLevel = "fort" | "moyen" | "faible";
+
+export type DifferentiationLevel = "A1" | "A2" | "B1" | "B2";
+
+export interface DifferentiationTransformationRule {
+  operation: string;
+  allowed: string[];
+  forbidden: string[];
+}
+
+export interface DifferentiationContractValidation {
+  valid: boolean;
+  errors: string[];
+  warnings: string[];
+}
 
 export interface PedagogicalRule {
   id: string;
@@ -170,6 +185,19 @@ const clusterVariantRules =
   });
 const exerciseScoringRules =
   (exerciseScoringRulesData as { scoring_rules: ScoringRule[]; hard_filters: HardFilter[] });
+
+const differentiationTransformationRules = differentiationTransformationRulesData as {
+  version: string;
+  status: string;
+  levels: DifferentiationLevel[];
+  principles: Record<string, boolean>;
+  transformations: Record<string, DifferentiationTransformationRule>;
+  validation: {
+    blocking: string[];
+    warning: string[];
+    informative: string[];
+  };
+};
 
 export function niveauToBand(niveauCecrl?: string | null): NiveauBand {
   const n = (niveauCecrl ?? "A1").toUpperCase();
@@ -470,6 +498,91 @@ export function inferThemeFromText(text: string): ThemeSessionTemplate | null {
 
 export function getClusterVariantRules(): typeof clusterVariantRules {
   return clusterVariantRules;
+}
+
+export function normalizeDifferentiationLevel(niveau?: string | null): DifferentiationLevel {
+  const normalized = String(niveau ?? "A2").trim().toUpperCase();
+  if (normalized.startsWith("B2")) return "B2";
+  if (normalized.startsWith("B1")) return "B1";
+  if (normalized.startsWith("A2")) return "A2";
+  return "A1";
+}
+
+export function getDifferentiationTransformationRule(
+  sourceLevel: string,
+  targetLevel: string,
+): { id: string; rule: DifferentiationTransformationRule } | null {
+  const source = normalizeDifferentiationLevel(sourceLevel);
+  const target = normalizeDifferentiationLevel(targetLevel);
+  if (source === target) {
+    return {
+      id: "IDENTITY",
+      rule: { operation: "conserver", allowed: [], forbidden: ["add_fact", "change_competence"] },
+    };
+  }
+  const id = `${source}_TO_${target}`;
+  const rule = differentiationTransformationRules.transformations[id];
+  return rule ? { id, rule } : null;
+}
+
+export function formatDifferentiationTransformationPrompt(
+  sourceLevel: string,
+  targetLevel: string,
+  competence: string,
+): string {
+  const source = normalizeDifferentiationLevel(sourceLevel);
+  const target = normalizeDifferentiationLevel(targetLevel);
+  const resolved = getDifferentiationTransformationRule(source, target);
+  if (!resolved) {
+    return `CONTRAT DIFFERENCIATION: transformation ${source}->${target} non supportee.`;
+  }
+  return [
+    "CONTRAT DIFFERENCIATION V1 (CONTRAIGNANT):",
+    `- niveau_source: ${source}`,
+    `- niveau_cible: ${target}`,
+    `- competence_invariante: ${competence}`,
+    `- transformation_id: ${resolved.id}`,
+    `- operation: ${resolved.rule.operation}`,
+    `- transformations_autorisees: ${resolved.rule.allowed.join(", ") || "conserver"}`,
+    `- transformations_interdites: ${resolved.rule.forbidden.join(", ")}`,
+    "- Ne jamais changer la competence, l'objectif, la tache noyau ou les faits du support.",
+    "- Si le support ne permet pas l'operation demandee, signaler DIFF_TRANSFORMATION_NOT_SUPPORTED.",
+    "- B2 signifie davantage de nuance/autonomie/implicite disponible, pas seulement plus d'items.",
+    "- A1 simplifie l'acces sans infantiliser la situation adulte.",
+  ].join("\n");
+}
+
+export function validateDifferentiationVariantContract(input: {
+  variant: Record<string, unknown>;
+  sourceLevel: string;
+  targetLevel: string;
+  competence: string;
+}): DifferentiationContractValidation {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+  const resolved = getDifferentiationTransformationRule(input.sourceLevel, input.targetLevel);
+  if (!resolved) errors.push("DIFF_TRANSFORMATION_NOT_SUPPORTED");
+
+  const variant = input.variant ?? {};
+  const exercise = (variant.exercice ?? variant) as Record<string, unknown>;
+  const common = (variant.tronc_commun ?? {}) as Record<string, unknown>;
+  const generatedCompetences = [exercise.competence, common.competence]
+    .filter((value): value is string => typeof value === "string" && value.trim().length > 0);
+  if (generatedCompetences.some((value) => value !== input.competence)) {
+    errors.push("DIFF_COMPETENCE_CHANGED");
+  }
+
+  const declared = (variant.differentiation_contract ?? {}) as Record<string, unknown>;
+  if (declared.transformation_id && declared.transformation_id !== resolved?.id) {
+    errors.push("DIFF_TRANSFORMATION_UNDECLARED");
+  }
+  if (!declared.transformation_id) warnings.push("DIFF_TRANSFORMATION_UNDECLARED");
+
+  return { valid: errors.length === 0, errors, warnings };
+}
+
+export function getDifferentiationTransformationRules(): typeof differentiationTransformationRules {
+  return differentiationTransformationRules;
 }
 
 export function assignClusterVariant(

@@ -11,6 +11,10 @@ import {
   assignClusterVariant,
   deriveFormatsForCluster,
   formatReferentialPromptBlock,
+  formatDifferentiationTransformationPrompt,
+  getDifferentiationTransformationRule,
+  normalizeDifferentiationLevel,
+  validateDifferentiationVariantContract,
   getClusterVariantRules,
   getSessionMinimumsForDuration,
   getEnrichedSession,
@@ -18,6 +22,7 @@ import {
   inferThemeFromText,
   resolvePlanCadreThemeId,
   type ClusterVariantId,
+  type DifferentiationLevel,
   type ThemeSessionTemplate,
 } from "../_shared/referential-loader.ts";
 
@@ -31,6 +36,7 @@ const corsHeaders = {
 
 interface DifferentiationCluster {
   key: string;
+  target_level: DifferentiationLevel;
   cluster_id: ClusterVariantId;
   niveau_variante: PedagogicalDirectives["niveau_variante"];
   niveau_etayage: PedagogicalDirectives["niveau_etayage"];
@@ -41,22 +47,20 @@ interface DifferentiationCluster {
   eleve_ids: string[];
 }
 
-function mergeClustersToMaxThree(clusters: DifferentiationCluster[]): DifferentiationCluster[] {
-  const maxClusters = getClusterVariantRules().max_clusters_per_session ?? 3;
+function mergeClustersToConfiguredMax(clusters: DifferentiationCluster[]): DifferentiationCluster[] {
+  const maxClusters = getClusterVariantRules().max_clusters_per_session ?? 4;
   if (clusters.length <= maxClusters) return clusters;
 
-  const byVariant = new Map<ClusterVariantId, DifferentiationCluster>();
+  const byTargetLevel = new Map<DifferentiationLevel, DifferentiationCluster>();
   for (const cluster of clusters) {
-    const variant = cluster.niveau_variante;
-    if (!byVariant.has(variant)) {
-      byVariant.set(variant, { ...cluster, eleve_ids: [...cluster.eleve_ids] });
+    if (!byTargetLevel.has(cluster.target_level)) {
+      byTargetLevel.set(cluster.target_level, { ...cluster, eleve_ids: [...cluster.eleve_ids] });
     } else {
-      byVariant.get(variant)!.eleve_ids.push(...cluster.eleve_ids);
+      byTargetLevel.get(cluster.target_level)!.eleve_ids.push(...cluster.eleve_ids);
     }
   }
-  return Array.from(byVariant.values()).slice(0, maxClusters);
+  return Array.from(byTargetLevel.values()).slice(0, maxClusters);
 }
-
 function summarizeExercise(exercise: any): string {
   return String(exercise?.titre || exercise?.exercice?.consigne || exercise?.consigne || "Variante").slice(0, 140);
 }
@@ -66,20 +70,38 @@ function normalizeVariantPayload(exercise: any, commonExercise: any, context: {
   objectifs?: string;
   competence: string;
   niveau: string;
+  sourceLevel: DifferentiationLevel;
+  targetLevel: DifferentiationLevel;
+  transformationId: string;
   directives: PedagogicalDirectives;
 }) {
+  const differentiationContract = {
+    schema_version: "1.0",
+    source_level: context.sourceLevel,
+    target_level: context.targetLevel,
+    competence_invariante: context.competence,
+    transformation_id: context.transformationId,
+  };
+
   if (exercise?.support && exercise?.exercice && exercise?.attendus) {
     return {
       ...exercise,
-      tronc_commun: exercise.tronc_commun ?? {
-        objectif: context.objectifs || context.titre,
-        theme: context.titre,
+      tronc_commun: {
+        ...(exercise.tronc_commun ?? {}),
+        objectif: exercise.tronc_commun?.objectif ?? context.objectifs ?? context.titre,
+        theme: exercise.tronc_commun?.theme ?? context.titre,
         competence: context.competence,
       },
+      exercice: {
+        ...exercise.exercice,
+        competence: context.competence,
+      },
+      differentiation_contract: differentiationContract,
     };
   }
 
   return {
+    differentiation_contract: differentiationContract,
     tronc_commun: {
       objectif: context.objectifs || context.titre,
       theme: context.titre,
@@ -517,6 +539,7 @@ Utilise le tool fourni pour retourner le résultat.` + QA_REVIEW_BLOCK;
       targetCompetence,
     });
 
+    const sourceLevel = normalizeDifferentiationLevel(niveau);
     const clusterMap = new Map<string, DifferentiationCluster>();
     for (const eleveId of eligibleEleveIds) {
       const profile = progressionProfiles[eleveId];
@@ -527,8 +550,9 @@ Utilise le tool fourni pour retourner le résultat.` + QA_REVIEW_BLOCK;
         directives.niveau_variante,
       );
       const clusterId = clusterVariant?.id ?? directives.niveau_variante;
-      const key = clusterId;
-      const targetComp = directives.competence_cible ?? targetCompetence ?? "CE";
+      const targetLevel = normalizeDifferentiationLevel(profile.profile?.niveau_actuel ?? niveau);
+      const key = `${clusterId}:${targetLevel}`;
+      const targetComp = targetCompetence ?? directives.competence_cible ?? "CE";
       const formatDerivation = deriveFormatsForCluster(
         profile.profile?.niveau_actuel ?? niveau,
         directives.niveau_variante,
@@ -539,6 +563,7 @@ Utilise le tool fourni pour retourner le résultat.` + QA_REVIEW_BLOCK;
       if (!clusterMap.has(key)) {
         clusterMap.set(key, {
           key,
+          target_level: targetLevel,
           cluster_id: clusterId,
           niveau_variante: directives.niveau_variante,
           niveau_etayage: directives.niveau_etayage,
@@ -552,7 +577,7 @@ Utilise le tool fourni pour retourner le résultat.` + QA_REVIEW_BLOCK;
       clusterMap.get(key)!.eleve_ids.push(eleveId);
     }
 
-    let clusters = mergeClustersToMaxThree(Array.from(clusterMap.values()));
+    const clusters = mergeClustersToConfiguredMax(Array.from(clusterMap.values()));
     if (clusters.length > 8) {
       return new Response(
         JSON.stringify({ error: "too_many_clusters", clusters: clusters.length }),
@@ -566,6 +591,24 @@ Utilise le tool fourni pour retourner le résultat.` + QA_REVIEW_BLOCK;
 
     for (const cluster of clusters) {
       const directivesBlock = formatPedagogicalDirectives(cluster.directives);
+      const clusterCompetence = targetCompetence ?? cluster.competence_cible ?? "CE";
+      const transformation = getDifferentiationTransformationRule(sourceLevel, cluster.target_level);
+      if (!transformation) {
+        return new Response(
+          JSON.stringify({
+            error: "DIFF_TRANSFORMATION_NOT_SUPPORTED",
+            source_level: sourceLevel,
+            target_level: cluster.target_level,
+          }),
+          { status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
+      const differentiationContractBlock = formatDifferentiationTransformationPrompt(
+        sourceLevel,
+        cluster.target_level,
+        clusterCompetence,
+      );
+      const clusterReferentialBlock
       const clusterReferentialBlock = formatReferentialPromptBlock({
         theme: themeTemplate,
         dureeMinutes: duree,
@@ -588,6 +631,8 @@ FORMATS AUTORISES POUR CE CLUSTER: ${cluster.formats_autorises.join(", ")}
 
 ${clusterReferentialBlock}
 
+${differentiationContractBlock}
+
 DIRECTIVES DU CLUSTER:
 ${directivesBlock}
 
@@ -600,6 +645,7 @@ Chaque variante doit contenir:
 - support: type, contenu, aides_lexicales, longueur, niveau_lisible
 - exercice: titre, consigne, format, competence, difficulte, contenu, nombre_items, type_questions
 - attendus: production_minimale, niveau_autonomie, criteres_reussite
+- differentiation_contract: schema_version, source_level, target_level, competence_invariante, transformation_id
 Ne cree pas une activite differente: differencie le chemin d'acces.
 Si le support.contenu change, il doit rester une version etayee du support commun, pas un nouveau support.`;
 
@@ -607,7 +653,7 @@ Si le support.contenu change, il doit rester une version etayee du support commu
         model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: variantPrompt + QA_REVIEW_BLOCK },
-          { role: "user", content: `Genere les variantes pour le cluster ${cluster.niveau_variante}/${cluster.niveau_etayage}.` },
+          { role: "user", content: `Genere les variantes pour le niveau CECRL ${cluster.target_level}, cluster ${cluster.niveau_variante}/${cluster.niveau_etayage}, transformation ${transformation.id}.` },
         ],
         tools: [
           {
@@ -623,12 +669,13 @@ Si le support.contenu change, il doit rester une version etayee du support commu
                     items: {
                       type: "object",
                       properties: {
+                        differentiation_contract: { type: "object" },
                         tronc_commun: { type: "object" },
                         support: { type: "object" },
                         exercice: { type: "object" },
                         attendus: { type: "object" },
                       },
-                      required: ["support", "exercice", "attendus"],
+                      required: ["differentiation_contract", "support", "exercice", "attendus"],
                     },
                   },
                 },
@@ -649,7 +696,27 @@ Si le support.contenu change, il doit rester une version etayee du support commu
       for (let index = 0; index < exercices.length; index++) {
         const rawVariant = rawVariants[index] ?? exercices[index];
         const rawExercise = rawVariant.exercice ?? rawVariant;
-        const validated = await validateAndFix(rawExercise, { niveau });
+        const expectedCompetence = exercices[index]?.competence || targetCompetence || "CE";
+        const rawContractValidation = validateDifferentiationVariantContract({
+          variant: rawVariant,
+          sourceLevel,
+          targetLevel: cluster.target_level,
+          competence: expectedCompetence,
+        });
+        if (!rawContractValidation.valid) {
+          return new Response(
+            JSON.stringify({
+              error: "differentiation_contract_failed",
+              codes: rawContractValidation.errors,
+              warnings: rawContractValidation.warnings,
+              exercice_index: index,
+              source_level: sourceLevel,
+              target_level: cluster.target_level,
+            }),
+            { status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+          );
+        }
+        const validated = await validateAndFix(rawExercise, { niveau: cluster.target_level });
         const safeExercise = validated?.exercise ? { ...rawExercise, ...validated.exercise } : rawExercise;
         const variant = normalizeVariantPayload(
           { ...rawVariant, exercice: safeExercise },
@@ -657,8 +724,11 @@ Si le support.contenu change, il doit rester une version etayee du support commu
           {
             titre,
             objectifs,
-            competence: exercices[index]?.competence || targetCompetence || "CE",
-            niveau,
+            competence: expectedCompetence,
+            niveau: cluster.target_level,
+            sourceLevel,
+            targetLevel: cluster.target_level,
+            transformationId: transformation.id,
             directives: cluster.directives,
           },
         );
@@ -695,6 +765,9 @@ Si le support.contenu change, il doit rester une version etayee du support commu
       for (const eleveId of cluster.eleve_ids) {
         variantsPerEleve[eleveId] = {
           niveau_variante: cluster.niveau_variante,
+          target_level: cluster.target_level,
+          source_level: sourceLevel,
+          transformation_id: getDifferentiationTransformationRule(sourceLevel, cluster.target_level)?.id ?? null,
           niveau_etayage: cluster.niveau_etayage,
           mode_adaptation: cluster.mode_adaptation,
           exercices: normalizedVariants,
@@ -741,6 +814,9 @@ Si le support.contenu change, il doit rester une version etayee du support commu
         clusters: clusters.map((cluster) => ({
           cluster_id: cluster.cluster_id,
           niveau_variante: cluster.niveau_variante,
+          target_level: cluster.target_level,
+          source_level: sourceLevel,
+          transformation_id: getDifferentiationTransformationRule(sourceLevel, cluster.target_level)?.id ?? null,
           niveau_etayage: cluster.niveau_etayage,
           mode_adaptation: cluster.mode_adaptation,
           formats_autorises: cluster.formats_autorises,

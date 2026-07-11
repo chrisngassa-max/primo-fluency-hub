@@ -1,0 +1,211 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://captcf.fr/schemas/differentiation-family-v1.schema.json",
+  "title": "CapTCF Differentiation Family Contract V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "family_id", "version", "status", "competence", "subcompetence", "objective", "core_task", "source_level", "source_document", "facts", "level_contracts", "variants", "validation_report"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "family_id": { "type": "string", "pattern": "^[A-Z0-9][A-Z0-9_-]{5,79}$" },
+    "version": { "type": "integer", "minimum": 1 },
+    "status": { "enum": ["draft", "review", "validated", "published", "archived"] },
+    "competence": { "$ref": "#/definitions/competence" },
+    "subcompetence": { "type": "string", "minLength": 2, "maxLength": 120 },
+    "objective": { "type": "string", "minLength": 5, "maxLength": 500 },
+    "core_task": { "type": "string", "minLength": 5, "maxLength": 500 },
+    "source_level": { "$ref": "#/definitions/level" },
+    "session_role": { "enum": ["variation", "differentiation", "remediation", "consolidation", "extension"] },
+    "source_document": { "$ref": "#/definitions/sourceDocument" },
+    "facts": { "$ref": "#/definitions/facts" },
+    "level_contracts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["A1", "A2", "B1", "B2"],
+      "properties": {
+        "A1": { "$ref": "#/definitions/levelContract" },
+        "A2": { "$ref": "#/definitions/levelContract" },
+        "B1": { "$ref": "#/definitions/levelContract" },
+        "B2": { "$ref": "#/definitions/levelContract" }
+      }
+    },
+    "variants": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["A1", "A2", "B1", "B2"],
+      "properties": {
+        "A1": { "$ref": "#/definitions/variant" },
+        "A2": { "$ref": "#/definitions/variant" },
+        "B1": { "$ref": "#/definitions/variant" },
+        "B2": { "$ref": "#/definitions/variant" }
+      }
+    },
+    "extensions": { "type": "array", "items": { "$ref": "#/definitions/extension" }, "default": [] },
+    "generation": { "$ref": "#/definitions/generation" },
+    "validation_report": { "$ref": "#/definitions/validationReport" }
+  },
+  "definitions": {
+    "level": { "enum": ["A1", "A2", "B1", "B2"] },
+    "competence": { "enum": ["CO", "CE", "EE", "EO", "Structures"] },
+    "supportMode": { "enum": ["source", "annotated", "segmented", "excerpted", "didacticized"] },
+    "guidance": { "enum": ["fort", "moyen", "faible", "a_la_demande"] },
+    "autonomy": { "enum": ["faible", "moyenne", "forte", "tres_forte"] },
+    "sourceDocument": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source_document_id", "uri", "content_hash", "immutable", "provenance"],
+      "properties": {
+        "source_document_id": { "type": "string", "minLength": 3 },
+        "uri": { "type": "string", "minLength": 3 },
+        "content_hash": { "type": "string", "pattern": "^sha256:[a-fA-F0-9]{64}$" },
+        "immutable": { "const": true },
+        "provenance": {
+          "type": "object", "additionalProperties": false,
+          "required": ["type", "version"],
+          "properties": {
+            "type": { "enum": ["official", "curriculum", "licensed", "authored"] },
+            "version": { "type": ["string", "integer"] },
+            "source_url": { "type": "string" },
+            "effective_from": { "type": ["string", "null"], "format": "date" },
+            "effective_to": { "type": ["string", "null"], "format": "date" },
+            "verified_at": { "type": ["string", "null"], "format": "date" }
+          }
+        }
+      }
+    },
+    "fact": {
+      "type": "object", "additionalProperties": false,
+      "required": ["fact_id", "subject", "predicate", "object"],
+      "properties": {
+        "fact_id": { "type": "string", "minLength": 2 },
+        "subject": { "type": "string", "minLength": 1 },
+        "predicate": { "type": "string", "minLength": 1 },
+        "object": {},
+        "qualifiers": { "type": "object" },
+        "required_for_task": { "type": "boolean", "default": true }
+      }
+    },
+    "facts": {
+      "type": "object", "additionalProperties": false,
+      "required": ["required", "facts_hash"],
+      "properties": {
+        "required": { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/fact" } },
+        "facts_hash": { "type": "string", "pattern": "^sha256:[a-fA-F0-9]{64}$" }
+      }
+    },
+    "levelContract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["target_level", "cognitive_operations", "guidance", "autonomy", "allowed_formats", "forbidden_formats", "scaffolds", "success_criteria", "duration_policy"],
+      "properties": {
+        "target_level": { "$ref": "#/definitions/level" },
+        "cognitive_operations": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "guidance": { "$ref": "#/definitions/guidance" },
+        "autonomy": { "$ref": "#/definitions/autonomy" },
+        "allowed_formats": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "forbidden_formats": { "type": "array", "items": { "type": "string" } },
+        "scaffolds": { "type": "array", "items": { "type": "string" } },
+        "success_criteria": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "audio_policy": {
+          "type": ["object", "null"], "additionalProperties": false,
+          "properties": {
+            "max_listens": { "type": ["integer", "null"], "minimum": 1 },
+            "transcript": { "enum": ["none", "available", "unlockable", "always"] },
+            "target_seconds": { "type": ["integer", "null"], "minimum": 1 }
+          }
+        },
+        "duration_policy": {
+          "type": "object", "additionalProperties": false,
+          "required": ["mode"],
+          "properties": {
+            "mode": { "enum": ["informative", "warning", "blocking"] },
+            "target_seconds": { "type": ["integer", "null"], "minimum": 1 },
+            "calibration_id": { "type": ["string", "null"] }
+          }
+        }
+      }
+    },
+    "exercise": {
+      "type": "object", "additionalProperties": true,
+      "required": ["title", "instruction", "format", "steps", "items", "expected_output"],
+      "properties": {
+        "title": { "type": "string", "minLength": 2 },
+        "instruction": { "type": "string", "minLength": 2 },
+        "format": { "type": "string", "minLength": 2 },
+        "steps": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "items": { "type": "array" },
+        "expected_output": { "type": "string", "minLength": 2 },
+        "feedback": { "type": ["object", "null"] }
+      }
+    },
+    "variant": {
+      "type": "object", "additionalProperties": false,
+      "required": ["target_level", "competence", "transformation_id", "support_mode", "support_ref", "applied_transformations", "exercise", "scaffolding", "success_criteria"],
+      "properties": {
+        "target_level": { "$ref": "#/definitions/level" },
+        "competence": { "$ref": "#/definitions/competence" },
+        "transformation_id": { "type": "string", "pattern": "^(IDENTITY|[A-Z][0-9]_TO_[A-Z][0-9])$" },
+        "support_mode": { "$ref": "#/definitions/supportMode" },
+        "support_ref": { "type": "string", "minLength": 2 },
+        "derived_support_hash": { "type": ["string", "null"], "pattern": "^sha256:[a-fA-F0-9]{64}$" },
+        "applied_transformations": { "type": "array", "items": { "$ref": "#/definitions/appliedTransformation" } },
+        "exercise": { "$ref": "#/definitions/exercise" },
+        "scaffolding": { "type": "object" },
+        "success_criteria": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+      }
+    },
+    "appliedTransformation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["rule_id", "applied_to"],
+      "properties": {
+        "rule_id": { "type": "string", "minLength": 3 },
+        "applied_to": { "type": "string", "minLength": 1 },
+        "evidence": { "type": ["string", "null"] }
+      }
+    },
+    "extension": {
+      "type": "object", "additionalProperties": false,
+      "required": ["extension_id", "competence", "linked_family_id"],
+      "properties": {
+        "extension_id": { "type": "string" },
+        "competence": { "$ref": "#/definitions/competence" },
+        "linked_family_id": { "type": "string" }
+      }
+    },
+    "generation": {
+      "type": ["object", "null"], "additionalProperties": false,
+      "properties": {
+        "model_id": { "type": ["string", "null"] },
+        "prompt_version": { "type": ["string", "null"] },
+        "generated_at": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "validationRuleResult": {
+      "type": "object", "additionalProperties": false,
+      "required": ["rule_id", "status", "evidence", "errors"],
+      "properties": {
+        "rule_id": { "type": "string", "minLength": 3 },
+        "status": { "enum": ["pass", "warning", "fail", "not_run"] },
+        "evidence": { "type": "array", "items": { "type": "string" } },
+        "errors": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "validationReport": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "rules", "errors", "warnings"],
+      "properties": {
+        "status": { "enum": ["pass", "warning", "fail", "not_run"] },
+        "rules": { "type": "array", "items": { "$ref": "#/definitions/validationRuleResult" } },
+        "errors": { "type": "array", "items": { "type": "string" } },
+        "warnings": { "type": "array", "items": { "type": "string" } },
+        "review": {
+          "type": ["object", "null"], "additionalProperties": false,
+          "properties": {
+            "reviewer_type": { "enum": ["human", "service", "none"] },
+            "reviewer_id": { "type": ["string", "null"] },
+            "reviewed_at": { "type": ["string", "null"], "format": "date-time" },
+            "model_id": { "type": ["string", "null"] }
+          }
+        }
+      }
+    }
+  }
+}
