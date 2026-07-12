@@ -71,6 +71,8 @@ import { activateSessionForStudents, sendSessionExercisesToStudents } from "@/li
 import { DifficultyBadge, mapDifficultyToScale10 } from "@/components/DifficultyBadge";
 import FeuilleAppel from "@/components/FeuilleAppel";
 import LivePilotingSection from "@/components/LivePilotingSection";
+import { SessionPlaylistPanel, type SessionExerciceRow } from "@/components/formateur/SessionPlaylistPanel";
+import ExerciseStudentPreviewDialog from "@/components/ExerciseStudentPreviewDialog";
 import GenerateTargetedExerciseWizard from "@/components/formateur/GenerateTargetedExerciseWizard";
 import ExerciseRecommendationsPanel from "@/components/formateur/ExerciseRecommendationsPanel";
 import { routeExercises, type ExerciseRecommendation } from "@/services/ExerciseRouter";
@@ -153,6 +155,8 @@ const SessionPilot = () => {
   const [duplicateStudentIds, setDuplicateStudentIds] = useState<string[]>([]);
   const [duplicating, setDuplicating] = useState(false);
   const [duplicateDifficulty, setDuplicateDifficulty] = useState<number>(3);
+  const [playlistPreviewRow, setPlaylistPreviewRow] = useState<SessionExerciceRow | null>(null);
+  const [testedPlaylistExerciseIds, setTestedPlaylistExerciseIds] = useState<Set<string>>(new Set());
 
   // Direct send (without duplication) — one row per exercise being sent
   const [sendingExerciseId, setSendingExerciseId] = useState<string | null>(null);
@@ -1550,6 +1554,46 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
       ),
     },
     {
+      id: "playlist",
+      title: "Playlist",
+      description: "Réordonner, renuméroter et retirer les activités à venir de la séance.",
+      icon: ListChecks,
+      content: (
+        <SessionPlaylistPanel
+          sessionId={id!}
+          onTest={setPlaylistPreviewRow}
+          onClone={(row) => {
+            if (!testedPlaylistExerciseIds.has(row.exercice_id)) {
+              toast.info("Test requis avant clonage", { description: "Parcourez d'abord l'exercice dans l'aperçu élève." });
+              setPlaylistPreviewRow(row);
+              return;
+            }
+            setDuplicateExercise(row.exercice);
+            setDuplicateStudentIds([]);
+            setDuplicateDifficulty(row.exercice?.difficulte || 3);
+          }}
+          onAssign={(row) => {
+            if (!testedPlaylistExerciseIds.has(row.exercice_id)) {
+              toast.info("Test requis avant publication", { description: "Parcourez d'abord l'exercice dans l'aperçu élève." });
+              setPlaylistPreviewRow(row);
+              return;
+            }
+            void handleSendExerciseDirect(row);
+          }}
+          onBonus={(row) => {
+            if (!testedPlaylistExerciseIds.has(row.exercice_id)) {
+              toast.info("Test requis avant envoi bonus", { description: "Parcourez d'abord l'exercice dans l'aperçu élève." });
+              setPlaylistPreviewRow(row);
+              return;
+            }
+            setDuplicateExercise(row.exercice);
+            setDuplicateStudentIds([]);
+            setDuplicateDifficulty(row.exercice?.difficulte || 3);
+          }}
+        />
+      ),
+    },
+    {
       id: "synthesis",
       title: "Synthèse",
       description: "Consulter les points de vigilance et ouvrir le bilan quand vous le souhaitez.",
@@ -2768,6 +2812,17 @@ ${ficheHtml}</body></html>`;
         </DialogContent>
       </Dialog>
 
+      <ExerciseStudentPreviewDialog
+        open={!!playlistPreviewRow}
+        onOpenChange={(open) => { if (!open) setPlaylistPreviewRow(null); }}
+        exercise={playlistPreviewRow?.exercice ?? null}
+        interactive
+        onTestComplete={() => {
+          if (!playlistPreviewRow) return;
+          setTestedPlaylistExerciseIds((current) => new Set(current).add(playlistPreviewRow.exercice_id));
+          toast.success("Test formateur validé", { description: "L'exercice peut maintenant être assigné ou cloné depuis la playlist." });
+        }}
+      />
       {/* ─── Duplicate & Send Dialog ─── */}
       <Dialog open={!!duplicateExercise} onOpenChange={(open) => { if (!open) { setDuplicateExercise(null); setDuplicateStudentIds([]); } }}>
         <DialogContent className="sm:max-w-md">

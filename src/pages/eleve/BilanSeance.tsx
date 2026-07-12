@@ -28,6 +28,7 @@ import SessionFeedbackForm from "@/components/SessionFeedbackForm";
 import { logEvent } from "@/lib/analytics";
 import ReportProblemButton from "@/components/ReportProblemButton";
 import RegenerateItemButton from "@/components/RegenerateItemButton";
+import { useSessionExercicesRealtime } from "@/hooks/useSessionExercicesRealtime";
 import { useLiveAttemptSync } from "@/hooks/useLiveAttemptSync";
 import { corrigerExercice } from "@/lib/correctionExercice";
 import { applyExerciseVariant, resolveStudentExerciseLevel } from "@/lib/exerciseVariant";
@@ -173,6 +174,13 @@ const BilanSeance = () => {
       return data ?? [];
     },
     enabled: !!sessionId,
+  });
+
+  // Le formateur peut réordonner/ajouter/retirer des activités pendant la
+  // séance (SessionPlaylistPanel) — l'élève doit voir la liste se mettre à
+  // jour sans recharger la page.
+  useSessionExercicesRealtime(sessionId, () => {
+    qc.invalidateQueries({ queryKey: ["bilan-exercices", sessionId] });
   });
 
   // Check if bilan already done (any result for this session's exercises)
