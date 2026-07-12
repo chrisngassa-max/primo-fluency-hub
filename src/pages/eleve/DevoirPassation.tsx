@@ -161,6 +161,8 @@ const DevoirPassation = () => {
   // Audio recording state for EO
   const [isRecording, setIsRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [submittedOralTranscript, setSubmittedOralTranscript] = useState<string | null>(null);
+  const [oralPlaybackUrl, setOralPlaybackUrl] = useState<string | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
 
@@ -275,6 +277,30 @@ const DevoirPassation = () => {
     ?? false;
   const remainingPlays = remainingAudioPlays(audioPlayCount, maxAudioPlays);
   const draftKey = user?.id && devoirId ? exerciseDraftKey(user.id, devoirId) : null;
+  useEffect(() => {
+    if (!isCompetenceEO) {
+      setOralPlaybackUrl(null);
+      return;
+    }
+
+    if (audioBlob) {
+      const localUrl = URL.createObjectURL(audioBlob);
+      setOralPlaybackUrl(localUrl);
+      return () => URL.revokeObjectURL(localUrl);
+    }
+
+    const storedPath = (existingResult?.reponses_eleve as any)?.audio_path as string | undefined;
+    if (!storedPath) {
+      setOralPlaybackUrl(null);
+      return;
+    }
+
+    let cancelled = false;
+    void supabase.storage.from("test-audio").createSignedUrl(storedPath, 60 * 60).then(({ data, error }) => {
+      if (!cancelled) setOralPlaybackUrl(error ? null : data?.signedUrl ?? null);
+    });
+    return () => { cancelled = true; };
+  }, [audioBlob, existingResult?.reponses_eleve, isCompetenceEO]);
 
   useEffect(() => {
     if (!draftKey || result || isDone || draftRestoredRef.current) return;
@@ -539,6 +565,7 @@ const DevoirPassation = () => {
           return;
         }
         transcription = sttData.transcript;
+        setSubmittedOralTranscript(transcription);
       } catch (sttErr) {
         console.error("STT error:", sttErr);
         toast.error("Serveur vocal indisponible", { description: "Veuillez réessayer." });
@@ -780,6 +807,46 @@ const DevoirPassation = () => {
             <p className="text-sm text-muted-foreground">{ex?.competence} · {ex?.format?.replace(/_/g, " ")}</p>
           </div>
         </div>
+
+        {isCompetenceEO && (() => {
+          const oralItem = Array.isArray(finalResult.correction) ? finalResult.correction[0] : null;
+          const storedAnswers = existingResult?.reponses_eleve as any;
+          const transcript = submittedOralTranscript
+            ?? storedAnswers?.transcription
+            ?? oralItem?.reponse_donnee
+            ?? oralItem?.reponse_eleve
+            ?? null;
+          const correctedText = oralItem?.reformulation_modele
+            ?? (oralItem?.bonne_reponse_label === "exemple_attendu" ? oralItem?.bonne_reponse : null);
+
+          return (
+            <Card className="border-primary/30">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Mic className="h-4 w-4 text-primary" />
+                  Ma réponse orale et son corrigé
+                </CardTitle>
+                <CardDescription>Réécoute-toi, compare la transcription puis écoute une formulation correcte.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <p className="text-sm font-semibold">1. Ce que j'ai dit</p>
+                  {oralPlaybackUrl ? <audio controls preload="metadata" src={oralPlaybackUrl} className="w-full" /> : <p className="text-sm text-muted-foreground">L'enregistrement audio n'est plus disponible, mais la transcription reste accessible.</p>}
+                </div>
+                <div className="rounded-md border bg-muted/30 p-3">
+                  <p className="mb-1 text-sm font-semibold">2. Transcription automatique</p>
+                  <p className="text-sm">{transcript || "Transcription indisponible."}</p>
+                  <p className="mt-2 text-xs text-muted-foreground">La reconnaissance vocale peut contenir des erreurs : compare-la avec ce que tu entends.</p>
+                </div>
+                <div className="rounded-md border border-green-200 bg-green-50 p-3 dark:border-green-900 dark:bg-green-950/30">
+                  <p className="mb-2 text-sm font-semibold text-green-800 dark:text-green-300">3. Une formulation correcte</p>
+                  <p className="text-sm">{correctedText || "Le corrigé oral détaillé n'est pas disponible pour cette tentative."}</p>
+                  {correctedText && <div className="mt-3"><TTSAudioPlayer text={String(correctedText)} label="Écouter la formulation correcte" showSpeedControl /></div>}
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })()}
 
         <CorrectionDetaillee
           itemResults={finalResult.correction}
