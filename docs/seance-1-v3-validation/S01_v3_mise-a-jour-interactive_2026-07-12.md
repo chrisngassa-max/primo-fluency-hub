@@ -1,7 +1,7 @@
 # S01 v3 — Rapport de régénération interactive
 
 **Date :** 12 juillet 2026
-**Statut :** régénérée et testée localement ; non publiée en production
+**Statut :** régénérée, testée et branchée à la banque ; 28 exercices publiés, 1 QCM civique en révision
 **Pivot pédagogique :** A2
 
 ## Résultat
@@ -70,7 +70,7 @@ Répartition par compétence :
 2. **Validation civique officielle.** Les affirmations civiques doivent être reliées à la base officielle structurée avec provenance, version et date d’effet. Le RAG seul ne constitue pas une validation.
 3. **Chronométrage terrain.** Les durées des exercices sont initialisées mais doivent être recalibrées à partir des premières tentatives réelles.
 4. **Charge B2.** Le parcours B2 comporte cinq activités ; c’est conforme au minimum, mais moins riche que le parcours A2. Une activité CE ou Structures supplémentaire est recommandée après observation terrain.
-5. **Publication en banque.** Le fichier interactif est prêt pour le pont, mais aucune écriture en production n’a été faite dans cette régénération.
+5. **Publication en banque.** Les 29 exercices ont été insérés sans doublon. Vingt-huit sont publiés et prêts ; le QCM civique A2 reste volontairement en statut to_review et non live_ready jusqu’à validation officielle.
 
 ## Fichiers de référence
 
