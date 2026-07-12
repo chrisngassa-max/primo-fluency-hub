@@ -1,19 +1,22 @@
 [
   {
     "support_id": "S01-support-accueil",
-    "version": 1,
+    "family_id": "S01_CE_ACCUEIL_01",
+    "version": 2,
     "niveau": "A1",
-    "consigne": "Écoutez le dialogue. Associez chaque personnage à son rôle, puis complétez les phrases avec les mots de la liste.",
+    "competence": "CE",
+    "consigne": "Lisez ou écoutez le dialogue par segments. Repérez les informations sur le parcours d’Awa, puis répondez.",
     "aides": [
-      "Awa = apprenante",
-      "Mme Rossi = formatrice",
-      "Mots utiles : parcours, objectif, séance"
+      "Awa = apprenante ; Mme Rossi = formatrice",
+      "durée = nombre total d’heures",
+      "évaluation = moment où l’on vérifie les acquis",
+      "Les nombres utiles sont surlignés dans le support annoté."
     ],
     "questions": [
       {
         "id": "q1",
         "type": "qcm",
-        "enonce": "Combien d'heures dure le parcours d'Awa ?",
+        "enonce": "Combien d’heures dure le parcours d’Awa ?",
         "options": [
           "25 heures",
           "80 heures",
@@ -22,93 +25,381 @@
       },
       {
         "id": "q2",
+        "type": "qcm",
+        "enonce": "Combien de séances collectives sont prévues ?",
+        "options": [
+          "2",
+          "5",
+          "25"
+        ]
+      },
+      {
+        "id": "q3",
         "type": "vrai_faux",
-        "enonce": "Awa veut obtenir sa carte de séjour pluriannuelle."
+        "enonce": "Chaque séance collective dure 3 heures."
+      },
+      {
+        "id": "q4",
+        "type": "qcm",
+        "enonce": "Quelles évaluations sont mentionnées ?",
+        "options": [
+          "E1 et E2",
+          "A1 et A2",
+          "CSP et TCF"
+        ]
+      },
+      {
+        "id": "q5",
+        "type": "vrai_faux",
+        "enonce": "Le parcours aborde cinq thèmes civiques."
       }
     ],
     "corrige": {
       "q1": "80 heures",
-      "q2": true
+      "q2": "25",
+      "q3": true,
+      "q4": "E1 et E2",
+      "q5": true
     },
-    "invariants_hash": "903e5738ae417d38d6edcff9a93a533a9a106f5d8d2179ef59b036c9494922ad"
+    "invariants_hash": "903e5738ae417d38d6edcff9a93a533a9a106f5d8d2179ef59b036c9494922ad",
+    "differentiation_contract": {
+      "schema_version": "1.0",
+      "source_level": "A2",
+      "target_level": "A1",
+      "competence_invariante": "CE",
+      "transformation_id": "A2_TO_A1",
+      "support_mode": "annotated_segmented",
+      "estimated_minutes": 25,
+      "cognitive_operations": [
+        "repérer",
+        "associer"
+      ],
+      "autonomy": "faible",
+      "guidance": "fort"
+    },
+    "validation_report": {
+      "status": "pass",
+      "rules": [
+        {
+          "rule_id": "DIFF_COMPETENCE_PRESERVED",
+          "status": "pass",
+          "evidence": [
+            "competence=CE"
+          ],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_FACTS_PRESERVED",
+          "status": "pass",
+          "evidence": [
+            "invariants_hash identique au support"
+          ],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_TRANSFORMATION_SUPPORTED",
+          "status": "pass",
+          "evidence": [
+            "A2_TO_A1"
+          ],
+          "errors": []
+        }
+      ],
+      "errors": [],
+      "warnings": [
+        "DIFF_DURATION_UNCALIBRATED"
+      ]
+    }
   },
   {
     "support_id": "S01-support-accueil",
-    "version": 1,
+    "family_id": "S01_CE_ACCUEIL_01",
+    "version": 2,
     "niveau": "A2",
-    "consigne": "Racontez avec vos mots ce que veut Awa et comment se déroule son parcours (durée, nombre de séances, évaluations).",
+    "competence": "CE",
+    "consigne": "À partir du dialogue, organisez les informations essentielles sur le parcours d’Awa.",
     "aides": [
-      "Pensez à utiliser : parcours, séance, objectif, examen"
+      "Classez les informations : durée, séances, évaluations, thèmes."
     ],
     "questions": [
       {
         "id": "q1",
         "type": "qcm",
-        "enonce": "Combien de séances collectives Awa va-t-elle suivre ?",
+        "enonce": "Quelle est la durée totale annoncée ?",
         "options": [
-          "18",
-          "25",
-          "31"
+          "25 heures",
+          "80 heures",
+          "100 heures"
         ]
       },
       {
         "id": "q2",
+        "type": "qcm",
+        "enonce": "Quelle organisation est annoncée ?",
+        "options": [
+          "25 séances de 3 heures",
+          "3 séances de 25 heures",
+          "80 séances collectives"
+        ]
+      },
+      {
+        "id": "q3",
         "type": "reponse_courte",
-        "enonce": "Citez un des cinq thèmes civiques mentionnés par Mme Rossi."
+        "enonce": "Nommez les deux évaluations mentionnées."
+      },
+      {
+        "id": "q4",
+        "type": "reponse_courte",
+        "enonce": "Combien de thèmes civiques sont annoncés ?"
+      },
+      {
+        "id": "q5",
+        "type": "reponse_courte",
+        "enonce": "Reformulez en une phrase l’objectif administratif d’Awa."
       }
     ],
     "corrige": {
-      "q1": "25",
-      "q2": "Principes et valeurs de la République / Système institutionnel / Droits et devoirs / Histoire, géographie et culture / Vivre dans la société française (une réponse suffit)."
+      "q1": "80 heures",
+      "q2": "25 séances de 3 heures",
+      "q3": "E1 et E2",
+      "q4": "Cinq",
+      "q5": "Awa suit ce parcours pour préparer son objectif lié à la carte de séjour pluriannuelle."
     },
-    "invariants_hash": "903e5738ae417d38d6edcff9a93a533a9a106f5d8d2179ef59b036c9494922ad"
+    "invariants_hash": "903e5738ae417d38d6edcff9a93a533a9a106f5d8d2179ef59b036c9494922ad",
+    "differentiation_contract": {
+      "schema_version": "1.0",
+      "source_level": "A2",
+      "target_level": "A2",
+      "competence_invariante": "CE",
+      "transformation_id": "IDENTITY",
+      "support_mode": "source",
+      "estimated_minutes": 25,
+      "cognitive_operations": [
+        "extraire",
+        "reformuler"
+      ],
+      "autonomy": "moyenne",
+      "guidance": "moyen"
+    },
+    "validation_report": {
+      "status": "pass",
+      "rules": [
+        {
+          "rule_id": "DIFF_COMPETENCE_PRESERVED",
+          "status": "pass",
+          "evidence": [
+            "competence=CE"
+          ],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_FACTS_PRESERVED",
+          "status": "pass",
+          "evidence": [
+            "invariants_hash identique au support"
+          ],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_TRANSFORMATION_SUPPORTED",
+          "status": "pass",
+          "evidence": [
+            "IDENTITY"
+          ],
+          "errors": []
+        }
+      ],
+      "errors": [],
+      "warnings": [
+        "DIFF_DURATION_UNCALIBRATED"
+      ]
+    }
   },
   {
     "support_id": "S01-support-accueil",
-    "version": 1,
+    "family_id": "S01_CE_ACCUEIL_01",
+    "version": 2,
     "niveau": "B1",
-    "consigne": "Expliquez avec vos propres mots la différence entre un droit, un devoir et une règle en vous appuyant sur le dialogue, puis justifiez pourquoi le parcours comprend deux évaluations distinctes (E1 et E2).",
-    "aides": [],
+    "competence": "CE",
+    "consigne": "À partir du seul dialogue, reliez les informations et justifiez votre compréhension de l’organisation du parcours.",
+    "aides": [
+      "Critères : exactitude des faits, relation explicite entre les informations, justification appuyée sur le support."
+    ],
     "questions": [
       {
         "id": "q1",
         "type": "reponse_longue",
-        "enonce": "Reformulez la différence entre droit, devoir et règle donnée par Mme Rossi."
+        "enonce": "Présentez l’organisation du parcours en reliant durée totale, nombre et durée des séances."
       },
       {
         "id": "q2",
         "type": "reponse_longue",
-        "enonce": "Comparez le rôle de l'évaluation intermédiaire (E1) et de l'évaluation finale (E2)."
+        "enonce": "Comparez E1 et E2 uniquement à partir de ce que le dialogue permet d’affirmer."
+      },
+      {
+        "id": "q3",
+        "type": "reponse_longue",
+        "enonce": "Expliquez comment les cinq thèmes civiques s’intègrent au parcours."
+      },
+      {
+        "id": "q4",
+        "type": "reponse_longue",
+        "enonce": "Distinguez droit, devoir et règle comme ils sont présentés dans le support."
       }
     ],
     "corrige": {
-      "q1": "Un droit est une possibilité garantie par la loi ; un devoir est une obligation ; une règle est une consigne precise et locale.",
-      "q2": "E1 mesure la progression a mi-parcours et adapte la suite (S17-S24) ; E2 valide l'ensemble du tronc commun et oriente vers la sortie ou l'extension B1."
+      "q1": "Le parcours annoncé dure 80 heures et comprend 25 séances collectives de 3 heures ; la réponse doit signaler ces trois données sans les modifier.",
+      "q2": "Deux évaluations, E1 et E2, sont prévues hors séances. Aucun rôle plus précis ne doit être inventé si le dialogue ne le donne pas.",
+      "q3": "Le parcours couvre cinq thèmes civiques ; la réponse relie ce contenu à l’organisation annoncée sans ajouter de thème.",
+      "q4": "La réponse restitue les trois notions distinctes telles qu’elles apparaissent dans le support."
     },
-    "invariants_hash": "903e5738ae417d38d6edcff9a93a533a9a106f5d8d2179ef59b036c9494922ad"
+    "invariants_hash": "903e5738ae417d38d6edcff9a93a533a9a106f5d8d2179ef59b036c9494922ad",
+    "differentiation_contract": {
+      "schema_version": "1.0",
+      "source_level": "A2",
+      "target_level": "B1",
+      "competence_invariante": "CE",
+      "transformation_id": "A2_TO_B1",
+      "support_mode": "source",
+      "estimated_minutes": 25,
+      "cognitive_operations": [
+        "relier",
+        "comparer",
+        "justifier"
+      ],
+      "autonomy": "forte",
+      "guidance": "faible"
+    },
+    "validation_report": {
+      "status": "pass",
+      "rules": [
+        {
+          "rule_id": "DIFF_COMPETENCE_PRESERVED",
+          "status": "pass",
+          "evidence": [
+            "competence=CE malgré le format de réponse rédigée"
+          ],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_FACTS_PRESERVED",
+          "status": "pass",
+          "evidence": [
+            "invariants_hash identique au support"
+          ],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_TRANSFORMATION_SUPPORTED",
+          "status": "pass",
+          "evidence": [
+            "A2_TO_B1"
+          ],
+          "errors": []
+        }
+      ],
+      "errors": [],
+      "warnings": [
+        "DIFF_DURATION_UNCALIBRATED"
+      ]
+    }
   },
   {
     "support_id": "S01-support-accueil",
-    "version": 1,
+    "family_id": "S01_CE_ACCUEIL_01",
+    "version": 2,
     "niveau": "B2",
-    "consigne": "Analysez l'organisation du parcours d'Awa (progressivité, double évaluation, cinq thèmes civiques) et nuancez son intérêt pour un adulte primo-arrivant ayant peu de temps disponible.",
-    "aides": [],
+    "competence": "CE",
+    "consigne": "Analysez avec précision l’organisation présentée dans le dialogue. Toute interprétation doit être distinguée d’un fait explicite.",
+    "aides": [
+      "Critères disponibles à la demande : précision, implicite maîtrisé, nuance, registre et absence d’ajout factuel."
+    ],
     "questions": [
       {
         "id": "q1",
         "type": "argumentation",
-        "enonce": "Argumentez : en quoi la distinction entre droit, devoir et règle est-elle utile pour un nouvel arrivant ?"
+        "enonce": "Analysez la cohérence interne entre les 80 heures annoncées, les 25 séances de 3 heures et les deux évaluations hors séances. Distinguez calcul, constat et hypothèse."
       },
       {
         "id": "q2",
         "type": "argumentation",
-        "enonce": "Nuancez : quels sont les avantages et les limites d'un parcours de 80 heures reparti sur 25 semaines ?"
+        "enonce": "Expliquez ce que le support permet — et ne permet pas — de conclure sur la fonction de E1 et E2."
+      },
+      {
+        "id": "q3",
+        "type": "argumentation",
+        "enonce": "Analysez la place donnée aux cinq thèmes civiques dans la présentation du parcours, sans inventer leur contenu."
+      },
+      {
+        "id": "q4",
+        "type": "argumentation",
+        "enonce": "Proposez une synthèse nuancée de l’organisation du parcours en séparant les faits explicites de votre interprétation."
       }
     ],
     "corrige": {
-      "q1": "Reponse ouverte evaluee sur la precision des notions et la qualite de l'argumentation, sans reponse unique imposee.",
-      "q2": "Reponse ouverte : avantages (progressivite, ancrage) vs limites (duree totale, disponibilite) a mettre en balance."
+      "q1": "Les séances représentent 75 heures ; le parcours total est annoncé à 80 heures et deux évaluations sont hors séances. Le support ne permet pas d’attribuer avec certitude les 5 heures restantes.",
+      "q2": "Le support établit l’existence de E1 et E2 hors séances. Toute fonction détaillée doit être signalée comme non établie.",
+      "q3": "Le support affirme que cinq thèmes civiques sont couverts, sans autoriser l’invention de leur contenu si celui-ci n’est pas explicité.",
+      "q4": "La synthèse conserve 80 heures, 25 séances de 3 heures, E1 et E2 hors séances, cinq thèmes civiques et les notions distinctes de droit, devoir et règle."
     },
-    "invariants_hash": "903e5738ae417d38d6edcff9a93a533a9a106f5d8d2179ef59b036c9494922ad"
+    "invariants_hash": "903e5738ae417d38d6edcff9a93a533a9a106f5d8d2179ef59b036c9494922ad",
+    "differentiation_contract": {
+      "schema_version": "1.0",
+      "source_level": "A2",
+      "target_level": "B2",
+      "competence_invariante": "CE",
+      "transformation_id": "A2_TO_B2",
+      "support_mode": "source",
+      "estimated_minutes": 25,
+      "cognitive_operations": [
+        "analyser",
+        "distinguer_explicite_implicite",
+        "nuancer",
+        "synthétiser"
+      ],
+      "autonomy": "très_forte",
+      "guidance": "à_la_demande"
+    },
+    "validation_report": {
+      "status": "pass",
+      "rules": [
+        {
+          "rule_id": "DIFF_COMPETENCE_PRESERVED",
+          "status": "pass",
+          "evidence": [
+            "competence=CE malgré le format argumenté"
+          ],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_FACTS_PRESERVED",
+          "status": "pass",
+          "evidence": [
+            "invariants_hash identique au support"
+          ],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_TRANSFORMATION_SUPPORTED",
+          "status": "pass",
+          "evidence": [
+            "A2_TO_B2"
+          ],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_B2_NOT_ITEM_COUNT",
+          "status": "pass",
+          "evidence": [
+            "La difficulté porte sur implicite, précision et nuance, pas sur un allongement mécanique"
+          ],
+          "errors": []
+        }
+      ],
+      "errors": [],
+      "warnings": [
+        "DIFF_DURATION_UNCALIBRATED"
+      ]
+    }
   }
 ]

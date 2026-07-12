@@ -50,6 +50,12 @@ export function competenceForFormat(format) {
   }
 }
 
+export function resolveVariantCompetence(variant, format) {
+  const declared = String(variant?.competence ?? '').toUpperCase();
+  if (['CE', 'CO', 'EE', 'EO', 'STRUCTURES'].includes(declared)) return declared;
+  return competenceForFormat(format);
+}
+
 export function normalizeCorrigeValue(value) {
   if (typeof value === 'boolean') return value ? 'Vrai' : 'Faux';
   if (value == null) return '';
@@ -85,7 +91,7 @@ export function buildVariantExerciceDraft({
 }) {
   const items = (variant.questions ?? []).map((q) => mapQuestionToItem(q, variant.corrige ?? {}));
   const format = dominantFormat(variant.questions);
-  const competence = competenceForFormat(format);
+  const competence = resolveVariantCompetence(variant, format);
   const metadataCode = curriculumMetadataCode(sessionCode, 'variant', variant.niveau);
 
   return {
@@ -114,6 +120,12 @@ export function buildVariantExerciceDraft({
         curriculum_key: metadataCode,
         aides: variant.aides ?? [],
         invariants_hash: variant.invariants_hash ?? null,
+        family_id: variant.family_id ?? null,
+        source_level: variant.differentiation_contract?.source_level ?? null,
+        target_level: variant.differentiation_contract?.target_level ?? variant.niveau,
+        transformation_id: variant.differentiation_contract?.transformation_id ?? null,
+        differentiation_contract: variant.differentiation_contract ?? null,
+        validation_report: variant.validation_report ?? null,
       },
     },
     animation_guide: {

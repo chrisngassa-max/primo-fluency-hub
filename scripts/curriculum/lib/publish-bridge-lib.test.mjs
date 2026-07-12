@@ -7,6 +7,7 @@ import {
   dominantFormat,
   mapQuestionToItem,
   orderExercicesForPilot,
+  resolveVariantCompetence,
   selectNiveauxForPalier,
 } from './publish-bridge-lib.mjs';
 
@@ -76,6 +77,31 @@ describe('publish-bridge-lib', () => {
 
     expect(draft.format).toBe('production_ecrite');
     expect(draft.competence).toBe('EE');
+  });
+
+  it('preserve la competence explicite de la famille quel que soit le format de reponse', () => {
+    const draft = buildVariantExerciceDraft({
+      variant: {
+        ...variant,
+        niveau: 'B2',
+        competence: 'CE',
+        family_id: 'S01_CE_ACCUEIL_01',
+        differentiation_contract: {
+          source_level: 'A2',
+          target_level: 'B2',
+          transformation_id: 'A2_TO_B2',
+        },
+        questions: [{ id: 'q1', type: 'argumentation', enonce: 'Analysez le support.' }],
+      },
+      sessionCode: 'S01',
+      trainingSessionId: 'ts-uuid',
+      supportId: variant.support_id,
+    });
+
+    expect(resolveVariantCompetence({ competence: 'CE' }, 'production_ecrite')).toBe('CE');
+    expect(draft.format).toBe('production_ecrite');
+    expect(draft.competence).toBe('CE');
+    expect(draft.contenu.metadata.transformation_id).toBe('A2_TO_B2');
   });
 
   it('construit un QCM civique reutilisable', () => {
