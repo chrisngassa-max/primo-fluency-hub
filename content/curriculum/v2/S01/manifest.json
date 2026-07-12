@@ -69,7 +69,7 @@
       },
       "alt_text": null,
       "depends_on_answer": false,
-      "expected_hash": "2425f90d3977130592b460eb45c961d9fa2da9a95bc08dfb4c6387593c2513f4",
+      "expected_hash": "a89995ed75f259c78f7a8070c1948b75b98da361f499989d21be43ebb25eb25a",
       "dependencies": [
         "support-master-html"
       ]
