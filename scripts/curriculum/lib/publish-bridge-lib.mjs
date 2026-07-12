@@ -7,18 +7,97 @@ export function curriculumMetadataCode(sessionCode, kind, key) {
   return `cv2:${sessionCode}:${kind}:${key}`;
 }
 
+/** Type de question curriculum non reconnu par le pont — bloque la publication de la variante. */
+export class UnknownQuestionTypeError extends Error {
+  constructor(questionType) {
+    super(`Type de question curriculum inconnu : "${questionType}". Publication bloquee.`);
+    this.name = 'UnknownQuestionTypeError';
+    this.questionType = questionType;
+  }
+}
+
+/**
+ * Type de question RECONNU par le pont mais que le frontend actuel ne sait
+ * pas restituer/corriger fidelement. Distinct de UnknownQuestionTypeError :
+ * ici on sait ce que le type veut dire, on sait juste que la chaine
+ * bout-en-bout (rendu + saisie + correction) ne le supporte pas encore.
+ */
+export class UnsupportedFrontendFormatError extends Error {
+  constructor(questionType, reason) {
+    super(`Type de question "${questionType}" reconnu mais non restituable par le frontend : ${reason}`);
+    this.name = 'UnsupportedFrontendFormatError';
+    this.questionType = questionType;
+    this.reason = reason;
+  }
+}
+
+// La colonne `exercices.format` est un ENUM Postgres fige a 7 valeurs
+// (qcm, vrai_faux, appariement, production_ecrite, production_orale,
+// texte_lacunaire, transformation — voir migration 20260317202832). Les
+// types curriculum ci-dessous n'ont donc pas tous une correspondance 1:1 en
+// stockage ; le mapping choisit la valeur d'enum la plus proche et la
+// distinction fine reste portee par `contenu.items` / `metadata`, pas par
+// `format`. Un type absent de cette liste doit BLOQUER la publication
+// (DIFF_TRANSFORMATION_NOT_SUPPORTED-like), jamais retomber silencieusement
+// sur 'qcm'.
+//
+// VERIFICATION BOUT-EN-BOUT (src/lib/correctionExercice.ts, supabase/functions/
+// _shared/correction-server.ts, src/pages/eleve/DevoirPassation.tsx) :
+// - qcm/vrai_faux/appariement/texte_lacunaire/transformation sont tous
+//   corriges par EGALITE DE CHAINE NORMALISEE sur une reponse UNIQUE
+//   (`answers[idx]` est une string, jamais un tableau). `appariement` ne
+//   rend PAS une UI d'appariement dediee : c'est la meme liste a choix
+//   unique que qcm (limite produit preexistante, pas introduite ici).
+// - production_ecrite/production_orale passent par l'IA (tcf-evaluate-answer).
+// - Le lecteur audio CO (`DevoirPassation.tsx`) affiche `contenu.script_audio`
+//   au niveau de l'exercice ; `buildVariantExerciceDraft` ne propage
+//   aujourd'hui AUCUN champ audio depuis une question vers `contenu.script_audio`.
+//
+// Consequence : 5 des 15 types demandes sont RECONNUS mais NE PEUVENT PAS
+// etre restitues fidelement aujourd'hui et doivent donc BLOQUER la
+// publication (pas etre traites comme supportes) :
+//   - qcm_multiple   : plusieurs bonnes reponses -> aucune UI/donnee multi-select,
+//                      la 2e selection ecrase la 1re, la correction ne peut
+//                      pas noter "plusieurs reponses correctes".
+//   - ordonnancement : remettre dans l'ordre -> retomberait sur le meme
+//                      choix unique qu'un qcm, perd totalement la semantique.
+//   - classement     : classer par categorie -> idem, aucune UI de classement.
+//   - audio_qcm      : QCM avec audio -> `contenu.script_audio` n'est pas
+//                      propage par le pont, l'audio serait silencieusement absent.
+//   - dictee         : ecrire ce qui est entendu -> meme dependance audio non
+//                      cablee, plus une correction qui devrait etre tolerante
+//                      (IA) et non une simple egalite de chaine.
 export function mapQuestionTypeToFormat(type) {
   switch (type) {
     case 'qcm':
       return 'qcm';
     case 'vrai_faux':
       return 'vrai_faux';
+    case 'appariement':
+      return 'appariement';
+    case 'texte_lacunaire':
+      return 'texte_lacunaire';
+    case 'transformation':
+      return 'transformation';
     case 'reponse_courte':
     case 'reponse_longue':
     case 'argumentation':
+    case 'production_ecrite':
       return 'production_ecrite';
+    case 'production_orale':
+      return 'production_orale';
+    case 'qcm_multiple':
+      throw new UnsupportedFrontendFormatError(type, 'reponse multiple non supportee par le renderer (answers[idx] est une valeur unique) ni par la correction (egalite de chaine simple).');
+    case 'ordonnancement':
+      throw new UnsupportedFrontendFormatError(type, 'aucune UI de remise en ordre ; retomberait sur un choix unique et perdrait la semantique de sequence.');
+    case 'classement':
+      throw new UnsupportedFrontendFormatError(type, 'aucune UI de classement par categorie ; retomberait sur un choix unique.');
+    case 'audio_qcm':
+      throw new UnsupportedFrontendFormatError(type, 'le pont ne propage pas encore de champ audio vers contenu.script_audio ; le lecteur CO resterait vide.');
+    case 'dictee':
+      throw new UnsupportedFrontendFormatError(type, 'meme dependance audio non cablee que audio_qcm, et necessite une correction tolerante (IA) plutot qu\'une egalite de chaine.');
     default:
-      return 'qcm';
+      throw new UnknownQuestionTypeError(type);
   }
 }
 

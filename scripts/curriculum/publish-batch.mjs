@@ -1,4 +1,4 @@
-﻿// npm run curriculum:publish -- --only S01
+// npm run curriculum:publish -- --only S01
 // npm run curriculum:publish -- --from S01 --to S05 [--batch-id <id>]
 //
 // Lot 3/section 9.6 : publication automatique et atomique-par-seance des
@@ -29,7 +29,7 @@ function bucketForResource(resourceEntry) {
 }
 
 /** Publie atomiquement (par seance) toutes les ressources d'une seance deja validee/publiable. */
-export async function publishOneSession({ sessionCode, storagePublisher, planVersionId, baseDir }) {
+export async function publishOneSession({ sessionCode, storagePublisher, planVersionId, baseDir, allowPartialFamily = false }) {
   const manifest = await readSessionManifest(sessionCode, baseDir);
   if (!manifest) return { sessionCode, published: false, reason: 'not_generated' };
 
@@ -115,6 +115,7 @@ export async function publishOneSession({ sessionCode, storagePublisher, planVer
       sessionId,
       baseDir,
       publishedResources,
+      allowPartialFamily,
     });
   } catch (bridgeError) {
     console.warn(`  ${sessionCode} : pont exercices echoue (publication storage OK) :`, bridgeError.message);
@@ -142,9 +143,19 @@ async function main() {
   const batch = batchStore ? await batchStore.getBatch(batchId) : null;
   const planVersionId = process.env.CURRICULUM_PLAN_VERSION_ID ?? manifestJson.plan_version;
   const force = hasFlag(args, '--force');
+  // Derogation EXPLICITE requise pour publier une famille A1/A2/B1/B2
+  // incomplete (voir syncPublishBridge). Sans ce flag, une famille avec ne
+  // serait-ce qu'un niveau bloque n'est PAS publiee dans `exercices` — elle
+  // reste en brouillon, jamais annoncee comme publiee.
+  const allowPartialFamily = hasFlag(args, '--allow-partial-family');
+  if (allowPartialFamily) {
+    console.log('  [derogation] --allow-partial-family actif : les familles incompletes seront publiees partiellement.');
+  }
 
   let publishedCount = 0;
   let blockedCount = 0;
+  let familiesRequiringOverride = 0;
+  let incompleteFamilyCount = 0;
 
   for (const sessionCode of sessionCodes) {
     const existingJob = batch?.jobs?.[sessionCode];
@@ -154,16 +165,35 @@ async function main() {
       continue;
     }
 
-    const result = await publishOneSession({ sessionCode, storagePublisher, planVersionId });
+    const result = await publishOneSession({ sessionCode, storagePublisher, planVersionId, allowPartialFamily });
 
     if (result.published) {
       publishedCount += 1;
+      const blockedVariantCount = result.bridge?.blocked_variants?.length ?? 0;
+      const overrideNeeded = result.bridge?.families_requiring_override ?? [];
+      familiesRequiringOverride += overrideNeeded.length;
+      incompleteFamilyCount += (result.bridge?.families ?? []).filter((family) => family.status !== 'complete').length;
       const bridgeNote = result.bridge?.bridged
         ? ` · pont exercices : ${result.bridge.exercice_ids?.length ?? 0} ligne(s)`
+          + (blockedVariantCount > 0 ? ` · ${blockedVariantCount} variante(s) BLOQUEE(S) (voir blocked_variants)` : '')
+          + (overrideNeeded.length > 0
+            ? ` · ${overrideNeeded.length} famille(s) NON PUBLIEE(S) faute de derogation (--allow-partial-family) : ${overrideNeeded.join(', ')}`
+            : '')
         : result.bridge?.reason
           ? ` · pont exercices ignore (${result.bridge.reason})`
           : '';
       console.log(`  ${sessionCode} : PUBLIÃ‰ (${result.publishedResources.length} ressources)${bridgeNote}.`);
+      for (const family of result.bridge?.families ?? []) {
+        if (family.status !== 'complete') {
+          console.log(
+            `    - famille ${family.family_id} : ${family.status}`
+            + ` (valides: ${family.niveaux_valides.join(',') || 'aucun'}`
+            + `, bloques: ${family.niveaux_bloques.map((b) => `${b.niveau}[${b.reason}]`).join(',') || 'aucun'}`
+            + `, manquants: ${family.niveaux_manquants.join(',') || 'aucun'}`
+            + `, publiee: ${family.published})`,
+          );
+        }
+      }
     } else if (result.reason === 'not_generated') {
       console.log(`  ${sessionCode} : pas encore gÃ©nÃ©rÃ© â€” exÃ©cutez curriculum:generate d'abord.`);
     } else if (result.reason === 'not_validated') {
@@ -184,13 +214,16 @@ async function main() {
   }
 
   console.log(`\nPubliÃ© : ${publishedCount} Â· Non publiÃ© : ${blockedCount}`);
+  if (familiesRequiringOverride > 0) {
+    console.log(`${familiesRequiringOverride} famille(s) en attente de derogation --allow-partial-family (voir details ci-dessus).`);
+  }
 
   if (batchStore) {
-    const status = blockedCount === 0 ? 'published_complete' : publishedCount > 0 ? 'published_partial' : 'needs_attention';
+    const status = blockedCount === 0 && incompleteFamilyCount === 0 ? 'published_complete' : publishedCount > 0 ? 'published_partial' : 'needs_attention';
     await batchStore.updateBatch(batchId, { status, counters: { published: publishedCount, blocked: blockedCount } });
   }
 
-  if (hasFlag(args, '--strict') && blockedCount > 0) process.exitCode = 1;
+  if (hasFlag(args, '--strict') && (blockedCount > 0 || incompleteFamilyCount > 0)) process.exitCode = 1;
 }
 
 if (isMainModule(import.meta.url)) {

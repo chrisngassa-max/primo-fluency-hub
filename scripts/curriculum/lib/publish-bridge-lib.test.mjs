@@ -6,10 +6,26 @@ import {
   curriculumMetadataCode,
   dominantFormat,
   mapQuestionToItem,
+  mapQuestionTypeToFormat,
   orderExercicesForPilot,
   resolveVariantCompetence,
   selectNiveauxForPalier,
+  UnknownQuestionTypeError,
+  UnsupportedFrontendFormatError,
 } from './publish-bridge-lib.mjs';
+
+// Seules ces 7 valeurs existent dans l'ENUM Postgres `exercice_format`
+// (migration 20260317202832) — toute valeur retournee par le mapping DOIT
+// en faire partie, sous peine d'echec d'insertion en base.
+const VALID_EXERCICE_FORMATS = new Set([
+  'qcm',
+  'vrai_faux',
+  'appariement',
+  'production_ecrite',
+  'production_orale',
+  'texte_lacunaire',
+  'transformation',
+]);
 
 describe('publish-bridge-lib', () => {
   const variant = {
@@ -135,5 +151,95 @@ describe('publish-bridge-lib', () => {
   it('selectNiveauxForPalier inclut A1-B2 en heterogene', () => {
     expect(selectNiveauxForPalier('B1', true)).toEqual(['A1', 'A2', 'B1', 'B2']);
     expect(selectNiveauxForPalier('B1', false)).toEqual(['B1']);
+  });
+
+  describe('mapQuestionTypeToFormat — couverture des 15 types de la mission', () => {
+    // Ces 10 types sont verifies bout-en-bout comme reellement restituables
+    // (src/lib/correctionExercice.ts, correction-server.ts, DevoirPassation.tsx) :
+    // rendu (options -> choix unique, ou input texte libre), saisie, correction.
+    const EXPECTED_MAPPING = {
+      qcm: 'qcm',
+      vrai_faux: 'vrai_faux',
+      appariement: 'appariement',
+      texte_lacunaire: 'texte_lacunaire',
+      reponse_courte: 'production_ecrite',
+      reponse_longue: 'production_ecrite',
+      argumentation: 'production_ecrite',
+      transformation: 'transformation',
+      production_ecrite: 'production_ecrite',
+      production_orale: 'production_orale',
+    };
+
+    // Ces 5 types sont RECONNUS (pas "inconnus") mais le frontend actuel ne
+    // sait pas les restituer fidelement — ils doivent BLOQUER la publication
+    // plutot que d'etre traites comme supportes (voir le mapping commente
+    // dans publish-bridge-lib.mjs pour le detail de chaque preuve).
+    const EXPECTED_UNSUPPORTED = [
+      'qcm_multiple',
+      'ordonnancement',
+      'classement',
+      'audio_qcm',
+      'dictee',
+    ];
+
+    it.each(Object.entries(EXPECTED_MAPPING))(
+      'mappe "%s" vers un format valide de l\'enum exercice_format ("%s")',
+      (type, expectedFormat) => {
+        const format = mapQuestionTypeToFormat(type);
+        expect(format).toBe(expectedFormat);
+        expect(VALID_EXERCICE_FORMATS.has(format)).toBe(true);
+      },
+    );
+
+    it.each(EXPECTED_UNSUPPORTED)(
+      'bloque "%s" (reconnu mais non restituable par le frontend aujourd\'hui)',
+      (type) => {
+        expect(() => mapQuestionTypeToFormat(type)).toThrow(UnsupportedFrontendFormatError);
+        try {
+          mapQuestionTypeToFormat(type);
+        } catch (error) {
+          expect(error.questionType).toBe(type);
+          expect(typeof error.reason).toBe('string');
+          expect(error.reason.length).toBeGreaterThan(0);
+        }
+      },
+    );
+
+    it('bloque un type de question inconnu au lieu de retomber silencieusement sur qcm', () => {
+      expect(() => mapQuestionTypeToFormat('type_totalement_inconnu')).toThrow(UnknownQuestionTypeError);
+      try {
+        mapQuestionTypeToFormat('type_totalement_inconnu');
+      } catch (error) {
+        expect(error.questionType).toBe('type_totalement_inconnu');
+      }
+    });
+
+    it('dominantFormat bloque des qu\'une question du lot a un type inconnu', () => {
+      const questions = [
+        { id: 'q1', type: 'qcm', enonce: 'Ok' },
+        { id: 'q2', type: 'format_mystere', enonce: 'Casse' },
+      ];
+      expect(() => dominantFormat(questions)).toThrow(UnknownQuestionTypeError);
+    });
+
+    it('buildVariantExerciceDraft bloque la construction du brouillon sur un type inconnu', () => {
+      const variant = {
+        support_id: 'S02-support-x',
+        version: 1,
+        niveau: 'A1',
+        consigne: 'Test',
+        questions: [{ id: 'q1', type: 'format_mystere', enonce: 'Casse' }],
+        corrige: {},
+        invariants_hash: 'x',
+      };
+      expect(() =>
+        buildVariantExerciceDraft({
+          variant,
+          sessionCode: 'S02',
+          trainingSessionId: 'ts-uuid',
+          supportId: variant.support_id,
+        }),
+      ).toThrow(UnknownQuestionTypeError);
+    });
   });
 });

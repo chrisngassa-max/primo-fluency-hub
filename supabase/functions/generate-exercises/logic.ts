@@ -125,7 +125,7 @@ export function buildDurationPrompt(targetDurationMinutes: number): string {
   // l'instruction "DOIT etre fixe" forçait une valeur arbitraire (ex: 720s
   // pour 3 questions), déconnectée du contenu réel — d'où les minuteurs
   // absurdes observés.
-  return `DUREE CIBLE PAR EXERCICE : ${targetDurationMinutes} minute(s).
+  return `DUREE CIBLE PAR EXERCICE : ${targetDurationMinutes} minute(s), soit ${targetDurationMinutes * 60} secondes.
 Adapte le nombre d'items et la longueur des productions a cette duree :
 plus la duree cible est longue, plus tu dois generer d'items (ou de contenu),
 jamais l'inverse. Ne reduis jamais le nombre d'items pour une duree cible longue.`;

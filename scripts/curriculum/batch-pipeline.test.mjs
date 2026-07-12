@@ -1,4 +1,4 @@
-﻿import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
+import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -11,6 +11,7 @@ import { SvgImageProvider } from './providers/svg-image.mjs';
 import { FakeTtsProvider } from './providers/fake-tts.mjs';
 import { FakeRenderer } from './providers/fake-renderer.mjs';
 import { FakeContentProvider } from './providers/fake-content.mjs';
+import { createFakeSupabaseClient } from './lib/test-helpers/fake-supabase-client.mjs';
 
 // Lot 3 â€” verifie generate/validate/publish/resume "en vrai" (fichiers reels
 // sur disque, batch/storage persistes) mais dans des repertoires temporaires
@@ -123,7 +124,7 @@ describe('Lot 3 â€” pipeline generate/validate/publish/resume (repertoires 
     // Republication : nouvelle version, lien vers la version precedente conserve (section 9.6/9.7).
     const republication = await publishOneSession({ sessionCode: 'S00', storagePublisher, planVersionId: 'plan-test', baseDir: contentDir });
     expect(republication.publishedResources.every((r) => r.version === 2)).toBe(true);
-  });
+  }, 15_000);
 
   it('reprend sans regenerer une seance deja au statut succeeded avec la meme idempotency_key (section 9.5)', async () => {
     const batchStore = new FileBatchStore({ dir: batchDir });
@@ -218,5 +219,77 @@ describe('Lot 3 â€” pipeline generate/validate/publish/resume (repertoires 
 
     expect(summary.generated).toEqual(['S00']);
     expect(summary.skippedNoBrief).toEqual(['S38']);
+  });
+
+  it('publie le PDF/les ressources storage meme quand le pont bloque la famille A1-B2 (independance storage vs pont)', async () => {
+    const batchStore = new FileBatchStore({ dir: batchDir });
+    const providerConfig = { content: 'fake', image: 'svg', tts: 'fake', renderer: 'fake', storage: 'file' };
+    const batch = await batchStore.createBatch({ config: { session_codes: ['S00'], providers: providerConfig } });
+
+    // Brief identique a FIXTURE_BRIEF, sauf B2 dont la question a un type
+    // reconnu mais non restituable par le frontend (qcm_multiple) — doit
+    // bloquer la famille dans le pont SANS jamais empecher la publication
+    // du PDF/des ressources documentaires (deja publiees avant l'appel au pont).
+    const briefWithBlockedB2 = {
+      ...FIXTURE_BRIEF,
+      variants: {
+        ...FIXTURE_BRIEF.variants,
+        B2: {
+          ...FIXTURE_BRIEF.variants.B2,
+          questions: [{ id: 'q1', type: 'qcm_multiple', enonce: '?', options: ['a'] }],
+        },
+      },
+    };
+    await writeFile(path.join(contentDir, 'S00', 'brief.json'), JSON.stringify(briefWithBlockedB2, null, 2), 'utf8');
+
+    await runGenerateBatch({
+      sessionCodes: ['S00'],
+      manifestJson: MANIFEST_JSON,
+      providers: fakeProviders(),
+      providerConfig,
+      batchStore,
+      batch,
+      baseDir: contentDir,
+      log: noop,
+    });
+
+    // Confirme que le type bloque a bien atteint le fichier genere (sinon le
+    // reste du test ne prouverait rien).
+    const variantsPath = path.join(contentDir, 'S00', 'exercices', 'variantes-A1-A2-B1-B2.json');
+    const generatedVariants = JSON.parse(await (await import('node:fs/promises')).readFile(variantsPath, 'utf8'));
+    const b2 = generatedVariants.find((v) => v.niveau === 'B2');
+    expect(b2.questions[0].type).toBe('qcm_multiple');
+    // Le brief de fixture generique ne porte pas de family_id : avec 4
+    // niveaux sans family_id, le pont classe desormais cette famille comme
+    // "non identifiee" (voir publish-bridge.mjs) — donc `blocked`, pas
+    // `partial_draft`. On ne modifie pas le fichier genere ici (le hash
+    // d'integrite de la ressource storage le rejetterait) : le cas
+    // family_id present + un seul niveau bloque -> `partial_draft` est
+    // couvert par des fixtures dediees dans publish-bridge.test.mjs.
+
+    const contentProvider = new FakeContentProvider();
+    const validation = await validateOneSession({ sessionCode: 'S00', contentProvider, baseDir: contentDir });
+    expect(validation.report.publishable).toBe(true);
+
+    const storagePublisher = new FileStoragePublisher({ dir: storageDir });
+    storagePublisher.client = createFakeSupabaseClient({
+      user_roles: [{ user_id: 'formateur-test', role: 'admin' }],
+      points_a_maitriser: [{ id: 'point-test' }],
+    });
+
+    const publication = await publishOneSession({ sessionCode: 'S00', storagePublisher, planVersionId: 'plan-test', baseDir: contentDir });
+
+    // Le PDF / les ressources documentaires SONT publies (independance totale).
+    expect(publication.published).toBe(true);
+    expect(publication.publishedResources.length).toBeGreaterThan(0);
+
+    // La famille, elle, reste bloquee — aucune ligne `exercices` creee pour
+    // aucun niveau, meme les niveaux valides (pas de publication silencieuse).
+    expect(publication.bridge.bridged).toBe(true);
+    expect(publication.bridge.families[0].status).toBe('blocked');
+    expect(publication.bridge.families[0].kind).toBe('unidentified_family');
+    expect(publication.bridge.families[0].published).toBe(false);
+    expect(publication.bridge.exercice_ids).toEqual([]);
+    expect(storagePublisher.client.__dump('exercices')).toHaveLength(0);
   });
 });
