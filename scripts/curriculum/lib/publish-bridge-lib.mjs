@@ -39,6 +39,17 @@ export function dominantFormat(questions) {
   return best;
 }
 
+export function competenceForFormat(format) {
+  switch (format) {
+    case 'production_ecrite':
+      return 'EE';
+    case 'production_orale':
+      return 'EO';
+    default:
+      return 'CE';
+  }
+}
+
 export function normalizeCorrigeValue(value) {
   if (typeof value === 'boolean') return value ? 'Vrai' : 'Faux';
   if (value == null) return '';
@@ -74,13 +85,14 @@ export function buildVariantExerciceDraft({
 }) {
   const items = (variant.questions ?? []).map((q) => mapQuestionToItem(q, variant.corrige ?? {}));
   const format = dominantFormat(variant.questions);
+  const competence = competenceForFormat(format);
   const metadataCode = curriculumMetadataCode(sessionCode, 'variant', variant.niveau);
 
   return {
     metadata_code: metadataCode,
     titre: `${sessionCode} · variante ${variant.niveau}`,
     consigne: variant.consigne,
-    competence: 'CE',
+    competence,
     format,
     niveau_vise: variant.niveau,
     difficulte: niveauToDifficulte(variant.niveau),

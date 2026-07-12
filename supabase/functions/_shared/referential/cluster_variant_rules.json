@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "max_clusters_per_session": 3,
+  "max_clusters_per_session": 4,
   "clusters": [
     {
       "id": "bas",

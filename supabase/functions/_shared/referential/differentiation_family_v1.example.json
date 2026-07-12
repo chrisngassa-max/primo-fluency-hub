@@ -1,0 +1,51 @@
+﻿{
+  "schema_version": "1.0",
+  "family_id": "S01_CE_ACCUEIL_01",
+  "version": 1,
+  "status": "draft",
+  "competence": "CE",
+  "subcompetence": "reperage_reformulation",
+  "objective": "Comprendre et relier les informations essentielles du parcours d'Awa.",
+  "core_task": "Extraire puis expliquer l'organisation du parcours à partir du support publié.",
+  "source_level": "A2",
+  "session_role": "variation",
+  "source_document": {
+    "source_document_id": "S01-support-accueil",
+    "uri": "content/curriculum/v2/S01/supports/dialogue-accueil",
+    "content_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "immutable": true,
+    "provenance": { "type": "curriculum", "version": 1, "effective_from": null, "effective_to": null, "verified_at": "2026-07-11" }
+  },
+  "facts": {
+    "required": [
+      { "fact_id": "duration", "subject": "parcours_Awa", "predicate": "duree", "object": "80 heures", "required_for_task": true },
+      { "fact_id": "sessions", "subject": "parcours_Awa", "predicate": "nombre_seances_collectives", "object": 25, "required_for_task": true },
+      { "fact_id": "evaluations", "subject": "parcours_Awa", "predicate": "comprend_evaluations", "object": ["E1", "E2"], "required_for_task": true }
+    ],
+    "facts_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "level_contracts": {
+    "A1": { "target_level": "A1", "cognitive_operations": ["reperer", "associer"], "guidance": "fort", "autonomy": "faible", "allowed_formats": ["qcm", "vrai_faux", "appariement"], "forbidden_formats": ["argumentation_libre"], "scaffolds": ["segmentation", "lexique", "exemple_resolu"], "success_criteria": ["Repère les trois faits requis"], "audio_policy": null, "duration_policy": { "mode": "informative", "target_seconds": null, "calibration_id": null } },
+    "A2": { "target_level": "A2", "cognitive_operations": ["extraire", "reformuler"], "guidance": "moyen", "autonomy": "moyenne", "allowed_formats": ["qcm", "reponse_courte"], "forbidden_formats": [], "scaffolds": ["lexique_cible"], "success_criteria": ["Organise correctement les faits essentiels"], "audio_policy": null, "duration_policy": { "mode": "informative", "target_seconds": null, "calibration_id": null } },
+    "B1": { "target_level": "B1", "cognitive_operations": ["comparer", "justifier"], "guidance": "faible", "autonomy": "forte", "allowed_formats": ["reponse_justifiee", "synthese_courte"], "forbidden_formats": [], "scaffolds": ["criteres_reussite"], "success_criteria": ["Compare E1 et E2 à partir du support"], "audio_policy": null, "duration_policy": { "mode": "informative", "target_seconds": null, "calibration_id": null } },
+    "B2": { "target_level": "B2", "cognitive_operations": ["analyser", "nuancer"], "guidance": "a_la_demande", "autonomy": "tres_forte", "allowed_formats": ["analyse_ecrite_de_comprehension"], "forbidden_formats": [], "scaffolds": ["clarification_a_la_demande"], "success_criteria": ["Analyse avantages et limites sans inventer de fait"], "audio_policy": null, "duration_policy": { "mode": "informative", "target_seconds": null, "calibration_id": null } }
+  },
+  "variants": {
+    "A1": { "target_level": "A1", "competence": "CE", "transformation_id": "A2_TO_A1", "support_mode": "segmented", "support_ref": "S01-support-accueil", "derived_support_hash": null, "applied_transformations": [{ "rule_id": "segment", "applied_to": "support", "evidence": "Les trois faits restent présents" }], "exercise": { "title": "Le parcours d'Awa", "instruction": "Associez chaque information.", "format": "appariement", "steps": ["Lire les segments", "Associer les faits"], "items": [], "expected_output": "Trois associations correctes", "feedback": null }, "scaffolding": { "lexique": true, "example": true }, "success_criteria": ["Repère les trois faits requis"] },
+    "A2": { "target_level": "A2", "competence": "CE", "transformation_id": "IDENTITY", "support_mode": "source", "support_ref": "S01-support-accueil", "derived_support_hash": null, "applied_transformations": [], "exercise": { "title": "Comprendre le parcours", "instruction": "Présentez la durée, les séances et les évaluations.", "format": "reponse_courte", "steps": ["Lire", "Extraire", "Reformuler"], "items": [], "expected_output": "Une reformulation organisée", "feedback": null }, "scaffolding": { "lexique": true }, "success_criteria": ["Organise correctement les faits essentiels"] },
+    "B1": { "target_level": "B1", "competence": "CE", "transformation_id": "A2_TO_B1", "support_mode": "source", "support_ref": "S01-support-accueil", "derived_support_hash": null, "applied_transformations": [{ "rule_id": "request_comparison", "applied_to": "exercise.instruction", "evidence": "E1 et E2 figurent dans le support" }], "exercise": { "title": "Comparer E1 et E2", "instruction": "Comparez le rôle des deux évaluations et justifiez votre réponse.", "format": "reponse_justifiee", "steps": ["Identifier E1 et E2", "Comparer", "Justifier"], "items": [], "expected_output": "Une comparaison justifiée", "feedback": null }, "scaffolding": { "criteria": true }, "success_criteria": ["Compare E1 et E2 à partir du support"] },
+    "B2": { "target_level": "B2", "competence": "CE", "transformation_id": "A2_TO_B2", "support_mode": "source", "support_ref": "S01-support-accueil", "derived_support_hash": null, "applied_transformations": [{ "rule_id": "request_nuance_if_supported", "applied_to": "exercise.instruction", "evidence": "La durée et l'organisation sont explicites" }], "exercise": { "title": "Analyser l'organisation", "instruction": "Analysez les avantages et les limites de cette organisation à partir des informations du support.", "format": "analyse_ecrite_de_comprehension", "steps": ["Identifier les choix", "Relier les faits", "Nuancer"], "items": [], "expected_output": "Une analyse fondée exclusivement sur le support", "feedback": null }, "scaffolding": { "clarification_on_request": true }, "success_criteria": ["Analyse avantages et limites sans inventer de fait"] }
+  },
+  "extensions": [{ "extension_id": "S01_EE_ACCUEIL_01", "competence": "EE", "linked_family_id": "S01_CE_ACCUEIL_01" }],
+  "generation": null,
+  "validation_report": {
+    "status": "warning",
+    "rules": [
+      { "rule_id": "DIFF_COMPETENCE_PRESERVED", "status": "pass", "evidence": ["Toutes les variantes portent CE"], "errors": [] },
+      { "rule_id": "DIFF_DURATION_CALIBRATED", "status": "warning", "evidence": [], "errors": ["DIFF_DURATION_UNCALIBRATED"] }
+    ],
+    "errors": [],
+    "warnings": ["DIFF_DURATION_UNCALIBRATED"],
+    "review": { "reviewer_type": "none", "reviewer_id": null, "reviewed_at": null, "model_id": null }
+  }
+}

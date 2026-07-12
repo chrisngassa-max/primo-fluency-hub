@@ -1,0 +1,32 @@
+﻿{
+  "version": "1.0",
+  "status": "draft",
+  "levels": ["A1", "A2", "B1", "B2"],
+  "principles": {
+    "same_competence_within_family": true,
+    "a2_default_pivot_not_mandatory": true,
+    "source_document_immutable": true,
+    "unsupported_transformation_must_fail": true,
+    "b2_is_not_more_items": true,
+    "a1_must_not_infantilize": true
+  },
+  "transformations": {
+    "A1_TO_A2": { "operation": "consolider", "allowed": ["reduce_scaffolding", "merge_segments", "request_reformulation"], "forbidden": ["add_fact", "change_competence"] },
+    "A1_TO_B1": { "operation": "approfondir", "allowed": ["request_relation", "request_justification", "reduce_scaffolding"], "forbidden": ["add_implicit_not_in_source", "add_fact", "change_competence"] },
+    "A1_TO_B2": { "operation": "etendre", "allowed": ["request_synthesis", "request_nuance_if_supported", "request_register_analysis_if_supported"], "forbidden": ["enrich_source_with_new_fact", "invent_exception", "change_competence"] },
+    "A2_TO_A1": { "operation": "etayer", "allowed": ["segment", "annotate", "highlight", "add_glossary", "add_solved_example"], "forbidden": ["remove_required_fact", "change_competence", "infantilize"] },
+    "A2_TO_B1": { "operation": "approfondir", "allowed": ["request_inference_if_supported", "request_comparison", "request_justification", "reduce_scaffolding"], "forbidden": ["invent_implicit", "add_fact", "change_competence"] },
+    "A2_TO_B2": { "operation": "etendre", "allowed": ["request_implication_if_supported", "request_nuance_if_supported", "request_synthesis", "request_register_analysis_if_supported"], "forbidden": ["invent_viewpoint", "invent_exception", "change_competence"] },
+    "B1_TO_A1": { "operation": "reconstruire_acces", "allowed": ["excerpt_required_passages", "segment", "annotate", "add_glossary", "add_model"], "forbidden": ["reverse_relation", "remove_required_fact", "change_competence"] },
+    "B1_TO_A2": { "operation": "simplifier", "allowed": ["reduce_syntactic_load", "make_structure_visible", "add_light_scaffolding"], "forbidden": ["remove_core_task", "add_fact", "change_competence"] },
+    "B1_TO_B2": { "operation": "etendre", "allowed": ["request_nuance_if_supported", "request_counterargument_if_supported", "request_synthesis"], "forbidden": ["invent_condition", "add_fact", "change_competence"] },
+    "B2_TO_A1": { "operation": "reconstruire_fortement", "allowed": ["excerpt_required_passages", "segment", "annotate", "add_visual_scaffolding", "add_model"], "forbidden": ["remove_required_fact", "change_core_task", "change_competence"] },
+    "B2_TO_A2": { "operation": "rendre_accessible", "allowed": ["didacticize_with_fact_preservation", "reduce_simultaneous_operations", "add_glossary"], "forbidden": ["reverse_relation", "remove_required_fact", "change_competence"] },
+    "B2_TO_B1": { "operation": "cadrer", "allowed": ["add_question_guides", "provide_plan", "reduce_nuance_requirement"], "forbidden": ["change_core_task", "add_fact", "change_competence"] }
+  },
+  "validation": {
+    "blocking": ["DIFF_SCHEMA_INVALID", "DIFF_COMPETENCE_CHANGED", "DIFF_OBJECTIVE_CHANGED", "DIFF_CORE_TASK_CHANGED", "DIFF_FACTS_CHANGED", "DIFF_FACTS_MISSING", "DIFF_TRANSFORMATION_NOT_SUPPORTED", "DIFF_TRANSFORMATION_UNDECLARED", "DIFF_EXTENSION_INSIDE_FAMILY", "DIFF_FAKE_REVIEW_NOT_ADMISSIBLE"],
+    "warning": ["DIFF_LEVEL_CONTRACT_MISMATCH", "DIFF_SCAFFOLDING_MISSING", "DIFF_A1_INFANTILIZING", "DIFF_B2_ONLY_MORE_ITEMS", "DIFF_SUPPORT_DIVERGED"],
+    "informative": ["DIFF_DURATION_UNCALIBRATED"]
+  }
+}

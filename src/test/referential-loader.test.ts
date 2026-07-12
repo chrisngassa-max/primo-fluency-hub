@@ -3,6 +3,9 @@ import {
   assignClusterVariant,
   deriveFormatsForCluster,
   formatReferentialPromptBlock,
+  formatDifferentiationTransformationPrompt,
+  getDifferentiationTransformationRule,
+  getDifferentiationTransformationRules,
   getClusterVariantRules,
   getDemarcheWeights,
   getDominantPilierFromErrors,
@@ -21,11 +24,13 @@ import {
   mapStructuresCompetence,
   matchSwitchRule,
   normalizePlanCadreFormat,
+  normalizeDifferentiationLevel,
   niveauToBand,
   resolveFormatAlias,
   resolveFormatForGenerator,
   resolvePlanCadreThemeId,
   scoreExerciseCandidate,
+  validateDifferentiationVariantContract,
 } from "../../supabase/functions/_shared/referential-loader.ts";
 
 describe("referential-loader", () => {
@@ -109,12 +114,57 @@ describe("referential-loader", () => {
 
   it("assigns cluster variants with normalized niveau_variante", () => {
     const rules = getClusterVariantRules();
-    expect(rules.max_clusters_per_session).toBe(3);
+    expect(rules.max_clusters_per_session).toBe(4);
     expect(rules.clusters).toHaveLength(3);
 
     const bas = assignClusterVariant("A0", "bas");
     expect(bas?.id).toBe("bas");
     expect(bas?.etayage_default).toBe("fort");
+  });
+
+  it("loads the 12 differentiation transformations", () => {
+    const rules = getDifferentiationTransformationRules();
+    expect(Object.keys(rules.transformations)).toHaveLength(12);
+    expect(getDifferentiationTransformationRule("A2", "B2")?.id).toBe("A2_TO_B2");
+    expect(getDifferentiationTransformationRule("A2", "A2")?.id).toBe("IDENTITY");
+    expect(normalizeDifferentiationLevel("A0")).toBe("A1");
+    expect(normalizeDifferentiationLevel("B2+")).toBe("B2");
+  });
+
+  it("formats a binding differentiation prompt", () => {
+    const block = formatDifferentiationTransformationPrompt("A2", "B1", "CE");
+    expect(block).toContain("A2_TO_B1");
+    expect(block).toContain("competence_invariante: CE");
+    expect(block).toContain("Ne jamais changer la competence");
+  });
+
+  it("rejects a generated variant that changes competence", () => {
+    const result = validateDifferentiationVariantContract({
+      sourceLevel: "A2",
+      targetLevel: "B1",
+      competence: "CE",
+      variant: {
+        differentiation_contract: { transformation_id: "A2_TO_B1" },
+        tronc_commun: { competence: "CE" },
+        exercice: { competence: "EE" },
+      },
+    });
+    expect(result.valid).toBe(false);
+    expect(result.errors).toContain("DIFF_COMPETENCE_CHANGED");
+  });
+
+  it("accepts a same-competence declared transformation", () => {
+    const result = validateDifferentiationVariantContract({
+      sourceLevel: "B1",
+      targetLevel: "A1",
+      competence: "CO",
+      variant: {
+        differentiation_contract: { transformation_id: "B1_TO_A1" },
+        tronc_commun: { competence: "CO" },
+        exercice: { competence: "CO" },
+      },
+    });
+    expect(result).toEqual({ valid: true, errors: [], warnings: [] });
   });
 
   it("scores exercise candidates and applies hard filters", () => {

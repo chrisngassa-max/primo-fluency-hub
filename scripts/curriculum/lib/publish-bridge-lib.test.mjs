@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   buildCivicExerciceDraft,
   buildVariantExerciceDraft,
+  competenceForFormat,
   curriculumMetadataCode,
   dominantFormat,
   mapQuestionToItem,
@@ -47,7 +48,34 @@ describe('publish-bridge-lib', () => {
     expect(draft.metadata_code).toBe('cv2:S01:variant:A1');
     expect(draft.contenu.metadata.session_code).toBe('S01');
     expect(draft.contenu.items).toHaveLength(2);
+    expect(draft.competence).toBe('CE');
     expect(dominantFormat(variant.questions)).toBe('qcm');
+  });
+
+  it('derive la competence depuis le format dominant', () => {
+    expect(competenceForFormat('qcm')).toBe('CE');
+    expect(competenceForFormat('vrai_faux')).toBe('CE');
+    expect(competenceForFormat('production_ecrite')).toBe('EE');
+    expect(competenceForFormat('production_orale')).toBe('EO');
+  });
+
+  it('classe une variante de production longue en EE', () => {
+    const draft = buildVariantExerciceDraft({
+      variant: {
+        ...variant,
+        niveau: 'B1',
+        questions: [
+          { id: 'q1', type: 'reponse_longue', enonce: 'Justifiez votre réponse.' },
+          { id: 'q2', type: 'argumentation', enonce: 'Développez votre point de vue.' },
+        ],
+      },
+      sessionCode: 'S01',
+      trainingSessionId: 'ts-uuid',
+      supportId: variant.support_id,
+    });
+
+    expect(draft.format).toBe('production_ecrite');
+    expect(draft.competence).toBe('EE');
   });
 
   it('construit un QCM civique reutilisable', () => {
