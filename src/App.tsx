@@ -169,6 +169,7 @@ const App = () => (
               <Route path="import-programme" element={<ImportProgramme />} />
               <Route path="parcours" element={<ParcoursPage />} />
               <Route path="parcours/:sessionCode/documents" element={<SessionDocumentsPage />} />
+              <Route path="parcours/:sessionCode/exercices-interactifs" element={<S01InteractiveExercises />} />
               <Route path="parcours/:parcoursId" element={<ParcoursDetail />} />
               <Route path="production-parcours" element={<ProductionParcours />} />
               <Route path="rapports" element={<RapportsPage />} />

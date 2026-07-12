@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ArrowLeft, BookOpen, FileText, GraduationCap, FolderOpen, Library, Plus, Upload, Loader2, Printer } from "lucide-react";
+import { ArrowLeft, BookOpen, FileText, GraduationCap, FolderOpen, Library, Plus, Upload, Loader2, Printer, PlayCircle } from "lucide-react";
 import { fetchActivePlanVersion, fetchTrainingSessions } from "@/lib/curriculum/api";
 import {
   createBlankSessionDocument,
@@ -433,6 +433,15 @@ const SessionDocumentsPage = () => {
       </div>
 
       <div className="flex items-center justify-end gap-2 flex-wrap">
+        {sessionCode === "S01" && (
+          <Button
+            size="sm"
+            className="h-9 gap-2 bg-blue-600 px-4 font-bold text-white hover:bg-blue-700"
+            onClick={() => navigate(`/formateur/parcours/${sessionCode}/exercices-interactifs`)}
+          >
+            <PlayCircle className="h-4 w-4" /> Exercices interactifs (28)
+          </Button>
+        )}
         <Button
           variant="outline"
           size="sm"
