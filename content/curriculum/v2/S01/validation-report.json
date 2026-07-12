@@ -1,8 +1,10 @@
 {
   "session_code": "S01",
   "validated_at": "2026-07-06T16:40:33.274Z",
-  "publishable": true,
-  "blocking_resources": [],
+  "publishable": false,
+  "blocking_resources": [
+    "s01-differentiation-revalidation-required"
+  ],
   "resources": {
     "support-master-json": {
       "deterministic": {
@@ -1162,5 +1164,6 @@
       "ai_review": null,
       "publishable": true
     }
-  }
+  },
+  "superseded_reason": "S01 variants version 2: full deterministic revalidation required; previous fake-content-model reviews are not admissible evidence."
 }
