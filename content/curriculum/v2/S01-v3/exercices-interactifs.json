@@ -1,0 +1,1888 @@
+{
+  "schema_version": "1.0",
+  "session_code": "S01",
+  "exercises": [
+    {
+      "metadata_code": "cv2:S01:v3:co-dialogue:A1",
+      "titre": "Comprendre le dialogue d'accueil",
+      "consigne": "Écoutez attentivement le document sonore et cochez la case de l'option correcte sur votre grille de réponse.",
+      "competence": "CO",
+      "format": "qcm",
+      "niveau_vise": "A1",
+      "difficulte": 2,
+      "duree_limite_secondes": 600,
+      "source": "S01-QCM-TCF-v3",
+      "family_id": "S01_CO_ACCUEIL_01",
+      "extension_of_family_id": null,
+      "contenu": {
+        "items": [
+          {
+            "question": "Comment s'appelle l'apprenante du dialogue ?",
+            "options": [
+              "Awa Diallo",
+              "Awa Rossi",
+              "Fatou Diallo"
+            ],
+            "bonne_reponse": "Awa Diallo",
+            "explication": "Elle se présente : « Je m'appelle Awa. Awa Diallo. »"
+          },
+          {
+            "question": "Combien d'heures dure le parcours d'Awa ?",
+            "options": [
+              "50 heures",
+              "80 heures",
+              "100 heures"
+            ],
+            "bonne_reponse": "80 heures",
+            "explication": "« Vous allez suivre un parcours de quatre-vingts heures. »"
+          },
+          {
+            "question": "Combien de séances collectives sont prévues ?",
+            "options": [
+              "18",
+              "25",
+              "31"
+            ],
+            "bonne_reponse": "25",
+            "explication": "« réparti sur vingt-cinq séances de trois heures »"
+          },
+          {
+            "question": "Combien de temps dure chaque séance ?",
+            "options": [
+              "2 heures",
+              "3 heures",
+              "4 heures"
+            ],
+            "bonne_reponse": "3 heures",
+            "explication": "« vingt-cinq séances de trois heures »"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "source_level": "A2",
+          "target_level": "A1",
+          "competence_invariante": "CO",
+          "cognitive_operations": [
+            "repérer",
+            "associer"
+          ],
+          "autonomy": "faible",
+          "guidance": "fort",
+          "trainer_preview_required": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:atelier-1:A1",
+      "titre": "Atelier A1 — activité 1",
+      "consigne": "Écoutez la phrase, puis choisissez l'orthographe correcte du nom de famille.",
+      "competence": "CO",
+      "format": "qcm",
+      "niveau_vise": "A1",
+      "difficulte": 2,
+      "duree_limite_secondes": 420,
+      "source": "Banque exercices, id 4c983a50 (réutilisé tel quel)",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "contenu": {
+        "items": [
+          {
+            "question": "Comment s'écrit le nom de famille ?",
+            "options": [
+              "B-E-L-K-A-S-S-E-M",
+              "B-E-L-K-A-C-E-M",
+              "B-E-L-G-A-S-S-E-M"
+            ],
+            "bonne_reponse": "B-E-L-K-A-S-S-E-M"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "source_level": "A2",
+          "target_level": "A1",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "repérer",
+            "associer"
+          ],
+          "autonomy": "faible",
+          "guidance": "fort",
+          "trainer_preview_required": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:atelier-2:A1",
+      "titre": "Atelier A1 — activité 2",
+      "consigne": "Pour chaque question, cochez la bonne réponse.",
+      "competence": "CE",
+      "format": "appariement",
+      "niveau_vise": "A1",
+      "difficulte": 2,
+      "duree_limite_secondes": 420,
+      "source": "Banque exercices, id 4a85ed79 (réutilisé tel quel)",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "contenu": {
+        "items": [
+          {
+            "question": "Où habitez-vous ?",
+            "options": [
+              "J'habite à Nice.",
+              "Je suis Italien.",
+              "C'est le 06 00 00 00 00."
+            ],
+            "bonne_reponse": "J'habite à Nice."
+          },
+          {
+            "question": "Quelle est votre nationalité ?",
+            "options": [
+              "Je suis Italien.",
+              "Enchanté.",
+              "Marc Petit."
+            ],
+            "bonne_reponse": "Je suis Italien."
+          },
+          {
+            "question": "Quel est votre numéro de téléphone ?",
+            "options": [
+              "C'est le 06 00 00 00 00.",
+              "C'est le 12 rue de la Paix.",
+              "En 1985."
+            ],
+            "bonne_reponse": "C'est le 06 00 00 00 00."
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "source_level": "A2",
+          "target_level": "A1",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "repérer",
+            "associer"
+          ],
+          "autonomy": "faible",
+          "guidance": "fort",
+          "trainer_preview_required": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:atelier-3:A1",
+      "titre": "Atelier A1 — activité 3",
+      "consigne": "Lisez la carte d'identité, puis répondez par Vrai ou Faux.",
+      "competence": "CE",
+      "format": "vrai_faux",
+      "niveau_vise": "A1",
+      "difficulte": 2,
+      "duree_limite_secondes": 420,
+      "source": "Banque exercices, id 77dcd9d8 (réutilisé tel quel)",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "contenu": {
+        "items": [
+          {
+            "question": "Yasmine est née à Marseille.",
+            "options": [
+              "Vrai",
+              "Faux"
+            ],
+            "bonne_reponse": "Vrai"
+          },
+          {
+            "question": "Son nom de famille est Yasmine.",
+            "options": [
+              "Vrai",
+              "Faux"
+            ],
+            "bonne_reponse": "Faux"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "source_level": "A2",
+          "target_level": "A1",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "repérer",
+            "associer"
+          ],
+          "autonomy": "faible",
+          "guidance": "fort",
+          "trainer_preview_required": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:atelier-4:A1",
+      "titre": "Atelier A1 — activité 4",
+      "consigne": "Relisez le début du dialogue (fiche Dialogue), puis répondez par Vrai ou Faux.",
+      "competence": "CE",
+      "format": "vrai_faux",
+      "niveau_vise": "A1",
+      "difficulte": 2,
+      "duree_limite_secondes": 420,
+      "source": "Variante A1, corrigée le 2026-07-08 (consigne raccourcie, texte support ajouté ; remplace cv2:S01:variant:A1 needs_review)",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "contenu": {
+        "items": [
+          {
+            "question": "Awa épelle son prénom.",
+            "options": [
+              "Vrai",
+              "Faux"
+            ],
+            "bonne_reponse": "Faux"
+          },
+          {
+            "question": "Le nom de famille d'Awa est Diallo.",
+            "options": [
+              "Vrai",
+              "Faux"
+            ],
+            "bonne_reponse": "Vrai"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "source_level": "A2",
+          "target_level": "A1",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "repérer",
+            "associer"
+          ],
+          "autonomy": "faible",
+          "guidance": "fort",
+          "trainer_preview_required": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:structures:A1",
+      "titre": "Structures utiles — A1",
+      "consigne": "Conjuguez le verbe être. Complétez avec le pronom correct (Je, Tu, Il, Elle). Choisissez la forme correcte.",
+      "competence": "Structures",
+      "format": "texte_lacunaire",
+      "niveau_vise": "A1",
+      "difficulte": 2,
+      "duree_limite_secondes": 420,
+      "source": "Banque exercices, id 26254e2b-63e0-440e-ae49-9373ea5e9e5a (réutilisé tel quel) | Banque exercices, id f4fe558a-43dc-4768-b5bb-4d5393557e98 (réutilisé tel quel) | Banque exercices, id 19a3f6b2-58ae-428e-b9d8-fa6ffdfaec2f (réutilisé tel quel)",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "contenu": {
+        "items": [
+          {
+            "question": "Elle ___ française.",
+            "bonne_reponse": "est",
+            "explication": "Verbe être au présent"
+          },
+          {
+            "question": "Je ___ marié.",
+            "bonne_reponse": "suis",
+            "explication": "Verbe être au présent"
+          },
+          {
+            "question": "Le dossier ___ complet.",
+            "bonne_reponse": "est",
+            "explication": "Verbe être au présent"
+          },
+          {
+            "question": "___ m'appelle Ahmed.",
+            "bonne_reponse": "Je",
+            "explication": "Pronoms personnels d'identité"
+          },
+          {
+            "question": "___ habite à Marseille. (Sonia)",
+            "bonne_reponse": "Elle",
+            "explication": "Pronoms personnels d'identité"
+          },
+          {
+            "question": "___ est né en 1985. (Marc)",
+            "bonne_reponse": "Il",
+            "explication": "Pronoms personnels d'identité"
+          },
+          {
+            "question": "Comment tu ________ ? (t'appelles / t'appelle)",
+            "bonne_reponse": "t'appelles",
+            "explication": "Verbes s'appeler / habiter au présent"
+          },
+          {
+            "question": "Il ________ à Paris. (habite / habitent)",
+            "bonne_reponse": "habite",
+            "explication": "Verbes s'appeler / habiter au présent"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "source_level": "A2",
+          "target_level": "A1",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "repérer",
+            "associer"
+          ],
+          "autonomy": "faible",
+          "guidance": "fort",
+          "trainer_preview_required": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:eo:A1",
+      "titre": "Prendre la parole — A1",
+      "consigne": "Enregistrez vos réponses. Vous pourrez réécouter la transcription et le corrigé oral.",
+      "competence": "EO",
+      "format": "production_orale",
+      "niveau_vise": "A1",
+      "difficulte": 2,
+      "duree_limite_secondes": 480,
+      "source": "Inspiré banque exercices, id 59592128-eec4-4e5a-8786-59750f4f91e7 | Banque exercices, id 7509dee3 / e0a01c8e (réutilisés)",
+      "family_id": null,
+      "extension_of_family_id": "S01_CO_ACCUEIL_01",
+      "contenu": {
+        "items": [
+          {
+            "question": "Dites votre nom et votre ville en une phrase.",
+            "bonne_reponse": "",
+            "explication": "Nom + ville énoncés clairement, phrase simple correcte."
+          },
+          {
+            "question": "Épelez votre nom de famille lettre par lettre.",
+            "bonne_reponse": "",
+            "explication": "Épellation correcte, débit compréhensible."
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "source_level": "A2",
+          "target_level": "A1",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "repérer",
+            "associer"
+          ],
+          "autonomy": "faible",
+          "guidance": "fort",
+          "trainer_preview_required": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:co-dialogue:A2",
+      "titre": "Comprendre le dialogue d'accueil",
+      "consigne": "Écoutez attentivement le document sonore et cochez la case de l'option correcte sur votre grille de réponse.",
+      "competence": "CO",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 4,
+      "duree_limite_secondes": 480,
+      "source": "S01-QCM-TCF-v3",
+      "family_id": "S01_CO_ACCUEIL_01",
+      "extension_of_family_id": null,
+      "contenu": {
+        "items": [
+          {
+            "question": "Comment s'appelle l'apprenante du dialogue ?",
+            "options": [
+              "Awa Diallo",
+              "Awa Rossi",
+              "Fatou Diallo",
+              "Awa Camara"
+            ],
+            "bonne_reponse": "Awa Diallo",
+            "explication": "Elle se présente : « Je m'appelle Awa. Awa Diallo. »"
+          },
+          {
+            "question": "Quel est l'objectif administratif d'Awa ?",
+            "options": [
+              "La carte de séjour pluriannuelle",
+              "La nationalité française",
+              "Un visa touristique",
+              "Un titre de travail"
+            ],
+            "bonne_reponse": "La carte de séjour pluriannuelle",
+            "explication": "« Je voudrais avoir ma carte de séjour pluriannuelle. »"
+          },
+          {
+            "question": "Combien d'heures dure le parcours d'Awa ?",
+            "options": [
+              "50 heures",
+              "80 heures",
+              "100 heures",
+              "120 heures"
+            ],
+            "bonne_reponse": "80 heures",
+            "explication": "« Vous allez suivre un parcours de quatre-vingts heures. »"
+          },
+          {
+            "question": "Combien de séances collectives sont prévues ?",
+            "options": [
+              "18",
+              "25",
+              "31",
+              "37"
+            ],
+            "bonne_reponse": "25",
+            "explication": "« réparti sur vingt-cinq séances de trois heures »"
+          },
+          {
+            "question": "Combien de temps dure chaque séance ?",
+            "options": [
+              "2 heures",
+              "3 heures",
+              "4 heures",
+              "5 heures"
+            ],
+            "bonne_reponse": "3 heures",
+            "explication": "« vingt-cinq séances de trois heures »"
+          },
+          {
+            "question": "À quel rythme les séances ont-elles lieu ?",
+            "options": [
+              "Une par semaine",
+              "Deux par semaine",
+              "Une par mois"
+            ],
+            "bonne_reponse": "Une par semaine",
+            "explication": "« à raison d'une séance par semaine »"
+          },
+          {
+            "question": "Après combien d'heures a lieu l'évaluation intermédiaire (E1) ?",
+            "options": [
+              "25 heures",
+              "50 heures",
+              "80 heures",
+              "100 heures"
+            ],
+            "bonne_reponse": "50 heures",
+            "explication": "« une évaluation intermédiaire après cinquante heures »"
+          },
+          {
+            "question": "Combien de thèmes civiques structurent le parcours ?",
+            "options": [
+              "Trois",
+              "Cinq",
+              "Sept",
+              "Dix"
+            ],
+            "bonne_reponse": "Cinq",
+            "explication": "« cinq thèmes sur la vie en France »"
+          },
+          {
+            "question": "D'après Mme Rossi, qu'est-ce qu'un « devoir » ?",
+            "options": [
+              "Quelque chose qu'on peut demander",
+              "Quelque chose qu'on doit faire",
+              "Une consigne propre à un lieu",
+              "Une évaluation finale"
+            ],
+            "bonne_reponse": "Quelque chose qu'on doit faire",
+            "explication": "« Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. »"
+          },
+          {
+            "question": "D'après Mme Rossi, qu'est-ce qu'une « règle » ?",
+            "options": [
+              "Une consigne précise (ex. arriver à l'heure)",
+              "Une possibilité garantie par la loi",
+              "Une obligation nationale",
+              "Un examen final"
+            ],
+            "bonne_reponse": "Une consigne précise (ex. arriver à l'heure)",
+            "explication": "« Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. »"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "source_level": "A2",
+          "target_level": "A2",
+          "competence_invariante": "CO",
+          "cognitive_operations": [
+            "extraire",
+            "reformuler"
+          ],
+          "autonomy": "moyenne",
+          "guidance": "moyen",
+          "trainer_preview_required": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:atelier-1:A2",
+      "titre": "Atelier A2 — activité 1",
+      "consigne": "Complétez le texte avec les mots proposés.",
+      "competence": "CE",
+      "format": "texte_lacunaire",
+      "niveau_vise": "A2",
+      "difficulte": 4,
+      "duree_limite_secondes": 420,
+      "source": "Banque exercices, id afd658af (réutilisé tel quel)",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "contenu": {
+        "items": [
+          {
+            "question": "Bonjour, je ... Youcef.",
+            "options": [
+              "m'appelle",
+              "habite"
+            ],
+            "bonne_reponse": "m'appelle"
+          },
+          {
+            "question": "Je ... d'Algérie.",
+            "options": [
+              "viens",
+              "suis"
+            ],
+            "bonne_reponse": "viens"
+          },
+          {
+            "question": "J' ... 28 ans.",
+            "options": [
+              "suis",
+              "ai"
+            ],
+            "bonne_reponse": "ai"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "source_level": "A2",
+          "target_level": "A2",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "extraire",
+            "reformuler"
+          ],
+          "autonomy": "moyenne",
+          "guidance": "moyen",
+          "trainer_preview_required": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:atelier-2:A2",
+      "titre": "Atelier A2 — activité 2",
+      "consigne": "Lisez les deux fiches, puis répondez aux questions.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 4,
+      "duree_limite_secondes": 420,
+      "source": "Banque exercices, id 95f4746e (réutilisé tel quel, sélection de 4 questions sur 8)",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "contenu": {
+        "items": [
+          {
+            "question": "Quel est le nom de famille de la première personne ?",
+            "options": [
+              "Mehdi",
+              "BENALI",
+              "Algérienne"
+            ],
+            "bonne_reponse": "BENALI"
+          },
+          {
+            "question": "Dans quelle ville habite Mehdi ?",
+            "options": [
+              "Paris",
+              "Bordeaux",
+              "Marseille"
+            ],
+            "bonne_reponse": "Bordeaux"
+          },
+          {
+            "question": "Quelle est la nationalité d'Elena ?",
+            "options": [
+              "Espagnole",
+              "Italienne",
+              "Française"
+            ],
+            "bonne_reponse": "Italienne"
+          },
+          {
+            "question": "Mehdi est plus âgé qu'Elena.",
+            "options": [
+              "Vrai",
+              "Faux"
+            ],
+            "bonne_reponse": "Vrai"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "source_level": "A2",
+          "target_level": "A2",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "extraire",
+            "reformuler"
+          ],
+          "autonomy": "moyenne",
+          "guidance": "moyen",
+          "trainer_preview_required": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:atelier-3:A2",
+      "titre": "Atelier A2 — activité 3",
+      "consigne": "D'après le dialogue, choisissez la bonne réponse.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 4,
+      "duree_limite_secondes": 420,
+      "source": "Variante A2, recréée le 2026-07-08 (remplace l'original rejeté : qcm_no_options)",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "contenu": {
+        "items": [
+          {
+            "question": "Quel est l'objectif d'Awa au début de sa formation ?",
+            "options": [
+              "Obtenir sa carte de séjour pluriannuelle.",
+              "Trouver un emploi de formatrice.",
+              "Passer le TCF pour partir à l'étranger."
+            ],
+            "bonne_reponse": "Obtenir sa carte de séjour pluriannuelle."
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "source_level": "A2",
+          "target_level": "A2",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "extraire",
+            "reformuler"
+          ],
+          "autonomy": "moyenne",
+          "guidance": "moyen",
+          "trainer_preview_required": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:structures:A2",
+      "titre": "Structures utiles — A2",
+      "consigne": "Complétez avec 'mon', 'ma' ou 'mes'. Complétez le texte de présentation.",
+      "competence": "Structures",
+      "format": "texte_lacunaire",
+      "niveau_vise": "A2",
+      "difficulte": 4,
+      "duree_limite_secondes": 420,
+      "source": "Banque exercices, id 475e1e27-d7d0-4ecd-b003-b5b84537d530 (réutilisé tel quel) | Banque exercices, id 2a162e99-ea0d-4eda-ac92-e9a5149ec2da (réutilisé tel quel)",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "contenu": {
+        "items": [
+          {
+            "question": "Je vous présente ___ passeport.",
+            "bonne_reponse": "mon",
+            "explication": "Adjectifs possessifs (identité/papiers)"
+          },
+          {
+            "question": "C'est ___ carte d'identité.",
+            "bonne_reponse": "ma",
+            "explication": "Adjectifs possessifs (identité/papiers)"
+          },
+          {
+            "question": "Je cherche ___ papiers.",
+            "bonne_reponse": "mes",
+            "explication": "Adjectifs possessifs (identité/papiers)"
+          },
+          {
+            "question": "Bonjour, je (1)________ Thomas Martin. Je (2)________ boulanger. J'(3)________ à Lyon. J'ai 34 (4)________.",
+            "bonne_reponse": "m'appelle",
+            "explication": "Structure « je m'appelle / je suis / j'habite »"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "source_level": "A2",
+          "target_level": "A2",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "extraire",
+            "reformuler"
+          ],
+          "autonomy": "moyenne",
+          "guidance": "moyen",
+          "trainer_preview_required": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:eo:A2",
+      "titre": "Prendre la parole — A2",
+      "consigne": "Enregistrez vos réponses. Vous pourrez réécouter la transcription et le corrigé oral.",
+      "competence": "EO",
+      "format": "production_orale",
+      "niveau_vise": "A2",
+      "difficulte": 4,
+      "duree_limite_secondes": 480,
+      "source": "Inspiré banque exercices, id 67dab702-654c-431c-bc6c-367be1b4e874 (sous-questions 1-3) | Inspiré pedagogical_activities, id GEF_A1_p23_ex11_parole_groupe",
+      "family_id": null,
+      "extension_of_family_id": "S01_CO_ACCUEIL_01",
+      "contenu": {
+        "items": [
+          {
+            "question": "Présentez-vous : nom, nationalité/origine, âge.",
+            "bonne_reponse": "",
+            "explication": "Trois informations correctes, verbes conjugués correctement."
+          },
+          {
+            "question": "Présentez un camarade du groupe (nom, ville, nationalité).",
+            "bonne_reponse": "",
+            "explication": "Troisième personne correcte (« il/elle s'appelle... »)."
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "source_level": "A2",
+          "target_level": "A2",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "extraire",
+            "reformuler"
+          ],
+          "autonomy": "moyenne",
+          "guidance": "moyen",
+          "trainer_preview_required": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:co-dialogue:B1",
+      "titre": "Comprendre le dialogue d'accueil",
+      "consigne": "Écoutez attentivement le document sonore et cochez la case de l'option correcte sur votre grille de réponse.",
+      "competence": "CO",
+      "format": "qcm",
+      "niveau_vise": "B1",
+      "difficulte": 6,
+      "duree_limite_secondes": 480,
+      "source": "S01-QCM-TCF-v3",
+      "family_id": "S01_CO_ACCUEIL_01",
+      "extension_of_family_id": null,
+      "contenu": {
+        "items": [
+          {
+            "question": "Quel est l'objectif administratif d'Awa ?",
+            "options": [
+              "La carte de séjour pluriannuelle",
+              "La nationalité française",
+              "Un visa touristique",
+              "Un titre de travail"
+            ],
+            "bonne_reponse": "La carte de séjour pluriannuelle",
+            "explication": "« Je voudrais avoir ma carte de séjour pluriannuelle. »",
+            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+          },
+          {
+            "question": "À quel rythme les séances ont-elles lieu ?",
+            "options": [
+              "Une par semaine",
+              "Deux par semaine",
+              "Une par mois"
+            ],
+            "bonne_reponse": "Une par semaine",
+            "explication": "« à raison d'une séance par semaine »",
+            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+          },
+          {
+            "question": "Après combien d'heures a lieu l'évaluation intermédiaire (E1) ?",
+            "options": [
+              "25 heures",
+              "50 heures",
+              "80 heures",
+              "100 heures"
+            ],
+            "bonne_reponse": "50 heures",
+            "explication": "« une évaluation intermédiaire après cinquante heures »",
+            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+          },
+          {
+            "question": "Combien de thèmes civiques structurent le parcours ?",
+            "options": [
+              "Trois",
+              "Cinq",
+              "Sept",
+              "Dix"
+            ],
+            "bonne_reponse": "Cinq",
+            "explication": "« cinq thèmes sur la vie en France »",
+            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+          },
+          {
+            "question": "D'après Mme Rossi, qu'est-ce qu'un « devoir » ?",
+            "options": [
+              "Quelque chose qu'on peut demander",
+              "Quelque chose qu'on doit faire",
+              "Une consigne propre à un lieu",
+              "Une évaluation finale"
+            ],
+            "bonne_reponse": "Quelque chose qu'on doit faire",
+            "explication": "« Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. »",
+            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+          },
+          {
+            "question": "D'après Mme Rossi, qu'est-ce qu'une « règle » ?",
+            "options": [
+              "Une consigne précise (ex. arriver à l'heure)",
+              "Une possibilité garantie par la loi",
+              "Une obligation nationale",
+              "Un examen final"
+            ],
+            "bonne_reponse": "Une consigne précise (ex. arriver à l'heure)",
+            "explication": "« Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. »",
+            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "source_level": "A2",
+          "target_level": "B1",
+          "competence_invariante": "CO",
+          "cognitive_operations": [
+            "relier",
+            "justifier"
+          ],
+          "autonomy": "forte",
+          "guidance": "faible",
+          "trainer_preview_required": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:atelier-1:B1",
+      "titre": "Atelier B1 — activité 1",
+      "consigne": "Lisez, puis répondez aux questions.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "B1",
+      "difficulte": 6,
+      "duree_limite_secondes": 420,
+      "source": "Créé à partir de support.faits (approfondissement présentation)",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "contenu": {
+        "items": [
+          {
+            "question": "Combien de séances comprend le parcours ?",
+            "options": [
+              "20 séances",
+              "25 séances",
+              "30 séances"
+            ],
+            "bonne_reponse": "25 séances"
+          },
+          {
+            "question": "Quand a lieu l'évaluation E1 ?",
+            "options": [
+              "Après 50 heures",
+              "Après 80 heures",
+              "Après 25 séances"
+            ],
+            "bonne_reponse": "Après 50 heures"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "source_level": "A2",
+          "target_level": "B1",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "relier",
+            "justifier"
+          ],
+          "autonomy": "forte",
+          "guidance": "faible",
+          "trainer_preview_required": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:atelier-2:B1",
+      "titre": "Atelier B1 — activité 2",
+      "consigne": "Associez chaque terme à sa définition, d'après les explications de Mme Rossi.",
+      "competence": "CE",
+      "format": "appariement",
+      "niveau_vise": "B1",
+      "difficulte": 6,
+      "duree_limite_secondes": 420,
+      "source": "Variante B1, recréée le 2026-07-08 en compétence CE (remplace l'originale rejetée : format production_ecrite incompatible avec CE)",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "contenu": {
+        "items": [
+          {
+            "question": "Un droit",
+            "options": [
+              "Quelque chose que vous pouvez demander, comme le droit à la santé.",
+              "Quelque chose que vous devez faire, comme respecter la loi.",
+              "Une consigne précise, par exemple arriver à l'heure."
+            ],
+            "bonne_reponse": "Quelque chose que vous pouvez demander, comme le droit à la santé."
+          },
+          {
+            "question": "Un devoir",
+            "options": [
+              "Quelque chose que vous pouvez demander, comme le droit à la santé.",
+              "Quelque chose que vous devez faire, comme respecter la loi.",
+              "Une consigne précise, par exemple arriver à l'heure."
+            ],
+            "bonne_reponse": "Quelque chose que vous devez faire, comme respecter la loi."
+          },
+          {
+            "question": "Une règle",
+            "options": [
+              "Quelque chose que vous pouvez demander, comme le droit à la santé.",
+              "Quelque chose que vous devez faire, comme respecter la loi.",
+              "Une consigne précise, par exemple arriver à l'heure."
+            ],
+            "bonne_reponse": "Une consigne précise, par exemple arriver à l'heure."
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "source_level": "A2",
+          "target_level": "B1",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "relier",
+            "justifier"
+          ],
+          "autonomy": "forte",
+          "guidance": "faible",
+          "trainer_preview_required": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:structures:B1",
+      "titre": "Structures utiles — B1",
+      "consigne": "Transformez sur le modèle donné. Complétez au discours rapporté.",
+      "competence": "Structures",
+      "format": "transformation",
+      "niveau_vise": "B1",
+      "difficulte": 6,
+      "duree_limite_secondes": 420,
+      "source": "Créé (banque B1 pauvre sur ce point précis, cf. audit lot9) | Créé, inspiré de la structure du dialogue",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "contenu": {
+        "items": [
+          {
+            "question": "Il est né en Algérie, il vit à Lyon. → C'est un Algérien qui habite à Lyon.",
+            "bonne_reponse": "(modèle)",
+            "explication": "Nationalité / pays-ville (« venir de » + « habiter à »)"
+          },
+          {
+            "question": "Elle est née au Sénégal, elle vit à Paris. → ?",
+            "bonne_reponse": "C'est une Sénégalaise qui habite à Paris.",
+            "explication": "Nationalité / pays-ville (« venir de » + « habiter à »)"
+          },
+          {
+            "question": "Il est né au Maroc, il vit à Nice. → ?",
+            "bonne_reponse": "C'est un Marocain qui habite à Nice.",
+            "explication": "Nationalité / pays-ville (« venir de » + « habiter à »)"
+          },
+          {
+            "question": "Awa a dit qu'elle ________ (s'appeler) Awa Diallo et qu'elle ________ (vouloir) sa carte de séjour.",
+            "bonne_reponse": "s'appelait",
+            "explication": "Discours rapporté simple (identité)"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "source_level": "A2",
+          "target_level": "B1",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "relier",
+            "justifier"
+          ],
+          "autonomy": "forte",
+          "guidance": "faible",
+          "trainer_preview_required": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:eo:B1",
+      "titre": "Prendre la parole — B1",
+      "consigne": "Enregistrez vos réponses. Vous pourrez réécouter la transcription et le corrigé oral.",
+      "competence": "EO",
+      "format": "production_orale",
+      "niveau_vise": "B1",
+      "difficulte": 6,
+      "duree_limite_secondes": 480,
+      "source": "Inspiré pedagogical_activities, id tcf_act1_se_presenter | Inspiré pedagogical_activities, id tcf_oral_guide_task1_act1",
+      "family_id": null,
+      "extension_of_family_id": "S01_CO_ACCUEIL_01",
+      "contenu": {
+        "items": [
+          {
+            "question": "Présentez-vous en 1 minute : âge, origine, famille, étude ou travail.",
+            "bonne_reponse": "",
+            "explication": "Enchaînement fluide, connecteurs simples (et, mais, donc)."
+          },
+          {
+            "question": "Décrivez votre parcours personnel et pourquoi vous suivez cette formation.",
+            "bonne_reponse": "",
+            "explication": "Structure avec au moins un exemple concret."
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "source_level": "A2",
+          "target_level": "B1",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "relier",
+            "justifier"
+          ],
+          "autonomy": "forte",
+          "guidance": "faible",
+          "trainer_preview_required": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:co-dialogue:B2",
+      "titre": "Comprendre le dialogue d'accueil",
+      "consigne": "Écoutez attentivement le document sonore et cochez la case de l'option correcte sur votre grille de réponse.",
+      "competence": "CO",
+      "format": "qcm",
+      "niveau_vise": "B2",
+      "difficulte": 8,
+      "duree_limite_secondes": 480,
+      "source": "S01-QCM-TCF-v3",
+      "family_id": "S01_CO_ACCUEIL_01",
+      "extension_of_family_id": null,
+      "contenu": {
+        "items": [
+          {
+            "question": "Quel est l'objectif administratif d'Awa ?",
+            "options": [
+              "La carte de séjour pluriannuelle",
+              "La nationalité française",
+              "Un visa touristique",
+              "Un titre de travail"
+            ],
+            "bonne_reponse": "La carte de séjour pluriannuelle",
+            "explication": "« Je voudrais avoir ma carte de séjour pluriannuelle. »",
+            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+          },
+          {
+            "question": "Après combien d'heures a lieu l'évaluation intermédiaire (E1) ?",
+            "options": [
+              "25 heures",
+              "50 heures",
+              "80 heures",
+              "100 heures"
+            ],
+            "bonne_reponse": "50 heures",
+            "explication": "« une évaluation intermédiaire après cinquante heures »",
+            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+          },
+          {
+            "question": "Combien de thèmes civiques structurent le parcours ?",
+            "options": [
+              "Trois",
+              "Cinq",
+              "Sept",
+              "Dix"
+            ],
+            "bonne_reponse": "Cinq",
+            "explication": "« cinq thèmes sur la vie en France »",
+            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+          },
+          {
+            "question": "D'après Mme Rossi, qu'est-ce qu'un « devoir » ?",
+            "options": [
+              "Quelque chose qu'on peut demander",
+              "Quelque chose qu'on doit faire",
+              "Une consigne propre à un lieu",
+              "Une évaluation finale"
+            ],
+            "bonne_reponse": "Quelque chose qu'on doit faire",
+            "explication": "« Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. »",
+            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+          },
+          {
+            "question": "D'après Mme Rossi, qu'est-ce qu'une « règle » ?",
+            "options": [
+              "Une consigne précise (ex. arriver à l'heure)",
+              "Une possibilité garantie par la loi",
+              "Une obligation nationale",
+              "Un examen final"
+            ],
+            "bonne_reponse": "Une consigne précise (ex. arriver à l'heure)",
+            "explication": "« Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. »",
+            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "source_level": "A2",
+          "target_level": "B2",
+          "competence_invariante": "CO",
+          "cognitive_operations": [
+            "interpréter",
+            "nuancer"
+          ],
+          "autonomy": "forte",
+          "guidance": "minimal",
+          "trainer_preview_required": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:atelier-1:B2",
+      "titre": "Atelier B2 — activité 1",
+      "consigne": "Lisez le paragraphe, puis répondez aux questions.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "B2",
+      "difficulte": 8,
+      "duree_limite_secondes": 420,
+      "source": "Variante B2, recréée le 2026-07-08 en compétence CE (remplace l'originale rejetée : même cause que B1)",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "contenu": {
+        "items": [
+          {
+            "question": "Quel connecteur introduit la limite du parcours long ?",
+            "options": [
+              "Cependant",
+              "Par conséquent",
+              "En revanche"
+            ],
+            "bonne_reponse": "Cependant"
+          },
+          {
+            "question": "Que faut-il organiser en amont, selon le texte ?",
+            "options": [
+              "Le transport uniquement",
+              "La garde d'enfants et les horaires de travail",
+              "Le paiement de la formation"
+            ],
+            "bonne_reponse": "La garde d'enfants et les horaires de travail"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "source_level": "A2",
+          "target_level": "B2",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "interpréter",
+            "nuancer"
+          ],
+          "autonomy": "forte",
+          "guidance": "minimal",
+          "trainer_preview_required": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:structures:B2",
+      "titre": "Structures utiles — B2",
+      "consigne": "Reformulez avec une nominalisation. Complétez avec un connecteur (cependant / par conséquent / en revanche).",
+      "competence": "Structures",
+      "format": "transformation",
+      "niveau_vise": "B2",
+      "difficulte": 8,
+      "duree_limite_secondes": 420,
+      "source": "Créé | Créé",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "contenu": {
+        "items": [
+          {
+            "question": "Vous pouvez demander l'accès aux soins. → Vous avez ___ à ___.",
+            "bonne_reponse": "le droit",
+            "explication": "Nominalisation droits/devoirs"
+          },
+          {
+            "question": "Un parcours long permet d'apprendre en profondeur, ___ il demande de la disponibilité.",
+            "bonne_reponse": "cependant",
+            "explication": "Connecteurs argumentatifs (nuance)"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "source_level": "A2",
+          "target_level": "B2",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "interpréter",
+            "nuancer"
+          ],
+          "autonomy": "forte",
+          "guidance": "minimal",
+          "trainer_preview_required": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:eo:B2",
+      "titre": "Prendre la parole — B2",
+      "consigne": "Enregistrez vos réponses. Vous pourrez réécouter la transcription et le corrigé oral.",
+      "competence": "EO",
+      "format": "production_orale",
+      "niveau_vise": "B2",
+      "difficulte": 8,
+      "duree_limite_secondes": 480,
+      "source": "Inspiré pedagogical_activities, id sim_glob_phase2_identites | Créé (lien direct avec le civique de S01)",
+      "family_id": null,
+      "extension_of_family_id": "S01_CO_ACCUEIL_01",
+      "contenu": {
+        "items": [
+          {
+            "question": "Présentez-vous en détail : identité, parcours de vie, un trait de personnalité, un projet.",
+            "bonne_reponse": "",
+            "explication": "Richesse lexicale, nuance, cohérence temporelle (passé/présent/futur)."
+          },
+          {
+            "question": "Argumentez : pourquoi est-il utile de bien distinguer droit, devoir et règle dès le début d'un parcours d'intégration ?",
+            "bonne_reponse": "",
+            "explication": "Argumentation structurée, au moins un exemple personnel."
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "source_level": "A2",
+          "target_level": "B2",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "interpréter",
+            "nuancer"
+          ],
+          "autonomy": "forte",
+          "guidance": "minimal",
+          "trainer_preview_required": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:civique:A2",
+      "titre": "Droits, devoirs et règles",
+      "consigne": "Lisez chaque situation puis choisissez la réponse directement justifiée par la règle présentée.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 4,
+      "duree_limite_secondes": 600,
+      "source": "S01-QCM-civique-v3",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "contenu": {
+        "items": [
+          {
+            "question": "Respecter le règlement intérieur d'un centre de formation est avant tout :",
+            "options": [
+              "Un droit",
+              "Un devoir",
+              "Une démarche"
+            ],
+            "bonne_reponse": "Un devoir",
+            "explication": "C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option."
+          },
+          {
+            "question": "Le droit à la santé signifie que vous pouvez :",
+            "options": [
+              "Demander l'accès aux soins",
+              "Être obligé de vous soigner",
+              "Payer une amende"
+            ],
+            "bonne_reponse": "Demander l'accès aux soins",
+            "explication": "Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation."
+          },
+          {
+            "question": "Un formateur demande à un apprenant d'arriver à l'heure à chaque séance. Il s'agit :",
+            "options": [
+              "D'une règle du centre de formation",
+              "D'un droit de l'apprenant",
+              "D'une loi nationale"
+            ],
+            "bonne_reponse": "D'une règle du centre de formation",
+            "explication": "Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale."
+          },
+          {
+            "question": "Le parcours vers la carte de séjour pluriannuelle dure :",
+            "options": [
+              "50 heures",
+              "80 heures",
+              "120 heures"
+            ],
+            "bonne_reponse": "80 heures",
+            "explication": "Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue."
+          },
+          {
+            "question": "Combien de thèmes civiques officiels structurent le parcours ?",
+            "options": [
+              "Trois",
+              "Cinq",
+              "Sept"
+            ],
+            "bonne_reponse": "Cinq",
+            "explication": "Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société)."
+          },
+          {
+            "question": "Un devoir, c'est :",
+            "options": [
+              "Une obligation à respecter",
+              "Un choix libre sans conséquence",
+              "Un avantage optionnel"
+            ],
+            "bonne_reponse": "Une obligation à respecter",
+            "explication": "Un devoir engage la personne à agir, contrairement à un simple choix."
+          },
+          {
+            "question": "L'évaluation finale (E2) a lieu :",
+            "options": [
+              "Après 25 heures",
+              "Après 50 heures",
+              "À la fin des 80 heures"
+            ],
+            "bonne_reponse": "À la fin des 80 heures",
+            "explication": "E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet."
+          },
+          {
+            "question": "Pourquoi le parcours comprend-il une évaluation intermédiaire (E1) ?",
+            "options": [
+              "Pour sanctionner les absences",
+              "Pour mesurer la progression à mi-parcours",
+              "Pour remplacer l'évaluation finale"
+            ],
+            "bonne_reponse": "Pour mesurer la progression à mi-parcours",
+            "explication": "E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant."
+          },
+          {
+            "question": "Une règle se distingue d'un devoir car :",
+            "options": [
+              "Une règle est propre à un lieu précis, un devoir est une obligation plus générale",
+              "Une règle est facultative",
+              "Un devoir n'a aucune conséquence"
+            ],
+            "bonne_reponse": "Une règle est propre à un lieu précis, un devoir est une obligation plus générale",
+            "explication": "Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général."
+          },
+          {
+            "question": "Combien d'évaluations rythment le parcours de 80 heures ?",
+            "options": [
+              "Une seule",
+              "Deux (E1 et E2)",
+              "Quatre"
+            ],
+            "bonne_reponse": "Deux (E1 et E2)",
+            "explication": "Le dialogue mentionne explicitement deux évaluations distinctes."
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "source_level": "A2",
+          "target_level": "A2",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "extraire",
+            "reformuler"
+          ],
+          "autonomy": "moyenne",
+          "guidance": "moyen",
+          "trainer_preview_required": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:ee-guidee-1:A1",
+      "titre": "Compléter une présentation",
+      "consigne": "Complétez le texte de présentation : Bonjour, je (........) Awa. Je (........) 28 ans. Je (........) du Sénégal. J'(........) à Paris.",
+      "competence": "EE",
+      "format": "texte_lacunaire",
+      "niveau_vise": "A1",
+      "difficulte": 2,
+      "duree_limite_secondes": 360,
+      "source": "Format inspiré banque exercices, id c1fa478c / 2a162e99, adapté au personnage Awa",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "contenu": {
+        "items": [
+          {
+            "question": "Mot manquant 1",
+            "bonne_reponse": "m'appelle"
+          },
+          {
+            "question": "Mot manquant 2",
+            "bonne_reponse": "ai"
+          },
+          {
+            "question": "Mot manquant 3",
+            "bonne_reponse": "viens"
+          },
+          {
+            "question": "Mot manquant 4",
+            "bonne_reponse": "habite"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "source_level": "A2",
+          "target_level": "A1",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "repérer",
+            "associer"
+          ],
+          "autonomy": "faible",
+          "guidance": "fort",
+          "trainer_preview_required": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:ee-guidee-1:A2",
+      "titre": "Compléter une présentation",
+      "consigne": "Complétez le texte de présentation : Bonjour, je (........) Awa. Je (........) 28 ans. Je (........) du Sénégal. J'(........) à Paris.",
+      "competence": "EE",
+      "format": "texte_lacunaire",
+      "niveau_vise": "A2",
+      "difficulte": 4,
+      "duree_limite_secondes": 360,
+      "source": "Format inspiré banque exercices, id c1fa478c / 2a162e99, adapté au personnage Awa",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "contenu": {
+        "items": [
+          {
+            "question": "Mot manquant 1",
+            "bonne_reponse": "m'appelle"
+          },
+          {
+            "question": "Mot manquant 2",
+            "bonne_reponse": "ai"
+          },
+          {
+            "question": "Mot manquant 3",
+            "bonne_reponse": "viens"
+          },
+          {
+            "question": "Mot manquant 4",
+            "bonne_reponse": "habite"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "source_level": "A2",
+          "target_level": "A2",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "extraire",
+            "reformuler"
+          ],
+          "autonomy": "moyenne",
+          "guidance": "moyen",
+          "trainer_preview_required": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:ee-guidee-2:A2",
+      "titre": "Production guidée 2 (A2/B1) — à partir d'une fiche",
+      "consigne": "À partir de cette fiche, rédigez 5 phrases complètes : NOM : Diallo — PRÉNOM : Awa — NÉE LE : 14/03/1995 — NATIONALITÉ : Sénégalaise — VILLE : Paris.",
+      "competence": "EE",
+      "format": "production_ecrite",
+      "niveau_vise": "A2",
+      "difficulte": 4,
+      "duree_limite_secondes": 600,
+      "source": "Format inspiré pedagogical_activities « Présentez Sébastien Badou » + banque exercices id 95f4746e",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "contenu": {
+        "items": [
+          {
+            "question": "À partir de cette fiche, rédigez 5 phrases complètes : NOM : Diallo — PRÉNOM : Awa — NÉE LE : 14/03/1995 — NATIONALITÉ : Sénégalaise — VILLE : Paris.",
+            "bonne_reponse": "5 phrases complètes, informations toutes exactes et correctement reformulées (pas de recopiage brut)."
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "source_level": "A2",
+          "target_level": "A2",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "extraire",
+            "reformuler"
+          ],
+          "autonomy": "moyenne",
+          "guidance": "moyen",
+          "trainer_preview_required": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:ee-guidee-2:B1",
+      "titre": "Production guidée 2 (A2/B1) — à partir d'une fiche",
+      "consigne": "À partir de cette fiche, rédigez 5 phrases complètes : NOM : Diallo — PRÉNOM : Awa — NÉE LE : 14/03/1995 — NATIONALITÉ : Sénégalaise — VILLE : Paris.",
+      "competence": "EE",
+      "format": "production_ecrite",
+      "niveau_vise": "B1",
+      "difficulte": 6,
+      "duree_limite_secondes": 600,
+      "source": "Format inspiré pedagogical_activities « Présentez Sébastien Badou » + banque exercices id 95f4746e",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "contenu": {
+        "items": [
+          {
+            "question": "À partir de cette fiche, rédigez 5 phrases complètes : NOM : Diallo — PRÉNOM : Awa — NÉE LE : 14/03/1995 — NATIONALITÉ : Sénégalaise — VILLE : Paris.",
+            "bonne_reponse": "5 phrases complètes, informations toutes exactes et correctement reformulées (pas de recopiage brut)."
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "source_level": "A2",
+          "target_level": "B1",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "relier",
+            "justifier"
+          ],
+          "autonomy": "forte",
+          "guidance": "faible",
+          "trainer_preview_required": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:ee-autonome:B1",
+      "titre": "Production autonome (B1/B2)",
+      "consigne": "B1 : amorces fournies (« Je m'appelle... / Mon objectif est... / Le parcours dure... »), 8 phrases minimum.",
+      "competence": "EE",
+      "format": "production_ecrite",
+      "niveau_vise": "B1",
+      "difficulte": 6,
+      "duree_limite_secondes": 720,
+      "source": "Prolongement du devoir A2 existant (brief.devoirs.A2), étendu et rendu autonome pour B1/B2",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "contenu": {
+        "items": [
+          {
+            "question": "Rédigez un texte de 8 à 10 phrases présentant votre propre parcours et votre objectif administratif, sur le modèle d'Awa.",
+            "bonne_reponse": "Cohérence informationnelle, conjugaison au présent correcte, structure en paragraphe (B2)."
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "source_level": "A2",
+          "target_level": "B1",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "relier",
+            "justifier"
+          ],
+          "autonomy": "forte",
+          "guidance": "faible",
+          "trainer_preview_required": true,
+          "interactive": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:ee-autonome:B2",
+      "titre": "Production autonome (B1/B2)",
+      "consigne": "B2 : sans amorce, 10 phrases minimum, au moins un connecteur argumentatif exigé.",
+      "competence": "EE",
+      "format": "production_ecrite",
+      "niveau_vise": "B2",
+      "difficulte": 8,
+      "duree_limite_secondes": 720,
+      "source": "Prolongement du devoir A2 existant (brief.devoirs.A2), étendu et rendu autonome pour B1/B2",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "contenu": {
+        "items": [
+          {
+            "question": "Rédigez un texte de 8 à 10 phrases présentant votre propre parcours et votre objectif administratif, sur le modèle d'Awa.",
+            "bonne_reponse": "Cohérence informationnelle, conjugaison au présent correcte, structure en paragraphe (B2)."
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "source_level": "A2",
+          "target_level": "B2",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "interpréter",
+            "nuancer"
+          ],
+          "autonomy": "forte",
+          "guidance": "minimal",
+          "trainer_preview_required": true,
+          "interactive": true
+        }
+      }
+    }
+  ],
+  "playlists": {
+    "A1": [
+      {
+        "ordre": 1,
+        "metadata_code": "cv2:S01:v3:co-dialogue:A1",
+        "label": "Activité 1 sur 8",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 2,
+        "metadata_code": "cv2:S01:v3:atelier-1:A1",
+        "label": "Activité 2 sur 8",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 3,
+        "metadata_code": "cv2:S01:v3:atelier-2:A1",
+        "label": "Activité 3 sur 8",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 4,
+        "metadata_code": "cv2:S01:v3:atelier-3:A1",
+        "label": "Activité 4 sur 8",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 5,
+        "metadata_code": "cv2:S01:v3:atelier-4:A1",
+        "label": "Activité 5 sur 8",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 6,
+        "metadata_code": "cv2:S01:v3:structures:A1",
+        "label": "Activité 6 sur 8",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 7,
+        "metadata_code": "cv2:S01:v3:eo:A1",
+        "label": "Activité 7 sur 8",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 8,
+        "metadata_code": "cv2:S01:v3:ee-guidee-1:A1",
+        "label": "Activité 8 sur 8",
+        "trainer_preview_required": true
+      }
+    ],
+    "A2": [
+      {
+        "ordre": 1,
+        "metadata_code": "cv2:S01:v3:co-dialogue:A2",
+        "label": "Activité 1 sur 9",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 2,
+        "metadata_code": "cv2:S01:v3:atelier-1:A2",
+        "label": "Activité 2 sur 9",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 3,
+        "metadata_code": "cv2:S01:v3:atelier-2:A2",
+        "label": "Activité 3 sur 9",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 4,
+        "metadata_code": "cv2:S01:v3:atelier-3:A2",
+        "label": "Activité 4 sur 9",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 5,
+        "metadata_code": "cv2:S01:v3:structures:A2",
+        "label": "Activité 5 sur 9",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 6,
+        "metadata_code": "cv2:S01:v3:eo:A2",
+        "label": "Activité 6 sur 9",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 7,
+        "metadata_code": "cv2:S01:v3:civique:A2",
+        "label": "Activité 7 sur 9",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 8,
+        "metadata_code": "cv2:S01:v3:ee-guidee-1:A2",
+        "label": "Activité 8 sur 9",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 9,
+        "metadata_code": "cv2:S01:v3:ee-guidee-2:A2",
+        "label": "Activité 9 sur 9",
+        "trainer_preview_required": true
+      }
+    ],
+    "B1": [
+      {
+        "ordre": 1,
+        "metadata_code": "cv2:S01:v3:co-dialogue:B1",
+        "label": "Activité 1 sur 7",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 2,
+        "metadata_code": "cv2:S01:v3:atelier-1:B1",
+        "label": "Activité 2 sur 7",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 3,
+        "metadata_code": "cv2:S01:v3:atelier-2:B1",
+        "label": "Activité 3 sur 7",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 4,
+        "metadata_code": "cv2:S01:v3:structures:B1",
+        "label": "Activité 4 sur 7",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 5,
+        "metadata_code": "cv2:S01:v3:eo:B1",
+        "label": "Activité 5 sur 7",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 6,
+        "metadata_code": "cv2:S01:v3:ee-guidee-2:B1",
+        "label": "Activité 6 sur 7",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 7,
+        "metadata_code": "cv2:S01:v3:ee-autonome:B1",
+        "label": "Activité 7 sur 7",
+        "trainer_preview_required": true
+      }
+    ],
+    "B2": [
+      {
+        "ordre": 1,
+        "metadata_code": "cv2:S01:v3:co-dialogue:B2",
+        "label": "Activité 1 sur 5",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 2,
+        "metadata_code": "cv2:S01:v3:atelier-1:B2",
+        "label": "Activité 2 sur 5",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 3,
+        "metadata_code": "cv2:S01:v3:structures:B2",
+        "label": "Activité 3 sur 5",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 4,
+        "metadata_code": "cv2:S01:v3:eo:B2",
+        "label": "Activité 4 sur 5",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 5,
+        "metadata_code": "cv2:S01:v3:ee-autonome:B2",
+        "label": "Activité 5 sur 5",
+        "trainer_preview_required": true
+      }
+    ]
+  },
+  "report": {
+    "generated_at": "2026-07-12",
+    "session_code": "S01",
+    "pivot_level": "A2",
+    "exercise_count": 29,
+    "counts_by_level": {
+      "A1": 8,
+      "A2": 9,
+      "B1": 7,
+      "B2": 5
+    },
+    "counts_by_competence": {
+      "CO": 5,
+      "CE": 10,
+      "EE": 6,
+      "EO": 4,
+      "Structures": 4
+    },
+    "validation_rules": [
+      {
+        "rule_id": "INTERACTIVE_FORMAT_SUPPORTED",
+        "status": "pass"
+      },
+      {
+        "rule_id": "MINIMUM_FOUR_ACTIVITIES_PER_LEVEL",
+        "status": "pass"
+      },
+      {
+        "rule_id": "TRAINER_PREVIEW_REQUIRED",
+        "status": "pass"
+      },
+      {
+        "rule_id": "COMPETENCE_FAMILY_PRESERVED",
+        "status": "pass"
+      }
+    ],
+    "warnings": [
+      "Le MP3 définitif reste à produire avec une voix réelle.",
+      "Les affirmations civiques doivent être validées contre la base officielle versionnée avant publication.",
+      "Le chronométrage doit être calibré avec des données terrain."
+    ]
+  }
+}
