@@ -368,7 +368,7 @@
       },
       "alt_text": null,
       "depends_on_answer": false,
-      "expected_hash": "652e30b3a6b476fd435e243aff37ff81bc7a074187b817541f5bccc022384028",
+      "expected_hash": "664b7cb3cf0ee783c6ffb8e26a66caaab8a1c8d68eaee8f4cbaa30cf09d879c7",
       "dependencies": [
         "exercices-json"
       ]
@@ -388,7 +388,7 @@
       },
       "alt_text": null,
       "depends_on_answer": false,
-      "expected_hash": "fbf0c94b97a844fe8eb9292c94d44a81fa262ba9ddd894222fcac8e610498137",
+      "expected_hash": "1134246b01ea2a9c3c1eac3d275ac31cf5eb76a02a0e8fb51f3380a44f95333f",
       "dependencies": [
         "variantes-a1-a2-b1-b2"
       ]
@@ -408,7 +408,7 @@
       },
       "alt_text": null,
       "depends_on_answer": false,
-      "expected_hash": "1b2209aea9ef45ee13c4bdfb925ae0fde57d8432e2e658b21bdd6d461c9d9287",
+      "expected_hash": "d5155576c1666fac98a75f92e2d52443b56e7c398447333ca4200b2014939457",
       "dependencies": [
         "exercices-json"
       ]
@@ -428,7 +428,7 @@
       },
       "alt_text": null,
       "depends_on_answer": false,
-      "expected_hash": "ef961fc4718ddde8127414b5d0fd7314f3448a65f3106142826d8e7308625299",
+      "expected_hash": "1abfaae0a8d7d5cb8ad4a236be0fdfc71e2997e74c5f38840f61ab6afe0f021d",
       "dependencies": [
         "variantes-a1-a2-b1-b2"
       ]
@@ -448,7 +448,7 @@
       },
       "alt_text": null,
       "depends_on_answer": false,
-      "expected_hash": "2375ee731c5b10abdfc551da3e909d611d51df7d423f37d34092dda6ff720390",
+      "expected_hash": "9eb430c1dc0e5b262b8b4cd90e3c4b5cb22233fdf2f843da3125dcca16f95e0a",
       "dependencies": [
         "exercices-json"
       ]
@@ -468,7 +468,7 @@
       },
       "alt_text": null,
       "depends_on_answer": false,
-      "expected_hash": "a8b889e62ac88978adda29595ec40503e19a4db9ec6c5f84696d5219b08da651",
+      "expected_hash": "6b70d3ace297445bb773d12d97cdd35f8c5f56dd89167e574ece6933eab066cf",
       "dependencies": [
         "variantes-a1-a2-b1-b2"
       ]
@@ -488,7 +488,7 @@
       },
       "alt_text": null,
       "depends_on_answer": false,
-      "expected_hash": "4980013c4ffbaae226c50de2fd50617f47af509763ef3de31e0ff189fa78d352",
+      "expected_hash": "25f447cba6688931effe81e8c74d48c927e340040531299a9ee638e4f14ef460",
       "dependencies": [
         "exercices-json"
       ]
@@ -508,7 +508,7 @@
       },
       "alt_text": null,
       "depends_on_answer": false,
-      "expected_hash": "dfb3a4ec500d2c4a97479d6f9436a06cc62519df8ec319c8169a8f0ca0632a20",
+      "expected_hash": "0b84b550bcea95bc7ca5563f7915fae5564de5d4c4c151e669c525574d9fed99",
       "dependencies": [
         "variantes-a1-a2-b1-b2"
       ]
@@ -528,7 +528,7 @@
       },
       "alt_text": null,
       "depends_on_answer": false,
-      "expected_hash": "4c42a244d14d47bcacbb9dcb57858aba5bc081a464a446ddedd94feb9b2d2c46",
+      "expected_hash": "c43ee4806cd0b59cc14bdba4df3fd3a63b1f3c93cc2acde69ba926f7e3488329",
       "dependencies": []
     },
     {
