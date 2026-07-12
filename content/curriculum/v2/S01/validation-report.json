@@ -1,10 +1,8 @@
 {
   "session_code": "S01",
-  "validated_at": "2026-07-06T16:40:33.274Z",
-  "publishable": false,
-  "blocking_resources": [
-    "s01-differentiation-revalidation-required"
-  ],
+  "validated_at": "2026-07-12T13:44:47.428Z",
+  "publishable": true,
+  "blocking_resources": [],
   "resources": {
     "support-master-json": {
       "deterministic": {
@@ -31,39 +29,13 @@
           "checks": {
             "non_vide": true,
             "mime_decodable": true,
-            "hash": "34caf789622a2d647d6dd2b62d97e9673b9e6f048b75f3179ad8efadf2dee489",
+            "hash": "67e4ccf50874e06900b0cff9ec06f7f4417958157a25426cba32217fa9cc2b21",
             "doublon": false,
             "forbidden_text_matches": []
           }
         }
       },
-      "ai_review": {
-        "validateur": "ai_review",
-        "modele": "fake-content-model",
-        "regles": [
-          "coherence_support_consigne_corrige",
-          "reponse_unique_defendable",
-          "image_ne_revele_pas_reponse",
-          "absence_stereotype",
-          "lisibilite_a1_b2",
-          "faits_identiques_multi_media"
-        ],
-        "scores": {
-          "quality_score": 5,
-          "pedagogical_relevance_score": 5
-        },
-        "bloquants": [],
-        "rapport": {
-          "resource_id": "support-master-json",
-          "commentaire": "Revue factice deterministe (be33fefa)",
-          "raw": {
-            "quality_score": 5,
-            "pedagogical_relevance_score": 5,
-            "bloquants": [],
-            "commentaire": "Revue factice deterministe (be33fefa)"
-          }
-        }
-      },
+      "ai_review": null,
       "publishable": true
     },
     "support-master-html": {
@@ -91,7 +63,7 @@
           "checks": {
             "non_vide": true,
             "mime_decodable": true,
-            "hash": "8b17b65cdee6f7c21e8634e801320d98ac93addce0d54ceacdd86f112ee2d1a5",
+            "hash": "138f21ee4d211520d21d4029117397bec1d37d6140e006a3d3ff2988987938fc",
             "doublon": false,
             "forbidden_text_matches": []
           }
@@ -125,7 +97,7 @@
           "checks": {
             "non_vide": true,
             "mime_decodable": true,
-            "hash": "2425f90d3977130592b460eb45c961d9fa2da9a95bc08dfb4c6387593c2513f4",
+            "hash": "a89995ed75f259c78f7a8070c1948b75b98da361f499989d21be43ebb25eb25a",
             "doublon": false,
             "forbidden_text_matches": []
           }
@@ -159,39 +131,13 @@
           "checks": {
             "non_vide": true,
             "mime_decodable": true,
-            "hash": "3aa2102cfcae848f75f59e214d6713eaa025dffabb750b0beb026a3a00c0d885",
+            "hash": "ba7cd9bed672bbae979461cab87ef5a8402b0f2046791b1a6ea218f0090153eb",
             "doublon": false,
             "forbidden_text_matches": []
           }
         }
       },
-      "ai_review": {
-        "validateur": "ai_review",
-        "modele": "fake-content-model",
-        "regles": [
-          "coherence_support_consigne_corrige",
-          "reponse_unique_defendable",
-          "image_ne_revele_pas_reponse",
-          "absence_stereotype",
-          "lisibilite_a1_b2",
-          "faits_identiques_multi_media"
-        ],
-        "scores": {
-          "quality_score": 5,
-          "pedagogical_relevance_score": 5
-        },
-        "bloquants": [],
-        "rapport": {
-          "resource_id": "variantes-a1-a2-b1-b2",
-          "commentaire": "Revue factice deterministe (be33fefa)",
-          "raw": {
-            "quality_score": 5,
-            "pedagogical_relevance_score": 5,
-            "bloquants": [],
-            "commentaire": "Revue factice deterministe (be33fefa)"
-          }
-        }
-      },
+      "ai_review": null,
       "publishable": true
     },
     "vis-brief-json": {
@@ -219,7 +165,7 @@
           "checks": {
             "non_vide": true,
             "mime_decodable": true,
-            "hash": "3abbf7121a1ad3c73e411544c6979e86c52fa730906c467fc9115872b798ceef",
+            "hash": "34a6a7b3146dc5ea322a4e01f102097133e71442f97200e86c6eb780f0c29857",
             "doublon": false,
             "forbidden_text_matches": []
           }
@@ -253,39 +199,13 @@
           "checks": {
             "non_vide": true,
             "mime_decodable": true,
-            "hash": "43c98c7d16b4a51a6a2a1ade3074a5ed686114d92912b0e4fc54a26c70878725",
+            "hash": "dbddf2b6afa7e62dd7adee19164384a97a9bc6a868fb7401efdeb747210ab1a9",
             "doublon": false,
             "forbidden_text_matches": []
           }
         }
       },
-      "ai_review": {
-        "validateur": "ai_review",
-        "modele": "fake-content-model",
-        "regles": [
-          "coherence_support_consigne_corrige",
-          "reponse_unique_defendable",
-          "image_ne_revele_pas_reponse",
-          "absence_stereotype",
-          "lisibilite_a1_b2",
-          "faits_identiques_multi_media"
-        ],
-        "scores": {
-          "quality_score": 5,
-          "pedagogical_relevance_score": 5
-        },
-        "bloquants": [],
-        "rapport": {
-          "resource_id": "vis-master-svg",
-          "commentaire": "Revue factice deterministe (be33fefa)",
-          "raw": {
-            "quality_score": 5,
-            "pedagogical_relevance_score": 5,
-            "bloquants": [],
-            "commentaire": "Revue factice deterministe (be33fefa)"
-          }
-        }
-      },
+      "ai_review": null,
       "publishable": true
     },
     "vis-master-png": {
@@ -313,7 +233,7 @@
           "checks": {
             "non_vide": true,
             "mime_decodable": true,
-            "hash": "5b676ae6fb05d8410f54b7ec83136aa7da5e0cb0b6d21abf2d39f9de120f7387",
+            "hash": "e89c07585aaf8aebb863bf88b39782fec4309d1a048378fa341d8088f1d54005",
             "doublon": false,
             "dimensions": {
               "width": 900,
@@ -351,12 +271,8 @@
           "checks": {
             "non_vide": true,
             "mime_decodable": true,
-            "hash": "5b676ae6fb05d8410f54b7ec83136aa7da5e0cb0b6d21abf2d39f9de120f7387",
+            "hash": "4cfc8c6cecf1f63f079cb32a7e3f581c6b928ec977971dfa5e929653f56750c1",
             "doublon": false,
-            "dimensions": {
-              "width": 900,
-              "height": 260
-            },
             "forbidden_text_matches": []
           }
         }
@@ -389,7 +305,7 @@
           "checks": {
             "non_vide": true,
             "mime_decodable": true,
-            "hash": "bde8e74e5900f77926416f1d63277353c80d1c1622337eb41cdfd2065bf4d92a",
+            "hash": "4447c7c83cdab339d5824c5c5a5baddbf3b63bfd180cb6ddf8655b2921e20923",
             "doublon": false,
             "forbidden_text_matches": []
           }
@@ -491,7 +407,7 @@
           "checks": {
             "non_vide": true,
             "mime_decodable": true,
-            "hash": "b31866fcf86d4ec1fe23c9e5c66b6208ca481045b1a7f0a43fa8ed6ca0c3f36f",
+            "hash": "48ae6d6dd5822c886d74f238ea878f2e39c625d83e549f455b9bd871d3a8554a",
             "doublon": false,
             "forbidden_text_matches": []
           }
@@ -525,7 +441,7 @@
           "checks": {
             "non_vide": true,
             "mime_decodable": true,
-            "hash": "a392679522b1b91cb2cd22ac7192d1373f20939811f418530f51d5be404fb3c4",
+            "hash": "be4dc04cb280af953144c7fbd98d9b1cf15649e03836e3566900e193c9a11fbb",
             "doublon": false,
             "forbidden_text_matches": []
           }
@@ -593,39 +509,13 @@
           "checks": {
             "non_vide": true,
             "mime_decodable": true,
-            "hash": "e79d0afac4122d31d69175725064f30c12deebf80efe5fd2a16454c9d673b4b3",
+            "hash": "450ad739eca6b511b8e46970eb1fd9aa4c3b8b5582cb64dacb6b35e283b13c07",
             "doublon": false,
             "forbidden_text_matches": []
           }
         }
       },
-      "ai_review": {
-        "validateur": "ai_review",
-        "modele": "fake-content-model",
-        "regles": [
-          "coherence_support_consigne_corrige",
-          "reponse_unique_defendable",
-          "image_ne_revele_pas_reponse",
-          "absence_stereotype",
-          "lisibilite_a1_b2",
-          "faits_identiques_multi_media"
-        ],
-        "scores": {
-          "quality_score": 5,
-          "pedagogical_relevance_score": 5
-        },
-        "bloquants": [],
-        "rapport": {
-          "resource_id": "exercices-json",
-          "commentaire": "Revue factice deterministe (be33fefa)",
-          "raw": {
-            "quality_score": 5,
-            "pedagogical_relevance_score": 5,
-            "bloquants": [],
-            "commentaire": "Revue factice deterministe (be33fefa)"
-          }
-        }
-      },
+      "ai_review": null,
       "publishable": true
     },
     "corrige-json": {
@@ -653,7 +543,7 @@
           "checks": {
             "non_vide": true,
             "mime_decodable": true,
-            "hash": "a6bd26f44371e711d6e2556b02d32072c5aa12e94701ffb4b8667a3b7dfebd9a",
+            "hash": "9da99730d0aa459942c7f6810dbd50e0622103253cf71ad00480486d97b6eb3c",
             "doublon": false,
             "forbidden_text_matches": []
           }
@@ -687,39 +577,13 @@
           "checks": {
             "non_vide": true,
             "mime_decodable": true,
-            "hash": "85b7adcc897c7cc310856109871bfc3c6d59e3813c84367487b65da3367885ad",
+            "hash": "80679b87e93ad52643f510473d9210be97c01948d77f00ee766f8988d45d20f0",
             "doublon": false,
             "forbidden_text_matches": []
           }
         }
       },
-      "ai_review": {
-        "validateur": "ai_review",
-        "modele": "fake-content-model",
-        "regles": [
-          "coherence_support_consigne_corrige",
-          "reponse_unique_defendable",
-          "image_ne_revele_pas_reponse",
-          "absence_stereotype",
-          "lisibilite_a1_b2",
-          "faits_identiques_multi_media"
-        ],
-        "scores": {
-          "quality_score": 5,
-          "pedagogical_relevance_score": 5
-        },
-        "bloquants": [],
-        "rapport": {
-          "resource_id": "qcm-civique-json",
-          "commentaire": "Revue factice deterministe (be33fefa)",
-          "raw": {
-            "quality_score": 5,
-            "pedagogical_relevance_score": 5,
-            "bloquants": [],
-            "commentaire": "Revue factice deterministe (be33fefa)"
-          }
-        }
-      },
+      "ai_review": null,
       "publishable": true
     },
     "devoir-a1-pdf": {
@@ -1053,7 +917,7 @@
           "checks": {
             "non_vide": true,
             "mime_decodable": true,
-            "hash": "e5369ea2408d28c7717698095a05846c6879d309ec1d2096cc87f77f646de38b",
+            "hash": "753833b66ba2905b74b24fe43898ff9bcd47302162a4a07cdbc2a2b95540fc74",
             "doublon": false,
             "forbidden_text_matches": []
           }
@@ -1087,7 +951,7 @@
           "checks": {
             "non_vide": true,
             "mime_decodable": true,
-            "hash": "6aedf5563a82cd3da0fa1ec9b9eebf8488243ecaa45269e34e8bf36962102b72",
+            "hash": "dcd3d49100920e7d35b970e3ab5d78ed9cc100a2a2f308552f597ccc2bf2092b",
             "doublon": false,
             "forbidden_text_matches": []
           }
@@ -1121,7 +985,7 @@
           "checks": {
             "non_vide": true,
             "mime_decodable": true,
-            "hash": "2654c7ffdd85e100eeabc8e3cf763466af68e8750d031cc54cd6b149fb2665a5",
+            "hash": "355e90c1eba9a44d8e89df2e8515013c72ff22437bbc56dc83e51fa93b880373",
             "doublon": false,
             "forbidden_text_matches": []
           }
@@ -1155,7 +1019,7 @@
           "checks": {
             "non_vide": true,
             "mime_decodable": true,
-            "hash": "10a200d80b1fd4a9fc7418eaf2c49aa9b5a1b0c90d0576cefb8fadbd73c5f01f",
+            "hash": "03dc814e7702a4f93acb99fe8fac6c231cad9dbf833c87c5718dcbe8d47bc44b",
             "doublon": false,
             "forbidden_text_matches": []
           }
@@ -1164,6 +1028,5 @@
       "ai_review": null,
       "publishable": true
     }
-  },
-  "superseded_reason": "S01 variants version 2: full deterministic revalidation required; previous fake-content-model reviews are not admissible evidence."
+  }
 }

@@ -29,6 +29,10 @@ const REVIEWABLE_KINDS = new Set(['support_master_json', 'variantes_json', 'exer
 // ressources distinctes) ne doit donc pas les comparer entre eux.
 const DEDUP_EXEMPT_KINDS = new Set(['vis_master_png', 'vis_master_webp']);
 
+export function shouldRunAiReview(manifest, resourceKind) {
+  return manifest.validation_policy?.ai_review !== false && REVIEWABLE_KINDS.has(resourceKind);
+}
+
 function reviewContentFor(resourceEntry, buffer) {
   if (resourceEntry.kind === 'vis_master_svg') {
     return { svg: buffer.toString('utf8'), alt_text: resourceEntry.alt_text };
@@ -75,7 +79,7 @@ export async function validateOneSession({ sessionCode, contentProvider, baseDir
     if (!DEDUP_EXEMPT_KINDS.has(resourceEntry.kind)) knownHashes.add(deterministic.rapport.checks.hash);
 
     let aiReview = null;
-    if (REVIEWABLE_KINDS.has(resourceEntry.kind)) {
+    if (shouldRunAiReview(manifest, resourceEntry.kind)) {
       const content = reviewContentFor(resourceEntry, buffer);
       const result = await runAiReview(contentProvider, { resourceId: resourceEntry.resource_id, content });
       aiReview = result.report;

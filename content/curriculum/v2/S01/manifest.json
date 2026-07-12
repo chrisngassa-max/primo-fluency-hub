@@ -31,7 +31,7 @@
       },
       "alt_text": null,
       "depends_on_answer": false,
-      "expected_hash": "34caf789622a2d647d6dd2b62d97e9673b9e6f048b75f3179ad8efadf2dee489",
+      "expected_hash": "67e4ccf50874e06900b0cff9ec06f7f4417958157a25426cba32217fa9cc2b21",
       "dependencies": []
     },
     {
@@ -49,7 +49,7 @@
       },
       "alt_text": null,
       "depends_on_answer": false,
-      "expected_hash": "8b17b65cdee6f7c21e8634e801320d98ac93addce0d54ceacdd86f112ee2d1a5",
+      "expected_hash": "138f21ee4d211520d21d4029117397bec1d37d6140e006a3d3ff2988987938fc",
       "dependencies": [
         "support-master-json"
       ]
@@ -109,7 +109,7 @@
       },
       "alt_text": "Cinq panneaux de couleur representant les cinq themes civiques : principes et valeurs de la Republique, systeme institutionnel, droits et devoirs, histoire et geographie, vie en societe.",
       "depends_on_answer": false,
-      "expected_hash": "3abbf7121a1ad3c73e411544c6979e86c52fa730906c467fc9115872b798ceef",
+      "expected_hash": "34a6a7b3146dc5ea322a4e01f102097133e71442f97200e86c6eb780f0c29857",
       "dependencies": [
         "support-master-json"
       ]
@@ -134,7 +134,7 @@
       },
       "alt_text": "Cinq panneaux de couleur representant les cinq themes civiques : principes et valeurs de la Republique, systeme institutionnel, droits et devoirs, histoire et geographie, vie en societe.",
       "depends_on_answer": false,
-      "expected_hash": "43c98c7d16b4a51a6a2a1ade3074a5ed686114d92912b0e4fc54a26c70878725",
+      "expected_hash": "dbddf2b6afa7e62dd7adee19164384a97a9bc6a868fb7401efdeb747210ab1a9",
       "dependencies": [
         "vis-brief-json"
       ]
@@ -154,7 +154,7 @@
       },
       "alt_text": "Cinq panneaux de couleur representant les cinq themes civiques : principes et valeurs de la Republique, systeme institutionnel, droits et devoirs, histoire et geographie, vie en societe.",
       "depends_on_answer": false,
-      "expected_hash": "5b676ae6fb05d8410f54b7ec83136aa7da5e0cb0b6d21abf2d39f9de120f7387",
+      "expected_hash": "e89c07585aaf8aebb863bf88b39782fec4309d1a048378fa341d8088f1d54005",
       "dependencies": [
         "vis-master-svg"
       ]
@@ -170,11 +170,11 @@
       "source_ids": [],
       "rights_status": "cap_tcf_created",
       "output_spec": {
-        "mime_type": "image/png"
+        "mime_type": "image/webp"
       },
       "alt_text": "Cinq panneaux de couleur representant les cinq themes civiques : principes et valeurs de la Republique, systeme institutionnel, droits et devoirs, histoire et geographie, vie en societe.",
       "depends_on_answer": false,
-      "expected_hash": "5b676ae6fb05d8410f54b7ec83136aa7da5e0cb0b6d21abf2d39f9de120f7387",
+      "expected_hash": "4cfc8c6cecf1f63f079cb32a7e3f581c6b928ec977971dfa5e929653f56750c1",
       "dependencies": [
         "vis-master-svg"
       ]
@@ -194,7 +194,7 @@
       },
       "alt_text": null,
       "depends_on_answer": false,
-      "expected_hash": "bde8e74e5900f77926416f1d63277353c80d1c1622337eb41cdfd2065bf4d92a",
+      "expected_hash": "4447c7c83cdab339d5824c5c5a5baddbf3b63bfd180cb6ddf8655b2921e20923",
       "dependencies": []
     },
     {
@@ -252,7 +252,7 @@
       },
       "alt_text": null,
       "depends_on_answer": false,
-      "expected_hash": "b31866fcf86d4ec1fe23c9e5c66b6208ca481045b1a7f0a43fa8ed6ca0c3f36f",
+      "expected_hash": "48ae6d6dd5822c886d74f238ea878f2e39c625d83e549f455b9bd871d3a8554a",
       "dependencies": [
         "co-master-mp3"
       ]
@@ -272,7 +272,7 @@
       },
       "alt_text": null,
       "depends_on_answer": false,
-      "expected_hash": "a392679522b1b91cb2cd22ac7192d1373f20939811f418530f51d5be404fb3c4",
+      "expected_hash": "be4dc04cb280af953144c7fbd98d9b1cf15649e03836e3566900e193c9a11fbb",
       "dependencies": []
     },
     {
@@ -310,7 +310,7 @@
       },
       "alt_text": null,
       "depends_on_answer": false,
-      "expected_hash": "e79d0afac4122d31d69175725064f30c12deebf80efe5fd2a16454c9d673b4b3",
+      "expected_hash": "450ad739eca6b511b8e46970eb1fd9aa4c3b8b5582cb64dacb6b35e283b13c07",
       "dependencies": [
         "variantes-a1-a2-b1-b2"
       ]
@@ -330,7 +330,7 @@
       },
       "alt_text": null,
       "depends_on_answer": true,
-      "expected_hash": "a6bd26f44371e711d6e2556b02d32072c5aa12e94701ffb4b8667a3b7dfebd9a",
+      "expected_hash": "9da99730d0aa459942c7f6810dbd50e0622103253cf71ad00480486d97b6eb3c",
       "dependencies": [
         "exercices-json"
       ]
@@ -350,7 +350,7 @@
       },
       "alt_text": null,
       "depends_on_answer": true,
-      "expected_hash": "85b7adcc897c7cc310856109871bfc3c6d59e3813c84367487b65da3367885ad",
+      "expected_hash": "80679b87e93ad52643f510473d9210be97c01948d77f00ee766f8988d45d20f0",
       "dependencies": []
     },
     {
@@ -546,7 +546,7 @@
       },
       "alt_text": null,
       "depends_on_answer": false,
-      "expected_hash": "e5369ea2408d28c7717698095a05846c6879d309ec1d2096cc87f77f646de38b",
+      "expected_hash": "753833b66ba2905b74b24fe43898ff9bcd47302162a4a07cdbc2a2b95540fc74",
       "dependencies": []
     },
     {
@@ -564,7 +564,7 @@
       },
       "alt_text": null,
       "depends_on_answer": false,
-      "expected_hash": "6aedf5563a82cd3da0fa1ec9b9eebf8488243ecaa45269e34e8bf36962102b72",
+      "expected_hash": "dcd3d49100920e7d35b970e3ab5d78ed9cc100a2a2f308552f597ccc2bf2092b",
       "dependencies": []
     },
     {
@@ -582,7 +582,7 @@
       },
       "alt_text": null,
       "depends_on_answer": false,
-      "expected_hash": "2654c7ffdd85e100eeabc8e3cf763466af68e8750d031cc54cd6b149fb2665a5",
+      "expected_hash": "355e90c1eba9a44d8e89df2e8515013c72ff22437bbc56dc83e51fa93b880373",
       "dependencies": []
     },
     {
@@ -600,7 +600,7 @@
       },
       "alt_text": null,
       "depends_on_answer": false,
-      "expected_hash": "10a200d80b1fd4a9fc7418eaf2c49aa9b5a1b0c90d0576cefb8fadbd73c5f01f",
+      "expected_hash": "03dc814e7702a4f93acb99fe8fac6c231cad9dbf833c87c5718dcbe8d47bc44b",
       "dependencies": []
     }
   ],

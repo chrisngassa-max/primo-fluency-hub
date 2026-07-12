@@ -1,187 +1,187 @@
 {
   "session_code": "S01",
-  "published_at": "2026-07-07T08:57:41.061Z",
+  "published_at": "2026-07-12T13:46:51.827Z",
   "published_by": "automation",
   "resources": [
     {
       "resource_id": "support-master-json",
-      "session_resource_id": "a8a17660-1bed-4f98-9f22-edb91f8ca57a",
-      "version": 2,
-      "publication_id": "8528e67b-cc00-40cf-a718-a72901d9af08"
+      "session_resource_id": "fea7b939-e0dc-44d7-a292-86f6c647ef26",
+      "version": 3,
+      "publication_id": "1b3c4c6d-a1f7-48da-b62b-0c158406ceaa"
     },
     {
       "resource_id": "support-master-html",
-      "session_resource_id": "851e9f36-d12f-408b-a005-b9e8983373ac",
-      "version": 2,
-      "publication_id": "00cc151f-7d1f-453e-b4b5-12f74b43def6"
+      "session_resource_id": "b1a5b882-d292-44e8-a913-ca99eec66296",
+      "version": 3,
+      "publication_id": "57202b65-faea-41f5-93d4-c6f4a6e75861"
     },
     {
       "resource_id": "support-master-pdf",
-      "session_resource_id": "68d0fb84-30f9-4ee7-9ead-40c8b1028fea",
-      "version": 2,
-      "publication_id": "680abc0d-5b94-40a8-b469-ffec516d6a1d"
+      "session_resource_id": "d2b22d34-8eb6-4b7c-8833-b26cb8d8ca72",
+      "version": 3,
+      "publication_id": "0570841b-5857-45b2-b274-5d9838453bb4"
     },
     {
       "resource_id": "variantes-a1-a2-b1-b2",
-      "session_resource_id": "35f4a8e0-8d14-4db7-a80a-45a273010ce2",
-      "version": 2,
-      "publication_id": "11ed19c4-da59-4982-9099-2e5ce93a848b"
+      "session_resource_id": "87f07c57-a289-433b-a5ad-a4ef9ce507ca",
+      "version": 3,
+      "publication_id": "5a3e3614-0c9b-4a49-bed6-b9e09fe25879"
     },
     {
       "resource_id": "vis-brief-json",
-      "session_resource_id": "0bab4e35-7216-4bd5-8477-ccd878927d2d",
-      "version": 2,
-      "publication_id": "f5bd08a9-66fa-40f7-b147-958669ef20da"
+      "session_resource_id": "919be7ed-2d40-48c9-b1fe-80f87ffd0fcc",
+      "version": 3,
+      "publication_id": "41c44654-c7b4-4369-8e60-d08e4999c1ba"
     },
     {
       "resource_id": "vis-master-svg",
-      "session_resource_id": "68d60f63-cfc6-4c77-80ab-7a5a487c7311",
-      "version": 2,
-      "publication_id": "261a186f-9762-4778-99b0-97459afb4c1a"
+      "session_resource_id": "dc9c013c-891f-4965-b4cc-b025146975d1",
+      "version": 3,
+      "publication_id": "c391b1f7-c5fc-4cc8-9c2b-58f85f7240bd"
     },
     {
       "resource_id": "vis-master-png",
-      "session_resource_id": "3a5a81c4-cf3e-46d0-9ca7-5dda82005dcb",
-      "version": 2,
-      "publication_id": "bea33514-0d2b-4631-af51-b944a71bc2ce"
+      "session_resource_id": "3a4df2e3-7f32-4e96-83bd-52318605a630",
+      "version": 3,
+      "publication_id": "eb3f4726-1eea-45c7-8045-4a4032037735"
     },
     {
       "resource_id": "vis-master-webp",
-      "session_resource_id": "fe235ac9-e531-4d38-bee1-1ab3f2d02788",
-      "version": 2,
-      "publication_id": "b3e1dea1-3d04-47bb-94c5-350e6e9635bf"
+      "session_resource_id": "a9b270ff-dca3-43f7-80f7-6676a6ed9b33",
+      "version": 3,
+      "publication_id": "002b2dea-941d-443a-bea5-75c3de773572"
     },
     {
       "resource_id": "co-script-md",
-      "session_resource_id": "c10f56c9-41df-4f47-92f4-72fb50c1391e",
-      "version": 2,
-      "publication_id": "0ce3f453-33ad-4580-858f-c72c845201d4"
+      "session_resource_id": "c231ec56-f2f1-4b40-9e46-6f91a80c2af6",
+      "version": 3,
+      "publication_id": "876ae9c8-0f02-450b-a38b-b619fe827a42"
     },
     {
       "resource_id": "co-transcript-pdf",
-      "session_resource_id": "a3704a2f-2270-48aa-9158-ce80da02a6ad",
-      "version": 2,
-      "publication_id": "e6dd2fc6-7e6f-42c9-93ae-54827e98ea45"
+      "session_resource_id": "160cd1f9-7ea0-472c-9762-b9fdf49ef6a0",
+      "version": 3,
+      "publication_id": "a86bff6d-2e73-4973-b90c-d1c4fb58a874"
     },
     {
       "resource_id": "co-master-mp3",
-      "session_resource_id": "b1aae2c5-c1bc-4218-897a-912b4359c084",
-      "version": 2,
-      "publication_id": "6c8f79ca-9c12-4a36-9a3e-5fbd3d9a6be9"
+      "session_resource_id": "367a7c5a-ab29-4066-a98d-d8385e5ce2f0",
+      "version": 3,
+      "publication_id": "ee5db8fa-eda7-4d77-a157-65691d1ceb7c"
     },
     {
       "resource_id": "co-metadata-json",
-      "session_resource_id": "83097d05-65cf-4c88-8267-49ceb55f47ad",
-      "version": 2,
-      "publication_id": "4a028634-18b9-4008-806a-0cf351b98934"
+      "session_resource_id": "1532d4c5-5f4b-4452-8c71-b6405ea2abef",
+      "version": 3,
+      "publication_id": "a415ab45-5462-4beb-bec9-1b72bbd8857b"
     },
     {
       "resource_id": "lexique-a1-b2-json",
-      "session_resource_id": "87596c76-878c-423f-a535-1733c1adc305",
-      "version": 2,
-      "publication_id": "bf984f02-95f1-4adf-8f5b-27c04c265b52"
+      "session_resource_id": "2ce029aa-f025-4ac2-bc7e-9cf008f18db5",
+      "version": 3,
+      "publication_id": "3eb8f419-de48-4719-aba4-eb289939eadc"
     },
     {
       "resource_id": "lexique-a1-b2-pdf",
-      "session_resource_id": "9d259e1a-c6e1-4ff5-b554-97486c421372",
-      "version": 2,
-      "publication_id": "cf58d0b7-49e3-4936-8d40-12e2fc810a3b"
+      "session_resource_id": "9014b46b-4adf-42b5-a50c-d875ca76ea69",
+      "version": 3,
+      "publication_id": "f1f29c8b-2a19-4b48-80e9-c12e05f666bd"
     },
     {
       "resource_id": "exercices-json",
-      "session_resource_id": "dd9d6079-e864-49a3-9b74-eff9dd6bb033",
-      "version": 2,
-      "publication_id": "305f050e-6924-453e-9aad-e54b933029db"
+      "session_resource_id": "09f6e1bd-e4ad-4024-bc4b-50789fbd3cd1",
+      "version": 3,
+      "publication_id": "7df4b736-c4a8-4b5e-86fd-5e3a88b490f9"
     },
     {
       "resource_id": "corrige-json",
-      "session_resource_id": "a6e45159-745a-4e43-a7ac-59045998a7c3",
-      "version": 2,
-      "publication_id": "5b1c1e6b-0c01-46d4-9e9c-bd9160f5aade"
+      "session_resource_id": "f18ae362-8d67-4754-94e8-bcfdc0e9ac28",
+      "version": 3,
+      "publication_id": "0b053298-a561-4802-992d-ecd7b1322d3b"
     },
     {
       "resource_id": "qcm-civique-json",
-      "session_resource_id": "7e23d452-8b23-446b-98f8-511c5c0b9c26",
-      "version": 2,
-      "publication_id": "609af0fe-3776-4ba8-bacb-f6bb18bec9e4"
+      "session_resource_id": "695a310d-2048-401c-8525-ddf080a53aed",
+      "version": 3,
+      "publication_id": "80637e03-ef9c-4462-825d-a4763abaf38a"
     },
     {
       "resource_id": "devoir-a1-pdf",
-      "session_resource_id": "84ca9cd7-a88e-4d69-969c-968eb93d946d",
-      "version": 2,
-      "publication_id": "8c306505-0346-459a-920e-907611d46d80"
+      "session_resource_id": "d6bf43ca-c12d-42e5-9191-72d4ba4244ff",
+      "version": 3,
+      "publication_id": "711001e9-0f22-450e-b1de-d12bbaf6c248"
     },
     {
       "resource_id": "fiche-a1-pdf",
-      "session_resource_id": "450fd2c4-805a-47ff-8bcf-e63f5a5d887f",
-      "version": 2,
-      "publication_id": "f6499ea2-d53b-4d07-bf6b-2432555a2a7d"
+      "session_resource_id": "cb6bce3e-2c7b-48f5-a0e7-b3d6572db0c5",
+      "version": 3,
+      "publication_id": "8cd389e2-c44d-4fe6-b614-d43263a9e113"
     },
     {
       "resource_id": "devoir-a2-pdf",
-      "session_resource_id": "2022d87d-5af6-4a9a-b648-845deca478e4",
-      "version": 2,
-      "publication_id": "9d57d827-4b29-40fa-b1b8-59d15356d88b"
+      "session_resource_id": "4ba596d4-a951-4b75-afe0-a225fa02fca0",
+      "version": 3,
+      "publication_id": "9f5488a1-4b7f-4e70-8f77-ec5610ddaab1"
     },
     {
       "resource_id": "fiche-a2-pdf",
-      "session_resource_id": "b97aa138-f1c3-467d-b1f8-0ce17d4cdc27",
-      "version": 2,
-      "publication_id": "5fe9237e-105a-4006-bbe0-54f928ce9807"
+      "session_resource_id": "6c9d58f5-fec4-4f1a-9e6a-b8a11c4946ac",
+      "version": 3,
+      "publication_id": "1b1e5fea-fe53-4768-aecb-c4bf2166ac0c"
     },
     {
       "resource_id": "devoir-b1-pdf",
-      "session_resource_id": "3d657119-db85-49fa-bf2b-18d4b6fbbab0",
-      "version": 2,
-      "publication_id": "6d95d5b2-44a6-4bcd-a0c2-a7b3480e5a2a"
+      "session_resource_id": "b11822ed-a6b0-4d26-a228-baa098b8c3df",
+      "version": 3,
+      "publication_id": "896510d4-2997-49eb-8fd2-8e097096235b"
     },
     {
       "resource_id": "fiche-b1-pdf",
-      "session_resource_id": "8af1c05d-9d8b-47b3-89bf-44b0e3406696",
-      "version": 2,
-      "publication_id": "e17cdbed-5bd6-4a37-99e2-e7eb8def3b45"
+      "session_resource_id": "fff5f213-57aa-450e-98e7-905b9ef67e85",
+      "version": 3,
+      "publication_id": "271455eb-76d5-4bdf-80df-726df8bcdc29"
     },
     {
       "resource_id": "devoir-b2-pdf",
-      "session_resource_id": "9c4841fb-b012-4705-8d9d-a91b2c3ca59a",
-      "version": 2,
-      "publication_id": "6b62ebd9-493b-4922-9c3b-55115283f235"
+      "session_resource_id": "12ec5b43-0762-4f73-a06f-03bd7403ada9",
+      "version": 3,
+      "publication_id": "8ea0eebd-45af-42cb-9e8a-a8c94b12caf1"
     },
     {
       "resource_id": "fiche-b2-pdf",
-      "session_resource_id": "aa927a70-98d3-4ece-9e92-44afdb496e44",
-      "version": 2,
-      "publication_id": "06185484-e1a1-4c1a-8e25-06c797736a3a"
+      "session_resource_id": "3bdd79c9-657c-43a5-a2ea-a78fac86fedc",
+      "version": 3,
+      "publication_id": "2d59f39e-5be8-42f8-98d4-1aa32eefcf80"
     },
     {
       "resource_id": "fiche-formateur-pdf",
-      "session_resource_id": "346aa401-5375-4557-b768-d76f61b71a77",
-      "version": 2,
-      "publication_id": "d1e9b647-bed3-4928-b01e-f674b66dae24"
+      "session_resource_id": "b155fb72-b67e-4454-a3b3-9c912e323105",
+      "version": 3,
+      "publication_id": "b860d16d-46ef-4a02-abe6-184d3218556a"
     },
     {
       "resource_id": "deroule-180min-json",
-      "session_resource_id": "d34f99b4-4044-4a63-8c7c-02594d6088a4",
-      "version": 2,
-      "publication_id": "c8dcc4c8-cf76-4ebb-aa15-e5e7da963896"
+      "session_resource_id": "4d11f387-d717-4ff1-9127-5de37289cfb5",
+      "version": 3,
+      "publication_id": "0a87aee8-8b6d-4478-af54-738309911773"
     },
     {
       "resource_id": "adaptation-rules-json",
-      "session_resource_id": "c3422395-611e-4529-b1ea-0cb477c01da9",
-      "version": 2,
-      "publication_id": "e4341d2a-3f03-4f57-ad3f-1b1598980449"
+      "session_resource_id": "f0211d78-f2bf-4a5f-a35a-d77e74d1c82d",
+      "version": 3,
+      "publication_id": "f6301368-4360-4bd1-951e-3110674affe2"
     },
     {
       "resource_id": "sources-json",
-      "session_resource_id": "996da742-5e6c-4b87-a440-00b8eab75487",
-      "version": 2,
-      "publication_id": "e9a0287b-819a-4d76-a71e-8525c586cf70"
+      "session_resource_id": "3ff5b710-358c-4a84-90f6-2fd4360dfb12",
+      "version": 3,
+      "publication_id": "ab5a0efd-8e3b-4d79-bfd1-f49e30e5cb02"
     },
     {
       "resource_id": "session-yaml",
-      "session_resource_id": "fc63d6d6-4c93-432b-8d9b-a119abc32716",
-      "version": 2,
-      "publication_id": "07aa4938-06e0-4c0a-98b4-1d07d6ca1a88"
+      "session_resource_id": "7de32fcb-0970-4199-95c2-4e1bf53b570e",
+      "version": 3,
+      "publication_id": "a4cda1c0-cae5-4696-b6b3-fa8da1ae6c58"
     }
   ]
 }
