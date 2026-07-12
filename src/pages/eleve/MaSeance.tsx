@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   BookOpen, CalendarClock, CheckCircle2, ChevronRight, GraduationCap,
-  PlayCircle, Sparkles,
+  PlayCircle, Sparkles, MonitorPlay,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import CompetenceLabel from "@/components/CompetenceLabel";
@@ -90,6 +90,9 @@ const MaSeance = () => {
     return (
       <div className="space-y-6 max-w-2xl mx-auto">
         <Header />
+        <Button className="w-full gap-2 bg-blue-600 font-bold hover:bg-blue-700" onClick={() => navigate("/eleve/exercices-interactifs/s01")}>
+          <PlayCircle className="h-5 w-5" /> Exercices interactifs — Séance 1 v3
+        </Button>
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="h-16 w-16 rounded-full bg-blue-100 flex items-center justify-center mb-4">
             <CalendarClock className="h-8 w-8 text-primary" />
@@ -109,6 +112,9 @@ const MaSeance = () => {
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
       <Header />
+        <Button className="w-full gap-2 bg-blue-600 font-bold hover:bg-blue-700" onClick={() => navigate("/eleve/exercices-interactifs/s01")}>
+          <PlayCircle className="h-5 w-5" /> Exercices interactifs — Séance 1 v3
+        </Button>
 
       {/* Carte séance courante */}
       <div className="rounded-2xl bg-[#0b234a] p-5 text-white shadow-sm">
@@ -144,7 +150,7 @@ const MaSeance = () => {
       )}
 
       {/* Exercices demandés */}
-      <Section title="Mes exercices" icon={<BookOpen className="h-4 w-4" />}>
+      <Section title="Mes exercices interactifs" icon={<MonitorPlay className="h-4 w-4" />}>
         {loadingEx ? (
           <div className="space-y-3">
             <Skeleton className="h-16 w-full" />
@@ -206,6 +212,7 @@ function Section({ title, icon, children }: { title: string; icon?: React.ReactN
 function ExerciceRow({ ex, onOpen }: { ex: SeanceExercice; onOpen: () => void }) {
   const meta = STATUT_META[ex.statut];
   const Icon = meta.icon;
+  const dejaFait = ex.statut === "termine";
   return (
     <div
       className={cn(
@@ -221,6 +228,9 @@ function ExerciceRow({ ex, onOpen }: { ex: SeanceExercice; onOpen: () => void })
         <div className="flex items-center gap-2 flex-wrap">
           <span className="font-semibold truncate">{ex.titre}</span>
           <Badge variant="outline" className={cn("text-xs", meta.badge)}>{meta.label}</Badge>
+          <Badge className="text-xs border-0 bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 gap-1">
+            <MonitorPlay className="h-3 w-3" /> Interactif
+          </Badge>
         </div>
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           {ex.competence && (
@@ -231,6 +241,17 @@ function ExerciceRow({ ex, onOpen }: { ex: SeanceExercice; onOpen: () => void })
           )}
         </div>
       </div>
+      <Button
+        size="sm"
+        className="shrink-0 gap-1 bg-blue-600 hover:bg-blue-700 text-white"
+        onClick={(e) => {
+          e.stopPropagation();
+          onOpen();
+        }}
+      >
+        <PlayCircle className="h-4 w-4" />
+        {dejaFait ? "Revoir" : "Tester"}
+      </Button>
       <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
     </div>
   );

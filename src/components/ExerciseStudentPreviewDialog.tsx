@@ -104,6 +104,7 @@ export default function ExerciseStudentPreviewDialog({
     : [];
   const totalPages = items.length;
   const currentItem = items[page] as Record<string, unknown> | undefined;
+  const isTestComplete = totalPages === 0 || items.every((_, index) => Boolean(answers[String(index)]?.trim()));
 
   const handleAnswerChange = (value: string) => {
     setAnswers((current) => ({ ...current, [String(page)]: value }));
@@ -265,9 +266,13 @@ export default function ExerciseStudentPreviewDialog({
                           })}
                         </RadioGroup>
                       ) : (
-                        <div className="rounded-md border bg-muted/20 p-3 text-sm italic text-muted-foreground">
-                          Zone de saisie libre pour l'élève
-                        </div>
+                        <textarea
+                          className="min-h-28 w-full rounded-md border bg-background p-3 text-sm"
+                          disabled={!interactive}
+                          value={answers[String(page)] ?? ""}
+                          onChange={(event) => handleAnswerChange(event.target.value)}
+                          placeholder={exercise.format === "production_orale" ? "Écris ici ce que tu dirais à l’oral pour tester cette activité." : "Écris ta réponse ici."}
+                        />
                       )}
                     </CardContent>
                   </Card>
@@ -294,6 +299,8 @@ export default function ExerciseStudentPreviewDialog({
             {interactive && onTestComplete && (
               <div className="flex justify-end border-t pt-4">
                 <Button
+                  disabled={!isTestComplete}
+                  title={!isTestComplete ? "Réponds à toutes les questions avant de terminer." : undefined}
                   onClick={() => {
                     onTestComplete();
                     onOpenChange(false);

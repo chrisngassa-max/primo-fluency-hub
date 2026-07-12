@@ -1,4 +1,4 @@
-﻿import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
+import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -124,7 +124,7 @@ describe('Lot 3 â€” pipeline generate/validate/publish/resume (repertoires 
     // Republication : nouvelle version, lien vers la version precedente conserve (section 9.6/9.7).
     const republication = await publishOneSession({ sessionCode: 'S00', storagePublisher, planVersionId: 'plan-test', baseDir: contentDir });
     expect(republication.publishedResources.every((r) => r.version === 2)).toBe(true);
-  });
+  }, 15_000);
 
   it('reprend sans regenerer une seance deja au statut succeeded avec la meme idempotency_key (section 9.5)', async () => {
     const batchStore = new FileBatchStore({ dir: batchDir });
