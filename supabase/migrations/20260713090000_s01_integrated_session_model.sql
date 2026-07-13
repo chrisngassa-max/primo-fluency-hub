@@ -116,97 +116,29 @@ UPDATE public.session_documents
   WHERE status = 'valide' AND pedagogical_status = 'draft';
 
 -- ------------------------------------------------------------
--- 3. Accès apprenant en lecture seule au contenu de séance.
--- Règle absolue : jamais de PDF/DOCX/URL de stockage côté apprenant.
--- On ne s'appuie pas seulement sur une policy RLS ligne par ligne :
--- les vues ci-dessous n'exposent structurellement PAS les colonnes
--- file_url / source_file_path, quelle que soit la ligne retournée
--- (même logique défensive que play-exercise/index.ts qui retire
--- is_live_ready de la réponse avant envoi).
+-- 3. Accès apprenant au contenu de séance — REVU après relecture
+-- indépendante (2026-07-13) : une policy RLS SELECT sur la table de BASE
+-- reste une policy PAR LIGNE, pas par colonne. Un client authentifié peut
+-- techniquement demander `file_url`/`source_file_path` dans son `select()`
+-- et les obtenir dès lors qu'une ligne est autorisée — la vue "learner_view"
+-- de la version précédente de cette migration ne protégeait donc RIEN
+-- contre un appel direct à la table `session_documents` elle-même.
 --
--- Enrôlement vérifié via le chemin déjà utilisé ailleurs (migration
--- 20260707100000_curriculum_v2_pilot_link.sql) :
---   training_sessions.code = session_code
---   sessions.training_session_id = training_sessions.id
---   group_members.group_id = sessions.group_id, eleve_id = auth.uid()
+-- Nouvelle règle, structurelle : AUCUNE policy SELECT apprenant sur
+-- session_documents / session_document_links / exercices (RLS deny-by-
+-- default pour authenticated). Le seul chemin de lecture pour un apprenant
+-- passe par les edge functions `get-seance-content` et
+-- `get-attempt-correction` (service role, colonnes choisies en dur dans le
+-- code TypeScript, jamais construites depuis l'input du client — voir
+-- supabase/functions/get-seance-content/index.ts). Un test d'intégration
+-- (tests/integration/pdf-protection.test.mjs) vérifie qu'une requête
+-- authentifiée directe sur file_url échoue réellement.
 -- ------------------------------------------------------------
 DROP POLICY IF EXISTS "eleves_read_session_documents_content" ON public.session_documents;
-CREATE POLICY "eleves_read_session_documents_content"
-  ON public.session_documents FOR SELECT TO authenticated
-  USING (
-    audience IN ('apprenant', 'both')
-    AND pedagogical_status IN ('publishable', 'published')
-    AND EXISTS (
-      SELECT 1
-      FROM public.training_sessions ts
-      JOIN public.sessions s ON s.training_session_id = ts.id
-      JOIN public.group_members gm ON gm.group_id = s.group_id
-      WHERE ts.code = session_documents.session_code
-        AND gm.eleve_id = auth.uid()
-    )
-  );
-
 DROP POLICY IF EXISTS "eleves_read_session_document_links" ON public.session_document_links;
-CREATE POLICY "eleves_read_session_document_links"
-  ON public.session_document_links FOR SELECT TO authenticated
-  USING (
-    audience IN ('apprenant', 'both')
-    AND EXISTS (
-      SELECT 1 FROM public.exercices e
-      WHERE e.id = session_document_links.linked_id
-        AND e.pedagogical_status IN ('publishable', 'published')
-    )
-    AND EXISTS (
-      SELECT 1
-      FROM public.training_sessions ts
-      JOIN public.sessions s ON s.training_session_id = ts.id
-      JOIN public.group_members gm ON gm.group_id = s.group_id
-      WHERE ts.code = session_document_links.session_code
-        AND gm.eleve_id = auth.uid()
-    )
-  );
-
--- Sans cette policy, un apprenant ne pourrait lire ni le contenu.contenu
--- (items, consigne...) d'un exercice référencé par session_document_links :
--- les policies existantes sur exercices ne couvrent que session_exercices
--- (parcours/playlist), pas ce pont-ci.
 DROP POLICY IF EXISTS "eleves_read_exercices_via_session_document_links" ON public.exercices;
-CREATE POLICY "eleves_read_exercices_via_session_document_links"
-  ON public.exercices FOR SELECT TO authenticated
-  USING (
-    pedagogical_status IN ('publishable', 'published')
-    AND EXISTS (
-      SELECT 1
-      FROM public.session_document_links sdl
-      JOIN public.training_sessions ts ON ts.code = sdl.session_code
-      JOIN public.sessions s ON s.training_session_id = ts.id
-      JOIN public.group_members gm ON gm.group_id = s.group_id
-      WHERE sdl.linked_id = exercices.id
-        AND sdl.audience IN ('apprenant', 'both')
-        AND gm.eleve_id = auth.uid()
-    )
-  );
-
-CREATE OR REPLACE VIEW public.session_documents_learner_view
-WITH (security_invoker = true) AS
-SELECT
-  id, session_code, document_type, title, level, competence,
-  content_html, content_json, display_order, audience,
-  activity_id, block_code, pedagogical_status, version, updated_at
-FROM public.session_documents;
--- Ni file_url ni source_file_path ne figurent dans cette vue : un PDF
--- ne peut structurellement pas être servi à travers elle.
-
-GRANT SELECT ON public.session_documents_learner_view TO authenticated;
-
-CREATE OR REPLACE VIEW public.session_document_links_learner_view
-WITH (security_invoker = true) AS
-SELECT
-  id, session_code, linked_type, linked_id, audience,
-  display_order, title, activity_id, block_code, metadata, updated_at
-FROM public.session_document_links;
-
-GRANT SELECT ON public.session_document_links_learner_view TO authenticated;
+DROP VIEW IF EXISTS public.session_documents_learner_view;
+DROP VIEW IF EXISTS public.session_document_links_learner_view;
 
 -- ------------------------------------------------------------
 -- 4. Base de faits civiques officiels (rapport de référence §9) +
@@ -257,22 +189,42 @@ CREATE POLICY "service_all_civic_facts"
 
 ALTER TABLE public.exercices
   ADD COLUMN IF NOT EXISTS civic_content boolean NOT NULL DEFAULT false,
-  ADD COLUMN IF NOT EXISTS civic_fact_ids text[] NOT NULL DEFAULT '{}';
+  ADD COLUMN IF NOT EXISTS civic_fact_ids text[] NOT NULL DEFAULT '{}',
+  ADD COLUMN IF NOT EXISTS needs_content_review boolean NOT NULL DEFAULT false;
 
--- Verrou déterministe : un exercice marqué civic_content ne peut
--- atteindre pedagogical_status='publishable' que si chacun de ses
--- civic_fact_ids référence un fait actif et en vigueur à la date du
--- jour. Le RAG/l'IA peuvent proposer des fact_id ; ce trigger ne fait
--- confiance qu'à la table civic_facts, jamais à l'IA seule (§9/§10 du
--- rapport de référence).
+COMMENT ON COLUMN public.exercices.needs_content_review IS
+  'Posé par le générateur (scripts/curriculum/generate-s01-interactive.mjs) quand un exercice autocorrigé est sous le plancher de 10 items faute de matière première réelle. Bloque publishable/published (trigger trg_check_publishable_density) tant que non corrigé manuellement.';
+
+-- Attributs de gouvernance du fait civique lui-même (pas de l'exercice) :
+-- version et validateur humain distinct de exercices.reviewed_by (qui porte
+-- la revue pédagogique du contenu, pas la vérification de la véracité du
+-- fait officiel).
+ALTER TABLE public.civic_facts
+  ADD COLUMN IF NOT EXISTS version integer NOT NULL DEFAULT 1,
+  ADD COLUMN IF NOT EXISTS validated_by uuid REFERENCES public.profiles(id);
+
+-- Verrou déterministe, DURCI après relecture indépendante (2026-07-13) :
+-- 1) s'applique à TOUTE transition VERS 'publishable' OU 'published' (pas
+--    seulement 'publishable' — la version précédente laissait un exercice
+--    déjà 'publishable' passer librement à 'published' sans re-vérifier) ;
+-- 2) exige, pour CHAQUE civic_fact_id référencé : source_url non nul,
+--    content_hash non nul, verified_at non nul, validated_by non nul
+--    (validateur humain distinct de l'IA), en plus de status='active' et de
+--    la fenêtre effective_from/effective_to déjà vérifiée ;
+-- 3) interdit tout saut de plus d'un palier du cycle en une seule
+--    transition pour un exercice civique — bloque nommément draft->published
+--    direct, mais aussi tout autre raccourci (ex. draft->trainer_approved).
 CREATE OR REPLACE FUNCTION public.check_civic_publishable()
 RETURNS trigger
 LANGUAGE plpgsql
 AS $$
 DECLARE
   v_missing text[];
+  v_rank_old integer;
+  v_rank_new integer;
+  v_ranks jsonb := '{"draft":0,"technical_review":1,"pedagogical_review":2,"factual_review":3,"trainer_approved":4,"publishable":5,"published":6}'::jsonb;
 BEGIN
-  IF NEW.pedagogical_status = 'publishable' AND NEW.civic_content THEN
+  IF NEW.civic_content AND NEW.pedagogical_status IN ('publishable', 'published') THEN
     IF NEW.civic_fact_ids IS NULL OR array_length(NEW.civic_fact_ids, 1) IS NULL THEN
       RAISE EXCEPTION 'DIFF_FACT_SOURCE_UNVERIFIED: exercice civique % sans civic_fact_ids', NEW.id;
     END IF;
@@ -285,10 +237,25 @@ BEGIN
         AND cf.status = 'active'
         AND cf.effective_from <= current_date
         AND (cf.effective_to IS NULL OR cf.effective_to > current_date)
+        AND cf.source_url IS NOT NULL
+        AND cf.content_hash IS NOT NULL
+        AND cf.verified_at IS NOT NULL
+        AND cf.validated_by IS NOT NULL
+        AND cf.version >= 1
     );
 
     IF v_missing IS NOT NULL THEN
-      RAISE EXCEPTION 'DIFF_FACT_SOURCE_EXPIRED: fait(s) civique(s) non actifs/à jour: %', v_missing;
+      RAISE EXCEPTION 'DIFF_FACT_SOURCE_EXPIRED: fait(s) civique(s) non actifs, non sourcés ou non validés humainement : %', v_missing;
+    END IF;
+
+    IF TG_OP = 'UPDATE' THEN
+      v_rank_old := COALESCE((v_ranks -> OLD.pedagogical_status)::text::integer, 0);
+      v_rank_new := (v_ranks -> NEW.pedagogical_status)::text::integer;
+      IF v_rank_new - v_rank_old > 1 THEN
+        RAISE EXCEPTION 'DIFF_CIVIC_STAGE_SKIPPED: un exercice civique (%) ne peut pas sauter de % à % en une seule transition', NEW.id, OLD.pedagogical_status, NEW.pedagogical_status;
+      END IF;
+    ELSIF NEW.pedagogical_status <> 'draft' THEN
+      RAISE EXCEPTION 'DIFF_CIVIC_STAGE_SKIPPED: un exercice civique (%) doit être créé en draft, jamais directement en %', NEW.id, NEW.pedagogical_status;
     END IF;
   END IF;
   RETURN NEW;
@@ -299,6 +266,25 @@ DROP TRIGGER IF EXISTS trg_check_civic_publishable ON public.exercices;
 CREATE TRIGGER trg_check_civic_publishable
   BEFORE INSERT OR UPDATE ON public.exercices
   FOR EACH ROW EXECUTE FUNCTION public.check_civic_publishable();
+
+-- Point 9 (relecture indépendante) : un exercice marqué needs_content_review
+-- ne doit jamais être publié, civique ou non.
+CREATE OR REPLACE FUNCTION public.check_publishable_density()
+RETURNS trigger
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  IF NEW.needs_content_review AND NEW.pedagogical_status IN ('publishable', 'published') THEN
+    RAISE EXCEPTION 'DENSITY_BELOW_FLOOR: exercice % marqué needs_content_review=true, publication bloquée', NEW.id;
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trg_check_publishable_density ON public.exercices;
+CREATE TRIGGER trg_check_publishable_density
+  BEFORE INSERT OR UPDATE ON public.exercices
+  FOR EACH ROW EXECUTE FUNCTION public.check_publishable_density();
 
 -- ------------------------------------------------------------
 -- 5. Moteur de libération des corrections.
@@ -365,14 +351,18 @@ CREATE POLICY "service_all_release_events"
   ON public.correction_release_events FOR ALL TO service_role
   USING (auth.role() = 'service_role') WITH CHECK (auth.role() = 'service_role');
 
--- Protection des colonnes de libération : learner_own_attempts (RLS
--- historique, migration 20260414211154) autorise l'apprenant à mettre
--- à jour SA PROPRE ligne sans restriction de colonne. Sans ce trigger,
--- un apprenant pourrait s'auto-libérer sa propre correction. On
--- neutralise silencieusement toute tentative non-staff de modifier
--- correction_released_at / remediation_*, et on n'autorise
--- correction_viewed_at que si une libération existe déjà.
-CREATE OR REPLACE FUNCTION public.guard_exercise_attempts_release_columns()
+-- Protection des colonnes de libération ET du score/de la correction.
+-- DURCI après relecture indépendante (2026-07-13) : la version précédente
+-- ne couvrait que l'UPDATE des colonnes de libération — elle laissait un
+-- apprenant INSÉRER directement une ligne avec status='completed',
+-- score_normalized et item_results arbitraires (learner_own_attempts,
+-- migration 20260414211154, est une policy FOR ALL sans restriction de
+-- colonne). Seul un ping de progression 'in_progress' (cf.
+-- src/hooks/useLiveAttemptSync.ts, qui ne pose jamais de score) reste
+-- possible pour un non-staff ; tout calcul réel de score/correction doit
+-- passer par une voie service_role (edge function get-seance-content /
+-- auto-correct-exercise, qui recharge exercices.contenu server-side).
+CREATE OR REPLACE FUNCTION public.guard_exercise_attempts_learner_writes()
 RETURNS trigger
 LANGUAGE plpgsql
 AS $$
@@ -383,7 +373,11 @@ BEGIN
     OR public.has_role(auth.uid(), 'formateur'::public.app_role)
     OR public.has_role(auth.uid(), 'admin'::public.app_role);
 
-  IF NOT v_is_staff THEN
+  IF v_is_staff THEN
+    RETURN NEW;
+  END IF;
+
+  IF TG_OP = 'UPDATE' THEN
     IF NEW.correction_released_at IS DISTINCT FROM OLD.correction_released_at THEN
       NEW.correction_released_at := OLD.correction_released_at;
     END IF;
@@ -400,15 +394,44 @@ BEGIN
        AND OLD.correction_released_at IS NULL THEN
       NEW.correction_viewed_at := OLD.correction_viewed_at;
     END IF;
+    -- Un apprenant ne peut jamais faire passer sa propre tentative à
+    -- 'completed' avec un score : seule une voie service_role calcule et
+    -- pose le résultat réel. Un update non-staff reste cantonné à un ping
+    -- 'in_progress' (progress/provisional), jamais une complétion.
+    IF NEW.status = 'completed' AND OLD.status IS DISTINCT FROM 'completed' THEN
+      NEW.status := OLD.status;
+      NEW.score_normalized := OLD.score_normalized;
+      NEW.score_raw := OLD.score_raw;
+      NEW.item_results := OLD.item_results;
+      NEW.completed_at := OLD.completed_at;
+      NEW.feedback_text := OLD.feedback_text;
+    END IF;
+  ELSE
+    -- INSERT : un non-staff ne peut jamais créer directement une ligne
+    -- 'completed' ni poser la moindre colonne de libération/remédiation.
+    NEW.correction_released_at := NULL;
+    NEW.release_event_id := NULL;
+    NEW.remediation_exercise_id := NULL;
+    NEW.remediation_assigned_at := NULL;
+    NEW.correction_viewed_at := NULL;
+    IF NEW.status = 'completed' THEN
+      NEW.status := 'in_progress';
+      NEW.score_normalized := NULL;
+      NEW.score_raw := NULL;
+      NEW.item_results := NULL;
+      NEW.completed_at := NULL;
+      NEW.feedback_text := NULL;
+    END IF;
   END IF;
   RETURN NEW;
 END;
 $$;
 
 DROP TRIGGER IF EXISTS trg_guard_exercise_attempts_release_columns ON public.exercise_attempts;
-CREATE TRIGGER trg_guard_exercise_attempts_release_columns
-  BEFORE UPDATE ON public.exercise_attempts
-  FOR EACH ROW EXECUTE FUNCTION public.guard_exercise_attempts_release_columns();
+DROP TRIGGER IF EXISTS trg_guard_exercise_attempts_learner_writes ON public.exercise_attempts;
+CREATE TRIGGER trg_guard_exercise_attempts_learner_writes
+  BEFORE INSERT OR UPDATE ON public.exercise_attempts
+  FOR EACH ROW EXECUTE FUNCTION public.guard_exercise_attempts_learner_writes();
 
 CREATE OR REPLACE FUNCTION public.exercise_attempt_workflow_state(ea public.exercise_attempts)
 RETURNS text
@@ -425,11 +448,68 @@ AS $$
   END
 $$;
 
+-- Autorisation liée à la SÉANCE ET AU GROUPE du formateur (relecture
+-- indépendante, point 7) — pas seulement exercices.formateur_id, qui peut
+-- être un compte technique/générateur différent du formateur qui pilote
+-- réellement la séance en cours pour ce groupe. Un appelant est autorisé
+-- s'il est service_role, admin, propriétaire déclaré de l'exercice (legacy),
+-- OU formateur du groupe d'au moins UNE séance (`sessions`) où cet exercice
+-- est planifié (`session_exercices`).
+CREATE OR REPLACE FUNCTION public.is_authorized_for_exercise_release(p_exercise_id uuid, p_caller uuid)
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT (auth.role() = 'service_role')
+    OR public.has_role(p_caller, 'admin'::public.app_role)
+    OR EXISTS (
+      SELECT 1 FROM public.exercices e
+      WHERE e.id = p_exercise_id AND e.formateur_id = p_caller
+    )
+    OR EXISTS (
+      SELECT 1
+      FROM public.session_exercices se
+      JOIN public.sessions s ON s.id = se.session_id
+      JOIN public.groups g ON g.id = s.group_id
+      WHERE se.exercice_id = p_exercise_id
+        AND g.formateur_id = p_caller
+    );
+$$;
+
+-- Vérifie que chaque eleve_id ciblé appartient bien à un groupe où cet
+-- exercice est réellement planifié — empêche un formateur de "libérer" pour
+-- un élève qui n'a rien à voir avec la séance de cet exercice.
+CREATE OR REPLACE FUNCTION public.eleve_ids_in_exercise_scope(p_exercise_id uuid, p_eleve_ids uuid[])
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT p_eleve_ids IS NULL OR NOT EXISTS (
+    SELECT 1 FROM unnest(p_eleve_ids) AS target_id
+    WHERE NOT EXISTS (
+      SELECT 1
+      FROM public.session_exercices se
+      JOIN public.sessions s ON s.id = se.session_id
+      JOIN public.group_members gm ON gm.group_id = s.group_id
+      WHERE se.exercice_id = p_exercise_id AND gm.eleve_id = target_id
+    )
+  );
+$$;
+
 -- Fonction serveur de libération, seule voie autorisée pour poser
 -- correction_released_at à distance (le trigger ci-dessus bloque
--- l'apprenant ; cette fonction vérifie explicitement que l'appelant
--- est le formateur propriétaire de l'exercice, un admin, ou le
--- service_role, avant toute écriture).
+-- l'apprenant). Scopes réels demandés (relecture indépendante, point 7) :
+-- individual (p_eleve_ids = 1 élève), subgroup (p_eleve_ids = liste choisie
+-- par le formateur), level (p_eleve_ids = élèves de ce niveau, résolus côté
+-- appelant via student_competency_levels/l'UI existante), finished (tous
+-- les `completed` non encore libérés), class (p_eleve_ids NULL = tout le
+-- groupe). "collective" n'est pas un scope de libération séparé : c'est un
+-- mode d'AFFICHAGE anonymisé (voir get_exercise_response_distribution)
+-- combiné à un release scope='class'.
 CREATE OR REPLACE FUNCTION public.release_corrections(
   p_exercise_id uuid,
   p_eleve_ids uuid[] DEFAULT NULL,
@@ -442,21 +522,22 @@ SET search_path = public
 AS $$
 DECLARE
   v_caller uuid := auth.uid();
-  v_is_authorized boolean;
   v_event_id uuid;
 BEGIN
-  IF p_scope NOT IN ('individual', 'finished', 'class') THEN
+  IF p_scope NOT IN ('individual', 'finished', 'subgroup', 'level', 'class') THEN
     RAISE EXCEPTION 'release_corrections: scope inconnu %', p_scope;
   END IF;
 
-  SELECT (auth.role() = 'service_role') OR EXISTS (
-    SELECT 1 FROM public.exercices e
-    WHERE e.id = p_exercise_id
-      AND (e.formateur_id = v_caller OR public.has_role(v_caller, 'admin'::public.app_role))
-  ) INTO v_is_authorized;
+  IF p_scope = 'individual' AND (p_eleve_ids IS NULL OR array_length(p_eleve_ids, 1) <> 1) THEN
+    RAISE EXCEPTION 'release_corrections: le scope individual exige exactement un eleve_id';
+  END IF;
 
-  IF NOT v_is_authorized THEN
-    RAISE EXCEPTION 'release_corrections: appelant non autorisé pour l''exercice %', p_exercise_id;
+  IF NOT public.is_authorized_for_exercise_release(p_exercise_id, v_caller) THEN
+    RAISE EXCEPTION 'release_corrections: appelant non autorisé pour l''exercice % (ni propriétaire, ni formateur du groupe de séance)', p_exercise_id;
+  END IF;
+
+  IF NOT public.eleve_ids_in_exercise_scope(p_exercise_id, p_eleve_ids) THEN
+    RAISE EXCEPTION 'release_corrections: au moins un eleve_id ne fait pas partie du groupe de séance de cet exercice';
   END IF;
 
   INSERT INTO public.correction_release_events (exercise_id, released_by, scope, target_eleve_ids)
@@ -482,6 +563,34 @@ BEGIN
     AND ea.correction_released_at IS NULL
     AND (p_eleve_ids IS NULL OR ea.learner_id = ANY(p_eleve_ids))
   RETURNING ea.*;
+END;
+$$;
+
+-- Correction collective anonymisée (mission §"CORRECTION COLLECTIVE") :
+-- distribution des réponses par item, sans jamais exposer l'identité de
+-- l'élève. Autorisation identique à release_corrections.
+CREATE OR REPLACE FUNCTION public.get_exercise_response_distribution(p_exercise_id uuid)
+RETURNS TABLE(item_index text, reponse_normalisee text, occurrences bigint)
+LANGUAGE plpgsql
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  IF NOT public.is_authorized_for_exercise_release(p_exercise_id, auth.uid()) THEN
+    RAISE EXCEPTION 'get_exercise_response_distribution: appelant non autorisé pour l''exercice %', p_exercise_id;
+  END IF;
+
+  RETURN QUERY
+  SELECT kv.key AS item_index,
+         lower(trim(both from (kv.value #>> '{}'))) AS reponse_normalisee,
+         count(*)::bigint AS occurrences
+  FROM public.exercise_attempts ea
+  CROSS JOIN LATERAL jsonb_each(COALESCE(ea.answers, '{}'::jsonb)) AS kv(key, value)
+  WHERE ea.exercise_id = p_exercise_id
+    AND ea.status = 'completed'
+  GROUP BY kv.key, lower(trim(both from (kv.value #>> '{}')))
+  ORDER BY kv.key;
 END;
 $$;
 
@@ -530,5 +639,63 @@ ALTER TABLE public.devoirs
   ADD COLUMN IF NOT EXISTS correction_policy text NOT NULL DEFAULT 'immediate'
     CHECK (correction_policy IN ('immediate', 'manual_release', 'scheduled')),
   ADD COLUMN IF NOT EXISTS correction_release_at timestamptz;
+
+-- ------------------------------------------------------------
+-- 7. Alimentation réelle de S01 (relecture indépendante, point 4) :
+-- la version précédente créait le SCHÉMA de session_activities sans
+-- jamais y insérer les 7 activités ni rattacher un seul document/exercice
+-- réel. Idempotent (ON CONFLICT / UPDATE ... WHERE IS NULL), sans dépendre
+-- de ce que scripts/curriculum/publish-s01-interactive.mjs aura ou non
+-- déjà exécuté (peut tourner avant ou après, sans effet destructif).
+-- ------------------------------------------------------------
+INSERT INTO public.session_activities (session_code, activity_code, title, objective, display_order, pedagogical_status)
+VALUES
+  ('S01', 'S01.ACCUEIL', 'Accueil et cinq thèmes civiques', 'Découvrir les cinq thèmes civiques du parcours', 1, 'draft'),
+  ('S01', 'S01.LEXIQUE', 'Lexique de la séance', 'Installer les 10 mots-clés avant l''écoute du dialogue', 2, 'draft'),
+  ('S01', 'S01.CO', 'Comprendre le dialogue d''accueil', 'Comprendre le parcours et ses modalités (durée, séances, évaluations)', 3, 'draft'),
+  ('S01', 'S01.ATELIER', 'Atelier différencié — identité', 'Se présenter et présenter un tiers (identité, nationalité, parcours)', 4, 'draft'),
+  ('S01', 'S01.STRUCTURES', 'Structures utiles', 'Travailler les structures grammaticales graduées A1 à B2', 5, 'draft'),
+  ('S01', 'S01.CIVIQUE', 'Droits, devoirs et règles', 'Distinguer droit, devoir et règle', 6, 'draft'),
+  ('S01', 'S01.PRODUCTION', 'Production orale et écrite', 'Réemploi communicatif : se présenter et expliquer son objectif', 7, 'draft')
+ON CONFLICT (session_code, activity_code) DO NOTHING;
+
+-- Contrainte d'unicité additive : permet à la procédure d'ingestion
+-- (scripts/curriculum/publish-s01-interactive.mjs) de faire un vrai
+-- upsert (ON CONFLICT) sur session_document_links au lieu d'insérer un
+-- doublon à chaque exécution.
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'session_document_links_session_linked_unique'
+  ) THEN
+    ALTER TABLE public.session_document_links
+      ADD CONSTRAINT session_document_links_session_linked_unique
+      UNIQUE (session_code, linked_id);
+  END IF;
+END $$;
+
+-- Rattache les 9 documents S01 déjà seedés (migration 20260708210100) à
+-- leur activité canonique, par document_type. N'écrase jamais un
+-- activity_id déjà posé manuellement (WHERE activity_id IS NULL).
+UPDATE public.session_documents sd
+SET activity_id = sa.id,
+    block_code = 'S01.' || upper(sd.document_type)
+FROM public.session_activities sa
+WHERE sd.session_code = 'S01'
+  AND sa.session_code = 'S01'
+  AND sd.activity_id IS NULL
+  AND (
+    (sd.document_type IN ('support_visuel') AND sa.activity_code = 'S01.ACCUEIL')
+    OR (sd.document_type IN ('lexique') AND sa.activity_code = 'S01.LEXIQUE')
+    OR (sd.document_type IN ('dialogue_transcription', 'qcm_tcf') AND sa.activity_code = 'S01.CO')
+    OR (sd.document_type IN ('fiche_apprenant') AND sa.activity_code = 'S01.ATELIER')
+    OR (sd.document_type IN ('qcm_civique') AND sa.activity_code = 'S01.CIVIQUE')
+  );
+-- fiche_formateur / corrige_formateur / document_transforme restent sans
+-- activity_id : ce sont des documents formateur (audience='formateur') ou
+-- non encore classés — ils ne doivent de toute façon jamais être servis à
+-- l'apprenant (voir section 3 : aucune policy SELECT apprenant sur cette
+-- table, accès exclusivement via get-seance-content qui filtre lui-même
+-- sur audience IN ('apprenant','both')).
 
 COMMIT;

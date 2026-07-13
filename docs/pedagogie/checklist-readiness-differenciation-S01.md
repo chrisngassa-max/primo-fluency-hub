@@ -1,5 +1,15 @@
 # Checklist de readiness — 12 préalables (extraits de `Rapport_Reference_Differenciation_CapTCF_V2.md`, §18)
 
+> **Mise à jour 2026-07-13 (revue de sécurité indépendante).** Une relecture indépendante a
+> identifié 10 défauts bloquants dans l'implémentation initiale (fuite de `bonne_reponse` au client,
+> score falsifiable côté apprenant, protection PDF insuffisante au niveau colonne, migration ne
+> peuplant aucun contenu réel, verrou civique incomplet, pont d'ingestion mal audité, périmètres de
+> libération incomplets, HTML non assaini, densité surjouée, absence de tests réels). Tous ont été
+> corrigés sur la branche `codex/s01-parcours-interactif` : voir les commits de correctifs et le
+> rapport de session correspondant. La migration n'a toujours pas pu être appliquée ni testée contre
+> une base réelle (Docker Desktop/WSL2 indisponibles sur cette machine) — ce point reste un vrai
+> bloquant avant toute mise en production, indépendamment des 12 préalables ci-dessous.
+
 > Extraction exacte, sans reformulation ni ajout, des 12 conditions listées en conclusion du rapport
 > de référence (`docs/pedagogie/Rapport_Reference_Differenciation_CapTCF_V2.md:484-497`). Cette
 > checklist ne remplace pas le rapport ; elle sert de tableau de bord de gouvernance pour la mission
