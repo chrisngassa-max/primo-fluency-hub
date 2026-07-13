@@ -38,6 +38,28 @@ function itemFrom(source) {
   };
 }
 
+// Fixe un bug de sécurité/pédagogie signalé en relecture indépendante
+// (2026-07-13) : un item d'appariement avec une seule option (= la bonne
+// réponse) ne demande aucun choix réel à l'apprenant. Construit un jeu
+// d'options réel : la bonne définition + N distracteurs pris parmi les
+// AUTRES définitions déjà rédigées dans la même liste (contenu réel, pas
+// inventé — cf. rapport de référence §8 : confusion entre deux
+// informations présentes est un distracteur légitime).
+function buildAppariementOptions(entries, index, getLabel, distractorCount = 3) {
+  const correct = getLabel(entries[index]);
+  const distractors = [];
+  for (let offset = 1; distractors.length < distractorCount && offset < entries.length; offset += 1) {
+    const candidate = getLabel(entries[(index + offset) % entries.length]);
+    if (candidate !== correct) distractors.push(candidate);
+  }
+  // Ordre déterministe (pas de mélange aléatoire) : la bonne réponse est
+  // toujours insérée à une position dérivée de l'index pour éviter qu'elle
+  // soit systématiquement en première position.
+  const options = [...distractors];
+  options.splice(index % (options.length + 1), 0, correct);
+  return options;
+}
+
 // Corrige un bug du générateur v1 : un point de grammaire dont le
 // gabarit est UNE seule phrase à plusieurs trous (items.length === 1)
 // mais dont reponses.length > 1 ne produisait qu'un seul item, en
@@ -129,9 +151,9 @@ export async function buildInteractiveS01() {
       format: "appariement",
       level,
       instruction: "Associez chaque mot de la séance à sa définition simplifiée.",
-      items: data.lexique.mots.map((entry) => ({
+      items: data.lexique.mots.map((entry, index) => ({
         question: entry.mot,
-        options: [entry.definition_simple],
+        options: buildAppariementOptions(data.lexique.mots, index, (m) => m.definition_simple),
         bonne_reponse: entry.definition_simple,
         explication: entry.exemple,
       })),

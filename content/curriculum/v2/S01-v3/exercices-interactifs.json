@@ -21,7 +21,10 @@
           {
             "question": "parcours",
             "options": [
-              "Ensemble des séances à suivre pour atteindre un objectif."
+              "Ensemble des séances à suivre pour atteindre un objectif.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+              "Le but que l'on veut atteindre.",
+              "Une action pour obtenir un document ou un droit."
             ],
             "bonne_reponse": "Ensemble des séances à suivre pour atteindre un objectif.",
             "explication": "Awa suit un parcours de 80 heures."
@@ -29,7 +32,10 @@
           {
             "question": "niveau",
             "options": [
-              "Le degré de connaissance d'une langue (A1, A2, B1, B2)."
+              "Le but que l'on veut atteindre.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+              "Une action pour obtenir un document ou un droit.",
+              "Quelque chose qu'on peut demander, garanti par la loi."
             ],
             "bonne_reponse": "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
             "explication": "Son niveau de français progresse."
@@ -37,7 +43,10 @@
           {
             "question": "objectif",
             "options": [
-              "Le but que l'on veut atteindre."
+              "Une action pour obtenir un document ou un droit.",
+              "Quelque chose qu'on peut demander, garanti par la loi.",
+              "Le but que l'on veut atteindre.",
+              "Une obligation, quelque chose qu'on doit faire."
             ],
             "bonne_reponse": "Le but que l'on veut atteindre.",
             "explication": "Son objectif est d'avoir sa carte de séjour."
@@ -45,6 +54,9 @@
           {
             "question": "démarche",
             "options": [
+              "Quelque chose qu'on peut demander, garanti par la loi.",
+              "Une obligation, quelque chose qu'on doit faire.",
+              "La forme de gouvernement de la France.",
               "Une action pour obtenir un document ou un droit."
             ],
             "bonne_reponse": "Une action pour obtenir un document ou un droit.",
@@ -53,7 +65,10 @@
           {
             "question": "droit",
             "options": [
-              "Quelque chose qu'on peut demander, garanti par la loi."
+              "Quelque chose qu'on peut demander, garanti par la loi.",
+              "Une obligation, quelque chose qu'on doit faire.",
+              "La forme de gouvernement de la France.",
+              "Une épreuve qui évalue les connaissances."
             ],
             "bonne_reponse": "Quelque chose qu'on peut demander, garanti par la loi.",
             "explication": "Le droit à la santé permet de se soigner."
@@ -61,7 +76,10 @@
           {
             "question": "devoir",
             "options": [
-              "Une obligation, quelque chose qu'on doit faire."
+              "La forme de gouvernement de la France.",
+              "Une obligation, quelque chose qu'on doit faire.",
+              "Une épreuve qui évalue les connaissances.",
+              "Une réunion de formation à une date précise."
             ],
             "bonne_reponse": "Une obligation, quelque chose qu'on doit faire.",
             "explication": "Respecter la loi est un devoir."
@@ -69,7 +87,10 @@
           {
             "question": "République",
             "options": [
-              "La forme de gouvernement de la France."
+              "Une épreuve qui évalue les connaissances.",
+              "Une réunion de formation à une date précise.",
+              "La forme de gouvernement de la France.",
+              "Avancer, s'améliorer petit à petit."
             ],
             "bonne_reponse": "La forme de gouvernement de la France.",
             "explication": "La République française a une devise."
@@ -77,6 +98,9 @@
           {
             "question": "examen",
             "options": [
+              "Une réunion de formation à une date précise.",
+              "Avancer, s'améliorer petit à petit.",
+              "Ensemble des séances à suivre pour atteindre un objectif.",
               "Une épreuve qui évalue les connaissances."
             ],
             "bonne_reponse": "Une épreuve qui évalue les connaissances.",
@@ -85,7 +109,10 @@
           {
             "question": "séance",
             "options": [
-              "Une réunion de formation à une date précise."
+              "Une réunion de formation à une date précise.",
+              "Avancer, s'améliorer petit à petit.",
+              "Ensemble des séances à suivre pour atteindre un objectif.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2)."
             ],
             "bonne_reponse": "Une réunion de formation à une date précise.",
             "explication": "Chaque séance dure 3 heures."
@@ -93,7 +120,10 @@
           {
             "question": "progresser",
             "options": [
-              "Avancer, s'améliorer petit à petit."
+              "Ensemble des séances à suivre pour atteindre un objectif.",
+              "Avancer, s'améliorer petit à petit.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+              "Le but que l'on veut atteindre."
             ],
             "bonne_reponse": "Avancer, s'améliorer petit à petit.",
             "explication": "Elle progresse en français chaque semaine."
@@ -183,7 +213,10 @@
           {
             "question": "parcours",
             "options": [
-              "Ensemble des séances à suivre pour atteindre un objectif."
+              "Ensemble des séances à suivre pour atteindre un objectif.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+              "Le but que l'on veut atteindre.",
+              "Une action pour obtenir un document ou un droit."
             ],
             "bonne_reponse": "Ensemble des séances à suivre pour atteindre un objectif.",
             "explication": "Awa suit un parcours de 80 heures."
@@ -191,7 +224,10 @@
           {
             "question": "niveau",
             "options": [
-              "Le degré de connaissance d'une langue (A1, A2, B1, B2)."
+              "Le but que l'on veut atteindre.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+              "Une action pour obtenir un document ou un droit.",
+              "Quelque chose qu'on peut demander, garanti par la loi."
             ],
             "bonne_reponse": "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
             "explication": "Son niveau de français progresse."
@@ -199,7 +235,10 @@
           {
             "question": "objectif",
             "options": [
-              "Le but que l'on veut atteindre."
+              "Une action pour obtenir un document ou un droit.",
+              "Quelque chose qu'on peut demander, garanti par la loi.",
+              "Le but que l'on veut atteindre.",
+              "Une obligation, quelque chose qu'on doit faire."
             ],
             "bonne_reponse": "Le but que l'on veut atteindre.",
             "explication": "Son objectif est d'avoir sa carte de séjour."
@@ -207,6 +246,9 @@
           {
             "question": "démarche",
             "options": [
+              "Quelque chose qu'on peut demander, garanti par la loi.",
+              "Une obligation, quelque chose qu'on doit faire.",
+              "La forme de gouvernement de la France.",
               "Une action pour obtenir un document ou un droit."
             ],
             "bonne_reponse": "Une action pour obtenir un document ou un droit.",
@@ -215,7 +257,10 @@
           {
             "question": "droit",
             "options": [
-              "Quelque chose qu'on peut demander, garanti par la loi."
+              "Quelque chose qu'on peut demander, garanti par la loi.",
+              "Une obligation, quelque chose qu'on doit faire.",
+              "La forme de gouvernement de la France.",
+              "Une épreuve qui évalue les connaissances."
             ],
             "bonne_reponse": "Quelque chose qu'on peut demander, garanti par la loi.",
             "explication": "Le droit à la santé permet de se soigner."
@@ -223,7 +268,10 @@
           {
             "question": "devoir",
             "options": [
-              "Une obligation, quelque chose qu'on doit faire."
+              "La forme de gouvernement de la France.",
+              "Une obligation, quelque chose qu'on doit faire.",
+              "Une épreuve qui évalue les connaissances.",
+              "Une réunion de formation à une date précise."
             ],
             "bonne_reponse": "Une obligation, quelque chose qu'on doit faire.",
             "explication": "Respecter la loi est un devoir."
@@ -231,7 +279,10 @@
           {
             "question": "République",
             "options": [
-              "La forme de gouvernement de la France."
+              "Une épreuve qui évalue les connaissances.",
+              "Une réunion de formation à une date précise.",
+              "La forme de gouvernement de la France.",
+              "Avancer, s'améliorer petit à petit."
             ],
             "bonne_reponse": "La forme de gouvernement de la France.",
             "explication": "La République française a une devise."
@@ -239,6 +290,9 @@
           {
             "question": "examen",
             "options": [
+              "Une réunion de formation à une date précise.",
+              "Avancer, s'améliorer petit à petit.",
+              "Ensemble des séances à suivre pour atteindre un objectif.",
               "Une épreuve qui évalue les connaissances."
             ],
             "bonne_reponse": "Une épreuve qui évalue les connaissances.",
@@ -247,7 +301,10 @@
           {
             "question": "séance",
             "options": [
-              "Une réunion de formation à une date précise."
+              "Une réunion de formation à une date précise.",
+              "Avancer, s'améliorer petit à petit.",
+              "Ensemble des séances à suivre pour atteindre un objectif.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2)."
             ],
             "bonne_reponse": "Une réunion de formation à une date précise.",
             "explication": "Chaque séance dure 3 heures."
@@ -255,7 +312,10 @@
           {
             "question": "progresser",
             "options": [
-              "Avancer, s'améliorer petit à petit."
+              "Ensemble des séances à suivre pour atteindre un objectif.",
+              "Avancer, s'améliorer petit à petit.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+              "Le but que l'on veut atteindre."
             ],
             "bonne_reponse": "Avancer, s'améliorer petit à petit.",
             "explication": "Elle progresse en français chaque semaine."
@@ -345,7 +405,10 @@
           {
             "question": "parcours",
             "options": [
-              "Ensemble des séances à suivre pour atteindre un objectif."
+              "Ensemble des séances à suivre pour atteindre un objectif.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+              "Le but que l'on veut atteindre.",
+              "Une action pour obtenir un document ou un droit."
             ],
             "bonne_reponse": "Ensemble des séances à suivre pour atteindre un objectif.",
             "explication": "Awa suit un parcours de 80 heures."
@@ -353,7 +416,10 @@
           {
             "question": "niveau",
             "options": [
-              "Le degré de connaissance d'une langue (A1, A2, B1, B2)."
+              "Le but que l'on veut atteindre.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+              "Une action pour obtenir un document ou un droit.",
+              "Quelque chose qu'on peut demander, garanti par la loi."
             ],
             "bonne_reponse": "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
             "explication": "Son niveau de français progresse."
@@ -361,7 +427,10 @@
           {
             "question": "objectif",
             "options": [
-              "Le but que l'on veut atteindre."
+              "Une action pour obtenir un document ou un droit.",
+              "Quelque chose qu'on peut demander, garanti par la loi.",
+              "Le but que l'on veut atteindre.",
+              "Une obligation, quelque chose qu'on doit faire."
             ],
             "bonne_reponse": "Le but que l'on veut atteindre.",
             "explication": "Son objectif est d'avoir sa carte de séjour."
@@ -369,6 +438,9 @@
           {
             "question": "démarche",
             "options": [
+              "Quelque chose qu'on peut demander, garanti par la loi.",
+              "Une obligation, quelque chose qu'on doit faire.",
+              "La forme de gouvernement de la France.",
               "Une action pour obtenir un document ou un droit."
             ],
             "bonne_reponse": "Une action pour obtenir un document ou un droit.",
@@ -377,7 +449,10 @@
           {
             "question": "droit",
             "options": [
-              "Quelque chose qu'on peut demander, garanti par la loi."
+              "Quelque chose qu'on peut demander, garanti par la loi.",
+              "Une obligation, quelque chose qu'on doit faire.",
+              "La forme de gouvernement de la France.",
+              "Une épreuve qui évalue les connaissances."
             ],
             "bonne_reponse": "Quelque chose qu'on peut demander, garanti par la loi.",
             "explication": "Le droit à la santé permet de se soigner."
@@ -385,7 +460,10 @@
           {
             "question": "devoir",
             "options": [
-              "Une obligation, quelque chose qu'on doit faire."
+              "La forme de gouvernement de la France.",
+              "Une obligation, quelque chose qu'on doit faire.",
+              "Une épreuve qui évalue les connaissances.",
+              "Une réunion de formation à une date précise."
             ],
             "bonne_reponse": "Une obligation, quelque chose qu'on doit faire.",
             "explication": "Respecter la loi est un devoir."
@@ -393,7 +471,10 @@
           {
             "question": "République",
             "options": [
-              "La forme de gouvernement de la France."
+              "Une épreuve qui évalue les connaissances.",
+              "Une réunion de formation à une date précise.",
+              "La forme de gouvernement de la France.",
+              "Avancer, s'améliorer petit à petit."
             ],
             "bonne_reponse": "La forme de gouvernement de la France.",
             "explication": "La République française a une devise."
@@ -401,6 +482,9 @@
           {
             "question": "examen",
             "options": [
+              "Une réunion de formation à une date précise.",
+              "Avancer, s'améliorer petit à petit.",
+              "Ensemble des séances à suivre pour atteindre un objectif.",
               "Une épreuve qui évalue les connaissances."
             ],
             "bonne_reponse": "Une épreuve qui évalue les connaissances.",
@@ -409,7 +493,10 @@
           {
             "question": "séance",
             "options": [
-              "Une réunion de formation à une date précise."
+              "Une réunion de formation à une date précise.",
+              "Avancer, s'améliorer petit à petit.",
+              "Ensemble des séances à suivre pour atteindre un objectif.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2)."
             ],
             "bonne_reponse": "Une réunion de formation à une date précise.",
             "explication": "Chaque séance dure 3 heures."
@@ -417,7 +504,10 @@
           {
             "question": "progresser",
             "options": [
-              "Avancer, s'améliorer petit à petit."
+              "Ensemble des séances à suivre pour atteindre un objectif.",
+              "Avancer, s'améliorer petit à petit.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+              "Le but que l'on veut atteindre."
             ],
             "bonne_reponse": "Avancer, s'améliorer petit à petit.",
             "explication": "Elle progresse en français chaque semaine."
@@ -507,7 +597,10 @@
           {
             "question": "parcours",
             "options": [
-              "Ensemble des séances à suivre pour atteindre un objectif."
+              "Ensemble des séances à suivre pour atteindre un objectif.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+              "Le but que l'on veut atteindre.",
+              "Une action pour obtenir un document ou un droit."
             ],
             "bonne_reponse": "Ensemble des séances à suivre pour atteindre un objectif.",
             "explication": "Awa suit un parcours de 80 heures."
@@ -515,7 +608,10 @@
           {
             "question": "niveau",
             "options": [
-              "Le degré de connaissance d'une langue (A1, A2, B1, B2)."
+              "Le but que l'on veut atteindre.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+              "Une action pour obtenir un document ou un droit.",
+              "Quelque chose qu'on peut demander, garanti par la loi."
             ],
             "bonne_reponse": "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
             "explication": "Son niveau de français progresse."
@@ -523,7 +619,10 @@
           {
             "question": "objectif",
             "options": [
-              "Le but que l'on veut atteindre."
+              "Une action pour obtenir un document ou un droit.",
+              "Quelque chose qu'on peut demander, garanti par la loi.",
+              "Le but que l'on veut atteindre.",
+              "Une obligation, quelque chose qu'on doit faire."
             ],
             "bonne_reponse": "Le but que l'on veut atteindre.",
             "explication": "Son objectif est d'avoir sa carte de séjour."
@@ -531,6 +630,9 @@
           {
             "question": "démarche",
             "options": [
+              "Quelque chose qu'on peut demander, garanti par la loi.",
+              "Une obligation, quelque chose qu'on doit faire.",
+              "La forme de gouvernement de la France.",
               "Une action pour obtenir un document ou un droit."
             ],
             "bonne_reponse": "Une action pour obtenir un document ou un droit.",
@@ -539,7 +641,10 @@
           {
             "question": "droit",
             "options": [
-              "Quelque chose qu'on peut demander, garanti par la loi."
+              "Quelque chose qu'on peut demander, garanti par la loi.",
+              "Une obligation, quelque chose qu'on doit faire.",
+              "La forme de gouvernement de la France.",
+              "Une épreuve qui évalue les connaissances."
             ],
             "bonne_reponse": "Quelque chose qu'on peut demander, garanti par la loi.",
             "explication": "Le droit à la santé permet de se soigner."
@@ -547,7 +652,10 @@
           {
             "question": "devoir",
             "options": [
-              "Une obligation, quelque chose qu'on doit faire."
+              "La forme de gouvernement de la France.",
+              "Une obligation, quelque chose qu'on doit faire.",
+              "Une épreuve qui évalue les connaissances.",
+              "Une réunion de formation à une date précise."
             ],
             "bonne_reponse": "Une obligation, quelque chose qu'on doit faire.",
             "explication": "Respecter la loi est un devoir."
@@ -555,7 +663,10 @@
           {
             "question": "République",
             "options": [
-              "La forme de gouvernement de la France."
+              "Une épreuve qui évalue les connaissances.",
+              "Une réunion de formation à une date précise.",
+              "La forme de gouvernement de la France.",
+              "Avancer, s'améliorer petit à petit."
             ],
             "bonne_reponse": "La forme de gouvernement de la France.",
             "explication": "La République française a une devise."
@@ -563,6 +674,9 @@
           {
             "question": "examen",
             "options": [
+              "Une réunion de formation à une date précise.",
+              "Avancer, s'améliorer petit à petit.",
+              "Ensemble des séances à suivre pour atteindre un objectif.",
               "Une épreuve qui évalue les connaissances."
             ],
             "bonne_reponse": "Une épreuve qui évalue les connaissances.",
@@ -571,7 +685,10 @@
           {
             "question": "séance",
             "options": [
-              "Une réunion de formation à une date précise."
+              "Une réunion de formation à une date précise.",
+              "Avancer, s'améliorer petit à petit.",
+              "Ensemble des séances à suivre pour atteindre un objectif.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2)."
             ],
             "bonne_reponse": "Une réunion de formation à une date précise.",
             "explication": "Chaque séance dure 3 heures."
@@ -579,7 +696,10 @@
           {
             "question": "progresser",
             "options": [
-              "Avancer, s'améliorer petit à petit."
+              "Ensemble des séances à suivre pour atteindre un objectif.",
+              "Avancer, s'améliorer petit à petit.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+              "Le but que l'on veut atteindre."
             ],
             "bonne_reponse": "Avancer, s'améliorer petit à petit.",
             "explication": "Elle progresse en français chaque semaine."
