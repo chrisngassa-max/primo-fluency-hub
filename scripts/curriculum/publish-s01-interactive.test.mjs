@@ -47,22 +47,43 @@ describe("publish-s01-interactive — adaptateur du pont existant", () => {
     expect(new Set(codes).size).toBe(codes.length);
   });
 
-  it("ne pose jamais statut/is_live_ready — un import reste invisible par les anciens champs (2e relecture, points 6/7)", async () => {
-    // L'ancienne route S01InteractiveExercises (désormais outil formateur
-    // uniquement) filtre sur statut='published' ET is_live_ready=true, deux
-    // colonnes indépendantes de pedagogical_status. Si buildDraft les posait
-    // explicitement, un import répété pourrait écraser une activation
-    // légitime faite par un formateur via l'outillage historique, ou pire,
-    // exposer un contenu draft si une valeur "sûre" était mal choisie. En ne
-    // les posant JAMAIS, on s'appuie uniquement sur les valeurs par défaut
-    // sûres de la colonne (statut DEFAULT 'draft', is_live_ready DEFAULT
-    // false — vérifié dans supabase/migrations/20260414211154_*.sql) pour
-    // toute nouvelle ligne, et on ne touche jamais une ligne existante.
+  it("pose explicitement statut='draft'/is_live_ready=false/pedagogical_status='draft' sur CHAQUE draft (4e relecture, point 6)", async () => {
+    // Revirement assumé par rapport à la version précédente de ce test (qui
+    // vérifiait l'absence de ces clés) : décision explicite du porteur
+    // projet, la réingestion doit désormais reposer ces trois champs à
+    // chaque exécution, y compris sur une ligne déjà published/is_live_ready
+    // (voir test suivant, qui simule exactement ce cas via upsertExercice).
     const payload = await buildInteractiveS01();
     for (const entry of payload.exercises) {
       const draft = buildDraft(entry);
-      expect(draft).not.toHaveProperty("statut");
-      expect(draft).not.toHaveProperty("is_live_ready");
+      expect(draft.statut).toBe("draft");
+      expect(draft.is_live_ready).toBe(false);
+      expect(draft.pedagogical_status).toBe("draft");
     }
+  });
+
+  it("une réingestion referme une ligne existante déjà published/is_live_ready=true (simulation upsertExercice)", async () => {
+    // Simule exactement le chemin réel : upsertExercice (publish-bridge.mjs)
+    // fait un UPDATE({...draft, formateur_id, point_a_maitriser_id}) sur une
+    // ligne existante. On vérifie ici que le payload construit par
+    // buildDraft, une fois fusionné comme le ferait cet UPDATE, referme bien
+    // une ligne préalablement exposée — sans dépendre d'une vraie base
+    // (aucune instance Postgres disponible dans cet environnement).
+    const payload = await buildInteractiveS01();
+    const entry = payload.exercises[0];
+    const existingRowBeforeReingestion = {
+      id: "existing-row-id",
+      metadata_code: entry.metadata_code,
+      statut: "published",
+      is_live_ready: true,
+      pedagogical_status: "published",
+    };
+    const draft = buildDraft(entry);
+    const updatePayload = { ...draft, formateur_id: "formateur-1", point_a_maitriser_id: "point-1" };
+    const rowAfterReingestion = { ...existingRowBeforeReingestion, ...updatePayload };
+
+    expect(rowAfterReingestion.statut).toBe("draft");
+    expect(rowAfterReingestion.is_live_ready).toBe(false);
+    expect(rowAfterReingestion.pedagogical_status).toBe("draft");
   });
 });

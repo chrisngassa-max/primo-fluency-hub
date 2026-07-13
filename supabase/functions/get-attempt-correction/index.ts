@@ -16,6 +16,13 @@ function jsonResponse(body: unknown, status = 200) {
  * Seule voie de lecture de la correction d'une tentative. Ne renvoie
  * jamais item_results/score_normalized si correction_released_at est nul —
  * l'apprenant obtient alors seulement { released: false, status }.
+ *
+ * 4e relecture indépendante (point 5) : reçoit désormais attempt_id (pas
+ * exercise_id) et vérifie que CETTE tentative précise appartient à
+ * auth.uid(), au lieu de chercher "la dernière tentative" pour (exercise_id,
+ * learner_id) — une recherche par "dernière tentative" pouvait renvoyer la
+ * tentative d'une AUTRE séance/groupe sur le même exercice partagé, ou une
+ * tentative différente de celle que l'apprenant vient de soumettre.
  */
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -41,24 +48,28 @@ Deno.serve(async (req) => {
     }
     const learnerId = userData.user.id;
 
-    const { exercise_id: exerciseId } = await req.json().catch(() => ({}));
-    if (!exerciseId) {
-      return jsonResponse({ error: 'exercise_id requis' }, 400);
+    const { attempt_id: attemptId } = await req.json().catch(() => ({}));
+    if (!attemptId) {
+      return jsonResponse({ error: 'attempt_id requis' }, 400);
     }
 
     const admin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
     const { data: attempt, error } = await admin
       .from('exercise_attempts')
       .select('id, status, correction_released_at, correction_viewed_at, score_normalized, item_results, learner_id')
-      .eq('exercise_id', exerciseId)
-      .eq('learner_id', learnerId)
-      .order('created_at', { ascending: false })
-      .limit(1)
+      .eq('id', attemptId)
       .maybeSingle();
     if (error) throw error;
 
     if (!attempt) {
       return jsonResponse({ status: 'not_started', released: false });
+    }
+
+    // Vérification d'appartenance : cette tentative précise doit être celle
+    // de l'appelant, jamais celle d'un autre apprenant (même exercice,
+    // même séance ou non).
+    if (attempt.learner_id !== learnerId) {
+      return jsonResponse({ error: 'Cette tentative ne vous appartient pas' }, 403);
     }
 
     if (!attempt.correction_released_at) {

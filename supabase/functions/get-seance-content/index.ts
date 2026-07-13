@@ -1,6 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { sanitizeExercice, sanitizeContentJson } from '../_shared/session-content-sanitizer.ts';
-import { isActivityVisible, isExerciseLinkVisible } from '../_shared/session-visibility.ts';
+import { sanitizeExercice } from '../_shared/session-content-sanitizer.ts';
+import { isActivityVisible, isExerciseLinkVisible, resolveLearnerLevelForCompetence } from '../_shared/session-visibility.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -49,8 +49,9 @@ Deno.serve(async (req) => {
     // plateforme (training_sessions -> sessions -> group_members),
     // effectuée ici server-side (service role), jamais confiée à une
     // policy RLS activable par le client lui-même. On récupère aussi
-    // groups.niveau : c'est le niveau CECRL de référence pour filtrer les
-    // exercices "communs" (relecture indépendante, point 3).
+    // groups.niveau (fallback) et sessions.id : cette dernière ancre
+    // désormais chaque tentative/libération à LA séance précise (4e
+    // relecture, point 1 — isolation multi-groupes).
     const { data: enrollment, error: enrollmentError } = await admin
       .from('training_sessions')
       .select('id, sessions:sessions(id, group:groups(id, niveau), group_members:group_members(eleve_id))')
@@ -68,13 +69,20 @@ Deno.serve(async (req) => {
     if (!matchingSession) {
       return jsonResponse({ error: 'Non enrôlé dans cette séance' }, 403);
     }
-    const learnerNiveau: string | null = matchingSession.group?.niveau ?? null;
+    const sessionId: string = matchingSession.id;
+    const groupNiveau: string | null = matchingSession.group?.niveau ?? null;
 
-    // Point 4 : le filtre publishable/published est appliqué directement
-    // dans la requête (pas seulement en mémoire après coup) — corrige un
-    // défaut où une activité 'technical_review'/'trainer_approved' etc.
-    // était renvoyée puis seulement écartée par un filtre JS trop laxiste
-    // (`!== 'draft'` laissait passer tous les paliers intermédiaires).
+    // Niveau INDIVIDUEL de l'apprenant, prioritaire sur le niveau de groupe
+    // (4e relecture, point 8) : profils_eleves porte un niveau par
+    // compétence (niveau_ce/co/ee/eo) en plus du niveau_actuel global.
+    const { data: profile } = await admin
+      .from('profils_eleves')
+      .select('niveau_actuel, niveau_ce, niveau_co, niveau_ee, niveau_eo')
+      .eq('eleve_id', learnerId)
+      .maybeSingle();
+
+    // Point 4 (3e relecture) : le filtre publishable/published est appliqué
+    // directement dans la requête (pas seulement en mémoire après coup).
     const { data: activities, error: activitiesError } = await admin
       .from('session_activities')
       .select('id, activity_code, title, objective, display_order, pedagogical_status')
@@ -83,13 +91,16 @@ Deno.serve(async (req) => {
       .order('display_order', { ascending: true });
     if (activitiesError) throw activitiesError;
 
-    // Jamais file_url / source_file_path / storage_path dans cette
-    // sélection : liste de colonnes en dur, jamais construite depuis
-    // l'input du client. content_json passe par une liste noire récursive
-    // (sanitizeContentJson) avant envoi (point 5).
+    // Jamais file_url / source_file_path / storage_path / content_json dans
+    // cette sélection : liste de colonnes en dur, jamais construite depuis
+    // l'input du client. content_json est ENTIÈREMENT EXCLU pour ce pilote
+    // (4e relecture, point 10) plutôt que nettoyé par liste noire — la
+    // colonne n'est de toute façon peuplée nulle part aujourd'hui
+    // (vérifié), et une exclusion complète est structurellement plus sûre
+    // qu'un filtrage best-effort sur une forme de données non figée.
     const { data: documents, error: documentsError } = await admin
       .from('session_documents')
-      .select('id, document_type, title, content_html, content_json, display_order, activity_id, pedagogical_status, audience')
+      .select('id, document_type, title, content_html, display_order, activity_id, pedagogical_status, audience')
       .eq('session_code', sessionCode)
       .in('audience', ['apprenant', 'both'])
       .in('pedagogical_status', ['publishable', 'published']);
@@ -120,6 +131,26 @@ Deno.serve(async (req) => {
       exercisesById = new Map((exercises ?? []).map((e) => [e.id, e]));
     }
 
+    // Tentatives DE CET APPRENANT, DANS CETTE SÉANCE PRÉCISE UNIQUEMENT
+    // (session_id = sessionId) — la même exigence d'isolation multi-groupes
+    // que release_corrections (point 1/3) : ne jamais résoudre "la dernière
+    // tentative sur cet exercice_id" tous groupes/séances confondus.
+    let attemptByExercise = new Map<string, Record<string, unknown>>();
+    if (linkedIds.length > 0) {
+      const { data: attempts, error: attemptsError } = await admin
+        .from('exercise_attempts')
+        .select('id, exercise_id, status, correction_released_at')
+        .eq('learner_id', learnerId)
+        .eq('session_id', sessionId)
+        .in('exercise_id', linkedIds)
+        .order('created_at', { ascending: false });
+      if (attemptsError) throw attemptsError;
+      // La plus récente par exercice (le tri DESC + première rencontre suffit).
+      for (const a of attempts ?? []) {
+        if (!attemptByExercise.has(a.exercise_id)) attemptByExercise.set(a.exercise_id, a);
+      }
+    }
+
     const supportBlocks = (documents ?? []).map((d) => ({
       kind: 'support',
       id: d.id,
@@ -127,19 +158,20 @@ Deno.serve(async (req) => {
       display_order: d.display_order,
       title: d.title,
       content_html: d.content_html,
-      content_json: sanitizeContentJson(d.content_json),
     }));
 
     const exerciseBlocks = (links ?? [])
       .map((link) => {
         const exercice = exercisesById.get(link.linked_id);
         if (!exercice) return null;
+        const learnerNiveau = resolveLearnerLevelForCompetence(profile ?? null, groupNiveau, exercice.competence as string);
         // Point 3 : fonction pure partagée et testée (session-visibility.ts)
         // — un A1 ne doit jamais recevoir automatiquement les variantes
         // B1/B2 de la même famille ; un lien individuel reste visible.
         if (!isExerciseLinkVisible(link, exercice as any, learnerId, learnerNiveau)) {
           return null;
         }
+        const attempt = attemptByExercise.get(link.linked_id);
         return {
           kind: 'exercise' as const,
           id: link.id,
@@ -147,6 +179,9 @@ Deno.serve(async (req) => {
           display_order: link.display_order,
           is_bonus: Boolean(link.is_bonus),
           ...sanitizeExercice(exercice as any),
+          my_attempt: attempt
+            ? { attempt_id: attempt.id, status: attempt.status, correction_released: Boolean(attempt.correction_released_at) }
+            : null,
         };
       })
       .filter((b) => b !== null);
@@ -155,6 +190,7 @@ Deno.serve(async (req) => {
 
     return jsonResponse({
       session_code: sessionCode,
+      session_id: sessionId,
       // Défense en profondeur : filtre déjà appliqué en SQL (point 4),
       // revérifié ici via la fonction pure partagée et testée.
       activities: (activities ?? []).filter(isActivityVisible),

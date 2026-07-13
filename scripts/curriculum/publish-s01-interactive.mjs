@@ -38,8 +38,18 @@ export function buildDraft(entry) {
     is_template: false,
     is_devoir: false,
     collectif: true,
-    // Nouvelles colonnes réelles (migration 20260713090000) — jamais
-    // au-delà de 'draft' depuis cette procédure d'ingestion automatisée.
+    // 4e relecture indépendante (point 6) : revirement assumé par rapport
+    // à la version précédente, qui NE POSAIT PAS ces champs pour ne pas
+    // écraser une activation legacy. Décision explicite du porteur projet :
+    // toute RÉINGESTION doit reposer explicitement statut='draft'/
+    // is_live_ready=false/pedagogical_status='draft', même sur une ligne
+    // déjà 'published'/is_live_ready=true — le pipeline d'ingestion est
+    // l'autorité qui referme l'exposition à chaque réécriture de contenu,
+    // il ne doit jamais silencieusement hériter d'un statut d'exposition
+    // antérieur. Testé : publish-s01-interactive.test.mjs simule l'UPDATE
+    // d'une ligne existante déjà published/is_live_ready=true.
+    statut: 'draft',
+    is_live_ready: false,
     pedagogical_status: 'draft',
     civic_content: Boolean(entry.civic_content),
     civic_fact_ids: entry.civic_fact_ids ?? [],

@@ -23,6 +23,7 @@ DECLARE
   v_group_id uuid;
   v_training_session_id uuid;
   v_session_id uuid;
+  v_second_session_id uuid;
   v_point_id uuid;
   v_plan_version_id uuid;
   v_exercice_id uuid;
@@ -77,8 +78,8 @@ BEGIN
 
   EXECUTE 'SET LOCAL ROLE authenticated';
   PERFORM set_config('request.jwt.claims', jsonb_build_object('sub', v_student_id)::text, true);
-  INSERT INTO public.exercise_attempts (exercise_id, learner_id, status, score_normalized, item_results)
-    VALUES (v_exercice_id, v_student_id, 'completed', 100, '{"0":{"correct":true}}'::jsonb)
+  INSERT INTO public.exercise_attempts (exercise_id, learner_id, session_id, status, score_normalized, item_results)
+    VALUES (v_exercice_id, v_student_id, v_session_id, 'completed', 100, '{"0":{"correct":true}}'::jsonb)
     RETURNING id INTO v_attempt_id;
 
   IF (SELECT status FROM public.exercise_attempts WHERE id = v_attempt_id) = 'completed' THEN
@@ -158,15 +159,15 @@ BEGIN
   UPDATE public.exercices SET pedagogical_status = 'published' WHERE id = v_exercice_id;
   INSERT INTO public.session_exercices (session_id, exercice_id, ordre)
     VALUES (v_session_id, v_exercice_id, 1);
-  INSERT INTO public.exercise_attempts (exercise_id, learner_id, status, score_normalized, item_results)
-    VALUES (v_exercice_id, v_student_id, 'completed', 80, '{"0":{"correct":true}}'::jsonb);
+  INSERT INTO public.exercise_attempts (exercise_id, learner_id, session_id, status, score_normalized, item_results)
+    VALUES (v_exercice_id, v_student_id, v_session_id, 'completed', 80, '{"0":{"correct":true}}'::jsonb);
 
   -- Un formateur ÉTRANGER au groupe ne doit pas pouvoir libérer.
   EXECUTE 'SET LOCAL ROLE authenticated';
   PERFORM set_config('request.jwt.claims', jsonb_build_object('sub', v_stranger_formateur_id)::text, true);
   v_raised := false;
   BEGIN
-    PERFORM public.release_corrections(v_exercice_id, NULL, 'finished');
+    PERFORM public.release_corrections(v_exercice_id, v_session_id, NULL, 'finished');
   EXCEPTION WHEN OTHERS THEN
     v_raised := true;
   END;
@@ -178,7 +179,7 @@ BEGIN
   -- Le formateur du groupe PEUT libérer (scope finished).
   EXECUTE 'SET LOCAL ROLE authenticated';
   PERFORM set_config('request.jwt.claims', jsonb_build_object('sub', v_formateur_id)::text, true);
-  PERFORM public.release_corrections(v_exercice_id, NULL, 'finished');
+  PERFORM public.release_corrections(v_exercice_id, v_session_id, NULL, 'finished');
 
   EXECUTE 'SET LOCAL ROLE service_role';
   RESET request.jwt.claims;
@@ -188,6 +189,36 @@ BEGIN
   RAISE NOTICE 'TEST 5b OK : libération finished par le formateur du groupe réussie';
 
   -- ── Test 6 : correction invisible avant libération (relecture serveur) ──
+  -- Test 5c : isolation stricte entre deux séances qui partagent le même
+  -- exercice de banque. Une libération dans la première ne doit jamais
+  -- toucher la tentative de la seconde, même pour le même élève.
+  EXECUTE 'SET LOCAL ROLE service_role';
+  RESET request.jwt.claims;
+  INSERT INTO public.sessions (group_id, titre, date_seance, training_session_id)
+    VALUES (v_group_id, 'Seconde séance test S01', now(), v_training_session_id)
+    RETURNING id INTO v_second_session_id;
+  INSERT INTO public.exercise_attempts (
+    exercise_id, learner_id, session_id, status, score_normalized, item_results, answers
+  ) VALUES (
+    v_exercice_id, v_student_id, v_second_session_id, 'completed', 80,
+    '{"0":{"correct":true}}'::jsonb, '{"0":"A"}'::jsonb
+  );
+
+  EXECUTE 'SET LOCAL ROLE authenticated';
+  PERFORM set_config('request.jwt.claims', jsonb_build_object('sub', v_formateur_id)::text, true);
+  PERFORM public.release_corrections(v_exercice_id, v_session_id, NULL, 'class');
+
+  EXECUTE 'SET LOCAL ROLE service_role';
+  RESET request.jwt.claims;
+  IF EXISTS (
+    SELECT 1 FROM public.exercise_attempts
+    WHERE exercise_id = v_exercice_id
+      AND session_id = v_second_session_id
+      AND correction_released_at IS NOT NULL
+  ) THEN
+    RAISE EXCEPTION 'TEST 5c ÉCHOUÉ : une libération dans une séance a contaminé une autre séance partageant le même exercice';
+  END IF;
+  RAISE NOTICE 'TEST 5c OK : libération strictement isolée par session_id';
   -- (Couvert fonctionnellement par les edge functions get-attempt-correction /
   -- submit-seance-answer, non exécutables en SQL pur — voir tests Vitest
   -- session-content-sanitizer.test.ts pour la garantie "jamais bonne_reponse".)
@@ -206,12 +237,12 @@ BEGIN
   -- exercices.formateur_id ici, exactement le cas signalé par la relecture.
   INSERT INTO public.session_document_links (session_code, linked_type, linked_id, audience, display_order)
     VALUES ('S01', 'exercise', v_exercice_id, 'both', 1);
-  INSERT INTO public.exercise_attempts (exercise_id, learner_id, status, score_normalized, item_results)
-    VALUES (v_exercice_id, v_student_id, 'completed', 90, '{"0":{"correct":true}}'::jsonb);
+  INSERT INTO public.exercise_attempts (exercise_id, learner_id, session_id, status, score_normalized, item_results)
+    VALUES (v_exercice_id, v_student_id, v_session_id, 'completed', 90, '{"0":{"correct":true}}'::jsonb);
 
   EXECUTE 'SET LOCAL ROLE authenticated';
   PERFORM set_config('request.jwt.claims', jsonb_build_object('sub', v_formateur_id)::text, true);
-  PERFORM public.release_corrections(v_exercice_id, NULL, 'finished');
+  PERFORM public.release_corrections(v_exercice_id, v_session_id, NULL, 'finished');
 
   EXECUTE 'SET LOCAL ROLE service_role';
   RESET request.jwt.claims;
@@ -224,13 +255,13 @@ BEGIN
   EXECUTE 'SET LOCAL ROLE service_role';
   RESET request.jwt.claims;
   INSERT INTO public.group_members (group_id, eleve_id) VALUES (v_group_id, v_other_student_id);
-  INSERT INTO public.exercise_attempts (exercise_id, learner_id, status, score_normalized, item_results)
-    VALUES (v_exercice_id, v_other_student_id, 'completed', 70, '{"0":{"correct":true}}'::jsonb);
+  INSERT INTO public.exercise_attempts (exercise_id, learner_id, session_id, status, score_normalized, item_results)
+    VALUES (v_exercice_id, v_other_student_id, v_session_id, 'completed', 70, '{"0":{"correct":true}}'::jsonb);
 
   EXECUTE 'SET LOCAL ROLE authenticated';
   PERFORM set_config('request.jwt.claims', jsonb_build_object('sub', v_formateur_id)::text, true);
-  PERFORM public.release_corrections(v_exercice_id, ARRAY[v_other_student_id], 'subgroup');
-  PERFORM public.release_corrections(v_exercice_id, ARRAY[v_other_student_id], 'level');
+  PERFORM public.release_corrections(v_exercice_id, v_session_id, ARRAY[v_other_student_id], 'subgroup');
+  PERFORM public.release_corrections(v_exercice_id, v_session_id, ARRAY[v_other_student_id], 'level');
 
   EXECUTE 'SET LOCAL ROLE service_role';
   RESET request.jwt.claims;

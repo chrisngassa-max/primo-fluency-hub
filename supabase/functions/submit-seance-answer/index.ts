@@ -73,20 +73,25 @@ Deno.serve(async (req) => {
       return jsonResponse({ error: 'Exercice non lié à cette séance' }, 404);
     }
 
+    // Résout LA séance réelle de l'élève (pas seulement "un enrôlement
+    // quelconque" pour ce session_code) — 4e relecture, points 1/2 : cette
+    // session_id est ensuite posée sur la tentative, condition nécessaire à
+    // l'isolation multi-groupes de release_corrections (un même exercice
+    // peut être travaillé par plusieurs groupes différents sur le même
+    // training_session_code S01).
     const { data: enrollment, error: enrollmentError } = await admin
       .from('training_sessions')
       .select('id, sessions:sessions(id, group_members:group_members(eleve_id))')
       .eq('code', sessionCode)
       .maybeSingle();
     if (enrollmentError) throw enrollmentError;
-    const isEnrolled = Boolean(
-      (enrollment as any)?.sessions?.some((s: any) =>
-        (s.group_members ?? []).some((gm: any) => gm.eleve_id === learnerId),
-      ),
+    const matchingSession = (enrollment as any)?.sessions?.find((s: any) =>
+      (s.group_members ?? []).some((gm: any) => gm.eleve_id === learnerId),
     );
-    if (!isEnrolled) {
+    if (!matchingSession) {
       return jsonResponse({ error: 'Non enrôlé dans cette séance' }, 403);
     }
+    const sessionId: string = matchingSession.id;
 
     const { data: exercice, error: exerciceError } = await admin
       .from('exercices')
@@ -130,6 +135,7 @@ Deno.serve(async (req) => {
       .insert({
         exercise_id: exerciseId,
         learner_id: learnerId,
+        session_id: sessionId,
         status: 'completed',
         completed_at: new Date().toISOString(),
         score_raw: result.correctCount,

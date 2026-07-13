@@ -322,12 +322,22 @@ CREATE TRIGGER trg_check_publishable_density
 -- il n'existe pas de front réel de "réponse envoyée mais pas encore
 -- traitée" à représenter séparément sans réécrire ce pipeline.
 -- ------------------------------------------------------------
+-- session_id (3e relecture indépendante, point 1) : sans cette colonne,
+-- deux GROUPES DIFFÉRENTS travaillant le même exercice partagé (banque
+-- commune) ne pouvaient pas être distingués par release_corrections/
+-- get_exercise_response_distribution — une libération ou une distribution
+-- calculée pour le groupe A aurait pu inclure des tentatives du groupe B
+-- sur le même exercice. session_id ancre chaque tentative à LA séance
+-- réelle où elle a eu lieu.
 ALTER TABLE public.exercise_attempts
+  ADD COLUMN IF NOT EXISTS session_id uuid REFERENCES public.sessions(id) ON DELETE SET NULL,
   ADD COLUMN IF NOT EXISTS correction_released_at timestamptz,
   ADD COLUMN IF NOT EXISTS correction_viewed_at timestamptz,
   ADD COLUMN IF NOT EXISTS remediation_exercise_id uuid REFERENCES public.exercices(id) ON DELETE SET NULL,
   ADD COLUMN IF NOT EXISTS remediation_assigned_at timestamptz,
   ADD COLUMN IF NOT EXISTS release_event_id uuid;
+
+CREATE INDEX IF NOT EXISTS idx_exercise_attempts_session ON public.exercise_attempts (session_id);
 
 -- Rétrocompatibilité explicite : les tentatives déjà terminées avant
 -- cette migration gardent leur comportement actuel (correction visible
@@ -340,6 +350,7 @@ UPDATE public.exercise_attempts
 CREATE TABLE IF NOT EXISTS public.correction_release_events (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   exercise_id uuid NOT NULL REFERENCES public.exercices(id) ON DELETE CASCADE,
+  session_id uuid NOT NULL REFERENCES public.sessions(id) ON DELETE CASCADE,
   released_by uuid REFERENCES public.profiles(id) ON DELETE SET NULL,
   scope text NOT NULL CHECK (scope IN ('individual', 'finished', 'subgroup', 'level', 'class')),
   target_eleve_ids uuid[],
@@ -363,10 +374,15 @@ DROP POLICY IF EXISTS "formateur_read_own_release_events" ON public.correction_r
 CREATE POLICY "formateur_read_own_release_events"
   ON public.correction_release_events FOR SELECT TO authenticated
   USING (
-    EXISTS (
+    public.has_role(auth.uid(), 'admin'::public.app_role)
+    OR EXISTS (
       SELECT 1 FROM public.exercices e
-      WHERE e.id = correction_release_events.exercise_id
-        AND (e.formateur_id = auth.uid() OR public.has_role(auth.uid(), 'admin'::public.app_role))
+      WHERE e.id = correction_release_events.exercise_id AND e.formateur_id = auth.uid()
+    )
+    OR EXISTS (
+      SELECT 1 FROM public.sessions s
+      JOIN public.groups g ON g.id = s.group_id
+      WHERE s.id = correction_release_events.session_id AND g.formateur_id = auth.uid()
     )
   );
 
@@ -472,21 +488,19 @@ AS $$
   END
 $$;
 
--- Autorisation liée à la SÉANCE ET AU GROUPE du formateur (relecture
--- indépendante, points 2/7) — pas seulement exercices.formateur_id, qui peut
--- être un compte technique/générateur différent du formateur qui pilote
--- réellement la séance en cours pour ce groupe. DEUX chemins de séance
--- doivent être couverts, pas un seul :
---   - le modèle LEGACY (`session_exercices`, playlist historique) ;
---   - le modèle INTÉGRÉ S01 (`session_document_links` -> `training_sessions`
---     (par code) -> `sessions` -> `groups`), qui n'existait pas encore lors
---     de la première version de cette fonction — un formateur pilotant
---     uniquement le parcours intégré (aucune ligne session_exercices) était
---     donc rejeté à tort.
--- Un appelant est autorisé s'il est service_role, admin, propriétaire
--- déclaré de l'exercice (legacy), OU formateur du groupe d'au moins une
--- séance où cet exercice est planifié/lié, par L'UN OU L'AUTRE chemin.
-CREATE OR REPLACE FUNCTION public.is_authorized_for_exercise_release(p_exercise_id uuid, p_caller uuid)
+-- Autorisation liée À LA SÉANCE PRÉCISE ET AU GROUPE du formateur (relecture
+-- indépendante, points 2/7, DURCI 3e relecture point 3 : p_session_id
+-- devient obligatoire). Sans ancrage à une séance précise, un exercice
+-- partagé par la banque entre DEUX groupes différents aurait pu autoriser
+-- un formateur du groupe A à agir sur les tentatives du groupe B (même
+-- exercice, groupes distincts). Un appelant est autorisé s'il est
+-- service_role, admin, OU formateur du groupe de LA séance p_session_id
+-- précisément, à condition que cet exercice soit réellement planifié/lié
+-- DANS cette séance (legacy `session_exercices` OU parcours intégré
+-- `session_document_links` via le training_session de cette séance).
+CREATE OR REPLACE FUNCTION public.is_authorized_for_exercise_release(
+  p_exercise_id uuid, p_session_id uuid, p_caller uuid
+)
 RETURNS boolean
 LANGUAGE sql
 STABLE
@@ -496,33 +510,32 @@ AS $$
   SELECT (auth.role() = 'service_role')
     OR public.has_role(p_caller, 'admin'::public.app_role)
     OR EXISTS (
-      SELECT 1 FROM public.exercices e
-      WHERE e.id = p_exercise_id AND e.formateur_id = p_caller
-    )
-    OR EXISTS (
       SELECT 1
-      FROM public.session_exercices se
-      JOIN public.sessions s ON s.id = se.session_id
+      FROM public.sessions s
       JOIN public.groups g ON g.id = s.group_id
-      WHERE se.exercice_id = p_exercise_id
+      WHERE s.id = p_session_id
         AND g.formateur_id = p_caller
-    )
-    OR EXISTS (
-      SELECT 1
-      FROM public.session_document_links sdl
-      JOIN public.training_sessions ts ON ts.code = sdl.session_code
-      JOIN public.sessions s ON s.training_session_id = ts.id
-      JOIN public.groups g ON g.id = s.group_id
-      WHERE sdl.linked_id = p_exercise_id
-        AND g.formateur_id = p_caller
+        AND (
+          EXISTS (
+            SELECT 1 FROM public.session_exercices se
+            WHERE se.session_id = s.id AND se.exercice_id = p_exercise_id
+          )
+          OR EXISTS (
+            SELECT 1
+            FROM public.session_document_links sdl
+            JOIN public.training_sessions ts ON ts.code = sdl.session_code
+            WHERE sdl.linked_id = p_exercise_id
+              AND ts.id = s.training_session_id
+          )
+        )
     );
 $$;
 
--- Vérifie que chaque eleve_id ciblé appartient bien à un groupe où cet
--- exercice est réellement planifié/lié (legacy OU parcours intégré) —
--- empêche un formateur de "libérer" pour un élève qui n'a rien à voir avec
--- la séance de cet exercice.
-CREATE OR REPLACE FUNCTION public.eleve_ids_in_exercise_scope(p_exercise_id uuid, p_eleve_ids uuid[])
+-- Vérifie que chaque eleve_id ciblé appartient bien au groupe de CETTE
+-- séance précise (pas n'importe quel groupe où l'exercice apparaîtrait par
+-- ailleurs) — empêche un formateur de "libérer" pour un élève d'un autre
+-- groupe partageant le même exercice de banque.
+CREATE OR REPLACE FUNCTION public.eleve_ids_in_session_group(p_session_id uuid, p_eleve_ids uuid[])
 RETURNS boolean
 LANGUAGE sql
 STABLE
@@ -533,33 +546,26 @@ AS $$
     SELECT 1 FROM unnest(p_eleve_ids) AS target_id
     WHERE NOT EXISTS (
       SELECT 1
-      FROM public.session_exercices se
-      JOIN public.sessions s ON s.id = se.session_id
+      FROM public.sessions s
       JOIN public.group_members gm ON gm.group_id = s.group_id
-      WHERE se.exercice_id = p_exercise_id AND gm.eleve_id = target_id
-    ) AND NOT EXISTS (
-      SELECT 1
-      FROM public.session_document_links sdl
-      JOIN public.training_sessions ts ON ts.code = sdl.session_code
-      JOIN public.sessions s ON s.training_session_id = ts.id
-      JOIN public.group_members gm ON gm.group_id = s.group_id
-      WHERE sdl.linked_id = p_exercise_id AND gm.eleve_id = target_id
+      WHERE s.id = p_session_id AND gm.eleve_id = target_id
     )
   );
 $$;
 
 -- Fonction serveur de libération, seule voie autorisée pour poser
 -- correction_released_at à distance (le trigger ci-dessus bloque
--- l'apprenant). Scopes réels demandés (relecture indépendante, point 7) :
--- individual (p_eleve_ids = 1 élève), subgroup (p_eleve_ids = liste choisie
--- par le formateur), level (p_eleve_ids = élèves de ce niveau, résolus côté
--- appelant via student_competency_levels/l'UI existante), finished (tous
--- les `completed` non encore libérés), class (p_eleve_ids NULL = tout le
--- groupe). "collective" n'est pas un scope de libération séparé : c'est un
--- mode d'AFFICHAGE anonymisé (voir get_exercise_response_distribution)
--- combiné à un release scope='class'.
+-- l'apprenant). p_session_id est désormais OBLIGATOIRE (3e relecture,
+-- point 3) : toutes les mises à jour (tentatives, resultats) et
+-- l'événement de libération sont strictement bornés à cette séance,
+-- jamais à "tout attempt sur cet exercice_id" tous groupes confondus.
+-- Scopes : individual (p_eleve_ids = 1 élève), subgroup (liste choisie),
+-- level (liste résolue côté appelant), finished (tous les `completed` non
+-- libérés DE CETTE SÉANCE), class (p_eleve_ids NULL = tout le groupe DE
+-- CETTE SÉANCE).
 CREATE OR REPLACE FUNCTION public.release_corrections(
   p_exercise_id uuid,
+  p_session_id uuid,
   p_eleve_ids uuid[] DEFAULT NULL,
   p_scope text DEFAULT 'individual'
 )
@@ -572,6 +578,10 @@ DECLARE
   v_caller uuid := auth.uid();
   v_event_id uuid;
 BEGIN
+  IF p_session_id IS NULL THEN
+    RAISE EXCEPTION 'release_corrections: p_session_id est obligatoire';
+  END IF;
+
   IF p_scope NOT IN ('individual', 'finished', 'subgroup', 'level', 'class') THEN
     RAISE EXCEPTION 'release_corrections: scope inconnu %', p_scope;
   END IF;
@@ -580,33 +590,38 @@ BEGIN
     RAISE EXCEPTION 'release_corrections: le scope individual exige exactement un eleve_id';
   END IF;
 
-  IF NOT public.is_authorized_for_exercise_release(p_exercise_id, v_caller) THEN
-    RAISE EXCEPTION 'release_corrections: appelant non autorisé pour l''exercice % (ni propriétaire, ni formateur du groupe de séance)', p_exercise_id;
+  IF NOT public.is_authorized_for_exercise_release(p_exercise_id, p_session_id, v_caller) THEN
+    RAISE EXCEPTION 'release_corrections: appelant non autorisé pour l''exercice % dans la séance % (pas formateur du groupe de cette séance précise)', p_exercise_id, p_session_id;
   END IF;
 
-  IF NOT public.eleve_ids_in_exercise_scope(p_exercise_id, p_eleve_ids) THEN
-    RAISE EXCEPTION 'release_corrections: au moins un eleve_id ne fait pas partie du groupe de séance de cet exercice';
+  IF NOT public.eleve_ids_in_session_group(p_session_id, p_eleve_ids) THEN
+    RAISE EXCEPTION 'release_corrections: au moins un eleve_id ne fait pas partie du groupe de la séance %', p_session_id;
   END IF;
 
-  INSERT INTO public.correction_release_events (exercise_id, released_by, scope, target_eleve_ids)
-  VALUES (p_exercise_id, v_caller, p_scope, p_eleve_ids)
+  INSERT INTO public.correction_release_events (exercise_id, session_id, released_by, scope, target_eleve_ids)
+  VALUES (p_exercise_id, p_session_id, v_caller, p_scope, p_eleve_ids)
   RETURNING id INTO v_event_id;
 
   -- Même geste de libération sur le chemin devoirs/resultats (table
   -- distincte, non synchronisée en retour par le trigger miroir — voir
-  -- section 5bis), pour ne pas exiger deux clics formateur pour un seul
-  -- exercice selon le chemin d'accès de l'élève.
+  -- section 5bis). Borné à CETTE séance via devoirs.session_id (resultats
+  -- n'a pas de session_id propre — le lien passe par le devoir).
   UPDATE public.resultats r
   SET correction_released_at = now()
   WHERE r.exercice_id = p_exercise_id
     AND r.correction_released_at IS NULL
-    AND (p_eleve_ids IS NULL OR r.eleve_id = ANY(p_eleve_ids));
+    AND (p_eleve_ids IS NULL OR r.eleve_id = ANY(p_eleve_ids))
+    AND EXISTS (
+      SELECT 1 FROM public.devoirs d
+      WHERE d.id = r.devoir_id AND d.session_id = p_session_id
+    );
 
   RETURN QUERY
   UPDATE public.exercise_attempts ea
   SET correction_released_at = now(),
       release_event_id = v_event_id
   WHERE ea.exercise_id = p_exercise_id
+    AND ea.session_id = p_session_id
     AND ea.status = 'completed'
     AND ea.correction_released_at IS NULL
     AND (p_eleve_ids IS NULL OR ea.learner_id = ANY(p_eleve_ids))
@@ -616,8 +631,9 @@ $$;
 
 -- Correction collective anonymisée (mission §"CORRECTION COLLECTIVE") :
 -- distribution des réponses par item, sans jamais exposer l'identité de
--- l'élève. Autorisation identique à release_corrections.
-CREATE OR REPLACE FUNCTION public.get_exercise_response_distribution(p_exercise_id uuid)
+-- l'élève. p_session_id obligatoire (3e relecture, point 4) : n'agrège
+-- JAMAIS les réponses d'un autre groupe travaillant le même exercice.
+CREATE OR REPLACE FUNCTION public.get_exercise_response_distribution(p_exercise_id uuid, p_session_id uuid)
 RETURNS TABLE(item_index text, reponse_normalisee text, occurrences bigint)
 LANGUAGE plpgsql
 STABLE
@@ -625,8 +641,12 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
 BEGIN
-  IF NOT public.is_authorized_for_exercise_release(p_exercise_id, auth.uid()) THEN
-    RAISE EXCEPTION 'get_exercise_response_distribution: appelant non autorisé pour l''exercice %', p_exercise_id;
+  IF p_session_id IS NULL THEN
+    RAISE EXCEPTION 'get_exercise_response_distribution: p_session_id est obligatoire';
+  END IF;
+
+  IF NOT public.is_authorized_for_exercise_release(p_exercise_id, p_session_id, auth.uid()) THEN
+    RAISE EXCEPTION 'get_exercise_response_distribution: appelant non autorisé pour l''exercice % dans la séance %', p_exercise_id, p_session_id;
   END IF;
 
   RETURN QUERY
@@ -636,6 +656,7 @@ BEGIN
   FROM public.exercise_attempts ea
   CROSS JOIN LATERAL jsonb_each(COALESCE(ea.answers, '{}'::jsonb)) AS kv(key, value)
   WHERE ea.exercise_id = p_exercise_id
+    AND ea.session_id = p_session_id
     AND ea.status = 'completed'
   GROUP BY kv.key, lower(trim(both from (kv.value #>> '{}')))
   ORDER BY kv.key;

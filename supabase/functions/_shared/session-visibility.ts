@@ -42,3 +42,38 @@ export function isExerciseLinkVisible(
   if (!learnerNiveau) return true; // pas de niveau de groupe connu : ne bloque pas (dégradé, pas de faux négatif)
   return exercice.niveau_vise === learnerNiveau;
 }
+
+export interface LearnerProfileLevels {
+  niveau_actuel?: string | null;
+  niveau_ce?: string | null;
+  niveau_co?: string | null;
+  niveau_ee?: string | null;
+  niveau_eo?: string | null;
+}
+
+const PER_COMPETENCE_FIELD: Record<string, keyof LearnerProfileLevels> = {
+  CO: "niveau_co",
+  CE: "niveau_ce",
+  EE: "niveau_ee",
+  EO: "niveau_eo",
+};
+
+/**
+ * Niveau CECRL effectif pour filtrer un exercice COMMUN d'une compétence
+ * donnée (4e relecture indépendante, point 8) : priorité au niveau
+ * INDIVIDUEL de l'apprenant pour cette compétence précise
+ * (`profils_eleves.niveau_ce/co/ee/eo`), puis son niveau global
+ * (`niveau_actuel`), puis en dernier recours le niveau du groupe — jamais
+ * l'inverse. Une assignation individuelle (traitée séparément par
+ * isExerciseLinkVisible) reste de toute façon toujours prioritaire sur ce
+ * calcul, qui ne s'applique qu'aux liens communs.
+ */
+export function resolveLearnerLevelForCompetence(
+  profile: LearnerProfileLevels | null,
+  groupNiveau: string | null,
+  competence: string,
+): string | null {
+  const field = PER_COMPETENCE_FIELD[competence];
+  const perCompetence = field ? profile?.[field] : null;
+  return perCompetence || profile?.niveau_actuel || groupNiveau || null;
+}
