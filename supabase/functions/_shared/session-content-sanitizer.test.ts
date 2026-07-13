@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { sanitizeItem, sanitizeExercice } from "./session-content-sanitizer.ts";
+import { sanitizeItem, sanitizeExercice, sanitizeContentJson } from "./session-content-sanitizer.ts";
 
 const SENSITIVE_KEYS = ["bonne_reponse", "explication", "justification_attendue", "criteres_evaluation", "mots_cles_attendus"];
 
@@ -61,5 +61,52 @@ describe("session-content-sanitizer — relecture indépendante point 1/10", () 
   it("un item sans champ sensible reste inchangé pour les clés autorisées", () => {
     const sanitized = sanitizeItem({ question: "Q", texte: "T", enonce: "E", consigne: "C", options: ["a"] });
     expect(sanitized).toEqual({ question: "Q", texte: "T", enonce: "E", consigne: "C", options: ["a"] });
+  });
+});
+
+describe("sanitizeContentJson — 2e relecture indépendante, point 5/10", () => {
+  const FORBIDDEN = ["file_url", "storage_path", "source_file_path", "bonne_reponse", "corrige", "correction", "bareme", "explication"];
+
+  it("retire récursivement file_url/storage_path/source_file_path à toute profondeur", () => {
+    const raw = {
+      title: "Support",
+      file_url: "https://storage/secret.pdf",
+      nested: { storage_path: "bucket/secret.pdf", ok: "valeur licite" },
+      list: [{ source_file_path: "/tmp/secret.pdf" }, { ok: 1 }],
+    };
+    const sanitized: any = sanitizeContentJson(raw);
+    const serialized = JSON.stringify(sanitized);
+    for (const key of FORBIDDEN) {
+      expect(serialized).not.toContain(key);
+    }
+    expect(sanitized.title).toBe("Support");
+    expect(sanitized.nested.ok).toBe("valeur licite");
+    expect(sanitized.list[1].ok).toBe(1);
+  });
+
+  it("retire bonne_reponse/corrige/correction/bareme même imbriqués dans un tableau de questions", () => {
+    const raw = {
+      questions: [
+        { question: "Q1", bonne_reponse: "A", correction: "explication secrète" },
+        { question: "Q2", corrige: { bareme: 10 } },
+      ],
+    };
+    const sanitized: any = sanitizeContentJson(raw);
+    const serialized = JSON.stringify(sanitized);
+    for (const key of FORBIDDEN) {
+      expect(serialized).not.toContain(key);
+    }
+    expect(sanitized.questions[0].question).toBe("Q1");
+  });
+
+  it("laisse passer un contenu sans aucune clé sensible, inchangé", () => {
+    const raw = { title: "Titre", paragraphs: ["a", "b"] };
+    expect(sanitizeContentJson(raw)).toEqual(raw);
+  });
+
+  it("gère null/valeurs scalaires sans erreur", () => {
+    expect(sanitizeContentJson(null)).toBeNull();
+    expect(sanitizeContentJson("texte")).toBe("texte");
+    expect(sanitizeContentJson(42)).toBe(42);
   });
 });

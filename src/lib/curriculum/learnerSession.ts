@@ -50,6 +50,7 @@ export interface LearnerExerciseBlock {
   format: string;
   niveau_vise: string;
   civic_content: boolean;
+  is_bonus: boolean;
   items: SanitizedItem[];
 }
 
