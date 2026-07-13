@@ -115,7 +115,10 @@ const App = () => (
                   <Route index element={<AIConsentRequiredRoute><EleveDashboard /></AIConsentRequiredRoute>} />
                   <Route path="ma-seance" element={<AIConsentRequiredRoute><MaSeance /></AIConsentRequiredRoute>} />
                   <Route path="mes-seances" element={<AIConsentRequiredRoute><MesSeances /></AIConsentRequiredRoute>} />
-                  <Route path="exercices-interactifs/s01" element={<AIConsentRequiredRoute><S01InteractiveExercises /></AIConsentRequiredRoute>} />
+                  {/* Ancienne page séparée : redirigée, jamais rendue côté apprenant
+                      (relecture indépendante, point 6). Reste un outil formateur
+                      via /formateur/parcours/:sessionCode/exercices-interactifs. */}
+                  <Route path="exercices-interactifs/s01" element={<Navigate to="/eleve/seances/S01" replace />} />
                   <Route path="seances/:sessionCode" element={<AIConsentRequiredRoute><SeanceApprenant /></AIConsentRequiredRoute>} />
                   <Route path="test-positionnement" element={<AIConsentRequiredRoute><TestPositionnement /></AIConsentRequiredRoute>} />
                   <Route path="test-positionnement/passer/:token" element={<PositionnementPassation />} />
@@ -220,7 +223,7 @@ const App = () => (
               <Route index element={<AIConsentRequiredRoute><EleveDashboard /></AIConsentRequiredRoute>} />
               <Route path="ma-seance" element={<AIConsentRequiredRoute><MaSeance /></AIConsentRequiredRoute>} />
               <Route path="mes-seances" element={<AIConsentRequiredRoute><MesSeances /></AIConsentRequiredRoute>} />
-              <Route path="exercices-interactifs/s01" element={<AIConsentRequiredRoute><S01InteractiveExercises /></AIConsentRequiredRoute>} />
+              <Route path="exercices-interactifs/s01" element={<Navigate to="/eleve/seances/S01" replace />} />
               <Route path="seances/:sessionCode" element={<AIConsentRequiredRoute><SeanceApprenant /></AIConsentRequiredRoute>} />
               <Route path="test-positionnement" element={<AIConsentRequiredRoute><TestPositionnement /></AIConsentRequiredRoute>} />
               <Route path="test-positionnement/passer/:token" element={<PositionnementPassation />} />
