@@ -84,6 +84,22 @@ ALTER TABLE public.session_document_links
   ADD COLUMN IF NOT EXISTS activity_id uuid REFERENCES public.session_activities(id) ON DELETE SET NULL,
   ADD COLUMN IF NOT EXISTS block_code text;
 
+-- Point 3 (2e relecture indépendante) : le parcours intégré n'avait aucun
+-- moyen de représenter une assignation individuelle ou un bonus (contrairement
+-- au modèle legacy session_exercices.eleve_id/is_bonus). Sans ça, TOUS les
+-- exercices liés à une séance étaient visibles par TOUS les apprenants du
+-- groupe, quel que soit leur niveau CECRL — un A1 recevait donc aussi les
+-- variantes B1/B2 de la même famille. Même convention que session_exercices :
+-- eleve_id NULL = exercice commun au groupe (filtré par niveau du groupe côté
+-- get-seance-content) ; eleve_id renseigné = assignation individuelle
+-- (toujours visible pour CET élève, quel que soit son niveau — bonus/
+-- remédiation délibérément choisis par le formateur).
+ALTER TABLE public.session_document_links
+  ADD COLUMN IF NOT EXISTS eleve_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE,
+  ADD COLUMN IF NOT EXISTS is_bonus boolean NOT NULL DEFAULT false;
+
+CREATE INDEX IF NOT EXISTS idx_session_document_links_eleve ON public.session_document_links (eleve_id);
+
 CREATE INDEX IF NOT EXISTS idx_session_documents_activity ON public.session_documents (activity_id);
 CREATE INDEX IF NOT EXISTS idx_session_document_links_activity ON public.session_document_links (activity_id);
 
@@ -203,17 +219,16 @@ ALTER TABLE public.civic_facts
   ADD COLUMN IF NOT EXISTS version integer NOT NULL DEFAULT 1,
   ADD COLUMN IF NOT EXISTS validated_by uuid REFERENCES public.profiles(id);
 
--- Verrou déterministe, DURCI après relecture indépendante (2026-07-13) :
--- 1) s'applique à TOUTE transition VERS 'publishable' OU 'published' (pas
---    seulement 'publishable' — la version précédente laissait un exercice
---    déjà 'publishable' passer librement à 'published' sans re-vérifier) ;
--- 2) exige, pour CHAQUE civic_fact_id référencé : source_url non nul,
---    content_hash non nul, verified_at non nul, validated_by non nul
---    (validateur humain distinct de l'IA), en plus de status='active' et de
---    la fenêtre effective_from/effective_to déjà vérifiée ;
--- 3) interdit tout saut de plus d'un palier du cycle en une seule
---    transition pour un exercice civique — bloque nommément draft->published
---    direct, mais aussi tout autre raccourci (ex. draft->trainer_approved).
+-- Verrou déterministe, DURCI après DEUX relectures indépendantes (2026-07-13) :
+-- 1) le contrôle de PALIER (pas de saut de plus d'un cran) s'applique à
+--    TOUTE transition d'un exercice civique, quel que soit le statut cible —
+--    la version précédente n'évaluait ce contrôle QUE lorsque NEW.pedagogical_status
+--    était déjà 'publishable'/'published', ce qui laissait passer librement
+--    un saut draft->trainer_approved (jamais réévalué) ;
+-- 2) le contrôle de FAITS SOURCÉS (source_url/content_hash/verified_at/
+--    validated_by/fenêtre effective_from-effective_to) ne s'applique qu'à
+--    l'ATTEINTE de 'publishable' ou 'published' (un fait n'a pas besoin
+--    d'être sourcé pour rester en pedagogical_review, par exemple).
 CREATE OR REPLACE FUNCTION public.check_civic_publishable()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -224,7 +239,25 @@ DECLARE
   v_rank_new integer;
   v_ranks jsonb := '{"draft":0,"technical_review":1,"pedagogical_review":2,"factual_review":3,"trainer_approved":4,"publishable":5,"published":6}'::jsonb;
 BEGIN
-  IF NEW.civic_content AND NEW.pedagogical_status IN ('publishable', 'published') THEN
+  IF NOT NEW.civic_content THEN
+    RETURN NEW;
+  END IF;
+
+  -- Contrôle de palier : s'applique à CHAQUE transition, indépendamment du
+  -- statut cible (corrige le bug où draft->trainer_approved n'était jamais
+  -- vérifié car hors du bloc publishable/published).
+  IF TG_OP = 'UPDATE' THEN
+    v_rank_old := COALESCE((v_ranks -> OLD.pedagogical_status)::text::integer, 0);
+    v_rank_new := (v_ranks -> NEW.pedagogical_status)::text::integer;
+    IF v_rank_new - v_rank_old > 1 THEN
+      RAISE EXCEPTION 'DIFF_CIVIC_STAGE_SKIPPED: un exercice civique (%) ne peut pas sauter de % à % en une seule transition', NEW.id, OLD.pedagogical_status, NEW.pedagogical_status;
+    END IF;
+  ELSIF NEW.pedagogical_status <> 'draft' THEN
+    RAISE EXCEPTION 'DIFF_CIVIC_STAGE_SKIPPED: un exercice civique (%) doit être créé en draft, jamais directement en %', NEW.id, NEW.pedagogical_status;
+  END IF;
+
+  -- Contrôle des faits sourcés : uniquement à l'atteinte de publishable/published.
+  IF NEW.pedagogical_status IN ('publishable', 'published') THEN
     IF NEW.civic_fact_ids IS NULL OR array_length(NEW.civic_fact_ids, 1) IS NULL THEN
       RAISE EXCEPTION 'DIFF_FACT_SOURCE_UNVERIFIED: exercice civique % sans civic_fact_ids', NEW.id;
     END IF;
@@ -247,17 +280,8 @@ BEGIN
     IF v_missing IS NOT NULL THEN
       RAISE EXCEPTION 'DIFF_FACT_SOURCE_EXPIRED: fait(s) civique(s) non actifs, non sourcés ou non validés humainement : %', v_missing;
     END IF;
-
-    IF TG_OP = 'UPDATE' THEN
-      v_rank_old := COALESCE((v_ranks -> OLD.pedagogical_status)::text::integer, 0);
-      v_rank_new := (v_ranks -> NEW.pedagogical_status)::text::integer;
-      IF v_rank_new - v_rank_old > 1 THEN
-        RAISE EXCEPTION 'DIFF_CIVIC_STAGE_SKIPPED: un exercice civique (%) ne peut pas sauter de % à % en une seule transition', NEW.id, OLD.pedagogical_status, NEW.pedagogical_status;
-      END IF;
-    ELSIF NEW.pedagogical_status <> 'draft' THEN
-      RAISE EXCEPTION 'DIFF_CIVIC_STAGE_SKIPPED: un exercice civique (%) doit être créé en draft, jamais directement en %', NEW.id, NEW.pedagogical_status;
-    END IF;
   END IF;
+
   RETURN NEW;
 END;
 $$;
@@ -317,7 +341,7 @@ CREATE TABLE IF NOT EXISTS public.correction_release_events (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   exercise_id uuid NOT NULL REFERENCES public.exercices(id) ON DELETE CASCADE,
   released_by uuid REFERENCES public.profiles(id) ON DELETE SET NULL,
-  scope text NOT NULL CHECK (scope IN ('individual', 'finished', 'class')),
+  scope text NOT NULL CHECK (scope IN ('individual', 'finished', 'subgroup', 'level', 'class')),
   target_eleve_ids uuid[],
   released_at timestamptz NOT NULL DEFAULT now()
 );
@@ -449,12 +473,19 @@ AS $$
 $$;
 
 -- Autorisation liée à la SÉANCE ET AU GROUPE du formateur (relecture
--- indépendante, point 7) — pas seulement exercices.formateur_id, qui peut
+-- indépendante, points 2/7) — pas seulement exercices.formateur_id, qui peut
 -- être un compte technique/générateur différent du formateur qui pilote
--- réellement la séance en cours pour ce groupe. Un appelant est autorisé
--- s'il est service_role, admin, propriétaire déclaré de l'exercice (legacy),
--- OU formateur du groupe d'au moins UNE séance (`sessions`) où cet exercice
--- est planifié (`session_exercices`).
+-- réellement la séance en cours pour ce groupe. DEUX chemins de séance
+-- doivent être couverts, pas un seul :
+--   - le modèle LEGACY (`session_exercices`, playlist historique) ;
+--   - le modèle INTÉGRÉ S01 (`session_document_links` -> `training_sessions`
+--     (par code) -> `sessions` -> `groups`), qui n'existait pas encore lors
+--     de la première version de cette fonction — un formateur pilotant
+--     uniquement le parcours intégré (aucune ligne session_exercices) était
+--     donc rejeté à tort.
+-- Un appelant est autorisé s'il est service_role, admin, propriétaire
+-- déclaré de l'exercice (legacy), OU formateur du groupe d'au moins une
+-- séance où cet exercice est planifié/lié, par L'UN OU L'AUTRE chemin.
 CREATE OR REPLACE FUNCTION public.is_authorized_for_exercise_release(p_exercise_id uuid, p_caller uuid)
 RETURNS boolean
 LANGUAGE sql
@@ -475,12 +506,22 @@ AS $$
       JOIN public.groups g ON g.id = s.group_id
       WHERE se.exercice_id = p_exercise_id
         AND g.formateur_id = p_caller
+    )
+    OR EXISTS (
+      SELECT 1
+      FROM public.session_document_links sdl
+      JOIN public.training_sessions ts ON ts.code = sdl.session_code
+      JOIN public.sessions s ON s.training_session_id = ts.id
+      JOIN public.groups g ON g.id = s.group_id
+      WHERE sdl.linked_id = p_exercise_id
+        AND g.formateur_id = p_caller
     );
 $$;
 
 -- Vérifie que chaque eleve_id ciblé appartient bien à un groupe où cet
--- exercice est réellement planifié — empêche un formateur de "libérer" pour
--- un élève qui n'a rien à voir avec la séance de cet exercice.
+-- exercice est réellement planifié/lié (legacy OU parcours intégré) —
+-- empêche un formateur de "libérer" pour un élève qui n'a rien à voir avec
+-- la séance de cet exercice.
 CREATE OR REPLACE FUNCTION public.eleve_ids_in_exercise_scope(p_exercise_id uuid, p_eleve_ids uuid[])
 RETURNS boolean
 LANGUAGE sql
@@ -496,6 +537,13 @@ AS $$
       JOIN public.sessions s ON s.id = se.session_id
       JOIN public.group_members gm ON gm.group_id = s.group_id
       WHERE se.exercice_id = p_exercise_id AND gm.eleve_id = target_id
+    ) AND NOT EXISTS (
+      SELECT 1
+      FROM public.session_document_links sdl
+      JOIN public.training_sessions ts ON ts.code = sdl.session_code
+      JOIN public.sessions s ON s.training_session_id = ts.id
+      JOIN public.group_members gm ON gm.group_id = s.group_id
+      WHERE sdl.linked_id = p_exercise_id AND gm.eleve_id = target_id
     )
   );
 $$;
@@ -659,20 +707,89 @@ VALUES
   ('S01', 'S01.PRODUCTION', 'Production orale et écrite', 'Réemploi communicatif : se présenter et expliquer son objectif', 7, 'draft')
 ON CONFLICT (session_code, activity_code) DO NOTHING;
 
--- Contrainte d'unicité additive : permet à la procédure d'ingestion
--- (scripts/curriculum/publish-s01-interactive.mjs) de faire un vrai
--- upsert (ON CONFLICT) sur session_document_links au lieu d'insérer un
--- doublon à chaque exécution.
+-- Unicité additive : permet à la procédure d'ingestion
+-- (scripts/curriculum/publish-s01-interactive.mjs) de faire un vrai upsert
+-- (ON CONFLICT) au lieu d'insérer un doublon à chaque exécution.
+--
+-- DEUX index uniques PARTIELS, pas une contrainte simple (session_code,
+-- linked_id) : depuis l'ajout d'eleve_id (point 3 ci-dessus), le MÊME
+-- exercice peut légitimement apparaître plusieurs fois dans la même séance
+-- — une fois en lien commun (eleve_id NULL) et une fois par élève à qui il
+-- est assigné individuellement (bonus/remédiation). Une contrainte UNIQUE
+-- simple sur (session_code, linked_id) aurait bloqué cet usage légitime
+-- (deux assignations individuelles différentes du même exercice à deux
+-- élèves distincts).
+--   - un seul lien COMMUN par (session_code, linked_id) [eleve_id IS NULL] ;
+--   - un seul lien INDIVIDUEL par (session_code, linked_id, eleve_id).
+--
+-- Point 9 (2e relecture indépendante) : une contrainte ajoutée sans
+-- vérification échoue silencieusement s'il existe déjà des doublons.
+-- Stratégie déterministe, SANS perte d'information : pour chaque doublon,
+-- conserver la ligne la plus récemment modifiée (updated_at DESC, puis id
+-- DESC pour départager), tracer chaque suppression par une ligne NOTICE,
+-- puis échouer avec un message explicite si des doublons subsistent malgré
+-- la déduplication automatique (ne devrait jamais arriver).
 DO $$
+DECLARE
+  v_removed_id uuid;
+  v_removed_count integer := 0;
 BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_constraint WHERE conname = 'session_document_links_session_linked_unique'
+  -- Doublons parmi les liens COMMUNS (eleve_id IS NULL).
+  FOR v_removed_id IN
+    SELECT id FROM (
+      SELECT id,
+        row_number() OVER (PARTITION BY session_code, linked_id ORDER BY updated_at DESC, id DESC) AS rn
+      FROM public.session_document_links
+      WHERE eleve_id IS NULL
+    ) ranked
+    WHERE rn > 1
+  LOOP
+    DELETE FROM public.session_document_links WHERE id = v_removed_id;
+    v_removed_count := v_removed_count + 1;
+    RAISE NOTICE 'session_document_links : ligne % supprimée (doublon lien commun, conservée = plus récente).', v_removed_id;
+  END LOOP;
+
+  -- Doublons parmi les liens INDIVIDUELS (session_code, linked_id, eleve_id).
+  FOR v_removed_id IN
+    SELECT id FROM (
+      SELECT id,
+        row_number() OVER (PARTITION BY session_code, linked_id, eleve_id ORDER BY updated_at DESC, id DESC) AS rn
+      FROM public.session_document_links
+      WHERE eleve_id IS NOT NULL
+    ) ranked
+    WHERE rn > 1
+  LOOP
+    DELETE FROM public.session_document_links WHERE id = v_removed_id;
+    v_removed_count := v_removed_count + 1;
+    RAISE NOTICE 'session_document_links : ligne % supprimée (doublon lien individuel, conservée = plus récente).', v_removed_id;
+  END LOOP;
+
+  IF v_removed_count > 0 THEN
+    RAISE NOTICE 'session_document_links : déduplication terminée, % ligne(s) supprimée(s).', v_removed_count;
+  END IF;
+
+  IF EXISTS (
+    SELECT 1 FROM public.session_document_links WHERE eleve_id IS NULL
+    GROUP BY session_code, linked_id HAVING count(*) > 1
+  ) OR EXISTS (
+    SELECT 1 FROM public.session_document_links WHERE eleve_id IS NOT NULL
+    GROUP BY session_code, linked_id, eleve_id HAVING count(*) > 1
   ) THEN
-    ALTER TABLE public.session_document_links
-      ADD CONSTRAINT session_document_links_session_linked_unique
-      UNIQUE (session_code, linked_id);
+    RAISE EXCEPTION 'MIGRATION_BLOQUEE: des doublons persistent dans session_document_links après déduplication automatique — intervention manuelle requise avant d''ajouter les index uniques.';
   END IF;
 END $$;
+
+DROP INDEX IF EXISTS session_document_links_session_linked_unique;
+ALTER TABLE public.session_document_links
+  DROP CONSTRAINT IF EXISTS session_document_links_session_linked_unique;
+
+CREATE UNIQUE INDEX IF NOT EXISTS session_document_links_common_unique
+  ON public.session_document_links (session_code, linked_id)
+  WHERE eleve_id IS NULL;
+
+CREATE UNIQUE INDEX IF NOT EXISTS session_document_links_individual_unique
+  ON public.session_document_links (session_code, linked_id, eleve_id)
+  WHERE eleve_id IS NOT NULL;
 
 -- Rattache les 9 documents S01 déjà seedés (migration 20260708210100) à
 -- leur activité canonique, par document_type. N'écrase jamais un
