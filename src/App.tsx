@@ -45,6 +45,7 @@ import EleveProfil from "@/pages/eleve/Profil";
 import MaSeance from "@/pages/eleve/MaSeance";
 import MesSeances from "@/pages/eleve/MesSeances";
 import S01InteractiveExercises from "@/pages/eleve/S01InteractiveExercises";
+import SeanceApprenant from "@/pages/eleve/SeanceApprenant";
 
 import BilanSeance from "@/pages/eleve/BilanSeance";
 import BilanTestPassation from "@/pages/eleve/BilanTestPassation";
@@ -115,6 +116,7 @@ const App = () => (
                   <Route path="ma-seance" element={<AIConsentRequiredRoute><MaSeance /></AIConsentRequiredRoute>} />
                   <Route path="mes-seances" element={<AIConsentRequiredRoute><MesSeances /></AIConsentRequiredRoute>} />
                   <Route path="exercices-interactifs/s01" element={<AIConsentRequiredRoute><S01InteractiveExercises /></AIConsentRequiredRoute>} />
+                  <Route path="seances/:sessionCode" element={<AIConsentRequiredRoute><SeanceApprenant /></AIConsentRequiredRoute>} />
                   <Route path="test-positionnement" element={<AIConsentRequiredRoute><TestPositionnement /></AIConsentRequiredRoute>} />
                   <Route path="test-positionnement/passer/:token" element={<PositionnementPassation />} />
                   <Route path="test-positionnement/resultat/:attemptId" element={<PositionnementResultat />} />
@@ -219,6 +221,7 @@ const App = () => (
               <Route path="ma-seance" element={<AIConsentRequiredRoute><MaSeance /></AIConsentRequiredRoute>} />
               <Route path="mes-seances" element={<AIConsentRequiredRoute><MesSeances /></AIConsentRequiredRoute>} />
               <Route path="exercices-interactifs/s01" element={<AIConsentRequiredRoute><S01InteractiveExercises /></AIConsentRequiredRoute>} />
+              <Route path="seances/:sessionCode" element={<AIConsentRequiredRoute><SeanceApprenant /></AIConsentRequiredRoute>} />
               <Route path="test-positionnement" element={<AIConsentRequiredRoute><TestPositionnement /></AIConsentRequiredRoute>} />
               <Route path="test-positionnement/passer/:token" element={<PositionnementPassation />} />
               <Route path="test-positionnement/resultat/:attemptId" element={<PositionnementResultat />} />
