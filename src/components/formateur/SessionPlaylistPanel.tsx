@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { ArrowUp, ArrowDown, X, FlaskConical, Copy, Send, Gift, Lock } from "lucide-react";
+import { ArrowUp, ArrowDown, X, FlaskConical, Copy, Send, Gift, Lock, Unlock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   insertItem as pureInsertItem,
@@ -154,6 +154,29 @@ export function SessionPlaylistPanel({ sessionId, onTest, onClone, onAssign, onB
     setBusyId(id);
     await persist(pureMoveToPosition(items, id, position));
   }
+  /**
+   * Libère la correction pour tous les élèves ayant terminé cette activité
+   * (scope "finished") — réutilise la fonction serveur release_corrections
+   * (migration 20260713090000), seule voie autorisée à poser
+   * correction_released_at. Aucune correction n'est donc jamais visible côté
+   * apprenant tant que le formateur n'a pas cliqué ici.
+   */
+  async function handleReleaseCorrection(row: SessionExerciceRow) {
+    setBusyId(row.id);
+    try {
+      const { error } = await supabase.rpc("release_corrections", {
+        p_exercise_id: row.exercice_id,
+        p_scope: "finished",
+      });
+      if (error) throw error;
+      toast.success("Correction libérée pour les élèves ayant terminé.");
+    } catch (e: any) {
+      toast.error("Libération impossible", { description: e.message });
+    } finally {
+      setBusyId(null);
+    }
+  }
+
   async function handleRemove(id: string) {
     setBusyId(id);
     const outcome = pureRemoveItem(items, id);
@@ -241,6 +264,18 @@ export function SessionPlaylistPanel({ sessionId, onTest, onClone, onAssign, onB
                   {onBonus && (
                     <Button variant="outline" size="sm" className="h-6 text-[11px] gap-1" onClick={() => onBonus(row)}>
                       <Gift className="h-3 w-3" /> Bonus
+                    </Button>
+                  )}
+                  {locked && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-6 text-[11px] gap-1 border-emerald-300 text-emerald-700 dark:text-emerald-400"
+                      disabled={busy}
+                      onClick={() => handleReleaseCorrection(row)}
+                      title="Libère la correction pour les élèves ayant terminé cette activité"
+                    >
+                      <Unlock className="h-3 w-3" /> Libérer la correction
                     </Button>
                   )}
                   <Button
