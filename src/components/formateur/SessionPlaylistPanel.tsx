@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { ArrowUp, ArrowDown, X, FlaskConical, Copy, Send, Gift, Lock, Unlock } from "lucide-react";
+import { ArrowUp, ArrowDown, X, FlaskConical, Copy, Send, Gift, Lock, Unlock, BarChart3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
@@ -86,12 +86,13 @@ export function SessionPlaylistPanel({ sessionId, onTest, onClone, onAssign, onB
   // Verrouillage : une activité devient non déplaçable/non supprimable dès
   // qu'au moins une tentative existe (in_progress ou completed).
   const { data: attempts } = useQuery({
-    queryKey: ["session-playlist-attempts", exerciceIds.join(",")],
+    queryKey: ["session-playlist-attempts", sessionId, exerciceIds.join(",")],
     queryFn: async () => {
       if (exerciceIds.length === 0) return [];
       const { data, error } = await supabase
         .from("exercise_attempts")
         .select("exercise_id, status")
+        .eq("session_id", sessionId)
         .in("exercise_id", exerciceIds);
       if (error) throw error;
       return data ?? [];
@@ -169,6 +170,7 @@ export function SessionPlaylistPanel({ sessionId, onTest, onClone, onAssign, onB
   async function releaseCorrection(exerciceId: string, scope: string, eleveIds: string[] | null) {
     const { error } = await supabase.rpc("release_corrections", {
       p_exercise_id: exerciceId,
+      p_session_id: sessionId,
       p_scope: scope,
       p_eleve_ids: eleveIds,
     });
@@ -289,6 +291,11 @@ export function SessionPlaylistPanel({ sessionId, onTest, onClone, onAssign, onB
                         <Unlock className="h-3 w-3" /> Libérer (terminés)
                       </Button>
                       <ReleaseCorrectionDialog sessionId={sessionId} onRelease={(scope, ids) => releaseCorrection(row.exercice_id, scope, ids)} />
+                      <CollectiveCorrectionDialog
+                        sessionId={sessionId}
+                        exerciseId={row.exercice_id}
+                        onReleaseClass={() => releaseCorrection(row.exercice_id, "class", null)}
+                      />
                     </>
                   )}
                   <Button
@@ -331,11 +338,12 @@ function ReleaseCorrectionDialog({
   sessionId, onRelease,
 }: {
   sessionId: string;
-  onRelease: (scope: "individual" | "subgroup", eleveIds: string[]) => Promise<void>;
+  onRelease: (scope: "individual" | "subgroup" | "level" | "class", eleveIds: string[] | null) => Promise<void>;
 }) {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [submitting, setSubmitting] = useState(false);
+  const [selectedLevel, setSelectedLevel] = useState("");
 
   const { data: members, isLoading } = useQuery({
     queryKey: ["session-group-members", sessionId],
@@ -351,10 +359,38 @@ function ReleaseCorrectionDialog({
         .select("eleve_id, eleve:profiles(nom, prenom)")
         .eq("group_id", session.group_id);
       if (error) throw error;
-      return (data ?? []) as unknown as Array<{ eleve_id: string; eleve: { nom: string; prenom: string } | null }>;
+      const memberIds = (data ?? []).map((row: any) => row.eleve_id);
+      const { data: levels, error: levelsError } = memberIds.length > 0
+        ? await supabase.from("profils_eleves").select("eleve_id, niveau_actuel").in("eleve_id", memberIds)
+        : { data: [], error: null };
+      if (levelsError) throw levelsError;
+      const levelByStudent = new Map((levels ?? []).map((row: any) => [row.eleve_id, row.niveau_actuel]));
+      return (data ?? []).map((row: any) => ({ ...row, niveau_actuel: levelByStudent.get(row.eleve_id) ?? null })) as Array<{
+        eleve_id: string;
+        eleve: { nom: string; prenom: string } | null;
+        niveau_actuel: string | null;
+      }>;
     },
     enabled: open,
   });
+
+  const availableLevels = Array.from(new Set((members ?? []).map((member) => member.niveau_actuel).filter(Boolean))).sort() as string[];
+
+  async function handleLevelRelease() {
+    const ids = (members ?? []).filter((member) => member.niveau_actuel === selectedLevel).map((member) => member.eleve_id);
+    if (!selectedLevel || ids.length === 0) return;
+    setSubmitting(true);
+    try {
+      await onRelease("level", ids);
+      toast.success(`Correction libérée pour le niveau ${selectedLevel} (${ids.length} élève(s)).`);
+      setOpen(false);
+      setSelectedLevel("");
+    } catch (e: any) {
+      toast.error("Libération impossible", { description: e.message });
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   function toggle(eleveId: string) {
     setSelected((prev) => {
@@ -394,7 +430,21 @@ function ReleaseCorrectionDialog({
         {isLoading ? (
           <Skeleton className="h-24" />
         ) : (
-          <div className="space-y-2 max-h-64 overflow-y-auto">
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 rounded-md border p-2">
+              <select
+                className="h-9 flex-1 rounded-md border bg-background px-2 text-sm"
+                value={selectedLevel}
+                onChange={(event) => setSelectedLevel(event.target.value)}
+              >
+                <option value="">Choisir un niveau</option>
+                {availableLevels.map((level) => <option key={level} value={level}>{level}</option>)}
+              </select>
+              <Button variant="outline" disabled={!selectedLevel || submitting} onClick={handleLevelRelease}>
+                Libérer ce niveau
+              </Button>
+            </div>
+            <div className="space-y-2 max-h-64 overflow-y-auto">
             {(members ?? []).map((m) => {
               const label = [m.eleve?.prenom, m.eleve?.nom].filter(Boolean).join(" ") || "Élève";
               return (
@@ -404,7 +454,8 @@ function ReleaseCorrectionDialog({
                 </label>
               );
             })}
-            {(members ?? []).length === 0 && <p className="text-sm text-muted-foreground">Aucun élève dans ce groupe.</p>}
+              {(members ?? []).length === 0 && <p className="text-sm text-muted-foreground">Aucun élève dans ce groupe.</p>}
+            </div>
           </div>
         )}
         <DialogFooter>
@@ -417,6 +468,94 @@ function ReleaseCorrectionDialog({
   );
 }
 
+function CollectiveCorrectionDialog({
+  sessionId,
+  exerciseId,
+  onReleaseClass,
+}: {
+  sessionId: string;
+  exerciseId: string;
+  onReleaseClass: () => Promise<void>;
+}) {
+  const [open, setOpen] = useState(false);
+  const [releasing, setReleasing] = useState(false);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["exercise-response-distribution", sessionId, exerciseId],
+    queryFn: async () => {
+      const { data: rows, error: rpcError } = await (supabase as any).rpc("get_exercise_response_distribution", {
+        p_exercise_id: exerciseId,
+        p_session_id: sessionId,
+      });
+      if (rpcError) throw rpcError;
+      return (rows ?? []) as Array<{ item_index: string; reponse_normalisee: string; occurrences: number }>;
+    },
+    enabled: open,
+  });
+
+  async function releaseForClass() {
+    setReleasing(true);
+    try {
+      await onReleaseClass();
+      toast.success("Correction libérée pour toute la classe.");
+      setOpen(false);
+    } catch (e: any) {
+      toast.error("Libération impossible", { description: e.message });
+    } finally {
+      setReleasing(false);
+    }
+  }
+
+  const grouped = useMemo(() => {
+    const result = new Map<string, Array<{ answer: string; count: number }>>();
+    for (const row of data ?? []) {
+      const answers = result.get(row.item_index) ?? [];
+      answers.push({ answer: row.reponse_normalisee || "(sans réponse)", count: row.occurrences });
+      result.set(row.item_index, answers);
+    }
+    return Array.from(result.entries()).sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }));
+  }, [data]);
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm" className="h-6 text-[11px] gap-1">
+          <BarChart3 className="h-3 w-3" /> Correction collective
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Réponses anonymisées de la classe</DialogTitle>
+        </DialogHeader>
+        {isLoading ? <Skeleton className="h-32" /> : error ? (
+          <p className="text-sm text-destructive">Impossible de charger les réponses.</p>
+        ) : grouped.length === 0 ? (
+          <p className="text-sm text-muted-foreground">Aucune réponse enregistrée pour cette activité dans cette séance.</p>
+        ) : (
+          <div className="max-h-[55vh] space-y-4 overflow-y-auto">
+            {grouped.map(([itemIndex, answers]) => (
+              <div key={itemIndex} className="rounded-md border p-3">
+                <p className="mb-2 text-sm font-medium">Item {Number.isNaN(Number(itemIndex)) ? itemIndex : Number(itemIndex) + 1}</p>
+                <div className="space-y-1">
+                  {answers.map(({ answer, count }) => (
+                    <div key={answer} className="flex items-center justify-between gap-4 text-sm">
+                      <span className="break-words">{answer}</span>
+                      <Badge variant="secondary">{count} réponse{count > 1 ? "s" : ""}</Badge>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        <DialogFooter>
+          <Button disabled={releasing || grouped.length === 0} onClick={releaseForClass}>
+            Envoyer la correction à toute la classe
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
 /**
  * Calcule la position (`ordre`) à assigner à une NOUVELLE activité insérée
  * avant/après une activité de référence, et les mises à jour d'`ordre` à

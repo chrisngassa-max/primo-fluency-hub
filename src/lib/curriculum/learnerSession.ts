@@ -27,7 +27,6 @@ export interface LearnerSupportBlock {
   display_order: number;
   title: string;
   content_html: string | null;
-  content_json: unknown;
 }
 
 /** Item nettoyé : jamais de bonne_reponse/explication/barème (voir edge function). */
@@ -37,6 +36,15 @@ export interface SanitizedItem {
   enonce?: string;
   consigne?: string;
   options?: string[];
+}
+
+/** État de la tentative de CET apprenant pour cet exercice, DANS CETTE
+ * séance précise uniquement (jamais "la dernière tentative tous groupes
+ * confondus" — voir get-seance-content, 4e relecture point 1). */
+export interface MyAttemptSummary {
+  attempt_id: string;
+  status: string;
+  correction_released: boolean;
 }
 
 export interface LearnerExerciseBlock {
@@ -52,6 +60,7 @@ export interface LearnerExerciseBlock {
   civic_content: boolean;
   is_bonus: boolean;
   items: SanitizedItem[];
+  my_attempt: MyAttemptSummary | null;
 }
 
 export type LearnerSessionBlock = LearnerSupportBlock | LearnerExerciseBlock;
@@ -64,6 +73,7 @@ async function invokeEdgeFunction<T>(name: string, body: Record<string, unknown>
 }
 
 export async function fetchSeanceContent(sessionCode: string): Promise<{
+  session_id: string;
   activities: LearnerActivity[];
   blocks: LearnerSessionBlock[];
 }> {
@@ -79,8 +89,9 @@ export interface AttemptCorrectionResponse {
   correction_viewed_at?: string | null;
 }
 
-export async function fetchAttemptCorrection(exerciseId: string): Promise<AttemptCorrectionResponse> {
-  return invokeEdgeFunction("get-attempt-correction", { exercise_id: exerciseId });
+/** Reçoit attempt_id (pas exercise_id) — voir edge function get-attempt-correction. */
+export async function fetchAttemptCorrection(attemptId: string): Promise<AttemptCorrectionResponse> {
+  return invokeEdgeFunction("get-attempt-correction", { attempt_id: attemptId });
 }
 
 export interface SubmitAnswerResponse {

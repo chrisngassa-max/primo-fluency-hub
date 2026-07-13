@@ -64,11 +64,12 @@ export default function SeanceApprenant() {
   const currentGroup = activityGroups[activityIndex];
   const currentBlock = currentGroup?.blocks[blockIndex];
   const currentExercise = currentBlock?.kind === "exercise" ? (currentBlock as LearnerExerciseBlock) : null;
+  const currentAttemptId = currentExercise?.my_attempt?.attempt_id ?? null;
 
   const { data: correction, isLoading: loadingCorrection } = useQuery({
-    queryKey: ["seance-apprenant-correction", currentExercise?.id],
-    queryFn: () => fetchAttemptCorrection(currentExercise!.id),
-    enabled: !!currentExercise,
+    queryKey: ["seance-apprenant-correction", currentAttemptId],
+    queryFn: () => fetchAttemptCorrection(currentAttemptId!),
+    enabled: !!currentAttemptId,
   });
 
   function resetExerciseNav() {
@@ -115,23 +116,27 @@ export default function SeanceApprenant() {
     }
     // Dernier item : envoi au serveur. Aucune correction/score reçu ici —
     // uniquement une confirmation de complétion (voir submitSeanceAnswer).
-    await submitSeanceAnswer({
+    const submitted = await submitSeanceAnswer({
       exerciseId: currentExercise.id,
       sessionCode,
       answers: Object.fromEntries(Object.entries(answers)),
     });
     setJustSubmitted(true);
-    queryClient.invalidateQueries({ queryKey: ["seance-apprenant-correction", currentExercise.id] });
+    queryClient.setQueryData(
+      ["seance-apprenant-correction", submitted.attempt_id],
+      { attempt_id: submitted.attempt_id, status: submitted.status, released: false },
+    );
+    await queryClient.invalidateQueries({ queryKey: ["seance-apprenant-content", sessionCode] });
   }
 
   async function handleViewCorrection() {
     if (correction?.attempt_id && correction.released && !correction.correction_viewed_at) {
       await markCorrectionViewed(correction.attempt_id);
-      queryClient.invalidateQueries({ queryKey: ["seance-apprenant-correction", currentExercise?.id] });
+      queryClient.invalidateQueries({ queryKey: ["seance-apprenant-correction", correction.attempt_id] });
     }
   }
 
-  const attemptCompleted = justSubmitted || (correction && correction.status !== "not_started");
+  const attemptCompleted = justSubmitted || !!currentExercise?.my_attempt;
 
   if (isLoading) {
     return (
