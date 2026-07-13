@@ -10,6 +10,10 @@ import { toast } from "sonner";
 import { ArrowUp, ArrowDown, X, FlaskConical, Copy, Send, Gift, Lock, Unlock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
+  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
+} from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
   insertItem as pureInsertItem,
   moveDown as pureMoveDown,
   moveToPosition as pureMoveToPosition,
@@ -155,20 +159,26 @@ export function SessionPlaylistPanel({ sessionId, onTest, onClone, onAssign, onB
     await persist(pureMoveToPosition(items, id, position));
   }
   /**
-   * Libère la correction pour tous les élèves ayant terminé cette activité
-   * (scope "finished") — réutilise la fonction serveur release_corrections
+   * Libère la correction — réutilise la fonction serveur release_corrections
    * (migration 20260713090000), seule voie autorisée à poser
-   * correction_released_at. Aucune correction n'est donc jamais visible côté
-   * apprenant tant que le formateur n'a pas cliqué ici.
+   * correction_released_at (authorisation liée à la séance/groupe du
+   * formateur, pas seulement à exercices.formateur_id). Aucune correction
+   * n'est donc jamais visible côté apprenant tant que le formateur n'a pas
+   * explicitement cliqué ici.
    */
-  async function handleReleaseCorrection(row: SessionExerciceRow) {
+  async function releaseCorrection(exerciceId: string, scope: string, eleveIds: string[] | null) {
+    const { error } = await supabase.rpc("release_corrections", {
+      p_exercise_id: exerciceId,
+      p_scope: scope,
+      p_eleve_ids: eleveIds,
+    });
+    if (error) throw error;
+  }
+
+  async function handleReleaseFinished(row: SessionExerciceRow) {
     setBusyId(row.id);
     try {
-      const { error } = await supabase.rpc("release_corrections", {
-        p_exercise_id: row.exercice_id,
-        p_scope: "finished",
-      });
-      if (error) throw error;
+      await releaseCorrection(row.exercice_id, "finished", null);
       toast.success("Correction libérée pour les élèves ayant terminé.");
     } catch (e: any) {
       toast.error("Libération impossible", { description: e.message });
@@ -267,16 +277,19 @@ export function SessionPlaylistPanel({ sessionId, onTest, onClone, onAssign, onB
                     </Button>
                   )}
                   {locked && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-6 text-[11px] gap-1 border-emerald-300 text-emerald-700 dark:text-emerald-400"
-                      disabled={busy}
-                      onClick={() => handleReleaseCorrection(row)}
-                      title="Libère la correction pour les élèves ayant terminé cette activité"
-                    >
-                      <Unlock className="h-3 w-3" /> Libérer la correction
-                    </Button>
+                    <>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-6 text-[11px] gap-1 border-emerald-300 text-emerald-700 dark:text-emerald-400"
+                        disabled={busy}
+                        onClick={() => handleReleaseFinished(row)}
+                        title="Libère la correction pour les élèves ayant terminé cette activité"
+                      >
+                        <Unlock className="h-3 w-3" /> Libérer (terminés)
+                      </Button>
+                      <ReleaseCorrectionDialog sessionId={sessionId} onRelease={(scope, ids) => releaseCorrection(row.exercice_id, scope, ids)} />
+                    </>
                   )}
                   <Button
                     variant="ghost"
@@ -301,6 +314,106 @@ export function SessionPlaylistPanel({ sessionId, onTest, onClone, onAssign, onB
         );
       })}
     </div>
+  );
+}
+
+/**
+ * Sélection d'élève(s) pour une libération individuelle ou en sous-groupe
+ * (relecture indépendante, point 7). Charge les membres du groupe de la
+ * séance (sessions.group_id -> group_members -> profiles), coche manuelle.
+ * scope='individual' si exactement un élève sélectionné, sinon 'subgroup'.
+ * "level" n'est pas résolu automatiquement ici (aucune correspondance
+ * fiable niveau CECRL <-> student_competency_levels vérifiée dans cette
+ * mission) — le formateur sélectionne manuellement les élèves du niveau
+ * visé, ce qui reste une "subgroup" du point de vue du serveur.
+ */
+function ReleaseCorrectionDialog({
+  sessionId, onRelease,
+}: {
+  sessionId: string;
+  onRelease: (scope: "individual" | "subgroup", eleveIds: string[]) => Promise<void>;
+}) {
+  const [open, setOpen] = useState(false);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [submitting, setSubmitting] = useState(false);
+
+  const { data: members, isLoading } = useQuery({
+    queryKey: ["session-group-members", sessionId],
+    queryFn: async () => {
+      const { data: session, error: sessionError } = await supabase
+        .from("sessions")
+        .select("group_id")
+        .eq("id", sessionId)
+        .single();
+      if (sessionError) throw sessionError;
+      const { data, error } = await supabase
+        .from("group_members")
+        .select("eleve_id, eleve:profiles(nom, prenom)")
+        .eq("group_id", session.group_id);
+      if (error) throw error;
+      return (data ?? []) as unknown as Array<{ eleve_id: string; eleve: { nom: string; prenom: string } | null }>;
+    },
+    enabled: open,
+  });
+
+  function toggle(eleveId: string) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(eleveId)) next.delete(eleveId); else next.add(eleveId);
+      return next;
+    });
+  }
+
+  async function handleConfirm() {
+    if (selected.size === 0) return;
+    setSubmitting(true);
+    try {
+      const ids = Array.from(selected);
+      await onRelease(ids.length === 1 ? "individual" : "subgroup", ids);
+      toast.success(`Correction libérée pour ${ids.length} élève(s).`);
+      setOpen(false);
+      setSelected(new Set());
+    } catch (e: any) {
+      toast.error("Libération impossible", { description: e.message });
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm" className="h-6 text-[11px] gap-1">
+          <Unlock className="h-3 w-3" /> Libérer (choisir)
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Libérer la correction pour un élève ou un sous-groupe</DialogTitle>
+        </DialogHeader>
+        {isLoading ? (
+          <Skeleton className="h-24" />
+        ) : (
+          <div className="space-y-2 max-h-64 overflow-y-auto">
+            {(members ?? []).map((m) => {
+              const label = [m.eleve?.prenom, m.eleve?.nom].filter(Boolean).join(" ") || "Élève";
+              return (
+                <label key={m.eleve_id} className="flex items-center gap-2 text-sm">
+                  <Checkbox checked={selected.has(m.eleve_id)} onCheckedChange={() => toggle(m.eleve_id)} />
+                  {label}
+                </label>
+              );
+            })}
+            {(members ?? []).length === 0 && <p className="text-sm text-muted-foreground">Aucun élève dans ce groupe.</p>}
+          </div>
+        )}
+        <DialogFooter>
+          <Button disabled={selected.size === 0 || submitting} onClick={handleConfirm}>
+            Libérer pour {selected.size || "..."} élève(s)
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

@@ -2,18 +2,15 @@ import { useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, Layers3, Lock } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
 import {
-  fetchLearnerSessionBlocks,
-  fetchOwnExerciseAttempt,
-  fetchSessionActivities,
+  fetchAttemptCorrection,
+  fetchSeanceContent,
   markCorrectionViewed,
-  submitExerciseAttempt,
-  type LearnerActivity,
+  submitSeanceAnswer,
   type LearnerExerciseBlock,
   type LearnerSessionBlock,
 } from "@/lib/curriculum/learnerSession";
-import { corrigerExercice, type CorrigerResult } from "@/lib/correctionExercice";
+import { sanitizeSeanceHtml } from "@/lib/curriculum/sanitizeHtml";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -25,15 +22,15 @@ import { Label } from "@/components/ui/label";
 
 /**
  * Parcours apprenant intégré d'une séance (S01 en pilote). Remplace la page
- * séparée S01InteractiveExercises comme point d'entrée apprenant : ici,
- * supports + exercices + corrections vivent dans un seul déroulé organisé en
- * Activité X sur N -> Exercice Y sur M -> Question Z sur K. Aucun PDF n'est
- * chargé ni exposé (les vues *_learner_view ne portent jamais file_url).
+ * séparée S01InteractiveExercises. REVU après relecture indépendante
+ * (2026-07-13) : ne lit plus jamais exercices.contenu ni session_documents
+ * directement — tout passe par get-seance-content (contenu nettoyé, jamais
+ * de bonne_reponse) et submit-seance-answer (score calculé serveur,
+ * jamais renvoyé avant libération formateur).
  */
 export default function SeanceApprenant() {
   const { sessionCode = "" } = useParams<{ sessionCode: string }>();
   const navigate = useNavigate();
-  const { user } = useAuth();
   const queryClient = useQueryClient();
 
   const [activityIndex, setActivityIndex] = useState(0);
@@ -41,19 +38,16 @@ export default function SeanceApprenant() {
   const [itemIndex, setItemIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [lockedItems, setLockedItems] = useState<Set<number>>(new Set());
-  const [justSubmittedResult, setJustSubmittedResult] = useState<CorrigerResult | null>(null);
+  const [justSubmitted, setJustSubmitted] = useState(false);
 
-  const { data: activities = [], isLoading: loadingActivities } = useQuery({
-    queryKey: ["seance-apprenant-activities", sessionCode],
-    queryFn: () => fetchSessionActivities(sessionCode),
+  const { data, isLoading } = useQuery({
+    queryKey: ["seance-apprenant-content", sessionCode],
+    queryFn: () => fetchSeanceContent(sessionCode),
     enabled: !!sessionCode,
   });
 
-  const { data: blocks = [], isLoading: loadingBlocks } = useQuery({
-    queryKey: ["seance-apprenant-blocks", sessionCode],
-    queryFn: () => fetchLearnerSessionBlocks(sessionCode),
-    enabled: !!sessionCode,
-  });
+  const activities = data?.activities ?? [];
+  const blocks = data?.blocks ?? [];
 
   const activityGroups = useMemo(() => {
     const byActivity = new Map<string | null, LearnerSessionBlock[]>();
@@ -62,27 +56,26 @@ export default function SeanceApprenant() {
       if (!byActivity.has(key)) byActivity.set(key, []);
       byActivity.get(key)!.push(block);
     }
-    // N'affiche que les activités qui ont réellement du contenu visible.
-    return activities.filter((activity) => (byActivity.get(activity.id) ?? []).length > 0)
+    return activities
+      .filter((activity) => (byActivity.get(activity.id) ?? []).length > 0)
       .map((activity) => ({ activity, blocks: byActivity.get(activity.id) ?? [] }));
   }, [activities, blocks]);
 
   const currentGroup = activityGroups[activityIndex];
   const currentBlock = currentGroup?.blocks[blockIndex];
-
   const currentExercise = currentBlock?.kind === "exercise" ? (currentBlock as LearnerExerciseBlock) : null;
 
-  const { data: attempt, isLoading: loadingAttempt } = useQuery({
-    queryKey: ["seance-apprenant-attempt", currentExercise?.exercice_id, user?.id],
-    queryFn: () => fetchOwnExerciseAttempt(currentExercise!.exercice_id, user!.id),
-    enabled: !!currentExercise && !!user?.id,
+  const { data: correction, isLoading: loadingCorrection } = useQuery({
+    queryKey: ["seance-apprenant-correction", currentExercise?.id],
+    queryFn: () => fetchAttemptCorrection(currentExercise!.id),
+    enabled: !!currentExercise,
   });
 
   function resetExerciseNav() {
     setItemIndex(0);
     setAnswers({});
     setLockedItems(new Set());
-    setJustSubmittedResult(null);
+    setJustSubmitted(false);
   }
 
   function goToBlock(nextActivityIndex: number, nextBlockIndex: number) {
@@ -110,50 +103,37 @@ export default function SeanceApprenant() {
   }
 
   const isFirstBlock = activityIndex === 0 && blockIndex === 0;
-  const isLastBlock = activityIndex === activityGroups.length - 1
-    && currentGroup ? blockIndex === currentGroup.blocks.length - 1 : false;
+  const isLastBlock = currentGroup ? (activityIndex === activityGroups.length - 1 && blockIndex === currentGroup.blocks.length - 1) : false;
 
-  async function handleValidateItem(item: Record<string, unknown>) {
+  async function handleValidateItem() {
     setLockedItems((prev) => new Set(prev).add(itemIndex));
     if (!currentExercise) return;
-    const items = currentExercise.contenu.items;
+    const items = currentExercise.items;
     if (itemIndex + 1 < items.length) {
       setItemIndex((i) => i + 1);
       return;
     }
-    // Dernier item validé : on corrige et on soumet, mais on n'affiche
-    // JAMAIS la correction ici — seule la libération formateur la révèle.
-    const result = await corrigerExercice({
-      format: currentExercise.format,
-      competence: currentExercise.competence,
-      items,
-      answers,
-      metadata: { code: currentExercise.exercice_id },
+    // Dernier item : envoi au serveur. Aucune correction/score reçu ici —
+    // uniquement une confirmation de complétion (voir submitSeanceAnswer).
+    await submitSeanceAnswer({
+      exerciseId: currentExercise.id,
+      sessionCode,
+      answers: Object.fromEntries(Object.entries(answers)),
     });
-    setJustSubmittedResult(result);
-    if (user?.id) {
-      await submitExerciseAttempt({
-        exerciseId: currentExercise.exercice_id,
-        learnerId: user.id,
-        answers: Object.fromEntries(Object.entries(answers).map(([k, v]) => [k, v])),
-        itemResults: result.correction,
-        scoreNormalized: result.score,
-      });
-      queryClient.invalidateQueries({ queryKey: ["seance-apprenant-attempt", currentExercise.exercice_id, user.id] });
-    }
+    setJustSubmitted(true);
+    queryClient.invalidateQueries({ queryKey: ["seance-apprenant-correction", currentExercise.id] });
   }
-
-  const correctionReleased = !!attempt?.correction_released_at;
-  const attemptCompleted = !!attempt || !!justSubmittedResult;
 
   async function handleViewCorrection() {
-    if (attempt?.id && !attempt.correction_viewed_at) {
-      await markCorrectionViewed(attempt.id);
-      queryClient.invalidateQueries({ queryKey: ["seance-apprenant-attempt", currentExercise?.exercice_id, user?.id] });
+    if (correction?.attempt_id && correction.released && !correction.correction_viewed_at) {
+      await markCorrectionViewed(correction.attempt_id);
+      queryClient.invalidateQueries({ queryKey: ["seance-apprenant-correction", currentExercise?.id] });
     }
   }
 
-  if (loadingActivities || loadingBlocks) {
+  const attemptCompleted = justSubmitted || (correction && correction.status !== "not_started");
+
+  if (isLoading) {
     return (
       <div className="mx-auto max-w-3xl space-y-4">
         <Skeleton className="h-10 w-2/3" />
@@ -208,7 +188,7 @@ export default function SeanceApprenant() {
             <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-blue-600">
               <BookOpen className="h-4 w-4" /> {currentBlock.title}
             </div>
-            <div dangerouslySetInnerHTML={{ __html: currentBlock.content_html || "<p>Support en préparation.</p>" }} />
+            <div dangerouslySetInnerHTML={{ __html: sanitizeSeanceHtml(currentBlock.content_html) }} />
           </CardContent>
         </Card>
       )}
@@ -220,7 +200,7 @@ export default function SeanceApprenant() {
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wide text-blue-600">
                   Exercice {blockIndex + 1} sur {currentGroup.blocks.length}
-                  {!attemptCompleted && ` — Question ${Math.min(itemIndex + 1, currentExercise.contenu.items.length)} sur ${currentExercise.contenu.items.length}`}
+                  {!attemptCompleted && ` — Question ${Math.min(itemIndex + 1, currentExercise.items.length)} sur ${currentExercise.items.length}`}
                 </p>
                 <p className="font-semibold">{currentExercise.titre}</p>
               </div>
@@ -231,25 +211,22 @@ export default function SeanceApprenant() {
             </div>
             <p className="text-sm text-muted-foreground">{currentExercise.consigne}</p>
 
-            {loadingAttempt ? (
+            {loadingCorrection ? (
               <Skeleton className="h-24" />
             ) : attemptCompleted ? (
               <CorrectionGate
-                released={correctionReleased}
-                result={justSubmittedResult}
-                storedItemResults={attempt?.item_results as CorrigerResult["correction"] | undefined}
+                correction={correction ?? null}
                 onViewCorrection={handleViewCorrection}
-                viewed={!!attempt?.correction_viewed_at}
               />
             ) : (
               <ExerciseItemForm
-                item={currentExercise.contenu.items[itemIndex]}
+                item={currentExercise.items[itemIndex]}
                 index={itemIndex}
-                total={currentExercise.contenu.items.length}
+                total={currentExercise.items.length}
                 locked={lockedItems.has(itemIndex)}
                 value={answers[itemIndex] ?? ""}
                 onChange={(value) => setAnswers((prev) => ({ ...prev, [itemIndex]: value }))}
-                onValidate={() => handleValidateItem(currentExercise.contenu.items[itemIndex])}
+                onValidate={handleValidateItem}
               />
             )}
           </CardContent>
@@ -275,7 +252,7 @@ export default function SeanceApprenant() {
 function ExerciseItemForm({
   item, index, total, locked, value, onChange, onValidate,
 }: {
-  item: Record<string, unknown>;
+  item: { question?: string; texte?: string; enonce?: string; options?: string[] };
   index: number;
   total: number;
   locked: boolean;
@@ -283,8 +260,8 @@ function ExerciseItemForm({
   onChange: (value: string) => void;
   onValidate: () => void;
 }) {
-  const question = (item.question ?? item.texte ?? item.enonce ?? `Question ${index + 1}`) as string;
-  const options = Array.isArray(item.options) ? (item.options as string[]) : null;
+  const question = item.question ?? item.texte ?? item.enonce ?? `Question ${index + 1}`;
+  const options = Array.isArray(item.options) ? item.options : null;
 
   return (
     <div className="space-y-3">
@@ -316,33 +293,30 @@ function ExerciseItemForm({
 }
 
 function CorrectionGate({
-  released, result, storedItemResults, onViewCorrection, viewed,
+  correction, onViewCorrection,
 }: {
-  released: boolean;
-  result: CorrigerResult | null;
-  storedItemResults?: CorrigerResult["correction"];
+  correction: Awaited<ReturnType<typeof fetchAttemptCorrection>> | null;
   onViewCorrection: () => void;
-  viewed: boolean;
 }) {
-  if (!released) {
+  if (!correction || !correction.released) {
     return (
       <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-200">
         <p className="font-semibold">Exercice terminé — correction en attente</p>
-        <p className="mt-1">Ton formateur libérera la correction bientôt. Tu peux continuer la séance en attendant.</p>
+        <p className="mt-1">Ta réponse est bien enregistrée. Ton formateur libérera la correction bientôt. Tu peux continuer la séance en attendant.</p>
       </div>
     );
   }
 
-  const correction = result?.correction ?? storedItemResults ?? [];
+  const entries = Object.values(correction.item_results ?? {});
   return (
     <div className="space-y-3">
-      {!viewed && (
+      {!correction.correction_viewed_at && (
         <Button size="sm" variant="outline" onClick={onViewCorrection}>Marquer la correction comme vue</Button>
       )}
-      {correction.map((entry, index) => (
+      {entries.map((entry, index) => (
         <div key={index} className={`rounded-lg border p-3 text-sm ${entry.correct ? "border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950/20" : "border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/20"}`}>
           <p className="font-medium">{entry.question}</p>
-          <p className="mt-1">Ta réponse : <span className={entry.correct ? "text-green-700 dark:text-green-400" : "text-red-700 underline dark:text-red-400"}>{entry.reponse_eleve || "(vide)"}</span></p>
+          <p className="mt-1">Ta réponse : <span className={entry.correct ? "text-green-700 dark:text-green-400" : "text-red-700 underline dark:text-red-400"}>{entry.reponse_donnee || "(vide)"}</span></p>
           {!entry.correct && <p className="text-blue-700 dark:text-blue-400">Réponse attendue : {entry.bonne_reponse}</p>}
           {entry.explication && <p className="mt-1 text-muted-foreground">{entry.explication}</p>}
         </div>
