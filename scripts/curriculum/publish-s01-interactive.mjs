@@ -108,11 +108,32 @@ export async function publishS01Interactive({ client, dryRun = false } = {}) {
       activity_id: activityId,
       block_code: `${activityCode ?? 'S01.NON_CLASSE'}.${entry.metadata_code}`,
       metadata: { needs_content_review: Boolean(entry.contenu?.metadata?.needs_content_review) },
+      // Toujours un lien COMMUN (eleve_id NULL) : cette procédure alimente
+      // le contenu partagé de la séance, jamais une assignation individuelle.
+      eleve_id: null,
     };
 
-    const { error: linkError } = await client
+    // upsert manuel en 2 temps plutôt que .upsert({onConflict}) : la
+    // contrainte d'unicité est un index PARTIEL (WHERE eleve_id IS NULL,
+    // cf. migration 20260713090000) pour permettre les assignations
+    // individuelles multiples du même exercice — Postgres n'accepte un
+    // ON CONFLICT (colonnes) sans prédicat que s'il correspond à un index
+    // NON partiel ; l'API upsert() de supabase-js ne permet pas d'exprimer
+    // le prédicat WHERE. Cette table est en pratique alimentée uniquement
+    // par cette procédure côté "lien commun", donc un check-then-write
+    // reste sûr (pas de concurrence d'écriture attendue sur ce chemin).
+    const { data: existingLink, error: existingLinkError } = await client
       .from('session_document_links')
-      .upsert(linkRow, { onConflict: 'session_code,linked_id' });
+      .select('id')
+      .eq('session_code', 'S01')
+      .eq('linked_id', upserted.id)
+      .is('eleve_id', null)
+      .maybeSingle();
+    if (existingLinkError) throw new Error(`publish-s01-interactive: lecture session_document_links pour ${entry.metadata_code} : ${existingLinkError.message}`);
+
+    const linkError = existingLink
+      ? (await client.from('session_document_links').update(linkRow).eq('id', existingLink.id)).error
+      : (await client.from('session_document_links').insert(linkRow)).error;
     if (linkError) throw new Error(`publish-s01-interactive: upsert session_document_links pour ${entry.metadata_code} : ${linkError.message}`);
     report.links_upserted += 1;
   }

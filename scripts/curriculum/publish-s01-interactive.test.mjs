@@ -46,4 +46,23 @@ describe("publish-s01-interactive — adaptateur du pont existant", () => {
     const codes = drafts.map((d) => d.metadata_code);
     expect(new Set(codes).size).toBe(codes.length);
   });
+
+  it("ne pose jamais statut/is_live_ready — un import reste invisible par les anciens champs (2e relecture, points 6/7)", async () => {
+    // L'ancienne route S01InteractiveExercises (désormais outil formateur
+    // uniquement) filtre sur statut='published' ET is_live_ready=true, deux
+    // colonnes indépendantes de pedagogical_status. Si buildDraft les posait
+    // explicitement, un import répété pourrait écraser une activation
+    // légitime faite par un formateur via l'outillage historique, ou pire,
+    // exposer un contenu draft si une valeur "sûre" était mal choisie. En ne
+    // les posant JAMAIS, on s'appuie uniquement sur les valeurs par défaut
+    // sûres de la colonne (statut DEFAULT 'draft', is_live_ready DEFAULT
+    // false — vérifié dans supabase/migrations/20260414211154_*.sql) pour
+    // toute nouvelle ligne, et on ne touche jamais une ligne existante.
+    const payload = await buildInteractiveS01();
+    for (const entry of payload.exercises) {
+      const draft = buildDraft(entry);
+      expect(draft).not.toHaveProperty("statut");
+      expect(draft).not.toHaveProperty("is_live_ready");
+    }
+  });
 });
