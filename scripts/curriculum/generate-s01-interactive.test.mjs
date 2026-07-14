@@ -3,6 +3,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { buildInteractiveS01 } from "./generate-s01-interactive.mjs";
+import { indiceContainsAnswer, validateExerciseIndices } from "./lib/indice-validator.mjs";
 
 const OUTPUT_PATH = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "content", "curriculum", "v2", "S01-v3", "exercices-interactifs.json");
 const AUTO_CORRECTED_FORMATS = new Set(["qcm", "vrai_faux", "appariement", "texte_lacunaire", "transformation"]);
@@ -30,19 +31,19 @@ describe("S01 v3 — parcours interactif", () => {
     expect(payload.report.validation_rules.some((rule) => rule.status === "fail")).toBe(false);
   });
 
-  it("marque explicitement (needs_content_review) tout exercice autocorrigé sous le plancher de 10 items, sans jamais fabriquer d'item", async () => {
+  it("marque needs_content_review pour toute raison réelle (plancher de densité, transformation non supportée, ou provenance civique non validée), jamais sans raison", async () => {
     const payload = await buildInteractiveS01();
-    // civique est volontairement exclu de cette assertion : depuis le Lot 2,
-    // il porte needs_content_review=true pour une raison indépendante du
-    // plancher de densité (provenance civique non validée — voir le
-    // describe dédié "Lot 2 — civique").
-    const autoCorrected = payload.exercises.filter(
-      (exercise) => AUTO_CORRECTED_FORMATS.has(exercise.format) && !exercise.metadata_code.startsWith("cv2:S01:v3:civique:"),
-    );
+    const autoCorrected = payload.exercises.filter((exercise) => AUTO_CORRECTED_FORMATS.has(exercise.format));
     expect(autoCorrected.length).toBeGreaterThan(0);
     for (const exercise of autoCorrected) {
       const belowFloor = exercise.contenu.items.length < 10;
-      expect(exercise.contenu.metadata.needs_content_review).toBe(belowFloor);
+      const hasUnsupportedTransformation = (exercise.contenu.metadata.applied_transformations ?? []).some(
+        (t) => t.rule_id === "DIFF_TRANSFORMATION_NOT_SUPPORTED",
+      );
+      const civiqueUnvalidated = exercise.metadata_code.startsWith("cv2:S01:v3:civique:")
+        && exercise.contenu.items.some((item) => item.needs_review);
+      const expected = belowFloor || hasUnsupportedTransformation || civiqueUnvalidated;
+      expect(exercise.contenu.metadata.needs_content_review, exercise.metadata_code).toBe(expected);
     }
   });
 
@@ -126,14 +127,17 @@ describe("Lot 2 — co-dialogue : transformation réelle par niveau", () => {
     }
   });
 
-  it("A1 : fournit un indice explicite dérivé de la justification réelle, et n'expose jamais la correction", async () => {
+  it("A1 : fournit un indice orienté (zone à réécouter), jamais la réponse littéralement, et n'expose jamais la correction", async () => {
     const levels = await byLevel();
     for (const item of levels.A1.contenu.items) {
       expect(typeof item.indice).toBe("string");
       expect(item.indice.length).toBeGreaterThan(0);
-      // L'indice est identique à la justification/explication réelle déjà
-      // rédigée dans la source (pas un texte inventé au générateur).
-      expect(item.indice).toBe(item.explication);
+      // Lot 2.1, point 3 : l'indice pointe vers la zone du dialogue, il
+      // n'est plus identique à l'explication/justification réelle (qui
+      // contient la réponse) — vérifié par indiceContainsAnswer, pas
+      // seulement par inspection visuelle.
+      expect(item.indice).not.toBe(item.explication);
+      expect(indiceContainsAnswer(item.indice, item.bonne_reponse)).toBe(false);
       expect(item).not.toHaveProperty("justification_required");
     }
   });
@@ -240,12 +244,17 @@ describe("Lot 2 — lexique-association : transformation réelle par niveau", ()
     }
   });
 
-  it("A1 : mot vers définition, un distracteur, exemple visible en aide (indice)", async () => {
+  it("A1 : mot vers définition, un distracteur, exemple réel visible en aide (indice), jamais identique à explication/preuve_support", async () => {
     const levels = await byLevel();
     for (const item of levels.A1.contenu.items) {
       expect(item.options.length).toBe(2);
       expect(typeof item.indice).toBe("string");
-      expect(item.indice).toBe(item.explication);
+      // L'exemple réel reste le même fait, mais reformulé : l'indice n'est
+      // plus le texte brut identique à explication/correction.preuve_support
+      // (Lot 2.1, point 3).
+      expect(item.indice).toContain(item.explication);
+      expect(item.indice).not.toBe(item.explication);
+      expect(item.indice).not.toBe(item.correction.preuve_support);
     }
   });
 
@@ -524,5 +533,80 @@ describe("Lot 2 — civique : transformation réelle par niveau (traitée en der
     for (const item of levels.B2.contenu.items) {
       expect(item.correction).toBeDefined();
     }
+  });
+});
+
+describe("Lot 2.1, point 3 — aucun indice A1 ne fuite littéralement la réponse", () => {
+  it("le validateur ne relève aucune violation sur les cinq exercices A1 retravaillés, avec assisted_retrieval déclaré uniquement pour support-visuel", async () => {
+    const payload = await buildInteractiveS01();
+    const a1WithIndices = payload.exercises.filter(
+      (exercise) => exercise.niveau_vise === "A1" && exercise.contenu.items.some((item) => item.indice),
+    );
+    expect(a1WithIndices.length).toBeGreaterThanOrEqual(5);
+    for (const exercise of a1WithIndices) {
+      const result = validateExerciseIndices(exercise, { assistedRetrieval: (item) => item.assisted_retrieval === true });
+      expect(result.violations, exercise.metadata_code).toEqual([]);
+    }
+  });
+
+  it("support-visuel A1 est explicitement marqué assisted_retrieval (support d'observation), pas une fuite tolérée en silence", async () => {
+    const payload = await buildInteractiveS01();
+    const supportVisuel = payload.exercises.find((exercise) => exercise.metadata_code === "cv2:S01:v3:support-visuel:A1");
+    for (const item of supportVisuel.contenu.items) {
+      expect(item.assisted_retrieval).toBe(true);
+    }
+  });
+
+  it("co-dialogue/civique A1 n'ont jamais assisted_retrieval : leurs indices doivent être sûrs par construction, pas par exception", async () => {
+    const payload = await buildInteractiveS01();
+    for (const code of ["co-dialogue", "civique"]) {
+      const exercise = payload.exercises.find((e) => e.metadata_code === `cv2:S01:v3:${code}:A1`);
+      for (const item of exercise.contenu.items) {
+        expect(item.assisted_retrieval).toBeUndefined();
+        expect(indiceContainsAnswer(item.indice, item.bonne_reponse)).toBe(false);
+      }
+    }
+  });
+});
+
+describe("Lot 2.1, point 7 — toute transformation non supportée rend l'exercice non publiable", () => {
+  it("chaque exercice portant DIFF_TRANSFORMATION_NOT_SUPPORTED a needs_content_review=true", async () => {
+    const payload = await buildInteractiveS01();
+    for (const exercise of payload.exercises) {
+      const hasUnsupported = (exercise.contenu.metadata.applied_transformations ?? []).some(
+        (t) => t.rule_id === "DIFF_TRANSFORMATION_NOT_SUPPORTED",
+      );
+      if (hasUnsupported) {
+        expect(exercise.contenu.metadata.needs_content_review, exercise.metadata_code).toBe(true);
+      }
+    }
+  });
+
+  it("report.publishability liste chaque exercice concerné avec publishable=false et les items concernés comme preuve", async () => {
+    const payload = await buildInteractiveS01();
+    const { publishability } = payload.report;
+    expect(publishability).toBeDefined();
+    expect(publishability.unsupported_transformations.length).toBeGreaterThan(0);
+    for (const entry of publishability.unsupported_transformations) {
+      expect(entry.publishable).toBe(false);
+      expect(entry.items_concerned.length).toBeGreaterThan(0);
+      for (const item of entry.items_concerned) {
+        expect(item.applied_to).toMatch(/^items\[\d+\]\./);
+        expect(item.evidence.length).toBeGreaterThan(10);
+      }
+    }
+    // Cohérence : le compte non-publiable du rapport correspond aux
+    // exercices needs_content_review réels.
+    const actualNonPublishable = payload.exercises.filter((e) => e.contenu.metadata.needs_content_review).length;
+    expect(publishability.non_publishable_count).toBe(actualNonPublishable);
+    expect(publishability.publishable_count + publishability.non_publishable_count).toBe(59);
+  });
+
+  it("le rapport pédagogique déclare le statut NO_UNSUPPORTED_TRANSFORMATION_PUBLISHED en warning tant que ces exercices existent (honnête, pas silencieux)", async () => {
+    const payload = await buildInteractiveS01();
+    const rule = payload.report.validation_rules.find((r) => r.rule_id === "NO_UNSUPPORTED_TRANSFORMATION_PUBLISHED");
+    expect(rule).toBeDefined();
+    expect(rule.status).toBe("warning");
+    expect(rule.evidence.length).toBeGreaterThan(0);
   });
 });

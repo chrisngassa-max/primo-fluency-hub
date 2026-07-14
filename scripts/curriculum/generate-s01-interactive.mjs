@@ -140,6 +140,19 @@ function deriveVisualThemes(scene) {
 // Différenciation réelle : garde-fous et corrections communs (Lot 2).
 // ------------------------------------------------------------
 
+// Lot 2.1, point 3 : un indice A1 pédagogique doit orienter vers la
+// ZONE/l'opération à réaliser, jamais fournir littéralement la réponse.
+// Dérivé MÉCANIQUEMENT de la question elle-même (jamais de la
+// justification/preuve, qui contient presque toujours la réponse) : une
+// question bien formée ne contient jamais sa propre réponse, donc ce
+// gabarit ne peut pas fuiter par construction — vérifié par
+// indice-validator.mjs, pas seulement supposé.
+function orientingIndiceFromQuestion(question, locus) {
+  const trimmed = String(question ?? "").replace(/[?!.]+$/, "").trim();
+  const lower = trimmed.length > 0 ? trimmed.charAt(0).toLowerCase() + trimmed.slice(1) : trimmed;
+  return `Repérez, dans ${locus}, le passage qui répond à : « ${lower} ».`;
+}
+
 // Réduit un jeu d'options à `maxOptions` en GARANTISSANT que la bonne
 // réponse y figure toujours (jamais un options.slice(0, n) aveugle qui
 // pourrait la couper si elle n'est pas dans les n premières). Les
@@ -206,10 +219,16 @@ function exercise({
 }) {
   const strictLevel = parseDifferentiationLevelStrict(level);
   if (!SUPPORTED_FORMATS.has(format)) throw new Error(`Format non supporté: ${format}`);
-  // Un item civique marqué needs_review (provenance non validée) rend tout
-  // l'exercice non publiable — le blocage existant (needs_content_review ->
-  // submit-seance-answer refuse l'exercice) est réutilisé, pas dupliqué.
-  const belowFloor = (AUTO_CORRECTED_FORMATS.has(format) && items.length < MIN_AUTO_CORRECTED_ITEMS) || forceNeedsContentReview;
+  // Lot 2.1, point 7 : toute transformation déclarée non supportée
+  // (DIFF_TRANSFORMATION_NOT_SUPPORTED) rend AUTOMATIQUEMENT l'exercice non
+  // publiable — jamais seulement un avertissement informatif. Un item
+  // civique marqué needs_review (provenance non validée) a le même effet.
+  // Le blocage existant (needs_content_review -> submit-seance-answer
+  // refuse l'exercice) est réutilisé, pas dupliqué.
+  const hasUnsupportedTransformation = appliedTransformations.some((t) => t.rule_id === "DIFF_TRANSFORMATION_NOT_SUPPORTED");
+  const belowFloor = (AUTO_CORRECTED_FORMATS.has(format) && items.length < MIN_AUTO_CORRECTED_ITEMS)
+    || forceNeedsContentReview
+    || hasUnsupportedTransformation;
   const levelContract = getLevelContract(competence, strictLevel);
   const transformation = getDifferentiationTransformationRule(sourceLevel, strictLevel);
   const referential = getDifferentiationLevelContracts();
@@ -336,11 +355,15 @@ export async function buildInteractiveS01() {
         explication: entry.exemple,
       };
       if (level === "A1") {
-        item.indice = entry.exemple;
+        // Reformulé en consigne (jamais l'exemple brut identique à
+        // explication/preuve_support — Lot 2.1, point 3) : le fait réel
+        // reste le même exemple, la formulation d'indice est distincte de
+        // la donnée de corrigé.
+        item.indice = `Un exemple d'emploi réel peut vous aider à choisir : « ${entry.exemple} »`;
         lexiqueAppliedTransformations.push({
           rule_id: "A2_TO_A1",
           applied_to: `items[${index}].indice`,
-          evidence: `Exemple d'emploi réel affiché en aide ; options réduites à ${options.length} avec bonne réponse garantie.`,
+          evidence: `Exemple d'emploi réel affiché en aide (reformulé, distinct de explication/preuve_support) ; options réduites à ${options.length} avec bonne réponse garantie.`,
         });
       }
       item.correction = closedItemCorrection({ options, bonneReponse: entry.definition_simple, preuve: entry.exemple });
@@ -469,12 +492,16 @@ export async function buildInteractiveS01() {
 
       if (level === "A1") {
         // Légende explicite couleur -> thème (repérage direct) : calculée,
-        // pas mémorisée à la main.
+        // pas mémorisée à la main. Support d'observation légitime (Lot 2.1,
+        // point 3, cas A) : la réponse EST visible dans le support, la
+        // tâche consiste justement à la repérer — marqué assisted_retrieval
+        // au lieu d'être traité comme une fuite ou réécrit artificiellement.
         item.indice = visualLegend;
+        item.assisted_retrieval = true;
         visuelAppliedTransformations.push({
           rule_id: "A2_TO_A1",
           applied_to: `items[${index}].indice`,
-          evidence: "Légende couleur -> thème affichée, dérivée de data.visual.scene.elements (repérage direct).",
+          evidence: "Légende couleur -> thème affichée, dérivée de data.visual.scene.elements (repérage direct, support d'observation : assisted_retrieval=true).",
         });
       } else if (level === "B1" || level === "B2") {
         // Relation/classement fondés UNIQUEMENT sur les libellés visibles —
@@ -554,14 +581,16 @@ export async function buildInteractiveS01() {
         // sont deux options réelles déjà rédigées (pas inventées).
         const reduced = ensureAnswerInOptions(question.options, question.reponse, 3);
         item.options = reduced;
-        // Indice explicite dérivé de la justification réelle déjà rédigée
-        // (annotation/surlignage du support, cf. A2_TO_A1 allowed:
-        // "highlight"). Jamais la correction elle-même.
-        item.indice = preuve;
+        // Indice orienté vers la ZONE du dialogue à réécouter, jamais la
+        // réponse elle-même (Lot 2.1, point 3 : la justification réelle
+        // contient presque toujours la réponse littéralement — remplacée
+        // par un gabarit dérivé de la question, qui ne peut pas fuiter par
+        // construction, vérifié par indice-validator.mjs).
+        item.indice = orientingIndiceFromQuestion(question.enonce, "le dialogue");
         coAppliedTransformations.push({
           rule_id: "A2_TO_A1",
           applied_to: `items[${index}].indice`,
-          evidence: `Indice affiché dérivé de la justification réelle de la question ${question.id} ; options réduites à ${reduced.length} avec bonne réponse garantie.`,
+          evidence: `Indice orienté (zone à réécouter) affiché sans révéler la réponse de la question ${question.id} ; options réduites à ${reduced.length} avec bonne réponse garantie.`,
         });
       } else if (level === "B1") {
         item.justification_required = true;
@@ -769,11 +798,14 @@ export async function buildInteractiveS01() {
       }
 
       if (level === "A1") {
-        item.indice = preuve;
+        // Indice orienté vers la règle à relire dans l'énoncé, jamais la
+        // réponse elle-même (Lot 2.1, point 3) — la justification réelle
+        // nomme presque toujours la réponse littéralement.
+        item.indice = orientingIndiceFromQuestion(item.question, "l'énoncé");
         civiqueAppliedTransformations.push({
           rule_id: "A2_TO_A1",
           applied_to: `items[${index}].indice`,
-          evidence: `Indice affiché dérivé de la justification réelle de la question ${index + 1} (règle explicitée), situation adulte inchangée.`,
+          evidence: `Indice orienté (règle à relire) affiché sans révéler la réponse de la question ${index + 1}, situation adulte inchangée.`,
         });
       } else if (level === "B1") {
         item.justification_required = true;
@@ -888,6 +920,30 @@ export async function buildInteractiveS01() {
   }));
 
   const belowFloorExercises = exercises.filter((entry) => entry.contenu.metadata.needs_content_review);
+  const unsupportedTransformationExercises = exercises.filter((entry) =>
+    (entry.contenu.metadata.applied_transformations ?? []).some((t) => t.rule_id === "DIFF_TRANSFORMATION_NOT_SUPPORTED"),
+  );
+
+  // Lot 2.1, point 7 : statut de publication honnête et exploitable, porté
+  // par le corpus lui-même (le pont de publication n'est PAS modifié ici —
+  // Lot 3). Toute transformation non supportée rend l'exercice concerné
+  // publishable=false, avec les items concernés comme preuve.
+  const publishability = {
+    publishable_count: exercises.filter((entry) => !entry.contenu.metadata.needs_content_review).length,
+    non_publishable_count: belowFloorExercises.length,
+    by_exercise: exercises.map((entry) => ({
+      metadata_code: entry.metadata_code,
+      publishable: !entry.contenu.metadata.needs_content_review,
+      needs_content_review: entry.contenu.metadata.needs_content_review,
+    })),
+    unsupported_transformations: unsupportedTransformationExercises.map((entry) => ({
+      metadata_code: entry.metadata_code,
+      publishable: false,
+      items_concerned: (entry.contenu.metadata.applied_transformations ?? [])
+        .filter((t) => t.rule_id === "DIFF_TRANSFORMATION_NOT_SUPPORTED")
+        .map((t) => ({ applied_to: t.applied_to, evidence: t.evidence })),
+    })),
+  };
 
   const report = {
     generated_at: "2026-07-13",
@@ -912,6 +968,11 @@ export async function buildInteractiveS01() {
       { rule_id: "TRAINER_PREVIEW_REQUIRED", status: exercises.every((entry) => entry.contenu.metadata.trainer_preview_required) ? "pass" : "fail" },
       { rule_id: "COMPETENCE_FAMILY_PRESERVED", status: exercises.filter((entry) => entry.family_id).every((entry) => entry.competence === (entry.family_id.includes("_CO_") ? "CO" : entry.competence)) ? "pass" : "fail" },
       { rule_id: "CIVIC_ON_ALL_LEVELS", status: LEVELS.every((level) => exercises.some((entry) => entry.niveau_vise === level && entry.civic_content)) ? "pass" : "fail" },
+      {
+        rule_id: "NO_UNSUPPORTED_TRANSFORMATION_PUBLISHED",
+        status: unsupportedTransformationExercises.length === 0 ? "pass" : "warning",
+        evidence: unsupportedTransformationExercises.map((entry) => `${entry.metadata_code} (needs_content_review=true, publishable=false)`),
+      },
     ],
     warnings: [
       "Le MP3 définitif reste à produire avec une voix réelle.",
@@ -919,8 +980,10 @@ export async function buildInteractiveS01() {
       "Le chronométrage doit être calibré avec des données terrain.",
       "Le contenu civique est identique sur les 4 niveaux faute de variante linguistique par niveau dans la source — gap documenté, pas une simplification réalisée ici.",
       `${belowFloorExercises.length} exercice(s) autocorrigé(s) restent sous le plancher de 10 items par manque réel de matière première en banque (needs_content_review=true) — voir MINIMUM_TEN_ITEMS_AUTO_CORRECTED.`,
+      `${unsupportedTransformationExercises.length} exercice(s) portent au moins une transformation DIFF_TRANSFORMATION_NOT_SUPPORTED — non publiables (voir report.publishability.unsupported_transformations). Le pont de publication n'est pas encore modifié pour bloquer sur ce statut (Lot 3).`,
     ],
     activities: ACTIVITY_DEFS,
+    publishability,
   };
 
   const payload = { schema_version: "1.1", session_code: "S01", exercises, playlists, report };
