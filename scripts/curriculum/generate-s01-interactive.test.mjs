@@ -358,3 +358,76 @@ describe("Lot 2 — lexique-texte-lacunaire : transformation réelle par niveau"
     }
   });
 });
+
+describe("Lot 2 — support-visuel : réponses réelles dérivées de data.visual.scene.elements", () => {
+  async function byLevel() {
+    const payload = await buildInteractiveS01();
+    const found = {};
+    for (const level of ["A1", "A2", "B1", "B2"]) {
+      found[level] = payload.exercises.find((exercise) => exercise.metadata_code === `cv2:S01:v3:support-visuel:${level}`);
+    }
+    return found;
+  }
+
+  it("conserve trois items et le format texte_lacunaire à chaque niveau", async () => {
+    const levels = await byLevel();
+    for (const level of ["A1", "A2", "B1", "B2"]) {
+      expect(levels[level].contenu.items.length).toBe(3);
+      expect(levels[level].format).toBe("texte_lacunaire");
+    }
+  });
+
+  it("ne contient plus jamais le placeholder factice « Réponse attendue dans le support visuel »", async () => {
+    const payload = await buildInteractiveS01();
+    const raw = JSON.stringify(payload);
+    expect(raw).not.toContain("Réponse attendue dans le support visuel");
+  });
+
+  it("calcule le nombre de thèmes, leur ordre réel et le thème du panneau rouge clair depuis data.visual.scene.elements", async () => {
+    const levels = await byLevel();
+    const [count, order, redPanel] = levels.A2.contenu.items.map((item) => item.bonne_reponse);
+    expect(count).toBe("Cinq");
+    // "Histoire, géographie et culture" contient elle-même une virgule : on
+    // vérifie la présence des cinq libellés réels plutôt qu'un split naïf
+    // sur ", ".
+    for (const theme of [
+      "Principes et valeurs de la République",
+      "Système institutionnel et politique",
+      "Droits et devoirs",
+      "Histoire, géographie et culture",
+      "Vivre dans la société française",
+    ]) {
+      expect(order).toContain(theme);
+    }
+    expect(redPanel).toBe("Histoire, géographie et culture");
+  });
+
+  it("A1 seul porte la légende couleur -> thème (indice) ; A2 reste le pivot sans légende", async () => {
+    const levels = await byLevel();
+    for (const item of levels.A1.contenu.items) {
+      expect(item.indice).toContain("rouge clair");
+      expect(item.indice).toContain("Histoire, géographie et culture");
+    }
+    for (const item of levels.A2.contenu.items) {
+      expect(item).not.toHaveProperty("indice");
+    }
+    expect(levels.A2.contenu.metadata.applied_transformations).toEqual([]);
+  });
+
+  it("B1/B2 exigent une justification fondée sur les libellés visibles, jamais une justification de l'ordre des panneaux", async () => {
+    const levels = await byLevel();
+    for (const level of ["B1", "B2"]) {
+      for (const item of levels[level].contenu.items) {
+        expect(item.justification_required).toBe(true);
+        expect(item.justification_prompt.toLowerCase()).not.toMatch(/pourquoi.*ordre|ordre.*panneaux/);
+        expect(item.justification_prompt).toMatch(/libellés|couleurs visibles/);
+      }
+    }
+  });
+
+  it("B2 déclare DIFF_TRANSFORMATION_NOT_SUPPORTED pour la synthèse entre catégories (schéma sans relation entre panneaux)", async () => {
+    const levels = await byLevel();
+    const notSupported = levels.B2.contenu.metadata.applied_transformations.filter((t) => t.rule_id === "DIFF_TRANSFORMATION_NOT_SUPPORTED");
+    expect(notSupported.length).toBe(3);
+  });
+});

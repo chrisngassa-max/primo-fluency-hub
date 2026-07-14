@@ -2402,15 +2402,39 @@
         "items": [
           {
             "question": "Combien de thèmes sont représentés sur le schéma ?",
-            "bonne_reponse": "Cinq"
+            "bonne_reponse": "Cinq",
+            "indice": "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française",
+            "correction": {
+              "bonne_reponse": "Cinq",
+              "preuve_support": "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française",
+              "explication_distracteurs": [],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française » puis répondez à nouveau."
+            }
           },
           {
             "question": "Nommez les cinq thèmes dans l'ordre, de gauche à droite.",
-            "bonne_reponse": "Réponse attendue dans le support visuel"
+            "bonne_reponse": "Principes et valeurs de la République, Système institutionnel et politique, Droits et devoirs, Histoire, géographie et culture, Vivre dans la société française",
+            "indice": "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française",
+            "correction": {
+              "bonne_reponse": "Principes et valeurs de la République, Système institutionnel et politique, Droits et devoirs, Histoire, géographie et culture, Vivre dans la société française",
+              "preuve_support": "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française",
+              "explication_distracteurs": [],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française » puis répondez à nouveau."
+            }
           },
           {
             "question": "Quel thème correspond au panneau de couleur rouge clair ?",
-            "bonne_reponse": "Réponse attendue dans le support visuel"
+            "bonne_reponse": "Histoire, géographie et culture",
+            "indice": "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française",
+            "correction": {
+              "bonne_reponse": "Histoire, géographie et culture",
+              "preuve_support": "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française",
+              "explication_distracteurs": [],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française » puis répondez à nouveau."
+            }
           }
         ],
         "metadata": {
@@ -2466,7 +2490,23 @@
             ]
           },
           "transformation_id": "A2_TO_A1",
-          "applied_transformations": [],
+          "applied_transformations": [
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[0].indice",
+              "evidence": "Légende couleur -> thème affichée, dérivée de data.visual.scene.elements (repérage direct)."
+            },
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[1].indice",
+              "evidence": "Légende couleur -> thème affichée, dérivée de data.visual.scene.elements (repérage direct)."
+            },
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[2].indice",
+              "evidence": "Légende couleur -> thème affichée, dérivée de data.visual.scene.elements (repérage direct)."
+            }
+          ],
           "cognitive_operations": [
             "reperer",
             "identifier",
@@ -2583,15 +2623,36 @@
         "items": [
           {
             "question": "Combien de thèmes sont représentés sur le schéma ?",
-            "bonne_reponse": "Cinq"
+            "bonne_reponse": "Cinq",
+            "correction": {
+              "bonne_reponse": "Cinq",
+              "preuve_support": "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française",
+              "explication_distracteurs": [],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française » puis répondez à nouveau."
+            }
           },
           {
             "question": "Nommez les cinq thèmes dans l'ordre, de gauche à droite.",
-            "bonne_reponse": "Réponse attendue dans le support visuel"
+            "bonne_reponse": "Principes et valeurs de la République, Système institutionnel et politique, Droits et devoirs, Histoire, géographie et culture, Vivre dans la société française",
+            "correction": {
+              "bonne_reponse": "Principes et valeurs de la République, Système institutionnel et politique, Droits et devoirs, Histoire, géographie et culture, Vivre dans la société française",
+              "preuve_support": "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française",
+              "explication_distracteurs": [],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française » puis répondez à nouveau."
+            }
           },
           {
             "question": "Quel thème correspond au panneau de couleur rouge clair ?",
-            "bonne_reponse": "Réponse attendue dans le support visuel"
+            "bonne_reponse": "Histoire, géographie et culture",
+            "correction": {
+              "bonne_reponse": "Histoire, géographie et culture",
+              "preuve_support": "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française",
+              "explication_distracteurs": [],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française » puis répondez à nouveau."
+            }
           }
         ],
         "metadata": {
@@ -2753,15 +2814,99 @@
         "items": [
           {
             "question": "Combien de thèmes sont représentés sur le schéma ?",
-            "bonne_reponse": "Cinq"
+            "bonne_reponse": "Cinq",
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre réponse en citant uniquement les libellés ou couleurs visibles sur le schéma.",
+            "correction": {
+              "bonne_reponse": "Cinq",
+              "preuve_support": "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française",
+              "explication_distracteurs": [],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française"
+                ],
+                "formulations_acceptables": [
+                  "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française"
+                ],
+                "exemple_non_exclusif": "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Nommez les cinq thèmes dans l'ordre, de gauche à droite.",
-            "bonne_reponse": "Réponse attendue dans le support visuel"
+            "bonne_reponse": "Principes et valeurs de la République, Système institutionnel et politique, Droits et devoirs, Histoire, géographie et culture, Vivre dans la société française",
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre réponse en citant uniquement les libellés ou couleurs visibles sur le schéma.",
+            "correction": {
+              "bonne_reponse": "Principes et valeurs de la République, Système institutionnel et politique, Droits et devoirs, Histoire, géographie et culture, Vivre dans la société française",
+              "preuve_support": "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française",
+              "explication_distracteurs": [],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française"
+                ],
+                "formulations_acceptables": [
+                  "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française"
+                ],
+                "exemple_non_exclusif": "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Quel thème correspond au panneau de couleur rouge clair ?",
-            "bonne_reponse": "Réponse attendue dans le support visuel"
+            "bonne_reponse": "Histoire, géographie et culture",
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre réponse en citant uniquement les libellés ou couleurs visibles sur le schéma.",
+            "correction": {
+              "bonne_reponse": "Histoire, géographie et culture",
+              "preuve_support": "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française",
+              "explication_distracteurs": [],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française"
+                ],
+                "formulations_acceptables": [
+                  "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française"
+                ],
+                "exemple_non_exclusif": "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           }
         ],
         "metadata": {
@@ -2811,7 +2956,23 @@
             ]
           },
           "transformation_id": "A2_TO_B1",
-          "applied_transformations": [],
+          "applied_transformations": [
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[0].justification_prompt",
+              "evidence": "Justification obligatoire fondée sur les libellés visibles du schéma, sans aide ni légende."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[1].justification_prompt",
+              "evidence": "Justification obligatoire fondée sur les libellés visibles du schéma, sans aide ni légende."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[2].justification_prompt",
+              "evidence": "Justification obligatoire fondée sur les libellés visibles du schéma, sans aide ni légende."
+            }
+          ],
           "cognitive_operations": [
             "inferer",
             "comparer",
@@ -2925,15 +3086,99 @@
         "items": [
           {
             "question": "Combien de thèmes sont représentés sur le schéma ?",
-            "bonne_reponse": "Cinq"
+            "bonne_reponse": "Cinq",
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre réponse en citant uniquement les libellés ou couleurs visibles sur le schéma.",
+            "correction": {
+              "bonne_reponse": "Cinq",
+              "preuve_support": "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française",
+              "explication_distracteurs": [],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française"
+                ],
+                "formulations_acceptables": [
+                  "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française"
+                ],
+                "exemple_non_exclusif": "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Nommez les cinq thèmes dans l'ordre, de gauche à droite.",
-            "bonne_reponse": "Réponse attendue dans le support visuel"
+            "bonne_reponse": "Principes et valeurs de la République, Système institutionnel et politique, Droits et devoirs, Histoire, géographie et culture, Vivre dans la société française",
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre réponse en citant uniquement les libellés ou couleurs visibles sur le schéma.",
+            "correction": {
+              "bonne_reponse": "Principes et valeurs de la République, Système institutionnel et politique, Droits et devoirs, Histoire, géographie et culture, Vivre dans la société française",
+              "preuve_support": "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française",
+              "explication_distracteurs": [],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française"
+                ],
+                "formulations_acceptables": [
+                  "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française"
+                ],
+                "exemple_non_exclusif": "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Quel thème correspond au panneau de couleur rouge clair ?",
-            "bonne_reponse": "Réponse attendue dans le support visuel"
+            "bonne_reponse": "Histoire, géographie et culture",
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre réponse en citant uniquement les libellés ou couleurs visibles sur le schéma.",
+            "correction": {
+              "bonne_reponse": "Histoire, géographie et culture",
+              "preuve_support": "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française",
+              "explication_distracteurs": [],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française"
+                ],
+                "formulations_acceptables": [
+                  "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française"
+                ],
+                "exemple_non_exclusif": "bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « bleu clair : Principes et valeurs de la République | vert clair : Système institutionnel et politique | jaune clair : Droits et devoirs | rouge clair : Histoire, géographie et culture | violet clair : Vivre dans la société française ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           }
         ],
         "metadata": {
@@ -2983,7 +3228,38 @@
             ]
           },
           "transformation_id": "A2_TO_B2",
-          "applied_transformations": [],
+          "applied_transformations": [
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[0].justification_prompt",
+              "evidence": "Justification obligatoire fondée sur les libellés visibles du schéma, sans aide ni légende."
+            },
+            {
+              "rule_id": "DIFF_TRANSFORMATION_NOT_SUPPORTED",
+              "applied_to": "items[0].justification_prompt",
+              "evidence": "Le support ne fournit aucune relation entre catégories (cinq panneaux indépendants) : synthèse non réalisée plutôt qu'inventée."
+            },
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[1].justification_prompt",
+              "evidence": "Justification obligatoire fondée sur les libellés visibles du schéma, sans aide ni légende."
+            },
+            {
+              "rule_id": "DIFF_TRANSFORMATION_NOT_SUPPORTED",
+              "applied_to": "items[1].justification_prompt",
+              "evidence": "Le support ne fournit aucune relation entre catégories (cinq panneaux indépendants) : synthèse non réalisée plutôt qu'inventée."
+            },
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[2].justification_prompt",
+              "evidence": "Justification obligatoire fondée sur les libellés visibles du schéma, sans aide ni légende."
+            },
+            {
+              "rule_id": "DIFF_TRANSFORMATION_NOT_SUPPORTED",
+              "applied_to": "items[2].justification_prompt",
+              "evidence": "Le support ne fournit aucune relation entre catégories (cinq panneaux indépendants) : synthèse non réalisée plutôt qu'inventée."
+            }
+          ],
           "cognitive_operations": [
             "analyser",
             "synthetiser",

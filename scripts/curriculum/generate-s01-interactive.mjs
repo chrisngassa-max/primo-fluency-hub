@@ -91,6 +91,52 @@ function expandGrammarPoint(point) {
 }
 
 // ------------------------------------------------------------
+// support-visuel : dérive les vraies réponses depuis
+// data.visual.scene.elements (jamais de placeholder "Réponse attendue dans
+// le support visuel"). Reconstruit les cinq panneaux (rect + libellés
+// texte associés) dans leur ordre réel gauche->droite, et classe leur
+// couleur par calcul RVB (pas un nom de couleur asserté à la main).
+// ------------------------------------------------------------
+
+function hexToRgb(hex) {
+  const clean = String(hex).replace("#", "");
+  return {
+    r: parseInt(clean.slice(0, 2), 16),
+    g: parseInt(clean.slice(2, 4), 16),
+    b: parseInt(clean.slice(4, 6), 16),
+  };
+}
+
+// Classification déterministe par dominance de canal RVB — pas une liste de
+// couleurs mémorisée à la main : recalculée depuis le fill réel de chaque
+// panneau.
+function nameLightColor(hex) {
+  const { r, g, b } = hexToRgb(hex);
+  if (r - g > 20 && Math.abs(g - b) < 10) return "rouge clair";
+  if (b > r && b > g && g - r >= 10) return "bleu clair";
+  if (b > r && b > g) return "violet clair";
+  if (g > r && g > b) return "vert clair";
+  if (r > b && g > b) return "jaune clair";
+  return "couleur claire";
+}
+
+function deriveVisualThemes(scene) {
+  const panels = [];
+  let current = null;
+  for (const element of scene.elements) {
+    if (element.type === "rect") {
+      current = { x: element.x, fill: element.fill, lines: [] };
+      panels.push(current);
+    } else if (element.type === "text" && current) {
+      current.lines.push(element.text);
+    }
+  }
+  return panels
+    .sort((a, b) => a.x - b.x)
+    .map((panel) => ({ x: panel.x, fill: panel.fill, color: nameLightColor(panel.fill), label: panel.lines.join(" ") }));
+}
+
+// ------------------------------------------------------------
 // Différenciation réelle : garde-fous et corrections communs (Lot 2).
 // ------------------------------------------------------------
 
@@ -400,7 +446,62 @@ export async function buildInteractiveS01() {
   // Support visuel — 5 questions d'exploitation (S01.ACCUEIL),
   // jusqu'ici jamais exposées par le générateur.
   // ------------------------------------------------------------
+  const visualThemes = deriveVisualThemes(data.visual.scene);
+  const visualOrderAnswer = visualThemes.map((theme) => theme.label).join(", ");
+  const redPanelTheme = visualThemes.find((theme) => theme.color === "rouge clair");
+  // Trois questions fermées réelles (support-visuel) : nombre de thèmes,
+  // ordre réel gauche->droite, thème du panneau rouge clair — les trois
+  // calculées depuis data.visual.scene.elements, plus de placeholder.
+  const VISUAL_ANSWERS = [
+    visualThemes.length === 5 ? "Cinq" : String(visualThemes.length),
+    visualOrderAnswer,
+    redPanelTheme ? redPanelTheme.label : null,
+  ];
+  const visualLegend = visualThemes.map((theme) => `${theme.color} : ${theme.label}`).join(" | ");
+
   for (const level of LEVELS) {
+    const visuelAppliedTransformations = [];
+    const visuelItems = data.visual_questions.slice(0, 3).map((question, index) => {
+      const item = { question, bonne_reponse: VISUAL_ANSWERS[index] };
+
+      if (level === "A1") {
+        // Légende explicite couleur -> thème (repérage direct) : calculée,
+        // pas mémorisée à la main.
+        item.indice = visualLegend;
+        visuelAppliedTransformations.push({
+          rule_id: "A2_TO_A1",
+          applied_to: `items[${index}].indice`,
+          evidence: "Légende couleur -> thème affichée, dérivée de data.visual.scene.elements (repérage direct).",
+        });
+      } else if (level === "B1" || level === "B2") {
+        // Relation/classement fondés UNIQUEMENT sur les libellés visibles —
+        // jamais une justification de l'ordre des panneaux (absente du
+        // support).
+        item.justification_required = true;
+        item.justification_type = "support_evidence";
+        item.justification_prompt = "Justifiez votre réponse en citant uniquement les libellés ou couleurs visibles sur le schéma.";
+        visuelAppliedTransformations.push({
+          rule_id: level === "B2" ? "A2_TO_B2" : "A2_TO_B1",
+          applied_to: `items[${index}].justification_prompt`,
+          evidence: "Justification obligatoire fondée sur les libellés visibles du schéma, sans aide ni légende.",
+        });
+        if (level === "B2") {
+          // Le schéma est une liste plate de cinq thèmes indépendants, sans
+          // relation ni hiérarchie déclarée entre eux : aucune synthèse
+          // entre catégories n'est possible sans l'inventer.
+          visuelAppliedTransformations.push({
+            rule_id: "DIFF_TRANSFORMATION_NOT_SUPPORTED",
+            applied_to: `items[${index}].justification_prompt`,
+            evidence: "Le support ne fournit aucune relation entre catégories (cinq panneaux indépendants) : synthèse non réalisée plutôt qu'inventée.",
+          });
+        }
+      }
+
+      item.correction = closedItemCorrection({ options: null, bonneReponse: item.bonne_reponse, preuve: visualLegend });
+      if (item.justification_prompt) item.correction.justification_ouverte = openJustificationCorrection(visualLegend);
+      return item;
+    });
+
     exercises.push(exercise({
       code: "support-visuel",
       title: "Les cinq thèmes civiques du parcours",
@@ -408,13 +509,11 @@ export async function buildInteractiveS01() {
       format: "texte_lacunaire",
       level,
       instruction: "Observez le schéma des cinq thèmes puis répondez.",
-      items: data.visual_questions.slice(0, 3).map((question, index) => ({
-        question,
-        bonne_reponse: index === 0 ? "Cinq" : "Réponse attendue dans le support visuel",
-      })),
+      items: visuelItems,
       source: data.visual.resource_id,
       duration: 240,
       activityCode: "S01.ACCUEIL",
+      appliedTransformations: visuelAppliedTransformations,
     }));
     exercises.push(exercise({
       code: "support-visuel-ouvert",
