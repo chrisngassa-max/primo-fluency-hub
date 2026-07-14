@@ -90,8 +90,8 @@ const MaSeance = () => {
     return (
       <div className="space-y-6 max-w-2xl mx-auto">
         <Header />
-        <Button className="w-full gap-2 bg-blue-600 font-bold hover:bg-blue-700" onClick={() => navigate("/eleve/exercices-interactifs/s01")}>
-          <PlayCircle className="h-5 w-5" /> Exercices interactifs — Séance 1 v3
+        <Button className="w-full gap-2 bg-blue-600 font-bold hover:bg-blue-700" onClick={() => navigate("/eleve/seances/S01")}>
+          <PlayCircle className="h-5 w-5" /> Séance 1 — parcours interactif
         </Button>
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="h-16 w-16 rounded-full bg-blue-100 flex items-center justify-center mb-4">
@@ -112,8 +112,8 @@ const MaSeance = () => {
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
       <Header />
-        <Button className="w-full gap-2 bg-blue-600 font-bold hover:bg-blue-700" onClick={() => navigate("/eleve/exercices-interactifs/s01")}>
-          <PlayCircle className="h-5 w-5" /> Exercices interactifs — Séance 1 v3
+        <Button className="w-full gap-2 bg-blue-600 font-bold hover:bg-blue-700" onClick={() => navigate("/eleve/seances/S01")}>
+          <PlayCircle className="h-5 w-5" /> Séance 1 — parcours interactif
         </Button>
 
       {/* Carte séance courante */}

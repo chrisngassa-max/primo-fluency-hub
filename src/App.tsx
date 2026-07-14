@@ -45,6 +45,7 @@ import EleveProfil from "@/pages/eleve/Profil";
 import MaSeance from "@/pages/eleve/MaSeance";
 import MesSeances from "@/pages/eleve/MesSeances";
 import S01InteractiveExercises from "@/pages/eleve/S01InteractiveExercises";
+import SeanceApprenant from "@/pages/eleve/SeanceApprenant";
 
 import BilanSeance from "@/pages/eleve/BilanSeance";
 import BilanTestPassation from "@/pages/eleve/BilanTestPassation";
@@ -82,6 +83,7 @@ import PreparationCiviquePage from "@/pages/formateur/PreparationCiviquePage";
 import FicheEleveIpePage from "@/pages/formateur/FicheEleveIpePage";
 import FicheGroupeIpePage from "@/pages/formateur/FicheGroupeIpePage";
 import ProductionParcours from "@/pages/formateur/ProductionParcours";
+import S01DemoPage from "@/pages/S01DemoPage";
 
 const queryClient = new QueryClient();
 
@@ -114,7 +116,11 @@ const App = () => (
                   <Route index element={<AIConsentRequiredRoute><EleveDashboard /></AIConsentRequiredRoute>} />
                   <Route path="ma-seance" element={<AIConsentRequiredRoute><MaSeance /></AIConsentRequiredRoute>} />
                   <Route path="mes-seances" element={<AIConsentRequiredRoute><MesSeances /></AIConsentRequiredRoute>} />
-                  <Route path="exercices-interactifs/s01" element={<AIConsentRequiredRoute><S01InteractiveExercises /></AIConsentRequiredRoute>} />
+                  {/* Ancienne page séparée : redirigée, jamais rendue côté apprenant
+                      (relecture indépendante, point 6). Reste un outil formateur
+                      via /formateur/parcours/:sessionCode/exercices-interactifs. */}
+                  <Route path="exercices-interactifs/s01" element={<Navigate to="/eleve/seances/S01" replace />} />
+                  <Route path="seances/:sessionCode" element={<AIConsentRequiredRoute><SeanceApprenant /></AIConsentRequiredRoute>} />
                   <Route path="test-positionnement" element={<AIConsentRequiredRoute><TestPositionnement /></AIConsentRequiredRoute>} />
                   <Route path="test-positionnement/passer/:token" element={<PositionnementPassation />} />
                   <Route path="test-positionnement/resultat/:attemptId" element={<PositionnementResultat />} />
@@ -142,6 +148,7 @@ const App = () => (
             <Route path="/unsubscribe" element={<Unsubscribe />} />
             <Route path="/play/:token" element={<PlayExercise />} />
             <Route path="/auth/relay-reset" element={<AuthRelayReset />} />
+            <Route path="/demo/s01" element={<S01DemoPage />} />
             <Route path="/sandbox" element={<Navigate to="/formateur/sandbox" replace />} />
 
             {/* Formateur routes */}
@@ -218,7 +225,8 @@ const App = () => (
               <Route index element={<AIConsentRequiredRoute><EleveDashboard /></AIConsentRequiredRoute>} />
               <Route path="ma-seance" element={<AIConsentRequiredRoute><MaSeance /></AIConsentRequiredRoute>} />
               <Route path="mes-seances" element={<AIConsentRequiredRoute><MesSeances /></AIConsentRequiredRoute>} />
-              <Route path="exercices-interactifs/s01" element={<AIConsentRequiredRoute><S01InteractiveExercises /></AIConsentRequiredRoute>} />
+              <Route path="exercices-interactifs/s01" element={<Navigate to="/eleve/seances/S01" replace />} />
+              <Route path="seances/:sessionCode" element={<AIConsentRequiredRoute><SeanceApprenant /></AIConsentRequiredRoute>} />
               <Route path="test-positionnement" element={<AIConsentRequiredRoute><TestPositionnement /></AIConsentRequiredRoute>} />
               <Route path="test-positionnement/passer/:token" element={<PositionnementPassation />} />
               <Route path="test-positionnement/resultat/:attemptId" element={<PositionnementResultat />} />

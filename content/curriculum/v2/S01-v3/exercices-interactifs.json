@@ -1,7 +1,1291 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "session_code": "S01",
   "exercises": [
+    {
+      "metadata_code": "cv2:S01:v3:lexique-association:A1",
+      "titre": "Associer chaque mot à sa définition",
+      "consigne": "Associez chaque mot de la séance à sa définition simplifiée.",
+      "competence": "CE",
+      "format": "appariement",
+      "niveau_vise": "A1",
+      "difficulte": 2,
+      "duree_limite_secondes": 420,
+      "source": "S01-LEX-A1-B2",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
+      "contenu": {
+        "items": [
+          {
+            "question": "parcours",
+            "options": [
+              "Ensemble des séances à suivre pour atteindre un objectif.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+              "Le but que l'on veut atteindre.",
+              "Une action pour obtenir un document ou un droit."
+            ],
+            "bonne_reponse": "Ensemble des séances à suivre pour atteindre un objectif.",
+            "explication": "Awa suit un parcours de 80 heures."
+          },
+          {
+            "question": "niveau",
+            "options": [
+              "Le but que l'on veut atteindre.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+              "Une action pour obtenir un document ou un droit.",
+              "Quelque chose qu'on peut demander, garanti par la loi."
+            ],
+            "bonne_reponse": "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+            "explication": "Son niveau de français progresse."
+          },
+          {
+            "question": "objectif",
+            "options": [
+              "Une action pour obtenir un document ou un droit.",
+              "Quelque chose qu'on peut demander, garanti par la loi.",
+              "Le but que l'on veut atteindre.",
+              "Une obligation, quelque chose qu'on doit faire."
+            ],
+            "bonne_reponse": "Le but que l'on veut atteindre.",
+            "explication": "Son objectif est d'avoir sa carte de séjour."
+          },
+          {
+            "question": "démarche",
+            "options": [
+              "Quelque chose qu'on peut demander, garanti par la loi.",
+              "Une obligation, quelque chose qu'on doit faire.",
+              "La forme de gouvernement de la France.",
+              "Une action pour obtenir un document ou un droit."
+            ],
+            "bonne_reponse": "Une action pour obtenir un document ou un droit.",
+            "explication": "Elle fait une démarche à la préfecture."
+          },
+          {
+            "question": "droit",
+            "options": [
+              "Quelque chose qu'on peut demander, garanti par la loi.",
+              "Une obligation, quelque chose qu'on doit faire.",
+              "La forme de gouvernement de la France.",
+              "Une épreuve qui évalue les connaissances."
+            ],
+            "bonne_reponse": "Quelque chose qu'on peut demander, garanti par la loi.",
+            "explication": "Le droit à la santé permet de se soigner."
+          },
+          {
+            "question": "devoir",
+            "options": [
+              "La forme de gouvernement de la France.",
+              "Une obligation, quelque chose qu'on doit faire.",
+              "Une épreuve qui évalue les connaissances.",
+              "Une réunion de formation à une date précise."
+            ],
+            "bonne_reponse": "Une obligation, quelque chose qu'on doit faire.",
+            "explication": "Respecter la loi est un devoir."
+          },
+          {
+            "question": "République",
+            "options": [
+              "Une épreuve qui évalue les connaissances.",
+              "Une réunion de formation à une date précise.",
+              "La forme de gouvernement de la France.",
+              "Avancer, s'améliorer petit à petit."
+            ],
+            "bonne_reponse": "La forme de gouvernement de la France.",
+            "explication": "La République française a une devise."
+          },
+          {
+            "question": "examen",
+            "options": [
+              "Une réunion de formation à une date précise.",
+              "Avancer, s'améliorer petit à petit.",
+              "Ensemble des séances à suivre pour atteindre un objectif.",
+              "Une épreuve qui évalue les connaissances."
+            ],
+            "bonne_reponse": "Une épreuve qui évalue les connaissances.",
+            "explication": "L'examen final a lieu après 80 heures."
+          },
+          {
+            "question": "séance",
+            "options": [
+              "Une réunion de formation à une date précise.",
+              "Avancer, s'améliorer petit à petit.",
+              "Ensemble des séances à suivre pour atteindre un objectif.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2)."
+            ],
+            "bonne_reponse": "Une réunion de formation à une date précise.",
+            "explication": "Chaque séance dure 3 heures."
+          },
+          {
+            "question": "progresser",
+            "options": [
+              "Ensemble des séances à suivre pour atteindre un objectif.",
+              "Avancer, s'améliorer petit à petit.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+              "Le but que l'on veut atteindre."
+            ],
+            "bonne_reponse": "Avancer, s'améliorer petit à petit.",
+            "explication": "Elle progresse en français chaque semaine."
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.LEXIQUE",
+          "source_level": "A2",
+          "target_level": "A1",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "repérer",
+            "associer"
+          ],
+          "autonomy": "faible",
+          "guidance": "fort",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": false
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:A1",
+      "titre": "Exercice 2 — Phrase à compléter",
+      "consigne": "Complétez le texte avec les mots manquants. Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure.",
+      "competence": "CE",
+      "format": "texte_lacunaire",
+      "niveau_vise": "A1",
+      "difficulte": 2,
+      "duree_limite_secondes": 300,
+      "source": "Adapté du format banque (id 2a162e99 « Présentation simple »)",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
+      "contenu": {
+        "items": [
+          {
+            "question": "Mot manquant 1",
+            "bonne_reponse": "parcours"
+          },
+          {
+            "question": "Mot manquant 2",
+            "bonne_reponse": "objectif"
+          },
+          {
+            "question": "Mot manquant 3",
+            "bonne_reponse": "règles"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.LEXIQUE",
+          "source_level": "A2",
+          "target_level": "A1",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "repérer",
+            "associer"
+          ],
+          "autonomy": "faible",
+          "guidance": "fort",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:lexique-association:A2",
+      "titre": "Associer chaque mot à sa définition",
+      "consigne": "Associez chaque mot de la séance à sa définition simplifiée.",
+      "competence": "CE",
+      "format": "appariement",
+      "niveau_vise": "A2",
+      "difficulte": 4,
+      "duree_limite_secondes": 420,
+      "source": "S01-LEX-A1-B2",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
+      "contenu": {
+        "items": [
+          {
+            "question": "parcours",
+            "options": [
+              "Ensemble des séances à suivre pour atteindre un objectif.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+              "Le but que l'on veut atteindre.",
+              "Une action pour obtenir un document ou un droit."
+            ],
+            "bonne_reponse": "Ensemble des séances à suivre pour atteindre un objectif.",
+            "explication": "Awa suit un parcours de 80 heures."
+          },
+          {
+            "question": "niveau",
+            "options": [
+              "Le but que l'on veut atteindre.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+              "Une action pour obtenir un document ou un droit.",
+              "Quelque chose qu'on peut demander, garanti par la loi."
+            ],
+            "bonne_reponse": "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+            "explication": "Son niveau de français progresse."
+          },
+          {
+            "question": "objectif",
+            "options": [
+              "Une action pour obtenir un document ou un droit.",
+              "Quelque chose qu'on peut demander, garanti par la loi.",
+              "Le but que l'on veut atteindre.",
+              "Une obligation, quelque chose qu'on doit faire."
+            ],
+            "bonne_reponse": "Le but que l'on veut atteindre.",
+            "explication": "Son objectif est d'avoir sa carte de séjour."
+          },
+          {
+            "question": "démarche",
+            "options": [
+              "Quelque chose qu'on peut demander, garanti par la loi.",
+              "Une obligation, quelque chose qu'on doit faire.",
+              "La forme de gouvernement de la France.",
+              "Une action pour obtenir un document ou un droit."
+            ],
+            "bonne_reponse": "Une action pour obtenir un document ou un droit.",
+            "explication": "Elle fait une démarche à la préfecture."
+          },
+          {
+            "question": "droit",
+            "options": [
+              "Quelque chose qu'on peut demander, garanti par la loi.",
+              "Une obligation, quelque chose qu'on doit faire.",
+              "La forme de gouvernement de la France.",
+              "Une épreuve qui évalue les connaissances."
+            ],
+            "bonne_reponse": "Quelque chose qu'on peut demander, garanti par la loi.",
+            "explication": "Le droit à la santé permet de se soigner."
+          },
+          {
+            "question": "devoir",
+            "options": [
+              "La forme de gouvernement de la France.",
+              "Une obligation, quelque chose qu'on doit faire.",
+              "Une épreuve qui évalue les connaissances.",
+              "Une réunion de formation à une date précise."
+            ],
+            "bonne_reponse": "Une obligation, quelque chose qu'on doit faire.",
+            "explication": "Respecter la loi est un devoir."
+          },
+          {
+            "question": "République",
+            "options": [
+              "Une épreuve qui évalue les connaissances.",
+              "Une réunion de formation à une date précise.",
+              "La forme de gouvernement de la France.",
+              "Avancer, s'améliorer petit à petit."
+            ],
+            "bonne_reponse": "La forme de gouvernement de la France.",
+            "explication": "La République française a une devise."
+          },
+          {
+            "question": "examen",
+            "options": [
+              "Une réunion de formation à une date précise.",
+              "Avancer, s'améliorer petit à petit.",
+              "Ensemble des séances à suivre pour atteindre un objectif.",
+              "Une épreuve qui évalue les connaissances."
+            ],
+            "bonne_reponse": "Une épreuve qui évalue les connaissances.",
+            "explication": "L'examen final a lieu après 80 heures."
+          },
+          {
+            "question": "séance",
+            "options": [
+              "Une réunion de formation à une date précise.",
+              "Avancer, s'améliorer petit à petit.",
+              "Ensemble des séances à suivre pour atteindre un objectif.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2)."
+            ],
+            "bonne_reponse": "Une réunion de formation à une date précise.",
+            "explication": "Chaque séance dure 3 heures."
+          },
+          {
+            "question": "progresser",
+            "options": [
+              "Ensemble des séances à suivre pour atteindre un objectif.",
+              "Avancer, s'améliorer petit à petit.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+              "Le but que l'on veut atteindre."
+            ],
+            "bonne_reponse": "Avancer, s'améliorer petit à petit.",
+            "explication": "Elle progresse en français chaque semaine."
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.LEXIQUE",
+          "source_level": "A2",
+          "target_level": "A2",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "extraire",
+            "reformuler"
+          ],
+          "autonomy": "moyenne",
+          "guidance": "moyen",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": false
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:A2",
+      "titre": "Exercice 2 — Phrase à compléter",
+      "consigne": "Complétez le texte avec les mots manquants. Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure.",
+      "competence": "CE",
+      "format": "texte_lacunaire",
+      "niveau_vise": "A2",
+      "difficulte": 4,
+      "duree_limite_secondes": 300,
+      "source": "Adapté du format banque (id 2a162e99 « Présentation simple »)",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
+      "contenu": {
+        "items": [
+          {
+            "question": "Mot manquant 1",
+            "bonne_reponse": "parcours"
+          },
+          {
+            "question": "Mot manquant 2",
+            "bonne_reponse": "objectif"
+          },
+          {
+            "question": "Mot manquant 3",
+            "bonne_reponse": "règles"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.LEXIQUE",
+          "source_level": "A2",
+          "target_level": "A2",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "extraire",
+            "reformuler"
+          ],
+          "autonomy": "moyenne",
+          "guidance": "moyen",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:lexique-association:B1",
+      "titre": "Associer chaque mot à sa définition",
+      "consigne": "Associez chaque mot de la séance à sa définition simplifiée.",
+      "competence": "CE",
+      "format": "appariement",
+      "niveau_vise": "B1",
+      "difficulte": 6,
+      "duree_limite_secondes": 420,
+      "source": "S01-LEX-A1-B2",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
+      "contenu": {
+        "items": [
+          {
+            "question": "parcours",
+            "options": [
+              "Ensemble des séances à suivre pour atteindre un objectif.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+              "Le but que l'on veut atteindre.",
+              "Une action pour obtenir un document ou un droit."
+            ],
+            "bonne_reponse": "Ensemble des séances à suivre pour atteindre un objectif.",
+            "explication": "Awa suit un parcours de 80 heures."
+          },
+          {
+            "question": "niveau",
+            "options": [
+              "Le but que l'on veut atteindre.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+              "Une action pour obtenir un document ou un droit.",
+              "Quelque chose qu'on peut demander, garanti par la loi."
+            ],
+            "bonne_reponse": "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+            "explication": "Son niveau de français progresse."
+          },
+          {
+            "question": "objectif",
+            "options": [
+              "Une action pour obtenir un document ou un droit.",
+              "Quelque chose qu'on peut demander, garanti par la loi.",
+              "Le but que l'on veut atteindre.",
+              "Une obligation, quelque chose qu'on doit faire."
+            ],
+            "bonne_reponse": "Le but que l'on veut atteindre.",
+            "explication": "Son objectif est d'avoir sa carte de séjour."
+          },
+          {
+            "question": "démarche",
+            "options": [
+              "Quelque chose qu'on peut demander, garanti par la loi.",
+              "Une obligation, quelque chose qu'on doit faire.",
+              "La forme de gouvernement de la France.",
+              "Une action pour obtenir un document ou un droit."
+            ],
+            "bonne_reponse": "Une action pour obtenir un document ou un droit.",
+            "explication": "Elle fait une démarche à la préfecture."
+          },
+          {
+            "question": "droit",
+            "options": [
+              "Quelque chose qu'on peut demander, garanti par la loi.",
+              "Une obligation, quelque chose qu'on doit faire.",
+              "La forme de gouvernement de la France.",
+              "Une épreuve qui évalue les connaissances."
+            ],
+            "bonne_reponse": "Quelque chose qu'on peut demander, garanti par la loi.",
+            "explication": "Le droit à la santé permet de se soigner."
+          },
+          {
+            "question": "devoir",
+            "options": [
+              "La forme de gouvernement de la France.",
+              "Une obligation, quelque chose qu'on doit faire.",
+              "Une épreuve qui évalue les connaissances.",
+              "Une réunion de formation à une date précise."
+            ],
+            "bonne_reponse": "Une obligation, quelque chose qu'on doit faire.",
+            "explication": "Respecter la loi est un devoir."
+          },
+          {
+            "question": "République",
+            "options": [
+              "Une épreuve qui évalue les connaissances.",
+              "Une réunion de formation à une date précise.",
+              "La forme de gouvernement de la France.",
+              "Avancer, s'améliorer petit à petit."
+            ],
+            "bonne_reponse": "La forme de gouvernement de la France.",
+            "explication": "La République française a une devise."
+          },
+          {
+            "question": "examen",
+            "options": [
+              "Une réunion de formation à une date précise.",
+              "Avancer, s'améliorer petit à petit.",
+              "Ensemble des séances à suivre pour atteindre un objectif.",
+              "Une épreuve qui évalue les connaissances."
+            ],
+            "bonne_reponse": "Une épreuve qui évalue les connaissances.",
+            "explication": "L'examen final a lieu après 80 heures."
+          },
+          {
+            "question": "séance",
+            "options": [
+              "Une réunion de formation à une date précise.",
+              "Avancer, s'améliorer petit à petit.",
+              "Ensemble des séances à suivre pour atteindre un objectif.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2)."
+            ],
+            "bonne_reponse": "Une réunion de formation à une date précise.",
+            "explication": "Chaque séance dure 3 heures."
+          },
+          {
+            "question": "progresser",
+            "options": [
+              "Ensemble des séances à suivre pour atteindre un objectif.",
+              "Avancer, s'améliorer petit à petit.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+              "Le but que l'on veut atteindre."
+            ],
+            "bonne_reponse": "Avancer, s'améliorer petit à petit.",
+            "explication": "Elle progresse en français chaque semaine."
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.LEXIQUE",
+          "source_level": "A2",
+          "target_level": "B1",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "relier",
+            "justifier"
+          ],
+          "autonomy": "forte",
+          "guidance": "faible",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": false
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:B1",
+      "titre": "Exercice 2 — Phrase à compléter",
+      "consigne": "Complétez le texte avec les mots manquants. Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure.",
+      "competence": "CE",
+      "format": "texte_lacunaire",
+      "niveau_vise": "B1",
+      "difficulte": 6,
+      "duree_limite_secondes": 300,
+      "source": "Adapté du format banque (id 2a162e99 « Présentation simple »)",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
+      "contenu": {
+        "items": [
+          {
+            "question": "Mot manquant 1",
+            "bonne_reponse": "parcours"
+          },
+          {
+            "question": "Mot manquant 2",
+            "bonne_reponse": "objectif"
+          },
+          {
+            "question": "Mot manquant 3",
+            "bonne_reponse": "règles"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.LEXIQUE",
+          "source_level": "A2",
+          "target_level": "B1",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "relier",
+            "justifier"
+          ],
+          "autonomy": "forte",
+          "guidance": "faible",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:lexique-association:B2",
+      "titre": "Associer chaque mot à sa définition",
+      "consigne": "Associez chaque mot de la séance à sa définition simplifiée.",
+      "competence": "CE",
+      "format": "appariement",
+      "niveau_vise": "B2",
+      "difficulte": 8,
+      "duree_limite_secondes": 420,
+      "source": "S01-LEX-A1-B2",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
+      "contenu": {
+        "items": [
+          {
+            "question": "parcours",
+            "options": [
+              "Ensemble des séances à suivre pour atteindre un objectif.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+              "Le but que l'on veut atteindre.",
+              "Une action pour obtenir un document ou un droit."
+            ],
+            "bonne_reponse": "Ensemble des séances à suivre pour atteindre un objectif.",
+            "explication": "Awa suit un parcours de 80 heures."
+          },
+          {
+            "question": "niveau",
+            "options": [
+              "Le but que l'on veut atteindre.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+              "Une action pour obtenir un document ou un droit.",
+              "Quelque chose qu'on peut demander, garanti par la loi."
+            ],
+            "bonne_reponse": "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+            "explication": "Son niveau de français progresse."
+          },
+          {
+            "question": "objectif",
+            "options": [
+              "Une action pour obtenir un document ou un droit.",
+              "Quelque chose qu'on peut demander, garanti par la loi.",
+              "Le but que l'on veut atteindre.",
+              "Une obligation, quelque chose qu'on doit faire."
+            ],
+            "bonne_reponse": "Le but que l'on veut atteindre.",
+            "explication": "Son objectif est d'avoir sa carte de séjour."
+          },
+          {
+            "question": "démarche",
+            "options": [
+              "Quelque chose qu'on peut demander, garanti par la loi.",
+              "Une obligation, quelque chose qu'on doit faire.",
+              "La forme de gouvernement de la France.",
+              "Une action pour obtenir un document ou un droit."
+            ],
+            "bonne_reponse": "Une action pour obtenir un document ou un droit.",
+            "explication": "Elle fait une démarche à la préfecture."
+          },
+          {
+            "question": "droit",
+            "options": [
+              "Quelque chose qu'on peut demander, garanti par la loi.",
+              "Une obligation, quelque chose qu'on doit faire.",
+              "La forme de gouvernement de la France.",
+              "Une épreuve qui évalue les connaissances."
+            ],
+            "bonne_reponse": "Quelque chose qu'on peut demander, garanti par la loi.",
+            "explication": "Le droit à la santé permet de se soigner."
+          },
+          {
+            "question": "devoir",
+            "options": [
+              "La forme de gouvernement de la France.",
+              "Une obligation, quelque chose qu'on doit faire.",
+              "Une épreuve qui évalue les connaissances.",
+              "Une réunion de formation à une date précise."
+            ],
+            "bonne_reponse": "Une obligation, quelque chose qu'on doit faire.",
+            "explication": "Respecter la loi est un devoir."
+          },
+          {
+            "question": "République",
+            "options": [
+              "Une épreuve qui évalue les connaissances.",
+              "Une réunion de formation à une date précise.",
+              "La forme de gouvernement de la France.",
+              "Avancer, s'améliorer petit à petit."
+            ],
+            "bonne_reponse": "La forme de gouvernement de la France.",
+            "explication": "La République française a une devise."
+          },
+          {
+            "question": "examen",
+            "options": [
+              "Une réunion de formation à une date précise.",
+              "Avancer, s'améliorer petit à petit.",
+              "Ensemble des séances à suivre pour atteindre un objectif.",
+              "Une épreuve qui évalue les connaissances."
+            ],
+            "bonne_reponse": "Une épreuve qui évalue les connaissances.",
+            "explication": "L'examen final a lieu après 80 heures."
+          },
+          {
+            "question": "séance",
+            "options": [
+              "Une réunion de formation à une date précise.",
+              "Avancer, s'améliorer petit à petit.",
+              "Ensemble des séances à suivre pour atteindre un objectif.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2)."
+            ],
+            "bonne_reponse": "Une réunion de formation à une date précise.",
+            "explication": "Chaque séance dure 3 heures."
+          },
+          {
+            "question": "progresser",
+            "options": [
+              "Ensemble des séances à suivre pour atteindre un objectif.",
+              "Avancer, s'améliorer petit à petit.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+              "Le but que l'on veut atteindre."
+            ],
+            "bonne_reponse": "Avancer, s'améliorer petit à petit.",
+            "explication": "Elle progresse en français chaque semaine."
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.LEXIQUE",
+          "source_level": "A2",
+          "target_level": "B2",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "interpréter",
+            "nuancer"
+          ],
+          "autonomy": "forte",
+          "guidance": "minimal",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": false
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:B2",
+      "titre": "Exercice 2 — Phrase à compléter",
+      "consigne": "Complétez le texte avec les mots manquants. Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure.",
+      "competence": "CE",
+      "format": "texte_lacunaire",
+      "niveau_vise": "B2",
+      "difficulte": 8,
+      "duree_limite_secondes": 300,
+      "source": "Adapté du format banque (id 2a162e99 « Présentation simple »)",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
+      "contenu": {
+        "items": [
+          {
+            "question": "Mot manquant 1",
+            "bonne_reponse": "parcours"
+          },
+          {
+            "question": "Mot manquant 2",
+            "bonne_reponse": "objectif"
+          },
+          {
+            "question": "Mot manquant 3",
+            "bonne_reponse": "règles"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.LEXIQUE",
+          "source_level": "A2",
+          "target_level": "B2",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "interpréter",
+            "nuancer"
+          ],
+          "autonomy": "forte",
+          "guidance": "minimal",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:A1",
+      "titre": "Exercice 3 — Réemploi oral",
+      "consigne": "En une phrase, expliquez pourquoi vous suivez ce parcours, en utilisant le mot « objectif » ou « démarche ».",
+      "competence": "EO",
+      "format": "production_orale",
+      "niveau_vise": "A1",
+      "difficulte": 2,
+      "duree_limite_secondes": 180,
+      "source": "Créé, inspiré de l'activité pedagogical_activities « tcf_oral_guide_task1_act1 »",
+      "family_id": null,
+      "extension_of_family_id": "S01_CO_ACCUEIL_01",
+      "civic_content": false,
+      "civic_fact_ids": [],
+      "contenu": {
+        "items": [
+          {
+            "question": "En une phrase, expliquez pourquoi vous suivez ce parcours, en utilisant le mot « objectif » ou « démarche ».",
+            "bonne_reponse": "Usage correct du mot dans une phrase complète."
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.LEXIQUE",
+          "source_level": "A2",
+          "target_level": "A1",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "repérer",
+            "associer"
+          ],
+          "autonomy": "faible",
+          "guidance": "fort",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": false
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:A2",
+      "titre": "Exercice 3 — Réemploi oral",
+      "consigne": "En une phrase, expliquez pourquoi vous suivez ce parcours, en utilisant le mot « objectif » ou « démarche ».",
+      "competence": "EO",
+      "format": "production_orale",
+      "niveau_vise": "A2",
+      "difficulte": 4,
+      "duree_limite_secondes": 180,
+      "source": "Créé, inspiré de l'activité pedagogical_activities « tcf_oral_guide_task1_act1 »",
+      "family_id": null,
+      "extension_of_family_id": "S01_CO_ACCUEIL_01",
+      "civic_content": false,
+      "civic_fact_ids": [],
+      "contenu": {
+        "items": [
+          {
+            "question": "En une phrase, expliquez pourquoi vous suivez ce parcours, en utilisant le mot « objectif » ou « démarche ».",
+            "bonne_reponse": "Usage correct du mot dans une phrase complète."
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.LEXIQUE",
+          "source_level": "A2",
+          "target_level": "A2",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "extraire",
+            "reformuler"
+          ],
+          "autonomy": "moyenne",
+          "guidance": "moyen",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": false
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:B1",
+      "titre": "Exercice 3 — Réemploi oral",
+      "consigne": "En une phrase, expliquez pourquoi vous suivez ce parcours, en utilisant le mot « objectif » ou « démarche ».",
+      "competence": "EO",
+      "format": "production_orale",
+      "niveau_vise": "B1",
+      "difficulte": 6,
+      "duree_limite_secondes": 180,
+      "source": "Créé, inspiré de l'activité pedagogical_activities « tcf_oral_guide_task1_act1 »",
+      "family_id": null,
+      "extension_of_family_id": "S01_CO_ACCUEIL_01",
+      "civic_content": false,
+      "civic_fact_ids": [],
+      "contenu": {
+        "items": [
+          {
+            "question": "En une phrase, expliquez pourquoi vous suivez ce parcours, en utilisant le mot « objectif » ou « démarche ».",
+            "bonne_reponse": "Usage correct du mot dans une phrase complète."
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.LEXIQUE",
+          "source_level": "A2",
+          "target_level": "B1",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "relier",
+            "justifier"
+          ],
+          "autonomy": "forte",
+          "guidance": "faible",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": false
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:B2",
+      "titre": "Exercice 3 — Réemploi oral",
+      "consigne": "En une phrase, expliquez pourquoi vous suivez ce parcours, en utilisant le mot « objectif » ou « démarche ».",
+      "competence": "EO",
+      "format": "production_orale",
+      "niveau_vise": "B2",
+      "difficulte": 8,
+      "duree_limite_secondes": 180,
+      "source": "Créé, inspiré de l'activité pedagogical_activities « tcf_oral_guide_task1_act1 »",
+      "family_id": null,
+      "extension_of_family_id": "S01_CO_ACCUEIL_01",
+      "civic_content": false,
+      "civic_fact_ids": [],
+      "contenu": {
+        "items": [
+          {
+            "question": "En une phrase, expliquez pourquoi vous suivez ce parcours, en utilisant le mot « objectif » ou « démarche ».",
+            "bonne_reponse": "Usage correct du mot dans une phrase complète."
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.LEXIQUE",
+          "source_level": "A2",
+          "target_level": "B2",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "interpréter",
+            "nuancer"
+          ],
+          "autonomy": "forte",
+          "guidance": "minimal",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": false
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:support-visuel:A1",
+      "titre": "Les cinq thèmes civiques du parcours",
+      "consigne": "Observez le schéma des cinq thèmes puis répondez.",
+      "competence": "CE",
+      "format": "texte_lacunaire",
+      "niveau_vise": "A1",
+      "difficulte": 2,
+      "duree_limite_secondes": 240,
+      "source": "S01-VIS-master",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
+      "contenu": {
+        "items": [
+          {
+            "question": "Combien de thèmes sont représentés sur le schéma ?",
+            "bonne_reponse": "Cinq"
+          },
+          {
+            "question": "Nommez les cinq thèmes dans l'ordre, de gauche à droite.",
+            "bonne_reponse": "Réponse attendue dans le support visuel"
+          },
+          {
+            "question": "Quel thème correspond au panneau de couleur rouge clair ?",
+            "bonne_reponse": "Réponse attendue dans le support visuel"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.ACCUEIL",
+          "source_level": "A2",
+          "target_level": "A1",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "repérer",
+            "associer"
+          ],
+          "autonomy": "faible",
+          "guidance": "fort",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:support-visuel-ouvert:A1",
+      "titre": "Votre lien avec les cinq thèmes",
+      "consigne": "Répondez en une phrase justifiée à chacune des deux questions.",
+      "competence": "EE",
+      "format": "production_ecrite",
+      "niveau_vise": "A1",
+      "difficulte": 2,
+      "duree_limite_secondes": 240,
+      "source": "S01-VIS-master",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
+      "contenu": {
+        "items": [
+          {
+            "question": "Pourquoi ces cinq thèmes sont-ils réunis sur un même schéma, selon vous ?",
+            "bonne_reponse": "Réponse ouverte, justifiée par une phrase."
+          },
+          {
+            "question": "Lequel de ces cinq thèmes vous semble le plus utile pour votre vie quotidienne en France ? Justifiez votre réponse en une phrase.",
+            "bonne_reponse": "Réponse ouverte, justifiée par une phrase."
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.ACCUEIL",
+          "source_level": "A2",
+          "target_level": "A1",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "repérer",
+            "associer"
+          ],
+          "autonomy": "faible",
+          "guidance": "fort",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": false
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:support-visuel:A2",
+      "titre": "Les cinq thèmes civiques du parcours",
+      "consigne": "Observez le schéma des cinq thèmes puis répondez.",
+      "competence": "CE",
+      "format": "texte_lacunaire",
+      "niveau_vise": "A2",
+      "difficulte": 4,
+      "duree_limite_secondes": 240,
+      "source": "S01-VIS-master",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
+      "contenu": {
+        "items": [
+          {
+            "question": "Combien de thèmes sont représentés sur le schéma ?",
+            "bonne_reponse": "Cinq"
+          },
+          {
+            "question": "Nommez les cinq thèmes dans l'ordre, de gauche à droite.",
+            "bonne_reponse": "Réponse attendue dans le support visuel"
+          },
+          {
+            "question": "Quel thème correspond au panneau de couleur rouge clair ?",
+            "bonne_reponse": "Réponse attendue dans le support visuel"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.ACCUEIL",
+          "source_level": "A2",
+          "target_level": "A2",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "extraire",
+            "reformuler"
+          ],
+          "autonomy": "moyenne",
+          "guidance": "moyen",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:support-visuel-ouvert:A2",
+      "titre": "Votre lien avec les cinq thèmes",
+      "consigne": "Répondez en une phrase justifiée à chacune des deux questions.",
+      "competence": "EE",
+      "format": "production_ecrite",
+      "niveau_vise": "A2",
+      "difficulte": 4,
+      "duree_limite_secondes": 240,
+      "source": "S01-VIS-master",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
+      "contenu": {
+        "items": [
+          {
+            "question": "Pourquoi ces cinq thèmes sont-ils réunis sur un même schéma, selon vous ?",
+            "bonne_reponse": "Réponse ouverte, justifiée par une phrase."
+          },
+          {
+            "question": "Lequel de ces cinq thèmes vous semble le plus utile pour votre vie quotidienne en France ? Justifiez votre réponse en une phrase.",
+            "bonne_reponse": "Réponse ouverte, justifiée par une phrase."
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.ACCUEIL",
+          "source_level": "A2",
+          "target_level": "A2",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "extraire",
+            "reformuler"
+          ],
+          "autonomy": "moyenne",
+          "guidance": "moyen",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": false
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:support-visuel:B1",
+      "titre": "Les cinq thèmes civiques du parcours",
+      "consigne": "Observez le schéma des cinq thèmes puis répondez.",
+      "competence": "CE",
+      "format": "texte_lacunaire",
+      "niveau_vise": "B1",
+      "difficulte": 6,
+      "duree_limite_secondes": 240,
+      "source": "S01-VIS-master",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
+      "contenu": {
+        "items": [
+          {
+            "question": "Combien de thèmes sont représentés sur le schéma ?",
+            "bonne_reponse": "Cinq"
+          },
+          {
+            "question": "Nommez les cinq thèmes dans l'ordre, de gauche à droite.",
+            "bonne_reponse": "Réponse attendue dans le support visuel"
+          },
+          {
+            "question": "Quel thème correspond au panneau de couleur rouge clair ?",
+            "bonne_reponse": "Réponse attendue dans le support visuel"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.ACCUEIL",
+          "source_level": "A2",
+          "target_level": "B1",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "relier",
+            "justifier"
+          ],
+          "autonomy": "forte",
+          "guidance": "faible",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:support-visuel-ouvert:B1",
+      "titre": "Votre lien avec les cinq thèmes",
+      "consigne": "Répondez en une phrase justifiée à chacune des deux questions.",
+      "competence": "EE",
+      "format": "production_ecrite",
+      "niveau_vise": "B1",
+      "difficulte": 6,
+      "duree_limite_secondes": 240,
+      "source": "S01-VIS-master",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
+      "contenu": {
+        "items": [
+          {
+            "question": "Pourquoi ces cinq thèmes sont-ils réunis sur un même schéma, selon vous ?",
+            "bonne_reponse": "Réponse ouverte, justifiée par une phrase."
+          },
+          {
+            "question": "Lequel de ces cinq thèmes vous semble le plus utile pour votre vie quotidienne en France ? Justifiez votre réponse en une phrase.",
+            "bonne_reponse": "Réponse ouverte, justifiée par une phrase."
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.ACCUEIL",
+          "source_level": "A2",
+          "target_level": "B1",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "relier",
+            "justifier"
+          ],
+          "autonomy": "forte",
+          "guidance": "faible",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": false
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:support-visuel:B2",
+      "titre": "Les cinq thèmes civiques du parcours",
+      "consigne": "Observez le schéma des cinq thèmes puis répondez.",
+      "competence": "CE",
+      "format": "texte_lacunaire",
+      "niveau_vise": "B2",
+      "difficulte": 8,
+      "duree_limite_secondes": 240,
+      "source": "S01-VIS-master",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
+      "contenu": {
+        "items": [
+          {
+            "question": "Combien de thèmes sont représentés sur le schéma ?",
+            "bonne_reponse": "Cinq"
+          },
+          {
+            "question": "Nommez les cinq thèmes dans l'ordre, de gauche à droite.",
+            "bonne_reponse": "Réponse attendue dans le support visuel"
+          },
+          {
+            "question": "Quel thème correspond au panneau de couleur rouge clair ?",
+            "bonne_reponse": "Réponse attendue dans le support visuel"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.ACCUEIL",
+          "source_level": "A2",
+          "target_level": "B2",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "interpréter",
+            "nuancer"
+          ],
+          "autonomy": "forte",
+          "guidance": "minimal",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": true
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:support-visuel-ouvert:B2",
+      "titre": "Votre lien avec les cinq thèmes",
+      "consigne": "Répondez en une phrase justifiée à chacune des deux questions.",
+      "competence": "EE",
+      "format": "production_ecrite",
+      "niveau_vise": "B2",
+      "difficulte": 8,
+      "duree_limite_secondes": 240,
+      "source": "S01-VIS-master",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
+      "contenu": {
+        "items": [
+          {
+            "question": "Pourquoi ces cinq thèmes sont-ils réunis sur un même schéma, selon vous ?",
+            "bonne_reponse": "Réponse ouverte, justifiée par une phrase."
+          },
+          {
+            "question": "Lequel de ces cinq thèmes vous semble le plus utile pour votre vie quotidienne en France ? Justifiez votre réponse en une phrase.",
+            "bonne_reponse": "Réponse ouverte, justifiée par une phrase."
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.ACCUEIL",
+          "source_level": "A2",
+          "target_level": "B2",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "interpréter",
+            "nuancer"
+          ],
+          "autonomy": "forte",
+          "guidance": "minimal",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": false
+        }
+      }
+    },
     {
       "metadata_code": "cv2:S01:v3:co-dialogue:A1",
       "titre": "Comprendre le dialogue d'accueil",
@@ -14,6 +1298,8 @@
       "source": "S01-QCM-TCF-v3",
       "family_id": "S01_CO_ACCUEIL_01",
       "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
       "contenu": {
         "items": [
           {
@@ -25,6 +1311,16 @@
             ],
             "bonne_reponse": "Awa Diallo",
             "explication": "Elle se présente : « Je m'appelle Awa. Awa Diallo. »"
+          },
+          {
+            "question": "Quel est l'objectif administratif d'Awa ?",
+            "options": [
+              "La carte de séjour pluriannuelle",
+              "La nationalité française",
+              "Un visa touristique"
+            ],
+            "bonne_reponse": "La carte de séjour pluriannuelle",
+            "explication": "« Je voudrais avoir ma carte de séjour pluriannuelle. »"
           },
           {
             "question": "Combien d'heures dure le parcours d'Awa ?",
@@ -55,10 +1351,61 @@
             ],
             "bonne_reponse": "3 heures",
             "explication": "« vingt-cinq séances de trois heures »"
+          },
+          {
+            "question": "À quel rythme les séances ont-elles lieu ?",
+            "options": [
+              "Une par semaine",
+              "Deux par semaine",
+              "Une par mois"
+            ],
+            "bonne_reponse": "Une par semaine",
+            "explication": "« à raison d'une séance par semaine »"
+          },
+          {
+            "question": "Après combien d'heures a lieu l'évaluation intermédiaire (E1) ?",
+            "options": [
+              "25 heures",
+              "50 heures",
+              "80 heures"
+            ],
+            "bonne_reponse": "50 heures",
+            "explication": "« une évaluation intermédiaire après cinquante heures »"
+          },
+          {
+            "question": "Combien de thèmes civiques structurent le parcours ?",
+            "options": [
+              "Trois",
+              "Cinq",
+              "Sept"
+            ],
+            "bonne_reponse": "Cinq",
+            "explication": "« cinq thèmes sur la vie en France »"
+          },
+          {
+            "question": "D'après Mme Rossi, qu'est-ce qu'un « devoir » ?",
+            "options": [
+              "Quelque chose qu'on peut demander",
+              "Quelque chose qu'on doit faire",
+              "Une consigne propre à un lieu"
+            ],
+            "bonne_reponse": "Quelque chose qu'on doit faire",
+            "explication": "« Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. »"
+          },
+          {
+            "question": "D'après Mme Rossi, qu'est-ce qu'une « règle » ?",
+            "options": [
+              "Une consigne précise (ex. arriver à l'heure)",
+              "Une possibilité garantie par la loi",
+              "Une obligation nationale"
+            ],
+            "bonne_reponse": "Une consigne précise (ex. arriver à l'heure)",
+            "explication": "« Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. »"
           }
         ],
         "metadata": {
           "session_code": "S01",
+          "activity_code": "S01.CO",
           "source_level": "A2",
           "target_level": "A1",
           "competence_invariante": "CO",
@@ -69,7 +1416,108 @@
           "autonomy": "faible",
           "guidance": "fort",
           "trainer_preview_required": true,
-          "interactive": true
+          "interactive": true,
+          "needs_content_review": false
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:co-comprehension:A1",
+      "titre": "Vingt questions sur le dialogue",
+      "consigne": "Répondez en une phrase courte, d'après le dialogue.",
+      "competence": "CO",
+      "format": "texte_lacunaire",
+      "niveau_vise": "A1",
+      "difficulte": 2,
+      "duree_limite_secondes": 600,
+      "source": "S01-CO-master-v3",
+      "family_id": "S01_CO_ACCUEIL_01",
+      "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
+      "contenu": {
+        "items": [
+          {
+            "question": "Qui sont les deux personnes qui parlent ?",
+            "bonne_reponse": "Awa Diallo (apprenante) et Mme Rossi (formatrice)",
+            "explication": "Compréhension globale"
+          },
+          {
+            "question": "À votre avis, à quel moment de la formation se passe cette scène ?",
+            "bonne_reponse": "Le premier jour",
+            "explication": "Compréhension globale"
+          },
+          {
+            "question": "Quel est l'objectif principal d'Awa ?",
+            "bonne_reponse": "Obtenir sa carte de séjour pluriannuelle",
+            "explication": "Compréhension globale"
+          },
+          {
+            "question": "Combien d'heures dure le parcours d'Awa ?",
+            "bonne_reponse": "80 heures",
+            "explication": "Repérage d'information"
+          },
+          {
+            "question": "Combien de séances va-t-elle suivre ?",
+            "bonne_reponse": "25 séances",
+            "explication": "Repérage d'information"
+          },
+          {
+            "question": "Combien de temps dure chaque séance ?",
+            "bonne_reponse": "3 heures",
+            "explication": "Repérage d'information"
+          },
+          {
+            "question": "À quel rythme ont lieu les séances ?",
+            "bonne_reponse": "Une par semaine",
+            "explication": "Repérage d'information"
+          },
+          {
+            "question": "Après combien d'heures a lieu la première évaluation (E1) ?",
+            "bonne_reponse": "50 heures",
+            "explication": "Repérage d'information"
+          },
+          {
+            "question": "Que signifie le mot « parcours » dans le dialogue ?",
+            "bonne_reponse": "L'ensemble du chemin de formation à suivre",
+            "explication": "Lexique"
+          },
+          {
+            "question": "Que veut dire « épeler » son nom ?",
+            "bonne_reponse": "Dire chaque lettre du nom une par une",
+            "explication": "Lexique"
+          },
+          {
+            "question": "Awa connaît déjà bien la différence entre droit, devoir et règle.",
+            "bonne_reponse": "Faux (« Pas très bien, madame »)",
+            "explication": "Vrai/Faux"
+          },
+          {
+            "question": "Le parcours couvre cinq thèmes sur la vie en France.",
+            "bonne_reponse": "Vrai",
+            "explication": "Vrai/Faux"
+          },
+          {
+            "question": "Il y a une seule évaluation à la fin du parcours.",
+            "bonne_reponse": "Faux — il y en a deux (E1 et E2)",
+            "explication": "Vrai/Faux"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.CO",
+          "source_level": "A2",
+          "target_level": "A1",
+          "competence_invariante": "CO",
+          "cognitive_operations": [
+            "repérer",
+            "associer"
+          ],
+          "autonomy": "faible",
+          "guidance": "fort",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": false
         }
       }
     },
@@ -85,6 +1533,8 @@
       "source": "Banque exercices, id 4c983a50 (réutilisé tel quel)",
       "family_id": null,
       "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
       "contenu": {
         "items": [
           {
@@ -99,6 +1549,7 @@
         ],
         "metadata": {
           "session_code": "S01",
+          "activity_code": "S01.ATELIER",
           "source_level": "A2",
           "target_level": "A1",
           "competence_invariante": null,
@@ -109,7 +1560,8 @@
           "autonomy": "faible",
           "guidance": "fort",
           "trainer_preview_required": true,
-          "interactive": true
+          "interactive": true,
+          "needs_content_review": true
         }
       }
     },
@@ -125,6 +1577,8 @@
       "source": "Banque exercices, id 4a85ed79 (réutilisé tel quel)",
       "family_id": null,
       "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
       "contenu": {
         "items": [
           {
@@ -157,6 +1611,7 @@
         ],
         "metadata": {
           "session_code": "S01",
+          "activity_code": "S01.ATELIER",
           "source_level": "A2",
           "target_level": "A1",
           "competence_invariante": null,
@@ -167,7 +1622,8 @@
           "autonomy": "faible",
           "guidance": "fort",
           "trainer_preview_required": true,
-          "interactive": true
+          "interactive": true,
+          "needs_content_review": true
         }
       }
     },
@@ -183,6 +1639,8 @@
       "source": "Banque exercices, id 77dcd9d8 (réutilisé tel quel)",
       "family_id": null,
       "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
       "contenu": {
         "items": [
           {
@@ -204,6 +1662,7 @@
         ],
         "metadata": {
           "session_code": "S01",
+          "activity_code": "S01.ATELIER",
           "source_level": "A2",
           "target_level": "A1",
           "competence_invariante": null,
@@ -214,7 +1673,8 @@
           "autonomy": "faible",
           "guidance": "fort",
           "trainer_preview_required": true,
-          "interactive": true
+          "interactive": true,
+          "needs_content_review": true
         }
       }
     },
@@ -230,6 +1690,8 @@
       "source": "Variante A1, corrigée le 2026-07-08 (consigne raccourcie, texte support ajouté ; remplace cv2:S01:variant:A1 needs_review)",
       "family_id": null,
       "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
       "contenu": {
         "items": [
           {
@@ -251,6 +1713,7 @@
         ],
         "metadata": {
           "session_code": "S01",
+          "activity_code": "S01.ATELIER",
           "source_level": "A2",
           "target_level": "A1",
           "competence_invariante": null,
@@ -261,7 +1724,8 @@
           "autonomy": "faible",
           "guidance": "fort",
           "trainer_preview_required": true,
-          "interactive": true
+          "interactive": true,
+          "needs_content_review": true
         }
       }
     },
@@ -277,6 +1741,8 @@
       "source": "Banque exercices, id 26254e2b-63e0-440e-ae49-9373ea5e9e5a (réutilisé tel quel) | Banque exercices, id f4fe558a-43dc-4768-b5bb-4d5393557e98 (réutilisé tel quel) | Banque exercices, id 19a3f6b2-58ae-428e-b9d8-fa6ffdfaec2f (réutilisé tel quel)",
       "family_id": null,
       "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
       "contenu": {
         "items": [
           {
@@ -322,6 +1788,7 @@
         ],
         "metadata": {
           "session_code": "S01",
+          "activity_code": "S01.STRUCTURES",
           "source_level": "A2",
           "target_level": "A1",
           "competence_invariante": null,
@@ -332,7 +1799,8 @@
           "autonomy": "faible",
           "guidance": "fort",
           "trainer_preview_required": true,
-          "interactive": true
+          "interactive": true,
+          "needs_content_review": true
         }
       }
     },
@@ -348,6 +1816,8 @@
       "source": "Inspiré banque exercices, id 59592128-eec4-4e5a-8786-59750f4f91e7 | Banque exercices, id 7509dee3 / e0a01c8e (réutilisés)",
       "family_id": null,
       "extension_of_family_id": "S01_CO_ACCUEIL_01",
+      "civic_content": false,
+      "civic_fact_ids": [],
       "contenu": {
         "items": [
           {
@@ -363,6 +1833,7 @@
         ],
         "metadata": {
           "session_code": "S01",
+          "activity_code": "S01.PRODUCTION",
           "source_level": "A2",
           "target_level": "A1",
           "competence_invariante": null,
@@ -373,7 +1844,8 @@
           "autonomy": "faible",
           "guidance": "fort",
           "trainer_preview_required": true,
-          "interactive": true
+          "interactive": true,
+          "needs_content_review": false
         }
       }
     },
@@ -389,6 +1861,8 @@
       "source": "S01-QCM-TCF-v3",
       "family_id": "S01_CO_ACCUEIL_01",
       "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
       "contenu": {
         "items": [
           {
@@ -503,6 +1977,7 @@
         ],
         "metadata": {
           "session_code": "S01",
+          "activity_code": "S01.CO",
           "source_level": "A2",
           "target_level": "A2",
           "competence_invariante": "CO",
@@ -513,7 +1988,159 @@
           "autonomy": "moyenne",
           "guidance": "moyen",
           "trainer_preview_required": true,
-          "interactive": true
+          "interactive": true,
+          "needs_content_review": false
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:co-comprehension:A2",
+      "titre": "Vingt questions sur le dialogue",
+      "consigne": "Répondez en une phrase courte, d'après le dialogue.",
+      "competence": "CO",
+      "format": "texte_lacunaire",
+      "niveau_vise": "A2",
+      "difficulte": 4,
+      "duree_limite_secondes": 600,
+      "source": "S01-CO-master-v3",
+      "family_id": "S01_CO_ACCUEIL_01",
+      "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
+      "contenu": {
+        "items": [
+          {
+            "question": "Qui sont les deux personnes qui parlent ?",
+            "bonne_reponse": "Awa Diallo (apprenante) et Mme Rossi (formatrice)",
+            "explication": "Compréhension globale"
+          },
+          {
+            "question": "À votre avis, à quel moment de la formation se passe cette scène ?",
+            "bonne_reponse": "Le premier jour",
+            "explication": "Compréhension globale"
+          },
+          {
+            "question": "Quel est l'objectif principal d'Awa ?",
+            "bonne_reponse": "Obtenir sa carte de séjour pluriannuelle",
+            "explication": "Compréhension globale"
+          },
+          {
+            "question": "Combien d'heures dure le parcours d'Awa ?",
+            "bonne_reponse": "80 heures",
+            "explication": "Repérage d'information"
+          },
+          {
+            "question": "Combien de séances va-t-elle suivre ?",
+            "bonne_reponse": "25 séances",
+            "explication": "Repérage d'information"
+          },
+          {
+            "question": "Combien de temps dure chaque séance ?",
+            "bonne_reponse": "3 heures",
+            "explication": "Repérage d'information"
+          },
+          {
+            "question": "À quel rythme ont lieu les séances ?",
+            "bonne_reponse": "Une par semaine",
+            "explication": "Repérage d'information"
+          },
+          {
+            "question": "Après combien d'heures a lieu la première évaluation (E1) ?",
+            "bonne_reponse": "50 heures",
+            "explication": "Repérage d'information"
+          },
+          {
+            "question": "Que signifie le mot « parcours » dans le dialogue ?",
+            "bonne_reponse": "L'ensemble du chemin de formation à suivre",
+            "explication": "Lexique"
+          },
+          {
+            "question": "Que veut dire « épeler » son nom ?",
+            "bonne_reponse": "Dire chaque lettre du nom une par une",
+            "explication": "Lexique"
+          },
+          {
+            "question": "Awa connaît déjà bien la différence entre droit, devoir et règle.",
+            "bonne_reponse": "Faux (« Pas très bien, madame »)",
+            "explication": "Vrai/Faux"
+          },
+          {
+            "question": "Le parcours couvre cinq thèmes sur la vie en France.",
+            "bonne_reponse": "Vrai",
+            "explication": "Vrai/Faux"
+          },
+          {
+            "question": "Il y a une seule évaluation à la fin du parcours.",
+            "bonne_reponse": "Faux — il y en a deux (E1 et E2)",
+            "explication": "Vrai/Faux"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.CO",
+          "source_level": "A2",
+          "target_level": "A2",
+          "competence_invariante": "CO",
+          "cognitive_operations": [
+            "extraire",
+            "reformuler"
+          ],
+          "autonomy": "moyenne",
+          "guidance": "moyen",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": false
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:co-approfondissement:A2",
+      "titre": "Approfondir : reformuler et justifier",
+      "consigne": "Répondez avec vos propres mots, en une ou deux phrases par question.",
+      "competence": "CO",
+      "format": "production_ecrite",
+      "niveau_vise": "A2",
+      "difficulte": 4,
+      "duree_limite_secondes": 480,
+      "source": "S01-CO-master-v3",
+      "family_id": "S01_CO_ACCUEIL_01",
+      "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
+      "contenu": {
+        "items": [
+          {
+            "question": "Reformulez avec vos mots ce qu'est un « droit » selon Mme Rossi.",
+            "bonne_reponse": "Quelque chose qu'on peut demander (ex. droit à la santé)"
+          },
+          {
+            "question": "Reformulez avec vos mots ce qu'est un « devoir » selon Mme Rossi.",
+            "bonne_reponse": "Quelque chose qu'on doit faire (ex. respecter la loi)"
+          },
+          {
+            "question": "Reformulez ce qu'est une « règle », avec l'exemple donné.",
+            "bonne_reponse": "Une consigne précise (ex. arriver à l'heure)"
+          },
+          {
+            "question": "Pourquoi Mme Rossi demande-t-elle à Awa d'épeler son nom ?",
+            "bonne_reponse": "Pour bien noter l'orthographe exacte — important dans les démarches administratives"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.CO",
+          "source_level": "A2",
+          "target_level": "A2",
+          "competence_invariante": "CO",
+          "cognitive_operations": [
+            "extraire",
+            "reformuler"
+          ],
+          "autonomy": "moyenne",
+          "guidance": "moyen",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": false
         }
       }
     },
@@ -529,6 +2156,8 @@
       "source": "Banque exercices, id afd658af (réutilisé tel quel)",
       "family_id": null,
       "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
       "contenu": {
         "items": [
           {
@@ -558,6 +2187,7 @@
         ],
         "metadata": {
           "session_code": "S01",
+          "activity_code": "S01.ATELIER",
           "source_level": "A2",
           "target_level": "A2",
           "competence_invariante": null,
@@ -568,7 +2198,8 @@
           "autonomy": "moyenne",
           "guidance": "moyen",
           "trainer_preview_required": true,
-          "interactive": true
+          "interactive": true,
+          "needs_content_review": true
         }
       }
     },
@@ -584,6 +2215,8 @@
       "source": "Banque exercices, id 95f4746e (réutilisé tel quel, sélection de 4 questions sur 8)",
       "family_id": null,
       "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
       "contenu": {
         "items": [
           {
@@ -624,6 +2257,7 @@
         ],
         "metadata": {
           "session_code": "S01",
+          "activity_code": "S01.ATELIER",
           "source_level": "A2",
           "target_level": "A2",
           "competence_invariante": null,
@@ -634,7 +2268,8 @@
           "autonomy": "moyenne",
           "guidance": "moyen",
           "trainer_preview_required": true,
-          "interactive": true
+          "interactive": true,
+          "needs_content_review": true
         }
       }
     },
@@ -650,6 +2285,8 @@
       "source": "Variante A2, recréée le 2026-07-08 (remplace l'original rejeté : qcm_no_options)",
       "family_id": null,
       "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
       "contenu": {
         "items": [
           {
@@ -664,6 +2301,7 @@
         ],
         "metadata": {
           "session_code": "S01",
+          "activity_code": "S01.ATELIER",
           "source_level": "A2",
           "target_level": "A2",
           "competence_invariante": null,
@@ -674,7 +2312,8 @@
           "autonomy": "moyenne",
           "guidance": "moyen",
           "trainer_preview_required": true,
-          "interactive": true
+          "interactive": true,
+          "needs_content_review": true
         }
       }
     },
@@ -690,6 +2329,8 @@
       "source": "Banque exercices, id 475e1e27-d7d0-4ecd-b003-b5b84537d530 (réutilisé tel quel) | Banque exercices, id 2a162e99-ea0d-4eda-ac92-e9a5149ec2da (réutilisé tel quel)",
       "family_id": null,
       "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
       "contenu": {
         "items": [
           {
@@ -708,13 +2349,29 @@
             "explication": "Adjectifs possessifs (identité/papiers)"
           },
           {
-            "question": "Bonjour, je (1)________ Thomas Martin. Je (2)________ boulanger. J'(3)________ à Lyon. J'ai 34 (4)________.",
+            "question": "Bonjour, je (1)________ Thomas Martin. Je (2)________ boulanger. J'(3)________ à Lyon. J'ai 34 (4)________. (trou 1 sur 4)",
             "bonne_reponse": "m'appelle",
+            "explication": "Structure « je m'appelle / je suis / j'habite »"
+          },
+          {
+            "question": "Bonjour, je (1)________ Thomas Martin. Je (2)________ boulanger. J'(3)________ à Lyon. J'ai 34 (4)________. (trou 2 sur 4)",
+            "bonne_reponse": "suis",
+            "explication": "Structure « je m'appelle / je suis / j'habite »"
+          },
+          {
+            "question": "Bonjour, je (1)________ Thomas Martin. Je (2)________ boulanger. J'(3)________ à Lyon. J'ai 34 (4)________. (trou 3 sur 4)",
+            "bonne_reponse": "habite",
+            "explication": "Structure « je m'appelle / je suis / j'habite »"
+          },
+          {
+            "question": "Bonjour, je (1)________ Thomas Martin. Je (2)________ boulanger. J'(3)________ à Lyon. J'ai 34 (4)________. (trou 4 sur 4)",
+            "bonne_reponse": "ans",
             "explication": "Structure « je m'appelle / je suis / j'habite »"
           }
         ],
         "metadata": {
           "session_code": "S01",
+          "activity_code": "S01.STRUCTURES",
           "source_level": "A2",
           "target_level": "A2",
           "competence_invariante": null,
@@ -725,7 +2382,8 @@
           "autonomy": "moyenne",
           "guidance": "moyen",
           "trainer_preview_required": true,
-          "interactive": true
+          "interactive": true,
+          "needs_content_review": true
         }
       }
     },
@@ -738,11 +2396,23 @@
       "niveau_vise": "A2",
       "difficulte": 4,
       "duree_limite_secondes": 480,
-      "source": "Inspiré banque exercices, id 67dab702-654c-431c-bc6c-367be1b4e874 (sous-questions 1-3) | Inspiré pedagogical_activities, id GEF_A1_p23_ex11_parole_groupe",
+      "source": "Inspiré banque exercices, id 59592128-eec4-4e5a-8786-59750f4f91e7 | Banque exercices, id 7509dee3 / e0a01c8e (réutilisés) | Inspiré banque exercices, id 67dab702-654c-431c-bc6c-367be1b4e874 (sous-questions 1-3) | Inspiré pedagogical_activities, id GEF_A1_p23_ex11_parole_groupe",
       "family_id": null,
       "extension_of_family_id": "S01_CO_ACCUEIL_01",
+      "civic_content": false,
+      "civic_fact_ids": [],
       "contenu": {
         "items": [
+          {
+            "question": "Dites votre nom et votre ville en une phrase.",
+            "bonne_reponse": "",
+            "explication": "Nom + ville énoncés clairement, phrase simple correcte."
+          },
+          {
+            "question": "Épelez votre nom de famille lettre par lettre.",
+            "bonne_reponse": "",
+            "explication": "Épellation correcte, débit compréhensible."
+          },
           {
             "question": "Présentez-vous : nom, nationalité/origine, âge.",
             "bonne_reponse": "",
@@ -756,6 +2426,7 @@
         ],
         "metadata": {
           "session_code": "S01",
+          "activity_code": "S01.PRODUCTION",
           "source_level": "A2",
           "target_level": "A2",
           "competence_invariante": null,
@@ -766,7 +2437,8 @@
           "autonomy": "moyenne",
           "guidance": "moyen",
           "trainer_preview_required": true,
-          "interactive": true
+          "interactive": true,
+          "needs_content_review": false
         }
       }
     },
@@ -782,8 +2454,22 @@
       "source": "S01-QCM-TCF-v3",
       "family_id": "S01_CO_ACCUEIL_01",
       "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
       "contenu": {
         "items": [
+          {
+            "question": "Comment s'appelle l'apprenante du dialogue ?",
+            "options": [
+              "Awa Diallo",
+              "Awa Rossi",
+              "Fatou Diallo",
+              "Awa Camara"
+            ],
+            "bonne_reponse": "Awa Diallo",
+            "explication": "Elle se présente : « Je m'appelle Awa. Awa Diallo. »",
+            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+          },
           {
             "question": "Quel est l'objectif administratif d'Awa ?",
             "options": [
@@ -794,6 +2480,42 @@
             ],
             "bonne_reponse": "La carte de séjour pluriannuelle",
             "explication": "« Je voudrais avoir ma carte de séjour pluriannuelle. »",
+            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+          },
+          {
+            "question": "Combien d'heures dure le parcours d'Awa ?",
+            "options": [
+              "50 heures",
+              "80 heures",
+              "100 heures",
+              "120 heures"
+            ],
+            "bonne_reponse": "80 heures",
+            "explication": "« Vous allez suivre un parcours de quatre-vingts heures. »",
+            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+          },
+          {
+            "question": "Combien de séances collectives sont prévues ?",
+            "options": [
+              "18",
+              "25",
+              "31",
+              "37"
+            ],
+            "bonne_reponse": "25",
+            "explication": "« réparti sur vingt-cinq séances de trois heures »",
+            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+          },
+          {
+            "question": "Combien de temps dure chaque séance ?",
+            "options": [
+              "2 heures",
+              "3 heures",
+              "4 heures",
+              "5 heures"
+            ],
+            "bonne_reponse": "3 heures",
+            "explication": "« vingt-cinq séances de trois heures »",
             "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
           },
           {
@@ -858,6 +2580,7 @@
         ],
         "metadata": {
           "session_code": "S01",
+          "activity_code": "S01.CO",
           "source_level": "A2",
           "target_level": "B1",
           "competence_invariante": "CO",
@@ -868,7 +2591,163 @@
           "autonomy": "forte",
           "guidance": "faible",
           "trainer_preview_required": true,
-          "interactive": true
+          "interactive": true,
+          "needs_content_review": false
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:co-comprehension:B1",
+      "titre": "Vingt questions sur le dialogue",
+      "consigne": "Répondez en une phrase courte, d'après le dialogue.",
+      "competence": "CO",
+      "format": "texte_lacunaire",
+      "niveau_vise": "B1",
+      "difficulte": 6,
+      "duree_limite_secondes": 600,
+      "source": "S01-CO-master-v3",
+      "family_id": "S01_CO_ACCUEIL_01",
+      "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
+      "contenu": {
+        "items": [
+          {
+            "question": "Qui sont les deux personnes qui parlent ?",
+            "bonne_reponse": "Awa Diallo (apprenante) et Mme Rossi (formatrice)",
+            "explication": "Compréhension globale"
+          },
+          {
+            "question": "À votre avis, à quel moment de la formation se passe cette scène ?",
+            "bonne_reponse": "Le premier jour",
+            "explication": "Compréhension globale"
+          },
+          {
+            "question": "Quel est l'objectif principal d'Awa ?",
+            "bonne_reponse": "Obtenir sa carte de séjour pluriannuelle",
+            "explication": "Compréhension globale"
+          },
+          {
+            "question": "Combien d'heures dure le parcours d'Awa ?",
+            "bonne_reponse": "80 heures",
+            "explication": "Repérage d'information"
+          },
+          {
+            "question": "Combien de séances va-t-elle suivre ?",
+            "bonne_reponse": "25 séances",
+            "explication": "Repérage d'information"
+          },
+          {
+            "question": "Combien de temps dure chaque séance ?",
+            "bonne_reponse": "3 heures",
+            "explication": "Repérage d'information"
+          },
+          {
+            "question": "À quel rythme ont lieu les séances ?",
+            "bonne_reponse": "Une par semaine",
+            "explication": "Repérage d'information"
+          },
+          {
+            "question": "Après combien d'heures a lieu la première évaluation (E1) ?",
+            "bonne_reponse": "50 heures",
+            "explication": "Repérage d'information"
+          },
+          {
+            "question": "Que signifie le mot « parcours » dans le dialogue ?",
+            "bonne_reponse": "L'ensemble du chemin de formation à suivre",
+            "explication": "Lexique"
+          },
+          {
+            "question": "Que veut dire « épeler » son nom ?",
+            "bonne_reponse": "Dire chaque lettre du nom une par une",
+            "explication": "Lexique"
+          },
+          {
+            "question": "Awa connaît déjà bien la différence entre droit, devoir et règle.",
+            "bonne_reponse": "Faux (« Pas très bien, madame »)",
+            "explication": "Vrai/Faux"
+          },
+          {
+            "question": "Le parcours couvre cinq thèmes sur la vie en France.",
+            "bonne_reponse": "Vrai",
+            "explication": "Vrai/Faux"
+          },
+          {
+            "question": "Il y a une seule évaluation à la fin du parcours.",
+            "bonne_reponse": "Faux — il y en a deux (E1 et E2)",
+            "explication": "Vrai/Faux"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.CO",
+          "source_level": "A2",
+          "target_level": "B1",
+          "competence_invariante": "CO",
+          "cognitive_operations": [
+            "relier",
+            "justifier"
+          ],
+          "autonomy": "forte",
+          "guidance": "faible",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": false
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:co-approfondissement:B1",
+      "titre": "Approfondir : reformuler et justifier",
+      "consigne": "Répondez avec vos propres mots, en une ou deux phrases par question.",
+      "competence": "CO",
+      "format": "production_ecrite",
+      "niveau_vise": "B1",
+      "difficulte": 6,
+      "duree_limite_secondes": 480,
+      "source": "S01-CO-master-v3",
+      "family_id": "S01_CO_ACCUEIL_01",
+      "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
+      "contenu": {
+        "items": [
+          {
+            "question": "Reformulez avec vos mots ce qu'est un « droit » selon Mme Rossi.",
+            "bonne_reponse": "Quelque chose qu'on peut demander (ex. droit à la santé)"
+          },
+          {
+            "question": "Reformulez avec vos mots ce qu'est un « devoir » selon Mme Rossi.",
+            "bonne_reponse": "Quelque chose qu'on doit faire (ex. respecter la loi)"
+          },
+          {
+            "question": "Reformulez ce qu'est une « règle », avec l'exemple donné.",
+            "bonne_reponse": "Une consigne précise (ex. arriver à l'heure)"
+          },
+          {
+            "question": "Pourquoi Mme Rossi demande-t-elle à Awa d'épeler son nom ?",
+            "bonne_reponse": "Pour bien noter l'orthographe exacte — important dans les démarches administratives"
+          },
+          {
+            "question": "À votre avis, pourquoi le parcours comprend-il deux évaluations plutôt qu'une seule ?",
+            "bonne_reponse": "Réponse ouverte (ex. mesurer la progression à mi-parcours puis valider l'ensemble)"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.CO",
+          "source_level": "A2",
+          "target_level": "B1",
+          "competence_invariante": "CO",
+          "cognitive_operations": [
+            "relier",
+            "justifier"
+          ],
+          "autonomy": "forte",
+          "guidance": "faible",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": false
         }
       }
     },
@@ -884,6 +2763,8 @@
       "source": "Créé à partir de support.faits (approfondissement présentation)",
       "family_id": null,
       "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
       "contenu": {
         "items": [
           {
@@ -907,6 +2788,7 @@
         ],
         "metadata": {
           "session_code": "S01",
+          "activity_code": "S01.ATELIER",
           "source_level": "A2",
           "target_level": "B1",
           "competence_invariante": null,
@@ -917,7 +2799,8 @@
           "autonomy": "forte",
           "guidance": "faible",
           "trainer_preview_required": true,
-          "interactive": true
+          "interactive": true,
+          "needs_content_review": true
         }
       }
     },
@@ -933,6 +2816,8 @@
       "source": "Variante B1, recréée le 2026-07-08 en compétence CE (remplace l'originale rejetée : format production_ecrite incompatible avec CE)",
       "family_id": null,
       "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
       "contenu": {
         "items": [
           {
@@ -965,6 +2850,7 @@
         ],
         "metadata": {
           "session_code": "S01",
+          "activity_code": "S01.ATELIER",
           "source_level": "A2",
           "target_level": "B1",
           "competence_invariante": null,
@@ -975,7 +2861,8 @@
           "autonomy": "forte",
           "guidance": "faible",
           "trainer_preview_required": true,
-          "interactive": true
+          "interactive": true,
+          "needs_content_review": true
         }
       }
     },
@@ -991,13 +2878,10 @@
       "source": "Créé (banque B1 pauvre sur ce point précis, cf. audit lot9) | Créé, inspiré de la structure du dialogue",
       "family_id": null,
       "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
       "contenu": {
         "items": [
-          {
-            "question": "Il est né en Algérie, il vit à Lyon. → C'est un Algérien qui habite à Lyon.",
-            "bonne_reponse": "(modèle)",
-            "explication": "Nationalité / pays-ville (« venir de » + « habiter à »)"
-          },
           {
             "question": "Elle est née au Sénégal, elle vit à Paris. → ?",
             "bonne_reponse": "C'est une Sénégalaise qui habite à Paris.",
@@ -1009,13 +2893,19 @@
             "explication": "Nationalité / pays-ville (« venir de » + « habiter à »)"
           },
           {
-            "question": "Awa a dit qu'elle ________ (s'appeler) Awa Diallo et qu'elle ________ (vouloir) sa carte de séjour.",
+            "question": "Awa a dit qu'elle ________ (s'appeler) Awa Diallo et qu'elle ________ (vouloir) sa carte de séjour. (trou 1 sur 2)",
             "bonne_reponse": "s'appelait",
+            "explication": "Discours rapporté simple (identité)"
+          },
+          {
+            "question": "Awa a dit qu'elle ________ (s'appeler) Awa Diallo et qu'elle ________ (vouloir) sa carte de séjour. (trou 2 sur 2)",
+            "bonne_reponse": "voulait",
             "explication": "Discours rapporté simple (identité)"
           }
         ],
         "metadata": {
           "session_code": "S01",
+          "activity_code": "S01.STRUCTURES",
           "source_level": "A2",
           "target_level": "B1",
           "competence_invariante": null,
@@ -1026,7 +2916,8 @@
           "autonomy": "forte",
           "guidance": "faible",
           "trainer_preview_required": true,
-          "interactive": true
+          "interactive": true,
+          "needs_content_review": true
         }
       }
     },
@@ -1039,11 +2930,33 @@
       "niveau_vise": "B1",
       "difficulte": 6,
       "duree_limite_secondes": 480,
-      "source": "Inspiré pedagogical_activities, id tcf_act1_se_presenter | Inspiré pedagogical_activities, id tcf_oral_guide_task1_act1",
+      "source": "Inspiré banque exercices, id 59592128-eec4-4e5a-8786-59750f4f91e7 | Banque exercices, id 7509dee3 / e0a01c8e (réutilisés) | Inspiré banque exercices, id 67dab702-654c-431c-bc6c-367be1b4e874 (sous-questions 1-3) | Inspiré pedagogical_activities, id GEF_A1_p23_ex11_parole_groupe | Inspiré pedagogical_activities, id tcf_act1_se_presenter | Inspiré pedagogical_activities, id tcf_oral_guide_task1_act1",
       "family_id": null,
       "extension_of_family_id": "S01_CO_ACCUEIL_01",
+      "civic_content": false,
+      "civic_fact_ids": [],
       "contenu": {
         "items": [
+          {
+            "question": "Dites votre nom et votre ville en une phrase.",
+            "bonne_reponse": "",
+            "explication": "Nom + ville énoncés clairement, phrase simple correcte."
+          },
+          {
+            "question": "Épelez votre nom de famille lettre par lettre.",
+            "bonne_reponse": "",
+            "explication": "Épellation correcte, débit compréhensible."
+          },
+          {
+            "question": "Présentez-vous : nom, nationalité/origine, âge.",
+            "bonne_reponse": "",
+            "explication": "Trois informations correctes, verbes conjugués correctement."
+          },
+          {
+            "question": "Présentez un camarade du groupe (nom, ville, nationalité).",
+            "bonne_reponse": "",
+            "explication": "Troisième personne correcte (« il/elle s'appelle... »)."
+          },
           {
             "question": "Présentez-vous en 1 minute : âge, origine, famille, étude ou travail.",
             "bonne_reponse": "",
@@ -1053,10 +2966,19 @@
             "question": "Décrivez votre parcours personnel et pourquoi vous suivez cette formation.",
             "bonne_reponse": "",
             "explication": "Structure avec au moins un exemple concret."
+          },
+          {
+            "question": "À votre tour : présentez-vous comme Awa (nom, objectif administratif).",
+            "bonne_reponse": "Réponse libre"
+          },
+          {
+            "question": "Imaginez une question supplémentaire qu'Awa pourrait poser à Mme Rossi sur le parcours.",
+            "bonne_reponse": "Réponse libre"
           }
         ],
         "metadata": {
           "session_code": "S01",
+          "activity_code": "S01.PRODUCTION",
           "source_level": "A2",
           "target_level": "B1",
           "competence_invariante": null,
@@ -1067,7 +2989,8 @@
           "autonomy": "forte",
           "guidance": "faible",
           "trainer_preview_required": true,
-          "interactive": true
+          "interactive": true,
+          "needs_content_review": false
         }
       }
     },
@@ -1083,8 +3006,22 @@
       "source": "S01-QCM-TCF-v3",
       "family_id": "S01_CO_ACCUEIL_01",
       "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
       "contenu": {
         "items": [
+          {
+            "question": "Comment s'appelle l'apprenante du dialogue ?",
+            "options": [
+              "Awa Diallo",
+              "Awa Rossi",
+              "Fatou Diallo",
+              "Awa Camara"
+            ],
+            "bonne_reponse": "Awa Diallo",
+            "explication": "Elle se présente : « Je m'appelle Awa. Awa Diallo. »",
+            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+          },
           {
             "question": "Quel est l'objectif administratif d'Awa ?",
             "options": [
@@ -1095,6 +3032,53 @@
             ],
             "bonne_reponse": "La carte de séjour pluriannuelle",
             "explication": "« Je voudrais avoir ma carte de séjour pluriannuelle. »",
+            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+          },
+          {
+            "question": "Combien d'heures dure le parcours d'Awa ?",
+            "options": [
+              "50 heures",
+              "80 heures",
+              "100 heures",
+              "120 heures"
+            ],
+            "bonne_reponse": "80 heures",
+            "explication": "« Vous allez suivre un parcours de quatre-vingts heures. »",
+            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+          },
+          {
+            "question": "Combien de séances collectives sont prévues ?",
+            "options": [
+              "18",
+              "25",
+              "31",
+              "37"
+            ],
+            "bonne_reponse": "25",
+            "explication": "« réparti sur vingt-cinq séances de trois heures »",
+            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+          },
+          {
+            "question": "Combien de temps dure chaque séance ?",
+            "options": [
+              "2 heures",
+              "3 heures",
+              "4 heures",
+              "5 heures"
+            ],
+            "bonne_reponse": "3 heures",
+            "explication": "« vingt-cinq séances de trois heures »",
+            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+          },
+          {
+            "question": "À quel rythme les séances ont-elles lieu ?",
+            "options": [
+              "Une par semaine",
+              "Deux par semaine",
+              "Une par mois"
+            ],
+            "bonne_reponse": "Une par semaine",
+            "explication": "« à raison d'une séance par semaine »",
             "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
           },
           {
@@ -1148,6 +3132,7 @@
         ],
         "metadata": {
           "session_code": "S01",
+          "activity_code": "S01.CO",
           "source_level": "A2",
           "target_level": "B2",
           "competence_invariante": "CO",
@@ -1158,7 +3143,163 @@
           "autonomy": "forte",
           "guidance": "minimal",
           "trainer_preview_required": true,
-          "interactive": true
+          "interactive": true,
+          "needs_content_review": false
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:co-comprehension:B2",
+      "titre": "Vingt questions sur le dialogue",
+      "consigne": "Répondez en une phrase courte, d'après le dialogue.",
+      "competence": "CO",
+      "format": "texte_lacunaire",
+      "niveau_vise": "B2",
+      "difficulte": 8,
+      "duree_limite_secondes": 600,
+      "source": "S01-CO-master-v3",
+      "family_id": "S01_CO_ACCUEIL_01",
+      "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
+      "contenu": {
+        "items": [
+          {
+            "question": "Qui sont les deux personnes qui parlent ?",
+            "bonne_reponse": "Awa Diallo (apprenante) et Mme Rossi (formatrice)",
+            "explication": "Compréhension globale"
+          },
+          {
+            "question": "À votre avis, à quel moment de la formation se passe cette scène ?",
+            "bonne_reponse": "Le premier jour",
+            "explication": "Compréhension globale"
+          },
+          {
+            "question": "Quel est l'objectif principal d'Awa ?",
+            "bonne_reponse": "Obtenir sa carte de séjour pluriannuelle",
+            "explication": "Compréhension globale"
+          },
+          {
+            "question": "Combien d'heures dure le parcours d'Awa ?",
+            "bonne_reponse": "80 heures",
+            "explication": "Repérage d'information"
+          },
+          {
+            "question": "Combien de séances va-t-elle suivre ?",
+            "bonne_reponse": "25 séances",
+            "explication": "Repérage d'information"
+          },
+          {
+            "question": "Combien de temps dure chaque séance ?",
+            "bonne_reponse": "3 heures",
+            "explication": "Repérage d'information"
+          },
+          {
+            "question": "À quel rythme ont lieu les séances ?",
+            "bonne_reponse": "Une par semaine",
+            "explication": "Repérage d'information"
+          },
+          {
+            "question": "Après combien d'heures a lieu la première évaluation (E1) ?",
+            "bonne_reponse": "50 heures",
+            "explication": "Repérage d'information"
+          },
+          {
+            "question": "Que signifie le mot « parcours » dans le dialogue ?",
+            "bonne_reponse": "L'ensemble du chemin de formation à suivre",
+            "explication": "Lexique"
+          },
+          {
+            "question": "Que veut dire « épeler » son nom ?",
+            "bonne_reponse": "Dire chaque lettre du nom une par une",
+            "explication": "Lexique"
+          },
+          {
+            "question": "Awa connaît déjà bien la différence entre droit, devoir et règle.",
+            "bonne_reponse": "Faux (« Pas très bien, madame »)",
+            "explication": "Vrai/Faux"
+          },
+          {
+            "question": "Le parcours couvre cinq thèmes sur la vie en France.",
+            "bonne_reponse": "Vrai",
+            "explication": "Vrai/Faux"
+          },
+          {
+            "question": "Il y a une seule évaluation à la fin du parcours.",
+            "bonne_reponse": "Faux — il y en a deux (E1 et E2)",
+            "explication": "Vrai/Faux"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.CO",
+          "source_level": "A2",
+          "target_level": "B2",
+          "competence_invariante": "CO",
+          "cognitive_operations": [
+            "interpréter",
+            "nuancer"
+          ],
+          "autonomy": "forte",
+          "guidance": "minimal",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": false
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:co-approfondissement:B2",
+      "titre": "Approfondir : reformuler et justifier",
+      "consigne": "Répondez avec vos propres mots, en une ou deux phrases par question.",
+      "competence": "CO",
+      "format": "production_ecrite",
+      "niveau_vise": "B2",
+      "difficulte": 8,
+      "duree_limite_secondes": 480,
+      "source": "S01-CO-master-v3",
+      "family_id": "S01_CO_ACCUEIL_01",
+      "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
+      "contenu": {
+        "items": [
+          {
+            "question": "Reformulez avec vos mots ce qu'est un « droit » selon Mme Rossi.",
+            "bonne_reponse": "Quelque chose qu'on peut demander (ex. droit à la santé)"
+          },
+          {
+            "question": "Reformulez avec vos mots ce qu'est un « devoir » selon Mme Rossi.",
+            "bonne_reponse": "Quelque chose qu'on doit faire (ex. respecter la loi)"
+          },
+          {
+            "question": "Reformulez ce qu'est une « règle », avec l'exemple donné.",
+            "bonne_reponse": "Une consigne précise (ex. arriver à l'heure)"
+          },
+          {
+            "question": "Pourquoi Mme Rossi demande-t-elle à Awa d'épeler son nom ?",
+            "bonne_reponse": "Pour bien noter l'orthographe exacte — important dans les démarches administratives"
+          },
+          {
+            "question": "À votre avis, pourquoi le parcours comprend-il deux évaluations plutôt qu'une seule ?",
+            "bonne_reponse": "Réponse ouverte (ex. mesurer la progression à mi-parcours puis valider l'ensemble)"
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.CO",
+          "source_level": "A2",
+          "target_level": "B2",
+          "competence_invariante": "CO",
+          "cognitive_operations": [
+            "interpréter",
+            "nuancer"
+          ],
+          "autonomy": "forte",
+          "guidance": "minimal",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": false
         }
       }
     },
@@ -1174,6 +3315,8 @@
       "source": "Variante B2, recréée le 2026-07-08 en compétence CE (remplace l'originale rejetée : même cause que B1)",
       "family_id": null,
       "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
       "contenu": {
         "items": [
           {
@@ -1197,6 +3340,7 @@
         ],
         "metadata": {
           "session_code": "S01",
+          "activity_code": "S01.ATELIER",
           "source_level": "A2",
           "target_level": "B2",
           "competence_invariante": null,
@@ -1207,7 +3351,8 @@
           "autonomy": "forte",
           "guidance": "minimal",
           "trainer_preview_required": true,
-          "interactive": true
+          "interactive": true,
+          "needs_content_review": true
         }
       }
     },
@@ -1223,11 +3368,18 @@
       "source": "Créé | Créé",
       "family_id": null,
       "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
       "contenu": {
         "items": [
           {
-            "question": "Vous pouvez demander l'accès aux soins. → Vous avez ___ à ___.",
+            "question": "Vous pouvez demander l'accès aux soins. → Vous avez ___ à ___. (trou 1 sur 2)",
             "bonne_reponse": "le droit",
+            "explication": "Nominalisation droits/devoirs"
+          },
+          {
+            "question": "Vous pouvez demander l'accès aux soins. → Vous avez ___ à ___. (trou 2 sur 2)",
+            "bonne_reponse": "l'accès aux soins",
             "explication": "Nominalisation droits/devoirs"
           },
           {
@@ -1238,6 +3390,7 @@
         ],
         "metadata": {
           "session_code": "S01",
+          "activity_code": "S01.STRUCTURES",
           "source_level": "A2",
           "target_level": "B2",
           "competence_invariante": null,
@@ -1248,7 +3401,8 @@
           "autonomy": "forte",
           "guidance": "minimal",
           "trainer_preview_required": true,
-          "interactive": true
+          "interactive": true,
+          "needs_content_review": true
         }
       }
     },
@@ -1261,11 +3415,43 @@
       "niveau_vise": "B2",
       "difficulte": 8,
       "duree_limite_secondes": 480,
-      "source": "Inspiré pedagogical_activities, id sim_glob_phase2_identites | Créé (lien direct avec le civique de S01)",
+      "source": "Inspiré banque exercices, id 59592128-eec4-4e5a-8786-59750f4f91e7 | Banque exercices, id 7509dee3 / e0a01c8e (réutilisés) | Inspiré banque exercices, id 67dab702-654c-431c-bc6c-367be1b4e874 (sous-questions 1-3) | Inspiré pedagogical_activities, id GEF_A1_p23_ex11_parole_groupe | Inspiré pedagogical_activities, id tcf_act1_se_presenter | Inspiré pedagogical_activities, id tcf_oral_guide_task1_act1 | Inspiré pedagogical_activities, id sim_glob_phase2_identites | Créé (lien direct avec le civique de S01)",
       "family_id": null,
       "extension_of_family_id": "S01_CO_ACCUEIL_01",
+      "civic_content": false,
+      "civic_fact_ids": [],
       "contenu": {
         "items": [
+          {
+            "question": "Dites votre nom et votre ville en une phrase.",
+            "bonne_reponse": "",
+            "explication": "Nom + ville énoncés clairement, phrase simple correcte."
+          },
+          {
+            "question": "Épelez votre nom de famille lettre par lettre.",
+            "bonne_reponse": "",
+            "explication": "Épellation correcte, débit compréhensible."
+          },
+          {
+            "question": "Présentez-vous : nom, nationalité/origine, âge.",
+            "bonne_reponse": "",
+            "explication": "Trois informations correctes, verbes conjugués correctement."
+          },
+          {
+            "question": "Présentez un camarade du groupe (nom, ville, nationalité).",
+            "bonne_reponse": "",
+            "explication": "Troisième personne correcte (« il/elle s'appelle... »)."
+          },
+          {
+            "question": "Présentez-vous en 1 minute : âge, origine, famille, étude ou travail.",
+            "bonne_reponse": "",
+            "explication": "Enchaînement fluide, connecteurs simples (et, mais, donc)."
+          },
+          {
+            "question": "Décrivez votre parcours personnel et pourquoi vous suivez cette formation.",
+            "bonne_reponse": "",
+            "explication": "Structure avec au moins un exemple concret."
+          },
           {
             "question": "Présentez-vous en détail : identité, parcours de vie, un trait de personnalité, un projet.",
             "bonne_reponse": "",
@@ -1275,10 +3461,19 @@
             "question": "Argumentez : pourquoi est-il utile de bien distinguer droit, devoir et règle dès le début d'un parcours d'intégration ?",
             "bonne_reponse": "",
             "explication": "Argumentation structurée, au moins un exemple personnel."
+          },
+          {
+            "question": "À votre tour : présentez-vous comme Awa (nom, objectif administratif).",
+            "bonne_reponse": "Réponse libre"
+          },
+          {
+            "question": "Imaginez une question supplémentaire qu'Awa pourrait poser à Mme Rossi sur le parcours.",
+            "bonne_reponse": "Réponse libre"
           }
         ],
         "metadata": {
           "session_code": "S01",
+          "activity_code": "S01.PRODUCTION",
           "source_level": "A2",
           "target_level": "B2",
           "competence_invariante": null,
@@ -1289,22 +3484,31 @@
           "autonomy": "forte",
           "guidance": "minimal",
           "trainer_preview_required": true,
-          "interactive": true
+          "interactive": true,
+          "needs_content_review": false
         }
       }
     },
     {
-      "metadata_code": "cv2:S01:v3:civique:A2",
+      "metadata_code": "cv2:S01:v3:civique:A1",
       "titre": "Droits, devoirs et règles",
       "consigne": "Lisez chaque situation puis choisissez la réponse directement justifiée par la règle présentée.",
       "competence": "CE",
       "format": "qcm",
-      "niveau_vise": "A2",
-      "difficulte": 4,
+      "niveau_vise": "A1",
+      "difficulte": 2,
       "duree_limite_secondes": 600,
       "source": "S01-QCM-civique-v3",
       "family_id": null,
       "extension_of_family_id": null,
+      "civic_content": true,
+      "civic_fact_ids": [
+        "cv2:S01:civic:0",
+        "cv2:S01:civic:1",
+        "cv2:S01:civic:2",
+        "cv2:S01:civic:3",
+        "cv2:S01:civic:4"
+      ],
       "contenu": {
         "items": [
           {
@@ -1410,6 +3614,148 @@
         ],
         "metadata": {
           "session_code": "S01",
+          "activity_code": "S01.CIVIQUE",
+          "source_level": "A2",
+          "target_level": "A1",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "repérer",
+            "associer"
+          ],
+          "autonomy": "faible",
+          "guidance": "fort",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": false
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:civique:A2",
+      "titre": "Droits, devoirs et règles",
+      "consigne": "Lisez chaque situation puis choisissez la réponse directement justifiée par la règle présentée.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 4,
+      "duree_limite_secondes": 600,
+      "source": "S01-QCM-civique-v3",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "civic_content": true,
+      "civic_fact_ids": [
+        "cv2:S01:civic:0",
+        "cv2:S01:civic:1",
+        "cv2:S01:civic:2",
+        "cv2:S01:civic:3",
+        "cv2:S01:civic:4"
+      ],
+      "contenu": {
+        "items": [
+          {
+            "question": "Respecter le règlement intérieur d'un centre de formation est avant tout :",
+            "options": [
+              "Un droit",
+              "Un devoir",
+              "Une démarche"
+            ],
+            "bonne_reponse": "Un devoir",
+            "explication": "C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option."
+          },
+          {
+            "question": "Le droit à la santé signifie que vous pouvez :",
+            "options": [
+              "Demander l'accès aux soins",
+              "Être obligé de vous soigner",
+              "Payer une amende"
+            ],
+            "bonne_reponse": "Demander l'accès aux soins",
+            "explication": "Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation."
+          },
+          {
+            "question": "Un formateur demande à un apprenant d'arriver à l'heure à chaque séance. Il s'agit :",
+            "options": [
+              "D'une règle du centre de formation",
+              "D'un droit de l'apprenant",
+              "D'une loi nationale"
+            ],
+            "bonne_reponse": "D'une règle du centre de formation",
+            "explication": "Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale."
+          },
+          {
+            "question": "Le parcours vers la carte de séjour pluriannuelle dure :",
+            "options": [
+              "50 heures",
+              "80 heures",
+              "120 heures"
+            ],
+            "bonne_reponse": "80 heures",
+            "explication": "Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue."
+          },
+          {
+            "question": "Combien de thèmes civiques officiels structurent le parcours ?",
+            "options": [
+              "Trois",
+              "Cinq",
+              "Sept"
+            ],
+            "bonne_reponse": "Cinq",
+            "explication": "Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société)."
+          },
+          {
+            "question": "Un devoir, c'est :",
+            "options": [
+              "Une obligation à respecter",
+              "Un choix libre sans conséquence",
+              "Un avantage optionnel"
+            ],
+            "bonne_reponse": "Une obligation à respecter",
+            "explication": "Un devoir engage la personne à agir, contrairement à un simple choix."
+          },
+          {
+            "question": "L'évaluation finale (E2) a lieu :",
+            "options": [
+              "Après 25 heures",
+              "Après 50 heures",
+              "À la fin des 80 heures"
+            ],
+            "bonne_reponse": "À la fin des 80 heures",
+            "explication": "E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet."
+          },
+          {
+            "question": "Pourquoi le parcours comprend-il une évaluation intermédiaire (E1) ?",
+            "options": [
+              "Pour sanctionner les absences",
+              "Pour mesurer la progression à mi-parcours",
+              "Pour remplacer l'évaluation finale"
+            ],
+            "bonne_reponse": "Pour mesurer la progression à mi-parcours",
+            "explication": "E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant."
+          },
+          {
+            "question": "Une règle se distingue d'un devoir car :",
+            "options": [
+              "Une règle est propre à un lieu précis, un devoir est une obligation plus générale",
+              "Une règle est facultative",
+              "Un devoir n'a aucune conséquence"
+            ],
+            "bonne_reponse": "Une règle est propre à un lieu précis, un devoir est une obligation plus générale",
+            "explication": "Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général."
+          },
+          {
+            "question": "Combien d'évaluations rythment le parcours de 80 heures ?",
+            "options": [
+              "Une seule",
+              "Deux (E1 et E2)",
+              "Quatre"
+            ],
+            "bonne_reponse": "Deux (E1 et E2)",
+            "explication": "Le dialogue mentionne explicitement deux évaluations distinctes."
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.CIVIQUE",
           "source_level": "A2",
           "target_level": "A2",
           "competence_invariante": null,
@@ -1420,7 +3766,290 @@
           "autonomy": "moyenne",
           "guidance": "moyen",
           "trainer_preview_required": true,
-          "interactive": true
+          "interactive": true,
+          "needs_content_review": false
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:civique:B1",
+      "titre": "Droits, devoirs et règles",
+      "consigne": "Lisez chaque situation puis choisissez la réponse directement justifiée par la règle présentée.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "B1",
+      "difficulte": 6,
+      "duree_limite_secondes": 600,
+      "source": "S01-QCM-civique-v3",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "civic_content": true,
+      "civic_fact_ids": [
+        "cv2:S01:civic:0",
+        "cv2:S01:civic:1",
+        "cv2:S01:civic:2",
+        "cv2:S01:civic:3",
+        "cv2:S01:civic:4"
+      ],
+      "contenu": {
+        "items": [
+          {
+            "question": "Respecter le règlement intérieur d'un centre de formation est avant tout :",
+            "options": [
+              "Un droit",
+              "Un devoir",
+              "Une démarche"
+            ],
+            "bonne_reponse": "Un devoir",
+            "explication": "C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option."
+          },
+          {
+            "question": "Le droit à la santé signifie que vous pouvez :",
+            "options": [
+              "Demander l'accès aux soins",
+              "Être obligé de vous soigner",
+              "Payer une amende"
+            ],
+            "bonne_reponse": "Demander l'accès aux soins",
+            "explication": "Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation."
+          },
+          {
+            "question": "Un formateur demande à un apprenant d'arriver à l'heure à chaque séance. Il s'agit :",
+            "options": [
+              "D'une règle du centre de formation",
+              "D'un droit de l'apprenant",
+              "D'une loi nationale"
+            ],
+            "bonne_reponse": "D'une règle du centre de formation",
+            "explication": "Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale."
+          },
+          {
+            "question": "Le parcours vers la carte de séjour pluriannuelle dure :",
+            "options": [
+              "50 heures",
+              "80 heures",
+              "120 heures"
+            ],
+            "bonne_reponse": "80 heures",
+            "explication": "Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue."
+          },
+          {
+            "question": "Combien de thèmes civiques officiels structurent le parcours ?",
+            "options": [
+              "Trois",
+              "Cinq",
+              "Sept"
+            ],
+            "bonne_reponse": "Cinq",
+            "explication": "Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société)."
+          },
+          {
+            "question": "Un devoir, c'est :",
+            "options": [
+              "Une obligation à respecter",
+              "Un choix libre sans conséquence",
+              "Un avantage optionnel"
+            ],
+            "bonne_reponse": "Une obligation à respecter",
+            "explication": "Un devoir engage la personne à agir, contrairement à un simple choix."
+          },
+          {
+            "question": "L'évaluation finale (E2) a lieu :",
+            "options": [
+              "Après 25 heures",
+              "Après 50 heures",
+              "À la fin des 80 heures"
+            ],
+            "bonne_reponse": "À la fin des 80 heures",
+            "explication": "E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet."
+          },
+          {
+            "question": "Pourquoi le parcours comprend-il une évaluation intermédiaire (E1) ?",
+            "options": [
+              "Pour sanctionner les absences",
+              "Pour mesurer la progression à mi-parcours",
+              "Pour remplacer l'évaluation finale"
+            ],
+            "bonne_reponse": "Pour mesurer la progression à mi-parcours",
+            "explication": "E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant."
+          },
+          {
+            "question": "Une règle se distingue d'un devoir car :",
+            "options": [
+              "Une règle est propre à un lieu précis, un devoir est une obligation plus générale",
+              "Une règle est facultative",
+              "Un devoir n'a aucune conséquence"
+            ],
+            "bonne_reponse": "Une règle est propre à un lieu précis, un devoir est une obligation plus générale",
+            "explication": "Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général."
+          },
+          {
+            "question": "Combien d'évaluations rythment le parcours de 80 heures ?",
+            "options": [
+              "Une seule",
+              "Deux (E1 et E2)",
+              "Quatre"
+            ],
+            "bonne_reponse": "Deux (E1 et E2)",
+            "explication": "Le dialogue mentionne explicitement deux évaluations distinctes."
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.CIVIQUE",
+          "source_level": "A2",
+          "target_level": "B1",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "relier",
+            "justifier"
+          ],
+          "autonomy": "forte",
+          "guidance": "faible",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": false
+        }
+      }
+    },
+    {
+      "metadata_code": "cv2:S01:v3:civique:B2",
+      "titre": "Droits, devoirs et règles",
+      "consigne": "Lisez chaque situation puis choisissez la réponse directement justifiée par la règle présentée.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "B2",
+      "difficulte": 8,
+      "duree_limite_secondes": 600,
+      "source": "S01-QCM-civique-v3",
+      "family_id": null,
+      "extension_of_family_id": null,
+      "civic_content": true,
+      "civic_fact_ids": [
+        "cv2:S01:civic:0",
+        "cv2:S01:civic:1",
+        "cv2:S01:civic:2",
+        "cv2:S01:civic:3",
+        "cv2:S01:civic:4"
+      ],
+      "contenu": {
+        "items": [
+          {
+            "question": "Respecter le règlement intérieur d'un centre de formation est avant tout :",
+            "options": [
+              "Un droit",
+              "Un devoir",
+              "Une démarche"
+            ],
+            "bonne_reponse": "Un devoir",
+            "explication": "C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option."
+          },
+          {
+            "question": "Le droit à la santé signifie que vous pouvez :",
+            "options": [
+              "Demander l'accès aux soins",
+              "Être obligé de vous soigner",
+              "Payer une amende"
+            ],
+            "bonne_reponse": "Demander l'accès aux soins",
+            "explication": "Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation."
+          },
+          {
+            "question": "Un formateur demande à un apprenant d'arriver à l'heure à chaque séance. Il s'agit :",
+            "options": [
+              "D'une règle du centre de formation",
+              "D'un droit de l'apprenant",
+              "D'une loi nationale"
+            ],
+            "bonne_reponse": "D'une règle du centre de formation",
+            "explication": "Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale."
+          },
+          {
+            "question": "Le parcours vers la carte de séjour pluriannuelle dure :",
+            "options": [
+              "50 heures",
+              "80 heures",
+              "120 heures"
+            ],
+            "bonne_reponse": "80 heures",
+            "explication": "Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue."
+          },
+          {
+            "question": "Combien de thèmes civiques officiels structurent le parcours ?",
+            "options": [
+              "Trois",
+              "Cinq",
+              "Sept"
+            ],
+            "bonne_reponse": "Cinq",
+            "explication": "Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société)."
+          },
+          {
+            "question": "Un devoir, c'est :",
+            "options": [
+              "Une obligation à respecter",
+              "Un choix libre sans conséquence",
+              "Un avantage optionnel"
+            ],
+            "bonne_reponse": "Une obligation à respecter",
+            "explication": "Un devoir engage la personne à agir, contrairement à un simple choix."
+          },
+          {
+            "question": "L'évaluation finale (E2) a lieu :",
+            "options": [
+              "Après 25 heures",
+              "Après 50 heures",
+              "À la fin des 80 heures"
+            ],
+            "bonne_reponse": "À la fin des 80 heures",
+            "explication": "E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet."
+          },
+          {
+            "question": "Pourquoi le parcours comprend-il une évaluation intermédiaire (E1) ?",
+            "options": [
+              "Pour sanctionner les absences",
+              "Pour mesurer la progression à mi-parcours",
+              "Pour remplacer l'évaluation finale"
+            ],
+            "bonne_reponse": "Pour mesurer la progression à mi-parcours",
+            "explication": "E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant."
+          },
+          {
+            "question": "Une règle se distingue d'un devoir car :",
+            "options": [
+              "Une règle est propre à un lieu précis, un devoir est une obligation plus générale",
+              "Une règle est facultative",
+              "Un devoir n'a aucune conséquence"
+            ],
+            "bonne_reponse": "Une règle est propre à un lieu précis, un devoir est une obligation plus générale",
+            "explication": "Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général."
+          },
+          {
+            "question": "Combien d'évaluations rythment le parcours de 80 heures ?",
+            "options": [
+              "Une seule",
+              "Deux (E1 et E2)",
+              "Quatre"
+            ],
+            "bonne_reponse": "Deux (E1 et E2)",
+            "explication": "Le dialogue mentionne explicitement deux évaluations distinctes."
+          }
+        ],
+        "metadata": {
+          "session_code": "S01",
+          "activity_code": "S01.CIVIQUE",
+          "source_level": "A2",
+          "target_level": "B2",
+          "competence_invariante": null,
+          "cognitive_operations": [
+            "interpréter",
+            "nuancer"
+          ],
+          "autonomy": "forte",
+          "guidance": "minimal",
+          "trainer_preview_required": true,
+          "interactive": true,
+          "needs_content_review": false
         }
       }
     },
@@ -1436,6 +4065,8 @@
       "source": "Format inspiré banque exercices, id c1fa478c / 2a162e99, adapté au personnage Awa",
       "family_id": null,
       "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
       "contenu": {
         "items": [
           {
@@ -1457,6 +4088,7 @@
         ],
         "metadata": {
           "session_code": "S01",
+          "activity_code": "S01.PRODUCTION",
           "source_level": "A2",
           "target_level": "A1",
           "competence_invariante": null,
@@ -1467,7 +4099,8 @@
           "autonomy": "faible",
           "guidance": "fort",
           "trainer_preview_required": true,
-          "interactive": true
+          "interactive": true,
+          "needs_content_review": true
         }
       }
     },
@@ -1483,6 +4116,8 @@
       "source": "Format inspiré banque exercices, id c1fa478c / 2a162e99, adapté au personnage Awa",
       "family_id": null,
       "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
       "contenu": {
         "items": [
           {
@@ -1504,6 +4139,7 @@
         ],
         "metadata": {
           "session_code": "S01",
+          "activity_code": "S01.PRODUCTION",
           "source_level": "A2",
           "target_level": "A2",
           "competence_invariante": null,
@@ -1514,7 +4150,8 @@
           "autonomy": "moyenne",
           "guidance": "moyen",
           "trainer_preview_required": true,
-          "interactive": true
+          "interactive": true,
+          "needs_content_review": true
         }
       }
     },
@@ -1530,6 +4167,8 @@
       "source": "Format inspiré pedagogical_activities « Présentez Sébastien Badou » + banque exercices id 95f4746e",
       "family_id": null,
       "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
       "contenu": {
         "items": [
           {
@@ -1539,6 +4178,7 @@
         ],
         "metadata": {
           "session_code": "S01",
+          "activity_code": "S01.PRODUCTION",
           "source_level": "A2",
           "target_level": "A2",
           "competence_invariante": null,
@@ -1549,7 +4189,8 @@
           "autonomy": "moyenne",
           "guidance": "moyen",
           "trainer_preview_required": true,
-          "interactive": true
+          "interactive": true,
+          "needs_content_review": false
         }
       }
     },
@@ -1565,6 +4206,8 @@
       "source": "Format inspiré pedagogical_activities « Présentez Sébastien Badou » + banque exercices id 95f4746e",
       "family_id": null,
       "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
       "contenu": {
         "items": [
           {
@@ -1574,6 +4217,7 @@
         ],
         "metadata": {
           "session_code": "S01",
+          "activity_code": "S01.PRODUCTION",
           "source_level": "A2",
           "target_level": "B1",
           "competence_invariante": null,
@@ -1584,7 +4228,8 @@
           "autonomy": "forte",
           "guidance": "faible",
           "trainer_preview_required": true,
-          "interactive": true
+          "interactive": true,
+          "needs_content_review": false
         }
       }
     },
@@ -1600,6 +4245,8 @@
       "source": "Prolongement du devoir A2 existant (brief.devoirs.A2), étendu et rendu autonome pour B1/B2",
       "family_id": null,
       "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
       "contenu": {
         "items": [
           {
@@ -1609,6 +4256,7 @@
         ],
         "metadata": {
           "session_code": "S01",
+          "activity_code": "S01.PRODUCTION",
           "source_level": "A2",
           "target_level": "B1",
           "competence_invariante": null,
@@ -1619,7 +4267,8 @@
           "autonomy": "forte",
           "guidance": "faible",
           "trainer_preview_required": true,
-          "interactive": true
+          "interactive": true,
+          "needs_content_review": false
         }
       }
     },
@@ -1635,6 +4284,8 @@
       "source": "Prolongement du devoir A2 existant (brief.devoirs.A2), étendu et rendu autonome pour B1/B2",
       "family_id": null,
       "extension_of_family_id": null,
+      "civic_content": false,
+      "civic_fact_ids": [],
       "contenu": {
         "items": [
           {
@@ -1644,6 +4295,7 @@
         ],
         "metadata": {
           "session_code": "S01",
+          "activity_code": "S01.PRODUCTION",
           "source_level": "A2",
           "target_level": "B2",
           "competence_invariante": null,
@@ -1654,7 +4306,8 @@
           "autonomy": "forte",
           "guidance": "minimal",
           "trainer_preview_required": true,
-          "interactive": true
+          "interactive": true,
+          "needs_content_review": false
         }
       }
     }
@@ -1663,202 +4316,441 @@
     "A1": [
       {
         "ordre": 1,
-        "metadata_code": "cv2:S01:v3:co-dialogue:A1",
-        "label": "Activité 1 sur 8",
+        "metadata_code": "cv2:S01:v3:lexique-association:A1",
+        "activity_code": "S01.LEXIQUE",
+        "label": "Activité 1 sur 15",
         "trainer_preview_required": true
       },
       {
         "ordre": 2,
-        "metadata_code": "cv2:S01:v3:atelier-1:A1",
-        "label": "Activité 2 sur 8",
+        "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:A1",
+        "activity_code": "S01.LEXIQUE",
+        "label": "Activité 2 sur 15",
         "trainer_preview_required": true
       },
       {
         "ordre": 3,
-        "metadata_code": "cv2:S01:v3:atelier-2:A1",
-        "label": "Activité 3 sur 8",
+        "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:A1",
+        "activity_code": "S01.LEXIQUE",
+        "label": "Activité 3 sur 15",
         "trainer_preview_required": true
       },
       {
         "ordre": 4,
-        "metadata_code": "cv2:S01:v3:atelier-3:A1",
-        "label": "Activité 4 sur 8",
+        "metadata_code": "cv2:S01:v3:support-visuel:A1",
+        "activity_code": "S01.ACCUEIL",
+        "label": "Activité 4 sur 15",
         "trainer_preview_required": true
       },
       {
         "ordre": 5,
-        "metadata_code": "cv2:S01:v3:atelier-4:A1",
-        "label": "Activité 5 sur 8",
+        "metadata_code": "cv2:S01:v3:support-visuel-ouvert:A1",
+        "activity_code": "S01.ACCUEIL",
+        "label": "Activité 5 sur 15",
         "trainer_preview_required": true
       },
       {
         "ordre": 6,
-        "metadata_code": "cv2:S01:v3:structures:A1",
-        "label": "Activité 6 sur 8",
+        "metadata_code": "cv2:S01:v3:co-dialogue:A1",
+        "activity_code": "S01.CO",
+        "label": "Activité 6 sur 15",
         "trainer_preview_required": true
       },
       {
         "ordre": 7,
-        "metadata_code": "cv2:S01:v3:eo:A1",
-        "label": "Activité 7 sur 8",
+        "metadata_code": "cv2:S01:v3:co-comprehension:A1",
+        "activity_code": "S01.CO",
+        "label": "Activité 7 sur 15",
         "trainer_preview_required": true
       },
       {
         "ordre": 8,
+        "metadata_code": "cv2:S01:v3:atelier-1:A1",
+        "activity_code": "S01.ATELIER",
+        "label": "Activité 8 sur 15",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 9,
+        "metadata_code": "cv2:S01:v3:atelier-2:A1",
+        "activity_code": "S01.ATELIER",
+        "label": "Activité 9 sur 15",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 10,
+        "metadata_code": "cv2:S01:v3:atelier-3:A1",
+        "activity_code": "S01.ATELIER",
+        "label": "Activité 10 sur 15",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 11,
+        "metadata_code": "cv2:S01:v3:atelier-4:A1",
+        "activity_code": "S01.ATELIER",
+        "label": "Activité 11 sur 15",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 12,
+        "metadata_code": "cv2:S01:v3:structures:A1",
+        "activity_code": "S01.STRUCTURES",
+        "label": "Activité 12 sur 15",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 13,
+        "metadata_code": "cv2:S01:v3:eo:A1",
+        "activity_code": "S01.PRODUCTION",
+        "label": "Activité 13 sur 15",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 14,
+        "metadata_code": "cv2:S01:v3:civique:A1",
+        "activity_code": "S01.CIVIQUE",
+        "label": "Activité 14 sur 15",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 15,
         "metadata_code": "cv2:S01:v3:ee-guidee-1:A1",
-        "label": "Activité 8 sur 8",
+        "activity_code": "S01.PRODUCTION",
+        "label": "Activité 15 sur 15",
         "trainer_preview_required": true
       }
     ],
     "A2": [
       {
         "ordre": 1,
-        "metadata_code": "cv2:S01:v3:co-dialogue:A2",
-        "label": "Activité 1 sur 9",
+        "metadata_code": "cv2:S01:v3:lexique-association:A2",
+        "activity_code": "S01.LEXIQUE",
+        "label": "Activité 1 sur 16",
         "trainer_preview_required": true
       },
       {
         "ordre": 2,
-        "metadata_code": "cv2:S01:v3:atelier-1:A2",
-        "label": "Activité 2 sur 9",
+        "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:A2",
+        "activity_code": "S01.LEXIQUE",
+        "label": "Activité 2 sur 16",
         "trainer_preview_required": true
       },
       {
         "ordre": 3,
-        "metadata_code": "cv2:S01:v3:atelier-2:A2",
-        "label": "Activité 3 sur 9",
+        "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:A2",
+        "activity_code": "S01.LEXIQUE",
+        "label": "Activité 3 sur 16",
         "trainer_preview_required": true
       },
       {
         "ordre": 4,
-        "metadata_code": "cv2:S01:v3:atelier-3:A2",
-        "label": "Activité 4 sur 9",
+        "metadata_code": "cv2:S01:v3:support-visuel:A2",
+        "activity_code": "S01.ACCUEIL",
+        "label": "Activité 4 sur 16",
         "trainer_preview_required": true
       },
       {
         "ordre": 5,
-        "metadata_code": "cv2:S01:v3:structures:A2",
-        "label": "Activité 5 sur 9",
+        "metadata_code": "cv2:S01:v3:support-visuel-ouvert:A2",
+        "activity_code": "S01.ACCUEIL",
+        "label": "Activité 5 sur 16",
         "trainer_preview_required": true
       },
       {
         "ordre": 6,
-        "metadata_code": "cv2:S01:v3:eo:A2",
-        "label": "Activité 6 sur 9",
+        "metadata_code": "cv2:S01:v3:co-dialogue:A2",
+        "activity_code": "S01.CO",
+        "label": "Activité 6 sur 16",
         "trainer_preview_required": true
       },
       {
         "ordre": 7,
-        "metadata_code": "cv2:S01:v3:civique:A2",
-        "label": "Activité 7 sur 9",
+        "metadata_code": "cv2:S01:v3:co-comprehension:A2",
+        "activity_code": "S01.CO",
+        "label": "Activité 7 sur 16",
         "trainer_preview_required": true
       },
       {
         "ordre": 8,
-        "metadata_code": "cv2:S01:v3:ee-guidee-1:A2",
-        "label": "Activité 8 sur 9",
+        "metadata_code": "cv2:S01:v3:co-approfondissement:A2",
+        "activity_code": "S01.CO",
+        "label": "Activité 8 sur 16",
         "trainer_preview_required": true
       },
       {
         "ordre": 9,
+        "metadata_code": "cv2:S01:v3:atelier-1:A2",
+        "activity_code": "S01.ATELIER",
+        "label": "Activité 9 sur 16",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 10,
+        "metadata_code": "cv2:S01:v3:atelier-2:A2",
+        "activity_code": "S01.ATELIER",
+        "label": "Activité 10 sur 16",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 11,
+        "metadata_code": "cv2:S01:v3:atelier-3:A2",
+        "activity_code": "S01.ATELIER",
+        "label": "Activité 11 sur 16",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 12,
+        "metadata_code": "cv2:S01:v3:structures:A2",
+        "activity_code": "S01.STRUCTURES",
+        "label": "Activité 12 sur 16",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 13,
+        "metadata_code": "cv2:S01:v3:eo:A2",
+        "activity_code": "S01.PRODUCTION",
+        "label": "Activité 13 sur 16",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 14,
+        "metadata_code": "cv2:S01:v3:civique:A2",
+        "activity_code": "S01.CIVIQUE",
+        "label": "Activité 14 sur 16",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 15,
+        "metadata_code": "cv2:S01:v3:ee-guidee-1:A2",
+        "activity_code": "S01.PRODUCTION",
+        "label": "Activité 15 sur 16",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 16,
         "metadata_code": "cv2:S01:v3:ee-guidee-2:A2",
-        "label": "Activité 9 sur 9",
+        "activity_code": "S01.PRODUCTION",
+        "label": "Activité 16 sur 16",
         "trainer_preview_required": true
       }
     ],
     "B1": [
       {
         "ordre": 1,
-        "metadata_code": "cv2:S01:v3:co-dialogue:B1",
-        "label": "Activité 1 sur 7",
+        "metadata_code": "cv2:S01:v3:lexique-association:B1",
+        "activity_code": "S01.LEXIQUE",
+        "label": "Activité 1 sur 15",
         "trainer_preview_required": true
       },
       {
         "ordre": 2,
-        "metadata_code": "cv2:S01:v3:atelier-1:B1",
-        "label": "Activité 2 sur 7",
+        "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:B1",
+        "activity_code": "S01.LEXIQUE",
+        "label": "Activité 2 sur 15",
         "trainer_preview_required": true
       },
       {
         "ordre": 3,
-        "metadata_code": "cv2:S01:v3:atelier-2:B1",
-        "label": "Activité 3 sur 7",
+        "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:B1",
+        "activity_code": "S01.LEXIQUE",
+        "label": "Activité 3 sur 15",
         "trainer_preview_required": true
       },
       {
         "ordre": 4,
-        "metadata_code": "cv2:S01:v3:structures:B1",
-        "label": "Activité 4 sur 7",
+        "metadata_code": "cv2:S01:v3:support-visuel:B1",
+        "activity_code": "S01.ACCUEIL",
+        "label": "Activité 4 sur 15",
         "trainer_preview_required": true
       },
       {
         "ordre": 5,
-        "metadata_code": "cv2:S01:v3:eo:B1",
-        "label": "Activité 5 sur 7",
+        "metadata_code": "cv2:S01:v3:support-visuel-ouvert:B1",
+        "activity_code": "S01.ACCUEIL",
+        "label": "Activité 5 sur 15",
         "trainer_preview_required": true
       },
       {
         "ordre": 6,
-        "metadata_code": "cv2:S01:v3:ee-guidee-2:B1",
-        "label": "Activité 6 sur 7",
+        "metadata_code": "cv2:S01:v3:co-dialogue:B1",
+        "activity_code": "S01.CO",
+        "label": "Activité 6 sur 15",
         "trainer_preview_required": true
       },
       {
         "ordre": 7,
+        "metadata_code": "cv2:S01:v3:co-comprehension:B1",
+        "activity_code": "S01.CO",
+        "label": "Activité 7 sur 15",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 8,
+        "metadata_code": "cv2:S01:v3:co-approfondissement:B1",
+        "activity_code": "S01.CO",
+        "label": "Activité 8 sur 15",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 9,
+        "metadata_code": "cv2:S01:v3:atelier-1:B1",
+        "activity_code": "S01.ATELIER",
+        "label": "Activité 9 sur 15",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 10,
+        "metadata_code": "cv2:S01:v3:atelier-2:B1",
+        "activity_code": "S01.ATELIER",
+        "label": "Activité 10 sur 15",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 11,
+        "metadata_code": "cv2:S01:v3:structures:B1",
+        "activity_code": "S01.STRUCTURES",
+        "label": "Activité 11 sur 15",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 12,
+        "metadata_code": "cv2:S01:v3:eo:B1",
+        "activity_code": "S01.PRODUCTION",
+        "label": "Activité 12 sur 15",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 13,
+        "metadata_code": "cv2:S01:v3:civique:B1",
+        "activity_code": "S01.CIVIQUE",
+        "label": "Activité 13 sur 15",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 14,
+        "metadata_code": "cv2:S01:v3:ee-guidee-2:B1",
+        "activity_code": "S01.PRODUCTION",
+        "label": "Activité 14 sur 15",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 15,
         "metadata_code": "cv2:S01:v3:ee-autonome:B1",
-        "label": "Activité 7 sur 7",
+        "activity_code": "S01.PRODUCTION",
+        "label": "Activité 15 sur 15",
         "trainer_preview_required": true
       }
     ],
     "B2": [
       {
         "ordre": 1,
-        "metadata_code": "cv2:S01:v3:co-dialogue:B2",
-        "label": "Activité 1 sur 5",
+        "metadata_code": "cv2:S01:v3:lexique-association:B2",
+        "activity_code": "S01.LEXIQUE",
+        "label": "Activité 1 sur 13",
         "trainer_preview_required": true
       },
       {
         "ordre": 2,
-        "metadata_code": "cv2:S01:v3:atelier-1:B2",
-        "label": "Activité 2 sur 5",
+        "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:B2",
+        "activity_code": "S01.LEXIQUE",
+        "label": "Activité 2 sur 13",
         "trainer_preview_required": true
       },
       {
         "ordre": 3,
-        "metadata_code": "cv2:S01:v3:structures:B2",
-        "label": "Activité 3 sur 5",
+        "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:B2",
+        "activity_code": "S01.LEXIQUE",
+        "label": "Activité 3 sur 13",
         "trainer_preview_required": true
       },
       {
         "ordre": 4,
-        "metadata_code": "cv2:S01:v3:eo:B2",
-        "label": "Activité 4 sur 5",
+        "metadata_code": "cv2:S01:v3:support-visuel:B2",
+        "activity_code": "S01.ACCUEIL",
+        "label": "Activité 4 sur 13",
         "trainer_preview_required": true
       },
       {
         "ordre": 5,
+        "metadata_code": "cv2:S01:v3:support-visuel-ouvert:B2",
+        "activity_code": "S01.ACCUEIL",
+        "label": "Activité 5 sur 13",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 6,
+        "metadata_code": "cv2:S01:v3:co-dialogue:B2",
+        "activity_code": "S01.CO",
+        "label": "Activité 6 sur 13",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 7,
+        "metadata_code": "cv2:S01:v3:co-comprehension:B2",
+        "activity_code": "S01.CO",
+        "label": "Activité 7 sur 13",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 8,
+        "metadata_code": "cv2:S01:v3:co-approfondissement:B2",
+        "activity_code": "S01.CO",
+        "label": "Activité 8 sur 13",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 9,
+        "metadata_code": "cv2:S01:v3:atelier-1:B2",
+        "activity_code": "S01.ATELIER",
+        "label": "Activité 9 sur 13",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 10,
+        "metadata_code": "cv2:S01:v3:structures:B2",
+        "activity_code": "S01.STRUCTURES",
+        "label": "Activité 10 sur 13",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 11,
+        "metadata_code": "cv2:S01:v3:eo:B2",
+        "activity_code": "S01.PRODUCTION",
+        "label": "Activité 11 sur 13",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 12,
+        "metadata_code": "cv2:S01:v3:civique:B2",
+        "activity_code": "S01.CIVIQUE",
+        "label": "Activité 12 sur 13",
+        "trainer_preview_required": true
+      },
+      {
+        "ordre": 13,
         "metadata_code": "cv2:S01:v3:ee-autonome:B2",
-        "label": "Activité 5 sur 5",
+        "activity_code": "S01.PRODUCTION",
+        "label": "Activité 13 sur 13",
         "trainer_preview_required": true
       }
     ]
   },
   "report": {
-    "generated_at": "2026-07-12",
+    "generated_at": "2026-07-13",
     "session_code": "S01",
     "pivot_level": "A2",
-    "exercise_count": 29,
+    "exercise_count": 59,
     "counts_by_level": {
-      "A1": 8,
-      "A2": 9,
-      "B1": 7,
-      "B2": 5
+      "A1": 15,
+      "A2": 16,
+      "B1": 15,
+      "B2": 13
     },
     "counts_by_competence": {
-      "CO": 5,
-      "CE": 10,
-      "EE": 6,
-      "EO": 4,
+      "CO": 12,
+      "CE": 25,
+      "EE": 10,
+      "EO": 8,
       "Structures": 4
     },
     "validation_rules": [
@@ -1871,18 +4763,95 @@
         "status": "pass"
       },
       {
+        "rule_id": "MINIMUM_TEN_ITEMS_AUTO_CORRECTED",
+        "status": "warning",
+        "evidence": [
+          "cv2:S01:v3:lexique-texte-lacunaire:A1 (3 items)",
+          "cv2:S01:v3:lexique-texte-lacunaire:A2 (3 items)",
+          "cv2:S01:v3:lexique-texte-lacunaire:B1 (3 items)",
+          "cv2:S01:v3:lexique-texte-lacunaire:B2 (3 items)",
+          "cv2:S01:v3:support-visuel:A1 (3 items)",
+          "cv2:S01:v3:support-visuel:A2 (3 items)",
+          "cv2:S01:v3:support-visuel:B1 (3 items)",
+          "cv2:S01:v3:support-visuel:B2 (3 items)",
+          "cv2:S01:v3:atelier-1:A1 (1 items)",
+          "cv2:S01:v3:atelier-2:A1 (3 items)",
+          "cv2:S01:v3:atelier-3:A1 (2 items)",
+          "cv2:S01:v3:atelier-4:A1 (2 items)",
+          "cv2:S01:v3:structures:A1 (8 items)",
+          "cv2:S01:v3:atelier-1:A2 (3 items)",
+          "cv2:S01:v3:atelier-2:A2 (4 items)",
+          "cv2:S01:v3:atelier-3:A2 (1 items)",
+          "cv2:S01:v3:structures:A2 (7 items)",
+          "cv2:S01:v3:atelier-1:B1 (2 items)",
+          "cv2:S01:v3:atelier-2:B1 (3 items)",
+          "cv2:S01:v3:structures:B1 (4 items)",
+          "cv2:S01:v3:atelier-1:B2 (2 items)",
+          "cv2:S01:v3:structures:B2 (3 items)",
+          "cv2:S01:v3:ee-guidee-1:A1 (4 items)",
+          "cv2:S01:v3:ee-guidee-1:A2 (4 items)"
+        ]
+      },
+      {
+        "rule_id": "MINIMUM_ORAL_PROMPTS",
+        "status": "warning"
+      },
+      {
         "rule_id": "TRAINER_PREVIEW_REQUIRED",
         "status": "pass"
       },
       {
         "rule_id": "COMPETENCE_FAMILY_PRESERVED",
         "status": "pass"
+      },
+      {
+        "rule_id": "CIVIC_ON_ALL_LEVELS",
+        "status": "pass"
       }
     ],
     "warnings": [
       "Le MP3 définitif reste à produire avec une voix réelle.",
-      "Les affirmations civiques doivent être validées contre la base officielle versionnée avant publication.",
-      "Le chronométrage doit être calibré avec des données terrain."
+      "Les affirmations civiques doivent être validées contre la base officielle versionnée (civic_facts) avant publication — voir docs/pedagogie/checklist-readiness-differenciation-S01.md.",
+      "Le chronométrage doit être calibré avec des données terrain.",
+      "Le contenu civique est identique sur les 4 niveaux faute de variante linguistique par niveau dans la source — gap documenté, pas une simplification réalisée ici.",
+      "24 exercice(s) autocorrigé(s) restent sous le plancher de 10 items par manque réel de matière première en banque (needs_content_review=true) — voir MINIMUM_TEN_ITEMS_AUTO_CORRECTED."
+    ],
+    "activities": [
+      {
+        "code": "S01.ACCUEIL",
+        "title": "Accueil et cinq thèmes civiques",
+        "order": 1
+      },
+      {
+        "code": "S01.LEXIQUE",
+        "title": "Lexique de la séance",
+        "order": 2
+      },
+      {
+        "code": "S01.CO",
+        "title": "Comprendre le dialogue d'accueil",
+        "order": 3
+      },
+      {
+        "code": "S01.ATELIER",
+        "title": "Atelier différencié — identité",
+        "order": 4
+      },
+      {
+        "code": "S01.STRUCTURES",
+        "title": "Structures utiles",
+        "order": 5
+      },
+      {
+        "code": "S01.CIVIQUE",
+        "title": "Droits, devoirs et règles",
+        "order": 6
+      },
+      {
+        "code": "S01.PRODUCTION",
+        "title": "Production orale et écrite",
+        "order": 7
+      }
     ]
   }
 }
