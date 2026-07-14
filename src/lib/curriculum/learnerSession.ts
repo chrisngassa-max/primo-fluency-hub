@@ -85,7 +85,7 @@ export interface AttemptCorrectionResponse {
   status: string;
   released: boolean;
   score_normalized?: number;
-  item_results?: Record<string, { question: string; reponse_donnee: string; bonne_reponse: string; correct: boolean; explication: string | null }>;
+  item_results?: Record<string, { question: string; reponse_donnee: string; bonne_reponse: string; correct: boolean; explication: string | null; learner_justification?: string | null }>;
   correction_viewed_at?: string | null;
 }
 
@@ -105,10 +105,12 @@ export interface SubmitAnswerResponse {
  * score ni la correction en retour (relecture indépendante, point 2) —
  * uniquement une confirmation de complétion.
  */
+export type LearnerAnswerValue = string | { reponse: string; justification?: string };
+
 export async function submitSeanceAnswer(input: {
   exerciseId: string;
   sessionCode: string;
-  answers: Record<string, string>;
+  answers: Record<string, LearnerAnswerValue>;
 }): Promise<SubmitAnswerResponse> {
   return invokeEdgeFunction("submit-seance-answer", {
     exercise_id: input.exerciseId,

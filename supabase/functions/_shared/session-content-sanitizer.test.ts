@@ -62,6 +62,58 @@ describe("session-content-sanitizer — relecture indépendante point 1/10", () 
     const sanitized = sanitizeItem({ question: "Q", texte: "T", enonce: "E", consigne: "C", options: ["a"] });
     expect(sanitized).toEqual({ question: "Q", texte: "T", enonce: "E", consigne: "C", options: ["a"] });
   });
+
+  it("laisse passer justification_prompt (consigne de justification, jamais un corrigé) mais bloque toujours justification_attendue", () => {
+    const raw = {
+      question: "Q",
+      options: ["A", "B"],
+      justification_prompt: "Justifiez votre réponse à partir d'un indice précis du support.",
+      justification_attendue: "Justifiez à partir du support.",
+      bonne_reponse: "A",
+    };
+    const sanitized = sanitizeItem(raw);
+    expect(sanitized.justification_prompt).toBe(raw.justification_prompt);
+    expect(sanitized).not.toHaveProperty("justification_attendue");
+    expect(sanitized).not.toHaveProperty("bonne_reponse");
+    expect(Object.keys(sanitized).sort()).toEqual(["justification_prompt", "options", "question"].sort());
+  });
+
+  it("laisse passer justification_required et justification_type (pilotage UI, jamais un corrigé)", () => {
+    const raw = {
+      question: "Q",
+      options: ["A", "B"],
+      justification_prompt: "Justifiez votre réponse.",
+      justification_required: true,
+      justification_type: "nuance",
+    };
+    const sanitized = sanitizeItem(raw);
+    expect(sanitized.justification_required).toBe(true);
+    expect(sanitized.justification_type).toBe("nuance");
+  });
+
+  it("justification_required absent (false/non posé) ne fuite jamais en tant que champ présent", () => {
+    const sanitized = sanitizeItem({ question: "Q", options: ["A"] });
+    expect(sanitized).not.toHaveProperty("justification_required");
+    expect(sanitized).not.toHaveProperty("justification_type");
+  });
+
+  it("ne transmet jamais bonne_reponse/expected_elements/correction modèle/explication/critères privés, avant ou après libération (sanitizeItem ne connaît pas la libération : il retire ces clés inconditionnellement)", () => {
+    const raw = {
+      question: "Q",
+      options: ["A", "B", "C"],
+      bonne_reponse: "A",
+      expected_elements: ["A", "explique le contexte"],
+      corrige_modele: "La réponse attendue est A car...",
+      explication: "Justification interne réservée au corrigé.",
+      criteres_evaluation: { bareme: 10, mots_cles: ["A"] },
+      criteres_prives: "ne jamais exposer",
+    };
+    const sanitized = sanitizeItem(raw as any);
+    for (const key of ["bonne_reponse", "expected_elements", "corrige_modele", "explication", "criteres_evaluation", "criteres_prives"]) {
+      expect(sanitized).not.toHaveProperty(key);
+    }
+    expect(Object.keys(sanitized).sort()).toEqual(["options", "question"]);
+  });
 });
 
 describe("sanitizeContentJson — 2e relecture indépendante, point 5/10", () => {

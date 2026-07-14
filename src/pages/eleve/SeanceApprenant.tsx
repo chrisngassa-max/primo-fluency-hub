@@ -11,6 +11,7 @@ import {
   type LearnerSessionBlock,
 } from "@/lib/curriculum/learnerSession";
 import { sanitizeSeanceHtml } from "@/lib/curriculum/sanitizeHtml";
+import { buildStructuredAnswer, isJustificationMissing } from "@/lib/curriculum/justificationAnswer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -37,8 +38,14 @@ export default function SeanceApprenant() {
   const [blockIndex, setBlockIndex] = useState(0);
   const [itemIndex, setItemIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
+  // Justification saisie séparément de la réponse principale (Lot 2,
+  // contrat B1/B2) — jamais fusionnée dans `answers` avant la soumission,
+  // pour ne jamais perdre l'une en modifiant l'autre.
+  const [justifications, setJustifications] = useState<Record<number, string>>({});
   const [lockedItems, setLockedItems] = useState<Set<number>>(new Set());
   const [justSubmitted, setJustSubmitted] = useState(false);
+  const [justificationError, setJustificationError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["seance-apprenant-content", sessionCode],
@@ -75,8 +82,11 @@ export default function SeanceApprenant() {
   function resetExerciseNav() {
     setItemIndex(0);
     setAnswers({});
+    setJustifications({});
     setLockedItems(new Set());
     setJustSubmitted(false);
+    setJustificationError(null);
+    setSubmitError(null);
   }
 
   function goToBlock(nextActivityIndex: number, nextBlockIndex: number) {
@@ -107,26 +117,65 @@ export default function SeanceApprenant() {
   const isLastBlock = currentGroup ? (activityIndex === activityGroups.length - 1 && blockIndex === currentGroup.blocks.length - 1) : false;
 
   async function handleValidateItem() {
-    setLockedItems((prev) => new Set(prev).add(itemIndex));
     if (!currentExercise) return;
     const items = currentExercise.items;
+    const item = items[itemIndex] as { justification_required?: boolean; justification_prompt?: string } | undefined;
+
+    // Erreur pédagogique explicite : la justification est obligatoire pour
+    // ce contrat (B1/B2) et n'a pas été saisie. La réponse principale déjà
+    // tapée (answers[itemIndex]) n'est jamais effacée — on bloque juste la
+    // progression tant qu'elle manque. Même logique que le garde-fou serveur
+    // (findMissingRequiredJustifications), appliquée ici côté client pour un
+    // retour immédiat.
+    if (item && isJustificationMissing(item, justifications[itemIndex] ?? "")) {
+      setJustificationError("Merci de justifier votre réponse avant de valider.");
+      return;
+    }
+    setJustificationError(null);
+
+    setLockedItems((prev) => new Set(prev).add(itemIndex));
     if (itemIndex + 1 < items.length) {
       setItemIndex((i) => i + 1);
       return;
     }
+
     // Dernier item : envoi au serveur. Aucune correction/score reçu ici —
     // uniquement une confirmation de complétion (voir submitSeanceAnswer).
-    const submitted = await submitSeanceAnswer({
-      exerciseId: currentExercise.id,
-      sessionCode,
-      answers: Object.fromEntries(Object.entries(answers)),
-    });
-    setJustSubmitted(true);
-    queryClient.setQueryData(
-      ["seance-apprenant-correction", submitted.attempt_id],
-      { attempt_id: submitted.attempt_id, status: submitted.status, released: false },
+    // Score et correction sont TOUJOURS recalculés côté serveur ; ce client
+    // n'envoie jamais de score.
+    const allIndexes = new Set([...Object.keys(answers), ...Object.keys(justifications)].map(Number));
+    const payloadAnswers = Object.fromEntries(
+      [...allIndexes].map((idx) => [idx, buildStructuredAnswer(answers[idx] ?? "", justifications[idx] ?? "")]),
     );
-    await queryClient.invalidateQueries({ queryKey: ["seance-apprenant-content", sessionCode] });
+
+    try {
+      const submitted = await submitSeanceAnswer({
+        exerciseId: currentExercise.id,
+        sessionCode,
+        answers: payloadAnswers,
+      });
+      setSubmitError(null);
+      setJustSubmitted(true);
+      queryClient.setQueryData(
+        ["seance-apprenant-correction", submitted.attempt_id],
+        { attempt_id: submitted.attempt_id, status: submitted.status, released: false },
+      );
+      await queryClient.invalidateQueries({ queryKey: ["seance-apprenant-content", sessionCode] });
+    } catch (error) {
+      // Rejet serveur (ex. JUSTIFICATION_REQUISE en défense en profondeur) :
+      // on déverrouille le dernier item pour permettre de corriger, et on ne
+      // touche ni à `answers` ni à `justifications` — rien n'est perdu.
+      setLockedItems((prev) => {
+        const next = new Set(prev);
+        next.delete(itemIndex);
+        return next;
+      });
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : "La soumission a échoué. Vérifie tes réponses (et justifications si demandées) puis réessaie.",
+      );
+    }
   }
 
   async function handleViewCorrection() {
@@ -224,15 +273,26 @@ export default function SeanceApprenant() {
                 onViewCorrection={handleViewCorrection}
               />
             ) : (
-              <ExerciseItemForm
-                item={currentExercise.items[itemIndex]}
-                index={itemIndex}
-                total={currentExercise.items.length}
-                locked={lockedItems.has(itemIndex)}
-                value={answers[itemIndex] ?? ""}
-                onChange={(value) => setAnswers((prev) => ({ ...prev, [itemIndex]: value }))}
-                onValidate={handleValidateItem}
-              />
+              <>
+                <ExerciseItemForm
+                  item={currentExercise.items[itemIndex]}
+                  index={itemIndex}
+                  total={currentExercise.items.length}
+                  locked={lockedItems.has(itemIndex)}
+                  value={answers[itemIndex] ?? ""}
+                  onChange={(value) => setAnswers((prev) => ({ ...prev, [itemIndex]: value }))}
+                  justificationValue={justifications[itemIndex] ?? ""}
+                  onJustificationChange={(value) => {
+                    setJustifications((prev) => ({ ...prev, [itemIndex]: value }));
+                    if (justificationError) setJustificationError(null);
+                  }}
+                  justificationError={justificationError}
+                  onValidate={handleValidateItem}
+                />
+                {submitError && (
+                  <p className="text-sm text-red-700 dark:text-red-400">{submitError}</p>
+                )}
+              </>
             )}
           </CardContent>
         </Card>
@@ -254,19 +314,33 @@ export default function SeanceApprenant() {
   );
 }
 
-function ExerciseItemForm({
-  item, index, total, locked, value, onChange, onValidate,
+export function ExerciseItemForm({
+  item, index, total, locked, value, onChange,
+  justificationValue, onJustificationChange, justificationError, onValidate,
 }: {
-  item: { question?: string; texte?: string; enonce?: string; options?: string[] };
+  item: {
+    question?: string; texte?: string; enonce?: string; options?: string[];
+    justification_prompt?: string; justification_required?: boolean;
+  };
   index: number;
   total: number;
   locked: boolean;
   value: string;
   onChange: (value: string) => void;
+  justificationValue: string;
+  onJustificationChange: (value: string) => void;
+  justificationError?: string | null;
   onValidate: () => void;
 }) {
   const question = item.question ?? item.texte ?? item.enonce ?? `Question ${index + 1}`;
   const options = Array.isArray(item.options) ? item.options : null;
+  const needsJustification = Boolean(item.justification_prompt);
+  // Le bouton reste cliquable dès que la réponse principale est saisie,
+  // même si la justification obligatoire manque : c'est handleValidateItem
+  // (au clic) qui bloque la progression et affiche une erreur pédagogique
+  // EXPLICITE (justificationError) plutôt qu'un bouton silencieusement
+  // désactivé sans message.
+  const canValidate = value.trim().length > 0;
 
   return (
     <div className="space-y-3">
@@ -283,8 +357,28 @@ function ExerciseItemForm({
       ) : (
         <Textarea value={value} onChange={(e) => onChange(e.target.value)} disabled={locked} placeholder="Ta réponse..." />
       )}
+
+      {needsJustification && (
+        <div className="space-y-1.5">
+          <Label htmlFor={`justification-${index}`} className="flex items-center gap-1 text-sm">
+            {item.justification_prompt}
+            {item.justification_required && <span aria-hidden="true" className="text-red-600">*</span>}
+          </Label>
+          <Textarea
+            id={`justification-${index}`}
+            value={justificationValue}
+            onChange={(e) => onJustificationChange(e.target.value)}
+            disabled={locked}
+            placeholder="Ta justification..."
+          />
+        </div>
+      )}
+      {justificationError && (
+        <p role="alert" className="text-sm text-red-700 dark:text-red-400">{justificationError}</p>
+      )}
+
       {!locked && (
-        <Button onClick={onValidate} disabled={!value.trim()} className="gap-2 bg-blue-600 hover:bg-blue-700">
+        <Button onClick={onValidate} disabled={!canValidate} className="gap-2 bg-blue-600 hover:bg-blue-700">
           <CheckCircle2 className="h-4 w-4" /> Valider ma réponse
         </Button>
       )}
@@ -297,7 +391,7 @@ function ExerciseItemForm({
   );
 }
 
-function CorrectionGate({
+export function CorrectionGate({
   correction, onViewCorrection,
 }: {
   correction: Awaited<ReturnType<typeof fetchAttemptCorrection>> | null;
@@ -322,6 +416,9 @@ function CorrectionGate({
         <div key={index} className={`rounded-lg border p-3 text-sm ${entry.correct ? "border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950/20" : "border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/20"}`}>
           <p className="font-medium">{entry.question}</p>
           <p className="mt-1">Ta réponse : <span className={entry.correct ? "text-green-700 dark:text-green-400" : "text-red-700 underline dark:text-red-400"}>{entry.reponse_donnee || "(vide)"}</span></p>
+          {entry.learner_justification && (
+            <p className="mt-1">Ta justification : <span className="text-muted-foreground">{entry.learner_justification}</span></p>
+          )}
           {!entry.correct && <p className="text-blue-700 dark:text-blue-400">Réponse attendue : {entry.bonne_reponse}</p>}
           {entry.explication && <p className="mt-1 text-muted-foreground">{entry.explication}</p>}
         </div>

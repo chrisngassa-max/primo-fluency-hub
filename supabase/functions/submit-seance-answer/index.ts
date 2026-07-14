@@ -1,5 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corrigerExerciceServer } from '../_shared/correction-server.ts';
+import { findMissingRequiredJustifications } from '../_shared/justification-guard.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -108,6 +109,28 @@ Deno.serve(async (req) => {
     const contenu = (exercice.contenu ?? {}) as Record<string, unknown>;
     const items = Array.isArray(contenu.items) ? (contenu.items as Array<Record<string, unknown>>) : [];
 
+    // Défense en profondeur (Lot 2, B1/B2) : items.justification_required
+    // vient de exercices.contenu rechargé ici server-side (jamais du
+    // client) — un client qui omettrait la justification malgré la
+    // validation côté UI est rejeté ici, AVANT tout insert. La réponse
+    // principale n'est jamais perdue : rien n'est inséré, le client garde
+    // sa saisie et peut réessayer avec la justification complétée.
+    const missingJustifications = findMissingRequiredJustifications(items, answers);
+    if (missingJustifications.length > 0) {
+      return jsonResponse(
+        {
+          error: 'Justification requise manquante pour au moins une réponse.',
+          code: 'JUSTIFICATION_REQUISE',
+          item_indexes: missingJustifications,
+        },
+        422,
+      );
+    }
+
+    // Score/correction TOUJOURS recalculés ici à partir de items+answers :
+    // aucun champ score/score_normalized/item_results envoyé par le client
+    // n'est jamais lu (req.json() n'a destructuré que exercise_id,
+    // session_code, answers — voir plus haut) ni utilisé plus bas.
     const result = await corrigerExerciceServer({
       format: exercice.format,
       competence: exercice.competence,
@@ -126,6 +149,7 @@ Deno.serve(async (req) => {
           bonne_reponse: c.bonne_reponse,
           correct: c.correct,
           explication: c.explication ?? null,
+          learner_justification: c.learner_justification ?? null,
         },
       ]),
     );

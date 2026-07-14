@@ -6,6 +6,18 @@
  * Règle absolue (relecture indépendante 2026-07-13, point 1) : jamais
  * bonne_reponse, explication, justification_attendue, criteres_evaluation,
  * mots_cles_attendus, ni aucun champ de barème dans la sortie.
+ *
+ * `justification_prompt`/`justification_required`/`justification_type`
+ * (Lot 2, différenciation S01) sont distincts de `justification_attendue` :
+ * ce ne sont jamais des données de corrigé, seulement le pilotage du champ
+ * de saisie affiché à l'apprenant —
+ *   - justification_prompt  : la CONSIGNE affichée demandant de justifier ;
+ *   - justification_required: si vrai, le client doit bloquer la validation
+ *     tant que ce champ est vide (contrat B1/B2) — revérifié côté serveur ;
+ *   - justification_type    : nuance du type de justification attendu
+ *     (ex. "justification" vs "nuance"), purement informatif pour l'UI.
+ * Volontairement ajoutés à la liste blanche — ne jamais y ajouter
+ * justification_attendue/bonne_reponse/explication/criteres_evaluation/etc.
  */
 
 export interface RawItem {
@@ -14,6 +26,9 @@ export interface RawItem {
   enonce?: string;
   consigne?: string;
   options?: string[];
+  justification_prompt?: string;
+  justification_required?: boolean;
+  justification_type?: string;
   bonne_reponse?: string;
   explication?: string;
   justification_attendue?: string;
@@ -28,9 +43,15 @@ export interface SanitizedItem {
   enonce?: string;
   consigne?: string;
   options?: string[];
+  justification_prompt?: string;
+  justification_required?: boolean;
+  justification_type?: string;
 }
 
-const ALLOWED_ITEM_KEYS = ["question", "texte", "enonce", "consigne", "options"] as const;
+const ALLOWED_ITEM_KEYS = [
+  "question", "texte", "enonce", "consigne", "options",
+  "justification_prompt", "justification_required", "justification_type",
+] as const;
 
 export function sanitizeItem(item: RawItem): SanitizedItem {
   const out: SanitizedItem = {};

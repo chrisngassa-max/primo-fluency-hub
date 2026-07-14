@@ -1,4 +1,6 @@
 // @ts-nocheck
+import { isStructuredAnswer } from "./justification-guard.ts";
+
 /**
  * Logique de correction d'exercice côté SERVEUR (Edge Function).
  * Réplique fidèle de src/lib/correctionExercice.ts mais sans dépendances client.
@@ -23,6 +25,14 @@ export interface ServerCorrectionItem {
   ia_score_raw?: number;
   criteres_oraux?: Record<string, { score: number; commentaire: string }>;
   ai_failed?: boolean;
+  /**
+   * Justification écrite par l'apprenant quand l'item porte
+   * `justification_prompt` (Lot 2, B1/B2). Jamais utilisée pour le calcul de
+   * `correct` (qui reste sur la seule `reponse_eleve`) — seulement conservée
+   * pour la revue/correction ultérieure (formateur ou IA), conformément à la
+   * doctrine "correction différée/qualitative" à ces niveaux.
+   */
+  learner_justification?: string;
 }
 
 export interface ServerCorrigerOptions {
@@ -135,7 +145,20 @@ export async function corrigerExerciceServer(
 
   for (let idx = 0; idx < items.length; idx++) {
     const item = items[idx] as Record<string, unknown>;
-    const userAnswer = (answers[idx] ?? answers[String(idx)] ?? "").toString();
+    const rawAnswer = answers[idx] ?? answers[String(idx)] ?? "";
+    // Réponse structurée { reponse, justification } (Lot 2, items portant
+    // justification_prompt) vs chaîne simple (tous les autres formats,
+    // comportement historique inchangé). Seule `reponse` entre dans la
+    // comparaison/l'évaluation ; `justification` est conservée à part.
+    // NB : un `correct`/`score` éventuellement injecté par un client
+    // malveillant dans l'objet `rawAnswer` est ignoré ici — seules les clés
+    // `reponse`/`justification` sont jamais lues, `correct` est toujours
+    // recalculé plus bas à partir de item.bonne_reponse.
+    const structuredAnswer = isStructuredAnswer(rawAnswer);
+    const userAnswer = (structuredAnswer ? (rawAnswer as Record<string, unknown>).reponse ?? "" : rawAnswer).toString();
+    const learnerJustification = structuredAnswer
+      ? (String((rawAnswer as Record<string, unknown>).justification ?? "").trim() || undefined)
+      : undefined;
     const question = (item.question || item.texte || item.enonce || item.consigne || `Question ${idx + 1}`) as string;
     const bonneReponse = (item.bonne_reponse ?? "").toString();
     const explicationOrig = (item.explication ?? "") as string;
@@ -221,6 +244,7 @@ export async function corrigerExerciceServer(
       ia_score_raw: iaScoreRaw,
       criteres_oraux: criteresOraux,
       ai_failed: aiFailedItem || undefined,
+      learner_justification: learnerJustification,
     });
   }
 
