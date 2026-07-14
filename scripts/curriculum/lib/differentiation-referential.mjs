@@ -13,12 +13,35 @@ import differentiationLevelContractsData from "../../../supabase/functions/_shar
 const LEVELS = ["A1", "A2", "B1", "B2"];
 const COMPETENCES = ["CE", "CO", "EE", "EO", "Structures"];
 
+export class DifferentiationLevelError extends Error {
+  constructor(value) {
+    super(`Niveau de différenciation invalide: ${JSON.stringify(value)}. Attendu: ${LEVELS.join(", ")}.`);
+    this.name = "DifferentiationLevelError";
+  }
+}
+
 export function normalizeDifferentiationLevel(niveau) {
   const normalized = String(niveau ?? "A2").trim().toUpperCase();
   if (normalized.startsWith("B2")) return "B2";
   if (normalized.startsWith("B1")) return "B1";
   if (normalized.startsWith("A2")) return "A2";
   return "A1";
+}
+
+// normalizeDifferentiationLevel() coerce silencieusement toute entrée
+// inconnue (ex. "ZZ") vers "A1" — comportement historique conservé
+// ci-dessus pour les consommateurs existants qui en dépendent.
+//
+// parseDifferentiationLevelStrict() est une API additive séparée, miroir
+// exact de son équivalent Deno (referential-loader.ts) : elle rejette toute
+// valeur qui n'est pas exactement A1, A2, B1 ou B2 (après trim/uppercase)
+// au lieu de deviner.
+export function parseDifferentiationLevelStrict(value) {
+  const normalized = typeof value === "string" ? value.trim().toUpperCase() : "";
+  if (LEVELS.includes(normalized)) {
+    return normalized;
+  }
+  throw new DifferentiationLevelError(value);
 }
 
 export function getDifferentiationTransformationRule(sourceLevel, targetLevel) {
