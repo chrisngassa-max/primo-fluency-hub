@@ -83,6 +83,7 @@ import PreparationCiviquePage from "@/pages/formateur/PreparationCiviquePage";
 import FicheEleveIpePage from "@/pages/formateur/FicheEleveIpePage";
 import FicheGroupeIpePage from "@/pages/formateur/FicheGroupeIpePage";
 import ProductionParcours from "@/pages/formateur/ProductionParcours";
+import S01DemoPage from "@/pages/S01DemoPage";
 
 const queryClient = new QueryClient();
 
@@ -147,6 +148,7 @@ const App = () => (
             <Route path="/unsubscribe" element={<Unsubscribe />} />
             <Route path="/play/:token" element={<PlayExercise />} />
             <Route path="/auth/relay-reset" element={<AuthRelayReset />} />
+            <Route path="/demo/s01" element={<S01DemoPage />} />
             <Route path="/sandbox" element={<Navigate to="/formateur/sandbox" replace />} />
 
             {/* Formateur routes */}
