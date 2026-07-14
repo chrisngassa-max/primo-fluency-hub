@@ -7819,7 +7819,18 @@
               "Une démarche"
             ],
             "bonne_reponse": "Un devoir",
-            "explication": "C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option."
+            "explication": "C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option.",
+            "indice": "C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option.",
+            "correction": {
+              "bonne_reponse": "Un devoir",
+              "preuve_support": "C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option.",
+              "explication_distracteurs": [
+                "« Un droit » ne correspond pas à ce qu'indique le support : « C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option. ».",
+                "« Une démarche » ne correspond pas à ce qu'indique le support : « C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option. » puis répondez à nouveau."
+            }
           },
           {
             "question": "Le droit à la santé signifie que vous pouvez :",
@@ -7829,7 +7840,18 @@
               "Payer une amende"
             ],
             "bonne_reponse": "Demander l'accès aux soins",
-            "explication": "Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation."
+            "explication": "Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation.",
+            "indice": "Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation.",
+            "correction": {
+              "bonne_reponse": "Demander l'accès aux soins",
+              "preuve_support": "Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation.",
+              "explication_distracteurs": [
+                "« Être obligé de vous soigner » ne correspond pas à ce qu'indique le support : « Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation. ».",
+                "« Payer une amende » ne correspond pas à ce qu'indique le support : « Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation. » puis répondez à nouveau."
+            }
           },
           {
             "question": "Un formateur demande à un apprenant d'arriver à l'heure à chaque séance. Il s'agit :",
@@ -7839,7 +7861,19 @@
               "D'une loi nationale"
             ],
             "bonne_reponse": "D'une règle du centre de formation",
-            "explication": "Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale."
+            "explication": "Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale.",
+            "needs_review": true,
+            "indice": "Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale.",
+            "correction": {
+              "bonne_reponse": "D'une règle du centre de formation",
+              "preuve_support": "Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale.",
+              "explication_distracteurs": [
+                "« D'un droit de l'apprenant » ne correspond pas à ce qu'indique le support : « Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale. ».",
+                "« D'une loi nationale » ne correspond pas à ce qu'indique le support : « Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale. » puis répondez à nouveau."
+            }
           },
           {
             "question": "Le parcours vers la carte de séjour pluriannuelle dure :",
@@ -7849,7 +7883,18 @@
               "120 heures"
             ],
             "bonne_reponse": "80 heures",
-            "explication": "Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue."
+            "explication": "Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue.",
+            "indice": "Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue.",
+            "correction": {
+              "bonne_reponse": "80 heures",
+              "preuve_support": "Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue.",
+              "explication_distracteurs": [
+                "« 50 heures » ne correspond pas à ce qu'indique le support : « Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue. ».",
+                "« 120 heures » ne correspond pas à ce qu'indique le support : « Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue. » puis répondez à nouveau."
+            }
           },
           {
             "question": "Combien de thèmes civiques officiels structurent le parcours ?",
@@ -7859,7 +7904,18 @@
               "Sept"
             ],
             "bonne_reponse": "Cinq",
-            "explication": "Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société)."
+            "explication": "Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société).",
+            "indice": "Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société).",
+            "correction": {
+              "bonne_reponse": "Cinq",
+              "preuve_support": "Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société).",
+              "explication_distracteurs": [
+                "« Trois » ne correspond pas à ce qu'indique le support : « Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société). ».",
+                "« Sept » ne correspond pas à ce qu'indique le support : « Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société). »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société). » puis répondez à nouveau."
+            }
           },
           {
             "question": "Un devoir, c'est :",
@@ -7869,7 +7925,19 @@
               "Un avantage optionnel"
             ],
             "bonne_reponse": "Une obligation à respecter",
-            "explication": "Un devoir engage la personne à agir, contrairement à un simple choix."
+            "explication": "Un devoir engage la personne à agir, contrairement à un simple choix.",
+            "needs_review": true,
+            "indice": "Un devoir engage la personne à agir, contrairement à un simple choix.",
+            "correction": {
+              "bonne_reponse": "Une obligation à respecter",
+              "preuve_support": "Un devoir engage la personne à agir, contrairement à un simple choix.",
+              "explication_distracteurs": [
+                "« Un choix libre sans conséquence » ne correspond pas à ce qu'indique le support : « Un devoir engage la personne à agir, contrairement à un simple choix. ».",
+                "« Un avantage optionnel » ne correspond pas à ce qu'indique le support : « Un devoir engage la personne à agir, contrairement à un simple choix. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Un devoir engage la personne à agir, contrairement à un simple choix. » puis répondez à nouveau."
+            }
           },
           {
             "question": "L'évaluation finale (E2) a lieu :",
@@ -7879,7 +7947,19 @@
               "À la fin des 80 heures"
             ],
             "bonne_reponse": "À la fin des 80 heures",
-            "explication": "E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet."
+            "explication": "E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet.",
+            "needs_review": true,
+            "indice": "E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet.",
+            "correction": {
+              "bonne_reponse": "À la fin des 80 heures",
+              "preuve_support": "E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet.",
+              "explication_distracteurs": [
+                "« Après 25 heures » ne correspond pas à ce qu'indique le support : « E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet. ».",
+                "« Après 50 heures » ne correspond pas à ce qu'indique le support : « E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet. » puis répondez à nouveau."
+            }
           },
           {
             "question": "Pourquoi le parcours comprend-il une évaluation intermédiaire (E1) ?",
@@ -7889,7 +7969,19 @@
               "Pour remplacer l'évaluation finale"
             ],
             "bonne_reponse": "Pour mesurer la progression à mi-parcours",
-            "explication": "E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant."
+            "explication": "E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant.",
+            "needs_review": true,
+            "indice": "E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant.",
+            "correction": {
+              "bonne_reponse": "Pour mesurer la progression à mi-parcours",
+              "preuve_support": "E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant.",
+              "explication_distracteurs": [
+                "« Pour sanctionner les absences » ne correspond pas à ce qu'indique le support : « E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant. ».",
+                "« Pour remplacer l'évaluation finale » ne correspond pas à ce qu'indique le support : « E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant. » puis répondez à nouveau."
+            }
           },
           {
             "question": "Une règle se distingue d'un devoir car :",
@@ -7899,7 +7991,19 @@
               "Un devoir n'a aucune conséquence"
             ],
             "bonne_reponse": "Une règle est propre à un lieu précis, un devoir est une obligation plus générale",
-            "explication": "Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général."
+            "explication": "Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général.",
+            "needs_review": true,
+            "indice": "Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général.",
+            "correction": {
+              "bonne_reponse": "Une règle est propre à un lieu précis, un devoir est une obligation plus générale",
+              "preuve_support": "Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général.",
+              "explication_distracteurs": [
+                "« Une règle est facultative » ne correspond pas à ce qu'indique le support : « Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général. ».",
+                "« Un devoir n'a aucune conséquence » ne correspond pas à ce qu'indique le support : « Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général. » puis répondez à nouveau."
+            }
           },
           {
             "question": "Combien d'évaluations rythment le parcours de 80 heures ?",
@@ -7909,7 +8013,19 @@
               "Quatre"
             ],
             "bonne_reponse": "Deux (E1 et E2)",
-            "explication": "Le dialogue mentionne explicitement deux évaluations distinctes."
+            "explication": "Le dialogue mentionne explicitement deux évaluations distinctes.",
+            "needs_review": true,
+            "indice": "Le dialogue mentionne explicitement deux évaluations distinctes.",
+            "correction": {
+              "bonne_reponse": "Deux (E1 et E2)",
+              "preuve_support": "Le dialogue mentionne explicitement deux évaluations distinctes.",
+              "explication_distracteurs": [
+                "« Une seule » ne correspond pas à ce qu'indique le support : « Le dialogue mentionne explicitement deux évaluations distinctes. ».",
+                "« Quatre » ne correspond pas à ce qu'indique le support : « Le dialogue mentionne explicitement deux évaluations distinctes. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Le dialogue mentionne explicitement deux évaluations distinctes. » puis répondez à nouveau."
+            }
           }
         ],
         "metadata": {
@@ -7965,7 +8081,58 @@
             ]
           },
           "transformation_id": "A2_TO_A1",
-          "applied_transformations": [],
+          "applied_transformations": [
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[0].indice",
+              "evidence": "Indice affiché dérivé de la justification réelle de la question 1 (règle explicitée), situation adulte inchangée."
+            },
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[1].indice",
+              "evidence": "Indice affiché dérivé de la justification réelle de la question 2 (règle explicitée), situation adulte inchangée."
+            },
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[2].indice",
+              "evidence": "Indice affiché dérivé de la justification réelle de la question 3 (règle explicitée), situation adulte inchangée."
+            },
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[3].indice",
+              "evidence": "Indice affiché dérivé de la justification réelle de la question 4 (règle explicitée), situation adulte inchangée."
+            },
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[4].indice",
+              "evidence": "Indice affiché dérivé de la justification réelle de la question 5 (règle explicitée), situation adulte inchangée."
+            },
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[5].indice",
+              "evidence": "Indice affiché dérivé de la justification réelle de la question 6 (règle explicitée), situation adulte inchangée."
+            },
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[6].indice",
+              "evidence": "Indice affiché dérivé de la justification réelle de la question 7 (règle explicitée), situation adulte inchangée."
+            },
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[7].indice",
+              "evidence": "Indice affiché dérivé de la justification réelle de la question 8 (règle explicitée), situation adulte inchangée."
+            },
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[8].indice",
+              "evidence": "Indice affiché dérivé de la justification réelle de la question 9 (règle explicitée), situation adulte inchangée."
+            },
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[9].indice",
+              "evidence": "Indice affiché dérivé de la justification réelle de la question 10 (règle explicitée), situation adulte inchangée."
+            }
+          ],
           "cognitive_operations": [
             "reperer",
             "identifier",
@@ -7975,7 +8142,7 @@
           "guidance": "fort",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": true
         }
       }
     },
@@ -8009,7 +8176,17 @@
               "Une démarche"
             ],
             "bonne_reponse": "Un devoir",
-            "explication": "C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option."
+            "explication": "C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option.",
+            "correction": {
+              "bonne_reponse": "Un devoir",
+              "preuve_support": "C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option.",
+              "explication_distracteurs": [
+                "« Un droit » ne correspond pas à ce qu'indique le support : « C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option. ».",
+                "« Une démarche » ne correspond pas à ce qu'indique le support : « C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option. » puis répondez à nouveau."
+            }
           },
           {
             "question": "Le droit à la santé signifie que vous pouvez :",
@@ -8019,7 +8196,17 @@
               "Payer une amende"
             ],
             "bonne_reponse": "Demander l'accès aux soins",
-            "explication": "Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation."
+            "explication": "Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation.",
+            "correction": {
+              "bonne_reponse": "Demander l'accès aux soins",
+              "preuve_support": "Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation.",
+              "explication_distracteurs": [
+                "« Être obligé de vous soigner » ne correspond pas à ce qu'indique le support : « Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation. ».",
+                "« Payer une amende » ne correspond pas à ce qu'indique le support : « Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation. » puis répondez à nouveau."
+            }
           },
           {
             "question": "Un formateur demande à un apprenant d'arriver à l'heure à chaque séance. Il s'agit :",
@@ -8029,7 +8216,18 @@
               "D'une loi nationale"
             ],
             "bonne_reponse": "D'une règle du centre de formation",
-            "explication": "Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale."
+            "explication": "Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale.",
+            "needs_review": true,
+            "correction": {
+              "bonne_reponse": "D'une règle du centre de formation",
+              "preuve_support": "Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale.",
+              "explication_distracteurs": [
+                "« D'un droit de l'apprenant » ne correspond pas à ce qu'indique le support : « Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale. ».",
+                "« D'une loi nationale » ne correspond pas à ce qu'indique le support : « Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale. » puis répondez à nouveau."
+            }
           },
           {
             "question": "Le parcours vers la carte de séjour pluriannuelle dure :",
@@ -8039,7 +8237,17 @@
               "120 heures"
             ],
             "bonne_reponse": "80 heures",
-            "explication": "Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue."
+            "explication": "Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue.",
+            "correction": {
+              "bonne_reponse": "80 heures",
+              "preuve_support": "Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue.",
+              "explication_distracteurs": [
+                "« 50 heures » ne correspond pas à ce qu'indique le support : « Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue. ».",
+                "« 120 heures » ne correspond pas à ce qu'indique le support : « Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue. » puis répondez à nouveau."
+            }
           },
           {
             "question": "Combien de thèmes civiques officiels structurent le parcours ?",
@@ -8049,7 +8257,17 @@
               "Sept"
             ],
             "bonne_reponse": "Cinq",
-            "explication": "Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société)."
+            "explication": "Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société).",
+            "correction": {
+              "bonne_reponse": "Cinq",
+              "preuve_support": "Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société).",
+              "explication_distracteurs": [
+                "« Trois » ne correspond pas à ce qu'indique le support : « Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société). ».",
+                "« Sept » ne correspond pas à ce qu'indique le support : « Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société). »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société). » puis répondez à nouveau."
+            }
           },
           {
             "question": "Un devoir, c'est :",
@@ -8059,7 +8277,18 @@
               "Un avantage optionnel"
             ],
             "bonne_reponse": "Une obligation à respecter",
-            "explication": "Un devoir engage la personne à agir, contrairement à un simple choix."
+            "explication": "Un devoir engage la personne à agir, contrairement à un simple choix.",
+            "needs_review": true,
+            "correction": {
+              "bonne_reponse": "Une obligation à respecter",
+              "preuve_support": "Un devoir engage la personne à agir, contrairement à un simple choix.",
+              "explication_distracteurs": [
+                "« Un choix libre sans conséquence » ne correspond pas à ce qu'indique le support : « Un devoir engage la personne à agir, contrairement à un simple choix. ».",
+                "« Un avantage optionnel » ne correspond pas à ce qu'indique le support : « Un devoir engage la personne à agir, contrairement à un simple choix. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Un devoir engage la personne à agir, contrairement à un simple choix. » puis répondez à nouveau."
+            }
           },
           {
             "question": "L'évaluation finale (E2) a lieu :",
@@ -8069,7 +8298,18 @@
               "À la fin des 80 heures"
             ],
             "bonne_reponse": "À la fin des 80 heures",
-            "explication": "E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet."
+            "explication": "E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet.",
+            "needs_review": true,
+            "correction": {
+              "bonne_reponse": "À la fin des 80 heures",
+              "preuve_support": "E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet.",
+              "explication_distracteurs": [
+                "« Après 25 heures » ne correspond pas à ce qu'indique le support : « E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet. ».",
+                "« Après 50 heures » ne correspond pas à ce qu'indique le support : « E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet. » puis répondez à nouveau."
+            }
           },
           {
             "question": "Pourquoi le parcours comprend-il une évaluation intermédiaire (E1) ?",
@@ -8079,7 +8319,18 @@
               "Pour remplacer l'évaluation finale"
             ],
             "bonne_reponse": "Pour mesurer la progression à mi-parcours",
-            "explication": "E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant."
+            "explication": "E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant.",
+            "needs_review": true,
+            "correction": {
+              "bonne_reponse": "Pour mesurer la progression à mi-parcours",
+              "preuve_support": "E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant.",
+              "explication_distracteurs": [
+                "« Pour sanctionner les absences » ne correspond pas à ce qu'indique le support : « E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant. ».",
+                "« Pour remplacer l'évaluation finale » ne correspond pas à ce qu'indique le support : « E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant. » puis répondez à nouveau."
+            }
           },
           {
             "question": "Une règle se distingue d'un devoir car :",
@@ -8089,7 +8340,18 @@
               "Un devoir n'a aucune conséquence"
             ],
             "bonne_reponse": "Une règle est propre à un lieu précis, un devoir est une obligation plus générale",
-            "explication": "Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général."
+            "explication": "Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général.",
+            "needs_review": true,
+            "correction": {
+              "bonne_reponse": "Une règle est propre à un lieu précis, un devoir est une obligation plus générale",
+              "preuve_support": "Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général.",
+              "explication_distracteurs": [
+                "« Une règle est facultative » ne correspond pas à ce qu'indique le support : « Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général. ».",
+                "« Un devoir n'a aucune conséquence » ne correspond pas à ce qu'indique le support : « Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général. » puis répondez à nouveau."
+            }
           },
           {
             "question": "Combien d'évaluations rythment le parcours de 80 heures ?",
@@ -8099,7 +8361,18 @@
               "Quatre"
             ],
             "bonne_reponse": "Deux (E1 et E2)",
-            "explication": "Le dialogue mentionne explicitement deux évaluations distinctes."
+            "explication": "Le dialogue mentionne explicitement deux évaluations distinctes.",
+            "needs_review": true,
+            "correction": {
+              "bonne_reponse": "Deux (E1 et E2)",
+              "preuve_support": "Le dialogue mentionne explicitement deux évaluations distinctes.",
+              "explication_distracteurs": [
+                "« Une seule » ne correspond pas à ce qu'indique le support : « Le dialogue mentionne explicitement deux évaluations distinctes. ».",
+                "« Quatre » ne correspond pas à ce qu'indique le support : « Le dialogue mentionne explicitement deux évaluations distinctes. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Le dialogue mentionne explicitement deux évaluations distinctes. » puis répondez à nouveau."
+            }
           }
         ],
         "metadata": {
@@ -8156,7 +8429,7 @@
           "guidance": "moyen",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": true
         }
       }
     },
@@ -8190,7 +8463,38 @@
               "Une démarche"
             ],
             "bonne_reponse": "Un devoir",
-            "explication": "C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option."
+            "explication": "C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option.",
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix à partir de la règle présentée dans l'énoncé, sans ajouter d'information nouvelle.",
+            "correction": {
+              "bonne_reponse": "Un devoir",
+              "preuve_support": "C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option.",
+              "explication_distracteurs": [
+                "« Un droit » ne correspond pas à ce qu'indique le support : « C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option. ».",
+                "« Une démarche » ne correspond pas à ce qu'indique le support : « C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option. » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option."
+                ],
+                "formulations_acceptables": [
+                  "C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option."
+                ],
+                "exemple_non_exclusif": "C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option.",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option. ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Le droit à la santé signifie que vous pouvez :",
@@ -8200,7 +8504,38 @@
               "Payer une amende"
             ],
             "bonne_reponse": "Demander l'accès aux soins",
-            "explication": "Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation."
+            "explication": "Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation.",
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix à partir de la règle présentée dans l'énoncé, sans ajouter d'information nouvelle.",
+            "correction": {
+              "bonne_reponse": "Demander l'accès aux soins",
+              "preuve_support": "Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation.",
+              "explication_distracteurs": [
+                "« Être obligé de vous soigner » ne correspond pas à ce qu'indique le support : « Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation. ».",
+                "« Payer une amende » ne correspond pas à ce qu'indique le support : « Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation. » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation."
+                ],
+                "formulations_acceptables": [
+                  "Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation."
+                ],
+                "exemple_non_exclusif": "Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation.",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation. ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Un formateur demande à un apprenant d'arriver à l'heure à chaque séance. Il s'agit :",
@@ -8210,7 +8545,39 @@
               "D'une loi nationale"
             ],
             "bonne_reponse": "D'une règle du centre de formation",
-            "explication": "Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale."
+            "explication": "Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale.",
+            "needs_review": true,
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix à partir de la règle présentée dans l'énoncé, sans ajouter d'information nouvelle.",
+            "correction": {
+              "bonne_reponse": "D'une règle du centre de formation",
+              "preuve_support": "Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale.",
+              "explication_distracteurs": [
+                "« D'un droit de l'apprenant » ne correspond pas à ce qu'indique le support : « Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale. ».",
+                "« D'une loi nationale » ne correspond pas à ce qu'indique le support : « Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale. » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale."
+                ],
+                "formulations_acceptables": [
+                  "Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale."
+                ],
+                "exemple_non_exclusif": "Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale.",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale. ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Le parcours vers la carte de séjour pluriannuelle dure :",
@@ -8220,7 +8587,38 @@
               "120 heures"
             ],
             "bonne_reponse": "80 heures",
-            "explication": "Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue."
+            "explication": "Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue.",
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix à partir de la règle présentée dans l'énoncé, sans ajouter d'information nouvelle.",
+            "correction": {
+              "bonne_reponse": "80 heures",
+              "preuve_support": "Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue.",
+              "explication_distracteurs": [
+                "« 50 heures » ne correspond pas à ce qu'indique le support : « Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue. ».",
+                "« 120 heures » ne correspond pas à ce qu'indique le support : « Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue. » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue."
+                ],
+                "formulations_acceptables": [
+                  "Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue."
+                ],
+                "exemple_non_exclusif": "Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue.",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue. ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Combien de thèmes civiques officiels structurent le parcours ?",
@@ -8230,7 +8628,38 @@
               "Sept"
             ],
             "bonne_reponse": "Cinq",
-            "explication": "Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société)."
+            "explication": "Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société).",
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix à partir de la règle présentée dans l'énoncé, sans ajouter d'information nouvelle.",
+            "correction": {
+              "bonne_reponse": "Cinq",
+              "preuve_support": "Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société).",
+              "explication_distracteurs": [
+                "« Trois » ne correspond pas à ce qu'indique le support : « Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société). ».",
+                "« Sept » ne correspond pas à ce qu'indique le support : « Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société). »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société). » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société)."
+                ],
+                "formulations_acceptables": [
+                  "Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société)."
+                ],
+                "exemple_non_exclusif": "Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société).",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société). ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Un devoir, c'est :",
@@ -8240,7 +8669,39 @@
               "Un avantage optionnel"
             ],
             "bonne_reponse": "Une obligation à respecter",
-            "explication": "Un devoir engage la personne à agir, contrairement à un simple choix."
+            "explication": "Un devoir engage la personne à agir, contrairement à un simple choix.",
+            "needs_review": true,
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix à partir de la règle présentée dans l'énoncé, sans ajouter d'information nouvelle.",
+            "correction": {
+              "bonne_reponse": "Une obligation à respecter",
+              "preuve_support": "Un devoir engage la personne à agir, contrairement à un simple choix.",
+              "explication_distracteurs": [
+                "« Un choix libre sans conséquence » ne correspond pas à ce qu'indique le support : « Un devoir engage la personne à agir, contrairement à un simple choix. ».",
+                "« Un avantage optionnel » ne correspond pas à ce qu'indique le support : « Un devoir engage la personne à agir, contrairement à un simple choix. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Un devoir engage la personne à agir, contrairement à un simple choix. » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "Un devoir engage la personne à agir, contrairement à un simple choix."
+                ],
+                "formulations_acceptables": [
+                  "Un devoir engage la personne à agir, contrairement à un simple choix."
+                ],
+                "exemple_non_exclusif": "Un devoir engage la personne à agir, contrairement à un simple choix.",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « Un devoir engage la personne à agir, contrairement à un simple choix. ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "L'évaluation finale (E2) a lieu :",
@@ -8250,7 +8711,39 @@
               "À la fin des 80 heures"
             ],
             "bonne_reponse": "À la fin des 80 heures",
-            "explication": "E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet."
+            "explication": "E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet.",
+            "needs_review": true,
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix à partir de la règle présentée dans l'énoncé, sans ajouter d'information nouvelle.",
+            "correction": {
+              "bonne_reponse": "À la fin des 80 heures",
+              "preuve_support": "E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet.",
+              "explication_distracteurs": [
+                "« Après 25 heures » ne correspond pas à ce qu'indique le support : « E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet. ».",
+                "« Après 50 heures » ne correspond pas à ce qu'indique le support : « E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet. » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet."
+                ],
+                "formulations_acceptables": [
+                  "E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet."
+                ],
+                "exemple_non_exclusif": "E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet.",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet. ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Pourquoi le parcours comprend-il une évaluation intermédiaire (E1) ?",
@@ -8260,7 +8753,39 @@
               "Pour remplacer l'évaluation finale"
             ],
             "bonne_reponse": "Pour mesurer la progression à mi-parcours",
-            "explication": "E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant."
+            "explication": "E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant.",
+            "needs_review": true,
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix à partir de la règle présentée dans l'énoncé, sans ajouter d'information nouvelle.",
+            "correction": {
+              "bonne_reponse": "Pour mesurer la progression à mi-parcours",
+              "preuve_support": "E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant.",
+              "explication_distracteurs": [
+                "« Pour sanctionner les absences » ne correspond pas à ce qu'indique le support : « E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant. ».",
+                "« Pour remplacer l'évaluation finale » ne correspond pas à ce qu'indique le support : « E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant. » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant."
+                ],
+                "formulations_acceptables": [
+                  "E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant."
+                ],
+                "exemple_non_exclusif": "E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant.",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant. ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Une règle se distingue d'un devoir car :",
@@ -8270,7 +8795,39 @@
               "Un devoir n'a aucune conséquence"
             ],
             "bonne_reponse": "Une règle est propre à un lieu précis, un devoir est une obligation plus générale",
-            "explication": "Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général."
+            "explication": "Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général.",
+            "needs_review": true,
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix à partir de la règle présentée dans l'énoncé, sans ajouter d'information nouvelle.",
+            "correction": {
+              "bonne_reponse": "Une règle est propre à un lieu précis, un devoir est une obligation plus générale",
+              "preuve_support": "Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général.",
+              "explication_distracteurs": [
+                "« Une règle est facultative » ne correspond pas à ce qu'indique le support : « Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général. ».",
+                "« Un devoir n'a aucune conséquence » ne correspond pas à ce qu'indique le support : « Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général. » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général."
+                ],
+                "formulations_acceptables": [
+                  "Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général."
+                ],
+                "exemple_non_exclusif": "Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général.",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général. ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Combien d'évaluations rythment le parcours de 80 heures ?",
@@ -8280,7 +8837,39 @@
               "Quatre"
             ],
             "bonne_reponse": "Deux (E1 et E2)",
-            "explication": "Le dialogue mentionne explicitement deux évaluations distinctes."
+            "explication": "Le dialogue mentionne explicitement deux évaluations distinctes.",
+            "needs_review": true,
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix à partir de la règle présentée dans l'énoncé, sans ajouter d'information nouvelle.",
+            "correction": {
+              "bonne_reponse": "Deux (E1 et E2)",
+              "preuve_support": "Le dialogue mentionne explicitement deux évaluations distinctes.",
+              "explication_distracteurs": [
+                "« Une seule » ne correspond pas à ce qu'indique le support : « Le dialogue mentionne explicitement deux évaluations distinctes. ».",
+                "« Quatre » ne correspond pas à ce qu'indique le support : « Le dialogue mentionne explicitement deux évaluations distinctes. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Le dialogue mentionne explicitement deux évaluations distinctes. » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "Le dialogue mentionne explicitement deux évaluations distinctes."
+                ],
+                "formulations_acceptables": [
+                  "Le dialogue mentionne explicitement deux évaluations distinctes."
+                ],
+                "exemple_non_exclusif": "Le dialogue mentionne explicitement deux évaluations distinctes.",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « Le dialogue mentionne explicitement deux évaluations distinctes. ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           }
         ],
         "metadata": {
@@ -8330,7 +8919,58 @@
             ]
           },
           "transformation_id": "A2_TO_B1",
-          "applied_transformations": [],
+          "applied_transformations": [
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[0].justification_prompt",
+              "evidence": "Justification obligatoire ajoutée, appuyée sur la règle réellement présentée pour la question 1."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[1].justification_prompt",
+              "evidence": "Justification obligatoire ajoutée, appuyée sur la règle réellement présentée pour la question 2."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[2].justification_prompt",
+              "evidence": "Justification obligatoire ajoutée, appuyée sur la règle réellement présentée pour la question 3."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[3].justification_prompt",
+              "evidence": "Justification obligatoire ajoutée, appuyée sur la règle réellement présentée pour la question 4."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[4].justification_prompt",
+              "evidence": "Justification obligatoire ajoutée, appuyée sur la règle réellement présentée pour la question 5."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[5].justification_prompt",
+              "evidence": "Justification obligatoire ajoutée, appuyée sur la règle réellement présentée pour la question 6."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[6].justification_prompt",
+              "evidence": "Justification obligatoire ajoutée, appuyée sur la règle réellement présentée pour la question 7."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[7].justification_prompt",
+              "evidence": "Justification obligatoire ajoutée, appuyée sur la règle réellement présentée pour la question 8."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[8].justification_prompt",
+              "evidence": "Justification obligatoire ajoutée, appuyée sur la règle réellement présentée pour la question 9."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[9].justification_prompt",
+              "evidence": "Justification obligatoire ajoutée, appuyée sur la règle réellement présentée pour la question 10."
+            }
+          ],
           "cognitive_operations": [
             "inferer",
             "comparer",
@@ -8340,7 +8980,7 @@
           "guidance": "faible",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": true
         }
       }
     },
@@ -8374,7 +9014,38 @@
               "Une démarche"
             ],
             "bonne_reponse": "Un devoir",
-            "explication": "C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option."
+            "explication": "C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option.",
+            "justification_required": true,
+            "justification_type": "nuance",
+            "justification_prompt": "Justifiez votre choix, expliquez précisément pourquoi les autres réponses ne conviennent pas, et précisez s'il s'agit d'un droit, d'un devoir, d'une règle ou d'une démarche, uniquement à partir de la situation présentée.",
+            "correction": {
+              "bonne_reponse": "Un devoir",
+              "preuve_support": "C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option.",
+              "explication_distracteurs": [
+                "« Un droit » ne correspond pas à ce qu'indique le support : « C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option. ».",
+                "« Une démarche » ne correspond pas à ce qu'indique le support : « C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option. » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option."
+                ],
+                "formulations_acceptables": [
+                  "C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option."
+                ],
+                "exemple_non_exclusif": "C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option.",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « C'est une obligation à laquelle on doit se conformer pendant la formation, pas une simple option. ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Le droit à la santé signifie que vous pouvez :",
@@ -8384,7 +9055,38 @@
               "Payer une amende"
             ],
             "bonne_reponse": "Demander l'accès aux soins",
-            "explication": "Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation."
+            "explication": "Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation.",
+            "justification_required": true,
+            "justification_type": "nuance",
+            "justification_prompt": "Justifiez votre choix, expliquez précisément pourquoi les autres réponses ne conviennent pas, et précisez s'il s'agit d'un droit, d'un devoir, d'une règle ou d'une démarche, uniquement à partir de la situation présentée.",
+            "correction": {
+              "bonne_reponse": "Demander l'accès aux soins",
+              "preuve_support": "Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation.",
+              "explication_distracteurs": [
+                "« Être obligé de vous soigner » ne correspond pas à ce qu'indique le support : « Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation. ».",
+                "« Payer une amende » ne correspond pas à ce qu'indique le support : « Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation. » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation."
+                ],
+                "formulations_acceptables": [
+                  "Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation."
+                ],
+                "exemple_non_exclusif": "Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation.",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « Un droit est une possibilité que la loi garantit, comme demander à être soigné — ce n'est pas une obligation. ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Un formateur demande à un apprenant d'arriver à l'heure à chaque séance. Il s'agit :",
@@ -8394,7 +9096,39 @@
               "D'une loi nationale"
             ],
             "bonne_reponse": "D'une règle du centre de formation",
-            "explication": "Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale."
+            "explication": "Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale.",
+            "needs_review": true,
+            "justification_required": true,
+            "justification_type": "nuance",
+            "justification_prompt": "Justifiez votre choix, expliquez précisément pourquoi les autres réponses ne conviennent pas, et précisez s'il s'agit d'un droit, d'un devoir, d'une règle ou d'une démarche, uniquement à partir de la situation présentée.",
+            "correction": {
+              "bonne_reponse": "D'une règle du centre de formation",
+              "preuve_support": "Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale.",
+              "explication_distracteurs": [
+                "« D'un droit de l'apprenant » ne correspond pas à ce qu'indique le support : « Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale. ».",
+                "« D'une loi nationale » ne correspond pas à ce qu'indique le support : « Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale. » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale."
+                ],
+                "formulations_acceptables": [
+                  "Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale."
+                ],
+                "exemple_non_exclusif": "Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale.",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « Une règle est une consigne précise, propre à un lieu (ici le centre de formation), différente d'une loi nationale. ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Le parcours vers la carte de séjour pluriannuelle dure :",
@@ -8404,7 +9138,38 @@
               "120 heures"
             ],
             "bonne_reponse": "80 heures",
-            "explication": "Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue."
+            "explication": "Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue.",
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix à partir de la règle présentée dans l'énoncé, sans ajouter d'information nouvelle.",
+            "correction": {
+              "bonne_reponse": "80 heures",
+              "preuve_support": "Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue.",
+              "explication_distracteurs": [
+                "« 50 heures » ne correspond pas à ce qu'indique le support : « Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue. ».",
+                "« 120 heures » ne correspond pas à ce qu'indique le support : « Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue. » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue."
+                ],
+                "formulations_acceptables": [
+                  "Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue."
+                ],
+                "exemple_non_exclusif": "Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue.",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « Durée officielle du tronc commun A2/CSP telle que présentée à Awa dans le dialogue. ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Combien de thèmes civiques officiels structurent le parcours ?",
@@ -8414,7 +9179,38 @@
               "Sept"
             ],
             "bonne_reponse": "Cinq",
-            "explication": "Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société)."
+            "explication": "Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société).",
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix à partir de la règle présentée dans l'énoncé, sans ajouter d'information nouvelle.",
+            "correction": {
+              "bonne_reponse": "Cinq",
+              "preuve_support": "Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société).",
+              "explication_distracteurs": [
+                "« Trois » ne correspond pas à ce qu'indique le support : « Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société). ».",
+                "« Sept » ne correspond pas à ce qu'indique le support : « Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société). »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société). » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société)."
+                ],
+                "formulations_acceptables": [
+                  "Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société)."
+                ],
+                "exemple_non_exclusif": "Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société).",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « Les cinq thèmes sont représentés sur le support visuel de la séance (République, institutions, droits/devoirs, histoire, société). ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Un devoir, c'est :",
@@ -8424,7 +9220,39 @@
               "Un avantage optionnel"
             ],
             "bonne_reponse": "Une obligation à respecter",
-            "explication": "Un devoir engage la personne à agir, contrairement à un simple choix."
+            "explication": "Un devoir engage la personne à agir, contrairement à un simple choix.",
+            "needs_review": true,
+            "justification_required": true,
+            "justification_type": "nuance",
+            "justification_prompt": "Justifiez votre choix, expliquez précisément pourquoi les autres réponses ne conviennent pas, et précisez s'il s'agit d'un droit, d'un devoir, d'une règle ou d'une démarche, uniquement à partir de la situation présentée.",
+            "correction": {
+              "bonne_reponse": "Une obligation à respecter",
+              "preuve_support": "Un devoir engage la personne à agir, contrairement à un simple choix.",
+              "explication_distracteurs": [
+                "« Un choix libre sans conséquence » ne correspond pas à ce qu'indique le support : « Un devoir engage la personne à agir, contrairement à un simple choix. ».",
+                "« Un avantage optionnel » ne correspond pas à ce qu'indique le support : « Un devoir engage la personne à agir, contrairement à un simple choix. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Un devoir engage la personne à agir, contrairement à un simple choix. » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "Un devoir engage la personne à agir, contrairement à un simple choix."
+                ],
+                "formulations_acceptables": [
+                  "Un devoir engage la personne à agir, contrairement à un simple choix."
+                ],
+                "exemple_non_exclusif": "Un devoir engage la personne à agir, contrairement à un simple choix.",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « Un devoir engage la personne à agir, contrairement à un simple choix. ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "L'évaluation finale (E2) a lieu :",
@@ -8434,7 +9262,39 @@
               "À la fin des 80 heures"
             ],
             "bonne_reponse": "À la fin des 80 heures",
-            "explication": "E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet."
+            "explication": "E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet.",
+            "needs_review": true,
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix à partir de la règle présentée dans l'énoncé, sans ajouter d'information nouvelle.",
+            "correction": {
+              "bonne_reponse": "À la fin des 80 heures",
+              "preuve_support": "E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet.",
+              "explication_distracteurs": [
+                "« Après 25 heures » ne correspond pas à ce qu'indique le support : « E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet. ».",
+                "« Après 50 heures » ne correspond pas à ce qu'indique le support : « E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet. » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet."
+                ],
+                "formulations_acceptables": [
+                  "E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet."
+                ],
+                "exemple_non_exclusif": "E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet.",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « E2 valide l'ensemble du tronc commun, donc à la fin du parcours complet. ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Pourquoi le parcours comprend-il une évaluation intermédiaire (E1) ?",
@@ -8444,7 +9304,39 @@
               "Pour remplacer l'évaluation finale"
             ],
             "bonne_reponse": "Pour mesurer la progression à mi-parcours",
-            "explication": "E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant."
+            "explication": "E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant.",
+            "needs_review": true,
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix à partir de la règle présentée dans l'énoncé, sans ajouter d'information nouvelle.",
+            "correction": {
+              "bonne_reponse": "Pour mesurer la progression à mi-parcours",
+              "preuve_support": "E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant.",
+              "explication_distracteurs": [
+                "« Pour sanctionner les absences » ne correspond pas à ce qu'indique le support : « E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant. ».",
+                "« Pour remplacer l'évaluation finale » ne correspond pas à ce qu'indique le support : « E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant. » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant."
+                ],
+                "formulations_acceptables": [
+                  "E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant."
+                ],
+                "exemple_non_exclusif": "E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant.",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « E1 permet d'ajuster la suite de la formation selon les besoins de l'apprenant. ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Une règle se distingue d'un devoir car :",
@@ -8454,7 +9346,39 @@
               "Un devoir n'a aucune conséquence"
             ],
             "bonne_reponse": "Une règle est propre à un lieu précis, un devoir est une obligation plus générale",
-            "explication": "Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général."
+            "explication": "Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général.",
+            "needs_review": true,
+            "justification_required": true,
+            "justification_type": "nuance",
+            "justification_prompt": "Justifiez votre choix, expliquez précisément pourquoi les autres réponses ne conviennent pas, et précisez s'il s'agit d'un droit, d'un devoir, d'une règle ou d'une démarche, uniquement à partir de la situation présentée.",
+            "correction": {
+              "bonne_reponse": "Une règle est propre à un lieu précis, un devoir est une obligation plus générale",
+              "preuve_support": "Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général.",
+              "explication_distracteurs": [
+                "« Une règle est facultative » ne correspond pas à ce qu'indique le support : « Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général. ».",
+                "« Un devoir n'a aucune conséquence » ne correspond pas à ce qu'indique le support : « Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général. » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général."
+                ],
+                "formulations_acceptables": [
+                  "Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général."
+                ],
+                "exemple_non_exclusif": "Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général.",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « Ex. « arriver à l'heure » est une règle du centre ; « respecter la loi » est un devoir général. ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Combien d'évaluations rythment le parcours de 80 heures ?",
@@ -8464,7 +9388,39 @@
               "Quatre"
             ],
             "bonne_reponse": "Deux (E1 et E2)",
-            "explication": "Le dialogue mentionne explicitement deux évaluations distinctes."
+            "explication": "Le dialogue mentionne explicitement deux évaluations distinctes.",
+            "needs_review": true,
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix à partir de la règle présentée dans l'énoncé, sans ajouter d'information nouvelle.",
+            "correction": {
+              "bonne_reponse": "Deux (E1 et E2)",
+              "preuve_support": "Le dialogue mentionne explicitement deux évaluations distinctes.",
+              "explication_distracteurs": [
+                "« Une seule » ne correspond pas à ce qu'indique le support : « Le dialogue mentionne explicitement deux évaluations distinctes. ».",
+                "« Quatre » ne correspond pas à ce qu'indique le support : « Le dialogue mentionne explicitement deux évaluations distinctes. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Le dialogue mentionne explicitement deux évaluations distinctes. » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "Le dialogue mentionne explicitement deux évaluations distinctes."
+                ],
+                "formulations_acceptables": [
+                  "Le dialogue mentionne explicitement deux évaluations distinctes."
+                ],
+                "exemple_non_exclusif": "Le dialogue mentionne explicitement deux évaluations distinctes.",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « Le dialogue mentionne explicitement deux évaluations distinctes. ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           }
         ],
         "metadata": {
@@ -8514,7 +9470,58 @@
             ]
           },
           "transformation_id": "A2_TO_B2",
-          "applied_transformations": [],
+          "applied_transformations": [
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[0].justification_prompt",
+              "evidence": "La question 1 oppose explicitement deux notions (droit/devoir/règle/démarche) dans son énoncé : distinction demandée à partir du contenu existant, aucune conséquence juridique ni exception inventée."
+            },
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[1].justification_prompt",
+              "evidence": "La question 2 oppose explicitement deux notions (droit/devoir/règle/démarche) dans son énoncé : distinction demandée à partir du contenu existant, aucune conséquence juridique ni exception inventée."
+            },
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[2].justification_prompt",
+              "evidence": "La question 3 oppose explicitement deux notions (droit/devoir/règle/démarche) dans son énoncé : distinction demandée à partir du contenu existant, aucune conséquence juridique ni exception inventée."
+            },
+            {
+              "rule_id": "DIFF_TRANSFORMATION_NOT_SUPPORTED",
+              "applied_to": "items[3].justification_prompt",
+              "evidence": "La question 4 est purement factuelle (durée/comptage) : aucune distinction droit/devoir/règle/démarche n'y est présente, justification simple maintenue plutôt qu'une nuance inventée."
+            },
+            {
+              "rule_id": "DIFF_TRANSFORMATION_NOT_SUPPORTED",
+              "applied_to": "items[4].justification_prompt",
+              "evidence": "La question 5 est purement factuelle (durée/comptage) : aucune distinction droit/devoir/règle/démarche n'y est présente, justification simple maintenue plutôt qu'une nuance inventée."
+            },
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[5].justification_prompt",
+              "evidence": "La question 6 oppose explicitement deux notions (droit/devoir/règle/démarche) dans son énoncé : distinction demandée à partir du contenu existant, aucune conséquence juridique ni exception inventée."
+            },
+            {
+              "rule_id": "DIFF_TRANSFORMATION_NOT_SUPPORTED",
+              "applied_to": "items[6].justification_prompt",
+              "evidence": "La question 7 est purement factuelle (durée/comptage) : aucune distinction droit/devoir/règle/démarche n'y est présente, justification simple maintenue plutôt qu'une nuance inventée."
+            },
+            {
+              "rule_id": "DIFF_TRANSFORMATION_NOT_SUPPORTED",
+              "applied_to": "items[7].justification_prompt",
+              "evidence": "La question 8 est purement factuelle (durée/comptage) : aucune distinction droit/devoir/règle/démarche n'y est présente, justification simple maintenue plutôt qu'une nuance inventée."
+            },
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[8].justification_prompt",
+              "evidence": "La question 9 oppose explicitement deux notions (droit/devoir/règle/démarche) dans son énoncé : distinction demandée à partir du contenu existant, aucune conséquence juridique ni exception inventée."
+            },
+            {
+              "rule_id": "DIFF_TRANSFORMATION_NOT_SUPPORTED",
+              "applied_to": "items[9].justification_prompt",
+              "evidence": "La question 10 est purement factuelle (durée/comptage) : aucune distinction droit/devoir/règle/démarche n'y est présente, justification simple maintenue plutôt qu'une nuance inventée."
+            }
+          ],
           "cognitive_operations": [
             "analyser",
             "synthetiser",
@@ -8524,7 +9531,7 @@
           "guidance": "a_la_demande",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": true
         }
       }
     },
@@ -9502,6 +10509,10 @@
           "cv2:S01:v3:structures:B1 (4 items)",
           "cv2:S01:v3:atelier-1:B2 (2 items)",
           "cv2:S01:v3:structures:B2 (3 items)",
+          "cv2:S01:v3:civique:A1 (10 items)",
+          "cv2:S01:v3:civique:A2 (10 items)",
+          "cv2:S01:v3:civique:B1 (10 items)",
+          "cv2:S01:v3:civique:B2 (10 items)",
           "cv2:S01:v3:ee-guidee-1:A1 (4 items)",
           "cv2:S01:v3:ee-guidee-1:A2 (4 items)"
         ]
@@ -9528,7 +10539,7 @@
       "Les affirmations civiques doivent être validées contre la base officielle versionnée (civic_facts) avant publication — voir docs/pedagogie/checklist-readiness-differenciation-S01.md.",
       "Le chronométrage doit être calibré avec des données terrain.",
       "Le contenu civique est identique sur les 4 niveaux faute de variante linguistique par niveau dans la source — gap documenté, pas une simplification réalisée ici.",
-      "24 exercice(s) autocorrigé(s) restent sous le plancher de 10 items par manque réel de matière première en banque (needs_content_review=true) — voir MINIMUM_TEN_ITEMS_AUTO_CORRECTED."
+      "28 exercice(s) autocorrigé(s) restent sous le plancher de 10 items par manque réel de matière première en banque (needs_content_review=true) — voir MINIMUM_TEN_ITEMS_AUTO_CORRECTED."
     ],
     "activities": [
       {

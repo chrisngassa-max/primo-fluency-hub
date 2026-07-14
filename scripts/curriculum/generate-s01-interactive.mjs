@@ -202,11 +202,14 @@ function exercise({
   code, title, competence, format, level, instruction, items, source,
   duration = 420, familyId = null, extensionOf = null, activityCode = null,
   civicContent = false, civicFactIds = [], appliedTransformations = [],
-  sourceLevel = "A2",
+  sourceLevel = "A2", forceNeedsContentReview = false,
 }) {
   const strictLevel = parseDifferentiationLevelStrict(level);
   if (!SUPPORTED_FORMATS.has(format)) throw new Error(`Format non supporté: ${format}`);
-  const belowFloor = AUTO_CORRECTED_FORMATS.has(format) && items.length < MIN_AUTO_CORRECTED_ITEMS;
+  // Un item civique marqué needs_review (provenance non validée) rend tout
+  // l'exercice non publiable — le blocage existant (needs_content_review ->
+  // submit-seance-answer refuse l'exercice) est réutilisé, pas dupliqué.
+  const belowFloor = (AUTO_CORRECTED_FORMATS.has(format) && items.length < MIN_AUTO_CORRECTED_ITEMS) || forceNeedsContentReview;
   const levelContract = getLevelContract(competence, strictLevel);
   const transformation = getDifferentiationTransformationRule(sourceLevel, strictLevel);
   const referential = getDifferentiationLevelContracts();
@@ -736,12 +739,77 @@ export async function buildInteractiveS01() {
     }));
   }
 
-  // Civique : servi à TOUS les niveaux (avant : A2 uniquement, un
-  // gain d'accès civique était refusé à A1/B1/B2 sans raison
-  // pédagogique déclarée). Contenu linguistique identique par manque
-  // de variante par niveau dans la source — gap documenté au rapport
-  // de mission, pas une simplification effectuée ici.
+  // Lot 2 — civique : servi à TOUS les niveaux, dix items conservés à
+  // chaque niveau. Contenu linguistique (énoncés/options) identique par
+  // manque de variante par niveau dans la source — gap documenté, pas une
+  // simplification réalisée ici : la différenciation porte sur l'étayage
+  // (indice), l'exigence de justification et la profondeur d'analyse
+  // demandée, jamais sur les faits eux-mêmes.
+  //
+  // Seules les questions dont l'énoncé oppose explicitement deux notions
+  // parmi droit/devoir/règle/démarche supportent réellement une analyse
+  // distinctive B2 ; les questions purement factuelles (durées, comptages)
+  // ne le supportent pas et déclarent DIFF_TRANSFORMATION_NOT_SUPPORTED.
+  const CIVIQUE_CATEGORY_QUESTION_INDEXES = new Set([0, 1, 2, 5, 8]);
+
   for (const level of LEVELS) {
+    const civiqueAppliedTransformations = [];
+    let civiqueNeedsReview = false;
+    const civiqueItems = data.qcm_civique.questions.map((question, index) => {
+      const item = itemFrom(question);
+      const preuve = question.justification ?? null;
+
+      // Provenance réelle non validée (statut Supabase != validated_auto) :
+      // l'item — donc tout l'exercice pour ce niveau — reste non publiable.
+      // Jamais une validation générée : seule une revue humaine réelle lève
+      // ce statut (cf. checklist readiness différenciation S01).
+      if (!String(question.source ?? "").includes("validated_auto")) {
+        item.needs_review = true;
+        civiqueNeedsReview = true;
+      }
+
+      if (level === "A1") {
+        item.indice = preuve;
+        civiqueAppliedTransformations.push({
+          rule_id: "A2_TO_A1",
+          applied_to: `items[${index}].indice`,
+          evidence: `Indice affiché dérivé de la justification réelle de la question ${index + 1} (règle explicitée), situation adulte inchangée.`,
+        });
+      } else if (level === "B1") {
+        item.justification_required = true;
+        item.justification_type = "support_evidence";
+        item.justification_prompt = "Justifiez votre choix à partir de la règle présentée dans l'énoncé, sans ajouter d'information nouvelle.";
+        civiqueAppliedTransformations.push({
+          rule_id: "A2_TO_B1",
+          applied_to: `items[${index}].justification_prompt`,
+          evidence: `Justification obligatoire ajoutée, appuyée sur la règle réellement présentée pour la question ${index + 1}.`,
+        });
+      } else if (level === "B2") {
+        item.justification_required = true;
+        if (CIVIQUE_CATEGORY_QUESTION_INDEXES.has(index)) {
+          item.justification_type = "nuance";
+          item.justification_prompt = "Justifiez votre choix, expliquez précisément pourquoi les autres réponses ne conviennent pas, et précisez s'il s'agit d'un droit, d'un devoir, d'une règle ou d'une démarche, uniquement à partir de la situation présentée.";
+          civiqueAppliedTransformations.push({
+            rule_id: "A2_TO_B2",
+            applied_to: `items[${index}].justification_prompt`,
+            evidence: `La question ${index + 1} oppose explicitement deux notions (droit/devoir/règle/démarche) dans son énoncé : distinction demandée à partir du contenu existant, aucune conséquence juridique ni exception inventée.`,
+          });
+        } else {
+          item.justification_type = "support_evidence";
+          item.justification_prompt = "Justifiez votre choix à partir de la règle présentée dans l'énoncé, sans ajouter d'information nouvelle.";
+          civiqueAppliedTransformations.push({
+            rule_id: "DIFF_TRANSFORMATION_NOT_SUPPORTED",
+            applied_to: `items[${index}].justification_prompt`,
+            evidence: `La question ${index + 1} est purement factuelle (durée/comptage) : aucune distinction droit/devoir/règle/démarche n'y est présente, justification simple maintenue plutôt qu'une nuance inventée.`,
+          });
+        }
+      }
+
+      item.correction = closedItemCorrection({ options: item.options, bonneReponse: item.bonne_reponse, preuve });
+      if (item.justification_prompt) item.correction.justification_ouverte = openJustificationCorrection(preuve);
+      return item;
+    });
+
     exercises.push(exercise({
       code: "civique",
       title: "Droits, devoirs et règles",
@@ -749,12 +817,14 @@ export async function buildInteractiveS01() {
       format: "qcm",
       level,
       instruction: "Lisez chaque situation puis choisissez la réponse directement justifiée par la règle présentée.",
-      items: data.qcm_civique.questions.map(itemFrom),
+      items: civiqueItems,
       source: data.qcm_civique.resource_id,
       duration: 600,
       activityCode: "S01.CIVIQUE",
       civicContent: true,
       civicFactIds: data.qcm_civique.questions.map((q) => q.metadata_code ?? q.id_supabase).filter(Boolean),
+      appliedTransformations: civiqueAppliedTransformations,
+      forceNeedsContentReview: civiqueNeedsReview,
     }));
   }
 

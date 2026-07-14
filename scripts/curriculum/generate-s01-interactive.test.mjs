@@ -32,7 +32,13 @@ describe("S01 v3 — parcours interactif", () => {
 
   it("marque explicitement (needs_content_review) tout exercice autocorrigé sous le plancher de 10 items, sans jamais fabriquer d'item", async () => {
     const payload = await buildInteractiveS01();
-    const autoCorrected = payload.exercises.filter((exercise) => AUTO_CORRECTED_FORMATS.has(exercise.format));
+    // civique est volontairement exclu de cette assertion : depuis le Lot 2,
+    // il porte needs_content_review=true pour une raison indépendante du
+    // plancher de densité (provenance civique non validée — voir le
+    // describe dédié "Lot 2 — civique").
+    const autoCorrected = payload.exercises.filter(
+      (exercise) => AUTO_CORRECTED_FORMATS.has(exercise.format) && !exercise.metadata_code.startsWith("cv2:S01:v3:civique:"),
+    );
     expect(autoCorrected.length).toBeGreaterThan(0);
     for (const exercise of autoCorrected) {
       const belowFloor = exercise.contenu.items.length < 10;
@@ -429,5 +435,94 @@ describe("Lot 2 — support-visuel : réponses réelles dérivées de data.visua
     const levels = await byLevel();
     const notSupported = levels.B2.contenu.metadata.applied_transformations.filter((t) => t.rule_id === "DIFF_TRANSFORMATION_NOT_SUPPORTED");
     expect(notSupported.length).toBe(3);
+  });
+});
+
+describe("Lot 2 — civique : transformation réelle par niveau (traitée en dernier)", () => {
+  async function byLevel() {
+    const payload = await buildInteractiveS01();
+    const found = {};
+    for (const level of ["A1", "A2", "B1", "B2"]) {
+      found[level] = payload.exercises.find((exercise) => exercise.metadata_code === `cv2:S01:v3:civique:${level}`);
+    }
+    return found;
+  }
+
+  it("conserve dix items par niveau, la compétence CE et le format qcm", async () => {
+    const levels = await byLevel();
+    for (const level of ["A1", "A2", "B1", "B2"]) {
+      expect(levels[level].contenu.items.length).toBe(10);
+      expect(levels[level].competence).toBe("CE");
+      expect(levels[level].format).toBe("qcm");
+      expect(levels[level].civic_content).toBe(true);
+    }
+  });
+
+  it("la bonne réponse figure toujours dans les options, à tous les niveaux", async () => {
+    const levels = await byLevel();
+    for (const level of ["A1", "A2", "B1", "B2"]) {
+      for (const item of levels[level].contenu.items) {
+        expect(item.options).toContain(item.bonne_reponse);
+      }
+    }
+  });
+
+  it("A1 : indice dérivé de la justification réelle, situation adulte et énoncés inchangés (pas d'infantilisation)", async () => {
+    const levels = await byLevel();
+    for (const [index, item] of levels.A1.contenu.items.entries()) {
+      expect(typeof item.indice).toBe("string");
+      // Les énoncés/options restent ceux de la source, mot pour mot.
+      expect(item.question).toBe(levels.A2.contenu.items[index].question);
+      expect(item.options).toEqual(levels.A2.contenu.items[index].options);
+    }
+  });
+
+  it("B1 : justification obligatoire fondée sur la règle présentée, sur les dix items, aucun ajout factuel", async () => {
+    const levels = await byLevel();
+    for (const item of levels.B1.contenu.items) {
+      expect(item.justification_required).toBe(true);
+      expect(item.justification_type).toBe("support_evidence");
+    }
+  });
+
+  it("B2 : distingue droit/devoir/règle/démarche uniquement sur les questions qui opposent réellement ces notions (5/10), DIFF_TRANSFORMATION_NOT_SUPPORTED pour les 5 questions factuelles", async () => {
+    const levels = await byLevel();
+    const nuanced = levels.B2.contenu.items.filter((item) => item.justification_type === "nuance");
+    const plain = levels.B2.contenu.items.filter((item) => item.justification_type === "support_evidence");
+    expect(nuanced.length).toBe(5);
+    expect(plain.length).toBe(5);
+    expect(levels.B2.contenu.items.every((item) => item.justification_required === true)).toBe(true);
+    for (const item of nuanced) {
+      expect(item.justification_prompt).toContain("droit");
+      expect(item.justification_prompt).toContain("devoir");
+    }
+    const notSupported = levels.B2.contenu.metadata.applied_transformations.filter((t) => t.rule_id === "DIFF_TRANSFORMATION_NOT_SUPPORTED");
+    expect(notSupported.length).toBe(5);
+  });
+
+  it("ne modifie jamais un fait civique entre niveaux : mêmes bonne_reponse à chaque niveau", async () => {
+    const levels = await byLevel();
+    for (let index = 0; index < 10; index += 1) {
+      const answers = ["A1", "A2", "B1", "B2"].map((level) => levels[level].contenu.items[index].bonne_reponse);
+      expect(new Set(answers).size).toBe(1);
+    }
+  });
+
+  it("tout item civique non validé (provenance != validated_auto) ou marqué needs_review rend l'exercice non publiable (needs_content_review=true), à tous les niveaux", async () => {
+    const levels = await byLevel();
+    for (const level of ["A1", "A2", "B1", "B2"]) {
+      expect(levels[level].contenu.metadata.needs_content_review).toBe(true);
+      const flagged = levels[level].contenu.items.filter((item) => item.needs_review);
+      // 1 item explicitement "needs_review" + 5 items "Créé (complément)"
+      // (statut != validated_auto) dans data.qcm_civique.questions.
+      expect(flagged.length).toBe(6);
+    }
+  });
+
+  it("les réponses et corrections restent cachées avant libération (hors liste blanche du sanitizer), y compris needs_review", async () => {
+    const levels = await byLevel();
+    for (const item of levels.B2.contenu.items) {
+      expect(item.correction).toBeDefined();
+    }
   });
 });

@@ -90,6 +90,11 @@ describe("session-content-sanitizer — relecture indépendante point 1/10", () 
     expect(sanitized).not.toHaveProperty("correction");
   });
 
+  it("ne transmet jamais needs_review (statut éditorial de provenance civique, jamais destiné à l'apprenant)", () => {
+    const sanitized = sanitizeItem({ question: "Q", options: ["A", "B"], needs_review: true } as any);
+    expect(sanitized).not.toHaveProperty("needs_review");
+  });
+
   it("laisse passer banque_mots (mots réels non associés à un trou précis)", () => {
     const sanitized = sanitizeItem({ question: "Mot manquant 1", banque_mots: ["objectif", "parcours", "règles"] } as any);
     expect(sanitized.banque_mots).toEqual(["objectif", "parcours", "règles"]);
