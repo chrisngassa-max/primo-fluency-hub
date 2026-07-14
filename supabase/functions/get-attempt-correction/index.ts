@@ -1,4 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { filterReleasedItemResults } from '../_shared/released-correction-filter.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -76,12 +77,16 @@ Deno.serve(async (req) => {
       return jsonResponse({ attempt_id: attempt.id, status: attempt.status, released: false });
     }
 
+    // Lot 2.1, point 6 : liste blanche dédiée (released-correction-filter.ts)
+    // appliquée ICI, au point de sortie, plutôt que de faire confiance
+    // aveuglément à ce qui a été stocké par submit-seance-answer — défense
+    // en profondeur.
     return jsonResponse({
       attempt_id: attempt.id,
       status: attempt.status,
       released: true,
       score_normalized: attempt.score_normalized,
-      item_results: attempt.item_results,
+      item_results: filterReleasedItemResults(attempt.item_results),
       correction_viewed_at: attempt.correction_viewed_at,
     });
   } catch (err: any) {

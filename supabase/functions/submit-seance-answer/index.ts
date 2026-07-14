@@ -140,6 +140,14 @@ Deno.serve(async (req) => {
       serviceRoleKey: SERVICE_ROLE_KEY,
     });
 
+    // Stockage COMPLET (Lot 2.1, points 5/6) : le modèle de résultat riche
+    // (justification_status/score/feedback/overall_status/score_provisional
+    // + preuve_support/explication_distracteurs/erreur_diagnostiquee/
+    // remediation/justification_ouverte) est conservé ici pour la revue
+    // formateur et la restitution différée. Il n'est JAMAIS renvoyé par
+    // cette fonction (réponse volontairement minimale, voir plus bas) : seul
+    // get-attempt-correction le lit, et seulement après libération, à
+    // travers sa propre liste blanche dédiée (released-correction-filter.ts).
     const itemResults = Object.fromEntries(
       result.correction.map((c, idx) => [
         String(idx),
@@ -150,6 +158,17 @@ Deno.serve(async (req) => {
           correct: c.correct,
           explication: c.explication ?? null,
           learner_justification: c.learner_justification ?? null,
+          answer_correct: c.answer_correct,
+          justification_status: c.justification_status,
+          justification_score: c.justification_score,
+          justification_feedback: c.justification_feedback,
+          overall_status: c.overall_status,
+          score_provisional: c.score_provisional,
+          preuve_support: c.preuve_support ?? null,
+          explication_distracteurs: c.explication_distracteurs ?? [],
+          erreur_diagnostiquee: c.erreur_diagnostiquee ?? null,
+          remediation: c.remediation ?? null,
+          justification_ouverte: c.justification_ouverte ?? null,
         },
       ]),
     );
