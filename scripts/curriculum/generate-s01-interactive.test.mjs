@@ -205,3 +205,88 @@ describe("Lot 2 — co-dialogue : transformation réelle par niveau", () => {
     }
   });
 });
+
+describe("Lot 2 — lexique-association : transformation réelle par niveau", () => {
+  async function byLevel() {
+    const payload = await buildInteractiveS01();
+    const found = {};
+    for (const level of ["A1", "A2", "B1", "B2"]) {
+      found[level] = payload.exercises.find((exercise) => exercise.metadata_code === `cv2:S01:v3:lexique-association:${level}`);
+    }
+    return found;
+  }
+
+  it("conserve dix items, le format appariement et la compétence CE à chaque niveau", async () => {
+    const levels = await byLevel();
+    for (const level of ["A1", "A2", "B1", "B2"]) {
+      expect(levels[level].contenu.items.length).toBe(10);
+      expect(levels[level].format).toBe("appariement");
+      expect(levels[level].competence).toBe("CE");
+    }
+  });
+
+  it("la bonne réponse figure toujours dans les options, à tous les niveaux", async () => {
+    const levels = await byLevel();
+    for (const level of ["A1", "A2", "B1", "B2"]) {
+      for (const item of levels[level].contenu.items) {
+        expect(item.options).toContain(item.bonne_reponse);
+      }
+    }
+  });
+
+  it("A1 : mot vers définition, un distracteur, exemple visible en aide (indice)", async () => {
+    const levels = await byLevel();
+    for (const item of levels.A1.contenu.items) {
+      expect(item.options.length).toBe(2);
+      expect(typeof item.indice).toBe("string");
+      expect(item.indice).toBe(item.explication);
+    }
+  });
+
+  it("A2 reste le pivot : mot vers définition, deux distracteurs, aucune transformation appliquée déclarée", async () => {
+    const levels = await byLevel();
+    expect(levels.A2.contenu.metadata.applied_transformations).toEqual([]);
+    for (const item of levels.A2.contenu.items) {
+      expect(item.options.length).toBe(3);
+      expect(item).not.toHaveProperty("indice");
+    }
+  });
+
+  it("B1/B2 : format inversé (exemple d'emploi -> mot), pas seulement une différence de nombre de distracteurs", async () => {
+    const levels = await byLevel();
+    for (const level of ["B1", "B2"]) {
+      for (const item of levels[level].contenu.items) {
+        // La question porte sur l'exemple d'emploi réel, la réponse est le
+        // mot — vérifie que la réponse est bien un des dix mots du lexique
+        // (pas une définition).
+        expect(item.bonne_reponse.split(" ").length).toBeLessThanOrEqual(2);
+        expect(item.question.length).toBeGreaterThan(item.bonne_reponse.length);
+      }
+    }
+  });
+
+  it("justification lexicale réelle uniquement sur droit/devoir (les deux seuls termes proches), jamais généralisée aux huit autres", async () => {
+    const levels = await byLevel();
+    for (const level of ["B1", "B2"]) {
+      const withJustification = levels[level].contenu.items.filter((item) => item.justification_required);
+      expect(withJustification.length).toBe(2);
+      expect(new Set(withJustification.map((item) => item.bonne_reponse))).toEqual(new Set(["droit", "devoir"]));
+    }
+    // B2 force la discrimination : "devoir" est un distracteur explicite de
+    // l'item "droit", et réciproquement.
+    const droitB2 = levels.B2.contenu.items.find((item) => item.bonne_reponse === "droit");
+    const devoirB2 = levels.B2.contenu.items.find((item) => item.bonne_reponse === "devoir");
+    expect(droitB2.options).toContain("devoir");
+    expect(devoirB2.options).toContain("droit");
+    expect(droitB2.justification_type).toBe("nuance");
+  });
+
+  it("B2 n'invente aucune nuance pour les huit mots sans terme proche : mêmes définitions/exemples que la source", async () => {
+    const levels = await byLevel();
+    const withoutJustification = levels.B2.contenu.items.filter((item) => !item.justification_required);
+    expect(withoutJustification.length).toBe(8);
+    for (const item of withoutJustification) {
+      expect(item).not.toHaveProperty("justification_prompt");
+    }
+  });
+});

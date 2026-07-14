@@ -222,23 +222,96 @@ export async function buildInteractiveS01() {
   // l'appariement, au lieu des 3 paires isolées de
   // lexique_exercices[0] : même contenu réel, simplement complet.
   // ------------------------------------------------------------
+  // Lot 2 — lexique-association : dix mots (data.lexique.mots), format
+  // appariement et compétence CE conservés à tous les niveaux. « droit » et
+  // « devoir » sont les deux seuls mots dont le sens est assez proche pour
+  // justifier une distinction lexicale réelle (les huit autres sont
+  // lexicalement distincts entre eux d'après les définitions du lexique) :
+  // la justification et le forçage du distracteur voisin ne portent QUE sur
+  // ces deux mots, jamais généralisés ni inventés pour les autres.
+  const LEXIQUE_CLOSE_TERMS = { droit: "devoir", devoir: "droit" };
+
   for (const level of LEVELS) {
+    const lexiqueAppliedTransformations = [];
+    const reversedFormat = level === "B1" || level === "B2";
+    const lexiqueItems = data.lexique.mots.map((entry, index) => {
+      const closeTerm = LEXIQUE_CLOSE_TERMS[entry.mot] ?? null;
+
+      if (reversedFormat) {
+        // B1/B2 : exemple d'emploi réel -> mot approprié (relier un usage à
+        // un mot, pas mémoriser une définition) — différenciation par le
+        // format de la tâche, pas seulement le nombre de distracteurs.
+        let options = buildAppariementOptions(data.lexique.mots, index, (m) => m.mot, 3);
+        if (closeTerm && level === "B2" && !options.includes(closeTerm)) {
+          // B2 uniquement : force la discrimination entre les deux termes
+          // proches en incluant le mot voisin réel comme distracteur.
+          options = options.filter((option) => option !== entry.mot).slice(0, 2);
+          options = Array.from(new Set([...options, closeTerm, entry.mot]));
+        }
+        const item = {
+          question: entry.exemple,
+          options,
+          bonne_reponse: entry.mot,
+          explication: entry.definition_simple,
+        };
+        lexiqueAppliedTransformations.push({
+          rule_id: level === "B2" ? "A2_TO_B2" : "A2_TO_B1",
+          applied_to: `items[${index}].question`,
+          evidence: `Format inversé : la question porte sur l'exemple d'emploi réel (« ${entry.exemple} »), la réponse attendue est le mot, pas sa définition.`,
+        });
+        if (closeTerm) {
+          item.justification_required = true;
+          item.justification_type = level === "B2" ? "nuance" : "lexical_distinction";
+          item.justification_prompt = level === "B2"
+            ? `Justifiez votre choix et expliquez, à partir des définitions du lexique, en quoi « ${entry.mot} » se distingue de « ${closeTerm} ».`
+            : `Justifiez votre choix à partir de la définition de « ${entry.mot} » dans le lexique.`;
+          lexiqueAppliedTransformations.push({
+            rule_id: level === "B2" ? "A2_TO_B2" : "A2_TO_B1",
+            applied_to: `items[${index}].justification_prompt`,
+            evidence: `« ${entry.mot} » et « ${closeTerm} » sont sémantiquement proches dans le lexique réel de la séance : justification/distinction demandée, aucune nuance inventée.`,
+          });
+        }
+        item.correction = closedItemCorrection({ options: item.options, bonneReponse: entry.mot, preuve: entry.definition_simple });
+        if (item.justification_prompt) item.correction.justification_ouverte = openJustificationCorrection(entry.definition_simple);
+        return item;
+      }
+
+      // A1/A2 : mot -> définition (format d'origine). A1 = 1 distracteur +
+      // exemple visible en aide ; A2 = 2 distracteurs, reste le pivot.
+      const distractorCount = level === "A1" ? 1 : 2;
+      const options = buildAppariementOptions(data.lexique.mots, index, (m) => m.definition_simple, distractorCount);
+      const item = {
+        question: entry.mot,
+        options,
+        bonne_reponse: entry.definition_simple,
+        explication: entry.exemple,
+      };
+      if (level === "A1") {
+        item.indice = entry.exemple;
+        lexiqueAppliedTransformations.push({
+          rule_id: "A2_TO_A1",
+          applied_to: `items[${index}].indice`,
+          evidence: `Exemple d'emploi réel affiché en aide ; options réduites à ${options.length} avec bonne réponse garantie.`,
+        });
+      }
+      item.correction = closedItemCorrection({ options, bonneReponse: entry.definition_simple, preuve: entry.exemple });
+      return item;
+    });
+
     exercises.push(exercise({
       code: "lexique-association",
       title: "Associer chaque mot à sa définition",
       competence: "CE",
       format: "appariement",
       level,
-      instruction: "Associez chaque mot de la séance à sa définition simplifiée.",
-      items: data.lexique.mots.map((entry, index) => ({
-        question: entry.mot,
-        options: buildAppariementOptions(data.lexique.mots, index, (m) => m.definition_simple),
-        bonne_reponse: entry.definition_simple,
-        explication: entry.exemple,
-      })),
+      instruction: reversedFormat
+        ? "Associez chaque exemple d'emploi au mot approprié de la séance."
+        : "Associez chaque mot de la séance à sa définition simplifiée.",
+      items: lexiqueItems,
       source: data.lexique.resource_id,
       duration: 420,
       activityCode: "S01.LEXIQUE",
+      appliedTransformations: lexiqueAppliedTransformations,
     }));
 
     const texteLacunaire = data.lexique_exercices.find((entry) => entry.type === "texte_lacunaire");

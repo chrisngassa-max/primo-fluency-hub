@@ -22,111 +22,191 @@
             "question": "parcours",
             "options": [
               "Ensemble des séances à suivre pour atteindre un objectif.",
-              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
-              "Le but que l'on veut atteindre.",
-              "Une action pour obtenir un document ou un droit."
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2)."
             ],
             "bonne_reponse": "Ensemble des séances à suivre pour atteindre un objectif.",
-            "explication": "Awa suit un parcours de 80 heures."
+            "explication": "Awa suit un parcours de 80 heures.",
+            "indice": "Awa suit un parcours de 80 heures.",
+            "correction": {
+              "bonne_reponse": "Ensemble des séances à suivre pour atteindre un objectif.",
+              "preuve_support": "Awa suit un parcours de 80 heures.",
+              "explication_distracteurs": [
+                "« Le degré de connaissance d'une langue (A1, A2, B1, B2). » ne correspond pas à ce qu'indique le support : « Awa suit un parcours de 80 heures. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Awa suit un parcours de 80 heures. » puis répondez à nouveau."
+            }
           },
           {
             "question": "niveau",
             "options": [
               "Le but que l'on veut atteindre.",
-              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
-              "Une action pour obtenir un document ou un droit.",
-              "Quelque chose qu'on peut demander, garanti par la loi."
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2)."
             ],
             "bonne_reponse": "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
-            "explication": "Son niveau de français progresse."
+            "explication": "Son niveau de français progresse.",
+            "indice": "Son niveau de français progresse.",
+            "correction": {
+              "bonne_reponse": "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+              "preuve_support": "Son niveau de français progresse.",
+              "explication_distracteurs": [
+                "« Le but que l'on veut atteindre. » ne correspond pas à ce qu'indique le support : « Son niveau de français progresse. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Son niveau de français progresse. » puis répondez à nouveau."
+            }
           },
           {
             "question": "objectif",
             "options": [
-              "Une action pour obtenir un document ou un droit.",
-              "Quelque chose qu'on peut demander, garanti par la loi.",
               "Le but que l'on veut atteindre.",
-              "Une obligation, quelque chose qu'on doit faire."
+              "Une action pour obtenir un document ou un droit."
             ],
             "bonne_reponse": "Le but que l'on veut atteindre.",
-            "explication": "Son objectif est d'avoir sa carte de séjour."
+            "explication": "Son objectif est d'avoir sa carte de séjour.",
+            "indice": "Son objectif est d'avoir sa carte de séjour.",
+            "correction": {
+              "bonne_reponse": "Le but que l'on veut atteindre.",
+              "preuve_support": "Son objectif est d'avoir sa carte de séjour.",
+              "explication_distracteurs": [
+                "« Une action pour obtenir un document ou un droit. » ne correspond pas à ce qu'indique le support : « Son objectif est d'avoir sa carte de séjour. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Son objectif est d'avoir sa carte de séjour. » puis répondez à nouveau."
+            }
           },
           {
             "question": "démarche",
             "options": [
               "Quelque chose qu'on peut demander, garanti par la loi.",
-              "Une obligation, quelque chose qu'on doit faire.",
-              "La forme de gouvernement de la France.",
               "Une action pour obtenir un document ou un droit."
             ],
             "bonne_reponse": "Une action pour obtenir un document ou un droit.",
-            "explication": "Elle fait une démarche à la préfecture."
+            "explication": "Elle fait une démarche à la préfecture.",
+            "indice": "Elle fait une démarche à la préfecture.",
+            "correction": {
+              "bonne_reponse": "Une action pour obtenir un document ou un droit.",
+              "preuve_support": "Elle fait une démarche à la préfecture.",
+              "explication_distracteurs": [
+                "« Quelque chose qu'on peut demander, garanti par la loi. » ne correspond pas à ce qu'indique le support : « Elle fait une démarche à la préfecture. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Elle fait une démarche à la préfecture. » puis répondez à nouveau."
+            }
           },
           {
             "question": "droit",
             "options": [
               "Quelque chose qu'on peut demander, garanti par la loi.",
-              "Une obligation, quelque chose qu'on doit faire.",
-              "La forme de gouvernement de la France.",
-              "Une épreuve qui évalue les connaissances."
+              "Une obligation, quelque chose qu'on doit faire."
             ],
             "bonne_reponse": "Quelque chose qu'on peut demander, garanti par la loi.",
-            "explication": "Le droit à la santé permet de se soigner."
+            "explication": "Le droit à la santé permet de se soigner.",
+            "indice": "Le droit à la santé permet de se soigner.",
+            "correction": {
+              "bonne_reponse": "Quelque chose qu'on peut demander, garanti par la loi.",
+              "preuve_support": "Le droit à la santé permet de se soigner.",
+              "explication_distracteurs": [
+                "« Une obligation, quelque chose qu'on doit faire. » ne correspond pas à ce qu'indique le support : « Le droit à la santé permet de se soigner. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Le droit à la santé permet de se soigner. » puis répondez à nouveau."
+            }
           },
           {
             "question": "devoir",
             "options": [
               "La forme de gouvernement de la France.",
-              "Une obligation, quelque chose qu'on doit faire.",
-              "Une épreuve qui évalue les connaissances.",
-              "Une réunion de formation à une date précise."
+              "Une obligation, quelque chose qu'on doit faire."
             ],
             "bonne_reponse": "Une obligation, quelque chose qu'on doit faire.",
-            "explication": "Respecter la loi est un devoir."
+            "explication": "Respecter la loi est un devoir.",
+            "indice": "Respecter la loi est un devoir.",
+            "correction": {
+              "bonne_reponse": "Une obligation, quelque chose qu'on doit faire.",
+              "preuve_support": "Respecter la loi est un devoir.",
+              "explication_distracteurs": [
+                "« La forme de gouvernement de la France. » ne correspond pas à ce qu'indique le support : « Respecter la loi est un devoir. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Respecter la loi est un devoir. » puis répondez à nouveau."
+            }
           },
           {
             "question": "République",
             "options": [
-              "Une épreuve qui évalue les connaissances.",
-              "Une réunion de formation à une date précise.",
               "La forme de gouvernement de la France.",
-              "Avancer, s'améliorer petit à petit."
+              "Une épreuve qui évalue les connaissances."
             ],
             "bonne_reponse": "La forme de gouvernement de la France.",
-            "explication": "La République française a une devise."
+            "explication": "La République française a une devise.",
+            "indice": "La République française a une devise.",
+            "correction": {
+              "bonne_reponse": "La forme de gouvernement de la France.",
+              "preuve_support": "La République française a une devise.",
+              "explication_distracteurs": [
+                "« Une épreuve qui évalue les connaissances. » ne correspond pas à ce qu'indique le support : « La République française a une devise. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « La République française a une devise. » puis répondez à nouveau."
+            }
           },
           {
             "question": "examen",
             "options": [
               "Une réunion de formation à une date précise.",
-              "Avancer, s'améliorer petit à petit.",
-              "Ensemble des séances à suivre pour atteindre un objectif.",
               "Une épreuve qui évalue les connaissances."
             ],
             "bonne_reponse": "Une épreuve qui évalue les connaissances.",
-            "explication": "L'examen final a lieu après 80 heures."
+            "explication": "L'examen final a lieu après 80 heures.",
+            "indice": "L'examen final a lieu après 80 heures.",
+            "correction": {
+              "bonne_reponse": "Une épreuve qui évalue les connaissances.",
+              "preuve_support": "L'examen final a lieu après 80 heures.",
+              "explication_distracteurs": [
+                "« Une réunion de formation à une date précise. » ne correspond pas à ce qu'indique le support : « L'examen final a lieu après 80 heures. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « L'examen final a lieu après 80 heures. » puis répondez à nouveau."
+            }
           },
           {
             "question": "séance",
             "options": [
               "Une réunion de formation à une date précise.",
-              "Avancer, s'améliorer petit à petit.",
-              "Ensemble des séances à suivre pour atteindre un objectif.",
-              "Le degré de connaissance d'une langue (A1, A2, B1, B2)."
+              "Avancer, s'améliorer petit à petit."
             ],
             "bonne_reponse": "Une réunion de formation à une date précise.",
-            "explication": "Chaque séance dure 3 heures."
+            "explication": "Chaque séance dure 3 heures.",
+            "indice": "Chaque séance dure 3 heures.",
+            "correction": {
+              "bonne_reponse": "Une réunion de formation à une date précise.",
+              "preuve_support": "Chaque séance dure 3 heures.",
+              "explication_distracteurs": [
+                "« Avancer, s'améliorer petit à petit. » ne correspond pas à ce qu'indique le support : « Chaque séance dure 3 heures. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Chaque séance dure 3 heures. » puis répondez à nouveau."
+            }
           },
           {
             "question": "progresser",
             "options": [
               "Ensemble des séances à suivre pour atteindre un objectif.",
-              "Avancer, s'améliorer petit à petit.",
-              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
-              "Le but que l'on veut atteindre."
+              "Avancer, s'améliorer petit à petit."
             ],
             "bonne_reponse": "Avancer, s'améliorer petit à petit.",
-            "explication": "Elle progresse en français chaque semaine."
+            "explication": "Elle progresse en français chaque semaine.",
+            "indice": "Elle progresse en français chaque semaine.",
+            "correction": {
+              "bonne_reponse": "Avancer, s'améliorer petit à petit.",
+              "preuve_support": "Elle progresse en français chaque semaine.",
+              "explication_distracteurs": [
+                "« Ensemble des séances à suivre pour atteindre un objectif. » ne correspond pas à ce qu'indique le support : « Elle progresse en français chaque semaine. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Elle progresse en français chaque semaine. » puis répondez à nouveau."
+            }
           }
         ],
         "metadata": {
@@ -182,7 +262,58 @@
             ]
           },
           "transformation_id": "A2_TO_A1",
-          "applied_transformations": [],
+          "applied_transformations": [
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[0].indice",
+              "evidence": "Exemple d'emploi réel affiché en aide ; options réduites à 2 avec bonne réponse garantie."
+            },
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[1].indice",
+              "evidence": "Exemple d'emploi réel affiché en aide ; options réduites à 2 avec bonne réponse garantie."
+            },
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[2].indice",
+              "evidence": "Exemple d'emploi réel affiché en aide ; options réduites à 2 avec bonne réponse garantie."
+            },
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[3].indice",
+              "evidence": "Exemple d'emploi réel affiché en aide ; options réduites à 2 avec bonne réponse garantie."
+            },
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[4].indice",
+              "evidence": "Exemple d'emploi réel affiché en aide ; options réduites à 2 avec bonne réponse garantie."
+            },
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[5].indice",
+              "evidence": "Exemple d'emploi réel affiché en aide ; options réduites à 2 avec bonne réponse garantie."
+            },
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[6].indice",
+              "evidence": "Exemple d'emploi réel affiché en aide ; options réduites à 2 avec bonne réponse garantie."
+            },
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[7].indice",
+              "evidence": "Exemple d'emploi réel affiché en aide ; options réduites à 2 avec bonne réponse garantie."
+            },
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[8].indice",
+              "evidence": "Exemple d'emploi réel affiché en aide ; options réduites à 2 avec bonne réponse garantie."
+            },
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[9].indice",
+              "evidence": "Exemple d'emploi réel affiché en aide ; options réduites à 2 avec bonne réponse garantie."
+            }
+          ],
           "cognitive_operations": [
             "reperer",
             "identifier",
@@ -313,110 +444,200 @@
             "options": [
               "Ensemble des séances à suivre pour atteindre un objectif.",
               "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
-              "Le but que l'on veut atteindre.",
-              "Une action pour obtenir un document ou un droit."
+              "Le but que l'on veut atteindre."
             ],
             "bonne_reponse": "Ensemble des séances à suivre pour atteindre un objectif.",
-            "explication": "Awa suit un parcours de 80 heures."
+            "explication": "Awa suit un parcours de 80 heures.",
+            "correction": {
+              "bonne_reponse": "Ensemble des séances à suivre pour atteindre un objectif.",
+              "preuve_support": "Awa suit un parcours de 80 heures.",
+              "explication_distracteurs": [
+                "« Le degré de connaissance d'une langue (A1, A2, B1, B2). » ne correspond pas à ce qu'indique le support : « Awa suit un parcours de 80 heures. ».",
+                "« Le but que l'on veut atteindre. » ne correspond pas à ce qu'indique le support : « Awa suit un parcours de 80 heures. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Awa suit un parcours de 80 heures. » puis répondez à nouveau."
+            }
           },
           {
             "question": "niveau",
             "options": [
               "Le but que l'on veut atteindre.",
               "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
-              "Une action pour obtenir un document ou un droit.",
-              "Quelque chose qu'on peut demander, garanti par la loi."
+              "Une action pour obtenir un document ou un droit."
             ],
             "bonne_reponse": "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
-            "explication": "Son niveau de français progresse."
+            "explication": "Son niveau de français progresse.",
+            "correction": {
+              "bonne_reponse": "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+              "preuve_support": "Son niveau de français progresse.",
+              "explication_distracteurs": [
+                "« Le but que l'on veut atteindre. » ne correspond pas à ce qu'indique le support : « Son niveau de français progresse. ».",
+                "« Une action pour obtenir un document ou un droit. » ne correspond pas à ce qu'indique le support : « Son niveau de français progresse. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Son niveau de français progresse. » puis répondez à nouveau."
+            }
           },
           {
             "question": "objectif",
             "options": [
               "Une action pour obtenir un document ou un droit.",
               "Quelque chose qu'on peut demander, garanti par la loi.",
-              "Le but que l'on veut atteindre.",
-              "Une obligation, quelque chose qu'on doit faire."
+              "Le but que l'on veut atteindre."
             ],
             "bonne_reponse": "Le but que l'on veut atteindre.",
-            "explication": "Son objectif est d'avoir sa carte de séjour."
+            "explication": "Son objectif est d'avoir sa carte de séjour.",
+            "correction": {
+              "bonne_reponse": "Le but que l'on veut atteindre.",
+              "preuve_support": "Son objectif est d'avoir sa carte de séjour.",
+              "explication_distracteurs": [
+                "« Une action pour obtenir un document ou un droit. » ne correspond pas à ce qu'indique le support : « Son objectif est d'avoir sa carte de séjour. ».",
+                "« Quelque chose qu'on peut demander, garanti par la loi. » ne correspond pas à ce qu'indique le support : « Son objectif est d'avoir sa carte de séjour. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Son objectif est d'avoir sa carte de séjour. » puis répondez à nouveau."
+            }
           },
           {
             "question": "démarche",
             "options": [
+              "Une action pour obtenir un document ou un droit.",
               "Quelque chose qu'on peut demander, garanti par la loi.",
-              "Une obligation, quelque chose qu'on doit faire.",
-              "La forme de gouvernement de la France.",
-              "Une action pour obtenir un document ou un droit."
+              "Une obligation, quelque chose qu'on doit faire."
             ],
             "bonne_reponse": "Une action pour obtenir un document ou un droit.",
-            "explication": "Elle fait une démarche à la préfecture."
+            "explication": "Elle fait une démarche à la préfecture.",
+            "correction": {
+              "bonne_reponse": "Une action pour obtenir un document ou un droit.",
+              "preuve_support": "Elle fait une démarche à la préfecture.",
+              "explication_distracteurs": [
+                "« Quelque chose qu'on peut demander, garanti par la loi. » ne correspond pas à ce qu'indique le support : « Elle fait une démarche à la préfecture. ».",
+                "« Une obligation, quelque chose qu'on doit faire. » ne correspond pas à ce qu'indique le support : « Elle fait une démarche à la préfecture. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Elle fait une démarche à la préfecture. » puis répondez à nouveau."
+            }
           },
           {
             "question": "droit",
             "options": [
-              "Quelque chose qu'on peut demander, garanti par la loi.",
               "Une obligation, quelque chose qu'on doit faire.",
-              "La forme de gouvernement de la France.",
-              "Une épreuve qui évalue les connaissances."
+              "Quelque chose qu'on peut demander, garanti par la loi.",
+              "La forme de gouvernement de la France."
             ],
             "bonne_reponse": "Quelque chose qu'on peut demander, garanti par la loi.",
-            "explication": "Le droit à la santé permet de se soigner."
+            "explication": "Le droit à la santé permet de se soigner.",
+            "correction": {
+              "bonne_reponse": "Quelque chose qu'on peut demander, garanti par la loi.",
+              "preuve_support": "Le droit à la santé permet de se soigner.",
+              "explication_distracteurs": [
+                "« Une obligation, quelque chose qu'on doit faire. » ne correspond pas à ce qu'indique le support : « Le droit à la santé permet de se soigner. ».",
+                "« La forme de gouvernement de la France. » ne correspond pas à ce qu'indique le support : « Le droit à la santé permet de se soigner. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Le droit à la santé permet de se soigner. » puis répondez à nouveau."
+            }
           },
           {
             "question": "devoir",
             "options": [
               "La forme de gouvernement de la France.",
-              "Une obligation, quelque chose qu'on doit faire.",
               "Une épreuve qui évalue les connaissances.",
-              "Une réunion de formation à une date précise."
+              "Une obligation, quelque chose qu'on doit faire."
             ],
             "bonne_reponse": "Une obligation, quelque chose qu'on doit faire.",
-            "explication": "Respecter la loi est un devoir."
+            "explication": "Respecter la loi est un devoir.",
+            "correction": {
+              "bonne_reponse": "Une obligation, quelque chose qu'on doit faire.",
+              "preuve_support": "Respecter la loi est un devoir.",
+              "explication_distracteurs": [
+                "« La forme de gouvernement de la France. » ne correspond pas à ce qu'indique le support : « Respecter la loi est un devoir. ».",
+                "« Une épreuve qui évalue les connaissances. » ne correspond pas à ce qu'indique le support : « Respecter la loi est un devoir. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Respecter la loi est un devoir. » puis répondez à nouveau."
+            }
           },
           {
             "question": "République",
             "options": [
-              "Une épreuve qui évalue les connaissances.",
-              "Une réunion de formation à une date précise.",
               "La forme de gouvernement de la France.",
-              "Avancer, s'améliorer petit à petit."
+              "Une épreuve qui évalue les connaissances.",
+              "Une réunion de formation à une date précise."
             ],
             "bonne_reponse": "La forme de gouvernement de la France.",
-            "explication": "La République française a une devise."
+            "explication": "La République française a une devise.",
+            "correction": {
+              "bonne_reponse": "La forme de gouvernement de la France.",
+              "preuve_support": "La République française a une devise.",
+              "explication_distracteurs": [
+                "« Une épreuve qui évalue les connaissances. » ne correspond pas à ce qu'indique le support : « La République française a une devise. ».",
+                "« Une réunion de formation à une date précise. » ne correspond pas à ce qu'indique le support : « La République française a une devise. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « La République française a une devise. » puis répondez à nouveau."
+            }
           },
           {
             "question": "examen",
             "options": [
               "Une réunion de formation à une date précise.",
-              "Avancer, s'améliorer petit à petit.",
-              "Ensemble des séances à suivre pour atteindre un objectif.",
-              "Une épreuve qui évalue les connaissances."
+              "Une épreuve qui évalue les connaissances.",
+              "Avancer, s'améliorer petit à petit."
             ],
             "bonne_reponse": "Une épreuve qui évalue les connaissances.",
-            "explication": "L'examen final a lieu après 80 heures."
+            "explication": "L'examen final a lieu après 80 heures.",
+            "correction": {
+              "bonne_reponse": "Une épreuve qui évalue les connaissances.",
+              "preuve_support": "L'examen final a lieu après 80 heures.",
+              "explication_distracteurs": [
+                "« Une réunion de formation à une date précise. » ne correspond pas à ce qu'indique le support : « L'examen final a lieu après 80 heures. ».",
+                "« Avancer, s'améliorer petit à petit. » ne correspond pas à ce qu'indique le support : « L'examen final a lieu après 80 heures. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « L'examen final a lieu après 80 heures. » puis répondez à nouveau."
+            }
           },
           {
             "question": "séance",
             "options": [
-              "Une réunion de formation à une date précise.",
               "Avancer, s'améliorer petit à petit.",
               "Ensemble des séances à suivre pour atteindre un objectif.",
-              "Le degré de connaissance d'une langue (A1, A2, B1, B2)."
+              "Une réunion de formation à une date précise."
             ],
             "bonne_reponse": "Une réunion de formation à une date précise.",
-            "explication": "Chaque séance dure 3 heures."
+            "explication": "Chaque séance dure 3 heures.",
+            "correction": {
+              "bonne_reponse": "Une réunion de formation à une date précise.",
+              "preuve_support": "Chaque séance dure 3 heures.",
+              "explication_distracteurs": [
+                "« Avancer, s'améliorer petit à petit. » ne correspond pas à ce qu'indique le support : « Chaque séance dure 3 heures. ».",
+                "« Ensemble des séances à suivre pour atteindre un objectif. » ne correspond pas à ce qu'indique le support : « Chaque séance dure 3 heures. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Chaque séance dure 3 heures. » puis répondez à nouveau."
+            }
           },
           {
             "question": "progresser",
             "options": [
-              "Ensemble des séances à suivre pour atteindre un objectif.",
               "Avancer, s'améliorer petit à petit.",
-              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
-              "Le but que l'on veut atteindre."
+              "Ensemble des séances à suivre pour atteindre un objectif.",
+              "Le degré de connaissance d'une langue (A1, A2, B1, B2)."
             ],
             "bonne_reponse": "Avancer, s'améliorer petit à petit.",
-            "explication": "Elle progresse en français chaque semaine."
+            "explication": "Elle progresse en français chaque semaine.",
+            "correction": {
+              "bonne_reponse": "Avancer, s'améliorer petit à petit.",
+              "preuve_support": "Elle progresse en français chaque semaine.",
+              "explication_distracteurs": [
+                "« Ensemble des séances à suivre pour atteindre un objectif. » ne correspond pas à ce qu'indique le support : « Elle progresse en français chaque semaine. ».",
+                "« Le degré de connaissance d'une langue (A1, A2, B1, B2). » ne correspond pas à ce qu'indique le support : « Elle progresse en français chaque semaine. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Elle progresse en français chaque semaine. » puis répondez à nouveau."
+            }
           }
         ],
         "metadata": {
@@ -567,7 +788,7 @@
     {
       "metadata_code": "cv2:S01:v3:lexique-association:B1",
       "titre": "Associer chaque mot à sa définition",
-      "consigne": "Associez chaque mot de la séance à sa définition simplifiée.",
+      "consigne": "Associez chaque exemple d'emploi au mot approprié de la séance.",
       "competence": "CE",
       "format": "appariement",
       "niveau_vise": "B1",
@@ -581,114 +802,266 @@
       "contenu": {
         "items": [
           {
-            "question": "parcours",
+            "question": "Awa suit un parcours de 80 heures.",
             "options": [
-              "Ensemble des séances à suivre pour atteindre un objectif.",
-              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
-              "Le but que l'on veut atteindre.",
-              "Une action pour obtenir un document ou un droit."
+              "parcours",
+              "niveau",
+              "objectif",
+              "démarche"
             ],
-            "bonne_reponse": "Ensemble des séances à suivre pour atteindre un objectif.",
-            "explication": "Awa suit un parcours de 80 heures."
+            "bonne_reponse": "parcours",
+            "explication": "Ensemble des séances à suivre pour atteindre un objectif.",
+            "correction": {
+              "bonne_reponse": "parcours",
+              "preuve_support": "Ensemble des séances à suivre pour atteindre un objectif.",
+              "explication_distracteurs": [
+                "« niveau » ne correspond pas à ce qu'indique le support : « Ensemble des séances à suivre pour atteindre un objectif. ».",
+                "« objectif » ne correspond pas à ce qu'indique le support : « Ensemble des séances à suivre pour atteindre un objectif. ».",
+                "« démarche » ne correspond pas à ce qu'indique le support : « Ensemble des séances à suivre pour atteindre un objectif. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Ensemble des séances à suivre pour atteindre un objectif. » puis répondez à nouveau."
+            }
           },
           {
-            "question": "niveau",
+            "question": "Son niveau de français progresse.",
             "options": [
-              "Le but que l'on veut atteindre.",
-              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
-              "Une action pour obtenir un document ou un droit.",
-              "Quelque chose qu'on peut demander, garanti par la loi."
+              "objectif",
+              "niveau",
+              "démarche",
+              "droit"
             ],
-            "bonne_reponse": "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
-            "explication": "Son niveau de français progresse."
+            "bonne_reponse": "niveau",
+            "explication": "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+            "correction": {
+              "bonne_reponse": "niveau",
+              "preuve_support": "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+              "explication_distracteurs": [
+                "« objectif » ne correspond pas à ce qu'indique le support : « Le degré de connaissance d'une langue (A1, A2, B1, B2). ».",
+                "« démarche » ne correspond pas à ce qu'indique le support : « Le degré de connaissance d'une langue (A1, A2, B1, B2). ».",
+                "« droit » ne correspond pas à ce qu'indique le support : « Le degré de connaissance d'une langue (A1, A2, B1, B2). »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Le degré de connaissance d'une langue (A1, A2, B1, B2). » puis répondez à nouveau."
+            }
           },
           {
-            "question": "objectif",
+            "question": "Son objectif est d'avoir sa carte de séjour.",
             "options": [
-              "Une action pour obtenir un document ou un droit.",
-              "Quelque chose qu'on peut demander, garanti par la loi.",
-              "Le but que l'on veut atteindre.",
-              "Une obligation, quelque chose qu'on doit faire."
+              "démarche",
+              "droit",
+              "objectif",
+              "devoir"
             ],
-            "bonne_reponse": "Le but que l'on veut atteindre.",
-            "explication": "Son objectif est d'avoir sa carte de séjour."
+            "bonne_reponse": "objectif",
+            "explication": "Le but que l'on veut atteindre.",
+            "correction": {
+              "bonne_reponse": "objectif",
+              "preuve_support": "Le but que l'on veut atteindre.",
+              "explication_distracteurs": [
+                "« démarche » ne correspond pas à ce qu'indique le support : « Le but que l'on veut atteindre. ».",
+                "« droit » ne correspond pas à ce qu'indique le support : « Le but que l'on veut atteindre. ».",
+                "« devoir » ne correspond pas à ce qu'indique le support : « Le but que l'on veut atteindre. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Le but que l'on veut atteindre. » puis répondez à nouveau."
+            }
           },
           {
-            "question": "démarche",
+            "question": "Elle fait une démarche à la préfecture.",
             "options": [
-              "Quelque chose qu'on peut demander, garanti par la loi.",
-              "Une obligation, quelque chose qu'on doit faire.",
-              "La forme de gouvernement de la France.",
-              "Une action pour obtenir un document ou un droit."
+              "droit",
+              "devoir",
+              "République",
+              "démarche"
             ],
-            "bonne_reponse": "Une action pour obtenir un document ou un droit.",
-            "explication": "Elle fait une démarche à la préfecture."
+            "bonne_reponse": "démarche",
+            "explication": "Une action pour obtenir un document ou un droit.",
+            "correction": {
+              "bonne_reponse": "démarche",
+              "preuve_support": "Une action pour obtenir un document ou un droit.",
+              "explication_distracteurs": [
+                "« droit » ne correspond pas à ce qu'indique le support : « Une action pour obtenir un document ou un droit. ».",
+                "« devoir » ne correspond pas à ce qu'indique le support : « Une action pour obtenir un document ou un droit. ».",
+                "« République » ne correspond pas à ce qu'indique le support : « Une action pour obtenir un document ou un droit. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Une action pour obtenir un document ou un droit. » puis répondez à nouveau."
+            }
           },
           {
-            "question": "droit",
+            "question": "Le droit à la santé permet de se soigner.",
             "options": [
-              "Quelque chose qu'on peut demander, garanti par la loi.",
-              "Une obligation, quelque chose qu'on doit faire.",
-              "La forme de gouvernement de la France.",
-              "Une épreuve qui évalue les connaissances."
+              "droit",
+              "devoir",
+              "République",
+              "examen"
             ],
-            "bonne_reponse": "Quelque chose qu'on peut demander, garanti par la loi.",
-            "explication": "Le droit à la santé permet de se soigner."
+            "bonne_reponse": "droit",
+            "explication": "Quelque chose qu'on peut demander, garanti par la loi.",
+            "justification_required": true,
+            "justification_type": "lexical_distinction",
+            "justification_prompt": "Justifiez votre choix à partir de la définition de « droit » dans le lexique.",
+            "correction": {
+              "bonne_reponse": "droit",
+              "preuve_support": "Quelque chose qu'on peut demander, garanti par la loi.",
+              "explication_distracteurs": [
+                "« devoir » ne correspond pas à ce qu'indique le support : « Quelque chose qu'on peut demander, garanti par la loi. ».",
+                "« République » ne correspond pas à ce qu'indique le support : « Quelque chose qu'on peut demander, garanti par la loi. ».",
+                "« examen » ne correspond pas à ce qu'indique le support : « Quelque chose qu'on peut demander, garanti par la loi. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Quelque chose qu'on peut demander, garanti par la loi. » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "Quelque chose qu'on peut demander, garanti par la loi."
+                ],
+                "formulations_acceptables": [
+                  "Quelque chose qu'on peut demander, garanti par la loi."
+                ],
+                "exemple_non_exclusif": "Quelque chose qu'on peut demander, garanti par la loi.",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « Quelque chose qu'on peut demander, garanti par la loi. ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
-            "question": "devoir",
+            "question": "Respecter la loi est un devoir.",
             "options": [
-              "La forme de gouvernement de la France.",
-              "Une obligation, quelque chose qu'on doit faire.",
-              "Une épreuve qui évalue les connaissances.",
-              "Une réunion de formation à une date précise."
+              "République",
+              "devoir",
+              "examen",
+              "séance"
             ],
-            "bonne_reponse": "Une obligation, quelque chose qu'on doit faire.",
-            "explication": "Respecter la loi est un devoir."
+            "bonne_reponse": "devoir",
+            "explication": "Une obligation, quelque chose qu'on doit faire.",
+            "justification_required": true,
+            "justification_type": "lexical_distinction",
+            "justification_prompt": "Justifiez votre choix à partir de la définition de « devoir » dans le lexique.",
+            "correction": {
+              "bonne_reponse": "devoir",
+              "preuve_support": "Une obligation, quelque chose qu'on doit faire.",
+              "explication_distracteurs": [
+                "« République » ne correspond pas à ce qu'indique le support : « Une obligation, quelque chose qu'on doit faire. ».",
+                "« examen » ne correspond pas à ce qu'indique le support : « Une obligation, quelque chose qu'on doit faire. ».",
+                "« séance » ne correspond pas à ce qu'indique le support : « Une obligation, quelque chose qu'on doit faire. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Une obligation, quelque chose qu'on doit faire. » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "Une obligation, quelque chose qu'on doit faire."
+                ],
+                "formulations_acceptables": [
+                  "Une obligation, quelque chose qu'on doit faire."
+                ],
+                "exemple_non_exclusif": "Une obligation, quelque chose qu'on doit faire.",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « Une obligation, quelque chose qu'on doit faire. ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
-            "question": "République",
+            "question": "La République française a une devise.",
             "options": [
-              "Une épreuve qui évalue les connaissances.",
-              "Une réunion de formation à une date précise.",
-              "La forme de gouvernement de la France.",
-              "Avancer, s'améliorer petit à petit."
+              "examen",
+              "séance",
+              "République",
+              "progresser"
             ],
-            "bonne_reponse": "La forme de gouvernement de la France.",
-            "explication": "La République française a une devise."
+            "bonne_reponse": "République",
+            "explication": "La forme de gouvernement de la France.",
+            "correction": {
+              "bonne_reponse": "République",
+              "preuve_support": "La forme de gouvernement de la France.",
+              "explication_distracteurs": [
+                "« examen » ne correspond pas à ce qu'indique le support : « La forme de gouvernement de la France. ».",
+                "« séance » ne correspond pas à ce qu'indique le support : « La forme de gouvernement de la France. ».",
+                "« progresser » ne correspond pas à ce qu'indique le support : « La forme de gouvernement de la France. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « La forme de gouvernement de la France. » puis répondez à nouveau."
+            }
           },
           {
-            "question": "examen",
+            "question": "L'examen final a lieu après 80 heures.",
             "options": [
-              "Une réunion de formation à une date précise.",
-              "Avancer, s'améliorer petit à petit.",
-              "Ensemble des séances à suivre pour atteindre un objectif.",
-              "Une épreuve qui évalue les connaissances."
+              "séance",
+              "progresser",
+              "parcours",
+              "examen"
             ],
-            "bonne_reponse": "Une épreuve qui évalue les connaissances.",
-            "explication": "L'examen final a lieu après 80 heures."
+            "bonne_reponse": "examen",
+            "explication": "Une épreuve qui évalue les connaissances.",
+            "correction": {
+              "bonne_reponse": "examen",
+              "preuve_support": "Une épreuve qui évalue les connaissances.",
+              "explication_distracteurs": [
+                "« séance » ne correspond pas à ce qu'indique le support : « Une épreuve qui évalue les connaissances. ».",
+                "« progresser » ne correspond pas à ce qu'indique le support : « Une épreuve qui évalue les connaissances. ».",
+                "« parcours » ne correspond pas à ce qu'indique le support : « Une épreuve qui évalue les connaissances. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Une épreuve qui évalue les connaissances. » puis répondez à nouveau."
+            }
           },
           {
-            "question": "séance",
+            "question": "Chaque séance dure 3 heures.",
             "options": [
-              "Une réunion de formation à une date précise.",
-              "Avancer, s'améliorer petit à petit.",
-              "Ensemble des séances à suivre pour atteindre un objectif.",
-              "Le degré de connaissance d'une langue (A1, A2, B1, B2)."
+              "séance",
+              "progresser",
+              "parcours",
+              "niveau"
             ],
-            "bonne_reponse": "Une réunion de formation à une date précise.",
-            "explication": "Chaque séance dure 3 heures."
+            "bonne_reponse": "séance",
+            "explication": "Une réunion de formation à une date précise.",
+            "correction": {
+              "bonne_reponse": "séance",
+              "preuve_support": "Une réunion de formation à une date précise.",
+              "explication_distracteurs": [
+                "« progresser » ne correspond pas à ce qu'indique le support : « Une réunion de formation à une date précise. ».",
+                "« parcours » ne correspond pas à ce qu'indique le support : « Une réunion de formation à une date précise. ».",
+                "« niveau » ne correspond pas à ce qu'indique le support : « Une réunion de formation à une date précise. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Une réunion de formation à une date précise. » puis répondez à nouveau."
+            }
           },
           {
-            "question": "progresser",
+            "question": "Elle progresse en français chaque semaine.",
             "options": [
-              "Ensemble des séances à suivre pour atteindre un objectif.",
-              "Avancer, s'améliorer petit à petit.",
-              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
-              "Le but que l'on veut atteindre."
+              "parcours",
+              "progresser",
+              "niveau",
+              "objectif"
             ],
-            "bonne_reponse": "Avancer, s'améliorer petit à petit.",
-            "explication": "Elle progresse en français chaque semaine."
+            "bonne_reponse": "progresser",
+            "explication": "Avancer, s'améliorer petit à petit.",
+            "correction": {
+              "bonne_reponse": "progresser",
+              "preuve_support": "Avancer, s'améliorer petit à petit.",
+              "explication_distracteurs": [
+                "« parcours » ne correspond pas à ce qu'indique le support : « Avancer, s'améliorer petit à petit. ».",
+                "« niveau » ne correspond pas à ce qu'indique le support : « Avancer, s'améliorer petit à petit. ».",
+                "« objectif » ne correspond pas à ce qu'indique le support : « Avancer, s'améliorer petit à petit. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Avancer, s'améliorer petit à petit. » puis répondez à nouveau."
+            }
           }
         ],
         "metadata": {
@@ -738,7 +1111,68 @@
             ]
           },
           "transformation_id": "A2_TO_B1",
-          "applied_transformations": [],
+          "applied_transformations": [
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[0].question",
+              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Awa suit un parcours de 80 heures. »), la réponse attendue est le mot, pas sa définition."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[1].question",
+              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Son niveau de français progresse. »), la réponse attendue est le mot, pas sa définition."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[2].question",
+              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Son objectif est d'avoir sa carte de séjour. »), la réponse attendue est le mot, pas sa définition."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[3].question",
+              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Elle fait une démarche à la préfecture. »), la réponse attendue est le mot, pas sa définition."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[4].question",
+              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Le droit à la santé permet de se soigner. »), la réponse attendue est le mot, pas sa définition."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[4].justification_prompt",
+              "evidence": "« droit » et « devoir » sont sémantiquement proches dans le lexique réel de la séance : justification/distinction demandée, aucune nuance inventée."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[5].question",
+              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Respecter la loi est un devoir. »), la réponse attendue est le mot, pas sa définition."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[5].justification_prompt",
+              "evidence": "« devoir » et « droit » sont sémantiquement proches dans le lexique réel de la séance : justification/distinction demandée, aucune nuance inventée."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[6].question",
+              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« La République française a une devise. »), la réponse attendue est le mot, pas sa définition."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[7].question",
+              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« L'examen final a lieu après 80 heures. »), la réponse attendue est le mot, pas sa définition."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[8].question",
+              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Chaque séance dure 3 heures. »), la réponse attendue est le mot, pas sa définition."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[9].question",
+              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Elle progresse en français chaque semaine. »), la réponse attendue est le mot, pas sa définition."
+            }
+          ],
           "cognitive_operations": [
             "inferer",
             "comparer",
@@ -845,7 +1279,7 @@
     {
       "metadata_code": "cv2:S01:v3:lexique-association:B2",
       "titre": "Associer chaque mot à sa définition",
-      "consigne": "Associez chaque mot de la séance à sa définition simplifiée.",
+      "consigne": "Associez chaque exemple d'emploi au mot approprié de la séance.",
       "competence": "CE",
       "format": "appariement",
       "niveau_vise": "B2",
@@ -859,114 +1293,266 @@
       "contenu": {
         "items": [
           {
-            "question": "parcours",
+            "question": "Awa suit un parcours de 80 heures.",
             "options": [
-              "Ensemble des séances à suivre pour atteindre un objectif.",
-              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
-              "Le but que l'on veut atteindre.",
-              "Une action pour obtenir un document ou un droit."
+              "parcours",
+              "niveau",
+              "objectif",
+              "démarche"
             ],
-            "bonne_reponse": "Ensemble des séances à suivre pour atteindre un objectif.",
-            "explication": "Awa suit un parcours de 80 heures."
+            "bonne_reponse": "parcours",
+            "explication": "Ensemble des séances à suivre pour atteindre un objectif.",
+            "correction": {
+              "bonne_reponse": "parcours",
+              "preuve_support": "Ensemble des séances à suivre pour atteindre un objectif.",
+              "explication_distracteurs": [
+                "« niveau » ne correspond pas à ce qu'indique le support : « Ensemble des séances à suivre pour atteindre un objectif. ».",
+                "« objectif » ne correspond pas à ce qu'indique le support : « Ensemble des séances à suivre pour atteindre un objectif. ».",
+                "« démarche » ne correspond pas à ce qu'indique le support : « Ensemble des séances à suivre pour atteindre un objectif. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Ensemble des séances à suivre pour atteindre un objectif. » puis répondez à nouveau."
+            }
           },
           {
-            "question": "niveau",
+            "question": "Son niveau de français progresse.",
             "options": [
-              "Le but que l'on veut atteindre.",
-              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
-              "Une action pour obtenir un document ou un droit.",
-              "Quelque chose qu'on peut demander, garanti par la loi."
+              "objectif",
+              "niveau",
+              "démarche",
+              "droit"
             ],
-            "bonne_reponse": "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
-            "explication": "Son niveau de français progresse."
+            "bonne_reponse": "niveau",
+            "explication": "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+            "correction": {
+              "bonne_reponse": "niveau",
+              "preuve_support": "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+              "explication_distracteurs": [
+                "« objectif » ne correspond pas à ce qu'indique le support : « Le degré de connaissance d'une langue (A1, A2, B1, B2). ».",
+                "« démarche » ne correspond pas à ce qu'indique le support : « Le degré de connaissance d'une langue (A1, A2, B1, B2). ».",
+                "« droit » ne correspond pas à ce qu'indique le support : « Le degré de connaissance d'une langue (A1, A2, B1, B2). »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Le degré de connaissance d'une langue (A1, A2, B1, B2). » puis répondez à nouveau."
+            }
           },
           {
-            "question": "objectif",
+            "question": "Son objectif est d'avoir sa carte de séjour.",
             "options": [
-              "Une action pour obtenir un document ou un droit.",
-              "Quelque chose qu'on peut demander, garanti par la loi.",
-              "Le but que l'on veut atteindre.",
-              "Une obligation, quelque chose qu'on doit faire."
+              "démarche",
+              "droit",
+              "objectif",
+              "devoir"
             ],
-            "bonne_reponse": "Le but que l'on veut atteindre.",
-            "explication": "Son objectif est d'avoir sa carte de séjour."
+            "bonne_reponse": "objectif",
+            "explication": "Le but que l'on veut atteindre.",
+            "correction": {
+              "bonne_reponse": "objectif",
+              "preuve_support": "Le but que l'on veut atteindre.",
+              "explication_distracteurs": [
+                "« démarche » ne correspond pas à ce qu'indique le support : « Le but que l'on veut atteindre. ».",
+                "« droit » ne correspond pas à ce qu'indique le support : « Le but que l'on veut atteindre. ».",
+                "« devoir » ne correspond pas à ce qu'indique le support : « Le but que l'on veut atteindre. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Le but que l'on veut atteindre. » puis répondez à nouveau."
+            }
           },
           {
-            "question": "démarche",
+            "question": "Elle fait une démarche à la préfecture.",
             "options": [
-              "Quelque chose qu'on peut demander, garanti par la loi.",
-              "Une obligation, quelque chose qu'on doit faire.",
-              "La forme de gouvernement de la France.",
-              "Une action pour obtenir un document ou un droit."
+              "droit",
+              "devoir",
+              "République",
+              "démarche"
             ],
-            "bonne_reponse": "Une action pour obtenir un document ou un droit.",
-            "explication": "Elle fait une démarche à la préfecture."
+            "bonne_reponse": "démarche",
+            "explication": "Une action pour obtenir un document ou un droit.",
+            "correction": {
+              "bonne_reponse": "démarche",
+              "preuve_support": "Une action pour obtenir un document ou un droit.",
+              "explication_distracteurs": [
+                "« droit » ne correspond pas à ce qu'indique le support : « Une action pour obtenir un document ou un droit. ».",
+                "« devoir » ne correspond pas à ce qu'indique le support : « Une action pour obtenir un document ou un droit. ».",
+                "« République » ne correspond pas à ce qu'indique le support : « Une action pour obtenir un document ou un droit. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Une action pour obtenir un document ou un droit. » puis répondez à nouveau."
+            }
           },
           {
-            "question": "droit",
+            "question": "Le droit à la santé permet de se soigner.",
             "options": [
-              "Quelque chose qu'on peut demander, garanti par la loi.",
-              "Une obligation, quelque chose qu'on doit faire.",
-              "La forme de gouvernement de la France.",
-              "Une épreuve qui évalue les connaissances."
+              "droit",
+              "devoir",
+              "République",
+              "examen"
             ],
-            "bonne_reponse": "Quelque chose qu'on peut demander, garanti par la loi.",
-            "explication": "Le droit à la santé permet de se soigner."
+            "bonne_reponse": "droit",
+            "explication": "Quelque chose qu'on peut demander, garanti par la loi.",
+            "justification_required": true,
+            "justification_type": "nuance",
+            "justification_prompt": "Justifiez votre choix et expliquez, à partir des définitions du lexique, en quoi « droit » se distingue de « devoir ».",
+            "correction": {
+              "bonne_reponse": "droit",
+              "preuve_support": "Quelque chose qu'on peut demander, garanti par la loi.",
+              "explication_distracteurs": [
+                "« devoir » ne correspond pas à ce qu'indique le support : « Quelque chose qu'on peut demander, garanti par la loi. ».",
+                "« République » ne correspond pas à ce qu'indique le support : « Quelque chose qu'on peut demander, garanti par la loi. ».",
+                "« examen » ne correspond pas à ce qu'indique le support : « Quelque chose qu'on peut demander, garanti par la loi. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Quelque chose qu'on peut demander, garanti par la loi. » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "Quelque chose qu'on peut demander, garanti par la loi."
+                ],
+                "formulations_acceptables": [
+                  "Quelque chose qu'on peut demander, garanti par la loi."
+                ],
+                "exemple_non_exclusif": "Quelque chose qu'on peut demander, garanti par la loi.",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « Quelque chose qu'on peut demander, garanti par la loi. ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
-            "question": "devoir",
+            "question": "Respecter la loi est un devoir.",
             "options": [
-              "La forme de gouvernement de la France.",
-              "Une obligation, quelque chose qu'on doit faire.",
-              "Une épreuve qui évalue les connaissances.",
-              "Une réunion de formation à une date précise."
+              "République",
+              "examen",
+              "droit",
+              "devoir"
             ],
-            "bonne_reponse": "Une obligation, quelque chose qu'on doit faire.",
-            "explication": "Respecter la loi est un devoir."
+            "bonne_reponse": "devoir",
+            "explication": "Une obligation, quelque chose qu'on doit faire.",
+            "justification_required": true,
+            "justification_type": "nuance",
+            "justification_prompt": "Justifiez votre choix et expliquez, à partir des définitions du lexique, en quoi « devoir » se distingue de « droit ».",
+            "correction": {
+              "bonne_reponse": "devoir",
+              "preuve_support": "Une obligation, quelque chose qu'on doit faire.",
+              "explication_distracteurs": [
+                "« République » ne correspond pas à ce qu'indique le support : « Une obligation, quelque chose qu'on doit faire. ».",
+                "« examen » ne correspond pas à ce qu'indique le support : « Une obligation, quelque chose qu'on doit faire. ».",
+                "« droit » ne correspond pas à ce qu'indique le support : « Une obligation, quelque chose qu'on doit faire. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Une obligation, quelque chose qu'on doit faire. » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "Une obligation, quelque chose qu'on doit faire."
+                ],
+                "formulations_acceptables": [
+                  "Une obligation, quelque chose qu'on doit faire."
+                ],
+                "exemple_non_exclusif": "Une obligation, quelque chose qu'on doit faire.",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « Une obligation, quelque chose qu'on doit faire. ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
-            "question": "République",
+            "question": "La République française a une devise.",
             "options": [
-              "Une épreuve qui évalue les connaissances.",
-              "Une réunion de formation à une date précise.",
-              "La forme de gouvernement de la France.",
-              "Avancer, s'améliorer petit à petit."
+              "examen",
+              "séance",
+              "République",
+              "progresser"
             ],
-            "bonne_reponse": "La forme de gouvernement de la France.",
-            "explication": "La République française a une devise."
+            "bonne_reponse": "République",
+            "explication": "La forme de gouvernement de la France.",
+            "correction": {
+              "bonne_reponse": "République",
+              "preuve_support": "La forme de gouvernement de la France.",
+              "explication_distracteurs": [
+                "« examen » ne correspond pas à ce qu'indique le support : « La forme de gouvernement de la France. ».",
+                "« séance » ne correspond pas à ce qu'indique le support : « La forme de gouvernement de la France. ».",
+                "« progresser » ne correspond pas à ce qu'indique le support : « La forme de gouvernement de la France. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « La forme de gouvernement de la France. » puis répondez à nouveau."
+            }
           },
           {
-            "question": "examen",
+            "question": "L'examen final a lieu après 80 heures.",
             "options": [
-              "Une réunion de formation à une date précise.",
-              "Avancer, s'améliorer petit à petit.",
-              "Ensemble des séances à suivre pour atteindre un objectif.",
-              "Une épreuve qui évalue les connaissances."
+              "séance",
+              "progresser",
+              "parcours",
+              "examen"
             ],
-            "bonne_reponse": "Une épreuve qui évalue les connaissances.",
-            "explication": "L'examen final a lieu après 80 heures."
+            "bonne_reponse": "examen",
+            "explication": "Une épreuve qui évalue les connaissances.",
+            "correction": {
+              "bonne_reponse": "examen",
+              "preuve_support": "Une épreuve qui évalue les connaissances.",
+              "explication_distracteurs": [
+                "« séance » ne correspond pas à ce qu'indique le support : « Une épreuve qui évalue les connaissances. ».",
+                "« progresser » ne correspond pas à ce qu'indique le support : « Une épreuve qui évalue les connaissances. ».",
+                "« parcours » ne correspond pas à ce qu'indique le support : « Une épreuve qui évalue les connaissances. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Une épreuve qui évalue les connaissances. » puis répondez à nouveau."
+            }
           },
           {
-            "question": "séance",
+            "question": "Chaque séance dure 3 heures.",
             "options": [
-              "Une réunion de formation à une date précise.",
-              "Avancer, s'améliorer petit à petit.",
-              "Ensemble des séances à suivre pour atteindre un objectif.",
-              "Le degré de connaissance d'une langue (A1, A2, B1, B2)."
+              "séance",
+              "progresser",
+              "parcours",
+              "niveau"
             ],
-            "bonne_reponse": "Une réunion de formation à une date précise.",
-            "explication": "Chaque séance dure 3 heures."
+            "bonne_reponse": "séance",
+            "explication": "Une réunion de formation à une date précise.",
+            "correction": {
+              "bonne_reponse": "séance",
+              "preuve_support": "Une réunion de formation à une date précise.",
+              "explication_distracteurs": [
+                "« progresser » ne correspond pas à ce qu'indique le support : « Une réunion de formation à une date précise. ».",
+                "« parcours » ne correspond pas à ce qu'indique le support : « Une réunion de formation à une date précise. ».",
+                "« niveau » ne correspond pas à ce qu'indique le support : « Une réunion de formation à une date précise. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Une réunion de formation à une date précise. » puis répondez à nouveau."
+            }
           },
           {
-            "question": "progresser",
+            "question": "Elle progresse en français chaque semaine.",
             "options": [
-              "Ensemble des séances à suivre pour atteindre un objectif.",
-              "Avancer, s'améliorer petit à petit.",
-              "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
-              "Le but que l'on veut atteindre."
+              "parcours",
+              "progresser",
+              "niveau",
+              "objectif"
             ],
-            "bonne_reponse": "Avancer, s'améliorer petit à petit.",
-            "explication": "Elle progresse en français chaque semaine."
+            "bonne_reponse": "progresser",
+            "explication": "Avancer, s'améliorer petit à petit.",
+            "correction": {
+              "bonne_reponse": "progresser",
+              "preuve_support": "Avancer, s'améliorer petit à petit.",
+              "explication_distracteurs": [
+                "« parcours » ne correspond pas à ce qu'indique le support : « Avancer, s'améliorer petit à petit. ».",
+                "« niveau » ne correspond pas à ce qu'indique le support : « Avancer, s'améliorer petit à petit. ».",
+                "« objectif » ne correspond pas à ce qu'indique le support : « Avancer, s'améliorer petit à petit. »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Avancer, s'améliorer petit à petit. » puis répondez à nouveau."
+            }
           }
         ],
         "metadata": {
@@ -1016,7 +1602,68 @@
             ]
           },
           "transformation_id": "A2_TO_B2",
-          "applied_transformations": [],
+          "applied_transformations": [
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[0].question",
+              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Awa suit un parcours de 80 heures. »), la réponse attendue est le mot, pas sa définition."
+            },
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[1].question",
+              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Son niveau de français progresse. »), la réponse attendue est le mot, pas sa définition."
+            },
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[2].question",
+              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Son objectif est d'avoir sa carte de séjour. »), la réponse attendue est le mot, pas sa définition."
+            },
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[3].question",
+              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Elle fait une démarche à la préfecture. »), la réponse attendue est le mot, pas sa définition."
+            },
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[4].question",
+              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Le droit à la santé permet de se soigner. »), la réponse attendue est le mot, pas sa définition."
+            },
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[4].justification_prompt",
+              "evidence": "« droit » et « devoir » sont sémantiquement proches dans le lexique réel de la séance : justification/distinction demandée, aucune nuance inventée."
+            },
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[5].question",
+              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Respecter la loi est un devoir. »), la réponse attendue est le mot, pas sa définition."
+            },
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[5].justification_prompt",
+              "evidence": "« devoir » et « droit » sont sémantiquement proches dans le lexique réel de la séance : justification/distinction demandée, aucune nuance inventée."
+            },
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[6].question",
+              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« La République française a une devise. »), la réponse attendue est le mot, pas sa définition."
+            },
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[7].question",
+              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« L'examen final a lieu après 80 heures. »), la réponse attendue est le mot, pas sa définition."
+            },
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[8].question",
+              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Chaque séance dure 3 heures. »), la réponse attendue est le mot, pas sa définition."
+            },
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[9].question",
+              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Elle progresse en français chaque semaine. »), la réponse attendue est le mot, pas sa définition."
+            }
+          ],
           "cognitive_operations": [
             "analyser",
             "synthetiser",
