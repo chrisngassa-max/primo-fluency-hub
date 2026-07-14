@@ -103,6 +103,28 @@ describe("validation bloquante S01", () => {
     expect(failedRule(validation, "DIFF_CIVIC_FACT_NOT_VALIDATED", civic.metadata_code)).toBe(true);
   });
 
+  it("bloque une réponse recopiée dans la question, sans bloquer une phrase à trou", () => {
+    const mutated = clonePayload();
+    const leaked = mutated.exercises.find((item) => item.metadata_code === "cv2:S01:v3:lexique-association:B1");
+    leaked.contenu.items[0].question = `La réponse correcte est ${leaked.contenu.items[0].bonne_reponse}.`;
+    const validation = validateS01DifferentiationPayload(mutated, { baseline });
+    expect(failedRule(validation, "DIFF_ANSWER_LEAK_IN_QUESTION", leaked.metadata_code)).toBe(true);
+
+    const currentValidation = validateS01DifferentiationPayload(payload, { baseline });
+    expect(failedRule(currentValidation, "DIFF_ANSWER_LEAK_IN_QUESTION", "cv2:S01:v3:structures:A1")).toBe(false);
+    expect(failedRule(currentValidation, "DIFF_ANSWER_LEAK_IN_QUESTION", "cv2:S01:v3:lexique-association:B1")).toBe(false);
+  });
+  it("les variantes lexicales B1/B2 masquent le mot et B2 exige une justification", () => {
+    for (const level of ["B1", "B2"]) {
+      const exercise = payload.exercises.find((item) => item.metadata_code === `cv2:S01:v3:lexique-association:${level}`);
+      expect(exercise.contenu.items).toHaveLength(10);
+      for (const item of exercise.contenu.items) {
+        expect(item.question).toContain("________");
+        expect(item.question.toLocaleLowerCase("fr")).not.toContain(String(item.bonne_reponse).toLocaleLowerCase("fr"));
+        if (level === "B2") expect(item.justification_required).toBe(true);
+      }
+    }
+  });
   it("bloque une extension placée à l'intérieur d'une famille", () => {
     const mutated = clonePayload();
     const entry = mutated.exercises.find((item) => item.family_id);

@@ -280,28 +280,30 @@ describe("Lot 2 — lexique-association : transformation réelle par niveau", ()
     }
   });
 
-  it("justification lexicale réelle uniquement sur droit/devoir (les deux seuls termes proches), jamais généralisée aux huit autres", async () => {
+  it("B1 réserve la justification à droit/devoir ; B2 justifie chaque choix à partir du contexte", async () => {
     const levels = await byLevel();
-    for (const level of ["B1", "B2"]) {
-      const withJustification = levels[level].contenu.items.filter((item) => item.justification_required);
-      expect(withJustification.length).toBe(2);
-      expect(new Set(withJustification.map((item) => item.bonne_reponse))).toEqual(new Set(["droit", "devoir"]));
-    }
+    const b1WithJustification = levels.B1.contenu.items.filter((item) => item.justification_required);
+    expect(b1WithJustification.length).toBe(2);
+    expect(new Set(b1WithJustification.map((item) => item.bonne_reponse))).toEqual(new Set(["droit", "devoir"]));
+
+    const b2WithJustification = levels.B2.contenu.items.filter((item) => item.justification_required);
+    expect(b2WithJustification.length).toBe(10);
+    expect(b2WithJustification.every((item) => item.justification_type === "contextual_nuance")).toBe(true);
+
     // B2 force la discrimination : "devoir" est un distracteur explicite de
     // l'item "droit", et réciproquement.
     const droitB2 = levels.B2.contenu.items.find((item) => item.bonne_reponse === "droit");
     const devoirB2 = levels.B2.contenu.items.find((item) => item.bonne_reponse === "devoir");
     expect(droitB2.options).toContain("devoir");
     expect(devoirB2.options).toContain("droit");
-    expect(droitB2.justification_type).toBe("nuance");
   });
 
-  it("B2 n'invente aucune nuance pour les huit mots sans terme proche : mêmes définitions/exemples que la source", async () => {
+  it("B2 fonde les dix justifications sur le contexte et les corrections du lexique réel", async () => {
     const levels = await byLevel();
-    const withoutJustification = levels.B2.contenu.items.filter((item) => !item.justification_required);
-    expect(withoutJustification.length).toBe(8);
-    for (const item of withoutJustification) {
-      expect(item).not.toHaveProperty("justification_prompt");
+    for (const item of levels.B2.contenu.items) {
+      expect(item.justification_prompt).toContain("contexte");
+      expect(item.correction.justification_ouverte.elements_attendus).toContain(item.explication);
+      expect(item.question).toContain("________");
     }
   });
 });

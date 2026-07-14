@@ -51,6 +51,15 @@ function resolveAppliedPath(entry, appliedTo) {
   return entry.contenu?.items?.[Number(match[1])]?.[match[2]];
 }
 
+function questionLeaksAnswer(item) {
+  const lexical = (value) => normalized(value).replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+  const rawQuestion = String(item?.question ?? item?.enonce ?? item?.texte ?? "");
+  const answer = lexical(item?.bonne_reponse);
+  if (answer.length < 4 || /_{2,}|…/.test(rawQuestion)) return false;
+  const question = lexical(rawQuestion);
+  return ` ${question} `.includes(` ${answer} `);
+}
+
 function makeRule(ruleId, status, { scope = "global", metadataCode = null, evidence = [], errors = [] } = {}) {
   return { rule_id: ruleId, status, scope, metadata_code: metadataCode, evidence, errors };
 }
@@ -150,6 +159,7 @@ export function validateS01DifferentiationPayload(payload, { baseline = null } =
 
     const correctionErrors = [];
     const coherenceErrors = [];
+    const answerLeakErrors = [];
     items.forEach((item, index) => {
       const question = item?.question ?? item?.enonce ?? item?.texte;
       const answer = item?.bonne_reponse;
@@ -168,6 +178,9 @@ export function validateS01DifferentiationPayload(payload, { baseline = null } =
       if (Array.isArray(item?.options) && item.options.length > 0 && !item.options.includes(answer)) {
         coherenceErrors.push(`items[${index}]: bonne_reponse absente des options`);
       }
+      if (questionLeaksAnswer(item)) {
+        answerLeakErrors.push(`items[${index}]: bonne_reponse recopiee dans la question`);
+      }
       if (item?.justification_prompt) {
         const correction = item?.correction?.justification_ouverte;
         if (!Array.isArray(correction?.elements_attendus) || correction.elements_attendus.length === 0) {
@@ -183,6 +196,9 @@ export function validateS01DifferentiationPayload(payload, { baseline = null } =
     }));
     addExercise(code, makeRule("DIFF_INSTRUCTION_CORRECTION_MISMATCH", coherenceErrors.length ? "fail" : "pass", {
       scope: "exercise", metadataCode: code, errors: coherenceErrors,
+    }));
+    addExercise(code, makeRule("DIFF_ANSWER_LEAK_IN_QUESTION", answerLeakErrors.length ? "fail" : "pass", {
+      scope: "exercise", metadataCode: code, errors: answerLeakErrors,
     }));
 
     const indiceValidation = validateExerciseIndices(entry, {

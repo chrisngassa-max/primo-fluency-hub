@@ -1,4 +1,5 @@
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile, rename, writeFile } from "node:fs/promises";
+import { randomUUID } from "node:crypto";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -23,6 +24,12 @@ const SUPPORTED_FORMATS = new Set(["qcm", "vrai_faux", "appariement", "productio
 const AUTO_CORRECTED_FORMATS = new Set(["qcm", "vrai_faux", "appariement", "texte_lacunaire", "transformation"]);
 const MIN_AUTO_CORRECTED_ITEMS = 10;
 const MIN_ORAL_PROMPTS = 6;
+
+async function writeJsonAtomically(path, value) {
+  const temporaryPath = `${path}.${randomUUID()}.tmp`;
+  await writeFile(temporaryPath, JSON.stringify(value, null, 2) + "\n", "utf8");
+  await rename(temporaryPath, path);
+}
 
 // Identifiants canoniques d'activité (S01.XXX), utilisés comme couche
 // d'organisation "Activité X sur N" — ils référencent les exercices
@@ -66,6 +73,24 @@ function buildAppariementOptions(entries, index, getLabel, distractorCount = 3) 
   const options = [...distractors];
   options.splice(index % (options.length + 1), 0, correct);
   return options;
+}
+// Masque le mot cible dans son exemple réel. B1/B2 doivent l'identifier à
+// partir du contexte : recopier la réponse dans la question annulerait toute
+// mesure de compréhension lexicale.
+function maskLexicalTarget(example, target) {
+  const escapeRegex = (value) => String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  let masked = String(example).replace(new RegExp(escapeRegex(target), "giu"), "________");
+  // Le lexique peut donner un infinitif alors que l'exemple emploie sa forme
+  // conjuguée (progresser -> progresse). On masque alors le radical réel,
+  // sans inventer une nouvelle phrase.
+  if (masked === example && /er$/iu.test(String(target))) {
+    const stem = String(target).slice(0, -2);
+    masked = String(example).replace(new RegExp(`${escapeRegex(stem)}\\p{L}*`, "giu"), "________");
+  }
+  if (masked === example) {
+    throw new Error(`Mot lexical absent de son exemple : ${target}`);
+  }
+  return masked;
 }
 
 // Corrige un bug du générateur v1 : un point de grammaire dont le
@@ -281,7 +306,7 @@ function exercise({
   };
 }
 
-export async function buildInteractiveS01() {
+export async function buildInteractiveS01({ writeOutput = !process.env.VITEST } = {}) {
   const data = JSON.parse(await readFile(DATA_PATH, "utf8"));
   const exercises = [];
 
@@ -318,8 +343,9 @@ export async function buildInteractiveS01() {
           options = options.filter((option) => option !== entry.mot).slice(0, 2);
           options = Array.from(new Set([...options, closeTerm, entry.mot]));
         }
+        const maskedExample = maskLexicalTarget(entry.exemple, entry.mot);
         const item = {
-          question: entry.exemple,
+          question: maskedExample,
           options,
           bonne_reponse: entry.mot,
           explication: entry.definition_simple,
@@ -327,18 +353,20 @@ export async function buildInteractiveS01() {
         lexiqueAppliedTransformations.push({
           rule_id: level === "B2" ? "A2_TO_B2" : "A2_TO_B1",
           applied_to: `items[${index}].question`,
-          evidence: `Format inversé : la question porte sur l'exemple d'emploi réel (« ${entry.exemple} »), la réponse attendue est le mot, pas sa définition.`,
+          evidence: `Format inversé : le mot cible est masqué dans l'exemple réel (« ${maskedExample} ») ; la réponse doit être inférée du contexte.`,
         });
-        if (closeTerm) {
+        if (level === "B2" || closeTerm) {
           item.justification_required = true;
-          item.justification_type = level === "B2" ? "nuance" : "lexical_distinction";
+          item.justification_type = level === "B2" ? "contextual_nuance" : "lexical_distinction";
           item.justification_prompt = level === "B2"
-            ? `Justifiez votre choix et expliquez, à partir des définitions du lexique, en quoi « ${entry.mot} » se distingue de « ${closeTerm} ».`
+            ? `Justifiez votre choix à partir du contexte et écartez le distracteur qui pourrait sembler le plus proche.`
             : `Justifiez votre choix à partir de la définition de « ${entry.mot} » dans le lexique.`;
           lexiqueAppliedTransformations.push({
             rule_id: level === "B2" ? "A2_TO_B2" : "A2_TO_B1",
             applied_to: `items[${index}].justification_prompt`,
-            evidence: `« ${entry.mot} » et « ${closeTerm} » sont sémantiquement proches dans le lexique réel de la séance : justification/distinction demandée, aucune nuance inventée.`,
+            evidence: level === "B2"
+              ? "B2 : justification contextuelle et discrimination du distracteur le plus proche exigées pour chaque item."
+              : `« ${entry.mot} » et « ${closeTerm} » sont sémantiquement proches dans le lexique réel de la séance : justification demandée, aucune nuance inventée.`,
           });
         }
         item.correction = closedItemCorrection({ options: item.options, bonneReponse: entry.mot, preuve: entry.definition_simple });
@@ -1014,7 +1042,7 @@ export async function buildInteractiveS01() {
       `${differentiationValidation.non_publishable_count} blocked`,
     ],
   });
-  await writeFile(OUTPUT_PATH, JSON.stringify(payload, null, 2) + "\n", "utf8");
+  if (writeOutput) await writeJsonAtomically(OUTPUT_PATH, payload);
   return payload;
 }
 

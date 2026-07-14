@@ -893,7 +893,7 @@
       "contenu": {
         "items": [
           {
-            "question": "Awa suit un parcours de 80 heures.",
+            "question": "Awa suit un ________ de 80 heures.",
             "options": [
               "parcours",
               "niveau",
@@ -915,7 +915,7 @@
             }
           },
           {
-            "question": "Son niveau de français progresse.",
+            "question": "Son ________ de français progresse.",
             "options": [
               "objectif",
               "niveau",
@@ -937,7 +937,7 @@
             }
           },
           {
-            "question": "Son objectif est d'avoir sa carte de séjour.",
+            "question": "Son ________ est d'avoir sa carte de séjour.",
             "options": [
               "démarche",
               "droit",
@@ -959,7 +959,7 @@
             }
           },
           {
-            "question": "Elle fait une démarche à la préfecture.",
+            "question": "Elle fait une ________ à la préfecture.",
             "options": [
               "droit",
               "devoir",
@@ -981,7 +981,7 @@
             }
           },
           {
-            "question": "Le droit à la santé permet de se soigner.",
+            "question": "Le ________ à la santé permet de se soigner.",
             "options": [
               "droit",
               "devoir",
@@ -1024,7 +1024,7 @@
             }
           },
           {
-            "question": "Respecter la loi est un devoir.",
+            "question": "Respecter la loi est un ________.",
             "options": [
               "République",
               "devoir",
@@ -1067,7 +1067,7 @@
             }
           },
           {
-            "question": "La République française a une devise.",
+            "question": "La ________ française a une devise.",
             "options": [
               "examen",
               "séance",
@@ -1089,7 +1089,7 @@
             }
           },
           {
-            "question": "L'examen final a lieu après 80 heures.",
+            "question": "L'________ final a lieu après 80 heures.",
             "options": [
               "séance",
               "progresser",
@@ -1111,7 +1111,7 @@
             }
           },
           {
-            "question": "Chaque séance dure 3 heures.",
+            "question": "Chaque ________ dure 3 heures.",
             "options": [
               "séance",
               "progresser",
@@ -1133,7 +1133,7 @@
             }
           },
           {
-            "question": "Elle progresse en français chaque semaine.",
+            "question": "Elle ________ en français chaque semaine.",
             "options": [
               "parcours",
               "progresser",
@@ -1206,62 +1206,62 @@
             {
               "rule_id": "A2_TO_B1",
               "applied_to": "items[0].question",
-              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Awa suit un parcours de 80 heures. »), la réponse attendue est le mot, pas sa définition."
+              "evidence": "Format inversé : le mot cible est masqué dans l'exemple réel (« Awa suit un ________ de 80 heures. ») ; la réponse doit être inférée du contexte."
             },
             {
               "rule_id": "A2_TO_B1",
               "applied_to": "items[1].question",
-              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Son niveau de français progresse. »), la réponse attendue est le mot, pas sa définition."
+              "evidence": "Format inversé : le mot cible est masqué dans l'exemple réel (« Son ________ de français progresse. ») ; la réponse doit être inférée du contexte."
             },
             {
               "rule_id": "A2_TO_B1",
               "applied_to": "items[2].question",
-              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Son objectif est d'avoir sa carte de séjour. »), la réponse attendue est le mot, pas sa définition."
+              "evidence": "Format inversé : le mot cible est masqué dans l'exemple réel (« Son ________ est d'avoir sa carte de séjour. ») ; la réponse doit être inférée du contexte."
             },
             {
               "rule_id": "A2_TO_B1",
               "applied_to": "items[3].question",
-              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Elle fait une démarche à la préfecture. »), la réponse attendue est le mot, pas sa définition."
+              "evidence": "Format inversé : le mot cible est masqué dans l'exemple réel (« Elle fait une ________ à la préfecture. ») ; la réponse doit être inférée du contexte."
             },
             {
               "rule_id": "A2_TO_B1",
               "applied_to": "items[4].question",
-              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Le droit à la santé permet de se soigner. »), la réponse attendue est le mot, pas sa définition."
+              "evidence": "Format inversé : le mot cible est masqué dans l'exemple réel (« Le ________ à la santé permet de se soigner. ») ; la réponse doit être inférée du contexte."
             },
             {
               "rule_id": "A2_TO_B1",
               "applied_to": "items[4].justification_prompt",
-              "evidence": "« droit » et « devoir » sont sémantiquement proches dans le lexique réel de la séance : justification/distinction demandée, aucune nuance inventée."
+              "evidence": "« droit » et « devoir » sont sémantiquement proches dans le lexique réel de la séance : justification demandée, aucune nuance inventée."
             },
             {
               "rule_id": "A2_TO_B1",
               "applied_to": "items[5].question",
-              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Respecter la loi est un devoir. »), la réponse attendue est le mot, pas sa définition."
+              "evidence": "Format inversé : le mot cible est masqué dans l'exemple réel (« Respecter la loi est un ________. ») ; la réponse doit être inférée du contexte."
             },
             {
               "rule_id": "A2_TO_B1",
               "applied_to": "items[5].justification_prompt",
-              "evidence": "« devoir » et « droit » sont sémantiquement proches dans le lexique réel de la séance : justification/distinction demandée, aucune nuance inventée."
+              "evidence": "« devoir » et « droit » sont sémantiquement proches dans le lexique réel de la séance : justification demandée, aucune nuance inventée."
             },
             {
               "rule_id": "A2_TO_B1",
               "applied_to": "items[6].question",
-              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« La République française a une devise. »), la réponse attendue est le mot, pas sa définition."
+              "evidence": "Format inversé : le mot cible est masqué dans l'exemple réel (« La ________ française a une devise. ») ; la réponse doit être inférée du contexte."
             },
             {
               "rule_id": "A2_TO_B1",
               "applied_to": "items[7].question",
-              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« L'examen final a lieu après 80 heures. »), la réponse attendue est le mot, pas sa définition."
+              "evidence": "Format inversé : le mot cible est masqué dans l'exemple réel (« L'________ final a lieu après 80 heures. ») ; la réponse doit être inférée du contexte."
             },
             {
               "rule_id": "A2_TO_B1",
               "applied_to": "items[8].question",
-              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Chaque séance dure 3 heures. »), la réponse attendue est le mot, pas sa définition."
+              "evidence": "Format inversé : le mot cible est masqué dans l'exemple réel (« Chaque ________ dure 3 heures. ») ; la réponse doit être inférée du contexte."
             },
             {
               "rule_id": "A2_TO_B1",
               "applied_to": "items[9].question",
-              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Elle progresse en français chaque semaine. »), la réponse attendue est le mot, pas sa définition."
+              "evidence": "Format inversé : le mot cible est masqué dans l'exemple réel (« Elle ________ en français chaque semaine. ») ; la réponse doit être inférée du contexte."
             }
           ],
           "cognitive_operations": [
@@ -1484,7 +1484,7 @@
       "contenu": {
         "items": [
           {
-            "question": "Awa suit un parcours de 80 heures.",
+            "question": "Awa suit un ________ de 80 heures.",
             "options": [
               "parcours",
               "niveau",
@@ -1493,6 +1493,9 @@
             ],
             "bonne_reponse": "parcours",
             "explication": "Ensemble des séances à suivre pour atteindre un objectif.",
+            "justification_required": true,
+            "justification_type": "contextual_nuance",
+            "justification_prompt": "Justifiez votre choix à partir du contexte et écartez le distracteur qui pourrait sembler le plus proche.",
             "correction": {
               "bonne_reponse": "parcours",
               "preuve_support": "Ensemble des séances à suivre pour atteindre un objectif.",
@@ -1502,11 +1505,29 @@
                 "« démarche » ne correspond pas à ce qu'indique le support : « Ensemble des séances à suivre pour atteindre un objectif. »."
               ],
               "erreur_diagnostiquee": "confusion_information_presente",
-              "remediation": "Relisez la phrase du support : « Ensemble des séances à suivre pour atteindre un objectif. » puis répondez à nouveau."
+              "remediation": "Relisez la phrase du support : « Ensemble des séances à suivre pour atteindre un objectif. » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "Ensemble des séances à suivre pour atteindre un objectif."
+                ],
+                "formulations_acceptables": [
+                  "Ensemble des séances à suivre pour atteindre un objectif."
+                ],
+                "exemple_non_exclusif": "Ensemble des séances à suivre pour atteindre un objectif.",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « Ensemble des séances à suivre pour atteindre un objectif. ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
             }
           },
           {
-            "question": "Son niveau de français progresse.",
+            "question": "Son ________ de français progresse.",
             "options": [
               "objectif",
               "niveau",
@@ -1515,6 +1536,9 @@
             ],
             "bonne_reponse": "niveau",
             "explication": "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+            "justification_required": true,
+            "justification_type": "contextual_nuance",
+            "justification_prompt": "Justifiez votre choix à partir du contexte et écartez le distracteur qui pourrait sembler le plus proche.",
             "correction": {
               "bonne_reponse": "niveau",
               "preuve_support": "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
@@ -1524,11 +1548,29 @@
                 "« droit » ne correspond pas à ce qu'indique le support : « Le degré de connaissance d'une langue (A1, A2, B1, B2). »."
               ],
               "erreur_diagnostiquee": "confusion_information_presente",
-              "remediation": "Relisez la phrase du support : « Le degré de connaissance d'une langue (A1, A2, B1, B2). » puis répondez à nouveau."
+              "remediation": "Relisez la phrase du support : « Le degré de connaissance d'une langue (A1, A2, B1, B2). » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "Le degré de connaissance d'une langue (A1, A2, B1, B2)."
+                ],
+                "formulations_acceptables": [
+                  "Le degré de connaissance d'une langue (A1, A2, B1, B2)."
+                ],
+                "exemple_non_exclusif": "Le degré de connaissance d'une langue (A1, A2, B1, B2).",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « Le degré de connaissance d'une langue (A1, A2, B1, B2). ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
             }
           },
           {
-            "question": "Son objectif est d'avoir sa carte de séjour.",
+            "question": "Son ________ est d'avoir sa carte de séjour.",
             "options": [
               "démarche",
               "droit",
@@ -1537,6 +1579,9 @@
             ],
             "bonne_reponse": "objectif",
             "explication": "Le but que l'on veut atteindre.",
+            "justification_required": true,
+            "justification_type": "contextual_nuance",
+            "justification_prompt": "Justifiez votre choix à partir du contexte et écartez le distracteur qui pourrait sembler le plus proche.",
             "correction": {
               "bonne_reponse": "objectif",
               "preuve_support": "Le but que l'on veut atteindre.",
@@ -1546,11 +1591,29 @@
                 "« devoir » ne correspond pas à ce qu'indique le support : « Le but que l'on veut atteindre. »."
               ],
               "erreur_diagnostiquee": "confusion_information_presente",
-              "remediation": "Relisez la phrase du support : « Le but que l'on veut atteindre. » puis répondez à nouveau."
+              "remediation": "Relisez la phrase du support : « Le but que l'on veut atteindre. » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "Le but que l'on veut atteindre."
+                ],
+                "formulations_acceptables": [
+                  "Le but que l'on veut atteindre."
+                ],
+                "exemple_non_exclusif": "Le but que l'on veut atteindre.",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « Le but que l'on veut atteindre. ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
             }
           },
           {
-            "question": "Elle fait une démarche à la préfecture.",
+            "question": "Elle fait une ________ à la préfecture.",
             "options": [
               "droit",
               "devoir",
@@ -1559,6 +1622,9 @@
             ],
             "bonne_reponse": "démarche",
             "explication": "Une action pour obtenir un document ou un droit.",
+            "justification_required": true,
+            "justification_type": "contextual_nuance",
+            "justification_prompt": "Justifiez votre choix à partir du contexte et écartez le distracteur qui pourrait sembler le plus proche.",
             "correction": {
               "bonne_reponse": "démarche",
               "preuve_support": "Une action pour obtenir un document ou un droit.",
@@ -1568,11 +1634,29 @@
                 "« République » ne correspond pas à ce qu'indique le support : « Une action pour obtenir un document ou un droit. »."
               ],
               "erreur_diagnostiquee": "confusion_information_presente",
-              "remediation": "Relisez la phrase du support : « Une action pour obtenir un document ou un droit. » puis répondez à nouveau."
+              "remediation": "Relisez la phrase du support : « Une action pour obtenir un document ou un droit. » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "Une action pour obtenir un document ou un droit."
+                ],
+                "formulations_acceptables": [
+                  "Une action pour obtenir un document ou un droit."
+                ],
+                "exemple_non_exclusif": "Une action pour obtenir un document ou un droit.",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « Une action pour obtenir un document ou un droit. ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
             }
           },
           {
-            "question": "Le droit à la santé permet de se soigner.",
+            "question": "Le ________ à la santé permet de se soigner.",
             "options": [
               "droit",
               "devoir",
@@ -1582,8 +1666,8 @@
             "bonne_reponse": "droit",
             "explication": "Quelque chose qu'on peut demander, garanti par la loi.",
             "justification_required": true,
-            "justification_type": "nuance",
-            "justification_prompt": "Justifiez votre choix et expliquez, à partir des définitions du lexique, en quoi « droit » se distingue de « devoir ».",
+            "justification_type": "contextual_nuance",
+            "justification_prompt": "Justifiez votre choix à partir du contexte et écartez le distracteur qui pourrait sembler le plus proche.",
             "correction": {
               "bonne_reponse": "droit",
               "preuve_support": "Quelque chose qu'on peut demander, garanti par la loi.",
@@ -1615,7 +1699,7 @@
             }
           },
           {
-            "question": "Respecter la loi est un devoir.",
+            "question": "Respecter la loi est un ________.",
             "options": [
               "République",
               "examen",
@@ -1625,8 +1709,8 @@
             "bonne_reponse": "devoir",
             "explication": "Une obligation, quelque chose qu'on doit faire.",
             "justification_required": true,
-            "justification_type": "nuance",
-            "justification_prompt": "Justifiez votre choix et expliquez, à partir des définitions du lexique, en quoi « devoir » se distingue de « droit ».",
+            "justification_type": "contextual_nuance",
+            "justification_prompt": "Justifiez votre choix à partir du contexte et écartez le distracteur qui pourrait sembler le plus proche.",
             "correction": {
               "bonne_reponse": "devoir",
               "preuve_support": "Une obligation, quelque chose qu'on doit faire.",
@@ -1658,7 +1742,7 @@
             }
           },
           {
-            "question": "La République française a une devise.",
+            "question": "La ________ française a une devise.",
             "options": [
               "examen",
               "séance",
@@ -1667,6 +1751,9 @@
             ],
             "bonne_reponse": "République",
             "explication": "La forme de gouvernement de la France.",
+            "justification_required": true,
+            "justification_type": "contextual_nuance",
+            "justification_prompt": "Justifiez votre choix à partir du contexte et écartez le distracteur qui pourrait sembler le plus proche.",
             "correction": {
               "bonne_reponse": "République",
               "preuve_support": "La forme de gouvernement de la France.",
@@ -1676,11 +1763,29 @@
                 "« progresser » ne correspond pas à ce qu'indique le support : « La forme de gouvernement de la France. »."
               ],
               "erreur_diagnostiquee": "confusion_information_presente",
-              "remediation": "Relisez la phrase du support : « La forme de gouvernement de la France. » puis répondez à nouveau."
+              "remediation": "Relisez la phrase du support : « La forme de gouvernement de la France. » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "La forme de gouvernement de la France."
+                ],
+                "formulations_acceptables": [
+                  "La forme de gouvernement de la France."
+                ],
+                "exemple_non_exclusif": "La forme de gouvernement de la France.",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « La forme de gouvernement de la France. ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
             }
           },
           {
-            "question": "L'examen final a lieu après 80 heures.",
+            "question": "L'________ final a lieu après 80 heures.",
             "options": [
               "séance",
               "progresser",
@@ -1689,6 +1794,9 @@
             ],
             "bonne_reponse": "examen",
             "explication": "Une épreuve qui évalue les connaissances.",
+            "justification_required": true,
+            "justification_type": "contextual_nuance",
+            "justification_prompt": "Justifiez votre choix à partir du contexte et écartez le distracteur qui pourrait sembler le plus proche.",
             "correction": {
               "bonne_reponse": "examen",
               "preuve_support": "Une épreuve qui évalue les connaissances.",
@@ -1698,11 +1806,29 @@
                 "« parcours » ne correspond pas à ce qu'indique le support : « Une épreuve qui évalue les connaissances. »."
               ],
               "erreur_diagnostiquee": "confusion_information_presente",
-              "remediation": "Relisez la phrase du support : « Une épreuve qui évalue les connaissances. » puis répondez à nouveau."
+              "remediation": "Relisez la phrase du support : « Une épreuve qui évalue les connaissances. » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "Une épreuve qui évalue les connaissances."
+                ],
+                "formulations_acceptables": [
+                  "Une épreuve qui évalue les connaissances."
+                ],
+                "exemple_non_exclusif": "Une épreuve qui évalue les connaissances.",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « Une épreuve qui évalue les connaissances. ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
             }
           },
           {
-            "question": "Chaque séance dure 3 heures.",
+            "question": "Chaque ________ dure 3 heures.",
             "options": [
               "séance",
               "progresser",
@@ -1711,6 +1837,9 @@
             ],
             "bonne_reponse": "séance",
             "explication": "Une réunion de formation à une date précise.",
+            "justification_required": true,
+            "justification_type": "contextual_nuance",
+            "justification_prompt": "Justifiez votre choix à partir du contexte et écartez le distracteur qui pourrait sembler le plus proche.",
             "correction": {
               "bonne_reponse": "séance",
               "preuve_support": "Une réunion de formation à une date précise.",
@@ -1720,11 +1849,29 @@
                 "« niveau » ne correspond pas à ce qu'indique le support : « Une réunion de formation à une date précise. »."
               ],
               "erreur_diagnostiquee": "confusion_information_presente",
-              "remediation": "Relisez la phrase du support : « Une réunion de formation à une date précise. » puis répondez à nouveau."
+              "remediation": "Relisez la phrase du support : « Une réunion de formation à une date précise. » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "Une réunion de formation à une date précise."
+                ],
+                "formulations_acceptables": [
+                  "Une réunion de formation à une date précise."
+                ],
+                "exemple_non_exclusif": "Une réunion de formation à une date précise.",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « Une réunion de formation à une date précise. ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
             }
           },
           {
-            "question": "Elle progresse en français chaque semaine.",
+            "question": "Elle ________ en français chaque semaine.",
             "options": [
               "parcours",
               "progresser",
@@ -1733,6 +1880,9 @@
             ],
             "bonne_reponse": "progresser",
             "explication": "Avancer, s'améliorer petit à petit.",
+            "justification_required": true,
+            "justification_type": "contextual_nuance",
+            "justification_prompt": "Justifiez votre choix à partir du contexte et écartez le distracteur qui pourrait sembler le plus proche.",
             "correction": {
               "bonne_reponse": "progresser",
               "preuve_support": "Avancer, s'améliorer petit à petit.",
@@ -1742,7 +1892,25 @@
                 "« objectif » ne correspond pas à ce qu'indique le support : « Avancer, s'améliorer petit à petit. »."
               ],
               "erreur_diagnostiquee": "confusion_information_presente",
-              "remediation": "Relisez la phrase du support : « Avancer, s'améliorer petit à petit. » puis répondez à nouveau."
+              "remediation": "Relisez la phrase du support : « Avancer, s'améliorer petit à petit. » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "Avancer, s'améliorer petit à petit."
+                ],
+                "formulations_acceptables": [
+                  "Avancer, s'améliorer petit à petit."
+                ],
+                "exemple_non_exclusif": "Avancer, s'améliorer petit à petit.",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « Avancer, s'améliorer petit à petit. ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
             }
           }
         ],
@@ -1797,62 +1965,102 @@
             {
               "rule_id": "A2_TO_B2",
               "applied_to": "items[0].question",
-              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Awa suit un parcours de 80 heures. »), la réponse attendue est le mot, pas sa définition."
+              "evidence": "Format inversé : le mot cible est masqué dans l'exemple réel (« Awa suit un ________ de 80 heures. ») ; la réponse doit être inférée du contexte."
+            },
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[0].justification_prompt",
+              "evidence": "B2 : justification contextuelle et discrimination du distracteur le plus proche exigées pour chaque item."
             },
             {
               "rule_id": "A2_TO_B2",
               "applied_to": "items[1].question",
-              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Son niveau de français progresse. »), la réponse attendue est le mot, pas sa définition."
+              "evidence": "Format inversé : le mot cible est masqué dans l'exemple réel (« Son ________ de français progresse. ») ; la réponse doit être inférée du contexte."
+            },
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[1].justification_prompt",
+              "evidence": "B2 : justification contextuelle et discrimination du distracteur le plus proche exigées pour chaque item."
             },
             {
               "rule_id": "A2_TO_B2",
               "applied_to": "items[2].question",
-              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Son objectif est d'avoir sa carte de séjour. »), la réponse attendue est le mot, pas sa définition."
+              "evidence": "Format inversé : le mot cible est masqué dans l'exemple réel (« Son ________ est d'avoir sa carte de séjour. ») ; la réponse doit être inférée du contexte."
+            },
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[2].justification_prompt",
+              "evidence": "B2 : justification contextuelle et discrimination du distracteur le plus proche exigées pour chaque item."
             },
             {
               "rule_id": "A2_TO_B2",
               "applied_to": "items[3].question",
-              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Elle fait une démarche à la préfecture. »), la réponse attendue est le mot, pas sa définition."
+              "evidence": "Format inversé : le mot cible est masqué dans l'exemple réel (« Elle fait une ________ à la préfecture. ») ; la réponse doit être inférée du contexte."
+            },
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[3].justification_prompt",
+              "evidence": "B2 : justification contextuelle et discrimination du distracteur le plus proche exigées pour chaque item."
             },
             {
               "rule_id": "A2_TO_B2",
               "applied_to": "items[4].question",
-              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Le droit à la santé permet de se soigner. »), la réponse attendue est le mot, pas sa définition."
+              "evidence": "Format inversé : le mot cible est masqué dans l'exemple réel (« Le ________ à la santé permet de se soigner. ») ; la réponse doit être inférée du contexte."
             },
             {
               "rule_id": "A2_TO_B2",
               "applied_to": "items[4].justification_prompt",
-              "evidence": "« droit » et « devoir » sont sémantiquement proches dans le lexique réel de la séance : justification/distinction demandée, aucune nuance inventée."
+              "evidence": "B2 : justification contextuelle et discrimination du distracteur le plus proche exigées pour chaque item."
             },
             {
               "rule_id": "A2_TO_B2",
               "applied_to": "items[5].question",
-              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Respecter la loi est un devoir. »), la réponse attendue est le mot, pas sa définition."
+              "evidence": "Format inversé : le mot cible est masqué dans l'exemple réel (« Respecter la loi est un ________. ») ; la réponse doit être inférée du contexte."
             },
             {
               "rule_id": "A2_TO_B2",
               "applied_to": "items[5].justification_prompt",
-              "evidence": "« devoir » et « droit » sont sémantiquement proches dans le lexique réel de la séance : justification/distinction demandée, aucune nuance inventée."
+              "evidence": "B2 : justification contextuelle et discrimination du distracteur le plus proche exigées pour chaque item."
             },
             {
               "rule_id": "A2_TO_B2",
               "applied_to": "items[6].question",
-              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« La République française a une devise. »), la réponse attendue est le mot, pas sa définition."
+              "evidence": "Format inversé : le mot cible est masqué dans l'exemple réel (« La ________ française a une devise. ») ; la réponse doit être inférée du contexte."
+            },
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[6].justification_prompt",
+              "evidence": "B2 : justification contextuelle et discrimination du distracteur le plus proche exigées pour chaque item."
             },
             {
               "rule_id": "A2_TO_B2",
               "applied_to": "items[7].question",
-              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« L'examen final a lieu après 80 heures. »), la réponse attendue est le mot, pas sa définition."
+              "evidence": "Format inversé : le mot cible est masqué dans l'exemple réel (« L'________ final a lieu après 80 heures. ») ; la réponse doit être inférée du contexte."
+            },
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[7].justification_prompt",
+              "evidence": "B2 : justification contextuelle et discrimination du distracteur le plus proche exigées pour chaque item."
             },
             {
               "rule_id": "A2_TO_B2",
               "applied_to": "items[8].question",
-              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Chaque séance dure 3 heures. »), la réponse attendue est le mot, pas sa définition."
+              "evidence": "Format inversé : le mot cible est masqué dans l'exemple réel (« Chaque ________ dure 3 heures. ») ; la réponse doit être inférée du contexte."
+            },
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[8].justification_prompt",
+              "evidence": "B2 : justification contextuelle et discrimination du distracteur le plus proche exigées pour chaque item."
             },
             {
               "rule_id": "A2_TO_B2",
               "applied_to": "items[9].question",
-              "evidence": "Format inversé : la question porte sur l'exemple d'emploi réel (« Elle progresse en français chaque semaine. »), la réponse attendue est le mot, pas sa définition."
+              "evidence": "Format inversé : le mot cible est masqué dans l'exemple réel (« Elle ________ en français chaque semaine. ») ; la réponse doit être inférée du contexte."
+            },
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[9].justification_prompt",
+              "evidence": "B2 : justification contextuelle et discrimination du distracteur le plus proche exigées pour chaque item."
             }
           ],
           "cognitive_operations": [
@@ -11744,6 +11952,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:lexique-association:A1",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -11845,6 +12061,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:A1",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -11931,6 +12155,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:lexique-association:A2",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -12010,6 +12242,14 @@
         },
         {
           "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:A2",
+          "evidence": [],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
           "status": "pass",
           "scope": "exercise",
           "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:A2",
@@ -12112,6 +12352,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:lexique-association:B1",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -12202,6 +12450,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:B1",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -12266,17 +12522,25 @@
           "metadata_code": "cv2:S01:v3:lexique-association:B2",
           "evidence": [
             "A2_TO_B2:items[0].question",
+            "A2_TO_B2:items[0].justification_prompt",
             "A2_TO_B2:items[1].question",
+            "A2_TO_B2:items[1].justification_prompt",
             "A2_TO_B2:items[2].question",
+            "A2_TO_B2:items[2].justification_prompt",
             "A2_TO_B2:items[3].question",
+            "A2_TO_B2:items[3].justification_prompt",
             "A2_TO_B2:items[4].question",
             "A2_TO_B2:items[4].justification_prompt",
             "A2_TO_B2:items[5].question",
             "A2_TO_B2:items[5].justification_prompt",
             "A2_TO_B2:items[6].question",
+            "A2_TO_B2:items[6].justification_prompt",
             "A2_TO_B2:items[7].question",
+            "A2_TO_B2:items[7].justification_prompt",
             "A2_TO_B2:items[8].question",
-            "A2_TO_B2:items[9].question"
+            "A2_TO_B2:items[8].justification_prompt",
+            "A2_TO_B2:items[9].question",
+            "A2_TO_B2:items[9].justification_prompt"
           ],
           "errors": []
         },
@@ -12290,6 +12554,14 @@
         },
         {
           "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:lexique-association:B2",
+          "evidence": [],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
           "status": "pass",
           "scope": "exercise",
           "metadata_code": "cv2:S01:v3:lexique-association:B2",
@@ -12396,6 +12668,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:B2",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -12471,6 +12751,14 @@
         },
         {
           "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:A1",
+          "evidence": [],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
           "status": "pass",
           "scope": "exercise",
           "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:A1",
@@ -12560,6 +12848,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:A2",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -12642,6 +12938,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:B1",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -12717,6 +13021,14 @@
         },
         {
           "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:B2",
+          "evidence": [],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
           "status": "pass",
           "scope": "exercise",
           "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:B2",
@@ -12814,6 +13126,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:support-visuel:A1",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -12893,6 +13213,14 @@
         },
         {
           "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:support-visuel-ouvert:A1",
+          "evidence": [],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
           "status": "pass",
           "scope": "exercise",
           "metadata_code": "cv2:S01:v3:support-visuel-ouvert:A1",
@@ -12986,6 +13314,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:support-visuel:A2",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -13061,6 +13397,14 @@
         },
         {
           "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:support-visuel-ouvert:A2",
+          "evidence": [],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
           "status": "pass",
           "scope": "exercise",
           "metadata_code": "cv2:S01:v3:support-visuel-ouvert:A2",
@@ -13158,6 +13502,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:support-visuel:B1",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -13233,6 +13585,14 @@
         },
         {
           "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:support-visuel-ouvert:B1",
+          "evidence": [],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
           "status": "pass",
           "scope": "exercise",
           "metadata_code": "cv2:S01:v3:support-visuel-ouvert:B1",
@@ -13339,6 +13699,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:support-visuel:B2",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -13414,6 +13782,14 @@
         },
         {
           "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:support-visuel-ouvert:B2",
+          "evidence": [],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
           "status": "pass",
           "scope": "exercise",
           "metadata_code": "cv2:S01:v3:support-visuel-ouvert:B2",
@@ -13514,6 +13890,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:co-dialogue:A1",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -13607,6 +13991,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:co-comprehension:A1",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -13686,6 +14078,14 @@
         },
         {
           "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:atelier-1:A1",
+          "evidence": [],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
           "status": "pass",
           "scope": "exercise",
           "metadata_code": "cv2:S01:v3:atelier-1:A1",
@@ -13779,6 +14179,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:atelier-2:A1",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -13858,6 +14266,14 @@
         },
         {
           "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:atelier-3:A1",
+          "evidence": [],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
           "status": "pass",
           "scope": "exercise",
           "metadata_code": "cv2:S01:v3:atelier-3:A1",
@@ -13951,6 +14367,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:atelier-4:A1",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -14037,6 +14461,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:structures:A1",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -14119,6 +14551,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:eo:A1",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -14201,6 +14641,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:co-dialogue:A2",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -14283,6 +14731,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:co-comprehension:A2",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -14358,6 +14814,14 @@
         },
         {
           "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:co-approfondissement:A2",
+          "evidence": [],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
           "status": "pass",
           "scope": "exercise",
           "metadata_code": "cv2:S01:v3:co-approfondissement:A2",
@@ -14451,6 +14915,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:atelier-1:A2",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -14530,6 +15002,14 @@
         },
         {
           "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:atelier-2:A2",
+          "evidence": [],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
           "status": "pass",
           "scope": "exercise",
           "metadata_code": "cv2:S01:v3:atelier-2:A2",
@@ -14623,6 +15103,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:atelier-3:A2",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -14709,6 +15197,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:structures:A2",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -14784,6 +15280,14 @@
         },
         {
           "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:eo:A2",
+          "evidence": [],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
           "status": "pass",
           "scope": "exercise",
           "metadata_code": "cv2:S01:v3:eo:A2",
@@ -14884,6 +15388,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:co-dialogue:B1",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -14966,6 +15478,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:co-comprehension:B1",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -15041,6 +15561,14 @@
         },
         {
           "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:co-approfondissement:B1",
+          "evidence": [],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
           "status": "pass",
           "scope": "exercise",
           "metadata_code": "cv2:S01:v3:co-approfondissement:B1",
@@ -15134,6 +15662,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:atelier-1:B1",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -15213,6 +15749,14 @@
         },
         {
           "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:atelier-2:B1",
+          "evidence": [],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
           "status": "pass",
           "scope": "exercise",
           "metadata_code": "cv2:S01:v3:atelier-2:B1",
@@ -15306,6 +15850,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:structures:B1",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -15381,6 +15933,14 @@
         },
         {
           "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:eo:B1",
+          "evidence": [],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
           "status": "pass",
           "scope": "exercise",
           "metadata_code": "cv2:S01:v3:eo:B1",
@@ -15496,6 +16056,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:co-dialogue:B2",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -15578,6 +16146,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:co-comprehension:B2",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -15653,6 +16229,14 @@
         },
         {
           "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:co-approfondissement:B2",
+          "evidence": [],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
           "status": "pass",
           "scope": "exercise",
           "metadata_code": "cv2:S01:v3:co-approfondissement:B2",
@@ -15746,6 +16330,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:atelier-1:B2",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -15832,6 +16424,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:structures:B2",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -15907,6 +16507,14 @@
         },
         {
           "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:eo:B2",
+          "evidence": [],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
           "status": "pass",
           "scope": "exercise",
           "metadata_code": "cv2:S01:v3:eo:B2",
@@ -16004,6 +16612,14 @@
         },
         {
           "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:civique:A1",
+          "evidence": [],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
           "status": "pass",
           "scope": "exercise",
           "metadata_code": "cv2:S01:v3:civique:A1",
@@ -16110,6 +16726,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:civique:A2",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -16202,6 +16826,14 @@
         },
         {
           "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:civique:B1",
+          "evidence": [],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
           "status": "pass",
           "scope": "exercise",
           "metadata_code": "cv2:S01:v3:civique:B1",
@@ -16316,6 +16948,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:civique:B2",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -16397,6 +17037,14 @@
         },
         {
           "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:ee-guidee-1:A1",
+          "evidence": [],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
           "status": "pass",
           "scope": "exercise",
           "metadata_code": "cv2:S01:v3:ee-guidee-1:A1",
@@ -16490,6 +17138,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:ee-guidee-1:A2",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -16572,6 +17228,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:ee-guidee-2:A2",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -16654,6 +17318,14 @@
           "errors": []
         },
         {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:ee-guidee-2:B1",
+          "evidence": [],
+          "errors": []
+        },
+        {
           "rule_id": "DIFF_HINT_LEAK",
           "status": "pass",
           "scope": "exercise",
@@ -16729,6 +17401,14 @@
         },
         {
           "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:ee-autonome:B1",
+          "evidence": [],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
           "status": "pass",
           "scope": "exercise",
           "metadata_code": "cv2:S01:v3:ee-autonome:B1",
@@ -16811,6 +17491,14 @@
         },
         {
           "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+          "status": "pass",
+          "scope": "exercise",
+          "metadata_code": "cv2:S01:v3:ee-autonome:B2",
+          "evidence": [],
+          "errors": []
+        },
+        {
+          "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
           "status": "pass",
           "scope": "exercise",
           "metadata_code": "cv2:S01:v3:ee-autonome:B2",
@@ -17866,6 +18554,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:lexique-association:A1",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -17993,6 +18689,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:A1",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -18088,6 +18792,14 @@
             },
             {
               "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:lexique-association:A2",
+              "evidence": [],
+              "errors": []
+            },
+            {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
               "status": "pass",
               "scope": "exercise",
               "metadata_code": "cv2:S01:v3:lexique-association:A2",
@@ -18207,6 +18919,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:A2",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -18311,6 +19031,14 @@
             },
             {
               "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:lexique-association:B1",
+              "evidence": [],
+              "errors": []
+            },
+            {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
               "status": "pass",
               "scope": "exercise",
               "metadata_code": "cv2:S01:v3:lexique-association:B1",
@@ -18444,6 +19172,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:B1",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -18537,17 +19273,25 @@
               "metadata_code": "cv2:S01:v3:lexique-association:B2",
               "evidence": [
                 "A2_TO_B2:items[0].question",
+                "A2_TO_B2:items[0].justification_prompt",
                 "A2_TO_B2:items[1].question",
+                "A2_TO_B2:items[1].justification_prompt",
                 "A2_TO_B2:items[2].question",
+                "A2_TO_B2:items[2].justification_prompt",
                 "A2_TO_B2:items[3].question",
+                "A2_TO_B2:items[3].justification_prompt",
                 "A2_TO_B2:items[4].question",
                 "A2_TO_B2:items[4].justification_prompt",
                 "A2_TO_B2:items[5].question",
                 "A2_TO_B2:items[5].justification_prompt",
                 "A2_TO_B2:items[6].question",
+                "A2_TO_B2:items[6].justification_prompt",
                 "A2_TO_B2:items[7].question",
+                "A2_TO_B2:items[7].justification_prompt",
                 "A2_TO_B2:items[8].question",
-                "A2_TO_B2:items[9].question"
+                "A2_TO_B2:items[8].justification_prompt",
+                "A2_TO_B2:items[9].question",
+                "A2_TO_B2:items[9].justification_prompt"
               ],
               "errors": []
             },
@@ -18561,6 +19305,14 @@
             },
             {
               "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:lexique-association:B2",
+              "evidence": [],
+              "errors": []
+            },
+            {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
               "status": "pass",
               "scope": "exercise",
               "metadata_code": "cv2:S01:v3:lexique-association:B2",
@@ -18714,6 +19466,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:B2",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -18838,6 +19598,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:A1",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -18951,6 +19719,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:A2",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -19055,6 +19831,14 @@
             },
             {
               "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:B1",
+              "evidence": [],
+              "errors": []
+            },
+            {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
               "status": "pass",
               "scope": "exercise",
               "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:B1",
@@ -19181,6 +19965,14 @@
             },
             {
               "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:B2",
+              "evidence": [],
+              "errors": []
+            },
+            {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
               "status": "pass",
               "scope": "exercise",
               "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:B2",
@@ -19319,6 +20111,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:support-visuel:A1",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -19427,6 +20227,14 @@
             },
             {
               "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:support-visuel-ouvert:A1",
+              "evidence": [],
+              "errors": []
+            },
+            {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
               "status": "pass",
               "scope": "exercise",
               "metadata_code": "cv2:S01:v3:support-visuel-ouvert:A1",
@@ -19561,6 +20369,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:support-visuel:A2",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -19652,6 +20468,14 @@
             },
             {
               "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:support-visuel-ouvert:A2",
+              "evidence": [],
+              "errors": []
+            },
+            {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
               "status": "pass",
               "scope": "exercise",
               "metadata_code": "cv2:S01:v3:support-visuel-ouvert:A2",
@@ -19785,6 +20609,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:support-visuel:B1",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -19902,6 +20734,14 @@
             },
             {
               "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:support-visuel-ouvert:B1",
+              "evidence": [],
+              "errors": []
+            },
+            {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
               "status": "pass",
               "scope": "exercise",
               "metadata_code": "cv2:S01:v3:support-visuel-ouvert:B1",
@@ -20070,6 +20910,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:support-visuel:B2",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -20194,6 +21042,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:support-visuel-ouvert:B2",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -20311,6 +21167,14 @@
             },
             {
               "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:co-dialogue:A1",
+              "evidence": [],
+              "errors": []
+            },
+            {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
               "status": "pass",
               "scope": "exercise",
               "metadata_code": "cv2:S01:v3:co-dialogue:A1",
@@ -20443,6 +21307,14 @@
             },
             {
               "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:co-comprehension:A1",
+              "evidence": [],
+              "errors": []
+            },
+            {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
               "status": "pass",
               "scope": "exercise",
               "metadata_code": "cv2:S01:v3:co-comprehension:A1",
@@ -20587,6 +21459,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:atelier-1:A1",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -20692,6 +21572,14 @@
             },
             {
               "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:atelier-2:A1",
+              "evidence": [],
+              "errors": []
+            },
+            {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
               "status": "pass",
               "scope": "exercise",
               "metadata_code": "cv2:S01:v3:atelier-2:A1",
@@ -20811,6 +21699,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:atelier-3:A1",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -20923,6 +21819,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:atelier-4:A1",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -21018,6 +21922,14 @@
             },
             {
               "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:structures:A1",
+              "evidence": [],
+              "errors": []
+            },
+            {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
               "status": "pass",
               "scope": "exercise",
               "metadata_code": "cv2:S01:v3:structures:A1",
@@ -21123,6 +22035,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:eo:A1",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -21214,6 +22134,14 @@
             },
             {
               "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:co-dialogue:A2",
+              "evidence": [],
+              "errors": []
+            },
+            {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
               "status": "pass",
               "scope": "exercise",
               "metadata_code": "cv2:S01:v3:co-dialogue:A2",
@@ -21329,6 +22257,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:co-comprehension:A2",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -21430,6 +22366,14 @@
             },
             {
               "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:co-approfondissement:A2",
+              "evidence": [],
+              "errors": []
+            },
+            {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
               "status": "pass",
               "scope": "exercise",
               "metadata_code": "cv2:S01:v3:co-approfondissement:A2",
@@ -21559,6 +22503,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:atelier-1:A2",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -21664,6 +22616,14 @@
             },
             {
               "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:atelier-2:A2",
+              "evidence": [],
+              "errors": []
+            },
+            {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
               "status": "pass",
               "scope": "exercise",
               "metadata_code": "cv2:S01:v3:atelier-2:A2",
@@ -21783,6 +22743,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:atelier-3:A2",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -21895,6 +22863,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:structures:A2",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -21986,6 +22962,14 @@
             },
             {
               "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:eo:A2",
+              "evidence": [],
+              "errors": []
+            },
+            {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
               "status": "pass",
               "scope": "exercise",
               "metadata_code": "cv2:S01:v3:eo:A2",
@@ -22095,6 +23079,14 @@
             },
             {
               "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:co-dialogue:B1",
+              "evidence": [],
+              "errors": []
+            },
+            {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
               "status": "pass",
               "scope": "exercise",
               "metadata_code": "cv2:S01:v3:co-dialogue:B1",
@@ -22216,6 +23208,14 @@
             },
             {
               "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:co-comprehension:B1",
+              "evidence": [],
+              "errors": []
+            },
+            {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
               "status": "pass",
               "scope": "exercise",
               "metadata_code": "cv2:S01:v3:co-comprehension:B1",
@@ -22350,6 +23350,14 @@
             },
             {
               "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:co-approfondissement:B1",
+              "evidence": [],
+              "errors": []
+            },
+            {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
               "status": "pass",
               "scope": "exercise",
               "metadata_code": "cv2:S01:v3:co-approfondissement:B1",
@@ -22492,6 +23500,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:atelier-1:B1",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -22597,6 +23613,14 @@
             },
             {
               "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:atelier-2:B1",
+              "evidence": [],
+              "errors": []
+            },
+            {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
               "status": "pass",
               "scope": "exercise",
               "metadata_code": "cv2:S01:v3:atelier-2:B1",
@@ -22716,6 +23740,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:structures:B1",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -22807,6 +23839,14 @@
             },
             {
               "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:eo:B1",
+              "evidence": [],
+              "errors": []
+            },
+            {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
               "status": "pass",
               "scope": "exercise",
               "metadata_code": "cv2:S01:v3:eo:B1",
@@ -22964,6 +24004,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:co-dialogue:B2",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -23078,6 +24126,14 @@
             },
             {
               "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:co-comprehension:B2",
+              "evidence": [],
+              "errors": []
+            },
+            {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
               "status": "pass",
               "scope": "exercise",
               "metadata_code": "cv2:S01:v3:co-comprehension:B2",
@@ -23219,6 +24275,14 @@
             },
             {
               "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:co-approfondissement:B2",
+              "evidence": [],
+              "errors": []
+            },
+            {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
               "status": "pass",
               "scope": "exercise",
               "metadata_code": "cv2:S01:v3:co-approfondissement:B2",
@@ -23371,6 +24435,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:atelier-1:B2",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -23483,6 +24555,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:structures:B2",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -23582,6 +24662,14 @@
             },
             {
               "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:eo:B2",
+              "evidence": [],
+              "errors": []
+            },
+            {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
               "status": "pass",
               "scope": "exercise",
               "metadata_code": "cv2:S01:v3:eo:B2",
@@ -23729,6 +24817,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:civique:A1",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -23861,6 +24957,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:civique:A2",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -23986,6 +25090,14 @@
             },
             {
               "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:civique:B1",
+              "evidence": [],
+              "errors": []
+            },
+            {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
               "status": "pass",
               "scope": "exercise",
               "metadata_code": "cv2:S01:v3:civique:B1",
@@ -24146,6 +25258,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:civique:B2",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -24263,6 +25383,14 @@
             },
             {
               "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:ee-guidee-1:A1",
+              "evidence": [],
+              "errors": []
+            },
+            {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
               "status": "pass",
               "scope": "exercise",
               "metadata_code": "cv2:S01:v3:ee-guidee-1:A1",
@@ -24395,6 +25523,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:ee-guidee-1:A2",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -24486,6 +25622,14 @@
             },
             {
               "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:ee-guidee-2:A2",
+              "evidence": [],
+              "errors": []
+            },
+            {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
               "status": "pass",
               "scope": "exercise",
               "metadata_code": "cv2:S01:v3:ee-guidee-2:A2",
@@ -24595,6 +25739,14 @@
             },
             {
               "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:ee-guidee-2:B1",
+              "evidence": [],
+              "errors": []
+            },
+            {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
               "status": "pass",
               "scope": "exercise",
               "metadata_code": "cv2:S01:v3:ee-guidee-2:B1",
@@ -24713,6 +25865,14 @@
               "errors": []
             },
             {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:ee-autonome:B1",
+              "evidence": [],
+              "errors": []
+            },
+            {
               "rule_id": "DIFF_HINT_LEAK",
               "status": "pass",
               "scope": "exercise",
@@ -24804,6 +25964,14 @@
             },
             {
               "rule_id": "DIFF_INSTRUCTION_CORRECTION_MISMATCH",
+              "status": "pass",
+              "scope": "exercise",
+              "metadata_code": "cv2:S01:v3:ee-autonome:B2",
+              "evidence": [],
+              "errors": []
+            },
+            {
+              "rule_id": "DIFF_ANSWER_LEAK_IN_QUESTION",
               "status": "pass",
               "scope": "exercise",
               "metadata_code": "cv2:S01:v3:ee-autonome:B2",
