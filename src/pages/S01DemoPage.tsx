@@ -1,14 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { BookOpen, CheckCircle2, FlaskConical, Lock, RotateCcw, Unlock } from "lucide-react";
+import { BookOpen, FlaskConical, RotateCcw, Unlock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Textarea } from "@/components/ui/textarea";
 import type { AttemptCorrectionResponse, LearnerActivity, LearnerExerciseBlock } from "@/lib/curriculum/learnerSession";
+import { buildStructuredAnswer, isJustificationMissing } from "@/lib/curriculum/justificationAnswer";
+// Lot 2.1, point 4 : réutilise le RENDU RÉEL du parcours apprenant (mêmes
+// composants que SeanceApprenant.tsx) — indice sur demande, banque de
+// mots, justification obligatoire, restitution post-libération. Aucune
+// logique de rendu parallèle recréée ici.
+import { ExerciseItemForm, CorrectionGate } from "@/pages/eleve/SeanceApprenant";
 import {
   fetchS01DemoContent,
   fetchS01DemoCorrection,
@@ -30,7 +33,11 @@ export default function S01DemoPage() {
   const [exerciseIndex, setExerciseIndex] = useState(0);
   const [itemIndex, setItemIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
+  const [justifications, setJustifications] = useState<Record<number, string>>({});
+  const [hintsRevealed, setHintsRevealed] = useState<Record<number, boolean>>({});
   const [locked, setLocked] = useState<Set<number>>(new Set());
+  const [justificationError, setJustificationError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [attemptId, setAttemptId] = useState<string | null>(null);
   const [correction, setCorrection] = useState<AttemptCorrectionResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -46,7 +53,11 @@ export default function S01DemoPage() {
   function resetRunner() {
     setItemIndex(0);
     setAnswers({});
+    setJustifications({});
+    setHintsRevealed({});
     setLocked(new Set());
+    setJustificationError(null);
+    setSubmitError(null);
     setAttemptId(null);
     setCorrection(null);
   }
@@ -55,12 +66,15 @@ export default function S01DemoPage() {
     setExerciseIndex(0);
     resetRunner();
     void load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [level]);
 
   const exercise = exercises[exerciseIndex];
   const activity = activities.find((entry) => entry.id === exercise?.activity_id);
   const activityPosition = Math.max(0, activities.findIndex((entry) => entry.id === activity?.id));
-  const currentItem = exercise?.items[itemIndex];
+  const currentItem = exercise?.items[itemIndex] as
+    | { justification_required?: boolean; justification_prompt?: string }
+    | undefined;
   const completed = Boolean(attemptId ?? exercise?.my_attempt?.attempt_id);
 
   const activityExerciseCounts = useMemo(() => {
@@ -71,18 +85,49 @@ export default function S01DemoPage() {
 
   async function validateItem() {
     if (!exercise || !currentItem) return;
+
+    // Même garde-fou pédagogique explicite que le parcours réel : la
+    // réponse principale n'est jamais effacée.
+    if (isJustificationMissing(currentItem, justifications[itemIndex] ?? "")) {
+      setJustificationError("Merci de justifier votre réponse avant de valider.");
+      return;
+    }
+    setJustificationError(null);
+
     setLocked((previous) => new Set(previous).add(itemIndex));
     if (itemIndex + 1 < exercise.items.length) {
       setItemIndex((value) => value + 1);
       return;
     }
-    const submitted = await submitS01DemoAnswer({
-      exerciseId: exercise.id,
-      answers: Object.fromEntries(Object.entries(answers).map(([key, value]) => [String(key), value])),
-    });
-    setAttemptId(submitted.attempt_id);
-    setCorrection(await fetchS01DemoCorrection(submitted.attempt_id));
-    await load();
+
+    const allIndexes = new Set(
+      [...Object.keys(answers), ...Object.keys(justifications), ...Object.keys(hintsRevealed)].map(Number),
+    );
+    const payloadAnswers = Object.fromEntries(
+      [...allIndexes].map((idx) => [
+        idx,
+        buildStructuredAnswer(answers[idx] ?? "", justifications[idx] ?? "", hintsRevealed[idx] === true),
+      ]),
+    );
+
+    try {
+      const submitted = await submitS01DemoAnswer({ exerciseId: exercise.id, answers: payloadAnswers });
+      setSubmitError(null);
+      setAttemptId(submitted.attempt_id);
+      setCorrection(await fetchS01DemoCorrection(submitted.attempt_id));
+      await load();
+    } catch (error) {
+      setLocked((previous) => {
+        const next = new Set(previous);
+        next.delete(itemIndex);
+        return next;
+      });
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : "La soumission a échoué. Vérifie tes réponses (et justifications si demandées) puis réessaie.",
+      );
+    }
   }
 
   async function releaseCorrection() {
@@ -96,7 +141,7 @@ export default function S01DemoPage() {
   async function viewCorrection() {
     const id = correction?.attempt_id;
     if (!id) return;
-    markS01DemoCorrectionViewed(id);
+    await markS01DemoCorrectionViewed(id);
     setCorrection(await fetchS01DemoCorrection(id));
   }
 
@@ -121,10 +166,6 @@ export default function S01DemoPage() {
   if (loading || !exercise) {
     return <div className="min-h-screen bg-slate-50 p-8 text-center text-slate-600">Chargement de la démonstration S01…</div>;
   }
-
-  const question = currentItem?.question ?? currentItem?.texte ?? currentItem?.enonce ?? `Question ${itemIndex + 1}`;
-  const options = Array.isArray(currentItem?.options) ? currentItem.options : null;
-  const correctionEntries = Object.values(correction?.item_results ?? {});
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top_right,#dbeafe,transparent_35%),#f8fafc] px-4 py-6 text-slate-950">
@@ -183,29 +224,31 @@ export default function S01DemoPage() {
             <p className="rounded-lg bg-blue-50 p-3 text-sm text-blue-950">{exercise.consigne}</p>
 
             {!completed && currentItem && (
-              <div className="space-y-4">
-                <p className="font-semibold">{question}</p>
-                {options ? (
-                  <RadioGroup value={answers[itemIndex] ?? ""} onValueChange={(value) => setAnswers((previous) => ({ ...previous, [itemIndex]: value }))} disabled={locked.has(itemIndex)}>
-                    {options.map((option, index) => (
-                      <div key={`${index}-${option}`} className="flex items-start gap-2 rounded-lg border bg-white p-3">
-                        <RadioGroupItem value={option} id={`demo-${exerciseIndex}-${itemIndex}-${index}`} className="mt-0.5" />
-                        <Label htmlFor={`demo-${exerciseIndex}-${itemIndex}-${index}`} className="cursor-pointer leading-5">{option}</Label>
-                      </div>
-                    ))}
-                  </RadioGroup>
-                ) : (
-                  <Textarea value={answers[itemIndex] ?? ""} onChange={(event) => setAnswers((previous) => ({ ...previous, [itemIndex]: event.target.value }))} placeholder="Ta réponse…" />
-                )}
-                <Button className="gap-2 bg-blue-700 hover:bg-blue-800" disabled={!(answers[itemIndex] ?? "").trim()} onClick={() => void validateItem()}>
-                  <CheckCircle2 className="h-4 w-4" /> Valider ma réponse
-                </Button>
-              </div>
+              <>
+                <ExerciseItemForm
+                  item={currentItem}
+                  index={itemIndex}
+                  total={exercise.items.length}
+                  locked={locked.has(itemIndex)}
+                  value={answers[itemIndex] ?? ""}
+                  onChange={(value) => setAnswers((previous) => ({ ...previous, [itemIndex]: value }))}
+                  justificationValue={justifications[itemIndex] ?? ""}
+                  onJustificationChange={(value) => {
+                    setJustifications((previous) => ({ ...previous, [itemIndex]: value }));
+                    if (justificationError) setJustificationError(null);
+                  }}
+                  justificationError={justificationError}
+                  hintRevealed={hintsRevealed[itemIndex] === true}
+                  onRevealHint={() => setHintsRevealed((previous) => ({ ...previous, [itemIndex]: true }))}
+                  onValidate={() => void validateItem()}
+                />
+                {submitError && <p className="text-sm text-red-700">{submitError}</p>}
+              </>
             )}
 
             {completed && (!correction || !correction.released) && (
               <div className="rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950">
-                <p className="flex items-center gap-2 font-bold"><Lock className="h-4 w-4" /> Exercice terminé — correction en attente</p>
+                <p className="flex items-center gap-2 font-bold"><Unlock className="h-4 w-4" /> Exercice terminé — correction en attente</p>
                 <p className="mt-1">Dans l’application réelle, seul le formateur peut libérer cette correction.</p>
                 <Button size="sm" className="mt-3 gap-1 bg-amber-700 hover:bg-amber-800" onClick={() => void releaseCorrection()}>
                   <Unlock className="h-3.5 w-3.5" /> Simuler la libération formateur
@@ -215,15 +258,12 @@ export default function S01DemoPage() {
 
             {correction?.released && (
               <div className="space-y-3">
-                <div className="flex flex-wrap items-center gap-2"><Badge className="bg-emerald-700">Score {correction.score_normalized}%</Badge>{!correction.correction_viewed_at && <Button size="sm" variant="outline" onClick={() => void viewCorrection()}>Marquer comme vue</Button>}</div>
-                {correctionEntries.map((entry, index) => (
-                  <div key={index} className={`rounded-lg border p-3 text-sm ${entry.correct ? "border-emerald-200 bg-emerald-50" : "border-red-200 bg-red-50"}`}>
-                    <p className="font-semibold">{entry.question}</p>
-                    <p>Ta réponse : <span className={entry.correct ? "text-emerald-700" : "text-red-700 underline"}>{entry.reponse_donnee || "(vide)"}</span></p>
-                    {!entry.correct && <p className="text-blue-800">Réponse attendue : {entry.bonne_reponse}</p>}
-                    {entry.explication && <p className="mt-1 text-slate-600">{entry.explication}</p>}
-                  </div>
-                ))}
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge className="bg-emerald-700">
+                    Score {correction.score_normalized}%{(correction as { score_provisional?: boolean }).score_provisional && " (provisoire)"}
+                  </Badge>
+                </div>
+                <CorrectionGate correction={correction} onViewCorrection={() => void viewCorrection()} />
               </div>
             )}
           </CardContent>
