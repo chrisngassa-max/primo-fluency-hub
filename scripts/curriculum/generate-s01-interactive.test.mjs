@@ -595,10 +595,15 @@ describe("Lot 2.1, point 7 — toute transformation non supportée rend l'exerci
         expect(item.evidence.length).toBeGreaterThan(10);
       }
     }
-    // Cohérence : le compte non-publiable du rapport correspond aux
-    // exercices needs_content_review réels.
-    const actualNonPublishable = payload.exercises.filter((e) => e.contenu.metadata.needs_content_review).length;
-    expect(publishability.non_publishable_count).toBe(actualNonPublishable);
+    // LOT 3 : needs_content_review reste un motif bloquant, mais le rapport
+    // agrège désormais tous les garde-fous (doublon pédagogique, support,
+    // correction, transformation, etc.). Son total vient du validateur.
+    const actualNeedsReview = payload.exercises.filter((e) => e.contenu.metadata.needs_content_review);
+    expect(publishability.non_publishable_count).toBe(payload.report.differentiation_validation.non_publishable_count);
+    expect(publishability.non_publishable_count).toBeGreaterThanOrEqual(actualNeedsReview.length);
+    for (const exercise of actualNeedsReview) {
+      expect(payload.report.differentiation_validation.by_exercise[exercise.metadata_code].publishable).toBe(false);
+    }
     expect(publishability.publishable_count + publishability.non_publishable_count).toBe(59);
   });
 

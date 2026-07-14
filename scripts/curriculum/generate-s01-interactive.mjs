@@ -7,10 +7,12 @@ import {
   getLevelContract,
   parseDifferentiationLevelStrict,
 } from "./lib/differentiation-referential.mjs";
+import { validateS01DifferentiationPayload } from "./lib/s01-differentiation-validate.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const DATA_PATH = join(ROOT, "content", "curriculum", "v2", "S01-v3", "s01-v3-data.json");
 const OUTPUT_PATH = join(ROOT, "content", "curriculum", "v2", "S01-v3", "exercices-interactifs.json");
+const BASELINE_PATH = join(ROOT, "content", "curriculum", "v2", "S01-v3", "__snapshots__", "s01-v3-corpus-baseline.json");
 const LEVELS = ["A1", "A2", "B1", "B2"];
 const SUPPORTED_FORMATS = new Set(["qcm", "vrai_faux", "appariement", "production_ecrite", "production_orale", "texte_lacunaire", "transformation"]);
 
@@ -980,13 +982,38 @@ export async function buildInteractiveS01() {
       "Le chronométrage doit être calibré avec des données terrain.",
       "Le contenu civique est identique sur les 4 niveaux faute de variante linguistique par niveau dans la source — gap documenté, pas une simplification réalisée ici.",
       `${belowFloorExercises.length} exercice(s) autocorrigé(s) restent sous le plancher de 10 items par manque réel de matière première en banque (needs_content_review=true) — voir MINIMUM_TEN_ITEMS_AUTO_CORRECTED.`,
-      `${unsupportedTransformationExercises.length} exercice(s) portent au moins une transformation DIFF_TRANSFORMATION_NOT_SUPPORTED — non publiables (voir report.publishability.unsupported_transformations). Le pont de publication n'est pas encore modifié pour bloquer sur ce statut (Lot 3).`,
+      `${unsupportedTransformationExercises.length} exercice(s) portent au moins une transformation DIFF_TRANSFORMATION_NOT_SUPPORTED — non publiables (voir report.publishability.unsupported_transformations). Le pont de publication bloque désormais tout lien apprenant portant ce statut (Lot 3).`,
     ],
     activities: ACTIVITY_DEFS,
     publishability,
   };
 
   const payload = { schema_version: "1.1", session_code: "S01", exercises, playlists, report };
+  const baseline = JSON.parse(await readFile(BASELINE_PATH, "utf8"));
+  const differentiationValidation = validateS01DifferentiationPayload(payload, { baseline });
+  report.differentiation_validation = differentiationValidation;
+  report.publishability = {
+    ...publishability,
+    publishable_count: differentiationValidation.publishable_count,
+    non_publishable_count: differentiationValidation.non_publishable_count,
+    by_exercise: exercises.map((entry) => ({
+      metadata_code: entry.metadata_code,
+      needs_content_review: Boolean(entry.contenu?.metadata?.needs_content_review),
+      publishable: differentiationValidation.by_exercise[entry.metadata_code].publishable,
+      blocking_errors: differentiationValidation.by_exercise[entry.metadata_code].blocking_errors,
+    })),
+    validation_source: "report.differentiation_validation",
+  };
+  report.validation_rules.push({
+    rule_id: "DIFFERENTIATION_VALIDATION",
+    status: differentiationValidation.valid
+      ? (differentiationValidation.publishable ? "pass" : "warning")
+      : "fail",
+    evidence: [
+      `${differentiationValidation.publishable_count} publishable`,
+      `${differentiationValidation.non_publishable_count} blocked`,
+    ],
+  });
   await writeFile(OUTPUT_PATH, JSON.stringify(payload, null, 2) + "\n", "utf8");
   return payload;
 }
