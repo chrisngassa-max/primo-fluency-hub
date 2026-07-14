@@ -90,6 +90,12 @@ describe("session-content-sanitizer — relecture indépendante point 1/10", () 
     expect(sanitized).not.toHaveProperty("correction");
   });
 
+  it("laisse passer banque_mots (mots réels non associés à un trou précis)", () => {
+    const sanitized = sanitizeItem({ question: "Mot manquant 1", banque_mots: ["objectif", "parcours", "règles"] } as any);
+    expect(sanitized.banque_mots).toEqual(["objectif", "parcours", "règles"]);
+    expect(sanitized).not.toHaveProperty("bonne_reponse");
+  });
+
   it("laisse passer justification_required et justification_type (pilotage UI, jamais un corrigé)", () => {
     const raw = {
       question: "Q",

@@ -314,7 +314,56 @@ export async function buildInteractiveS01() {
       appliedTransformations: lexiqueAppliedTransformations,
     }));
 
+    // Lot 2 — lexique-texte-lacunaire : mêmes trois trous (data...reponses)
+    // à tous les niveaux, jamais réduits pour "simplifier" A1 ni étendus
+    // pour "densifier" B2.
     const texteLacunaire = data.lexique_exercices.find((entry) => entry.type === "texte_lacunaire");
+    // Ordre alphabétique déterministe (jamais l'ordre des trous dans le
+    // texte) : une banque ordonnée comme les trous révélerait la réponse.
+    const texteLacunaireBanque = [...texteLacunaire.reponses].sort((a, b) => a.localeCompare(b, "fr"));
+    const tlAppliedTransformations = [];
+    const tlItems = texteLacunaire.reponses.map((reponse, index) => {
+      const item = { question: `Mot manquant ${index + 1}`, bonne_reponse: reponse };
+
+      if (level === "A1" || level === "A2") {
+        item.banque_mots = texteLacunaireBanque;
+        if (level === "A1") {
+          item.indice = "Cherchez, parmi les mots de la banque, celui dont le sens correspond à cette partie de la phrase.";
+          tlAppliedTransformations.push({
+            rule_id: "A2_TO_A1",
+            applied_to: `items[${index}].indice`,
+            evidence: "Amorce ajoutée en plus de la banque de mots (guidage fort) ; aucun mot de la banque n'est associé au trou.",
+          });
+        }
+      } else {
+        // B1/B2 : banque supprimée (autonomie forte/très forte),
+        // justification contextuelle obligatoire.
+        item.justification_required = true;
+        item.justification_type = "contextual";
+        item.justification_prompt = "Justifiez votre choix à partir du sens de la phrase (pourquoi ce mot et pas un autre ?).";
+        tlAppliedTransformations.push({
+          rule_id: level === "B2" ? "A2_TO_B2" : "A2_TO_B1",
+          applied_to: `items[${index}].justification_prompt`,
+          evidence: "Banque de mots supprimée, justification contextuelle obligatoire ajoutée.",
+        });
+        if (level === "B2") {
+          // Ces trois trous acceptent chacun un seul mot cohérent avec le
+          // contexte (pas deux mots proches en concurrence) : aucun effet de
+          // sens/nuance supplémentaire n'est présent dans ce texte au-delà
+          // de la justification contextuelle déjà demandée à B1.
+          tlAppliedTransformations.push({
+            rule_id: "DIFF_TRANSFORMATION_NOT_SUPPORTED",
+            applied_to: `items[${index}].justification_prompt`,
+            evidence: "Aucun effet de sens entre mots proches n'est présent pour ce trou : justification contextuelle simple maintenue plutôt qu'une nuance inventée.",
+          });
+        }
+      }
+
+      item.correction = closedItemCorrection({ options: null, bonneReponse: reponse, preuve: texteLacunaire.texte });
+      if (item.justification_prompt) item.correction.justification_ouverte = openJustificationCorrection(texteLacunaire.texte);
+      return item;
+    });
+
     exercises.push(exercise({
       code: "lexique-texte-lacunaire",
       title: texteLacunaire.titre,
@@ -322,12 +371,10 @@ export async function buildInteractiveS01() {
       format: "texte_lacunaire",
       level,
       instruction: `${texteLacunaire.consigne} ${texteLacunaire.texte}`,
-      items: texteLacunaire.reponses.map((reponse, index) => ({
-        question: `Mot manquant ${index + 1}`,
-        bonne_reponse: reponse,
-      })),
+      items: tlItems,
       source: texteLacunaire.source,
       duration: 300,
+      appliedTransformations: tlAppliedTransformations,
       activityCode: "S01.LEXIQUE",
     }));
   }

@@ -21,6 +21,9 @@
  * réponse (annotation/surlignage du support — cf. transformation A2_TO_A1
  * "highlight"). Distinct de `bonne_reponse`/`correction` : il pointe vers un
  * passage du support, jamais vers "quelle option choisir".
+ * `banque_mots` (Lot 2, texte_lacunaire A1/A2) est l'ensemble RÉEL des mots
+ * à placer, mélangé, jamais associé à un trou précis : une banque de mots
+ * n'indique pas quel mot va où, contrairement à `bonne_reponse`.
  *
  * Volontairement ajoutés à la liste blanche — ne jamais y ajouter
  * justification_attendue/bonne_reponse/explication/criteres_evaluation/
@@ -34,6 +37,7 @@ export interface RawItem {
   consigne?: string;
   options?: string[];
   indice?: string;
+  banque_mots?: string[];
   justification_prompt?: string;
   justification_required?: boolean;
   justification_type?: string;
@@ -52,13 +56,14 @@ export interface SanitizedItem {
   consigne?: string;
   options?: string[];
   indice?: string;
+  banque_mots?: string[];
   justification_prompt?: string;
   justification_required?: boolean;
   justification_type?: string;
 }
 
 const ALLOWED_ITEM_KEYS = [
-  "question", "texte", "enonce", "consigne", "options", "indice",
+  "question", "texte", "enonce", "consigne", "options", "indice", "banque_mots",
   "justification_prompt", "justification_required", "justification_type",
 ] as const;
 

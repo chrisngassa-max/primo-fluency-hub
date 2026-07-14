@@ -290,3 +290,71 @@ describe("Lot 2 — lexique-association : transformation réelle par niveau", ()
     }
   });
 });
+
+describe("Lot 2 — lexique-texte-lacunaire : transformation réelle par niveau", () => {
+  async function byLevel() {
+    const payload = await buildInteractiveS01();
+    const found = {};
+    for (const level of ["A1", "A2", "B1", "B2"]) {
+      found[level] = payload.exercises.find((exercise) => exercise.metadata_code === `cv2:S01:v3:lexique-texte-lacunaire:${level}`);
+    }
+    return found;
+  }
+
+  it("conserve exactement trois trous et le format texte_lacunaire à chaque niveau", async () => {
+    const levels = await byLevel();
+    for (const level of ["A1", "A2", "B1", "B2"]) {
+      expect(levels[level].contenu.items.length).toBe(3);
+      expect(levels[level].format).toBe("texte_lacunaire");
+    }
+  });
+
+  it("A1/A2 : banque de mots réelle (les trois réponses, jamais dans l'ordre des trous) présente sur chaque item", async () => {
+    const levels = await byLevel();
+    for (const level of ["A1", "A2"]) {
+      for (const item of levels[level].contenu.items) {
+        expect(item.banque_mots.slice().sort()).toEqual(["objectif", "parcours", "règles"].sort());
+      }
+      // La banque n'est jamais dans l'ordre des trous (ce qui révélerait la
+      // réponse) : ordre alphabétique déterministe.
+      expect(levels[level].contenu.items[0].banque_mots).toEqual([...levels[level].contenu.items[0].banque_mots].sort((a, b) => a.localeCompare(b, "fr")));
+    }
+  });
+
+  it("A1 seul porte une amorce (indice) en plus de la banque ; A2 n'a pas d'exemple intégralement résolu", async () => {
+    const levels = await byLevel();
+    for (const item of levels.A1.contenu.items) {
+      expect(typeof item.indice).toBe("string");
+    }
+    for (const item of levels.A2.contenu.items) {
+      expect(item).not.toHaveProperty("indice");
+      expect(item.banque_mots).toBeDefined();
+    }
+  });
+
+  it("B1/B2 : banque supprimée, justification contextuelle obligatoire sur les trois trous", async () => {
+    const levels = await byLevel();
+    for (const level of ["B1", "B2"]) {
+      for (const item of levels[level].contenu.items) {
+        expect(item.banque_mots).toBeUndefined();
+        expect(item.justification_required).toBe(true);
+        expect(item.justification_type).toBe("contextual");
+      }
+    }
+  });
+
+  it("B2 déclare DIFF_TRANSFORMATION_NOT_SUPPORTED pour l'effet de sens (aucune nuance disponible sur ce texte), sur les trois trous", async () => {
+    const levels = await byLevel();
+    const notSupported = levels.B2.contenu.metadata.applied_transformations.filter((t) => t.rule_id === "DIFF_TRANSFORMATION_NOT_SUPPORTED");
+    expect(notSupported.length).toBe(3);
+  });
+
+  it("les réponses attendues et explications restent cachées avant libération (hors liste blanche du sanitizer)", async () => {
+    const levels = await byLevel();
+    for (const level of ["A1", "A2", "B1", "B2"]) {
+      for (const item of levels[level].contenu.items) {
+        expect(item.correction.bonne_reponse).toBe(item.bonne_reponse);
+      }
+    }
+  });
+});
