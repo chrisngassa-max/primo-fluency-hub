@@ -14,6 +14,7 @@ import themeSessionTemplatesData from "./referential/theme_session_templates.jso
 import clusterVariantRulesData from "./referential/cluster_variant_rules.json" with { type: "json" };
 import exerciseScoringRulesData from "./referential/exercise_scoring_rules.json" with { type: "json" };
 import differentiationTransformationRulesData from "./referential/differentiation_transformation_rules_v1.json" with { type: "json" };
+import differentiationLevelContractsData from "./referential/differentiation_level_contracts_v1.json" with { type: "json" };
 
 export type NiveauBand = "A0_A1" | "A2_B1" | "B2";
 export type PilierId = "conjugaison" | "grammaire" | "phonetique" | "vocabulaire";
@@ -28,6 +29,28 @@ export interface DifferentiationTransformationRule {
   operation: string;
   allowed: string[];
   forbidden: string[];
+  rule_id?: string;
+  severity?: string;
+  expected_evidence?: string;
+  observable_changes?: string[];
+  forbidden_changes?: string[];
+}
+
+export type DifferentiationCompetence = "CE" | "CO" | "EE" | "EO" | "Structures";
+
+export interface DifferentiationLevelContract {
+  target_level: DifferentiationLevel;
+  cognitive_operations: string[];
+  guidance: EtayageLevel | "a_la_demande";
+  autonomy: string;
+  allowed_formats: string[];
+  forbidden_formats: string[];
+  scaffolds: string[];
+  success_criteria: string[];
+  duration_policy: { mode: string; target_seconds: number | null; calibration_id: string | null };
+  response_types: string[];
+  correction_requirements: string[];
+  audio_policy?: { max_listens: number | null; transcript: string; target_seconds: number | null } | null;
 }
 
 export interface DifferentiationContractValidation {
@@ -197,6 +220,15 @@ const differentiationTransformationRules = differentiationTransformationRulesDat
     warning: string[];
     informative: string[];
   };
+};
+
+const differentiationLevelContracts = differentiationLevelContractsData as {
+  schema_version: string;
+  status: string;
+  pivot_level: DifferentiationLevel;
+  levels: DifferentiationLevel[];
+  competences: DifferentiationCompetence[];
+  contracts: Record<DifferentiationCompetence, Record<DifferentiationLevel, DifferentiationLevelContract>>;
 };
 
 export function niveauToBand(niveauCecrl?: string | null): NiveauBand {
@@ -583,6 +615,20 @@ export function validateDifferentiationVariantContract(input: {
 
 export function getDifferentiationTransformationRules(): typeof differentiationTransformationRules {
   return differentiationTransformationRules;
+}
+
+export function getLevelContract(
+  competence: DifferentiationCompetence | string,
+  level: string,
+): DifferentiationLevelContract | null {
+  const normalizedLevel = normalizeDifferentiationLevel(level);
+  const competenceContracts = differentiationLevelContracts.contracts[competence as DifferentiationCompetence];
+  if (!competenceContracts) return null;
+  return competenceContracts[normalizedLevel] ?? null;
+}
+
+export function getDifferentiationLevelContracts(): typeof differentiationLevelContracts {
+  return differentiationLevelContracts;
 }
 
 export function assignClusterVariant(

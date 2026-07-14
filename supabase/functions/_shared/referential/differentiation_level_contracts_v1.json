@@ -1,0 +1,288 @@
+{
+  "schema_version": "1.0",
+  "status": "draft",
+  "source": {
+    "doctrine_docx": "docs/pedagogie/Referentiel_Moteur_Differenciation_CapTCF_V1.docx (sections 3, 4, D.5)",
+    "reference_report_md": "docs/pedagogie/Rapport_Reference_Differenciation_CapTCF_V2.md (section 7.1-7.5)"
+  },
+  "note": "Vingt contrats compétence x niveau, transcrits des tableaux doctrine (pas de valeur inventée). B2 n'est jamais défini par un volume d'items supplémentaire : voir doctrine_docx section 'Dignité' et champ success_criteria de chaque cellule B2.",
+  "pivot_level": "A2",
+  "levels": ["A1", "A2", "B1", "B2"],
+  "competences": ["CE", "CO", "EE", "EO", "Structures"],
+  "contracts": {
+    "CE": {
+      "A1": {
+        "target_level": "A1",
+        "cognitive_operations": ["reperer", "identifier", "associer"],
+        "guidance": "fort",
+        "autonomy": "faible",
+        "allowed_formats": ["qcm", "vrai_faux", "appariement"],
+        "forbidden_formats": ["argumentation_libre", "redaction_libre_non_preparee", "tache_vague"],
+        "scaffolds": ["lexique", "pictogramme", "surlignage", "exemple_resolu"],
+        "success_criteria": ["Informations explicites correctement localisées"],
+        "duration_policy": { "mode": "informative", "target_seconds": null, "calibration_id": null },
+        "response_types": ["selection_qcm", "association", "vrai_faux"],
+        "correction_requirements": ["correction_automatique_admise_si_mesure_reelle", "pas_de_jugement_de_nuance_attendu", "feedback_immediat_non_sanctionnant"]
+      },
+      "A2": {
+        "target_level": "A2",
+        "cognitive_operations": ["comprendre_globalement", "reformuler"],
+        "guidance": "moyen",
+        "autonomy": "moyenne",
+        "allowed_formats": ["qcm", "texte_lacunaire", "appariement"],
+        "forbidden_formats": ["tache_vague", "questions_artificiellement_accumulees"],
+        "scaffolds": ["glossaire_cible"],
+        "success_criteria": ["Informations essentielles organisées"],
+        "duration_policy": { "mode": "informative", "target_seconds": null, "calibration_id": null },
+        "response_types": ["reponse_courte_organisee", "reformulation_guidee"],
+        "correction_requirements": ["correction_automatique_ou_grille_simple", "feedback_oriente_reformulation"]
+      },
+      "B1": {
+        "target_level": "B1",
+        "cognitive_operations": ["inferer", "comparer", "justifier"],
+        "guidance": "faible",
+        "autonomy": "forte",
+        "allowed_formats": ["texte_lacunaire", "qcm", "production_ecrite"],
+        "forbidden_formats": ["questions_artificiellement_accumulees"],
+        "scaffolds": ["criteres_reussite", "relecture"],
+        "success_criteria": ["Relations et intention expliquées"],
+        "duration_policy": { "mode": "informative", "target_seconds": null, "calibration_id": null },
+        "response_types": ["reponse_justifiee", "synthese_courte"],
+        "correction_requirements": ["grille_de_criteres_explicite", "correction_peut_etre_differee_ou_par_sous_groupe"]
+      },
+      "B2": {
+        "target_level": "B2",
+        "cognitive_operations": ["analyser", "synthetiser", "nuancer"],
+        "guidance": "a_la_demande",
+        "autonomy": "tres_forte",
+        "allowed_formats": ["production_ecrite", "qcm"],
+        "forbidden_formats": ["complexite_lexicale_sans_enjeu_cognitif", "ajout_mecanique_de_questions"],
+        "scaffolds": ["aides_a_la_demande"],
+        "success_criteria": ["Argumentation ou implications comprises avec précision"],
+        "duration_policy": { "mode": "informative", "target_seconds": null, "calibration_id": null },
+        "response_types": ["analyse_ecrite", "argumentation_nuancee"],
+        "correction_requirements": ["evaluation_qualitative_par_criteres_de_nuance", "revue_humaine_recommandee_si_contenu_civique_ou_sensible"]
+      }
+    },
+    "CO": {
+      "A1": {
+        "target_level": "A1",
+        "cognitive_operations": ["identifier_qui_ou_quand_combien"],
+        "guidance": "fort",
+        "autonomy": "faible",
+        "allowed_formats": ["qcm", "vrai_faux", "appariement"],
+        "forbidden_formats": ["ecoute_unique_sans_transcription", "redaction_libre_non_preparee"],
+        "scaffolds": ["ecoutes_multiples_2_3", "images", "transcription_deverrouillable"],
+        "success_criteria": ["Informations explicites repérées"],
+        "duration_policy": { "mode": "informative", "target_seconds": null, "calibration_id": null },
+        "audio_policy": { "max_listens": 3, "transcript": "unlockable", "target_seconds": null },
+        "response_types": ["selection_qcm", "association_image", "transcription_assistee"],
+        "correction_requirements": ["correction_automatique_admise_si_mesure_reelle", "pas_de_jugement_de_nuance_attendu", "feedback_immediat_non_sanctionnant"]
+      },
+      "A2": {
+        "target_level": "A2",
+        "cognitive_operations": ["restituer_essentiel"],
+        "guidance": "moyen",
+        "autonomy": "moyenne",
+        "allowed_formats": ["qcm", "texte_lacunaire"],
+        "forbidden_formats": ["tache_vague"],
+        "scaffolds": ["ecoutes_2", "lexique_prealable"],
+        "success_criteria": ["Message global et détails utiles compris"],
+        "duration_policy": { "mode": "informative", "target_seconds": null, "calibration_id": null },
+        "audio_policy": { "max_listens": 2, "transcript": "none", "target_seconds": null },
+        "response_types": ["restitution_orale_ou_ecrite_courte", "reponse_courte"],
+        "correction_requirements": ["correction_automatique_ou_grille_simple", "feedback_oriente_reformulation"]
+      },
+      "B1": {
+        "target_level": "B1",
+        "cognitive_operations": ["inferer_intention", "relier"],
+        "guidance": "faible",
+        "autonomy": "forte",
+        "allowed_formats": ["texte_lacunaire", "production_ecrite"],
+        "forbidden_formats": ["questions_artificiellement_accumulees"],
+        "scaffolds": ["ecoutes_1_a_2", "criteres"],
+        "success_criteria": ["Intention et enchaînement expliqués"],
+        "duration_policy": { "mode": "informative", "target_seconds": null, "calibration_id": null },
+        "audio_policy": { "max_listens": 2, "transcript": "none", "target_seconds": null },
+        "response_types": ["explication_orale_ou_ecrite", "mise_en_relation"],
+        "correction_requirements": ["grille_de_criteres_explicite", "correction_peut_etre_differee_ou_par_sous_groupe"]
+      },
+      "B2": {
+        "target_level": "B2",
+        "cognitive_operations": ["synthetiser", "evaluer"],
+        "guidance": "a_la_demande",
+        "autonomy": "tres_forte",
+        "allowed_formats": ["production_ecrite", "qcm"],
+        "forbidden_formats": ["complexite_lexicale_sans_enjeu_cognitif", "ajout_mecanique_de_questions"],
+        "scaffolds": ["ecoute_principale_avec_reprise_ciblee"],
+        "success_criteria": ["Nuance, registre et position distingués"],
+        "duration_policy": { "mode": "informative", "target_seconds": null, "calibration_id": null },
+        "audio_policy": { "max_listens": 1, "transcript": "none", "target_seconds": null },
+        "response_types": ["synthese", "evaluation_du_point_de_vue"],
+        "correction_requirements": ["evaluation_qualitative_par_criteres_de_nuance", "revue_humaine_recommandee_si_contenu_civique_ou_sensible"]
+      }
+    },
+    "EE": {
+      "A1": {
+        "target_level": "A1",
+        "cognitive_operations": ["completer", "produire_phrases_fonctionnelles"],
+        "guidance": "fort",
+        "autonomy": "faible",
+        "allowed_formats": ["texte_lacunaire"],
+        "forbidden_formats": ["redaction_libre_non_preparee", "argumentation_libre"],
+        "scaffolds": ["banque_de_mots", "modele", "canevas"],
+        "success_criteria": ["Intelligibilité et informations essentielles"],
+        "duration_policy": { "mode": "informative", "target_seconds": null, "calibration_id": null },
+        "response_types": ["texte_lacunaire", "phrase_courte_fonctionnelle"],
+        "correction_requirements": ["correction_automatique_admise_si_mesure_reelle", "pas_de_jugement_de_nuance_attendu", "feedback_immediat_non_sanctionnant"]
+      },
+      "A2": {
+        "target_level": "A2",
+        "cognitive_operations": ["raconter", "decrire", "demander"],
+        "guidance": "moyen",
+        "autonomy": "moyenne",
+        "allowed_formats": ["texte_lacunaire", "production_ecrite"],
+        "forbidden_formats": ["tache_vague"],
+        "scaffolds": ["structure_proposee", "connecteurs_usuels"],
+        "success_criteria": ["Adéquation, cohérence simple, lexique pertinent"],
+        "duration_policy": { "mode": "informative", "target_seconds": null, "calibration_id": null },
+        "response_types": ["message_organise_semi_guide"],
+        "correction_requirements": ["correction_automatique_ou_grille_simple", "feedback_oriente_reformulation"]
+      },
+      "B1": {
+        "target_level": "B1",
+        "cognitive_operations": ["expliquer", "justifier", "developper"],
+        "guidance": "faible",
+        "autonomy": "forte",
+        "allowed_formats": ["production_ecrite"],
+        "forbidden_formats": ["questions_artificiellement_accumulees"],
+        "scaffolds": ["plan_possible", "grille"],
+        "success_criteria": ["Cohérence, justification, correction suffisante"],
+        "duration_policy": { "mode": "informative", "target_seconds": null, "calibration_id": null },
+        "response_types": ["texte_structure_justifie"],
+        "correction_requirements": ["grille_de_criteres_explicite", "correction_peut_etre_differee_ou_par_sous_groupe"]
+      },
+      "B2": {
+        "target_level": "B2",
+        "cognitive_operations": ["argumenter", "nuancer", "adapter_registre"],
+        "guidance": "a_la_demande",
+        "autonomy": "tres_forte",
+        "allowed_formats": ["production_ecrite"],
+        "forbidden_formats": ["complexite_lexicale_sans_enjeu_cognitif", "ajout_mecanique_de_questions"],
+        "scaffolds": ["criteres_seuls"],
+        "success_criteria": ["Précision, nuance, cohésion, efficacité pragmatique"],
+        "duration_policy": { "mode": "informative", "target_seconds": null, "calibration_id": null },
+        "response_types": ["texte_autonome_argumente"],
+        "correction_requirements": ["evaluation_qualitative_par_criteres_de_nuance", "revue_humaine_recommandee_si_contenu_civique_ou_sensible"]
+      }
+    },
+    "EO": {
+      "A1": {
+        "target_level": "A1",
+        "cognitive_operations": ["se_presenter", "repondre_simplement"],
+        "guidance": "fort",
+        "autonomy": "faible",
+        "allowed_formats": ["production_orale"],
+        "forbidden_formats": ["interaction_spontanee_libre"],
+        "scaffolds": ["mots_cles", "modele", "repetitions"],
+        "success_criteria": ["Intelligibilité et informations clés"],
+        "duration_policy": { "mode": "informative", "target_seconds": null, "calibration_id": null },
+        "response_types": ["prise_de_parole_courte_guidee"],
+        "correction_requirements": ["correction_automatique_admise_si_mesure_reelle", "pas_de_jugement_de_nuance_attendu", "feedback_immediat_non_sanctionnant"]
+      },
+      "A2": {
+        "target_level": "A2",
+        "cognitive_operations": ["decrire", "raconter", "expliquer_simplement"],
+        "guidance": "moyen",
+        "autonomy": "moyenne",
+        "allowed_formats": ["production_orale"],
+        "forbidden_formats": ["tache_vague"],
+        "scaffolds": ["plan_bref", "preparation"],
+        "success_criteria": ["Clarté, enchaînement, interaction simple"],
+        "duration_policy": { "mode": "informative", "target_seconds": null, "calibration_id": null },
+        "response_types": ["discours_court_suivi"],
+        "correction_requirements": ["correction_automatique_ou_grille_simple", "feedback_oriente_reformulation"]
+      },
+      "B1": {
+        "target_level": "B1",
+        "cognitive_operations": ["donner_avis", "justifier", "reagir"],
+        "guidance": "faible",
+        "autonomy": "forte",
+        "allowed_formats": ["production_orale"],
+        "forbidden_formats": ["questions_artificiellement_accumulees"],
+        "scaffolds": ["criteres_et_preparation_limitee"],
+        "success_criteria": ["Cohérence, interaction, justification"],
+        "duration_policy": { "mode": "informative", "target_seconds": null, "calibration_id": null },
+        "response_types": ["discours_developpe_interactif"],
+        "correction_requirements": ["grille_de_criteres_explicite", "correction_peut_etre_differee_ou_par_sous_groupe"]
+      },
+      "B2": {
+        "target_level": "B2",
+        "cognitive_operations": ["defendre", "nuancer", "reformuler"],
+        "guidance": "a_la_demande",
+        "autonomy": "tres_forte",
+        "allowed_formats": ["production_orale"],
+        "forbidden_formats": ["complexite_lexicale_sans_enjeu_cognitif", "ajout_mecanique_de_questions"],
+        "scaffolds": ["criteres_seuls"],
+        "success_criteria": ["Spontanéité, registre, précision, contre-argument"],
+        "duration_policy": { "mode": "informative", "target_seconds": null, "calibration_id": null },
+        "response_types": ["interaction_autonome_nuancee"],
+        "correction_requirements": ["evaluation_qualitative_par_criteres_de_nuance", "revue_humaine_recommandee_si_contenu_civique_ou_sensible"]
+      }
+    },
+    "Structures": {
+      "A1": {
+        "target_level": "A1",
+        "cognitive_operations": ["reperer", "choisir"],
+        "guidance": "fort",
+        "autonomy": "faible",
+        "allowed_formats": ["texte_lacunaire", "qcm"],
+        "forbidden_formats": ["transformation_libre_sans_modele"],
+        "scaffolds": ["forme_frequente_dans_le_support"],
+        "success_criteria": ["Reconnaissance et réemploi guidé"],
+        "duration_policy": { "mode": "informative", "target_seconds": null, "calibration_id": null },
+        "response_types": ["reconnaissance_reemploi_guide"],
+        "correction_requirements": ["correction_automatique_admise_si_mesure_reelle", "pas_de_jugement_de_nuance_attendu", "feedback_immediat_non_sanctionnant"]
+      },
+      "A2": {
+        "target_level": "A2",
+        "cognitive_operations": ["completer", "transformer"],
+        "guidance": "moyen",
+        "autonomy": "moyenne",
+        "allowed_formats": ["texte_lacunaire", "transformation"],
+        "forbidden_formats": ["tache_vague"],
+        "scaffolds": ["exemple_resolu"],
+        "success_criteria": ["Correction et sens global"],
+        "duration_policy": { "mode": "informative", "target_seconds": null, "calibration_id": null },
+        "response_types": ["completion_transformation_guidee"],
+        "correction_requirements": ["correction_automatique_ou_grille_simple", "feedback_oriente_reformulation"]
+      },
+      "B1": {
+        "target_level": "B1",
+        "cognitive_operations": ["choisir_et_justifier"],
+        "guidance": "faible",
+        "autonomy": "forte",
+        "allowed_formats": ["transformation", "qcm"],
+        "forbidden_formats": ["questions_artificiellement_accumulees"],
+        "scaffolds": ["alternative_morphosyntaxique_donnee"],
+        "success_criteria": ["Adéquation au sens et cohérence"],
+        "duration_policy": { "mode": "informative", "target_seconds": null, "calibration_id": null },
+        "response_types": ["choix_justifie"],
+        "correction_requirements": ["grille_de_criteres_explicite", "correction_peut_etre_differee_ou_par_sous_groupe"]
+      },
+      "B2": {
+        "target_level": "B2",
+        "cognitive_operations": ["moduler", "expliquer_effet"],
+        "guidance": "a_la_demande",
+        "autonomy": "tres_forte",
+        "allowed_formats": ["transformation"],
+        "forbidden_formats": ["complexite_lexicale_sans_enjeu_cognitif", "ajout_mecanique_de_questions"],
+        "scaffolds": ["aucun_etayage_supplementaire"],
+        "success_criteria": ["Précision et effet discursif"],
+        "duration_policy": { "mode": "informative", "target_seconds": null, "calibration_id": null },
+        "response_types": ["modulation_avec_explication_effet"],
+        "correction_requirements": ["evaluation_qualitative_par_criteres_de_nuance", "revue_humaine_recommandee_si_contenu_civique_ou_sensible"]
+      }
+    }
+  }
+}

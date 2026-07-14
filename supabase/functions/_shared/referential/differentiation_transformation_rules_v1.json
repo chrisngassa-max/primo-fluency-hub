@@ -11,18 +11,90 @@
     "a1_must_not_infantilize": true
   },
   "transformations": {
-    "A1_TO_A2": { "operation": "consolider", "allowed": ["reduce_scaffolding", "merge_segments", "request_reformulation"], "forbidden": ["add_fact", "change_competence"] },
-    "A1_TO_B1": { "operation": "approfondir", "allowed": ["request_relation", "request_justification", "reduce_scaffolding"], "forbidden": ["add_implicit_not_in_source", "add_fact", "change_competence"] },
-    "A1_TO_B2": { "operation": "etendre", "allowed": ["request_synthesis", "request_nuance_if_supported", "request_register_analysis_if_supported"], "forbidden": ["enrich_source_with_new_fact", "invent_exception", "change_competence"] },
-    "A2_TO_A1": { "operation": "etayer", "allowed": ["segment", "annotate", "highlight", "add_glossary", "add_solved_example"], "forbidden": ["remove_required_fact", "change_competence", "infantilize"] },
-    "A2_TO_B1": { "operation": "approfondir", "allowed": ["request_inference_if_supported", "request_comparison", "request_justification", "reduce_scaffolding"], "forbidden": ["invent_implicit", "add_fact", "change_competence"] },
-    "A2_TO_B2": { "operation": "etendre", "allowed": ["request_implication_if_supported", "request_nuance_if_supported", "request_synthesis", "request_register_analysis_if_supported"], "forbidden": ["invent_viewpoint", "invent_exception", "change_competence"] },
-    "B1_TO_A1": { "operation": "reconstruire_acces", "allowed": ["excerpt_required_passages", "segment", "annotate", "add_glossary", "add_model"], "forbidden": ["reverse_relation", "remove_required_fact", "change_competence"] },
-    "B1_TO_A2": { "operation": "simplifier", "allowed": ["reduce_syntactic_load", "make_structure_visible", "add_light_scaffolding"], "forbidden": ["remove_core_task", "add_fact", "change_competence"] },
-    "B1_TO_B2": { "operation": "etendre", "allowed": ["request_nuance_if_supported", "request_counterargument_if_supported", "request_synthesis"], "forbidden": ["invent_condition", "add_fact", "change_competence"] },
-    "B2_TO_A1": { "operation": "reconstruire_fortement", "allowed": ["excerpt_required_passages", "segment", "annotate", "add_visual_scaffolding", "add_model"], "forbidden": ["remove_required_fact", "change_core_task", "change_competence"] },
-    "B2_TO_A2": { "operation": "rendre_accessible", "allowed": ["didacticize_with_fact_preservation", "reduce_simultaneous_operations", "add_glossary"], "forbidden": ["reverse_relation", "remove_required_fact", "change_competence"] },
-    "B2_TO_B1": { "operation": "cadrer", "allowed": ["add_question_guides", "provide_plan", "reduce_nuance_requirement"], "forbidden": ["change_core_task", "add_fact", "change_competence"] }
+    "A1_TO_A2": {
+      "operation": "consolider", "allowed": ["reduce_scaffolding", "merge_segments", "request_reformulation"], "forbidden": ["add_fact", "change_competence"],
+      "rule_id": "A1_TO_A2", "severity": "blocking",
+      "expected_evidence": "Le support n'est plus segmenté/surligné systématiquement, la consigne demande une reformulation ou une organisation des informations, sans aide supplémentaire ajoutée.",
+      "observable_changes": ["processus", "accompagnement"],
+      "forbidden_changes": ["objectif", "competence", "situation_de_communication", "faits", "tache_noyau"]
+    },
+    "A1_TO_B1": {
+      "operation": "approfondir", "allowed": ["request_relation", "request_justification", "reduce_scaffolding"], "forbidden": ["add_implicit_not_in_source", "add_fact", "change_competence"],
+      "rule_id": "A1_TO_B1", "severity": "blocking",
+      "expected_evidence": "La consigne demande une relation, une comparaison ou une justification appuyée sur le support, avec un guidage réduit par rapport à A1.",
+      "observable_changes": ["productions", "processus"],
+      "forbidden_changes": ["objectif", "competence", "situation_de_communication", "faits", "tache_noyau"]
+    },
+    "A1_TO_B2": {
+      "operation": "etendre", "allowed": ["request_synthesis", "request_nuance_if_supported", "request_register_analysis_if_supported"], "forbidden": ["enrich_source_with_new_fact", "invent_exception", "change_competence"],
+      "rule_id": "A1_TO_B2", "severity": "blocking",
+      "expected_evidence": "La consigne demande une synthèse ou une nuance/un registre déjà présents dans le support, sans aide au-delà des critères, sans ajout d'items.",
+      "observable_changes": ["productions", "contenus"],
+      "forbidden_changes": ["objectif", "competence", "situation_de_communication", "faits", "tache_noyau"]
+    },
+    "A2_TO_A1": {
+      "operation": "etayer", "allowed": ["segment", "annotate", "highlight", "add_glossary", "add_solved_example"], "forbidden": ["remove_required_fact", "change_competence", "infantilize"],
+      "rule_id": "A2_TO_A1", "severity": "blocking",
+      "expected_evidence": "Le support est segmenté ou annoté, un exemple résolu et un lexique ciblé sont fournis, sans suppression d'un fait requis ni infantilisation de la situation.",
+      "observable_changes": ["accompagnement", "processus"],
+      "forbidden_changes": ["objectif", "competence", "situation_de_communication", "faits", "tache_noyau"]
+    },
+    "A2_TO_B1": {
+      "operation": "approfondir", "allowed": ["request_inference_if_supported", "request_comparison", "request_justification", "reduce_scaffolding"], "forbidden": ["invent_implicit", "add_fact", "change_competence"],
+      "rule_id": "A2_TO_B1", "severity": "blocking",
+      "expected_evidence": "La consigne demande une inférence, une comparaison ou une justification, avec une aide réduite par rapport à A2, sans inventer d'implicite absent du support.",
+      "observable_changes": ["productions", "processus"],
+      "forbidden_changes": ["objectif", "competence", "situation_de_communication", "faits", "tache_noyau"]
+    },
+    "A2_TO_B2": {
+      "operation": "etendre", "allowed": ["request_implication_if_supported", "request_nuance_if_supported", "request_synthesis", "request_register_analysis_if_supported"], "forbidden": ["invent_viewpoint", "invent_exception", "change_competence"],
+      "rule_id": "A2_TO_B2", "severity": "blocking",
+      "expected_evidence": "La consigne demande une implication, une nuance ou une analyse de registre déjà présentes dans le support, en autonomie forte, distincte du simple ajout d'items.",
+      "observable_changes": ["productions", "contenus"],
+      "forbidden_changes": ["objectif", "competence", "situation_de_communication", "faits", "tache_noyau"]
+    },
+    "B1_TO_A1": {
+      "operation": "reconstruire_acces", "allowed": ["excerpt_required_passages", "segment", "annotate", "add_glossary", "add_model"], "forbidden": ["reverse_relation", "remove_required_fact", "change_competence"],
+      "rule_id": "B1_TO_A1", "severity": "blocking",
+      "expected_evidence": "Seuls les passages nécessaires sont extraits/segmentés, avec lexique et modèle, sans inverser aucune relation entre les faits.",
+      "observable_changes": ["contenus", "accompagnement"],
+      "forbidden_changes": ["objectif", "competence", "situation_de_communication", "faits", "tache_noyau"]
+    },
+    "B1_TO_A2": {
+      "operation": "simplifier", "allowed": ["reduce_syntactic_load", "make_structure_visible", "add_light_scaffolding"], "forbidden": ["remove_core_task", "add_fact", "change_competence"],
+      "rule_id": "B1_TO_A2", "severity": "blocking",
+      "expected_evidence": "La densité syntaxique et l'implicite sont réduits, la structure utile reste visible, une aide légère est ajoutée, sans changer la tâche noyau.",
+      "observable_changes": ["contenus", "processus"],
+      "forbidden_changes": ["objectif", "competence", "situation_de_communication", "faits", "tache_noyau"]
+    },
+    "B1_TO_B2": {
+      "operation": "etendre", "allowed": ["request_nuance_if_supported", "request_counterargument_if_supported", "request_synthesis"], "forbidden": ["invent_condition", "add_fact", "change_competence"],
+      "rule_id": "B1_TO_B2", "severity": "blocking",
+      "expected_evidence": "La consigne ajoute une demande de nuance ou de contre-argument déjà supportée par le texte, sans nouveau fait.",
+      "observable_changes": ["productions", "contenus"],
+      "forbidden_changes": ["objectif", "competence", "situation_de_communication", "faits", "tache_noyau"]
+    },
+    "B2_TO_A1": {
+      "operation": "reconstruire_fortement", "allowed": ["excerpt_required_passages", "segment", "annotate", "add_visual_scaffolding", "add_model"], "forbidden": ["remove_required_fact", "change_core_task", "change_competence"],
+      "rule_id": "B2_TO_A1", "severity": "blocking",
+      "expected_evidence": "Le chemin minimal vers la même cible est extrait/segmenté avec guidage fort et support visuel, sans changer la tâche noyau.",
+      "observable_changes": ["contenus", "accompagnement"],
+      "forbidden_changes": ["objectif", "competence", "situation_de_communication", "faits", "tache_noyau"]
+    },
+    "B2_TO_A2": {
+      "operation": "rendre_accessible", "allowed": ["didacticize_with_fact_preservation", "reduce_simultaneous_operations", "add_glossary"], "forbidden": ["reverse_relation", "remove_required_fact", "change_competence"],
+      "rule_id": "B2_TO_A2", "severity": "blocking",
+      "expected_evidence": "La charge syntaxique est réduite dans un dérivé contrôlé du support, sans inverser de relation ni supprimer un fait requis.",
+      "observable_changes": ["contenus", "accompagnement"],
+      "forbidden_changes": ["objectif", "competence", "situation_de_communication", "faits", "tache_noyau"]
+    },
+    "B2_TO_B1": {
+      "operation": "cadrer", "allowed": ["add_question_guides", "provide_plan", "reduce_nuance_requirement"], "forbidden": ["change_core_task", "add_fact", "change_competence"],
+      "rule_id": "B2_TO_B1", "severity": "blocking",
+      "expected_evidence": "Le nombre d'opérations simultanées est réduit via un plan ou des questions-guides, sans changer la tâche noyau ni ajouter de fait.",
+      "observable_changes": ["processus", "productions"],
+      "forbidden_changes": ["objectif", "competence", "situation_de_communication", "faits", "tache_noyau"]
+    }
   },
   "validation": {
     "blocking": ["DIFF_SCHEMA_INVALID", "DIFF_COMPETENCE_CHANGED", "DIFF_OBJECTIVE_CHANGED", "DIFF_CORE_TASK_CHANGED", "DIFF_FACTS_CHANGED", "DIFF_FACTS_MISSING", "DIFF_TRANSFORMATION_NOT_SUPPORTED", "DIFF_TRANSFORMATION_UNDECLARED", "DIFF_EXTENSION_INSIDE_FAMILY", "DIFF_FAKE_REVIEW_NOT_ADMISSIBLE"],
