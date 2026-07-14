@@ -135,8 +135,57 @@
           "source_level": "A2",
           "target_level": "A1",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A1",
+            "cognitive_operations": [
+              "reperer",
+              "identifier",
+              "associer"
+            ],
+            "guidance": "fort",
+            "autonomy": "faible",
+            "allowed_formats": [
+              "qcm",
+              "vrai_faux",
+              "appariement",
+              "texte_lacunaire"
+            ],
+            "forbidden_formats": [
+              "argumentation_libre",
+              "redaction_libre_non_preparee",
+              "tache_vague"
+            ],
+            "scaffolds": [
+              "lexique",
+              "pictogramme",
+              "surlignage",
+              "exemple_resolu"
+            ],
+            "success_criteria": [
+              "Informations explicites correctement localisées"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "selection_qcm",
+              "association",
+              "vrai_faux"
+            ],
+            "correction_requirements": [
+              "correction_automatique_admise_si_mesure_reelle",
+              "pas_de_jugement_de_nuance_attendu",
+              "feedback_immediat_non_sanctionnant"
+            ]
+          },
+          "transformation_id": "A2_TO_A1",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "repérer",
+            "reperer",
+            "identifier",
             "associer"
           ],
           "autonomy": "faible",
@@ -182,8 +231,57 @@
           "source_level": "A2",
           "target_level": "A1",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A1",
+            "cognitive_operations": [
+              "reperer",
+              "identifier",
+              "associer"
+            ],
+            "guidance": "fort",
+            "autonomy": "faible",
+            "allowed_formats": [
+              "qcm",
+              "vrai_faux",
+              "appariement",
+              "texte_lacunaire"
+            ],
+            "forbidden_formats": [
+              "argumentation_libre",
+              "redaction_libre_non_preparee",
+              "tache_vague"
+            ],
+            "scaffolds": [
+              "lexique",
+              "pictogramme",
+              "surlignage",
+              "exemple_resolu"
+            ],
+            "success_criteria": [
+              "Informations explicites correctement localisées"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "selection_qcm",
+              "association",
+              "vrai_faux"
+            ],
+            "correction_requirements": [
+              "correction_automatique_admise_si_mesure_reelle",
+              "pas_de_jugement_de_nuance_attendu",
+              "feedback_immediat_non_sanctionnant"
+            ]
+          },
+          "transformation_id": "A2_TO_A1",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "repérer",
+            "reperer",
+            "identifier",
             "associer"
           ],
           "autonomy": "faible",
@@ -327,8 +425,48 @@
           "source_level": "A2",
           "target_level": "A2",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A2",
+            "cognitive_operations": [
+              "comprendre_globalement",
+              "reformuler"
+            ],
+            "guidance": "moyen",
+            "autonomy": "moyenne",
+            "allowed_formats": [
+              "qcm",
+              "texte_lacunaire",
+              "appariement"
+            ],
+            "forbidden_formats": [
+              "tache_vague",
+              "questions_artificiellement_accumulees"
+            ],
+            "scaffolds": [
+              "glossaire_cible"
+            ],
+            "success_criteria": [
+              "Informations essentielles organisées"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "reponse_courte_organisee",
+              "reformulation_guidee"
+            ],
+            "correction_requirements": [
+              "correction_automatique_ou_grille_simple",
+              "feedback_oriente_reformulation"
+            ]
+          },
+          "transformation_id": "IDENTITY",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "extraire",
+            "comprendre_globalement",
             "reformuler"
           ],
           "autonomy": "moyenne",
@@ -374,8 +512,48 @@
           "source_level": "A2",
           "target_level": "A2",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A2",
+            "cognitive_operations": [
+              "comprendre_globalement",
+              "reformuler"
+            ],
+            "guidance": "moyen",
+            "autonomy": "moyenne",
+            "allowed_formats": [
+              "qcm",
+              "texte_lacunaire",
+              "appariement"
+            ],
+            "forbidden_formats": [
+              "tache_vague",
+              "questions_artificiellement_accumulees"
+            ],
+            "scaffolds": [
+              "glossaire_cible"
+            ],
+            "success_criteria": [
+              "Informations essentielles organisées"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "reponse_courte_organisee",
+              "reformulation_guidee"
+            ],
+            "correction_requirements": [
+              "correction_automatique_ou_grille_simple",
+              "feedback_oriente_reformulation"
+            ]
+          },
+          "transformation_id": "IDENTITY",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "extraire",
+            "comprendre_globalement",
             "reformuler"
           ],
           "autonomy": "moyenne",
@@ -519,8 +697,51 @@
           "source_level": "A2",
           "target_level": "B1",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "B1",
+            "cognitive_operations": [
+              "inferer",
+              "comparer",
+              "justifier"
+            ],
+            "guidance": "faible",
+            "autonomy": "forte",
+            "allowed_formats": [
+              "texte_lacunaire",
+              "qcm",
+              "production_ecrite",
+              "appariement"
+            ],
+            "forbidden_formats": [
+              "questions_artificiellement_accumulees"
+            ],
+            "scaffolds": [
+              "criteres_reussite",
+              "relecture"
+            ],
+            "success_criteria": [
+              "Relations et intention expliquées"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "reponse_justifiee",
+              "synthese_courte"
+            ],
+            "correction_requirements": [
+              "grille_de_criteres_explicite",
+              "correction_peut_etre_differee_ou_par_sous_groupe"
+            ]
+          },
+          "transformation_id": "A2_TO_B1",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "relier",
+            "inferer",
+            "comparer",
             "justifier"
           ],
           "autonomy": "forte",
@@ -566,8 +787,51 @@
           "source_level": "A2",
           "target_level": "B1",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "B1",
+            "cognitive_operations": [
+              "inferer",
+              "comparer",
+              "justifier"
+            ],
+            "guidance": "faible",
+            "autonomy": "forte",
+            "allowed_formats": [
+              "texte_lacunaire",
+              "qcm",
+              "production_ecrite",
+              "appariement"
+            ],
+            "forbidden_formats": [
+              "questions_artificiellement_accumulees"
+            ],
+            "scaffolds": [
+              "criteres_reussite",
+              "relecture"
+            ],
+            "success_criteria": [
+              "Relations et intention expliquées"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "reponse_justifiee",
+              "synthese_courte"
+            ],
+            "correction_requirements": [
+              "grille_de_criteres_explicite",
+              "correction_peut_etre_differee_ou_par_sous_groupe"
+            ]
+          },
+          "transformation_id": "A2_TO_B1",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "relier",
+            "inferer",
+            "comparer",
             "justifier"
           ],
           "autonomy": "forte",
@@ -711,12 +975,55 @@
           "source_level": "A2",
           "target_level": "B2",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "B2",
+            "cognitive_operations": [
+              "analyser",
+              "synthetiser",
+              "nuancer"
+            ],
+            "guidance": "a_la_demande",
+            "autonomy": "tres_forte",
+            "allowed_formats": [
+              "production_ecrite",
+              "qcm",
+              "appariement",
+              "texte_lacunaire"
+            ],
+            "forbidden_formats": [
+              "complexite_lexicale_sans_enjeu_cognitif",
+              "ajout_mecanique_de_questions"
+            ],
+            "scaffolds": [
+              "aides_a_la_demande"
+            ],
+            "success_criteria": [
+              "Argumentation ou implications comprises avec précision"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "analyse_ecrite",
+              "argumentation_nuancee"
+            ],
+            "correction_requirements": [
+              "evaluation_qualitative_par_criteres_de_nuance",
+              "revue_humaine_recommandee_si_contenu_civique_ou_sensible"
+            ]
+          },
+          "transformation_id": "A2_TO_B2",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "interpréter",
+            "analyser",
+            "synthetiser",
             "nuancer"
           ],
-          "autonomy": "forte",
-          "guidance": "minimal",
+          "autonomy": "tres_forte",
+          "guidance": "a_la_demande",
           "trainer_preview_required": true,
           "interactive": true,
           "needs_content_review": false
@@ -758,12 +1065,55 @@
           "source_level": "A2",
           "target_level": "B2",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "B2",
+            "cognitive_operations": [
+              "analyser",
+              "synthetiser",
+              "nuancer"
+            ],
+            "guidance": "a_la_demande",
+            "autonomy": "tres_forte",
+            "allowed_formats": [
+              "production_ecrite",
+              "qcm",
+              "appariement",
+              "texte_lacunaire"
+            ],
+            "forbidden_formats": [
+              "complexite_lexicale_sans_enjeu_cognitif",
+              "ajout_mecanique_de_questions"
+            ],
+            "scaffolds": [
+              "aides_a_la_demande"
+            ],
+            "success_criteria": [
+              "Argumentation ou implications comprises avec précision"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "analyse_ecrite",
+              "argumentation_nuancee"
+            ],
+            "correction_requirements": [
+              "evaluation_qualitative_par_criteres_de_nuance",
+              "revue_humaine_recommandee_si_contenu_civique_ou_sensible"
+            ]
+          },
+          "transformation_id": "A2_TO_B2",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "interpréter",
+            "analyser",
+            "synthetiser",
             "nuancer"
           ],
-          "autonomy": "forte",
-          "guidance": "minimal",
+          "autonomy": "tres_forte",
+          "guidance": "a_la_demande",
           "trainer_preview_required": true,
           "interactive": true,
           "needs_content_review": true
@@ -797,9 +1147,48 @@
           "source_level": "A2",
           "target_level": "A1",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A1",
+            "cognitive_operations": [
+              "se_presenter",
+              "repondre_simplement"
+            ],
+            "guidance": "fort",
+            "autonomy": "faible",
+            "allowed_formats": [
+              "production_orale"
+            ],
+            "forbidden_formats": [
+              "interaction_spontanee_libre"
+            ],
+            "scaffolds": [
+              "mots_cles",
+              "modele",
+              "repetitions"
+            ],
+            "success_criteria": [
+              "Intelligibilité et informations clés"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "prise_de_parole_courte_guidee"
+            ],
+            "correction_requirements": [
+              "correction_automatique_admise_si_mesure_reelle",
+              "pas_de_jugement_de_nuance_attendu",
+              "feedback_immediat_non_sanctionnant"
+            ]
+          },
+          "transformation_id": "A2_TO_A1",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "repérer",
-            "associer"
+            "se_presenter",
+            "repondre_simplement"
           ],
           "autonomy": "faible",
           "guidance": "fort",
@@ -836,9 +1225,48 @@
           "source_level": "A2",
           "target_level": "A2",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A2",
+            "cognitive_operations": [
+              "decrire",
+              "raconter",
+              "expliquer_simplement"
+            ],
+            "guidance": "moyen",
+            "autonomy": "moyenne",
+            "allowed_formats": [
+              "production_orale"
+            ],
+            "forbidden_formats": [
+              "tache_vague"
+            ],
+            "scaffolds": [
+              "plan_bref",
+              "preparation"
+            ],
+            "success_criteria": [
+              "Clarté, enchaînement, interaction simple"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "discours_court_suivi"
+            ],
+            "correction_requirements": [
+              "correction_automatique_ou_grille_simple",
+              "feedback_oriente_reformulation"
+            ]
+          },
+          "transformation_id": "IDENTITY",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "extraire",
-            "reformuler"
+            "decrire",
+            "raconter",
+            "expliquer_simplement"
           ],
           "autonomy": "moyenne",
           "guidance": "moyen",
@@ -875,9 +1303,47 @@
           "source_level": "A2",
           "target_level": "B1",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "B1",
+            "cognitive_operations": [
+              "donner_avis",
+              "justifier",
+              "reagir"
+            ],
+            "guidance": "faible",
+            "autonomy": "forte",
+            "allowed_formats": [
+              "production_orale"
+            ],
+            "forbidden_formats": [
+              "questions_artificiellement_accumulees"
+            ],
+            "scaffolds": [
+              "criteres_et_preparation_limitee"
+            ],
+            "success_criteria": [
+              "Cohérence, interaction, justification"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "discours_developpe_interactif"
+            ],
+            "correction_requirements": [
+              "grille_de_criteres_explicite",
+              "correction_peut_etre_differee_ou_par_sous_groupe"
+            ]
+          },
+          "transformation_id": "A2_TO_B1",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "relier",
-            "justifier"
+            "donner_avis",
+            "justifier",
+            "reagir"
           ],
           "autonomy": "forte",
           "guidance": "faible",
@@ -914,12 +1380,51 @@
           "source_level": "A2",
           "target_level": "B2",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "B2",
+            "cognitive_operations": [
+              "defendre",
+              "nuancer",
+              "reformuler"
+            ],
+            "guidance": "a_la_demande",
+            "autonomy": "tres_forte",
+            "allowed_formats": [
+              "production_orale"
+            ],
+            "forbidden_formats": [
+              "complexite_lexicale_sans_enjeu_cognitif",
+              "ajout_mecanique_de_questions"
+            ],
+            "scaffolds": [
+              "criteres_seuls"
+            ],
+            "success_criteria": [
+              "Spontanéité, registre, précision, contre-argument"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "interaction_autonome_nuancee"
+            ],
+            "correction_requirements": [
+              "evaluation_qualitative_par_criteres_de_nuance",
+              "revue_humaine_recommandee_si_contenu_civique_ou_sensible"
+            ]
+          },
+          "transformation_id": "A2_TO_B2",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "interpréter",
-            "nuancer"
+            "defendre",
+            "nuancer",
+            "reformuler"
           ],
-          "autonomy": "forte",
-          "guidance": "minimal",
+          "autonomy": "tres_forte",
+          "guidance": "a_la_demande",
           "trainer_preview_required": true,
           "interactive": true,
           "needs_content_review": false
@@ -961,8 +1466,57 @@
           "source_level": "A2",
           "target_level": "A1",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A1",
+            "cognitive_operations": [
+              "reperer",
+              "identifier",
+              "associer"
+            ],
+            "guidance": "fort",
+            "autonomy": "faible",
+            "allowed_formats": [
+              "qcm",
+              "vrai_faux",
+              "appariement",
+              "texte_lacunaire"
+            ],
+            "forbidden_formats": [
+              "argumentation_libre",
+              "redaction_libre_non_preparee",
+              "tache_vague"
+            ],
+            "scaffolds": [
+              "lexique",
+              "pictogramme",
+              "surlignage",
+              "exemple_resolu"
+            ],
+            "success_criteria": [
+              "Informations explicites correctement localisées"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "selection_qcm",
+              "association",
+              "vrai_faux"
+            ],
+            "correction_requirements": [
+              "correction_automatique_admise_si_mesure_reelle",
+              "pas_de_jugement_de_nuance_attendu",
+              "feedback_immediat_non_sanctionnant"
+            ]
+          },
+          "transformation_id": "A2_TO_A1",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "repérer",
+            "reperer",
+            "identifier",
             "associer"
           ],
           "autonomy": "faible",
@@ -1004,9 +1558,51 @@
           "source_level": "A2",
           "target_level": "A1",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A1",
+            "cognitive_operations": [
+              "completer",
+              "produire_phrases_fonctionnelles"
+            ],
+            "guidance": "fort",
+            "autonomy": "faible",
+            "allowed_formats": [
+              "texte_lacunaire",
+              "production_ecrite"
+            ],
+            "forbidden_formats": [
+              "redaction_libre_non_preparee",
+              "argumentation_libre"
+            ],
+            "scaffolds": [
+              "banque_de_mots",
+              "modele",
+              "canevas"
+            ],
+            "success_criteria": [
+              "Intelligibilité et informations essentielles"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "texte_lacunaire",
+              "phrase_courte_fonctionnelle"
+            ],
+            "correction_requirements": [
+              "correction_automatique_admise_si_mesure_reelle",
+              "pas_de_jugement_de_nuance_attendu",
+              "feedback_immediat_non_sanctionnant"
+            ]
+          },
+          "transformation_id": "A2_TO_A1",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "repérer",
-            "associer"
+            "completer",
+            "produire_phrases_fonctionnelles"
           ],
           "autonomy": "faible",
           "guidance": "fort",
@@ -1051,8 +1647,48 @@
           "source_level": "A2",
           "target_level": "A2",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A2",
+            "cognitive_operations": [
+              "comprendre_globalement",
+              "reformuler"
+            ],
+            "guidance": "moyen",
+            "autonomy": "moyenne",
+            "allowed_formats": [
+              "qcm",
+              "texte_lacunaire",
+              "appariement"
+            ],
+            "forbidden_formats": [
+              "tache_vague",
+              "questions_artificiellement_accumulees"
+            ],
+            "scaffolds": [
+              "glossaire_cible"
+            ],
+            "success_criteria": [
+              "Informations essentielles organisées"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "reponse_courte_organisee",
+              "reformulation_guidee"
+            ],
+            "correction_requirements": [
+              "correction_automatique_ou_grille_simple",
+              "feedback_oriente_reformulation"
+            ]
+          },
+          "transformation_id": "IDENTITY",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "extraire",
+            "comprendre_globalement",
             "reformuler"
           ],
           "autonomy": "moyenne",
@@ -1094,9 +1730,49 @@
           "source_level": "A2",
           "target_level": "A2",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A2",
+            "cognitive_operations": [
+              "raconter",
+              "decrire",
+              "demander"
+            ],
+            "guidance": "moyen",
+            "autonomy": "moyenne",
+            "allowed_formats": [
+              "texte_lacunaire",
+              "production_ecrite"
+            ],
+            "forbidden_formats": [
+              "tache_vague"
+            ],
+            "scaffolds": [
+              "structure_proposee",
+              "connecteurs_usuels"
+            ],
+            "success_criteria": [
+              "Adéquation, cohérence simple, lexique pertinent"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "message_organise_semi_guide"
+            ],
+            "correction_requirements": [
+              "correction_automatique_ou_grille_simple",
+              "feedback_oriente_reformulation"
+            ]
+          },
+          "transformation_id": "IDENTITY",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "extraire",
-            "reformuler"
+            "raconter",
+            "decrire",
+            "demander"
           ],
           "autonomy": "moyenne",
           "guidance": "moyen",
@@ -1141,8 +1817,51 @@
           "source_level": "A2",
           "target_level": "B1",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "B1",
+            "cognitive_operations": [
+              "inferer",
+              "comparer",
+              "justifier"
+            ],
+            "guidance": "faible",
+            "autonomy": "forte",
+            "allowed_formats": [
+              "texte_lacunaire",
+              "qcm",
+              "production_ecrite",
+              "appariement"
+            ],
+            "forbidden_formats": [
+              "questions_artificiellement_accumulees"
+            ],
+            "scaffolds": [
+              "criteres_reussite",
+              "relecture"
+            ],
+            "success_criteria": [
+              "Relations et intention expliquées"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "reponse_justifiee",
+              "synthese_courte"
+            ],
+            "correction_requirements": [
+              "grille_de_criteres_explicite",
+              "correction_peut_etre_differee_ou_par_sous_groupe"
+            ]
+          },
+          "transformation_id": "A2_TO_B1",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "relier",
+            "inferer",
+            "comparer",
             "justifier"
           ],
           "autonomy": "forte",
@@ -1184,9 +1903,48 @@
           "source_level": "A2",
           "target_level": "B1",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "B1",
+            "cognitive_operations": [
+              "expliquer",
+              "justifier",
+              "developper"
+            ],
+            "guidance": "faible",
+            "autonomy": "forte",
+            "allowed_formats": [
+              "production_ecrite"
+            ],
+            "forbidden_formats": [
+              "questions_artificiellement_accumulees"
+            ],
+            "scaffolds": [
+              "plan_possible",
+              "grille"
+            ],
+            "success_criteria": [
+              "Cohérence, justification, correction suffisante"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "texte_structure_justifie"
+            ],
+            "correction_requirements": [
+              "grille_de_criteres_explicite",
+              "correction_peut_etre_differee_ou_par_sous_groupe"
+            ]
+          },
+          "transformation_id": "A2_TO_B1",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "relier",
-            "justifier"
+            "expliquer",
+            "justifier",
+            "developper"
           ],
           "autonomy": "forte",
           "guidance": "faible",
@@ -1231,12 +1989,55 @@
           "source_level": "A2",
           "target_level": "B2",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "B2",
+            "cognitive_operations": [
+              "analyser",
+              "synthetiser",
+              "nuancer"
+            ],
+            "guidance": "a_la_demande",
+            "autonomy": "tres_forte",
+            "allowed_formats": [
+              "production_ecrite",
+              "qcm",
+              "appariement",
+              "texte_lacunaire"
+            ],
+            "forbidden_formats": [
+              "complexite_lexicale_sans_enjeu_cognitif",
+              "ajout_mecanique_de_questions"
+            ],
+            "scaffolds": [
+              "aides_a_la_demande"
+            ],
+            "success_criteria": [
+              "Argumentation ou implications comprises avec précision"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "analyse_ecrite",
+              "argumentation_nuancee"
+            ],
+            "correction_requirements": [
+              "evaluation_qualitative_par_criteres_de_nuance",
+              "revue_humaine_recommandee_si_contenu_civique_ou_sensible"
+            ]
+          },
+          "transformation_id": "A2_TO_B2",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "interpréter",
+            "analyser",
+            "synthetiser",
             "nuancer"
           ],
-          "autonomy": "forte",
-          "guidance": "minimal",
+          "autonomy": "tres_forte",
+          "guidance": "a_la_demande",
           "trainer_preview_required": true,
           "interactive": true,
           "needs_content_review": true
@@ -1274,12 +2075,51 @@
           "source_level": "A2",
           "target_level": "B2",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "B2",
+            "cognitive_operations": [
+              "argumenter",
+              "nuancer",
+              "adapter_registre"
+            ],
+            "guidance": "a_la_demande",
+            "autonomy": "tres_forte",
+            "allowed_formats": [
+              "production_ecrite"
+            ],
+            "forbidden_formats": [
+              "complexite_lexicale_sans_enjeu_cognitif",
+              "ajout_mecanique_de_questions"
+            ],
+            "scaffolds": [
+              "criteres_seuls"
+            ],
+            "success_criteria": [
+              "Précision, nuance, cohésion, efficacité pragmatique"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "texte_autonome_argumente"
+            ],
+            "correction_requirements": [
+              "evaluation_qualitative_par_criteres_de_nuance",
+              "revue_humaine_recommandee_si_contenu_civique_ou_sensible"
+            ]
+          },
+          "transformation_id": "A2_TO_B2",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "interpréter",
-            "nuancer"
+            "argumenter",
+            "nuancer",
+            "adapter_registre"
           ],
-          "autonomy": "forte",
-          "guidance": "minimal",
+          "autonomy": "tres_forte",
+          "guidance": "a_la_demande",
           "trainer_preview_required": true,
           "interactive": true,
           "needs_content_review": false
@@ -1310,7 +2150,18 @@
               "Fatou Diallo"
             ],
             "bonne_reponse": "Awa Diallo",
-            "explication": "Elle se présente : « Je m'appelle Awa. Awa Diallo. »"
+            "explication": "Elle se présente : « Je m'appelle Awa. Awa Diallo. »",
+            "indice": "Elle se présente : « Je m'appelle Awa. Awa Diallo. »",
+            "correction": {
+              "bonne_reponse": "Awa Diallo",
+              "preuve_support": "Elle se présente : « Je m'appelle Awa. Awa Diallo. »",
+              "explication_distracteurs": [
+                "« Awa Rossi » ne correspond pas à ce qu'indique le support : « Elle se présente : « Je m'appelle Awa. Awa Diallo. » ».",
+                "« Fatou Diallo » ne correspond pas à ce qu'indique le support : « Elle se présente : « Je m'appelle Awa. Awa Diallo. » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Elle se présente : « Je m'appelle Awa. Awa Diallo. » » puis répondez à nouveau."
+            }
           },
           {
             "question": "Quel est l'objectif administratif d'Awa ?",
@@ -1320,7 +2171,18 @@
               "Un visa touristique"
             ],
             "bonne_reponse": "La carte de séjour pluriannuelle",
-            "explication": "« Je voudrais avoir ma carte de séjour pluriannuelle. »"
+            "explication": "« Je voudrais avoir ma carte de séjour pluriannuelle. »",
+            "indice": "« Je voudrais avoir ma carte de séjour pluriannuelle. »",
+            "correction": {
+              "bonne_reponse": "La carte de séjour pluriannuelle",
+              "preuve_support": "« Je voudrais avoir ma carte de séjour pluriannuelle. »",
+              "explication_distracteurs": [
+                "« La nationalité française » ne correspond pas à ce qu'indique le support : « « Je voudrais avoir ma carte de séjour pluriannuelle. » ».",
+                "« Un visa touristique » ne correspond pas à ce qu'indique le support : « « Je voudrais avoir ma carte de séjour pluriannuelle. » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « Je voudrais avoir ma carte de séjour pluriannuelle. » » puis répondez à nouveau."
+            }
           },
           {
             "question": "Combien d'heures dure le parcours d'Awa ?",
@@ -1330,7 +2192,18 @@
               "100 heures"
             ],
             "bonne_reponse": "80 heures",
-            "explication": "« Vous allez suivre un parcours de quatre-vingts heures. »"
+            "explication": "« Vous allez suivre un parcours de quatre-vingts heures. »",
+            "indice": "« Vous allez suivre un parcours de quatre-vingts heures. »",
+            "correction": {
+              "bonne_reponse": "80 heures",
+              "preuve_support": "« Vous allez suivre un parcours de quatre-vingts heures. »",
+              "explication_distracteurs": [
+                "« 50 heures » ne correspond pas à ce qu'indique le support : « « Vous allez suivre un parcours de quatre-vingts heures. » ».",
+                "« 100 heures » ne correspond pas à ce qu'indique le support : « « Vous allez suivre un parcours de quatre-vingts heures. » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « Vous allez suivre un parcours de quatre-vingts heures. » » puis répondez à nouveau."
+            }
           },
           {
             "question": "Combien de séances collectives sont prévues ?",
@@ -1340,7 +2213,18 @@
               "31"
             ],
             "bonne_reponse": "25",
-            "explication": "« réparti sur vingt-cinq séances de trois heures »"
+            "explication": "« réparti sur vingt-cinq séances de trois heures »",
+            "indice": "« réparti sur vingt-cinq séances de trois heures »",
+            "correction": {
+              "bonne_reponse": "25",
+              "preuve_support": "« réparti sur vingt-cinq séances de trois heures »",
+              "explication_distracteurs": [
+                "« 18 » ne correspond pas à ce qu'indique le support : « « réparti sur vingt-cinq séances de trois heures » ».",
+                "« 31 » ne correspond pas à ce qu'indique le support : « « réparti sur vingt-cinq séances de trois heures » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « réparti sur vingt-cinq séances de trois heures » » puis répondez à nouveau."
+            }
           },
           {
             "question": "Combien de temps dure chaque séance ?",
@@ -1350,7 +2234,18 @@
               "4 heures"
             ],
             "bonne_reponse": "3 heures",
-            "explication": "« vingt-cinq séances de trois heures »"
+            "explication": "« vingt-cinq séances de trois heures »",
+            "indice": "« vingt-cinq séances de trois heures »",
+            "correction": {
+              "bonne_reponse": "3 heures",
+              "preuve_support": "« vingt-cinq séances de trois heures »",
+              "explication_distracteurs": [
+                "« 2 heures » ne correspond pas à ce qu'indique le support : « « vingt-cinq séances de trois heures » ».",
+                "« 4 heures » ne correspond pas à ce qu'indique le support : « « vingt-cinq séances de trois heures » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « vingt-cinq séances de trois heures » » puis répondez à nouveau."
+            }
           },
           {
             "question": "À quel rythme les séances ont-elles lieu ?",
@@ -1360,7 +2255,18 @@
               "Une par mois"
             ],
             "bonne_reponse": "Une par semaine",
-            "explication": "« à raison d'une séance par semaine »"
+            "explication": "« à raison d'une séance par semaine »",
+            "indice": "« à raison d'une séance par semaine »",
+            "correction": {
+              "bonne_reponse": "Une par semaine",
+              "preuve_support": "« à raison d'une séance par semaine »",
+              "explication_distracteurs": [
+                "« Deux par semaine » ne correspond pas à ce qu'indique le support : « « à raison d'une séance par semaine » ».",
+                "« Une par mois » ne correspond pas à ce qu'indique le support : « « à raison d'une séance par semaine » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « à raison d'une séance par semaine » » puis répondez à nouveau."
+            }
           },
           {
             "question": "Après combien d'heures a lieu l'évaluation intermédiaire (E1) ?",
@@ -1370,7 +2276,18 @@
               "80 heures"
             ],
             "bonne_reponse": "50 heures",
-            "explication": "« une évaluation intermédiaire après cinquante heures »"
+            "explication": "« une évaluation intermédiaire après cinquante heures »",
+            "indice": "« une évaluation intermédiaire après cinquante heures »",
+            "correction": {
+              "bonne_reponse": "50 heures",
+              "preuve_support": "« une évaluation intermédiaire après cinquante heures »",
+              "explication_distracteurs": [
+                "« 25 heures » ne correspond pas à ce qu'indique le support : « « une évaluation intermédiaire après cinquante heures » ».",
+                "« 80 heures » ne correspond pas à ce qu'indique le support : « « une évaluation intermédiaire après cinquante heures » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « une évaluation intermédiaire après cinquante heures » » puis répondez à nouveau."
+            }
           },
           {
             "question": "Combien de thèmes civiques structurent le parcours ?",
@@ -1380,7 +2297,18 @@
               "Sept"
             ],
             "bonne_reponse": "Cinq",
-            "explication": "« cinq thèmes sur la vie en France »"
+            "explication": "« cinq thèmes sur la vie en France »",
+            "indice": "« cinq thèmes sur la vie en France »",
+            "correction": {
+              "bonne_reponse": "Cinq",
+              "preuve_support": "« cinq thèmes sur la vie en France »",
+              "explication_distracteurs": [
+                "« Trois » ne correspond pas à ce qu'indique le support : « « cinq thèmes sur la vie en France » ».",
+                "« Sept » ne correspond pas à ce qu'indique le support : « « cinq thèmes sur la vie en France » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « cinq thèmes sur la vie en France » » puis répondez à nouveau."
+            }
           },
           {
             "question": "D'après Mme Rossi, qu'est-ce qu'un « devoir » ?",
@@ -1390,7 +2318,18 @@
               "Une consigne propre à un lieu"
             ],
             "bonne_reponse": "Quelque chose qu'on doit faire",
-            "explication": "« Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. »"
+            "explication": "« Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. »",
+            "indice": "« Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. »",
+            "correction": {
+              "bonne_reponse": "Quelque chose qu'on doit faire",
+              "preuve_support": "« Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. »",
+              "explication_distracteurs": [
+                "« Quelque chose qu'on peut demander » ne correspond pas à ce qu'indique le support : « « Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. » ».",
+                "« Une consigne propre à un lieu » ne correspond pas à ce qu'indique le support : « « Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. » » puis répondez à nouveau."
+            }
           },
           {
             "question": "D'après Mme Rossi, qu'est-ce qu'une « règle » ?",
@@ -1400,7 +2339,18 @@
               "Une obligation nationale"
             ],
             "bonne_reponse": "Une consigne précise (ex. arriver à l'heure)",
-            "explication": "« Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. »"
+            "explication": "« Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. »",
+            "indice": "« Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. »",
+            "correction": {
+              "bonne_reponse": "Une consigne précise (ex. arriver à l'heure)",
+              "preuve_support": "« Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. »",
+              "explication_distracteurs": [
+                "« Une possibilité garantie par la loi » ne correspond pas à ce qu'indique le support : « « Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. » ».",
+                "« Une obligation nationale » ne correspond pas à ce qu'indique le support : « « Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. » » puis répondez à nouveau."
+            }
           }
         ],
         "metadata": {
@@ -1409,9 +2359,108 @@
           "source_level": "A2",
           "target_level": "A1",
           "competence_invariante": "CO",
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A1",
+            "cognitive_operations": [
+              "identifier_qui_ou_quand_combien"
+            ],
+            "guidance": "fort",
+            "autonomy": "faible",
+            "allowed_formats": [
+              "qcm",
+              "vrai_faux",
+              "appariement",
+              "texte_lacunaire"
+            ],
+            "forbidden_formats": [
+              "ecoute_unique_sans_transcription",
+              "redaction_libre_non_preparee"
+            ],
+            "scaffolds": [
+              "ecoutes_multiples_2_3",
+              "images",
+              "transcription_deverrouillable"
+            ],
+            "success_criteria": [
+              "Informations explicites repérées"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "audio_policy": {
+              "max_listens": 3,
+              "transcript": "unlockable",
+              "target_seconds": null
+            },
+            "response_types": [
+              "selection_qcm",
+              "association_image",
+              "transcription_assistee"
+            ],
+            "correction_requirements": [
+              "correction_automatique_admise_si_mesure_reelle",
+              "pas_de_jugement_de_nuance_attendu",
+              "feedback_immediat_non_sanctionnant"
+            ]
+          },
+          "transformation_id": "A2_TO_A1",
+          "applied_transformations": [
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[0].indice",
+              "evidence": "Indice affiché dérivé de la justification réelle de la question 1 ; options réduites à 3 avec bonne réponse garantie."
+            },
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[1].indice",
+              "evidence": "Indice affiché dérivé de la justification réelle de la question 2 ; options réduites à 3 avec bonne réponse garantie."
+            },
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[2].indice",
+              "evidence": "Indice affiché dérivé de la justification réelle de la question 3 ; options réduites à 3 avec bonne réponse garantie."
+            },
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[3].indice",
+              "evidence": "Indice affiché dérivé de la justification réelle de la question 4 ; options réduites à 3 avec bonne réponse garantie."
+            },
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[4].indice",
+              "evidence": "Indice affiché dérivé de la justification réelle de la question 5 ; options réduites à 3 avec bonne réponse garantie."
+            },
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[5].indice",
+              "evidence": "Indice affiché dérivé de la justification réelle de la question 6 ; options réduites à 3 avec bonne réponse garantie."
+            },
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[6].indice",
+              "evidence": "Indice affiché dérivé de la justification réelle de la question 7 ; options réduites à 3 avec bonne réponse garantie."
+            },
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[7].indice",
+              "evidence": "Indice affiché dérivé de la justification réelle de la question 8 ; options réduites à 3 avec bonne réponse garantie."
+            },
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[8].indice",
+              "evidence": "Indice affiché dérivé de la justification réelle de la question 9 ; options réduites à 3 avec bonne réponse garantie."
+            },
+            {
+              "rule_id": "A2_TO_A1",
+              "applied_to": "items[9].indice",
+              "evidence": "Indice affiché dérivé de la justification réelle de la question 10 ; options réduites à 3 avec bonne réponse garantie."
+            }
+          ],
           "cognitive_operations": [
-            "repérer",
-            "associer"
+            "identifier_qui_ou_quand_combien"
           ],
           "autonomy": "faible",
           "guidance": "fort",
@@ -1509,9 +2558,57 @@
           "source_level": "A2",
           "target_level": "A1",
           "competence_invariante": "CO",
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A1",
+            "cognitive_operations": [
+              "identifier_qui_ou_quand_combien"
+            ],
+            "guidance": "fort",
+            "autonomy": "faible",
+            "allowed_formats": [
+              "qcm",
+              "vrai_faux",
+              "appariement",
+              "texte_lacunaire"
+            ],
+            "forbidden_formats": [
+              "ecoute_unique_sans_transcription",
+              "redaction_libre_non_preparee"
+            ],
+            "scaffolds": [
+              "ecoutes_multiples_2_3",
+              "images",
+              "transcription_deverrouillable"
+            ],
+            "success_criteria": [
+              "Informations explicites repérées"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "audio_policy": {
+              "max_listens": 3,
+              "transcript": "unlockable",
+              "target_seconds": null
+            },
+            "response_types": [
+              "selection_qcm",
+              "association_image",
+              "transcription_assistee"
+            ],
+            "correction_requirements": [
+              "correction_automatique_admise_si_mesure_reelle",
+              "pas_de_jugement_de_nuance_attendu",
+              "feedback_immediat_non_sanctionnant"
+            ]
+          },
+          "transformation_id": "A2_TO_A1",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "repérer",
-            "associer"
+            "identifier_qui_ou_quand_combien"
           ],
           "autonomy": "faible",
           "guidance": "fort",
@@ -1553,9 +2650,57 @@
           "source_level": "A2",
           "target_level": "A1",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A1",
+            "cognitive_operations": [
+              "identifier_qui_ou_quand_combien"
+            ],
+            "guidance": "fort",
+            "autonomy": "faible",
+            "allowed_formats": [
+              "qcm",
+              "vrai_faux",
+              "appariement",
+              "texte_lacunaire"
+            ],
+            "forbidden_formats": [
+              "ecoute_unique_sans_transcription",
+              "redaction_libre_non_preparee"
+            ],
+            "scaffolds": [
+              "ecoutes_multiples_2_3",
+              "images",
+              "transcription_deverrouillable"
+            ],
+            "success_criteria": [
+              "Informations explicites repérées"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "audio_policy": {
+              "max_listens": 3,
+              "transcript": "unlockable",
+              "target_seconds": null
+            },
+            "response_types": [
+              "selection_qcm",
+              "association_image",
+              "transcription_assistee"
+            ],
+            "correction_requirements": [
+              "correction_automatique_admise_si_mesure_reelle",
+              "pas_de_jugement_de_nuance_attendu",
+              "feedback_immediat_non_sanctionnant"
+            ]
+          },
+          "transformation_id": "A2_TO_A1",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "repérer",
-            "associer"
+            "identifier_qui_ou_quand_combien"
           ],
           "autonomy": "faible",
           "guidance": "fort",
@@ -1615,8 +2760,57 @@
           "source_level": "A2",
           "target_level": "A1",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A1",
+            "cognitive_operations": [
+              "reperer",
+              "identifier",
+              "associer"
+            ],
+            "guidance": "fort",
+            "autonomy": "faible",
+            "allowed_formats": [
+              "qcm",
+              "vrai_faux",
+              "appariement",
+              "texte_lacunaire"
+            ],
+            "forbidden_formats": [
+              "argumentation_libre",
+              "redaction_libre_non_preparee",
+              "tache_vague"
+            ],
+            "scaffolds": [
+              "lexique",
+              "pictogramme",
+              "surlignage",
+              "exemple_resolu"
+            ],
+            "success_criteria": [
+              "Informations explicites correctement localisées"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "selection_qcm",
+              "association",
+              "vrai_faux"
+            ],
+            "correction_requirements": [
+              "correction_automatique_admise_si_mesure_reelle",
+              "pas_de_jugement_de_nuance_attendu",
+              "feedback_immediat_non_sanctionnant"
+            ]
+          },
+          "transformation_id": "A2_TO_A1",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "repérer",
+            "reperer",
+            "identifier",
             "associer"
           ],
           "autonomy": "faible",
@@ -1666,8 +2860,57 @@
           "source_level": "A2",
           "target_level": "A1",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A1",
+            "cognitive_operations": [
+              "reperer",
+              "identifier",
+              "associer"
+            ],
+            "guidance": "fort",
+            "autonomy": "faible",
+            "allowed_formats": [
+              "qcm",
+              "vrai_faux",
+              "appariement",
+              "texte_lacunaire"
+            ],
+            "forbidden_formats": [
+              "argumentation_libre",
+              "redaction_libre_non_preparee",
+              "tache_vague"
+            ],
+            "scaffolds": [
+              "lexique",
+              "pictogramme",
+              "surlignage",
+              "exemple_resolu"
+            ],
+            "success_criteria": [
+              "Informations explicites correctement localisées"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "selection_qcm",
+              "association",
+              "vrai_faux"
+            ],
+            "correction_requirements": [
+              "correction_automatique_admise_si_mesure_reelle",
+              "pas_de_jugement_de_nuance_attendu",
+              "feedback_immediat_non_sanctionnant"
+            ]
+          },
+          "transformation_id": "A2_TO_A1",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "repérer",
+            "reperer",
+            "identifier",
             "associer"
           ],
           "autonomy": "faible",
@@ -1717,8 +2960,57 @@
           "source_level": "A2",
           "target_level": "A1",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A1",
+            "cognitive_operations": [
+              "reperer",
+              "identifier",
+              "associer"
+            ],
+            "guidance": "fort",
+            "autonomy": "faible",
+            "allowed_formats": [
+              "qcm",
+              "vrai_faux",
+              "appariement",
+              "texte_lacunaire"
+            ],
+            "forbidden_formats": [
+              "argumentation_libre",
+              "redaction_libre_non_preparee",
+              "tache_vague"
+            ],
+            "scaffolds": [
+              "lexique",
+              "pictogramme",
+              "surlignage",
+              "exemple_resolu"
+            ],
+            "success_criteria": [
+              "Informations explicites correctement localisées"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "selection_qcm",
+              "association",
+              "vrai_faux"
+            ],
+            "correction_requirements": [
+              "correction_automatique_admise_si_mesure_reelle",
+              "pas_de_jugement_de_nuance_attendu",
+              "feedback_immediat_non_sanctionnant"
+            ]
+          },
+          "transformation_id": "A2_TO_A1",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "repérer",
+            "reperer",
+            "identifier",
             "associer"
           ],
           "autonomy": "faible",
@@ -1792,9 +3084,47 @@
           "source_level": "A2",
           "target_level": "A1",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A1",
+            "cognitive_operations": [
+              "reperer",
+              "choisir"
+            ],
+            "guidance": "fort",
+            "autonomy": "faible",
+            "allowed_formats": [
+              "texte_lacunaire",
+              "qcm"
+            ],
+            "forbidden_formats": [
+              "transformation_libre_sans_modele"
+            ],
+            "scaffolds": [
+              "forme_frequente_dans_le_support"
+            ],
+            "success_criteria": [
+              "Reconnaissance et réemploi guidé"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "reconnaissance_reemploi_guide"
+            ],
+            "correction_requirements": [
+              "correction_automatique_admise_si_mesure_reelle",
+              "pas_de_jugement_de_nuance_attendu",
+              "feedback_immediat_non_sanctionnant"
+            ]
+          },
+          "transformation_id": "A2_TO_A1",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "repérer",
-            "associer"
+            "reperer",
+            "choisir"
           ],
           "autonomy": "faible",
           "guidance": "fort",
@@ -1837,9 +3167,48 @@
           "source_level": "A2",
           "target_level": "A1",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A1",
+            "cognitive_operations": [
+              "se_presenter",
+              "repondre_simplement"
+            ],
+            "guidance": "fort",
+            "autonomy": "faible",
+            "allowed_formats": [
+              "production_orale"
+            ],
+            "forbidden_formats": [
+              "interaction_spontanee_libre"
+            ],
+            "scaffolds": [
+              "mots_cles",
+              "modele",
+              "repetitions"
+            ],
+            "success_criteria": [
+              "Intelligibilité et informations clés"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "prise_de_parole_courte_guidee"
+            ],
+            "correction_requirements": [
+              "correction_automatique_admise_si_mesure_reelle",
+              "pas_de_jugement_de_nuance_attendu",
+              "feedback_immediat_non_sanctionnant"
+            ]
+          },
+          "transformation_id": "A2_TO_A1",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "repérer",
-            "associer"
+            "se_presenter",
+            "repondre_simplement"
           ],
           "autonomy": "faible",
           "guidance": "fort",
@@ -1874,7 +3243,18 @@
               "Awa Camara"
             ],
             "bonne_reponse": "Awa Diallo",
-            "explication": "Elle se présente : « Je m'appelle Awa. Awa Diallo. »"
+            "explication": "Elle se présente : « Je m'appelle Awa. Awa Diallo. »",
+            "correction": {
+              "bonne_reponse": "Awa Diallo",
+              "preuve_support": "Elle se présente : « Je m'appelle Awa. Awa Diallo. »",
+              "explication_distracteurs": [
+                "« Awa Rossi » ne correspond pas à ce qu'indique le support : « Elle se présente : « Je m'appelle Awa. Awa Diallo. » ».",
+                "« Fatou Diallo » ne correspond pas à ce qu'indique le support : « Elle se présente : « Je m'appelle Awa. Awa Diallo. » ».",
+                "« Awa Camara » ne correspond pas à ce qu'indique le support : « Elle se présente : « Je m'appelle Awa. Awa Diallo. » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Elle se présente : « Je m'appelle Awa. Awa Diallo. » » puis répondez à nouveau."
+            }
           },
           {
             "question": "Quel est l'objectif administratif d'Awa ?",
@@ -1885,7 +3265,18 @@
               "Un titre de travail"
             ],
             "bonne_reponse": "La carte de séjour pluriannuelle",
-            "explication": "« Je voudrais avoir ma carte de séjour pluriannuelle. »"
+            "explication": "« Je voudrais avoir ma carte de séjour pluriannuelle. »",
+            "correction": {
+              "bonne_reponse": "La carte de séjour pluriannuelle",
+              "preuve_support": "« Je voudrais avoir ma carte de séjour pluriannuelle. »",
+              "explication_distracteurs": [
+                "« La nationalité française » ne correspond pas à ce qu'indique le support : « « Je voudrais avoir ma carte de séjour pluriannuelle. » ».",
+                "« Un visa touristique » ne correspond pas à ce qu'indique le support : « « Je voudrais avoir ma carte de séjour pluriannuelle. » ».",
+                "« Un titre de travail » ne correspond pas à ce qu'indique le support : « « Je voudrais avoir ma carte de séjour pluriannuelle. » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « Je voudrais avoir ma carte de séjour pluriannuelle. » » puis répondez à nouveau."
+            }
           },
           {
             "question": "Combien d'heures dure le parcours d'Awa ?",
@@ -1896,7 +3287,18 @@
               "120 heures"
             ],
             "bonne_reponse": "80 heures",
-            "explication": "« Vous allez suivre un parcours de quatre-vingts heures. »"
+            "explication": "« Vous allez suivre un parcours de quatre-vingts heures. »",
+            "correction": {
+              "bonne_reponse": "80 heures",
+              "preuve_support": "« Vous allez suivre un parcours de quatre-vingts heures. »",
+              "explication_distracteurs": [
+                "« 50 heures » ne correspond pas à ce qu'indique le support : « « Vous allez suivre un parcours de quatre-vingts heures. » ».",
+                "« 100 heures » ne correspond pas à ce qu'indique le support : « « Vous allez suivre un parcours de quatre-vingts heures. » ».",
+                "« 120 heures » ne correspond pas à ce qu'indique le support : « « Vous allez suivre un parcours de quatre-vingts heures. » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « Vous allez suivre un parcours de quatre-vingts heures. » » puis répondez à nouveau."
+            }
           },
           {
             "question": "Combien de séances collectives sont prévues ?",
@@ -1907,7 +3309,18 @@
               "37"
             ],
             "bonne_reponse": "25",
-            "explication": "« réparti sur vingt-cinq séances de trois heures »"
+            "explication": "« réparti sur vingt-cinq séances de trois heures »",
+            "correction": {
+              "bonne_reponse": "25",
+              "preuve_support": "« réparti sur vingt-cinq séances de trois heures »",
+              "explication_distracteurs": [
+                "« 18 » ne correspond pas à ce qu'indique le support : « « réparti sur vingt-cinq séances de trois heures » ».",
+                "« 31 » ne correspond pas à ce qu'indique le support : « « réparti sur vingt-cinq séances de trois heures » ».",
+                "« 37 » ne correspond pas à ce qu'indique le support : « « réparti sur vingt-cinq séances de trois heures » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « réparti sur vingt-cinq séances de trois heures » » puis répondez à nouveau."
+            }
           },
           {
             "question": "Combien de temps dure chaque séance ?",
@@ -1918,7 +3331,18 @@
               "5 heures"
             ],
             "bonne_reponse": "3 heures",
-            "explication": "« vingt-cinq séances de trois heures »"
+            "explication": "« vingt-cinq séances de trois heures »",
+            "correction": {
+              "bonne_reponse": "3 heures",
+              "preuve_support": "« vingt-cinq séances de trois heures »",
+              "explication_distracteurs": [
+                "« 2 heures » ne correspond pas à ce qu'indique le support : « « vingt-cinq séances de trois heures » ».",
+                "« 4 heures » ne correspond pas à ce qu'indique le support : « « vingt-cinq séances de trois heures » ».",
+                "« 5 heures » ne correspond pas à ce qu'indique le support : « « vingt-cinq séances de trois heures » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « vingt-cinq séances de trois heures » » puis répondez à nouveau."
+            }
           },
           {
             "question": "À quel rythme les séances ont-elles lieu ?",
@@ -1928,7 +3352,17 @@
               "Une par mois"
             ],
             "bonne_reponse": "Une par semaine",
-            "explication": "« à raison d'une séance par semaine »"
+            "explication": "« à raison d'une séance par semaine »",
+            "correction": {
+              "bonne_reponse": "Une par semaine",
+              "preuve_support": "« à raison d'une séance par semaine »",
+              "explication_distracteurs": [
+                "« Deux par semaine » ne correspond pas à ce qu'indique le support : « « à raison d'une séance par semaine » ».",
+                "« Une par mois » ne correspond pas à ce qu'indique le support : « « à raison d'une séance par semaine » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « à raison d'une séance par semaine » » puis répondez à nouveau."
+            }
           },
           {
             "question": "Après combien d'heures a lieu l'évaluation intermédiaire (E1) ?",
@@ -1939,7 +3373,18 @@
               "100 heures"
             ],
             "bonne_reponse": "50 heures",
-            "explication": "« une évaluation intermédiaire après cinquante heures »"
+            "explication": "« une évaluation intermédiaire après cinquante heures »",
+            "correction": {
+              "bonne_reponse": "50 heures",
+              "preuve_support": "« une évaluation intermédiaire après cinquante heures »",
+              "explication_distracteurs": [
+                "« 25 heures » ne correspond pas à ce qu'indique le support : « « une évaluation intermédiaire après cinquante heures » ».",
+                "« 80 heures » ne correspond pas à ce qu'indique le support : « « une évaluation intermédiaire après cinquante heures » ».",
+                "« 100 heures » ne correspond pas à ce qu'indique le support : « « une évaluation intermédiaire après cinquante heures » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « une évaluation intermédiaire après cinquante heures » » puis répondez à nouveau."
+            }
           },
           {
             "question": "Combien de thèmes civiques structurent le parcours ?",
@@ -1950,7 +3395,18 @@
               "Dix"
             ],
             "bonne_reponse": "Cinq",
-            "explication": "« cinq thèmes sur la vie en France »"
+            "explication": "« cinq thèmes sur la vie en France »",
+            "correction": {
+              "bonne_reponse": "Cinq",
+              "preuve_support": "« cinq thèmes sur la vie en France »",
+              "explication_distracteurs": [
+                "« Trois » ne correspond pas à ce qu'indique le support : « « cinq thèmes sur la vie en France » ».",
+                "« Sept » ne correspond pas à ce qu'indique le support : « « cinq thèmes sur la vie en France » ».",
+                "« Dix » ne correspond pas à ce qu'indique le support : « « cinq thèmes sur la vie en France » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « cinq thèmes sur la vie en France » » puis répondez à nouveau."
+            }
           },
           {
             "question": "D'après Mme Rossi, qu'est-ce qu'un « devoir » ?",
@@ -1961,7 +3417,18 @@
               "Une évaluation finale"
             ],
             "bonne_reponse": "Quelque chose qu'on doit faire",
-            "explication": "« Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. »"
+            "explication": "« Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. »",
+            "correction": {
+              "bonne_reponse": "Quelque chose qu'on doit faire",
+              "preuve_support": "« Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. »",
+              "explication_distracteurs": [
+                "« Quelque chose qu'on peut demander » ne correspond pas à ce qu'indique le support : « « Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. » ».",
+                "« Une consigne propre à un lieu » ne correspond pas à ce qu'indique le support : « « Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. » ».",
+                "« Une évaluation finale » ne correspond pas à ce qu'indique le support : « « Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. » » puis répondez à nouveau."
+            }
           },
           {
             "question": "D'après Mme Rossi, qu'est-ce qu'une « règle » ?",
@@ -1972,7 +3439,18 @@
               "Un examen final"
             ],
             "bonne_reponse": "Une consigne précise (ex. arriver à l'heure)",
-            "explication": "« Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. »"
+            "explication": "« Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. »",
+            "correction": {
+              "bonne_reponse": "Une consigne précise (ex. arriver à l'heure)",
+              "preuve_support": "« Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. »",
+              "explication_distracteurs": [
+                "« Une possibilité garantie par la loi » ne correspond pas à ce qu'indique le support : « « Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. » ».",
+                "« Une obligation nationale » ne correspond pas à ce qu'indique le support : « « Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. » ».",
+                "« Un examen final » ne correspond pas à ce qu'indique le support : « « Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. » » puis répondez à nouveau."
+            }
           }
         ],
         "metadata": {
@@ -1981,9 +3459,52 @@
           "source_level": "A2",
           "target_level": "A2",
           "competence_invariante": "CO",
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A2",
+            "cognitive_operations": [
+              "restituer_essentiel"
+            ],
+            "guidance": "moyen",
+            "autonomy": "moyenne",
+            "allowed_formats": [
+              "qcm",
+              "texte_lacunaire",
+              "production_ecrite"
+            ],
+            "forbidden_formats": [
+              "tache_vague"
+            ],
+            "scaffolds": [
+              "ecoutes_2",
+              "lexique_prealable"
+            ],
+            "success_criteria": [
+              "Message global et détails utiles compris"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "audio_policy": {
+              "max_listens": 2,
+              "transcript": "none",
+              "target_seconds": null
+            },
+            "response_types": [
+              "restitution_orale_ou_ecrite_courte",
+              "reponse_courte"
+            ],
+            "correction_requirements": [
+              "correction_automatique_ou_grille_simple",
+              "feedback_oriente_reformulation"
+            ]
+          },
+          "transformation_id": "IDENTITY",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "extraire",
-            "reformuler"
+            "restituer_essentiel"
           ],
           "autonomy": "moyenne",
           "guidance": "moyen",
@@ -2081,9 +3602,52 @@
           "source_level": "A2",
           "target_level": "A2",
           "competence_invariante": "CO",
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A2",
+            "cognitive_operations": [
+              "restituer_essentiel"
+            ],
+            "guidance": "moyen",
+            "autonomy": "moyenne",
+            "allowed_formats": [
+              "qcm",
+              "texte_lacunaire",
+              "production_ecrite"
+            ],
+            "forbidden_formats": [
+              "tache_vague"
+            ],
+            "scaffolds": [
+              "ecoutes_2",
+              "lexique_prealable"
+            ],
+            "success_criteria": [
+              "Message global et détails utiles compris"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "audio_policy": {
+              "max_listens": 2,
+              "transcript": "none",
+              "target_seconds": null
+            },
+            "response_types": [
+              "restitution_orale_ou_ecrite_courte",
+              "reponse_courte"
+            ],
+            "correction_requirements": [
+              "correction_automatique_ou_grille_simple",
+              "feedback_oriente_reformulation"
+            ]
+          },
+          "transformation_id": "IDENTITY",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "extraire",
-            "reformuler"
+            "restituer_essentiel"
           ],
           "autonomy": "moyenne",
           "guidance": "moyen",
@@ -2132,9 +3696,52 @@
           "source_level": "A2",
           "target_level": "A2",
           "competence_invariante": "CO",
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A2",
+            "cognitive_operations": [
+              "restituer_essentiel"
+            ],
+            "guidance": "moyen",
+            "autonomy": "moyenne",
+            "allowed_formats": [
+              "qcm",
+              "texte_lacunaire",
+              "production_ecrite"
+            ],
+            "forbidden_formats": [
+              "tache_vague"
+            ],
+            "scaffolds": [
+              "ecoutes_2",
+              "lexique_prealable"
+            ],
+            "success_criteria": [
+              "Message global et détails utiles compris"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "audio_policy": {
+              "max_listens": 2,
+              "transcript": "none",
+              "target_seconds": null
+            },
+            "response_types": [
+              "restitution_orale_ou_ecrite_courte",
+              "reponse_courte"
+            ],
+            "correction_requirements": [
+              "correction_automatique_ou_grille_simple",
+              "feedback_oriente_reformulation"
+            ]
+          },
+          "transformation_id": "IDENTITY",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "extraire",
-            "reformuler"
+            "restituer_essentiel"
           ],
           "autonomy": "moyenne",
           "guidance": "moyen",
@@ -2191,8 +3798,48 @@
           "source_level": "A2",
           "target_level": "A2",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A2",
+            "cognitive_operations": [
+              "comprendre_globalement",
+              "reformuler"
+            ],
+            "guidance": "moyen",
+            "autonomy": "moyenne",
+            "allowed_formats": [
+              "qcm",
+              "texte_lacunaire",
+              "appariement"
+            ],
+            "forbidden_formats": [
+              "tache_vague",
+              "questions_artificiellement_accumulees"
+            ],
+            "scaffolds": [
+              "glossaire_cible"
+            ],
+            "success_criteria": [
+              "Informations essentielles organisées"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "reponse_courte_organisee",
+              "reformulation_guidee"
+            ],
+            "correction_requirements": [
+              "correction_automatique_ou_grille_simple",
+              "feedback_oriente_reformulation"
+            ]
+          },
+          "transformation_id": "IDENTITY",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "extraire",
+            "comprendre_globalement",
             "reformuler"
           ],
           "autonomy": "moyenne",
@@ -2261,8 +3908,48 @@
           "source_level": "A2",
           "target_level": "A2",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A2",
+            "cognitive_operations": [
+              "comprendre_globalement",
+              "reformuler"
+            ],
+            "guidance": "moyen",
+            "autonomy": "moyenne",
+            "allowed_formats": [
+              "qcm",
+              "texte_lacunaire",
+              "appariement"
+            ],
+            "forbidden_formats": [
+              "tache_vague",
+              "questions_artificiellement_accumulees"
+            ],
+            "scaffolds": [
+              "glossaire_cible"
+            ],
+            "success_criteria": [
+              "Informations essentielles organisées"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "reponse_courte_organisee",
+              "reformulation_guidee"
+            ],
+            "correction_requirements": [
+              "correction_automatique_ou_grille_simple",
+              "feedback_oriente_reformulation"
+            ]
+          },
+          "transformation_id": "IDENTITY",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "extraire",
+            "comprendre_globalement",
             "reformuler"
           ],
           "autonomy": "moyenne",
@@ -2305,8 +3992,48 @@
           "source_level": "A2",
           "target_level": "A2",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A2",
+            "cognitive_operations": [
+              "comprendre_globalement",
+              "reformuler"
+            ],
+            "guidance": "moyen",
+            "autonomy": "moyenne",
+            "allowed_formats": [
+              "qcm",
+              "texte_lacunaire",
+              "appariement"
+            ],
+            "forbidden_formats": [
+              "tache_vague",
+              "questions_artificiellement_accumulees"
+            ],
+            "scaffolds": [
+              "glossaire_cible"
+            ],
+            "success_criteria": [
+              "Informations essentielles organisées"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "reponse_courte_organisee",
+              "reformulation_guidee"
+            ],
+            "correction_requirements": [
+              "correction_automatique_ou_grille_simple",
+              "feedback_oriente_reformulation"
+            ]
+          },
+          "transformation_id": "IDENTITY",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "extraire",
+            "comprendre_globalement",
             "reformuler"
           ],
           "autonomy": "moyenne",
@@ -2375,9 +4102,46 @@
           "source_level": "A2",
           "target_level": "A2",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A2",
+            "cognitive_operations": [
+              "completer",
+              "transformer"
+            ],
+            "guidance": "moyen",
+            "autonomy": "moyenne",
+            "allowed_formats": [
+              "texte_lacunaire",
+              "transformation"
+            ],
+            "forbidden_formats": [
+              "tache_vague"
+            ],
+            "scaffolds": [
+              "exemple_resolu"
+            ],
+            "success_criteria": [
+              "Correction et sens global"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "completion_transformation_guidee"
+            ],
+            "correction_requirements": [
+              "correction_automatique_ou_grille_simple",
+              "feedback_oriente_reformulation"
+            ]
+          },
+          "transformation_id": "IDENTITY",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "extraire",
-            "reformuler"
+            "completer",
+            "transformer"
           ],
           "autonomy": "moyenne",
           "guidance": "moyen",
@@ -2430,9 +4194,48 @@
           "source_level": "A2",
           "target_level": "A2",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A2",
+            "cognitive_operations": [
+              "decrire",
+              "raconter",
+              "expliquer_simplement"
+            ],
+            "guidance": "moyen",
+            "autonomy": "moyenne",
+            "allowed_formats": [
+              "production_orale"
+            ],
+            "forbidden_formats": [
+              "tache_vague"
+            ],
+            "scaffolds": [
+              "plan_bref",
+              "preparation"
+            ],
+            "success_criteria": [
+              "Clarté, enchaînement, interaction simple"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "discours_court_suivi"
+            ],
+            "correction_requirements": [
+              "correction_automatique_ou_grille_simple",
+              "feedback_oriente_reformulation"
+            ]
+          },
+          "transformation_id": "IDENTITY",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "extraire",
-            "reformuler"
+            "decrire",
+            "raconter",
+            "expliquer_simplement"
           ],
           "autonomy": "moyenne",
           "guidance": "moyen",
@@ -2468,7 +4271,38 @@
             ],
             "bonne_reponse": "Awa Diallo",
             "explication": "Elle se présente : « Je m'appelle Awa. Awa Diallo. »",
-            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix en citant précisément un mot ou une phrase entendue dans le dialogue.",
+            "correction": {
+              "bonne_reponse": "Awa Diallo",
+              "preuve_support": "Elle se présente : « Je m'appelle Awa. Awa Diallo. »",
+              "explication_distracteurs": [
+                "« Awa Rossi » ne correspond pas à ce qu'indique le support : « Elle se présente : « Je m'appelle Awa. Awa Diallo. » ».",
+                "« Fatou Diallo » ne correspond pas à ce qu'indique le support : « Elle se présente : « Je m'appelle Awa. Awa Diallo. » ».",
+                "« Awa Camara » ne correspond pas à ce qu'indique le support : « Elle se présente : « Je m'appelle Awa. Awa Diallo. » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Elle se présente : « Je m'appelle Awa. Awa Diallo. » » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "Elle se présente : « Je m'appelle Awa. Awa Diallo. »"
+                ],
+                "formulations_acceptables": [
+                  "Elle se présente : « Je m'appelle Awa. Awa Diallo. »"
+                ],
+                "exemple_non_exclusif": "Elle se présente : « Je m'appelle Awa. Awa Diallo. »",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « Elle se présente : « Je m'appelle Awa. Awa Diallo. » ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Quel est l'objectif administratif d'Awa ?",
@@ -2480,7 +4314,38 @@
             ],
             "bonne_reponse": "La carte de séjour pluriannuelle",
             "explication": "« Je voudrais avoir ma carte de séjour pluriannuelle. »",
-            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix en citant précisément un mot ou une phrase entendue dans le dialogue.",
+            "correction": {
+              "bonne_reponse": "La carte de séjour pluriannuelle",
+              "preuve_support": "« Je voudrais avoir ma carte de séjour pluriannuelle. »",
+              "explication_distracteurs": [
+                "« La nationalité française » ne correspond pas à ce qu'indique le support : « « Je voudrais avoir ma carte de séjour pluriannuelle. » ».",
+                "« Un visa touristique » ne correspond pas à ce qu'indique le support : « « Je voudrais avoir ma carte de séjour pluriannuelle. » ».",
+                "« Un titre de travail » ne correspond pas à ce qu'indique le support : « « Je voudrais avoir ma carte de séjour pluriannuelle. » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « Je voudrais avoir ma carte de séjour pluriannuelle. » » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "« Je voudrais avoir ma carte de séjour pluriannuelle. »"
+                ],
+                "formulations_acceptables": [
+                  "« Je voudrais avoir ma carte de séjour pluriannuelle. »"
+                ],
+                "exemple_non_exclusif": "« Je voudrais avoir ma carte de séjour pluriannuelle. »",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « « Je voudrais avoir ma carte de séjour pluriannuelle. » ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Combien d'heures dure le parcours d'Awa ?",
@@ -2492,7 +4357,38 @@
             ],
             "bonne_reponse": "80 heures",
             "explication": "« Vous allez suivre un parcours de quatre-vingts heures. »",
-            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix en citant précisément un mot ou une phrase entendue dans le dialogue.",
+            "correction": {
+              "bonne_reponse": "80 heures",
+              "preuve_support": "« Vous allez suivre un parcours de quatre-vingts heures. »",
+              "explication_distracteurs": [
+                "« 50 heures » ne correspond pas à ce qu'indique le support : « « Vous allez suivre un parcours de quatre-vingts heures. » ».",
+                "« 100 heures » ne correspond pas à ce qu'indique le support : « « Vous allez suivre un parcours de quatre-vingts heures. » ».",
+                "« 120 heures » ne correspond pas à ce qu'indique le support : « « Vous allez suivre un parcours de quatre-vingts heures. » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « Vous allez suivre un parcours de quatre-vingts heures. » » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "« Vous allez suivre un parcours de quatre-vingts heures. »"
+                ],
+                "formulations_acceptables": [
+                  "« Vous allez suivre un parcours de quatre-vingts heures. »"
+                ],
+                "exemple_non_exclusif": "« Vous allez suivre un parcours de quatre-vingts heures. »",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « « Vous allez suivre un parcours de quatre-vingts heures. » ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Combien de séances collectives sont prévues ?",
@@ -2504,7 +4400,38 @@
             ],
             "bonne_reponse": "25",
             "explication": "« réparti sur vingt-cinq séances de trois heures »",
-            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix en citant précisément un mot ou une phrase entendue dans le dialogue.",
+            "correction": {
+              "bonne_reponse": "25",
+              "preuve_support": "« réparti sur vingt-cinq séances de trois heures »",
+              "explication_distracteurs": [
+                "« 18 » ne correspond pas à ce qu'indique le support : « « réparti sur vingt-cinq séances de trois heures » ».",
+                "« 31 » ne correspond pas à ce qu'indique le support : « « réparti sur vingt-cinq séances de trois heures » ».",
+                "« 37 » ne correspond pas à ce qu'indique le support : « « réparti sur vingt-cinq séances de trois heures » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « réparti sur vingt-cinq séances de trois heures » » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "« réparti sur vingt-cinq séances de trois heures »"
+                ],
+                "formulations_acceptables": [
+                  "« réparti sur vingt-cinq séances de trois heures »"
+                ],
+                "exemple_non_exclusif": "« réparti sur vingt-cinq séances de trois heures »",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « « réparti sur vingt-cinq séances de trois heures » ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Combien de temps dure chaque séance ?",
@@ -2516,7 +4443,38 @@
             ],
             "bonne_reponse": "3 heures",
             "explication": "« vingt-cinq séances de trois heures »",
-            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix en citant précisément un mot ou une phrase entendue dans le dialogue.",
+            "correction": {
+              "bonne_reponse": "3 heures",
+              "preuve_support": "« vingt-cinq séances de trois heures »",
+              "explication_distracteurs": [
+                "« 2 heures » ne correspond pas à ce qu'indique le support : « « vingt-cinq séances de trois heures » ».",
+                "« 4 heures » ne correspond pas à ce qu'indique le support : « « vingt-cinq séances de trois heures » ».",
+                "« 5 heures » ne correspond pas à ce qu'indique le support : « « vingt-cinq séances de trois heures » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « vingt-cinq séances de trois heures » » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "« vingt-cinq séances de trois heures »"
+                ],
+                "formulations_acceptables": [
+                  "« vingt-cinq séances de trois heures »"
+                ],
+                "exemple_non_exclusif": "« vingt-cinq séances de trois heures »",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « « vingt-cinq séances de trois heures » ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "À quel rythme les séances ont-elles lieu ?",
@@ -2527,7 +4485,37 @@
             ],
             "bonne_reponse": "Une par semaine",
             "explication": "« à raison d'une séance par semaine »",
-            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix en citant précisément un mot ou une phrase entendue dans le dialogue.",
+            "correction": {
+              "bonne_reponse": "Une par semaine",
+              "preuve_support": "« à raison d'une séance par semaine »",
+              "explication_distracteurs": [
+                "« Deux par semaine » ne correspond pas à ce qu'indique le support : « « à raison d'une séance par semaine » ».",
+                "« Une par mois » ne correspond pas à ce qu'indique le support : « « à raison d'une séance par semaine » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « à raison d'une séance par semaine » » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "« à raison d'une séance par semaine »"
+                ],
+                "formulations_acceptables": [
+                  "« à raison d'une séance par semaine »"
+                ],
+                "exemple_non_exclusif": "« à raison d'une séance par semaine »",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « « à raison d'une séance par semaine » ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Après combien d'heures a lieu l'évaluation intermédiaire (E1) ?",
@@ -2539,7 +4527,38 @@
             ],
             "bonne_reponse": "50 heures",
             "explication": "« une évaluation intermédiaire après cinquante heures »",
-            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix en citant précisément un mot ou une phrase entendue dans le dialogue.",
+            "correction": {
+              "bonne_reponse": "50 heures",
+              "preuve_support": "« une évaluation intermédiaire après cinquante heures »",
+              "explication_distracteurs": [
+                "« 25 heures » ne correspond pas à ce qu'indique le support : « « une évaluation intermédiaire après cinquante heures » ».",
+                "« 80 heures » ne correspond pas à ce qu'indique le support : « « une évaluation intermédiaire après cinquante heures » ».",
+                "« 100 heures » ne correspond pas à ce qu'indique le support : « « une évaluation intermédiaire après cinquante heures » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « une évaluation intermédiaire après cinquante heures » » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "« une évaluation intermédiaire après cinquante heures »"
+                ],
+                "formulations_acceptables": [
+                  "« une évaluation intermédiaire après cinquante heures »"
+                ],
+                "exemple_non_exclusif": "« une évaluation intermédiaire après cinquante heures »",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « « une évaluation intermédiaire après cinquante heures » ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Combien de thèmes civiques structurent le parcours ?",
@@ -2551,7 +4570,38 @@
             ],
             "bonne_reponse": "Cinq",
             "explication": "« cinq thèmes sur la vie en France »",
-            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix en citant précisément un mot ou une phrase entendue dans le dialogue.",
+            "correction": {
+              "bonne_reponse": "Cinq",
+              "preuve_support": "« cinq thèmes sur la vie en France »",
+              "explication_distracteurs": [
+                "« Trois » ne correspond pas à ce qu'indique le support : « « cinq thèmes sur la vie en France » ».",
+                "« Sept » ne correspond pas à ce qu'indique le support : « « cinq thèmes sur la vie en France » ».",
+                "« Dix » ne correspond pas à ce qu'indique le support : « « cinq thèmes sur la vie en France » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « cinq thèmes sur la vie en France » » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "« cinq thèmes sur la vie en France »"
+                ],
+                "formulations_acceptables": [
+                  "« cinq thèmes sur la vie en France »"
+                ],
+                "exemple_non_exclusif": "« cinq thèmes sur la vie en France »",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « « cinq thèmes sur la vie en France » ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "D'après Mme Rossi, qu'est-ce qu'un « devoir » ?",
@@ -2563,7 +4613,38 @@
             ],
             "bonne_reponse": "Quelque chose qu'on doit faire",
             "explication": "« Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. »",
-            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix en citant précisément un mot ou une phrase entendue dans le dialogue.",
+            "correction": {
+              "bonne_reponse": "Quelque chose qu'on doit faire",
+              "preuve_support": "« Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. »",
+              "explication_distracteurs": [
+                "« Quelque chose qu'on peut demander » ne correspond pas à ce qu'indique le support : « « Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. » ».",
+                "« Une consigne propre à un lieu » ne correspond pas à ce qu'indique le support : « « Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. » ».",
+                "« Une évaluation finale » ne correspond pas à ce qu'indique le support : « « Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. » » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "« Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. »"
+                ],
+                "formulations_acceptables": [
+                  "« Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. »"
+                ],
+                "exemple_non_exclusif": "« Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. »",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « « Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. » ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "D'après Mme Rossi, qu'est-ce qu'une « règle » ?",
@@ -2575,7 +4656,38 @@
             ],
             "bonne_reponse": "Une consigne précise (ex. arriver à l'heure)",
             "explication": "« Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. »",
-            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix en citant précisément un mot ou une phrase entendue dans le dialogue.",
+            "correction": {
+              "bonne_reponse": "Une consigne précise (ex. arriver à l'heure)",
+              "preuve_support": "« Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. »",
+              "explication_distracteurs": [
+                "« Une possibilité garantie par la loi » ne correspond pas à ce qu'indique le support : « « Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. » ».",
+                "« Une obligation nationale » ne correspond pas à ce qu'indique le support : « « Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. » ».",
+                "« Un examen final » ne correspond pas à ce qu'indique le support : « « Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. » » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "« Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. »"
+                ],
+                "formulations_acceptables": [
+                  "« Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. »"
+                ],
+                "exemple_non_exclusif": "« Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. »",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « « Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. » ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           }
         ],
         "metadata": {
@@ -2584,9 +4696,105 @@
           "source_level": "A2",
           "target_level": "B1",
           "competence_invariante": "CO",
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "B1",
+            "cognitive_operations": [
+              "inferer_intention",
+              "relier"
+            ],
+            "guidance": "faible",
+            "autonomy": "forte",
+            "allowed_formats": [
+              "texte_lacunaire",
+              "production_ecrite",
+              "qcm"
+            ],
+            "forbidden_formats": [
+              "questions_artificiellement_accumulees"
+            ],
+            "scaffolds": [
+              "ecoutes_1_a_2",
+              "criteres"
+            ],
+            "success_criteria": [
+              "Intention et enchaînement expliqués"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "audio_policy": {
+              "max_listens": 2,
+              "transcript": "none",
+              "target_seconds": null
+            },
+            "response_types": [
+              "explication_orale_ou_ecrite",
+              "mise_en_relation"
+            ],
+            "correction_requirements": [
+              "grille_de_criteres_explicite",
+              "correction_peut_etre_differee_ou_par_sous_groupe"
+            ]
+          },
+          "transformation_id": "A2_TO_B1",
+          "applied_transformations": [
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[0].justification_prompt",
+              "evidence": "Justification obligatoire ajoutée (justification_required=true), appuyée sur le support réel de la question 1."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[1].justification_prompt",
+              "evidence": "Justification obligatoire ajoutée (justification_required=true), appuyée sur le support réel de la question 2."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[2].justification_prompt",
+              "evidence": "Justification obligatoire ajoutée (justification_required=true), appuyée sur le support réel de la question 3."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[3].justification_prompt",
+              "evidence": "Justification obligatoire ajoutée (justification_required=true), appuyée sur le support réel de la question 4."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[4].justification_prompt",
+              "evidence": "Justification obligatoire ajoutée (justification_required=true), appuyée sur le support réel de la question 5."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[5].justification_prompt",
+              "evidence": "Justification obligatoire ajoutée (justification_required=true), appuyée sur le support réel de la question 6."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[6].justification_prompt",
+              "evidence": "Justification obligatoire ajoutée (justification_required=true), appuyée sur le support réel de la question 7."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[7].justification_prompt",
+              "evidence": "Justification obligatoire ajoutée (justification_required=true), appuyée sur le support réel de la question 8."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[8].justification_prompt",
+              "evidence": "Justification obligatoire ajoutée (justification_required=true), appuyée sur le support réel de la question 9."
+            },
+            {
+              "rule_id": "A2_TO_B1",
+              "applied_to": "items[9].justification_prompt",
+              "evidence": "Justification obligatoire ajoutée (justification_required=true), appuyée sur le support réel de la question 10."
+            }
+          ],
           "cognitive_operations": [
-            "relier",
-            "justifier"
+            "inferer_intention",
+            "relier"
           ],
           "autonomy": "forte",
           "guidance": "faible",
@@ -2684,9 +4892,54 @@
           "source_level": "A2",
           "target_level": "B1",
           "competence_invariante": "CO",
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "B1",
+            "cognitive_operations": [
+              "inferer_intention",
+              "relier"
+            ],
+            "guidance": "faible",
+            "autonomy": "forte",
+            "allowed_formats": [
+              "texte_lacunaire",
+              "production_ecrite",
+              "qcm"
+            ],
+            "forbidden_formats": [
+              "questions_artificiellement_accumulees"
+            ],
+            "scaffolds": [
+              "ecoutes_1_a_2",
+              "criteres"
+            ],
+            "success_criteria": [
+              "Intention et enchaînement expliqués"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "audio_policy": {
+              "max_listens": 2,
+              "transcript": "none",
+              "target_seconds": null
+            },
+            "response_types": [
+              "explication_orale_ou_ecrite",
+              "mise_en_relation"
+            ],
+            "correction_requirements": [
+              "grille_de_criteres_explicite",
+              "correction_peut_etre_differee_ou_par_sous_groupe"
+            ]
+          },
+          "transformation_id": "A2_TO_B1",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "relier",
-            "justifier"
+            "inferer_intention",
+            "relier"
           ],
           "autonomy": "forte",
           "guidance": "faible",
@@ -2739,9 +4992,54 @@
           "source_level": "A2",
           "target_level": "B1",
           "competence_invariante": "CO",
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "B1",
+            "cognitive_operations": [
+              "inferer_intention",
+              "relier"
+            ],
+            "guidance": "faible",
+            "autonomy": "forte",
+            "allowed_formats": [
+              "texte_lacunaire",
+              "production_ecrite",
+              "qcm"
+            ],
+            "forbidden_formats": [
+              "questions_artificiellement_accumulees"
+            ],
+            "scaffolds": [
+              "ecoutes_1_a_2",
+              "criteres"
+            ],
+            "success_criteria": [
+              "Intention et enchaînement expliqués"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "audio_policy": {
+              "max_listens": 2,
+              "transcript": "none",
+              "target_seconds": null
+            },
+            "response_types": [
+              "explication_orale_ou_ecrite",
+              "mise_en_relation"
+            ],
+            "correction_requirements": [
+              "grille_de_criteres_explicite",
+              "correction_peut_etre_differee_ou_par_sous_groupe"
+            ]
+          },
+          "transformation_id": "A2_TO_B1",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "relier",
-            "justifier"
+            "inferer_intention",
+            "relier"
           ],
           "autonomy": "forte",
           "guidance": "faible",
@@ -2792,8 +5090,51 @@
           "source_level": "A2",
           "target_level": "B1",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "B1",
+            "cognitive_operations": [
+              "inferer",
+              "comparer",
+              "justifier"
+            ],
+            "guidance": "faible",
+            "autonomy": "forte",
+            "allowed_formats": [
+              "texte_lacunaire",
+              "qcm",
+              "production_ecrite",
+              "appariement"
+            ],
+            "forbidden_formats": [
+              "questions_artificiellement_accumulees"
+            ],
+            "scaffolds": [
+              "criteres_reussite",
+              "relecture"
+            ],
+            "success_criteria": [
+              "Relations et intention expliquées"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "reponse_justifiee",
+              "synthese_courte"
+            ],
+            "correction_requirements": [
+              "grille_de_criteres_explicite",
+              "correction_peut_etre_differee_ou_par_sous_groupe"
+            ]
+          },
+          "transformation_id": "A2_TO_B1",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "relier",
+            "inferer",
+            "comparer",
             "justifier"
           ],
           "autonomy": "forte",
@@ -2854,8 +5195,51 @@
           "source_level": "A2",
           "target_level": "B1",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "B1",
+            "cognitive_operations": [
+              "inferer",
+              "comparer",
+              "justifier"
+            ],
+            "guidance": "faible",
+            "autonomy": "forte",
+            "allowed_formats": [
+              "texte_lacunaire",
+              "qcm",
+              "production_ecrite",
+              "appariement"
+            ],
+            "forbidden_formats": [
+              "questions_artificiellement_accumulees"
+            ],
+            "scaffolds": [
+              "criteres_reussite",
+              "relecture"
+            ],
+            "success_criteria": [
+              "Relations et intention expliquées"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "reponse_justifiee",
+              "synthese_courte"
+            ],
+            "correction_requirements": [
+              "grille_de_criteres_explicite",
+              "correction_peut_etre_differee_ou_par_sous_groupe"
+            ]
+          },
+          "transformation_id": "A2_TO_B1",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "relier",
+            "inferer",
+            "comparer",
             "justifier"
           ],
           "autonomy": "forte",
@@ -2909,9 +5293,44 @@
           "source_level": "A2",
           "target_level": "B1",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "B1",
+            "cognitive_operations": [
+              "choisir_et_justifier"
+            ],
+            "guidance": "faible",
+            "autonomy": "forte",
+            "allowed_formats": [
+              "transformation",
+              "qcm"
+            ],
+            "forbidden_formats": [
+              "questions_artificiellement_accumulees"
+            ],
+            "scaffolds": [
+              "alternative_morphosyntaxique_donnee"
+            ],
+            "success_criteria": [
+              "Adéquation au sens et cohérence"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "choix_justifie"
+            ],
+            "correction_requirements": [
+              "grille_de_criteres_explicite",
+              "correction_peut_etre_differee_ou_par_sous_groupe"
+            ]
+          },
+          "transformation_id": "A2_TO_B1",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "relier",
-            "justifier"
+            "choisir_et_justifier"
           ],
           "autonomy": "forte",
           "guidance": "faible",
@@ -2982,9 +5401,47 @@
           "source_level": "A2",
           "target_level": "B1",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "B1",
+            "cognitive_operations": [
+              "donner_avis",
+              "justifier",
+              "reagir"
+            ],
+            "guidance": "faible",
+            "autonomy": "forte",
+            "allowed_formats": [
+              "production_orale"
+            ],
+            "forbidden_formats": [
+              "questions_artificiellement_accumulees"
+            ],
+            "scaffolds": [
+              "criteres_et_preparation_limitee"
+            ],
+            "success_criteria": [
+              "Cohérence, interaction, justification"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "discours_developpe_interactif"
+            ],
+            "correction_requirements": [
+              "grille_de_criteres_explicite",
+              "correction_peut_etre_differee_ou_par_sous_groupe"
+            ]
+          },
+          "transformation_id": "A2_TO_B1",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "relier",
-            "justifier"
+            "donner_avis",
+            "justifier",
+            "reagir"
           ],
           "autonomy": "forte",
           "guidance": "faible",
@@ -3020,7 +5477,38 @@
             ],
             "bonne_reponse": "Awa Diallo",
             "explication": "Elle se présente : « Je m'appelle Awa. Awa Diallo. »",
-            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix en citant précisément un mot ou une phrase entendue dans le dialogue.",
+            "correction": {
+              "bonne_reponse": "Awa Diallo",
+              "preuve_support": "Elle se présente : « Je m'appelle Awa. Awa Diallo. »",
+              "explication_distracteurs": [
+                "« Awa Rossi » ne correspond pas à ce qu'indique le support : « Elle se présente : « Je m'appelle Awa. Awa Diallo. » ».",
+                "« Fatou Diallo » ne correspond pas à ce qu'indique le support : « Elle se présente : « Je m'appelle Awa. Awa Diallo. » ».",
+                "« Awa Camara » ne correspond pas à ce qu'indique le support : « Elle se présente : « Je m'appelle Awa. Awa Diallo. » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « Elle se présente : « Je m'appelle Awa. Awa Diallo. » » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "Elle se présente : « Je m'appelle Awa. Awa Diallo. »"
+                ],
+                "formulations_acceptables": [
+                  "Elle se présente : « Je m'appelle Awa. Awa Diallo. »"
+                ],
+                "exemple_non_exclusif": "Elle se présente : « Je m'appelle Awa. Awa Diallo. »",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « Elle se présente : « Je m'appelle Awa. Awa Diallo. » ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Quel est l'objectif administratif d'Awa ?",
@@ -3032,7 +5520,38 @@
             ],
             "bonne_reponse": "La carte de séjour pluriannuelle",
             "explication": "« Je voudrais avoir ma carte de séjour pluriannuelle. »",
-            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix en citant précisément un mot ou une phrase entendue dans le dialogue.",
+            "correction": {
+              "bonne_reponse": "La carte de séjour pluriannuelle",
+              "preuve_support": "« Je voudrais avoir ma carte de séjour pluriannuelle. »",
+              "explication_distracteurs": [
+                "« La nationalité française » ne correspond pas à ce qu'indique le support : « « Je voudrais avoir ma carte de séjour pluriannuelle. » ».",
+                "« Un visa touristique » ne correspond pas à ce qu'indique le support : « « Je voudrais avoir ma carte de séjour pluriannuelle. » ».",
+                "« Un titre de travail » ne correspond pas à ce qu'indique le support : « « Je voudrais avoir ma carte de séjour pluriannuelle. » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « Je voudrais avoir ma carte de séjour pluriannuelle. » » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "« Je voudrais avoir ma carte de séjour pluriannuelle. »"
+                ],
+                "formulations_acceptables": [
+                  "« Je voudrais avoir ma carte de séjour pluriannuelle. »"
+                ],
+                "exemple_non_exclusif": "« Je voudrais avoir ma carte de séjour pluriannuelle. »",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « « Je voudrais avoir ma carte de séjour pluriannuelle. » ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Combien d'heures dure le parcours d'Awa ?",
@@ -3044,7 +5563,38 @@
             ],
             "bonne_reponse": "80 heures",
             "explication": "« Vous allez suivre un parcours de quatre-vingts heures. »",
-            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix en citant précisément un mot ou une phrase entendue dans le dialogue.",
+            "correction": {
+              "bonne_reponse": "80 heures",
+              "preuve_support": "« Vous allez suivre un parcours de quatre-vingts heures. »",
+              "explication_distracteurs": [
+                "« 50 heures » ne correspond pas à ce qu'indique le support : « « Vous allez suivre un parcours de quatre-vingts heures. » ».",
+                "« 100 heures » ne correspond pas à ce qu'indique le support : « « Vous allez suivre un parcours de quatre-vingts heures. » ».",
+                "« 120 heures » ne correspond pas à ce qu'indique le support : « « Vous allez suivre un parcours de quatre-vingts heures. » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « Vous allez suivre un parcours de quatre-vingts heures. » » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "« Vous allez suivre un parcours de quatre-vingts heures. »"
+                ],
+                "formulations_acceptables": [
+                  "« Vous allez suivre un parcours de quatre-vingts heures. »"
+                ],
+                "exemple_non_exclusif": "« Vous allez suivre un parcours de quatre-vingts heures. »",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « « Vous allez suivre un parcours de quatre-vingts heures. » ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Combien de séances collectives sont prévues ?",
@@ -3056,7 +5606,38 @@
             ],
             "bonne_reponse": "25",
             "explication": "« réparti sur vingt-cinq séances de trois heures »",
-            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix en citant précisément un mot ou une phrase entendue dans le dialogue.",
+            "correction": {
+              "bonne_reponse": "25",
+              "preuve_support": "« réparti sur vingt-cinq séances de trois heures »",
+              "explication_distracteurs": [
+                "« 18 » ne correspond pas à ce qu'indique le support : « « réparti sur vingt-cinq séances de trois heures » ».",
+                "« 31 » ne correspond pas à ce qu'indique le support : « « réparti sur vingt-cinq séances de trois heures » ».",
+                "« 37 » ne correspond pas à ce qu'indique le support : « « réparti sur vingt-cinq séances de trois heures » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « réparti sur vingt-cinq séances de trois heures » » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "« réparti sur vingt-cinq séances de trois heures »"
+                ],
+                "formulations_acceptables": [
+                  "« réparti sur vingt-cinq séances de trois heures »"
+                ],
+                "exemple_non_exclusif": "« réparti sur vingt-cinq séances de trois heures »",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « « réparti sur vingt-cinq séances de trois heures » ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Combien de temps dure chaque séance ?",
@@ -3068,7 +5649,38 @@
             ],
             "bonne_reponse": "3 heures",
             "explication": "« vingt-cinq séances de trois heures »",
-            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix en citant précisément un mot ou une phrase entendue dans le dialogue.",
+            "correction": {
+              "bonne_reponse": "3 heures",
+              "preuve_support": "« vingt-cinq séances de trois heures »",
+              "explication_distracteurs": [
+                "« 2 heures » ne correspond pas à ce qu'indique le support : « « vingt-cinq séances de trois heures » ».",
+                "« 4 heures » ne correspond pas à ce qu'indique le support : « « vingt-cinq séances de trois heures » ».",
+                "« 5 heures » ne correspond pas à ce qu'indique le support : « « vingt-cinq séances de trois heures » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « vingt-cinq séances de trois heures » » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "« vingt-cinq séances de trois heures »"
+                ],
+                "formulations_acceptables": [
+                  "« vingt-cinq séances de trois heures »"
+                ],
+                "exemple_non_exclusif": "« vingt-cinq séances de trois heures »",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « « vingt-cinq séances de trois heures » ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "À quel rythme les séances ont-elles lieu ?",
@@ -3079,7 +5691,37 @@
             ],
             "bonne_reponse": "Une par semaine",
             "explication": "« à raison d'une séance par semaine »",
-            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix en citant précisément un mot ou une phrase entendue dans le dialogue.",
+            "correction": {
+              "bonne_reponse": "Une par semaine",
+              "preuve_support": "« à raison d'une séance par semaine »",
+              "explication_distracteurs": [
+                "« Deux par semaine » ne correspond pas à ce qu'indique le support : « « à raison d'une séance par semaine » ».",
+                "« Une par mois » ne correspond pas à ce qu'indique le support : « « à raison d'une séance par semaine » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « à raison d'une séance par semaine » » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "« à raison d'une séance par semaine »"
+                ],
+                "formulations_acceptables": [
+                  "« à raison d'une séance par semaine »"
+                ],
+                "exemple_non_exclusif": "« à raison d'une séance par semaine »",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « « à raison d'une séance par semaine » ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Après combien d'heures a lieu l'évaluation intermédiaire (E1) ?",
@@ -3091,7 +5733,38 @@
             ],
             "bonne_reponse": "50 heures",
             "explication": "« une évaluation intermédiaire après cinquante heures »",
-            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix en citant précisément un mot ou une phrase entendue dans le dialogue.",
+            "correction": {
+              "bonne_reponse": "50 heures",
+              "preuve_support": "« une évaluation intermédiaire après cinquante heures »",
+              "explication_distracteurs": [
+                "« 25 heures » ne correspond pas à ce qu'indique le support : « « une évaluation intermédiaire après cinquante heures » ».",
+                "« 80 heures » ne correspond pas à ce qu'indique le support : « « une évaluation intermédiaire après cinquante heures » ».",
+                "« 100 heures » ne correspond pas à ce qu'indique le support : « « une évaluation intermédiaire après cinquante heures » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « une évaluation intermédiaire après cinquante heures » » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "« une évaluation intermédiaire après cinquante heures »"
+                ],
+                "formulations_acceptables": [
+                  "« une évaluation intermédiaire après cinquante heures »"
+                ],
+                "exemple_non_exclusif": "« une évaluation intermédiaire après cinquante heures »",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « « une évaluation intermédiaire après cinquante heures » ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "Combien de thèmes civiques structurent le parcours ?",
@@ -3103,7 +5776,38 @@
             ],
             "bonne_reponse": "Cinq",
             "explication": "« cinq thèmes sur la vie en France »",
-            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+            "justification_required": true,
+            "justification_type": "support_evidence",
+            "justification_prompt": "Justifiez votre choix en citant précisément un mot ou une phrase entendue dans le dialogue.",
+            "correction": {
+              "bonne_reponse": "Cinq",
+              "preuve_support": "« cinq thèmes sur la vie en France »",
+              "explication_distracteurs": [
+                "« Trois » ne correspond pas à ce qu'indique le support : « « cinq thèmes sur la vie en France » ».",
+                "« Sept » ne correspond pas à ce qu'indique le support : « « cinq thèmes sur la vie en France » ».",
+                "« Dix » ne correspond pas à ce qu'indique le support : « « cinq thèmes sur la vie en France » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « cinq thèmes sur la vie en France » » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "« cinq thèmes sur la vie en France »"
+                ],
+                "formulations_acceptables": [
+                  "« cinq thèmes sur la vie en France »"
+                ],
+                "exemple_non_exclusif": "« cinq thèmes sur la vie en France »",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « « cinq thèmes sur la vie en France » ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "D'après Mme Rossi, qu'est-ce qu'un « devoir » ?",
@@ -3115,7 +5819,38 @@
             ],
             "bonne_reponse": "Quelque chose qu'on doit faire",
             "explication": "« Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. »",
-            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+            "justification_required": true,
+            "justification_type": "nuance",
+            "justification_prompt": "Justifiez votre choix et précisez, avec les mots de Mme Rossi, en quoi cette notion se distingue de la notion voisine (droit/devoir/règle).",
+            "correction": {
+              "bonne_reponse": "Quelque chose qu'on doit faire",
+              "preuve_support": "« Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. »",
+              "explication_distracteurs": [
+                "« Quelque chose qu'on peut demander » ne correspond pas à ce qu'indique le support : « « Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. » ».",
+                "« Une consigne propre à un lieu » ne correspond pas à ce qu'indique le support : « « Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. » ».",
+                "« Une évaluation finale » ne correspond pas à ce qu'indique le support : « « Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. » » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "« Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. »"
+                ],
+                "formulations_acceptables": [
+                  "« Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. »"
+                ],
+                "exemple_non_exclusif": "« Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. »",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « « Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. » ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           },
           {
             "question": "D'après Mme Rossi, qu'est-ce qu'une « règle » ?",
@@ -3127,7 +5862,38 @@
             ],
             "bonne_reponse": "Une consigne précise (ex. arriver à l'heure)",
             "explication": "« Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. »",
-            "justification_attendue": "Justifiez le choix à partir d'un indice précis du support."
+            "justification_required": true,
+            "justification_type": "nuance",
+            "justification_prompt": "Justifiez votre choix et précisez, avec les mots de Mme Rossi, en quoi cette notion se distingue de la notion voisine (droit/devoir/règle).",
+            "correction": {
+              "bonne_reponse": "Une consigne précise (ex. arriver à l'heure)",
+              "preuve_support": "« Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. »",
+              "explication_distracteurs": [
+                "« Une possibilité garantie par la loi » ne correspond pas à ce qu'indique le support : « « Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. » ».",
+                "« Une obligation nationale » ne correspond pas à ce qu'indique le support : « « Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. » ».",
+                "« Un examen final » ne correspond pas à ce qu'indique le support : « « Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. » »."
+              ],
+              "erreur_diagnostiquee": "confusion_information_presente",
+              "remediation": "Relisez la phrase du support : « « Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. » » puis répondez à nouveau.",
+              "justification_ouverte": {
+                "elements_attendus": [
+                  "« Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. »"
+                ],
+                "formulations_acceptables": [
+                  "« Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. »"
+                ],
+                "exemple_non_exclusif": "« Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. »",
+                "erreurs_frequentes": [
+                  "justification absente ou trop vague",
+                  "justification sans lien avec le passage cité"
+                ],
+                "remediation": "Citez ou reformulez précisément : « « Une règle, c'est une consigne précise, par exemple arriver à l'heure en formation. » ».",
+                "criteres_evaluation": [
+                  "cite ou reformule fidèlement un élément réel du support",
+                  "relie explicitement la citation à la réponse donnée"
+                ]
+              }
+            }
           }
         ],
         "metadata": {
@@ -3136,12 +5902,108 @@
           "source_level": "A2",
           "target_level": "B2",
           "competence_invariante": "CO",
-          "cognitive_operations": [
-            "interpréter",
-            "nuancer"
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "B2",
+            "cognitive_operations": [
+              "synthetiser",
+              "evaluer"
+            ],
+            "guidance": "a_la_demande",
+            "autonomy": "tres_forte",
+            "allowed_formats": [
+              "production_ecrite",
+              "qcm",
+              "texte_lacunaire"
+            ],
+            "forbidden_formats": [
+              "complexite_lexicale_sans_enjeu_cognitif",
+              "ajout_mecanique_de_questions"
+            ],
+            "scaffolds": [
+              "ecoute_principale_avec_reprise_ciblee"
+            ],
+            "success_criteria": [
+              "Nuance, registre et position distingués"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "audio_policy": {
+              "max_listens": 1,
+              "transcript": "none",
+              "target_seconds": null
+            },
+            "response_types": [
+              "synthese",
+              "evaluation_du_point_de_vue"
+            ],
+            "correction_requirements": [
+              "evaluation_qualitative_par_criteres_de_nuance",
+              "revue_humaine_recommandee_si_contenu_civique_ou_sensible"
+            ]
+          },
+          "transformation_id": "A2_TO_B2",
+          "applied_transformations": [
+            {
+              "rule_id": "DIFF_TRANSFORMATION_NOT_SUPPORTED",
+              "applied_to": "items[0].justification_prompt",
+              "evidence": "Aucune implication/intention/registre n'est présente dans le support pour la question 1 : justification simple maintenue plutôt qu'inventée."
+            },
+            {
+              "rule_id": "DIFF_TRANSFORMATION_NOT_SUPPORTED",
+              "applied_to": "items[1].justification_prompt",
+              "evidence": "Aucune implication/intention/registre n'est présente dans le support pour la question 2 : justification simple maintenue plutôt qu'inventée."
+            },
+            {
+              "rule_id": "DIFF_TRANSFORMATION_NOT_SUPPORTED",
+              "applied_to": "items[2].justification_prompt",
+              "evidence": "Aucune implication/intention/registre n'est présente dans le support pour la question 3 : justification simple maintenue plutôt qu'inventée."
+            },
+            {
+              "rule_id": "DIFF_TRANSFORMATION_NOT_SUPPORTED",
+              "applied_to": "items[3].justification_prompt",
+              "evidence": "Aucune implication/intention/registre n'est présente dans le support pour la question 4 : justification simple maintenue plutôt qu'inventée."
+            },
+            {
+              "rule_id": "DIFF_TRANSFORMATION_NOT_SUPPORTED",
+              "applied_to": "items[4].justification_prompt",
+              "evidence": "Aucune implication/intention/registre n'est présente dans le support pour la question 5 : justification simple maintenue plutôt qu'inventée."
+            },
+            {
+              "rule_id": "DIFF_TRANSFORMATION_NOT_SUPPORTED",
+              "applied_to": "items[5].justification_prompt",
+              "evidence": "Aucune implication/intention/registre n'est présente dans le support pour la question 6 : justification simple maintenue plutôt qu'inventée."
+            },
+            {
+              "rule_id": "DIFF_TRANSFORMATION_NOT_SUPPORTED",
+              "applied_to": "items[6].justification_prompt",
+              "evidence": "Aucune implication/intention/registre n'est présente dans le support pour la question 7 : justification simple maintenue plutôt qu'inventée."
+            },
+            {
+              "rule_id": "DIFF_TRANSFORMATION_NOT_SUPPORTED",
+              "applied_to": "items[7].justification_prompt",
+              "evidence": "Aucune implication/intention/registre n'est présente dans le support pour la question 8 : justification simple maintenue plutôt qu'inventée."
+            },
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[8].justification_prompt",
+              "evidence": "Nuance demandée : le dialogue oppose explicitement droit/devoir/règle dans la même réplique (question 9) — support suffisant, aucune invention."
+            },
+            {
+              "rule_id": "A2_TO_B2",
+              "applied_to": "items[9].justification_prompt",
+              "evidence": "Nuance demandée : le dialogue oppose explicitement droit/devoir/règle dans la même réplique (question 10) — support suffisant, aucune invention."
+            }
           ],
-          "autonomy": "forte",
-          "guidance": "minimal",
+          "cognitive_operations": [
+            "synthetiser",
+            "evaluer"
+          ],
+          "autonomy": "tres_forte",
+          "guidance": "a_la_demande",
           "trainer_preview_required": true,
           "interactive": true,
           "needs_content_review": false
@@ -3236,12 +6098,57 @@
           "source_level": "A2",
           "target_level": "B2",
           "competence_invariante": "CO",
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "B2",
+            "cognitive_operations": [
+              "synthetiser",
+              "evaluer"
+            ],
+            "guidance": "a_la_demande",
+            "autonomy": "tres_forte",
+            "allowed_formats": [
+              "production_ecrite",
+              "qcm",
+              "texte_lacunaire"
+            ],
+            "forbidden_formats": [
+              "complexite_lexicale_sans_enjeu_cognitif",
+              "ajout_mecanique_de_questions"
+            ],
+            "scaffolds": [
+              "ecoute_principale_avec_reprise_ciblee"
+            ],
+            "success_criteria": [
+              "Nuance, registre et position distingués"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "audio_policy": {
+              "max_listens": 1,
+              "transcript": "none",
+              "target_seconds": null
+            },
+            "response_types": [
+              "synthese",
+              "evaluation_du_point_de_vue"
+            ],
+            "correction_requirements": [
+              "evaluation_qualitative_par_criteres_de_nuance",
+              "revue_humaine_recommandee_si_contenu_civique_ou_sensible"
+            ]
+          },
+          "transformation_id": "A2_TO_B2",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "interpréter",
-            "nuancer"
+            "synthetiser",
+            "evaluer"
           ],
-          "autonomy": "forte",
-          "guidance": "minimal",
+          "autonomy": "tres_forte",
+          "guidance": "a_la_demande",
           "trainer_preview_required": true,
           "interactive": true,
           "needs_content_review": false
@@ -3291,12 +6198,57 @@
           "source_level": "A2",
           "target_level": "B2",
           "competence_invariante": "CO",
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "B2",
+            "cognitive_operations": [
+              "synthetiser",
+              "evaluer"
+            ],
+            "guidance": "a_la_demande",
+            "autonomy": "tres_forte",
+            "allowed_formats": [
+              "production_ecrite",
+              "qcm",
+              "texte_lacunaire"
+            ],
+            "forbidden_formats": [
+              "complexite_lexicale_sans_enjeu_cognitif",
+              "ajout_mecanique_de_questions"
+            ],
+            "scaffolds": [
+              "ecoute_principale_avec_reprise_ciblee"
+            ],
+            "success_criteria": [
+              "Nuance, registre et position distingués"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "audio_policy": {
+              "max_listens": 1,
+              "transcript": "none",
+              "target_seconds": null
+            },
+            "response_types": [
+              "synthese",
+              "evaluation_du_point_de_vue"
+            ],
+            "correction_requirements": [
+              "evaluation_qualitative_par_criteres_de_nuance",
+              "revue_humaine_recommandee_si_contenu_civique_ou_sensible"
+            ]
+          },
+          "transformation_id": "A2_TO_B2",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "interpréter",
-            "nuancer"
+            "synthetiser",
+            "evaluer"
           ],
-          "autonomy": "forte",
-          "guidance": "minimal",
+          "autonomy": "tres_forte",
+          "guidance": "a_la_demande",
           "trainer_preview_required": true,
           "interactive": true,
           "needs_content_review": false
@@ -3344,12 +6296,55 @@
           "source_level": "A2",
           "target_level": "B2",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "B2",
+            "cognitive_operations": [
+              "analyser",
+              "synthetiser",
+              "nuancer"
+            ],
+            "guidance": "a_la_demande",
+            "autonomy": "tres_forte",
+            "allowed_formats": [
+              "production_ecrite",
+              "qcm",
+              "appariement",
+              "texte_lacunaire"
+            ],
+            "forbidden_formats": [
+              "complexite_lexicale_sans_enjeu_cognitif",
+              "ajout_mecanique_de_questions"
+            ],
+            "scaffolds": [
+              "aides_a_la_demande"
+            ],
+            "success_criteria": [
+              "Argumentation ou implications comprises avec précision"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "analyse_ecrite",
+              "argumentation_nuancee"
+            ],
+            "correction_requirements": [
+              "evaluation_qualitative_par_criteres_de_nuance",
+              "revue_humaine_recommandee_si_contenu_civique_ou_sensible"
+            ]
+          },
+          "transformation_id": "A2_TO_B2",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "interpréter",
+            "analyser",
+            "synthetiser",
             "nuancer"
           ],
-          "autonomy": "forte",
-          "guidance": "minimal",
+          "autonomy": "tres_forte",
+          "guidance": "a_la_demande",
           "trainer_preview_required": true,
           "interactive": true,
           "needs_content_review": true
@@ -3394,12 +6389,49 @@
           "source_level": "A2",
           "target_level": "B2",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "B2",
+            "cognitive_operations": [
+              "moduler",
+              "expliquer_effet"
+            ],
+            "guidance": "a_la_demande",
+            "autonomy": "tres_forte",
+            "allowed_formats": [
+              "transformation"
+            ],
+            "forbidden_formats": [
+              "complexite_lexicale_sans_enjeu_cognitif",
+              "ajout_mecanique_de_questions"
+            ],
+            "scaffolds": [
+              "aucun_etayage_supplementaire"
+            ],
+            "success_criteria": [
+              "Précision et effet discursif"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "modulation_avec_explication_effet"
+            ],
+            "correction_requirements": [
+              "evaluation_qualitative_par_criteres_de_nuance",
+              "revue_humaine_recommandee_si_contenu_civique_ou_sensible"
+            ]
+          },
+          "transformation_id": "A2_TO_B2",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "interpréter",
-            "nuancer"
+            "moduler",
+            "expliquer_effet"
           ],
-          "autonomy": "forte",
-          "guidance": "minimal",
+          "autonomy": "tres_forte",
+          "guidance": "a_la_demande",
           "trainer_preview_required": true,
           "interactive": true,
           "needs_content_review": true
@@ -3477,12 +6509,51 @@
           "source_level": "A2",
           "target_level": "B2",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "B2",
+            "cognitive_operations": [
+              "defendre",
+              "nuancer",
+              "reformuler"
+            ],
+            "guidance": "a_la_demande",
+            "autonomy": "tres_forte",
+            "allowed_formats": [
+              "production_orale"
+            ],
+            "forbidden_formats": [
+              "complexite_lexicale_sans_enjeu_cognitif",
+              "ajout_mecanique_de_questions"
+            ],
+            "scaffolds": [
+              "criteres_seuls"
+            ],
+            "success_criteria": [
+              "Spontanéité, registre, précision, contre-argument"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "interaction_autonome_nuancee"
+            ],
+            "correction_requirements": [
+              "evaluation_qualitative_par_criteres_de_nuance",
+              "revue_humaine_recommandee_si_contenu_civique_ou_sensible"
+            ]
+          },
+          "transformation_id": "A2_TO_B2",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "interpréter",
-            "nuancer"
+            "defendre",
+            "nuancer",
+            "reformuler"
           ],
-          "autonomy": "forte",
-          "guidance": "minimal",
+          "autonomy": "tres_forte",
+          "guidance": "a_la_demande",
           "trainer_preview_required": true,
           "interactive": true,
           "needs_content_review": false
@@ -3618,8 +6689,57 @@
           "source_level": "A2",
           "target_level": "A1",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A1",
+            "cognitive_operations": [
+              "reperer",
+              "identifier",
+              "associer"
+            ],
+            "guidance": "fort",
+            "autonomy": "faible",
+            "allowed_formats": [
+              "qcm",
+              "vrai_faux",
+              "appariement",
+              "texte_lacunaire"
+            ],
+            "forbidden_formats": [
+              "argumentation_libre",
+              "redaction_libre_non_preparee",
+              "tache_vague"
+            ],
+            "scaffolds": [
+              "lexique",
+              "pictogramme",
+              "surlignage",
+              "exemple_resolu"
+            ],
+            "success_criteria": [
+              "Informations explicites correctement localisées"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "selection_qcm",
+              "association",
+              "vrai_faux"
+            ],
+            "correction_requirements": [
+              "correction_automatique_admise_si_mesure_reelle",
+              "pas_de_jugement_de_nuance_attendu",
+              "feedback_immediat_non_sanctionnant"
+            ]
+          },
+          "transformation_id": "A2_TO_A1",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "repérer",
+            "reperer",
+            "identifier",
             "associer"
           ],
           "autonomy": "faible",
@@ -3759,8 +6879,48 @@
           "source_level": "A2",
           "target_level": "A2",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A2",
+            "cognitive_operations": [
+              "comprendre_globalement",
+              "reformuler"
+            ],
+            "guidance": "moyen",
+            "autonomy": "moyenne",
+            "allowed_formats": [
+              "qcm",
+              "texte_lacunaire",
+              "appariement"
+            ],
+            "forbidden_formats": [
+              "tache_vague",
+              "questions_artificiellement_accumulees"
+            ],
+            "scaffolds": [
+              "glossaire_cible"
+            ],
+            "success_criteria": [
+              "Informations essentielles organisées"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "reponse_courte_organisee",
+              "reformulation_guidee"
+            ],
+            "correction_requirements": [
+              "correction_automatique_ou_grille_simple",
+              "feedback_oriente_reformulation"
+            ]
+          },
+          "transformation_id": "IDENTITY",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "extraire",
+            "comprendre_globalement",
             "reformuler"
           ],
           "autonomy": "moyenne",
@@ -3900,8 +7060,51 @@
           "source_level": "A2",
           "target_level": "B1",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "B1",
+            "cognitive_operations": [
+              "inferer",
+              "comparer",
+              "justifier"
+            ],
+            "guidance": "faible",
+            "autonomy": "forte",
+            "allowed_formats": [
+              "texte_lacunaire",
+              "qcm",
+              "production_ecrite",
+              "appariement"
+            ],
+            "forbidden_formats": [
+              "questions_artificiellement_accumulees"
+            ],
+            "scaffolds": [
+              "criteres_reussite",
+              "relecture"
+            ],
+            "success_criteria": [
+              "Relations et intention expliquées"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "reponse_justifiee",
+              "synthese_courte"
+            ],
+            "correction_requirements": [
+              "grille_de_criteres_explicite",
+              "correction_peut_etre_differee_ou_par_sous_groupe"
+            ]
+          },
+          "transformation_id": "A2_TO_B1",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "relier",
+            "inferer",
+            "comparer",
             "justifier"
           ],
           "autonomy": "forte",
@@ -4041,12 +7244,55 @@
           "source_level": "A2",
           "target_level": "B2",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "B2",
+            "cognitive_operations": [
+              "analyser",
+              "synthetiser",
+              "nuancer"
+            ],
+            "guidance": "a_la_demande",
+            "autonomy": "tres_forte",
+            "allowed_formats": [
+              "production_ecrite",
+              "qcm",
+              "appariement",
+              "texte_lacunaire"
+            ],
+            "forbidden_formats": [
+              "complexite_lexicale_sans_enjeu_cognitif",
+              "ajout_mecanique_de_questions"
+            ],
+            "scaffolds": [
+              "aides_a_la_demande"
+            ],
+            "success_criteria": [
+              "Argumentation ou implications comprises avec précision"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "analyse_ecrite",
+              "argumentation_nuancee"
+            ],
+            "correction_requirements": [
+              "evaluation_qualitative_par_criteres_de_nuance",
+              "revue_humaine_recommandee_si_contenu_civique_ou_sensible"
+            ]
+          },
+          "transformation_id": "A2_TO_B2",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "interpréter",
+            "analyser",
+            "synthetiser",
             "nuancer"
           ],
-          "autonomy": "forte",
-          "guidance": "minimal",
+          "autonomy": "tres_forte",
+          "guidance": "a_la_demande",
           "trainer_preview_required": true,
           "interactive": true,
           "needs_content_review": false
@@ -4092,9 +7338,51 @@
           "source_level": "A2",
           "target_level": "A1",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A1",
+            "cognitive_operations": [
+              "completer",
+              "produire_phrases_fonctionnelles"
+            ],
+            "guidance": "fort",
+            "autonomy": "faible",
+            "allowed_formats": [
+              "texte_lacunaire",
+              "production_ecrite"
+            ],
+            "forbidden_formats": [
+              "redaction_libre_non_preparee",
+              "argumentation_libre"
+            ],
+            "scaffolds": [
+              "banque_de_mots",
+              "modele",
+              "canevas"
+            ],
+            "success_criteria": [
+              "Intelligibilité et informations essentielles"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "texte_lacunaire",
+              "phrase_courte_fonctionnelle"
+            ],
+            "correction_requirements": [
+              "correction_automatique_admise_si_mesure_reelle",
+              "pas_de_jugement_de_nuance_attendu",
+              "feedback_immediat_non_sanctionnant"
+            ]
+          },
+          "transformation_id": "A2_TO_A1",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "repérer",
-            "associer"
+            "completer",
+            "produire_phrases_fonctionnelles"
           ],
           "autonomy": "faible",
           "guidance": "fort",
@@ -4143,9 +7431,49 @@
           "source_level": "A2",
           "target_level": "A2",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A2",
+            "cognitive_operations": [
+              "raconter",
+              "decrire",
+              "demander"
+            ],
+            "guidance": "moyen",
+            "autonomy": "moyenne",
+            "allowed_formats": [
+              "texte_lacunaire",
+              "production_ecrite"
+            ],
+            "forbidden_formats": [
+              "tache_vague"
+            ],
+            "scaffolds": [
+              "structure_proposee",
+              "connecteurs_usuels"
+            ],
+            "success_criteria": [
+              "Adéquation, cohérence simple, lexique pertinent"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "message_organise_semi_guide"
+            ],
+            "correction_requirements": [
+              "correction_automatique_ou_grille_simple",
+              "feedback_oriente_reformulation"
+            ]
+          },
+          "transformation_id": "IDENTITY",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "extraire",
-            "reformuler"
+            "raconter",
+            "decrire",
+            "demander"
           ],
           "autonomy": "moyenne",
           "guidance": "moyen",
@@ -4182,9 +7510,49 @@
           "source_level": "A2",
           "target_level": "A2",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "A2",
+            "cognitive_operations": [
+              "raconter",
+              "decrire",
+              "demander"
+            ],
+            "guidance": "moyen",
+            "autonomy": "moyenne",
+            "allowed_formats": [
+              "texte_lacunaire",
+              "production_ecrite"
+            ],
+            "forbidden_formats": [
+              "tache_vague"
+            ],
+            "scaffolds": [
+              "structure_proposee",
+              "connecteurs_usuels"
+            ],
+            "success_criteria": [
+              "Adéquation, cohérence simple, lexique pertinent"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "message_organise_semi_guide"
+            ],
+            "correction_requirements": [
+              "correction_automatique_ou_grille_simple",
+              "feedback_oriente_reformulation"
+            ]
+          },
+          "transformation_id": "IDENTITY",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "extraire",
-            "reformuler"
+            "raconter",
+            "decrire",
+            "demander"
           ],
           "autonomy": "moyenne",
           "guidance": "moyen",
@@ -4221,9 +7589,48 @@
           "source_level": "A2",
           "target_level": "B1",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "B1",
+            "cognitive_operations": [
+              "expliquer",
+              "justifier",
+              "developper"
+            ],
+            "guidance": "faible",
+            "autonomy": "forte",
+            "allowed_formats": [
+              "production_ecrite"
+            ],
+            "forbidden_formats": [
+              "questions_artificiellement_accumulees"
+            ],
+            "scaffolds": [
+              "plan_possible",
+              "grille"
+            ],
+            "success_criteria": [
+              "Cohérence, justification, correction suffisante"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "texte_structure_justifie"
+            ],
+            "correction_requirements": [
+              "grille_de_criteres_explicite",
+              "correction_peut_etre_differee_ou_par_sous_groupe"
+            ]
+          },
+          "transformation_id": "A2_TO_B1",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "relier",
-            "justifier"
+            "expliquer",
+            "justifier",
+            "developper"
           ],
           "autonomy": "forte",
           "guidance": "faible",
@@ -4260,9 +7667,48 @@
           "source_level": "A2",
           "target_level": "B1",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "B1",
+            "cognitive_operations": [
+              "expliquer",
+              "justifier",
+              "developper"
+            ],
+            "guidance": "faible",
+            "autonomy": "forte",
+            "allowed_formats": [
+              "production_ecrite"
+            ],
+            "forbidden_formats": [
+              "questions_artificiellement_accumulees"
+            ],
+            "scaffolds": [
+              "plan_possible",
+              "grille"
+            ],
+            "success_criteria": [
+              "Cohérence, justification, correction suffisante"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "texte_structure_justifie"
+            ],
+            "correction_requirements": [
+              "grille_de_criteres_explicite",
+              "correction_peut_etre_differee_ou_par_sous_groupe"
+            ]
+          },
+          "transformation_id": "A2_TO_B1",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "relier",
-            "justifier"
+            "expliquer",
+            "justifier",
+            "developper"
           ],
           "autonomy": "forte",
           "guidance": "faible",
@@ -4299,12 +7745,51 @@
           "source_level": "A2",
           "target_level": "B2",
           "competence_invariante": null,
+          "referential_version": "1.0",
+          "level_contract": {
+            "target_level": "B2",
+            "cognitive_operations": [
+              "argumenter",
+              "nuancer",
+              "adapter_registre"
+            ],
+            "guidance": "a_la_demande",
+            "autonomy": "tres_forte",
+            "allowed_formats": [
+              "production_ecrite"
+            ],
+            "forbidden_formats": [
+              "complexite_lexicale_sans_enjeu_cognitif",
+              "ajout_mecanique_de_questions"
+            ],
+            "scaffolds": [
+              "criteres_seuls"
+            ],
+            "success_criteria": [
+              "Précision, nuance, cohésion, efficacité pragmatique"
+            ],
+            "duration_policy": {
+              "mode": "warning",
+              "target_seconds": null,
+              "calibration_id": null
+            },
+            "response_types": [
+              "texte_autonome_argumente"
+            ],
+            "correction_requirements": [
+              "evaluation_qualitative_par_criteres_de_nuance",
+              "revue_humaine_recommandee_si_contenu_civique_ou_sensible"
+            ]
+          },
+          "transformation_id": "A2_TO_B2",
+          "applied_transformations": [],
           "cognitive_operations": [
-            "interpréter",
-            "nuancer"
+            "argumenter",
+            "nuancer",
+            "adapter_registre"
           ],
-          "autonomy": "forte",
-          "guidance": "minimal",
+          "autonomy": "tres_forte",
+          "guidance": "a_la_demande",
           "trainer_preview_required": true,
           "interactive": true,
           "needs_content_review": false

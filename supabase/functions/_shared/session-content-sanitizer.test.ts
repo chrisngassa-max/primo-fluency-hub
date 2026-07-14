@@ -78,6 +78,18 @@ describe("session-content-sanitizer — relecture indépendante point 1/10", () 
     expect(Object.keys(sanitized).sort()).toEqual(["justification_prompt", "options", "question"].sort());
   });
 
+  it("laisse passer indice (étayage A1 réel) mais jamais correction/preuve_support/erreur_diagnostiquee (hors liste blanche)", () => {
+    const raw = {
+      question: "Q",
+      options: ["A", "B", "C"],
+      indice: "Elle se présente : « Je m'appelle Awa. Awa Diallo. »",
+      correction: { bonne_reponse: "A", preuve_support: "citation secrète" },
+    };
+    const sanitized = sanitizeItem(raw as any);
+    expect(sanitized.indice).toBe(raw.indice);
+    expect(sanitized).not.toHaveProperty("correction");
+  });
+
   it("laisse passer justification_required et justification_type (pilotage UI, jamais un corrigé)", () => {
     const raw = {
       question: "Q",

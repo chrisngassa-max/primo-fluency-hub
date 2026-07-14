@@ -5,6 +5,12 @@ import type {
   LearnerSessionBlock,
   SubmitAnswerResponse,
 } from "@/lib/curriculum/learnerSession";
+// Même sanitizer (liste BLANCHE) que le vrai parcours de séance
+// (get-seance-content) — jamais une seconde exclusion de clés dupliquée ici :
+// c'est exactement ce type de duplication qui avait laissé fuiter le
+// nouveau champ `correction` (Lot 2) via ce chemin de démo avant ce
+// correctif (JSON.stringify(...).not.toContain("bonne_reponse") le prouve).
+import { sanitizeItem } from "../../../supabase/functions/_shared/session-content-sanitizer.ts";
 
 export type DemoLevel = "A1" | "A2" | "B1" | "B2";
 
@@ -100,7 +106,7 @@ export async function fetchS01DemoContent(level: DemoLevel): Promise<{
       niveau_vise: exercise.niveau_vise,
       civic_content: Boolean(exercise.civic_content),
       is_bonus: false,
-      items: exercise.contenu.items.map(({ bonne_reponse: _answer, explication: _explanation, ...item }) => item),
+      items: exercise.contenu.items.map((item) => sanitizeItem(item)),
       my_attempt: attempt
         ? { attempt_id: attempt.attempt_id, status: attempt.status, correction_released: attempt.released }
         : null,

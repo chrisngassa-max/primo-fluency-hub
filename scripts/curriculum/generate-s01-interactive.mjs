@@ -1,6 +1,12 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  getDifferentiationLevelContracts,
+  getDifferentiationTransformationRule,
+  getLevelContract,
+  parseDifferentiationLevelStrict,
+} from "./lib/differentiation-referential.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const DATA_PATH = join(ROOT, "content", "curriculum", "v2", "S01-v3", "s01-v3-data.json");
@@ -84,21 +90,88 @@ function expandGrammarPoint(point) {
     .filter((entry) => entry.bonne_reponse && !/^\(.*\)$/.test(entry.bonne_reponse));
 }
 
+// ------------------------------------------------------------
+// Différenciation réelle : garde-fous et corrections communs (Lot 2).
+// ------------------------------------------------------------
+
+// Réduit un jeu d'options à `maxOptions` en GARANTISSANT que la bonne
+// réponse y figure toujours (jamais un options.slice(0, n) aveugle qui
+// pourrait la couper si elle n'est pas dans les n premières). Les
+// distracteurs retenus sont les options réelles déjà rédigées dans la
+// source (pas des inventions), dans leur ordre d'origine.
+function ensureAnswerInOptions(allOptions, correctAnswer, maxOptions) {
+  if (!Array.isArray(allOptions) || allOptions.length <= maxOptions) return allOptions;
+  const distractors = allOptions.filter((option) => option !== correctAnswer).slice(0, Math.max(0, maxOptions - 1));
+  const options = [...distractors];
+  const insertAt = options.length > 0 ? allOptions.indexOf(correctAnswer) % (options.length + 1) : 0;
+  options.splice(Math.max(0, insertAt), 0, correctAnswer);
+  return options;
+}
+
+// Correction serveur d'un item fermé (QCM/vrai_faux/appariement/etc.) :
+// jamais envoyée au client avant libération (le champ `correction` n'est
+// pas dans la liste blanche du sanitizer). `preuve` est toujours une
+// citation réelle déjà présente dans la source (justification/explication
+// du gabarit d'origine) — jamais un texte inventé au cas par cas.
+function closedItemCorrection({ options, bonneReponse, preuve }) {
+  const distracteurs = (options ?? []).filter((option) => option !== bonneReponse);
+  return {
+    bonne_reponse: bonneReponse,
+    preuve_support: preuve ?? null,
+    explication_distracteurs: preuve
+      ? distracteurs.map((option) => `« ${option} » ne correspond pas à ce qu'indique le support : « ${preuve} ».`)
+      : [],
+    // Catégorie générique honnête (mécanique, pas une analyse bespoke par
+    // distracteur) : ces distracteurs proviennent tous d'une confusion
+    // possible entre deux informations présentes dans le support — cf.
+    // rapport de référence §8.
+    erreur_diagnostiquee: "confusion_information_presente",
+    remediation: preuve
+      ? `Relisez la phrase du support : « ${preuve} » puis répondez à nouveau.`
+      : "Relisez le support puis répondez à nouveau.",
+  };
+}
+
+// Correction serveur d'une justification ouverte (companion B1/B2) :
+// dérivée mécaniquement de la même preuve réelle que closedItemCorrection
+// (pas d'analyse pédagogique bespoke par item — limite documentée dans le
+// rapport de mission).
+function openJustificationCorrection(preuve) {
+  return {
+    elements_attendus: preuve ? [preuve] : [],
+    formulations_acceptables: preuve ? [preuve] : [],
+    exemple_non_exclusif: preuve ?? null,
+    erreurs_frequentes: ["justification absente ou trop vague", "justification sans lien avec le passage cité"],
+    remediation: preuve
+      ? `Citez ou reformulez précisément : « ${preuve} ».`
+      : "Citez un passage précis du support pour justifier votre réponse.",
+    criteres_evaluation: [
+      "cite ou reformule fidèlement un élément réel du support",
+      "relie explicitement la citation à la réponse donnée",
+    ],
+  };
+}
+
 function exercise({
   code, title, competence, format, level, instruction, items, source,
   duration = 420, familyId = null, extensionOf = null, activityCode = null,
-  civicContent = false, civicFactIds = [],
+  civicContent = false, civicFactIds = [], appliedTransformations = [],
+  sourceLevel = "A2",
 }) {
+  const strictLevel = parseDifferentiationLevelStrict(level);
   if (!SUPPORTED_FORMATS.has(format)) throw new Error(`Format non supporté: ${format}`);
   const belowFloor = AUTO_CORRECTED_FORMATS.has(format) && items.length < MIN_AUTO_CORRECTED_ITEMS;
+  const levelContract = getLevelContract(competence, strictLevel);
+  const transformation = getDifferentiationTransformationRule(sourceLevel, strictLevel);
+  const referential = getDifferentiationLevelContracts();
   return {
-    metadata_code: `cv2:S01:v3:${code}:${level}`,
+    metadata_code: `cv2:S01:v3:${code}:${strictLevel}`,
     titre: title,
     consigne: instruction,
     competence,
     format,
-    niveau_vise: level,
-    difficulte: { A1: 2, A2: 4, B1: 6, B2: 8 }[level],
+    niveau_vise: strictLevel,
+    difficulte: { A1: 2, A2: 4, B1: 6, B2: 8 }[strictLevel],
     duree_limite_secondes: duration,
     source,
     family_id: familyId,
@@ -110,17 +183,23 @@ function exercise({
       metadata: {
         session_code: "S01",
         activity_code: activityCode,
-        source_level: "A2",
-        target_level: level,
+        source_level: sourceLevel,
+        target_level: strictLevel,
         competence_invariante: familyId ? competence : null,
-        cognitive_operations: {
-          A1: ["repérer", "associer"],
-          A2: ["extraire", "reformuler"],
-          B1: ["relier", "justifier"],
-          B2: ["interpréter", "nuancer"],
-        }[level],
-        autonomy: { A1: "faible", A2: "moyenne", B1: "forte", B2: "forte" }[level],
-        guidance: { A1: "fort", A2: "moyen", B1: "faible", B2: "minimal" }[level],
+        // Référentiel réellement consommé (Lot 1), plus la carte littérale
+        // remplacée : cognitive_operations/autonomy/guidance viennent de
+        // getLevelContract(competence, level), pas d'une carte figée ici.
+        referential_version: referential.schema_version,
+        level_contract: levelContract,
+        transformation_id: transformation?.id ?? null,
+        // Preuves structurées des transformations RÉELLEMENT appliquées à
+        // cet exercice (champ modifié, pas une simple métadonnée déclarée) —
+        // vide pour les familles où seul le branchement métadonnée a été
+        // fait sans réécriture de contenu à ce lot.
+        applied_transformations: appliedTransformations,
+        cognitive_operations: levelContract?.cognitive_operations ?? [],
+        autonomy: levelContract?.autonomy ?? null,
+        guidance: levelContract?.guidance ?? null,
         trainer_preview_required: true,
         interactive: true,
         // Documente honnêtement un manque de matière première réel
@@ -231,20 +310,80 @@ export async function buildInteractiveS01() {
     }));
   }
 
+  // Lot 2 — co-dialogue : les 10 questions du QCM TCF restent servies à
+  // tous les niveaux (même nombre d'items). Seules Q9 (devoir) et Q10
+  // (règle) portent, dans la même réplique de Mme Rossi, un contraste
+  // explicite entre deux notions voisines — les seules à supporter
+  // réellement une nuance B2 au-delà de la justification. Pour les 8
+  // autres (identification/chiffres factuels), aucune implication,
+  // intention ou registre n'est présent dans le dialogue :
+  // DIFF_TRANSFORMATION_NOT_SUPPORTED est déclaré plutôt qu'inventé.
+  const CO_DIALOGUE_NUANCE_SUPPORTED_IDS = new Set([9, 10]);
+
   for (const level of LEVELS) {
-    // co-dialogue (QCM TCF, 10 questions A/B/C/D) : les 10 questions
-    // sont désormais servies à TOUS les niveaux (avant : 4/10/6/5
-    // selon le niveau, une réduction artificielle du nombre d'items
-    // qui violait le plancher de densité). La différenciation se fait
-    // par le nombre d'options (3 pour A1) et l'exigence de
-    // justification (B1/B2), pas par la suppression d'items.
-    const coItems = data.qcm_tcf.questions.map((question) => ({
-      ...itemFrom(question),
-      options: level === "A1" ? question.options.slice(0, 3) : question.options,
-      justification_attendue: level === "B1" || level === "B2"
-        ? "Justifiez le choix à partir d'un indice précis du support."
-        : undefined,
-    }));
+    const coAppliedTransformations = [];
+    const coItems = data.qcm_tcf.questions.map((question, index) => {
+      const preuve = question.justification ?? null;
+      const item = { ...itemFrom(question) };
+
+      if (level === "A1") {
+        // Jamais options.slice(0, 3) aveugle : la bonne réponse est
+        // garantie dans les options réduites, les distracteurs retenus
+        // sont deux options réelles déjà rédigées (pas inventées).
+        const reduced = ensureAnswerInOptions(question.options, question.reponse, 3);
+        item.options = reduced;
+        // Indice explicite dérivé de la justification réelle déjà rédigée
+        // (annotation/surlignage du support, cf. A2_TO_A1 allowed:
+        // "highlight"). Jamais la correction elle-même.
+        item.indice = preuve;
+        coAppliedTransformations.push({
+          rule_id: "A2_TO_A1",
+          applied_to: `items[${index}].indice`,
+          evidence: `Indice affiché dérivé de la justification réelle de la question ${question.id} ; options réduites à ${reduced.length} avec bonne réponse garantie.`,
+        });
+      } else if (level === "B1") {
+        item.justification_required = true;
+        item.justification_type = "support_evidence";
+        item.justification_prompt = "Justifiez votre choix en citant précisément un mot ou une phrase entendue dans le dialogue.";
+        coAppliedTransformations.push({
+          rule_id: "A2_TO_B1",
+          applied_to: `items[${index}].justification_prompt`,
+          evidence: `Justification obligatoire ajoutée (justification_required=true), appuyée sur le support réel de la question ${question.id}.`,
+        });
+      } else if (level === "B2") {
+        item.justification_required = true;
+        if (CO_DIALOGUE_NUANCE_SUPPORTED_IDS.has(question.id)) {
+          item.justification_type = "nuance";
+          item.justification_prompt = "Justifiez votre choix et précisez, avec les mots de Mme Rossi, en quoi cette notion se distingue de la notion voisine (droit/devoir/règle).";
+          coAppliedTransformations.push({
+            rule_id: "A2_TO_B2",
+            applied_to: `items[${index}].justification_prompt`,
+            evidence: `Nuance demandée : le dialogue oppose explicitement droit/devoir/règle dans la même réplique (question ${question.id}) — support suffisant, aucune invention.`,
+          });
+        } else {
+          item.justification_type = "support_evidence";
+          item.justification_prompt = "Justifiez votre choix en citant précisément un mot ou une phrase entendue dans le dialogue.";
+          coAppliedTransformations.push({
+            rule_id: "DIFF_TRANSFORMATION_NOT_SUPPORTED",
+            applied_to: `items[${index}].justification_prompt`,
+            evidence: `Aucune implication/intention/registre n'est présente dans le support pour la question ${question.id} : justification simple maintenue plutôt qu'inventée.`,
+          });
+        }
+      }
+
+      // Correction serveur (jamais transmise au client avant libération —
+      // "correction" est hors liste blanche du sanitizer).
+      item.correction = closedItemCorrection({
+        options: item.options ?? question.options,
+        bonneReponse: question.reponse,
+        preuve,
+      });
+      if (item.justification_prompt) {
+        item.correction.justification_ouverte = openJustificationCorrection(preuve);
+      }
+      return item;
+    });
+
     exercises.push(exercise({
       code: "co-dialogue",
       title: "Comprendre le dialogue d'accueil",
@@ -257,6 +396,7 @@ export async function buildInteractiveS01() {
       duration: level === "A1" ? 600 : 480,
       familyId: "S01_CO_ACCUEIL_01",
       activityCode: "S01.CO",
+      appliedTransformations: coAppliedTransformations,
     }));
 
     // co-comprehension : 20 questions/micro-tâches sur le dialogue

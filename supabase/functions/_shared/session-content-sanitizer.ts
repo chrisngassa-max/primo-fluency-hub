@@ -16,8 +16,15 @@
  *     tant que ce champ est vide (contrat B1/B2) — revérifié côté serveur ;
  *   - justification_type    : nuance du type de justification attendu
  *     (ex. "justification" vs "nuance"), purement informatif pour l'UI.
+ * `indice` (Lot 2, étayage A1) est un extrait RÉEL déjà rédigé dans la
+ * source (jamais généré), affiché en amont pour aider à repérer la bonne
+ * réponse (annotation/surlignage du support — cf. transformation A2_TO_A1
+ * "highlight"). Distinct de `bonne_reponse`/`correction` : il pointe vers un
+ * passage du support, jamais vers "quelle option choisir".
+ *
  * Volontairement ajoutés à la liste blanche — ne jamais y ajouter
- * justification_attendue/bonne_reponse/explication/criteres_evaluation/etc.
+ * justification_attendue/bonne_reponse/explication/criteres_evaluation/
+ * correction/etc.
  */
 
 export interface RawItem {
@@ -26,6 +33,7 @@ export interface RawItem {
   enonce?: string;
   consigne?: string;
   options?: string[];
+  indice?: string;
   justification_prompt?: string;
   justification_required?: boolean;
   justification_type?: string;
@@ -43,13 +51,14 @@ export interface SanitizedItem {
   enonce?: string;
   consigne?: string;
   options?: string[];
+  indice?: string;
   justification_prompt?: string;
   justification_required?: boolean;
   justification_type?: string;
 }
 
 const ALLOWED_ITEM_KEYS = [
-  "question", "texte", "enonce", "consigne", "options",
+  "question", "texte", "enonce", "consigne", "options", "indice",
   "justification_prompt", "justification_required", "justification_type",
 ] as const;
 
