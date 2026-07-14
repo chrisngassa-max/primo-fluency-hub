@@ -25,6 +25,7 @@ export interface StoredItemResult {
   answer_correct?: boolean;
   explication?: string | null;
   learner_justification?: string | null;
+  hint_used?: boolean;
   justification_status?: string;
   justification_score?: number | null;
   justification_feedback?: string;
@@ -46,6 +47,7 @@ const ALLOWED_RELEASED_KEYS = [
   "answer_correct",
   "explication",
   "learner_justification",
+  "hint_used",
   "justification_status",
   "justification_score",
   "justification_feedback",

@@ -42,6 +42,12 @@ export default function SeanceApprenant() {
   // contrat B1/B2) — jamais fusionnée dans `answers` avant la soumission,
   // pour ne jamais perdre l'une en modifiant l'autre.
   const [justifications, setJustifications] = useState<Record<number, string>>({});
+  // Lot 2.1, point 2 : un indice n'est jamais affiché automatiquement — ce
+  // state trace, par item, si l'apprenant a cliqué "Voir un indice". Envoyé
+  // au serveur (hint_used) et conservé dans la tentative/le reporting : un
+  // résultat aidé n'est jamais traité comme équivalent à un résultat
+  // autonome.
+  const [hintsRevealed, setHintsRevealed] = useState<Record<number, boolean>>({});
   const [lockedItems, setLockedItems] = useState<Set<number>>(new Set());
   const [justSubmitted, setJustSubmitted] = useState(false);
   const [justificationError, setJustificationError] = useState<string | null>(null);
@@ -83,6 +89,7 @@ export default function SeanceApprenant() {
     setItemIndex(0);
     setAnswers({});
     setJustifications({});
+    setHintsRevealed({});
     setLockedItems(new Set());
     setJustSubmitted(false);
     setJustificationError(null);
@@ -143,9 +150,14 @@ export default function SeanceApprenant() {
     // uniquement une confirmation de complétion (voir submitSeanceAnswer).
     // Score et correction sont TOUJOURS recalculés côté serveur ; ce client
     // n'envoie jamais de score.
-    const allIndexes = new Set([...Object.keys(answers), ...Object.keys(justifications)].map(Number));
+    const allIndexes = new Set(
+      [...Object.keys(answers), ...Object.keys(justifications), ...Object.keys(hintsRevealed)].map(Number),
+    );
     const payloadAnswers = Object.fromEntries(
-      [...allIndexes].map((idx) => [idx, buildStructuredAnswer(answers[idx] ?? "", justifications[idx] ?? "")]),
+      [...allIndexes].map((idx) => [
+        idx,
+        buildStructuredAnswer(answers[idx] ?? "", justifications[idx] ?? "", hintsRevealed[idx] === true),
+      ]),
     );
 
     try {
@@ -287,6 +299,8 @@ export default function SeanceApprenant() {
                     if (justificationError) setJustificationError(null);
                   }}
                   justificationError={justificationError}
+                  hintRevealed={hintsRevealed[itemIndex] === true}
+                  onRevealHint={() => setHintsRevealed((prev) => ({ ...prev, [itemIndex]: true }))}
                   onValidate={handleValidateItem}
                 />
                 {submitError && (
@@ -316,11 +330,13 @@ export default function SeanceApprenant() {
 
 export function ExerciseItemForm({
   item, index, total, locked, value, onChange,
-  justificationValue, onJustificationChange, justificationError, onValidate,
+  justificationValue, onJustificationChange, justificationError,
+  hintRevealed, onRevealHint, onValidate,
 }: {
   item: {
     question?: string; texte?: string; enonce?: string; options?: string[];
     justification_prompt?: string; justification_required?: boolean;
+    indice?: string; banque_mots?: string[];
   };
   index: number;
   total: number;
@@ -330,11 +346,15 @@ export function ExerciseItemForm({
   justificationValue: string;
   onJustificationChange: (value: string) => void;
   justificationError?: string | null;
+  hintRevealed: boolean;
+  onRevealHint: () => void;
   onValidate: () => void;
 }) {
   const question = item.question ?? item.texte ?? item.enonce ?? `Question ${index + 1}`;
   const options = Array.isArray(item.options) ? item.options : null;
   const needsJustification = Boolean(item.justification_prompt);
+  const hasHint = Boolean(item.indice);
+  const hasWordBank = Array.isArray(item.banque_mots) && item.banque_mots.length > 0;
   // Le bouton reste cliquable dès que la réponse principale est saisie,
   // même si la justification obligatoire manque : c'est handleValidateItem
   // (au clic) qui bloque la progression et affiche une erreur pédagogique
@@ -345,6 +365,44 @@ export function ExerciseItemForm({
   return (
     <div className="space-y-3">
       <p className="font-medium">{question}</p>
+
+      {hasWordBank && (
+        <div className="space-y-1.5">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Banque de mots</p>
+          {/* flex-wrap : chaque mot s'enroule sur une nouvelle ligne sur
+              petit écran plutôt que de déborder ou d'obliger un défilement
+              horizontal (Lot 2.1, point 2 : présentation utilisable sur
+              téléphone). L'ordre vient du générateur (alphabétique, jamais
+              l'ordre des trous) : jamais réordonné ici. */}
+          <div className="flex flex-wrap gap-2" role="list" aria-label="Banque de mots">
+            {item.banque_mots!.map((word) => (
+              <span
+                key={word}
+                role="listitem"
+                className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-sm text-blue-900 dark:border-blue-900 dark:bg-blue-950/30 dark:text-blue-200"
+              >
+                {word}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {hasHint && (
+        <div>
+          {!hintRevealed ? (
+            <Button type="button" variant="outline" size="sm" onClick={onRevealHint} disabled={locked}>
+              Voir un indice
+            </Button>
+          ) : (
+            <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-200">
+              <p>{item.indice}</p>
+              <p className="mt-1 text-xs opacity-80">Indice utilisé — cette aide est enregistrée avec ta réponse.</p>
+            </div>
+          )}
+        </div>
+      )}
+
       {options ? (
         <RadioGroup value={value} onValueChange={onChange} disabled={locked}>
           {options.map((option) => (
@@ -407,22 +465,45 @@ export function CorrectionGate({
   }
 
   const entries = Object.values(correction.item_results ?? {});
+  const OVERALL_STATUS_LABELS: Record<string, string> = {
+    complete: "Réussite complète",
+    partial: "Bonne réponse, justification insuffisante",
+    provisional: "En attente de correction (justification à revoir)",
+    incorrect: "Réponse incorrecte",
+  };
   return (
     <div className="space-y-3">
       {!correction.correction_viewed_at && (
         <Button size="sm" variant="outline" onClick={onViewCorrection}>Marquer la correction comme vue</Button>
       )}
-      {entries.map((entry, index) => (
-        <div key={index} className={`rounded-lg border p-3 text-sm ${entry.correct ? "border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950/20" : "border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/20"}`}>
-          <p className="font-medium">{entry.question}</p>
-          <p className="mt-1">Ta réponse : <span className={entry.correct ? "text-green-700 dark:text-green-400" : "text-red-700 underline dark:text-red-400"}>{entry.reponse_donnee || "(vide)"}</span></p>
-          {entry.learner_justification && (
-            <p className="mt-1">Ta justification : <span className="text-muted-foreground">{entry.learner_justification}</span></p>
-          )}
-          {!entry.correct && <p className="text-blue-700 dark:text-blue-400">Réponse attendue : {entry.bonne_reponse}</p>}
-          {entry.explication && <p className="mt-1 text-muted-foreground">{entry.explication}</p>}
-        </div>
-      ))}
+      {entries.map((entry, index) => {
+        const overallStatus = entry.overall_status ?? (entry.correct ? "complete" : "incorrect");
+        const isPositive = overallStatus === "complete";
+        return (
+          <div key={index} className={`rounded-lg border p-3 text-sm ${isPositive ? "border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950/20" : "border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/20"}`}>
+            <p className="font-medium">{entry.question}</p>
+            <p className="mt-1">Ta réponse : <span className={entry.correct ? "text-green-700 dark:text-green-400" : "text-red-700 underline dark:text-red-400"}>{entry.reponse_donnee || "(vide)"}</span></p>
+            {entry.hint_used && (
+              <p className="mt-1 text-xs text-amber-700 dark:text-amber-400">Indice utilisé pour cette question.</p>
+            )}
+            {entry.learner_justification && (
+              <p className="mt-1">Ta justification : <span className="text-muted-foreground">{entry.learner_justification}</span></p>
+            )}
+            {entry.justification_status && entry.justification_status !== "not_required" && (
+              <p className="mt-1 text-xs">
+                <span className="font-semibold">Évaluation de la justification :</span>{" "}
+                {entry.justification_feedback || entry.justification_status}
+                {entry.score_provisional && " (provisoire — en attente de revue)"}
+              </p>
+            )}
+            <p className={`mt-1 text-xs font-semibold ${isPositive ? "text-green-700 dark:text-green-400" : "text-amber-700 dark:text-amber-400"}`}>
+              {OVERALL_STATUS_LABELS[overallStatus] ?? overallStatus}
+            </p>
+            {!entry.correct && <p className="text-blue-700 dark:text-blue-400">Réponse attendue : {entry.bonne_reponse}</p>}
+            {entry.explication && <p className="mt-1 text-muted-foreground">{entry.explication}</p>}
+          </div>
+        );
+      })}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { isStructuredAnswer } from "./justification-guard.ts";
+import { extractHintUsed, isStructuredAnswer } from "./justification-guard.ts";
 import { computeOverallStatus, evaluateJustification, isScoreProvisional } from "./justification-evaluator.ts";
 
 /**
@@ -34,6 +34,13 @@ export interface ServerCorrectionItem {
    * doctrine "correction différée/qualitative" à ces niveaux.
    */
   learner_justification?: string;
+  /**
+   * Lot 2.1, point 2 : l'apprenant a révélé l'indice (bouton "Voir un
+   * indice", jamais automatique) pour cet item. Conservé dans la tentative
+   * et le reporting — un résultat aidé ne doit jamais être traité comme
+   * équivalent à un résultat autonome par les consommateurs de item_results.
+   */
+  hint_used: boolean;
 
   // --- Lot 2.1, point 5 : modèle de résultat qui distingue réellement la
   // correction du choix fermé de l'évaluation de la justification ouverte.
@@ -186,6 +193,7 @@ export async function corrigerExerciceServer(
     const learnerJustification = structuredAnswer
       ? (String((rawAnswer as Record<string, unknown>).justification ?? "").trim() || undefined)
       : undefined;
+    const hintUsed = extractHintUsed(rawAnswer);
     const question = (item.question || item.texte || item.enonce || item.consigne || `Question ${idx + 1}`) as string;
     const bonneReponse = (item.bonne_reponse ?? "").toString();
     const explicationOrig = (item.explication ?? "") as string;
@@ -301,6 +309,7 @@ export async function corrigerExerciceServer(
       criteres_oraux: criteresOraux,
       ai_failed: aiFailedItem || undefined,
       learner_justification: learnerJustification,
+      hint_used: hintUsed,
       // Lot 2.1, point 6 : consommées depuis item.correction (généré par
       // generate-s01-interactive.mjs), jamais recalculées ni inventées ici.
       preuve_support: (item as { correction?: { preuve_support?: string | null } }).correction?.preuve_support ?? null,

@@ -75,6 +75,8 @@ describe("ExerciseItemForm + corrigerExerciceServer — justification B1/B2 test
         justificationValue={lastJustification}
         onJustificationChange={(v) => { lastJustification = v; }}
         justificationError={null}
+        hintRevealed={false}
+        onRevealHint={() => {}}
         onValidate={() => {}}
       />,
     ));
@@ -107,6 +109,8 @@ describe("ExerciseItemForm + corrigerExerciceServer — justification B1/B2 test
         justificationValue={justificationValue}
         onJustificationChange={() => {}}
         justificationError="Merci de justifier votre réponse avant de valider."
+        hintRevealed={false}
+        onRevealHint={() => {}}
         onValidate={() => {}}
       />,
     ));
@@ -151,6 +155,8 @@ describe("ExerciseItemForm + corrigerExerciceServer — justification B1/B2 test
         justificationValue={justificationValue}
         onJustificationChange={(v) => { justificationValue = v; }}
         justificationError={null}
+        hintRevealed={false}
+        onRevealHint={() => {}}
         onValidate={() => {}}
       />,
     ));
@@ -210,5 +216,169 @@ describe("ExerciseItemForm + corrigerExerciceServer — justification B1/B2 test
     // Bonne réponse : "Réponse attendue" ne doit PAS être affiché (seulement
     // pour les réponses fausses).
     expect(container.textContent).not.toContain("Réponse attendue");
+  });
+});
+
+// Lot 2.1, point 2 — étayages réels : bouton "Voir un indice" (jamais
+// automatique, usage tracé) et banque de mots (visible avant la réponse).
+const ITEM_WITH_INDICE = {
+  question: "Comment s'appelle l'apprenante du dialogue ?",
+  options: ["Awa Diallo", "Awa Rossi", "Fatou Diallo"],
+  bonne_reponse: "Awa Diallo",
+  indice: "Écoutez le moment où l'apprenante se présente et donne son nom.",
+};
+
+const ITEM_WITH_WORD_BANK = {
+  question: "Mot manquant 1",
+  banque_mots: ["objectif", "parcours", "règles"],
+};
+
+describe("ExerciseItemForm — indice sur demande et banque de mots (Lot 2.1, point 2)", () => {
+  let container: HTMLDivElement;
+  let root: Root;
+
+  beforeEach(() => {
+    container = document.createElement("div");
+    document.body.appendChild(container);
+    root = createRoot(container);
+  });
+
+  afterEach(() => {
+    act(() => root.unmount());
+    container.remove();
+  });
+
+  it("n'affiche jamais l'indice automatiquement : seul le bouton \"Voir un indice\" est visible au départ", () => {
+    act(() => root.render(
+      <ExerciseItemForm
+        item={ITEM_WITH_INDICE}
+        index={0}
+        total={1}
+        locked={false}
+        value=""
+        onChange={() => {}}
+        justificationValue=""
+        onJustificationChange={() => {}}
+        justificationError={null}
+        hintRevealed={false}
+        onRevealHint={() => {}}
+        onValidate={() => {}}
+      />,
+    ));
+
+    expect(container.textContent).not.toContain(ITEM_WITH_INDICE.indice);
+    const button = Array.from(container.querySelectorAll("button")).find((b) => b.textContent?.includes("Voir un indice"));
+    expect(button).toBeDefined();
+  });
+
+  it("cliquer sur le bouton révèle l'indice réel et déclenche onRevealHint (traçage de l'usage)", () => {
+    let revealed = false;
+
+    act(() => root.render(
+      <ExerciseItemForm
+        item={ITEM_WITH_INDICE}
+        index={0}
+        total={1}
+        locked={false}
+        value=""
+        onChange={() => {}}
+        justificationValue=""
+        onJustificationChange={() => {}}
+        justificationError={null}
+        hintRevealed={revealed}
+        onRevealHint={() => { revealed = true; }}
+        onValidate={() => {}}
+      />,
+    ));
+
+    const button = Array.from(container.querySelectorAll("button")).find((b) => b.textContent?.includes("Voir un indice"))!;
+    act(() => button.dispatchEvent(new MouseEvent("click", { bubbles: true })));
+    expect(revealed).toBe(true);
+
+    // Re-rendu avec hintRevealed=true (comme le ferait le parent après
+    // avoir mis à jour son state) : l'indice devient visible, le bouton
+    // "Voir" disparaît, une mention explicite d'usage de l'aide apparaît.
+    act(() => root.render(
+      <ExerciseItemForm
+        item={ITEM_WITH_INDICE}
+        index={0}
+        total={1}
+        locked={false}
+        value=""
+        onChange={() => {}}
+        justificationValue=""
+        onJustificationChange={() => {}}
+        justificationError={null}
+        hintRevealed={revealed}
+        onRevealHint={() => {}}
+        onValidate={() => {}}
+      />,
+    ));
+    expect(container.textContent).toContain(ITEM_WITH_INDICE.indice);
+    expect(container.textContent).toContain("enregistrée");
+  });
+
+  it("affiche la banque de mots clairement AVANT la réponse (liste réelle, jamais dans l'ordre des trous par construction du générateur)", () => {
+    act(() => root.render(
+      <ExerciseItemForm
+        item={ITEM_WITH_WORD_BANK}
+        index={0}
+        total={3}
+        locked={false}
+        value=""
+        onChange={() => {}}
+        justificationValue=""
+        onJustificationChange={() => {}}
+        justificationError={null}
+        hintRevealed={false}
+        onRevealHint={() => {}}
+        onValidate={() => {}}
+      />,
+    ));
+
+    const wordBankItems = container.querySelectorAll('[role="listitem"]');
+    expect(wordBankItems.length).toBe(3);
+    const words = Array.from(wordBankItems).map((el) => el.textContent);
+    expect(words.sort()).toEqual(["objectif", "parcours", "règles"].sort());
+    // Présentation mobile-friendly : conteneur flex-wrap (s'enroule sur
+    // plusieurs lignes plutôt que de forcer un défilement horizontal).
+    const wordBankContainer = container.querySelector('[role="list"]');
+    expect(wordBankContainer?.className).toContain("flex-wrap");
+  });
+
+  it("hint_used est transmis à corrigerExerciceServer (le vrai moteur serveur) et conservé dans le résultat, sans jamais influencer answer_correct", async () => {
+    const itemWithJustification = {
+      ...ITEM_WITH_INDICE,
+      justification_prompt: "Justifiez votre choix.",
+      justification_required: false,
+    };
+    const payload = buildStructuredAnswer("Awa Diallo", "", true);
+    expect(payload).toEqual({ reponse: "Awa Diallo", hint_used: true });
+
+    const result = await corrigerExerciceServer({
+      format: "qcm",
+      competence: "CO",
+      items: [itemWithJustification],
+      answers: { 0: payload },
+      supabaseUrl: "https://example.invalid",
+      serviceRoleKey: "test-key",
+    });
+    expect(result.correction[0].hint_used).toBe(true);
+    expect(result.correction[0].answer_correct).toBe(true);
+  });
+
+  it("sans indice révélé, hint_used est false (comportement par défaut, jamais supposé aidé)", async () => {
+    const payload = buildStructuredAnswer("Awa Diallo", "", false);
+    expect(payload).toBe("Awa Diallo");
+
+    const result = await corrigerExerciceServer({
+      format: "qcm",
+      competence: "CO",
+      items: [ITEM_WITH_INDICE],
+      answers: { 0: payload },
+      supabaseUrl: "https://example.invalid",
+      serviceRoleKey: "test-key",
+    });
+    expect(result.correction[0].hint_used).toBe(false);
   });
 });

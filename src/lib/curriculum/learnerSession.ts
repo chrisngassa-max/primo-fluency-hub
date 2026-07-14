@@ -1,4 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
+import type { LearnerAnswerValue } from "@/lib/curriculum/justificationAnswer";
+
+export type { LearnerAnswerValue } from "@/lib/curriculum/justificationAnswer";
 
 /**
  * Couche d'accès apprenant au parcours de séance — REVU après relecture
@@ -80,12 +83,36 @@ export async function fetchSeanceContent(sessionCode: string): Promise<{
   return invokeEdgeFunction("get-seance-content", { session_code: sessionCode });
 }
 
+export interface AttemptItemResult {
+  question: string;
+  reponse_donnee: string;
+  bonne_reponse: string;
+  correct: boolean;
+  explication: string | null;
+  learner_justification?: string | null;
+  // Lot 2.1, points 2/5/6 — modèle de résultat étendu, filtré par une liste
+  // blanche dédiée côté serveur (released-correction-filter.ts) : présent
+  // uniquement après libération.
+  hint_used?: boolean;
+  answer_correct?: boolean;
+  justification_status?: "not_required" | "missing" | "unrelated" | "restates_answer_without_evidence" | "accepted" | "pending_review";
+  justification_score?: number | null;
+  justification_feedback?: string;
+  overall_status?: "incorrect" | "partial" | "provisional" | "complete";
+  score_provisional?: boolean;
+  preuve_support?: string | null;
+  explication_distracteurs?: string[];
+  erreur_diagnostiquee?: string | null;
+  remediation?: string | null;
+  justification_ouverte?: { elements_attendus: string[]; criteres_evaluation: string[] } | null;
+}
+
 export interface AttemptCorrectionResponse {
   attempt_id?: string;
   status: string;
   released: boolean;
   score_normalized?: number;
-  item_results?: Record<string, { question: string; reponse_donnee: string; bonne_reponse: string; correct: boolean; explication: string | null; learner_justification?: string | null }>;
+  item_results?: Record<string, AttemptItemResult>;
   correction_viewed_at?: string | null;
 }
 
@@ -105,8 +132,6 @@ export interface SubmitAnswerResponse {
  * score ni la correction en retour (relecture indépendante, point 2) —
  * uniquement une confirmation de complétion.
  */
-export type LearnerAnswerValue = string | { reponse: string; justification?: string };
-
 export async function submitSeanceAnswer(input: {
   exerciseId: string;
   sessionCode: string;

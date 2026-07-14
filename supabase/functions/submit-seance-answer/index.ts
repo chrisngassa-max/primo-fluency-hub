@@ -158,6 +158,7 @@ Deno.serve(async (req) => {
           correct: c.correct,
           explication: c.explication ?? null,
           learner_justification: c.learner_justification ?? null,
+          hint_used: c.hint_used ?? false,
           answer_correct: c.answer_correct,
           justification_status: c.justification_status,
           justification_score: c.justification_score,

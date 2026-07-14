@@ -34,6 +34,17 @@ export function hasNonEmptyJustification(value: unknown): boolean {
 }
 
 /**
+ * Lot 2.1, point 2 : indique si l'apprenant a révélé l'indice pour cet
+ * item (bouton "Voir un indice", jamais affiché automatiquement). Doit
+ * être conservé dans la tentative/le reporting — jamais traité comme un
+ * résultat autonome.
+ */
+export function extractHintUsed(value: unknown): boolean {
+  if (!isStructuredAnswer(value)) return false;
+  return (value as Record<string, unknown>).hint_used === true;
+}
+
+/**
  * Retourne les index d'items pour lesquels justification_required est vrai
  * mais dont la réponse soumise ne porte aucune justification non vide.
  * Tableau vide = soumission acceptable du point de vue justification.
