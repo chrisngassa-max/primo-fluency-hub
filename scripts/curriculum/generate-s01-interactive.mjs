@@ -359,8 +359,8 @@ export async function buildInteractiveS01({ writeOutput = !process.env.VITEST } 
           item.justification_required = true;
           item.justification_type = level === "B2" ? "contextual_nuance" : "lexical_distinction";
           item.justification_prompt = level === "B2"
-            ? `Justifiez votre choix à partir du contexte et écartez le distracteur qui pourrait sembler le plus proche.`
-            : `Justifiez votre choix à partir de la définition de « ${entry.mot} » dans le lexique.`;
+            ? "Expliquez quels éléments de la phrase vous ont aidé et pourquoi une autre proposition ne convient pas."
+            : "Expliquez quels éléments de la phrase vous ont aidé et pourquoi une autre proposition ne convient pas.";
           lexiqueAppliedTransformations.push({
             rule_id: level === "B2" ? "A2_TO_B2" : "A2_TO_B1",
             applied_to: `items[${index}].justification_prompt`,
@@ -389,7 +389,7 @@ export async function buildInteractiveS01({ writeOutput = !process.env.VITEST } 
         // explication/preuve_support — Lot 2.1, point 3) : le fait réel
         // reste le même exemple, la formulation d'indice est distincte de
         // la donnée de corrigé.
-        item.indice = `Un exemple d'emploi réel peut vous aider à choisir : « ${entry.exemple} »`;
+        item.indice = `Cette phrase peut vous aider à choisir : « ${entry.exemple} »`;
         lexiqueAppliedTransformations.push({
           rule_id: "A2_TO_A1",
           applied_to: `items[${index}].indice`,
@@ -402,13 +402,15 @@ export async function buildInteractiveS01({ writeOutput = !process.env.VITEST } 
 
     exercises.push(exercise({
       code: "lexique-association",
-      title: "Associer chaque mot à sa définition",
+      title: reversedFormat ? "Compléter des phrases avec le mot juste" : "Associer chaque mot à sa définition",
       competence: "CE",
       format: "appariement",
       level,
-      instruction: reversedFormat
-        ? "Associez chaque exemple d'emploi au mot approprié de la séance."
-        : "Associez chaque mot de la séance à sa définition simplifiée.",
+      instruction: level === "B2"
+        ? "Dans chaque phrase, un mot manque. Choisissez parmi les quatre propositions le mot qui complète correctement la phrase. Ensuite, expliquez quels éléments de la phrase vous ont aidé et pourquoi une autre proposition ne convient pas."
+        : level === "B1"
+          ? "Dans chaque phrase, un mot manque. Choisissez parmi les quatre propositions le mot qui complète correctement la phrase."
+          : "Associez chaque mot de la séance à sa définition simplifiée.",
       items: lexiqueItems,
       source: data.lexique.resource_id,
       duration: 420,

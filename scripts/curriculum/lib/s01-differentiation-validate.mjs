@@ -1,5 +1,6 @@
 import { diffAgainstBaseline } from "./s01-snapshot-diff.mjs";
 import { validateExerciseIndices } from "./indice-validator.mjs";
+import { validateInstructionQuality } from "./instruction-quality-validator.mjs";
 import {
   DIFFERENTIATION_LEVELS,
   getDifferentiationTransformationRules,
@@ -60,8 +61,8 @@ function questionLeaksAnswer(item) {
   return ` ${question} `.includes(` ${answer} `);
 }
 
-function makeRule(ruleId, status, { scope = "global", metadataCode = null, evidence = [], errors = [] } = {}) {
-  return { rule_id: ruleId, status, scope, metadata_code: metadataCode, evidence, errors };
+function makeRule(ruleId, status, { scope = "global", metadataCode = null, evidence = [], errors = [], suggestedRewrite = null } = {}) {
+  return { rule_id: ruleId, status, scope, metadata_code: metadataCode, evidence, errors, suggested_rewrite: suggestedRewrite };
 }
 
 function isFailure(rule) {
@@ -200,6 +201,14 @@ export function validateS01DifferentiationPayload(payload, { baseline = null } =
     addExercise(code, makeRule("DIFF_ANSWER_LEAK_IN_QUESTION", answerLeakErrors.length ? "fail" : "pass", {
       scope: "exercise", metadataCode: code, errors: answerLeakErrors,
     }));
+    const instructionValidation = validateInstructionQuality(entry);
+    instructionValidation.rules.forEach((rule) => addExercise(code, makeRule(rule.rule_id, rule.status, {
+      scope: rule.scope,
+      metadataCode: code,
+      evidence: rule.evidence,
+      errors: rule.errors,
+      suggestedRewrite: rule.suggested_rewrite,
+    })));
 
     const indiceValidation = validateExerciseIndices(entry, {
       assistedRetrieval: (item) => Boolean(item?.assisted_retrieval),

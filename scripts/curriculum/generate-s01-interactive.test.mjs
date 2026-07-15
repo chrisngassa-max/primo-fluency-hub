@@ -301,7 +301,7 @@ describe("Lot 2 — lexique-association : transformation réelle par niveau", ()
   it("B2 fonde les dix justifications sur le contexte et les corrections du lexique réel", async () => {
     const levels = await byLevel();
     for (const item of levels.B2.contenu.items) {
-      expect(item.justification_prompt).toContain("contexte");
+      expect(item.justification_prompt).toContain("éléments de la phrase");
       expect(item.correction.justification_ouverte.elements_attendus).toContain(item.explication);
       expect(item.question).toContain("________");
     }

@@ -133,6 +133,33 @@ describe("validation bloquante S01", () => {
     expect(failedRule(validation, "DIFF_EXTENSION_INSIDE_FAMILY", entry.metadata_code)).toBe(true);
   });
 
+  it("bloque le jargon pedagogique dans une consigne apprenant", () => {
+    const mutated = clonePayload();
+    const exercise = mutated.exercises.find((item) => item.metadata_code === "cv2:S01:v3:lexique-association:B1");
+    exercise.consigne = "Reperez le distracteur puis choisissez le mot approprie dans chaque exemple d'emploi.";
+    const validation = validateS01DifferentiationPayload(mutated, { baseline });
+    expect(failedRule(validation, "INSTRUCTION_JARGON_UNEXPLAINED", exercise.metadata_code)).toBe(true);
+  });
+
+  it("bloque une reponse revelee dans la demande de justification", () => {
+    const mutated = clonePayload();
+    const exercise = mutated.exercises.find((item) => item.metadata_code === "cv2:S01:v3:lexique-association:B2");
+    const item = exercise.contenu.items[0];
+    item.justification_prompt = `Expliquez pourquoi la bonne reponse est ${item.bonne_reponse}.`;
+    const validation = validateS01DifferentiationPayload(mutated, { baseline });
+    expect(failedRule(validation, "INSTRUCTION_ANSWER_LEAK", exercise.metadata_code)).toBe(true);
+  });
+
+  it("accepte les nouvelles consignes lexicales B1 et B2", () => {
+    const validation = validateS01DifferentiationPayload(payload, { baseline });
+    for (const level of ["B1", "B2"]) {
+      const metadataCode = `cv2:S01:v3:lexique-association:${level}`;
+      const instructionFailures = validation.by_exercise[metadataCode].rules.filter((rule) => (
+        rule.rule_id.startsWith("INSTRUCTION_") && rule.status === "fail"
+      ));
+      expect(instructionFailures).toEqual([]);
+    }
+  });
   it("le plan conserve 59 brouillons mais ne relie que les variantes conformes", () => {
     const plan = buildPublicationPlan(payload, baseline);
     expect(plan.aborted).toBe(false);

@@ -9,6 +9,7 @@
 // consomme le référentiel plutôt que des cartes littérales.
 import differentiationTransformationRulesData from "../../../supabase/functions/_shared/referential/differentiation_transformation_rules_v1.json" with { type: "json" };
 import differentiationLevelContractsData from "../../../supabase/functions/_shared/referential/differentiation_level_contracts_v1.json" with { type: "json" };
+import instructionQualityRulesData from "../../../supabase/functions/_shared/referential/instruction_quality_rules_v1.json" with { type: "json" };
 
 const LEVELS = ["A1", "A2", "B1", "B2"];
 const COMPETENCES = ["CE", "CO", "EE", "EO", "Structures"];
@@ -76,3 +77,7 @@ export function getDifferentiationLevelContracts() {
 
 export const DIFFERENTIATION_LEVELS = LEVELS;
 export const DIFFERENTIATION_COMPETENCES = COMPETENCES;
+
+export function getInstructionQualityRules() {
+  return instructionQualityRulesData;
+}
