@@ -100,6 +100,35 @@ Codes principaux :
 
 Une erreur de sévérité `blocking` empêche le lien apprenant mais conserve le brouillon formateur et son rapport. Un avertissement exige une revue sans bloquer automatiquement.
 
+### 5.1 Combinaison avec le référentiel de différenciation
+
+Les deux contrôles sont complémentaires :
+
+- le référentiel de différenciation vérifie la compétence, le niveau, l’opération cognitive, les aides et la correction ;
+- le présent cadre vérifie que l’apprenant comprend l’objet, l’action et le mode de réponse.
+
+La décision la plus restrictive s’applique. Une erreur bloquante de l’un ou l’autre référentiel empêche la publication apprenant. Un résultat `pass` ne neutralise jamais un résultat `fail`. Les rapports et les codes restent séparés afin que le formateur connaisse la cause exacte du blocage.
+
+### 5.2 Méthode de détection des fuites
+
+Le contrôle déterministe bloque une réponse littéralement présente dans une consigne, une question, un indice ou une demande de justification, après normalisation de la casse, des accents et de la ponctuation. Des exceptions explicites couvrent les réponses catégorielles courtes, les phrases à trou et les options volontairement affichées.
+
+Ce contrôle ne prétend pas détecter toutes les paraphrases. Une détection sémantique ultérieure ne pourra produire qu’un avertissement accompagné d’une preuve. Elle ne deviendra jamais bloquante sur le seul verdict d’une IA ; les cas ambigus exigent une validation humaine.
+
+### 5.3 Position dans le pipeline
+
+Le contrôle s’applique à deux moments :
+
+1. **préventif**, dans les directives de génération, afin de guider la rédaction ;
+2. **détectif**, après génération et avant publication, afin de vérifier chaque texte réellement produit.
+
+Dans la version actuelle, le contrôle détectif est actif sur le corpus statique S01. Le contrat est partagé entre Node et Deno, mais son injection préventive dans `buildPedagogicalDirectives()` et son application complète au moteur dynamique restent à réaliser après validation humaine du corpus candidat.
+
+### 5.4 Corpus candidat S01
+
+Le fichier `instruction_quality_calibration_s01_v1.json` contient vingt cas couvrant les quatre niveaux, les cinq compétences et les principaux formats. Il associe des consignes S01 actuelles à des cas historiques ou volontairement altérés pour tester les erreurs.
+
+Son statut est `candidate_pending_human_validation`. Les verdicts enregistrés sont des attentes machine destinées aux tests ; ils ne constituent pas une validation pédagogique humaine.
 ## 6. Gouvernance
 
 - Le JSON partagé est la source machine unique pour le générateur statique et, après branchement, le moteur dynamique.
@@ -111,6 +140,6 @@ Une erreur de sévérité `blocking` empêche le lien apprenant mais conserve le
 ## 7. Décisions ouvertes
 
 1. Valider les plafonds de longueur après observation sur téléphone.
-2. Déterminer si `INSTRUCTION_MULTISTEP_UNMARKED` devient bloquant après calibration.
+2. Maintenir `INSTRUCTION_MULTISTEP_UNMARKED` en avertissement ; toute évolution éventuelle, notamment en A1/A2, exige une calibration terrain et une décision humaine versionnée.
 3. Valider la liste initiale des termes interdits et leurs reformulations.
 4. Étendre le contrat au moteur dynamique et aux contenus hors S01 après validation de la V1.

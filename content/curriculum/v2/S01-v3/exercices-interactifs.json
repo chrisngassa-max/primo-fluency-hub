@@ -5,7 +5,7 @@
     {
       "metadata_code": "cv2:S01:v3:lexique-association:A1",
       "titre": "Associer chaque mot à sa définition",
-      "consigne": "Associez chaque mot de la séance à sa définition simplifiée.",
+      "consigne": "Associez chaque mot à sa définition. Utilisez l’indice si vous avez besoin d’aide.",
       "competence": "CE",
       "format": "appariement",
       "niveau_vise": "A1",
@@ -323,14 +323,16 @@
           "guidance": "fort",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:A1",
       "titre": "Exercice 2 — Phrase à compléter",
-      "consigne": "Complétez le texte avec les mots manquants. Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure.",
+      "consigne": "Dans le texte, trois mots manquent. Complétez chaque espace avec le mot correct.",
       "competence": "CE",
       "format": "texte_lacunaire",
       "niveau_vise": "A1",
@@ -474,14 +476,16 @@
           "guidance": "fort",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": true
+          "needs_content_review": true,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:lexique-association:A2",
       "titre": "Associer chaque mot à sa définition",
-      "consigne": "Associez chaque mot de la séance à sa définition simplifiée.",
+      "consigne": "Associez chaque mot de la séance à la définition qui lui correspond.",
       "competence": "CE",
       "format": "appariement",
       "niveau_vise": "A2",
@@ -749,14 +753,16 @@
           "guidance": "moyen",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:A2",
       "titre": "Exercice 2 — Phrase à compléter",
-      "consigne": "Complétez le texte avec les mots manquants. Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure.",
+      "consigne": "Lisez le texte. Ensuite, complétez les trois espaces avec les mots corrects.",
       "competence": "CE",
       "format": "texte_lacunaire",
       "niveau_vise": "A2",
@@ -872,7 +878,9 @@
           "guidance": "moyen",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": true
+          "needs_content_review": true,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
@@ -1273,14 +1281,16 @@
           "guidance": "faible",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:B1",
       "titre": "Exercice 2 — Phrase à compléter",
-      "consigne": "Complétez le texte avec les mots manquants. Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure.",
+      "consigne": "Complétez les trois espaces avec les mots qui donnent un texte cohérent.",
       "competence": "CE",
       "format": "texte_lacunaire",
       "niveau_vise": "B1",
@@ -1463,7 +1473,9 @@
           "guidance": "faible",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": true
+          "needs_content_review": true,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
@@ -2072,14 +2084,16 @@
           "guidance": "a_la_demande",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:B2",
       "titre": "Exercice 2 — Phrase à compléter",
-      "consigne": "Complétez le texte avec les mots manquants. Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure.",
+      "consigne": "Complétez les trois espaces en choisissant les mots précis qui rendent le texte cohérent.",
       "competence": "CE",
       "format": "texte_lacunaire",
       "niveau_vise": "B2",
@@ -2277,14 +2291,16 @@
           "guidance": "a_la_demande",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": true
+          "needs_content_review": true,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:A1",
       "titre": "Exercice 3 — Réemploi oral",
-      "consigne": "En une phrase, expliquez pourquoi vous suivez ce parcours, en utilisant le mot « objectif » ou « démarche ».",
+      "consigne": "Enregistrez une phrase pour dire pourquoi vous suivez ce parcours. Utilisez « objectif » ou « démarche ».",
       "competence": "EO",
       "format": "production_orale",
       "niveau_vise": "A1",
@@ -2355,14 +2371,16 @@
           "guidance": "fort",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:A2",
       "titre": "Exercice 3 — Réemploi oral",
-      "consigne": "En une phrase, expliquez pourquoi vous suivez ce parcours, en utilisant le mot « objectif » ou « démarche ».",
+      "consigne": "Enregistrez une phrase complète pour expliquer pourquoi vous suivez ce parcours. Utilisez « objectif » ou « démarche ».",
       "competence": "EO",
       "format": "production_orale",
       "niveau_vise": "A2",
@@ -2433,14 +2451,16 @@
           "guidance": "moyen",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:B1",
       "titre": "Exercice 3 — Réemploi oral",
-      "consigne": "En une phrase, expliquez pourquoi vous suivez ce parcours, en utilisant le mot « objectif » ou « démarche ».",
+      "consigne": "Enregistrez une réponse claire pour expliquer votre objectif dans ce parcours. Utilisez « objectif » ou « démarche ».",
       "competence": "EO",
       "format": "production_orale",
       "niveau_vise": "B1",
@@ -2510,14 +2530,16 @@
           "guidance": "faible",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:B2",
       "titre": "Exercice 3 — Réemploi oral",
-      "consigne": "En une phrase, expliquez pourquoi vous suivez ce parcours, en utilisant le mot « objectif » ou « démarche ».",
+      "consigne": "Enregistrez une réponse précise pour expliquer votre objectif et votre démarche dans ce parcours.",
       "competence": "EO",
       "format": "production_orale",
       "niveau_vise": "B2",
@@ -2588,14 +2610,16 @@
           "guidance": "a_la_demande",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:support-visuel:A1",
       "titre": "Les cinq thèmes civiques du parcours",
-      "consigne": "Observez le schéma des cinq thèmes puis répondez.",
+      "consigne": "Observez le schéma. Ensuite, complétez chaque réponse avec un mot ou un nombre présent dans le document.",
       "competence": "CE",
       "format": "texte_lacunaire",
       "niveau_vise": "A1",
@@ -2727,14 +2751,16 @@
           "guidance": "fort",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": true
+          "needs_content_review": true,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:support-visuel-ouvert:A1",
       "titre": "Votre lien avec les cinq thèmes",
-      "consigne": "Répondez en une phrase justifiée à chacune des deux questions.",
+      "consigne": "Observez le schéma. Ensuite, écrivez une phrase courte pour répondre à chaque question.",
       "competence": "EE",
       "format": "production_ecrite",
       "niveau_vise": "A1",
@@ -2812,14 +2838,16 @@
           "guidance": "fort",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:support-visuel:A2",
       "titre": "Les cinq thèmes civiques du parcours",
-      "consigne": "Observez le schéma des cinq thèmes puis répondez.",
+      "consigne": "Observez le schéma. Ensuite, complétez chaque réponse avec une information du document.",
       "competence": "CE",
       "format": "texte_lacunaire",
       "niveau_vise": "A2",
@@ -2920,14 +2948,16 @@
           "guidance": "moyen",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": true
+          "needs_content_review": true,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:support-visuel-ouvert:A2",
       "titre": "Votre lien avec les cinq thèmes",
-      "consigne": "Répondez en une phrase justifiée à chacune des deux questions.",
+      "consigne": "Observez le schéma. Ensuite, répondez à chaque question par une phrase complète.",
       "competence": "EE",
       "format": "production_ecrite",
       "niveau_vise": "A2",
@@ -3003,14 +3033,16 @@
           "guidance": "moyen",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:support-visuel:B1",
       "titre": "Les cinq thèmes civiques du parcours",
-      "consigne": "Observez le schéma des cinq thèmes puis répondez.",
+      "consigne": "Observez le schéma. Ensuite, complétez chaque réponse avec les informations précises du document.",
       "competence": "CE",
       "format": "texte_lacunaire",
       "niveau_vise": "B1",
@@ -3193,14 +3225,16 @@
           "guidance": "faible",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": true
+          "needs_content_review": true,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:support-visuel-ouvert:B1",
       "titre": "Votre lien avec les cinq thèmes",
-      "consigne": "Répondez en une phrase justifiée à chacune des deux questions.",
+      "consigne": "Observez le schéma. Ensuite, répondez à chaque question par une phrase et justifiez-la avec un élément du document.",
       "competence": "EE",
       "format": "production_ecrite",
       "niveau_vise": "B1",
@@ -3275,14 +3309,16 @@
           "guidance": "faible",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:support-visuel:B2",
       "titre": "Les cinq thèmes civiques du parcours",
-      "consigne": "Observez le schéma des cinq thèmes puis répondez.",
+      "consigne": "Observez l’organisation du schéma. Ensuite, complétez chaque réponse avec les informations précises du document.",
       "competence": "CE",
       "format": "texte_lacunaire",
       "niveau_vise": "B2",
@@ -3480,14 +3516,16 @@
           "guidance": "a_la_demande",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": true
+          "needs_content_review": true,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:support-visuel-ouvert:B2",
       "titre": "Votre lien avec les cinq thèmes",
-      "consigne": "Répondez en une phrase justifiée à chacune des deux questions.",
+      "consigne": "Observez le schéma. Ensuite, rédigez une réponse précise à chaque question et justifiez-la avec les informations du document.",
       "competence": "EE",
       "format": "production_ecrite",
       "niveau_vise": "B2",
@@ -3562,14 +3600,16 @@
           "guidance": "a_la_demande",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:co-dialogue:A1",
       "titre": "Comprendre le dialogue d'accueil",
-      "consigne": "Écoutez attentivement le document sonore et cochez la case de l'option correcte sur votre grille de réponse.",
+      "consigne": "Écoutez le dialogue. Ensuite, choisissez la bonne réponse pour chaque question.",
       "competence": "CO",
       "format": "qcm",
       "niveau_vise": "A1",
@@ -3906,14 +3946,16 @@
           "guidance": "fort",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:co-comprehension:A1",
       "titre": "Vingt questions sur le dialogue",
-      "consigne": "Répondez en une phrase courte, d'après le dialogue.",
+      "consigne": "Écoutez le dialogue. Ensuite, complétez chaque réponse avec un mot ou une phrase courte.",
       "competence": "CO",
       "format": "texte_lacunaire",
       "niveau_vise": "A1",
@@ -4054,14 +4096,16 @@
           "guidance": "fort",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:atelier-1:A1",
       "titre": "Atelier A1 — activité 1",
-      "consigne": "Écoutez la phrase, puis choisissez l'orthographe correcte du nom de famille.",
+      "consigne": "Écoutez la phrase. Ensuite, choisissez l’écriture correcte du nom de famille.",
       "competence": "CO",
       "format": "qcm",
       "niveau_vise": "A1",
@@ -4146,14 +4190,16 @@
           "guidance": "fort",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": true
+          "needs_content_review": true,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:atelier-2:A1",
       "titre": "Atelier A1 — activité 2",
-      "consigne": "Pour chaque question, cochez la bonne réponse.",
+      "consigne": "Lisez chaque question. Ensuite, choisissez la réponse qui convient.",
       "competence": "CE",
       "format": "appariement",
       "niveau_vise": "A1",
@@ -4257,14 +4303,16 @@
           "guidance": "fort",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": true
+          "needs_content_review": true,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:atelier-3:A1",
       "titre": "Atelier A1 — activité 3",
-      "consigne": "Lisez la carte d'identité, puis répondez par Vrai ou Faux.",
+      "consigne": "Lisez la carte d’identité. Ensuite, indiquez si chaque phrase est vraie ou fausse.",
       "competence": "CE",
       "format": "vrai_faux",
       "niveau_vise": "A1",
@@ -4357,14 +4405,16 @@
           "guidance": "fort",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": true
+          "needs_content_review": true,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:atelier-4:A1",
       "titre": "Atelier A1 — activité 4",
-      "consigne": "Relisez le début du dialogue (fiche Dialogue), puis répondez par Vrai ou Faux.",
+      "consigne": "Lisez le début du dialogue. Ensuite, indiquez si chaque phrase est vraie ou fausse.",
       "competence": "CE",
       "format": "vrai_faux",
       "niveau_vise": "A1",
@@ -4457,14 +4507,16 @@
           "guidance": "fort",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": true
+          "needs_content_review": true,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:structures:A1",
       "titre": "Structures utiles — A1",
-      "consigne": "Conjuguez le verbe être. Complétez avec le pronom correct (Je, Tu, Il, Elle). Choisissez la forme correcte.",
+      "consigne": "Lisez chaque phrase. Ensuite, complétez-la avec le pronom ou la forme du verbe être qui convient.",
       "competence": "Structures",
       "format": "texte_lacunaire",
       "niveau_vise": "A1",
@@ -4570,14 +4622,16 @@
           "guidance": "fort",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": true
+          "needs_content_review": true,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:eo:A1",
       "titre": "Prendre la parole — A1",
-      "consigne": "Enregistrez vos réponses. Vous pourrez réécouter la transcription et le corrigé oral.",
+      "consigne": "Lisez la question. Ensuite, enregistrez une réponse courte. Après l’exercice, vous pourrez écouter et lire la correction.",
       "competence": "EO",
       "format": "production_orale",
       "niveau_vise": "A1",
@@ -4654,14 +4708,16 @@
           "guidance": "fort",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:co-dialogue:A2",
       "titre": "Comprendre le dialogue d'accueil",
-      "consigne": "Écoutez attentivement le document sonore et cochez la case de l'option correcte sur votre grille de réponse.",
+      "consigne": "Écoutez le dialogue. Ensuite, choisissez la réponse qui correspond aux informations entendues.",
       "competence": "CO",
       "format": "qcm",
       "niveau_vise": "A2",
@@ -4950,14 +5006,16 @@
           "guidance": "moyen",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:co-comprehension:A2",
       "titre": "Vingt questions sur le dialogue",
-      "consigne": "Répondez en une phrase courte, d'après le dialogue.",
+      "consigne": "Écoutez le dialogue. Ensuite, complétez chaque réponse par une phrase courte et précise.",
       "competence": "CO",
       "format": "texte_lacunaire",
       "niveau_vise": "A2",
@@ -5093,14 +5151,16 @@
           "guidance": "moyen",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:co-approfondissement:A2",
       "titre": "Approfondir : reformuler et justifier",
-      "consigne": "Répondez avec vos propres mots, en une ou deux phrases par question.",
+      "consigne": "Écoutez le dialogue. Ensuite, répondez à chaque question avec vos propres mots, en une ou deux phrases.",
       "competence": "CO",
       "format": "production_ecrite",
       "niveau_vise": "A2",
@@ -5187,14 +5247,16 @@
           "guidance": "moyen",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:atelier-1:A2",
       "titre": "Atelier A2 — activité 1",
-      "consigne": "Complétez le texte avec les mots proposés.",
+      "consigne": "Lisez le texte. Ensuite, complétez chaque espace avec le mot proposé qui convient.",
       "competence": "CE",
       "format": "texte_lacunaire",
       "niveau_vise": "A2",
@@ -5286,14 +5348,16 @@
           "guidance": "moyen",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": true
+          "needs_content_review": true,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:atelier-2:A2",
       "titre": "Atelier A2 — activité 2",
-      "consigne": "Lisez les deux fiches, puis répondez aux questions.",
+      "consigne": "Lisez les deux fiches. Ensuite, choisissez la réponse exacte pour chaque question.",
       "competence": "CE",
       "format": "qcm",
       "niveau_vise": "A2",
@@ -5396,14 +5460,16 @@
           "guidance": "moyen",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": true
+          "needs_content_review": true,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:atelier-3:A2",
       "titre": "Atelier A2 — activité 3",
-      "consigne": "D'après le dialogue, choisissez la bonne réponse.",
+      "consigne": "Lisez le dialogue. Ensuite, choisissez la réponse qui correspond aux informations du texte.",
       "competence": "CE",
       "format": "qcm",
       "niveau_vise": "A2",
@@ -5480,14 +5546,16 @@
           "guidance": "moyen",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": true
+          "needs_content_review": true,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:structures:A2",
       "titre": "Structures utiles — A2",
-      "consigne": "Complétez avec 'mon', 'ma' ou 'mes'. Complétez le texte de présentation.",
+      "consigne": "Lisez chaque phrase. Ensuite, complétez-la avec « mon », « ma » ou « mes », puis terminez le texte de présentation.",
       "competence": "Structures",
       "format": "texte_lacunaire",
       "niveau_vise": "A2",
@@ -5587,14 +5655,16 @@
           "guidance": "moyen",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": true
+          "needs_content_review": true,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:eo:A2",
       "titre": "Prendre la parole — A2",
-      "consigne": "Enregistrez vos réponses. Vous pourrez réécouter la transcription et le corrigé oral.",
+      "consigne": "Lisez la question. Ensuite, enregistrez une réponse complète. Après l’exercice, vous pourrez écouter et lire la correction.",
       "competence": "EO",
       "format": "production_orale",
       "niveau_vise": "A2",
@@ -5681,14 +5751,16 @@
           "guidance": "moyen",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:co-dialogue:B1",
       "titre": "Comprendre le dialogue d'accueil",
-      "consigne": "Écoutez attentivement le document sonore et cochez la case de l'option correcte sur votre grille de réponse.",
+      "consigne": "Écoutez le dialogue. Choisissez chaque réponse. Ensuite, justifiez votre choix avec un mot ou une phrase entendue.",
       "competence": "CO",
       "format": "qcm",
       "niveau_vise": "B1",
@@ -6240,14 +6312,16 @@
           "guidance": "faible",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:co-comprehension:B1",
       "titre": "Vingt questions sur le dialogue",
-      "consigne": "Répondez en une phrase courte, d'après le dialogue.",
+      "consigne": "Écoutez le dialogue. Ensuite, complétez chaque réponse en reformulant précisément les informations entendues.",
       "competence": "CO",
       "format": "texte_lacunaire",
       "niveau_vise": "B1",
@@ -6385,14 +6459,16 @@
           "guidance": "faible",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:co-approfondissement:B1",
       "titre": "Approfondir : reformuler et justifier",
-      "consigne": "Répondez avec vos propres mots, en une ou deux phrases par question.",
+      "consigne": "Écoutez le dialogue. Ensuite, rédigez une ou deux phrases pour reformuler et justifier chaque réponse.",
       "competence": "CO",
       "format": "production_ecrite",
       "niveau_vise": "B1",
@@ -6485,14 +6561,16 @@
           "guidance": "faible",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:atelier-1:B1",
       "titre": "Atelier B1 — activité 1",
-      "consigne": "Lisez, puis répondez aux questions.",
+      "consigne": "Lisez le document. Ensuite, choisissez la réponse exacte pour chaque question.",
       "competence": "CE",
       "format": "qcm",
       "niveau_vise": "B1",
@@ -6581,14 +6659,16 @@
           "guidance": "faible",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": true
+          "needs_content_review": true,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:atelier-2:B1",
       "titre": "Atelier B1 — activité 2",
-      "consigne": "Associez chaque terme à sa définition, d'après les explications de Mme Rossi.",
+      "consigne": "Lisez les explications de Mme Rossi. Ensuite, associez chaque terme à sa définition.",
       "competence": "CE",
       "format": "appariement",
       "niveau_vise": "B1",
@@ -6686,14 +6766,16 @@
           "guidance": "faible",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": true
+          "needs_content_review": true,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:structures:B1",
       "titre": "Structures utiles — B1",
-      "consigne": "Transformez sur le modèle donné. Complétez au discours rapporté.",
+      "consigne": "Lisez le modèle. Ensuite, transformez chaque phrase au discours rapporté.",
       "competence": "Structures",
       "format": "transformation",
       "niveau_vise": "B1",
@@ -6776,14 +6858,16 @@
           "guidance": "faible",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": true
+          "needs_content_review": true,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:eo:B1",
       "titre": "Prendre la parole — B1",
-      "consigne": "Enregistrez vos réponses. Vous pourrez réécouter la transcription et le corrigé oral.",
+      "consigne": "Lisez la question. Ensuite, enregistrez une réponse développée et organisée. Après l’exercice, vous pourrez écouter et lire la correction.",
       "competence": "EO",
       "format": "production_orale",
       "niveau_vise": "B1",
@@ -6887,14 +6971,16 @@
           "guidance": "faible",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:co-dialogue:B2",
       "titre": "Comprendre le dialogue d'accueil",
-      "consigne": "Écoutez attentivement le document sonore et cochez la case de l'option correcte sur votre grille de réponse.",
+      "consigne": "Écoutez le dialogue. Choisissez chaque réponse. Ensuite, justifiez précisément votre choix à partir des informations entendues.",
       "competence": "CO",
       "format": "qcm",
       "niveau_vise": "B2",
@@ -7446,14 +7532,16 @@
           "guidance": "a_la_demande",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": true
+          "needs_content_review": true,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:co-comprehension:B2",
       "titre": "Vingt questions sur le dialogue",
-      "consigne": "Répondez en une phrase courte, d'après le dialogue.",
+      "consigne": "Écoutez le dialogue. Ensuite, complétez chaque réponse avec une reformulation précise et complète des informations entendues.",
       "competence": "CO",
       "format": "texte_lacunaire",
       "niveau_vise": "B2",
@@ -7591,14 +7679,16 @@
           "guidance": "a_la_demande",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:co-approfondissement:B2",
       "titre": "Approfondir : reformuler et justifier",
-      "consigne": "Répondez avec vos propres mots, en une ou deux phrases par question.",
+      "consigne": "Écoutez le dialogue. Ensuite, rédigez une réponse précise et nuancée à chaque question, uniquement à partir des informations entendues.",
       "competence": "CO",
       "format": "production_ecrite",
       "niveau_vise": "B2",
@@ -7691,14 +7781,16 @@
           "guidance": "a_la_demande",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:atelier-1:B2",
       "titre": "Atelier B2 — activité 1",
-      "consigne": "Lisez le paragraphe, puis répondez aux questions.",
+      "consigne": "Lisez le paragraphe. Ensuite, choisissez la réponse la plus précise pour chaque question.",
       "competence": "CE",
       "format": "qcm",
       "niveau_vise": "B2",
@@ -7787,14 +7879,16 @@
           "guidance": "a_la_demande",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": true
+          "needs_content_review": true,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:structures:B2",
       "titre": "Structures utiles — B2",
-      "consigne": "Reformulez avec une nominalisation. Complétez avec un connecteur (cependant / par conséquent / en revanche).",
+      "consigne": "Lisez chaque phrase. Ensuite, transformez-la avec une nominalisation ou complétez-la avec le connecteur demandé.",
       "competence": "Structures",
       "format": "transformation",
       "niveau_vise": "B2",
@@ -7874,14 +7968,16 @@
           "guidance": "a_la_demande",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": true
+          "needs_content_review": true,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:eo:B2",
       "titre": "Prendre la parole — B2",
-      "consigne": "Enregistrez vos réponses. Vous pourrez réécouter la transcription et le corrigé oral.",
+      "consigne": "Lisez la question. Ensuite, enregistrez une réponse précise, structurée et nuancée. Après l’exercice, vous pourrez écouter et lire la correction.",
       "competence": "EO",
       "format": "production_orale",
       "niveau_vise": "B2",
@@ -7996,14 +8092,16 @@
           "guidance": "a_la_demande",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:civique:A1",
       "titre": "Droits, devoirs et règles",
-      "consigne": "Lisez chaque situation puis choisissez la réponse directement justifiée par la règle présentée.",
+      "consigne": "Lisez chaque situation. Ensuite, choisissez la réponse indiquée par la règle présentée.",
       "competence": "CE",
       "format": "qcm",
       "niveau_vise": "A1",
@@ -8353,14 +8451,16 @@
           "guidance": "fort",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": true
+          "needs_content_review": true,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:civique:A2",
       "titre": "Droits, devoirs et règles",
-      "consigne": "Lisez chaque situation puis choisissez la réponse directement justifiée par la règle présentée.",
+      "consigne": "Lisez chaque situation. Ensuite, choisissez la réponse qui correspond à la règle présentée.",
       "competence": "CE",
       "format": "qcm",
       "niveau_vise": "A2",
@@ -8640,14 +8740,16 @@
           "guidance": "moyen",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": true
+          "needs_content_review": true,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:civique:B1",
       "titre": "Droits, devoirs et règles",
-      "consigne": "Lisez chaque situation puis choisissez la réponse directement justifiée par la règle présentée.",
+      "consigne": "Lisez chaque situation. Choisissez une réponse. Ensuite, justifiez votre choix uniquement avec la règle présentée.",
       "competence": "CE",
       "format": "qcm",
       "niveau_vise": "B1",
@@ -9191,14 +9293,16 @@
           "guidance": "faible",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": true
+          "needs_content_review": true,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:civique:B2",
       "titre": "Droits, devoirs et règles",
-      "consigne": "Lisez chaque situation puis choisissez la réponse directement justifiée par la règle présentée.",
+      "consigne": "Lisez chaque situation. Choisissez une réponse. Ensuite, justifiez votre choix et expliquez pourquoi une autre réponse ne convient pas, uniquement à partir de la règle présentée.",
       "competence": "CE",
       "format": "qcm",
       "niveau_vise": "B2",
@@ -9742,14 +9846,16 @@
           "guidance": "a_la_demande",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": true
+          "needs_content_review": true,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:ee-guidee-1:A1",
       "titre": "Compléter une présentation",
-      "consigne": "Complétez le texte de présentation : Bonjour, je (........) Awa. Je (........) 28 ans. Je (........) du Sénégal. J'(........) à Paris.",
+      "consigne": "Lisez le texte de présentation. Ensuite, complétez chaque espace avec la forme verbale correcte.",
       "competence": "EE",
       "format": "texte_lacunaire",
       "niveau_vise": "A1",
@@ -9835,14 +9941,16 @@
           "guidance": "fort",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": true
+          "needs_content_review": true,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:ee-guidee-1:A2",
       "titre": "Compléter une présentation",
-      "consigne": "Complétez le texte de présentation : Bonjour, je (........) Awa. Je (........) 28 ans. Je (........) du Sénégal. J'(........) à Paris.",
+      "consigne": "Lisez le texte de présentation. Ensuite, complétez chaque espace avec la forme verbale qui convient.",
       "competence": "EE",
       "format": "texte_lacunaire",
       "niveau_vise": "A2",
@@ -9926,14 +10034,16 @@
           "guidance": "moyen",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": true
+          "needs_content_review": true,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:ee-guidee-2:A2",
       "titre": "Production guidée 2 (A2/B1) — à partir d'une fiche",
-      "consigne": "À partir de cette fiche, rédigez 5 phrases complètes : NOM : Diallo — PRÉNOM : Awa — NÉE LE : 14/03/1995 — NATIONALITÉ : Sénégalaise — VILLE : Paris.",
+      "consigne": "Lisez la fiche d’identité. Ensuite, rédigez cinq phrases complètes pour présenter Awa.",
       "competence": "EE",
       "format": "production_ecrite",
       "niveau_vise": "A2",
@@ -10005,14 +10115,16 @@
           "guidance": "moyen",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:ee-guidee-2:B1",
       "titre": "Production guidée 2 (A2/B1) — à partir d'une fiche",
-      "consigne": "À partir de cette fiche, rédigez 5 phrases complètes : NOM : Diallo — PRÉNOM : Awa — NÉE LE : 14/03/1995 — NATIONALITÉ : Sénégalaise — VILLE : Paris.",
+      "consigne": "Lisez la fiche d’identité. Ensuite, rédigez cinq phrases liées et précises pour présenter Awa.",
       "competence": "EE",
       "format": "production_ecrite",
       "niveau_vise": "B1",
@@ -10083,14 +10195,16 @@
           "guidance": "faible",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:ee-autonome:B1",
       "titre": "Production autonome (B1/B2)",
-      "consigne": "B1 : amorces fournies (« Je m'appelle... / Mon objectif est... / Le parcours dure... »), 8 phrases minimum.",
+      "consigne": "Rédigez au moins huit phrases pour présenter votre parcours et votre objectif administratif. Utilisez les amorces proposées.",
       "competence": "EE",
       "format": "production_ecrite",
       "niveau_vise": "B1",
@@ -10161,14 +10275,16 @@
           "guidance": "faible",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     },
     {
       "metadata_code": "cv2:S01:v3:ee-autonome:B2",
       "titre": "Production autonome (B1/B2)",
-      "consigne": "B2 : sans amorce, 10 phrases minimum, au moins un connecteur argumentatif exigé.",
+      "consigne": "Rédigez au moins dix phrases structurées pour présenter votre parcours et votre objectif administratif. Utilisez au moins un connecteur pour expliquer votre démarche.",
       "competence": "EE",
       "format": "production_ecrite",
       "niveau_vise": "B2",
@@ -10239,7 +10355,9 @@
           "guidance": "a_la_demande",
           "trainer_preview_required": true,
           "interactive": true,
-          "needs_content_review": false
+          "needs_content_review": false,
+          "instruction_policy_version": "instruction-quality-v1",
+          "instruction_human_validation_status": "pending_pedagogical_owner"
         }
       }
     }
@@ -10756,11 +10874,20 @@
         ]
       },
       {
+        "rule_id": "INSTRUCTION_QUALITY_VALIDATION",
+        "status": "pass",
+        "evidence": [
+          "59 consignes contrôlées",
+          "0 erreur(s) ou avertissement(s)",
+          "validation humaine finale en attente"
+        ]
+      },
+      {
         "rule_id": "DIFFERENTIATION_VALIDATION",
         "status": "warning",
         "evidence": [
-          "14 publishable",
-          "45 blocked"
+          "30 publishable",
+          "29 blocked"
         ]
       }
     ],
@@ -10810,8 +10937,8 @@
       }
     ],
     "publishability": {
-      "publishable_count": 14,
-      "non_publishable_count": 45,
+      "publishable_count": 30,
+      "non_publishable_count": 29,
       "by_exercise": [
         {
           "metadata_code": "cv2:S01:v3:lexique-association:A1",
@@ -10876,16 +11003,6 @@
               "evidence": [
                 "cv2:S01:v3:lexique-texte-lacunaire:B1: needs_content_review=true"
               ]
-            },
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:lexique-texte-lacunaire:B1",
-                "cv2:S01:v3:lexique-texte-lacunaire:B2"
-              ]
             }
           ]
         },
@@ -10919,37 +11036,14 @@
                 "items[1].justification_prompt: Aucun effet de sens entre mots proches n'est présent pour ce trou : justification contextuelle simple maintenue plutôt qu'une nuance inventée.",
                 "items[2].justification_prompt: Aucun effet de sens entre mots proches n'est présent pour ce trou : justification contextuelle simple maintenue plutôt qu'une nuance inventée."
               ]
-            },
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:lexique-texte-lacunaire:B1",
-                "cv2:S01:v3:lexique-texte-lacunaire:B2"
-              ]
             }
           ]
         },
         {
           "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:A1",
           "needs_content_review": false,
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:lexique-reemploi-oral:A1",
-                "cv2:S01:v3:lexique-reemploi-oral:A2",
-                "cv2:S01:v3:lexique-reemploi-oral:B1",
-                "cv2:S01:v3:lexique-reemploi-oral:B2"
-              ]
-            }
-          ]
+          "publishable": true,
+          "blocking_errors": []
         },
         {
           "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:A2",
@@ -10960,40 +11054,14 @@
         {
           "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:B1",
           "needs_content_review": false,
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:lexique-reemploi-oral:A1",
-                "cv2:S01:v3:lexique-reemploi-oral:A2",
-                "cv2:S01:v3:lexique-reemploi-oral:B1",
-                "cv2:S01:v3:lexique-reemploi-oral:B2"
-              ]
-            }
-          ]
+          "publishable": true,
+          "blocking_errors": []
         },
         {
           "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:B2",
           "needs_content_review": false,
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:lexique-reemploi-oral:A1",
-                "cv2:S01:v3:lexique-reemploi-oral:A2",
-                "cv2:S01:v3:lexique-reemploi-oral:B1",
-                "cv2:S01:v3:lexique-reemploi-oral:B2"
-              ]
-            }
-          ]
+          "publishable": true,
+          "blocking_errors": []
         },
         {
           "metadata_code": "cv2:S01:v3:support-visuel:A1",
@@ -11008,38 +11076,14 @@
               "evidence": [
                 "cv2:S01:v3:support-visuel:A1: needs_content_review=true"
               ]
-            },
-            {
-              "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-              ],
-              "evidence": [
-                "complétez",
-                "choisissez",
-                "écrivez"
-              ]
             }
           ]
         },
         {
           "metadata_code": "cv2:S01:v3:support-visuel-ouvert:A1",
           "needs_content_review": false,
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:support-visuel-ouvert:A1",
-                "cv2:S01:v3:support-visuel-ouvert:A2",
-                "cv2:S01:v3:support-visuel-ouvert:B1",
-                "cv2:S01:v3:support-visuel-ouvert:B2"
-              ]
-            }
-          ]
+          "publishable": true,
+          "blocking_errors": []
         },
         {
           "metadata_code": "cv2:S01:v3:support-visuel:A2",
@@ -11053,17 +11097,6 @@
               ],
               "evidence": [
                 "cv2:S01:v3:support-visuel:A2: needs_content_review=true"
-              ]
-            },
-            {
-              "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-              ],
-              "evidence": [
-                "complétez",
-                "choisissez",
-                "écrivez"
               ]
             }
           ]
@@ -11087,48 +11120,14 @@
               "evidence": [
                 "cv2:S01:v3:support-visuel:B1: needs_content_review=true"
               ]
-            },
-            {
-              "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-              ],
-              "evidence": [
-                "complétez",
-                "choisissez",
-                "écrivez"
-              ]
-            },
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:support-visuel:B1",
-                "cv2:S01:v3:support-visuel:B2"
-              ]
             }
           ]
         },
         {
           "metadata_code": "cv2:S01:v3:support-visuel-ouvert:B1",
           "needs_content_review": false,
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:support-visuel-ouvert:A1",
-                "cv2:S01:v3:support-visuel-ouvert:A2",
-                "cv2:S01:v3:support-visuel-ouvert:B1",
-                "cv2:S01:v3:support-visuel-ouvert:B2"
-              ]
-            }
-          ]
+          "publishable": true,
+          "blocking_errors": []
         },
         {
           "metadata_code": "cv2:S01:v3:support-visuel:B2",
@@ -11154,48 +11153,14 @@
                 "items[1].justification_prompt: Le support ne fournit aucune relation entre catégories (cinq panneaux indépendants) : synthèse non réalisée plutôt qu'inventée.",
                 "items[2].justification_prompt: Le support ne fournit aucune relation entre catégories (cinq panneaux indépendants) : synthèse non réalisée plutôt qu'inventée."
               ]
-            },
-            {
-              "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-              ],
-              "evidence": [
-                "complétez",
-                "choisissez",
-                "écrivez"
-              ]
-            },
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:support-visuel:B1",
-                "cv2:S01:v3:support-visuel:B2"
-              ]
             }
           ]
         },
         {
           "metadata_code": "cv2:S01:v3:support-visuel-ouvert:B2",
           "needs_content_review": false,
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:support-visuel-ouvert:A1",
-                "cv2:S01:v3:support-visuel-ouvert:A2",
-                "cv2:S01:v3:support-visuel-ouvert:B1",
-                "cv2:S01:v3:support-visuel-ouvert:B2"
-              ]
-            }
-          ]
+          "publishable": true,
+          "blocking_errors": []
         },
         {
           "metadata_code": "cv2:S01:v3:co-dialogue:A1",
@@ -11206,32 +11171,8 @@
         {
           "metadata_code": "cv2:S01:v3:co-comprehension:A1",
           "needs_content_review": false,
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-              ],
-              "evidence": [
-                "complétez",
-                "choisissez",
-                "écrivez"
-              ]
-            },
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:co-comprehension:A1",
-                "cv2:S01:v3:co-comprehension:A2",
-                "cv2:S01:v3:co-comprehension:B1",
-                "cv2:S01:v3:co-comprehension:B2"
-              ]
-            }
-          ]
+          "publishable": true,
+          "blocking_errors": []
         },
         {
           "metadata_code": "cv2:S01:v3:atelier-1:A1",
@@ -11262,18 +11203,6 @@
               "evidence": [
                 "cv2:S01:v3:atelier-2:A1: needs_content_review=true"
               ]
-            },
-            {
-              "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format appariement."
-              ],
-              "evidence": [
-                "associez",
-                "reliez",
-                "choisissez",
-                "complétez"
-              ]
             }
           ]
         },
@@ -11290,17 +11219,6 @@
               "evidence": [
                 "cv2:S01:v3:atelier-3:A1: needs_content_review=true"
               ]
-            },
-            {
-              "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format vrai_faux."
-              ],
-              "evidence": [
-                "choisissez",
-                "cochez",
-                "indiquez"
-              ]
             }
           ]
         },
@@ -11316,17 +11234,6 @@
               ],
               "evidence": [
                 "cv2:S01:v3:atelier-4:A1: needs_content_review=true"
-              ]
-            },
-            {
-              "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format vrai_faux."
-              ],
-              "evidence": [
-                "choisissez",
-                "cochez",
-                "indiquez"
               ]
             }
           ]
@@ -11362,20 +11269,8 @@
         {
           "metadata_code": "cv2:S01:v3:co-comprehension:A2",
           "needs_content_review": false,
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-              ],
-              "evidence": [
-                "complétez",
-                "choisissez",
-                "écrivez"
-              ]
-            }
-          ]
+          "publishable": true,
+          "blocking_errors": []
         },
         {
           "metadata_code": "cv2:S01:v3:co-approfondissement:A2",
@@ -11462,49 +11357,14 @@
         {
           "metadata_code": "cv2:S01:v3:co-comprehension:B1",
           "needs_content_review": false,
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-              ],
-              "evidence": [
-                "complétez",
-                "choisissez",
-                "écrivez"
-              ]
-            },
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:co-comprehension:A1",
-                "cv2:S01:v3:co-comprehension:A2",
-                "cv2:S01:v3:co-comprehension:B1",
-                "cv2:S01:v3:co-comprehension:B2"
-              ]
-            }
-          ]
+          "publishable": true,
+          "blocking_errors": []
         },
         {
           "metadata_code": "cv2:S01:v3:co-approfondissement:B1",
           "needs_content_review": false,
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:co-approfondissement:B1",
-                "cv2:S01:v3:co-approfondissement:B2"
-              ]
-            }
-          ]
+          "publishable": true,
+          "blocking_errors": []
         },
         {
           "metadata_code": "cv2:S01:v3:atelier-1:B1",
@@ -11551,13 +11411,6 @@
               "evidence": [
                 "cv2:S01:v3:structures:B1: needs_content_review=true"
               ]
-            },
-            {
-              "rule_id": "INSTRUCTION_OUTPUT_UNCLEAR",
-              "errors": [
-                "La consigne ne précise pas clairement l'objet sur lequel agir ou la réponse attendue."
-              ],
-              "evidence": []
             }
           ]
         },
@@ -11602,56 +11455,14 @@
         {
           "metadata_code": "cv2:S01:v3:co-comprehension:B2",
           "needs_content_review": false,
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-              ],
-              "evidence": [
-                "complétez",
-                "choisissez",
-                "écrivez"
-              ]
-            },
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:co-comprehension:A1",
-                "cv2:S01:v3:co-comprehension:A2",
-                "cv2:S01:v3:co-comprehension:B1",
-                "cv2:S01:v3:co-comprehension:B2"
-              ]
-            }
-          ]
+          "publishable": true,
+          "blocking_errors": []
         },
         {
           "metadata_code": "cv2:S01:v3:co-approfondissement:B2",
           "needs_content_review": false,
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:co-approfondissement:B1",
-                "cv2:S01:v3:co-approfondissement:B2"
-              ]
-            },
-            {
-              "rule_id": "DIFF_B2_ONLY_MORE_ITEMS",
-              "errors": [
-                "B2 differe uniquement par des items supplementaires"
-              ],
-              "evidence": []
-            }
-          ]
+          "publishable": true,
+          "blocking_errors": []
         },
         {
           "metadata_code": "cv2:S01:v3:atelier-1:B2",
@@ -11688,16 +11499,8 @@
         {
           "metadata_code": "cv2:S01:v3:eo:B2",
           "needs_content_review": false,
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "DIFF_B2_ONLY_MORE_ITEMS",
-              "errors": [
-                "B2 differe uniquement par des items supplementaires"
-              ],
-              "evidence": []
-            }
-          ]
+          "publishable": true,
+          "blocking_errors": []
         },
         {
           "metadata_code": "cv2:S01:v3:civique:A1",
@@ -11817,16 +11620,6 @@
               "evidence": [
                 "cv2:S01:v3:ee-guidee-1:A1: needs_content_review=true"
               ]
-            },
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:ee-guidee-1:A1",
-                "cv2:S01:v3:ee-guidee-1:A2"
-              ]
             }
           ]
         },
@@ -11855,77 +11648,20 @@
         {
           "metadata_code": "cv2:S01:v3:ee-guidee-2:B1",
           "needs_content_review": false,
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:ee-guidee-2:A2",
-                "cv2:S01:v3:ee-guidee-2:B1"
-              ]
-            }
-          ]
+          "publishable": true,
+          "blocking_errors": []
         },
         {
           "metadata_code": "cv2:S01:v3:ee-autonome:B1",
           "needs_content_review": false,
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "INSTRUCTION_ACTION_MISSING",
-              "errors": [
-                "La consigne ne contient aucune action observable."
-              ],
-              "evidence": []
-            },
-            {
-              "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format production_ecrite."
-              ],
-              "evidence": [
-                "écrivez",
-                "rédigez",
-                "reformulez",
-                "complétez",
-                "répondez",
-                "expliquez",
-                "justifiez"
-              ]
-            }
-          ]
+          "publishable": true,
+          "blocking_errors": []
         },
         {
           "metadata_code": "cv2:S01:v3:ee-autonome:B2",
           "needs_content_review": false,
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "INSTRUCTION_ACTION_MISSING",
-              "errors": [
-                "La consigne ne contient aucune action observable."
-              ],
-              "evidence": []
-            },
-            {
-              "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format production_ecrite."
-              ],
-              "evidence": [
-                "écrivez",
-                "rédigez",
-                "reformulez",
-                "complétez",
-                "répondez",
-                "expliquez",
-                "justifiez"
-              ]
-            }
-          ]
+          "publishable": true,
+          "blocking_errors": []
         }
       ],
       "unsupported_transformations": [
@@ -12036,8 +11772,8 @@
       "schema_version": "1.0",
       "valid": true,
       "publishable": false,
-      "publishable_count": 14,
-      "non_publishable_count": 45,
+      "publishable_count": 30,
+      "non_publishable_count": 29,
       "global_blocking_errors": [],
       "rules": [
         {
@@ -12210,7 +11946,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:lexique-association:A1",
           "evidence": [
-            "60/180 caractères"
+            "82/180 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -12404,15 +12140,13 @@
         },
         {
           "rule_id": "INSTRUCTION_TOO_COMPLEX",
-          "status": "warning",
+          "status": "pass",
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:A1",
           "evidence": [
-            "213/180 caractères"
+            "80/180 caractères"
           ],
-          "errors": [
-            "La consigne dépasse le plafond de lisibilité mobile du niveau."
-          ],
+          "errors": [],
           "suggested_rewrite": null
         },
         {
@@ -12594,7 +12328,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:lexique-association:A2",
           "evidence": [
-            "60/220 caractères"
+            "68/220 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -12777,7 +12511,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:A2",
           "evidence": [
-            "213/220 caractères"
+            "76/220 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -13157,7 +12891,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:B1",
           "evidence": [
-            "213/280 caractères"
+            "72/280 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -13554,7 +13288,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:B2",
           "evidence": [
-            "213/340 caractères"
+            "89/340 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -13737,7 +13471,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:A1",
           "evidence": [
-            "108/180 caractères"
+            "105/180 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -13920,7 +13654,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:A2",
           "evidence": [
-            "108/220 caractères"
+            "119/220 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -14103,7 +13837,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:B1",
           "evidence": [
-            "108/280 caractères"
+            "117/280 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -14286,7 +14020,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:B2",
           "evidence": [
-            "108/340 caractères"
+            "97/340 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -14447,7 +14181,7 @@
         },
         {
           "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-          "status": "fail",
+          "status": "pass",
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:support-visuel:A1",
           "evidence": [
@@ -14455,9 +14189,7 @@
             "choisissez",
             "écrivez"
           ],
-          "errors": [
-            "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-          ],
+          "errors": [],
           "suggested_rewrite": null
         },
         {
@@ -14475,7 +14207,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:support-visuel:A1",
           "evidence": [
-            "49/180 caractères"
+            "104/180 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -14662,7 +14394,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:support-visuel-ouvert:A1",
           "evidence": [
-            "62/180 caractères"
+            "87/180 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -14819,7 +14551,7 @@
         },
         {
           "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-          "status": "fail",
+          "status": "pass",
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:support-visuel:A2",
           "evidence": [
@@ -14827,9 +14559,7 @@
             "choisissez",
             "écrivez"
           ],
-          "errors": [
-            "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-          ],
+          "errors": [],
           "suggested_rewrite": null
         },
         {
@@ -14847,7 +14577,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:support-visuel:A2",
           "evidence": [
-            "49/220 caractères"
+            "87/220 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -15030,7 +14760,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:support-visuel-ouvert:A2",
           "evidence": [
-            "62/220 caractères"
+            "80/220 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -15191,7 +14921,7 @@
         },
         {
           "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-          "status": "fail",
+          "status": "pass",
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:support-visuel:B1",
           "evidence": [
@@ -15199,9 +14929,7 @@
             "choisissez",
             "écrivez"
           ],
-          "errors": [
-            "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-          ],
+          "errors": [],
           "suggested_rewrite": null
         },
         {
@@ -15219,7 +14947,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:support-visuel:B1",
           "evidence": [
-            "49/280 caractères"
+            "97/280 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -15402,7 +15130,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:support-visuel-ouvert:B1",
           "evidence": [
-            "62/280 caractères"
+            "115/280 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -15572,7 +15300,7 @@
         },
         {
           "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-          "status": "fail",
+          "status": "pass",
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:support-visuel:B2",
           "evidence": [
@@ -15580,9 +15308,7 @@
             "choisissez",
             "écrivez"
           ],
-          "errors": [
-            "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-          ],
+          "errors": [],
           "suggested_rewrite": null
         },
         {
@@ -15600,7 +15326,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:support-visuel:B2",
           "evidence": [
-            "49/340 caractères"
+            "112/340 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -15783,7 +15509,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:support-visuel-ouvert:B2",
           "evidence": [
-            "62/340 caractères"
+            "125/340 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -15938,16 +15664,11 @@
         },
         {
           "rule_id": "INSTRUCTION_MULTISTEP_UNMARKED",
-          "status": "warning",
+          "status": "pass",
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:co-dialogue:A1",
-          "evidence": [
-            "cochez",
-            "écoutez"
-          ],
-          "errors": [
-            "Plusieurs actions sont demandées sans ordre explicite."
-          ],
+          "evidence": [],
+          "errors": [],
           "suggested_rewrite": null
         },
         {
@@ -15978,7 +15699,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:co-dialogue:A1",
           "evidence": [
-            "108/180 caractères"
+            "79/180 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -16142,7 +15863,7 @@
         },
         {
           "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-          "status": "fail",
+          "status": "pass",
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:co-comprehension:A1",
           "evidence": [
@@ -16150,9 +15871,7 @@
             "choisissez",
             "écrivez"
           ],
-          "errors": [
-            "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-          ],
+          "errors": [],
           "suggested_rewrite": null
         },
         {
@@ -16170,7 +15889,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:co-comprehension:A1",
           "evidence": [
-            "51/180 caractères"
+            "88/180 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -16353,7 +16072,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:atelier-1:A1",
           "evidence": [
-            "76/180 caractères"
+            "77/180 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -16510,7 +16229,7 @@
         },
         {
           "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-          "status": "fail",
+          "status": "pass",
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:atelier-2:A1",
           "evidence": [
@@ -16519,9 +16238,7 @@
             "choisissez",
             "complétez"
           ],
-          "errors": [
-            "La consigne ne décrit pas une action compatible avec le format appariement."
-          ],
+          "errors": [],
           "suggested_rewrite": null
         },
         {
@@ -16539,7 +16256,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:atelier-2:A1",
           "evidence": [
-            "46/180 caractères"
+            "67/180 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -16696,7 +16413,7 @@
         },
         {
           "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-          "status": "fail",
+          "status": "pass",
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:atelier-3:A1",
           "evidence": [
@@ -16704,9 +16421,7 @@
             "cochez",
             "indiquez"
           ],
-          "errors": [
-            "La consigne ne décrit pas une action compatible avec le format vrai_faux."
-          ],
+          "errors": [],
           "suggested_rewrite": null
         },
         {
@@ -16724,7 +16439,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:atelier-3:A1",
           "evidence": [
-            "58/180 caractères"
+            "82/180 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -16881,7 +16596,7 @@
         },
         {
           "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-          "status": "fail",
+          "status": "pass",
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:atelier-4:A1",
           "evidence": [
@@ -16889,9 +16604,7 @@
             "cochez",
             "indiquez"
           ],
-          "errors": [
-            "La consigne ne décrit pas une action compatible avec le format vrai_faux."
-          ],
+          "errors": [],
           "suggested_rewrite": null
         },
         {
@@ -16909,7 +16622,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:atelier-4:A1",
           "evidence": [
-            "78/180 caractères"
+            "83/180 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -17057,17 +16770,11 @@
         },
         {
           "rule_id": "INSTRUCTION_MULTISTEP_UNMARKED",
-          "status": "warning",
+          "status": "pass",
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:structures:A1",
-          "evidence": [
-            "choisissez",
-            "complétez",
-            "conjuguez"
-          ],
-          "errors": [
-            "Plusieurs actions sont demandées sans ordre explicite."
-          ],
+          "evidence": [],
+          "errors": [],
           "suggested_rewrite": null
         },
         {
@@ -17098,7 +16805,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:structures:A1",
           "evidence": [
-            "107/180 caractères"
+            "97/180 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -17281,7 +16988,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:eo:A1",
           "evidence": [
-            "85/180 caractères"
+            "121/180 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -17425,16 +17132,11 @@
         },
         {
           "rule_id": "INSTRUCTION_MULTISTEP_UNMARKED",
-          "status": "warning",
+          "status": "pass",
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:co-dialogue:A2",
-          "evidence": [
-            "cochez",
-            "écoutez"
-          ],
-          "errors": [
-            "Plusieurs actions sont demandées sans ordre explicite."
-          ],
+          "evidence": [],
+          "errors": [],
           "suggested_rewrite": null
         },
         {
@@ -17465,7 +17167,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:co-dialogue:A2",
           "evidence": [
-            "108/220 caractères"
+            "94/220 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -17618,7 +17320,7 @@
         },
         {
           "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-          "status": "fail",
+          "status": "pass",
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:co-comprehension:A2",
           "evidence": [
@@ -17626,9 +17328,7 @@
             "choisissez",
             "écrivez"
           ],
-          "errors": [
-            "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-          ],
+          "errors": [],
           "suggested_rewrite": null
         },
         {
@@ -17646,7 +17346,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:co-comprehension:A2",
           "evidence": [
-            "51/220 caractères"
+            "88/220 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -17829,7 +17529,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:co-approfondissement:A2",
           "evidence": [
-            "68/220 caractères"
+            "103/220 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -18012,7 +17712,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:atelier-1:A2",
           "evidence": [
-            "42/220 caractères"
+            "82/220 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -18195,7 +17895,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:atelier-2:A2",
           "evidence": [
-            "51/220 caractères"
+            "82/220 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -18378,7 +18078,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:atelier-3:A2",
           "evidence": [
-            "49/220 caractères"
+            "91/220 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -18561,7 +18261,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:structures:A2",
           "evidence": [
-            "72/220 caractères"
+            "115/220 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -18744,7 +18444,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:eo:A2",
           "evidence": [
-            "85/220 caractères"
+            "123/220 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -18899,16 +18599,11 @@
         },
         {
           "rule_id": "INSTRUCTION_MULTISTEP_UNMARKED",
-          "status": "warning",
+          "status": "pass",
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:co-dialogue:B1",
-          "evidence": [
-            "cochez",
-            "écoutez"
-          ],
-          "errors": [
-            "Plusieurs actions sont demandées sans ordre explicite."
-          ],
+          "evidence": [],
+          "errors": [],
           "suggested_rewrite": null
         },
         {
@@ -18939,7 +18634,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:co-dialogue:B1",
           "evidence": [
-            "108/280 caractères"
+            "114/280 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -19092,7 +18787,7 @@
         },
         {
           "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-          "status": "fail",
+          "status": "pass",
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:co-comprehension:B1",
           "evidence": [
@@ -19100,9 +18795,7 @@
             "choisissez",
             "écrivez"
           ],
-          "errors": [
-            "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-          ],
+          "errors": [],
           "suggested_rewrite": null
         },
         {
@@ -19120,7 +18813,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:co-comprehension:B1",
           "evidence": [
-            "51/280 caractères"
+            "109/280 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -19303,7 +18996,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:co-approfondissement:B1",
           "evidence": [
-            "68/280 caractères"
+            "102/280 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -19486,7 +19179,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:atelier-1:B1",
           "evidence": [
-            "35/280 caractères"
+            "78/280 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -19670,7 +19363,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:atelier-2:B1",
           "evidence": [
-            "77/280 caractères"
+            "84/280 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -19809,27 +19502,20 @@
         },
         {
           "rule_id": "INSTRUCTION_OUTPUT_UNCLEAR",
-          "status": "fail",
+          "status": "pass",
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:structures:B1",
           "evidence": [],
-          "errors": [
-            "La consigne ne précise pas clairement l'objet sur lequel agir ou la réponse attendue."
-          ],
+          "errors": [],
           "suggested_rewrite": null
         },
         {
           "rule_id": "INSTRUCTION_MULTISTEP_UNMARKED",
-          "status": "warning",
+          "status": "pass",
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:structures:B1",
-          "evidence": [
-            "complétez",
-            "transformez"
-          ],
-          "errors": [
-            "Plusieurs actions sont demandées sans ordre explicite."
-          ],
+          "evidence": [],
+          "errors": [],
           "suggested_rewrite": null
         },
         {
@@ -19861,7 +19547,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:structures:B1",
           "evidence": [
-            "64/280 caractères"
+            "73/280 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -20044,7 +19730,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:eo:B1",
           "evidence": [
-            "85/280 caractères"
+            "138/280 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -20214,16 +19900,11 @@
         },
         {
           "rule_id": "INSTRUCTION_MULTISTEP_UNMARKED",
-          "status": "warning",
+          "status": "pass",
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:co-dialogue:B2",
-          "evidence": [
-            "cochez",
-            "écoutez"
-          ],
-          "errors": [
-            "Plusieurs actions sont demandées sans ordre explicite."
-          ],
+          "evidence": [],
+          "errors": [],
           "suggested_rewrite": null
         },
         {
@@ -20254,7 +19935,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:co-dialogue:B2",
           "evidence": [
-            "108/340 caractères"
+            "127/340 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -20407,7 +20088,7 @@
         },
         {
           "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-          "status": "fail",
+          "status": "pass",
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:co-comprehension:B2",
           "evidence": [
@@ -20415,9 +20096,7 @@
             "choisissez",
             "écrivez"
           ],
-          "errors": [
-            "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-          ],
+          "errors": [],
           "suggested_rewrite": null
         },
         {
@@ -20435,7 +20114,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:co-comprehension:B2",
           "evidence": [
-            "51/340 caractères"
+            "125/340 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -20618,7 +20297,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:co-approfondissement:B2",
           "evidence": [
-            "68/340 caractères"
+            "135/340 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -20801,7 +20480,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:atelier-1:B2",
           "evidence": [
-            "49/340 caractères"
+            "89/340 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -20949,16 +20628,11 @@
         },
         {
           "rule_id": "INSTRUCTION_MULTISTEP_UNMARKED",
-          "status": "warning",
+          "status": "pass",
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:structures:B2",
-          "evidence": [
-            "complétez",
-            "reformulez"
-          ],
-          "errors": [
-            "Plusieurs actions sont demandées sans ordre explicite."
-          ],
+          "evidence": [],
+          "errors": [],
           "suggested_rewrite": null
         },
         {
@@ -20990,7 +20664,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:structures:B2",
           "evidence": [
-            "108/340 caractères"
+            "112/340 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -21173,7 +20847,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:eo:B2",
           "evidence": [
-            "85/340 caractères"
+            "145/340 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -21367,7 +21041,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:civique:A1",
           "evidence": [
-            "95/180 caractères"
+            "87/180 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -21563,7 +21237,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:civique:A2",
           "evidence": [
-            "95/220 caractères"
+            "91/220 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -21759,7 +21433,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:civique:B1",
           "evidence": [
-            "95/280 caractères"
+            "114/280 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -21963,7 +21637,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:civique:B2",
           "evidence": [
-            "95/340 caractères"
+            "178/340 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -22148,7 +21822,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:ee-guidee-1:A1",
           "evidence": [
-            "134/180 caractères"
+            "96/180 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -22331,7 +22005,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:ee-guidee-1:A2",
           "evidence": [
-            "134/220 caractères"
+            "100/220 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -22514,7 +22188,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:ee-guidee-2:A2",
           "evidence": [
-            "149/220 caractères"
+            "86/220 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -22697,7 +22371,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:ee-guidee-2:B1",
           "evidence": [
-            "149/280 caractères"
+            "94/280 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -22823,13 +22497,11 @@
         },
         {
           "rule_id": "INSTRUCTION_ACTION_MISSING",
-          "status": "fail",
+          "status": "pass",
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:ee-autonome:B1",
           "evidence": [],
-          "errors": [
-            "La consigne ne contient aucune action observable."
-          ],
+          "errors": [],
           "suggested_rewrite": null
         },
         {
@@ -22852,7 +22524,7 @@
         },
         {
           "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-          "status": "fail",
+          "status": "pass",
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:ee-autonome:B1",
           "evidence": [
@@ -22864,9 +22536,7 @@
             "expliquez",
             "justifiez"
           ],
-          "errors": [
-            "La consigne ne décrit pas une action compatible avec le format production_ecrite."
-          ],
+          "errors": [],
           "suggested_rewrite": null
         },
         {
@@ -22884,7 +22554,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:ee-autonome:B1",
           "evidence": [
-            "107/280 caractères"
+            "124/280 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -23010,13 +22680,11 @@
         },
         {
           "rule_id": "INSTRUCTION_ACTION_MISSING",
-          "status": "fail",
+          "status": "pass",
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:ee-autonome:B2",
           "evidence": [],
-          "errors": [
-            "La consigne ne contient aucune action observable."
-          ],
+          "errors": [],
           "suggested_rewrite": null
         },
         {
@@ -23039,7 +22707,7 @@
         },
         {
           "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-          "status": "fail",
+          "status": "pass",
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:ee-autonome:B2",
           "evidence": [
@@ -23051,9 +22719,7 @@
             "expliquez",
             "justifiez"
           ],
-          "errors": [
-            "La consigne ne décrit pas une action compatible avec le format production_ecrite."
-          ],
+          "errors": [],
           "suggested_rewrite": null
         },
         {
@@ -23071,7 +22737,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:ee-autonome:B2",
           "evidence": [
-            "80/340 caractères"
+            "166/340 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -23287,34 +22953,6 @@
           "suggested_rewrite": null
         },
         {
-          "rule_id": "DIFF_VARIANTS_DUPLICATED",
-          "status": "fail",
-          "scope": "family",
-          "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:B1",
-          "evidence": [
-            "cv2:S01:v3:lexique-texte-lacunaire:B1",
-            "cv2:S01:v3:lexique-texte-lacunaire:B2"
-          ],
-          "errors": [
-            "variante pedagogiquement identique a un autre niveau"
-          ],
-          "suggested_rewrite": null
-        },
-        {
-          "rule_id": "DIFF_VARIANTS_DUPLICATED",
-          "status": "fail",
-          "scope": "family",
-          "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:B2",
-          "evidence": [
-            "cv2:S01:v3:lexique-texte-lacunaire:B1",
-            "cv2:S01:v3:lexique-texte-lacunaire:B2"
-          ],
-          "errors": [
-            "variante pedagogiquement identique a un autre niveau"
-          ],
-          "suggested_rewrite": null
-        },
-        {
           "rule_id": "DIFF_FACTS_MISSING",
           "status": "warning",
           "scope": "family",
@@ -23356,54 +22994,6 @@
             "facts_hash absent: controle limite au support et aux corrections"
           ],
           "errors": [],
-          "suggested_rewrite": null
-        },
-        {
-          "rule_id": "DIFF_VARIANTS_DUPLICATED",
-          "status": "fail",
-          "scope": "family",
-          "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:A1",
-          "evidence": [
-            "cv2:S01:v3:lexique-reemploi-oral:A1",
-            "cv2:S01:v3:lexique-reemploi-oral:A2",
-            "cv2:S01:v3:lexique-reemploi-oral:B1",
-            "cv2:S01:v3:lexique-reemploi-oral:B2"
-          ],
-          "errors": [
-            "variante pedagogiquement identique a un autre niveau"
-          ],
-          "suggested_rewrite": null
-        },
-        {
-          "rule_id": "DIFF_VARIANTS_DUPLICATED",
-          "status": "fail",
-          "scope": "family",
-          "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:B1",
-          "evidence": [
-            "cv2:S01:v3:lexique-reemploi-oral:A1",
-            "cv2:S01:v3:lexique-reemploi-oral:A2",
-            "cv2:S01:v3:lexique-reemploi-oral:B1",
-            "cv2:S01:v3:lexique-reemploi-oral:B2"
-          ],
-          "errors": [
-            "variante pedagogiquement identique a un autre niveau"
-          ],
-          "suggested_rewrite": null
-        },
-        {
-          "rule_id": "DIFF_VARIANTS_DUPLICATED",
-          "status": "fail",
-          "scope": "family",
-          "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:B2",
-          "evidence": [
-            "cv2:S01:v3:lexique-reemploi-oral:A1",
-            "cv2:S01:v3:lexique-reemploi-oral:A2",
-            "cv2:S01:v3:lexique-reemploi-oral:B1",
-            "cv2:S01:v3:lexique-reemploi-oral:B2"
-          ],
-          "errors": [
-            "variante pedagogiquement identique a un autre niveau"
-          ],
           "suggested_rewrite": null
         },
         {
@@ -23451,34 +23041,6 @@
           "suggested_rewrite": null
         },
         {
-          "rule_id": "DIFF_VARIANTS_DUPLICATED",
-          "status": "fail",
-          "scope": "family",
-          "metadata_code": "cv2:S01:v3:support-visuel:B1",
-          "evidence": [
-            "cv2:S01:v3:support-visuel:B1",
-            "cv2:S01:v3:support-visuel:B2"
-          ],
-          "errors": [
-            "variante pedagogiquement identique a un autre niveau"
-          ],
-          "suggested_rewrite": null
-        },
-        {
-          "rule_id": "DIFF_VARIANTS_DUPLICATED",
-          "status": "fail",
-          "scope": "family",
-          "metadata_code": "cv2:S01:v3:support-visuel:B2",
-          "evidence": [
-            "cv2:S01:v3:support-visuel:B1",
-            "cv2:S01:v3:support-visuel:B2"
-          ],
-          "errors": [
-            "variante pedagogiquement identique a un autre niveau"
-          ],
-          "suggested_rewrite": null
-        },
-        {
           "rule_id": "DIFF_FACTS_MISSING",
           "status": "warning",
           "scope": "family",
@@ -23520,54 +23082,6 @@
             "facts_hash absent: controle limite au support et aux corrections"
           ],
           "errors": [],
-          "suggested_rewrite": null
-        },
-        {
-          "rule_id": "DIFF_VARIANTS_DUPLICATED",
-          "status": "fail",
-          "scope": "family",
-          "metadata_code": "cv2:S01:v3:support-visuel-ouvert:A1",
-          "evidence": [
-            "cv2:S01:v3:support-visuel-ouvert:A1",
-            "cv2:S01:v3:support-visuel-ouvert:A2",
-            "cv2:S01:v3:support-visuel-ouvert:B1",
-            "cv2:S01:v3:support-visuel-ouvert:B2"
-          ],
-          "errors": [
-            "variante pedagogiquement identique a un autre niveau"
-          ],
-          "suggested_rewrite": null
-        },
-        {
-          "rule_id": "DIFF_VARIANTS_DUPLICATED",
-          "status": "fail",
-          "scope": "family",
-          "metadata_code": "cv2:S01:v3:support-visuel-ouvert:B1",
-          "evidence": [
-            "cv2:S01:v3:support-visuel-ouvert:A1",
-            "cv2:S01:v3:support-visuel-ouvert:A2",
-            "cv2:S01:v3:support-visuel-ouvert:B1",
-            "cv2:S01:v3:support-visuel-ouvert:B2"
-          ],
-          "errors": [
-            "variante pedagogiquement identique a un autre niveau"
-          ],
-          "suggested_rewrite": null
-        },
-        {
-          "rule_id": "DIFF_VARIANTS_DUPLICATED",
-          "status": "fail",
-          "scope": "family",
-          "metadata_code": "cv2:S01:v3:support-visuel-ouvert:B2",
-          "evidence": [
-            "cv2:S01:v3:support-visuel-ouvert:A1",
-            "cv2:S01:v3:support-visuel-ouvert:A2",
-            "cv2:S01:v3:support-visuel-ouvert:B1",
-            "cv2:S01:v3:support-visuel-ouvert:B2"
-          ],
-          "errors": [
-            "variante pedagogiquement identique a un autre niveau"
-          ],
           "suggested_rewrite": null
         },
         {
@@ -23656,54 +23170,6 @@
             "facts_hash absent: controle limite au support et aux corrections"
           ],
           "errors": [],
-          "suggested_rewrite": null
-        },
-        {
-          "rule_id": "DIFF_VARIANTS_DUPLICATED",
-          "status": "fail",
-          "scope": "family",
-          "metadata_code": "cv2:S01:v3:co-comprehension:A1",
-          "evidence": [
-            "cv2:S01:v3:co-comprehension:A1",
-            "cv2:S01:v3:co-comprehension:A2",
-            "cv2:S01:v3:co-comprehension:B1",
-            "cv2:S01:v3:co-comprehension:B2"
-          ],
-          "errors": [
-            "variante pedagogiquement identique a un autre niveau"
-          ],
-          "suggested_rewrite": null
-        },
-        {
-          "rule_id": "DIFF_VARIANTS_DUPLICATED",
-          "status": "fail",
-          "scope": "family",
-          "metadata_code": "cv2:S01:v3:co-comprehension:B1",
-          "evidence": [
-            "cv2:S01:v3:co-comprehension:A1",
-            "cv2:S01:v3:co-comprehension:A2",
-            "cv2:S01:v3:co-comprehension:B1",
-            "cv2:S01:v3:co-comprehension:B2"
-          ],
-          "errors": [
-            "variante pedagogiquement identique a un autre niveau"
-          ],
-          "suggested_rewrite": null
-        },
-        {
-          "rule_id": "DIFF_VARIANTS_DUPLICATED",
-          "status": "fail",
-          "scope": "family",
-          "metadata_code": "cv2:S01:v3:co-comprehension:B2",
-          "evidence": [
-            "cv2:S01:v3:co-comprehension:A1",
-            "cv2:S01:v3:co-comprehension:A2",
-            "cv2:S01:v3:co-comprehension:B1",
-            "cv2:S01:v3:co-comprehension:B2"
-          ],
-          "errors": [
-            "variante pedagogiquement identique a un autre niveau"
-          ],
           "suggested_rewrite": null
         },
         {
@@ -23894,17 +23360,6 @@
           "suggested_rewrite": null
         },
         {
-          "rule_id": "DIFF_B2_ONLY_MORE_ITEMS",
-          "status": "fail",
-          "scope": "family",
-          "metadata_code": "cv2:S01:v3:eo:B2",
-          "evidence": [],
-          "errors": [
-            "B2 differe uniquement par des items supplementaires"
-          ],
-          "suggested_rewrite": null
-        },
-        {
           "rule_id": "DIFF_FACTS_MISSING",
           "status": "warning",
           "scope": "family",
@@ -23946,45 +23401,6 @@
             "facts_hash absent: controle limite au support et aux corrections"
           ],
           "errors": [],
-          "suggested_rewrite": null
-        },
-        {
-          "rule_id": "DIFF_VARIANTS_DUPLICATED",
-          "status": "fail",
-          "scope": "family",
-          "metadata_code": "cv2:S01:v3:co-approfondissement:B1",
-          "evidence": [
-            "cv2:S01:v3:co-approfondissement:B1",
-            "cv2:S01:v3:co-approfondissement:B2"
-          ],
-          "errors": [
-            "variante pedagogiquement identique a un autre niveau"
-          ],
-          "suggested_rewrite": null
-        },
-        {
-          "rule_id": "DIFF_VARIANTS_DUPLICATED",
-          "status": "fail",
-          "scope": "family",
-          "metadata_code": "cv2:S01:v3:co-approfondissement:B2",
-          "evidence": [
-            "cv2:S01:v3:co-approfondissement:B1",
-            "cv2:S01:v3:co-approfondissement:B2"
-          ],
-          "errors": [
-            "variante pedagogiquement identique a un autre niveau"
-          ],
-          "suggested_rewrite": null
-        },
-        {
-          "rule_id": "DIFF_B2_ONLY_MORE_ITEMS",
-          "status": "fail",
-          "scope": "family",
-          "metadata_code": "cv2:S01:v3:co-approfondissement:B2",
-          "evidence": [],
-          "errors": [
-            "B2 differe uniquement par des items supplementaires"
-          ],
           "suggested_rewrite": null
         },
         {
@@ -24065,20 +23481,6 @@
           "suggested_rewrite": null
         },
         {
-          "rule_id": "DIFF_VARIANTS_DUPLICATED",
-          "status": "fail",
-          "scope": "family",
-          "metadata_code": "cv2:S01:v3:ee-guidee-1:A1",
-          "evidence": [
-            "cv2:S01:v3:ee-guidee-1:A1",
-            "cv2:S01:v3:ee-guidee-1:A2"
-          ],
-          "errors": [
-            "variante pedagogiquement identique a un autre niveau"
-          ],
-          "suggested_rewrite": null
-        },
-        {
           "rule_id": "DIFF_FACTS_MISSING",
           "status": "warning",
           "scope": "family",
@@ -24098,20 +23500,6 @@
             "facts_hash absent: controle limite au support et aux corrections"
           ],
           "errors": [],
-          "suggested_rewrite": null
-        },
-        {
-          "rule_id": "DIFF_VARIANTS_DUPLICATED",
-          "status": "fail",
-          "scope": "family",
-          "metadata_code": "cv2:S01:v3:ee-guidee-2:B1",
-          "evidence": [
-            "cv2:S01:v3:ee-guidee-2:A2",
-            "cv2:S01:v3:ee-guidee-2:B1"
-          ],
-          "errors": [
-            "variante pedagogiquement identique a un autre niveau"
-          ],
           "suggested_rewrite": null
         },
         {
@@ -24305,7 +23693,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:lexique-association:A1",
               "evidence": [
-                "60/180 caractères"
+                "82/180 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -24526,15 +23914,13 @@
             },
             {
               "rule_id": "INSTRUCTION_TOO_COMPLEX",
-              "status": "warning",
+              "status": "pass",
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:A1",
               "evidence": [
-                "213/180 caractères"
+                "80/180 caractères"
               ],
-              "errors": [
-                "La consigne dépasse le plafond de lisibilité mobile du niveau."
-              ],
+              "errors": [],
               "suggested_rewrite": null
             },
             {
@@ -24733,7 +24119,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:lexique-association:A2",
               "evidence": [
-                "60/220 caractères"
+                "68/220 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -24943,7 +24329,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:A2",
               "evidence": [
-                "213/220 caractères"
+                "76/220 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -25227,16 +24613,6 @@
               "evidence": [
                 "cv2:S01:v3:lexique-texte-lacunaire:B1: needs_content_review=true"
               ]
-            },
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:lexique-texte-lacunaire:B1",
-                "cv2:S01:v3:lexique-texte-lacunaire:B2"
-              ]
             }
           ],
           "rules": [
@@ -25377,7 +24753,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:B1",
               "evidence": [
-                "213/280 caractères"
+                "72/280 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -25425,20 +24801,6 @@
               "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:B1",
               "evidence": [],
               "errors": [],
-              "suggested_rewrite": null
-            },
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "status": "fail",
-              "scope": "family",
-              "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:B1",
-              "evidence": [
-                "cv2:S01:v3:lexique-texte-lacunaire:B1",
-                "cv2:S01:v3:lexique-texte-lacunaire:B2"
-              ],
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
               "suggested_rewrite": null
             },
             {
@@ -25694,16 +25056,6 @@
                 "items[1].justification_prompt: Aucun effet de sens entre mots proches n'est présent pour ce trou : justification contextuelle simple maintenue plutôt qu'une nuance inventée.",
                 "items[2].justification_prompt: Aucun effet de sens entre mots proches n'est présent pour ce trou : justification contextuelle simple maintenue plutôt qu'une nuance inventée."
               ]
-            },
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:lexique-texte-lacunaire:B1",
-                "cv2:S01:v3:lexique-texte-lacunaire:B2"
-              ]
             }
           ],
           "rules": [
@@ -25853,7 +25205,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:B2",
               "evidence": [
-                "213/340 caractères"
+                "89/340 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -25904,20 +25256,6 @@
               "suggested_rewrite": null
             },
             {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "status": "fail",
-              "scope": "family",
-              "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:B2",
-              "evidence": [
-                "cv2:S01:v3:lexique-texte-lacunaire:B1",
-                "cv2:S01:v3:lexique-texte-lacunaire:B2"
-              ],
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "suggested_rewrite": null
-            },
-            {
               "rule_id": "DIFF_FACTS_MISSING",
               "status": "warning",
               "scope": "family",
@@ -25931,21 +25269,8 @@
           ]
         },
         "cv2:S01:v3:lexique-reemploi-oral:A1": {
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:lexique-reemploi-oral:A1",
-                "cv2:S01:v3:lexique-reemploi-oral:A2",
-                "cv2:S01:v3:lexique-reemploi-oral:B1",
-                "cv2:S01:v3:lexique-reemploi-oral:B2"
-              ]
-            }
-          ],
+          "publishable": true,
+          "blocking_errors": [],
           "rules": [
             {
               "rule_id": "DIFF_CONTENT_REVIEW_REQUIRED",
@@ -26080,7 +25405,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:A1",
               "evidence": [
-                "108/180 caractères"
+                "105/180 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -26128,22 +25453,6 @@
               "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:A1",
               "evidence": [],
               "errors": [],
-              "suggested_rewrite": null
-            },
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "status": "fail",
-              "scope": "family",
-              "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:A1",
-              "evidence": [
-                "cv2:S01:v3:lexique-reemploi-oral:A1",
-                "cv2:S01:v3:lexique-reemploi-oral:A2",
-                "cv2:S01:v3:lexique-reemploi-oral:B1",
-                "cv2:S01:v3:lexique-reemploi-oral:B2"
-              ],
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
               "suggested_rewrite": null
             },
             {
@@ -26296,7 +25605,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:A2",
               "evidence": [
-                "108/220 caractères"
+                "119/220 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -26360,21 +25669,8 @@
           ]
         },
         "cv2:S01:v3:lexique-reemploi-oral:B1": {
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:lexique-reemploi-oral:A1",
-                "cv2:S01:v3:lexique-reemploi-oral:A2",
-                "cv2:S01:v3:lexique-reemploi-oral:B1",
-                "cv2:S01:v3:lexique-reemploi-oral:B2"
-              ]
-            }
-          ],
+          "publishable": true,
+          "blocking_errors": [],
           "rules": [
             {
               "rule_id": "DIFF_CONTENT_REVIEW_REQUIRED",
@@ -26509,7 +25805,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:B1",
               "evidence": [
-                "108/280 caractères"
+                "117/280 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -26560,22 +25856,6 @@
               "suggested_rewrite": null
             },
             {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "status": "fail",
-              "scope": "family",
-              "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:B1",
-              "evidence": [
-                "cv2:S01:v3:lexique-reemploi-oral:A1",
-                "cv2:S01:v3:lexique-reemploi-oral:A2",
-                "cv2:S01:v3:lexique-reemploi-oral:B1",
-                "cv2:S01:v3:lexique-reemploi-oral:B2"
-              ],
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "suggested_rewrite": null
-            },
-            {
               "rule_id": "DIFF_FACTS_MISSING",
               "status": "warning",
               "scope": "family",
@@ -26589,21 +25869,8 @@
           ]
         },
         "cv2:S01:v3:lexique-reemploi-oral:B2": {
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:lexique-reemploi-oral:A1",
-                "cv2:S01:v3:lexique-reemploi-oral:A2",
-                "cv2:S01:v3:lexique-reemploi-oral:B1",
-                "cv2:S01:v3:lexique-reemploi-oral:B2"
-              ]
-            }
-          ],
+          "publishable": true,
+          "blocking_errors": [],
           "rules": [
             {
               "rule_id": "DIFF_CONTENT_REVIEW_REQUIRED",
@@ -26738,7 +26005,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:B2",
               "evidence": [
-                "108/340 caractères"
+                "97/340 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -26789,22 +26056,6 @@
               "suggested_rewrite": null
             },
             {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "status": "fail",
-              "scope": "family",
-              "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:B2",
-              "evidence": [
-                "cv2:S01:v3:lexique-reemploi-oral:A1",
-                "cv2:S01:v3:lexique-reemploi-oral:A2",
-                "cv2:S01:v3:lexique-reemploi-oral:B1",
-                "cv2:S01:v3:lexique-reemploi-oral:B2"
-              ],
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "suggested_rewrite": null
-            },
-            {
               "rule_id": "DIFF_FACTS_MISSING",
               "status": "warning",
               "scope": "family",
@@ -26827,17 +26078,6 @@
               ],
               "evidence": [
                 "cv2:S01:v3:support-visuel:A1: needs_content_review=true"
-              ]
-            },
-            {
-              "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-              ],
-              "evidence": [
-                "complétez",
-                "choisissez",
-                "écrivez"
               ]
             }
           ],
@@ -26953,7 +26193,7 @@
             },
             {
               "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "status": "fail",
+              "status": "pass",
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:support-visuel:A1",
               "evidence": [
@@ -26961,9 +26201,7 @@
                 "choisissez",
                 "écrivez"
               ],
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-              ],
+              "errors": [],
               "suggested_rewrite": null
             },
             {
@@ -26981,7 +26219,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:support-visuel:A1",
               "evidence": [
-                "49/180 caractères"
+                "104/180 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -27049,21 +26287,8 @@
           ]
         },
         "cv2:S01:v3:support-visuel-ouvert:A1": {
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:support-visuel-ouvert:A1",
-                "cv2:S01:v3:support-visuel-ouvert:A2",
-                "cv2:S01:v3:support-visuel-ouvert:B1",
-                "cv2:S01:v3:support-visuel-ouvert:B2"
-              ]
-            }
-          ],
+          "publishable": true,
+          "blocking_errors": [],
           "rules": [
             {
               "rule_id": "DIFF_CONTENT_REVIEW_REQUIRED",
@@ -27198,7 +26423,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:support-visuel-ouvert:A1",
               "evidence": [
-                "62/180 caractères"
+                "87/180 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -27249,22 +26474,6 @@
               "suggested_rewrite": null
             },
             {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "status": "fail",
-              "scope": "family",
-              "metadata_code": "cv2:S01:v3:support-visuel-ouvert:A1",
-              "evidence": [
-                "cv2:S01:v3:support-visuel-ouvert:A1",
-                "cv2:S01:v3:support-visuel-ouvert:A2",
-                "cv2:S01:v3:support-visuel-ouvert:B1",
-                "cv2:S01:v3:support-visuel-ouvert:B2"
-              ],
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "suggested_rewrite": null
-            },
-            {
               "rule_id": "DIFF_FACTS_MISSING",
               "status": "warning",
               "scope": "family",
@@ -27287,17 +26496,6 @@
               ],
               "evidence": [
                 "cv2:S01:v3:support-visuel:A2: needs_content_review=true"
-              ]
-            },
-            {
-              "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-              ],
-              "evidence": [
-                "complétez",
-                "choisissez",
-                "écrivez"
               ]
             }
           ],
@@ -27409,7 +26607,7 @@
             },
             {
               "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "status": "fail",
+              "status": "pass",
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:support-visuel:A2",
               "evidence": [
@@ -27417,9 +26615,7 @@
                 "choisissez",
                 "écrivez"
               ],
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-              ],
+              "errors": [],
               "suggested_rewrite": null
             },
             {
@@ -27437,7 +26633,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:support-visuel:A2",
               "evidence": [
-                "49/220 caractères"
+                "87/220 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -27637,7 +26833,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:support-visuel-ouvert:A2",
               "evidence": [
-                "62/220 caractères"
+                "80/220 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -27710,27 +26906,6 @@
               ],
               "evidence": [
                 "cv2:S01:v3:support-visuel:B1: needs_content_review=true"
-              ]
-            },
-            {
-              "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-              ],
-              "evidence": [
-                "complétez",
-                "choisissez",
-                "écrivez"
-              ]
-            },
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:support-visuel:B1",
-                "cv2:S01:v3:support-visuel:B2"
               ]
             }
           ],
@@ -27846,7 +27021,7 @@
             },
             {
               "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "status": "fail",
+              "status": "pass",
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:support-visuel:B1",
               "evidence": [
@@ -27854,9 +27029,7 @@
                 "choisissez",
                 "écrivez"
               ],
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-              ],
+              "errors": [],
               "suggested_rewrite": null
             },
             {
@@ -27874,7 +27047,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:support-visuel:B1",
               "evidence": [
-                "49/280 caractères"
+                "97/280 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -27925,20 +27098,6 @@
               "suggested_rewrite": null
             },
             {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "status": "fail",
-              "scope": "family",
-              "metadata_code": "cv2:S01:v3:support-visuel:B1",
-              "evidence": [
-                "cv2:S01:v3:support-visuel:B1",
-                "cv2:S01:v3:support-visuel:B2"
-              ],
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "suggested_rewrite": null
-            },
-            {
               "rule_id": "DIFF_FACTS_MISSING",
               "status": "warning",
               "scope": "family",
@@ -27952,21 +27111,8 @@
           ]
         },
         "cv2:S01:v3:support-visuel-ouvert:B1": {
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:support-visuel-ouvert:A1",
-                "cv2:S01:v3:support-visuel-ouvert:A2",
-                "cv2:S01:v3:support-visuel-ouvert:B1",
-                "cv2:S01:v3:support-visuel-ouvert:B2"
-              ]
-            }
-          ],
+          "publishable": true,
+          "blocking_errors": [],
           "rules": [
             {
               "rule_id": "DIFF_CONTENT_REVIEW_REQUIRED",
@@ -28101,7 +27247,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:support-visuel-ouvert:B1",
               "evidence": [
-                "62/280 caractères"
+                "115/280 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -28152,22 +27298,6 @@
               "suggested_rewrite": null
             },
             {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "status": "fail",
-              "scope": "family",
-              "metadata_code": "cv2:S01:v3:support-visuel-ouvert:B1",
-              "evidence": [
-                "cv2:S01:v3:support-visuel-ouvert:A1",
-                "cv2:S01:v3:support-visuel-ouvert:A2",
-                "cv2:S01:v3:support-visuel-ouvert:B1",
-                "cv2:S01:v3:support-visuel-ouvert:B2"
-              ],
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "suggested_rewrite": null
-            },
-            {
               "rule_id": "DIFF_FACTS_MISSING",
               "status": "warning",
               "scope": "family",
@@ -28201,27 +27331,6 @@
                 "items[0].justification_prompt: Le support ne fournit aucune relation entre catégories (cinq panneaux indépendants) : synthèse non réalisée plutôt qu'inventée.",
                 "items[1].justification_prompt: Le support ne fournit aucune relation entre catégories (cinq panneaux indépendants) : synthèse non réalisée plutôt qu'inventée.",
                 "items[2].justification_prompt: Le support ne fournit aucune relation entre catégories (cinq panneaux indépendants) : synthèse non réalisée plutôt qu'inventée."
-              ]
-            },
-            {
-              "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-              ],
-              "evidence": [
-                "complétez",
-                "choisissez",
-                "écrivez"
-              ]
-            },
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:support-visuel:B1",
-                "cv2:S01:v3:support-visuel:B2"
               ]
             }
           ],
@@ -28346,7 +27455,7 @@
             },
             {
               "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "status": "fail",
+              "status": "pass",
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:support-visuel:B2",
               "evidence": [
@@ -28354,9 +27463,7 @@
                 "choisissez",
                 "écrivez"
               ],
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-              ],
+              "errors": [],
               "suggested_rewrite": null
             },
             {
@@ -28374,7 +27481,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:support-visuel:B2",
               "evidence": [
-                "49/340 caractères"
+                "112/340 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -28425,20 +27532,6 @@
               "suggested_rewrite": null
             },
             {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "status": "fail",
-              "scope": "family",
-              "metadata_code": "cv2:S01:v3:support-visuel:B2",
-              "evidence": [
-                "cv2:S01:v3:support-visuel:B1",
-                "cv2:S01:v3:support-visuel:B2"
-              ],
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "suggested_rewrite": null
-            },
-            {
               "rule_id": "DIFF_FACTS_MISSING",
               "status": "warning",
               "scope": "family",
@@ -28452,21 +27545,8 @@
           ]
         },
         "cv2:S01:v3:support-visuel-ouvert:B2": {
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:support-visuel-ouvert:A1",
-                "cv2:S01:v3:support-visuel-ouvert:A2",
-                "cv2:S01:v3:support-visuel-ouvert:B1",
-                "cv2:S01:v3:support-visuel-ouvert:B2"
-              ]
-            }
-          ],
+          "publishable": true,
+          "blocking_errors": [],
           "rules": [
             {
               "rule_id": "DIFF_CONTENT_REVIEW_REQUIRED",
@@ -28601,7 +27681,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:support-visuel-ouvert:B2",
               "evidence": [
-                "62/340 caractères"
+                "125/340 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -28649,22 +27729,6 @@
               "metadata_code": "cv2:S01:v3:support-visuel-ouvert:B2",
               "evidence": [],
               "errors": [],
-              "suggested_rewrite": null
-            },
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "status": "fail",
-              "scope": "family",
-              "metadata_code": "cv2:S01:v3:support-visuel-ouvert:B2",
-              "evidence": [
-                "cv2:S01:v3:support-visuel-ouvert:A1",
-                "cv2:S01:v3:support-visuel-ouvert:A2",
-                "cv2:S01:v3:support-visuel-ouvert:B1",
-                "cv2:S01:v3:support-visuel-ouvert:B2"
-              ],
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
               "suggested_rewrite": null
             },
             {
@@ -28789,16 +27853,11 @@
             },
             {
               "rule_id": "INSTRUCTION_MULTISTEP_UNMARKED",
-              "status": "warning",
+              "status": "pass",
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:co-dialogue:A1",
-              "evidence": [
-                "cochez",
-                "écoutez"
-              ],
-              "errors": [
-                "Plusieurs actions sont demandées sans ordre explicite."
-              ],
+              "evidence": [],
+              "errors": [],
               "suggested_rewrite": null
             },
             {
@@ -28829,7 +27888,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:co-dialogue:A1",
               "evidence": [
-                "108/180 caractères"
+                "79/180 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -28915,32 +27974,8 @@
           ]
         },
         "cv2:S01:v3:co-comprehension:A1": {
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-              ],
-              "evidence": [
-                "complétez",
-                "choisissez",
-                "écrivez"
-              ]
-            },
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:co-comprehension:A1",
-                "cv2:S01:v3:co-comprehension:A2",
-                "cv2:S01:v3:co-comprehension:B1",
-                "cv2:S01:v3:co-comprehension:B2"
-              ]
-            }
-          ],
+          "publishable": true,
+          "blocking_errors": [],
           "rules": [
             {
               "rule_id": "DIFF_CONTENT_REVIEW_REQUIRED",
@@ -29045,7 +28080,7 @@
             },
             {
               "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "status": "fail",
+              "status": "pass",
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:co-comprehension:A1",
               "evidence": [
@@ -29053,9 +28088,7 @@
                 "choisissez",
                 "écrivez"
               ],
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-              ],
+              "errors": [],
               "suggested_rewrite": null
             },
             {
@@ -29073,7 +28106,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:co-comprehension:A1",
               "evidence": [
-                "51/180 caractères"
+                "88/180 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -29132,22 +28165,6 @@
                 "S01_CO_ACCUEIL_01:CO"
               ],
               "errors": [],
-              "suggested_rewrite": null
-            },
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "status": "fail",
-              "scope": "family",
-              "metadata_code": "cv2:S01:v3:co-comprehension:A1",
-              "evidence": [
-                "cv2:S01:v3:co-comprehension:A1",
-                "cv2:S01:v3:co-comprehension:A2",
-                "cv2:S01:v3:co-comprehension:B1",
-                "cv2:S01:v3:co-comprehension:B2"
-              ],
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
               "suggested_rewrite": null
             },
             {
@@ -29310,7 +28327,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:atelier-1:A1",
               "evidence": [
-                "76/180 caractères"
+                "77/180 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -29384,18 +28401,6 @@
               "evidence": [
                 "cv2:S01:v3:atelier-2:A1: needs_content_review=true"
               ]
-            },
-            {
-              "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format appariement."
-              ],
-              "evidence": [
-                "associez",
-                "reliez",
-                "choisissez",
-                "complétez"
-              ]
             }
           ],
           "rules": [
@@ -29506,7 +28511,7 @@
             },
             {
               "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "status": "fail",
+              "status": "pass",
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:atelier-2:A1",
               "evidence": [
@@ -29515,9 +28520,7 @@
                 "choisissez",
                 "complétez"
               ],
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format appariement."
-              ],
+              "errors": [],
               "suggested_rewrite": null
             },
             {
@@ -29535,7 +28538,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:atelier-2:A1",
               "evidence": [
-                "46/180 caractères"
+                "67/180 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -29609,17 +28612,6 @@
               "evidence": [
                 "cv2:S01:v3:atelier-3:A1: needs_content_review=true"
               ]
-            },
-            {
-              "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format vrai_faux."
-              ],
-              "evidence": [
-                "choisissez",
-                "cochez",
-                "indiquez"
-              ]
             }
           ],
           "rules": [
@@ -29730,7 +28722,7 @@
             },
             {
               "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "status": "fail",
+              "status": "pass",
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:atelier-3:A1",
               "evidence": [
@@ -29738,9 +28730,7 @@
                 "cochez",
                 "indiquez"
               ],
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format vrai_faux."
-              ],
+              "errors": [],
               "suggested_rewrite": null
             },
             {
@@ -29758,7 +28748,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:atelier-3:A1",
               "evidence": [
-                "58/180 caractères"
+                "82/180 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -29831,17 +28821,6 @@
               ],
               "evidence": [
                 "cv2:S01:v3:atelier-4:A1: needs_content_review=true"
-              ]
-            },
-            {
-              "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format vrai_faux."
-              ],
-              "evidence": [
-                "choisissez",
-                "cochez",
-                "indiquez"
               ]
             }
           ],
@@ -29953,7 +28932,7 @@
             },
             {
               "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "status": "fail",
+              "status": "pass",
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:atelier-4:A1",
               "evidence": [
@@ -29961,9 +28940,7 @@
                 "cochez",
                 "indiquez"
               ],
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format vrai_faux."
-              ],
+              "errors": [],
               "suggested_rewrite": null
             },
             {
@@ -29981,7 +28958,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:atelier-4:A1",
               "evidence": [
-                "78/180 caractères"
+                "83/180 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -30145,17 +29122,11 @@
             },
             {
               "rule_id": "INSTRUCTION_MULTISTEP_UNMARKED",
-              "status": "warning",
+              "status": "pass",
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:structures:A1",
-              "evidence": [
-                "choisissez",
-                "complétez",
-                "conjuguez"
-              ],
-              "errors": [
-                "Plusieurs actions sont demandées sans ordre explicite."
-              ],
+              "evidence": [],
+              "errors": [],
               "suggested_rewrite": null
             },
             {
@@ -30186,7 +29157,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:structures:A1",
               "evidence": [
-                "107/180 caractères"
+                "97/180 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -30386,7 +29357,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:eo:A1",
               "evidence": [
-                "85/180 caractères"
+                "121/180 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -30547,16 +29518,11 @@
             },
             {
               "rule_id": "INSTRUCTION_MULTISTEP_UNMARKED",
-              "status": "warning",
+              "status": "pass",
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:co-dialogue:A2",
-              "evidence": [
-                "cochez",
-                "écoutez"
-              ],
-              "errors": [
-                "Plusieurs actions sont demandées sans ordre explicite."
-              ],
+              "evidence": [],
+              "errors": [],
               "suggested_rewrite": null
             },
             {
@@ -30587,7 +29553,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:co-dialogue:A2",
               "evidence": [
-                "108/220 caractères"
+                "94/220 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -30662,20 +29628,8 @@
           ]
         },
         "cv2:S01:v3:co-comprehension:A2": {
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-              ],
-              "evidence": [
-                "complétez",
-                "choisissez",
-                "écrivez"
-              ]
-            }
-          ],
+          "publishable": true,
+          "blocking_errors": [],
           "rules": [
             {
               "rule_id": "DIFF_CONTENT_REVIEW_REQUIRED",
@@ -30780,7 +29734,7 @@
             },
             {
               "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "status": "fail",
+              "status": "pass",
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:co-comprehension:A2",
               "evidence": [
@@ -30788,9 +29742,7 @@
                 "choisissez",
                 "écrivez"
               ],
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-              ],
+              "errors": [],
               "suggested_rewrite": null
             },
             {
@@ -30808,7 +29760,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:co-comprehension:A2",
               "evidence": [
-                "51/220 caractères"
+                "88/220 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -31019,7 +29971,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:co-approfondissement:A2",
               "evidence": [
-                "68/220 caractères"
+                "103/220 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -31240,7 +30192,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:atelier-1:A2",
               "evidence": [
-                "42/220 caractères"
+                "82/220 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -31450,7 +30402,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:atelier-2:A2",
               "evidence": [
-                "51/220 caractères"
+                "82/220 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -31660,7 +30612,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:atelier-3:A2",
               "evidence": [
-                "49/220 caractères"
+                "91/220 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -31870,7 +30822,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:structures:A2",
               "evidence": [
-                "72/220 caractères"
+                "115/220 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -32070,7 +31022,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:eo:A2",
               "evidence": [
-                "85/220 caractères"
+                "123/220 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -32242,16 +31194,11 @@
             },
             {
               "rule_id": "INSTRUCTION_MULTISTEP_UNMARKED",
-              "status": "warning",
+              "status": "pass",
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:co-dialogue:B1",
-              "evidence": [
-                "cochez",
-                "écoutez"
-              ],
-              "errors": [
-                "Plusieurs actions sont demandées sans ordre explicite."
-              ],
+              "evidence": [],
+              "errors": [],
               "suggested_rewrite": null
             },
             {
@@ -32282,7 +31229,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:co-dialogue:B1",
               "evidence": [
-                "108/280 caractères"
+                "114/280 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -32357,32 +31304,8 @@
           ]
         },
         "cv2:S01:v3:co-comprehension:B1": {
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-              ],
-              "evidence": [
-                "complétez",
-                "choisissez",
-                "écrivez"
-              ]
-            },
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:co-comprehension:A1",
-                "cv2:S01:v3:co-comprehension:A2",
-                "cv2:S01:v3:co-comprehension:B1",
-                "cv2:S01:v3:co-comprehension:B2"
-              ]
-            }
-          ],
+          "publishable": true,
+          "blocking_errors": [],
           "rules": [
             {
               "rule_id": "DIFF_CONTENT_REVIEW_REQUIRED",
@@ -32487,7 +31410,7 @@
             },
             {
               "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "status": "fail",
+              "status": "pass",
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:co-comprehension:B1",
               "evidence": [
@@ -32495,9 +31418,7 @@
                 "choisissez",
                 "écrivez"
               ],
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-              ],
+              "errors": [],
               "suggested_rewrite": null
             },
             {
@@ -32515,7 +31436,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:co-comprehension:B1",
               "evidence": [
-                "51/280 caractères"
+                "109/280 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -32577,22 +31498,6 @@
               "suggested_rewrite": null
             },
             {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "status": "fail",
-              "scope": "family",
-              "metadata_code": "cv2:S01:v3:co-comprehension:B1",
-              "evidence": [
-                "cv2:S01:v3:co-comprehension:A1",
-                "cv2:S01:v3:co-comprehension:A2",
-                "cv2:S01:v3:co-comprehension:B1",
-                "cv2:S01:v3:co-comprehension:B2"
-              ],
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "suggested_rewrite": null
-            },
-            {
               "rule_id": "DIFF_FACTS_MISSING",
               "status": "warning",
               "scope": "family",
@@ -32606,19 +31511,8 @@
           ]
         },
         "cv2:S01:v3:co-approfondissement:B1": {
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:co-approfondissement:B1",
-                "cv2:S01:v3:co-approfondissement:B2"
-              ]
-            }
-          ],
+          "publishable": true,
+          "blocking_errors": [],
           "rules": [
             {
               "rule_id": "DIFF_CONTENT_REVIEW_REQUIRED",
@@ -32753,7 +31647,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:co-approfondissement:B1",
               "evidence": [
-                "68/280 caractères"
+                "102/280 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -32812,20 +31706,6 @@
                 "S01_CO_ACCUEIL_01:CO"
               ],
               "errors": [],
-              "suggested_rewrite": null
-            },
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "status": "fail",
-              "scope": "family",
-              "metadata_code": "cv2:S01:v3:co-approfondissement:B1",
-              "evidence": [
-                "cv2:S01:v3:co-approfondissement:B1",
-                "cv2:S01:v3:co-approfondissement:B2"
-              ],
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
               "suggested_rewrite": null
             },
             {
@@ -32988,7 +31868,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:atelier-1:B1",
               "evidence": [
-                "35/280 caractères"
+                "78/280 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -33199,7 +32079,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:atelier-2:B1",
               "evidence": [
-                "77/280 caractères"
+                "84/280 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -33273,13 +32153,6 @@
               "evidence": [
                 "cv2:S01:v3:structures:B1: needs_content_review=true"
               ]
-            },
-            {
-              "rule_id": "INSTRUCTION_OUTPUT_UNCLEAR",
-              "errors": [
-                "La consigne ne précise pas clairement l'objet sur lequel agir ou la réponse attendue."
-              ],
-              "evidence": []
             }
           ],
           "rules": [
@@ -33372,27 +32245,20 @@
             },
             {
               "rule_id": "INSTRUCTION_OUTPUT_UNCLEAR",
-              "status": "fail",
+              "status": "pass",
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:structures:B1",
               "evidence": [],
-              "errors": [
-                "La consigne ne précise pas clairement l'objet sur lequel agir ou la réponse attendue."
-              ],
+              "errors": [],
               "suggested_rewrite": null
             },
             {
               "rule_id": "INSTRUCTION_MULTISTEP_UNMARKED",
-              "status": "warning",
+              "status": "pass",
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:structures:B1",
-              "evidence": [
-                "complétez",
-                "transformez"
-              ],
-              "errors": [
-                "Plusieurs actions sont demandées sans ordre explicite."
-              ],
+              "evidence": [],
+              "errors": [],
               "suggested_rewrite": null
             },
             {
@@ -33424,7 +32290,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:structures:B1",
               "evidence": [
-                "64/280 caractères"
+                "73/280 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -33624,7 +32490,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:eo:B1",
               "evidence": [
-                "85/280 caractères"
+                "138/280 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -33837,16 +32703,11 @@
             },
             {
               "rule_id": "INSTRUCTION_MULTISTEP_UNMARKED",
-              "status": "warning",
+              "status": "pass",
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:co-dialogue:B2",
-              "evidence": [
-                "cochez",
-                "écoutez"
-              ],
-              "errors": [
-                "Plusieurs actions sont demandées sans ordre explicite."
-              ],
+              "evidence": [],
+              "errors": [],
               "suggested_rewrite": null
             },
             {
@@ -33877,7 +32738,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:co-dialogue:B2",
               "evidence": [
-                "108/340 caractères"
+                "127/340 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -33952,32 +32813,8 @@
           ]
         },
         "cv2:S01:v3:co-comprehension:B2": {
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-              ],
-              "evidence": [
-                "complétez",
-                "choisissez",
-                "écrivez"
-              ]
-            },
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:co-comprehension:A1",
-                "cv2:S01:v3:co-comprehension:A2",
-                "cv2:S01:v3:co-comprehension:B1",
-                "cv2:S01:v3:co-comprehension:B2"
-              ]
-            }
-          ],
+          "publishable": true,
+          "blocking_errors": [],
           "rules": [
             {
               "rule_id": "DIFF_CONTENT_REVIEW_REQUIRED",
@@ -34082,7 +32919,7 @@
             },
             {
               "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "status": "fail",
+              "status": "pass",
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:co-comprehension:B2",
               "evidence": [
@@ -34090,9 +32927,7 @@
                 "choisissez",
                 "écrivez"
               ],
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format texte_lacunaire."
-              ],
+              "errors": [],
               "suggested_rewrite": null
             },
             {
@@ -34110,7 +32945,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:co-comprehension:B2",
               "evidence": [
-                "51/340 caractères"
+                "125/340 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -34172,22 +33007,6 @@
               "suggested_rewrite": null
             },
             {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "status": "fail",
-              "scope": "family",
-              "metadata_code": "cv2:S01:v3:co-comprehension:B2",
-              "evidence": [
-                "cv2:S01:v3:co-comprehension:A1",
-                "cv2:S01:v3:co-comprehension:A2",
-                "cv2:S01:v3:co-comprehension:B1",
-                "cv2:S01:v3:co-comprehension:B2"
-              ],
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "suggested_rewrite": null
-            },
-            {
               "rule_id": "DIFF_FACTS_MISSING",
               "status": "warning",
               "scope": "family",
@@ -34201,26 +33020,8 @@
           ]
         },
         "cv2:S01:v3:co-approfondissement:B2": {
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:co-approfondissement:B1",
-                "cv2:S01:v3:co-approfondissement:B2"
-              ]
-            },
-            {
-              "rule_id": "DIFF_B2_ONLY_MORE_ITEMS",
-              "errors": [
-                "B2 differe uniquement par des items supplementaires"
-              ],
-              "evidence": []
-            }
-          ],
+          "publishable": true,
+          "blocking_errors": [],
           "rules": [
             {
               "rule_id": "DIFF_CONTENT_REVIEW_REQUIRED",
@@ -34355,7 +33156,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:co-approfondissement:B2",
               "evidence": [
-                "68/340 caractères"
+                "135/340 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -34414,31 +33215,6 @@
                 "S01_CO_ACCUEIL_01:CO"
               ],
               "errors": [],
-              "suggested_rewrite": null
-            },
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "status": "fail",
-              "scope": "family",
-              "metadata_code": "cv2:S01:v3:co-approfondissement:B2",
-              "evidence": [
-                "cv2:S01:v3:co-approfondissement:B1",
-                "cv2:S01:v3:co-approfondissement:B2"
-              ],
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "suggested_rewrite": null
-            },
-            {
-              "rule_id": "DIFF_B2_ONLY_MORE_ITEMS",
-              "status": "fail",
-              "scope": "family",
-              "metadata_code": "cv2:S01:v3:co-approfondissement:B2",
-              "evidence": [],
-              "errors": [
-                "B2 differe uniquement par des items supplementaires"
-              ],
               "suggested_rewrite": null
             },
             {
@@ -34601,7 +33377,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:atelier-1:B2",
               "evidence": [
-                "49/340 caractères"
+                "89/340 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -34776,16 +33552,11 @@
             },
             {
               "rule_id": "INSTRUCTION_MULTISTEP_UNMARKED",
-              "status": "warning",
+              "status": "pass",
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:structures:B2",
-              "evidence": [
-                "complétez",
-                "reformulez"
-              ],
-              "errors": [
-                "Plusieurs actions sont demandées sans ordre explicite."
-              ],
+              "evidence": [],
+              "errors": [],
               "suggested_rewrite": null
             },
             {
@@ -34817,7 +33588,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:structures:B2",
               "evidence": [
-                "108/340 caractères"
+                "112/340 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -34881,16 +33652,8 @@
           ]
         },
         "cv2:S01:v3:eo:B2": {
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "DIFF_B2_ONLY_MORE_ITEMS",
-              "errors": [
-                "B2 differe uniquement par des items supplementaires"
-              ],
-              "evidence": []
-            }
-          ],
+          "publishable": true,
+          "blocking_errors": [],
           "rules": [
             {
               "rule_id": "DIFF_CONTENT_REVIEW_REQUIRED",
@@ -35025,7 +33788,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:eo:B2",
               "evidence": [
-                "85/340 caractères"
+                "145/340 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -35073,17 +33836,6 @@
               "metadata_code": "cv2:S01:v3:eo:B2",
               "evidence": [],
               "errors": [],
-              "suggested_rewrite": null
-            },
-            {
-              "rule_id": "DIFF_B2_ONLY_MORE_ITEMS",
-              "status": "fail",
-              "scope": "family",
-              "metadata_code": "cv2:S01:v3:eo:B2",
-              "evidence": [],
-              "errors": [
-                "B2 differe uniquement par des items supplementaires"
-              ],
               "suggested_rewrite": null
             },
             {
@@ -35264,7 +34016,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:civique:A1",
               "evidence": [
-                "95/180 caractères"
+                "87/180 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -35494,7 +34246,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:civique:A2",
               "evidence": [
-                "95/220 caractères"
+                "91/220 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -35724,7 +34476,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:civique:B1",
               "evidence": [
-                "95/280 caractères"
+                "114/280 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -35975,7 +34727,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:civique:B2",
               "evidence": [
-                "95/340 caractères"
+                "178/340 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -36050,16 +34802,6 @@
               ],
               "evidence": [
                 "cv2:S01:v3:ee-guidee-1:A1: needs_content_review=true"
-              ]
-            },
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:ee-guidee-1:A1",
-                "cv2:S01:v3:ee-guidee-1:A2"
               ]
             }
           ],
@@ -36197,7 +34939,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:ee-guidee-1:A1",
               "evidence": [
-                "134/180 caractères"
+                "96/180 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -36245,20 +34987,6 @@
               "metadata_code": "cv2:S01:v3:ee-guidee-1:A1",
               "evidence": [],
               "errors": [],
-              "suggested_rewrite": null
-            },
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "status": "fail",
-              "scope": "family",
-              "metadata_code": "cv2:S01:v3:ee-guidee-1:A1",
-              "evidence": [
-                "cv2:S01:v3:ee-guidee-1:A1",
-                "cv2:S01:v3:ee-guidee-1:A2"
-              ],
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
               "suggested_rewrite": null
             },
             {
@@ -36421,7 +35149,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:ee-guidee-1:A2",
               "evidence": [
-                "134/220 caractères"
+                "100/220 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -36621,7 +35349,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:ee-guidee-2:A2",
               "evidence": [
-                "149/220 caractères"
+                "86/220 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -36685,19 +35413,8 @@
           ]
         },
         "cv2:S01:v3:ee-guidee-2:B1": {
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "evidence": [
-                "cv2:S01:v3:ee-guidee-2:A2",
-                "cv2:S01:v3:ee-guidee-2:B1"
-              ]
-            }
-          ],
+          "publishable": true,
+          "blocking_errors": [],
           "rules": [
             {
               "rule_id": "DIFF_CONTENT_REVIEW_REQUIRED",
@@ -36832,7 +35549,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:ee-guidee-2:B1",
               "evidence": [
-                "149/280 caractères"
+                "94/280 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -36883,20 +35600,6 @@
               "suggested_rewrite": null
             },
             {
-              "rule_id": "DIFF_VARIANTS_DUPLICATED",
-              "status": "fail",
-              "scope": "family",
-              "metadata_code": "cv2:S01:v3:ee-guidee-2:B1",
-              "evidence": [
-                "cv2:S01:v3:ee-guidee-2:A2",
-                "cv2:S01:v3:ee-guidee-2:B1"
-              ],
-              "errors": [
-                "variante pedagogiquement identique a un autre niveau"
-              ],
-              "suggested_rewrite": null
-            },
-            {
               "rule_id": "DIFF_FACTS_MISSING",
               "status": "warning",
               "scope": "family",
@@ -36910,31 +35613,8 @@
           ]
         },
         "cv2:S01:v3:ee-autonome:B1": {
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "INSTRUCTION_ACTION_MISSING",
-              "errors": [
-                "La consigne ne contient aucune action observable."
-              ],
-              "evidence": []
-            },
-            {
-              "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format production_ecrite."
-              ],
-              "evidence": [
-                "écrivez",
-                "rédigez",
-                "reformulez",
-                "complétez",
-                "répondez",
-                "expliquez",
-                "justifiez"
-              ]
-            }
-          ],
+          "publishable": true,
+          "blocking_errors": [],
           "rules": [
             {
               "rule_id": "DIFF_CONTENT_REVIEW_REQUIRED",
@@ -37012,13 +35692,11 @@
             },
             {
               "rule_id": "INSTRUCTION_ACTION_MISSING",
-              "status": "fail",
+              "status": "pass",
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:ee-autonome:B1",
               "evidence": [],
-              "errors": [
-                "La consigne ne contient aucune action observable."
-              ],
+              "errors": [],
               "suggested_rewrite": null
             },
             {
@@ -37041,7 +35719,7 @@
             },
             {
               "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "status": "fail",
+              "status": "pass",
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:ee-autonome:B1",
               "evidence": [
@@ -37053,9 +35731,7 @@
                 "expliquez",
                 "justifiez"
               ],
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format production_ecrite."
-              ],
+              "errors": [],
               "suggested_rewrite": null
             },
             {
@@ -37073,7 +35749,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:ee-autonome:B1",
               "evidence": [
-                "107/280 caractères"
+                "124/280 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -37137,31 +35813,8 @@
           ]
         },
         "cv2:S01:v3:ee-autonome:B2": {
-          "publishable": false,
-          "blocking_errors": [
-            {
-              "rule_id": "INSTRUCTION_ACTION_MISSING",
-              "errors": [
-                "La consigne ne contient aucune action observable."
-              ],
-              "evidence": []
-            },
-            {
-              "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format production_ecrite."
-              ],
-              "evidence": [
-                "écrivez",
-                "rédigez",
-                "reformulez",
-                "complétez",
-                "répondez",
-                "expliquez",
-                "justifiez"
-              ]
-            }
-          ],
+          "publishable": true,
+          "blocking_errors": [],
           "rules": [
             {
               "rule_id": "DIFF_CONTENT_REVIEW_REQUIRED",
@@ -37239,13 +35892,11 @@
             },
             {
               "rule_id": "INSTRUCTION_ACTION_MISSING",
-              "status": "fail",
+              "status": "pass",
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:ee-autonome:B2",
               "evidence": [],
-              "errors": [
-                "La consigne ne contient aucune action observable."
-              ],
+              "errors": [],
               "suggested_rewrite": null
             },
             {
@@ -37268,7 +35919,7 @@
             },
             {
               "rule_id": "INSTRUCTION_FORMAT_MISMATCH",
-              "status": "fail",
+              "status": "pass",
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:ee-autonome:B2",
               "evidence": [
@@ -37280,9 +35931,7 @@
                 "expliquez",
                 "justifiez"
               ],
-              "errors": [
-                "La consigne ne décrit pas une action compatible avec le format production_ecrite."
-              ],
+              "errors": [],
               "suggested_rewrite": null
             },
             {
@@ -37300,7 +35949,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:ee-autonome:B2",
               "evidence": [
-                "80/340 caractères"
+                "166/340 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -37364,6 +36013,14 @@
           ]
         }
       }
+    },
+    "instruction_quality": {
+      "policy_version": "instruction-quality-v1",
+      "human_validation_status": "pending_pedagogical_owner",
+      "exercise_count": 59,
+      "conforming_count": 59,
+      "issue_count": 0,
+      "issues": []
     }
   }
 }

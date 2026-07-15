@@ -9,6 +9,7 @@ import {
   parseDifferentiationLevelStrict,
 } from "./lib/differentiation-referential.mjs";
 import { validateS01DifferentiationPayload } from "./lib/s01-differentiation-validate.mjs";
+import { getS01InstructionPolicyStatus, rewriteS01Instructions } from "./lib/s01-instruction-rewriter.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const DATA_PATH = join(ROOT, "content", "curriculum", "v2", "S01-v3", "s01-v3-data.json");
@@ -308,7 +309,7 @@ function exercise({
 
 export async function buildInteractiveS01({ writeOutput = !process.env.VITEST } = {}) {
   const data = JSON.parse(await readFile(DATA_PATH, "utf8"));
-  const exercises = [];
+  let exercises = [];
 
   // ------------------------------------------------------------
   // Lexique — glossaire interactif (S01.LEXIQUE). Réutilise
@@ -940,6 +941,8 @@ export async function buildInteractiveS01({ writeOutput = !process.env.VITEST } 
     }));
   }
 
+  exercises = rewriteS01Instructions(exercises);
+
   const playlists = Object.fromEntries(LEVELS.map((level) => {
     const selected = exercises.filter((entry) => entry.niveau_vise === level);
     return [level, selected.map((entry, index) => ({
@@ -1022,6 +1025,27 @@ export async function buildInteractiveS01({ writeOutput = !process.env.VITEST } 
   const baseline = JSON.parse(await readFile(BASELINE_PATH, "utf8"));
   const differentiationValidation = validateS01DifferentiationPayload(payload, { baseline });
   report.differentiation_validation = differentiationValidation;
+  const instructionIssues = Object.values(differentiationValidation.by_exercise)
+    .flatMap((entry) => entry.rules)
+    .filter((rule) => rule.rule_id.startsWith("INSTRUCTION_") && rule.status !== "pass");
+  report.instruction_quality = {
+    ...getS01InstructionPolicyStatus(),
+    exercise_count: exercises.length,
+    conforming_count: exercises.length - new Set(instructionIssues.map((rule) => rule.metadata_code)).size,
+    issue_count: instructionIssues.length,
+    issues: instructionIssues,
+  };
+  report.validation_rules.push({
+    rule_id: "INSTRUCTION_QUALITY_VALIDATION",
+    status: instructionIssues.some((rule) => rule.status === "fail")
+      ? "fail"
+      : instructionIssues.length > 0 ? "warning" : "pass",
+    evidence: [
+      `${exercises.length} consignes contrôlées`,
+      `${instructionIssues.length} erreur(s) ou avertissement(s)`,
+      "validation humaine finale en attente",
+    ],
+  });
   report.publishability = {
     ...publishability,
     publishable_count: differentiationValidation.publishable_count,
