@@ -210,6 +210,68 @@ export function validateExerciseCoherence(entry) {
   }
   rules.push(rule("COHERENCE_OPEN_RUBRIC", openRubricErrors));
 
+  // Exemple guidé distinct des vrais items. Pilote S01 : obligatoire en B2,
+  // puis extensible aux autres niveaux après validation pédagogique.
+  const workedExample = entry?.contenu?.worked_example;
+  const exampleRequired = entry?.contenu?.metadata?.worked_example_required === true;
+  rules.push(rule(
+    "COHERENCE_WORKED_EXAMPLE_REQUIRED",
+    exampleRequired && (!workedExample || typeof workedExample !== "object")
+      ? ["contenu.worked_example est obligatoire selon la politique de cet exercice"]
+      : [],
+  ));
+
+  const exampleCompleteErrors = [];
+  const exampleFormatErrors = [];
+  const exampleDuplicateErrors = [];
+  const exampleLeakErrors = [];
+  if (workedExample && typeof workedExample === "object") {
+    for (const field of ["format", "instruction", "question", "response"]) {
+      if (!String(workedExample[field] ?? "").trim()) exampleCompleteErrors.push(`worked_example.${field} est vide`);
+    }
+    if (!Array.isArray(workedExample.explanation_steps) || workedExample.explanation_steps.length === 0
+      || workedExample.explanation_steps.some((step) => !String(step).trim())) {
+      exampleCompleteErrors.push("worked_example.explanation_steps doit contenir au moins une étape non vide");
+    }
+    if (workedExample.format !== entry?.format) {
+      exampleFormatErrors.push(`worked_example.format=${workedExample.format ?? "absent"}, format exercice=${entry?.format ?? "absent"}`);
+    }
+    if (optionFormats.has(entry?.format)) {
+      const exampleOptions = Array.isArray(workedExample.options) ? workedExample.options : [];
+      if (exampleOptions.length < 2 || !exampleOptions.some((option) => sameValue(option, workedExample.response))) {
+        exampleCompleteErrors.push("l'exemple à choix doit proposer au moins deux options et contenir sa réponse");
+      }
+    }
+    if (entry?.format === "texte_lacunaire" && countGaps(workedExample.question) !== 1) {
+      exampleCompleteErrors.push("la question d'exemple lacunaire doit afficher exactement un trou");
+    }
+
+    const exampleQuestion = normalized(workedExample.question);
+    items.forEach((item, index) => {
+      if (exampleQuestion && exampleQuestion === normalized(questionOf(item))) {
+        exampleDuplicateErrors.push(`worked_example.question duplique items[${index}]`);
+      }
+    });
+
+    const publicExampleText = normalized([
+      workedExample.question,
+      workedExample.response,
+      workedExample.completed_response,
+      ...(Array.isArray(workedExample.options) ? workedExample.options : []),
+      ...(Array.isArray(workedExample.explanation_steps) ? workedExample.explanation_steps : []),
+    ].join(" "));
+    items.forEach((item, index) => {
+      const answer = normalized(item?.bonne_reponse);
+      if (answer.length >= 4 && publicExampleText.includes(answer)) {
+        exampleLeakErrors.push(`worked_example contient la réponse du vrai item ${index + 1}`);
+      }
+    });
+  }
+  rules.push(rule("COHERENCE_WORKED_EXAMPLE_COMPLETE", exampleCompleteErrors));
+  rules.push(rule("COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH", exampleFormatErrors));
+  rules.push(rule("COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM", exampleDuplicateErrors));
+  rules.push(rule("COHERENCE_WORKED_EXAMPLE_ANSWER_LEAK", exampleLeakErrors));
+
   return {
     schema_version: coherenceContract.schema_version,
     valid: !rules.some((entryRule) => entryRule.status === "fail"),

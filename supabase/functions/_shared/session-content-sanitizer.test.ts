@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { sanitizeItem, sanitizeExercice, sanitizeContentJson } from "./session-content-sanitizer.ts";
+import { sanitizeItem, sanitizeExercice, sanitizeContentJson, sanitizeWorkedExample } from "./session-content-sanitizer.ts";
 
 const SENSITIVE_KEYS = ["bonne_reponse", "explication", "justification_attendue", "criteres_evaluation", "mots_cles_attendus"];
 
@@ -43,6 +43,17 @@ describe("session-content-sanitizer — relecture indépendante point 1/10", () 
       niveau_vise: "A2",
       civic_content: true,
       contenu: {
+        worked_example: {
+          format: "qcm",
+          instruction: "Choisissez une réponse.",
+          question: "Quel jour vient après lundi ?",
+          options: ["mardi", "jeudi"],
+          response: "mardi",
+          completed_response: "Le jour suivant est mardi.",
+          explanation_steps: ["Je repère le mot après.", "Je choisis mardi."],
+          bonne_reponse: "ne doit pas passer",
+          correction: { secret: true },
+        },
         items: [
           { question: "Q1", options: ["A", "B"], bonne_reponse: "A", explication: "car..." },
           { question: "Q2", bonne_reponse: "B", justification_attendue: "cf regle" },
@@ -56,8 +67,19 @@ describe("session-content-sanitizer — relecture indépendante point 1/10", () 
     }
     expect(sanitized.items).toHaveLength(2);
     expect(sanitized.id).toBe("ex-1");
+    expect(sanitized.worked_example?.response).toBe("mardi");
+    expect(JSON.stringify(sanitized.worked_example)).not.toContain("bonne_reponse");
+    expect(JSON.stringify(sanitized.worked_example)).not.toContain("correction");
   });
 
+  it("rejette un exemple incomplet au lieu d'exposer un contrat partiel", () => {
+    expect(sanitizeWorkedExample({
+      format: "qcm",
+      instruction: "Choisissez.",
+      question: "Question sans réponse",
+      explanation_steps: ["Étape"],
+    })).toBeUndefined();
+  });
   it("un item sans champ sensible reste inchangé pour les clés autorisées", () => {
     const sanitized = sanitizeItem({ question: "Q", texte: "T", enonce: "E", consigne: "C", options: ["a"] });
     expect(sanitized).toEqual({ question: "Q", texte: "T", enonce: "E", consigne: "C", options: ["a"] });

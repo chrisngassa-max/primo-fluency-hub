@@ -10,6 +10,7 @@ import {
 } from "./lib/differentiation-referential.mjs";
 import { validateS01DifferentiationPayload } from "./lib/s01-differentiation-validate.mjs";
 import { getS01InstructionPolicyStatus, rewriteS01Instructions } from "./lib/s01-instruction-rewriter.mjs";
+import { buildB2WorkedExample } from "./lib/s01-worked-examples.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const DATA_PATH = join(ROOT, "content", "curriculum", "v2", "S01-v3", "s01-v3-data.json");
@@ -260,6 +261,7 @@ function exercise({
   const levelContract = getLevelContract(competence, strictLevel);
   const transformation = getDifferentiationTransformationRule(sourceLevel, strictLevel);
   const referential = getDifferentiationLevelContracts();
+  const workedExample = strictLevel === "B2" ? buildB2WorkedExample(code, format) : null;
   return {
     metadata_code: `cv2:S01:v3:${code}:${strictLevel}`,
     titre: title,
@@ -276,6 +278,7 @@ function exercise({
     civic_fact_ids: civicFactIds,
     contenu: {
       items,
+      ...(workedExample ? { worked_example: workedExample } : {}),
       metadata: {
         session_code: "S01",
         activity_code: activityCode,
@@ -298,6 +301,7 @@ function exercise({
         guidance: levelContract?.guidance ?? null,
         trainer_preview_required: true,
         interactive: true,
+        worked_example_required: strictLevel === "B2",
         // Documente honnêtement un manque de matière première réel
         // (banque/contenu source insuffisants) plutôt que de fabriquer
         // des items pour atteindre le plancher — voir rapport de mission.

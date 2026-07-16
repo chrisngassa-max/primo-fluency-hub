@@ -41,6 +41,11 @@ L’ancien `exercise-validator.ts` couvre quelques champs génériques mais n’
 | `COHERENCE_JUSTIFICATION_CONTRACT` | Toute justification demandée possède attentes et critères de correction | Bloquant |
 | `COHERENCE_CORRECTION_COMPLETE` | Chaque item fermé possède réponse, preuve, explication et remédiation | Bloquant |
 | `COHERENCE_OPEN_RUBRIC` | Toute production possède un modèle ou des critères de réussite | Bloquant |
+| `COHERENCE_WORKED_EXAMPLE_REQUIRED` | Un exemple corrigé est présent lorsque la politique de l’exercice l’exige | Bloquant |
+| `COHERENCE_WORKED_EXAMPLE_COMPLETE` | L’exemple contient consigne, question, réponse et étapes d’explication | Bloquant |
+| `COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH` | L’exemple utilise le même format que l’exercice | Bloquant |
+| `COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM` | L’exemple ne reproduit aucune vraie question | Bloquant |
+| `COHERENCE_WORKED_EXAMPLE_ANSWER_LEAK` | L’exemple ne révèle aucune réponse des vrais items | Bloquant |
 
 ## 4. Contrôles par format
 
@@ -110,6 +115,7 @@ Pour chaque exercice, le formateur valide :
 | La remédiation permet une nouvelle tentative utile | ☐ | ☐ | |
 | Les faits civiques possèdent une provenance officielle valide | ☐ | ☐ | |
 | L’affichage mobile a été testé | ☐ | ☐ | |
+| L’exemple corrigé montre la méthode sans révéler les vrais items | ☐ | ☐ | |
 | L’exercice peut être publié sans modification | ☐ | ☐ | |
 
 ## 6. Décision

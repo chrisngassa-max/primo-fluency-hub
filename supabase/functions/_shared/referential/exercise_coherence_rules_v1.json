@@ -23,6 +23,11 @@
     { "rule_id": "COHERENCE_DECLARED_COUNT_MATCH", "severity": "blocking" },
     { "rule_id": "COHERENCE_JUSTIFICATION_CONTRACT", "severity": "blocking" },
     { "rule_id": "COHERENCE_CORRECTION_COMPLETE", "severity": "blocking" },
-    { "rule_id": "COHERENCE_OPEN_RUBRIC", "severity": "blocking" }
+    { "rule_id": "COHERENCE_OPEN_RUBRIC", "severity": "blocking" },
+    { "rule_id": "COHERENCE_WORKED_EXAMPLE_REQUIRED", "severity": "blocking" },
+    { "rule_id": "COHERENCE_WORKED_EXAMPLE_COMPLETE", "severity": "blocking" },
+    { "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH", "severity": "blocking" },
+    { "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM", "severity": "blocking" },
+    { "rule_id": "COHERENCE_WORKED_EXAMPLE_ANSWER_LEAK", "severity": "blocking" }
   ]
 }

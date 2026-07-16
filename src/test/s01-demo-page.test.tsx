@@ -105,4 +105,18 @@ describe("S01DemoPage — rendu réel", () => {
 
     expect(container.querySelector('button[role="radio"][data-state="checked"]')).not.toBeNull();
   });
+  it("affiche et ouvre l'exemple corrigé sur un exercice B2", async () => {
+    act(() => root.render(
+      <MemoryRouter initialEntries={["/demo/s01?niveau=B2"]}>
+        <S01DemoPage />
+      </MemoryRouter>,
+    ));
+    await act(async () => { await Promise.resolve(); await Promise.resolve(); });
+
+    const trigger = [...container.querySelectorAll("button")]
+      .find((button) => button.textContent?.includes("Voir un exemple corrigé"));
+    expect(trigger).toBeDefined();
+    await act(async () => { trigger?.click(); await Promise.resolve(); });
+    expect(document.body.textContent).toContain("Comment trouver la réponse");
+  });
 });

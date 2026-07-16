@@ -20,7 +20,7 @@ import type {
 //     réel — cohérent avec "Simulation locale : aucune donnée envoyée à
 //     Supabase."
 //   - filterReleasedItemResults : même liste blanche dédiée post-libération.
-import { sanitizeItem } from "../../../supabase/functions/_shared/session-content-sanitizer.ts";
+import { sanitizeItem, sanitizeWorkedExample, type RawWorkedExample } from "../../../supabase/functions/_shared/session-content-sanitizer.ts";
 import { findMissingRequiredJustifications } from "../../../supabase/functions/_shared/justification-guard.ts";
 import { corrigerExerciceServer } from "../../../supabase/functions/_shared/correction-server.ts";
 import { filterReleasedItemResults } from "../../../supabase/functions/_shared/released-correction-filter.ts";
@@ -54,6 +54,7 @@ interface RawExercise {
   civic_content?: boolean;
   contenu: {
     items: RawExerciseItem[];
+    worked_example?: RawWorkedExample;
     metadata?: { activity_code?: string };
   };
 }
@@ -134,6 +135,7 @@ export async function fetchS01DemoContent(level: DemoLevel): Promise<{
       civic_content: Boolean(exercise.civic_content),
       is_bonus: false,
       items: exercise.contenu.items.map((item) => sanitizeItem(item)),
+      worked_example: sanitizeWorkedExample(exercise.contenu.worked_example),
       my_attempt: attempt
         ? { attempt_id: attempt.attempt_id, status: attempt.status, correction_released: attempt.released }
         : null,

@@ -22,6 +22,25 @@ describe("S01 v3 — parcours interactif", () => {
     }
   });
 
+  it("fournit un exemple corrigé distinct aux 13 exercices B2 du pilote", async () => {
+    const payload = await buildInteractiveS01();
+    const b2 = payload.exercises.filter((exercise) => exercise.niveau_vise === "B2");
+    expect(b2).toHaveLength(13);
+    for (const exercise of b2) {
+      const example = exercise.contenu.worked_example;
+      expect(example, exercise.metadata_code).toBeDefined();
+      expect(example.format).toBe(exercise.format);
+      expect(example.instruction).toBeTruthy();
+      expect(example.question).toBeTruthy();
+      expect(example.response).toBeTruthy();
+      expect(example.explanation_steps.length).toBeGreaterThan(0);
+      const exampleRules = payload.report.differentiation_validation.by_exercise[exercise.metadata_code].rules
+        .filter((rule) => rule.rule_id.startsWith("COHERENCE_WORKED_EXAMPLE_"));
+      expect(exampleRules.every((rule) => rule.status === "pass"), exercise.metadata_code).toBe(true);
+    }
+    expect(payload.exercises.filter((exercise) => exercise.niveau_vise !== "B2")
+      .every((exercise) => exercise.contenu.worked_example === undefined)).toBe(true);
+  });
   it("ne produit que des formats compris par l'application et ne tolere aucun echec hors grille de coherence", async () => {
     const payload = await buildInteractiveS01();
     const formats = new Set(["qcm", "vrai_faux", "appariement", "production_ecrite", "production_orale", "texte_lacunaire", "transformation"]);

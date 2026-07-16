@@ -12,6 +12,7 @@ import { buildStructuredAnswer, isJustificationMissing } from "@/lib/curriculum/
 // mots, justification obligatoire, restitution post-libération. Aucune
 // logique de rendu parallèle recréée ici.
 import { ExerciseItemForm, CorrectionGate } from "@/pages/eleve/SeanceApprenant";
+import { WorkedExamplePanel } from "@/components/learner/WorkedExamplePanel";
 import {
   fetchS01DemoContent,
   fetchS01DemoCorrection,
@@ -304,6 +305,8 @@ export default function S01DemoPage() {
               <div className="flex gap-1.5"><Badge variant="outline">{exercise.niveau_vise}</Badge><Badge variant="outline">{exercise.competence}</Badge><Badge variant="outline">{exercise.format.replaceAll("_", " ")}</Badge></div>
             </div>
             <p className="rounded-lg bg-blue-50 p-3 text-sm text-blue-950">{exercise.consigne}</p>
+
+            <WorkedExamplePanel example={exercise.worked_example} />
 
             {!completed && currentItem && (
               <>

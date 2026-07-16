@@ -20,6 +20,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Label } from "@/components/ui/label";
+import { WorkedExamplePanel } from "@/components/learner/WorkedExamplePanel";
 
 /**
  * Parcours apprenant intégré d'une séance (S01 en pilote). Remplace la page
@@ -276,6 +277,8 @@ export default function SeanceApprenant() {
               </div>
             </div>
             <p className="text-sm text-muted-foreground">{currentExercise.consigne}</p>
+
+            <WorkedExamplePanel example={currentExercise.worked_example} />
 
             {loadingCorrection ? (
               <Skeleton className="h-24" />

@@ -61,6 +61,26 @@ export interface SanitizedItem {
   justification_required?: boolean;
   justification_type?: string;
 }
+export interface RawWorkedExample {
+  format?: string;
+  instruction?: string;
+  question?: string;
+  options?: string[];
+  response?: string;
+  completed_response?: string;
+  explanation_steps?: string[];
+  [key: string]: unknown;
+}
+
+export interface SanitizedWorkedExample {
+  format: string;
+  instruction: string;
+  question: string;
+  options?: string[];
+  response: string;
+  completed_response?: string;
+  explanation_steps: string[];
+}
 
 const ALLOWED_ITEM_KEYS = [
   "question", "texte", "enonce", "consigne", "options", "indice", "banque_mots",
@@ -74,6 +94,28 @@ export function sanitizeItem(item: RawItem): SanitizedItem {
   }
   return out;
 }
+export function sanitizeWorkedExample(value: RawWorkedExample | undefined): SanitizedWorkedExample | undefined {
+  if (!value || typeof value !== "object") return undefined;
+  const format = String(value.format ?? "").trim();
+  const instruction = String(value.instruction ?? "").trim();
+  const question = String(value.question ?? "").trim();
+  const response = String(value.response ?? "").trim();
+  const explanationSteps = Array.isArray(value.explanation_steps)
+    ? value.explanation_steps.map((step) => String(step).trim()).filter(Boolean)
+    : [];
+  if (!format || !instruction || !question || !response || explanationSteps.length === 0) return undefined;
+  return {
+    format,
+    instruction,
+    question,
+    ...(Array.isArray(value.options) ? { options: value.options.map((option) => String(option)) } : {}),
+    response,
+    ...(String(value.completed_response ?? "").trim()
+      ? { completed_response: String(value.completed_response).trim() }
+      : {}),
+    explanation_steps: explanationSteps,
+  };
+}
 
 export interface RawExercice {
   id: string;
@@ -83,7 +125,7 @@ export interface RawExercice {
   format: string;
   niveau_vise: string;
   civic_content?: boolean;
-  contenu?: { items?: RawItem[] };
+  contenu?: { items?: RawItem[]; worked_example?: RawWorkedExample };
 }
 
 export interface SanitizedExercice {
@@ -95,10 +137,12 @@ export interface SanitizedExercice {
   niveau_vise: string;
   civic_content: boolean;
   items: SanitizedItem[];
+  worked_example?: SanitizedWorkedExample;
 }
 
 export function sanitizeExercice(exercice: RawExercice): SanitizedExercice {
   const items = Array.isArray(exercice.contenu?.items) ? exercice.contenu!.items! : [];
+  const workedExample = sanitizeWorkedExample(exercice.contenu?.worked_example);
   return {
     id: exercice.id,
     titre: exercice.titre,
@@ -108,6 +152,7 @@ export function sanitizeExercice(exercice: RawExercice): SanitizedExercice {
     niveau_vise: exercice.niveau_vise,
     civic_content: Boolean(exercice.civic_content),
     items: items.map(sanitizeItem),
+    ...(workedExample ? { worked_example: workedExample } : {}),
   };
 }
 

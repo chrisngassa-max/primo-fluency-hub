@@ -139,6 +139,46 @@ describe("garde-fou de coherence structurelle des exercices", () => {
     expect(rule(validateExerciseCoherence(exercise), "COHERENCE_GAP_ANSWER_HIDDEN").status).toBe("pass");
   });
 
+  it("exige un exemple corrigé complet pour B2 et vérifie son format", () => {
+    const exercise = qcmFixture();
+    exercise.niveau_vise = "B2";
+    exercise.contenu.metadata = { worked_example_required: true };
+    expect(rule(validateExerciseCoherence(exercise), "COHERENCE_WORKED_EXAMPLE_REQUIRED").status).toBe("fail");
+
+    exercise.contenu.worked_example = {
+      format: "qcm",
+      instruction: "Lisez puis choisissez.",
+      question: "Quel jour vient après lundi ?",
+      options: ["mardi", "jeudi", "samedi"],
+      response: "mardi",
+      completed_response: "Le jour suivant est mardi.",
+      explanation_steps: ["Je repère le mot après.", "Je choisis mardi."],
+    };
+    const valid = validateExerciseCoherence(exercise);
+    expect(rule(valid, "COHERENCE_WORKED_EXAMPLE_REQUIRED").status).toBe("pass");
+    expect(rule(valid, "COHERENCE_WORKED_EXAMPLE_COMPLETE").status).toBe("pass");
+    expect(rule(valid, "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH").status).toBe("pass");
+
+    exercise.contenu.worked_example.format = "texte_lacunaire";
+    expect(rule(validateExerciseCoherence(exercise), "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH").status).toBe("fail");
+  });
+
+  it("bloque un exemple qui duplique une question ou révèle une vraie réponse", () => {
+    const exercise = qcmFixture();
+    exercise.niveau_vise = "B2";
+    exercise.contenu.metadata = { worked_example_required: true };
+    exercise.contenu.worked_example = {
+      format: "qcm",
+      instruction: "Lisez puis choisissez.",
+      question: exercise.contenu.items[0].question,
+      options: ["80 heures", "mardi"],
+      response: "80 heures",
+      explanation_steps: ["Je recopie la réponse réelle."],
+    };
+    const report = validateExerciseCoherence(exercise);
+    expect(rule(report, "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM").status).toBe("fail");
+    expect(rule(report, "COHERENCE_WORKED_EXAMPLE_ANSWER_LEAK").status).toBe("fail");
+  });
   it("utilise exactement le meme contrat cote Node et Deno", () => {
     expect(getNodeRules()).toEqual(getDenoRules());
   });

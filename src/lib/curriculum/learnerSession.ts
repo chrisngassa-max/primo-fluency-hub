@@ -44,6 +44,16 @@ export interface SanitizedItem {
 /** État de la tentative de CET apprenant pour cet exercice, DANS CETTE
  * séance précise uniquement (jamais "la dernière tentative tous groupes
  * confondus" — voir get-seance-content, 4e relecture point 1). */
+export interface WorkedExample {
+  format: string;
+  instruction: string;
+  question: string;
+  options?: string[];
+  response: string;
+  completed_response?: string;
+  explanation_steps: string[];
+}
+
 export interface MyAttemptSummary {
   attempt_id: string;
   status: string;
@@ -63,6 +73,7 @@ export interface LearnerExerciseBlock {
   civic_content: boolean;
   is_bonus: boolean;
   items: SanitizedItem[];
+  worked_example?: WorkedExample;
   my_attempt: MyAttemptSummary | null;
 }
 
