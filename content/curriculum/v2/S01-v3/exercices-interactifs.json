@@ -332,7 +332,7 @@
     {
       "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:A1",
       "titre": "Exercice 2 — Phrase à compléter",
-      "consigne": "Dans le texte, trois mots manquent. Complétez chaque espace avec le mot correct.",
+      "consigne": "Dans chaque phrase, un mot manque. Complétez l’espace avec le mot correct.",
       "competence": "CE",
       "format": "texte_lacunaire",
       "niveau_vise": "A1",
@@ -762,7 +762,7 @@
     {
       "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:A2",
       "titre": "Exercice 2 — Phrase à compléter",
-      "consigne": "Lisez le texte. Ensuite, complétez les trois espaces avec les mots corrects.",
+      "consigne": "Dans chaque phrase, un mot manque. Complétez l’espace avec le mot qui convient.",
       "competence": "CE",
       "format": "texte_lacunaire",
       "niveau_vise": "A2",
@@ -1290,7 +1290,7 @@
     {
       "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:B1",
       "titre": "Exercice 2 — Phrase à compléter",
-      "consigne": "Complétez les trois espaces avec les mots qui donnent un texte cohérent.",
+      "consigne": "Dans chaque phrase, un mot manque. Complétez l’espace avec le mot qui rend la phrase cohérente.",
       "competence": "CE",
       "format": "texte_lacunaire",
       "niveau_vise": "B1",
@@ -2093,7 +2093,7 @@
     {
       "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:B2",
       "titre": "Exercice 2 — Phrase à compléter",
-      "consigne": "Complétez les trois espaces en choisissant les mots précis qui rendent le texte cohérent.",
+      "consigne": "Dans chaque phrase, un mot manque. Complétez l’espace avec le mot précis qui rend la phrase cohérente.",
       "competence": "CE",
       "format": "texte_lacunaire",
       "niveau_vise": "B2",
@@ -12144,7 +12144,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:A1",
           "evidence": [
-            "80/180 caractères"
+            "74/180 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -12511,7 +12511,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:A2",
           "evidence": [
-            "76/220 caractères"
+            "79/220 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -12891,7 +12891,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:B1",
           "evidence": [
-            "72/280 caractères"
+            "95/280 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -13288,7 +13288,7 @@
           "scope": "instruction",
           "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:B2",
           "evidence": [
-            "89/340 caractères"
+            "102/340 caractères"
           ],
           "errors": [],
           "suggested_rewrite": null
@@ -23918,7 +23918,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:A1",
               "evidence": [
-                "80/180 caractères"
+                "74/180 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -24329,7 +24329,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:A2",
               "evidence": [
-                "76/220 caractères"
+                "79/220 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -24753,7 +24753,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:B1",
               "evidence": [
-                "72/280 caractères"
+                "95/280 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null
@@ -25205,7 +25205,7 @@
               "scope": "instruction",
               "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:B2",
               "evidence": [
-                "89/340 caractères"
+                "102/340 caractères"
               ],
               "errors": [],
               "suggested_rewrite": null

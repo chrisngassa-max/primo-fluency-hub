@@ -9,10 +9,10 @@ const INSTRUCTIONS = {
     B2: "Dans chaque phrase, un mot manque. Choisissez parmi les quatre propositions le mot qui complète correctement la phrase. Ensuite, expliquez quels éléments de la phrase vous ont aidé et pourquoi une autre proposition ne convient pas.",
   },
   "lexique-texte-lacunaire": {
-    A1: "Dans le texte, trois mots manquent. Complétez chaque espace avec le mot correct.",
-    A2: "Lisez le texte. Ensuite, complétez les trois espaces avec les mots corrects.",
-    B1: "Complétez les trois espaces avec les mots qui donnent un texte cohérent.",
-    B2: "Complétez les trois espaces en choisissant les mots précis qui rendent le texte cohérent.",
+    A1: "Dans chaque phrase, un mot manque. Complétez l’espace avec le mot correct.",
+    A2: "Dans chaque phrase, un mot manque. Complétez l’espace avec le mot qui convient.",
+    B1: "Dans chaque phrase, un mot manque. Complétez l’espace avec le mot qui rend la phrase cohérente.",
+    B2: "Dans chaque phrase, un mot manque. Complétez l’espace avec le mot précis qui rend la phrase cohérente.",
   },
   "lexique-reemploi-oral": {
     A1: "Enregistrez une phrase pour dire pourquoi vous suivez ce parcours. Utilisez « objectif » ou « démarche ».",

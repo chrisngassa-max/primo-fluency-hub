@@ -335,6 +335,8 @@ describe("Lot 2 — lexique-texte-lacunaire : transformation réelle par niveau"
     ];
     for (const level of ["A1", "A2", "B1", "B2"]) {
       expect(levels[level].contenu.items.map((item) => item.question)).toEqual(expectedQuestions);
+      expect(levels[level].consigne).toContain("Dans chaque phrase");
+      expect(levels[level].consigne).not.toContain("trois espaces");
       for (const item of levels[level].contenu.items) {
         expect(item.question).toContain("________");
         expect(item.question.toLocaleLowerCase("fr")).not.toContain(item.bonne_reponse.toLocaleLowerCase("fr"));
