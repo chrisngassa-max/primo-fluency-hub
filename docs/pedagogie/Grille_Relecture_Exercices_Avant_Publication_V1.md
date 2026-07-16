@@ -124,4 +124,4 @@ Pour chaque exercice, le formateur valide :
 - La plausibilité sémantique des distracteurs nécessite encore une revue humaine ou un contrôle sémantique non bloquant.
 - Les productions ouvertes nécessitent une calibration des grilles sur des réponses réelles.
 - La qualité audio et le rendu mobile doivent être testés dans l’application réelle.
-- Le contrat devra être branché au moteur dynamique après validation du pilote S01.
+- Le contrat est branché au moteur dynamique via `exercise-validator.ts` et la couche L1 de `validation-chain.ts`. Les anomalies structurelles bloquantes empêchent la publication ; les exigences de correction des contenus historiques restent en avertissement dans le profil `legacy_bank`.

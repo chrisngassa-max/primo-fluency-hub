@@ -30,6 +30,13 @@ const VALID_CE_QCM = {
         question: "Où va Marie ?",
         options: ["À la banque", "À l'école", "Au travail"],
         bonne_reponse: "À la banque",
+        correction: {
+          bonne_reponse: "À la banque",
+          preuve_support: "Marie va à la banque.",
+          explication_distracteurs: ["À l’école ne correspond pas au texte.", "Au travail ne correspond pas au texte."],
+          remediation: "Relisez la destination de Marie dans le texte.",
+        },
+
       },
     ],
   },

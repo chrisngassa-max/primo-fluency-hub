@@ -40,6 +40,14 @@ describe("lot8-b2-ce-spec", () => {
       expect(draft.source).toBe("search_first_p0");
       expect(draft.difficulte).toBe(5);
       expect(draft.niveau_guidage).toBe("autonome");
+      for (const item of draft.contenu.items) {
+        expect(item.correction?.bonne_reponse).toBe(item.bonne_reponse);
+        expect(item.correction?.preuve_support).toBeTruthy();
+        expect(item.correction?.remediation).toBeTruthy();
+        if (Array.isArray(item.options) && item.options.length > 1) {
+          expect(item.correction?.explication_distracteurs).toHaveLength(item.options.length - 1);
+        }
+      }
     }
     expect(countDistinctThemes(drafts.map((d) => ({ draft: d })))).toBeGreaterThanOrEqual(3);
   });
