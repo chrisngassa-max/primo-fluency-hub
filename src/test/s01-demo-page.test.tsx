@@ -61,4 +61,48 @@ describe("S01DemoPage — rendu réel", () => {
     // donc on vérifie l'absence de la clé sérialisée, pas du mot).
     expect(container.innerHTML).not.toContain('"explication"');
   });
+
+  it("permet de parcourir les intitulés et d’ouvrir un autre exercice sans terminer le premier", async () => {
+    act(() => root.render(
+      <MemoryRouter initialEntries={["/demo/s01?niveau=A2"]}>
+        <S01DemoPage />
+      </MemoryRouter>,
+    ));
+    await act(async () => { await Promise.resolve(); await Promise.resolve(); });
+
+    expect(container.textContent).toContain("Parcourir les 16 exercices du niveau A2");
+    expect(container.querySelector("h2")?.textContent).toContain("Associer chaque mot");
+
+    const target = [...container.querySelectorAll("button")]
+      .find((button) => button.textContent?.includes("Exercice 2 — Phrase à compléter"));
+    expect(target).toBeDefined();
+    await act(async () => { target?.click(); await Promise.resolve(); });
+
+    expect(container.querySelector("h2")?.textContent).toBe("Exercice 2 — Phrase à compléter");
+    expect(container.textContent).toContain("Item 1/3");
+  });
+
+  it("conserve la réponse en brouillon quand on quitte puis rouvre un exercice", async () => {
+    act(() => root.render(
+      <MemoryRouter initialEntries={["/demo/s01?niveau=A2"]}>
+        <S01DemoPage />
+      </MemoryRouter>,
+    ));
+    await act(async () => { await Promise.resolve(); await Promise.resolve(); });
+
+    const firstChoice = container.querySelector<HTMLButtonElement>('button[role="radio"]');
+    expect(firstChoice).not.toBeNull();
+    await act(async () => { firstChoice?.click(); await Promise.resolve(); });
+    expect(firstChoice?.getAttribute("data-state")).toBe("checked");
+
+    const secondExercise = [...container.querySelectorAll("button")]
+      .find((button) => button.textContent?.includes("Exercice 2 — Phrase à compléter"));
+    await act(async () => { secondExercise?.click(); await Promise.resolve(); });
+
+    const firstExercise = [...container.querySelectorAll("button")]
+      .find((button) => button.textContent?.includes("Associer chaque mot à sa définition"));
+    await act(async () => { firstExercise?.click(); await Promise.resolve(); });
+
+    expect(container.querySelector('button[role="radio"][data-state="checked"]')).not.toBeNull();
+  });
 });

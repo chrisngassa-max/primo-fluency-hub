@@ -326,6 +326,23 @@ describe("Lot 2 — lexique-texte-lacunaire : transformation réelle par niveau"
     }
   });
 
+  it("affiche dans chaque item la phrase complète avec son trou, sans révéler la réponse", async () => {
+    const levels = await byLevel();
+    const expectedQuestions = [
+      "Awa suit un ________ de 80 heures.",
+      "Son ________ est d'obtenir sa carte de séjour.",
+      "Elle doit respecter les ________ du centre de formation, comme arriver à l'heure.",
+    ];
+    for (const level of ["A1", "A2", "B1", "B2"]) {
+      expect(levels[level].contenu.items.map((item) => item.question)).toEqual(expectedQuestions);
+      for (const item of levels[level].contenu.items) {
+        expect(item.question).toContain("________");
+        expect(item.question.toLocaleLowerCase("fr")).not.toContain(item.bonne_reponse.toLocaleLowerCase("fr"));
+        expect(item.question).not.toMatch(/^Mot manquant/);
+      }
+    }
+  });
+
   it("A1/A2 : banque de mots réelle (les trois réponses, jamais dans l'ordre des trous) présente sur chaque item", async () => {
     const levels = await byLevel();
     for (const level of ["A1", "A2"]) {

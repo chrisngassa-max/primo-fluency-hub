@@ -346,7 +346,7 @@
       "contenu": {
         "items": [
           {
-            "question": "Mot manquant 1",
+            "question": "Awa suit un ________ de 80 heures.",
             "bonne_reponse": "parcours",
             "banque_mots": [
               "objectif",
@@ -356,14 +356,14 @@
             "indice": "Cherchez, parmi les mots de la banque, celui dont le sens correspond à cette partie de la phrase.",
             "correction": {
               "bonne_reponse": "parcours",
-              "preuve_support": "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure.",
+              "preuve_support": "Awa suit un parcours de 80 heures.",
               "explication_distracteurs": [],
               "erreur_diagnostiquee": "confusion_information_presente",
-              "remediation": "Relisez la phrase du support : « Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure. » puis répondez à nouveau."
+              "remediation": "Relisez la phrase du support : « Awa suit un parcours de 80 heures. » puis répondez à nouveau."
             }
           },
           {
-            "question": "Mot manquant 2",
+            "question": "Son ________ est d'obtenir sa carte de séjour.",
             "bonne_reponse": "objectif",
             "banque_mots": [
               "objectif",
@@ -373,14 +373,14 @@
             "indice": "Cherchez, parmi les mots de la banque, celui dont le sens correspond à cette partie de la phrase.",
             "correction": {
               "bonne_reponse": "objectif",
-              "preuve_support": "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure.",
+              "preuve_support": "Son objectif est d'obtenir sa carte de séjour.",
               "explication_distracteurs": [],
               "erreur_diagnostiquee": "confusion_information_presente",
-              "remediation": "Relisez la phrase du support : « Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure. » puis répondez à nouveau."
+              "remediation": "Relisez la phrase du support : « Son objectif est d'obtenir sa carte de séjour. » puis répondez à nouveau."
             }
           },
           {
-            "question": "Mot manquant 3",
+            "question": "Elle doit respecter les ________ du centre de formation, comme arriver à l'heure.",
             "bonne_reponse": "règles",
             "banque_mots": [
               "objectif",
@@ -390,10 +390,10 @@
             "indice": "Cherchez, parmi les mots de la banque, celui dont le sens correspond à cette partie de la phrase.",
             "correction": {
               "bonne_reponse": "règles",
-              "preuve_support": "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure.",
+              "preuve_support": "Elle doit respecter les règles du centre de formation, comme arriver à l'heure.",
               "explication_distracteurs": [],
               "erreur_diagnostiquee": "confusion_information_presente",
-              "remediation": "Relisez la phrase du support : « Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure. » puis répondez à nouveau."
+              "remediation": "Relisez la phrase du support : « Elle doit respecter les règles du centre de formation, comme arriver à l'heure. » puis répondez à nouveau."
             }
           }
         ],
@@ -776,7 +776,7 @@
       "contenu": {
         "items": [
           {
-            "question": "Mot manquant 1",
+            "question": "Awa suit un ________ de 80 heures.",
             "bonne_reponse": "parcours",
             "banque_mots": [
               "objectif",
@@ -785,14 +785,14 @@
             ],
             "correction": {
               "bonne_reponse": "parcours",
-              "preuve_support": "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure.",
+              "preuve_support": "Awa suit un parcours de 80 heures.",
               "explication_distracteurs": [],
               "erreur_diagnostiquee": "confusion_information_presente",
-              "remediation": "Relisez la phrase du support : « Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure. » puis répondez à nouveau."
+              "remediation": "Relisez la phrase du support : « Awa suit un parcours de 80 heures. » puis répondez à nouveau."
             }
           },
           {
-            "question": "Mot manquant 2",
+            "question": "Son ________ est d'obtenir sa carte de séjour.",
             "bonne_reponse": "objectif",
             "banque_mots": [
               "objectif",
@@ -801,14 +801,14 @@
             ],
             "correction": {
               "bonne_reponse": "objectif",
-              "preuve_support": "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure.",
+              "preuve_support": "Son objectif est d'obtenir sa carte de séjour.",
               "explication_distracteurs": [],
               "erreur_diagnostiquee": "confusion_information_presente",
-              "remediation": "Relisez la phrase du support : « Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure. » puis répondez à nouveau."
+              "remediation": "Relisez la phrase du support : « Son objectif est d'obtenir sa carte de séjour. » puis répondez à nouveau."
             }
           },
           {
-            "question": "Mot manquant 3",
+            "question": "Elle doit respecter les ________ du centre de formation, comme arriver à l'heure.",
             "bonne_reponse": "règles",
             "banque_mots": [
               "objectif",
@@ -817,10 +817,10 @@
             ],
             "correction": {
               "bonne_reponse": "règles",
-              "preuve_support": "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure.",
+              "preuve_support": "Elle doit respecter les règles du centre de formation, comme arriver à l'heure.",
               "explication_distracteurs": [],
               "erreur_diagnostiquee": "confusion_information_presente",
-              "remediation": "Relisez la phrase du support : « Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure. » puis répondez à nouveau."
+              "remediation": "Relisez la phrase du support : « Elle doit respecter les règles du centre de formation, comme arriver à l'heure. » puis répondez à nouveau."
             }
           }
         ],
@@ -1304,30 +1304,30 @@
       "contenu": {
         "items": [
           {
-            "question": "Mot manquant 1",
+            "question": "Awa suit un ________ de 80 heures.",
             "bonne_reponse": "parcours",
             "justification_required": true,
             "justification_type": "contextual",
             "justification_prompt": "Justifiez votre choix à partir du sens de la phrase (pourquoi ce mot et pas un autre ?).",
             "correction": {
               "bonne_reponse": "parcours",
-              "preuve_support": "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure.",
+              "preuve_support": "Awa suit un parcours de 80 heures.",
               "explication_distracteurs": [],
               "erreur_diagnostiquee": "confusion_information_presente",
-              "remediation": "Relisez la phrase du support : « Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure. » puis répondez à nouveau.",
+              "remediation": "Relisez la phrase du support : « Awa suit un parcours de 80 heures. » puis répondez à nouveau.",
               "justification_ouverte": {
                 "elements_attendus": [
-                  "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure."
+                  "Awa suit un parcours de 80 heures."
                 ],
                 "formulations_acceptables": [
-                  "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure."
+                  "Awa suit un parcours de 80 heures."
                 ],
-                "exemple_non_exclusif": "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure.",
+                "exemple_non_exclusif": "Awa suit un parcours de 80 heures.",
                 "erreurs_frequentes": [
                   "justification absente ou trop vague",
                   "justification sans lien avec le passage cité"
                 ],
-                "remediation": "Citez ou reformulez précisément : « Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure. ».",
+                "remediation": "Citez ou reformulez précisément : « Awa suit un parcours de 80 heures. ».",
                 "criteres_evaluation": [
                   "cite ou reformule fidèlement un élément réel du support",
                   "relie explicitement la citation à la réponse donnée"
@@ -1336,30 +1336,30 @@
             }
           },
           {
-            "question": "Mot manquant 2",
+            "question": "Son ________ est d'obtenir sa carte de séjour.",
             "bonne_reponse": "objectif",
             "justification_required": true,
             "justification_type": "contextual",
             "justification_prompt": "Justifiez votre choix à partir du sens de la phrase (pourquoi ce mot et pas un autre ?).",
             "correction": {
               "bonne_reponse": "objectif",
-              "preuve_support": "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure.",
+              "preuve_support": "Son objectif est d'obtenir sa carte de séjour.",
               "explication_distracteurs": [],
               "erreur_diagnostiquee": "confusion_information_presente",
-              "remediation": "Relisez la phrase du support : « Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure. » puis répondez à nouveau.",
+              "remediation": "Relisez la phrase du support : « Son objectif est d'obtenir sa carte de séjour. » puis répondez à nouveau.",
               "justification_ouverte": {
                 "elements_attendus": [
-                  "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure."
+                  "Son objectif est d'obtenir sa carte de séjour."
                 ],
                 "formulations_acceptables": [
-                  "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure."
+                  "Son objectif est d'obtenir sa carte de séjour."
                 ],
-                "exemple_non_exclusif": "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure.",
+                "exemple_non_exclusif": "Son objectif est d'obtenir sa carte de séjour.",
                 "erreurs_frequentes": [
                   "justification absente ou trop vague",
                   "justification sans lien avec le passage cité"
                 ],
-                "remediation": "Citez ou reformulez précisément : « Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure. ».",
+                "remediation": "Citez ou reformulez précisément : « Son objectif est d'obtenir sa carte de séjour. ».",
                 "criteres_evaluation": [
                   "cite ou reformule fidèlement un élément réel du support",
                   "relie explicitement la citation à la réponse donnée"
@@ -1368,30 +1368,30 @@
             }
           },
           {
-            "question": "Mot manquant 3",
+            "question": "Elle doit respecter les ________ du centre de formation, comme arriver à l'heure.",
             "bonne_reponse": "règles",
             "justification_required": true,
             "justification_type": "contextual",
             "justification_prompt": "Justifiez votre choix à partir du sens de la phrase (pourquoi ce mot et pas un autre ?).",
             "correction": {
               "bonne_reponse": "règles",
-              "preuve_support": "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure.",
+              "preuve_support": "Elle doit respecter les règles du centre de formation, comme arriver à l'heure.",
               "explication_distracteurs": [],
               "erreur_diagnostiquee": "confusion_information_presente",
-              "remediation": "Relisez la phrase du support : « Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure. » puis répondez à nouveau.",
+              "remediation": "Relisez la phrase du support : « Elle doit respecter les règles du centre de formation, comme arriver à l'heure. » puis répondez à nouveau.",
               "justification_ouverte": {
                 "elements_attendus": [
-                  "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure."
+                  "Elle doit respecter les règles du centre de formation, comme arriver à l'heure."
                 ],
                 "formulations_acceptables": [
-                  "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure."
+                  "Elle doit respecter les règles du centre de formation, comme arriver à l'heure."
                 ],
-                "exemple_non_exclusif": "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure.",
+                "exemple_non_exclusif": "Elle doit respecter les règles du centre de formation, comme arriver à l'heure.",
                 "erreurs_frequentes": [
                   "justification absente ou trop vague",
                   "justification sans lien avec le passage cité"
                 ],
-                "remediation": "Citez ou reformulez précisément : « Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure. ».",
+                "remediation": "Citez ou reformulez précisément : « Elle doit respecter les règles du centre de formation, comme arriver à l'heure. ».",
                 "criteres_evaluation": [
                   "cite ou reformule fidèlement un élément réel du support",
                   "relie explicitement la citation à la réponse donnée"
@@ -2107,30 +2107,30 @@
       "contenu": {
         "items": [
           {
-            "question": "Mot manquant 1",
+            "question": "Awa suit un ________ de 80 heures.",
             "bonne_reponse": "parcours",
             "justification_required": true,
             "justification_type": "contextual",
             "justification_prompt": "Justifiez votre choix à partir du sens de la phrase (pourquoi ce mot et pas un autre ?).",
             "correction": {
               "bonne_reponse": "parcours",
-              "preuve_support": "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure.",
+              "preuve_support": "Awa suit un parcours de 80 heures.",
               "explication_distracteurs": [],
               "erreur_diagnostiquee": "confusion_information_presente",
-              "remediation": "Relisez la phrase du support : « Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure. » puis répondez à nouveau.",
+              "remediation": "Relisez la phrase du support : « Awa suit un parcours de 80 heures. » puis répondez à nouveau.",
               "justification_ouverte": {
                 "elements_attendus": [
-                  "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure."
+                  "Awa suit un parcours de 80 heures."
                 ],
                 "formulations_acceptables": [
-                  "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure."
+                  "Awa suit un parcours de 80 heures."
                 ],
-                "exemple_non_exclusif": "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure.",
+                "exemple_non_exclusif": "Awa suit un parcours de 80 heures.",
                 "erreurs_frequentes": [
                   "justification absente ou trop vague",
                   "justification sans lien avec le passage cité"
                 ],
-                "remediation": "Citez ou reformulez précisément : « Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure. ».",
+                "remediation": "Citez ou reformulez précisément : « Awa suit un parcours de 80 heures. ».",
                 "criteres_evaluation": [
                   "cite ou reformule fidèlement un élément réel du support",
                   "relie explicitement la citation à la réponse donnée"
@@ -2139,30 +2139,30 @@
             }
           },
           {
-            "question": "Mot manquant 2",
+            "question": "Son ________ est d'obtenir sa carte de séjour.",
             "bonne_reponse": "objectif",
             "justification_required": true,
             "justification_type": "contextual",
             "justification_prompt": "Justifiez votre choix à partir du sens de la phrase (pourquoi ce mot et pas un autre ?).",
             "correction": {
               "bonne_reponse": "objectif",
-              "preuve_support": "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure.",
+              "preuve_support": "Son objectif est d'obtenir sa carte de séjour.",
               "explication_distracteurs": [],
               "erreur_diagnostiquee": "confusion_information_presente",
-              "remediation": "Relisez la phrase du support : « Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure. » puis répondez à nouveau.",
+              "remediation": "Relisez la phrase du support : « Son objectif est d'obtenir sa carte de séjour. » puis répondez à nouveau.",
               "justification_ouverte": {
                 "elements_attendus": [
-                  "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure."
+                  "Son objectif est d'obtenir sa carte de séjour."
                 ],
                 "formulations_acceptables": [
-                  "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure."
+                  "Son objectif est d'obtenir sa carte de séjour."
                 ],
-                "exemple_non_exclusif": "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure.",
+                "exemple_non_exclusif": "Son objectif est d'obtenir sa carte de séjour.",
                 "erreurs_frequentes": [
                   "justification absente ou trop vague",
                   "justification sans lien avec le passage cité"
                 ],
-                "remediation": "Citez ou reformulez précisément : « Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure. ».",
+                "remediation": "Citez ou reformulez précisément : « Son objectif est d'obtenir sa carte de séjour. ».",
                 "criteres_evaluation": [
                   "cite ou reformule fidèlement un élément réel du support",
                   "relie explicitement la citation à la réponse donnée"
@@ -2171,30 +2171,30 @@
             }
           },
           {
-            "question": "Mot manquant 3",
+            "question": "Elle doit respecter les ________ du centre de formation, comme arriver à l'heure.",
             "bonne_reponse": "règles",
             "justification_required": true,
             "justification_type": "contextual",
             "justification_prompt": "Justifiez votre choix à partir du sens de la phrase (pourquoi ce mot et pas un autre ?).",
             "correction": {
               "bonne_reponse": "règles",
-              "preuve_support": "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure.",
+              "preuve_support": "Elle doit respecter les règles du centre de formation, comme arriver à l'heure.",
               "explication_distracteurs": [],
               "erreur_diagnostiquee": "confusion_information_presente",
-              "remediation": "Relisez la phrase du support : « Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure. » puis répondez à nouveau.",
+              "remediation": "Relisez la phrase du support : « Elle doit respecter les règles du centre de formation, comme arriver à l'heure. » puis répondez à nouveau.",
               "justification_ouverte": {
                 "elements_attendus": [
-                  "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure."
+                  "Elle doit respecter les règles du centre de formation, comme arriver à l'heure."
                 ],
                 "formulations_acceptables": [
-                  "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure."
+                  "Elle doit respecter les règles du centre de formation, comme arriver à l'heure."
                 ],
-                "exemple_non_exclusif": "Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure.",
+                "exemple_non_exclusif": "Elle doit respecter les règles du centre de formation, comme arriver à l'heure.",
                 "erreurs_frequentes": [
                   "justification absente ou trop vague",
                   "justification sans lien avec le passage cité"
                 ],
-                "remediation": "Citez ou reformulez précisément : « Awa suit un (........) de 80 heures. Son (........) est d'obtenir sa carte de séjour. Elle doit respecter les (........) du centre de formation, comme arriver à l'heure. ».",
+                "remediation": "Citez ou reformulez précisément : « Elle doit respecter les règles du centre de formation, comme arriver à l'heure. ».",
                 "criteres_evaluation": [
                   "cite ou reformule fidèlement un élément réel du support",
                   "relie explicitement la citation à la réponse donnée"

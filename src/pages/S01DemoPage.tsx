@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { BookOpen, FlaskConical, RotateCcw, Unlock } from "lucide-react";
+import { BookOpen, CheckCircle2, ChevronDown, ChevronUp, FlaskConical, ListChecks, RotateCcw, Unlock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -24,6 +24,14 @@ import {
 
 const LEVELS: DemoLevel[] = ["A1", "A2", "B1", "B2"];
 
+type ExerciseDraft = {
+  itemIndex: number;
+  answers: Record<number, string>;
+  justifications: Record<number, string>;
+  hintsRevealed: Record<number, boolean>;
+  locked: number[];
+};
+
 export default function S01DemoPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const requestedLevel = searchParams.get("niveau");
@@ -41,6 +49,8 @@ export default function S01DemoPage() {
   const [attemptId, setAttemptId] = useState<string | null>(null);
   const [correction, setCorrection] = useState<AttemptCorrectionResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showExerciseList, setShowExerciseList] = useState(true);
+  const [drafts, setDrafts] = useState<Record<string, ExerciseDraft>>({});
 
   async function load() {
     setLoading(true);
@@ -64,6 +74,7 @@ export default function S01DemoPage() {
 
   useEffect(() => {
     setExerciseIndex(0);
+    setDrafts({});
     resetRunner();
     void load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -114,6 +125,11 @@ export default function S01DemoPage() {
       const submitted = await submitS01DemoAnswer({ exerciseId: exercise.id, answers: payloadAnswers });
       setSubmitError(null);
       setAttemptId(submitted.attempt_id);
+      setDrafts((previous) => {
+        const next = { ...previous };
+        delete next[exercise.id];
+        return next;
+      });
       setCorrection(await fetchS01DemoCorrection(submitted.attempt_id));
       await load();
     } catch (error) {
@@ -146,10 +162,35 @@ export default function S01DemoPage() {
   }
 
   async function goToExercise(nextIndex: number) {
-    if (nextIndex < 0 || nextIndex >= exercises.length) return;
+    if (nextIndex < 0 || nextIndex >= exercises.length || nextIndex === exerciseIndex) return;
+
+    if (exercise && !completed) {
+      setDrafts((previous) => ({
+        ...previous,
+        [exercise.id]: {
+          itemIndex,
+          answers,
+          justifications,
+          hintsRevealed,
+          locked: [...locked],
+        },
+      }));
+    }
+
+    const target = exercises[nextIndex];
+    const saved = drafts[target.id];
     setExerciseIndex(nextIndex);
-    resetRunner();
-    const existing = exercises[nextIndex].my_attempt?.attempt_id;
+    setItemIndex(saved?.itemIndex ?? 0);
+    setAnswers(saved?.answers ?? {});
+    setJustifications(saved?.justifications ?? {});
+    setHintsRevealed(saved?.hintsRevealed ?? {});
+    setLocked(new Set(saved?.locked ?? []));
+    setJustificationError(null);
+    setSubmitError(null);
+    setAttemptId(null);
+    setCorrection(null);
+
+    const existing = target.my_attempt?.attempt_id;
     if (existing) {
       setAttemptId(existing);
       setCorrection(await fetchS01DemoCorrection(existing));
@@ -159,6 +200,7 @@ export default function S01DemoPage() {
   async function resetAll() {
     resetS01Demo();
     setExerciseIndex(0);
+    setDrafts({});
     resetRunner();
     await load();
   }
@@ -208,6 +250,46 @@ export default function S01DemoPage() {
             </Badge>
           ))}
         </div>
+
+        <Card className="border-slate-200 bg-white/90 shadow-sm">
+          <CardContent className="p-4">
+            <button
+              type="button"
+              className="flex w-full items-center gap-2 text-left font-bold text-[#0b234a]"
+              onClick={() => setShowExerciseList((value) => !value)}
+              aria-expanded={showExerciseList}
+            >
+              <ListChecks className="h-5 w-5 text-blue-700" />
+              Parcourir les {exercises.length} exercices du niveau {level}
+              {showExerciseList ? <ChevronUp className="ml-auto h-4 w-4" /> : <ChevronDown className="ml-auto h-4 w-4" />}
+            </button>
+            <p className="mt-1 text-xs text-slate-600">Clique sur un intitulé pour prévisualiser l’exercice, sans avoir besoin de terminer le précédent.</p>
+            {showExerciseList && (
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                {exercises.map((entry, index) => {
+                  const active = index === exerciseIndex;
+                  const done = Boolean(entry.my_attempt?.attempt_id);
+                  return (
+                    <button
+                      type="button"
+                      key={entry.id}
+                      onClick={() => void goToExercise(index)}
+                      aria-current={active ? "true" : undefined}
+                      className={`flex min-h-14 items-start gap-2 rounded-lg border p-2.5 text-left text-sm transition ${active ? "border-blue-600 bg-blue-50 ring-1 ring-blue-600" : "border-slate-200 bg-white hover:border-blue-300 hover:bg-blue-50/50"}`}
+                    >
+                      <span className={`flex h-6 min-w-6 items-center justify-center rounded-full text-xs font-bold ${active ? "bg-blue-700 text-white" : "bg-slate-100 text-slate-700"}`}>{index + 1}</span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block font-semibold text-slate-900">{entry.titre}</span>
+                        <span className="mt-0.5 block text-xs text-slate-500">{entry.competence} · {entry.format.replaceAll("_", " ")} · {entry.items.length} item(s)</span>
+                      </span>
+                      {done && <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" aria-label="Exercice terminé" />}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         <Card className="border-blue-100 shadow-lg">
           <CardContent className="space-y-5 p-5 sm:p-7">
@@ -271,7 +353,7 @@ export default function S01DemoPage() {
 
         <div className="flex justify-between gap-3">
           <Button variant="outline" disabled={exerciseIndex === 0} onClick={() => void goToExercise(exerciseIndex - 1)}>Exercice précédent</Button>
-          <Button className="bg-blue-700 hover:bg-blue-800" disabled={!completed || exerciseIndex === exercises.length - 1} onClick={() => void goToExercise(exerciseIndex + 1)}>Exercice suivant</Button>
+          <Button className="bg-blue-700 hover:bg-blue-800" disabled={exerciseIndex === exercises.length - 1} onClick={() => void goToExercise(exerciseIndex + 1)}>Exercice suivant</Button>
         </div>
       </div>
     </main>

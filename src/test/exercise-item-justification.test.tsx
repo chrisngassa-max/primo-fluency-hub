@@ -189,7 +189,7 @@ describe("ExerciseItemForm + corrigerExerciceServer — justification B1/B2 test
     expect(result.correction[0].bonne_reponse).toBe(RAW_ITEM_B1.bonne_reponse);
   });
 
-  it("restitution après libération : CorrectionGate (rendu réel) affiche la justification de l'apprenant, jamais la bonne réponse quand la réponse est correcte", () => {
+  it("restitution après libération : CorrectionGate affiche la correction complète pour chaque item", () => {
     act(() => root.render(
       <CorrectionGate
         correction={{
@@ -203,6 +203,10 @@ describe("ExerciseItemForm + corrigerExerciceServer — justification B1/B2 test
               bonne_reponse: RAW_ITEM_B1.bonne_reponse,
               correct: true,
               explication: RAW_ITEM_B1.explication,
+              preuve_support: "Je m’appelle Awa. Awa Diallo.",
+              explication_distracteurs: ["Awa Rossi est le nom de la formatrice."],
+              remediation: "Réécoutez le passage où l’apprenante se présente.",
+              justification_ouverte: { elements_attendus: ["Le nom Awa Diallo"], criteres_evaluation: ["Citer un élément entendu"] },
               learner_justification: "Elle se présente explicitement au début du dialogue.",
             },
           },
@@ -213,9 +217,13 @@ describe("ExerciseItemForm + corrigerExerciceServer — justification B1/B2 test
 
     expect(container.textContent).toContain("Ta justification");
     expect(container.textContent).toContain("Elle se présente explicitement au début du dialogue.");
-    // Bonne réponse : "Réponse attendue" ne doit PAS être affiché (seulement
-    // pour les réponses fausses).
-    expect(container.textContent).not.toContain("Réponse attendue");
+    expect(container.textContent).toContain("Correction détaillée");
+    expect(container.textContent).toContain("Réponse attendue");
+    expect(container.textContent).toContain(RAW_ITEM_B1.bonne_reponse);
+    expect(container.textContent).toContain("Élément du support");
+    expect(container.textContent).toContain("Pourquoi les autres réponses ne conviennent pas");
+    expect(container.textContent).toContain("Pour progresser");
+    expect(container.textContent).toContain("Critères de réussite");
   });
 });
 

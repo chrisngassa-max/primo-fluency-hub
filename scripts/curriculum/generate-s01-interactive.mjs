@@ -427,8 +427,14 @@ export async function buildInteractiveS01({ writeOutput = !process.env.VITEST } 
     // texte) : une banque ordonnée comme les trous révélerait la réponse.
     const texteLacunaireBanque = [...texteLacunaire.reponses].sort((a, b) => a.localeCompare(b, "fr"));
     const tlAppliedTransformations = [];
+    const texteLacunairePhrases = texteLacunaire.texte.split(/(?<=\.)\s+/).filter((phrase) => phrase.includes("........"));
+    if (texteLacunairePhrases.length !== texteLacunaire.reponses.length) {
+      throw new Error(`S01 texte lacunaire incohérent : ${texteLacunairePhrases.length} phrases pour ${texteLacunaire.reponses.length} réponses.`);
+    }
     const tlItems = texteLacunaire.reponses.map((reponse, index) => {
-      const item = { question: `Mot manquant ${index + 1}`, bonne_reponse: reponse };
+      const phraseAvecTrou = texteLacunairePhrases[index].replace(/\(\.{4,}\)/, "________");
+      const phraseCorrigee = texteLacunairePhrases[index].replace(/\(\.{4,}\)/, reponse);
+      const item = { question: phraseAvecTrou, bonne_reponse: reponse };
 
       if (level === "A1" || level === "A2") {
         item.banque_mots = texteLacunaireBanque;
@@ -464,8 +470,8 @@ export async function buildInteractiveS01({ writeOutput = !process.env.VITEST } 
         }
       }
 
-      item.correction = closedItemCorrection({ options: null, bonneReponse: reponse, preuve: texteLacunaire.texte });
-      if (item.justification_prompt) item.correction.justification_ouverte = openJustificationCorrection(texteLacunaire.texte);
+      item.correction = closedItemCorrection({ options: null, bonneReponse: reponse, preuve: phraseCorrigee });
+      if (item.justification_prompt) item.correction.justification_ouverte = openJustificationCorrection(phraseCorrigee);
       return item;
     });
 

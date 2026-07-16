@@ -499,8 +499,39 @@ export function CorrectionGate({
             <p className={`mt-1 text-xs font-semibold ${isPositive ? "text-green-700 dark:text-green-400" : "text-amber-700 dark:text-amber-400"}`}>
               {OVERALL_STATUS_LABELS[overallStatus] ?? overallStatus}
             </p>
-            {!entry.correct && <p className="text-blue-700 dark:text-blue-400">Réponse attendue : {entry.bonne_reponse}</p>}
-            {entry.explication && <p className="mt-1 text-muted-foreground">{entry.explication}</p>}
+            <div className="mt-3 rounded-md border border-blue-200 bg-white/80 p-3 text-slate-800 dark:border-blue-900 dark:bg-slate-950/40 dark:text-slate-100">
+              <p className="text-xs font-bold uppercase tracking-wide text-blue-700 dark:text-blue-400">Correction détaillée</p>
+              <p className="mt-1"><span className="font-semibold">Réponse attendue :</span> {entry.bonne_reponse || "Réponse personnelle évaluée selon les critères."}</p>
+              {entry.explication && <p className="mt-1"><span className="font-semibold">Explication :</span> {entry.explication}</p>}
+              {entry.preuve_support && entry.preuve_support !== entry.explication && (
+                <p className="mt-1"><span className="font-semibold">Élément du support :</span> {entry.preuve_support}</p>
+              )}
+              {entry.explication_distracteurs && entry.explication_distracteurs.length > 0 && (
+                <div className="mt-2">
+                  <p className="font-semibold">Pourquoi les autres réponses ne conviennent pas :</p>
+                  <ul className="mt-1 list-disc space-y-1 pl-5">
+                    {entry.explication_distracteurs.map((explanation, explanationIndex) => <li key={explanationIndex}>{explanation}</li>)}
+                  </ul>
+                </div>
+              )}
+              {entry.justification_ouverte?.elements_attendus?.length ? (
+                <div className="mt-2">
+                  <p className="font-semibold">Éléments attendus dans la justification :</p>
+                  <ul className="mt-1 list-disc space-y-1 pl-5">
+                    {entry.justification_ouverte.elements_attendus.map((element, elementIndex) => <li key={elementIndex}>{element}</li>)}
+                  </ul>
+                </div>
+              ) : null}
+              {entry.justification_ouverte?.criteres_evaluation?.length ? (
+                <div className="mt-2">
+                  <p className="font-semibold">Critères de réussite :</p>
+                  <ul className="mt-1 list-disc space-y-1 pl-5">
+                    {entry.justification_ouverte.criteres_evaluation.map((criterion, criterionIndex) => <li key={criterionIndex}>{criterion}</li>)}
+                  </ul>
+                </div>
+              ) : null}
+              {entry.remediation && <p className="mt-2 text-amber-800 dark:text-amber-300"><span className="font-semibold">Pour progresser :</span> {entry.remediation}</p>}
+            </div>
           </div>
         );
       })}
