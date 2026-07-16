@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "status": "candidate_pending_human_validation",
+  "authority": "docs/pedagogie/Grille_Relecture_Exercices_Avant_Publication_V1.md",
+  "closed_formats": ["qcm", "vrai_faux", "appariement", "texte_lacunaire", "transformation"],
+  "option_formats": ["qcm", "vrai_faux", "appariement"],
+  "open_formats": ["production_ecrite", "production_orale"],
+  "minimum_options": { "qcm": 2, "vrai_faux": 2, "appariement": 2 },
+  "recommended_options": { "qcm": 3, "appariement": 3 },
+  "rules": [
+    { "rule_id": "COHERENCE_ITEMS_PRESENT", "severity": "blocking" },
+    { "rule_id": "COHERENCE_QUESTION_PRESENT", "severity": "blocking" },
+    { "rule_id": "COHERENCE_DUPLICATE_QUESTION", "severity": "warning" },
+    { "rule_id": "COHERENCE_CLOSED_ANSWER_PRESENT", "severity": "blocking" },
+    { "rule_id": "COHERENCE_OPTIONS_REQUIRED", "severity": "blocking" },
+    { "rule_id": "COHERENCE_OPTIONS_UNIQUE", "severity": "blocking" },
+    { "rule_id": "COHERENCE_ANSWER_IN_OPTIONS", "severity": "blocking" },
+    { "rule_id": "COHERENCE_DISTRACTOR_COUNT", "severity": "warning" },
+    { "rule_id": "COHERENCE_TRUE_FALSE_DOMAIN", "severity": "blocking" },
+    { "rule_id": "COHERENCE_GAP_COUNT", "severity": "blocking" },
+    { "rule_id": "COHERENCE_GAP_ANSWER_HIDDEN", "severity": "blocking" },
+    { "rule_id": "COHERENCE_WORD_BANK", "severity": "blocking" },
+    { "rule_id": "COHERENCE_DECLARED_COUNT_MATCH", "severity": "blocking" },
+    { "rule_id": "COHERENCE_JUSTIFICATION_CONTRACT", "severity": "blocking" },
+    { "rule_id": "COHERENCE_CORRECTION_COMPLETE", "severity": "blocking" },
+    { "rule_id": "COHERENCE_OPEN_RUBRIC", "severity": "blocking" }
+  ]
+}

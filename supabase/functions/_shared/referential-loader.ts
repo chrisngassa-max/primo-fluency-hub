@@ -16,6 +16,7 @@ import exerciseScoringRulesData from "./referential/exercise_scoring_rules.json"
 import differentiationTransformationRulesData from "./referential/differentiation_transformation_rules_v1.json" with { type: "json" };
 import differentiationLevelContractsData from "./referential/differentiation_level_contracts_v1.json" with { type: "json" };
 import instructionQualityRulesData from "./referential/instruction_quality_rules_v1.json" with { type: "json" };
+import exerciseCoherenceRulesData from "./referential/exercise_coherence_rules_v1.json" with { type: "json" };
 
 export type NiveauBand = "A0_A1" | "A2_B1" | "B2";
 export type PilierId = "conjugaison" | "grammaire" | "phonetique" | "vocabulaire";
@@ -671,6 +672,10 @@ export function assignClusterVariant(
 
 export function getInstructionQualityRules(): typeof instructionQualityRulesData {
   return instructionQualityRulesData;
+}
+
+export function getExerciseCoherenceRules(): typeof exerciseCoherenceRulesData {
+  return exerciseCoherenceRulesData;
 }
 
 export function getExerciseScoringRules(): { scoring_rules: ScoringRule[]; hard_filters: HardFilter[] } {

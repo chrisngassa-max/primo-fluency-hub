@@ -20,9 +20,14 @@ function makeEntry(metadataCode, needsContentReview = false) {
     contenu: {
       items: [{
         question: "Quelle réponse est correcte ?",
-        options: ["Oui", "Non"],
+        options: ["Oui", "Non", "Peut-etre"],
         bonne_reponse: "Oui",
-        correction: { preuve_support: "Le support indique Oui." },
+        correction: {
+          bonne_reponse: "Oui",
+          preuve_support: "Le support indique Oui.",
+          explication_distracteurs: ["Non contredit le support.", "Peut-etre ne repond pas precisement."],
+          remediation: "Relisez la phrase du support avant de repondre.",
+        },
       }],
       metadata: {
         transformation_id: "IDENTITY",

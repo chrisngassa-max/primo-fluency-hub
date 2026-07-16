@@ -1,5 +1,6 @@
 import { diffAgainstBaseline } from "./s01-snapshot-diff.mjs";
 import { validateExerciseIndices } from "./indice-validator.mjs";
+import { validateExerciseCoherence } from "./exercise-coherence-validator.mjs";
 import { validateInstructionQuality } from "./instruction-quality-validator.mjs";
 import {
   DIFFERENTIATION_LEVELS,
@@ -61,8 +62,8 @@ function questionLeaksAnswer(item) {
   return ` ${question} `.includes(` ${answer} `);
 }
 
-function makeRule(ruleId, status, { scope = "global", metadataCode = null, evidence = [], errors = [], suggestedRewrite = null } = {}) {
-  return { rule_id: ruleId, status, scope, metadata_code: metadataCode, evidence, errors, suggested_rewrite: suggestedRewrite };
+function makeRule(ruleId, status, { scope = "global", metadataCode = null, evidence = [], errors = [], suggestedRewrite = null, severity = null } = {}) {
+  return { rule_id: ruleId, status, severity, scope, metadata_code: metadataCode, evidence, errors, suggested_rewrite: suggestedRewrite };
 }
 
 function isFailure(rule) {
@@ -201,6 +202,15 @@ export function validateS01DifferentiationPayload(payload, { baseline = null } =
     addExercise(code, makeRule("DIFF_ANSWER_LEAK_IN_QUESTION", answerLeakErrors.length ? "fail" : "pass", {
       scope: "exercise", metadataCode: code, errors: answerLeakErrors,
     }));
+    const coherenceValidation = validateExerciseCoherence(entry);
+    coherenceValidation.rules.forEach((coherenceRule) => addExercise(code, makeRule(coherenceRule.rule_id, coherenceRule.status, {
+      scope: coherenceRule.scope,
+      metadataCode: code,
+      evidence: coherenceRule.evidence,
+      errors: coherenceRule.errors,
+      severity: coherenceRule.severity,
+    })));
+
     const instructionValidation = validateInstructionQuality(entry);
     instructionValidation.rules.forEach((rule) => addExercise(code, makeRule(rule.rule_id, rule.status, {
       scope: rule.scope,

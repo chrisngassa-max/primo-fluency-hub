@@ -160,6 +160,33 @@ describe("validation bloquante S01", () => {
       expect(instructionFailures).toEqual([]);
     }
   });
+  it("bloque un texte lacunaire sans trou visible et une correction incomplete", () => {
+    const mutated = clonePayload();
+    const gap = mutated.exercises.find((item) => item.metadata_code === "cv2:S01:v3:lexique-texte-lacunaire:B2");
+    gap.contenu.items[0].question = "Mot manquant 1";
+    delete gap.contenu.items[1].correction.remediation;
+    const validation = validateS01DifferentiationPayload(mutated, { baseline });
+    expect(failedRule(validation, "COHERENCE_GAP_COUNT", gap.metadata_code)).toBe(true);
+    expect(failedRule(validation, "COHERENCE_CORRECTION_COMPLETE", gap.metadata_code)).toBe(true);
+  });
+
+  it("bloque une consigne qui annonce trois espaces alors qu'un seul est affiche par item", () => {
+    const mutated = clonePayload();
+    const gap = mutated.exercises.find((item) => item.metadata_code === "cv2:S01:v3:lexique-texte-lacunaire:B2");
+    gap.consigne = "Completez les trois espaces.";
+    const validation = validateS01DifferentiationPayload(mutated, { baseline });
+    expect(failedRule(validation, "COHERENCE_DECLARED_COUNT_MATCH", gap.metadata_code)).toBe(true);
+  });
+
+  it("la famille lexique lacunaire reparee passe les controles de trou aux quatre niveaux", () => {
+    const validation = validateS01DifferentiationPayload(payload, { baseline });
+    for (const level of ["A1", "A2", "B1", "B2"]) {
+      const code = `cv2:S01:v3:lexique-texte-lacunaire:${level}`;
+      expect(failedRule(validation, "COHERENCE_GAP_COUNT", code)).toBe(false);
+      expect(failedRule(validation, "COHERENCE_DECLARED_COUNT_MATCH", code)).toBe(false);
+    }
+  });
+
   it("le plan conserve 59 brouillons mais ne relie que les variantes conformes", () => {
     const plan = buildPublicationPlan(payload, baseline);
     expect(plan.aborted).toBe(false);

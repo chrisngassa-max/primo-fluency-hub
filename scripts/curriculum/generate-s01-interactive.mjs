@@ -1041,6 +1041,27 @@ export async function buildInteractiveS01({ writeOutput = !process.env.VITEST } 
     issue_count: instructionIssues.length,
     issues: instructionIssues,
   };
+  const coherenceIssues = differentiationValidation.rules
+    .filter((rule) => rule.rule_id.startsWith("COHERENCE_") && rule.status !== "pass");
+  report.exercise_coherence = {
+    schema_version: "1.0",
+    human_validation_status: "pending_pedagogical_owner",
+    exercise_count: exercises.length,
+    exercises_with_issues: new Set(coherenceIssues.map((rule) => rule.metadata_code)).size,
+    issue_count: coherenceIssues.length,
+    blocking_issue_count: coherenceIssues.filter((rule) => rule.status === "fail").length,
+    warning_count: coherenceIssues.filter((rule) => rule.status === "warning").length,
+    issues: coherenceIssues,
+  };
+  report.validation_rules.push({
+    rule_id: "EXERCISE_COHERENCE_VALIDATION",
+    status: coherenceIssues.some((rule) => rule.status === "fail") ? "fail" : coherenceIssues.length > 0 ? "warning" : "pass",
+    evidence: [
+      `${exercises.length} exercices controles`,
+      `${new Set(coherenceIssues.map((rule) => rule.metadata_code)).size} exercice(s) avec anomalie`,
+      `${coherenceIssues.filter((rule) => rule.status === "fail").length} regle(s) bloquante(s) en echec`,
+    ],
+  });
   report.validation_rules.push({
     rule_id: "INSTRUCTION_QUALITY_VALIDATION",
     status: instructionIssues.some((rule) => rule.status === "fail")

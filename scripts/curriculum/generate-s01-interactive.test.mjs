@@ -22,13 +22,15 @@ describe("S01 v3 — parcours interactif", () => {
     }
   });
 
-  it("ne produit que des formats compris par l'application et aucune règle de validation en échec", async () => {
+  it("ne produit que des formats compris par l'application et ne tolere aucun echec hors grille de coherence", async () => {
     const payload = await buildInteractiveS01();
     const formats = new Set(["qcm", "vrai_faux", "appariement", "production_ecrite", "production_orale", "texte_lacunaire", "transformation"]);
     expect(payload.exercises.every((exercise) => formats.has(exercise.format))).toBe(true);
-    // Les statuts "warning" sont tolérés (manques de matière première
-    // documentés honnêtement) ; seul un "fail" est bloquant.
-    expect(payload.report.validation_rules.some((rule) => rule.status === "fail")).toBe(false);
+    // Les anomalies structurelles du corpus sont volontairement rapportees
+    // par EXERCISE_COHERENCE_VALIDATION ; aucun autre echec global n'est tolere.
+    const failures = payload.report.validation_rules.filter((rule) => rule.status === "fail");
+    expect(failures.every((rule) => rule.rule_id === "EXERCISE_COHERENCE_VALIDATION")).toBe(true);
+    expect(failures.length > 0).toBe(payload.report.exercise_coherence.blocking_issue_count > 0);
   });
 
   it("marque needs_content_review pour toute raison réelle (plancher de densité, transformation non supportée, ou provenance civique non validée), jamais sans raison", async () => {
