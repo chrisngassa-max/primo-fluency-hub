@@ -45,9 +45,11 @@ export interface SanitizedItem {
  * séance précise uniquement (jamais "la dernière tentative tous groupes
  * confondus" — voir get-seance-content, 4e relecture point 1). */
 export interface WorkedExample {
+  level: string;
   format: string;
   instruction: string;
   question: string;
+  highlighted_text?: string;
   options?: string[];
   response: string;
   completed_response?: string;

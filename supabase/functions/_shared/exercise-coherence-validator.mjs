@@ -223,10 +223,11 @@ export function validateExerciseCoherence(entry) {
 
   const exampleCompleteErrors = [];
   const exampleFormatErrors = [];
+  const exampleLevelErrors = [];
   const exampleDuplicateErrors = [];
   const exampleLeakErrors = [];
   if (workedExample && typeof workedExample === "object") {
-    for (const field of ["format", "instruction", "question", "response"]) {
+    for (const field of ["level", "format", "instruction", "question", "response"]) {
       if (!String(workedExample[field] ?? "").trim()) exampleCompleteErrors.push(`worked_example.${field} est vide`);
     }
     if (!Array.isArray(workedExample.explanation_steps) || workedExample.explanation_steps.length === 0
@@ -235,6 +236,12 @@ export function validateExerciseCoherence(entry) {
     }
     if (workedExample.format !== entry?.format) {
       exampleFormatErrors.push(`worked_example.format=${workedExample.format ?? "absent"}, format exercice=${entry?.format ?? "absent"}`);
+    }
+    if (normalized(workedExample.level) !== normalized(entry?.niveau_vise)) {
+      exampleLevelErrors.push(`worked_example.level=${workedExample.level ?? "absent"}, niveau exercice=${entry?.niveau_vise ?? "absent"}`);
+    }
+    if (workedExample.highlighted_text && !String(workedExample.question ?? "").includes(String(workedExample.highlighted_text))) {
+      exampleCompleteErrors.push("worked_example.highlighted_text doit apparaître exactement dans la question d’exemple");
     }
     if (optionFormats.has(entry?.format)) {
       const exampleOptions = Array.isArray(workedExample.options) ? workedExample.options : [];
@@ -269,6 +276,7 @@ export function validateExerciseCoherence(entry) {
   }
   rules.push(rule("COHERENCE_WORKED_EXAMPLE_COMPLETE", exampleCompleteErrors));
   rules.push(rule("COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH", exampleFormatErrors));
+  rules.push(rule("COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH", exampleLevelErrors));
   rules.push(rule("COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM", exampleDuplicateErrors));
   rules.push(rule("COHERENCE_WORKED_EXAMPLE_ANSWER_LEAK", exampleLeakErrors));
 

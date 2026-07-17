@@ -29,6 +29,7 @@ describe("S01 v3 — parcours interactif", () => {
     for (const exercise of b2) {
       const example = exercise.contenu.worked_example;
       expect(example, exercise.metadata_code).toBeDefined();
+      expect(example.level).toBe("B2");
       expect(example.format).toBe(exercise.format);
       expect(example.instruction).toBeTruthy();
       expect(example.question).toBeTruthy();

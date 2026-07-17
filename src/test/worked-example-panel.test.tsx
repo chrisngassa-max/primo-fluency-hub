@@ -22,9 +22,11 @@ describe("WorkedExamplePanel", () => {
   it("masque le corrigé avant le clic puis affiche le modèle et les étapes", async () => {
     act(() => root.render(
       <WorkedExamplePanel example={{
+        level: "B2",
         format: "texte_lacunaire",
         instruction: "Complétez avec un mot.",
         question: "Le train a dix minutes de ________.",
+        highlighted_text: "dix minutes",
         response: "retard",
         completed_response: "Le train a dix minutes de retard.",
         explanation_steps: ["Je lis la phrase.", "Je choisis le mot cohérent."],
@@ -40,6 +42,8 @@ describe("WorkedExamplePanel", () => {
     expect(document.body.textContent).toContain("Exemple corrigé");
     expect(document.body.textContent).toContain("Le train a dix minutes de retard.");
     expect(document.body.textContent).toContain("Comment trouver la réponse");
+    expect(document.body.textContent).toContain("niveau B2");
+    expect(document.querySelector("span.underline")?.textContent).toBe("dix minutes");
     const dialog = document.querySelector('[role="dialog"]');
     expect(dialog?.className).toContain("h-[100dvh]");
     expect(dialog?.className).toContain("sm:max-w-xl");

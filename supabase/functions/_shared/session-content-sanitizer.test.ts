@@ -44,12 +44,14 @@ describe("session-content-sanitizer — relecture indépendante point 1/10", () 
       civic_content: true,
       contenu: {
         worked_example: {
+          level: "A2",
           format: "qcm",
           instruction: "Choisissez une réponse.",
           question: "Quel jour vient après lundi ?",
           options: ["mardi", "jeudi"],
           response: "mardi",
           completed_response: "Le jour suivant est mardi.",
+          highlighted_text: "après lundi",
           explanation_steps: ["Je repère le mot après.", "Je choisis mardi."],
           bonne_reponse: "ne doit pas passer",
           correction: { secret: true },
@@ -67,6 +69,8 @@ describe("session-content-sanitizer — relecture indépendante point 1/10", () 
     }
     expect(sanitized.items).toHaveLength(2);
     expect(sanitized.id).toBe("ex-1");
+    expect(sanitized.worked_example?.level).toBe("A2");
+    expect(sanitized.worked_example?.highlighted_text).toBe("après lundi");
     expect(sanitized.worked_example?.response).toBe("mardi");
     expect(JSON.stringify(sanitized.worked_example)).not.toContain("bonne_reponse");
     expect(JSON.stringify(sanitized.worked_example)).not.toContain("correction");

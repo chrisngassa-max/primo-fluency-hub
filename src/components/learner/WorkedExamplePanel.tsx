@@ -10,6 +10,21 @@ import {
 } from "@/components/ui/dialog";
 import type { WorkedExample } from "@/lib/curriculum/learnerSession";
 
+function HighlightedQuestion({ text, highlightedText }: { text: string; highlightedText?: string }) {
+  if (!highlightedText) return <>{text}</>;
+  const start = text.indexOf(highlightedText);
+  if (start < 0) return <>{text}</>;
+  return (
+    <>
+      {text.slice(0, start)}
+      <span className="rounded-sm bg-yellow-100 px-0.5 font-bold underline decoration-2 underline-offset-4">
+        {highlightedText}
+      </span>
+      {text.slice(start + highlightedText.length)}
+    </>
+  );
+}
+
 export function WorkedExamplePanel({ example }: { example?: WorkedExample | null }) {
   if (!example) return null;
 
@@ -23,7 +38,7 @@ export function WorkedExamplePanel({ example }: { example?: WorkedExample | null
       </DialogTrigger>
       <DialogContent className="h-[100dvh] max-h-[100dvh] w-screen max-w-none overflow-y-auto rounded-none p-5 sm:h-auto sm:max-h-[85vh] sm:w-full sm:max-w-xl sm:rounded-lg sm:p-6">
         <DialogHeader>
-          <DialogTitle>Exemple corrigé</DialogTitle>
+          <DialogTitle>Exemple corrigé — niveau {example.level}</DialogTitle>
           <DialogDescription>
             Cet exemple utilise un autre contenu que les questions évaluées.
           </DialogDescription>
@@ -37,7 +52,9 @@ export function WorkedExamplePanel({ example }: { example?: WorkedExample | null
 
           <section className="space-y-2">
             <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Question d’exemple</p>
-            <p className="font-semibold text-slate-950">{example.question}</p>
+            <p className="font-semibold text-slate-950">
+              <HighlightedQuestion text={example.question} highlightedText={example.highlighted_text} />
+            </p>
             {example.options?.length ? (
               <ul className="space-y-1 pl-5 text-slate-700">
                 {example.options.map((option) => <li key={option} className="list-disc">{option}</li>)}

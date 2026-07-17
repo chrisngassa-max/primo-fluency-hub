@@ -1933,20 +1933,22 @@
           }
         ],
         "worked_example": {
+          "level": "B2",
           "format": "appariement",
-          "instruction": "Lisez la phrase, puis choisissez le mot qui correspond à son sens.",
+          "instruction": "Dans la phrase, choisissez le groupe de mots qui peut remplacer l’expression soulignée sans changer le sens.",
           "question": "Le médecin fixe une consultation pour vendredi matin.",
+          "highlighted_text": "une consultation",
           "options": [
-            "rendez-vous",
-            "retard",
-            "bagage"
+            "un rendez-vous",
+            "un retard",
+            "un bagage"
           ],
-          "response": "rendez-vous",
-          "completed_response": "Le mot « rendez-vous » correspond à une consultation fixée à une date précise.",
+          "response": "un rendez-vous",
+          "completed_response": "Le médecin fixe un rendez-vous pour vendredi matin.",
           "explanation_steps": [
-            "Je repère l’action : une consultation est fixée.",
-            "Je cherche le mot qui désigne une rencontre prévue.",
-            "Je choisis « rendez-vous »."
+            "Je repère l’expression soulignée : « une consultation ».",
+            "Je cherche une expression qui désigne également une rencontre prévue.",
+            "Je choisis « un rendez-vous » et je vérifie que la phrase conserve le même sens."
           ]
         },
         "metadata": {
@@ -2228,6 +2230,7 @@
           }
         ],
         "worked_example": {
+          "level": "B2",
           "format": "texte_lacunaire",
           "instruction": "Complétez la phrase avec un seul mot.",
           "question": "Le train arrive avec dix minutes de ________.",
@@ -2598,6 +2601,7 @@
           }
         ],
         "worked_example": {
+          "level": "B2",
           "format": "production_orale",
           "instruction": "Répondez oralement en deux phrases complètes.",
           "question": "Présentez un lieu utile de votre quartier et dites pourquoi vous y allez.",
@@ -3488,6 +3492,7 @@
           }
         ],
         "worked_example": {
+          "level": "B2",
           "format": "texte_lacunaire",
           "instruction": "Observez le panneau, puis complétez la phrase avec un mot.",
           "question": "La flèche verte indique la ________ du bâtiment.",
@@ -3620,6 +3625,7 @@
           }
         ],
         "worked_example": {
+          "level": "B2",
           "format": "production_ecrite",
           "instruction": "Décrivez le message du panneau en deux phrases.",
           "question": "Un panneau montre une flèche verte dirigée vers une porte. Expliquez son utilité.",
@@ -7531,6 +7537,7 @@
           }
         ],
         "worked_example": {
+          "level": "B2",
           "format": "qcm",
           "instruction": "Lisez le mini-dialogue, puis choisissez l’information exacte.",
           "question": "« Votre rendez-vous est jeudi à quinze heures. » Quand a lieu le rendez-vous ?",
@@ -7747,6 +7754,7 @@
           }
         ],
         "worked_example": {
+          "level": "B2",
           "format": "texte_lacunaire",
           "instruction": "Complétez la phrase avec le mot entendu dans le mini-message.",
           "question": "Mini-message : « Le bureau ne reçoit personne cet après-midi. » Le bureau est ________ cet après-midi.",
@@ -7862,6 +7870,7 @@
           }
         ],
         "worked_example": {
+          "level": "B2",
           "format": "production_ecrite",
           "instruction": "Reformulez l’idée du mini-dialogue sans reprendre exactement les mêmes mots.",
           "question": "« Je ne pourrai pas venir aujourd’hui ; pouvons-nous choisir une autre date ? » Reformulez la demande.",
@@ -7975,6 +7984,7 @@
           }
         ],
         "worked_example": {
+          "level": "B2",
           "format": "qcm",
           "instruction": "Lisez la situation, puis choisissez la réponse qui reprend exactement l’information donnée.",
           "question": "Le message indique : « La réunion commence à seize heures. » À quelle heure commence-t-elle ?",
@@ -8088,6 +8098,7 @@
           }
         ],
         "worked_example": {
+          "level": "B2",
           "format": "transformation",
           "instruction": "Transformez la phrase au passé composé en conservant son sens.",
           "question": "Nous envoyons le formulaire aujourd’hui.",
@@ -8223,6 +8234,7 @@
           }
         ],
         "worked_example": {
+          "level": "B2",
           "format": "production_orale",
           "instruction": "Donnez votre avis, puis justifiez-le avec un exemple.",
           "question": "Est-il utile de préparer ses documents avant un rendez-vous ?",
@@ -9938,6 +9950,7 @@
           }
         ],
         "worked_example": {
+          "level": "B2",
           "format": "qcm",
           "instruction": "Lisez la règle fictive, puis choisissez l’action qui la respecte.",
           "question": "Dans cet exemple fictif, le règlement de l’atelier demande de garder les téléphones silencieux. Que faut-il faire ?",
@@ -10525,6 +10538,7 @@
           }
         ],
         "worked_example": {
+          "level": "B2",
           "format": "production_ecrite",
           "instruction": "Rédigez un avis organisé avec une idée, une justification et un exemple.",
           "question": "Faut-il prévoir davantage d’espaces calmes dans les bibliothèques ?",
@@ -12719,6 +12733,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:lexique-association:A1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -13149,6 +13173,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:A1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -13554,6 +13588,16 @@
         },
         {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:lexique-association:A2",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
           "status": "pass",
           "severity": "blocking",
           "scope": "exercise_coherence",
@@ -13969,6 +14013,16 @@
         },
         {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:A2",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
           "status": "pass",
           "severity": "blocking",
           "scope": "exercise_coherence",
@@ -14401,6 +14455,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:lexique-association:B1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -14811,6 +14875,16 @@
         },
         {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:B1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
           "status": "pass",
           "severity": "blocking",
           "scope": "exercise_coherence",
@@ -15251,6 +15325,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:lexique-association:B2",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -15679,6 +15763,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:B2",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -16080,6 +16174,16 @@
         },
         {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:A1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
           "status": "pass",
           "severity": "blocking",
           "scope": "exercise_coherence",
@@ -16503,6 +16607,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:A2",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -16917,6 +17031,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:B1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -17322,6 +17446,16 @@
         },
         {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:B2",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
           "status": "pass",
           "severity": "blocking",
           "scope": "exercise_coherence",
@@ -17757,6 +17891,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:support-visuel:A1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -18162,6 +18306,16 @@
         },
         {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:support-visuel-ouvert:A1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
           "status": "pass",
           "severity": "blocking",
           "scope": "exercise_coherence",
@@ -18593,6 +18747,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:support-visuel:A2",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -18994,6 +19158,16 @@
         },
         {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:support-visuel-ouvert:A2",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
           "status": "pass",
           "severity": "blocking",
           "scope": "exercise_coherence",
@@ -19429,6 +19603,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:support-visuel:B1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -19830,6 +20014,16 @@
         },
         {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:support-visuel-ouvert:B1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
           "status": "pass",
           "severity": "blocking",
           "scope": "exercise_coherence",
@@ -20274,6 +20468,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:support-visuel:B2",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -20675,6 +20879,16 @@
         },
         {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:support-visuel-ouvert:B2",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
           "status": "pass",
           "severity": "blocking",
           "scope": "exercise_coherence",
@@ -21100,6 +21314,16 @@
         },
         {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:co-dialogue:A1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
           "status": "pass",
           "severity": "blocking",
           "scope": "exercise_coherence",
@@ -21558,6 +21782,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:co-comprehension:A1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -21965,6 +22199,16 @@
         },
         {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:atelier-1:A1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
           "status": "pass",
           "severity": "blocking",
           "scope": "exercise_coherence",
@@ -22392,6 +22636,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:atelier-2:A1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -22810,6 +23064,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:atelier-3:A1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -23218,6 +23482,16 @@
         },
         {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:atelier-4:A1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
           "status": "pass",
           "severity": "blocking",
           "scope": "exercise_coherence",
@@ -23650,6 +23924,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:structures:A1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -24051,6 +24335,16 @@
         },
         {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:eo:A1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
           "status": "pass",
           "severity": "blocking",
           "scope": "exercise_coherence",
@@ -24465,6 +24759,16 @@
         },
         {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:co-dialogue:A2",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
           "status": "pass",
           "severity": "blocking",
           "scope": "exercise_coherence",
@@ -24912,6 +25216,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:co-comprehension:A2",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -25313,6 +25627,16 @@
         },
         {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:co-approfondissement:A2",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
           "status": "pass",
           "severity": "blocking",
           "scope": "exercise_coherence",
@@ -25748,6 +26072,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:atelier-1:A2",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -26169,6 +26503,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:atelier-2:A2",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -26576,6 +26920,16 @@
         },
         {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:atelier-3:A2",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
           "status": "pass",
           "severity": "blocking",
           "scope": "exercise_coherence",
@@ -27012,6 +27366,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:structures:A2",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -27413,6 +27777,16 @@
         },
         {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:eo:A2",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
           "status": "pass",
           "severity": "blocking",
           "scope": "exercise_coherence",
@@ -27838,6 +28212,16 @@
         },
         {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:co-dialogue:B1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
           "status": "pass",
           "severity": "blocking",
           "scope": "exercise_coherence",
@@ -28285,6 +28669,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:co-comprehension:B1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -28686,6 +29080,16 @@
         },
         {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:co-approfondissement:B1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
           "status": "pass",
           "severity": "blocking",
           "scope": "exercise_coherence",
@@ -29116,6 +29520,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:atelier-1:B1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -29525,6 +29939,16 @@
         },
         {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:atelier-2:B1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
           "status": "pass",
           "severity": "blocking",
           "scope": "exercise_coherence",
@@ -29954,6 +30378,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:structures:B1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -30356,6 +30790,16 @@
         },
         {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:eo:B1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
           "status": "pass",
           "severity": "blocking",
           "scope": "exercise_coherence",
@@ -30805,6 +31249,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:co-dialogue:B2",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -31243,6 +31697,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:co-comprehension:B2",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -31644,6 +32108,16 @@
         },
         {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:co-approfondissement:B2",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
           "status": "pass",
           "severity": "blocking",
           "scope": "exercise_coherence",
@@ -32074,6 +32548,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:atelier-1:B2",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -32492,6 +32976,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:structures:B2",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -32894,6 +33388,16 @@
         },
         {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:eo:B2",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
           "status": "pass",
           "severity": "blocking",
           "scope": "exercise_coherence",
@@ -33332,6 +33836,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:civique:A1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -33759,6 +34273,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:civique:A2",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -34177,6 +34701,16 @@
         },
         {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:civique:B1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
           "status": "pass",
           "severity": "blocking",
           "scope": "exercise_coherence",
@@ -34621,6 +35155,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:civique:B2",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -35038,6 +35582,16 @@
         },
         {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:ee-guidee-1:A1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
           "status": "pass",
           "severity": "blocking",
           "scope": "exercise_coherence",
@@ -35471,6 +36025,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:ee-guidee-1:A2",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -35872,6 +36436,16 @@
         },
         {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:ee-guidee-2:A2",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
           "status": "pass",
           "severity": "blocking",
           "scope": "exercise_coherence",
@@ -36295,6 +36869,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:ee-guidee-2:B1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -36709,6 +37293,16 @@
           "suggested_rewrite": null
         },
         {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:ee-autonome:B1",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
           "status": "pass",
           "severity": "blocking",
@@ -37114,6 +37708,16 @@
         },
         {
           "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+          "status": "pass",
+          "severity": "blocking",
+          "scope": "exercise_coherence",
+          "metadata_code": "cv2:S01:v3:ee-autonome:B2",
+          "evidence": [],
+          "errors": [],
+          "suggested_rewrite": null
+        },
+        {
+          "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
           "status": "pass",
           "severity": "blocking",
           "scope": "exercise_coherence",
@@ -38393,6 +38997,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:lexique-association:A1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -38851,6 +39465,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:A1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -39274,6 +39898,16 @@
             },
             {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:lexique-association:A2",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
               "status": "pass",
               "severity": "blocking",
               "scope": "exercise_coherence",
@@ -39726,6 +40360,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:A2",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -40158,6 +40802,16 @@
             },
             {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:lexique-association:B1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
               "status": "pass",
               "severity": "blocking",
               "scope": "exercise_coherence",
@@ -40614,6 +41268,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:B1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -41054,6 +41718,16 @@
             },
             {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:lexique-association:B2",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
               "status": "pass",
               "severity": "blocking",
               "scope": "exercise_coherence",
@@ -41530,6 +42204,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:lexique-texte-lacunaire:B2",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -41949,6 +42633,16 @@
             },
             {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:A1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
               "status": "pass",
               "severity": "blocking",
               "scope": "exercise_coherence",
@@ -42390,6 +43084,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:A2",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -42822,6 +43526,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:B1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -43245,6 +43959,16 @@
             },
             {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:lexique-reemploi-oral:B2",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
               "status": "pass",
               "severity": "blocking",
               "scope": "exercise_coherence",
@@ -43717,6 +44441,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:support-visuel:A1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -44140,6 +44874,16 @@
             },
             {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:support-visuel-ouvert:A1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
               "status": "pass",
               "severity": "blocking",
               "scope": "exercise_coherence",
@@ -44608,6 +45352,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:support-visuel:A2",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -45027,6 +45781,16 @@
             },
             {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:support-visuel-ouvert:A2",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
               "status": "pass",
               "severity": "blocking",
               "scope": "exercise_coherence",
@@ -45499,6 +46263,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:support-visuel:B1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -45918,6 +46692,16 @@
             },
             {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:support-visuel-ouvert:B1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
               "status": "pass",
               "severity": "blocking",
               "scope": "exercise_coherence",
@@ -46410,6 +47194,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:support-visuel:B2",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -46829,6 +47623,16 @@
             },
             {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:support-visuel-ouvert:B2",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
               "status": "pass",
               "severity": "blocking",
               "scope": "exercise_coherence",
@@ -47272,6 +48076,16 @@
             },
             {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:co-dialogue:A1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
               "status": "pass",
               "severity": "blocking",
               "scope": "exercise_coherence",
@@ -47799,6 +48613,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:co-comprehension:A1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -48253,6 +49077,16 @@
             },
             {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:atelier-1:A1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
               "status": "pass",
               "severity": "blocking",
               "scope": "exercise_coherence",
@@ -48717,6 +49551,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:atelier-2:A1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -49162,6 +50006,16 @@
             },
             {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:atelier-3:A1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
               "status": "pass",
               "severity": "blocking",
               "scope": "exercise_coherence",
@@ -49624,6 +50478,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:atelier-4:A1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -50077,6 +50941,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:structures:A1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -50496,6 +51370,16 @@
             },
             {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:eo:A1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
               "status": "pass",
               "severity": "blocking",
               "scope": "exercise_coherence",
@@ -50928,6 +51812,16 @@
             },
             {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:co-dialogue:A2",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
               "status": "pass",
               "severity": "blocking",
               "scope": "exercise_coherence",
@@ -51444,6 +52338,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:co-comprehension:A2",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -51875,6 +52779,16 @@
             },
             {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:co-approfondissement:A2",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
               "status": "pass",
               "severity": "blocking",
               "scope": "exercise_coherence",
@@ -52368,6 +53282,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:atelier-1:A2",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -52827,6 +53751,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:atelier-2:A2",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -53269,6 +54203,16 @@
             },
             {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:atelier-3:A2",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
               "status": "pass",
               "severity": "blocking",
               "scope": "exercise_coherence",
@@ -53756,6 +54700,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:structures:A2",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -54175,6 +55129,16 @@
             },
             {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:eo:A2",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
               "status": "pass",
               "severity": "blocking",
               "scope": "exercise_coherence",
@@ -54618,6 +55582,16 @@
             },
             {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:co-dialogue:B1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
               "status": "pass",
               "severity": "blocking",
               "scope": "exercise_coherence",
@@ -55134,6 +56108,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:co-comprehension:B1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -55565,6 +56549,16 @@
             },
             {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:co-approfondissement:B1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
               "status": "pass",
               "severity": "blocking",
               "scope": "exercise_coherence",
@@ -56043,6 +57037,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:atelier-1:B1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -56489,6 +57493,16 @@
             },
             {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:atelier-2:B1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
               "status": "pass",
               "severity": "blocking",
               "scope": "exercise_coherence",
@@ -56956,6 +57970,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:structures:B1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -57376,6 +58400,16 @@
             },
             {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:eo:B1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
               "status": "pass",
               "severity": "blocking",
               "scope": "exercise_coherence",
@@ -57860,6 +58894,16 @@
             },
             {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:co-dialogue:B2",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
               "status": "pass",
               "severity": "blocking",
               "scope": "exercise_coherence",
@@ -58376,6 +59420,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:co-comprehension:B2",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -58807,6 +59861,16 @@
             },
             {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:co-approfondissement:B2",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
               "status": "pass",
               "severity": "blocking",
               "scope": "exercise_coherence",
@@ -59285,6 +60349,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:atelier-1:B2",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -59740,6 +60814,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:structures:B2",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -60160,6 +61244,16 @@
             },
             {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:eo:B2",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
               "status": "pass",
               "severity": "blocking",
               "scope": "exercise_coherence",
@@ -60633,6 +61727,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:civique:A1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -61095,6 +62199,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:civique:A2",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -61548,6 +62662,16 @@
             },
             {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:civique:B1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
               "status": "pass",
               "severity": "blocking",
               "scope": "exercise_coherence",
@@ -62040,6 +63164,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:civique:B2",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -62505,6 +63639,16 @@
             },
             {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:ee-guidee-1:A1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
               "status": "pass",
               "severity": "blocking",
               "scope": "exercise_coherence",
@@ -62986,6 +64130,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:ee-guidee-1:A2",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -63405,6 +64559,16 @@
             },
             {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:ee-guidee-2:A2",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
               "status": "pass",
               "severity": "blocking",
               "scope": "exercise_coherence",
@@ -63846,6 +65010,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:ee-guidee-2:B1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -64278,6 +65452,16 @@
               "suggested_rewrite": null
             },
             {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:ee-autonome:B1",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM",
               "status": "pass",
               "severity": "blocking",
@@ -64701,6 +65885,16 @@
             },
             {
               "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH",
+              "status": "pass",
+              "severity": "blocking",
+              "scope": "exercise_coherence",
+              "metadata_code": "cv2:S01:v3:ee-autonome:B2",
+              "evidence": [],
+              "errors": [],
+              "suggested_rewrite": null
+            },
+            {
+              "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH",
               "status": "pass",
               "severity": "blocking",
               "scope": "exercise_coherence",

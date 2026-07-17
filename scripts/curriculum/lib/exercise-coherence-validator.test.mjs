@@ -146,6 +146,7 @@ describe("garde-fou de coherence structurelle des exercices", () => {
     expect(rule(validateExerciseCoherence(exercise), "COHERENCE_WORKED_EXAMPLE_REQUIRED").status).toBe("fail");
 
     exercise.contenu.worked_example = {
+      level: "B2",
       format: "qcm",
       instruction: "Lisez puis choisissez.",
       question: "Quel jour vient après lundi ?",
@@ -158,6 +159,10 @@ describe("garde-fou de coherence structurelle des exercices", () => {
     expect(rule(valid, "COHERENCE_WORKED_EXAMPLE_REQUIRED").status).toBe("pass");
     expect(rule(valid, "COHERENCE_WORKED_EXAMPLE_COMPLETE").status).toBe("pass");
     expect(rule(valid, "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH").status).toBe("pass");
+    expect(rule(valid, "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH").status).toBe("pass");
+
+    exercise.contenu.worked_example.level = "A2";
+    expect(rule(validateExerciseCoherence(exercise), "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH").status).toBe("fail");
 
     exercise.contenu.worked_example.format = "texte_lacunaire";
     expect(rule(validateExerciseCoherence(exercise), "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH").status).toBe("fail");
@@ -168,6 +173,7 @@ describe("garde-fou de coherence structurelle des exercices", () => {
     exercise.niveau_vise = "B2";
     exercise.contenu.metadata = { worked_example_required: true };
     exercise.contenu.worked_example = {
+      level: "B2",
       format: "qcm",
       instruction: "Lisez puis choisissez.",
       question: exercise.contenu.items[0].question,

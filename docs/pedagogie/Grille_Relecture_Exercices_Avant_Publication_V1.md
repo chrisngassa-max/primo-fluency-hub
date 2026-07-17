@@ -44,6 +44,7 @@ L’ancien `exercise-validator.ts` couvre quelques champs génériques mais n’
 | `COHERENCE_WORKED_EXAMPLE_REQUIRED` | Un exemple corrigé est présent lorsque la politique de l’exercice l’exige | Bloquant |
 | `COHERENCE_WORKED_EXAMPLE_COMPLETE` | L’exemple contient consigne, question, réponse et étapes d’explication | Bloquant |
 | `COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH` | L’exemple utilise le même format que l’exercice | Bloquant |
+| `COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH` | L'exemple est calibré pour le même niveau que l'exercice | Bloquant |
 | `COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM` | L’exemple ne reproduit aucune vraie question | Bloquant |
 | `COHERENCE_WORKED_EXAMPLE_ANSWER_LEAK` | L’exemple ne révèle aucune réponse des vrais items | Bloquant |
 

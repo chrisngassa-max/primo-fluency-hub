@@ -1,15 +1,16 @@
 const B2_WORKED_EXAMPLES = {
   "lexique-association": {
     format: "appariement",
-    instruction: "Lisez la phrase, puis choisissez le mot qui correspond à son sens.",
+    instruction: "Dans la phrase, choisissez le groupe de mots qui peut remplacer l’expression soulignée sans changer le sens.",
     question: "Le médecin fixe une consultation pour vendredi matin.",
-    options: ["rendez-vous", "retard", "bagage"],
-    response: "rendez-vous",
-    completed_response: "Le mot « rendez-vous » correspond à une consultation fixée à une date précise.",
+    highlighted_text: "une consultation",
+    options: ["un rendez-vous", "un retard", "un bagage"],
+    response: "un rendez-vous",
+    completed_response: "Le médecin fixe un rendez-vous pour vendredi matin.",
     explanation_steps: [
-      "Je repère l’action : une consultation est fixée.",
-      "Je cherche le mot qui désigne une rencontre prévue.",
-      "Je choisis « rendez-vous ».",
+      "Je repère l’expression soulignée : « une consultation ».",
+      "Je cherche une expression qui désigne également une rencontre prévue.",
+      "Je choisis « un rendez-vous » et je vérifie que la phrase conserve le même sens.",
     ],
   },
   "lexique-texte-lacunaire": {
@@ -171,7 +172,7 @@ export function buildB2WorkedExample(code, format) {
   if (example.format !== format) {
     throw new Error(`Format d'exemple incohérent pour ${code}: ${example.format} au lieu de ${format}`);
   }
-  return structuredClone(example);
+  return { level: "B2", ...structuredClone(example) };
 }
 
 export function getB2WorkedExampleCodes() {

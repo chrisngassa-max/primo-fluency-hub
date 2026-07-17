@@ -62,9 +62,11 @@ export interface SanitizedItem {
   justification_type?: string;
 }
 export interface RawWorkedExample {
+  level?: string;
   format?: string;
   instruction?: string;
   question?: string;
+  highlighted_text?: string;
   options?: string[];
   response?: string;
   completed_response?: string;
@@ -73,9 +75,11 @@ export interface RawWorkedExample {
 }
 
 export interface SanitizedWorkedExample {
+  level: string;
   format: string;
   instruction: string;
   question: string;
+  highlighted_text?: string;
   options?: string[];
   response: string;
   completed_response?: string;
@@ -96,6 +100,7 @@ export function sanitizeItem(item: RawItem): SanitizedItem {
 }
 export function sanitizeWorkedExample(value: RawWorkedExample | undefined): SanitizedWorkedExample | undefined {
   if (!value || typeof value !== "object") return undefined;
+  const level = String(value.level ?? "").trim();
   const format = String(value.format ?? "").trim();
   const instruction = String(value.instruction ?? "").trim();
   const question = String(value.question ?? "").trim();
@@ -103,11 +108,13 @@ export function sanitizeWorkedExample(value: RawWorkedExample | undefined): Sani
   const explanationSteps = Array.isArray(value.explanation_steps)
     ? value.explanation_steps.map((step) => String(step).trim()).filter(Boolean)
     : [];
-  if (!format || !instruction || !question || !response || explanationSteps.length === 0) return undefined;
+  if (!level || !format || !instruction || !question || !response || explanationSteps.length === 0) return undefined;
   return {
+    level,
     format,
     instruction,
     question,
+    ...(String(value.highlighted_text ?? "").trim() ? { highlighted_text: String(value.highlighted_text).trim() } : {}),
     ...(Array.isArray(value.options) ? { options: value.options.map((option) => String(option)) } : {}),
     response,
     ...(String(value.completed_response ?? "").trim()

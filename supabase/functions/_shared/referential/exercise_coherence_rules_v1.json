@@ -27,6 +27,7 @@
     { "rule_id": "COHERENCE_WORKED_EXAMPLE_REQUIRED", "severity": "blocking" },
     { "rule_id": "COHERENCE_WORKED_EXAMPLE_COMPLETE", "severity": "blocking" },
     { "rule_id": "COHERENCE_WORKED_EXAMPLE_FORMAT_MATCH", "severity": "blocking" },
+    { "rule_id": "COHERENCE_WORKED_EXAMPLE_LEVEL_MATCH", "severity": "blocking" },
     { "rule_id": "COHERENCE_WORKED_EXAMPLE_DUPLICATE_ITEM", "severity": "blocking" },
     { "rule_id": "COHERENCE_WORKED_EXAMPLE_ANSWER_LEAK", "severity": "blocking" }
   ]
