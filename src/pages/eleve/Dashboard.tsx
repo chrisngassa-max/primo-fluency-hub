@@ -18,6 +18,7 @@ import TrajectoireTCF from "@/components/TrajectoireTCF";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toast } from "sonner";
+import { useActiveSeances } from "@/hooks/useEleveSeances";
 
 const EleveDashboard = () => {
   const { user } = useAuth();
@@ -88,51 +89,8 @@ const EleveDashboard = () => {
 
 
 
-  // Identifie toutes les séances accessibles aujourd'hui / en cours pour éviter de masquer un envoi
-  const { data: activeSessions } = useQuery({
-    queryKey: ["eleve-active-sessions", user?.id],
-    queryFn: async () => {
-      const { data: memberships } = await supabase
-        .from("group_members")
-        .select("group_id, joined_at")
-        .eq("eleve_id", user!.id);
-      if (!memberships?.length) return [];
-      const groupIds = memberships.map((m) => m.group_id);
-
-      // Bornes du jour (locales)
-      const start = new Date();
-      start.setHours(0, 0, 0, 0);
-      const end = new Date(start);
-      end.setDate(end.getDate() + 1);
-
-      const { data: todays } = await supabase
-        .from("sessions")
-        .select("id, titre, date_seance, group_id, statut, group:groups(nom)")
-        .in("group_id", groupIds)
-        .gte("date_seance", start.toISOString())
-        .lt("date_seance", end.toISOString())
-        .order("date_seance", { ascending: true });
-
-      const { data: enCours } = await supabase
-        .from("sessions")
-        .select("id, titre, date_seance, group_id, statut, group:groups(nom)")
-        .in("group_id", groupIds)
-        .eq("statut", "en_cours")
-        .order("date_seance", { ascending: false });
-
-      const byId = new Map<string, any>();
-      [...(todays ?? []), ...(enCours ?? [])].forEach((s: any) => byId.set(s.id, s));
-      return Array.from(byId.values()).sort(
-        (a, b) => new Date(b.date_seance).getTime() - new Date(a.date_seance).getTime()
-      );
-    },
-    enabled: !!user?.id,
-    staleTime: 0,
-    refetchOnWindowFocus: true,
-    refetchOnMount: "always",
-    refetchInterval: 60_000,
-  });
-
+  // Une séance devient accessible uniquement après l'appel (élève présent).
+  const { data: activeSessions } = useActiveSeances(user?.id);
 
   const activeSessionIds = (activeSessions ?? []).map((s: any) => s.id);
 
@@ -204,7 +162,7 @@ const EleveDashboard = () => {
             sessionId: session.id,
             titre: session.titre,
             date_seance: session.date_seance,
-            group_nom: session.group?.nom || "",
+            group_nom: session.group_nom || "",
             total,
             done,
             remaining: total - done,
@@ -369,8 +327,23 @@ const EleveDashboard = () => {
         <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground px-1">
           Aujourd'hui
         </p>
-        {(uncompletedTests.length > 0 || (sessionExercises && sessionExercises.length > 0)) ? (
+        {((activeSessions?.length ?? 0) > 0 || uncompletedTests.length > 0 || (sessionExercises && sessionExercises.length > 0)) ? (
           <div className="grid grid-cols-2 gap-3">
+            {(activeSessions ?? []).map((session) => (
+              <div
+                key={`session-${session.id}`}
+                className="flex flex-col items-start gap-3 p-5 rounded-2xl bg-[#e5edff] hover:bg-[#d6e3ff] transition-colors cursor-pointer min-h-[120px]"
+                onClick={() => navigate("/eleve/ma-seance")}
+              >
+                <div className="h-12 w-12 rounded-full bg-white/60 flex items-center justify-center">
+                  <Calendar className="h-6 w-6 text-[#2b6cb0]" />
+                </div>
+                <div>
+                  <p className="font-bold text-[15px] leading-snug text-[#0b234a]">{session.titre}</p>
+                  <p className="text-xs text-[#4a6285] mt-1">Séance ouverte</p>
+                </div>
+              </div>
+            ))}
             {uncompletedTests.map((test: any) => (
               <div
                 key={test.id}

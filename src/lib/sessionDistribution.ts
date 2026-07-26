@@ -15,7 +15,10 @@ import { supabase } from "@/integrations/supabase/client";
  * sans écraser une séance déjà terminée, et émet un événement temps réel pour
  * que les écrans abonnés se rafraîchissent.
  */
-export async function activateSessionForStudents(sessionId: string): Promise<void> {
+export async function activateSessionForStudents(
+  sessionId: string,
+  reason: "exercices_envoyes" | "appel_enregistre" = "exercices_envoyes",
+): Promise<void> {
   if (!sessionId) return;
 
   const { error } = await supabase
@@ -32,7 +35,7 @@ export async function activateSessionForStudents(sessionId: string): Promise<voi
       session_id: sessionId,
       eleve_id: null,
       event_type: "session_state_change",
-      payload: { reason: "exercices_envoyes" } as never,
+      payload: { reason } as never,
     } as never);
   if (eventError) {
     console.warn("[sessionDistribution] session_state_change", eventError.message);

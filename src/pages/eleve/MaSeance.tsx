@@ -90,9 +90,6 @@ const MaSeance = () => {
     return (
       <div className="space-y-6 max-w-2xl mx-auto">
         <Header />
-        <Button className="w-full gap-2 bg-blue-600 font-bold hover:bg-blue-700" onClick={() => navigate("/eleve/exercices-interactifs/s01")}>
-          <PlayCircle className="h-5 w-5" /> Exercices interactifs — Séance 1 v3
-        </Button>
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="h-16 w-16 rounded-full bg-blue-100 flex items-center justify-center mb-4">
             <CalendarClock className="h-8 w-8 text-primary" />
@@ -112,9 +109,6 @@ const MaSeance = () => {
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
       <Header />
-        <Button className="w-full gap-2 bg-blue-600 font-bold hover:bg-blue-700" onClick={() => navigate("/eleve/exercices-interactifs/s01")}>
-          <PlayCircle className="h-5 w-5" /> Exercices interactifs — Séance 1 v3
-        </Button>
 
       {/* Carte séance courante */}
       <div className="rounded-2xl bg-[#0b234a] p-5 text-white shadow-sm">

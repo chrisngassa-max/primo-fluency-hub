@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { activateSessionForStudents } from "@/lib/sessionDistribution";
 
 interface FeuilleAppelProps {
   sessionId: string;
@@ -123,8 +124,18 @@ export default function FeuilleAppel({ sessionId, session }: FeuilleAppelProps) 
         .upsert(upserts, { onConflict: "session_id,eleve_id" });
 
       if (error) throw error;
+      const presentStudentIds = upserts.filter((row) => row.present).map((row) => row.eleve_id);
+      if (presentStudentIds.length > 0) {
+        await activateSessionForStudents(sessionId, "appel_enregistre");
+      }
       qc.invalidateQueries({ queryKey: ["presences", sessionId] });
-      toast.success("Feuille d'appel enregistrée");
+      qc.invalidateQueries({ queryKey: ["presences-pilot", sessionId] });
+      qc.invalidateQueries({ queryKey: ["session-info", sessionId] });
+      toast.success(
+        presentStudentIds.length > 0
+          ? "Appel enregistré — séance ouverte pour les élèves présents"
+          : "Feuille d'appel enregistrée",
+      );
     } catch (e: any) {
       toast.error("Erreur : " + e.message);
     } finally {
