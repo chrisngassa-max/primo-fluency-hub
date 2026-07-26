@@ -1,189 +1,942 @@
 {
-  "session_code": "S01",
-  "plan_version": "curriculum-v2.0",
-  "titre": "Accueil, objectifs et cinq thèmes",
-  "support": {
-    "support_id": "S01-support-accueil",
-    "situation": "Awa Diallo, apprenante primo-arrivante, se présente le premier jour de sa formation. Elle explique à sa formatrice, Mme Rossi, son objectif administratif (la carte de séjour pluriannuelle) et découvre l'organisation du parcours.",
-    "personnages": ["Awa Diallo (apprenante)", "Mme Rossi (formatrice)"],
-    "faits": [
-      "Le parcours vers la carte de séjour pluriannuelle (CSP) dure 80 heures.",
-      "Il comprend 25 séances collectives de 3 heures chacune.",
-      "Il comprend deux évaluations hors séances : E1 et E2.",
-      "Le parcours couvre cinq thèmes civiques officiels.",
-      "Un droit, un devoir et une règle sont trois notions différentes."
-    ],
-    "nombres": [80, 25, 3, 5, 2],
-    "dates": [],
-    "source_ids": []
-  },
-  "co": {
-    "resource_id": "S01-CO-master",
-    "voice": "fr-FR-Wavenet-C",
-    "speaking_rate": 0.92,
-    "script": "Mme Rossi : Bonjour, bienvenue dans votre nouveau parcours. Comment vous appelez-vous ?\nAwa : Bonjour madame. Je m'appelle Awa. Awa Diallo.\nMme Rossi : Enchantée, Awa. Quel est votre objectif aujourd'hui ?\nAwa : Je voudrais avoir ma carte de séjour pluriannuelle.\nMme Rossi : Très bien. Pour ça, vous allez suivre un parcours de quatre-vingts heures.\nAwa : Quatre-vingts heures ? C'est beaucoup !\nMme Rossi : Oui, mais c'est réparti sur vingt-cinq séances de trois heures, à raison d'une séance par semaine.\nAwa : D'accord. Et qu'est-ce qu'on va apprendre exactement ?\nMme Rossi : Vous allez apprendre le français pour la vie quotidienne, et aussi cinq thèmes sur la vie en France : la République, les institutions, les droits et devoirs, l'histoire et la vie en société.\nAwa : Il y a un examen à la fin ?\nMme Rossi : Il y a deux évaluations : une évaluation intermédiaire après cinquante heures, et une évaluation finale à la fin des quatre-vingts heures.\nAwa : Je comprends. Merci beaucoup madame.\nMme Rossi : Une dernière chose : connaissez-vous la différence entre un droit, un devoir et une règle ?\nAwa : Pas très bien, madame.\nMme Rossi : Un droit, c'est quelque chose que vous pouvez demander, comme le droit à la santé. Un devoir, c'est quelque chose que vous devez faire, comme respecter la loi. Une règle, c'est une consigne précise, par exemple dans un règlement intérieur.\nAwa : D'accord, je comprends mieux maintenant.\nMme Rossi : Parfait, nous allons travailler cela ensemble pendant toute la formation. Bienvenue parmi nous, Awa !",
-    "pauses": [
-      { "after_word": 12, "ms": 400 },
-      { "after_word": 60, "ms": 400 },
-      { "after_word": 140, "ms": 500 }
-    ]
-  },
-  "visual": {
-    "resource_id": "S01-VIS-master",
-    "alt_text": "Cinq panneaux de couleur representant les cinq themes civiques : principes et valeurs de la Republique, systeme institutionnel, droits et devoirs, histoire et geographie, vie en societe.",
-    "scene": {
-      "title": "Cinq thèmes civiques du parcours CapTCF",
-      "width": 900,
-      "height": 260,
-      "background": "#ffffff",
-      "elements": [
-        { "type": "rect", "x": 20, "y": 30, "width": 150, "height": 180, "rx": 10, "fill": "#dbeafe" },
-        { "type": "text", "x": 95, "y": 130, "anchor": "middle", "fontSize": 14, "text": "Principes et" },
-        { "type": "text", "x": 95, "y": 150, "anchor": "middle", "fontSize": 14, "text": "valeurs de la" },
-        { "type": "text", "x": 95, "y": 170, "anchor": "middle", "fontSize": 14, "text": "République" },
+    "session_code":  "S01",
+    "plan_version":  "curriculum-v2.0",
+    "titre":  "Accueil, objectifs et cinq thèmes",
+    "support":  {
+                    "support_id":  "S01-support-accueil",
+                    "situation":  "Awa Diallo, apprenante primo-arrivante, se présente le premier jour de sa formation. Elle explique à sa formatrice, Mme Rossi, son objectif administratif (la carte de séjour pluriannuelle) et découvre l\u0027organisation du parcours.",
+                    "personnages":  [
+                                        "Awa Diallo (apprenante)",
+                                        "Mme Rossi (formatrice)"
+                                    ],
+                    "faits":  [
+                                  "Le parcours vers la carte de séjour pluriannuelle (CSP) dure 80 heures.",
+                                  "Il comprend 25 séances collectives de 3 heures chacune.",
+                                  "Il comprend deux évaluations hors séances : E1 et E2.",
+                                  "Le parcours couvre cinq thèmes civiques officiels.",
+                                  "Un droit, un devoir et une règle sont trois notions différentes."
+                              ],
+                    "nombres":  [
+                                    80,
+                                    25,
+                                    3,
+                                    5,
+                                    2
+                                ],
+                    "dates":  [
 
-        { "type": "rect", "x": 190, "y": 30, "width": 150, "height": 180, "rx": 10, "fill": "#dcfce7" },
-        { "type": "text", "x": 265, "y": 130, "anchor": "middle", "fontSize": 14, "text": "Système" },
-        { "type": "text", "x": 265, "y": 150, "anchor": "middle", "fontSize": 14, "text": "institutionnel" },
-        { "type": "text", "x": 265, "y": 170, "anchor": "middle", "fontSize": 14, "text": "et politique" },
+                              ],
+                    "source_ids":  [
 
-        { "type": "rect", "x": 360, "y": 30, "width": 150, "height": 180, "rx": 10, "fill": "#fef9c3" },
-        { "type": "text", "x": 435, "y": 130, "anchor": "middle", "fontSize": 14, "text": "Droits" },
-        { "type": "text", "x": 435, "y": 150, "anchor": "middle", "fontSize": 14, "text": "et" },
-        { "type": "text", "x": 435, "y": 170, "anchor": "middle", "fontSize": 14, "text": "devoirs" },
+                                   ]
+                },
+    "co":  {
+               "resource_id":  "S01-CO-master",
+               "voice":  "fr-FR-Wavenet-C",
+               "speaking_rate":  0.92,
+               "script":  "Mme Rossi : Bonjour, bienvenue dans votre nouveau parcours. Comment vous appelez-vous ?\nAwa : Bonjour madame. Je m\u0027appelle Awa. Awa Diallo.\nMme Rossi : Enchantée, Awa. Quel est votre objectif aujourd\u0027hui ?\nAwa : Je voudrais avoir ma carte de séjour pluriannuelle.\nMme Rossi : Très bien. Pour ça, vous allez suivre un parcours de quatre-vingts heures.\nAwa : Quatre-vingts heures ? C\u0027est beaucoup !\nMme Rossi : Oui, mais c\u0027est réparti sur vingt-cinq séances de trois heures, à raison d\u0027une séance par semaine.\nAwa : D\u0027accord. Et qu\u0027est-ce qu\u0027on va apprendre exactement ?\nMme Rossi : Vous allez apprendre le français pour la vie quotidienne, et aussi cinq thèmes sur la vie en France : la République, les institutions, les droits et devoirs, l\u0027histoire et la vie en société.\nAwa : Il y a un examen à la fin ?\nMme Rossi : Il y a deux évaluations : une évaluation intermédiaire après cinquante heures, et une évaluation finale à la fin des quatre-vingts heures.\nAwa : Je comprends. Merci beaucoup madame.\nMme Rossi : Une dernière chose : connaissez-vous la différence entre un droit, un devoir et une règle ?\nAwa : Pas très bien, madame.\nMme Rossi : Un droit, c\u0027est quelque chose que vous pouvez demander, comme le droit à la santé. Un devoir, c\u0027est quelque chose que vous devez faire, comme respecter la loi. Une règle, c\u0027est une consigne précise, par exemple dans un règlement intérieur.\nAwa : D\u0027accord, je comprends mieux maintenant.\nMme Rossi : Parfait, nous allons travailler cela ensemble pendant toute la formation. Bienvenue parmi nous, Awa !",
+               "pauses":  [
+                              {
+                                  "after_word":  12,
+                                  "ms":  400
+                              },
+                              {
+                                  "after_word":  60,
+                                  "ms":  400
+                              },
+                              {
+                                  "after_word":  140,
+                                  "ms":  500
+                              }
+                          ]
+           },
+    "visual":  {
+                   "resource_id":  "S01-VIS-master",
+                   "alt_text":  "Cinq panneaux de couleur representant les cinq themes civiques : principes et valeurs de la Republique, systeme institutionnel, droits et devoirs, histoire et geographie, vie en societe.",
+                   "scene":  {
+                                 "title":  "Cinq thèmes civiques du parcours CapTCF",
+                                 "width":  900,
+                                 "height":  260,
+                                 "background":  "#ffffff",
+                                 "elements":  [
+                                                  {
+                                                      "type":  "rect",
+                                                      "x":  20,
+                                                      "y":  30,
+                                                      "width":  150,
+                                                      "height":  180,
+                                                      "rx":  10,
+                                                      "fill":  "#dbeafe"
+                                                  },
+                                                  {
+                                                      "type":  "text",
+                                                      "x":  95,
+                                                      "y":  130,
+                                                      "anchor":  "middle",
+                                                      "fontSize":  14,
+                                                      "text":  "Principes et"
+                                                  },
+                                                  {
+                                                      "type":  "text",
+                                                      "x":  95,
+                                                      "y":  150,
+                                                      "anchor":  "middle",
+                                                      "fontSize":  14,
+                                                      "text":  "valeurs de la"
+                                                  },
+                                                  {
+                                                      "type":  "text",
+                                                      "x":  95,
+                                                      "y":  170,
+                                                      "anchor":  "middle",
+                                                      "fontSize":  14,
+                                                      "text":  "République"
+                                                  },
+                                                  {
+                                                      "type":  "rect",
+                                                      "x":  190,
+                                                      "y":  30,
+                                                      "width":  150,
+                                                      "height":  180,
+                                                      "rx":  10,
+                                                      "fill":  "#dcfce7"
+                                                  },
+                                                  {
+                                                      "type":  "text",
+                                                      "x":  265,
+                                                      "y":  130,
+                                                      "anchor":  "middle",
+                                                      "fontSize":  14,
+                                                      "text":  "Système"
+                                                  },
+                                                  {
+                                                      "type":  "text",
+                                                      "x":  265,
+                                                      "y":  150,
+                                                      "anchor":  "middle",
+                                                      "fontSize":  14,
+                                                      "text":  "institutionnel"
+                                                  },
+                                                  {
+                                                      "type":  "text",
+                                                      "x":  265,
+                                                      "y":  170,
+                                                      "anchor":  "middle",
+                                                      "fontSize":  14,
+                                                      "text":  "et politique"
+                                                  },
+                                                  {
+                                                      "type":  "rect",
+                                                      "x":  360,
+                                                      "y":  30,
+                                                      "width":  150,
+                                                      "height":  180,
+                                                      "rx":  10,
+                                                      "fill":  "#fef9c3"
+                                                  },
+                                                  {
+                                                      "type":  "text",
+                                                      "x":  435,
+                                                      "y":  130,
+                                                      "anchor":  "middle",
+                                                      "fontSize":  14,
+                                                      "text":  "Droits"
+                                                  },
+                                                  {
+                                                      "type":  "text",
+                                                      "x":  435,
+                                                      "y":  150,
+                                                      "anchor":  "middle",
+                                                      "fontSize":  14,
+                                                      "text":  "et"
+                                                  },
+                                                  {
+                                                      "type":  "text",
+                                                      "x":  435,
+                                                      "y":  170,
+                                                      "anchor":  "middle",
+                                                      "fontSize":  14,
+                                                      "text":  "devoirs"
+                                                  },
+                                                  {
+                                                      "type":  "rect",
+                                                      "x":  530,
+                                                      "y":  30,
+                                                      "width":  150,
+                                                      "height":  180,
+                                                      "rx":  10,
+                                                      "fill":  "#fee2e2"
+                                                  },
+                                                  {
+                                                      "type":  "text",
+                                                      "x":  605,
+                                                      "y":  130,
+                                                      "anchor":  "middle",
+                                                      "fontSize":  14,
+                                                      "text":  "Histoire,"
+                                                  },
+                                                  {
+                                                      "type":  "text",
+                                                      "x":  605,
+                                                      "y":  150,
+                                                      "anchor":  "middle",
+                                                      "fontSize":  14,
+                                                      "text":  "géographie"
+                                                  },
+                                                  {
+                                                      "type":  "text",
+                                                      "x":  605,
+                                                      "y":  170,
+                                                      "anchor":  "middle",
+                                                      "fontSize":  14,
+                                                      "text":  "et culture"
+                                                  },
+                                                  {
+                                                      "type":  "rect",
+                                                      "x":  700,
+                                                      "y":  30,
+                                                      "width":  180,
+                                                      "height":  180,
+                                                      "rx":  10,
+                                                      "fill":  "#ede9fe"
+                                                  },
+                                                  {
+                                                      "type":  "text",
+                                                      "x":  790,
+                                                      "y":  120,
+                                                      "anchor":  "middle",
+                                                      "fontSize":  14,
+                                                      "text":  "Vivre dans"
+                                                  },
+                                                  {
+                                                      "type":  "text",
+                                                      "x":  790,
+                                                      "y":  140,
+                                                      "anchor":  "middle",
+                                                      "fontSize":  14,
+                                                      "text":  "la société"
+                                                  },
+                                                  {
+                                                      "type":  "text",
+                                                      "x":  790,
+                                                      "y":  160,
+                                                      "anchor":  "middle",
+                                                      "fontSize":  14,
+                                                      "text":  "française"
+                                                  }
+                                              ]
+                             }
+               },
+    "lexique":  {
+                    "resource_id":  "S01-LEX-A1-B2",
+                    "mots":  [
+                                 {
+                                     "mot":  "parcours",
+                                     "definition_simple":  "Ensemble des séances et évaluations à suivre du début à la fin.",
+                                     "exemple":  "Le parcours dure quatre-vingts heures."
+                                 },
+                                 {
+                                     "mot":  "niveau",
+                                     "definition_simple":  "Le degré de maîtrise du français (A1, A2, B1, B2).",
+                                     "exemple":  "Awa commence au niveau A2."
+                                 },
+                                 {
+                                     "mot":  "objectif",
+                                     "definition_simple":  "Le but administratif que l\u0027on veut atteindre.",
+                                     "exemple":  "Son objectif est la carte de séjour pluriannuelle."
+                                 },
+                                 {
+                                     "mot":  "démarche",
+                                     "definition_simple":  "Une action à faire auprès d\u0027une administration.",
+                                     "exemple":  "Faire une démarche à la préfecture."
+                                 },
+                                 {
+                                     "mot":  "droit",
+                                     "definition_simple":  "Ce qu\u0027une personne peut demander ou faire, garanti par la loi.",
+                                     "exemple":  "Le droit à la santé."
+                                 },
+                                 {
+                                     "mot":  "devoir",
+                                     "definition_simple":  "Ce qu\u0027une personne doit faire.",
+                                     "exemple":  "Respecter la loi est un devoir."
+                                 },
+                                 {
+                                     "mot":  "République",
+                                     "definition_simple":  "La forme de gouvernement de la France, fondée sur des valeurs communes.",
+                                     "exemple":  "La République française."
+                                 },
+                                 {
+                                     "mot":  "examen",
+                                     "definition_simple":  "Une épreuve qui mesure des connaissances ou des compétences.",
+                                     "exemple":  "L\u0027examen civique compte 40 questions."
+                                 },
+                                 {
+                                     "mot":  "séance",
+                                     "definition_simple":  "Un cours collectif d\u0027une durée fixe.",
+                                     "exemple":  "Chaque séance dure trois heures."
+                                 },
+                                 {
+                                     "mot":  "progresser",
+                                     "definition_simple":  "Avancer, s\u0027améliorer petit à petit.",
+                                     "exemple":  "Awa va progresser en français et en connaissances civiques."
+                                 }
+                             ]
+                },
+    "variants":  {
+                     "A1":  {
+                                "consigne":  "Écoutez le dialogue. Associez chaque personnage à son rôle, puis complétez les phrases avec les mots de la liste.",
+                                "aides":  [
+                                              "Awa = apprenante",
+                                              "Mme Rossi = formatrice",
+                                              "Mots utiles : parcours, objectif, séance"
+                                          ],
+                                "questions":  [
+                                                  {
+                                                      "id":  "q1",
+                                                      "type":  "qcm",
+                                                      "enonce":  "Combien d\u0027heures dure le parcours d\u0027Awa ?",
+                                                      "options":  [
+                                                                      "25 heures",
+                                                                      "80 heures",
+                                                                      "100 heures"
+                                                                  ]
+                                                  },
+                                                  {
+                                                      "id":  "q2",
+                                                      "type":  "vrai_faux",
+                                                      "enonce":  "Awa veut obtenir sa carte de séjour pluriannuelle."
+                                                  }
+                                              ],
+                                "corrige":  {
+                                                "q1":  "80 heures",
+                                                "q2":  true
+                                            },
+                                "learning_path":  {
+                                                      "lesson":  {
+                                                                     "title":  "Lire les informations essentielles d’un parcours",
+                                                                     "objective":  "Repérer les personnes, les nombres et les mots qui organisent le parcours d’Awa.",
+                                                                     "explanation":  "Dans un dialogue d’accueil, commencez par identifier qui parle, puis cherchez les nombres et le nom des évaluations. Reliez chaque nombre au bon mot : heures, séances, thèmes ou évaluations.",
+                                                                     "key_points":  [
+                                                                                        "80 heures = durée totale du parcours",
+                                                                                        "25 séances collectives de 3 heures",
+                                                                                        "E1 et E2 = deux évaluations hors séances",
+                                                                                        "Le parcours couvre cinq thèmes civiques"
+                                                                                    ],
+                                                                     "examples":  [
+                                                                                      "80 → heures au total",
+                                                                                      "25 → séances collectives",
+                                                                                      "E1 et E2 → évaluations"
+                                                                                  ],
+                                                                     "estimated_minutes":  10
+                                                                 },
+                                                      "steps":  [
+                                                                    {
+                                                                        "step_id":  "reperage-guide",
+                                                                        "title":  "Repérage guidé",
+                                                                        "instruction":  "Choisissez les informations exactes dans le dialogue.",
+                                                                        "kind":  "guided",
+                                                                        "estimated_minutes":  15,
+                                                                        "questions":  [
+                                                                                          {
+                                                                                              "id":  "s1q1",
+                                                                                              "type":  "qcm",
+                                                                                              "enonce":  "Combien d’heures dure le parcours ?",
+                                                                                              "options":  [
+                                                                                                              "25 heures",
+                                                                                                              "80 heures",
+                                                                                                              "100 heures"
+                                                                                                          ]
+                                                                                          },
+                                                                                          {
+                                                                                              "id":  "s1q2",
+                                                                                              "type":  "qcm",
+                                                                                              "enonce":  "Combien de séances collectives sont prévues ?",
+                                                                                              "options":  [
+                                                                                                              "2",
+                                                                                                              "5",
+                                                                                                              "25"
+                                                                                                          ]
+                                                                                          },
+                                                                                          {
+                                                                                              "id":  "s1q3",
+                                                                                              "type":  "vrai_faux",
+                                                                                              "enonce":  "Chaque séance collective dure 3 heures."
+                                                                                          }
+                                                                                      ],
+                                                                        "corrige":  {
+                                                                                        "s1q1":  "80 heures",
+                                                                                        "s1q2":  "25",
+                                                                                        "s1q3":  true
+                                                                                    }
+                                                                    },
+                                                                    {
+                                                                        "step_id":  "association",
+                                                                        "title":  "Associer les informations",
+                                                                        "instruction":  "Associez chaque information à la bonne partie du parcours.",
+                                                                        "kind":  "practice",
+                                                                        "estimated_minutes":  15,
+                                                                        "questions":  [
+                                                                                          {
+                                                                                              "id":  "s2q1",
+                                                                                              "type":  "qcm",
+                                                                                              "enonce":  "Quelles évaluations sont mentionnées ?",
+                                                                                              "options":  [
+                                                                                                              "E1 et E2",
+                                                                                                              "A1 et A2",
+                                                                                                              "CSP et TCF"
+                                                                                                          ]
+                                                                                          },
+                                                                                          {
+                                                                                              "id":  "s2q2",
+                                                                                              "type":  "qcm",
+                                                                                              "enonce":  "Combien d’évaluations sont prévues hors séances ?",
+                                                                                              "options":  [
+                                                                                                              "Deux",
+                                                                                                              "Cinq",
+                                                                                                              "Vingt-cinq"
+                                                                                                          ]
+                                                                                          },
+                                                                                          {
+                                                                                              "id":  "s2q3",
+                                                                                              "type":  "vrai_faux",
+                                                                                              "enonce":  "Le parcours couvre cinq thèmes civiques."
+                                                                                          }
+                                                                                      ],
+                                                                        "corrige":  {
+                                                                                        "s2q1":  "E1 et E2",
+                                                                                        "s2q2":  "Deux",
+                                                                                        "s2q3":  true
+                                                                                    }
+                                                                    },
+                                                                    {
+                                                                        "step_id":  "completer",
+                                                                        "title":  "Compléter sans modèle",
+                                                                        "instruction":  "Écrivez l’information manquante.",
+                                                                        "kind":  "transfer",
+                                                                        "estimated_minutes":  20,
+                                                                        "questions":  [
+                                                                                          {
+                                                                                              "id":  "s3q1",
+                                                                                              "type":  "texte_lacunaire",
+                                                                                              "enonce":  "Le parcours dure ___ heures."
+                                                                                          },
+                                                                                          {
+                                                                                              "id":  "s3q2",
+                                                                                              "type":  "texte_lacunaire",
+                                                                                              "enonce":  "Il comprend ___ séances collectives."
+                                                                                          },
+                                                                                          {
+                                                                                              "id":  "s3q3",
+                                                                                              "type":  "texte_lacunaire",
+                                                                                              "enonce":  "Les deux évaluations s’appellent ___."
+                                                                                          }
+                                                                                      ],
+                                                                        "corrige":  {
+                                                                                        "s3q1":  "80",
+                                                                                        "s3q2":  "25",
+                                                                                        "s3q3":  "E1 et E2"
+                                                                                    }
+                                                                    }
+                                                                ],
+                                                      "adaptive_policy":  {
+                                                                              "remediation_below":  60,
+                                                                              "consolidation_from":  60,
+                                                                              "extension_from":  80
+                                                                          }
+                                                  }
+                            },
+                     "A2":  {
+                                "consigne":  "Racontez avec vos mots ce que veut Awa et comment se déroule son parcours (durée, nombre de séances, évaluations).",
+                                "aides":  [
+                                              "Pensez à utiliser : parcours, séance, objectif, examen"
+                                          ],
+                                "questions":  [
+                                                  {
+                                                      "id":  "q1",
+                                                      "type":  "qcm",
+                                                      "enonce":  "Combien de séances collectives Awa va-t-elle suivre ?",
+                                                      "options":  [
+                                                                      "18",
+                                                                      "25",
+                                                                      "31"
+                                                                  ]
+                                                  },
+                                                  {
+                                                      "id":  "q2",
+                                                      "type":  "reponse_courte",
+                                                      "enonce":  "Citez un des cinq thèmes civiques mentionnés par Mme Rossi."
+                                                  }
+                                              ],
+                                "corrige":  {
+                                                "q1":  "25",
+                                                "q2":  "Principes et valeurs de la République / Système institutionnel / Droits et devoirs / Histoire, géographie et culture / Vivre dans la société française (une réponse suffit)."
+                                            },
+                                "learning_path":  {
+                                                      "lesson":  {
+                                                                     "title":  "Organiser les informations d’un dialogue",
+                                                                     "objective":  "Classer les faits du support et les reformuler avec une phrase complète.",
+                                                                     "explanation":  "Pour présenter un parcours, classez les informations en quatre catégories : durée, organisation, évaluations et contenus. Une reformulation reste fidèle aux faits et n’ajoute aucune information.",
+                                                                     "key_points":  [
+                                                                                        "Durée : 80 heures",
+                                                                                        "Organisation : 25 séances de 3 heures",
+                                                                                        "Évaluations : E1 et E2, hors séances",
+                                                                                        "Contenus : cinq thèmes civiques"
+                                                                                    ],
+                                                                     "examples":  [
+                                                                                      "Le parcours dure 80 heures.",
+                                                                                      "Deux évaluations, E1 et E2, sont prévues hors séances."
+                                                                                  ],
+                                                                     "estimated_minutes":  10
+                                                                 },
+                                                      "steps":  [
+                                                                    {
+                                                                        "step_id":  "classer",
+                                                                        "title":  "Classer les faits",
+                                                                        "instruction":  "Choisissez la catégorie ou l’organisation correcte.",
+                                                                        "kind":  "guided",
+                                                                        "estimated_minutes":  15,
+                                                                        "questions":  [
+                                                                                          {
+                                                                                              "id":  "s1q1",
+                                                                                              "type":  "qcm",
+                                                                                              "enonce":  "Quelle est la durée totale annoncée ?",
+                                                                                              "options":  [
+                                                                                                              "25 heures",
+                                                                                                              "80 heures",
+                                                                                                              "100 heures"
+                                                                                                          ]
+                                                                                          },
+                                                                                          {
+                                                                                              "id":  "s1q2",
+                                                                                              "type":  "qcm",
+                                                                                              "enonce":  "Quelle organisation est annoncée ?",
+                                                                                              "options":  [
+                                                                                                              "25 séances de 3 heures",
+                                                                                                              "3 séances de 25 heures",
+                                                                                                              "80 séances collectives"
+                                                                                                          ]
+                                                                                          },
+                                                                                          {
+                                                                                              "id":  "s1q3",
+                                                                                              "type":  "qcm",
+                                                                                              "enonce":  "Quelle information appartient à la catégorie « évaluations » ?",
+                                                                                              "options":  [
+                                                                                                              "E1 et E2",
+                                                                                                              "80 heures",
+                                                                                                              "Cinq thèmes"
+                                                                                                          ]
+                                                                                          }
+                                                                                      ],
+                                                                        "corrige":  {
+                                                                                        "s1q1":  "80 heures",
+                                                                                        "s1q2":  "25 séances de 3 heures",
+                                                                                        "s1q3":  "E1 et E2"
+                                                                                    }
+                                                                    },
+                                                                    {
+                                                                        "step_id":  "extraire",
+                                                                        "title":  "Extraire avec précision",
+                                                                        "instruction":  "Répondez brièvement à partir du support.",
+                                                                        "kind":  "practice",
+                                                                        "estimated_minutes":  15,
+                                                                        "questions":  [
+                                                                                          {
+                                                                                              "id":  "s2q1",
+                                                                                              "type":  "reponse_courte",
+                                                                                              "enonce":  "Nommez les deux évaluations mentionnées."
+                                                                                          },
+                                                                                          {
+                                                                                              "id":  "s2q2",
+                                                                                              "type":  "reponse_courte",
+                                                                                              "enonce":  "Combien de thèmes civiques sont annoncés ?"
+                                                                                          },
+                                                                                          {
+                                                                                              "id":  "s2q3",
+                                                                                              "type":  "reponse_courte",
+                                                                                              "enonce":  "Quel est l’objectif administratif d’Awa ?"
+                                                                                          }
+                                                                                      ],
+                                                                        "corrige":  {
+                                                                                        "s2q1":  "E1 et E2",
+                                                                                        "s2q2":  "Cinq",
+                                                                                        "s2q3":  "La carte de séjour pluriannuelle"
+                                                                                    }
+                                                                    },
+                                                                    {
+                                                                        "step_id":  "reformuler",
+                                                                        "title":  "Reformuler les faits",
+                                                                        "instruction":  "Écrivez une phrase complète sans ajouter d’information.",
+                                                                        "kind":  "transfer",
+                                                                        "estimated_minutes":  20,
+                                                                        "questions":  [
+                                                                                          {
+                                                                                              "id":  "s3q1",
+                                                                                              "type":  "transformation",
+                                                                                              "enonce":  "Transformez les données « 80 heures ; 25 séances ; 3 heures » en une phrase complète."
+                                                                                          },
+                                                                                          {
+                                                                                              "id":  "s3q2",
+                                                                                              "type":  "transformation",
+                                                                                              "enonce":  "Transformez les données « E1 ; E2 ; hors séances » en une phrase complète."
+                                                                                          }
+                                                                                      ],
+                                                                        "corrige":  {
+                                                                                        "s3q1":  "Le parcours dure 80 heures et comprend 25 séances collectives de 3 heures.",
+                                                                                        "s3q2":  "Les évaluations E1 et E2 sont prévues hors séances."
+                                                                                    }
+                                                                    }
+                                                                ],
+                                                      "adaptive_policy":  {
+                                                                              "remediation_below":  60,
+                                                                              "consolidation_from":  60,
+                                                                              "extension_from":  80
+                                                                          }
+                                                  }
+                            },
+                     "B1":  {
+                                "consigne":  "Expliquez avec vos propres mots la différence entre un droit, un devoir et une règle en vous appuyant sur le dialogue, puis justifiez pourquoi le parcours comprend deux évaluations distinctes (E1 et E2).",
+                                "aides":  [
 
-        { "type": "rect", "x": 530, "y": 30, "width": 150, "height": 180, "rx": 10, "fill": "#fee2e2" },
-        { "type": "text", "x": 605, "y": 130, "anchor": "middle", "fontSize": 14, "text": "Histoire," },
-        { "type": "text", "x": 605, "y": 150, "anchor": "middle", "fontSize": 14, "text": "géographie" },
-        { "type": "text", "x": 605, "y": 170, "anchor": "middle", "fontSize": 14, "text": "et culture" },
+                                          ],
+                                "questions":  [
+                                                  {
+                                                      "id":  "q1",
+                                                      "type":  "reponse_longue",
+                                                      "enonce":  "Reformulez la différence entre droit, devoir et règle donnée par Mme Rossi."
+                                                  },
+                                                  {
+                                                      "id":  "q2",
+                                                      "type":  "reponse_longue",
+                                                      "enonce":  "Comparez le rôle de l\u0027évaluation intermédiaire (E1) et de l\u0027évaluation finale (E2)."
+                                                  }
+                                              ],
+                                "corrige":  {
+                                                "q1":  "Un droit est une possibilité garantie par la loi ; un devoir est une obligation ; une règle est une consigne precise et locale.",
+                                                "q2":  "E1 mesure la progression a mi-parcours et adapte la suite (S17-S24) ; E2 valide l\u0027ensemble du tronc commun et oriente vers la sortie ou l\u0027extension B1."
+                                            },
+                                "learning_path":  {
+                                                      "lesson":  {
+                                                                     "title":  "Relier et justifier des informations",
+                                                                     "objective":  "Construire une réponse organisée en citant des faits précis du support.",
+                                                                     "explanation":  "Une justification comporte une idée, une preuve tirée du support et une conclusion prudente. Quand le support ne précise pas un rôle ou une cause, dites-le au lieu d’inventer.",
+                                                                     "key_points":  [
+                                                                                        "Relier les données plutôt que les recopier séparément",
+                                                                                        "Appuyer chaque affirmation sur un fait explicite",
+                                                                                        "Signaler les limites du support",
+                                                                                        "Distinguer droit, devoir et règle"
+                                                                                    ],
+                                                                     "examples":  [
+                                                                                      "Le parcours est organisé en 25 séances de 3 heures, mais sa durée totale annoncée est de 80 heures.",
+                                                                                      "Le dialogue nomme E1 et E2 sans préciser leur fonction exacte."
+                                                                                  ],
+                                                                     "estimated_minutes":  10
+                                                                 },
+                                                      "steps":  [
+                                                                    {
+                                                                        "step_id":  "relier",
+                                                                        "title":  "Relier les données",
+                                                                        "instruction":  "Rédigez des réponses structurées à partir des faits explicites.",
+                                                                        "kind":  "guided",
+                                                                        "estimated_minutes":  15,
+                                                                        "questions":  [
+                                                                                          {
+                                                                                              "id":  "s1q1",
+                                                                                              "type":  "reponse_longue",
+                                                                                              "enonce":  "Présentez l’organisation du parcours en reliant durée totale, nombre et durée des séances."
+                                                                                          },
+                                                                                          {
+                                                                                              "id":  "s1q2",
+                                                                                              "type":  "reponse_longue",
+                                                                                              "enonce":  "Expliquez la place des évaluations E1 et E2 sans inventer leur fonction."
+                                                                                          }
+                                                                                      ],
+                                                                        "corrige":  {
+                                                                                        "s1q1":  "Le parcours annoncé dure 80 heures et comprend 25 séances collectives de 3 heures ; la réponse relie ces trois données sans les modifier.",
+                                                                                        "s1q2":  "Deux évaluations, E1 et E2, sont prévues hors séances. Le support ne précise pas davantage leur fonction."
+                                                                                    }
+                                                                    },
+                                                                    {
+                                                                        "step_id":  "justifier",
+                                                                        "title":  "Justifier sa compréhension",
+                                                                        "instruction":  "Donnez une idée puis une preuve précise issue du support.",
+                                                                        "kind":  "practice",
+                                                                        "estimated_minutes":  15,
+                                                                        "questions":  [
+                                                                                          {
+                                                                                              "id":  "s2q1",
+                                                                                              "type":  "reponse_longue",
+                                                                                              "enonce":  "Expliquez comment les cinq thèmes civiques s’intègrent au parcours."
+                                                                                          },
+                                                                                          {
+                                                                                              "id":  "s2q2",
+                                                                                              "type":  "reponse_longue",
+                                                                                              "enonce":  "Montrez pourquoi droit, devoir et règle ne peuvent pas être confondus."
+                                                                                          }
+                                                                                      ],
+                                                                        "corrige":  {
+                                                                                        "s2q1":  "Le parcours couvre cinq thèmes civiques ; la réponse relie ce contenu à l’organisation annoncée sans ajouter de thème.",
+                                                                                        "s2q2":  "Le support affirme qu’un droit, un devoir et une règle sont trois notions différentes ; la réponse respecte cette distinction."
+                                                                                    }
+                                                                    },
+                                                                    {
+                                                                        "step_id":  "synthese",
+                                                                        "title":  "Produire une synthèse",
+                                                                        "instruction":  "Rédigez avec autonomie et indiquez clairement les limites de vos conclusions.",
+                                                                        "kind":  "transfer",
+                                                                        "estimated_minutes":  20,
+                                                                        "questions":  [
+                                                                                          {
+                                                                                              "id":  "s3q1",
+                                                                                              "type":  "reponse_longue",
+                                                                                              "enonce":  "Rédigez une synthèse de l’organisation du parcours en quatre à six phrases."
+                                                                                          },
+                                                                                          {
+                                                                                              "id":  "s3q2",
+                                                                                              "type":  "reponse_longue",
+                                                                                              "enonce":  "Quelles informations faudrait-il encore demander à Mme Rossi pour comprendre complètement le parcours ? Justifiez à partir des absences du support."
+                                                                                          }
+                                                                                      ],
+                                                                        "corrige":  {
+                                                                                        "s3q1":  "La synthèse reprend fidèlement les 80 heures, les 25 séances de 3 heures, E1 et E2 hors séances et les cinq thèmes civiques, avec des liens logiques.",
+                                                                                        "s3q2":  "La réponse propose des questions pertinentes sur les éléments non précisés, par exemple la fonction et le calendrier de E1 et E2, sans présenter ces hypothèses comme des faits."
+                                                                                    }
+                                                                    }
+                                                                ],
+                                                      "adaptive_policy":  {
+                                                                              "remediation_below":  60,
+                                                                              "consolidation_from":  60,
+                                                                              "extension_from":  80
+                                                                          }
+                                                  }
+                            },
+                     "B2":  {
+                                "consigne":  "Analysez l\u0027organisation du parcours d\u0027Awa (progressivité, double évaluation, cinq thèmes civiques) et nuancez son intérêt pour un adulte primo-arrivant ayant peu de temps disponible.",
+                                "aides":  [
 
-        { "type": "rect", "x": 700, "y": 30, "width": 180, "height": 180, "rx": 10, "fill": "#ede9fe" },
-        { "type": "text", "x": 790, "y": 120, "anchor": "middle", "fontSize": 14, "text": "Vivre dans" },
-        { "type": "text", "x": 790, "y": 140, "anchor": "middle", "fontSize": 14, "text": "la société" },
-        { "type": "text", "x": 790, "y": 160, "anchor": "middle", "fontSize": 14, "text": "française" }
-      ]
-    }
-  },
-  "lexique": {
-    "resource_id": "S01-LEX-A1-B2",
-    "mots": [
-      { "mot": "parcours", "definition_simple": "Ensemble des séances et évaluations à suivre du début à la fin.", "exemple": "Le parcours dure quatre-vingts heures." },
-      { "mot": "niveau", "definition_simple": "Le degré de maîtrise du français (A1, A2, B1, B2).", "exemple": "Awa commence au niveau A2." },
-      { "mot": "objectif", "definition_simple": "Le but administratif que l'on veut atteindre.", "exemple": "Son objectif est la carte de séjour pluriannuelle." },
-      { "mot": "démarche", "definition_simple": "Une action à faire auprès d'une administration.", "exemple": "Faire une démarche à la préfecture." },
-      { "mot": "droit", "definition_simple": "Ce qu'une personne peut demander ou faire, garanti par la loi.", "exemple": "Le droit à la santé." },
-      { "mot": "devoir", "definition_simple": "Ce qu'une personne doit faire.", "exemple": "Respecter la loi est un devoir." },
-      { "mot": "République", "definition_simple": "La forme de gouvernement de la France, fondée sur des valeurs communes.", "exemple": "La République française." },
-      { "mot": "examen", "definition_simple": "Une épreuve qui mesure des connaissances ou des compétences.", "exemple": "L'examen civique compte 40 questions." },
-      { "mot": "séance", "definition_simple": "Un cours collectif d'une durée fixe.", "exemple": "Chaque séance dure trois heures." },
-      { "mot": "progresser", "definition_simple": "Avancer, s'améliorer petit à petit.", "exemple": "Awa va progresser en français et en connaissances civiques." }
-    ]
-  },
-  "variants": {
-    "A1": {
-      "consigne": "Écoutez le dialogue. Associez chaque personnage à son rôle, puis complétez les phrases avec les mots de la liste.",
-      "aides": ["Awa = apprenante", "Mme Rossi = formatrice", "Mots utiles : parcours, objectif, séance"],
-      "questions": [
-        { "id": "q1", "type": "qcm", "enonce": "Combien d'heures dure le parcours d'Awa ?", "options": ["25 heures", "80 heures", "100 heures"] },
-        { "id": "q2", "type": "vrai_faux", "enonce": "Awa veut obtenir sa carte de séjour pluriannuelle." }
-      ],
-      "corrige": { "q1": "80 heures", "q2": true }
-    },
-    "A2": {
-      "consigne": "Racontez avec vos mots ce que veut Awa et comment se déroule son parcours (durée, nombre de séances, évaluations).",
-      "aides": ["Pensez à utiliser : parcours, séance, objectif, examen"],
-      "questions": [
-        { "id": "q1", "type": "qcm", "enonce": "Combien de séances collectives Awa va-t-elle suivre ?", "options": ["18", "25", "31"] },
-        { "id": "q2", "type": "reponse_courte", "enonce": "Citez un des cinq thèmes civiques mentionnés par Mme Rossi." }
-      ],
-      "corrige": { "q1": "25", "q2": "Principes et valeurs de la République / Système institutionnel / Droits et devoirs / Histoire, géographie et culture / Vivre dans la société française (une réponse suffit)." }
-    },
-    "B1": {
-      "consigne": "Expliquez avec vos propres mots la différence entre un droit, un devoir et une règle en vous appuyant sur le dialogue, puis justifiez pourquoi le parcours comprend deux évaluations distinctes (E1 et E2).",
-      "aides": [],
-      "questions": [
-        { "id": "q1", "type": "reponse_longue", "enonce": "Reformulez la différence entre droit, devoir et règle donnée par Mme Rossi." },
-        { "id": "q2", "type": "reponse_longue", "enonce": "Comparez le rôle de l'évaluation intermédiaire (E1) et de l'évaluation finale (E2)." }
-      ],
-      "corrige": { "q1": "Un droit est une possibilité garantie par la loi ; un devoir est une obligation ; une règle est une consigne precise et locale.", "q2": "E1 mesure la progression a mi-parcours et adapte la suite (S17-S24) ; E2 valide l'ensemble du tronc commun et oriente vers la sortie ou l'extension B1." }
-    },
-    "B2": {
-      "consigne": "Analysez l'organisation du parcours d'Awa (progressivité, double évaluation, cinq thèmes civiques) et nuancez son intérêt pour un adulte primo-arrivant ayant peu de temps disponible.",
-      "aides": [],
-      "questions": [
-        { "id": "q1", "type": "argumentation", "enonce": "Argumentez : en quoi la distinction entre droit, devoir et règle est-elle utile pour un nouvel arrivant ?" },
-        { "id": "q2", "type": "argumentation", "enonce": "Nuancez : quels sont les avantages et les limites d'un parcours de 80 heures reparti sur 25 semaines ?" }
-      ],
-      "corrige": { "q1": "Reponse ouverte evaluee sur la precision des notions et la qualite de l'argumentation, sans reponse unique imposee.", "q2": "Reponse ouverte : avantages (progressivite, ancrage) vs limites (duree totale, disponibilite) a mettre en balance." }
-    }
-  },
-  "civic_qcm": {
-    "resource_id": "S01-QCM-civique",
-    "mention": "CSP",
-    "theme": "Droits et devoirs",
-    "questions": [
-      {
-        "notion": "distinction droit/devoir/regle",
-        "type": "connaissance",
-        "official_status": "simulation_pedagogique",
-        "enonce": "Respecter le règlement intérieur d'un centre de formation est avant tout :",
-        "options": ["Un droit", "Un devoir", "Une démarche"],
-        "reponse": "Un devoir"
-      },
-      {
-        "notion": "distinction droit/devoir/regle",
-        "type": "connaissance",
-        "official_status": "simulation_pedagogique",
-        "enonce": "Le droit à la santé signifie que vous pouvez :",
-        "options": ["Demander l'accès aux soins", "Etre oblige de vous soigner", "Payer une amende"],
-        "reponse": "Demander l'accès aux soins"
-      },
-      {
-        "notion": "distinction droit/devoir/regle",
-        "type": "mise_en_situation",
-        "official_status": "simulation_pedagogique",
-        "enonce": "Un formateur demande a un apprenant d'arriver a l'heure a chaque seance. Il s'agit :",
-        "options": ["D'une règle du centre de formation", "D'un droit de l'apprenant", "D'une loi nationale"],
-        "reponse": "D'une règle du centre de formation"
-      },
-      {
-        "notion": "organisation du parcours",
-        "type": "connaissance",
-        "official_status": "simulation_pedagogique",
-        "enonce": "Le parcours vers la carte de séjour pluriannuelle dure :",
-        "options": ["50 heures", "80 heures", "120 heures"],
-        "reponse": "80 heures"
-      },
-      {
-        "notion": "organisation du parcours",
-        "type": "connaissance",
-        "official_status": "simulation_pedagogique",
-        "enonce": "Combien de thèmes civiques officiels structurent le parcours ?",
-        "options": ["Trois", "Cinq", "Sept"],
-        "reponse": "Cinq"
-      }
-    ]
-  },
-  "devoirs": {
-    "A1": "A la maison : reecoutez l'audio et associez chaque mot du lexique a son image ou a sa definition.",
-    "A2": "A la maison : racontez par ecrit (5 phrases) votre propre objectif administratif, sur le modele d'Awa.",
-    "B1": "A la maison : redigez un court texte expliquant a un ami la difference entre droit, devoir et regle.",
-    "B2": "A la maison : redigez un paragraphe argumente sur l'interet d'un parcours progressif de formation pour un adulte."
-  },
-  "formateur": {
-    "fiche_formateur": "Seance d'accueil : verifier que chaque apprenant repart avec (1) une comprehension claire de la duree et du rythme du parcours, (2) la distinction droit/devoir/regle, (3) un premier reperage des cinq themes civiques. Le diagnostic est non certificatif : il sert a positionner chaque apprenant entre A1 et B2 pour les ateliers differencies a venir.",
-    "deroule_180min": [
-      { "phase": "Rituel civique", "duree_min": 10, "description": "Presentation des cinq themes civiques a partir du visuel maitre, sans notation." },
-      { "phase": "Activation + lexique", "duree_min": 20, "description": "Decouverte du lexique de la seance (parcours, objectif, droit, devoir...)." },
-      { "phase": "Support invariant CO/CE", "duree_min": 50, "description": "Ecoute du dialogue Awa/Mme Rossi, comprehension globale puis detaillee." },
-      { "phase": "Ateliers differencies", "duree_min": 60, "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante respective du meme support." },
-      { "phase": "Production EE/EO", "duree_min": 30, "description": "Chaque apprenant se presente et explique son propre objectif administratif." },
-      { "phase": "Fixation", "duree_min": 10, "description": "Synthese collective, mini-diagnostic civique A1-B2, devoir personnalise." }
-    ],
-    "adaptation_rules": [
-      "Si plus de la moitie du groupe confond droit et devoir, reprendre le lexique avant l'atelier B1.",
-      "Si le groupe est tres heterogene, prolonger l'atelier differencie de 10 minutes au detriment de la fixation.",
-      "Ne jamais remplacer le dialogue audio publie par une improvisation en direct : l'IA peut seulement l'expliquer ou le simplifier."
-    ]
-  }
+                                          ],
+                                "questions":  [
+                                                  {
+                                                      "id":  "q1",
+                                                      "type":  "argumentation",
+                                                      "enonce":  "Argumentez : en quoi la distinction entre droit, devoir et règle est-elle utile pour un nouvel arrivant ?"
+                                                  },
+                                                  {
+                                                      "id":  "q2",
+                                                      "type":  "argumentation",
+                                                      "enonce":  "Nuancez : quels sont les avantages et les limites d\u0027un parcours de 80 heures reparti sur 25 semaines ?"
+                                                  }
+                                              ],
+                                "corrige":  {
+                                                "q1":  "Reponse ouverte evaluee sur la precision des notions et la qualite de l\u0027argumentation, sans reponse unique imposee.",
+                                                "q2":  "Reponse ouverte : avantages (progressivite, ancrage) vs limites (duree totale, disponibilite) a mettre en balance."
+                                            },
+                                "learning_path":  {
+                                                      "lesson":  {
+                                                                     "title":  "Analyser la cohérence et maîtriser l’implicite",
+                                                                     "objective":  "Distinguer fait, calcul et hypothèse dans une analyse nuancée du support.",
+                                                                     "explanation":  "Une analyse de niveau B2 vérifie la cohérence des données, nomme les écarts et formule plusieurs interprétations possibles sans transformer une hypothèse en fait. Elle précise aussi ce que le document permet ou ne permet pas de conclure.",
+                                                                     "key_points":  [
+                                                                                        "Fait explicite : information directement présente",
+                                                                                        "Calcul : résultat obtenu à partir de plusieurs faits",
+                                                                                        "Hypothèse : explication possible mais non confirmée",
+                                                                                        "Nuancer avec cependant, il est possible que, le support ne précise pas"
+                                                                                    ],
+                                                                     "examples":  [
+                                                                                      "25 séances de 3 heures représentent 75 heures : c’est un calcul.",
+                                                                                      "Les cinq heures restantes peuvent correspondre à une autre activité : c’est une hypothèse, pas un fait."
+                                                                                  ],
+                                                                     "estimated_minutes":  10
+                                                                 },
+                                                      "steps":  [
+                                                                    {
+                                                                        "step_id":  "coherence",
+                                                                        "title":  "Vérifier la cohérence",
+                                                                        "instruction":  "Distinguez explicitement calcul, constat et hypothèse.",
+                                                                        "kind":  "guided",
+                                                                        "estimated_minutes":  15,
+                                                                        "questions":  [
+                                                                                          {
+                                                                                              "id":  "s1q1",
+                                                                                              "type":  "argumentation",
+                                                                                              "enonce":  "Analysez la cohérence entre les 80 heures annoncées et les 25 séances de 3 heures."
+                                                                                          },
+                                                                                          {
+                                                                                              "id":  "s1q2",
+                                                                                              "type":  "argumentation",
+                                                                                              "enonce":  "Intégrez E1 et E2 à votre analyse sans leur attribuer une durée inconnue."
+                                                                                          }
+                                                                                      ],
+                                                                        "corrige":  {
+                                                                                        "s1q1":  "25 × 3 donne 75 heures, alors que le total annoncé est de 80 heures. La réponse distingue ce calcul du fait explicite et formule prudemment toute explication des cinq heures restantes.",
+                                                                                        "s1q2":  "E1 et E2 sont deux évaluations hors séances. Leur durée n’étant pas indiquée, la réponse ne les utilise pas comme explication certaine de l’écart."
+                                                                                    }
+                                                                    },
+                                                                    {
+                                                                        "step_id":  "implicite",
+                                                                        "title":  "Maîtriser l’implicite",
+                                                                        "instruction":  "Analysez ce que le support permet de déduire et les limites de cette déduction.",
+                                                                        "kind":  "practice",
+                                                                        "estimated_minutes":  15,
+                                                                        "questions":  [
+                                                                                          {
+                                                                                              "id":  "s2q1",
+                                                                                              "type":  "argumentation",
+                                                                                              "enonce":  "Que peut-on déduire de la place des cinq thèmes civiques dans le parcours, et que ne peut-on pas affirmer ?"
+                                                                                          },
+                                                                                          {
+                                                                                              "id":  "s2q2",
+                                                                                              "type":  "argumentation",
+                                                                                              "enonce":  "Expliquez l’intérêt pédagogique de distinguer droit, devoir et règle sans ajouter de définition absente du support."
+                                                                                          }
+                                                                                      ],
+                                                                        "corrige":  {
+                                                                                        "s2q1":  "On peut affirmer que le parcours couvre cinq thèmes civiques. Leur ordre, leur durée et leur contenu détaillé ne sont pas précisés.",
+                                                                                        "s2q2":  "La réponse analyse l’intérêt de la distinction tout en reconnaissant que le support ne fournit pas les définitions détaillées des trois notions."
+                                                                                    }
+                                                                    },
+                                                                    {
+                                                                        "step_id":  "synthese-nuancee",
+                                                                        "title":  "Rédiger une synthèse nuancée",
+                                                                        "instruction":  "Produisez une analyse autonome, précise et fidèle aux limites documentaires.",
+                                                                        "kind":  "transfer",
+                                                                        "estimated_minutes":  20,
+                                                                        "questions":  [
+                                                                                          {
+                                                                                              "id":  "s3q1",
+                                                                                              "type":  "argumentation",
+                                                                                              "enonce":  "Rédigez une synthèse critique de l’organisation du parcours en distinguant informations certaines et zones à clarifier."
+                                                                                          },
+                                                                                          {
+                                                                                              "id":  "s3q2",
+                                                                                              "type":  "argumentation",
+                                                                                              "enonce":  "Formulez trois questions précises à poser à Mme Rossi pour lever les ambiguïtés du dialogue, puis justifiez leur priorité."
+                                                                                          }
+                                                                                      ],
+                                                                        "corrige":  {
+                                                                                        "s3q1":  "La synthèse reprend tous les faits, explicite le calcul 25 × 3 = 75, signale l’écart avec 80 heures et présente les interprétations comme des hypothèses.",
+                                                                                        "s3q2":  "Les questions ciblent des informations réellement absentes, notamment les cinq heures restantes, la fonction ou la durée de E1 et E2, et l’organisation des thèmes ; leur priorité est argumentée."
+                                                                                    }
+                                                                    }
+                                                                ],
+                                                      "adaptive_policy":  {
+                                                                              "remediation_below":  60,
+                                                                              "consolidation_from":  60,
+                                                                              "extension_from":  80
+                                                                          }
+                                                  }
+                            }
+                 },
+    "civic_qcm":  {
+                      "resource_id":  "S01-QCM-civique",
+                      "mention":  "CSP",
+                      "theme":  "Droits et devoirs",
+                      "questions":  [
+                                        {
+                                            "notion":  "distinction droit/devoir/regle",
+                                            "type":  "connaissance",
+                                            "official_status":  "simulation_pedagogique",
+                                            "enonce":  "Respecter le règlement intérieur d\u0027un centre de formation est avant tout :",
+                                            "options":  [
+                                                            "Un droit",
+                                                            "Un devoir",
+                                                            "Une démarche"
+                                                        ],
+                                            "reponse":  "Un devoir"
+                                        },
+                                        {
+                                            "notion":  "distinction droit/devoir/regle",
+                                            "type":  "connaissance",
+                                            "official_status":  "simulation_pedagogique",
+                                            "enonce":  "Le droit à la santé signifie que vous pouvez :",
+                                            "options":  [
+                                                            "Demander l\u0027accès aux soins",
+                                                            "Etre oblige de vous soigner",
+                                                            "Payer une amende"
+                                                        ],
+                                            "reponse":  "Demander l\u0027accès aux soins"
+                                        },
+                                        {
+                                            "notion":  "distinction droit/devoir/regle",
+                                            "type":  "mise_en_situation",
+                                            "official_status":  "simulation_pedagogique",
+                                            "enonce":  "Un formateur demande a un apprenant d\u0027arriver a l\u0027heure a chaque seance. Il s\u0027agit :",
+                                            "options":  [
+                                                            "D\u0027une règle du centre de formation",
+                                                            "D\u0027un droit de l\u0027apprenant",
+                                                            "D\u0027une loi nationale"
+                                                        ],
+                                            "reponse":  "D\u0027une règle du centre de formation"
+                                        },
+                                        {
+                                            "notion":  "organisation du parcours",
+                                            "type":  "connaissance",
+                                            "official_status":  "simulation_pedagogique",
+                                            "enonce":  "Le parcours vers la carte de séjour pluriannuelle dure :",
+                                            "options":  [
+                                                            "50 heures",
+                                                            "80 heures",
+                                                            "120 heures"
+                                                        ],
+                                            "reponse":  "80 heures"
+                                        },
+                                        {
+                                            "notion":  "organisation du parcours",
+                                            "type":  "connaissance",
+                                            "official_status":  "simulation_pedagogique",
+                                            "enonce":  "Combien de thèmes civiques officiels structurent le parcours ?",
+                                            "options":  [
+                                                            "Trois",
+                                                            "Cinq",
+                                                            "Sept"
+                                                        ],
+                                            "reponse":  "Cinq"
+                                        }
+                                    ]
+                  },
+    "devoirs":  {
+                    "A1":  "A la maison : reecoutez l\u0027audio et associez chaque mot du lexique a son image ou a sa definition.",
+                    "A2":  "A la maison : racontez par ecrit (5 phrases) votre propre objectif administratif, sur le modele d\u0027Awa.",
+                    "B1":  "A la maison : redigez un court texte expliquant a un ami la difference entre droit, devoir et regle.",
+                    "B2":  "A la maison : redigez un paragraphe argumente sur l\u0027interet d\u0027un parcours progressif de formation pour un adulte."
+                },
+    "formateur":  {
+                      "fiche_formateur":  "Seance d\u0027accueil : verifier que chaque apprenant repart avec (1) une comprehension claire de la duree et du rythme du parcours, (2) la distinction droit/devoir/regle, (3) un premier reperage des cinq themes civiques. Le diagnostic est non certificatif : il sert a positionner chaque apprenant entre A1 et B2 pour les ateliers differencies a venir.",
+                      "deroule_180min":  [
+                                             {
+                                                 "phase":  "Rituel civique",
+                                                 "duree_min":  10,
+                                                 "description":  "Presentation des cinq themes civiques a partir du visuel maitre, sans notation."
+                                             },
+                                             {
+                                                 "phase":  "Activation + lexique",
+                                                 "duree_min":  20,
+                                                 "description":  "Decouverte du lexique de la seance (parcours, objectif, droit, devoir...)."
+                                             },
+                                             {
+                                                 "phase":  "Support invariant CO/CE",
+                                                 "duree_min":  50,
+                                                 "description":  "Ecoute du dialogue Awa/Mme Rossi, comprehension globale puis detaillee."
+                                             },
+                                             {
+                                                 "phase":  "Ateliers differencies",
+                                                 "duree_min":  60,
+                                                 "description":  "Quatre groupes A1/A2/B1/B2 travaillent leur variante respective du meme support."
+                                             },
+                                             {
+                                                 "phase":  "Production EE/EO",
+                                                 "duree_min":  30,
+                                                 "description":  "Chaque apprenant se presente et explique son propre objectif administratif."
+                                             },
+                                             {
+                                                 "phase":  "Fixation",
+                                                 "duree_min":  10,
+                                                 "description":  "Synthese collective, mini-diagnostic civique A1-B2, devoir personnalise."
+                                             }
+                                         ],
+                      "adaptation_rules":  [
+                                               "Si plus de la moitie du groupe confond droit et devoir, reprendre le lexique avant l\u0027atelier B1.",
+                                               "Si le groupe est tres heterogene, prolonger l\u0027atelier differencie de 10 minutes au detriment de la fixation.",
+                                               "Ne jamais remplacer le dialogue audio publie par une improvisation en direct : l\u0027IA peut seulement l\u0027expliquer ou le simplifier."
+                                           ]
+                  }
 }

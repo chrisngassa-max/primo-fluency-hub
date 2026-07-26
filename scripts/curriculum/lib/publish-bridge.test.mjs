@@ -89,8 +89,72 @@ describe('syncPublishBridge — atomicite des familles', () => {
     expect(result.blocked_variants).toEqual([]);
     expect(result.families_requiring_override).toEqual([]);
   });
+  it('publie un learning_path en plusieurs exercices sans creer de moteur parallele', async () => {
+    const withPath = (entry) => ({
+      ...entry,
+      version: 3,
+      learning_path: {
+        lesson: {
+          title: 'Lecon test', objective: 'Comprendre le support.',
+          explanation: 'Une explication complete pour guider le travail.',
+          key_points: ['Point'], examples: ['Exemple'], estimated_minutes: 10,
+        },
+        steps: [
+          { step_id: 'guide', title: 'Guide', instruction: 'Guide', kind: 'guided', estimated_minutes: 20, questions: [questionValid(`${entry.niveau}-g1`)], corrige: { [`${entry.niveau}-g1`]: 'a' } },
+          { step_id: 'transfert', title: 'Transfert', instruction: 'Transfert', kind: 'transfer', estimated_minutes: 30, questions: [questionValid(`${entry.niveau}-t1`)], corrige: { [`${entry.niveau}-t1`]: 'a' } },
+        ],
+        adaptive_policy: { remediation_below: 60, consolidation_from: 60, extension_from: 80 },
+      },
+    });
+    await writeVariants([variant('A1'), variant('A2'), variant('B1'), variant('B2')].map(withPath));
+    const client = makeClient();
 
-  it('bloque toute la famille si UNE SEULE variante est invalide (aucune publication silencieuse)', async () => {
+    const result = await syncPublishBridge({
+      storagePublisher: { client }, sessionCode: 'S00', sessionId: 'session-test', baseDir,
+    });
+
+    expect(result.families[0].status).toBe('complete');
+    expect(result.exercice_ids).toHaveLength(8);
+    const exercices = client.__dump('exercices');
+    expect(exercices.filter((row) => row.contenu.lesson)).toHaveLength(4);
+    expect(exercices.map((row) => row.contenu.metadata.learning_path.step_order)).toEqual(
+      expect.arrayContaining([1, 2]),
+    );
+  });
+
+    it('mesure la couverture par niveau sans bloquer la publication en mode warning', async () => {
+    const variants = [variant('A1'), variant('A2'), variant('B1'), variant('B2')].map((entry) => ({
+      ...entry,
+      differentiation_contract: { estimated_minutes: 25 },
+    }));
+    await writeVariants(variants);
+    await mkdir(path.join(baseDir, 'S00', 'formateur'), { recursive: true });
+    await writeFile(
+      path.join(baseDir, 'S00', 'formateur', 'deroule-180min.json'),
+      JSON.stringify([{ phase: 'Ateliers differencies', duree_min: 60 }], null, 2),
+      'utf8',
+    );
+    const client = makeClient();
+
+    const result = await syncPublishBridge({
+      storagePublisher: { client },
+      sessionCode: 'S00',
+      sessionId: 'session-test',
+      baseDir,
+    });
+
+    expect(result.duration_coverage.status).toBe('warning');
+    expect(result.duration_coverage.blocking).toBe(false);
+    expect(result.duration_coverage.coverage_by_level.A1.estimated_minutes).toBe(25);
+    expect(result.duration_coverage.warnings).toEqual(expect.arrayContaining([
+      expect.objectContaining({ code: 'DIFF_DURATION_BELOW_MINIMUM', level: 'A1' }),
+    ]));
+    expect(result.families[0].status).toBe('complete');
+    expect(result.families[0].published).toBe(true);
+    expect(result.families[0].duration_warnings.length).toBeGreaterThan(0);
+    expect(client.__dump('exercices')[0].contenu.metadata.duration_observation.status).toBe('warning');
+  });
+it('bloque toute la famille si UNE SEULE variante est invalide (aucune publication silencieuse)', async () => {
     await writeVariants([variant('A1'), variant('A2'), variant('B1'), variant('B2', { blocked: true })]);
     const client = makeClient();
 

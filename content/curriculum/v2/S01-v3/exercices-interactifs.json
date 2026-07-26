@@ -708,8 +708,23 @@
             "explication": "Adjectifs possessifs (identité/papiers)"
           },
           {
-            "question": "Bonjour, je (1)________ Thomas Martin. Je (2)________ boulanger. J'(3)________ à Lyon. J'ai 34 (4)________.",
+            "question": "Bonjour, je ________ Thomas Martin.",
             "bonne_reponse": "m'appelle",
+            "explication": "Structure « je m'appelle / je suis / j'habite »"
+          },
+          {
+            "question": "Je ________ boulanger.",
+            "bonne_reponse": "suis",
+            "explication": "Structure « je m'appelle / je suis / j'habite »"
+          },
+          {
+            "question": "J'________ à Lyon.",
+            "bonne_reponse": "habite",
+            "explication": "Structure « je m'appelle / je suis / j'habite »"
+          },
+          {
+            "question": "J'ai 34 ________.",
+            "bonne_reponse": "ans",
             "explication": "Structure « je m'appelle / je suis / j'habite »"
           }
         ],
@@ -1009,8 +1024,13 @@
             "explication": "Nationalité / pays-ville (« venir de » + « habiter à »)"
           },
           {
-            "question": "Awa a dit qu'elle ________ (s'appeler) Awa Diallo et qu'elle ________ (vouloir) sa carte de séjour.",
+            "question": "Awa a dit qu'elle ________ (s'appeler) Awa Diallo.",
             "bonne_reponse": "s'appelait",
+            "explication": "Discours rapporté simple (identité)"
+          },
+          {
+            "question": "Elle a dit qu'elle ________ (vouloir) sa carte de séjour.",
+            "bonne_reponse": "voulait",
             "explication": "Discours rapporté simple (identité)"
           }
         ],
@@ -1226,8 +1246,13 @@
       "contenu": {
         "items": [
           {
-            "question": "Vous pouvez demander l'accès aux soins. → Vous avez ___ à ___.",
+            "question": "Vous pouvez demander l'accès aux soins. Vous avez ___ à l'accès aux soins.",
             "bonne_reponse": "le droit",
+            "explication": "Nominalisation droits/devoirs"
+          },
+          {
+            "question": "Vous avez le droit à ___.",
+            "bonne_reponse": "l'accès aux soins",
             "explication": "Nominalisation droits/devoirs"
           },
           {

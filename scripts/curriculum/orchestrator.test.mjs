@@ -100,6 +100,7 @@ describe('Lot 2 — orchestrateur avec doubles de test (aucun acces reseau)', ()
     const { publishable, report: aiReport } = await runAiReview(contentProvider, {
       resourceId: 'S01-support-master',
       content: support,
+      allowFakeReviewerForTest: true,
     });
     expect(publishable).toBe(true);
     expect(aiReport.scores.quality_score).toBeGreaterThanOrEqual(4);

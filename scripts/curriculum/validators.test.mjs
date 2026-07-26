@@ -58,11 +58,24 @@ describe('Controle 1 — deterministic validator (section 9.4)', () => {
 });
 
 describe('Controle 2 — ai review validator (section 9.4)', () => {
-  it('is publishable by default with FakeContentProvider (aucun bloquant)', async () => {
+  it('refuse une revue factice comme preuve de publication', async () => {
     const contentProvider = new FakeContentProvider();
     const { publishable, report } = await runAiReview(contentProvider, {
       resourceId: 'exo-1',
       content: { consigne: 'Repondez aux questions.' },
+    });
+    expect(publishable).toBe(false);
+    expect(report.bloquants).toContain(
+      'DIFF_FAKE_REVIEW_NOT_ADMISSIBLE : une revue factice ne peut pas autoriser la publication.',
+    );
+  });
+
+  it('autorise explicitement le reviewer factice dans un test de tuyauterie', async () => {
+    const contentProvider = new FakeContentProvider();
+    const { publishable, report } = await runAiReview(contentProvider, {
+      resourceId: 'exo-1',
+      content: { consigne: 'Repondez aux questions.' },
+      allowFakeReviewerForTest: true,
     });
     expect(publishable).toBe(true);
     expect(report.bloquants).toEqual([]);

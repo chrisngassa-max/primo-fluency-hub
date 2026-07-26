@@ -41,7 +41,12 @@ function reviewContentFor(resourceEntry, buffer) {
 }
 
 /** Valide une seance deja generee sur disque. Retourne le rapport complet + le verdict publiable. */
-export async function validateOneSession({ sessionCode, contentProvider, baseDir }) {
+export async function validateOneSession({
+  sessionCode,
+  contentProvider,
+  baseDir,
+  allowFakeReviewerForTest = false,
+}) {
   const manifest = await readSessionManifest(sessionCode, baseDir);
   if (!manifest) {
     return { sessionCode, generated: false };
@@ -81,7 +86,11 @@ export async function validateOneSession({ sessionCode, contentProvider, baseDir
     let aiReview = null;
     if (shouldRunAiReview(manifest, resourceEntry.kind)) {
       const content = reviewContentFor(resourceEntry, buffer);
-      const result = await runAiReview(contentProvider, { resourceId: resourceEntry.resource_id, content });
+      const result = await runAiReview(contentProvider, {
+        resourceId: resourceEntry.resource_id,
+        content,
+        allowFakeReviewerForTest,
+      });
       aiReview = result.report;
     }
 

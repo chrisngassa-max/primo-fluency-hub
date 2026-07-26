@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   buildCivicExerciceDraft,
   buildVariantExerciceDraft,
+  buildVariantExerciceDrafts,
   competenceForFormat,
   curriculumMetadataCode,
   dominantFormat,
@@ -69,6 +70,57 @@ describe('publish-bridge-lib', () => {
     expect(dominantFormat(variant.questions)).toBe('qcm');
   });
 
+  it('publie chaque etape du parcours comme un exercice ordonne et affiche la lecon au debut', () => {
+    const learningVariant = {
+      ...variant,
+      learning_path: {
+        lesson: {
+          title: 'Lecon test',
+          objective: 'Comprendre le support commun.',
+          explanation: 'Une explication suffisamment complete pour guider le travail.',
+          key_points: ['Point cle'],
+          examples: ['Exemple'],
+          estimated_minutes: 10,
+        },
+        steps: [
+          { step_id: 'guide', title: 'Guide', instruction: 'Etape guidee', kind: 'guided', estimated_minutes: 15, questions: [variant.questions[0]], corrige: { q1: '80' } },
+          { step_id: 'transfert', title: 'Transfert', instruction: 'Etape autonome', kind: 'transfer', estimated_minutes: 20, questions: [variant.questions[1]], corrige: { q2: true } },
+        ],
+        adaptive_policy: { remediation_below: 60, consolidation_from: 60, extension_from: 80 },
+      },
+    };
+    const drafts = buildVariantExerciceDrafts({
+      variant: learningVariant,
+      sessionCode: 'S01',
+      trainingSessionId: 'ts-uuid',
+      supportId: variant.support_id,
+    });
+
+    expect(drafts).toHaveLength(2);
+    expect(drafts[0].metadata_code).toBe('cv2:S01:variant:A1');
+    expect(drafts[1].metadata_code).toBe('cv2:S01:variant:A1:transfert');
+    expect(drafts[0].contenu.lesson.title).toBe('Lecon test');
+    expect(drafts[1].contenu.lesson).toBeNull();
+    expect(drafts.map((draft) => draft.contenu.metadata.learning_path.step_order)).toEqual([1, 2]);
+    expect(drafts[0].contenu.metadata.learning_path.adaptive_policy.extension_from).toBe(80);
+  });
+  it('propage l observation temporelle dans les metadata publiees', () => {
+    const durationObservation = {
+      estimated_minutes: 25,
+      minimum_coverage_minutes: 55,
+      status: 'warning',
+      warnings: [{ code: 'DIFF_DURATION_BELOW_MINIMUM', level: 'A1' }],
+    };
+    const draft = buildVariantExerciceDraft({
+      variant,
+      sessionCode: 'S01',
+      trainingSessionId: 'ts-uuid',
+      supportId: variant.support_id,
+      durationObservation,
+    });
+
+    expect(draft.contenu.metadata.duration_observation).toEqual(durationObservation);
+  });
   it('derive la competence depuis le format dominant', () => {
     expect(competenceForFormat('qcm')).toBe('CE');
     expect(competenceForFormat('vrai_faux')).toBe('CE');

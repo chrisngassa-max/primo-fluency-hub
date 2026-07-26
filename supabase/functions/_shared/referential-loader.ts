@@ -612,6 +612,23 @@ export function getSessionMinimumsForDuration(dureeMinutes: number): Record<stri
   return minimums["45_min"] ?? null;
 }
 
+export function getDifferentiatedDurationMinimums(
+  dureeMinutes: number,
+): Record<string, unknown> | null {
+  const policies = sessionBlockRules.minimums_par_niveau_differencie as
+    | Record<string, unknown>
+    | undefined;
+  if (!policies) return null;
+  const key = dureeMinutes >= 90 ? "90_min" : dureeMinutes >= 60 ? "60_min" : "45_min";
+  const policy = policies[key];
+  if (!policy || typeof policy !== "object") return null;
+  return {
+    key,
+    mode: policies.mode ?? "warning",
+    calibration_status: policies.calibration_status ?? "uncalibrated",
+    ...(policy as Record<string, unknown>),
+  };
+}
 function evaluateScoringCondition(condition: string, ctx: ExerciseScoringContext): boolean {
   const ex = ctx.exercise;
   const session = ctx.session;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildInteractiveS01 } from "./generate-s01-interactive.mjs";
+import { buildInteractiveS01, mapGrammarPointItems } from "./generate-s01-interactive.mjs";
 
 describe("S01 v3 — parcours interactif", () => {
   it("génère une playlist A1 à B2 suffisamment dense", async () => {
@@ -46,5 +46,12 @@ describe("S01 v3 — parcours interactif", () => {
     for (const competence of ["CO", "CE", "EE", "EO", "Structures"]) {
       expect(payload.exercises.some((exercise) => exercise.competence === competence)).toBe(true);
     }
+  });
+  it("bloque une structure qui ne fournit pas une reponse par question", () => {
+    expect(() => mapGrammarPointItems({
+      point: "Presentation",
+      items: ["Je ___.", "Tu ___."],
+      reponses: ["suis"],
+    })).toThrow("2 question(s) pour 1 reponse(s)");
   });
 });

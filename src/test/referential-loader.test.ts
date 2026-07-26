@@ -16,6 +16,7 @@ import {
   getOptionalModuleSessions,
   getSessionBlockRules,
   getSessionMinimumsForDuration,
+  getDifferentiatedDurationMinimums,
   getStructuresSwitchRules,
   getThemeTemplate,
   inferThemeFromText,
@@ -220,6 +221,12 @@ describe("referential-loader", () => {
     const mins60 = getSessionMinimumsForDuration(60);
     expect(mins60?.CO).toBe(2);
     expect(mins60?.EE).toBe(1);
+    const differentiated60 = getDifferentiatedDurationMinimums(60);
+    expect(differentiated60?.mode).toBe("warning");
+    expect(differentiated60?.minimum_coverage_minutes).toBe(55);
+    expect(differentiated60?.minimum_items_by_level).toEqual(
+      expect.objectContaining({ A1: 8, B2: 4 }),
+    );
   });
 
   it("formats referential prompt block with theme and invariants", () => {
