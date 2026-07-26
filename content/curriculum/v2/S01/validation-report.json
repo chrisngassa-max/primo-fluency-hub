@@ -1,6 +1,6 @@
 {
   "session_code": "S01",
-  "validated_at": "2026-07-12T14:56:34.677Z",
+  "validated_at": "2026-07-26T15:54:48.473Z",
   "publishable": true,
   "blocking_resources": [],
   "resources": {
@@ -131,7 +131,7 @@
           "checks": {
             "non_vide": true,
             "mime_decodable": true,
-            "hash": "ba7cd9bed672bbae979461cab87ef5a8402b0f2046791b1a6ea218f0090153eb",
+            "hash": "9cfdffc0ab94db85443663c749835de3753aa77ab88531c3c873f669a9228050",
             "doublon": false,
             "forbidden_text_matches": []
           }

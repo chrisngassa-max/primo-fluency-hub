@@ -89,7 +89,7 @@
       },
       "alt_text": null,
       "depends_on_answer": false,
-      "expected_hash": "ba7cd9bed672bbae979461cab87ef5a8402b0f2046791b1a6ea218f0090153eb",
+      "expected_hash": "9cfdffc0ab94db85443663c749835de3753aa77ab88531c3c873f669a9228050",
       "dependencies": [
         "support-master-json"
       ]
