@@ -6,27 +6,27 @@
   },
   {
     "phase": "Activation + lexique",
-    "duree_min": 20,
+    "duree_min": 10,
     "description": "Decouverte du lexique de la seance (parcours, objectif, droit, devoir...)."
   },
   {
     "phase": "Support invariant CO/CE",
-    "duree_min": 50,
+    "duree_min": 20,
     "description": "Ecoute du dialogue Awa/Mme Rossi, comprehension globale puis detaillee."
   },
   {
     "phase": "Ateliers differencies",
-    "duree_min": 60,
-    "description": "Quatre groupes A1/A2/B1/B2 travaillent leur variante respective du meme support."
+    "duree_min": 120,
+    "description": "Deux heures de parcours differenci? : leeon, six exercices progressifs par niveau, puis une activitEsupplementaire disponible en reserve ou en devoir."
   },
   {
     "phase": "Production EE/EO",
-    "duree_min": 30,
-    "description": "Chaque apprenant se presente et explique son propre objectif administratif."
+    "duree_min": 10,
+    "description": "Mise en commun orale d'une production realisee dans le parcours differenci?."
   },
   {
     "phase": "Fixation",
     "duree_min": 10,
-    "description": "Synthese collective, mini-diagnostic civique A1-B2, devoir personnalise."
+    "description": "Synthese collective, mini-diagnostic civique et attribution Eventuelle de l'activitEde reserve comme devoir personnalis?."
   }
 ]

@@ -84,7 +84,7 @@ describe('publish-bridge-lib', () => {
         },
         steps: [
           { step_id: 'guide', title: 'Guide', instruction: 'Etape guidee', kind: 'guided', estimated_minutes: 15, questions: [variant.questions[0]], corrige: { q1: '80' } },
-          { step_id: 'transfert', title: 'Transfert', instruction: 'Etape autonome', kind: 'transfer', estimated_minutes: 20, questions: [variant.questions[1]], corrige: { q2: true } },
+          { step_id: 'transfert', title: 'Transfert', instruction: 'Etape autonome', kind: 'transfer', estimated_minutes: 20, homework_eligible: true, questions: [variant.questions[1]], corrige: { q2: true } },
         ],
         adaptive_policy: { remediation_below: 60, consolidation_from: 60, extension_from: 80 },
       },
@@ -103,6 +103,8 @@ describe('publish-bridge-lib', () => {
     expect(drafts[1].contenu.lesson).toBeNull();
     expect(drafts.map((draft) => draft.contenu.metadata.learning_path.step_order)).toEqual([1, 2]);
     expect(drafts[0].contenu.metadata.learning_path.adaptive_policy.extension_from).toBe(80);
+    expect(drafts[0].contenu.metadata.learning_path.homework_eligible).toBe(false);
+    expect(drafts[1].contenu.metadata.learning_path.homework_eligible).toBe(true);
   });
   it('propage l observation temporelle dans les metadata publiees', () => {
     const durationObservation = {

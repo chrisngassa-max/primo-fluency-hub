@@ -1664,11 +1664,12 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          {session && session.statut !== "terminee" && !(session as any).training_session_id && (
+          {session && session.statut !== "terminee" && (
             <AttachCurriculumPathButton
               sessionId={id!}
               sessionTitle={session.titre}
               palierCible={(session as any).curriculum_palier_cible ?? session.niveau_cible}
+              isAttached={Boolean((session as any).training_session_id)}
               onAttached={async () => {
                 await Promise.all([
                   qc.invalidateQueries({ queryKey: ["session-info", id] }),

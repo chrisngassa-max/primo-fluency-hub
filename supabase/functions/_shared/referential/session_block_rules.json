@@ -67,17 +67,42 @@
     "45_min": {
       "minimum_coverage_minutes": 40,
       "maximum_coverage_minutes": 55,
-      "minimum_items_by_level": { "A1": 6, "A2": 5, "B1": 3, "B2": 3 }
+      "minimum_items_by_level": {
+        "A1": 6,
+        "A2": 5,
+        "B1": 3,
+        "B2": 3
+      }
     },
     "60_min": {
       "minimum_coverage_minutes": 55,
       "maximum_coverage_minutes": 70,
-      "minimum_items_by_level": { "A1": 8, "A2": 7, "B1": 4, "B2": 4 }
+      "minimum_items_by_level": {
+        "A1": 8,
+        "A2": 7,
+        "B1": 4,
+        "B2": 4
+      }
     },
     "90_min": {
       "minimum_coverage_minutes": 80,
       "maximum_coverage_minutes": 100,
-      "minimum_items_by_level": { "A1": 12, "A2": 10, "B1": 6, "B2": 6 }
+      "minimum_items_by_level": {
+        "A1": 12,
+        "A2": 10,
+        "B1": 6,
+        "B2": 6
+      }
+    },
+    "120_min": {
+      "minimum_coverage_minutes": 115,
+      "maximum_coverage_minutes": 145,
+      "minimum_items_by_level": {
+        "A1": 20,
+        "A2": 16,
+        "B1": 12,
+        "B2": 12
+      }
     }
   },
   "volume_seance": {
