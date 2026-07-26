@@ -93,6 +93,7 @@ import PreflightExercises from "@/components/PreflightExercises";
 import SessionToolbox, { type SessionTool } from "@/components/SessionToolbox";
 import { CurriculumBadge } from "@/components/curriculum/CurriculumBadge";
 import { CurriculumAdaptPanel } from "@/components/curriculum/CurriculumAdaptPanel";
+import { AttachCurriculumPathButton } from "@/components/curriculum/AttachCurriculumPathButton";
 import type { AggregatedLearnerError } from "@/lib/curriculum/types";
 import VigilanceDrawer from "@/components/VigilanceDrawer";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -1663,6 +1664,19 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
+          {session && session.statut !== "terminee" && !(session as any).training_session_id && (
+            <AttachCurriculumPathButton
+              sessionId={id!}
+              sessionTitle={session.titre}
+              palierCible={(session as any).curriculum_palier_cible ?? session.niveau_cible}
+              onAttached={async () => {
+                await Promise.all([
+                  qc.invalidateQueries({ queryKey: ["session-info", id] }),
+                  qc.invalidateQueries({ queryKey: ["session-exercices", id] }),
+                ]);
+              }}
+            />
+          )}
           <Button
             onClick={handleOpenSendDialog}
             disabled={sending || checkedCount === 0}
