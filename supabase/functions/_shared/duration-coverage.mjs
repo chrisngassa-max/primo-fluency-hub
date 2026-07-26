@@ -39,7 +39,7 @@ export function findDifferentiatedWorkshopMinutes(phases) {
 export function resolveDifferentiatedDurationPolicy(rules, announcedMinutes) {
   const policies = rules?.minimums_par_niveau_differencie;
   if (!policies || !finitePositive(announcedMinutes)) return null;
-  const key = announcedMinutes >= 90 ? '90_min' : announcedMinutes >= 60 ? '60_min' : '45_min';
+  const key = announcedMinutes >= 120 ? '120_min' : announcedMinutes >= 90 ? '90_min' : announcedMinutes >= 60 ? '60_min' : '45_min';
   const policy = policies[key];
   if (!policy) return null;
   return {

@@ -49,13 +49,17 @@ describe('S01 — famille de référence A2 pivot', () => {
     expect(b2.differentiation_contract.cognitive_operations).toContain('distinguer_explicite_implicite');
   });
 
-  it('fournit une lecon et trois exercices progressifs pour chaque niveau', () => {
-    const minimumItems = { A1: 8, A2: 7, B1: 4, B2: 4 };
+  it('fournit deux heures de parcours et une reserve de devoir pour chaque niveau', () => {
+    const minimumItems = { A1: 20, A2: 16, B1: 12, B2: 12 };
     for (const variant of variants) {
-      expect(variant.differentiation_contract.estimated_minutes).toBe(60);
+      expect(variant.differentiation_contract.estimated_minutes).toBe(140);
       expect(variant.learning_path.lesson.estimated_minutes).toBe(10);
-      expect(variant.learning_path.steps).toHaveLength(3);
-      expect(variant.learning_path.steps.reduce((sum, step) => sum + step.estimated_minutes, 0)).toBe(50);
+      expect(variant.learning_path.steps).toHaveLength(7);
+      expect(variant.learning_path.steps.reduce((sum, step) => sum + step.estimated_minutes, 0)).toBe(130);
+      const reserve = variant.learning_path.steps.at(-1);
+      expect(reserve.estimated_minutes).toBe(20);
+      expect(reserve.homework_eligible).toBe(true);
+      expect(variant.learning_path.lesson.estimated_minutes + variant.learning_path.steps.slice(0, -1).reduce((sum, step) => sum + step.estimated_minutes, 0)).toBe(120);
       expect(variant.learning_path.steps.flatMap((step) => step.questions).length).toBeGreaterThanOrEqual(minimumItems[variant.niveau]);
       expect(variant.learning_path.adaptive_policy).toEqual({
         remediation_below: 60,

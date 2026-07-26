@@ -229,6 +229,7 @@ export function buildVariantExerciceDraft({
               step_count: resolvedStepCount,
               kind: learningStep?.kind ?? 'practice',
               estimated_minutes: learningStep?.estimated_minutes ?? null,
+              homework_eligible: learningStep?.homework_eligible === true,
               adaptive_policy: variant.learning_path.adaptive_policy ?? null,
             }
           : null,

@@ -89,7 +89,7 @@
       },
       "alt_text": null,
       "depends_on_answer": false,
-      "expected_hash": "9cfdffc0ab94db85443663c749835de3753aa77ab88531c3c873f669a9228050",
+      "expected_hash": "ee75ad5940f81797fb780218b883c1f4d656b3cc7c75de3fdea9a56e1f632000",
       "dependencies": [
         "support-master-json"
       ]
@@ -546,7 +546,7 @@
       },
       "alt_text": null,
       "depends_on_answer": false,
-      "expected_hash": "753833b66ba2905b74b24fe43898ff9bcd47302162a4a07cdbc2a2b95540fc74",
+      "expected_hash": "daad362b19ebe9b1617259712b8e9a90b33576f419b3c98a2fe278f3be7209d1",
       "dependencies": []
     },
     {

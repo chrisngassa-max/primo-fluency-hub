@@ -69,7 +69,7 @@ describe('duration coverage — ateliers differencies', () => {
     ]));
   });
 
-  it('confirme que le parcours enrichi de S01 couvre les 60 minutes annoncees', async () => {
+  it('confirme que S01 couvre deux heures et conserve vingt minutes de reserve', async () => {
     const sessionDir = path.join(process.cwd(), 'content/curriculum/v2/S01');
     const [variants, deroule, rules] = await Promise.all([
       readFile(path.join(sessionDir, 'exercices/variantes-A1-A2-B1-B2.json'), 'utf8').then(JSON.parse),
@@ -82,13 +82,13 @@ describe('duration coverage — ateliers differencies', () => {
       rules,
     });
 
-    expect(result.announced_minutes).toBe(60);
+    expect(result.announced_minutes).toBe(120);
     expect(result.status).toBe('pass');
     expect(result.warnings).toEqual([]);
     for (const level of ['A1', 'A2', 'B1', 'B2']) {
-      expect(result.coverage_by_level[level].estimated_minutes).toBe(60);
+      expect(result.coverage_by_level[level].estimated_minutes).toBe(140);
       expect(result.coverage_by_level[level].warnings).toEqual([]);
-      expect(result.coverage_by_level[level].estimates[0].step_count).toBe(3);
+      expect(result.coverage_by_level[level].estimates[0].step_count).toBe(7);
       expect(result.coverage_by_level[level].estimates[0].lesson_minutes).toBe(10);
     }
   });

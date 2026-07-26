@@ -9,10 +9,11 @@ interface AttachCurriculumPathButtonProps {
   sessionId: string;
   sessionTitle?: string | null;
   palierCible?: string | null;
+  isAttached?: boolean;
   onAttached: () => void | Promise<void>;
 }
 
-export function AttachCurriculumPathButton({ sessionId, sessionTitle, palierCible, onAttached }: AttachCurriculumPathButtonProps) {
+export function AttachCurriculumPathButton({ sessionId, sessionTitle, palierCible, isAttached = false, onAttached }: AttachCurriculumPathButtonProps) {
   const [loading, setLoading] = useState(false);
   const sessionCode = inferCurriculumSessionCode(sessionTitle);
   if (!sessionCode) return null;
@@ -22,7 +23,7 @@ export function AttachCurriculumPathButton({ sessionId, sessionTitle, palierCibl
     try {
       const result = await attachCurriculumPathToSession({ sessionId, sessionCode, palierCible });
       await onAttached();
-      toast.success(`Parcours ${result.code} rattaché`, {
+      toast.success(isAttached ? `Parcours ${result.code} mis à jour` : `Parcours ${result.code} rattaché`, {
         description: result.linkedExercises > 0
           ? `${result.linkedExercises} activité(s) ajoutée(s) sur ${result.totalExercises}.`
           : `${result.totalExercises} activité(s) étaient déjà rattachées.`,
@@ -45,7 +46,7 @@ export function AttachCurriculumPathButton({ sessionId, sessionTitle, palierCibl
       disabled={loading}
     >
       {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Link2 className="h-4 w-4" />}
-      Rattacher le parcours {sessionCode}
+      {isAttached ? `Mettre à jour le parcours ${sessionCode}` : `Rattacher le parcours ${sessionCode}`}
     </Button>
   );
 }

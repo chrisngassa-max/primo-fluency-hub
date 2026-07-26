@@ -28,6 +28,7 @@ const learningStepSchema = z
     instruction: z.string().min(2),
     kind: z.enum(['guided', 'practice', 'transfer', 'extension', 'remediation']),
     estimated_minutes: z.number().positive(),
+    homework_eligible: z.boolean().optional(),
     questions: z.array(questionSchema).min(1),
     corrige: z.record(z.string(), z.unknown()).or(z.array(z.unknown())),
   })
