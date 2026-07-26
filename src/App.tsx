@@ -114,7 +114,6 @@ const App = () => (
                   <Route index element={<AIConsentRequiredRoute><EleveDashboard /></AIConsentRequiredRoute>} />
                   <Route path="ma-seance" element={<AIConsentRequiredRoute><MaSeance /></AIConsentRequiredRoute>} />
                   <Route path="mes-seances" element={<AIConsentRequiredRoute><MesSeances /></AIConsentRequiredRoute>} />
-                  <Route path="exercices-interactifs/s01" element={<AIConsentRequiredRoute><S01InteractiveExercises /></AIConsentRequiredRoute>} />
                   <Route path="test-positionnement" element={<AIConsentRequiredRoute><TestPositionnement /></AIConsentRequiredRoute>} />
                   <Route path="test-positionnement/passer/:token" element={<PositionnementPassation />} />
                   <Route path="test-positionnement/resultat/:attemptId" element={<PositionnementResultat />} />
@@ -218,7 +217,6 @@ const App = () => (
               <Route index element={<AIConsentRequiredRoute><EleveDashboard /></AIConsentRequiredRoute>} />
               <Route path="ma-seance" element={<AIConsentRequiredRoute><MaSeance /></AIConsentRequiredRoute>} />
               <Route path="mes-seances" element={<AIConsentRequiredRoute><MesSeances /></AIConsentRequiredRoute>} />
-              <Route path="exercices-interactifs/s01" element={<AIConsentRequiredRoute><S01InteractiveExercises /></AIConsentRequiredRoute>} />
               <Route path="test-positionnement" element={<AIConsentRequiredRoute><TestPositionnement /></AIConsentRequiredRoute>} />
               <Route path="test-positionnement/passer/:token" element={<PositionnementPassation />} />
               <Route path="test-positionnement/resultat/:attemptId" element={<PositionnementResultat />} />

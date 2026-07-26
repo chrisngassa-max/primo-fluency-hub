@@ -62,16 +62,58 @@ async function fetchGroupIds(eleveId: string): Promise<string[]> {
  * ne jamais masquer un envoi, comme le fait déjà le dashboard.
  */
 export function useActiveSeances(eleveId: string | undefined) {
+  const qc = useQueryClient();
+
+  useEffect(() => {
+    if (!eleveId) return;
+
+    const channel = supabase
+      .channel(`eleve-session-visibility-${eleveId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "presences",
+          filter: `eleve_id=eq.${eleveId}`,
+        },
+        () => qc.invalidateQueries({ queryKey: ["eleve-seances-actives", eleveId] }),
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "sessions" },
+        () => qc.invalidateQueries({ queryKey: ["eleve-seances-actives", eleveId] }),
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [eleveId, qc]);
+
   return useQuery({
     queryKey: ["eleve-seances-actives", eleveId],
     queryFn: async (): Promise<SeanceResume[]> => {
       const groupIds = await fetchGroupIds(eleveId!);
       if (groupIds.length === 0) return [];
+
+      // L'appel est la porte d'entrée de la séance : un élève absent ne voit
+      // pas la séance active d'un autre membre de son groupe.
+      const { data: presenceRows, error: presenceError } = await supabase
+        .from("presences")
+        .select("session_id")
+        .eq("eleve_id", eleveId!)
+        .eq("present", true);
+      if (presenceError) throw presenceError;
+      const presentSessionIds = [...new Set((presenceRows ?? []).map((row) => row.session_id))];
+      if (presentSessionIds.length === 0) return [];
+
       const { start, end } = dayBounds();
 
       const { data: todays } = await supabase
         .from("sessions")
         .select("id, titre, date_seance, group_id, statut, group:groups(nom)")
+        .in("id", presentSessionIds)
         .in("group_id", groupIds)
         .gte("date_seance", start.toISOString())
         .lt("date_seance", end.toISOString());
@@ -79,6 +121,7 @@ export function useActiveSeances(eleveId: string | undefined) {
       const { data: enCours } = await supabase
         .from("sessions")
         .select("id, titre, date_seance, group_id, statut, group:groups(nom)")
+        .in("id", presentSessionIds)
         .in("group_id", groupIds)
         .eq("statut", "en_cours");
 
@@ -277,6 +320,5 @@ export function useSeancesLiveRefresh(
     return () => {
       channels.forEach((ch) => supabase.removeChannel(ch));
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idsKey, notify, qc]);
 }
