@@ -167,16 +167,31 @@ export function buildVariantExerciceDraft({
   supportId,
   exerciseVariantId = null,
   sessionResourceId = null,
+  durationObservation = null,
+  learningStep = null,
+  stepIndex = 0,
+  stepCount = null,
 }) {
-  const items = (variant.questions ?? []).map((q) => mapQuestionToItem(q, variant.corrige ?? {}));
-  const format = dominantFormat(variant.questions);
+  const questions = learningStep?.questions ?? variant.questions ?? [];
+  const corrige = learningStep?.corrige ?? variant.corrige ?? {};
+  const items = questions.map((q) => mapQuestionToItem(q, corrige));
+  const format = dominantFormat(questions);
   const competence = resolveVariantCompetence(variant, format);
-  const metadataCode = curriculumMetadataCode(sessionCode, 'variant', variant.niveau);
+  const hasLearningPath = Array.isArray(variant.learning_path?.steps) && variant.learning_path.steps.length > 0;
+  const resolvedStepCount = stepCount ?? (hasLearningPath ? variant.learning_path.steps.length : 1);
+  const stepId = learningStep?.step_id ?? 'activity';
+  const metadataKey = stepIndex === 0
+    ? variant.niveau
+    : `${variant.niveau}:${stepId}`;
+  const metadataCode = curriculumMetadataCode(sessionCode, 'variant', metadataKey);
+  const lesson = stepIndex === 0 ? variant.learning_path?.lesson ?? null : null;
 
   return {
     metadata_code: metadataCode,
-    titre: `${sessionCode} · variante ${variant.niveau}`,
-    consigne: variant.consigne,
+    titre: learningStep?.title
+      ? `${sessionCode} · ${variant.niveau} · ${learningStep.title}`
+      : `${sessionCode} · variante ${variant.niveau}`,
+    consigne: learningStep?.instruction ?? variant.consigne,
     competence,
     format,
     niveau_vise: variant.niveau,
@@ -188,6 +203,7 @@ export function buildVariantExerciceDraft({
     collectif: true,
     contenu: {
       items,
+      lesson,
       metadata: {
         source: CURRICULUM_SOURCE,
         session_code: sessionCode,
@@ -205,16 +221,40 @@ export function buildVariantExerciceDraft({
         transformation_id: variant.differentiation_contract?.transformation_id ?? null,
         differentiation_contract: variant.differentiation_contract ?? null,
         validation_report: variant.validation_report ?? null,
+        duration_observation: durationObservation,
+        learning_path: hasLearningPath
+          ? {
+              step_id: stepId,
+              step_order: stepIndex + 1,
+              step_count: resolvedStepCount,
+              kind: learningStep?.kind ?? 'practice',
+              estimated_minutes: learningStep?.estimated_minutes ?? null,
+              adaptive_policy: variant.learning_path.adaptive_policy ?? null,
+            }
+          : null,
       },
     },
     animation_guide: {
       source: CURRICULUM_SOURCE,
       variant_niveau: variant.niveau,
       aides: variant.aides ?? [],
+      learning_path_step: hasLearningPath ? stepIndex + 1 : null,
     },
   };
 }
 
+export function buildVariantExerciceDrafts(args) {
+  const steps = args.variant?.learning_path?.steps;
+  if (!Array.isArray(steps) || steps.length === 0) {
+    return [buildVariantExerciceDraft(args)];
+  }
+  return steps.map((learningStep, stepIndex) => buildVariantExerciceDraft({
+    ...args,
+    learningStep,
+    stepIndex,
+    stepCount: steps.length,
+  }));
+}
 export function buildCivicExerciceDraft({
   question,
   index,

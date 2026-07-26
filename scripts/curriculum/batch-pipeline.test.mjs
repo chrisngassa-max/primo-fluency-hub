@@ -111,7 +111,12 @@ describe('Lot 3 â€” pipeline generate/validate/publish/resume (repertoires 
     expect(batch.jobs['S00'].resource_count).toBeGreaterThan(20);
 
     const contentProvider = new FakeContentProvider();
-    const validation = await validateOneSession({ sessionCode: 'S00', contentProvider, baseDir: contentDir });
+    const validation = await validateOneSession({
+      sessionCode: 'S00',
+      contentProvider,
+      baseDir: contentDir,
+      allowFakeReviewerForTest: true,
+    });
     expect(validation.generated).toBe(true);
     expect(validation.report.publishable).toBe(true);
     expect(validation.report.blocking_resources).toEqual([]);
@@ -268,7 +273,12 @@ describe('Lot 3 â€” pipeline generate/validate/publish/resume (repertoires 
     // couvert par des fixtures dediees dans publish-bridge.test.mjs.
 
     const contentProvider = new FakeContentProvider();
-    const validation = await validateOneSession({ sessionCode: 'S00', contentProvider, baseDir: contentDir });
+    const validation = await validateOneSession({
+      sessionCode: 'S00',
+      contentProvider,
+      baseDir: contentDir,
+      allowFakeReviewerForTest: true,
+    });
     expect(validation.report.publishable).toBe(true);
 
     const storagePublisher = new FileStoragePublisher({ dir: storageDir });

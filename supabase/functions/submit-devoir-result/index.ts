@@ -19,6 +19,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { corrigerExerciceServer } from "../_shared/correction-server.ts";
 import { classifyAndEmitErrors } from "../_shared/classifyAndEmitErrors.ts";
 import { resolveLiveSessionId } from "../_shared/resolveLiveSessionId.ts";
+import { resolveLearningPathOutcome } from "../_shared/learning-path-routing.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -86,7 +87,7 @@ Deno.serve(async (req) => {
   const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
 
   // 3a. Charger le devoir + vérifier propriété + statut (mode devoir uniquement)
-  let devoir: { id: string; eleve_id: string; exercice_id: string; statut: string; nb_reussites_consecutives: number } | null = null;
+  let devoir: { id: string; eleve_id: string; exercice_id: string; statut: string; nb_reussites_consecutives: number; formateur_id?: string | null; session_id?: string | null } | null = null;
   let targetExerciceId = standaloneExerciceId!;
   if (devoirId) {
     const { data, error: devErr } = await admin
@@ -107,14 +108,29 @@ Deno.serve(async (req) => {
   // 3b. Charger l'exercice
   const { data: ex, error: exErr } = await admin
     .from("exercices")
-    .select("id, titre, consigne, contenu, format, competence, niveau_vise, formateur_id")
+    .select("id, titre, consigne, contenu, format, competence, niveau_vise, formateur_id, metadata_code, source")
     .eq("id", targetExerciceId)
     .maybeSingle();
   if (exErr || !ex) return json(500, { error: "Failed to load exercice", details: exErr?.message });
 
   const contenu = (ex.contenu ?? {}) as Record<string, unknown>;
   const items = Array.isArray(contenu.items) ? contenu.items as Array<Record<string, unknown>> : [];
-  const metadata = (contenu.metadata ?? {}) as { code?: string };
+  const metadata = (contenu.metadata ?? {}) as {
+    code?: string;
+    session_code?: string;
+    family_id?: string;
+    niveau?: string;
+    learning_path?: {
+      step_order?: number;
+      step_count?: number;
+      adaptive_policy?: {
+        remediation_below?: number;
+        consolidation_from?: number;
+        extension_from?: number;
+      };
+    };
+  };
+  const learningPathMeta = metadata.learning_path;
 
   // 4. Correction côté serveur
   let correction: unknown[] = [];
@@ -190,7 +206,7 @@ Deno.serve(async (req) => {
 
   // 5b. BilanSeance: auto-create remediation devoir when score < 80 (service role)
   let devoirCreated = false;
-  if (!devoirId && score < 80 && ex.formateur_id) {
+  if (!devoirId && !learningPathMeta && score < 80 && ex.formateur_id) {
     const { count: activeCount, error: countErr } = await admin
       .from("devoirs")
       .select("id", { count: "exact", head: true })
@@ -242,6 +258,73 @@ Deno.serve(async (req) => {
     }
   }
 
+  // Parcours progressif : choisit et assigne réellement la prochaine étape.
+  // <60 : reprise de l’étape courante ; 60-79 : étape suivante ; >=80 : saut vers
+  // l’étape de transfert. Les parcours legacy sans metadata restent inchangés.
+  let adaptiveNext: Record<string, unknown> | null = null;
+  if (learningPathMeta && metadata.session_code && metadata.niveau) {
+    const currentOrder = Number(learningPathMeta.step_order ?? 1);
+    const stepCount = Number(learningPathMeta.step_count ?? 1);
+    const outcome = resolveLearningPathOutcome(score, learningPathMeta.adaptive_policy, currentOrder, stepCount);
+    adaptiveNext = { decision: outcome.decision, next_step_order: outcome.nextStepOrder, assigned: false };
+
+    if (outcome.nextStepOrder != null) {
+      const prefix = `cv2:${metadata.session_code}:variant:${metadata.niveau}`;
+      const { data: siblingRows, error: siblingErr } = await admin
+        .from("exercices")
+        .select("id, contenu")
+        .eq("source", "curriculum_v2")
+        .like("metadata_code", `${prefix}%`);
+
+      if (!siblingErr) {
+        const nextExercise = (siblingRows ?? []).find((row: any) => {
+          const siblingMetadata = row?.contenu?.metadata ?? {};
+          return siblingMetadata.family_id === metadata.family_id
+            && Number(siblingMetadata.learning_path?.step_order) === outcome.nextStepOrder;
+        });
+        const formateurId = devoir?.formateur_id ?? ex.formateur_id;
+        const sessionId = devoir?.session_id ?? body.session_id ?? null;
+
+        if (nextExercise?.id && formateurId) {
+          const { count: activeCount } = await admin
+            .from("devoirs")
+            .select("id", { count: "exact", head: true })
+            .eq("eleve_id", userId)
+            .eq("statut", "en_attente");
+          const { data: existingNext } = await admin
+            .from("devoirs")
+            .select("id")
+            .eq("eleve_id", userId)
+            .eq("exercice_id", nextExercise.id)
+            .eq("statut", "en_attente")
+            .neq("id", devoirId ?? "00000000-0000-0000-0000-000000000000")
+            .maybeSingle();
+
+          if (!existingNext && (activeCount ?? 0) < 3) {
+            const { error: nextErr } = await admin.from("devoirs").insert({
+              eleve_id: userId,
+              exercice_id: nextExercise.id,
+              formateur_id: formateurId,
+              session_id: sessionId,
+              raison: outcome.decision === "remediation" ? "remediation" : "consolidation",
+              statut: "en_attente",
+              contexte: "devoir",
+              source_label: `learning_path_${outcome.decision}`,
+            });
+            if (!nextErr) {
+              devoirCreated = true;
+              adaptiveNext.assigned = true;
+              adaptiveNext.exercice_id = nextExercise.id;
+            } else {
+              console.warn("[submit-devoir-result] adaptive next devoir failed:", nextErr.message);
+            }
+          }
+        }
+      } else {
+        console.warn("[submit-devoir-result] sibling lookup failed:", siblingErr.message);
+      }
+    }
+  }
   // Sprint 3 : classification taxonomique + émission live events
   // Fire-and-forget : on ne bloque pas la réponse si ça échoue.
   const liveSessionId = await resolveLiveSessionId(admin, {
@@ -274,6 +357,7 @@ Deno.serve(async (req) => {
     correction_detaillee: correction,
     devoir_statut: newStatut,
     devoir_created: devoirCreated,
+    adaptive_next: adaptiveNext,
     ai_failed: aiFailed,
   });
 });

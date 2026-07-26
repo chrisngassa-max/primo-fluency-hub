@@ -6,6 +6,7 @@ const supportPath = 'content/curriculum/v2/S01/support/support-master.json';
 const variantsPath = 'content/curriculum/v2/S01/exercices/variantes-A1-A2-B1-B2.json';
 const support = JSON.parse(readFileSync(supportPath, 'utf8'));
 const variants = JSON.parse(readFileSync(variantsPath, 'utf8'));
+const brief = JSON.parse(readFileSync('content/curriculum/v2/S01/brief.json', 'utf8'));
 const expectedTransformations = { A1: 'A2_TO_A1', A2: 'IDENTITY', B1: 'A2_TO_B1', B2: 'A2_TO_B2' };
 
 describe('S01 — famille de référence A2 pivot', () => {
@@ -47,4 +48,24 @@ describe('S01 — famille de référence A2 pivot', () => {
     expect(b2.differentiation_contract.cognitive_operations).toContain('nuancer');
     expect(b2.differentiation_contract.cognitive_operations).toContain('distinguer_explicite_implicite');
   });
-});
+
+  it('fournit une lecon et trois exercices progressifs pour chaque niveau', () => {
+    const minimumItems = { A1: 8, A2: 7, B1: 4, B2: 4 };
+    for (const variant of variants) {
+      expect(variant.differentiation_contract.estimated_minutes).toBe(60);
+      expect(variant.learning_path.lesson.estimated_minutes).toBe(10);
+      expect(variant.learning_path.steps).toHaveLength(3);
+      expect(variant.learning_path.steps.reduce((sum, step) => sum + step.estimated_minutes, 0)).toBe(50);
+      expect(variant.learning_path.steps.flatMap((step) => step.questions).length).toBeGreaterThanOrEqual(minimumItems[variant.niveau]);
+      expect(variant.learning_path.adaptive_policy).toEqual({
+        remediation_below: 60,
+        consolidation_from: 60,
+        extension_from: 80,
+      });
+    }
+  });
+  it('conserve le parcours dans le brief source pour les regenerations futures', () => {
+    for (const variant of variants) {
+      expect(brief.variants[variant.niveau].learning_path).toEqual(variant.learning_path);
+    }
+  });});

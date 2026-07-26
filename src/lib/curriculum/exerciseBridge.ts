@@ -40,6 +40,12 @@ export function orderExercicesForPilot(
     const bPri = b.niveau_vise === primary ? 0 : 1;
     if (aPri !== bPri) return aPri - bPri;
 
+    if (a.niveau_vise === b.niveau_vise) {
+      const aStep = Number((aMeta.learning_path as Record<string, unknown> | undefined)?.step_order ?? 0);
+      const bStep = Number((bMeta.learning_path as Record<string, unknown> | undefined)?.step_order ?? 0);
+      if (aStep !== bStep) return aStep - bStep;
+    }
+
     return (niveauRank[a.niveau_vise as keyof typeof niveauRank] ?? 99)
       - (niveauRank[b.niveau_vise as keyof typeof niveauRank] ?? 99);
   });

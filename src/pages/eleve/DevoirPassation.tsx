@@ -12,7 +12,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import {
-  ArrowLeft, CheckCircle2, Loader2, Send, FileText, Mic, Square, Clock, Smile, Meh, Frown,
+  ArrowLeft, CheckCircle2, Loader2, Send, FileText, Mic, Square, Clock, Smile, Meh, Frown, BookOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
@@ -50,6 +50,7 @@ import {
 } from "@/lib/offlineExercise";
 import { eeWordCountStatus, resolveEeMinWords } from "@/lib/eeWordCount";
 import { RandomClickDetector } from "@/lib/randomClickDetector";
+import { resolveLearningPathOutcome } from "@/lib/learningPath";
 
 type DifficultyFelt = "facile" | "correct" | "trop_difficile";
 
@@ -247,6 +248,24 @@ const DevoirPassation = () => {
   const items: any[] = rawItems.map((it, idx) => itemOverrides[idx] ? { ...it, ...itemOverrides[idx] } : it);
   const isDone = devoir?.statut === "fait" || devoir?.statut === "arrete";
   const metadata = contenu?.metadata;
+  const lesson = contenu?.lesson as {
+    title?: string;
+    objective?: string;
+    explanation?: string;
+    key_points?: string[];
+    examples?: string[];
+    estimated_minutes?: number;
+  } | null | undefined;
+  const learningPath = metadata?.learning_path as {
+    step_order?: number;
+    step_count?: number;
+    kind?: string;
+    adaptive_policy?: {
+      remediation_below?: number;
+      consolidation_from?: number;
+      extension_from?: number;
+    };
+  } | null | undefined;
   const timeLimit = ex?.duree_limite_secondes || metadata?.time_limit_seconds || contenu?.time_limit_seconds || 0;
 
   const isCompetenceCO = ex?.competence === "CO";
@@ -796,6 +815,9 @@ const DevoirPassation = () => {
 
   if (showResult || isDone) {
     const finalResult = showResult || { score: 0, correction: [] };
+    const adaptiveOutcome = learningPath?.adaptive_policy
+      ? resolveLearningPathOutcome(finalResult.score, learningPath.adaptive_policy, learningPath.step_order, learningPath.step_count)
+      : null;
     return (
       <div className="space-y-6 max-w-2xl mx-auto">
         <div className="flex items-center gap-3">
@@ -853,6 +875,23 @@ const DevoirPassation = () => {
           scoreNormalized={finalResult.score}
           displayMode="qualitative"
         />
+        {adaptiveOutcome && (
+          <Card className="border-primary/30 bg-primary/5">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Suite adaptée du parcours</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm">{adaptiveOutcome.learnerMessage}</p>
+              <Badge className="mt-3" variant="secondary">
+                {adaptiveOutcome.decision === "remediation"
+                  ? "Reprise guidée"
+                  : adaptiveOutcome.decision === "extension"
+                    ? "Extension"
+                    : "Consolidation"}
+              </Badge>
+            </CardContent>
+          </Card>
+        )}
 
         {user?.id && devoirId && (
           <DevoirFeedbackCard
@@ -909,6 +948,57 @@ const DevoirPassation = () => {
       </div>
 
       {user?.id && <SmartTextHint />}
+
+      {learningPath?.step_count && (
+        <Card className="border-primary/20 bg-primary/5">
+          <CardContent className="py-3 px-4">
+            <div className="flex items-center justify-between gap-3 text-sm">
+              <span className="font-semibold">Parcours progressif</span>
+              <Badge variant="secondary">
+                Étape {learningPath.step_order ?? 1}/{learningPath.step_count}
+              </Badge>
+            </div>
+            <Progress
+              value={((learningPath.step_order ?? 1) / learningPath.step_count) * 100}
+              className="mt-2 h-2"
+            />
+          </CardContent>
+        </Card>
+      )}
+
+      {lesson && (
+        <Card className="border-blue-300 bg-blue-50/70 dark:border-blue-900 dark:bg-blue-950/30">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <BookOpen className="h-5 w-5" />
+              {lesson.title || "Leçon"}
+            </CardTitle>
+            {lesson.objective && <CardDescription>{lesson.objective}</CardDescription>}
+          </CardHeader>
+          <CardContent className="space-y-4 text-sm leading-relaxed">
+            {lesson.explanation && <p>{lesson.explanation}</p>}
+            {Array.isArray(lesson.key_points) && lesson.key_points.length > 0 && (
+              <div>
+                <p className="mb-1 font-semibold">À retenir</p>
+                <ul className="list-disc space-y-1 pl-5">
+                  {lesson.key_points.map((point, index) => <li key={index}>{point}</li>)}
+                </ul>
+              </div>
+            )}
+            {Array.isArray(lesson.examples) && lesson.examples.length > 0 && (
+              <div>
+                <p className="mb-1 font-semibold">Exemples</p>
+                <ul className="space-y-1 rounded-lg bg-background/70 p-3">
+                  {lesson.examples.map((example, index) => <li key={index}>{example}</li>)}
+                </ul>
+              </div>
+            )}
+            {lesson.estimated_minutes && (
+              <p className="text-xs text-muted-foreground">Temps conseillé : {lesson.estimated_minutes} min</p>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Timer bar */}
       {timeLimit > 0 && (

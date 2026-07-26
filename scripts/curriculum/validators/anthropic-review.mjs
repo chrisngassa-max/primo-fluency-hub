@@ -41,7 +41,16 @@ const DEFAULT_RUBRIC = [
  * @param {import('../providers/content-provider.mjs').AnthropicContentProvider} contentProvider
  * @param {{ resourceId: string, content: unknown, promptVersion?: string, rubric?: string }} request
  */
-export async function runAiReview(contentProvider, { resourceId, content, promptVersion = 'review-v1', rubric = DEFAULT_RUBRIC }) {
+export async function runAiReview(
+  contentProvider,
+  {
+    resourceId,
+    content,
+    promptVersion = 'review-v1',
+    rubric = DEFAULT_RUBRIC,
+    allowFakeReviewerForTest = false,
+  },
+) {
   const { data, model } = await contentProvider.review({
     promptVersion,
     content,
@@ -51,6 +60,10 @@ export async function runAiReview(contentProvider, { resourceId, content, prompt
   });
 
   const bloquants = [...(data.bloquants ?? [])];
+  const fakeReviewerAllowed = allowFakeReviewerForTest && process.env.NODE_ENV === 'test';
+  if (model === 'fake-content-model' && !fakeReviewerAllowed) {
+    bloquants.push('DIFF_FAKE_REVIEW_NOT_ADMISSIBLE : une revue factice ne peut pas autoriser la publication.');
+  }
   if (data.single_defensible_answer === false) bloquants.push('Plus d\'une reponse defendable detectee.');
   if (data.image_reveals_answer === true) bloquants.push('L\'image revele la reponse.');
   if (data.contains_stereotype_or_noise === true) bloquants.push('Stereotype ou detail parasite detecte.');

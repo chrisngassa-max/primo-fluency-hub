@@ -17,6 +17,23 @@ function itemFrom(source) {
   };
 }
 
+export function mapGrammarPointItems(point) {
+  const questions = Array.isArray(point?.items) ? point.items : [];
+  const answers = Array.isArray(point?.reponses) ? point.reponses : [];
+
+  if (questions.length !== answers.length) {
+    throw new Error(
+      `Structures "${point?.point ?? "sans titre"}" : ${questions.length} question(s) pour ${answers.length} reponse(s).`,
+    );
+  }
+
+  return questions.map((question, index) => ({
+    question,
+    bonne_reponse: answers[index],
+    explication: point.point,
+  }));
+}
+
 function exercise({ code, title, competence, format, level, instruction, items, source, duration = 420, familyId = null, extensionOf = null }) {
   if (!SUPPORTED_FORMATS.has(format)) throw new Error(`Format non supporté: ${format}`);
   return {
@@ -109,11 +126,7 @@ export async function buildInteractiveS01() {
       format: level === "B1" || level === "B2" ? "transformation" : "texte_lacunaire",
       level,
       instruction: grammarPoints.map((point) => point.consigne).join(" "),
-      items: grammarPoints.flatMap((point) => point.items.map((question, index) => ({
-        question,
-        bonne_reponse: point.reponses[index] ?? point.reponses.join(" / "),
-        explication: point.point,
-      }))),
+      items: grammarPoints.flatMap(mapGrammarPointItems),
       source: grammarPoints.map((point) => point.source).join(" | "),
       duration: 420,
     }));

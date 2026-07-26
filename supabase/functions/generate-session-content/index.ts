@@ -608,7 +608,6 @@ Utilise le tool fourni pour retourner le résultat.` + QA_REVIEW_BLOCK;
         cluster.target_level,
         clusterCompetence,
       );
-      const clusterReferentialBlock
       const clusterReferentialBlock = formatReferentialPromptBlock({
         theme: themeTemplate,
         dureeMinutes: duree,

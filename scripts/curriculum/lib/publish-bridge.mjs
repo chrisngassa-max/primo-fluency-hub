@@ -1,7 +1,23 @@
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { readSessionJsonSibling } from './session-fs.mjs';
 import {
+  evaluateDifferentiatedDurationCoverage,
+  findDifferentiatedWorkshopMinutes,
+} from '../../../supabase/functions/_shared/duration-coverage.mjs';
+
+const SESSION_BLOCK_RULES = JSON.parse(
+  readFileSync(
+    path.join(
+      process.cwd(),
+      'supabase/functions/_shared/referential/session_block_rules.json',
+    ),
+    'utf8',
+  ),
+);
+import {
   buildCivicExerciceDraft,
-  buildVariantExerciceDraft,
+  buildVariantExerciceDrafts,
   CURRICULUM_SOURCE,
   dominantFormat,
   NIVEAUX,
@@ -98,8 +114,19 @@ function checkFamilyIdentity(groupMeta) {
 /** Valide une variante SANS ecriture DB. Renvoie { ok: true } ou
  * { ok: false, reason, question_type, message }. */
 function validateVariantFormat(variant) {
+  if (Number(variant?.version ?? 1) >= 3 && !variant?.learning_path) {
+    return {
+      ok: false,
+      reason: 'DIFF_LEARNING_PATH_MISSING',
+      question_type: null,
+      message: 'Une variante v3+ doit fournir une lecon et plusieurs exercices progressifs.',
+    };
+  }
   try {
-    dominantFormat(variant.questions);
+    const questionSets = Array.isArray(variant.learning_path?.steps)
+      ? variant.learning_path.steps.map((step) => step.questions)
+      : [variant.questions];
+    for (const questions of questionSets) dominantFormat(questions);
     return { ok: true };
   } catch (formatError) {
     if (formatError instanceof UnsupportedFrontendFormatError) {
@@ -285,6 +312,11 @@ export async function syncPublishBridge({
     baseDir,
   );
   const civic = await readSessionJsonSibling(sessionCode, 'exercices/qcm-civique.json', baseDir);
+  const deroule = await readSessionJsonSibling(
+    sessionCode,
+    'formateur/deroule-180min.json',
+    baseDir,
+  );
 
   if (!support || !Array.isArray(variants) || variants.length === 0) {
     return { bridged: false, reason: 'missing_variant_or_support' };
@@ -301,6 +333,11 @@ export async function syncPublishBridge({
   const exerciceRows = [];
   const variantRows = [];
   const families = [];
+  const durationCoverage = evaluateDifferentiatedDurationCoverage({
+    variants,
+    announcedMinutes: findDifferentiatedWorkshopMinutes(deroule),
+    rules: SESSION_BLOCK_RULES,
+  });
 
   const familyGroups = groupVariantsByFamily(variants, sessionCode);
 
@@ -361,6 +398,9 @@ export async function syncPublishBridge({
             message: identity.message,
           })),
       niveaux_manquants: niveauxManquants,
+      duration_warnings: durationCoverage.warnings.filter((warning) =>
+        warning.level == null || niveauxPresents.includes(warning.level)
+      ),
       published: false,
       requires_override: false,
     };
@@ -389,15 +429,18 @@ export async function syncPublishBridge({
       });
       variantRows.push(dbVariant.id);
 
-      const draft = buildVariantExerciceDraft({
+      const drafts = buildVariantExerciceDrafts({
         variant,
         sessionCode,
         trainingSessionId: sessionId,
         supportId: support.support_id,
         exerciseVariantId: dbVariant.id,
         sessionResourceId: variantResourceId,
+        durationObservation: durationCoverage.coverage_by_level[niveau] ?? null,
       });
-      exerciceRows.push(await upsertExercice(client, draft, { formateurId, pointId }));
+      for (const draft of drafts) {
+        exerciceRows.push(await upsertExercice(client, draft, { formateurId, pointId }));
+      }
       void niveau; // deja trace dans familyReport.niveaux_valides
     }
 
@@ -443,6 +486,7 @@ export async function syncPublishBridge({
     updated: exerciceRows.filter((r) => !r.created).length,
     blocked_variants: blockedVariants,
     families,
+    duration_coverage: durationCoverage,
     families_requiring_override: families.filter((f) => f.requires_override).map((f) => f.family_id),
   };
 }

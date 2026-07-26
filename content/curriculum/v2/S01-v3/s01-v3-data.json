@@ -461,7 +461,10 @@
       "point": "Structure « je m'appelle / je suis / j'habite »",
       "consigne": "Complétez le texte de présentation.",
       "items": [
-        "Bonjour, je (1)________ Thomas Martin. Je (2)________ boulanger. J'(3)________ à Lyon. J'ai 34 (4)________."
+        "Bonjour, je ________ Thomas Martin.",
+        "Je ________ boulanger.",
+        "J'________ à Lyon.",
+        "J'ai 34 ________."
       ],
       "reponses": [
         "m'appelle",
@@ -492,7 +495,8 @@
       "point": "Discours rapporté simple (identité)",
       "consigne": "Complétez au discours rapporté.",
       "items": [
-        "Awa a dit qu'elle ________ (s'appeler) Awa Diallo et qu'elle ________ (vouloir) sa carte de séjour."
+        "Awa a dit qu'elle ________ (s'appeler) Awa Diallo.",
+        "Elle a dit qu'elle ________ (vouloir) sa carte de séjour."
       ],
       "reponses": [
         "s'appelait",
@@ -505,7 +509,8 @@
       "point": "Nominalisation droits/devoirs",
       "consigne": "Reformulez avec une nominalisation.",
       "items": [
-        "Vous pouvez demander l'accès aux soins. → Vous avez ___ à ___."
+        "Vous pouvez demander l'accès aux soins. Vous avez ___ à l'accès aux soins.",
+        "Vous avez le droit à ___."
       ],
       "reponses": [
         "le droit",

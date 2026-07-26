@@ -127,12 +127,14 @@ function buildVariants(brief, supportHash) {
     if (!source) throw new Error(`Variante manquante pour le niveau ${niveau}.`);
     return variantSchema.parse({
       support_id: brief.support.support_id,
+      version: source.learning_path ? 3 : 1,
       niveau,
       consigne: source.consigne,
       aides: source.aides ?? [],
       questions: source.questions,
       corrige: source.corrige,
       invariants_hash: supportHash,
+      learning_path: source.learning_path,
     });
   });
 
