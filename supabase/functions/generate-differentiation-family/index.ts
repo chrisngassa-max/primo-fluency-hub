@@ -38,8 +38,8 @@ Deno.serve(async (request) => {
     const force = body.force_regenerate === true;
     if (!sourceId) return json(400, { error: "SOURCE_ID_REQUIRED" });
     const [{ data: trainer }, { data: adminRole }] = await Promise.all([
-      admin.rpc("has_role", { _user_id: user.id, _role: "formateur" }),
-      admin.rpc("has_role", { _user_id: user.id, _role: "admin" }),
+      admin.rpc("has_role", { uid: user.id, target_role: "formateur" }),
+      admin.rpc("has_role", { uid: user.id, target_role: "admin" }),
     ]);
     if (!trainer && !adminRole) return json(403, { error: "STAFF_ROLE_REQUIRED" });
     const { data: source, error: sourceError } = await admin.from("pedagogical_sources")

@@ -18,7 +18,7 @@ Deno.serve(async (request) => {
     if (!user) return json(401, { error: "AUTH_INVALID" });
     const body = await request.json().catch(() => ({}));
     if (typeof body.familyId !== "string") return json(400, { error: "FAMILY_ID_REQUIRED" });
-    const { data: isAdmin } = await admin.rpc("has_role", { _user_id: user.id, _role: "admin" });
+    const { data: isAdmin } = await admin.rpc("has_role", { uid: user.id, target_role: "admin" });
     const { data: family, error } = await admin.from("differentiation_families")
       .select("id, source_id, source_content_hash, created_by, generation_status, validation_status, review_status, published_exercise_id, payload")
       .eq("id", body.familyId).maybeSingle();

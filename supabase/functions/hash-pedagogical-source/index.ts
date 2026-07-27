@@ -36,8 +36,8 @@ Deno.serve(async (request) => {
     if (!sourceId) return json(400, { error: "SOURCE_ID_REQUIRED" });
 
     const [{ data: isTrainer }, { data: isAdmin }] = await Promise.all([
-      admin.rpc("has_role", { _user_id: user.id, _role: "formateur" }),
-      admin.rpc("has_role", { _user_id: user.id, _role: "admin" }),
+      admin.rpc("has_role", { uid: user.id, target_role: "formateur" }),
+      admin.rpc("has_role", { uid: user.id, target_role: "admin" }),
     ]);
     if (!isTrainer && !isAdmin) return json(403, { error: "STAFF_ROLE_REQUIRED" });
 
