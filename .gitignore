@@ -30,3 +30,8 @@ dist-ssr
 .env.production
 .vercel
 .env*
+
+# Local STT corpus and results (potentially personal data)
+scripts/stt-benchmark/local-corpus/
+scripts/stt-benchmark/local-results/
+scripts/stt-benchmark/benchmark-report.json

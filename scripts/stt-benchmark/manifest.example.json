@@ -1,0 +1,17 @@
+{
+  "corpus_id": "captcf-stt-corpus-v1",
+  "audio_path": "./local-corpus/dialogue-gare.mp3",
+  "reference_path": "./local-corpus/dialogue-gare.reference.json",
+  "candidate_paths": [
+    "./local-results/google-dialogue-gare.json",
+    "./local-results/openai-dialogue-gare.json",
+    "./local-results/gemini-dialogue-gare.json"
+  ],
+  "thresholds": {
+    "max_wer": 0.12,
+    "min_critical_token_recall": 1,
+    "min_timestamp_coverage": 0.9,
+    "require_speaker_labels": false,
+    "min_speaker_label_ratio": 0.8
+  }
+}

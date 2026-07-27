@@ -1,0 +1,10 @@
+{
+  "schema_version": "1.0", "provider": "fixture", "model": "good-v1", "audio_id": "fixture-dialogue-gare", "language": "fr",
+  "latency_ms": 850, "estimated_cost_usd": 0.001,
+  "text": "Bonjour, le train pour Lyon part a dix-sept heures vingt. Merci.",
+  "segments": [
+    { "id": "seg-001", "speaker": "speaker_1", "start_ms": 0, "end_ms": 950, "text": "Bonjour.", "confidence": 0.99 },
+    { "id": "seg-002", "speaker": "speaker_2", "start_ms": 980, "end_ms": 4250, "text": "Le train pour Lyon part a dix-sept heures vingt.", "confidence": 0.97 },
+    { "id": "seg-003", "speaker": "speaker_1", "start_ms": 4280, "end_ms": 5000, "text": "Merci.", "confidence": 0.99 }
+  ]
+}
