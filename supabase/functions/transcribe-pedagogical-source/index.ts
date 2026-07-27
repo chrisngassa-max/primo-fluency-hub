@@ -102,10 +102,10 @@ Deno.serve(async (request) => {
     if (validationErrors.length > 0) throw new Error(`TRANSCRIPTION_INVALID:${validationErrors.join(",")}`);
 
     const { error: segmentError } = await admin.from("pedagogical_source_transcription_segments").insert(
-      transcription.segments.map((segment) => ({
+      transcription.segments.map(({ text, ...segment }) => ({
         transcription_id: transcriptionId,
         ...segment,
-        raw_text: segment.text,
+        raw_text: text,
       })),
     );
     if (segmentError) throw segmentError;
