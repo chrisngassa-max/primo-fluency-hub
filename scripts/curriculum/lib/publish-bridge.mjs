@@ -149,7 +149,7 @@ function validateVariantFormat(variant) {
   }
 }
 
-async function resolveBridgeContext(client, env = process.env) {
+export async function resolveBridgeContext(client, env = process.env) {
   const formateurId = env.CURRICULUM_BRIDGE_FORMATEUR_ID;
   if (!formateurId) {
     const { data: roleRow } = await client
@@ -223,7 +223,12 @@ async function upsertExerciseVariant(client, { variant, supportUuid }) {
   return data;
 }
 
-async function upsertExercice(client, draft, { formateurId, pointId }) {
+/**
+ * Exportée pour réutilisation par d'autres adaptateurs du même pipeline
+ * (ex. scripts/curriculum/publish-s01-interactive.mjs) — ne pas dupliquer
+ * cette logique d'upsert par metadata_code ailleurs.
+ */
+export async function upsertExercice(client, draft, { formateurId, pointId }) {
   const { data: existing, error: readErr } = await client
     .from('exercices')
     .select('id, metadata_code')

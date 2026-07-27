@@ -16,9 +16,29 @@ export const LOT8_B2_CE_SLOTS = [
 ];
 
 export const FORBIDDEN_ISSUE_CODES = {
-  qcm: ["qcm_no_options", "qcm_answer_not_in_options", "missing_ce_text", "correction_not_in_text"],
-  vrai_faux: ["vf_invalid_answer", "missing_ce_text"],
-  texte_lacunaire: ["missing_ce_text"],
+  qcm: [
+    "qcm_no_options",
+    "qcm_answer_not_in_options",
+    "missing_ce_text",
+    "correction_not_in_text",
+    "COHERENCE_OPTIONS_REQUIRED",
+    "COHERENCE_OPTIONS_UNIQUE",
+    "COHERENCE_ANSWER_IN_OPTIONS",
+    "COHERENCE_CORRECTION_COMPLETE",
+  ],
+  vrai_faux: [
+    "vf_invalid_answer",
+    "missing_ce_text",
+    "COHERENCE_TRUE_FALSE_OPTIONS",
+    "COHERENCE_ANSWER_IN_OPTIONS",
+    "COHERENCE_CORRECTION_COMPLETE",
+  ],
+  texte_lacunaire: [
+    "missing_ce_text",
+    "COHERENCE_GAP_PRESENT",
+    "COHERENCE_GAP_CARDINALITY",
+    "COHERENCE_CORRECTION_COMPLETE",
+  ],
 };
 
 const THEME_LABELS = {
@@ -47,11 +67,36 @@ export function normalizeVraiFauxItem(item) {
   return normalized;
 }
 
+function buildStructuredCorrection(item) {
+  const options = Array.isArray(item?.options) ? item.options : [];
+  const bonneReponse = item?.bonne_reponse;
+  const explication = String(item?.explication ?? "").trim();
+  const explicationDistracteurs = options
+    .filter((option) => String(option).trim() !== String(bonneReponse).trim())
+    .map((option) => ({
+      option,
+      explication: `« ${option} » ne correspond pas aux informations du document.`,
+    }));
+
+  return {
+    bonne_reponse: bonneReponse,
+    preuve_support: explication || "La réponse est explicitement vérifiable dans le document.",
+    explication_distracteurs: explicationDistracteurs,
+    remediation: "Relisez dans le document le passage qui permet de répondre à cette question.",
+    ...(item?.correction ?? {}),
+  };
+}
+
 export function normalizeItems(format, items) {
   const list = Array.isArray(items) ? items : [];
   return list.map((item) => {
-    if (format === "vrai_faux") return normalizeVraiFauxItem(item);
-    return { ...item };
+    const normalized = format === "vrai_faux"
+      ? normalizeVraiFauxItem(item)
+      : { ...item };
+    return {
+      ...normalized,
+      correction: buildStructuredCorrection(normalized),
+    };
   });
 }
 

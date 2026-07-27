@@ -94,7 +94,7 @@
     },
     "levelContract": {
       "type": "object", "additionalProperties": false,
-      "required": ["target_level", "cognitive_operations", "guidance", "autonomy", "allowed_formats", "forbidden_formats", "scaffolds", "success_criteria", "duration_policy"],
+      "required": ["target_level", "cognitive_operations", "guidance", "autonomy", "allowed_formats", "forbidden_formats", "scaffolds", "success_criteria", "duration_policy", "response_types", "correction_requirements"],
       "properties": {
         "target_level": { "$ref": "#/definitions/level" },
         "cognitive_operations": { "type": "array", "minItems": 1, "items": { "type": "string" } },
@@ -104,6 +104,8 @@
         "forbidden_formats": { "type": "array", "items": { "type": "string" } },
         "scaffolds": { "type": "array", "items": { "type": "string" } },
         "success_criteria": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "response_types": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "correction_requirements": { "type": "array", "minItems": 1, "items": { "type": "string" } },
         "audio_policy": {
           "type": ["object", "null"], "additionalProperties": false,
           "properties": {

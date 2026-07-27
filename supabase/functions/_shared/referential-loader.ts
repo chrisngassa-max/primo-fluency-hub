@@ -14,6 +14,9 @@ import themeSessionTemplatesData from "./referential/theme_session_templates.jso
 import clusterVariantRulesData from "./referential/cluster_variant_rules.json" with { type: "json" };
 import exerciseScoringRulesData from "./referential/exercise_scoring_rules.json" with { type: "json" };
 import differentiationTransformationRulesData from "./referential/differentiation_transformation_rules_v1.json" with { type: "json" };
+import differentiationLevelContractsData from "./referential/differentiation_level_contracts_v1.json" with { type: "json" };
+import instructionQualityRulesData from "./referential/instruction_quality_rules_v1.json" with { type: "json" };
+import exerciseCoherenceRulesData from "./referential/exercise_coherence_rules_v1.json" with { type: "json" };
 
 export type NiveauBand = "A0_A1" | "A2_B1" | "B2";
 export type PilierId = "conjugaison" | "grammaire" | "phonetique" | "vocabulaire";
@@ -24,10 +27,43 @@ export type EtayageLevel = "fort" | "moyen" | "faible";
 
 export type DifferentiationLevel = "A1" | "A2" | "B1" | "B2";
 
+export const DIFFERENTIATION_LEVELS: readonly DifferentiationLevel[] = ["A1", "A2", "B1", "B2"];
+
+export class DifferentiationLevelError extends Error {
+  constructor(value: unknown) {
+    super(
+      `Niveau de différenciation invalide: ${JSON.stringify(value)}. Attendu: ${DIFFERENTIATION_LEVELS.join(", ")}.`,
+    );
+    this.name = "DifferentiationLevelError";
+  }
+}
+
 export interface DifferentiationTransformationRule {
   operation: string;
   allowed: string[];
   forbidden: string[];
+  rule_id?: string;
+  severity?: string;
+  expected_evidence?: string;
+  observable_changes?: string[];
+  forbidden_changes?: string[];
+}
+
+export type DifferentiationCompetence = "CE" | "CO" | "EE" | "EO" | "Structures";
+
+export interface DifferentiationLevelContract {
+  target_level: DifferentiationLevel;
+  cognitive_operations: string[];
+  guidance: EtayageLevel | "a_la_demande";
+  autonomy: string;
+  allowed_formats: string[];
+  forbidden_formats: string[];
+  scaffolds: string[];
+  success_criteria: string[];
+  duration_policy: { mode: string; target_seconds: number | null; calibration_id: string | null };
+  response_types: string[];
+  correction_requirements: string[];
+  audio_policy?: { max_listens: number | null; transcript: string; target_seconds: number | null } | null;
 }
 
 export interface DifferentiationContractValidation {
@@ -197,6 +233,15 @@ const differentiationTransformationRules = differentiationTransformationRulesDat
     warning: string[];
     informative: string[];
   };
+};
+
+const differentiationLevelContracts = differentiationLevelContractsData as {
+  schema_version: string;
+  status: string;
+  pivot_level: DifferentiationLevel;
+  levels: DifferentiationLevel[];
+  competences: DifferentiationCompetence[];
+  contracts: Record<DifferentiationCompetence, Record<DifferentiationLevel, DifferentiationLevelContract>>;
 };
 
 export function niveauToBand(niveauCecrl?: string | null): NiveauBand {
@@ -508,6 +553,22 @@ export function normalizeDifferentiationLevel(niveau?: string | null): Different
   return "A1";
 }
 
+// normalizeDifferentiationLevel() coerce silencieusement toute entrée
+// inconnue (ex. "ZZ") vers "A1" — comportement historique conservé
+// ci-dessus pour les consommateurs existants qui en dépendent
+// (getDifferentiationTransformationRule, getLevelContract, etc.).
+//
+// parseDifferentiationLevelStrict() est une API additive séparée : elle ne
+// remplace rien, elle rejette explicitement toute valeur qui n'est pas
+// exactement A1, A2, B1 ou B2 (après trim/uppercase) au lieu de deviner.
+export function parseDifferentiationLevelStrict(value: unknown): DifferentiationLevel {
+  const normalized = typeof value === "string" ? value.trim().toUpperCase() : "";
+  if ((DIFFERENTIATION_LEVELS as string[]).includes(normalized)) {
+    return normalized as DifferentiationLevel;
+  }
+  throw new DifferentiationLevelError(value);
+}
+
 export function getDifferentiationTransformationRule(
   sourceLevel: string,
   targetLevel: string,
@@ -585,6 +646,20 @@ export function getDifferentiationTransformationRules(): typeof differentiationT
   return differentiationTransformationRules;
 }
 
+export function getLevelContract(
+  competence: DifferentiationCompetence | string,
+  level: string,
+): DifferentiationLevelContract | null {
+  const normalizedLevel = normalizeDifferentiationLevel(level);
+  const competenceContracts = differentiationLevelContracts.contracts[competence as DifferentiationCompetence];
+  if (!competenceContracts) return null;
+  return competenceContracts[normalizedLevel] ?? null;
+}
+
+export function getDifferentiationLevelContracts(): typeof differentiationLevelContracts {
+  return differentiationLevelContracts;
+}
+
 export function assignClusterVariant(
   niveauCecrl: string,
   niveauVariante: ClusterVariantId,
@@ -593,6 +668,14 @@ export function assignClusterVariant(
   const direct = clusterVariantRules.clusters.find((c) => c.niveau_variante === niveauVariante);
   if (direct && direct.niveau_cecrl.some((n) => n.toUpperCase() === niveau)) return direct;
   return clusterVariantRules.clusters.find((c) => c.niveau_variante === niveauVariante) ?? null;
+}
+
+export function getInstructionQualityRules(): typeof instructionQualityRulesData {
+  return instructionQualityRulesData;
+}
+
+export function getExerciseCoherenceRules(): typeof exerciseCoherenceRulesData {
+  return exerciseCoherenceRulesData;
 }
 
 export function getExerciseScoringRules(): { scoring_rules: ScoringRule[]; hard_filters: HardFilter[] } {

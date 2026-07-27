@@ -1,0 +1,66 @@
+{
+  "schema_version": "1.0",
+  "authority": {
+    "primary_reference": "docs/pedagogie/Rapport_Reference_Differenciation_CapTCF_V2.md",
+    "derived_framework": "docs/pedagogie/Cadre_Qualite_Consignes_CapTCF_V1.md",
+    "status": "human_validation_required"
+  },
+  "learner_facing_fields": [
+    "consigne",
+    "question",
+    "justification_prompt",
+    "indice"
+  ],
+  "required_action_verbs": [
+    "associez", "choisissez", "classez", "cochez", "complétez", "conjuguez",
+    "décrivez", "dites", "écoutez", "écrivez", "enregistrez", "expliquez",
+    "identifiez", "indiquez", "justifiez", "lisez", "nommez", "observez", "parlez", "présentez", "rédigez", "réécrivez",
+    "répondez", "reformulez", "reliez", "transformez"
+  ],
+  "question_action_forms": [
+    "quel", "quelle", "quels", "quelles", "combien", "comment", "pourquoi", "où", "qui", "que"
+  ],
+  "forbidden_learner_jargon": [
+    {
+      "term": "distracteur",
+      "reason": "Terme technique de conception de QCM, non nécessaire pour accomplir la tâche.",
+      "suggested_rewrite": "une autre réponse qui pourrait sembler possible"
+    },
+    {
+      "term": "exemple d'emploi",
+      "reason": "Le mot emploi peut être compris comme travail et ne décrit pas directement l'action attendue.",
+      "suggested_rewrite": "phrase"
+    },
+    {
+      "term": "mot approprié",
+      "reason": "Formulation abstraite qui ne précise pas le critère de réussite.",
+      "suggested_rewrite": "mot qui complète correctement la phrase"
+    }
+  ],
+  "format_action_contracts": {
+    "qcm": ["choisissez", "cochez", "répondez"],
+    "vrai_faux": ["choisissez", "cochez", "indiquez"],
+    "appariement": ["associez", "reliez", "choisissez", "complétez"],
+    "texte_lacunaire": ["complétez", "choisissez", "écrivez"],
+    "transformation": ["transformez", "réécrivez", "conjuguez", "complétez"],
+    "production_ecrite": ["écrivez", "rédigez", "reformulez", "complétez", "répondez", "expliquez", "justifiez"],
+    "production_orale": ["dites", "présentez", "parlez", "enregistrez", "répondez", "expliquez", "justifiez"]
+  },
+  "max_instruction_characters": {
+    "A1": 180,
+    "A2": 220,
+    "B1": 280,
+    "B2": 340
+  },
+  "multi_step_markers": ["puis", "ensuite", "d'abord", "1.", "2.", "premièrement", "deuxièmement"],
+  "rules": [
+    { "rule_id": "INSTRUCTION_JARGON_UNEXPLAINED", "severity": "blocking" },
+    { "rule_id": "INSTRUCTION_ACTION_MISSING", "severity": "blocking" },
+    { "rule_id": "INSTRUCTION_OUTPUT_UNCLEAR", "severity": "blocking" },
+    { "rule_id": "INSTRUCTION_MULTISTEP_UNMARKED", "severity": "warning" },
+    { "rule_id": "INSTRUCTION_FORMAT_MISMATCH", "severity": "blocking" },
+    { "rule_id": "INSTRUCTION_ANSWER_LEAK", "severity": "blocking" },
+    { "rule_id": "INSTRUCTION_TOO_COMPLEX", "severity": "warning" },
+    { "rule_id": "INSTRUCTION_TITLE_MISMATCH", "severity": "warning" }
+  ]
+}

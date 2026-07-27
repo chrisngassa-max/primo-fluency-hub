@@ -813,6 +813,35 @@ const DevoirPassation = () => {
 
   const showResult = result || (existingResult ? { score: Number(existingResult.score), correction: (existingResult.correction_detaillee as any) || [] } : null);
 
+  // Moteur de libération des corrections (pilote S01, migration
+  // 20260713090000) : par défaut correction_policy='immediate' préserve le
+  // comportement historique (correction visible dès la soumission) pour
+  // tout devoir existant ou créé sans précision. Seul un devoir explicitement
+  // créé en 'manual_release' ou 'scheduled' passe par ce nouveau garde-fou —
+  // aucun devoir actuel n'est donc affecté tant qu'il n'est pas opté-in.
+  const correctionPolicy = (devoir as any)?.correction_policy ?? "immediate";
+  const correctionReleaseAt = (devoir as any)?.correction_release_at as string | null;
+  const releasedAt = (existingResult as any)?.correction_released_at as string | null;
+  const isCorrectionWithheld = showResult && !isDone && (
+    correctionPolicy === "manual_release" ? !releasedAt
+    : correctionPolicy === "scheduled" ? !(correctionReleaseAt && new Date(correctionReleaseAt) <= new Date())
+    : false
+  );
+
+  if (isCorrectionWithheld) {
+    return (
+      <div className="max-w-2xl mx-auto space-y-6 text-center py-12">
+        <p className="text-lg font-semibold">Devoir terminé — correction en attente</p>
+        <p className="text-muted-foreground">
+          Ta réponse est bien enregistrée. Ton formateur libérera la correction bientôt.
+        </p>
+        <Button variant="outline" onClick={() => navigate("/eleve/devoirs")}>
+          <ArrowLeft className="h-4 w-4 mr-2" />Retour aux devoirs
+        </Button>
+      </div>
+    );
+  }
+
   if (showResult || isDone) {
     const finalResult = showResult || { score: 0, correction: [] };
     const adaptiveOutcome = learningPath?.adaptive_policy

@@ -428,6 +428,11 @@ export function applyProfileSeverity(
       case "missing_audio_script":
         severity = "warning";
         break;
+      case "COHERENCE_CORRECTION_COMPLETE":
+      case "COHERENCE_OPEN_RUBRIC":
+      case "COHERENCE_JUSTIFICATION_CONTRACT":
+        severity = "warning";
+        break;
       default:
         break;
     }
