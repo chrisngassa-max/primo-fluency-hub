@@ -24,9 +24,7 @@ export function AttachCurriculumPathButton({ sessionId, sessionTitle, palierCibl
       const result = await attachCurriculumPathToSession({ sessionId, sessionCode, palierCible });
       await onAttached();
       toast.success(isAttached ? `Parcours ${result.code} mis à jour` : `Parcours ${result.code} rattaché`, {
-        description: result.linkedExercises > 0
-          ? `${result.linkedExercises} activité(s) ajoutée(s) sur ${result.totalExercises}.`
-          : `${result.totalExercises} activité(s) étaient déjà rattachées.`,
+        description: `${result.linkedExercises} activité(s) synchronisée(s) sur ${result.totalExercises}.`,
       });
     } catch (error) {
       toast.error(`Impossible de rattacher le parcours ${sessionCode}`, {
