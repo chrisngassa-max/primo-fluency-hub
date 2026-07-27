@@ -12,6 +12,8 @@ import { toast } from "sonner";
 import SmartText from "@/components/SmartText";
 import SmartTextHint from "@/components/SmartTextHint";
 import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
+import StudentOralRecorder from "@/components/eleve/StudentOralRecorder";
+import { getExerciseAudioSupport } from "@/lib/exerciseModalityGuard";
 
 interface Exercice {
   id: string;
@@ -194,9 +196,17 @@ const PlayExercise = () => {
     })();
   }, [user, exercice]);
 
-  const items: any[] = exercice?.contenu?.items ?? [];
+  const rawItems: any[] = exercice?.contenu?.items ?? [];
+  const isOralProduction = exercice?.competence === "EO" || exercice?.format === "production_orale";
+  const isWrittenProduction = exercice?.competence === "EE" || exercice?.format === "production_ecrite";
+  const items: any[] = rawItems.length > 0
+    ? rawItems
+    : (isOralProduction || isWrittenProduction)
+      ? [{ question: exercice?.consigne ?? "", bonne_reponse: "" }]
+      : [];
   const supportText = getSupportText(exercice?.contenu);
-  const audioUrl = getSupportAudio(exercice?.contenu);
+  const audioSupport = getExerciseAudioSupport(exercice?.contenu);
+  const audioUrl = getSupportAudio(exercice?.contenu) || audioSupport.url;
 
   const handleAnswer = (idx: number, value: string) => {
     setAnswers((prev) => ({ ...prev, [idx]: value }));
@@ -380,6 +390,10 @@ const PlayExercise = () => {
                 <p className="text-sm font-medium px-4 pt-3 pb-2">Support</p>
                 {audioUrl ? (
                   <AudioPlayer src={audioUrl} />
+                ) : audioSupport.script ? (
+                  <div className="px-4 pb-4">
+                    <TTSAudioPlayer text={audioSupport.script} label="Écouter le document" showSpeedControl />
+                  </div>
                 ) : (
                   <div className="px-4 pb-4">
                     <p className="text-sm leading-relaxed text-foreground whitespace-pre-wrap">
@@ -411,7 +425,9 @@ const PlayExercise = () => {
                 </div>
 
                 {/* Options */}
-                {Array.isArray(item.options) && item.options.length > 0 ? (
+                {isOralProduction ? (
+                  <StudentOralRecorder onRecorded={(blob) => handleAnswer(idx, blob ? "audio_enregistre" : "")} />
+                ) : Array.isArray(item.options) && item.options.length > 0 ? (
                   <div className="space-y-2">
                     {item.options.map((opt: string, oi: number) => (
                       <button
@@ -433,7 +449,7 @@ const PlayExercise = () => {
                     placeholder="Votre réponse…"
                     value={answers[idx] ?? ""}
                     onChange={(e) => handleAnswer(idx, e.target.value)}
-                    rows={3}
+                    rows={isWrittenProduction ? 8 : 3}
                   />
                 )}
               </div>

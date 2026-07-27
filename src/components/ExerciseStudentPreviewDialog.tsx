@@ -12,6 +12,8 @@ import { cn } from "@/lib/utils";
 import { emitLiveEvent } from "@/lib/liveEventEmitter";
 import { RandomClickDetector } from "@/lib/randomClickDetector";
 import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
+import StudentOralRecorder from "@/components/eleve/StudentOralRecorder";
+import { getExerciseReadingSupport, validateExerciseModality } from "@/lib/exerciseModalityGuard";
 
 export interface PreviewExercise {
   titre?: string;
@@ -88,12 +90,16 @@ export default function ExerciseStudentPreviewDialog({
 }: Props) {
   const [page, setPage] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [productionAnswer, setProductionAnswer] = useState("");
+  const [oralReady, setOralReady] = useState(false);
   const randomClickRef = useRef(new RandomClickDetector());
 
   useEffect(() => {
     if (open) {
       setPage(0);
       setAnswers({});
+      setProductionAnswer("");
+      setOralReady(false);
       randomClickRef.current.reset();
     }
   }, [open, exercise]);
@@ -104,7 +110,15 @@ export default function ExerciseStudentPreviewDialog({
     : [];
   const totalPages = items.length;
   const currentItem = items[page] as Record<string, unknown> | undefined;
-  const isTestComplete = totalPages === 0 || items.every((_, index) => Boolean(answers[String(index)]?.trim()));
+  const isOralProduction = exercise?.competence === "EO" || exercise?.format === "production_orale";
+  const isWrittenProduction = exercise?.competence === "EE" || exercise?.format === "production_ecrite";
+  const readingSupport = getExerciseReadingSupport(pc as Record<string, unknown>);
+  const modalityIssues = exercise ? validateExerciseModality(exercise) : [];
+  const isTestComplete = isOralProduction
+    ? oralReady
+    : isWrittenProduction
+      ? Boolean(productionAnswer.trim())
+      : totalPages > 0 && items.every((_, index) => Boolean(answers[String(index)]?.trim()));
 
   const handleAnswerChange = (value: string) => {
     setAnswers((current) => ({ ...current, [String(page)]: value }));
@@ -168,13 +182,13 @@ export default function ExerciseStudentPreviewDialog({
               ) : null;
             })()}
 
-            {exercise.competence === "CE" && (pc as { texte?: string }).texte && (
+            {exercise.competence === "CE" && readingSupport && (
               <Card className="border-primary/20 bg-primary/5">
                 <CardContent className="pb-4 pt-4">
                   <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-primary">
                     Document à lire
                   </p>
-                  <p className="whitespace-pre-wrap text-sm">{(pc as { texte: string }).texte}</p>
+                  <p className="whitespace-pre-wrap text-sm">{readingSupport}</p>
                 </CardContent>
               </Card>
             )}
@@ -185,7 +199,29 @@ export default function ExerciseStudentPreviewDialog({
               <Badge variant="secondary">Niveau {exercise.niveau_vise}</Badge>
             </div>
 
-            {totalPages > 0 ? (
+            {modalityIssues.length > 0 && (
+              <Card className="border-destructive/40 bg-destructive/5">
+                <CardContent className="pt-4 text-sm text-destructive">
+                  <p className="font-semibold">Exercice incomplet — publication refusée</p>
+                  <ul className="mt-2 list-disc space-y-1 pl-5">
+                    {modalityIssues.map((issue) => <li key={issue.code}>{issue.message}</li>)}
+                  </ul>
+                </CardContent>
+              </Card>
+            )}
+            {isWrittenProduction && (
+              <Card><CardContent className="space-y-2 pt-4">
+                <Label htmlFor="preview-written-answer">Votre réponse</Label>
+                <textarea id="preview-written-answer" rows={8} disabled={!interactive} value={productionAnswer}
+                  onChange={(event) => setProductionAnswer(event.target.value)}
+                  className="w-full resize-y rounded-md border bg-background p-3 text-sm"
+                  placeholder="Rédigez votre réponse ici…" />
+              </CardContent></Card>
+            )}
+            {isOralProduction && (
+              <StudentOralRecorder onRecorded={(blob) => setOralReady(Boolean(blob))} disabled={!interactive} />
+            )}
+            {!isOralProduction && !isWrittenProduction && totalPages > 0 ? (
               <>
                 <div className="flex items-center justify-between">
                   <Button variant="outline" size="sm" disabled={page === 0} onClick={() => setPage((p) => p - 1)} className="gap-1">
@@ -292,9 +328,9 @@ export default function ExerciseStudentPreviewDialog({
                   ))}
                 </div>
               </>
-            ) : (
+            ) : !isOralProduction && !isWrittenProduction ? (
               <p className="text-sm text-muted-foreground">Aucune question dans cet exercice.</p>
-            )}
+            ) : null}
 
             {interactive && onTestComplete && (
               <div className="flex justify-end border-t pt-4">

@@ -69,12 +69,15 @@ export function validateExercise(ex: ExerciseLike): ValidationResult {
 
   const contenu = ex.contenu || {};
   const items: any[] = Array.isArray(contenu.items) ? contenu.items : [];
+  const firstText = (...values: unknown[]) =>
+    values.find((value): value is string => typeof value === "string" && value.trim().length > 0)?.trim() || "";
 
   // ── Audio (CO) ──
   if (ex.competence === "CO") {
-    const script = contenu.script_audio || ex.script_audio;
-    if (!script || typeof script !== "string" || script.trim().length < 10) {
-      issues.push({ code: "missing_audio_script", severity: "error", field: "contenu.script_audio", message: "CO sans script_audio valide (TTS impossible)" });
+    const script = firstText(contenu.script_audio, contenu.audio_script, contenu.support_audio, ex.script_audio);
+    const audioUrl = firstText(contenu.audio_url, contenu.url_audio, contenu.audio_src);
+    if (!script && !audioUrl) {
+      issues.push({ code: "missing_audio_script", severity: "error", field: "contenu.script_audio", message: "CO sans script ni fichier audio : le bouton d'écoute ne peut pas fonctionner" });
     } else if (script.length > 600) {
       issues.push({ code: "audio_script_too_long", severity: "warning", message: "Script audio > 600 caractères (lecture > 60s)" });
     }
@@ -88,10 +91,18 @@ export function validateExercise(ex: ExerciseLike): ValidationResult {
 
   // ── CE : texte support obligatoire ──
   if (ex.competence === "CE") {
-    const texte = contenu.texte;
-    if (!texte || typeof texte !== "string" || texte.trim().length < 20) {
-      issues.push({ code: "missing_ce_text", severity: "error", field: "contenu.texte", message: "CE sans texte support valide" });
+    const texte = firstText(contenu.texte, contenu.texte_support, contenu.support_texte, contenu.document, contenu.support, contenu.enonce, contenu.contexte);
+    if (!texte) {
+      issues.push({ code: "missing_ce_text", severity: "error", field: "contenu.texte", message: "CE sans texte support visible" });
     }
+  }
+
+  if (ex.competence === "EE" && ex.format !== "production_ecrite") {
+    issues.push({ code: "missing_writing_control", severity: "error", field: "format", message: "EE doit utiliser production_ecrite pour afficher la zone de rédaction" });
+  }
+
+  if (ex.competence === "EO" && ex.format !== "production_orale") {
+    issues.push({ code: "missing_recording_control", severity: "error", field: "format", message: "EO doit utiliser production_orale pour afficher l'enregistreur" });
   }
 
   // ── Items (formats interactifs) ──

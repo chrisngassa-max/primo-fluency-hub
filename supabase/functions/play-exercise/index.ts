@@ -1,4 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { validateExercise } from '../_shared/exercise-validator.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -38,6 +39,15 @@ Deno.serve(async (req) => {
     if (!exercice || !exercice.is_live_ready) {
       return new Response(JSON.stringify({ error: 'Exercice introuvable ou non disponible' }), {
         status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const validation = validateExercise(exercice);
+    if (!validation.ok) {
+      return new Response(JSON.stringify({
+        error: "Exercice indisponible : contenu élève incomplet",
+        issues: validation.issues.filter((issue) => issue.severity === "error"),
+      }), {
+        status: 422, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
     // Strip the gating field from the response.
