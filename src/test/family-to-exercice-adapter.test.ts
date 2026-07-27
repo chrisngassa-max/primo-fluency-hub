@@ -21,7 +21,7 @@ describe("familyVariantToExerciceRow", () => {
           },
         },
       },
-    } as any, "trainer-1");
+    } as any, "trainer-1", "Bonjour, le train part à dix-sept heures.");
 
     expect(row).toMatchObject({
       formateur_id: "trainer-1",
@@ -32,6 +32,7 @@ describe("familyVariantToExerciceRow", () => {
       niveau_vise: "A2",
       contenu: {
         items: [{ id: "I1" }],
+        script_audio: "Bonjour, le train part à dix-sept heures.",
         metadata: {
           differentiation_family_id: "A2CO-TEST01",
           source_document_id: "source-1",

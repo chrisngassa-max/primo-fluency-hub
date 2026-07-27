@@ -3,6 +3,7 @@ import type { DifferentiationFamilySliceV1 } from "./differentiation/types.ts";
 export function familyVariantToExerciceRow(
   family: DifferentiationFamilySliceV1,
   formateurId: string,
+  audioScript: string,
 ) {
   const variant = family.variants.A2;
   return {
@@ -16,6 +17,7 @@ export function familyVariantToExerciceRow(
     is_ai_generated: true,
     contenu: {
       items: variant.exercise.items,
+      script_audio: audioScript,
       metadata: {
         differentiation_family_id: family.family_id,
         schema_version: family.schema_version,

@@ -29,10 +29,21 @@ Deno.serve(async (request) => {
     if (family.generation_status !== "generated" || !["passed", "passed_with_warnings"].includes(family.validation_status) || family.review_status !== "validated") {
       return json(422, { error: "FAMILY_NOT_APPROVED_FOR_PUBLICATION" });
     }
-    const { data: source } = await admin.from("pedagogical_sources").select("content_hash").eq("id", family.source_id).maybeSingle();
+    const { data: source } = await admin.from("pedagogical_sources").select("content_hash, status").eq("id", family.source_id).maybeSingle();
     if (!source || source.content_hash !== family.source_content_hash) return json(422, { error: "SOURCE_HASH_DIVERGED" });
+    if (source.status !== "analyzed") return json(422, { error: "SOURCE_ANALYSIS_STALE" });
+    const { data: transcription, error: transcriptionError } = await admin
+      .from("pedagogical_source_transcriptions")
+      .select("reviewed_text")
+      .eq("source_id", family.source_id)
+      .eq("is_current", true)
+      .eq("status", "reviewed")
+      .maybeSingle();
+    if (transcriptionError) throw transcriptionError;
+    const audioScript = transcription?.reviewed_text?.trim();
+    if (!audioScript) return json(422, { error: "REVIEWED_TRANSCRIPTION_REQUIRED" });
     const { data: exercise, error: insertError } = await admin.from("exercices")
-      .insert(familyVariantToExerciceRow(family.payload as DifferentiationFamilySliceV1, user.id)).select("id").single();
+      .insert(familyVariantToExerciceRow(family.payload as DifferentiationFamilySliceV1, user.id, audioScript)).select("id").single();
     if (insertError) throw insertError;
     const { data: publishedFamily, error: updateError } = await admin.from("differentiation_families").update({
       review_status: "published", published_exercise_id: exercise.id,

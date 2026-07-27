@@ -73,10 +73,10 @@ export function SourceDifferentiationFamilyActions({ source }: { source: Pedagog
     await refetch();
     await queryClient.invalidateQueries({ queryKey: ["differentiation-family", source.id] });
   };
-  const run = async () => {
+  const run = async (forceRegenerate = false) => {
     setBusy(true);
     try {
-      await generateDifferentiationFamily(source.id);
+      await generateDifferentiationFamily(source.id, forceRegenerate);
       await refresh();
       toast.success("Famille A2 générée.");
     } catch (error: any) {
@@ -132,6 +132,10 @@ export function SourceDifferentiationFamilyActions({ source }: { source: Pedagog
         ) : <div className="space-y-4">
           <Statuses family={family} />
           {family.generation_error?.message && <p className="text-sm text-destructive">{family.generation_error.message}</p>}
+          {family.review_status === "archived" && <div className="rounded border p-3 text-sm space-y-2">
+            <p>Cette famille a été invalidée après une nouvelle relecture de la transcription.</p>
+            <Button disabled={busy || !canGenerate} onClick={() => run(true)}>{busy && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Générer une nouvelle famille A2</Button>
+          </div>}
           <FamilyDetails family={family} />
           {family.published_exercise_id && <p className="text-sm text-muted-foreground">Exercice publié : {family.published_exercise_id}</p>}
           {feedbackEntries.length > 0 && <section className="space-y-2 rounded border p-3">

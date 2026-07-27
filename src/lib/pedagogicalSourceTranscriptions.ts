@@ -59,6 +59,7 @@ export async function saveTranscriptionReview(
   reviewedText: string,
   segments: Array<Pick<TranscriptionSegment, "id" | "reviewed_text">>,
   userId: string,
+  sourceId: string,
 ): Promise<void> {
   if (!reviewedText.trim() || segments.some((segment) => !segment.reviewed_text?.trim())) {
     throw new Error("Le texte complet et chaque segment doivent être renseignés.");
@@ -74,4 +75,23 @@ export async function saveTranscriptionReview(
     status: "reviewed",
   }).eq("id", transcriptionId);
   if (error) throw error;
+
+  const { error: chunksError } = await supabase
+    .from("pedagogical_source_chunks")
+    .delete()
+    .eq("source_id", sourceId);
+  if (chunksError) throw chunksError;
+
+  const { error: sourceError } = await supabase
+    .from("pedagogical_sources")
+    .update({ status: "imported" })
+    .eq("id", sourceId);
+  if (sourceError) throw sourceError;
+
+  const { error: familyError } = await supabase
+    .from("differentiation_families")
+    .update({ review_status: "archived" })
+    .eq("source_id", sourceId)
+    .neq("review_status", "published");
+  if (familyError) throw familyError;
 }
