@@ -24,6 +24,41 @@ export interface AttachedCurriculumPath {
   linkedExercises: number;
 }
 
+function getCurriculumExerciseLevel(row: CurriculumExerciceRow): string | null {
+  const metadata = row.contenu?.metadata ?? {};
+  const level = metadata.target_level ?? metadata.niveau ?? row.niveau_vise;
+  return typeof level === "string" ? level : null;
+}
+
+function getCurriculumReleaseVersion(row: CurriculumExerciceRow): number | null {
+  const match = String(row.metadata_code ?? "").match(/:v(\d+):/i);
+  if (!match) return null;
+  const version = Number(match[1]);
+  return Number.isFinite(version) ? version : null;
+}
+
+/**
+ * Une séance peut contenir plusieurs générations du même curriculum dans la
+ * banque. Dès qu'une version explicite existe (v2, v3...), seule la plus
+ * récente doit alimenter le pilote. Les variantes historiques sans version
+ * restent le repli pour les anciennes séances.
+ */
+export function selectLatestCurriculumRelease(
+  rows: CurriculumExerciceRow[],
+): CurriculumExerciceRow[] {
+  const versionedRows = rows
+    .map((row) => ({ row, version: getCurriculumReleaseVersion(row) }))
+    .filter((entry): entry is { row: CurriculumExerciceRow; version: number } =>
+      entry.version !== null,
+    );
+
+  if (versionedRows.length === 0) return rows;
+  const latestVersion = Math.max(...versionedRows.map((entry) => entry.version));
+  return versionedRows
+    .filter((entry) => entry.version === latestVersion)
+    .map((entry) => entry.row);
+}
+
 
 export function selectNiveauxForPalier(palierCible: string, includeHeterogeneous = true): string[] {
   const primary = NIVEAUX.includes(palierCible as (typeof NIVEAUX)[number]) ? palierCible : "A2";
@@ -41,8 +76,8 @@ export function orderExercicesForPilot(
   return [...exercices].sort((a, b) => {
     const aMeta = a.contenu?.metadata ?? {};
     const bMeta = b.contenu?.metadata ?? {};
-    const aVariant = aMeta.niveau ? 0 : 1;
-    const bVariant = bMeta.niveau ? 0 : 1;
+    const aVariant = aMeta.target_level || aMeta.niveau ? 0 : 1;
+    const bVariant = bMeta.target_level || bMeta.niveau ? 0 : 1;
     if (aVariant !== bVariant) return aVariant - bVariant;
 
     const aPri = a.niveau_vise === primary ? 0 : 1;
@@ -92,13 +127,14 @@ export function pickCurriculumExercicesForPilot(
   includeHeterogeneous = true,
 ): CurriculumExerciceRow[] {
   const allowedNiveaux = new Set(selectNiveauxForPalier(palierCible ?? "A2", includeHeterogeneous));
+  const releaseRows = selectLatestCurriculumRelease(rows);
 
-  const variants = rows.filter((row) => {
-    const niveau = row.contenu?.metadata?.niveau as string | undefined;
+  const variants = releaseRows.filter((row) => {
+    const niveau = getCurriculumExerciseLevel(row);
     return niveau && allowedNiveaux.has(niveau);
   });
 
-  const civic = rows.filter((row) => String(row.metadata_code ?? "").includes(":civic:"));
+  const civic = releaseRows.filter((row) => String(row.metadata_code ?? "").includes(":civic:"));
   return orderExercicesForPilot([...variants, ...civic], palierCible ?? "A2");
 }
 
@@ -139,6 +175,24 @@ export async function linkCurriculumExercicesToSession(
   return links.length;
 }
 
+/**
+ * Remplace atomiquement les liens collectifs issus du curriculum.
+ * Les exercices manuels/IA et les affectations individuelles sont conservés.
+ */
+export async function syncCurriculumExercicesToSession(
+  sessionId: string,
+  exerciceIds: string[],
+): Promise<number> {
+  if (exerciceIds.length === 0) return 0;
+
+  const { data, error } = await supabase.rpc("sync_curriculum_session_exercises", {
+    p_session_id: sessionId,
+    p_exercise_ids: exerciceIds,
+  });
+  if (error) throw error;
+  return Number(data ?? 0);
+}
+
 export async function attachCurriculumPathToSession(params: {
   sessionId: string;
   sessionCode: string;
@@ -168,7 +222,7 @@ export async function attachCurriculumPathToSession(params: {
     throw new Error(`Aucune activité publiée n'est disponible pour ${trainingSession.code}.`);
   }
 
-  const linkedExercises = await linkCurriculumExercicesToSession(
+  const linkedExercises = await syncCurriculumExercicesToSession(
     params.sessionId,
     selected.map((exercise) => exercise.id),
   );
