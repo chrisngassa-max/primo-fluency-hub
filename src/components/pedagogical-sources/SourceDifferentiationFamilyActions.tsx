@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   addDifferentiationFamilyFeedback,
+  fetchDifferentiationFamilyFeedback,
   fetchLatestDifferentiationFamily,
   generateDifferentiationFamily,
   publishDifferentiationFamily,
@@ -61,6 +62,11 @@ export function SourceDifferentiationFamilyActions({ source }: { source: Pedagog
     queryFn: () => fetchLatestDifferentiationFamily(source.id),
     enabled: open && source.source_kind === "audio",
   });
+  const { data: feedbackEntries = [] } = useQuery({
+    queryKey: ["differentiation-family-feedback", family?.id],
+    queryFn: () => fetchDifferentiationFamilyFeedback(family!.id),
+    enabled: open && Boolean(family?.id),
+  });
   if (source.source_kind !== "audio") return null;
 
   const refresh = async () => {
@@ -94,6 +100,7 @@ export function SourceDifferentiationFamilyActions({ source }: { source: Pedagog
     try {
       await addDifferentiationFamilyFeedback(family.id, user.id, feedback);
       setFeedback("");
+      await queryClient.invalidateQueries({ queryKey: ["differentiation-family-feedback", family.id] });
       toast.success("Feedback enregistré.");
     } catch (error: any) {
       toast.error("Feedback impossible", { description: error.message });
@@ -112,6 +119,7 @@ export function SourceDifferentiationFamilyActions({ source }: { source: Pedagog
   };
 
   const canValidate = family && ["passed", "passed_with_warnings"].includes(family.validation_status);
+  const canGenerate = source.status === "analyzed";
   return <>
     <Button size="sm" variant="outline" className="w-full gap-1.5" onClick={() => setOpen(true)}>
       <ClipboardCheck className="h-4 w-4" /> Famille A2
@@ -120,11 +128,18 @@ export function SourceDifferentiationFamilyActions({ source }: { source: Pedagog
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader><DialogTitle>Revue de la famille A2</DialogTitle><DialogDescription>{source.title}</DialogDescription></DialogHeader>
         {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : !family ? (
-          <div className="space-y-3"><p className="text-sm text-muted-foreground">La transcription doit être relue et l’audio analysé avant la génération.</p><Button disabled={busy} onClick={run}>{busy && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Générer la famille A2</Button></div>
+          <div className="space-y-3"><p className="text-sm text-muted-foreground">La transcription doit être relue et l’audio analysé avant la génération.</p><Button disabled={busy || !canGenerate} onClick={run}>{busy && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Générer la famille A2</Button>{!canGenerate && <p className="text-xs text-muted-foreground">Analysez d’abord l’audio pour créer les chunks sourcés.</p>}</div>
         ) : <div className="space-y-4">
           <Statuses family={family} />
           {family.generation_error?.message && <p className="text-sm text-destructive">{family.generation_error.message}</p>}
           <FamilyDetails family={family} />
+          {family.published_exercise_id && <p className="text-sm text-muted-foreground">Exercice publié : {family.published_exercise_id}</p>}
+          {feedbackEntries.length > 0 && <section className="space-y-2 rounded border p-3">
+            <p className="font-medium text-sm">Feedback de revue</p>
+            {feedbackEntries.map((entry) => <div key={entry.id} className="text-sm">
+              <span className="font-medium">{entry.issue_type}</span> — {entry.comment}
+            </div>)}
+          </section>}
           <Textarea aria-label="Feedback sur la famille" placeholder="Commentaire de revue (au moins 3 caractères)" value={feedback} onChange={(event) => setFeedback(event.target.value)} />
           <div className="flex flex-wrap gap-2">
             <Button variant="outline" disabled={busy || feedback.trim().length < 3} onClick={submitFeedback}><Send className="mr-2 h-4 w-4" />Ajouter un feedback</Button>

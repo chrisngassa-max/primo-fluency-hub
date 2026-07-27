@@ -19,6 +19,16 @@ export type DifferentiationFamily = {
   generation_error: { message?: string } | null;
 };
 
+export type DifferentiationFamilyFeedback = {
+  id: string;
+  target_type: string;
+  target_id: string | null;
+  issue_type: string;
+  comment: string;
+  created_by: string | null;
+  created_at: string;
+};
+
 export async function fetchLatestDifferentiationFamily(sourceId: string): Promise<DifferentiationFamily | null> {
   const { data, error } = await supabase
     .from("differentiation_families")
@@ -29,6 +39,16 @@ export async function fetchLatestDifferentiationFamily(sourceId: string): Promis
     .maybeSingle();
   if (error) throw error;
   return data as DifferentiationFamily | null;
+}
+
+export async function fetchDifferentiationFamilyFeedback(familyId: string): Promise<DifferentiationFamilyFeedback[]> {
+  const { data, error } = await supabase
+    .from("differentiation_family_feedback")
+    .select("id, target_type, target_id, issue_type, comment, created_by, created_at")
+    .eq("family_id", familyId)
+    .order("created_at", { ascending: true });
+  if (error) throw error;
+  return (data ?? []) as DifferentiationFamilyFeedback[];
 }
 
 export async function generateDifferentiationFamily(sourceId: string, forceRegenerate = false) {

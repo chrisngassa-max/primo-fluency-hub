@@ -67,3 +67,11 @@ project_id = "gudcenhmzlcvhgbgklzw"
     verify_jwt = true
   [functions.resolve-eleve-login]
     verify_jwt = false
+  [functions.transcribe-pedagogical-source]
+    verify_jwt = true
+  [functions.analyze-pedagogical-source]
+    verify_jwt = true
+  [functions.generate-differentiation-family]
+    verify_jwt = true
+  [functions.publish-differentiation-family]
+    verify_jwt = true
