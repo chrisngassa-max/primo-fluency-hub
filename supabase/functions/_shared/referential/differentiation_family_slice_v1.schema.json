@@ -1,0 +1,333 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://captcf.fr/schemas/differentiation-family-slice-v1.schema.json",
+  "title": "CapTCF Differentiation Family Slice Contract V1",
+  "description": "Contrat de construction partielle A2. Il ne remplace pas differentiation_family_v1.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "family_id",
+    "version",
+    "status",
+    "competence",
+    "subcompetence",
+    "objective",
+    "core_task",
+    "source_level",
+    "source_document",
+    "generated_levels",
+    "facts",
+    "level_contracts",
+    "variants",
+    "validation_report"
+  ],
+  "properties": {
+    "schema_version": { "const": "slice-1.0" },
+    "family_id": { "type": "string", "pattern": "^[A-Z0-9][A-Z0-9_-]{5,79}$" },
+    "version": { "type": "integer", "minimum": 1 },
+    "status": { "enum": ["draft", "review", "validated", "published", "archived"] },
+    "competence": { "const": "CO" },
+    "subcompetence": { "type": "string", "minLength": 2, "maxLength": 120 },
+    "objective": { "type": "string", "minLength": 5, "maxLength": 500 },
+    "core_task": { "type": "string", "minLength": 5, "maxLength": 500 },
+    "source_level": { "const": "A2" },
+    "generated_levels": { "const": ["A2"] },
+    "source_document": { "$ref": "#/definitions/sourceDocument" },
+    "facts": { "$ref": "#/definitions/facts" },
+    "level_contracts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["A2"],
+      "properties": { "A2": { "$ref": "#/definitions/levelContract" } }
+    },
+    "variants": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["A2"],
+      "properties": { "A2": { "$ref": "#/definitions/variant" } }
+    },
+    "generation": { "$ref": "#/definitions/generation" },
+    "validation_report": { "$ref": "#/definitions/validationReport" }
+  },
+  "definitions": {
+    "sourceDocument": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_document_id", "uri", "content_hash", "immutable", "provenance"],
+      "properties": {
+        "source_document_id": { "type": "string", "minLength": 3 },
+        "uri": { "type": "string", "minLength": 3 },
+        "content_hash": { "type": "string", "pattern": "^sha256:[a-fA-F0-9]{64}$" },
+        "immutable": { "const": true },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "version"],
+          "properties": {
+            "type": { "enum": ["official", "curriculum", "licensed", "authored"] },
+            "version": { "type": ["string", "integer"] },
+            "source_url": { "type": "string" },
+            "verified_at": { "type": ["string", "null"], "format": "date-time" }
+          }
+        }
+      }
+    },
+    "fact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fact_id",
+        "subject",
+        "predicate",
+        "object",
+        "semantic_qualifiers",
+        "provenance",
+        "required_for_task"
+      ],
+      "properties": {
+        "fact_id": { "type": "string", "pattern": "^fact_[A-Za-z0-9_-]+$" },
+        "subject": { "type": "string", "minLength": 1 },
+        "predicate": { "type": "string", "minLength": 1 },
+        "object": {},
+        "semantic_qualifiers": { "type": "object", "additionalProperties": true },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["source_id", "transcription_id", "segment_refs", "chunk_refs", "quote"],
+          "properties": {
+            "source_id": { "type": "string", "minLength": 1 },
+            "transcription_id": { "type": "string", "minLength": 1 },
+            "segment_refs": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": { "type": "string", "minLength": 1 }
+            },
+            "chunk_refs": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": { "type": "string", "minLength": 1 }
+            },
+            "quote": { "type": "string", "minLength": 1 },
+            "confidence": { "type": ["number", "null"], "minimum": 0, "maximum": 1 }
+          }
+        },
+        "required_for_task": { "type": "boolean" }
+      }
+    },
+    "facts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "facts_hash"],
+      "properties": {
+        "required": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/definitions/fact" }
+        },
+        "facts_hash": { "type": "string", "pattern": "^sha256:[a-fA-F0-9]{64}$" }
+      }
+    },
+    "levelContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target_level",
+        "cognitive_operations",
+        "guidance",
+        "autonomy",
+        "implicit_allowed",
+        "allowed_formats",
+        "forbidden_formats",
+        "allowed_distractor_categories",
+        "volume_items_min",
+        "volume_items_max",
+        "audio_policy",
+        "success_threshold_pct",
+        "generation_constraints"
+      ],
+      "properties": {
+        "target_level": { "const": "A2" },
+        "cognitive_operations": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 2 }
+        },
+        "guidance": { "const": "moyen" },
+        "autonomy": { "const": "moyenne" },
+        "implicit_allowed": { "const": false },
+        "allowed_formats": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": ["qcm", "vrai_faux", "appariement"] }
+        },
+        "forbidden_formats": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string" }
+        },
+        "allowed_distractor_categories": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string" }
+        },
+        "volume_items_min": { "type": "integer", "minimum": 1 },
+        "volume_items_max": { "type": "integer", "minimum": 1 },
+        "audio_policy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["max_listens", "transcript", "target_seconds"],
+          "properties": {
+            "max_listens": { "type": "integer", "minimum": 1 },
+            "transcript": { "enum": ["none", "available", "unlockable", "always"] },
+            "target_seconds": { "type": ["integer", "null"], "minimum": 1 }
+          }
+        },
+        "success_threshold_pct": { "type": "number", "minimum": 0, "maximum": 100 },
+        "generation_constraints": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 5 }
+        }
+      }
+    },
+    "choice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "text", "is_correct"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "text": { "type": "string", "minLength": 1 },
+        "is_correct": { "type": "boolean" },
+        "distractor_category": { "type": "string", "minLength": 1 }
+      }
+    },
+    "exerciseItem": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["id", "type", "instruction", "fact_refs", "justification"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^item_[A-Za-z0-9_-]+$" },
+        "type": { "enum": ["qcm", "vrai_faux", "appariement"] },
+        "instruction": { "type": "string", "minLength": 2 },
+        "choices": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "$ref": "#/definitions/choice" }
+        },
+        "fact_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^fact_[A-Za-z0-9_-]+$" }
+        },
+        "justification": { "type": "string", "minLength": 2 },
+        "review_flags": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "exercise": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["title", "instruction", "format", "steps", "items", "expected_output"],
+      "properties": {
+        "title": { "type": "string", "minLength": 2 },
+        "instruction": { "type": "string", "minLength": 2 },
+        "format": { "enum": ["qcm", "vrai_faux", "appariement", "mixed"] },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/definitions/exerciseItem" }
+        },
+        "expected_output": { "type": "string", "minLength": 2 },
+        "feedback": { "type": ["object", "null"] }
+      }
+    },
+    "variant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target_level",
+        "competence",
+        "transformation_id",
+        "support_mode",
+        "support_ref",
+        "applied_transformations",
+        "exercise",
+        "scaffolding",
+        "success_criteria"
+      ],
+      "properties": {
+        "target_level": { "const": "A2" },
+        "competence": { "const": "CO" },
+        "transformation_id": { "const": "IDENTITY" },
+        "support_mode": { "enum": ["source", "annotated", "segmented", "excerpted", "didacticized"] },
+        "support_ref": { "type": "string", "minLength": 2 },
+        "applied_transformations": { "type": "array" },
+        "exercise": { "$ref": "#/definitions/exercise" },
+        "scaffolding": { "type": "object" },
+        "success_criteria": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 2 }
+        }
+      }
+    },
+    "generation": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "model_id": { "type": ["string", "null"] },
+        "prompt_version": { "type": ["string", "null"] },
+        "generated_at": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "validationIssue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "path", "message"],
+      "properties": {
+        "code": { "type": "string", "minLength": 3 },
+        "path": { "type": "string" },
+        "message": { "type": "string", "minLength": 3 }
+      }
+    },
+    "validationReport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "blocking", "warnings", "requires_human_review"],
+      "properties": {
+        "status": { "enum": ["pass", "warning", "fail", "not_run"] },
+        "blocking": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/validationIssue" }
+        },
+        "warnings": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/validationIssue" }
+        },
+        "requires_human_review": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "distractor_ambiguity",
+              "instruction_cefr_fit",
+              "overall_difficulty",
+              "pedagogical_relevance",
+              "justification_quality",
+              "fact_selection"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

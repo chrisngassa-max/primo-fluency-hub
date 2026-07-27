@@ -1,0 +1,53 @@
+{
+  "version": "1.0",
+  "status": "draft_pending_pedagogical_approval",
+  "competence": "CO",
+  "source_references": [
+    "pedagogical_rules.json",
+    "Rapport_Reference_Differenciation_CapTCF_V2.md"
+  ],
+  "levels": {
+    "A2": {
+      "target_level": "A2",
+      "cognitive_operations": [
+        "identifier_information_explicite",
+        "comprendre_globalement",
+        "restituer_information_essentielle"
+      ],
+      "guidance": "moyen",
+      "autonomy": "moyenne",
+      "implicit_allowed": false,
+      "allowed_formats": ["qcm", "vrai_faux", "appariement"],
+      "forbidden_formats": ["production_libre", "inference_complexe", "synthese"],
+      "allowed_distractor_categories": [
+        "information_entendue_mais_non_reponse",
+        "confusion_temporelle",
+        "confusion_de_personne",
+        "confusion_de_lieu"
+      ],
+      "volume_items_min": 4,
+      "volume_items_max": 6,
+      "audio_policy": {
+        "max_listens": 2,
+        "transcript": "unlockable",
+        "target_seconds": null
+      },
+      "success_threshold_pct": 65,
+      "generation_constraints": [
+        "Chaque question porte sur une information explicite.",
+        "Chaque réponse correcte référence au moins un fait vérifiable.",
+        "Aucune connaissance extérieure au support n'est requise.",
+        "La consigne reste compréhensible par un apprenant A2.",
+        "Un QCM possède exactement une bonne réponse."
+      ],
+      "human_review_dimensions": [
+        "distractor_ambiguity",
+        "instruction_cefr_fit",
+        "overall_difficulty",
+        "pedagogical_relevance",
+        "justification_quality",
+        "fact_selection"
+      ]
+    }
+  }
+}
