@@ -194,7 +194,7 @@ CREATE POLICY "staff_insert_own_differentiation_family_feedback"
     AND EXISTS (
       SELECT 1
       FROM public.differentiation_families AS family
-      WHERE family.id = family_id
+      WHERE family.id = public.differentiation_family_feedback.family_id
         AND (
           family.created_by = auth.uid()
           OR public.has_role(auth.uid(), 'admin'::public.app_role)
