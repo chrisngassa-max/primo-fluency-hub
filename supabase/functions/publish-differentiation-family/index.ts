@@ -34,10 +34,16 @@ Deno.serve(async (request) => {
     const { data: exercise, error: insertError } = await admin.from("exercices")
       .insert(familyVariantToExerciceRow(family.payload as DifferentiationFamilySliceV1, user.id)).select("id").single();
     if (insertError) throw insertError;
-    const { error: updateError } = await admin.from("differentiation_families").update({
+    const { data: publishedFamily, error: updateError } = await admin.from("differentiation_families").update({
       review_status: "published", published_exercise_id: exercise.id,
-    }).eq("id", family.id).is("published_exercise_id", null);
+    }).eq("id", family.id).is("published_exercise_id", null).select("published_exercise_id").maybeSingle();
     if (updateError) throw updateError;
+    if (!publishedFamily) {
+      await admin.from("exercices").delete().eq("id", exercise.id);
+      const { data: alreadyPublished } = await admin.from("differentiation_families")
+        .select("published_exercise_id").eq("id", family.id).maybeSingle();
+      return json(409, { error: "FAMILY_ALREADY_PUBLISHED", exercise_id: alreadyPublished?.published_exercise_id });
+    }
     return json(200, { ok: true, exercise_id: exercise.id });
   } catch (error) {
     console.error("publish-differentiation-family error", error);
