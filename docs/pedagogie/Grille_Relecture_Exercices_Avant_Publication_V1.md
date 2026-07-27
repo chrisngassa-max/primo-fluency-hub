@@ -1,7 +1,7 @@
 # Grille de relecture des exercices avant publication — CapTCF V1
 
-Statut : **candidat opérationnel — validation pédagogique humaine requise**  
-Contrat machine : `supabase/functions/_shared/referential/exercise_coherence_rules_v1.json`  
+Statut : **candidat opérationnel — validation pédagogique humaine requise**
+Contrat machine : `supabase/functions/_shared/referential/exercise_coherence_rules_v1.json`
 Validateur : `scripts/curriculum/lib/exercise-coherence-validator.mjs`
 
 ## 1. Pourquoi cette grille

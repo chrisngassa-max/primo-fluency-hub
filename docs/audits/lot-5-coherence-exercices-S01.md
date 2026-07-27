@@ -1,7 +1,7 @@
 # Audit S01 ? Coh?rence des exercices avant publication
 
-Date : 2026-07-16  
-Statut : **audit automatique ? validation humaine requise**  
+Date : 2026-07-16
+Statut : **audit automatique ? validation humaine requise**
 Grille : `docs/pedagogie/Grille_Relecture_Exercices_Avant_Publication_V1.md`
 
 ## R?sum?

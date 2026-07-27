@@ -1,7 +1,7 @@
 # Cadre de qualité des consignes — CapTCF V1
 
-Statut : **proposition opérationnelle à valider humainement**  
-Référence principale : `Rapport_Reference_Differenciation_CapTCF_V2.md`  
+Statut : **proposition opérationnelle à valider humainement**
+Référence principale : `Rapport_Reference_Differenciation_CapTCF_V2.md`
 Contrat machine : `supabase/functions/_shared/referential/instruction_quality_rules_v1.json`
 
 ## 1. Objet

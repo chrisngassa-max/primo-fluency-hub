@@ -1,7 +1,7 @@
 # S01 ? Consignes r??crites ? valider
 
-Statut : **proposition Codex ? validation p?dagogique humaine en attente**  
-R?f?rentiel : `Cadre_Qualite_Consignes_CapTCF_V1.md`  
+Statut : **proposition Codex ? validation p?dagogique humaine en attente**
+R?f?rentiel : `Cadre_Qualite_Consignes_CapTCF_V1.md`
 Corpus : **59 exercices / 303 items**
 
 ## Invariants contr?l?s
@@ -36,7 +36,7 @@ Pour valider, remplacer `?` par `?` sur chaque ligne accept?e et noter les refor
 
 Commentaires du validateur :
 
-> 
+>
 
 ## Niveau A2
 
@@ -61,7 +61,7 @@ Commentaires du validateur :
 
 Commentaires du validateur :
 
-> 
+>
 
 ## Niveau B1
 
@@ -85,7 +85,7 @@ Commentaires du validateur :
 
 Commentaires du validateur :
 
-> 
+>
 
 ## Niveau B2
 
@@ -107,13 +107,13 @@ Commentaires du validateur :
 
 Commentaires du validateur :
 
-> 
+>
 
 ## D?cision finale
 
 - ? Toutes les consignes sont valid?es.
 - ? Certaines consignes doivent ?tre corrig?es.
 
-Validateur : ____________________  
-Date : ____________________  
+Validateur : ____________________
+Date : ____________________
 Version approuv?e : ____________________
