@@ -35,3 +35,6 @@ dist-ssr
 scripts/stt-benchmark/local-corpus/
 scripts/stt-benchmark/local-results/
 scripts/stt-benchmark/benchmark-report.json
+
+# Ephemeral local acceptance-test fixtures
+tmp/
