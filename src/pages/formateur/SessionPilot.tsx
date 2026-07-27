@@ -1643,13 +1643,13 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
   ] : [];
 
   return (
-    <div className="space-y-6 max-w-3xl mx-auto">
+    <div className="mx-auto max-w-7xl space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-3 print:hidden">
+      <div className="flex flex-col gap-4 print:hidden xl:flex-row xl:items-start">
         <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <div className="flex-1">
+        <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <h1 className="text-2xl font-bold">Pilote de séance</h1>
             {(session as any)?.training_session_id && (
@@ -1663,7 +1663,7 @@ ${Array.isArray(fiche.lexique_cles) && fiche.lexique_cles.length > 0 ? `
             )}
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex w-full flex-wrap gap-2 xl:w-auto xl:justify-end">
           {session && session.statut !== "terminee" && (
             <AttachCurriculumPathButton
               sessionId={id!}
