@@ -39,6 +39,7 @@ export interface PedagogicalSource {
   review_status: PedagogicalReviewStatus;
   storage_bucket: string;
   storage_path: string;
+  content_hash: string | null;
   file_size: number | null;
   mime_type: string | null;
   source_origin: string | null;
@@ -171,6 +172,7 @@ const SOURCE_COLUMNS = [
   "review_status",
   "storage_bucket",
   "storage_path",
+  "content_hash",
   "file_size",
   "mime_type",
   "source_origin",
@@ -229,6 +231,28 @@ export async function uploadPedagogicalSourceFile(file: File, userId: string): P
   return storagePath;
 }
 
+export interface PedagogicalSourceHashResult {
+  ok: true;
+  source_id: string;
+  content_hash: string;
+  file_size?: number;
+  cached: boolean;
+}
+
+export async function ensurePedagogicalSourceContentHash(
+  sourceId: string,
+  force = false,
+): Promise<PedagogicalSourceHashResult> {
+  const { data, error } = await supabase.functions.invoke("hash-pedagogical-source", {
+    body: { sourceId, force },
+  });
+  if (error) throw error;
+  if (!data?.ok || typeof data.content_hash !== "string") {
+    throw new Error(data?.error || "Unable to calculate the source integrity hash.");
+  }
+  return data as PedagogicalSourceHashResult;
+}
+
 export async function createPedagogicalSource(input: CreatePedagogicalSourceInput): Promise<PedagogicalSource> {
   const storagePath = await uploadPedagogicalSourceFile(input.file, input.userId);
   const { data, error } = await supabase
@@ -260,7 +284,9 @@ export async function createPedagogicalSource(input: CreatePedagogicalSourceInpu
     .select(SOURCE_COLUMNS)
     .single();
   if (error) throw error;
-  return data as PedagogicalSource;
+  const source = data as PedagogicalSource;
+  const integrity = await ensurePedagogicalSourceContentHash(source.id);
+  return { ...source, content_hash: integrity.content_hash };
 }
 
 export async function fetchPedagogicalSources(filters: PedagogicalSourceFilters = {}): Promise<PedagogicalSource[]> {
