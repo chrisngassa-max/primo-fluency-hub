@@ -1,4 +1,7 @@
 // @ts-nocheck
+import { extractHintUsed, isStructuredAnswer } from "./justification-guard.ts";
+import { computeOverallStatus, evaluateJustification, isScoreProvisional } from "./justification-evaluator.ts";
+
 /**
  * Logique de correction d'exercice côté SERVEUR (Edge Function).
  * Réplique fidèle de src/lib/correctionExercice.ts mais sans dépendances client.
@@ -23,6 +26,44 @@ export interface ServerCorrectionItem {
   ia_score_raw?: number;
   criteres_oraux?: Record<string, { score: number; commentaire: string }>;
   ai_failed?: boolean;
+  /**
+   * Justification écrite par l'apprenant quand l'item porte
+   * `justification_prompt` (Lot 2, B1/B2). Jamais utilisée pour le calcul de
+   * `correct` (qui reste sur la seule `reponse_eleve`) — seulement conservée
+   * pour la revue/correction ultérieure (formateur ou IA), conformément à la
+   * doctrine "correction différée/qualitative" à ces niveaux.
+   */
+  learner_justification?: string;
+  /**
+   * Lot 2.1, point 2 : l'apprenant a révélé l'indice (bouton "Voir un
+   * indice", jamais automatique) pour cet item. Conservé dans la tentative
+   * et le reporting — un résultat aidé ne doit jamais être traité comme
+   * équivalent à un résultat autonome par les consommateurs de item_results.
+   */
+  hint_used: boolean;
+
+  // --- Lot 2.1, point 5 : modèle de résultat qui distingue réellement la
+  // correction du choix fermé de l'évaluation de la justification ouverte.
+  // Un garde-fou "texte non vide" ne constitue pas une notation.
+  /** Alias explicite de `correct`, nommé sans ambiguïté pour les nouveaux consommateurs. */
+  answer_correct: boolean;
+  justification_status: "not_required" | "missing" | "unrelated" | "restates_answer_without_evidence" | "accepted" | "pending_review";
+  justification_score: number | null;
+  justification_feedback: string;
+  /** "incorrect" | "partial" | "provisional" | "complete" — jamais "complete" sur une bonne option sans justification acceptée quand elle est requise. */
+  overall_status: "incorrect" | "partial" | "provisional" | "complete";
+  /** true tant que la justification qualitative n'a pas reçu de verdict définitif (pending_review). */
+  score_provisional: boolean;
+
+  // --- Lot 2.1, point 6 : corrections générées par generate-s01-interactive.mjs
+  // (item.correction), consommées ici en toute sécurité — jamais lues par le
+  // client avant que get-attempt-correction ne les filtre après libération
+  // (released-correction-filter.ts).
+  preuve_support?: string | null;
+  explication_distracteurs?: string[];
+  erreur_diagnostiquee?: string | null;
+  remediation?: string | null;
+  justification_ouverte?: { elements_attendus: string[]; criteres_evaluation: string[] } | null;
 }
 
 export interface ServerCorrigerOptions {
@@ -44,6 +85,8 @@ export interface ServerCorrigerResult {
   correctCount: number;
   /** True si au moins un item a échoué l'évaluation IA → score partiel. */
   ai_failed: boolean;
+  /** true si au moins un item reste overall_status="provisional" (justification en attente de revue humaine) : le score global n'est pas définitif. */
+  score_provisional: boolean;
 }
 
 const AI_FORMATS = new Set([
@@ -132,10 +175,25 @@ export async function corrigerExerciceServer(
   let correctCount = 0;
   let countedItems = 0;
   let aiFailedAny = false;
+  let anyScoreProvisional = false;
 
   for (let idx = 0; idx < items.length; idx++) {
     const item = items[idx] as Record<string, unknown>;
-    const userAnswer = (answers[idx] ?? answers[String(idx)] ?? "").toString();
+    const rawAnswer = answers[idx] ?? answers[String(idx)] ?? "";
+    // Réponse structurée { reponse, justification } (Lot 2, items portant
+    // justification_prompt) vs chaîne simple (tous les autres formats,
+    // comportement historique inchangé). Seule `reponse` entre dans la
+    // comparaison/l'évaluation ; `justification` est conservée à part.
+    // NB : un `correct`/`score` éventuellement injecté par un client
+    // malveillant dans l'objet `rawAnswer` est ignoré ici — seules les clés
+    // `reponse`/`justification` sont jamais lues, `correct` est toujours
+    // recalculé plus bas à partir de item.bonne_reponse.
+    const structuredAnswer = isStructuredAnswer(rawAnswer);
+    const userAnswer = (structuredAnswer ? (rawAnswer as Record<string, unknown>).reponse ?? "" : rawAnswer).toString();
+    const learnerJustification = structuredAnswer
+      ? (String((rawAnswer as Record<string, unknown>).justification ?? "").trim() || undefined)
+      : undefined;
+    const hintUsed = extractHintUsed(rawAnswer);
     const question = (item.question || item.texte || item.enonce || item.consigne || `Question ${idx + 1}`) as string;
     const bonneReponse = (item.bonne_reponse ?? "").toString();
     const explicationOrig = (item.explication ?? "") as string;
@@ -202,28 +260,71 @@ export async function corrigerExerciceServer(
       isCorrect = normalize(userAnswer) === normalize(bonneReponse) && userAnswer !== "";
     }
 
+    // Lot 2.1, point 5 : le choix fermé (isCorrect) est noté immédiatement,
+    // mais une justification requise (justification_prompt) et non acceptée
+    // empêche une réussite B1/B2 COMPLÈTE — jamais un simple "texte non
+    // vide". Seuls les items non-IA avec justification_prompt sont évalués
+    // ici : les formats IA (production_ecrite/EE/EO) gardent leur pipeline
+    // existant, inchangé (justification_status="not_required").
+    const justificationPromptPresent = !itemNeedsAI && Boolean((item as { justification_prompt?: unknown }).justification_prompt);
+    const justificationEval = justificationPromptPresent
+      ? evaluateJustification({
+        justificationText: learnerJustification,
+        elementsAttendus: ((item as { correction?: { justification_ouverte?: { elements_attendus?: unknown } } }).correction
+          ?.justification_ouverte?.elements_attendus as string[] | undefined) ?? (explicationOrig ? [explicationOrig] : []),
+        bonneReponse,
+        justificationType: (item as { justification_type?: string }).justification_type ?? null,
+      })
+      : { justification_status: "not_required" as const, justification_score: null, justification_feedback: "" };
+    const overallStatus = computeOverallStatus(isCorrect, justificationEval.justification_status);
+    const scoreProvisionalItem = isScoreProvisional(overallStatus);
+
     // Item IA en échec : on l'EXCLUT du compte → score partiel honnête sur QCM
     // (cf. décision B : ne pas bloquer le devoir mais ne pas non plus mentir
     // sur le score). Si TOUS les items sont IA et tous échouent, score = 0.
+    // Le compte de réussite se fonde sur overall_status="complete", pas sur
+    // isCorrect seul : une bonne option avec justification insuffisante ne
+    // compte plus comme une réussite (Lot 2.1, point 5).
     if (!aiFailedItem) {
-      if (isCorrect) correctCount++;
+      if (overallStatus === "complete") correctCount++;
       countedItems++;
     }
+    if (scoreProvisionalItem) anyScoreProvisional = true;
 
     correction.push({
       question,
       reponse_eleve: userAnswer,
       bonne_reponse: displayedBonneReponse,
       bonne_reponse_label: label,
+      answer_correct: isCorrect,
+      justification_status: justificationEval.justification_status,
+      justification_score: justificationEval.justification_score,
+      justification_feedback: justificationEval.justification_feedback,
+      overall_status: overallStatus,
+      score_provisional: scoreProvisionalItem,
       correct: isCorrect,
       explication,
       ia_evaluated: iaEvaluated,
       ia_score_raw: iaScoreRaw,
       criteres_oraux: criteresOraux,
       ai_failed: aiFailedItem || undefined,
+      learner_justification: learnerJustification,
+      hint_used: hintUsed,
+      // Lot 2.1, point 6 : consommées depuis item.correction (généré par
+      // generate-s01-interactive.mjs), jamais recalculées ni inventées ici.
+      preuve_support: (item as { correction?: { preuve_support?: string | null } }).correction?.preuve_support ?? null,
+      explication_distracteurs: (item as { correction?: { explication_distracteurs?: string[] } }).correction?.explication_distracteurs ?? [],
+      erreur_diagnostiquee: (item as { correction?: { erreur_diagnostiquee?: string | null } }).correction?.erreur_diagnostiquee ?? null,
+      remediation: (item as { correction?: { remediation?: string | null } }).correction?.remediation ?? null,
+      justification_ouverte: (item as { correction?: { justification_ouverte?: { elements_attendus?: string[]; criteres_evaluation?: string[] } } }).correction?.justification_ouverte
+        ? {
+          elements_attendus: (item as { correction: { justification_ouverte: { elements_attendus?: string[] } } }).correction.justification_ouverte.elements_attendus ?? [],
+          criteres_evaluation: (item as { correction: { justification_ouverte: { criteres_evaluation?: string[] } } }).correction.justification_ouverte.criteres_evaluation ?? [],
+        }
+        : null,
     });
   }
 
   const score = countedItems > 0 ? Math.round((correctCount / countedItems) * 100) : 0;
-  return { correction, score, countedItems, correctCount, ai_failed: aiFailedAny };
+  return { correction, score, countedItems, correctCount, ai_failed: aiFailedAny, score_provisional: anyScoreProvisional };
 }

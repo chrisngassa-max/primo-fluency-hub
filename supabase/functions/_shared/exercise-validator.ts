@@ -5,6 +5,8 @@
 
 import { callAI } from "./ai-client.ts";
 import { computeExerciseDuration } from "./exercise-duration.ts";
+import { validateExerciseCoherence } from "./exercise-coherence-validator.mjs";
+import instructionQualityRules from "./referential/instruction_quality_rules_v1.json" with { type: "json" };
 
 export interface ExerciseLike {
   titre?: string;
@@ -59,11 +61,17 @@ export function validateExercise(ex: ExerciseLike): ValidationResult {
     issues.push({ code: "invalid_format", severity: "error", message: `Format invalide: ${ex.format}` });
   }
 
-  // ── Consigne A0/A1 : max 12 mots ──
+  // ── Consigne mobile-first : plafond progressif par niveau ──
+  // Politique mobile-first commune au referentiel des consignes : plafond
+  // progressif par niveau, en avertissement seulement (jamais de troncature).
   if (ex.consigne) {
-    const wordCount = ex.consigne.trim().split(/\s+/).length;
-    if (wordCount > 15) {
-      issues.push({ code: "consigne_too_long", severity: "warning", message: `Consigne trop longue (${wordCount} mots, max 12)` });
+    const maxCharacters = instructionQualityRules.max_instruction_characters[ex.niveau_vise || "A2"] ?? 280;
+    if (ex.consigne.length > maxCharacters) {
+      issues.push({
+        code: "INSTRUCTION_TOO_COMPLEX",
+        severity: "warning",
+        message: `Consigne trop longue pour ${ex.niveau_vise || "A2"} (${ex.consigne.length}/${maxCharacters} caracteres)`,
+      });
     }
   }
 
@@ -143,6 +151,19 @@ export function validateExercise(ex: ExerciseLike): ValidationResult {
   }
 
   // ── Conformité TCF IRN (metadata.code) ──
+  // Coherence finale consigne -> format -> items -> reponses -> correction.
+  // Les codes et severites viennent du contrat JSON partage Node/Deno.
+  const coherence = validateExerciseCoherence(ex);
+  for (const coherenceRule of coherence.rules) {
+    if (coherenceRule.status === "pass") continue;
+    issues.push({
+      code: coherenceRule.rule_id,
+      severity: coherenceRule.status === "fail" ? "error" : "warning",
+      field: coherenceRule.scope,
+      message: coherenceRule.errors.join(" | ") || coherenceRule.rule_id,
+    });
+  }
+
   const code = ex.metadata?.code;
   if (code && TCF_DURATIONS[code]) {
     const [min, max] = TCF_DURATIONS[code];
@@ -208,6 +229,8 @@ RÈGLES STRICTES :
 - Tous les items doivent avoir question + bonne_reponse
 - Image_description : cohérente avec la question si présente
 - Conserve le titre, la compétence, le format et la difficulté de l'original
+- Ne modifie jamais les faits, le texte support, le script audio, la source, les identifiants civiques ni leur provenance
+- Si une correction structurelle exige de changer un fait ou le support, ne publie pas l'exercice
 - Niveau cible : ${context.niveau || original.niveau_vise || "A1"}
 - Contexte : TCF IRN ${context.demarche || ""}`;
 
@@ -311,6 +334,11 @@ export async function validateAndFix(
 
   while (attempt <= maxAttempts) {
     const result = validateExercise(current);
+    const structuralErrors = result.issues.filter((issue) => issue.severity === "error" && issue.code.startsWith("COHERENCE_"));
+    if (structuralErrors.length > 0) {
+      console.warn(`[validator] Structural review required for "${current.titre}":`, structuralErrors.map((issue) => issue.code).join(", "));
+      return null;
+    }
     if (result.ok) {
       const warnings = result.issues.filter(i => i.severity === "warning");
       return { exercise: current, attempts: attempt, warnings };
