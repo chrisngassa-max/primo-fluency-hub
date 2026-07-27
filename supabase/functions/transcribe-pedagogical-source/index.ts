@@ -120,13 +120,17 @@ Deno.serve(async (request) => {
     return json(200, { ok: true, cached: false, transcription_id: transcriptionId, status: "ready", segments_count: transcription.segments.length });
   } catch (error) {
     console.error("transcribe-pedagogical-source error", error);
+    const message = error instanceof Error
+      ? error.message
+      : typeof error === "object" && error && "message" in error
+        ? String(error.message)
+        : "TRANSCRIPTION_FAILED";
     if (transcriptionId) {
       await admin.from("pedagogical_source_transcriptions").update({
         status: "error",
-        error_details: { code: error instanceof Error ? error.message.split(":")[0] : "TRANSCRIPTION_FAILED", message: error instanceof Error ? error.message : "Unknown error" },
+        error_details: { code: message.split(":")[0], message },
       }).eq("id", transcriptionId);
     }
-    const message = error instanceof Error ? error.message : "TRANSCRIPTION_FAILED";
     const status = message.startsWith("SOURCE_FILE_NOT_FOUND") ? 404
       : message.includes("TOO_LARGE") ? 413
       : message.startsWith("TRANSCRIPTION_INVALID") ? 422 : 502;
