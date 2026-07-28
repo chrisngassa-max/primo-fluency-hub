@@ -21,10 +21,11 @@ describe("familyVariantToExerciceRow", () => {
           },
         },
       },
-    } as any, "trainer-1", "Bonjour, le train part à dix-sept heures.");
+    } as any, "trainer-1", "Bonjour, le train part à dix-sept heures.", "point-1");
 
     expect(row).toMatchObject({
       formateur_id: "trainer-1",
+      point_a_maitriser_id: "point-1",
       titre: "Annonce",
       consigne: "Écoutez.",
       competence: "CO",

@@ -42,8 +42,19 @@ Deno.serve(async (request) => {
     if (transcriptionError) throw transcriptionError;
     const audioScript = transcription?.reviewed_text?.trim();
     if (!audioScript) return json(422, { error: "REVIEWED_TRANSCRIPTION_REQUIRED" });
+    const { data: defaultPoint, error: defaultPointError } = await admin
+      .from("points_a_maitriser")
+      .select("id")
+      .limit(1)
+      .single();
+    if (defaultPointError || !defaultPoint) throw defaultPointError || new Error("DEFAULT_MASTERY_POINT_REQUIRED");
     const { data: exercise, error: insertError } = await admin.from("exercices")
-      .insert(familyVariantToExerciceRow(family.payload as DifferentiationFamilySliceV1, user.id, audioScript)).select("id").single();
+      .insert(familyVariantToExerciceRow(
+        family.payload as DifferentiationFamilySliceV1,
+        user.id,
+        audioScript,
+        defaultPoint.id,
+      )).select("id").single();
     if (insertError) throw insertError;
     const { data: publishedFamily, error: updateError } = await admin.from("differentiation_families").update({
       review_status: "published", published_exercise_id: exercise.id,

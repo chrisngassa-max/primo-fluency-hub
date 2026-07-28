@@ -4,10 +4,12 @@ export function familyVariantToExerciceRow(
   family: DifferentiationFamilySliceV1,
   formateurId: string,
   audioScript: string,
+  pointAMaitriserId: string,
 ) {
   const variant = family.variants.A2;
   return {
     formateur_id: formateurId,
+    point_a_maitriser_id: pointAMaitriserId,
     titre: variant.exercise.title,
     consigne: variant.exercise.instruction,
     competence: "CO",
