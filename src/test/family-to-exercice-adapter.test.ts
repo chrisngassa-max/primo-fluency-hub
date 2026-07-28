@@ -9,7 +9,7 @@ describe("familyVariantToExerciceRow", () => {
       source_document: { source_document_id: "source-1", content_hash: "sha256:abc" },
       facts: {
         facts_hash: "facts-hash",
-        required: [{ fact_id: "F1", provenance: { segment_refs: ["segment-1"], chunk_refs: ["chunk-1"] } }],
+        required: [{ fact_id: "fact_01", provenance: { segment_refs: ["segment-1"], chunk_refs: ["chunk-1"] } }],
       },
       variants: {
         A2: {
@@ -17,7 +17,7 @@ describe("familyVariantToExerciceRow", () => {
             title: "Annonce",
             instruction: "Écoutez.",
             format: "mixed",
-            items: [{ id: "I1" }],
+            items: [{ id: "item_01" }],
           },
         },
       },
@@ -32,7 +32,7 @@ describe("familyVariantToExerciceRow", () => {
       format: "qcm",
       niveau_vise: "A2",
       contenu: {
-        items: [{ id: "I1" }],
+        items: [{ id: "item_01" }],
         script_audio: "Bonjour, le train part à dix-sept heures.",
         metadata: {
           differentiation_family_id: "A2CO-TEST01",

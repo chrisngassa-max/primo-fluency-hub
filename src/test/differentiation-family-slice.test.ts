@@ -158,4 +158,23 @@ describe("differentiation family A2 slice", () => {
     expect(codes).toContain("DIFF_ITEM_FACT_REF_ORPHAN");
     expect(codes).toContain("DIFF_MULTIPLE_CORRECT_ANSWERS");
   });
+
+  it("rejects forbidden formats and missing correct answers", async () => {
+    const family = await validFamily();
+    family.variants.A2.exercise.format = "production_libre" as typeof family.variants.A2.exercise.format;
+    family.variants.A2.exercise.items[0].choices!.forEach((choice) => {
+      choice.is_correct = false;
+    });
+
+    const report = await validateDifferentiationFamilySlice(family, {
+      sourceContentHash: family.source_document.content_hash,
+      segmentIds: ["segment-1"],
+      chunkIds: ["chunk-1"],
+    });
+
+    const codes = report.blocking.map((entry) => entry.code);
+    expect(report.status).toBe("fail");
+    expect(codes).toContain("DIFF_FORMAT_FORBIDDEN");
+    expect(codes).toContain("DIFF_NO_CORRECT_ANSWER");
+  });
 });

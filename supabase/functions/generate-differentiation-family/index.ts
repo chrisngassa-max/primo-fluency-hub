@@ -70,7 +70,7 @@ Deno.serve(async (request) => {
     if (created.error) throw created.error;
     familyId = created.data.id;
     const sourceContext = chunks.map((chunk: any) => `CHUNK ${chunk.id} [segments ${(chunk.pedagogical_source_chunk_segments ?? []).map((link: any) => link.segment_id).join(",")}]: ${chunk.content_text}`).join("\n");
-    const factResponse = await geminiJson(`Extrait seulement des faits explicites de cette transcription audio. JSON {"facts":[{"fact_id":"F1","subject":"...","predicate":"...","object":"...","semantic_qualifiers":{},"chunk_refs":["uuid"],"segment_refs":["uuid"],"quote":"...","required_for_task":true}]}. Chaque référence doit venir du contexte; pas d'inférence.\n${sourceContext}`);
+    const factResponse = await geminiJson(`Extrait seulement des faits explicites de cette transcription audio. JSON {"facts":[{"fact_id":"fact_01","subject":"...","predicate":"...","object":"...","semantic_qualifiers":{},"chunk_refs":["uuid"],"segment_refs":["uuid"],"quote":"...","required_for_task":true}]}. Chaque référence doit venir du contexte; pas d'inférence.\n${sourceContext}`);
     const validSegmentIds = new Set(segments.map((segment) => segment.id));
     const validChunkIds = new Set(chunks.map((chunk) => chunk.id));
     const facts: DifferentiationFact[] = (Array.isArray(factResponse.facts) ? factResponse.facts : [])
@@ -83,20 +83,26 @@ Deno.serve(async (request) => {
         fact.chunk_refs.every((id: unknown) => typeof id === "string" && validChunkIds.has(id))
       )
       .map((fact: any, index: number) => ({
-        fact_id: `F${index + 1}`,
+        fact_id: `fact_${String(index + 1).padStart(2, "0")}`,
         subject: String(fact.subject ?? ""), predicate: String(fact.predicate ?? ""), object: fact.object ?? "",
         semantic_qualifiers: fact.semantic_qualifiers ?? {},
         provenance: { source_id: source.id, transcription_id: transcription.id, segment_refs: fact.segment_refs, chunk_refs: fact.chunk_refs, quote: String(fact.quote ?? "") },
         required_for_task: fact.required_for_task !== false,
       }));
     if (facts.length === 0) throw new Error("NO_VERIFIABLE_FACTS");
-    const itemsResponse = await geminiJson(`Crée ${contract.volume_items_min} à ${contract.volume_items_max} questions A2 de compréhension orale depuis ces faits. Applique exactement ce contrat: ${JSON.stringify(contract)}. JSON {"title":"...","instruction":"...","format":"qcm|vrai_faux|appariement|mixed","items":[{"id":"I1","type":"qcm","instruction":"...","choices":[{"id":"a","text":"...","is_correct":true},{"id":"b","text":"...","is_correct":false,"distractor_category":"confusion_temporelle"}],"fact_refs":["F1"],"justification":"..."}]}. Aucune règle hors contrat.\n${JSON.stringify(facts)}`);
+    const itemsResponse = await geminiJson(`Crée ${contract.volume_items_min} à ${contract.volume_items_max} questions A2 de compréhension orale depuis ces faits. Applique exactement ce contrat: ${JSON.stringify(contract)}. JSON {"title":"...","instruction":"...","format":"qcm|vrai_faux|appariement|mixed","items":[{"id":"item_01","type":"qcm","instruction":"...","choices":[{"id":"a","text":"...","is_correct":true},{"id":"b","text":"...","is_correct":false,"distractor_category":"confusion_temporelle"}],"fact_refs":["fact_01"],"justification":"..."}]}. Aucune règle hors contrat.\n${JSON.stringify(facts)}`);
+    const normalizedItems = Array.isArray(itemsResponse.items)
+      ? itemsResponse.items.map((item: Record<string, unknown>, index: number) => ({
+        ...item,
+        id: `item_${String(index + 1).padStart(2, "0")}`,
+      }))
+      : [];
     const family = {
       schema_version: "slice-1.0", family_id: familyCode, version: 1, status: "draft", competence: "CO", subcompetence: "comprehension_orale",
       objective: "Comprendre des informations explicites dans un document audio.", core_task: "Répondre aux questions après écoute.", source_level: "A2",
       generated_levels: ["A2"], source_document: { source_document_id: source.id, uri: `${source.storage_bucket}/${source.storage_path}`, content_hash: source.content_hash, immutable: true, provenance: { type: "licensed", version: 1 } },
       facts: { required: facts, facts_hash: await calculateFactsHash(facts) }, level_contracts: { A2: contract },
-      variants: { A2: { target_level: "A2", competence: "CO", transformation_id: "IDENTITY", support_mode: "segmented", support_ref: transcription.id, applied_transformations: [], exercise: { ...itemsResponse, steps: [], expected_output: "Réponses aux questions" }, scaffolding: {}, success_criteria: [] } },
+      variants: { A2: { target_level: "A2", competence: "CO", transformation_id: "IDENTITY", support_mode: "segmented", support_ref: transcription.id, applied_transformations: [], exercise: { ...itemsResponse, items: normalizedItems, steps: ["Écouter", "Répondre"], expected_output: "Réponses aux questions" }, scaffolding: {}, success_criteria: ["Répondre correctement aux questions explicites du support audio."] } },
       generation: { model_id: "gemini-2.5-flash", prompt_version: "a2-audio-v1", generated_at: new Date().toISOString() },
       validation_report: { status: "not_run", blocking: [], warnings: [], requires_human_review: [] },
     } as DifferentiationFamilySliceV1;
