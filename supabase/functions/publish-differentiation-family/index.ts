@@ -58,6 +58,11 @@ Deno.serve(async (request) => {
     return json(200, { ok: true, exercise_id: exercise.id });
   } catch (error) {
     console.error("publish-differentiation-family error", error);
-    return json(500, { error: error instanceof Error ? error.message : "PUBLISH_FAMILY_FAILED" });
+    const message = error instanceof Error
+      ? error.message
+      : typeof error === "object" && error && "message" in error
+        ? String(error.message)
+        : "PUBLISH_FAMILY_FAILED";
+    return json(500, { error: message });
   }
 });
