@@ -10,6 +10,7 @@ Le vertical slice CapTCF A2 audio est fonctionnel de bout en bout. Le lot de har
 - Branche: `cursor/a2-audio-continuation`
 - PR: `#27`
 - Handoff anglais: `docs/handoffs/captcf-a2-audio-status-and-next-steps.md`
+- Commit hardening: `1be5e53` (+ commit de cloture SQL/rapport si present)
 
 ## 3. Corrections de cloture appliquees
 
@@ -19,16 +20,16 @@ Le vertical slice CapTCF A2 audio est fonctionnel de bout en bout. Le lot de har
 4. **Selection point de maitrise CO/A2** : niveaux `A0..C2` + normalisation `Pre-A1`/`Pré-A1` ; selection deterministe documentee comme rattachement generique.
 5. **Publications obsoletes** : pas de suppression ; exercice marque `contenu.metadata.source_stale` / `source_stale_at` via `published_exercise_id`.
 
-## 4. Resultats de validation locale
+## 4. Resultats de validation locale (session de cloture)
 
 | Controle | Resultat |
 |---|---|
-| Tests cibles (4 fichiers) | **23 passes** |
-| Suite complete | **64 fichiers / 403 tests passes** (ref. anterieure 392) |
+| Tests cibles (4 fichiers) | **20 passes** |
+| Suite complete | **64 fichiers / 400 tests passes** (ref. anterieure 392) |
 | Build Vite production | **OK** |
-| Test SQL `a2_audio_review_fixes_test.sql` | **OK** sur Postgres 16 Docker (`CREATE FUNCTION` + `DO` + `ROLLBACK`, exit 0) |
+| Test SQL RPC | **OK** — Postgres 15 Docker (`CREATE FUNCTION` + assertions + `ROLLBACK`, notice `HARNESS_SQL_TEST_OK`, exit 0) |
 
-Note: `supabase start` local echoue encore sur une migration ancienne (`003_placement_tests.sql` avant `profiles`). Le test SQL a ete prouve via conteneur Postgres temporaire + schema minimal equivalent, pas via lecture seule du SQL.
+Note: `npx supabase start` local echoue encore sur une migration ancienne (`003_placement_tests.sql` avant `profiles` — erreur `LegacyMigrationApplyError`). Le test SQL a ete execute et prouve via conteneur Postgres ephemere + schema minimal equivalent (pas une simple relecture du SQL). Artefacts harness sous `tmp/` non commités.
 
 ## 5. Controles serveur confirmes (non affaiblis)
 
@@ -43,6 +44,6 @@ Note: `supabase start` local echoue encore sur une migration ancienne (`003_plac
 - `supabase/.temp/linked-project.json`
 - artefacts tmp de harness SQL (`tmp/a2_audio_sql_*`)
 
-## 7. Verdict
+## 7. Deploiement / E2E
 
-Validations locales (TS + build + SQL) reussies. Le verdict `GO fusion` final depend encore du push, de l'application migration cible, du redeploiement des Edge Functions et du replay E2E post-deploiement.
+A completer apres push : migration distante, redeploiement des 3 Edge Functions, replay MP3 authentifie. Verdict `GO fusion` uniquement si ces etapes reussissent.

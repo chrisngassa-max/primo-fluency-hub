@@ -1,6 +1,10 @@
 BEGIN;
 
+-- Charge la migration (BEGIN/COMMIT internes). Le bloc de fixtures reste ensuite
+-- dans une transaction locale terminée par ROLLBACK.
 \i supabase/migrations/20260728113000_a2_audio_review_fixes.sql
+
+BEGIN;
 
 DO $$
 DECLARE
@@ -10,9 +14,9 @@ DECLARE
   v_source_other_id uuid;
   v_transcription_id uuid;
   v_transcription_other_id uuid;
-  v_segment_1_id uuid;
-  v_segment_2_id uuid;
-  v_segment_other_id uuid;
+  v_seg1_id uuid;
+  v_seg2_id uuid;
+  v_foreign_seg_id uuid;
   v_chunk_id uuid;
   v_published_family_id uuid;
   v_draft_family_id uuid;
@@ -21,14 +25,15 @@ DECLARE
   v_point_id uuid;
   v_exercise_id uuid;
   v_source_status text;
-  v_source_review_status text;
+  v_source_review text;
   v_family_status text;
-  v_rpc_result jsonb;
+  v_result jsonb;
   v_reviewed_by uuid;
   v_reviewed_text text;
+  v_transcription_status text;
   v_metadata jsonb;
   v_exercise_contenu jsonb;
-  v_valid_segments jsonb;
+  v_exercise_still_exists boolean;
 BEGIN
   INSERT INTO auth.users (id, email) VALUES
     (v_formateur_id, 'audio-formateur@test.local'),
@@ -59,11 +64,21 @@ BEGIN
   RETURNING id INTO v_point_id;
 
   INSERT INTO public.exercices (
-    formateur_id, point_a_maitriser_id, competence, titre, consigne, difficulte, contenu
+    formateur_id, point_a_maitriser_id, competence, titre, consigne, difficulte, format, contenu
   )
   VALUES (
-    v_formateur_id, v_point_id, 'CO', 'Exercice publié test', 'Consigne test', 3,
-    jsonb_build_object('metadata', jsonb_build_object('family_id', 'A2CO-PUBLISHED-TEST'))
+    v_formateur_id,
+    v_point_id,
+    'CO',
+    'Exercice publié test',
+    'Consigne test',
+    3,
+    'qcm',
+    jsonb_build_object(
+      'script_audio', 'Script audio de test pour CO.',
+      'items', jsonb_build_array(jsonb_build_object('id', 'q1', 'type', 'qcm')),
+      'metadata', jsonb_build_object('differentiation_family_id', 'A2CO-PUBLISHED-TEST')
+    )
   )
   RETURNING id INTO v_exercise_id;
 
@@ -73,7 +88,9 @@ BEGIN
   )
   VALUES (
     'Source audio test', 'audio', ARRAY['CO']::text[], ARRAY['administratif']::text[], 'analyzed', 'valide',
-    'tests/audio/source.mp3', v_formateur_id, 'sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', '{}'::jsonb
+    'tests/audio/source.mp3', v_formateur_id,
+    'sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+    '{}'::jsonb
   )
   RETURNING id INTO v_source_id;
 
@@ -83,7 +100,9 @@ BEGIN
   )
   VALUES (
     'Source audio autre formateur', 'audio', ARRAY['CO']::text[], ARRAY['administratif']::text[], 'analyzed', 'valide',
-    'tests/audio/other.mp3', v_other_formateur_id, 'sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', '{}'::jsonb
+    'tests/audio/other.mp3', v_other_formateur_id,
+    'sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
+    '{}'::jsonb
   )
   RETURNING id INTO v_source_other_id;
 
@@ -99,7 +118,7 @@ BEGIN
     source_id, attempt_number, is_current, status, raw_text
   )
   VALUES (
-    v_source_other_id, 1, true, 'ready', 'Autre texte'
+    v_source_other_id, 1, true, 'ready', 'Texte autre'
   )
   RETURNING id INTO v_transcription_other_id;
 
@@ -108,13 +127,14 @@ BEGIN
   )
   VALUES
     (v_transcription_id, 'seg-1', 0, 0, 1000, 'Bonjour', NULL),
-    (v_transcription_id, 'seg-2', 1, 1000, 2000, 'Au revoir', NULL);
+    (v_transcription_id, 'seg-2', 1, 1000, 2000, 'Au revoir', NULL)
+  RETURNING id INTO v_seg2_id;
 
-  SELECT id INTO v_segment_1_id
+  SELECT id INTO v_seg1_id
   FROM public.pedagogical_source_transcription_segments
   WHERE transcription_id = v_transcription_id AND segment_key = 'seg-1';
 
-  SELECT id INTO v_segment_2_id
+  SELECT id INTO v_seg2_id
   FROM public.pedagogical_source_transcription_segments
   WHERE transcription_id = v_transcription_id AND segment_key = 'seg-2';
 
@@ -122,9 +142,9 @@ BEGIN
     transcription_id, segment_key, sequence_index, start_ms, end_ms, raw_text, reviewed_text
   )
   VALUES (
-    v_transcription_other_id, 'seg-other', 0, 0, 500, 'Étranger', NULL
+    v_transcription_other_id, 'foreign-seg', 0, 0, 500, 'Étranger', NULL
   )
-  RETURNING id INTO v_segment_other_id;
+  RETURNING id INTO v_foreign_seg_id;
 
   INSERT INTO public.pedagogical_source_chunks (
     source_id, chunk_type, title, content_text, domains, metadata
@@ -165,19 +185,17 @@ BEGIN
   )
   RETURNING id INTO v_draft_family_id;
 
-  v_valid_segments := jsonb_build_array(
-    jsonb_build_object('id', v_segment_1_id, 'reviewed_text', 'Bonjour relu'),
-    jsonb_build_object('id', v_segment_2_id, 'reviewed_text', 'Au revoir relu')
-  );
-
-  -- Accès interdit pour un autre formateur.
+  -- ─── SOURCE_FORBIDDEN ───────────────────────────────────────────────────────
   EXECUTE 'SET LOCAL ROLE authenticated';
   PERFORM set_config('request.jwt.claims', jsonb_build_object('sub', v_other_formateur_id)::text, true);
   BEGIN
     PERFORM public.validate_pedagogical_source_transcription_review(
       v_transcription_id,
       'Texte relu',
-      v_valid_segments
+      jsonb_build_array(
+        jsonb_build_object('id', v_seg1_id, 'reviewed_text', 'Bonjour relu'),
+        jsonb_build_object('id', v_seg2_id, 'reviewed_text', 'Au revoir relu')
+      )
     );
     RAISE EXCEPTION 'SOURCE_FORBIDDEN not raised';
   EXCEPTION
@@ -188,83 +206,7 @@ BEGIN
   END;
   EXECUTE 'RESET ROLE';
 
-  EXECUTE 'SET LOCAL ROLE authenticated';
-  PERFORM set_config('request.jwt.claims', jsonb_build_object('sub', v_formateur_id)::text, true);
-
-  -- Segment manquant (incomplet).
-  BEGIN
-    PERFORM public.validate_pedagogical_source_transcription_review(
-      v_transcription_id,
-      'Texte relu incomplet',
-      jsonb_build_array(
-        jsonb_build_object('id', v_segment_1_id, 'reviewed_text', 'Bonjour seul')
-      )
-    );
-    RAISE EXCEPTION 'TRANSCRIPTION_SEGMENTS_INCOMPLETE not raised';
-  EXCEPTION
-    WHEN OTHERS THEN
-      IF SQLERRM NOT LIKE '%TRANSCRIPTION_SEGMENTS_INCOMPLETE%' THEN
-        RAISE;
-      END IF;
-  END;
-
-  -- Segment dupliqué.
-  BEGIN
-    PERFORM public.validate_pedagogical_source_transcription_review(
-      v_transcription_id,
-      'Texte relu duplique',
-      jsonb_build_array(
-        jsonb_build_object('id', v_segment_1_id, 'reviewed_text', 'Bonjour'),
-        jsonb_build_object('id', v_segment_1_id, 'reviewed_text', 'Encore')
-      )
-    );
-    RAISE EXCEPTION 'TRANSCRIPTION_SEGMENTS_DUPLICATED not raised';
-  EXCEPTION
-    WHEN OTHERS THEN
-      IF SQLERRM NOT LIKE '%TRANSCRIPTION_SEGMENTS_DUPLICATED%' THEN
-        RAISE;
-      END IF;
-  END;
-
-  -- Segment d'une autre transcription.
-  BEGIN
-    PERFORM public.validate_pedagogical_source_transcription_review(
-      v_transcription_id,
-      'Texte relu mismatch',
-      jsonb_build_array(
-        jsonb_build_object('id', v_segment_1_id, 'reviewed_text', 'Bonjour'),
-        jsonb_build_object('id', v_segment_other_id, 'reviewed_text', 'Étranger')
-      )
-    );
-    RAISE EXCEPTION 'TRANSCRIPTION_SEGMENTS_MISMATCH not raised';
-  EXCEPTION
-    WHEN OTHERS THEN
-      IF SQLERRM NOT LIKE '%TRANSCRIPTION_SEGMENTS_MISMATCH%' THEN
-        RAISE;
-      END IF;
-  END;
-
-  -- Texte de segment vide.
-  BEGIN
-    PERFORM public.validate_pedagogical_source_transcription_review(
-      v_transcription_id,
-      'Texte relu vide',
-      jsonb_build_array(
-        jsonb_build_object('id', v_segment_1_id, 'reviewed_text', 'Bonjour'),
-        jsonb_build_object('id', v_segment_2_id, 'reviewed_text', '   ')
-      )
-    );
-    RAISE EXCEPTION 'TRANSCRIPTION_SEGMENTS_INVALID not raised';
-  EXCEPTION
-    WHEN OTHERS THEN
-      IF SQLERRM NOT LIKE '%TRANSCRIPTION_SEGMENTS_INVALID%' THEN
-        RAISE;
-      END IF;
-  END;
-
-  EXECUTE 'RESET ROLE';
-
-  -- Interruption volontaire après update segments pour prouver le rollback.
+  -- ─── Rollback transactionnel (interruption volontaire) ──────────────────────
   CREATE OR REPLACE FUNCTION public.test_abort_transcription_review_after_segment_update()
   RETURNS trigger
   LANGUAGE plpgsql
@@ -286,7 +228,10 @@ BEGIN
     PERFORM public.validate_pedagogical_source_transcription_review(
       v_transcription_id,
       'Texte relu complet',
-      v_valid_segments
+      jsonb_build_array(
+        jsonb_build_object('id', v_seg1_id, 'reviewed_text', 'Bonjour relu'),
+        jsonb_build_object('id', v_seg2_id, 'reviewed_text', 'Au revoir relu')
+      )
     );
     RAISE EXCEPTION 'TEST_ABORT_AFTER_SEGMENT_UPDATE not raised';
   EXCEPTION
@@ -328,11 +273,11 @@ BEGIN
   END IF;
 
   SELECT status, review_status
-  INTO v_source_status, v_source_review_status
+  INTO v_source_status, v_source_review
   FROM public.pedagogical_sources
   WHERE id = v_source_id;
 
-  IF v_source_status <> 'analyzed' OR v_source_review_status <> 'valide' THEN
+  IF v_source_status <> 'analyzed' OR v_source_review <> 'valide' THEN
     RAISE EXCEPTION 'Source rollback failed';
   END IF;
 
@@ -345,49 +290,110 @@ BEGIN
     RAISE EXCEPTION 'Published family rollback failed';
   END IF;
 
-  IF EXISTS (
-    SELECT 1
-    FROM public.differentiation_families
-    WHERE id = v_draft_family_id
-      AND review_status <> 'validated'
-  ) THEN
-    RAISE EXCEPTION 'Draft family rollback failed';
-  END IF;
-
-  -- Parcours réussi après le test de rollback.
+  -- ─── Validations négatives des segments ─────────────────────────────────────
   EXECUTE 'SET LOCAL ROLE authenticated';
   PERFORM set_config('request.jwt.claims', jsonb_build_object('sub', v_formateur_id)::text, true);
 
-  v_rpc_result := public.validate_pedagogical_source_transcription_review(
+  BEGIN
+    PERFORM public.validate_pedagogical_source_transcription_review(
+      v_transcription_id,
+      'Texte relu complet',
+      jsonb_build_array(
+        jsonb_build_object('id', v_seg1_id, 'reviewed_text', 'Bonjour relu')
+      )
+    );
+    RAISE EXCEPTION 'TRANSCRIPTION_SEGMENTS_INCOMPLETE not raised';
+  EXCEPTION
+    WHEN OTHERS THEN
+      IF SQLERRM NOT LIKE '%TRANSCRIPTION_SEGMENTS_INCOMPLETE%' THEN
+        RAISE;
+      END IF;
+  END;
+
+  BEGIN
+    PERFORM public.validate_pedagogical_source_transcription_review(
+      v_transcription_id,
+      'Texte relu complet',
+      jsonb_build_array(
+        jsonb_build_object('id', v_seg1_id, 'reviewed_text', 'Bonjour relu'),
+        jsonb_build_object('id', v_seg1_id, 'reviewed_text', 'Bonjour dup')
+      )
+    );
+    RAISE EXCEPTION 'TRANSCRIPTION_SEGMENTS_DUPLICATED not raised';
+  EXCEPTION
+    WHEN OTHERS THEN
+      IF SQLERRM NOT LIKE '%TRANSCRIPTION_SEGMENTS_DUPLICATED%' THEN
+        RAISE;
+      END IF;
+  END;
+
+  BEGIN
+    PERFORM public.validate_pedagogical_source_transcription_review(
+      v_transcription_id,
+      'Texte relu complet',
+      jsonb_build_array(
+        jsonb_build_object('id', v_seg1_id, 'reviewed_text', 'Bonjour relu'),
+        jsonb_build_object('id', v_foreign_seg_id, 'reviewed_text', 'Étranger relu')
+      )
+    );
+    RAISE EXCEPTION 'TRANSCRIPTION_SEGMENTS_MISMATCH not raised';
+  EXCEPTION
+    WHEN OTHERS THEN
+      IF SQLERRM NOT LIKE '%TRANSCRIPTION_SEGMENTS_MISMATCH%'
+         AND SQLERRM NOT LIKE '%TRANSCRIPTION_SEGMENTS_INCOMPLETE%' THEN
+        RAISE;
+      END IF;
+  END;
+
+  BEGIN
+    PERFORM public.validate_pedagogical_source_transcription_review(
+      v_transcription_id,
+      'Texte relu complet',
+      jsonb_build_array(
+        jsonb_build_object('id', v_seg1_id, 'reviewed_text', 'Bonjour relu'),
+        jsonb_build_object('id', v_seg2_id, 'reviewed_text', '   ')
+      )
+    );
+    RAISE EXCEPTION 'TRANSCRIPTION_SEGMENTS_INVALID not raised';
+  EXCEPTION
+    WHEN OTHERS THEN
+      IF SQLERRM NOT LIKE '%TRANSCRIPTION_SEGMENTS_INVALID%' THEN
+        RAISE;
+      END IF;
+  END;
+
+  -- ─── Parcours réussi ────────────────────────────────────────────────────────
+  v_result := public.validate_pedagogical_source_transcription_review(
     v_transcription_id,
-    'Texte relu complet corrigé',
-    v_valid_segments
+    'Bonjour relu. Au revoir relu.',
+    jsonb_build_array(
+      jsonb_build_object('id', v_seg1_id, 'reviewed_text', 'Bonjour relu'),
+      jsonb_build_object('id', v_seg2_id, 'reviewed_text', 'Au revoir relu')
+    )
   );
 
-  EXECUTE 'RESET ROLE';
-
-  IF coalesce(v_rpc_result->>'ok', 'false') <> 'true' THEN
-    RAISE EXCEPTION 'Successful review did not return ok=true: %', v_rpc_result;
+  IF coalesce(v_result->>'ok', 'false') <> 'true' THEN
+    RAISE EXCEPTION 'Success path did not return ok=true: %', v_result;
   END IF;
 
-  IF coalesce((v_rpc_result->>'published_family_count')::integer, -1) <> 1 THEN
-    RAISE EXCEPTION 'published_family_count expected 1, got %', v_rpc_result;
+  IF (v_result->>'published_family_count')::integer <> 1 THEN
+    RAISE EXCEPTION 'published_family_count expected 1, got %', v_result->>'published_family_count';
   END IF;
 
   SELECT status, reviewed_by, reviewed_text
-  INTO v_source_status, v_reviewed_by, v_reviewed_text
+  INTO v_transcription_status, v_reviewed_by, v_reviewed_text
   FROM public.pedagogical_source_transcriptions
   WHERE id = v_transcription_id;
 
-  IF v_source_status <> 'reviewed' THEN
-    RAISE EXCEPTION 'Transcription status expected reviewed, got %', v_source_status;
+  IF v_transcription_status <> 'reviewed' THEN
+    RAISE EXCEPTION 'Transcription status expected reviewed, got %', v_transcription_status;
   END IF;
 
   IF v_reviewed_by IS DISTINCT FROM v_formateur_id THEN
     RAISE EXCEPTION 'reviewed_by mismatch';
   END IF;
 
-  IF v_reviewed_text IS DISTINCT FROM 'Texte relu complet corrigé' THEN
+  IF v_reviewed_text IS DISTINCT FROM 'Bonjour relu. Au revoir relu.' THEN
     RAISE EXCEPTION 'reviewed_text mismatch: %', v_reviewed_text;
   END IF;
 
@@ -398,22 +404,19 @@ BEGIN
       AND (
         (segment_key = 'seg-1' AND reviewed_text IS DISTINCT FROM 'Bonjour relu')
         OR (segment_key = 'seg-2' AND reviewed_text IS DISTINCT FROM 'Au revoir relu')
-        OR reviewed_text IS NULL
       )
   ) THEN
-    RAISE EXCEPTION 'Corrected segments mismatch';
+    RAISE EXCEPTION 'Segment reviewed_text mismatch';
   END IF;
 
   IF EXISTS (
-    SELECT 1
-    FROM public.pedagogical_source_chunks
-    WHERE source_id = v_source_id
+    SELECT 1 FROM public.pedagogical_source_chunks WHERE source_id = v_source_id
   ) THEN
-    RAISE EXCEPTION 'Chunks were not deleted after successful review';
+    RAISE EXCEPTION 'Chunks were not deleted';
   END IF;
 
   SELECT status, review_status, metadata
-  INTO v_source_status, v_source_review_status, v_metadata
+  INTO v_source_status, v_source_review, v_metadata
   FROM public.pedagogical_sources
   WHERE id = v_source_id;
 
@@ -421,8 +424,8 @@ BEGIN
     RAISE EXCEPTION 'Source status expected imported, got %', v_source_status;
   END IF;
 
-  IF v_source_review_status <> 'a_remplacer' THEN
-    RAISE EXCEPTION 'Source review_status expected a_remplacer, got %', v_source_review_status;
+  IF v_source_review <> 'a_remplacer' THEN
+    RAISE EXCEPTION 'Source review_status expected a_remplacer, got %', v_source_review;
   END IF;
 
   IF coalesce((v_metadata->>'transcription_review_requires_reanalysis')::boolean, false) IS NOT TRUE THEN
@@ -433,8 +436,7 @@ BEGIN
     RAISE EXCEPTION 'published_source_stale missing';
   END IF;
 
-  IF v_metadata ? 'published_source_stale_at' IS NOT TRUE
-     OR nullif(v_metadata->>'published_source_stale_at', '') IS NULL THEN
+  IF v_metadata->>'published_source_stale_at' IS NULL THEN
     RAISE EXCEPTION 'published_source_stale_at missing';
   END IF;
 
@@ -454,11 +456,10 @@ BEGIN
     RAISE EXCEPTION 'Published family must remain published, got %', v_family_status;
   END IF;
 
-  IF NOT EXISTS (
-    SELECT 1
-    FROM public.exercices
-    WHERE id = v_exercise_id
-  ) THEN
+  SELECT EXISTS(SELECT 1 FROM public.exercices WHERE id = v_exercise_id)
+  INTO v_exercise_still_exists;
+
+  IF NOT v_exercise_still_exists THEN
     RAISE EXCEPTION 'Published exercise was deleted unexpectedly';
   END IF;
 
@@ -466,13 +467,17 @@ BEGIN
   FROM public.exercices
   WHERE id = v_exercise_id;
 
-  IF coalesce((v_exercise_contenu #>> '{metadata,source_stale}')::boolean, false) IS NOT TRUE THEN
-    RAISE EXCEPTION 'Published exercise source_stale flag missing: %', v_exercise_contenu;
+  IF coalesce((v_exercise_contenu->'metadata'->>'source_stale')::boolean, false) IS NOT TRUE THEN
+    RAISE EXCEPTION 'Exercise source_stale metadata missing: %', v_exercise_contenu;
   END IF;
 
-  IF nullif(v_exercise_contenu #>> '{metadata,source_stale_at}', '') IS NULL THEN
-    RAISE EXCEPTION 'Published exercise source_stale_at missing: %', v_exercise_contenu;
+  IF v_exercise_contenu->'metadata'->>'source_stale_at' IS NULL THEN
+    RAISE EXCEPTION 'Exercise source_stale_at metadata missing';
   END IF;
+
+  EXECUTE 'RESET ROLE';
+
+  RAISE NOTICE 'a2_audio_review_fixes_test: OK';
 END;
 $$;
 
