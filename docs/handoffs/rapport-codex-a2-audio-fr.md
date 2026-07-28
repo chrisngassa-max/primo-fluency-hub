@@ -10,7 +10,7 @@ Le lot de hardening A2 audio est **clos**. Correctifs fonctionnels inchanges ; p
 - Branche: `cursor/a2-audio-continuation`
 - PR: `#27` — https://github.com/chrisngassa-max/primo-fluency-hub/pull/27
 - Projet Supabase: `gudcenhmzlcvhgbgklzw`
-- HEAD attendu apres commit de cloture: `fix(a2): finalize review RPC security and closure evidence`
+- HEAD: `18754d8` — `fix(a2): finalize review RPC security and closure evidence`
 
 ## 3. Validations locales
 
