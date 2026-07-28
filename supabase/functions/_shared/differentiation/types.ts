@@ -147,4 +147,5 @@ export interface ValidationContext {
   sourceContentHash: string;
   segmentIds: Iterable<string>;
   chunkIds: Iterable<string>;
+  chunkSegmentPairs?: Iterable<string>;
 }

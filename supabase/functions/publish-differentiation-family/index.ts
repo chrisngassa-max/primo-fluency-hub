@@ -1,6 +1,11 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { familyVariantToExerciceRow } from "../_shared/family-to-exercice-adapter.ts";
 import type { DifferentiationFamilySliceV1 } from "../_shared/differentiation/types.ts";
+import {
+  getPedagogicalSourceReadinessError,
+  isPedagogicalSourceReadyForDifferentiation,
+} from "../_shared/pedagogical-source-guards.ts";
+import { pickDeterministicCoA2MasteryPoint } from "../_shared/differentiation/publish-mastery-point.ts";
 
 const headers = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type" };
 const json = (status: number, body: unknown) => new Response(JSON.stringify(body), { status, headers: { ...headers, "Content-Type": "application/json" } });
@@ -29,9 +34,16 @@ Deno.serve(async (request) => {
     if (family.generation_status !== "generated" || !["passed", "passed_with_warnings"].includes(family.validation_status) || family.review_status !== "validated") {
       return json(422, { error: "FAMILY_NOT_APPROVED_FOR_PUBLICATION" });
     }
-    const { data: source } = await admin.from("pedagogical_sources").select("content_hash, status").eq("id", family.source_id).maybeSingle();
+    const { data: source } = await admin
+      .from("pedagogical_sources")
+      .select("content_hash, status, review_status")
+      .eq("id", family.source_id)
+      .maybeSingle();
     if (!source || source.content_hash !== family.source_content_hash) return json(422, { error: "SOURCE_HASH_DIVERGED" });
-    if (source.status !== "analyzed") return json(422, { error: "SOURCE_ANALYSIS_STALE" });
+    if (!isPedagogicalSourceReadyForDifferentiation(source)) {
+      const readinessError = getPedagogicalSourceReadinessError(source);
+      return json(422, { error: readinessError === "SOURCE_NOT_ANALYZED" ? "SOURCE_ANALYSIS_STALE" : readinessError });
+    }
     const { data: transcription, error: transcriptionError } = await admin
       .from("pedagogical_source_transcriptions")
       .select("reviewed_text")
@@ -42,12 +54,13 @@ Deno.serve(async (request) => {
     if (transcriptionError) throw transcriptionError;
     const audioScript = transcription?.reviewed_text?.trim();
     if (!audioScript) return json(422, { error: "REVIEWED_TRANSCRIPTION_REQUIRED" });
-    const { data: defaultPoint, error: defaultPointError } = await admin
+    const { data: masteryPoints, error: masteryPointsError } = await admin
       .from("points_a_maitriser")
-      .select("id")
-      .limit(1)
-      .single();
-    if (defaultPointError || !defaultPoint) throw defaultPointError || new Error("DEFAULT_MASTERY_POINT_REQUIRED");
+      .select("id, ordre, niveau_min, niveau_max, sous_sections!inner(ordre, epreuves!inner(competence, ordre))")
+      .eq("sous_sections.epreuves.competence", "CO");
+    if (masteryPointsError) throw masteryPointsError;
+    const defaultPoint = pickDeterministicCoA2MasteryPoint(masteryPoints ?? []);
+    if (!defaultPoint) throw new Error("DEFAULT_MASTERY_POINT_REQUIRED");
     const { data: exercise, error: insertError } = await admin.from("exercices")
       .insert(familyVariantToExerciceRow(
         family.payload as DifferentiationFamilySliceV1,

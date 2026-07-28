@@ -133,6 +133,7 @@ describe("differentiation family A2 slice", () => {
       sourceContentHash: family.source_document.content_hash,
       segmentIds: ["segment-1"],
       chunkIds: ["chunk-1"],
+      chunkSegmentPairs: ["chunk-1:segment-1"],
     });
     expect(report.status).toBe("warning");
     expect(report.blocking).toEqual([]);
@@ -149,6 +150,7 @@ describe("differentiation family A2 slice", () => {
       sourceContentHash: `sha256:${"b".repeat(64)}`,
       segmentIds: [],
       chunkIds: [],
+      chunkSegmentPairs: [],
     });
     const codes = report.blocking.map((entry) => entry.code);
     expect(report.status).toBe("fail");
@@ -170,11 +172,70 @@ describe("differentiation family A2 slice", () => {
       sourceContentHash: family.source_document.content_hash,
       segmentIds: ["segment-1"],
       chunkIds: ["chunk-1"],
+      chunkSegmentPairs: ["chunk-1:segment-1"],
     });
 
     const codes = report.blocking.map((entry) => entry.code);
     expect(report.status).toBe("fail");
     expect(codes).toContain("DIFF_FORMAT_FORBIDDEN");
     expect(codes).toContain("DIFF_NO_CORRECT_ANSWER");
+  });
+
+  it("accepts a single chunk linked to a single segment", async () => {
+    const family = await validFamily();
+    const report = await validateDifferentiationFamilySlice(family, {
+      sourceContentHash: family.source_document.content_hash,
+      segmentIds: ["segment-1"],
+      chunkIds: ["chunk-1"],
+      chunkSegmentPairs: ["chunk-1:segment-1"],
+    });
+
+    expect(report.blocking.map((entry) => entry.code)).not.toContain("DIFF_FACT_PROVENANCE_MISMATCH");
+  });
+
+  it("accepts two chunks each linked to a different segment without requiring the cartesian product", async () => {
+    const family = await validFamily();
+    family.facts.required[0].provenance.chunk_refs = ["chunk-1", "chunk-2"];
+    family.facts.required[0].provenance.segment_refs = ["segment-1", "segment-2"];
+    family.facts.facts_hash = await calculateFactsHash(family.facts.required);
+
+    const report = await validateDifferentiationFamilySlice(family, {
+      sourceContentHash: family.source_document.content_hash,
+      segmentIds: ["segment-1", "segment-2"],
+      chunkIds: ["chunk-1", "chunk-2"],
+      chunkSegmentPairs: ["chunk-1:segment-1", "chunk-2:segment-2"],
+    });
+
+    expect(report.blocking.map((entry) => entry.code)).not.toContain("DIFF_FACT_PROVENANCE_MISMATCH");
+  });
+
+  it("rejects facts whose chunk/segment provenance link does not exist", async () => {
+    const family = await validFamily();
+    const report = await validateDifferentiationFamilySlice(family, {
+      sourceContentHash: family.source_document.content_hash,
+      segmentIds: ["segment-1"],
+      chunkIds: ["chunk-1"],
+      chunkSegmentPairs: ["chunk-1:segment-999"],
+    });
+
+    expect(report.status).toBe("fail");
+    expect(report.blocking.map((entry) => entry.code)).toContain("DIFF_FACT_PROVENANCE_MISMATCH");
+  });
+
+  it("rejects a chunk or segment that has no valid link among the referenced pairs", async () => {
+    const family = await validFamily();
+    family.facts.required[0].provenance.chunk_refs = ["chunk-1", "chunk-orphan"];
+    family.facts.required[0].provenance.segment_refs = ["segment-1"];
+    family.facts.facts_hash = await calculateFactsHash(family.facts.required);
+
+    const report = await validateDifferentiationFamilySlice(family, {
+      sourceContentHash: family.source_document.content_hash,
+      segmentIds: ["segment-1"],
+      chunkIds: ["chunk-1", "chunk-orphan"],
+      chunkSegmentPairs: ["chunk-1:segment-1"],
+    });
+
+    expect(report.status).toBe("fail");
+    expect(report.blocking.map((entry) => entry.code)).toContain("DIFF_FACT_PROVENANCE_MISMATCH");
   });
 });

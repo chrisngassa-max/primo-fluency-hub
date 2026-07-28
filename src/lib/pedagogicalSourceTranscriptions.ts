@@ -60,38 +60,22 @@ export async function saveTranscriptionReview(
   segments: Array<Pick<TranscriptionSegment, "id" | "reviewed_text">>,
   userId: string,
   sourceId: string,
-): Promise<void> {
+): Promise<{ published_family_count: number }> {
+  void userId;
+  void sourceId;
   if (!reviewedText.trim() || segments.some((segment) => !segment.reviewed_text?.trim())) {
     throw new Error("Le texte complet et chaque segment doivent être renseignés.");
   }
-  const { error: segmentsError } = await supabase
-    .from("pedagogical_source_transcription_segments")
-    .upsert(segments.map((segment) => ({ id: segment.id, reviewed_text: segment.reviewed_text?.trim() })));
-  if (segmentsError) throw segmentsError;
-  const { error } = await supabase.from("pedagogical_source_transcriptions").update({
-    reviewed_text: reviewedText.trim(),
-    reviewed_at: new Date().toISOString(),
-    reviewed_by: userId,
-    status: "reviewed",
-  }).eq("id", transcriptionId);
+  const { data, error } = await supabase.rpc("validate_pedagogical_source_transcription_review", {
+    p_transcription_id: transcriptionId,
+    p_reviewed_text: reviewedText.trim(),
+    p_segments: segments.map((segment) => ({
+      id: segment.id,
+      reviewed_text: segment.reviewed_text?.trim(),
+    })),
+  });
   if (error) throw error;
-
-  const { error: chunksError } = await supabase
-    .from("pedagogical_source_chunks")
-    .delete()
-    .eq("source_id", sourceId);
-  if (chunksError) throw chunksError;
-
-  const { error: sourceError } = await supabase
-    .from("pedagogical_sources")
-    .update({ status: "imported" })
-    .eq("id", sourceId);
-  if (sourceError) throw sourceError;
-
-  const { error: familyError } = await supabase
-    .from("differentiation_families")
-    .update({ review_status: "archived" })
-    .eq("source_id", sourceId)
-    .neq("review_status", "published");
-  if (familyError) throw familyError;
+  return {
+    published_family_count: Number(data?.published_family_count ?? 0),
+  };
 }

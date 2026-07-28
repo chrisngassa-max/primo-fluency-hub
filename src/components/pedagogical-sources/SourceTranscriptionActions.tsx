@@ -66,13 +66,19 @@ export function SourceTranscriptionActions({ source }: { source: PedagogicalSour
     if (!transcription || !user) return;
     setRunning(true);
     try {
-      await saveTranscriptionReview(transcription.id, reviewedText, segments, user.id, source.id);
+      const result = await saveTranscriptionReview(transcription.id, reviewedText, segments, user.id, source.id);
       await refetch();
       queryClient.invalidateQueries({ queryKey: ["pedagogical-source-transcription", source.id] });
       queryClient.invalidateQueries({ queryKey: ["pedagogical-sources"] });
       queryClient.invalidateQueries({ queryKey: ["pedagogical-source-chunks", source.id] });
       queryClient.invalidateQueries({ queryKey: ["differentiation-family", source.id] });
-      toast.success("Transcription validée par le formateur.");
+      if (result.published_family_count > 0) {
+        toast.warning("Transcription validée, source à republier", {
+          description: `${result.published_family_count} exercice(s) déjà publié(s) doivent être revus après cette correction.`,
+        });
+      } else {
+        toast.success("Transcription validée par le formateur.");
+      }
     } catch (error: any) {
       toast.error("Validation impossible", { description: error.message });
     } finally {

@@ -29,6 +29,7 @@ export async function validateDifferentiationFamilySlice(
   const warnings: ValidationIssue[] = [];
   const segmentIds = new Set(context.segmentIds);
   const chunkIds = new Set(context.chunkIds);
+  const chunkSegmentPairs = new Set(context.chunkSegmentPairs ?? []);
 
   if (family.schema_version !== "slice-1.0") {
     blocking.push(issue("DIFF_SLICE_SCHEMA_INVALID", "schema_version", "Le contrat attendu est slice-1.0."));
@@ -68,6 +69,27 @@ export async function validateDifferentiationFamilySlice(
     for (const chunkId of fact.provenance.chunk_refs) {
       if (!chunkIds.has(chunkId)) {
         blocking.push(issue("DIFF_CHUNK_REF_ORPHAN", `${path}.provenance.chunk_refs`, `Chunk inconnu : ${chunkId}.`));
+      }
+    }
+    if (chunkSegmentPairs.size > 0) {
+      const linkedChunks = new Set<string>();
+      const linkedSegments = new Set<string>();
+      for (const chunkId of fact.provenance.chunk_refs) {
+        for (const segmentId of fact.provenance.segment_refs) {
+          if (chunkSegmentPairs.has(`${chunkId}:${segmentId}`)) {
+            linkedChunks.add(chunkId);
+            linkedSegments.add(segmentId);
+          }
+        }
+      }
+      const hasUnlinkedChunk = fact.provenance.chunk_refs.some((chunkId) => !linkedChunks.has(chunkId));
+      const hasUnlinkedSegment = fact.provenance.segment_refs.some((segmentId) => !linkedSegments.has(segmentId));
+      if (hasUnlinkedChunk || hasUnlinkedSegment) {
+        blocking.push(issue(
+          "DIFF_FACT_PROVENANCE_MISMATCH",
+          `${path}.provenance`,
+          "Chaque chunk_ref et chaque segment_ref doit avoir au moins une liaison valide; le produit cartésien n'est pas exigé.",
+        ));
       }
     }
   }

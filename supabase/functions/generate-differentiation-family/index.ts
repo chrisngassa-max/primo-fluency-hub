@@ -3,6 +3,10 @@ import { calculateFactsHash, validateDifferentiationFamilySlice } from "../_shar
 import { getCoA2LevelContract } from "../_shared/differentiation/co-level-contract-loader.ts";
 import type { DifferentiationFact, DifferentiationFamilySliceV1 } from "../_shared/differentiation/types.ts";
 import { isSha256ContentHash } from "../_shared/source-integrity.ts";
+import {
+  getPedagogicalSourceAccessError,
+  getPedagogicalSourceReadinessError,
+} from "../_shared/pedagogical-source-guards.ts";
 
 const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type" };
 const json = (status: number, body: unknown) => new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
@@ -43,10 +47,21 @@ Deno.serve(async (request) => {
     ]);
     if (!trainer && !adminRole) return json(403, { error: "STAFF_ROLE_REQUIRED" });
     const { data: source, error: sourceError } = await admin.from("pedagogical_sources")
-      .select("id, created_by, title, storage_bucket, storage_path, content_hash").eq("id", sourceId).maybeSingle();
+      .select("id, created_by, title, storage_bucket, storage_path, content_hash, source_kind, status, review_status")
+      .eq("id", sourceId)
+      .maybeSingle();
     if (sourceError) throw sourceError;
-    if (!source) return json(404, { error: "SOURCE_NOT_FOUND" });
-    if (!adminRole && source.created_by !== user.id) return json(403, { error: "SOURCE_FORBIDDEN" });
+    const accessError = getPedagogicalSourceAccessError({
+      isStaff: Boolean(trainer),
+      isAdmin: Boolean(adminRole),
+      userId: user.id,
+      source,
+    });
+    if (accessError === "SOURCE_NOT_FOUND") return json(404, { error: accessError });
+    if (accessError) return json(403, { error: accessError });
+    if (source.source_kind !== "audio") return json(422, { error: "SOURCE_NOT_AUDIO" });
+    const readinessError = getPedagogicalSourceReadinessError(source);
+    if (readinessError) return json(422, { error: readinessError });
     if (!isSha256ContentHash(source.content_hash)) return json(422, { error: "SOURCE_HASH_REQUIRED" });
     const { version: referentialVersion, contract } = getCoA2LevelContract();
     const { data: existing } = await admin.from("differentiation_families").select("id, generation_status, payload")
@@ -59,7 +74,8 @@ Deno.serve(async (request) => {
     if (!transcription) return json(422, { error: "REVIEWED_TRANSCRIPTION_REQUIRED" });
     const { data: segments } = await admin.from("pedagogical_source_transcription_segments").select("id, segment_key, reviewed_text, raw_text")
       .eq("transcription_id", transcription.id).order("sequence_index");
-    const { data: chunks } = await admin.from("pedagogical_source_chunks").select("id, content_text, pedagogical_source_chunk_segments(segment_id)")
+    const { data: chunks } = await admin.from("pedagogical_source_chunks")
+      .select("id, content_text, pedagogical_source_chunk_segments(segment_id)")
       .eq("source_id", source.id);
     if (!segments?.length || !chunks?.length) return json(422, { error: "ANALYZED_AUDIO_CHUNKS_REQUIRED" });
     const familyCode = `A2CO-${crypto.randomUUID().replaceAll("-", "").slice(0, 12).toUpperCase()}`;
@@ -106,7 +122,15 @@ Deno.serve(async (request) => {
       generation: { model_id: "gemini-2.5-flash", prompt_version: "a2-audio-v1", generated_at: new Date().toISOString() },
       validation_report: { status: "not_run", blocking: [], warnings: [], requires_human_review: [] },
     } as DifferentiationFamilySliceV1;
-    const report = await validateDifferentiationFamilySlice(family, { sourceContentHash: source.content_hash, segmentIds: segments.map((segment) => segment.id), chunkIds: chunks.map((chunk) => chunk.id) });
+    const chunkSegmentPairs = (chunks ?? []).flatMap((chunk: any) =>
+      (chunk.pedagogical_source_chunk_segments ?? []).map((link: any) => `${chunk.id}:${link.segment_id}`)
+    );
+    const report = await validateDifferentiationFamilySlice(family, {
+      sourceContentHash: source.content_hash,
+      segmentIds: segments.map((segment) => segment.id),
+      chunkIds: chunks.map((chunk) => chunk.id),
+      chunkSegmentPairs,
+    });
     family.validation_report = report;
     const { error: finishError } = await admin.from("differentiation_families").update({
       generation_status: "generated", validation_status: report.status === "pass" ? "passed" : report.status === "warning" ? "passed_with_warnings" : "failed",

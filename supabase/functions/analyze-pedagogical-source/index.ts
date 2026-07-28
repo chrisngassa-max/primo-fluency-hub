@@ -8,6 +8,7 @@ import {
   getUserIdFromAuth,
   logAICall,
 } from "../_shared/check-consent.ts";
+import { getPedagogicalSourceAccessError } from "../_shared/pedagogical-source-guards.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -308,12 +309,27 @@ serve(async (req) => {
     sourceId = body?.sourceId;
     if (!sourceId || typeof sourceId !== "string") return json(400, { error: "sourceId est requis." });
 
+    const [{ data: isTrainer }, { data: isAdmin }] = await Promise.all([
+      supabase.rpc("has_role", { uid: triggeredBy, target_role: "formateur" }),
+      supabase.rpc("has_role", { uid: triggeredBy, target_role: "admin" }),
+    ]);
+
     const { data: source, error: sourceError } = await supabase
       .from("pedagogical_sources")
       .select("*")
       .eq("id", sourceId)
-      .single();
-    if (sourceError || !source) throw sourceError || new Error("Source introuvable.");
+      .maybeSingle();
+    if (sourceError) throw sourceError;
+
+    const accessError = getPedagogicalSourceAccessError({
+      isStaff: Boolean(isTrainer),
+      isAdmin: Boolean(isAdmin),
+      userId: triggeredBy,
+      source,
+    });
+    if (accessError === "STAFF_ROLE_REQUIRED") return json(403, { error: accessError });
+    if (accessError === "SOURCE_NOT_FOUND") return json(404, { error: accessError });
+    if (accessError === "SOURCE_FORBIDDEN") return json(403, { error: accessError });
 
     let reviewedSegments: ReviewedTranscriptionSegment[] = [];
     if (source.source_kind === "audio") {
