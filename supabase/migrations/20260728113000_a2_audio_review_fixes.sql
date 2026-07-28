@@ -5,6 +5,8 @@ CREATE OR REPLACE FUNCTION public.validate_pedagogical_source_transcription_revi
 )
 RETURNS jsonb
 LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
 AS $fn$
 DECLARE
   v_user_id uuid := auth.uid();

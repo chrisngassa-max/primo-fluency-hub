@@ -2,48 +2,43 @@
 
 ## 1. Resume executif
 
-Le vertical slice CapTCF A2 audio est fonctionnel de bout en bout. Le lot de hardening A2 audio (5 correctifs + reserves de revue) a ete finalise, teste localement (Vitest + build + SQL Postgres) et prepare pour fusion de la PR `#27`.
+Le lot de hardening A2 audio est **clos**. Correctifs appliques, tests locaux verts, SQL prouve, commit+push sur `cursor/a2-audio-continuation`, migration distante appliquee, 3 Edge Functions redeployees, replay E2E authentifie reussi (y compris second formateur `SOURCE_FORBIDDEN`).
 
-## 2. Etat du chantier
+## 2. Etat
 
 - Worktree: `C:\Users\Sofiane\Documents\New project\primo-a2-cursor`
 - Branche: `cursor/a2-audio-continuation`
-- PR: `#27`
-- Handoff anglais: `docs/handoffs/captcf-a2-audio-status-and-next-steps.md`
-- Commit hardening: `1be5e53` (+ commit de cloture SQL/rapport si present)
+- PR: `#27` — https://github.com/chrisngassa-max/primo-fluency-hub/pull/27
+- Projet Supabase: `gudcenhmzlcvhgbgklzw`
 
-## 3. Corrections de cloture appliquees
-
-1. **Typage JSONB homogene** pour `published_source_stale_at` (plus de melange `timestamptz` / `text`) ; ancienne date stale non ecrasee par `null`.
-2. **Test SQL transactionnel complete** : parcours succes + cas segment manquant / duplique / etranger / vide ; assertions stale exercice via `contenu.metadata.source_stale`.
-3. **Provenance multi-chunks/multi-segments** : liaison couvrante (pas produit cartesien) ; code `DIFF_FACT_PROVENANCE_MISMATCH` conserve.
-4. **Selection point de maitrise CO/A2** : niveaux `A0..C2` + normalisation `Pre-A1`/`Pré-A1` ; selection deterministe documentee comme rattachement generique.
-5. **Publications obsoletes** : pas de suppression ; exercice marque `contenu.metadata.source_stale` / `source_stale_at` via `published_exercise_id`.
-
-## 4. Resultats de validation locale (session de cloture)
+## 3. Validations locales
 
 | Controle | Resultat |
 |---|---|
 | Tests cibles (4 fichiers) | **20 passes** |
-| Suite complete | **64 fichiers / 400 tests passes** (ref. anterieure 392) |
-| Build Vite production | **OK** |
-| Test SQL RPC | **OK** — Postgres 15 Docker (`CREATE FUNCTION` + assertions + `ROLLBACK`, notice `HARNESS_SQL_TEST_OK`, exit 0) |
+| Suite complete | **64 fichiers / 400 tests** |
+| Build Vite | **OK** |
+| Test SQL RPC | **OK** (Postgres 15 Docker, `HARNESS_SQL_TEST_OK`, ROLLBACK) |
 
-Note: `npx supabase start` local echoue encore sur une migration ancienne (`003_placement_tests.sql` avant `profiles` — erreur `LegacyMigrationApplyError`). Le test SQL a ete execute et prouve via conteneur Postgres ephemere + schema minimal equivalent (pas une simple relecture du SQL). Artefacts harness sous `tmp/` non commités.
+Note: `npx supabase start` echoue toujours sur `003_placement_tests.sql` (avant `profiles`). Contournement: conteneur Postgres ephemere + schema minimal.
 
-## 5. Controles serveur confirmes (non affaiblis)
+## 4. Deploiement / E2E
 
-- `analyze-pedagogical-source` : auth + formateur/admin + propriete (`SOURCE_FORBIDDEN`)
-- `generate-differentiation-family` : audio + analyzed + utilisable/valide + transcription reviewed + hash + propriete
-- `publish-differentiation-family` : famille validee + source prete + hash + transcription relue + point CO/A2 + double publication bloquee
+- Push: `f12a777` (+ hardening `1be5e53`)
+- Migration `a2_audio_review_fixes` + follow-up `SECURITY DEFINER` appliquees
+- Fonctions redeployees: `analyze-pedagogical-source`, `generate-differentiation-family`, `publish-differentiation-family`
+- E2E MP3 `tmp/fixtures/a2-sample-jeu-cropolis.mp3` via `formateur.e2e@tcfpro.fr`:
+  - upload → hash → transcription → review → analyse → generation → validation → publication **OK**
+  - 2e review: chunks=0, source `imported`/`a_remplacer`, `published_source_stale`, exercice `source_stale`, generation bloquee `SOURCE_NOT_ANALYZED`
+  - 2e formateur: analyse + RPC review → `SOURCE_FORBIDDEN`
 
-## 6. Fichiers hors commit (volontaire)
+## 5. Hors commit
 
 - `content/curriculum/v2/S01-v3/exercices-interactifs.json`
 - `pr27-body.md`
 - `supabase/.temp/linked-project.json`
-- artefacts tmp de harness SQL (`tmp/a2_audio_sql_*`)
+- `tmp/*` (fixtures, harness, scripts E2E)
 
-## 7. Deploiement / E2E
+## 6. Verdict
 
-A completer apres push : migration distante, redeploiement des 3 Edge Functions, replay MP3 authentifie. Verdict `GO fusion` uniquement si ces etapes reussissent.
+**GO fusion**
