@@ -39,7 +39,7 @@ Note: `npx supabase start` echoue toujours sur `003_placement_tests.sql` (avant 
 Parcours MP3 authentifie (upload → hash → transcription Gemini → revue → analyse → generation A2 → validation → publication) sur fixture `a2-sample-jeu-cropolis.mp3`.
 
 ### E2E post-hardening (artefact final)
-Replay du **2026-07-28T12:23:04Z** (UTC) — artefact `tmp/a2_e2e_replay_result.json` :
+Replay final du **2026-07-28T17:00:17Z** (UTC) — artefact `tmp/a2_e2e_replay_result.json`, exit code **0** :
 
 ```json
 {
@@ -58,7 +58,7 @@ Replay du **2026-07-28T12:23:04Z** (UTC) — artefact `tmp/a2_e2e_replay_result.
 }
 ```
 
-- Exercice anonymise: `da0ef6d4-…bb7a` (famille `18c84875-…d22f`, source `ee3912de-…587b`)
+- Exercice anonymise: `284f90b4-…82b5` (famille `bf85cad6-…74c4`, source `7a4a2a1c-…42e3`)
 - Seconde revue → invalidation stale → generation bloquee `SOURCE_NOT_ANALYZED` → republication bloquee
 - Controles inter-formateur: analyse HTTP 403 `SOURCE_FORBIDDEN` + RPC review `SOURCE_FORBIDDEN`
 
