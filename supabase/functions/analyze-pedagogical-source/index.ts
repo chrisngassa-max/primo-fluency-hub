@@ -8,6 +8,7 @@ import {
   getUserIdFromAuth,
   logAICall,
 } from "../_shared/check-consent.ts";
+import { getPedagogicalSourceAccessError } from "../_shared/pedagogical-source-guards.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -48,6 +49,16 @@ type SourceRow = {
   metadata: Record<string, unknown>;
 };
 
+type ReviewedTranscriptionSegment = {
+  id: string;
+  segment_key: string;
+  sequence_index: number;
+  start_ms: number;
+  end_ms: number;
+  raw_text: string;
+  reviewed_text: string | null;
+};
+
 type AnalysisChunk = {
   chunk_type?: string;
   title?: string;
@@ -58,6 +69,7 @@ type AnalysisChunk = {
   domains?: string[];
   theme?: string;
   metadata?: Record<string, unknown>;
+  segment_keys?: string[];
 };
 
 const json = (status: number, body: unknown) =>
@@ -124,7 +136,7 @@ function buildSourceContext(source: SourceRow): string {
   ].join("\n");
 }
 
-function buildAnalysisPrompt(source: SourceRow, extractedText?: string): string {
+function buildAnalysisPrompt(source: SourceRow, extractedText?: string, isAudio = false): string {
   const textBlock = extractedText
     ? `\n\nTEXTE EXTRAIT:\n${extractedText.slice(0, TEXT_LIMIT)}`
     : "\n\nAnalyse le fichier joint. S'il s'agit d'une image ou d'un PDF scanne, decris le contenu visible et les usages pedagogiques possibles.";
@@ -146,7 +158,8 @@ Retourne cet objet JSON:
       "level": "A0|A1|A2|B1|B2|C1|C2|null",
       "domains": ["vocabulaire"],
       "theme": "theme court",
-      "metadata": { "usage": "contexte_ia|support|exercice_source|image" }
+      "metadata": { "usage": "contexte_ia|support|exercice_source|image" },
+      "segment_keys": ["seg-001"]
     }
   ]
 }
@@ -157,6 +170,7 @@ Contraintes:
 - Si tu detectes une lecon, separe vocabulaire, grammaire, conjugaison et phonetique quand c'est possible.
 - Si tu detectes des exercices/corriges, cree des chunks distincts.
 - Si c'est une image, cree au moins un chunk image_description.
+- Pour une transcription audio, chaque chunk doit contenir uniquement des segment_keys fournis dans le texte.
 - Aucun nom d'eleve ou donnee personnelle inventee.${textBlock}`;
 }
 
@@ -170,12 +184,12 @@ function parseAnalysis(raw: string): { summary?: string; detected_level?: string
   };
 }
 
-async function analyzeText(source: SourceRow, text: string) {
+async function analyzeText(source: SourceRow, text: string, isAudio = false) {
   const response = await callAI({
     model: "google/gemini-2.5-flash",
     messages: [
       { role: "system", content: buildSystemPrompt() },
-      { role: "user", content: buildAnalysisPrompt(source, text) },
+      { role: "user", content: buildAnalysisPrompt(source, text, isAudio) },
     ],
   });
   const raw = response.choices?.[0]?.message?.content?.trim();
@@ -267,6 +281,7 @@ function normalizeChunk(chunk: AnalysisChunk, source: SourceRow, index: number) 
       ...(chunk.metadata || {}),
       analysis_lot: "B",
       source_kind: source.source_kind,
+      transcription_segment_keys: Array.isArray(chunk.segment_keys) ? chunk.segment_keys : [],
     },
   };
 }
@@ -294,12 +309,50 @@ serve(async (req) => {
     sourceId = body?.sourceId;
     if (!sourceId || typeof sourceId !== "string") return json(400, { error: "sourceId est requis." });
 
+    const [{ data: isTrainer }, { data: isAdmin }] = await Promise.all([
+      supabase.rpc("has_role", { uid: triggeredBy, target_role: "formateur" }),
+      supabase.rpc("has_role", { uid: triggeredBy, target_role: "admin" }),
+    ]);
+
     const { data: source, error: sourceError } = await supabase
       .from("pedagogical_sources")
       .select("*")
       .eq("id", sourceId)
-      .single();
-    if (sourceError || !source) throw sourceError || new Error("Source introuvable.");
+      .maybeSingle();
+    if (sourceError) throw sourceError;
+
+    const accessError = getPedagogicalSourceAccessError({
+      isStaff: Boolean(isTrainer),
+      isAdmin: Boolean(isAdmin),
+      userId: triggeredBy,
+      source,
+    });
+    if (accessError === "STAFF_ROLE_REQUIRED") return json(403, { error: accessError });
+    if (accessError === "SOURCE_NOT_FOUND") return json(404, { error: accessError });
+    if (accessError === "SOURCE_FORBIDDEN") return json(403, { error: accessError });
+
+    let reviewedSegments: ReviewedTranscriptionSegment[] = [];
+    if (source.source_kind === "audio") {
+      const { data: transcription, error: transcriptionError } = await supabase
+        .from("pedagogical_source_transcriptions")
+        .select("id, status")
+        .eq("source_id", sourceId)
+        .eq("is_current", true)
+        .eq("status", "reviewed")
+        .maybeSingle();
+      if (transcriptionError) throw transcriptionError;
+      if (!transcription) return json(422, { error: "REVIEWED_TRANSCRIPTION_REQUIRED" });
+      const { data: segments, error: segmentsError } = await supabase
+        .from("pedagogical_source_transcription_segments")
+        .select("id, segment_key, sequence_index, start_ms, end_ms, raw_text, reviewed_text")
+        .eq("transcription_id", transcription.id)
+        .order("sequence_index");
+      if (segmentsError) throw segmentsError;
+      reviewedSegments = (segments ?? []) as ReviewedTranscriptionSegment[];
+      if (reviewedSegments.length === 0 || reviewedSegments.some((segment) => !(segment.reviewed_text || segment.raw_text).trim())) {
+        return json(422, { error: "REVIEWED_TRANSCRIPTION_SEGMENTS_REQUIRED" });
+      }
+    }
 
     await supabase
       .from("pedagogical_sources")
@@ -312,21 +365,26 @@ serve(async (req) => {
       })
       .eq("id", sourceId);
 
-    const { data: file, error: downloadError } = await supabase.storage
-      .from(source.storage_bucket)
-      .download(source.storage_path);
-    if (downloadError || !file) throw downloadError || new Error("Fichier source introuvable.");
-
-    const bytes = new Uint8Array(await file.arrayBuffer());
-    if (bytes.byteLength > MAX_FILE_BYTES) {
-      throw new AIError("Fichier trop volumineux pour le lot B. Limite : 18 Mo.", 413);
+    let extractedText = "";
+    let analysis;
+    if (source.source_kind === "audio") {
+      extractedText = reviewedSegments
+        .map((segment) => `[${segment.segment_key} ${segment.start_ms}-${segment.end_ms}] ${segment.reviewed_text || segment.raw_text}`)
+        .join("\n");
+      analysis = await analyzeText(source, extractedText, true);
+    } else {
+      const { data: file, error: downloadError } = await supabase.storage
+        .from(source.storage_bucket)
+        .download(source.storage_path);
+      if (downloadError || !file) throw downloadError || new Error("Fichier source introuvable.");
+      const bytes = new Uint8Array(await file.arrayBuffer());
+      if (bytes.byteLength > MAX_FILE_BYTES) throw new AIError("Fichier trop volumineux pour le lot B. Limite : 18 Mo.", 413);
+      const mimeType = source.mime_type || file.type || "application/octet-stream";
+      extractedText = await extractTextForMime(bytes, mimeType);
+      analysis = extractedText.length > 80
+        ? await analyzeText(source, extractedText)
+        : await analyzeFileWithGemini(source, bytes, mimeType);
     }
-
-    const mimeType = source.mime_type || file.type || "application/octet-stream";
-    const extractedText = await extractTextForMime(bytes, mimeType);
-    const analysis = extractedText.length > 80
-      ? await analyzeText(source, extractedText)
-      : await analyzeFileWithGemini(source, bytes, mimeType);
 
     const chunks = (analysis.chunks || [])
       .slice(0, 24)
@@ -338,8 +396,20 @@ serve(async (req) => {
     }
 
     await supabase.from("pedagogical_source_chunks").delete().eq("source_id", sourceId);
-    const { error: insertError } = await supabase.from("pedagogical_source_chunks").insert(chunks);
+    const { data: insertedChunks, error: insertError } = await supabase.from("pedagogical_source_chunks").insert(chunks).select("id, metadata");
     if (insertError) throw insertError;
+    if (source.source_kind === "audio") {
+      const segmentByKey = new Map(reviewedSegments.map((segment) => [segment.segment_key, segment]));
+      const links = (insertedChunks ?? []).flatMap((chunk: { id: string; metadata: Record<string, unknown> }) => {
+        const keys = Array.isArray(chunk.metadata?.transcription_segment_keys)
+          ? chunk.metadata.transcription_segment_keys.filter((key): key is string => typeof key === "string" && segmentByKey.has(key))
+          : [];
+        return keys.map((key, sequence_index) => ({ chunk_id: chunk.id, segment_id: segmentByKey.get(key)!.id, sequence_index }));
+      });
+      if (links.length === 0) throw new AIError("Analyse audio invalide : aucun chunk ne référence un segment existant.", 422);
+      const { error: linksError } = await supabase.from("pedagogical_source_chunk_segments").insert(links);
+      if (linksError) throw linksError;
+    }
 
     const updatedMetadata = {
       ...(source.metadata || {}),

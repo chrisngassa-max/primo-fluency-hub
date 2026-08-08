@@ -27,6 +27,8 @@ import {
   type PedagogicalSourceKind,
 } from "@/lib/pedagogicalSources";
 import { SourceAnalysisActions } from "@/components/pedagogical-sources/SourceAnalysisActions";
+import { SourceDifferentiationFamilyActions } from "@/components/pedagogical-sources/SourceDifferentiationFamilyActions";
+import { SourceTranscriptionActions } from "@/components/pedagogical-sources/SourceTranscriptionActions";
 import { BookOpen, Eye, FileArchive, Filter, Image, Loader2, Search, Upload } from "lucide-react";
 
 const LEVELS = ["A0", "A1", "A2", "B1", "B2", "C1", "C2"];
@@ -375,7 +377,9 @@ export default function PedagogicalSourcesPage() {
                   {openingId === source.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Eye className="h-4 w-4" />}
                   Ouvrir
                 </Button>
+                <SourceTranscriptionActions source={source} />
                 <SourceAnalysisActions source={source} />
+                <SourceDifferentiationFamilyActions source={source} />
               </CardContent>
             </Card>
           ))}
