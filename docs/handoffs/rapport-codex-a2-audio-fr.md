@@ -10,7 +10,8 @@ Le lot de hardening A2 audio est **clos**. Correctifs fonctionnels inchanges ; p
 - Branche: `cursor/a2-audio-continuation`
 - PR: `#27` — https://github.com/chrisngassa-max/primo-fluency-hub/pull/27
 - Projet Supabase: `gudcenhmzlcvhgbgklzw`
-- HEAD: `18754d8` — `fix(a2): finalize review RPC security and closure evidence`
+- Base vérifiée avant réconciliation: `08b2632` — `fix(a2): finalize review RPC security and closure evidence`
+- Réconciliation finale des migrations: présente révision de la branche
 
 ## 3. Validations locales
 
@@ -20,17 +21,23 @@ Le lot de hardening A2 audio est **clos**. Correctifs fonctionnels inchanges ; p
 | Suite complete | **64 fichiers / 400 tests** |
 | Build Vite | **OK** |
 | Test SQL RPC | **OK** (Postgres Docker `a2-audio-sql-test`, `HARNESS_SQL_TEST_OK`, ROLLBACK) |
-| Migration additive locale | `20260728140000_a2_audio_review_rpc_security.sql` |
+| Historique A2 local/distant | **Aligné** sur `20260728104942`, `20260728114445`, `20260728120210`, `20260728120257` |
 
 Note: `npx supabase start` echoue toujours sur `003_placement_tests.sql` (avant `profiles`). Contournement: conteneur Postgres ephemere + schema minimal.
 
 ## 4. Deploiement / migrations distantes
 
-- Migration initiale: `a2_audio_review_fixes` (`20260728104942`)
-- Follow-up deja present: `a2_audio_review_rpc_security_definer` (`20260728114445`)
-- Migration additive de cloture appliquee: **`a2_audio_review_rpc_security`** (`20260728120210`)
-  - `SECURITY DEFINER` + `search_path=public`
-  - `REVOKE` PUBLIC/anon ; `GRANT EXECUTE` authenticated/service_role
+L'historique versionné dans le dépôt reproduit désormais exactement les quatre migrations A2 enregistrées par Supabase:
+
+| Version | Migration | Rôle |
+|---|---|---|
+| `20260728104942` | `a2_audio_review_fixes` | RPC transactionnelle initiale |
+| `20260728114445` | `a2_audio_review_rpc_security_definer` | Remplacement de la RPC avec `SECURITY DEFINER` et `search_path=public` |
+| `20260728120210` | `a2_audio_review_rpc_security` | Restriction des privilèges d'exécution |
+| `20260728120257` | `a2_audio_review_rpc_security` | Réapplication distante identique, conservée pour reproduire fidèlement l'historique |
+
+La commande `supabase migration list --linked` aligne les quatre versions côté local et distant. La RPC finale conserve `SECURITY DEFINER`, `search_path=public`, révoque `PUBLIC`/`anon` et accorde l'exécution à `authenticated`/`service_role`.
+
 - Fonctions ACTIVE: `analyze-pedagogical-source`, `generate-differentiation-family`, `publish-differentiation-family`
 
 ## 5. Preuves E2E (distinguer les trois niveaux)
@@ -74,4 +81,4 @@ Le HTTP **409** `FAMILY_ALREADY_PUBLISHED` (avec `exercise_id`) n'est **pas** un
 
 ## 7. Verdict
 
-**GO fusion** — sous reserve que le commit de cloture soit pousse et que l'artefact E2E final reste `ok: true` avec la migration additive presente a distance.
+**GO fusion** — l'historique A2 local et distant est aligné, l'artefact E2E final reste `ok: true`, les contrôles de sécurité sont actifs et la PR #27 est fusionnable.

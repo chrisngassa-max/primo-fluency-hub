@@ -165,8 +165,6 @@ BEGIN
         END
   WHERE id = v_source_id;
 
-  -- Marque les exercices publiés liés comme obsolètes sans les supprimer.
-  -- La famille reste `published` et l'exercice reste traçable.
   UPDATE public.exercices AS exercise
   SET contenu = coalesce(exercise.contenu, '{}'::jsonb)
     || jsonb_build_object(
@@ -196,4 +194,4 @@ END;
 $fn$;
 
 GRANT EXECUTE ON FUNCTION public.validate_pedagogical_source_transcription_review(uuid, text, jsonb)
-  TO authenticated, service_role;
+  TO authenticated, service_role;;
