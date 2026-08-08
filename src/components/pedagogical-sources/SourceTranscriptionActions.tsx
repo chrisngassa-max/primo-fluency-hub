@@ -101,6 +101,14 @@ export function SourceTranscriptionActions({ source }: { source: PedagogicalSour
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <Badge variant={transcription.status === "error" ? "destructive" : "secondary"}>{transcription.status}</Badge>
+                {transcription.provider_parameters?.timestamp_status === "unverified" && (
+                  <Badge variant="destructive">
+                    {"Horodatage \u00e0 v\u00e9rifier"}
+                    {typeof transcription.provider_parameters.timestamp_drift_ms === "number"
+                      ? ` (${Math.round(transcription.provider_parameters.timestamp_drift_ms / 1000)} s d'\u00e9cart)`
+                      : ""}
+                  </Badge>
+                )}
                 {transcription.error_details && <span className="text-xs text-destructive">{String(transcription.error_details.code || "Erreur de transcription")}</span>}
                 {transcription.status === "error" && <Button size="sm" variant="outline" disabled={running} onClick={() => run(true)}><RotateCcw className="mr-1 h-3 w-3" />Réessayer</Button>}
               </div>

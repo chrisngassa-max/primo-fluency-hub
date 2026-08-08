@@ -12,6 +12,12 @@ export interface PedagogicalSourceTranscription {
   reviewed_text: string | null;
   language_detected: string | null;
   error_details: Record<string, unknown> | null;
+  provider_parameters: {
+    audio_duration_ms?: number | null;
+    transcript_end_ms?: number | null;
+    timestamp_drift_ms?: number | null;
+    timestamp_status?: "verified" | "unverified";
+  } | null;
   reviewed_at: string | null;
   reviewed_by: string | null;
 }
@@ -35,7 +41,7 @@ export async function fetchCurrentTranscription(sourceId: string): Promise<{
 }> {
   const { data: transcription, error } = await supabase
     .from("pedagogical_source_transcriptions")
-    .select("id, source_id, status, raw_text, reviewed_text, language_detected, error_details, reviewed_at, reviewed_by")
+    .select("id, source_id, status, raw_text, reviewed_text, language_detected, error_details, reviewed_at, reviewed_by, provider_parameters")
     .eq("source_id", sourceId).eq("is_current", true).maybeSingle();
   if (error) throw error;
   if (!transcription) return { transcription: null, segments: [] };

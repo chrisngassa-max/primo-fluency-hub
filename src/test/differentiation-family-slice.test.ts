@@ -238,4 +238,20 @@ describe("differentiation family A2 slice", () => {
     expect(report.status).toBe("fail");
     expect(report.blocking.map((entry) => entry.code)).toContain("DIFF_FACT_PROVENANCE_MISMATCH");
   });
+
+  it("blocks publication evidence when transcription timestamps are unverified", async () => {
+    const family = await validFamily();
+    const report = await validateDifferentiationFamilySlice(family, {
+      sourceContentHash: family.source_document.content_hash,
+      segmentIds: ["segment-1"],
+      chunkIds: ["chunk-1"],
+      chunkSegmentPairs: ["chunk-1:segment-1"],
+      timestampsVerified: false,
+    });
+
+    expect(report.status).toBe("fail");
+    expect(report.blocking.map((entry) => entry.code)).toContain(
+      "DIFF_TRANSCRIPTION_TIMESTAMPS_UNVERIFIED",
+    );
+  });
 });

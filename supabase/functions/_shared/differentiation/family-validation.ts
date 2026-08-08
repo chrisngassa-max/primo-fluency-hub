@@ -31,6 +31,9 @@ export async function validateDifferentiationFamilySlice(
   const chunkIds = new Set(context.chunkIds);
   const chunkSegmentPairs = new Set(context.chunkSegmentPairs ?? []);
 
+  if (context.timestampsVerified === false) {
+    blocking.push(issue("DIFF_TRANSCRIPTION_TIMESTAMPS_UNVERIFIED", "facts.required[].provenance", "Les rep\u00e8res temporels d\u00e9passent ou ne couvrent pas correctement la dur\u00e9e r\u00e9elle de l'audio."));
+  }
   if (family.schema_version !== "slice-1.0") {
     blocking.push(issue("DIFF_SLICE_SCHEMA_INVALID", "schema_version", "Le contrat attendu est slice-1.0."));
   }
