@@ -148,4 +148,5 @@ export interface ValidationContext {
   segmentIds: Iterable<string>;
   chunkIds: Iterable<string>;
   chunkSegmentPairs?: Iterable<string>;
+  timestampsVerified?: boolean;
 }

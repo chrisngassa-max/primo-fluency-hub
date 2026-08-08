@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { isSha256ContentHash } from "../_shared/source-integrity.ts";
+import { assessTimestampCoverage, readMp3Duration } from "../_shared/transcription/audio-duration.ts";
 import {
   transcribeAudioWithGemini,
   validateCanonicalTranscription,
@@ -94,12 +95,15 @@ Deno.serve(async (request) => {
     if (downloadError || !file) throw new Error("SOURCE_FILE_NOT_FOUND");
     if (file.size === 0) throw new Error("SOURCE_FILE_EMPTY");
     if (file.size > MAX_GEMINI_AUDIO_BYTES) throw new Error("SOURCE_FILE_TOO_LARGE_FOR_GEMINI");
+    const audioBytes = new Uint8Array(await file.arrayBuffer());
+    const duration = String(source.mime_type ?? "").includes("mpeg") ? readMp3Duration(audioBytes) : null;
     const transcription = await transcribeAudioWithGemini(
-      new Uint8Array(await file.arrayBuffer()),
+      audioBytes,
       source.mime_type || file.type || "audio/mpeg",
     );
     const validationErrors = validateCanonicalTranscription(transcription);
     if (validationErrors.length > 0) throw new Error(`TRANSCRIPTION_INVALID:${validationErrors.join(",")}`);
+    const timestampAssessment = assessTimestampCoverage(transcription.segments, duration?.durationMs ?? null);
 
     const { error: segmentError } = await admin.from("pedagogical_source_transcription_segments").insert(
       transcription.segments.map(({ text, ...segment }) => ({
@@ -115,9 +119,21 @@ Deno.serve(async (request) => {
       language_detected: transcription.language,
       average_confidence: null,
       error_details: null,
+      provider_parameters: {
+        path: "inline_data",
+        content_hash: source.content_hash,
+        audio_duration_ms: timestampAssessment.audioDurationMs,
+        mp3_frame_count: duration?.frameCount ?? null,
+        timestamp_status: timestampAssessment.status,
+        transcript_end_ms: timestampAssessment.transcriptEndMs,
+        timestamp_drift_ms: timestampAssessment.driftMs,
+      },
     }).eq("id", transcriptionId);
     if (completeError) throw completeError;
-    return json(200, { ok: true, cached: false, transcription_id: transcriptionId, status: "ready", segments_count: transcription.segments.length });
+    return json(200, {
+      ok: true, cached: false, transcription_id: transcriptionId, status: "ready",
+      segments_count: transcription.segments.length, timestamp_assessment: timestampAssessment,
+    });
   } catch (error) {
     console.error("transcribe-pedagogical-source error", error);
     const message = error instanceof Error

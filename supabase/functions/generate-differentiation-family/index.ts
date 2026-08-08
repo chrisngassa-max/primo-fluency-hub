@@ -69,7 +69,7 @@ Deno.serve(async (request) => {
       .order("created_at", { ascending: false }).limit(1).maybeSingle();
     if (existing?.generation_status === "generating") return json(409, { error: "FAMILY_GENERATION_ALREADY_RUNNING" });
     if (!force && existing?.generation_status === "generated") return json(200, { ok: true, cached: true, family_id: existing.id, payload: existing.payload });
-    const { data: transcription } = await admin.from("pedagogical_source_transcriptions").select("id, reviewed_text")
+    const { data: transcription } = await admin.from("pedagogical_source_transcriptions").select("id, reviewed_text, provider_parameters")
       .eq("source_id", source.id).eq("is_current", true).eq("status", "reviewed").maybeSingle();
     if (!transcription) return json(422, { error: "REVIEWED_TRANSCRIPTION_REQUIRED" });
     const { data: segments } = await admin.from("pedagogical_source_transcription_segments").select("id, segment_key, reviewed_text, raw_text")
@@ -130,6 +130,7 @@ Deno.serve(async (request) => {
       segmentIds: segments.map((segment) => segment.id),
       chunkIds: chunks.map((chunk) => chunk.id),
       chunkSegmentPairs,
+      timestampsVerified: transcription.provider_parameters?.timestamp_status === "verified",
     });
     family.validation_report = report;
     const { error: finishError } = await admin.from("differentiation_families").update({

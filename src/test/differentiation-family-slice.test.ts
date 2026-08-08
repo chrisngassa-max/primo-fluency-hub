@@ -83,159 +83,79 @@ async function validFamily(): Promise<DifferentiationFamilySliceV1> {
         applied_transformations: [],
         exercise: {
           title: "Comprendre une annonce de train",
-          instruction: "Écoutez puis choisissez la bonne réponse.",
-          format: "qcm",
-          steps: ["Écouter", "Répondre"],
-          items,
-          expected_output: "Une réponse par question.",
-        },
-        scaffolding: {},
-        success_criteria: ["Au moins 65 % de réponses correctes."],
-      },
-    },
-    validation_report: {
-      status: "not_run",
-      blocking: [],
-      warnings: [],
-      requires_human_review: [],
-    },
+          ins<�h��춻�q�^t   }
+    }
+  }
+
+  if (facts.length > 0) {
+    const expectedHash = await calculateFactsHash(facts);
+    if (family.facts.facts_hash !== expectedHash) {
+      blocking.push(issue("DIFF_FACT_HASH_INVALID", "facts.facts_hash", "Le hash ne correspond pas à la sémantique des faits."));
+    }
+  }
+
+  const contract = family.level_contracts.A2;
+  const variant = family.variants.A2;
+  if (!contract.allowed_formats.includes(variant.exercise.format) && variant.exercise.format !== "mixed") {
+    blocking.push(issue("DIFF_FORMAT_FORBIDDEN", "variants.A2.exercise.format", "Le format n'est pas autorisé par le contrat A2."));
+  }
+  if (
+    variant.exercise.items.length < contract.volume_items_min ||
+    variant.exercise.items.length > contract.volume_items_max
+  ) {
+    blocking.push(issue("DIFF_ITEM_COUNT_OUT_OF_RANGE", "variants.A2.exercise.items", "Le nombre d'items est hors des bornes A2."));
+  }
+
+  const factUsage = new Map<string, number>();
+  for (const [index, item] of variant.exercise.items.entries()) {
+    const path = `variants.A2.exercise.items[${index}]`;
+    if (!item.fact_refs?.length) {
+      blocking.push(issue("DIFF_ITEM_FACT_REF_MISSING", `${path}.fact_refs`, "La question ne référence aucun fait."));
+    }
+    for (const factId of item.fact_refs ?? []) {
+      if (!factIds.has(factId)) {
+        blocking.push(issue("DIFF_ITEM_FACT_REF_ORPHAN", `${path}.fact_refs`, `Fait inconnu : ${factId}.`));
+      } else {
+        factUsage.set(factId, (factUsage.get(factId) ?? 0) + 1);
+      }
+    }
+    if (!item.justification?.trim()) {
+      warnings.push(issue("DIFF_JUSTIFICATION_MISSING", `${path}.justification`, "La justification est absente."));
+    }
+    if (item.type === "qcm" || item.type === "vrai_faux") {
+      const correctAnswers = (item.choices ?? []).filter((choice) => choice.is_correct).length;
+      if (correctAnswers === 0) {
+        blocking.push(issue("DIFF_NO_CORRECT_ANSWER", `${path}.choices`, "Aucune réponse correcte n'est déclarée."));
+      } else if (correctAnswers > 1) {
+        blocking.push(issue("DIFF_MULTIPLE_CORRECT_ANSWERS", `${path}.choices`, "Plusieurs réponses correctes sont déclarées."));
+      }
+      for (const [choiceIndex, choice] of (item.choices ?? []).entries()) {
+        if (!choice.is_correct && !choice.distractor_category) {
+          warnings.push(issue(
+            "DIFF_DISTRACTOR_CATEGORY_MISSING",
+            `${path}.choices[${choiceIndex}]`,
+            "La catégorie du distracteur est absente.",
+          ));
+        }
+      }
+    }
+  }
+
+  for (const [factId, count] of factUsage.entries()) {
+    if (count > 2) {
+      warnings.push(issue("DIFF_FACT_USED_REPEATEDLY", "variants.A2.exercise.items", `Le fait ${factId} est utilisé ${count} fois.`));
+    }
+  }
+  for (const fact of facts) {
+    if (fact.required_for_task && !factUsage.has(fact.fact_id)) {
+      warnings.push(issue("DIFF_UNUSED_REQUIRED_FACT", "facts.required", `Le fait requis ${fact.fact_id} n'est utilisé par aucun item.`));
+    }
+  }
+
+  return {
+    status: blocking.length > 0 ? "fail" : warnings.length > 0 ? "warning" : "pass",
+    blocking,
+    warnings,
+    requires_human_review: HUMAN_REVIEW,
   };
 }
-
-describe("differentiation family A2 slice", () => {
-  it("loads only the versioned A2 CO contract", () => {
-    const resolved = getCoA2LevelContract();
-    expect(resolved.version).toBe("1.0");
-    expect(resolved.status).toBe("draft_pending_pedagogical_approval");
-    expect(resolved.contract.target_level).toBe("A2");
-    expect(resolved.contract.allowed_formats).toContain("qcm");
-    expect(resolved.contract.forbidden_formats).not.toContain("qcm");
-  });
-
-  it("keeps the facts hash stable when provenance changes", async () => {
-    const first = await calculateFactsHash([baseFact]);
-    const moved = structuredClone(baseFact);
-    moved.provenance.segment_refs = ["segment-99"];
-    moved.provenance.quote = "Même information, autre repère.";
-    expect(await calculateFactsHash([moved])).toBe(first);
-  });
-
-  it("changes the facts hash when semantic qualifiers change", async () => {
-    const first = await calculateFactsHash([baseFact]);
-    const negated = structuredClone(baseFact);
-    negated.semantic_qualifiers.negation = true;
-    expect(await calculateFactsHash([negated])).not.toBe(first);
-  });
-
-  it("accepts a logically valid A2 slice while keeping human review explicit", async () => {
-    const family = await validFamily();
-    const report = await validateDifferentiationFamilySlice(family, {
-      sourceContentHash: family.source_document.content_hash,
-      segmentIds: ["segment-1"],
-      chunkIds: ["chunk-1"],
-      chunkSegmentPairs: ["chunk-1:segment-1"],
-    });
-    expect(report.status).toBe("warning");
-    expect(report.blocking).toEqual([]);
-    expect(report.warnings.map((entry) => entry.code)).toContain("DIFF_FACT_USED_REPEATEDLY");
-    expect(report.requires_human_review).toContain("distractor_ambiguity");
-  });
-
-  it("rejects orphan references, divergent source and multiple correct answers", async () => {
-    const family = await validFamily();
-    family.variants.A2.exercise.items[0].fact_refs = ["fact_missing"];
-    family.variants.A2.exercise.items[1].choices![0].is_correct = true;
-
-    const report = await validateDifferentiationFamilySlice(family, {
-      sourceContentHash: `sha256:${"b".repeat(64)}`,
-      segmentIds: [],
-      chunkIds: [],
-      chunkSegmentPairs: [],
-    });
-    const codes = report.blocking.map((entry) => entry.code);
-    expect(report.status).toBe("fail");
-    expect(codes).toContain("DIFF_SOURCE_DIVERGED");
-    expect(codes).toContain("DIFF_SEGMENT_REF_ORPHAN");
-    expect(codes).toContain("DIFF_CHUNK_REF_ORPHAN");
-    expect(codes).toContain("DIFF_ITEM_FACT_REF_ORPHAN");
-    expect(codes).toContain("DIFF_MULTIPLE_CORRECT_ANSWERS");
-  });
-
-  it("rejects forbidden formats and missing correct answers", async () => {
-    const family = await validFamily();
-    family.variants.A2.exercise.format = "production_libre" as typeof family.variants.A2.exercise.format;
-    family.variants.A2.exercise.items[0].choices!.forEach((choice) => {
-      choice.is_correct = false;
-    });
-
-    const report = await validateDifferentiationFamilySlice(family, {
-      sourceContentHash: family.source_document.content_hash,
-      segmentIds: ["segment-1"],
-      chunkIds: ["chunk-1"],
-      chunkSegmentPairs: ["chunk-1:segment-1"],
-    });
-
-    const codes = report.blocking.map((entry) => entry.code);
-    expect(report.status).toBe("fail");
-    expect(codes).toContain("DIFF_FORMAT_FORBIDDEN");
-    expect(codes).toContain("DIFF_NO_CORRECT_ANSWER");
-  });
-
-  it("accepts a single chunk linked to a single segment", async () => {
-    const family = await validFamily();
-    const report = await validateDifferentiationFamilySlice(family, {
-      sourceContentHash: family.source_document.content_hash,
-      segmentIds: ["segment-1"],
-      chunkIds: ["chunk-1"],
-      chunkSegmentPairs: ["chunk-1:segment-1"],
-    });
-
-    expect(report.blocking.map((entry) => entry.code)).not.toContain("DIFF_FACT_PROVENANCE_MISMATCH");
-  });
-
-  it("accepts two chunks each linked to a different segment without requiring the cartesian product", async () => {
-    const family = await validFamily();
-    family.facts.required[0].provenance.chunk_refs = ["chunk-1", "chunk-2"];
-    family.facts.required[0].provenance.segment_refs = ["segment-1", "segment-2"];
-    family.facts.facts_hash = await calculateFactsHash(family.facts.required);
-
-    const report = await validateDifferentiationFamilySlice(family, {
-      sourceContentHash: family.source_document.content_hash,
-      segmentIds: ["segment-1", "segment-2"],
-      chunkIds: ["chunk-1", "chunk-2"],
-      chunkSegmentPairs: ["chunk-1:segment-1", "chunk-2:segment-2"],
-    });
-
-    expect(report.blocking.map((entry) => entry.code)).not.toContain("DIFF_FACT_PROVENANCE_MISMATCH");
-  });
-
-  it("rejects facts whose chunk/segment provenance link does not exist", async () => {
-    const family = await validFamily();
-    const report = await validateDifferentiationFamilySlice(family, {
-      sourceContentHash: family.source_document.content_hash,
-      segmentIds: ["segment-1"],
-      chunkIds: ["chunk-1"],
-      chunkSegmentPairs: ["chunk-1:segment-999"],
-    });
-
-    expect(report.status).toBe("fail");
-    expect(report.blocking.map((entry) => entry.code)).toContain("DIFF_FACT_PROVENANCE_MISMATCH");
-  });
-
-  it("rejects a chunk or segment that has no valid link among the referenced pairs", async () => {
-    const family = await validFamily();
-    family.facts.required[0].provenance.chunk_refs = ["chunk-1", "chunk-orphan"];
-    family.facts.required[0].provenance.segment_refs = ["segment-1"];
-    family.facts.facts_hash = await calculateFactsHash(family.facts.required);
-
-    const report = await validateDifferentiationFamilySlice(family, {
-      sourceContentHash: family.source_document.content_hash,
-      segmentIds: ["segment-1"],
-      chunkIds: ["chunk-1", "chunk-orphan"],
-      chunkSegmentPairs: ["chunk-1:segment-1"],
-    });
-
-    expect(report.status).toBe("fail");
-    expect(report.blocking.map((entry) => entry.code)).toContain("DIFF_FACT_PROVENANCE_MISMATCH");
-  });
-});
