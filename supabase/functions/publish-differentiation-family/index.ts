@@ -36,13 +36,16 @@ Deno.serve(async (request) => {
     }
     const { data: source } = await admin
       .from("pedagogical_sources")
-      .select("content_hash, status, review_status, source_kind, mime_type")
+      .select("content_hash, status, review_status, source_kind, mime_type, storage_bucket, storage_path")
       .eq("id", family.source_id)
       .maybeSingle();
     if (!source || source.content_hash !== family.source_content_hash) return json(422, { error: "SOURCE_HASH_DIVERGED" });
     if (!isPedagogicalSourceReadyForDifferentiation(source)) {
       const readinessError = getPedagogicalSourceReadinessError(source);
       return json(422, { error: readinessError === "SOURCE_NOT_ANALYZED" ? "SOURCE_ANALYSIS_STALE" : readinessError });
+    }
+    if (source.source_kind === "audio" && (!source.storage_bucket || !source.storage_path)) {
+      return json(422, { error: "SOURCE_MP3_MISSING" });
     }
     const { data: transcription, error: transcriptionError } = await admin
       .from("pedagogical_source_transcriptions")

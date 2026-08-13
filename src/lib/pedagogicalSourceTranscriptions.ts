@@ -24,6 +24,12 @@ export interface PedagogicalSourceTranscription {
     model_id?: string;
     first_segment_start_ms?: number | null;
     last_segment_end_ms?: number | null;
+    transformations_applied?: unknown[];
+    filtering_applied?: boolean;
+    raw_segment_count?: number;
+    persisted_segment_count?: number;
+    dropped_segment_count?: number;
+    dropped_segment_reasons?: string[];
   } | null;
   reviewed_at: string | null;
   reviewed_by: string | null;

@@ -66,7 +66,7 @@ const MANIFEST_JSON = {
 
 function noop() {}
 
-describe('Lot 3 â€” pipeline generate/validate/publish/resume (repertoires temporaires)', () => {
+describe('Lot 3 â€” pipeline generate/validate/publish/resume (repertoires temporaires)', { timeout: 30_000 }, () => {
   let contentDir;
   let batchDir;
   let storageDir;

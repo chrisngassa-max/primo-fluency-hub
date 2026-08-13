@@ -1,18 +1,12 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { isSha256ContentHash } from "../_shared/source-integrity.ts";
-import { assessTimestampCoverage, readMp3Duration } from "../_shared/transcription/audio-duration.ts";
-import { validateCanonicalTranscription } from "../_shared/transcription/canonical.ts";
 import {
-  AUDIO_TIMESTAMP_SOURCE,
-  GOOGLE_STT_DEFAULT_MODEL,
-  GOOGLE_STT_PROVIDER,
-  assertSpeechRecognizeChunkingIsCanonical,
-  buildDedicatedSttProviderParameters,
-  isAllowedAudioTimestampProvider,
-  resolveRecognizeTimestampStatus,
-  toCanonicalTranscription,
-  transcribeAudioWithDedicatedStt,
-} from "../_shared/transcription/google-stt.ts";
+  assessGeminiTimestampCoverage,
+  buildGeminiProviderParameters,
+  GEMINI_TRANSCRIPTION_MODEL,
+  GEMINI_TRANSCRIPTION_PROVIDER,
+  transcribeAudioWithGemini,
+} from "../_shared/transcription/gemini-audio.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -87,13 +81,14 @@ Deno.serve(async (request) => {
         source_id: source.id,
         attempt_number: (current?.attempt_number ?? 0) + 1,
         is_current: true,
-        provider: GOOGLE_STT_PROVIDER,
-        model_id: GOOGLE_STT_DEFAULT_MODEL,
+        provider: GEMINI_TRANSCRIPTION_PROVIDER,
+        model_id: GEMINI_TRANSCRIPTION_MODEL,
         status: "processing",
         provider_parameters: {
-          path: "dedicated_stt",
+          path: "gemini_full_file_v1",
           content_hash: source.content_hash,
-          timestamp_source: AUDIO_TIMESTAMP_SOURCE,
+          timestamp_source: "gemini_segment_offsets",
+          timestamp_status: "unverified",
         },
       }).select("id").single();
     if (createError) {
@@ -107,25 +102,16 @@ Deno.serve(async (request) => {
     if (file.size === 0) throw new Error("SOURCE_FILE_EMPTY");
     if (file.size > MAX_AUDIO_BYTES) throw new Error("SOURCE_FILE_TOO_LARGE");
     const audioBytes = new Uint8Array(await file.arrayBuffer());
-    const duration = String(source.mime_type ?? "").includes("mpeg") ? readMp3Duration(audioBytes) : null;
-    const stt = await transcribeAudioWithDedicatedStt({
-      bytes: audioBytes,
-      mimeType: source.mime_type || file.type || "audio/mpeg",
-      language: "fr-FR",
-    });
-    if (!isAllowedAudioTimestampProvider(stt.provider) || stt.metadata.timestamp_source !== AUDIO_TIMESTAMP_SOURCE) {
-      throw new Error("STT_TIMESTAMP_PROVIDER_FORBIDDEN");
-    }
-    const chunkCount = Number(stt.metadata.chunk_count ?? 0);
-    // Defense in depth: never persist multi-chunk recognize as ready/verified (G3).
-    assertSpeechRecognizeChunkingIsCanonical(chunkCount);
-    const transcription = toCanonicalTranscription(stt);
-    const validationErrors = validateCanonicalTranscription(transcription);
-    if (validationErrors.length > 0) throw new Error(`TRANSCRIPTION_INVALID:${validationErrors.join(",")}`);
-    const timestampAssessment = assessTimestampCoverage(transcription.segments, duration?.durationMs ?? null);
-    const timestampStatus = resolveRecognizeTimestampStatus(chunkCount, timestampAssessment.status);
+    const mimeType = source.mime_type || file.type || "audio/mpeg";
+
+    // V1: full-file Gemini only. Multi-chunk Google sync chopping remains non-canonical elsewhere.
+    const { transcription, filtering } = await transcribeAudioWithGemini(audioBytes, mimeType);
+    const { duration, assessment } = assessGeminiTimestampCoverage(transcription, audioBytes, mimeType);
     const firstStartMs = transcription.segments[0]?.start_ms ?? null;
-    const lastEndMs = transcription.segments.at(-1)?.end_ms ?? timestampAssessment.transcriptEndMs;
+    const lastEndMs = transcription.segments.at(-1)?.end_ms ?? assessment.transcriptEndMs;
+    const confidences = transcription.segments
+      .map((segment) => segment.confidence)
+      .filter((value): value is number => typeof value === "number");
 
     const { error: segmentError } = await admin.from("pedagogical_source_transcription_segments").insert(
       transcription.segments.map(({ text, ...segment }) => ({
@@ -137,33 +123,30 @@ Deno.serve(async (request) => {
     if (segmentError) throw segmentError;
     const { error: completeError } = await admin.from("pedagogical_source_transcriptions").update({
       status: "ready",
-      provider: stt.provider,
-      model_id: stt.modelId,
+      provider: GEMINI_TRANSCRIPTION_PROVIDER,
+      model_id: GEMINI_TRANSCRIPTION_MODEL,
       raw_text: transcription.full_text,
       language_detected: transcription.language,
-      average_confidence: stt.confidence,
+      average_confidence: confidences.length
+        ? confidences.reduce((sum, value) => sum + value, 0) / confidences.length
+        : null,
       error_details: null,
-      provider_parameters: buildDedicatedSttProviderParameters({
+      provider_parameters: buildGeminiProviderParameters({
         contentHash: source.content_hash,
-        modelId: stt.modelId,
-        language: stt.language,
-        chunkCount,
-        audioDurationMs: timestampAssessment.audioDurationMs,
+        language: transcription.language,
+        audioDurationMs: assessment.audioDurationMs,
         mp3FrameCount: duration?.frameCount ?? null,
         mpegVersion: duration?.mpegVersion ?? null,
         sampleRateHz: duration?.sampleRateHz ?? null,
         channels: duration?.channels ?? null,
         firstStartMs,
         lastEndMs,
-        timestampStatus,
-        transcriptEndMs: timestampAssessment.transcriptEndMs,
-        timestampDriftMs: timestampAssessment.driftMs,
-        overshootMs: timestampAssessment.overshootMs,
-        trailingGapMs: timestampAssessment.trailingGapMs,
-        coverageRatio: timestampAssessment.coverageRatio,
-        chunkDiagnostics: Array.isArray(stt.metadata.chunk_diagnostics)
-          ? stt.metadata.chunk_diagnostics as never
-          : [],
+        transcriptEndMs: assessment.transcriptEndMs,
+        timestampDriftMs: assessment.driftMs,
+        overshootMs: assessment.overshootMs,
+        trailingGapMs: assessment.trailingGapMs,
+        coverageRatio: assessment.coverageRatio,
+        filtering,
       }),
     }).eq("id", transcriptionId);
     if (completeError) throw completeError;
@@ -172,11 +155,16 @@ Deno.serve(async (request) => {
       cached: false,
       transcription_id: transcriptionId,
       status: "ready",
-      provider: stt.provider,
-      model_id: stt.modelId,
+      provider: GEMINI_TRANSCRIPTION_PROVIDER,
+      model_id: GEMINI_TRANSCRIPTION_MODEL,
       segments_count: transcription.segments.length,
-      timestamp_assessment: { ...timestampAssessment, status: timestampStatus },
+      timestamp_assessment: assessment,
       transformations_applied: [],
+      filtering_applied: filtering.filtering_applied,
+      raw_segment_count: filtering.raw_segment_count,
+      persisted_segment_count: filtering.persisted_segment_count,
+      dropped_segment_count: filtering.dropped_segment_count,
+      dropped_segment_reasons: filtering.dropped_segment_reasons,
     });
   } catch (error) {
     console.error("transcribe-pedagogical-source error", error);
@@ -194,11 +182,8 @@ Deno.serve(async (request) => {
     const status = message.startsWith("SOURCE_FILE_NOT_FOUND") ? 404
       : message.includes("TOO_LARGE") ? 413
       : message.startsWith("TRANSCRIPTION_INVALID")
-        || message.startsWith("STT_TIMESTAMPS")
-        || message.startsWith("STT_TIMESTAMP")
-        || message.startsWith("STT_SEGMENT")
         || message.startsWith("STT_CHUNK")
-        || message.startsWith("STT_UNSUPPORTED")
+        || message.startsWith("GEMINI_")
         ? 422
         : 502;
     return json(status, { error: message.split(":")[0] });

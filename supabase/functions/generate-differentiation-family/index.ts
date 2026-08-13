@@ -47,7 +47,7 @@ Deno.serve(async (request) => {
     ]);
     if (!trainer && !adminRole) return json(403, { error: "STAFF_ROLE_REQUIRED" });
     const { data: source, error: sourceError } = await admin.from("pedagogical_sources")
-      .select("id, created_by, title, storage_bucket, storage_path, content_hash, source_kind, status, review_status")
+      .select("id, created_by, title, storage_bucket, storage_path, content_hash, source_kind, status, review_status, mime_type")
       .eq("id", sourceId)
       .maybeSingle();
     if (sourceError) throw sourceError;
@@ -63,13 +63,14 @@ Deno.serve(async (request) => {
     const readinessError = getPedagogicalSourceReadinessError(source);
     if (readinessError) return json(422, { error: readinessError });
     if (!isSha256ContentHash(source.content_hash)) return json(422, { error: "SOURCE_HASH_REQUIRED" });
+    if (!source.storage_bucket || !source.storage_path) return json(422, { error: "SOURCE_MP3_MISSING" });
     const { version: referentialVersion, contract } = getCoA2LevelContract();
     const { data: existing } = await admin.from("differentiation_families").select("id, generation_status, payload")
       .eq("source_id", source.id).eq("source_content_hash", source.content_hash).eq("referential_version", referentialVersion)
       .order("created_at", { ascending: false }).limit(1).maybeSingle();
     if (existing?.generation_status === "generating") return json(409, { error: "FAMILY_GENERATION_ALREADY_RUNNING" });
     if (!force && existing?.generation_status === "generated") return json(200, { ok: true, cached: true, family_id: existing.id, payload: existing.payload });
-    const { data: transcription } = await admin.from("pedagogical_source_transcriptions").select("id, reviewed_text, provider_parameters")
+    const { data: transcription } = await admin.from("pedagogical_source_transcriptions").select("id, reviewed_text, provider_parameters, status")
       .eq("source_id", source.id).eq("is_current", true).eq("status", "reviewed").maybeSingle();
     if (!transcription) return json(422, { error: "REVIEWED_TRANSCRIPTION_REQUIRED" });
     const { data: segments } = await admin.from("pedagogical_source_transcription_segments").select("id, segment_key, reviewed_text, raw_text")
@@ -125,12 +126,23 @@ Deno.serve(async (request) => {
     const chunkSegmentPairs = (chunks ?? []).flatMap((chunk: any) =>
       (chunk.pedagogical_source_chunk_segments ?? []).map((link: any) => `${chunk.id}:${link.segment_id}`)
     );
+    const hashPresent = isSha256ContentHash(source.content_hash);
     const report = await validateDifferentiationFamilySlice(family, {
       sourceContentHash: source.content_hash,
       segmentIds: segments.map((segment) => segment.id),
       chunkIds: chunks.map((chunk) => chunk.id),
       chunkSegmentPairs,
       timestampsVerified: transcription.provider_parameters?.timestamp_status === "verified",
+      // Explicit: ready !== reviewed
+      transcriptionReviewed: transcription.status === "reviewed",
+      sourceAnalyzed: source.status === "analyzed",
+      sourceReviewApproved: source.review_status === "utilisable" || source.review_status === "valide",
+      sourceHashPresent: hashPresent,
+      sourceHashCoherent: hashPresent && family.source_document.content_hash === source.content_hash,
+      originalMp3Available: Boolean(source.storage_bucket && source.storage_path),
+      factualProvenancePresent: facts.every((fact) =>
+        Boolean(fact.provenance?.segment_refs?.length && fact.provenance?.chunk_refs?.length && fact.provenance?.quote)
+      ),
     });
     family.validation_report = report;
     const { error: finishError } = await admin.from("differentiation_families").update({

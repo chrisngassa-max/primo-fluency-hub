@@ -295,14 +295,27 @@ describe("dedicated Google STT timestamps (fail-closed)", () => {
     expect(result.segments.at(-1)?.end_ms).not.toBe(Math.round((80 * 1152 * 1000) / 44_100));
   });
 
-  it("does not use Gemini source files as the timestamp adapter", () => {
+  it("wires pedagogical transcription to full-file Gemini (not Google STT)", () => {
     const transcribeSource = readFileSync(
       resolve(process.cwd(), "supabase/functions/transcribe-pedagogical-source/index.ts"),
       "utf8",
     );
-    expect(transcribeSource).toContain("transcribeAudioWithDedicatedStt");
-    expect(transcribeSource).not.toContain("transcribeAudioWithGemini");
-    expect(transcribeSource).toContain("GOOGLE_STT_PROVIDER");
+    expect(transcribeSource).toContain("transcribeAudioWithGemini");
+    expect(transcribeSource).not.toContain("transcribeAudioWithDedicatedStt");
+    expect(transcribeSource).toContain("GEMINI_TRANSCRIPTION_PROVIDER");
+    expect(transcribeSource).toContain("timestamp_status: \"unverified\"");
+    expect(transcribeSource).toContain("filtering");
+  });
+
+  it("keeps multi-chunk sync chopping blocked as non-canonical", async () => {
+    const framesNeededForTwoChunks = Math.ceil((55_000 / 1000) * (44_100 / 1152)) + 40;
+    await expect(transcribeAudioWithDedicatedStt({
+      bytes: mpeg1Layer3Frames(framesNeededForTwoChunks),
+      mimeType: "audio/mpeg",
+      recognize: async () => ({
+        results: [{ alternatives: [{ transcript: "x", words: words("0.1s", "1.0s") }] }],
+      }),
+    })).rejects.toThrow(STT_CHUNKING_NOT_CANONICAL);
   });
 
   it("estimates standard Speech-to-Text cost from billed 15s units", () => {

@@ -239,7 +239,7 @@ describe("differentiation family A2 slice", () => {
     expect(report.blocking.map((entry) => entry.code)).toContain("DIFF_FACT_PROVENANCE_MISMATCH");
   });
 
-  it("blocks publication evidence when transcription timestamps are unverified", async () => {
+  it("blocks unverified timestamps when readiness flags are incomplete", async () => {
     const family = await validFamily();
     const report = await validateDifferentiationFamilySlice(family, {
       sourceContentHash: family.source_document.content_hash,
@@ -247,9 +247,183 @@ describe("differentiation family A2 slice", () => {
       chunkIds: ["chunk-1"],
       chunkSegmentPairs: ["chunk-1:segment-1"],
       timestampsVerified: false,
+      transcriptionReviewed: false,
     });
 
     expect(report.status).toBe("fail");
+    expect(report.blocking.map((entry) => entry.code)).toContain(
+      "DIFF_TRANSCRIPTION_TIMESTAMPS_UNVERIFIED",
+    );
+  });
+
+  it("warns on unverified timestamps only when every readiness gate is true", async () => {
+    const family = await validFamily();
+    const report = await validateDifferentiationFamilySlice(family, {
+      sourceContentHash: family.source_document.content_hash,
+      segmentIds: ["segment-1"],
+      chunkIds: ["chunk-1"],
+      chunkSegmentPairs: ["chunk-1:segment-1"],
+      timestampsVerified: false,
+      transcriptionReviewed: true,
+      sourceAnalyzed: true,
+      sourceReviewApproved: true,
+      sourceHashPresent: true,
+      sourceHashCoherent: true,
+      originalMp3Available: true,
+      factualProvenancePresent: true,
+    });
+
+    expect(report.status).toBe("warning");
+    expect(report.blocking.map((entry) => entry.code)).not.toContain(
+      "DIFF_TRANSCRIPTION_TIMESTAMPS_UNVERIFIED",
+    );
+    expect(report.warnings.map((entry) => entry.code)).toContain(
+      "DIFF_TRANSCRIPTION_TIMESTAMPS_UNVERIFIED",
+    );
+  });
+
+  it("keeps unverified timestamps blocking when transcription is ready but not reviewed", async () => {
+    const family = await validFamily();
+    const report = await validateDifferentiationFamilySlice(family, {
+      sourceContentHash: family.source_document.content_hash,
+      segmentIds: ["segment-1"],
+      chunkIds: ["chunk-1"],
+      chunkSegmentPairs: ["chunk-1:segment-1"],
+      timestampsVerified: false,
+      transcriptionReviewed: false, // ready !== reviewed
+      sourceAnalyzed: true,
+      sourceReviewApproved: true,
+      sourceHashPresent: true,
+      sourceHashCoherent: true,
+      originalMp3Available: true,
+      factualProvenancePresent: true,
+    });
+    expect(report.blocking.map((entry) => entry.code)).toContain(
+      "DIFF_TRANSCRIPTION_TIMESTAMPS_UNVERIFIED",
+    );
+  });
+
+  it("keeps unverified timestamps blocking when source is not analyzed", async () => {
+    const family = await validFamily();
+    const report = await validateDifferentiationFamilySlice(family, {
+      sourceContentHash: family.source_document.content_hash,
+      segmentIds: ["segment-1"],
+      chunkIds: ["chunk-1"],
+      chunkSegmentPairs: ["chunk-1:segment-1"],
+      timestampsVerified: false,
+      transcriptionReviewed: true,
+      sourceAnalyzed: false,
+      sourceReviewApproved: true,
+      sourceHashPresent: true,
+      sourceHashCoherent: true,
+      originalMp3Available: true,
+      factualProvenancePresent: true,
+    });
+    expect(report.blocking.map((entry) => entry.code)).toContain(
+      "DIFF_TRANSCRIPTION_TIMESTAMPS_UNVERIFIED",
+    );
+  });
+
+  it("keeps unverified timestamps blocking when source review is not utilisable/valide", async () => {
+    const family = await validFamily();
+    const report = await validateDifferentiationFamilySlice(family, {
+      sourceContentHash: family.source_document.content_hash,
+      segmentIds: ["segment-1"],
+      chunkIds: ["chunk-1"],
+      chunkSegmentPairs: ["chunk-1:segment-1"],
+      timestampsVerified: false,
+      transcriptionReviewed: true,
+      sourceAnalyzed: true,
+      sourceReviewApproved: false,
+      sourceHashPresent: true,
+      sourceHashCoherent: true,
+      originalMp3Available: true,
+      factualProvenancePresent: true,
+    });
+    expect(report.blocking.map((entry) => entry.code)).toContain(
+      "DIFF_TRANSCRIPTION_TIMESTAMPS_UNVERIFIED",
+    );
+  });
+
+  it("keeps unverified timestamps blocking when content_hash is absent", async () => {
+    const family = await validFamily();
+    const report = await validateDifferentiationFamilySlice(family, {
+      sourceContentHash: family.source_document.content_hash,
+      segmentIds: ["segment-1"],
+      chunkIds: ["chunk-1"],
+      chunkSegmentPairs: ["chunk-1:segment-1"],
+      timestampsVerified: false,
+      transcriptionReviewed: true,
+      sourceAnalyzed: true,
+      sourceReviewApproved: true,
+      sourceHashPresent: false,
+      sourceHashCoherent: true,
+      originalMp3Available: true,
+      factualProvenancePresent: true,
+    });
+    expect(report.blocking.map((entry) => entry.code)).toContain(
+      "DIFF_TRANSCRIPTION_TIMESTAMPS_UNVERIFIED",
+    );
+  });
+
+  it("keeps unverified timestamps blocking when source_content_hash is incoherent", async () => {
+    const family = await validFamily();
+    const report = await validateDifferentiationFamilySlice(family, {
+      sourceContentHash: family.source_document.content_hash,
+      segmentIds: ["segment-1"],
+      chunkIds: ["chunk-1"],
+      chunkSegmentPairs: ["chunk-1:segment-1"],
+      timestampsVerified: false,
+      transcriptionReviewed: true,
+      sourceAnalyzed: true,
+      sourceReviewApproved: true,
+      sourceHashPresent: true,
+      sourceHashCoherent: false,
+      originalMp3Available: true,
+      factualProvenancePresent: true,
+    });
+    expect(report.blocking.map((entry) => entry.code)).toContain(
+      "DIFF_TRANSCRIPTION_TIMESTAMPS_UNVERIFIED",
+    );
+  });
+
+  it("keeps unverified timestamps blocking when original MP3 is missing", async () => {
+    const family = await validFamily();
+    const report = await validateDifferentiationFamilySlice(family, {
+      sourceContentHash: family.source_document.content_hash,
+      segmentIds: ["segment-1"],
+      chunkIds: ["chunk-1"],
+      chunkSegmentPairs: ["chunk-1:segment-1"],
+      timestampsVerified: false,
+      transcriptionReviewed: true,
+      sourceAnalyzed: true,
+      sourceReviewApproved: true,
+      sourceHashPresent: true,
+      sourceHashCoherent: true,
+      originalMp3Available: false,
+      factualProvenancePresent: true,
+    });
+    expect(report.blocking.map((entry) => entry.code)).toContain(
+      "DIFF_TRANSCRIPTION_TIMESTAMPS_UNVERIFIED",
+    );
+  });
+
+  it("keeps unverified timestamps blocking when factual textual/chunk provenance is missing", async () => {
+    const family = await validFamily();
+    const report = await validateDifferentiationFamilySlice(family, {
+      sourceContentHash: family.source_document.content_hash,
+      segmentIds: ["segment-1"],
+      chunkIds: ["chunk-1"],
+      chunkSegmentPairs: ["chunk-1:segment-1"],
+      timestampsVerified: false,
+      transcriptionReviewed: true,
+      sourceAnalyzed: true,
+      sourceReviewApproved: true,
+      sourceHashPresent: true,
+      sourceHashCoherent: true,
+      originalMp3Available: true,
+      factualProvenancePresent: false,
+    });
     expect(report.blocking.map((entry) => entry.code)).toContain(
       "DIFF_TRANSCRIPTION_TIMESTAMPS_UNVERIFIED",
     );

@@ -32,7 +32,21 @@ export async function validateDifferentiationFamilySlice(
   const chunkSegmentPairs = new Set(context.chunkSegmentPairs ?? []);
 
   if (context.timestampsVerified === false) {
-    blocking.push(issue("DIFF_TRANSCRIPTION_TIMESTAMPS_UNVERIFIED", "facts.required[].provenance", "Les rep\u00e8res temporels d\u00e9passent ou ne couvrent pas correctement la dur\u00e9e r\u00e9elle de l'audio."));
+    const unverifiedIssue = issue(
+      "DIFF_TRANSCRIPTION_TIMESTAMPS_UNVERIFIED",
+      "facts.required[].provenance",
+      "Rep\u00e8res temporels approximatifs : la navigation vers un extrait exact n'est pas fiable ; \u00e9coutez l'audio original complet.",
+    );
+    // Warning only when ALL gates hold. `ready` transcription is NOT reviewed.
+    const allowAsWarning = context.transcriptionReviewed === true
+      && context.sourceAnalyzed === true
+      && context.sourceReviewApproved === true
+      && context.sourceHashPresent === true
+      && context.sourceHashCoherent === true
+      && context.originalMp3Available === true
+      && context.factualProvenancePresent === true;
+    if (allowAsWarning) warnings.push(unverifiedIssue);
+    else blocking.push(unverifiedIssue);
   }
   if (family.schema_version !== "slice-1.0") {
     blocking.push(issue("DIFF_SLICE_SCHEMA_INVALID", "schema_version", "Le contrat attendu est slice-1.0."));
