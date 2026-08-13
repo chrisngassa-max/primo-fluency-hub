@@ -144,11 +144,20 @@ Deno.serve(async (request) => {
         chunkCount: Number(stt.metadata.chunk_count ?? 0),
         audioDurationMs: timestampAssessment.audioDurationMs,
         mp3FrameCount: duration?.frameCount ?? null,
+        mpegVersion: duration?.mpegVersion ?? null,
+        sampleRateHz: duration?.sampleRateHz ?? null,
+        channels: duration?.channels ?? null,
         firstStartMs,
         lastEndMs,
         timestampStatus: timestampAssessment.status,
         transcriptEndMs: timestampAssessment.transcriptEndMs,
         timestampDriftMs: timestampAssessment.driftMs,
+        overshootMs: timestampAssessment.overshootMs,
+        trailingGapMs: timestampAssessment.trailingGapMs,
+        coverageRatio: timestampAssessment.coverageRatio,
+        chunkDiagnostics: Array.isArray(stt.metadata.chunk_diagnostics)
+          ? stt.metadata.chunk_diagnostics as never
+          : [],
       }),
     }).eq("id", transcriptionId);
     if (completeError) throw completeError;
@@ -161,6 +170,7 @@ Deno.serve(async (request) => {
       model_id: stt.modelId,
       segments_count: transcription.segments.length,
       timestamp_assessment: timestampAssessment,
+      transformations_applied: [],
     });
   } catch (error) {
     console.error("transcribe-pedagogical-source error", error);
@@ -177,7 +187,12 @@ Deno.serve(async (request) => {
     }
     const status = message.startsWith("SOURCE_FILE_NOT_FOUND") ? 404
       : message.includes("TOO_LARGE") ? 413
-      : message.startsWith("TRANSCRIPTION_INVALID") || message.startsWith("STT_TIMESTAMPS") || message.startsWith("STT_TIMESTAMP") || message.startsWith("STT_SEGMENT") || message.startsWith("STT_UNSUPPORTED")
+      : message.startsWith("TRANSCRIPTION_INVALID")
+        || message.startsWith("STT_TIMESTAMPS")
+        || message.startsWith("STT_TIMESTAMP")
+        || message.startsWith("STT_SEGMENT")
+        || message.startsWith("STT_CHUNK")
+        || message.startsWith("STT_UNSUPPORTED")
         ? 422
         : 502;
     return json(status, { error: message.split(":")[0] });

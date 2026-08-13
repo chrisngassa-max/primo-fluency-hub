@@ -1,4 +1,9 @@
-import { assessTimestampCoverage, splitMp3ByMaxDurationMs } from "./audio-duration.ts";
+import {
+  assessTimestampCoverage,
+  readMp3Duration,
+  splitMp3ByMaxDurationMs,
+  type Mp3Chunk,
+} from "./audio-duration.ts";
 import {
   bytesToBase64,
   validateCanonicalTranscription,
@@ -10,6 +15,7 @@ export const GOOGLE_STT_PROVIDER = "google-stt";
 export const GOOGLE_STT_DEFAULT_MODEL = "latest_long";
 export const GOOGLE_STT_FALLBACK_MODEL = "default";
 export const GOOGLE_STT_CHUNK_MAX_MS = 55_000;
+export const GOOGLE_STT_CHUNK_TOLERANCE_MS = 2_000;
 export const AUDIO_TIMESTAMP_SOURCE = "google_stt_word_offsets";
 export const STANDARD_STT_USD_PER_15S = 0.006;
 
@@ -57,20 +63,37 @@ export type RecognizeChunkFn = (input: {
   audioBytes: Uint8Array;
   modelId: string;
   language: string;
+  sampleRateHertz: number;
 }) => Promise<GoogleSttRecognizeResponse>;
+
+export type RawChunkTimestampDiagnostics = {
+  chunk_index: number;
+  physical_duration_ms: number;
+  sample_rate_hz: number;
+  mpeg_version: number;
+  first_raw_offset_ms: number | null;
+  last_raw_offset_ms: number | null;
+  raw_overshoot_ms: number | null;
+  segment_count: number;
+  text_preview: string;
+};
 
 export function isAllowedAudioTimestampProvider(provider: string): boolean {
   return provider === GOOGLE_STT_PROVIDER;
 }
 
+export function isModelUnsupportedError(message: string): boolean {
+  return message.includes("STT_PROVIDER_ERROR:400")
+    && /model|unsupported|invalid argument|INVALID_ARGUMENT/i.test(message);
+}
+
+/** Accept only protobuf Duration forms: "1.250s" or {seconds, nanos}. Bare numbers are rejected. */
 export function parseGoogleDurationToMs(value: unknown): number | null {
   if (value == null) return null;
-  if (typeof value === "number") {
-    if (!Number.isFinite(value) || value < 0) return null;
-    return Math.round(value * (value <= 10_000 ? 1000 : 1));
-  }
+  if (typeof value === "number") return null;
   if (typeof value === "object") {
     const record = value as { seconds?: unknown; nanos?: unknown };
+    if (!("seconds" in record) && !("nanos" in record)) return null;
     const seconds = Number(record.seconds ?? 0);
     const nanos = Number(record.nanos ?? 0);
     if (!Number.isFinite(seconds) || seconds < 0 || !Number.isFinite(nanos) || nanos < 0) return null;
@@ -87,11 +110,6 @@ export function parseGoogleDurationToMs(value: unknown): number | null {
   return Math.round((seconds + fraction) * 1000);
 }
 
-export function clampChunkRelativeMs(value: number, chunkDurationMs: number | null): number {
-  if (chunkDurationMs == null || chunkDurationMs <= 0) return value;
-  return Math.max(0, Math.min(value, chunkDurationMs));
-}
-
 export function googleSpeechResultsToSegments(
   results: GoogleSttRecognizeResponse["results"],
   chunkOffsetMs = 0,
@@ -106,13 +124,19 @@ export function googleSpeechResultsToSegments(
     if (!text) continue;
     const words = Array.isArray(alternative?.words) ? alternative.words : [];
     if (words.length === 0) throw new Error("STT_TIMESTAMPS_MISSING");
-    const parsedStart = parseGoogleDurationToMs(words[0]?.startTime ?? words[0]?.start_time);
-    const parsedEnd = parseGoogleDurationToMs(words[words.length - 1]?.endTime ?? words[words.length - 1]?.end_time);
-    if (parsedStart == null || parsedEnd == null) throw new Error("STT_TIMESTAMP_INVALID");
-    if (parsedStart < 0 || parsedEnd < 0) throw new Error("STT_TIMESTAMP_NEGATIVE");
-    if (parsedEnd <= parsedStart) throw new Error("STT_SEGMENT_INVERTED");
-    const startMs = clampChunkRelativeMs(parsedStart, chunkDurationMs);
-    const endMs = Math.max(startMs + 1, clampChunkRelativeMs(parsedEnd, chunkDurationMs));
+    const startMs = parseGoogleDurationToMs(words[0]?.startTime ?? words[0]?.start_time);
+    const endMs = parseGoogleDurationToMs(words[words.length - 1]?.endTime ?? words[words.length - 1]?.end_time);
+    if (startMs == null || endMs == null) throw new Error("STT_TIMESTAMP_INVALID");
+    if (startMs < 0 || endMs < 0) throw new Error("STT_TIMESTAMP_NEGATIVE");
+    if (endMs <= startMs) throw new Error("STT_SEGMENT_INVERTED");
+    if (chunkDurationMs != null && chunkDurationMs > 0) {
+      if (startMs > chunkDurationMs + GOOGLE_STT_CHUNK_TOLERANCE_MS
+        || endMs > chunkDurationMs + GOOGLE_STT_CHUNK_TOLERANCE_MS) {
+        throw new Error(
+          `STT_CHUNK_TIMESTAMP_OUT_OF_RANGE:start=${startMs}:end=${endMs}:chunk=${chunkDurationMs}`,
+        );
+      }
+    }
     const speakerTag = words.find((word) => word.speakerTag != null || word.speaker_tag != null);
     const tag = speakerTag?.speakerTag ?? speakerTag?.speaker_tag;
     const index = startIndex + segments.length;
@@ -131,21 +155,81 @@ export function googleSpeechResultsToSegments(
   return segments;
 }
 
-export function normalizeStitchedSegments(segments: CanonicalSttSegment[]): CanonicalSttSegment[] {
-  const ordered = [...segments].sort((left, right) => left.start_ms - right.start_ms || left.end_ms - right.end_ms);
-  let previousEnd = 0;
-  return ordered.map((segment, index) => {
-    const startMs = Math.max(segment.start_ms, previousEnd);
-    const endMs = Math.max(segment.end_ms, startMs + 1);
-    previousEnd = endMs;
-    return {
-      ...segment,
-      id: `seg-${String(index + 1).padStart(3, "0")}`,
-      index,
-      start_ms: startMs,
-      end_ms: endMs,
-    };
-  });
+/** Reindex only. Never mutates start_ms / end_ms. */
+export function reindexSegmentsPreservingTimes(segments: CanonicalSttSegment[]): CanonicalSttSegment[] {
+  return segments.map((segment, index) => ({
+    ...segment,
+    id: `seg-${String(index + 1).padStart(3, "0")}`,
+    index,
+  }));
+}
+
+export function assertRawSegmentChronology(segments: CanonicalSttSegment[]): void {
+  for (let index = 0; index < segments.length; index += 1) {
+    const segment = segments[index];
+    if (segment.start_ms < 0 || segment.end_ms < 0) throw new Error("STT_TIMESTAMP_NEGATIVE");
+    if (segment.end_ms <= segment.start_ms) throw new Error("STT_SEGMENT_INVERTED");
+    if (index > 0) {
+      const previous = segments[index - 1];
+      if (segment.start_ms < previous.start_ms) {
+        throw new Error(`STT_SEGMENTS_UNORDERED:index=${index}`);
+      }
+      if (segment.start_ms < previous.end_ms) {
+        throw new Error(
+          `STT_CHUNK_SEGMENTS_OVERLAP:prev_end=${previous.end_ms}:start=${segment.start_ms}`,
+        );
+      }
+    }
+  }
+}
+
+export function collectRawChunkDiagnostics(
+  response: GoogleSttRecognizeResponse,
+  chunk: Mp3Chunk,
+  chunkIndex: number,
+): RawChunkTimestampDiagnostics {
+  const words = (response.results ?? []).flatMap((result) => result.alternatives?.[0]?.words ?? []);
+  const first = words.length ? parseGoogleDurationToMs(words[0]?.startTime ?? words[0]?.start_time) : null;
+  const last = words.length
+    ? parseGoogleDurationToMs(words[words.length - 1]?.endTime ?? words[words.length - 1]?.end_time)
+    : null;
+  const text = (response.results ?? [])
+    .map((result) => result.alternatives?.[0]?.transcript?.trim() ?? "")
+    .filter(Boolean)
+    .join(" ");
+  return {
+    chunk_index: chunkIndex,
+    physical_duration_ms: chunk.durationMs,
+    sample_rate_hz: chunk.sampleRateHz,
+    mpeg_version: chunk.mpegVersion,
+    first_raw_offset_ms: first,
+    last_raw_offset_ms: last,
+    raw_overshoot_ms: last == null ? null : last - chunk.durationMs,
+    segment_count: (response.results ?? []).filter((result) => result.alternatives?.[0]?.transcript?.trim()).length,
+    text_preview: text.slice(0, 160),
+  };
+}
+
+export function detectBoundaryTextIssues(
+  leftText: string,
+  rightText: string,
+): { duplicated_tail: string | null; suspicious_gap: boolean } {
+  const leftTokens = leftText.trim().split(/\s+/).filter(Boolean);
+  const rightTokens = rightText.trim().split(/\s+/).filter(Boolean);
+  if (leftTokens.length === 0 || rightTokens.length === 0) {
+    return { duplicated_tail: null, suspicious_gap: false };
+  }
+  let duplicated: string | null = null;
+  const max = Math.min(6, leftTokens.length, rightTokens.length);
+  for (let size = max; size >= 2; size -= 1) {
+    const leftTail = leftTokens.slice(-size).join(" ").toLowerCase();
+    const rightHead = rightTokens.slice(0, size).join(" ").toLowerCase();
+    if (leftTail === rightHead) {
+      duplicated = leftTokens.slice(-size).join(" ");
+      break;
+    }
+  }
+  return { duplicated_tail: duplicated, suspicious_gap: false };
 }
 
 export function toCanonicalTranscription(result: CanonicalSttResult): CanonicalTranscription {
@@ -176,11 +260,18 @@ export function buildDedicatedSttProviderParameters(input: {
   chunkCount: number;
   audioDurationMs: number | null;
   mp3FrameCount: number | null;
+  mpegVersion?: number | null;
+  sampleRateHz?: number | null;
+  channels?: number | null;
   firstStartMs: number | null;
   lastEndMs: number | null;
   timestampStatus: "verified" | "unverified";
   transcriptEndMs: number | null;
   timestampDriftMs: number | null;
+  overshootMs?: number | null;
+  trailingGapMs?: number | null;
+  coverageRatio?: number | null;
+  chunkDiagnostics?: RawChunkTimestampDiagnostics[];
 }): Record<string, unknown> {
   return {
     path: "dedicated_stt",
@@ -189,6 +280,9 @@ export function buildDedicatedSttProviderParameters(input: {
     language_code: input.language,
     enable_word_time_offsets: true,
     enable_automatic_punctuation: true,
+    sample_rate_hertz: input.sampleRateHz ?? null,
+    mpeg_version: input.mpegVersion ?? null,
+    channels: input.channels ?? null,
     chunk_max_duration_ms: GOOGLE_STT_CHUNK_MAX_MS,
     chunk_count: input.chunkCount,
     audio_duration_ms: input.audioDurationMs,
@@ -198,9 +292,14 @@ export function buildDedicatedSttProviderParameters(input: {
     timestamp_status: input.timestampStatus,
     transcript_end_ms: input.transcriptEndMs,
     timestamp_drift_ms: input.timestampDriftMs,
+    overshoot_ms: input.overshootMs ?? null,
+    trailing_gap_ms: input.trailingGapMs ?? null,
+    coverage_ratio: input.coverageRatio ?? null,
     timestamp_source: AUDIO_TIMESTAMP_SOURCE,
     timestamp_provider: GOOGLE_STT_PROVIDER,
     model_id: input.modelId,
+    transformations_applied: [],
+    chunk_diagnostics: input.chunkDiagnostics ?? [],
   };
 }
 
@@ -216,6 +315,7 @@ async function defaultRecognizeChunk(input: {
   audioBytes: Uint8Array;
   modelId: string;
   language: string;
+  sampleRateHertz: number;
   apiKey: string;
 }): Promise<GoogleSttRecognizeResponse> {
   const response = await fetch(`https://speech.googleapis.com/v1/speech:recognize?key=${input.apiKey}`, {
@@ -224,6 +324,7 @@ async function defaultRecognizeChunk(input: {
     body: JSON.stringify({
       config: {
         encoding: "MP3",
+        sampleRateHertz: input.sampleRateHertz,
         languageCode: input.language,
         enableWordTimeOffsets: true,
         enableAutomaticPunctuation: true,
@@ -239,6 +340,22 @@ async function defaultRecognizeChunk(input: {
   return await response.json() as GoogleSttRecognizeResponse;
 }
 
+async function recognizeAllChunks(
+  chunks: Mp3Chunk[],
+  modelId: string,
+  language: string,
+  recognize: RecognizeChunkFn,
+): Promise<GoogleSttRecognizeResponse[]> {
+  return await Promise.all(chunks.map((chunk) =>
+    recognize({
+      audioBytes: chunk.bytes,
+      modelId,
+      language,
+      sampleRateHertz: chunk.sampleRateHz,
+    })
+  ));
+}
+
 export async function transcribeAudioWithDedicatedStt(input: {
   bytes: Uint8Array;
   mimeType: string;
@@ -252,7 +369,8 @@ export async function transcribeAudioWithDedicatedStt(input: {
     throw new Error("STT_UNSUPPORTED_MIME");
   }
   const language = input.language || "fr-FR";
-  let modelId = input.modelId || GOOGLE_STT_DEFAULT_MODEL;
+  const preferredModel = input.modelId || GOOGLE_STT_DEFAULT_MODEL;
+  const audioMeta = readMp3Duration(input.bytes);
   const chunks = splitMp3ByMaxDurationMs(input.bytes, GOOGLE_STT_CHUNK_MAX_MS);
   if (chunks.length === 0) throw new Error("STT_AUDIO_UNREADABLE");
   const recognize = input.recognize ?? ((chunkInput) => defaultRecognizeChunk({
@@ -260,22 +378,57 @@ export async function transcribeAudioWithDedicatedStt(input: {
     apiKey: readGoogleSttApiKey(input.apiKey),
   }));
 
-  const recognizeChunk = async (chunk: typeof chunks[number]) => {
-    try {
-      return await recognize({ audioBytes: chunk.bytes, modelId, language });
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      if (modelId === GOOGLE_STT_DEFAULT_MODEL && message.includes("STT_PROVIDER_ERROR:400")) {
-        modelId = GOOGLE_STT_FALLBACK_MODEL;
-        return await recognize({ audioBytes: chunk.bytes, modelId, language });
-      }
+  let modelId = preferredModel;
+  let responses: GoogleSttRecognizeResponse[];
+  try {
+    responses = await recognizeAllChunks(chunks, modelId, language, recognize);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (preferredModel === GOOGLE_STT_DEFAULT_MODEL && isModelUnsupportedError(message)) {
+      modelId = GOOGLE_STT_FALLBACK_MODEL;
+      responses = await recognizeAllChunks(chunks, modelId, language, recognize);
+    } else {
       throw error instanceof Error ? error : new Error("STT_PROVIDER_ERROR");
     }
-  };
-  const responses = await Promise.all(chunks.map((chunk) => recognizeChunk(chunk)));
-  const segments = normalizeStitchedSegments(responses.flatMap((response, index) =>
+  }
+
+  const chunkDiagnostics = responses.map((response, index) =>
+    collectRawChunkDiagnostics(response, chunks[index], index)
+  );
+  for (const diagnostic of chunkDiagnostics) {
+    if (diagnostic.raw_overshoot_ms != null && diagnostic.raw_overshoot_ms > GOOGLE_STT_CHUNK_TOLERANCE_MS) {
+      throw new Error(
+        `STT_CHUNK_TIMESTAMP_OUT_OF_RANGE:chunk=${diagnostic.chunk_index}:overshoot=${diagnostic.raw_overshoot_ms}`,
+      );
+    }
+  }
+
+  const segmentsByChunk = responses.map((response, index) =>
     googleSpeechResultsToSegments(response.results, chunks[index].startMs, 0, chunks[index].durationMs)
-  ));
+  );
+  const boundaryIssues = [];
+  for (let index = 1; index < segmentsByChunk.length; index += 1) {
+    const left = segmentsByChunk[index - 1];
+    const right = segmentsByChunk[index];
+    if (left.length === 0 || right.length === 0) continue;
+    const leftText = left.map((segment) => segment.text).join(" ");
+    const rightText = right.map((segment) => segment.text).join(" ");
+    const issue = detectBoundaryTextIssues(leftText, rightText);
+    if (issue.duplicated_tail) {
+      throw new Error(`STT_CHUNK_BOUNDARY_TEXT_DUPLICATE:${issue.duplicated_tail}`);
+    }
+    boundaryIssues.push({
+      between_chunks: [index - 1, index],
+      left_last_end_ms: left[left.length - 1].end_ms,
+      right_first_start_ms: right[0].start_ms,
+      duplicated_tail: null,
+    });
+  }
+
+  const segments = reindexSegmentsPreservingTimes(segmentsByChunk.flat());
+  if (segments.length === 0) throw new Error("STT_TIMESTAMPS_MISSING");
+  assertRawSegmentChronology(segments);
+
   const confidences = segments.map((segment) => segment.confidence).filter((value): value is number => typeof value === "number");
   const result: CanonicalSttResult = {
     text: segments.map((segment) => segment.text).join(" ").replace(/\s+/g, " ").trim(),
@@ -288,6 +441,12 @@ export async function transcribeAudioWithDedicatedStt(input: {
       encoding: "MP3",
       chunk_count: chunks.length,
       timestamp_source: AUDIO_TIMESTAMP_SOURCE,
+      transformations_applied: [],
+      sample_rate_hz: audioMeta?.sampleRateHz ?? chunks[0]?.sampleRateHz ?? null,
+      mpeg_version: audioMeta?.mpegVersion ?? chunks[0]?.mpegVersion ?? null,
+      channels: audioMeta?.channels ?? chunks[0]?.channels ?? null,
+      chunk_diagnostics: chunkDiagnostics,
+      boundary_diagnostics: boundaryIssues,
     },
   };
   if (!isAllowedAudioTimestampProvider(result.provider)) throw new Error("STT_TIMESTAMP_PROVIDER_FORBIDDEN");
