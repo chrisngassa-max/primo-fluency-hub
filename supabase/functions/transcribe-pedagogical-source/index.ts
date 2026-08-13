@@ -1,17 +1,22 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { isSha256ContentHash } from "../_shared/source-integrity.ts";
 import { assessTimestampCoverage, readMp3Duration } from "../_shared/transcription/audio-duration.ts";
+import { validateCanonicalTranscription } from "../_shared/transcription/canonical.ts";
 import {
-  transcribeAudioWithGemini,
-  validateCanonicalTranscription,
-} from "../_shared/transcription/gemini-audio.ts";
+  AUDIO_TIMESTAMP_SOURCE,
+  GOOGLE_STT_DEFAULT_MODEL,
+  GOOGLE_STT_PROVIDER,
+  buildDedicatedSttProviderParameters,
+  isAllowedAudioTimestampProvider,
+  toCanonicalTranscription,
+  transcribeAudioWithDedicatedStt,
+} from "../_shared/transcription/google-stt.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
-const MAX_GEMINI_AUDIO_BYTES = 18 * 1024 * 1024;
-const MODEL_ID = "gemini-2.5-flash";
+const MAX_AUDIO_BYTES = 18 * 1024 * 1024;
 const json = (status: number, body: unknown) => new Response(JSON.stringify(body), {
   status,
   headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -80,10 +85,14 @@ Deno.serve(async (request) => {
         source_id: source.id,
         attempt_number: (current?.attempt_number ?? 0) + 1,
         is_current: true,
-        provider: "gemini",
-        model_id: MODEL_ID,
+        provider: GOOGLE_STT_PROVIDER,
+        model_id: GOOGLE_STT_DEFAULT_MODEL,
         status: "processing",
-        provider_parameters: { path: "inline_data", content_hash: source.content_hash },
+        provider_parameters: {
+          path: "dedicated_stt",
+          content_hash: source.content_hash,
+          timestamp_source: AUDIO_TIMESTAMP_SOURCE,
+        },
       }).select("id").single();
     if (createError) {
       if (String(createError.code) === "23505") return json(409, { error: "TRANSCRIPTION_ALREADY_RUNNING" });
@@ -94,16 +103,23 @@ Deno.serve(async (request) => {
     const { data: file, error: downloadError } = await admin.storage.from(source.storage_bucket).download(source.storage_path);
     if (downloadError || !file) throw new Error("SOURCE_FILE_NOT_FOUND");
     if (file.size === 0) throw new Error("SOURCE_FILE_EMPTY");
-    if (file.size > MAX_GEMINI_AUDIO_BYTES) throw new Error("SOURCE_FILE_TOO_LARGE_FOR_GEMINI");
+    if (file.size > MAX_AUDIO_BYTES) throw new Error("SOURCE_FILE_TOO_LARGE");
     const audioBytes = new Uint8Array(await file.arrayBuffer());
     const duration = String(source.mime_type ?? "").includes("mpeg") ? readMp3Duration(audioBytes) : null;
-    const transcription = await transcribeAudioWithGemini(
-      audioBytes,
-      source.mime_type || file.type || "audio/mpeg",
-    );
+    const stt = await transcribeAudioWithDedicatedStt({
+      bytes: audioBytes,
+      mimeType: source.mime_type || file.type || "audio/mpeg",
+      language: "fr-FR",
+    });
+    if (!isAllowedAudioTimestampProvider(stt.provider) || stt.metadata.timestamp_source !== AUDIO_TIMESTAMP_SOURCE) {
+      throw new Error("STT_TIMESTAMP_PROVIDER_FORBIDDEN");
+    }
+    const transcription = toCanonicalTranscription(stt);
     const validationErrors = validateCanonicalTranscription(transcription);
     if (validationErrors.length > 0) throw new Error(`TRANSCRIPTION_INVALID:${validationErrors.join(",")}`);
     const timestampAssessment = assessTimestampCoverage(transcription.segments, duration?.durationMs ?? null);
+    const firstStartMs = transcription.segments[0]?.start_ms ?? null;
+    const lastEndMs = transcription.segments.at(-1)?.end_ms ?? timestampAssessment.transcriptEndMs;
 
     const { error: segmentError } = await admin.from("pedagogical_source_transcription_segments").insert(
       transcription.segments.map(({ text, ...segment }) => ({
@@ -115,24 +131,36 @@ Deno.serve(async (request) => {
     if (segmentError) throw segmentError;
     const { error: completeError } = await admin.from("pedagogical_source_transcriptions").update({
       status: "ready",
+      provider: stt.provider,
+      model_id: stt.modelId,
       raw_text: transcription.full_text,
       language_detected: transcription.language,
-      average_confidence: null,
+      average_confidence: stt.confidence,
       error_details: null,
-      provider_parameters: {
-        path: "inline_data",
-        content_hash: source.content_hash,
-        audio_duration_ms: timestampAssessment.audioDurationMs,
-        mp3_frame_count: duration?.frameCount ?? null,
-        timestamp_status: timestampAssessment.status,
-        transcript_end_ms: timestampAssessment.transcriptEndMs,
-        timestamp_drift_ms: timestampAssessment.driftMs,
-      },
+      provider_parameters: buildDedicatedSttProviderParameters({
+        contentHash: source.content_hash,
+        modelId: stt.modelId,
+        language: stt.language,
+        chunkCount: Number(stt.metadata.chunk_count ?? 0),
+        audioDurationMs: timestampAssessment.audioDurationMs,
+        mp3FrameCount: duration?.frameCount ?? null,
+        firstStartMs,
+        lastEndMs,
+        timestampStatus: timestampAssessment.status,
+        transcriptEndMs: timestampAssessment.transcriptEndMs,
+        timestampDriftMs: timestampAssessment.driftMs,
+      }),
     }).eq("id", transcriptionId);
     if (completeError) throw completeError;
     return json(200, {
-      ok: true, cached: false, transcription_id: transcriptionId, status: "ready",
-      segments_count: transcription.segments.length, timestamp_assessment: timestampAssessment,
+      ok: true,
+      cached: false,
+      transcription_id: transcriptionId,
+      status: "ready",
+      provider: stt.provider,
+      model_id: stt.modelId,
+      segments_count: transcription.segments.length,
+      timestamp_assessment: timestampAssessment,
     });
   } catch (error) {
     console.error("transcribe-pedagogical-source error", error);
@@ -149,7 +177,9 @@ Deno.serve(async (request) => {
     }
     const status = message.startsWith("SOURCE_FILE_NOT_FOUND") ? 404
       : message.includes("TOO_LARGE") ? 413
-      : message.startsWith("TRANSCRIPTION_INVALID") ? 422 : 502;
+      : message.startsWith("TRANSCRIPTION_INVALID") || message.startsWith("STT_TIMESTAMPS") || message.startsWith("STT_TIMESTAMP") || message.startsWith("STT_SEGMENT") || message.startsWith("STT_UNSUPPORTED")
+        ? 422
+        : 502;
     return json(status, { error: message.split(":")[0] });
   }
 });

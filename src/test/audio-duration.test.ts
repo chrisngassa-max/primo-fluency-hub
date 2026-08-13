@@ -14,7 +14,7 @@ function mpeg1Layer3Frames(count: number): Uint8Array {
   return bytes;
 }
 
-describe("MP3 duration and Gemini timestamp assessment", () => {
+describe("MP3 duration and timestamp assessment", () => {
   it("computes duration from MPEG audio frames", () => {
     const duration = readMp3Duration(mpeg1Layer3Frames(100));
     expect(duration?.frameCount).toBe(100);
@@ -30,12 +30,21 @@ describe("MP3 duration and Gemini timestamp assessment", () => {
     });
   });
 
-  it("marks Gemini timestamps outside tolerance as unverified", () => {
+  it("marks timestamps that overshoot duration by more than 2 seconds as unverified", () => {
     expect(assessTimestampCoverage([{ end_ms: 90_000 }], 60_000)).toEqual({
       status: "unverified",
       audioDurationMs: 60_000,
       transcriptEndMs: 90_000,
       driftMs: 30_000,
+    });
+  });
+
+  it("accepts trailing silence when the last segment stays within the audio duration", () => {
+    expect(assessTimestampCoverage([{ end_ms: 57_100 }], 60_000)).toEqual({
+      status: "verified",
+      audioDurationMs: 60_000,
+      transcriptEndMs: 57_100,
+      driftMs: -2_900,
     });
   });
 });

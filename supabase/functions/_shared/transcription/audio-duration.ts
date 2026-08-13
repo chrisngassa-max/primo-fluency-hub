@@ -18,16 +18,27 @@ const SAMPLE_RATES: Record<number, number[]> = {
   25: [11_025, 12_000, 8_000],
 };
 
+export type Mp3FrameSpan = {
+  offset: number;
+  length: number;
+  durationSeconds: number;
+};
+
+export type Mp3Chunk = {
+  bytes: Uint8Array;
+  startMs: number;
+  durationMs: number;
+};
+
 function id3Offset(bytes: Uint8Array): number {
   if (bytes.length < 10 || bytes[0] !== 0x49 || bytes[1] !== 0x44 || bytes[2] !== 0x33) return 0;
   const size = ((bytes[6] & 0x7f) << 21) | ((bytes[7] & 0x7f) << 14) | ((bytes[8] & 0x7f) << 7) | (bytes[9] & 0x7f);
   return Math.min(bytes.length, 10 + size);
 }
 
-export function readMp3Duration(bytes: Uint8Array): AudioDurationResult | null {
+export function iterateMp3Frames(bytes: Uint8Array): Mp3FrameSpan[] {
+  const frames: Mp3FrameSpan[] = [];
   let offset = id3Offset(bytes);
-  let durationSeconds = 0;
-  let frameCount = 0;
   while (offset + 4 <= bytes.length) {
     if (bytes[offset] !== 0xff || (bytes[offset + 1] & 0xe0) !== 0xe0) {
       offset += 1;
@@ -55,12 +66,51 @@ export function readMp3Duration(bytes: Uint8Array): AudioDurationResult | null {
       offset += 1;
       continue;
     }
-    durationSeconds += samplesPerFrame / sampleRate;
-    frameCount += 1;
+    frames.push({
+      offset,
+      length: frameLength,
+      durationSeconds: samplesPerFrame / sampleRate,
+    });
     offset += frameLength;
   }
-  if (frameCount === 0 || !Number.isFinite(durationSeconds) || durationSeconds <= 0) return null;
-  return { durationMs: Math.round(durationSeconds * 1000), frameCount };
+  return frames;
+}
+
+export function readMp3Duration(bytes: Uint8Array): AudioDurationResult | null {
+  const frames = iterateMp3Frames(bytes);
+  if (frames.length === 0) return null;
+  const durationSeconds = frames.reduce((sum, frame) => sum + frame.durationSeconds, 0);
+  if (!Number.isFinite(durationSeconds) || durationSeconds <= 0) return null;
+  return { durationMs: Math.round(durationSeconds * 1000), frameCount: frames.length };
+}
+
+export function splitMp3ByMaxDurationMs(bytes: Uint8Array, maxDurationMs: number): Mp3Chunk[] {
+  const frames = iterateMp3Frames(bytes);
+  if (frames.length === 0 || maxDurationMs <= 0) return [];
+  const chunks: Mp3Chunk[] = [];
+  let acc: Mp3FrameSpan[] = [];
+  let accSeconds = 0;
+  let startSeconds = 0;
+  const flush = () => {
+    if (acc.length === 0) return;
+    const first = acc[0];
+    const last = acc[acc.length - 1];
+    chunks.push({
+      bytes: bytes.subarray(first.offset, last.offset + last.length),
+      startMs: Math.round(startSeconds * 1000),
+      durationMs: Math.round(accSeconds * 1000),
+    });
+    startSeconds += accSeconds;
+    acc = [];
+    accSeconds = 0;
+  };
+  for (const frame of frames) {
+    if (acc.length > 0 && (accSeconds + frame.durationSeconds) * 1000 > maxDurationMs) flush();
+    acc.push(frame);
+    accSeconds += frame.durationSeconds;
+  }
+  flush();
+  return chunks;
 }
 
 export type TimestampAssessment = {
@@ -81,7 +131,7 @@ export function assessTimestampCoverage(
   }
   const driftMs = transcriptEndMs - audioDurationMs;
   return {
-    status: Math.abs(driftMs) <= toleranceMs ? "verified" : "unverified",
+    status: transcriptEndMs > audioDurationMs + toleranceMs ? "unverified" : "verified",
     audioDurationMs,
     transcriptEndMs,
     driftMs,

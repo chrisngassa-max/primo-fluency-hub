@@ -96,7 +96,7 @@ export function SourceTranscriptionActions({ source }: { source: PedagogicalSour
           <DialogHeader><DialogTitle>Transcription et relecture</DialogTitle><DialogDescription>{source.title}</DialogDescription></DialogHeader>
           {audioUrl && <audio ref={audioRef} controls className="w-full" src={audioUrl} />}
           {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : !transcription ? (
-            <Button disabled={running} onClick={() => run()}>{running && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Transcrire avec Gemini</Button>
+            <Button disabled={running} onClick={() => run()}>{running && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Transcrire l'audio</Button>
           ) : (
             <div className="space-y-4">
               <div className="flex items-center gap-2">
