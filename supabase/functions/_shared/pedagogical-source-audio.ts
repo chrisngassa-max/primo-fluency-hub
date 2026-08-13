@@ -167,8 +167,7 @@ export async function resolveExerciseAudio(
     .storage
     .from(source.storage_bucket)
     .createSignedUrl(source.storage_path, SIGNED_URL_TTL_SECONDS);
-  if (signedError) throw signedError;
-  if (!signed?.signedUrl) {
+  if (signedError || !signed?.signedUrl) {
     return { status: "unavailable", code: "STORAGE_ERROR" };
   }
 

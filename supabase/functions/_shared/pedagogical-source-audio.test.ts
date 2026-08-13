@@ -217,7 +217,7 @@ describe("resolveExerciseAudio — états discriminés", () => {
       },
       signedUrl: { data: null, error: new Error("storage down") },
     });
-    // createSignedUrl throw via error => le résolveur propage l'erreur (throw).
-    await expect(resolveExerciseAudio(admin, "ex-1")).rejects.toThrow();
+    const res = await resolveExerciseAudio(admin, "ex-1");
+    expect(res).toEqual({ status: "unavailable", code: "STORAGE_ERROR" });
   });
 });

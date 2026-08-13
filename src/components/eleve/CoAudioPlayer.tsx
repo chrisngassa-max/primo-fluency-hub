@@ -98,7 +98,8 @@ export default function CoAudioPlayer({
   );
 
   const resolveNow = useCallback(async () => {
-    if (!canStartAudioPlay(playCount, maxPlays)) return; // limite atteinte
+    // La résolution d'URL ne consomme aucune écoute : le quota s'applique
+    // uniquement au démarrage effectif d'une nouvelle écoute (état ready).
     setResolution({ kind: "loading" });
     const result: AudioResolution = await resolveExerciseAudio({
       exerciseId,
@@ -124,7 +125,7 @@ export default function CoAudioPlayer({
         setResolution({ kind: "forbidden" });
         break;
     }
-  }, [exerciseId, sessionCode, devoirId, playToken, preview, playCount, maxPlays]);
+  }, [exerciseId, sessionCode, devoirId, playToken, preview]);
 
   // Démarre la résolution dès le montage si un original est attendu.
   useEffect(() => {
@@ -135,16 +136,18 @@ export default function CoAudioPlayer({
   }, [wantOriginal]);
 
   // --- Machine à états d'écoutes ----------------------------------------
+  // PRÊT ──play──▶ LECTURE_COMPTÉE ──pause/reprise──▶ (reste LECTURE_COMPTÉE)
+  // ──ended──▶ PRÊT. Le quota ne bloque qu'une NOUVELLE écoute (ready).
   const handlePlay = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
-    // Bloquer le démarrage si la limite d'écoutes est atteinte (devoirs).
-    if (!canStartAudioPlay(playCount, maxPlays)) {
+    if (
+      listenStateRef.current === "ready"
+      && !canStartAudioPlay(playCount, maxPlays)
+    ) {
       audio.pause();
       return;
     }
-    // Compter une écoute uniquement lors d'un démarrage depuis l'état PRÊT
-    // (nouveau démarrage), jamais lors d'une reprise après pause.
     if (listenStateRef.current === "ready") {
       listenStateRef.current = "counted";
       onPlayStart?.();

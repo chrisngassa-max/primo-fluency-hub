@@ -946,7 +946,9 @@ const DevoirPassation = () => {
   }
 
   // Check if CO questions are locked behind listening
-  const coLocked = isCompetenceCO && scriptAudio && !hasListened;
+  const hasOriginalAudio = Boolean(contenu?.audio);
+  const hasCoAudio = hasOriginalAudio || Boolean(scriptAudio);
+  const coLocked = isCompetenceCO && hasCoAudio && !hasListened;
 
   // ─── Exercise Passation ───
   return (
@@ -1090,7 +1092,7 @@ const DevoirPassation = () => {
             <CoAudioPlayer
               exerciseId={ex.id}
               competence="CO"
-              hasOriginalAudio={Boolean((contenu as any)?.audio)}
+              hasOriginalAudio={hasOriginalAudio}
               scriptAudio={scriptAudio ?? undefined}
               devoirId={devoirId}
               playCount={audioPlayCount}
