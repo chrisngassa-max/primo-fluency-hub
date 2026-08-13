@@ -143,4 +143,52 @@ describe("resolveExerciseAudio — cache contextuel", () => {
     await resolveExerciseAudio({ exerciseId: "ex-1", sessionCode: "S01" });
     expect(invokeMock).toHaveBeenCalledTimes(2);
   });
+
+  it("forceRefresh ignore l'entrée de cache concernée", async () => {
+    invokeMock
+      .mockResolvedValueOnce({
+        data: { ok: true, audio_url: "https://signed/a.mp3", expires_at: new Date(Date.now() + 600000).toISOString() },
+        error: null,
+      })
+      .mockResolvedValueOnce({
+        data: { ok: true, audio_url: "https://signed/b.mp3", expires_at: new Date(Date.now() + 600000).toISOString() },
+        error: null,
+      });
+    setUserId("user-A");
+    const first = await resolveExerciseAudio({ exerciseId: "ex-1", sessionCode: "S01" });
+    const second = await resolveExerciseAudio(
+      { exerciseId: "ex-1", sessionCode: "S01" },
+      { forceRefresh: true },
+    );
+    expect(invokeMock).toHaveBeenCalledTimes(2);
+    expect(first).toMatchObject({ status: "resolved", url: "https://signed/a.mp3" });
+    expect(second).toMatchObject({ status: "resolved", url: "https://signed/b.mp3" });
+  });
+
+  it("forceRefresh ne remplace que la clé contextuelle concernée", async () => {
+    invokeMock
+      .mockResolvedValueOnce({
+        data: { ok: true, audio_url: "https://signed/session.mp3", expires_at: new Date(Date.now() + 600000).toISOString() },
+        error: null,
+      })
+      .mockResolvedValueOnce({
+        data: { ok: true, audio_url: "https://signed/devoir.mp3", expires_at: new Date(Date.now() + 600000).toISOString() },
+        error: null,
+      })
+      .mockResolvedValueOnce({
+        data: { ok: true, audio_url: "https://signed/session-2.mp3", expires_at: new Date(Date.now() + 600000).toISOString() },
+        error: null,
+      });
+    setUserId("user-A");
+    await resolveExerciseAudio({ exerciseId: "ex-1", sessionCode: "S01" });
+    await resolveExerciseAudio({ exerciseId: "ex-1", devoirId: "d1" });
+    const refreshed = await resolveExerciseAudio(
+      { exerciseId: "ex-1", sessionCode: "S01" },
+      { forceRefresh: true },
+    );
+    const cachedDevoir = await resolveExerciseAudio({ exerciseId: "ex-1", devoirId: "d1" });
+    expect(invokeMock).toHaveBeenCalledTimes(3);
+    expect(refreshed).toMatchObject({ status: "resolved", url: "https://signed/session-2.mp3" });
+    expect(cachedDevoir).toMatchObject({ status: "resolved", url: "https://signed/devoir.mp3" });
+  });
 });

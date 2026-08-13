@@ -171,8 +171,67 @@ describe("CoAudioPlayer", () => {
     });
     await flush();
     expect(mockResolve).toHaveBeenCalledTimes(2);
+    expect(mockResolve.mock.calls[1][1]).toEqual({ forceRefresh: true });
     expect(onPlayStart).toHaveBeenCalledTimes(1);
     expect(audioEl()?.getAttribute("src")).toBe("https://signed.example/audio-2.mp3");
+  });
+
+  it("première erreur média : une résolution forcée, sans écoute supplémentaire", async () => {
+    mockResolve
+      .mockResolvedValueOnce(SIGNED)
+      .mockResolvedValueOnce({
+        ...SIGNED,
+        url: "https://signed.example/audio-2.mp3",
+      });
+    await renderPlayer();
+    expect(mockResolve.mock.calls[0][1]).toBeUndefined();
+    const audio = audioEl()!;
+    await act(async () => {
+      audio.dispatchEvent(new Event("play"));
+    });
+    await act(async () => {
+      audio.dispatchEvent(new Event("error"));
+    });
+    await flush();
+    expect(mockResolve).toHaveBeenCalledTimes(2);
+    expect(mockResolve.mock.calls[1][0]).toEqual(expect.objectContaining({
+      exerciseId: "ex-1",
+      devoirId: "devoir-1",
+    }));
+    expect(mockResolve.mock.calls[1][1]).toEqual({ forceRefresh: true });
+    expect(onPlayStart).toHaveBeenCalledTimes(1);
+    expect(audioEl()?.getAttribute("src")).toBe("https://signed.example/audio-2.mp3");
+  });
+
+  it("deuxième erreur persistante : pas de 3e appel, état unavailable", async () => {
+    mockResolve
+      .mockResolvedValueOnce(SIGNED)
+      .mockResolvedValueOnce({
+        ...SIGNED,
+        url: "https://signed.example/audio-2.mp3",
+      });
+    await renderPlayer();
+    const audio = audioEl()!;
+    await act(async () => {
+      audio.dispatchEvent(new Event("play"));
+    });
+    await act(async () => {
+      audio.dispatchEvent(new Event("error"));
+    });
+    await flush();
+    expect(mockResolve).toHaveBeenCalledTimes(2);
+    expect(onPlayStart).toHaveBeenCalledTimes(1);
+
+    const retried = audioEl()!;
+    await act(async () => {
+      retried.dispatchEvent(new Event("error"));
+    });
+    await flush();
+    expect(mockResolve).toHaveBeenCalledTimes(2);
+    expect(onPlayStart).toHaveBeenCalledTimes(1);
+    expect(audioEl()).toBeNull();
+    expect(container.textContent).toMatch(/momentanément indisponible/i);
+    expect(container.querySelector("[data-testid=tts-player]")).toBeNull();
   });
 
   it.each([

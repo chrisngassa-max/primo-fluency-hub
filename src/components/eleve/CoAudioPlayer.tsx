@@ -90,6 +90,8 @@ export default function CoAudioPlayer({
   // Position conservée lors d'un renouvellement d'URL.
   const savedTimeRef = useRef<number>(0);
   const isReloadingRef = useRef<boolean>(false);
+  const autoRetryCountRef = useRef(0);
+  const MAX_AUTO_RETRIES = 1;
   const [isReloading, setIsReloading] = useState(false);
 
   const remaining = useMemo(
@@ -97,17 +99,20 @@ export default function CoAudioPlayer({
     [playCount, maxPlays],
   );
 
-  const resolveNow = useCallback(async () => {
+  const resolveNow = useCallback(async (forceRefresh = false) => {
     // La résolution d'URL ne consomme aucune écoute : le quota s'applique
     // uniquement au démarrage effectif d'une nouvelle écoute (état ready).
     setResolution({ kind: "loading" });
-    const result: AudioResolution = await resolveExerciseAudio({
-      exerciseId,
-      sessionCode,
-      devoirId,
-      playToken,
-      preview,
-    });
+    const result: AudioResolution = await resolveExerciseAudio(
+      {
+        exerciseId,
+        sessionCode,
+        devoirId,
+        playToken,
+        preview,
+      },
+      forceRefresh ? { forceRefresh: true } : undefined,
+    );
     switch (result.status) {
       case "resolved":
         setResolution({ kind: "resolved", url: result.url, expiresAt: result.expiresAt });
@@ -130,10 +135,16 @@ export default function CoAudioPlayer({
   // Démarre la résolution dès le montage si un original est attendu.
   useEffect(() => {
     if (wantOriginal && resolution.kind === "idle") {
-      resolveNow();
+      void resolveNow();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wantOriginal]);
+
+  // Nouveau contexte / exercice : on autorise à nouveau une tentative auto.
+  // On ne remet PAS le compteur à zéro à la simple réception d'une URL.
+  useEffect(() => {
+    autoRetryCountRef.current = 0;
+  }, [exerciseId, sessionCode, devoirId, playToken, preview]);
 
   // --- Machine à états d'écoutes ----------------------------------------
   // PRÊT ──play──▶ LECTURE_COMPTÉE ──pause/reprise──▶ (reste LECTURE_COMPTÉE)
@@ -152,6 +163,8 @@ export default function CoAudioPlayer({
       listenStateRef.current = "counted";
       onPlayStart?.();
     }
+    // Lecture effective réussie : un futur cycle d'écoute peut retenter une fois.
+    autoRetryCountRef.current = 0;
   }, [onPlayStart, playCount, maxPlays]);
 
   const handleEnded = useCallback(() => {
@@ -160,15 +173,26 @@ export default function CoAudioPlayer({
     onPlayComplete?.();
   }, [onPlayComplete]);
 
-  // Renouvellement d'une URL expirée : conserve l'état et la position.
+  // Renouvellement forcé : ignore le cache contextuel, conserve état et position.
   const reloadUrl = useCallback(async () => {
     const audio = audioRef.current;
     if (audio) savedTimeRef.current = audio.currentTime;
     isReloadingRef.current = true;
     setIsReloading(true);
-    await resolveNow();
+    await resolveNow(true);
     // La position est restaurée dans l'effet ci-dessous.
   }, [resolveNow]);
+
+  const handleMediaError = useCallback(() => {
+    if (isReloadingRef.current) return;
+    if (autoRetryCountRef.current < MAX_AUTO_RETRIES) {
+      autoRetryCountRef.current += 1;
+      void reloadUrl();
+      return;
+    }
+    setIsReloading(false);
+    setResolution({ kind: "unavailable" });
+  }, [reloadUrl]);
 
   // Quand une URL résolue arrive (ou est renouvelée), restaurer la position si
   // on était en train de relire l'audio.
@@ -218,11 +242,7 @@ export default function CoAudioPlayer({
               className="w-full"
               onPlay={handlePlay}
               onEnded={handleEnded}
-              onError={() => {
-                // Erreur réseau / source : tenter un renouvellement d'URL une
-                // fois (sans recompter d'écoute).
-                if (!isReloadingRef.current) reloadUrl();
-              }}
+              onError={handleMediaError}
             />
             {remaining !== null && (
               <p className="mt-1 text-xs text-muted-foreground">

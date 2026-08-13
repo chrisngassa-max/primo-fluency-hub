@@ -28,6 +28,11 @@ export interface ResolveExerciseAudioInput {
   preview?: boolean;
 }
 
+export interface ResolveExerciseAudioOptions {
+  /** Ignore et remplace uniquement l'entrée de cache de ce contexte. */
+  forceRefresh?: boolean;
+}
+
 /**
  * Décode une erreur d'invoke en statut discriminé. Lit `error.context`
  * (Response) puis le statut HTTP + le champ `status`/`code` du corps JSON.
@@ -103,14 +108,24 @@ export function clearExerciseAudioCache(): void {
   cache.clear();
 }
 
+/** Supprime uniquement l'entrée contextuelle concernée. Ne persiste rien. */
+export function invalidateExerciseAudioCache(input: ResolveExerciseAudioInput): void {
+  cache.delete(cacheKey(input));
+}
+
 export async function resolveExerciseAudio(
   input: ResolveExerciseAudioInput,
+  options?: ResolveExerciseAudioOptions,
 ): Promise<AudioResolution> {
   const key = cacheKey(input);
-  const cached = cache.get(key);
   const now = Date.now();
-  if (cached && cached.expiresAt > now) {
-    return { status: "resolved", url: cached.url, expiresAt: new Date(cached.expiresAt).toISOString() };
+  if (options?.forceRefresh) {
+    cache.delete(key);
+  } else {
+    const cached = cache.get(key);
+    if (cached && cached.expiresAt > now) {
+      return { status: "resolved", url: cached.url, expiresAt: new Date(cached.expiresAt).toISOString() };
+    }
   }
 
   const { data, error } = await supabase.functions.invoke("resolve-exercise-audio", {
