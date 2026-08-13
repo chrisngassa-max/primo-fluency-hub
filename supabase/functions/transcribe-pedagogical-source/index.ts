@@ -6,8 +6,10 @@ import {
   AUDIO_TIMESTAMP_SOURCE,
   GOOGLE_STT_DEFAULT_MODEL,
   GOOGLE_STT_PROVIDER,
+  assertSpeechRecognizeChunkingIsCanonical,
   buildDedicatedSttProviderParameters,
   isAllowedAudioTimestampProvider,
+  resolveRecognizeTimestampStatus,
   toCanonicalTranscription,
   transcribeAudioWithDedicatedStt,
 } from "../_shared/transcription/google-stt.ts";
@@ -114,10 +116,14 @@ Deno.serve(async (request) => {
     if (!isAllowedAudioTimestampProvider(stt.provider) || stt.metadata.timestamp_source !== AUDIO_TIMESTAMP_SOURCE) {
       throw new Error("STT_TIMESTAMP_PROVIDER_FORBIDDEN");
     }
+    const chunkCount = Number(stt.metadata.chunk_count ?? 0);
+    // Defense in depth: never persist multi-chunk recognize as ready/verified (G3).
+    assertSpeechRecognizeChunkingIsCanonical(chunkCount);
     const transcription = toCanonicalTranscription(stt);
     const validationErrors = validateCanonicalTranscription(transcription);
     if (validationErrors.length > 0) throw new Error(`TRANSCRIPTION_INVALID:${validationErrors.join(",")}`);
     const timestampAssessment = assessTimestampCoverage(transcription.segments, duration?.durationMs ?? null);
+    const timestampStatus = resolveRecognizeTimestampStatus(chunkCount, timestampAssessment.status);
     const firstStartMs = transcription.segments[0]?.start_ms ?? null;
     const lastEndMs = transcription.segments.at(-1)?.end_ms ?? timestampAssessment.transcriptEndMs;
 
@@ -141,7 +147,7 @@ Deno.serve(async (request) => {
         contentHash: source.content_hash,
         modelId: stt.modelId,
         language: stt.language,
-        chunkCount: Number(stt.metadata.chunk_count ?? 0),
+        chunkCount,
         audioDurationMs: timestampAssessment.audioDurationMs,
         mp3FrameCount: duration?.frameCount ?? null,
         mpegVersion: duration?.mpegVersion ?? null,
@@ -149,7 +155,7 @@ Deno.serve(async (request) => {
         channels: duration?.channels ?? null,
         firstStartMs,
         lastEndMs,
-        timestampStatus: timestampAssessment.status,
+        timestampStatus,
         transcriptEndMs: timestampAssessment.transcriptEndMs,
         timestampDriftMs: timestampAssessment.driftMs,
         overshootMs: timestampAssessment.overshootMs,
@@ -169,7 +175,7 @@ Deno.serve(async (request) => {
       provider: stt.provider,
       model_id: stt.modelId,
       segments_count: transcription.segments.length,
-      timestamp_assessment: timestampAssessment,
+      timestamp_assessment: { ...timestampAssessment, status: timestampStatus },
       transformations_applied: [],
     });
   } catch (error) {

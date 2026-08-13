@@ -18,6 +18,30 @@ export const GOOGLE_STT_CHUNK_MAX_MS = 55_000;
 export const GOOGLE_STT_CHUNK_TOLERANCE_MS = 2_000;
 export const AUDIO_TIMESTAMP_SOURCE = "google_stt_word_offsets";
 export const STANDARD_STT_USD_PER_15S = 0.006;
+/** G3: synchronous multi-chunk MP3 chopping loses word fragments at boundaries. */
+export const STT_CHUNKING_NOT_CANONICAL = "STT_CHUNKING_NOT_CANONICAL";
+
+/**
+ * speech:recognize on more than one raw MP3 chop is not canonical provenance (G3).
+ * Single-chunk files may proceed; multi-chunk must fail closed before persist/verify.
+ */
+export function assertSpeechRecognizeChunkingIsCanonical(chunkCount: number): void {
+  if (!Number.isFinite(chunkCount) || chunkCount < 1) {
+    throw new Error("STT_AUDIO_UNREADABLE");
+  }
+  if (chunkCount > 1) {
+    throw new Error(STT_CHUNKING_NOT_CANONICAL);
+  }
+}
+
+/** Multi-chunk recognize results must never be marked verified. */
+export function resolveRecognizeTimestampStatus(
+  chunkCount: number,
+  assessmentStatus: "verified" | "unverified",
+): "verified" | "unverified" {
+  if (chunkCount > 1) return "unverified";
+  return assessmentStatus;
+}
 
 export type CanonicalSttSegment = {
   id: string;
@@ -273,6 +297,7 @@ export function buildDedicatedSttProviderParameters(input: {
   coverageRatio?: number | null;
   chunkDiagnostics?: RawChunkTimestampDiagnostics[];
 }): Record<string, unknown> {
+  const timestampStatus = resolveRecognizeTimestampStatus(input.chunkCount, input.timestampStatus);
   return {
     path: "dedicated_stt",
     content_hash: input.contentHash,
@@ -289,7 +314,7 @@ export function buildDedicatedSttProviderParameters(input: {
     mp3_frame_count: input.mp3FrameCount,
     first_segment_start_ms: input.firstStartMs,
     last_segment_end_ms: input.lastEndMs,
-    timestamp_status: input.timestampStatus,
+    timestamp_status: timestampStatus,
     transcript_end_ms: input.transcriptEndMs,
     timestamp_drift_ms: input.timestampDriftMs,
     overshoot_ms: input.overshootMs ?? null,
@@ -300,6 +325,7 @@ export function buildDedicatedSttProviderParameters(input: {
     model_id: input.modelId,
     transformations_applied: [],
     chunk_diagnostics: input.chunkDiagnostics ?? [],
+    chunking_canonical: input.chunkCount === 1,
   };
 }
 
@@ -373,6 +399,8 @@ export async function transcribeAudioWithDedicatedStt(input: {
   const audioMeta = readMp3Duration(input.bytes);
   const chunks = splitMp3ByMaxDurationMs(input.bytes, GOOGLE_STT_CHUNK_MAX_MS);
   if (chunks.length === 0) throw new Error("STT_AUDIO_UNREADABLE");
+  // G3 security gate: never call/persist multi-chunk speech:recognize chops.
+  assertSpeechRecognizeChunkingIsCanonical(chunks.length);
   const recognize = input.recognize ?? ((chunkInput) => defaultRecognizeChunk({
     ...chunkInput,
     apiKey: readGoogleSttApiKey(input.apiKey),

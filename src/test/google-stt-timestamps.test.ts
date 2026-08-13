@@ -1,19 +1,22 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { assessTimestampCoverage } from "../../supabase/functions/_shared/transcription/audio-duration.ts";
+import { assessTimestampCoverage, splitMp3ByMaxDurationMs } from "../../supabase/functions/_shared/transcription/audio-duration.ts";
 import {
   AUDIO_TIMESTAMP_SOURCE,
   GOOGLE_STT_FALLBACK_MODEL,
   GOOGLE_STT_PROVIDER,
+  STT_CHUNKING_NOT_CANONICAL,
   assessDedicatedSttTimestamps,
   assertRawSegmentChronology,
+  assertSpeechRecognizeChunkingIsCanonical,
   buildDedicatedSttProviderParameters,
   estimateGoogleSttCostUsd,
   googleSpeechResultsToSegments,
   isAllowedAudioTimestampProvider,
   parseGoogleDurationToMs,
   reindexSegmentsPreservingTimes,
+  resolveRecognizeTimestampStatus,
   toCanonicalTranscription,
   transcribeAudioWithDedicatedStt,
   type CanonicalSttResult,
@@ -117,18 +120,87 @@ describe("dedicated Google STT timestamps (fail-closed)", () => {
     })).rejects.toThrow("STT_PROVIDER_ERROR");
   });
 
-  it("replays ALL chunks with default when latest_long is unsupported on one chunk", async () => {
-    const calls: string[] = [];
+  it("blocks multi-chunk speech:recognize as non-canonical (G3)", async () => {
     const framesNeededForTwoChunks = Math.ceil((55_000 / 1000) * (44_100 / 1152)) + 40;
+    const bytes = mpeg1Layer3Frames(framesNeededForTwoChunks);
+    expect(splitMp3ByMaxDurationMs(bytes, 55_000).length).toBeGreaterThan(1);
+    expect(() => assertSpeechRecognizeChunkingIsCanonical(2)).toThrow(STT_CHUNKING_NOT_CANONICAL);
+    expect(resolveRecognizeTimestampStatus(2, "verified")).toBe("unverified");
+    expect(resolveRecognizeTimestampStatus(1, "verified")).toBe("verified");
+
+    let recognizeCalls = 0;
+    await expect(transcribeAudioWithDedicatedStt({
+      bytes,
+      mimeType: "audio/mpeg",
+      recognize: async () => {
+        recognizeCalls += 1;
+        return {
+          results: [{
+            alternatives: [{ transcript: "ne doit pas etre appele", words: words("0.100s", "1.000s") }],
+          }],
+        };
+      },
+    })).rejects.toThrow(STT_CHUNKING_NOT_CANONICAL);
+    expect(recognizeCalls).toBe(0);
+
+    const params = buildDedicatedSttProviderParameters({
+      contentHash: "sha256:" + "b".repeat(64),
+      modelId: "latest_long",
+      language: "fr-FR",
+      chunkCount: 2,
+      audioDurationMs: 120_000,
+      mp3FrameCount: framesNeededForTwoChunks,
+      firstStartMs: 0,
+      lastEndMs: 119_000,
+      timestampStatus: "verified",
+      transcriptEndMs: 119_000,
+      timestampDriftMs: -1_000,
+    });
+    expect(params.timestamp_status).toBe("unverified");
+    expect(params.chunking_canonical).toBe(false);
+    expect(params.chunk_count).toBe(2);
+  });
+
+  it("allows a single-chunk recognize path when raw offsets are valid", async () => {
+    const result = await transcribeAudioWithDedicatedStt({
+      bytes: mpeg1Layer3Frames(80),
+      mimeType: "audio/mpeg",
+      recognize: recognizeWith([
+        { alternatives: [{ transcript: "Bonjour la France.", words: words("0.200s", "1.800s") }] },
+      ]),
+    });
+    expect(result.metadata.chunk_count).toBe(1);
+    expect(() => assertSpeechRecognizeChunkingIsCanonical(1)).not.toThrow();
+    const assessment = assessDedicatedSttTimestamps(result, Math.round((80 * 1152 * 1000) / 44_100));
+    const status = resolveRecognizeTimestampStatus(1, assessment.status);
+    const params = buildDedicatedSttProviderParameters({
+      contentHash: "sha256:" + "c".repeat(64),
+      modelId: result.modelId,
+      language: result.language,
+      chunkCount: 1,
+      audioDurationMs: assessment.audioDurationMs,
+      mp3FrameCount: 80,
+      firstStartMs: result.segments[0].start_ms,
+      lastEndMs: result.segments[0].end_ms,
+      timestampStatus: status,
+      transcriptEndMs: assessment.transcriptEndMs,
+      timestampDriftMs: assessment.driftMs,
+    });
+    expect(params.chunking_canonical).toBe(true);
+    expect(params.timestamp_status).toBe(status);
+  });
+
+  it("replays single-chunk with default when latest_long is unsupported", async () => {
+    const calls: string[] = [];
     const recognize: RecognizeChunkFn = async ({ modelId }) => {
       calls.push(modelId);
-      if (modelId === "latest_long" && calls.filter((value) => value === "latest_long").length === 2) {
+      if (modelId === "latest_long") {
         throw new Error("STT_PROVIDER_ERROR:400:INVALID_ARGUMENT unsupported model");
       }
       return {
         results: [{
           alternatives: [{
-            transcript: `chunk-${calls.length}`,
+            transcript: "fallback ok",
             words: words("0.100s", "1.000s"),
           }],
         }],
@@ -136,15 +208,14 @@ describe("dedicated Google STT timestamps (fail-closed)", () => {
     };
 
     const result = await transcribeAudioWithDedicatedStt({
-      bytes: mpeg1Layer3Frames(framesNeededForTwoChunks),
+      bytes: mpeg1Layer3Frames(80),
       mimeType: "audio/mpeg",
       recognize,
     });
 
     expect(result.modelId).toBe(GOOGLE_STT_FALLBACK_MODEL);
-    expect(calls.filter((value) => value === "latest_long").length).toBeGreaterThanOrEqual(2);
-    expect(calls.filter((value) => value === "default").length).toBe(calls.filter((value) => value === "latest_long").length);
-    expect(new Set(result.segments.map(() => result.modelId)).size).toBe(1);
+    expect(calls).toEqual(["latest_long", "default"]);
+    expect(result.metadata.chunk_count).toBe(1);
   });
 
   it("records provider and model and never treats Gemini as a timestamp source", async () => {
