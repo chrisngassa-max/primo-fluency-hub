@@ -132,7 +132,13 @@ export interface RawExercice {
   format: string;
   niveau_vise: string;
   civic_content?: boolean;
-  contenu?: { items?: RawItem[]; worked_example?: RawWorkedExample };
+  /** `audio` est la référence stable à la source audio originale (voir
+   *  family-to-exercice-adapter). Elle ne doit JAMAIS être retransmise à
+   *  l'apprenant : seule la présence d'un original déclenche la résolution
+   *  côté serveur. `script_audio` (la transcription complète) est
+   *  délibérément NON transmis en séance : exposer la transcription permettrait
+   *  à l'apprenant de lire les réponses dans le trafic réseau. */
+  contenu?: { items?: RawItem[]; worked_example?: RawWorkedExample; audio?: unknown };
 }
 
 export interface SanitizedExercice {
@@ -145,11 +151,18 @@ export interface SanitizedExercice {
   civic_content: boolean;
   items: SanitizedItem[];
   worked_example?: SanitizedWorkedExample;
+  /** Indique qu'un audio original résolvable existe (le frontend appellera
+   *  resolve-exercise-audio). Ne transporte ni la réf, ni le hash, ni le chemin
+   *  Storage, ni la transcription. */
+  has_original_audio?: boolean;
 }
 
 export function sanitizeExercice(exercice: RawExercice): SanitizedExercice {
   const items = Array.isArray(exercice.contenu?.items) ? exercice.contenu!.items! : [];
   const workedExample = sanitizeWorkedExample(exercice.contenu?.worked_example);
+  const hasOriginalAudio = (exercice.competence ?? "").toUpperCase() === "CO"
+    && exercice.contenu?.audio !== null && exercice.contenu?.audio !== undefined
+    && typeof exercice.contenu?.audio === "object";
   return {
     id: exercice.id,
     titre: exercice.titre,
@@ -160,6 +173,7 @@ export function sanitizeExercice(exercice: RawExercice): SanitizedExercice {
     civic_content: Boolean(exercice.civic_content),
     items: items.map(sanitizeItem),
     ...(workedExample ? { worked_example: workedExample } : {}),
+    ...(hasOriginalAudio ? { has_original_audio: true } : {}),
   };
 }
 

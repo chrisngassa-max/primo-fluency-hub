@@ -76,6 +76,11 @@ export interface LearnerExerciseBlock {
   is_bonus: boolean;
   items: SanitizedItem[];
   worked_example?: WorkedExample;
+  /** Vrai si un audio original résolvable existe (CO publié depuis une source
+   *  pédagogique audio). Le frontend résout l'URL signée au moment de la
+   *  lecture via resolve-exercise-audio. La transcription complète n'est pas
+   *  transmise en séance (évite la fuite des réponses). */
+  has_original_audio?: boolean;
   my_attempt: MyAttemptSummary | null;
 }
 

@@ -36,7 +36,7 @@ Deno.serve(async (request) => {
     }
     const { data: source } = await admin
       .from("pedagogical_sources")
-      .select("content_hash, status, review_status")
+      .select("content_hash, status, review_status, source_kind, mime_type")
       .eq("id", family.source_id)
       .maybeSingle();
     if (!source || source.content_hash !== family.source_content_hash) return json(422, { error: "SOURCE_HASH_DIVERGED" });
@@ -61,12 +61,19 @@ Deno.serve(async (request) => {
     if (masteryPointsError) throw masteryPointsError;
     const defaultPoint = pickDeterministicCoA2MasteryPoint(masteryPoints ?? []);
     if (!defaultPoint) throw new Error("DEFAULT_MASTERY_POINT_REQUIRED");
+    // Référence stable à la source audio originale (uniquement pour les sources
+    // audio). Ne contient jamais de bucket/chemin Storage : le résolveur relit
+    // pedagogical_sources côté serveur pour signer l'URL au moment de la lecture.
+    const audioRef = source.source_kind === "audio"
+      ? { source_id: family.source_id, source_content_hash: family.source_content_hash, mime_type: source.mime_type ?? null }
+      : null;
     const { data: exercise, error: insertError } = await admin.from("exercices")
       .insert(familyVariantToExerciceRow(
         family.payload as DifferentiationFamilySliceV1,
         user.id,
         audioScript,
         defaultPoint.id,
+        audioRef,
       )).select("id").single();
     if (insertError) throw insertError;
     const { data: publishedFamily, error: updateError } = await admin.from("differentiation_families").update({

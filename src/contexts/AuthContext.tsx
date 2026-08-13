@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session, User } from "@supabase/supabase-js";
+import { clearExerciseAudioCache } from "@/lib/exerciseAudio";
 
 type AppRole = "formateur" | "eleve" | "admin";
 type ProfileStatus = "pending" | "approved";
@@ -126,6 +127,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(null);
     setRole(null);
     setProfileStatus(null);
+    // Vide le cache des URLs audio signées : ce sont des jetons d'accès liés à
+    // l'utilisateur ; ils ne doivent pas survivre à une déconnexion.
+    clearExerciseAudioCache();
   };
 
   return (

@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
+import CoAudioPlayer from "@/components/eleve/CoAudioPlayer";
 import CorrectionDetaillee from "@/components/CorrectionDetaillee";
 import ReportProblemButton from "@/components/ReportProblemButton";
 import RegenerateItemButton from "@/components/RegenerateItemButton";
@@ -1079,14 +1080,19 @@ const DevoirPassation = () => {
         </CardHeader>
       </Card>
 
-      {/* TTS player for CO exercises — forced listen */}
-      {isCompetenceCO && scriptAudio && (
+      {/* Audio CO : MP3 original si la source audio est référencée (résolu
+          côté serveur via resolve-exercise-audio), sinon fallback TTS du
+          script (parcours devoirs où script_audio est déjà légitimement
+          délivré). Gate d'écoutes strictement préservée. */}
+      {isCompetenceCO && ex?.id && (
         <Card className="border-primary/20 bg-primary/5">
           <CardContent className="pt-4 pb-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-primary mb-2">🔊 Écoute audio</p>
-            <TTSAudioPlayer
-              text={scriptAudio}
-              className="mb-0"
+            <CoAudioPlayer
+              exerciseId={ex.id}
+              competence="CO"
+              hasOriginalAudio={Boolean((contenu as any)?.audio)}
+              scriptAudio={scriptAudio ?? undefined}
+              devoirId={devoirId}
               playCount={audioPlayCount}
               maxPlays={maxAudioPlays}
               showSpeedControl
@@ -1100,7 +1106,7 @@ const DevoirPassation = () => {
                   : `${audioPlayCount} écoute${audioPlayCount > 1 ? "s" : ""}`}
                 {remainingPlays === 0 ? " · Limite atteinte" : ""}
               </span>
-              {!transcriptLocked && (
+              {!transcriptLocked && scriptAudio && (
                 <Button
                   type="button"
                   variant="outline"
@@ -1112,7 +1118,7 @@ const DevoirPassation = () => {
                 </Button>
               )}
             </div>
-            {showTranscript && !transcriptLocked && (
+            {showTranscript && !transcriptLocked && scriptAudio && (
               <div className="mt-3 border-l-4 border-primary bg-background p-3 leading-relaxed">
                 {user?.id ? (
                   <SmartText text={scriptAudio} studentId={user.id} contextSentence={scriptAudio} />

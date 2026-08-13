@@ -211,3 +211,100 @@ describe("sanitizeContentJson — 2e relecture indépendante, point 5/10", () =>
     expect(sanitizeContentJson(42)).toBe(42);
   });
 });
+
+describe("sanitizeExercice — référence audio originale (Lot 2)", () => {
+  it("transmet has_original_audio=true pour un exercice CO avec contenu.audio", () => {
+    const sanitized = sanitizeExercice({
+      id: "ex-co",
+      titre: "CO",
+      consigne: "Écoutez.",
+      competence: "CO",
+      format: "qcm",
+      niveau_vise: "A2",
+      contenu: {
+        items: [{ question: "Q", options: ["A", "B"] }],
+        audio: { source_id: "src-1", source_content_hash: "sha256:abc", mime_type: "audio/mpeg" },
+        script_audio: "La réponse est cachée dans cette transcription.",
+      } as any,
+    } as any);
+    expect(sanitized.has_original_audio).toBe(true);
+  });
+
+  it("NE transmet JAMAIS la référence audio, le hash, le chemin Storage ni la transcription", () => {
+    const sanitized = sanitizeExercice({
+      id: "ex-co",
+      titre: "CO",
+      consigne: "Écoutez.",
+      competence: "CO",
+      format: "qcm",
+      niveau_vise: "A2",
+      contenu: {
+        items: [{ question: "Q", options: ["A"] }],
+        audio: {
+          source_id: "src-secret",
+          source_content_hash: "sha256:secret",
+          mime_type: "audio/mpeg",
+          storage_bucket: "pedagogical-sources",
+          storage_path: "trainer/secret.mp3",
+        },
+        script_audio: "Transcription secrète contenant la bonne réponse.",
+      } as any,
+    } as any);
+    const serialized = JSON.stringify(sanitized);
+    expect(serialized).not.toContain("script_audio");
+    expect(serialized).not.toContain("source_id");
+    expect(serialized).not.toContain("source_content_hash");
+    expect(serialized).not.toContain("storage_bucket");
+    expect(serialized).not.toContain("storage_path");
+    expect(serialized).not.toContain("Transcription secrète");
+    expect(sanitized.has_original_audio).toBe(true);
+    // has_original_audio est un booléen, pas la réf elle-même.
+    expect((sanitized as any).audio).toBeUndefined();
+  });
+
+  it("n'ajoute pas has_original_audio pour un exercice non-CO", () => {
+    const sanitized = sanitizeExercice({
+      id: "ex-ce",
+      titre: "CE",
+      consigne: "Lisez.",
+      competence: "CE",
+      format: "qcm",
+      niveau_vise: "A2",
+      contenu: { items: [{ question: "Q", options: ["A"] }], audio: { source_id: "x" } } as any,
+    } as any);
+    expect(sanitized.has_original_audio).toBeUndefined();
+  });
+
+  it("n'ajoute pas has_original_audio pour un CO sans contenu.audio (ancien exercice)", () => {
+    const sanitized = sanitizeExercice({
+      id: "ex-co-old",
+      titre: "CO",
+      consigne: "Écoutez.",
+      competence: "CO",
+      format: "qcm",
+      niveau_vise: "A2",
+      contenu: { items: [{ question: "Q", options: ["A"] }] } as any,
+    } as any);
+    expect(sanitized.has_original_audio).toBeUndefined();
+  });
+
+  it("correction 10 : get-seance-content ne contient jamais script_audio (même pour un CO avec audio)", () => {
+    // Ce test garantit que la transcription complète n'est jamais exposée en
+    // séance live, même quand un audio original est présent.
+    const sanitized = sanitizeExercice({
+      id: "ex-co",
+      titre: "CO",
+      consigne: "Écoutez.",
+      competence: "CO",
+      format: "qcm",
+      niveau_vise: "A2",
+      contenu: {
+        items: [{ question: "Q", options: ["A"] }],
+        audio: { source_id: "s", source_content_hash: "sha256:x" },
+        script_audio: "Texte secret.",
+      } as any,
+    } as any);
+    expect(JSON.stringify(sanitized)).not.toContain("script_audio");
+    expect(JSON.stringify(sanitized)).not.toContain("Texte secret");
+  });
+});
