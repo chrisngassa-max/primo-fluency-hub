@@ -11,11 +11,17 @@ const DEVOIR = "devoir-1";
 const PLAY_TOKEN = "play-token-valid";
 
 function chain(result: { data: unknown; error?: unknown }) {
+  const payload = { data: result.data, error: result.error ?? null };
   const api: Record<string, unknown> = {};
   api.select = vi.fn(() => api);
   api.eq = vi.fn(() => api);
   api.in = vi.fn(() => api);
-  api.maybeSingle = vi.fn(async () => ({ data: result.data, error: result.error ?? null }));
+  api.maybeSingle = vi.fn(async () => ({
+    data: Array.isArray(payload.data) ? payload.data[0] ?? null : payload.data,
+    error: payload.error,
+  }));
+  api.then = (resolve: (value: unknown) => unknown, reject: (reason: unknown) => unknown) =>
+    Promise.resolve(payload).then(resolve, reject);
   return api;
 }
 
@@ -99,12 +105,9 @@ describe("resolve-exercise-audio handler", () => {
 
   it("élève inscrit + exercice rattaché → autorisé", async () => {
     const admin = makeAdmin({
-      training_sessions: {
-        data: {
-          id: "ts-1",
-          sessions: [{ id: "sess-1", group_members: [{ eleve_id: LEARNER }] }],
-        },
-      },
+      training_sessions: { data: { id: "ts-1" } },
+      sessions: { data: [{ id: "sess-1", group_id: "g-1", group: { niveau: "A2" } }] },
+      group_members: { data: [{ group_id: "g-1" }] },
       session_document_links: { data: { id: "link-1" } },
     });
     const { res, json, resolveAudio } = await callHandler({
@@ -121,12 +124,9 @@ describe("resolve-exercise-audio handler", () => {
 
   it("élève inscrit mais exercice absent de la séance → 403", async () => {
     const admin = makeAdmin({
-      training_sessions: {
-        data: {
-          id: "ts-1",
-          sessions: [{ id: "sess-1", group_members: [{ eleve_id: LEARNER }] }],
-        },
-      },
+      training_sessions: { data: { id: "ts-1" } },
+      sessions: { data: [{ id: "sess-1", group_id: "g-1", group: { niveau: "A2" } }] },
+      group_members: { data: [{ group_id: "g-1" }] },
       session_document_links: { data: null },
     });
     const { res, json } = await callHandler({

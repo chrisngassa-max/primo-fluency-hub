@@ -1,4 +1,5 @@
 import { resolveExerciseAudio } from "./pedagogical-source-audio.ts";
+import { findEnrolledSessionForCode } from "./session-enrollment.ts";
 
 /**
  * Handler HTTP testable de resolve-exercise-audio.
@@ -122,17 +123,12 @@ export async function handleResolveExerciseAudio(
 
   try {
     if (ctx.mode === "session") {
-      const { data: enrollment, error: enrollmentError } = await asChain(deps.admin, "training_sessions")
-        .select("id, sessions:sessions(id, group_members:group_members(eleve_id))")
-        .eq("code", ctx.sessionCode)
-        .maybeSingle();
-      if (enrollmentError) throw enrollmentError;
-      const matching = (enrollment as {
-        sessions?: Array<{ group_members?: Array<{ eleve_id: string }> }>;
-      })?.sessions?.find((s) =>
-        (s.group_members ?? []).some((gm) => gm.eleve_id === learnerId),
+      const enrolled = await findEnrolledSessionForCode(
+        deps.admin as never,
+        ctx.sessionCode,
+        learnerId as string,
       );
-      if (!matching) {
+      if (!enrolled) {
         return jsonResponse({ error: "NOT_ENROLLED" }, 403);
       }
       const { data: link, error: linkError } = await asChain(deps.admin, "session_document_links")

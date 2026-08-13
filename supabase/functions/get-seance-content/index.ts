@@ -1,5 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { sanitizeExercice } from '../_shared/session-content-sanitizer.ts';
+import { findEnrolledSessionForCode } from '../_shared/session-enrollment.ts';
 import { isActivityVisible, isExerciseLinkVisible, resolveLearnerLevelForCompetence } from '../_shared/session-visibility.ts';
 
 const corsHeaders = {
@@ -52,25 +53,18 @@ Deno.serve(async (req) => {
     // groups.niveau (fallback) et sessions.id : cette dernière ancre
     // désormais chaque tentative/libération à LA séance précise (4e
     // relecture, point 1 — isolation multi-groupes).
-    const { data: enrollment, error: enrollmentError } = await admin
-      .from('training_sessions')
-      .select('id, sessions:sessions(id, group:groups(id, niveau), group_members:group_members(eleve_id))')
-      .eq('code', sessionCode)
-      .maybeSingle();
-
-    if (enrollmentError) {
-      console.error('[get-seance-content] enrollment lookup error:', enrollmentError.message);
+    let enrolled;
+    try {
+      enrolled = await findEnrolledSessionForCode(admin, sessionCode, learnerId);
+    } catch (enrollmentError) {
+      console.error('[get-seance-content] enrollment lookup error:', enrollmentError instanceof Error ? enrollmentError.message : enrollmentError);
       return jsonResponse({ error: 'Erreur de vérification' }, 500);
     }
-
-    const matchingSession = (enrollment as any)?.sessions?.find((s: any) =>
-      (s.group_members ?? []).some((gm: any) => gm.eleve_id === learnerId),
-    );
-    if (!matchingSession) {
+    if (!enrolled) {
       return jsonResponse({ error: 'Non enrôlé dans cette séance' }, 403);
     }
-    const sessionId: string = matchingSession.id;
-    const groupNiveau: string | null = matchingSession.group?.niveau ?? null;
+    const sessionId: string = enrolled.sessionId;
+    const groupNiveau: string | null = enrolled.groupNiveau;
 
     // Niveau INDIVIDUEL de l'apprenant, prioritaire sur le niveau de groupe
     // (4e relecture, point 8) : profils_eleves porte un niveau par
