@@ -1,17 +1,18 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { isSha256ContentHash } from "../_shared/source-integrity.ts";
-import { assessTimestampCoverage, readMp3Duration } from "../_shared/transcription/audio-duration.ts";
 import {
+  assessGeminiTimestampCoverage,
+  buildGeminiProviderParameters,
+  GEMINI_TRANSCRIPTION_MODEL,
+  GEMINI_TRANSCRIPTION_PROVIDER,
   transcribeAudioWithGemini,
-  validateCanonicalTranscription,
 } from "../_shared/transcription/gemini-audio.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
-const MAX_GEMINI_AUDIO_BYTES = 18 * 1024 * 1024;
-const MODEL_ID = "gemini-2.5-flash";
+const MAX_AUDIO_BYTES = 18 * 1024 * 1024;
 const json = (status: number, body: unknown) => new Response(JSON.stringify(body), {
   status,
   headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -80,10 +81,15 @@ Deno.serve(async (request) => {
         source_id: source.id,
         attempt_number: (current?.attempt_number ?? 0) + 1,
         is_current: true,
-        provider: "gemini",
-        model_id: MODEL_ID,
+        provider: GEMINI_TRANSCRIPTION_PROVIDER,
+        model_id: GEMINI_TRANSCRIPTION_MODEL,
         status: "processing",
-        provider_parameters: { path: "inline_data", content_hash: source.content_hash },
+        provider_parameters: {
+          path: "gemini_full_file_v1",
+          content_hash: source.content_hash,
+          timestamp_source: "gemini_segment_offsets",
+          timestamp_status: "unverified",
+        },
       }).select("id").single();
     if (createError) {
       if (String(createError.code) === "23505") return json(409, { error: "TRANSCRIPTION_ALREADY_RUNNING" });
@@ -94,16 +100,18 @@ Deno.serve(async (request) => {
     const { data: file, error: downloadError } = await admin.storage.from(source.storage_bucket).download(source.storage_path);
     if (downloadError || !file) throw new Error("SOURCE_FILE_NOT_FOUND");
     if (file.size === 0) throw new Error("SOURCE_FILE_EMPTY");
-    if (file.size > MAX_GEMINI_AUDIO_BYTES) throw new Error("SOURCE_FILE_TOO_LARGE_FOR_GEMINI");
+    if (file.size > MAX_AUDIO_BYTES) throw new Error("SOURCE_FILE_TOO_LARGE");
     const audioBytes = new Uint8Array(await file.arrayBuffer());
-    const duration = String(source.mime_type ?? "").includes("mpeg") ? readMp3Duration(audioBytes) : null;
-    const transcription = await transcribeAudioWithGemini(
-      audioBytes,
-      source.mime_type || file.type || "audio/mpeg",
-    );
-    const validationErrors = validateCanonicalTranscription(transcription);
-    if (validationErrors.length > 0) throw new Error(`TRANSCRIPTION_INVALID:${validationErrors.join(",")}`);
-    const timestampAssessment = assessTimestampCoverage(transcription.segments, duration?.durationMs ?? null);
+    const mimeType = source.mime_type || file.type || "audio/mpeg";
+
+    // V1: full-file Gemini only. Multi-chunk Google sync chopping remains non-canonical elsewhere.
+    const { transcription, filtering } = await transcribeAudioWithGemini(audioBytes, mimeType);
+    const { duration, assessment } = assessGeminiTimestampCoverage(transcription, audioBytes, mimeType);
+    const firstStartMs = transcription.segments[0]?.start_ms ?? null;
+    const lastEndMs = transcription.segments.at(-1)?.end_ms ?? assessment.transcriptEndMs;
+    const confidences = transcription.segments
+      .map((segment) => segment.confidence)
+      .filter((value): value is number => typeof value === "number");
 
     const { error: segmentError } = await admin.from("pedagogical_source_transcription_segments").insert(
       transcription.segments.map(({ text, ...segment }) => ({
@@ -115,24 +123,48 @@ Deno.serve(async (request) => {
     if (segmentError) throw segmentError;
     const { error: completeError } = await admin.from("pedagogical_source_transcriptions").update({
       status: "ready",
+      provider: GEMINI_TRANSCRIPTION_PROVIDER,
+      model_id: GEMINI_TRANSCRIPTION_MODEL,
       raw_text: transcription.full_text,
       language_detected: transcription.language,
-      average_confidence: null,
+      average_confidence: confidences.length
+        ? confidences.reduce((sum, value) => sum + value, 0) / confidences.length
+        : null,
       error_details: null,
-      provider_parameters: {
-        path: "inline_data",
-        content_hash: source.content_hash,
-        audio_duration_ms: timestampAssessment.audioDurationMs,
-        mp3_frame_count: duration?.frameCount ?? null,
-        timestamp_status: timestampAssessment.status,
-        transcript_end_ms: timestampAssessment.transcriptEndMs,
-        timestamp_drift_ms: timestampAssessment.driftMs,
-      },
+      provider_parameters: buildGeminiProviderParameters({
+        contentHash: source.content_hash,
+        language: transcription.language,
+        audioDurationMs: assessment.audioDurationMs,
+        mp3FrameCount: duration?.frameCount ?? null,
+        mpegVersion: duration?.mpegVersion ?? null,
+        sampleRateHz: duration?.sampleRateHz ?? null,
+        channels: duration?.channels ?? null,
+        firstStartMs,
+        lastEndMs,
+        transcriptEndMs: assessment.transcriptEndMs,
+        timestampDriftMs: assessment.driftMs,
+        overshootMs: assessment.overshootMs,
+        trailingGapMs: assessment.trailingGapMs,
+        coverageRatio: assessment.coverageRatio,
+        filtering,
+      }),
     }).eq("id", transcriptionId);
     if (completeError) throw completeError;
     return json(200, {
-      ok: true, cached: false, transcription_id: transcriptionId, status: "ready",
-      segments_count: transcription.segments.length, timestamp_assessment: timestampAssessment,
+      ok: true,
+      cached: false,
+      transcription_id: transcriptionId,
+      status: "ready",
+      provider: GEMINI_TRANSCRIPTION_PROVIDER,
+      model_id: GEMINI_TRANSCRIPTION_MODEL,
+      segments_count: transcription.segments.length,
+      timestamp_assessment: assessment,
+      transformations_applied: [],
+      filtering_applied: filtering.filtering_applied,
+      raw_segment_count: filtering.raw_segment_count,
+      persisted_segment_count: filtering.persisted_segment_count,
+      dropped_segment_count: filtering.dropped_segment_count,
+      dropped_segment_reasons: filtering.dropped_segment_reasons,
     });
   } catch (error) {
     console.error("transcribe-pedagogical-source error", error);
@@ -149,7 +181,11 @@ Deno.serve(async (request) => {
     }
     const status = message.startsWith("SOURCE_FILE_NOT_FOUND") ? 404
       : message.includes("TOO_LARGE") ? 413
-      : message.startsWith("TRANSCRIPTION_INVALID") ? 422 : 502;
+      : message.startsWith("TRANSCRIPTION_INVALID")
+        || message.startsWith("STT_CHUNK")
+        || message.startsWith("GEMINI_")
+        ? 422
+        : 502;
     return json(status, { error: message.split(":")[0] });
   }
 });

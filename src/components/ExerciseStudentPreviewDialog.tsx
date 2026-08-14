@@ -13,9 +13,11 @@ import { emitLiveEvent } from "@/lib/liveEventEmitter";
 import { RandomClickDetector } from "@/lib/randomClickDetector";
 import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
 import StudentOralRecorder from "@/components/eleve/StudentOralRecorder";
+import CoAudioPlayer from "@/components/eleve/CoAudioPlayer";
 import { getExerciseReadingSupport, validateExerciseModality } from "@/lib/exerciseModalityGuard";
 
 export interface PreviewExercise {
+  id?: string;
   titre?: string;
   consigne?: string;
   competence?: string;
@@ -253,6 +255,26 @@ export default function ExerciseStudentPreviewDialog({
                       {exercise.competence === "CO" && (() => {
                         const audioText = getAudioText(pc as Record<string, unknown>, currentItem);
                         const audioUrl = getAudioUrl(pc as Record<string, unknown>, currentItem);
+                        // Un exercice CO publié depuis une source pédagogique
+                        // audio embarque contenu.audio : on résout le MP3
+                        // original via le mode preview (formateur/admin).
+                        const hasOriginalAudio = exercise.id
+                          && (pc as Record<string, unknown>).audio
+                          && typeof (pc as Record<string, unknown>).audio === "object";
+
+                        if (hasOriginalAudio && exercise.id) {
+                          return (
+                            <CoAudioPlayer
+                              exerciseId={exercise.id}
+                              competence="CO"
+                              hasOriginalAudio
+                              scriptAudio={audioText || undefined}
+                              preview
+                              label="Audio de compréhension orale"
+                              showSpeedControl
+                            />
+                          );
+                        }
 
                         if (audioUrl) {
                           return (

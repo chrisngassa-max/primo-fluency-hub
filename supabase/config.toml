@@ -77,3 +77,10 @@ project_id = "gudcenhmzlcvhgbgklzw"
     verify_jwt = true
   [functions.publish-differentiation-family]
     verify_jwt = true
+  # resolve-exercise-audio : verify_jwt = false car le mode play_token est
+  # public (lien /play/:token). L'authentification est refaite manuellement
+  # dans le handler (JWT obligatoire pour session/devoir/preview ;
+  # play_token + is_live_ready validés côté serveur pour le mode public).
+  # Aucune route n'est implicitement authentifiée par un simple identifiant.
+  [functions.resolve-exercise-audio]
+    verify_jwt = false

@@ -13,6 +13,7 @@ import SmartText from "@/components/SmartText";
 import SmartTextHint from "@/components/SmartTextHint";
 import TTSAudioPlayer from "@/components/ui/TTSAudioPlayer";
 import StudentOralRecorder from "@/components/eleve/StudentOralRecorder";
+import CoAudioPlayer from "@/components/eleve/CoAudioPlayer";
 import { getExerciseAudioSupport } from "@/lib/exerciseModalityGuard";
 
 interface Exercice {
@@ -207,6 +208,13 @@ const PlayExercise = () => {
   const supportText = getSupportText(exercice?.contenu);
   const audioSupport = getExerciseAudioSupport(exercice?.contenu);
   const audioUrl = getSupportAudio(exercice?.contenu) || audioSupport.url;
+  // Un exercice CO publié depuis une source pédagogique audio embarque une
+  // référence stable dans contenu.audio : on résout le MP3 original côté
+  // serveur (play_token public). Sinon, on retombe sur le comportement
+  // historique (URL native ou TTS du script).
+  const hasOriginalAudio = (exercice?.competence ?? "").toUpperCase() === "CO"
+    && exercice?.contenu && typeof (exercice.contenu as any).audio === "object"
+    && (exercice.contenu as any).audio !== null;
 
   const handleAnswer = (idx: number, value: string) => {
     setAnswers((prev) => ({ ...prev, [idx]: value }));
@@ -385,10 +393,22 @@ const PlayExercise = () => {
         ) : (
           <>
             {/* Support card */}
-            {(audioUrl || supportText) && (
+            {(hasOriginalAudio || audioUrl || supportText) && (
               <div className="rounded-[0.625rem] border bg-card shadow-sm overflow-hidden">
                 <p className="text-sm font-medium px-4 pt-3 pb-2">Support</p>
-                {audioUrl ? (
+                {hasOriginalAudio ? (
+                  <div className="px-4 pb-4">
+                    <CoAudioPlayer
+                      exerciseId={exercice.id}
+                      competence="CO"
+                      hasOriginalAudio
+                      scriptAudio={audioSupport.script || undefined}
+                      playToken={token}
+                      label="Écouter le document"
+                      showSpeedControl
+                    />
+                  </div>
+                ) : audioUrl ? (
                   <AudioPlayer src={audioUrl} />
                 ) : audioSupport.script ? (
                   <div className="px-4 pb-4">

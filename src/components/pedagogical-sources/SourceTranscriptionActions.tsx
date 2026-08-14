@@ -44,7 +44,10 @@ export function SourceTranscriptionActions({ source }: { source: PedagogicalSour
 
   if (source.source_kind !== "audio") return null;
   const transcription = data?.transcription;
+  // Precise extract seek only when timestamps are explicitly verified.
+  const timestampsVerified = transcription?.provider_parameters?.timestamp_status === "verified";
   const seek = (milliseconds: number) => {
+    if (!timestampsVerified) return;
     if (audioRef.current) {
       audioRef.current.currentTime = milliseconds / 1000;
       void audioRef.current.play();
@@ -96,15 +99,15 @@ export function SourceTranscriptionActions({ source }: { source: PedagogicalSour
           <DialogHeader><DialogTitle>Transcription et relecture</DialogTitle><DialogDescription>{source.title}</DialogDescription></DialogHeader>
           {audioUrl && <audio ref={audioRef} controls className="w-full" src={audioUrl} />}
           {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : !transcription ? (
-            <Button disabled={running} onClick={() => run()}>{running && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Transcrire avec Gemini</Button>
+            <Button disabled={running} onClick={() => run()}>{running && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Transcrire l'audio</Button>
           ) : (
             <div className="space-y-4">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <Badge variant={transcription.status === "error" ? "destructive" : "secondary"}>{transcription.status}</Badge>
-                {transcription.provider_parameters?.timestamp_status === "unverified" && (
-                  <Badge variant="destructive">
-                    {"Horodatage \u00e0 v\u00e9rifier"}
-                    {typeof transcription.provider_parameters.timestamp_drift_ms === "number"
+                {transcription.provider_parameters?.timestamp_status !== "verified" && (
+                  <Badge variant="outline">
+                    {"Rep\u00e8res temporels approximatifs"}
+                    {typeof transcription.provider_parameters?.timestamp_drift_ms === "number"
                       ? ` (${Math.round(transcription.provider_parameters.timestamp_drift_ms / 1000)} s d'\u00e9cart)`
                       : ""}
                   </Badge>
@@ -112,13 +115,24 @@ export function SourceTranscriptionActions({ source }: { source: PedagogicalSour
                 {transcription.error_details && <span className="text-xs text-destructive">{String(transcription.error_details.code || "Erreur de transcription")}</span>}
                 {transcription.status === "error" && <Button size="sm" variant="outline" disabled={running} onClick={() => run(true)}><RotateCcw className="mr-1 h-3 w-3" />Réessayer</Button>}
               </div>
+              {!timestampsVerified && transcription.status !== "error" && (
+                <p className="text-sm text-amber-700 dark:text-amber-400">
+                  {"Rep\u00e8res temporels approximatifs : la navigation vers un extrait exact est d\u00e9sactiv\u00e9e. \u00c9coutez l'audio original complet ci-dessus."}
+                </p>
+              )}
               {transcription.status !== "error" && <>
                 <Textarea value={reviewedText} onChange={(event) => setReviewedText(event.target.value)} className="min-h-28" aria-label="Texte relu" />
                 <div className="space-y-2">
                   {segments.map((segment, index) => (
                     <div key={segment.id} className="rounded border p-3 space-y-2">
                       <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                        <Button type="button" variant="link" size="sm" className="h-auto p-0" onClick={() => seek(segment.start_ms)}>{formatTime(segment.start_ms)}–{formatTime(segment.end_ms)}</Button>
+                        {!timestampsVerified ? (
+                          <span className="font-mono" title="Navigation d\u00e9sactiv\u00e9e : horodatage non v\u00e9rifi\u00e9">
+                            {formatTime(segment.start_ms)}–{formatTime(segment.end_ms)}
+                          </span>
+                        ) : (
+                          <Button type="button" variant="link" size="sm" className="h-auto p-0" onClick={() => seek(segment.start_ms)}>{formatTime(segment.start_ms)}–{formatTime(segment.end_ms)}</Button>
+                        )}
                         <span>{segment.speaker_label || "Locuteur non identifié"}</span><span>{segment.segment_key}</span>
                       </div>
                       <Textarea value={segment.reviewed_text || ""} onChange={(event) => setSegments((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, reviewed_text: event.target.value } : item))} />

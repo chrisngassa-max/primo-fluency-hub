@@ -149,4 +149,18 @@ export interface ValidationContext {
   chunkIds: Iterable<string>;
   chunkSegmentPairs?: Iterable<string>;
   timestampsVerified?: boolean;
+  /** Trainer-reviewed current transcription (`status === reviewed`). `ready` is NOT enough. */
+  transcriptionReviewed?: boolean;
+  /** pedagogical_sources.status === analyzed */
+  sourceAnalyzed?: boolean;
+  /** pedagogical_sources.review_status in utilisable|valide */
+  sourceReviewApproved?: boolean;
+  /** pedagogical_sources.content_hash present (sha256:…). */
+  sourceHashPresent?: boolean;
+  /** Source hash matches family.source_document.content_hash. */
+  sourceHashCoherent?: boolean;
+  /** Original MP3 still referenced on the pedagogical source. */
+  originalMp3Available?: boolean;
+  /** Required facts carry textual segment + chunk provenance. */
+  factualProvenancePresent?: boolean;
 }

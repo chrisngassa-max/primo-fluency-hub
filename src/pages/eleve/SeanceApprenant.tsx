@@ -21,6 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Label } from "@/components/ui/label";
 import { WorkedExamplePanel } from "@/components/learner/WorkedExamplePanel";
+import CoAudioPlayer from "@/components/eleve/CoAudioPlayer";
 
 /**
  * Parcours apprenant intégré d'une séance (S01 en pilote). Remplace la page
@@ -277,6 +278,20 @@ export default function SeanceApprenant() {
               </div>
             </div>
             <p className="text-sm text-muted-foreground">{currentExercise.consigne}</p>
+
+            {/* Audio CO : résout le MP3 original côté serveur via
+                resolve-exercise-audio. En séance live, la transcription
+                (script_audio) n'est pas transmise : on joue l'original, ou on
+                affiche un message explicite pour les anciens exercices sans
+                référence audio (jamais de fallback TTS client ici). */}
+            {!attemptCompleted && currentExercise.competence === "CO" && (
+              <CoAudioPlayer
+                exerciseId={currentExercise.id}
+                competence={currentExercise.competence}
+                hasOriginalAudio={currentExercise.has_original_audio}
+                sessionCode={sessionCode}
+              />
+            )}
 
             <WorkedExamplePanel example={currentExercise.worked_example} />
 
