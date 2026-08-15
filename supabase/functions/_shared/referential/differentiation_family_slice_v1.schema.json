@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://captcf.fr/schemas/differentiation-family-slice-v1.schema.json",
   "title": "CapTCF Differentiation Family Slice Contract V1",
-  "description": "Contrat de construction partielle A2. Il ne remplace pas differentiation_family_v1.",
+  "description": "Contrat de construction partielle CO pour un seul niveau cible (A1|A2|B1|B2). schema_version reste slice-1.0 : élargissement rétrocompatible (une clé de niveau au lieu de A2 seul). Les anciennes familles A2-only restent valides. Le référentiel pédagogique multi-niveaux est versionné séparément (referential_version 1.1).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -32,20 +32,37 @@
     "objective": { "type": "string", "minLength": 5, "maxLength": 500 },
     "core_task": { "type": "string", "minLength": 5, "maxLength": 500 },
     "source_level": { "const": "A2" },
-    "generated_levels": { "const": ["A2"] },
+    "generated_levels": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "items": { "enum": ["A1", "A2", "B1", "B2"] }
+    },
     "source_document": { "$ref": "#/definitions/sourceDocument" },
     "facts": { "$ref": "#/definitions/facts" },
     "level_contracts": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["A2"],
-      "properties": { "A2": { "$ref": "#/definitions/levelContract" } }
+      "minProperties": 1,
+      "maxProperties": 1,
+      "properties": {
+        "A1": { "$ref": "#/definitions/levelContract" },
+        "A2": { "$ref": "#/definitions/levelContract" },
+        "B1": { "$ref": "#/definitions/levelContract" },
+        "B2": { "$ref": "#/definitions/levelContract" }
+      }
     },
     "variants": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["A2"],
-      "properties": { "A2": { "$ref": "#/definitions/variant" } }
+      "minProperties": 1,
+      "maxProperties": 1,
+      "properties": {
+        "A1": { "$ref": "#/definitions/variant" },
+        "A2": { "$ref": "#/definitions/variant" },
+        "B1": { "$ref": "#/definitions/variant" },
+        "B2": { "$ref": "#/definitions/variant" }
+      }
     },
     "generation": { "$ref": "#/definitions/generation" },
     "validation_report": { "$ref": "#/definitions/validationReport" }
@@ -149,20 +166,26 @@
         "generation_constraints"
       ],
       "properties": {
-        "target_level": { "const": "A2" },
+        "target_level": { "enum": ["A1", "A2", "B1", "B2"] },
         "cognitive_operations": {
           "type": "array",
           "minItems": 1,
           "items": { "type": "string", "minLength": 2 }
         },
-        "guidance": { "const": "moyen" },
-        "autonomy": { "const": "moyenne" },
-        "implicit_allowed": { "const": false },
+        "guidance": { "enum": ["fort", "moyen", "faible", "a_la_demande"] },
+        "autonomy": { "type": "string", "minLength": 2 },
+        "implicit_allowed": {
+          "oneOf": [
+            { "const": false },
+            { "const": "verifiable_only" },
+            { "const": "supported_multi_fact" }
+          ]
+        },
         "allowed_formats": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "enum": ["qcm", "vrai_faux", "appariement"] }
+          "items": { "enum": ["qcm", "vrai_faux", "appariement", "ordre_chronologique"] }
         },
         "forbidden_formats": {
           "type": "array",
@@ -177,6 +200,11 @@
         },
         "volume_items_min": { "type": "integer", "minimum": 1 },
         "volume_items_max": { "type": "integer", "minimum": 1 },
+        "qcm_max_choices": { "type": "integer", "minimum": 2 },
+        "objectives": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 2 }
+        },
         "audio_policy": {
           "type": "object",
           "additionalProperties": false,
@@ -192,6 +220,19 @@
           "type": "array",
           "minItems": 1,
           "items": { "type": "string", "minLength": 5 }
+        },
+        "human_review_dimensions": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "distractor_ambiguity",
+              "instruction_cefr_fit",
+              "overall_difficulty",
+              "pedagogical_relevance",
+              "justification_quality",
+              "fact_selection"
+            ]
+          }
         }
       }
     },
@@ -212,7 +253,7 @@
       "required": ["id", "type", "instruction", "fact_refs", "justification"],
       "properties": {
         "id": { "type": "string", "pattern": "^item_[A-Za-z0-9_-]+$" },
-        "type": { "enum": ["qcm", "vrai_faux", "appariement"] },
+        "type": { "enum": ["qcm", "vrai_faux", "appariement", "ordre_chronologique"] },
         "instruction": { "type": "string", "minLength": 2 },
         "choices": {
           "type": "array",
@@ -236,7 +277,7 @@
       "properties": {
         "title": { "type": "string", "minLength": 2 },
         "instruction": { "type": "string", "minLength": 2 },
-        "format": { "enum": ["qcm", "vrai_faux", "appariement", "mixed"] },
+        "format": { "enum": ["qcm", "vrai_faux", "appariement", "ordre_chronologique", "mixed"] },
         "steps": {
           "type": "array",
           "minItems": 1,
@@ -266,9 +307,25 @@
         "success_criteria"
       ],
       "properties": {
-        "target_level": { "const": "A2" },
+        "target_level": { "enum": ["A1", "A2", "B1", "B2"] },
         "competence": { "const": "CO" },
-        "transformation_id": { "const": "IDENTITY" },
+        "transformation_id": {
+          "enum": [
+            "IDENTITY",
+            "A2_TO_A1",
+            "A2_TO_B1",
+            "A2_TO_B2",
+            "A1_TO_A2",
+            "A1_TO_B1",
+            "A1_TO_B2",
+            "B1_TO_A1",
+            "B1_TO_A2",
+            "B1_TO_B2",
+            "B2_TO_A1",
+            "B2_TO_A2",
+            "B2_TO_B1"
+          ]
+        },
         "support_mode": { "enum": ["source", "annotated", "segmented", "excerpted", "didacticized"] },
         "support_ref": { "type": "string", "minLength": 2 },
         "applied_transformations": { "type": "array" },
@@ -287,7 +344,10 @@
       "properties": {
         "model_id": { "type": ["string", "null"] },
         "prompt_version": { "type": ["string", "null"] },
-        "generated_at": { "type": ["string", "null"], "format": "date-time" }
+        "generated_at": { "type": ["string", "null"], "format": "date-time" },
+        "target_level": { "enum": ["A1", "A2", "B1", "B2"] },
+        "referential_version": { "type": ["string", "null"] },
+        "support_compatibility": { "type": ["object", "null"] }
       }
     },
     "validationIssue": {

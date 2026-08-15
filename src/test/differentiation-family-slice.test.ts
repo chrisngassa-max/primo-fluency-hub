@@ -105,7 +105,7 @@ async function validFamily(): Promise<DifferentiationFamilySliceV1> {
 describe("differentiation family A2 slice", () => {
   it("loads only the versioned A2 CO contract", () => {
     const resolved = getCoA2LevelContract();
-    expect(resolved.version).toBe("1.0");
+    expect(resolved.version).toBe("1.1");
     expect(resolved.status).toBe("draft_pending_pedagogical_approval");
     expect(resolved.contract.target_level).toBe("A2");
     expect(resolved.contract.allowed_formats).toContain("qcm");
