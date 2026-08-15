@@ -1,12 +1,12 @@
 /**
- * Sélection déterministe d'un point de maîtrise générique CO/A2.
+ * Sélection déterministe d'un point de maîtrise générique CO pour un niveau cible.
  *
- * Ce rattachement sert de garde-fou de publication (compétence CO + couverture A2).
+ * Ce rattachement sert de garde-fou de publication (compétence CO + couverture niveau).
  * Il ne choisit pas le thème pédagogique le plus précis pour la source.
  */
 const LEVEL_ORDER = ["A0", "A1", "A2", "B1", "B2", "C1", "C2"] as const;
 
-export interface CoA2MasteryPointCandidate {
+export interface CoMasteryPointCandidate {
   id: string;
   ordre?: number | null;
   niveau_min?: string | null;
@@ -19,6 +19,9 @@ export interface CoA2MasteryPointCandidate {
     } | null;
   } | null;
 }
+
+/** @deprecated Prefer CoMasteryPointCandidate. */
+export type CoA2MasteryPointCandidate = CoMasteryPointCandidate;
 
 function normalizeLevelToken(level: string): string {
   return level.trim().replace(/\s+/g, "-");
@@ -37,25 +40,65 @@ export function levelRank(level: string | null | undefined): number | null {
   return index >= 0 ? index : null;
 }
 
-export function isCoA2CompatibleMasteryPoint(point: CoA2MasteryPointCandidate): boolean {
+export function isCoLevelCompatibleMasteryPoint(
+  point: CoMasteryPointCandidate,
+  targetLevel: string,
+): boolean {
   const competence = point.sous_sections?.epreuves?.competence;
   if (competence !== "CO") return false;
 
   const minRank = levelRank(point.niveau_min);
   const maxRank = levelRank(point.niveau_max);
-  const targetRank = levelRank("A2");
+  const targetRank = levelRank(targetLevel);
 
   if (minRank === null || maxRank === null || targetRank === null) return false;
   return minRank <= targetRank && targetRank <= maxRank;
 }
 
-export function pickDeterministicCoA2MasteryPoint(
-  points: CoA2MasteryPointCandidate[],
-): CoA2MasteryPointCandidate | null {
-  const compatible = points.filter(isCoA2CompatibleMasteryPoint);
+/** @deprecated Prefer isCoLevelCompatibleMasteryPoint(point, "A2"). */
+export function isCoA2CompatibleMasteryPoint(point: CoMasteryPointCandidate): boolean {
+  return isCoLevelCompatibleMasteryPoint(point, "A2");
+}
+
+function coverageWidth(point: CoMasteryPointCandidate): number {
+  const minRank = levelRank(point.niveau_min);
+  const maxRank = levelRank(point.niveau_max);
+  if (minRank === null || maxRank === null) return Number.MAX_SAFE_INTEGER;
+  return maxRank - minRank;
+}
+
+function isExactLevelMatch(point: CoMasteryPointCandidate, targetLevel: string): boolean {
+  const min = (point.niveau_min ?? "").trim().toUpperCase();
+  const max = (point.niveau_max ?? "").trim().toUpperCase();
+  const target = targetLevel.trim().toUpperCase();
+  return min === target && max === target;
+}
+
+/**
+ * Politique documentée :
+ * 1) points CO dont l'intervalle couvre exactement le niveau cible ;
+ * 2) parmi eux, match exact (min=max=cible) prioritaire ;
+ * 3) sinon intervalle couvrant le plus étroit ;
+ * 4) tri déterministe (épreuve/sous-section/ordre/id) ;
+ * 5) aucun point compatible → null (erreur métier claire côté publish).
+ * Jamais de fallback sur une autre compétence ou un niveau non couvrant.
+ */
+export function pickDeterministicCoMasteryPoint(
+  points: CoMasteryPointCandidate[],
+  targetLevel: string,
+): CoMasteryPointCandidate | null {
+  const compatible = points.filter((point) => isCoLevelCompatibleMasteryPoint(point, targetLevel));
   if (compatible.length === 0) return null;
 
   return compatible.sort((left, right) => {
+    const leftExact = isExactLevelMatch(left, targetLevel) ? 0 : 1;
+    const rightExact = isExactLevelMatch(right, targetLevel) ? 0 : 1;
+    if (leftExact !== rightExact) return leftExact - rightExact;
+
+    const leftWidth = coverageWidth(left);
+    const rightWidth = coverageWidth(right);
+    if (leftWidth !== rightWidth) return leftWidth - rightWidth;
+
     const leftKey = [
       left.sous_sections?.epreuves?.ordre ?? Number.MAX_SAFE_INTEGER,
       left.sous_sections?.ordre ?? Number.MAX_SAFE_INTEGER,
@@ -75,4 +118,11 @@ export function pickDeterministicCoA2MasteryPoint(
     }
     return 0;
   })[0];
+}
+
+/** @deprecated Prefer pickDeterministicCoMasteryPoint(points, "A2"). */
+export function pickDeterministicCoA2MasteryPoint(
+  points: CoMasteryPointCandidate[],
+): CoMasteryPointCandidate | null {
+  return pickDeterministicCoMasteryPoint(points, "A2");
 }

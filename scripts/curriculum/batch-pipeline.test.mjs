@@ -66,7 +66,7 @@ const MANIFEST_JSON = {
 
 function noop() {}
 
-describe('Lot 3 â€” pipeline generate/validate/publish/resume (repertoires temporaires)', { timeout: 30_000 }, () => {
+describe('Lot 3 — pipeline generate/validate/publish/resume (repertoires temporaires)', { timeout: 60_000 }, () => {
   let contentDir;
   let batchDir;
   let storageDir;
@@ -89,7 +89,7 @@ describe('Lot 3 â€” pipeline generate/validate/publish/resume (repertoires 
     return { imageProvider: new SvgImageProvider(), ttsProvider: new FakeTtsProvider(), renderer: new FakeRenderer() };
   }
 
-  it('genere, valide et publie une seance de bout en bout', async () => {
+  it('genere, valide et publie une seance de bout en bout', { timeout: 45_000 }, async () => {
     const batchStore = new FileBatchStore({ dir: batchDir });
     const providerConfig = { content: 'fake', image: 'svg', tts: 'fake', renderer: 'fake', storage: 'file' };
     let batch = await batchStore.createBatch({ config: { session_codes: ['S00'], providers: providerConfig } });

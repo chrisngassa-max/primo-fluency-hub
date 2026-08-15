@@ -1,25 +1,33 @@
 import { describe, expect, it } from "vitest";
 import { familyVariantToExerciceRow } from "../../supabase/functions/_shared/family-to-exercice-adapter.ts";
 
-const baseFamily = {
-  family_id: "A2CO-TEST01",
-  schema_version: "slice-1.0",
-  source_document: { source_document_id: "source-1", content_hash: "sha256:abc" },
-  facts: {
-    facts_hash: "facts-hash",
-    required: [{ fact_id: "fact_01", provenance: { segment_refs: ["segment-1"], chunk_refs: ["chunk-1"] } }],
-  },
-  variants: {
-    A2: {
-      exercise: {
-        title: "Annonce",
-        instruction: "Écoutez.",
-        format: "mixed",
-        items: [{ id: "item_01" }],
+function familyFor(level: "A1" | "A2" | "B1" | "B2") {
+  return {
+    family_id: `${level}CO-TEST01`,
+    schema_version: "slice-1.0",
+    generated_levels: [level],
+    source_document: { source_document_id: "source-1", content_hash: "sha256:abc" },
+    facts: {
+      facts_hash: "facts-hash",
+      required: [{ fact_id: "fact_01", provenance: { segment_refs: ["segment-1"], chunk_refs: ["chunk-1"] } }],
+    },
+    level_contracts: { [level]: { target_level: level } },
+    variants: {
+      [level]: {
+        target_level: level,
+        transformation_id: level === "A2" ? "IDENTITY" : `A2_TO_${level}`,
+        exercise: {
+          title: "Annonce",
+          instruction: "Écoutez.",
+          format: "mixed",
+          items: [{ id: "item_01" }],
+        },
       },
     },
-  },
-} as any;
+  } as any;
+}
+
+const baseFamily = familyFor("A2");
 
 describe("familyVariantToExerciceRow", () => {
   it("publishes the A2 CO variant with its traceability metadata", () => {
@@ -42,9 +50,32 @@ describe("familyVariantToExerciceRow", () => {
           differentiation_family_id: "A2CO-TEST01",
           source_document_id: "source-1",
           facts_hash: "facts-hash",
+          target_level: "A2",
         },
       },
     });
+  });
+
+  it.each(["A1", "A2", "B1", "B2"] as const)("publishes niveau_vise %s with original MP3 ref metadata", (level) => {
+    const row: any = familyVariantToExerciceRow(
+      familyFor(level),
+      "trainer-1",
+      "script",
+      "point-1",
+      {
+        source_id: "src-uuid",
+        source_content_hash: "sha256:abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789",
+        mime_type: "audio/mpeg",
+      },
+      "1.1",
+    );
+    expect(row.niveau_vise).toBe(level);
+    expect(row.contenu.metadata.target_level).toBe(level);
+    expect(row.contenu.metadata.referential_version).toBe("1.1");
+    expect(row.contenu.metadata.source_id).toBe("source-1");
+    expect(row.contenu.metadata.family_id).toBe(`${level}CO-TEST01`);
+    expect(row.contenu.audio.source_id).toBe("src-uuid");
+    expect(JSON.stringify(row)).not.toContain("storage_bucket");
   });
 
   it("embarque une référence audio stable (sans bucket/path) quand audioRef est fourni", () => {

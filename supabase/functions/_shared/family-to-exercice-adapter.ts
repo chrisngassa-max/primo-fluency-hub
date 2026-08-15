@@ -1,4 +1,5 @@
-import type { DifferentiationFamilySliceV1 } from "./differentiation/types.ts";
+import type { DifferentiationFamilySliceV1, SliceLevel } from "./differentiation/types.ts";
+import { getSliceTargetLevel, getSliceVariant } from "./differentiation/types.ts";
 
 /**
  * Référence STABLE à la source audio originale, embarquée dans
@@ -14,23 +15,38 @@ export interface ExerciseAudioRef {
   mime_type: string | null;
 }
 
+const DIFFICULTY_BY_LEVEL: Record<SliceLevel, number> = {
+  A1: 1,
+  A2: 2,
+  B1: 3,
+  B2: 4,
+};
+
 export function familyVariantToExerciceRow(
   family: DifferentiationFamilySliceV1,
   formateurId: string,
   audioScript: string,
   pointAMaitriserId: string,
   audioRef: ExerciseAudioRef | null = null,
+  referentialVersion: string | null = null,
 ) {
-  const variant = family.variants.A2;
+  const targetLevel = getSliceTargetLevel(family);
+  const variant = getSliceVariant(family);
+  const format = variant.exercise.format === "mixed"
+    ? "qcm"
+    : variant.exercise.format === "ordre_chronologique"
+      ? "appariement"
+      : variant.exercise.format;
+
   return {
     formateur_id: formateurId,
     point_a_maitriser_id: pointAMaitriserId,
     titre: variant.exercise.title,
     consigne: variant.exercise.instruction,
     competence: "CO",
-    format: variant.exercise.format === "mixed" ? "qcm" : variant.exercise.format,
-    difficulte: 2,
-    niveau_vise: "A2",
+    format,
+    difficulte: DIFFICULTY_BY_LEVEL[targetLevel],
+    niveau_vise: targetLevel,
     is_ai_generated: true,
     contenu: {
       items: variant.exercise.items,
@@ -38,10 +54,16 @@ export function familyVariantToExerciceRow(
       ...(audioRef ? { audio: audioRef } : {}),
       metadata: {
         differentiation_family_id: family.family_id,
+        family_id: family.family_id,
         schema_version: family.schema_version,
+        source_id: family.source_document.source_document_id,
         source_document_id: family.source_document.source_document_id,
         source_content_hash: family.source_document.content_hash,
         facts_hash: family.facts.facts_hash,
+        target_level: targetLevel,
+        referential_version: referentialVersion,
+        level_contract: family.level_contracts[targetLevel] ?? null,
+        transformation_id: variant.transformation_id,
         traceability: {
           facts: family.facts.required.map((fact) => ({
             fact_id: fact.fact_id,

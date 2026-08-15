@@ -1,12 +1,73 @@
 {
-  "version": "1.0",
+  "version": "1.1",
   "status": "draft_pending_pedagogical_approval",
   "competence": "CO",
+  "changelog": {
+    "1.0": "Contrat CO A2 initial (Vertical Slice).",
+    "1.1": "Ajout des contrats CO A1/B1/B2 et champs additifs (objectives, qcm_max_choices, politique d'implicite étendue). Le contrat A2 1.0 reste sémantiquement préservé ; les nouvelles familles enregistrent referential_version=1.1."
+  },
   "source_references": [
     "pedagogical_rules.json",
     "Rapport_Reference_Differenciation_CapTCF_V2.md"
   ],
   "levels": {
+    "A1": {
+      "target_level": "A1",
+      "cognitive_operations": [
+        "reconnaitre_personne_lieu_situation",
+        "identifier_temps_date_prix_nombre",
+        "identifier_action_ou_info_explicite",
+        "comprendre_theme_immediat"
+      ],
+      "guidance": "fort",
+      "autonomy": "faible",
+      "implicit_allowed": false,
+      "allowed_formats": ["qcm", "vrai_faux", "appariement"],
+      "forbidden_formats": [
+        "production_libre",
+        "inference",
+        "implicature",
+        "synthese",
+        "ordre_chronologique"
+      ],
+      "allowed_distractor_categories": [
+        "information_entendue_mais_non_reponse",
+        "confusion_de_personne",
+        "confusion_de_lieu",
+        "confusion_de_nombre"
+      ],
+      "volume_items_min": 3,
+      "volume_items_max": 4,
+      "qcm_max_choices": 3,
+      "audio_policy": {
+        "max_listens": 3,
+        "transcript": "unlockable",
+        "target_seconds": null
+      },
+      "success_threshold_pct": 60,
+      "generation_constraints": [
+        "Seules les informations explicitement entendues sont interrogées.",
+        "Aucune inférence ni opinion implicite n'est demandée.",
+        "Les consignes restent très courtes et concrètes.",
+        "Le vocabulaire reste concret et immédiat.",
+        "Un QCM possède exactement une bonne réponse et au plus 3 choix.",
+        "Les distracteurs sont clairement distincts mais présents/plausibles dans le support."
+      ],
+      "objectives": [
+        "Reconnaître une personne, un lieu ou une situation.",
+        "Identifier un temps, une date, un prix ou un nombre simple.",
+        "Identifier une action ou une information explicitement entendue.",
+        "Comprendre le thème immédiat du document."
+      ],
+      "human_review_dimensions": [
+        "distractor_ambiguity",
+        "instruction_cefr_fit",
+        "overall_difficulty",
+        "pedagogical_relevance",
+        "justification_quality",
+        "fact_selection"
+      ]
+    },
     "A2": {
       "target_level": "A2",
       "cognitive_operations": [
@@ -27,6 +88,7 @@
       ],
       "volume_items_min": 4,
       "volume_items_max": 6,
+      "qcm_max_choices": 4,
       "audio_policy": {
         "max_listens": 2,
         "transcript": "unlockable",
@@ -38,7 +100,129 @@
         "Chaque réponse correcte référence au moins un fait vérifiable.",
         "Aucune connaissance extérieure au support n'est requise.",
         "La consigne reste compréhensible par un apprenant A2.",
+        "Un QCM possède exactement une bonne réponse.",
+        "Pas d'implicature complexe."
+      ],
+      "objectives": [
+        "Identifier des informations explicites.",
+        "Comprendre globalement le document.",
+        "Restituer ou reformuler simplement une information essentielle."
+      ],
+      "human_review_dimensions": [
+        "distractor_ambiguity",
+        "instruction_cefr_fit",
+        "overall_difficulty",
+        "pedagogical_relevance",
+        "justification_quality",
+        "fact_selection"
+      ]
+    },
+    "B1": {
+      "target_level": "B1",
+      "cognitive_operations": [
+        "identifier_idee_principale",
+        "distinguer_essentiel_et_detail",
+        "suivre_chronologie",
+        "relier_cause_consequence_explicite",
+        "reperer_opinion_ou_intention_explicite",
+        "reformuler"
+      ],
+      "guidance": "faible",
+      "autonomy": "forte",
+      "implicit_allowed": "verifiable_only",
+      "allowed_formats": ["qcm", "vrai_faux", "appariement", "ordre_chronologique"],
+      "forbidden_formats": ["production_libre", "implicature_non_supportee", "connaissance_exterieure"],
+      "allowed_distractor_categories": [
+        "detail_secondaire",
+        "confusion_temporelle",
+        "confusion_cause_consequence",
+        "opinion_d_un_autre_locuteur",
+        "information_entendue_mais_non_reponse"
+      ],
+      "volume_items_min": 5,
+      "volume_items_max": 7,
+      "qcm_max_choices": 4,
+      "audio_policy": {
+        "max_listens": 2,
+        "transcript": "unlockable",
+        "target_seconds": null
+      },
+      "success_threshold_pct": 70,
+      "generation_constraints": [
+        "Chaque réponse est liée à des fact_refs vérifiables.",
+        "La reformulation est autorisée si elle reste fidèle au support.",
+        "Une inférence simple n'est admise que si plusieurs faits la rendent vérifiable.",
+        "Aucune connaissance extérieure au support n'est requise.",
         "Un QCM possède exactement une bonne réponse."
+      ],
+      "objectives": [
+        "Identifier l'idée principale.",
+        "Distinguer l'essentiel du détail.",
+        "Suivre une chronologie.",
+        "Relier une cause et une conséquence explicites.",
+        "Repérer une opinion ou une intention clairement exprimée.",
+        "Reformuler une information entendue."
+      ],
+      "human_review_dimensions": [
+        "distractor_ambiguity",
+        "instruction_cefr_fit",
+        "overall_difficulty",
+        "pedagogical_relevance",
+        "justification_quality",
+        "fact_selection"
+      ]
+    },
+    "B2": {
+      "target_level": "B2",
+      "cognitive_operations": [
+        "identifier_point_de_vue",
+        "reperer_attitude_intention",
+        "distinguer_fait_opinion_hypothese",
+        "suivre_structure_argumentative",
+        "traiter_implicature_supportee",
+        "comparer_informations_ou_positions"
+      ],
+      "guidance": "a_la_demande",
+      "autonomy": "tres_forte",
+      "implicit_allowed": "supported_multi_fact",
+      "allowed_formats": ["qcm", "vrai_faux", "appariement", "ordre_chronologique"],
+      "forbidden_formats": [
+        "production_libre",
+        "faits_exterieurs",
+        "complexite_artificielle",
+        "implicature_inventee"
+      ],
+      "allowed_distractor_categories": [
+        "autre_point_de_vue",
+        "fait_presente_comme_opinion",
+        "opinion_presentee_comme_fait",
+        "hypothese_non_retenue",
+        "detail_secondaire",
+        "information_entendue_mais_non_reponse"
+      ],
+      "volume_items_min": 5,
+      "volume_items_max": 8,
+      "qcm_max_choices": 4,
+      "audio_policy": {
+        "max_listens": 2,
+        "transcript": "unlockable",
+        "target_seconds": null
+      },
+      "success_threshold_pct": 75,
+      "generation_constraints": [
+        "Chaque réponse correcte référence au moins un fait vérifiable ; une question B2 peut en référencer plusieurs.",
+        "Aucune connaissance extérieure au support n'est requise.",
+        "Aucune implicature inventée ni complexité artificielle.",
+        "Le moteur doit refuser B2 si le support est trop simple.",
+        "Un QCM possède exactement une bonne réponse."
+      ],
+      "objectives": [
+        "Identifier un point de vue.",
+        "Repérer une attitude ou une intention.",
+        "Distinguer fait, opinion et hypothèse.",
+        "Suivre une structure argumentative.",
+        "Traiter une implicature supportée par plusieurs faits.",
+        "Comparer des informations ou des positions."
       ],
       "human_review_dimensions": [
         "distractor_ambiguity",
