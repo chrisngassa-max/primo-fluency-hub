@@ -2,8 +2,10 @@ import coLevelContractsData from "../referential/co_level_contracts_v1.json" wit
 import type { CoLevelContract, SliceLevel } from "./types.ts";
 import { SLICE_LEVELS } from "./types.ts";
 
-/** Version référentielle embarquée par les nouvelles familles multi-niveaux. */
-export const CURRENT_CO_REFERENTIAL_VERSION = "1.1";
+/** Version référentielle embarquée par les nouvelles familles (extraction argumentée). */
+export const CURRENT_CO_REFERENTIAL_VERSION = "1.2";
+/** Première génération multi-niveaux A1/A2/B1/B2, extraction encore aplatie. */
+export const LEGACY_MULTILEVEL_REFERENTIAL_VERSION = "1.1";
 /** Version historique du Vertical Slice A2-only. */
 export const LEGACY_CO_A2_REFERENTIAL_VERSION = "1.0";
 /** Contrat de schéma slice inchangé (élargissement rétrocompatible documenté). */
