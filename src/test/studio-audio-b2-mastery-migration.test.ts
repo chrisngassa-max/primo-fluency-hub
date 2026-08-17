@@ -7,7 +7,7 @@ import {
 
 describe("studio audio B2 mastery point migration", () => {
   const sql = readFileSync(
-    "supabase/migrations/20260817092335_studio_audio_b2_mastery_point.sql",
+    "supabase/migrations/20260817094404_studio_audio_b2_mastery_point.sql",
     "utf8",
   );
 
