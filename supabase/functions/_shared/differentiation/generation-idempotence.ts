@@ -11,6 +11,17 @@ export type IdempotenceFamilyRow = {
   payload?: unknown;
 };
 
+/**
+ * L'index unique d'idempotence inclut referential_version.
+ * Une génération 1.2 ne doit jamais réutiliser une famille 1.1 en cache.
+ */
+export function wouldReuseCachedFamily(
+  storedReferentialVersion: string | null | undefined,
+  currentReferentialVersion: string,
+): boolean {
+  return Boolean(storedReferentialVersion) && storedReferentialVersion === currentReferentialVersion;
+}
+
 export function isPostgresUniqueViolation(error: { code?: string; message?: string } | null | undefined): boolean {
   if (!error) return false;
   if (error.code === "23505") return true;

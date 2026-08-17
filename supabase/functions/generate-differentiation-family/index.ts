@@ -2,8 +2,10 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import {
   calculateFactsHash,
   evaluateSupportCompatibility,
+  FACT_EXTRACTION_PROMPT_HEADER,
   getCoLevelContract,
   isKnownCoLevel,
+  normalizeExtractedFacts,
   validateDifferentiationFamilySlice,
   CURRENT_CO_REFERENTIAL_VERSION,
   SLICE_SCHEMA_VERSION,
@@ -35,7 +37,7 @@ const json = (status: number, body: unknown) =>
 const stripFences = (raw: string) => raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
 const SCHEMA_VERSION = SLICE_SCHEMA_VERSION;
 const COMPETENCE = "CO";
-/** Nouvelles familles multi-niveaux : toujours 1.1 (pas le legacy 1.0 A2-only). */
+/** Nouvelles familles multi-niveaux : 1.2 (extraction argumentée). Les familles 1.1 restent lisibles. */
 const REFERENTIAL_VERSION = CURRENT_CO_REFERENTIAL_VERSION;
 
 function transformationIdFor(level: SliceLevel): TransformationId {
@@ -240,35 +242,15 @@ Deno.serve(async (request) => {
     ).join("\n");
 
     const factResponse = await geminiJson(
-      `Extrait seulement des faits vérifiables de cette transcription audio. JSON {"facts":[{"fact_id":"fact_01","subject":"...","predicate":"...","object":"...","semantic_qualifiers":{"fact_kind":"explicit_info|main_idea|chronology|cause|consequence|opinion|intention|viewpoint|argument|implicature|hypothesis|fact","speaker":"...","viewpoint":"...","justified":false,"support_fact_ids":[],"epistemic":"fact|opinion|hypothesis"},"chunk_refs":["uuid"],"segment_refs":["uuid"],"quote":"...","required_for_task":true}]}. Chaque référence doit venir du contexte; pas d'invention; pas d'inférence non supportée.\n${sourceContext}`,
+      `${FACT_EXTRACTION_PROMPT_HEADER}\n${sourceContext}`,
     );
 
-    const validSegmentIds = new Set(segments.map((segment) => segment.id));
-    const validChunkIds = new Set(chunks.map((chunk) => chunk.id));
-    const facts: DifferentiationFact[] = (Array.isArray(factResponse.facts) ? factResponse.facts : [])
-      .filter((fact: any) =>
-        Array.isArray(fact.segment_refs) &&
-        fact.segment_refs.length > 0 &&
-        fact.segment_refs.every((id: unknown) => typeof id === "string" && validSegmentIds.has(id)) &&
-        Array.isArray(fact.chunk_refs) &&
-        fact.chunk_refs.length > 0 &&
-        fact.chunk_refs.every((id: unknown) => typeof id === "string" && validChunkIds.has(id))
-      )
-      .map((fact: any, index: number) => ({
-        fact_id: `fact_${String(index + 1).padStart(2, "0")}`,
-        subject: String(fact.subject ?? ""),
-        predicate: String(fact.predicate ?? ""),
-        object: fact.object ?? "",
-        semantic_qualifiers: fact.semantic_qualifiers ?? {},
-        provenance: {
-          source_id: source.id,
-          transcription_id: transcription.id,
-          segment_refs: fact.segment_refs,
-          chunk_refs: fact.chunk_refs,
-          quote: String(fact.quote ?? ""),
-        },
-        required_for_task: fact.required_for_task !== false,
-      }));
+    const facts: DifferentiationFact[] = normalizeExtractedFacts(factResponse.facts, {
+      sourceId: source.id,
+      transcriptionId: transcription.id,
+      validSegmentIds: new Set(segments.map((segment) => segment.id)),
+      validChunkIds: new Set(chunks.map((chunk) => chunk.id)),
+    });
 
     if (facts.length === 0) throw new Error("NO_VERIFIABLE_FACTS");
 

@@ -80,14 +80,46 @@ const CORPUS: CorpusCase[] = [
     file: "B2/les_actualites_qui_ont_marque_ma_vie.mp3",
     accepted: ["A1", "A2", "B1", "B2"],
     refused: [],
-    notes: "Support riche : points de vue, argumentation, fait/opinion/hypothèse.",
+    notes: "Support riche réel : opinion justifiée, points de vue rapportés, cause/conséquence, implicite étayé.",
     facts: [
-      makeFact("fact_01", "Alice dit que les attentats ont marqué sa jeunesse.", { fact_kind: "viewpoint", speaker: "alice", viewpoint: "alice" }),
-      makeFact("fact_02", "Bruno estime que le confinement a été plus déterminant.", { fact_kind: "viewpoint", speaker: "bruno", viewpoint: "bruno" }),
-      makeFact("fact_03", "Parce que les priorités professionnelles ont changé.", { fact_kind: "argument", justified: true }),
-      makeFact("fact_04", "À mon avis, la solidarité a augmenté.", { fact_kind: "opinion", justified: true, speaker: "alice" }),
-      makeFact("fact_05", "Peut-être que ces événements resteront dans les manuels.", { fact_kind: "hypothesis", epistemic: "hypothesis" }),
-      makeFact("fact_06", "Le 13 novembre est une date citée explicitement.", { fact_kind: "fact", epistemic: "fact" }),
+      makeFact(
+        "fact_01",
+        "je considère quand même que j'ai beaucoup de chance parce que je n'ai pas connu contrairement à mes grands-parents",
+        {
+          fact_kind: "opinion",
+          speaker: "Laure",
+          viewpoint: "Laure",
+          epistemic: "opinion",
+          justified: true,
+          relation_type: "justification",
+          support_fact_ids: ["fact_02", "fact_03"],
+        },
+      ),
+      makeFact(
+        "fact_02",
+        "eux ont pu le vivre la Seconde Guerre mondiale",
+        { fact_kind: "viewpoint", speaker: "Laure", viewpoint: "grands-parents", epistemic: "fact", relation_type: "contrast" },
+      ),
+      makeFact(
+        "fact_03",
+        "pour ma grand-mère qui avait dû fuir l'avancée des Allemands en Seine-et-Marne",
+        { fact_kind: "cause", speaker: "Laure", epistemic: "fact", relation_type: "cause" },
+      ),
+      makeFact(
+        "fact_04",
+        "l'événement qui m'a le plus fait peur quand j'étais plus jeune, c'était en 1987 avec l'explosion de la centrale nucléaire de Tchernobyl",
+        { fact_kind: "attitude", speaker: "Laure", epistemic: "opinion", justified: true, support_fact_ids: ["fact_05"] },
+      ),
+      makeFact(
+        "fact_05",
+        "cette ambiance un petit peu de crainte et l'inquiétude des gens aussi dans la rue",
+        { fact_kind: "consequence", speaker: "Laure", viewpoint: "les gens", epistemic: "fact", relation_type: "consequence" },
+      ),
+      makeFact(
+        "fact_06",
+        "je n'ai pas connu le traumatisme de la mort d'Elvis Presley puisque j'étais dans le ventre de ma mère",
+        { fact_kind: "explicit_info", speaker: "Laure", epistemic: "fact" },
+      ),
     ],
   },
   {
@@ -230,5 +262,47 @@ describe("corpus oral multilevel compatibility", () => {
       code: "DIFF_TRANSFORMATION_NOT_SUPPORTED",
     });
     expect(refusal.message).toMatch(/B2 fiable/);
+  });
+
+  it("keeps B2 items between 5 and 8 with fact_refs and no outside knowledge", async () => {
+    const rich = CORPUS.find((entry) => entry.id === "b2-actualites")!;
+    const { contract } = getCoLevelContract("B2");
+    expect(contract.volume_items_min).toBeGreaterThanOrEqual(5);
+    expect(contract.volume_items_max).toBeLessThanOrEqual(8);
+    const family = await buildFamily("B2", rich.facts, 6, (index) => ({
+      id: `item_${index + 1}`,
+      type: "qcm" as const,
+      instruction: "Quelle justification Laure donne-t-elle de sa chance, d'après le document ?",
+      choices: [
+        { id: "a", text: "Elle n'a pas connu de tragédie durable, contrairement à ses grands-parents.", is_correct: true },
+        { id: "b", text: "Elvis Presley est mort en 1977.", is_correct: false, distractor_category: "faits_exterieurs" },
+        { id: "c", text: "Le confinement de 2020 a tout changé.", is_correct: false, distractor_category: "information_entendue_mais_non_reponse" },
+      ],
+      fact_refs: ["fact_01", "fact_02"],
+      justification: "La réponse s'appuie sur l'opinion entendue et le contraste rapporté, sans date extérieure.",
+    }));
+    const items = family.variants.B2!.exercise.items;
+    expect(items.length).toBeGreaterThanOrEqual(5);
+    expect(items.length).toBeLessThanOrEqual(8);
+    expect(items.every((item) => item.fact_refs.length >= 1)).toBe(true);
+    expect(items.every((item) => item.fact_refs.every((ref) => rich.facts.some((fact) => fact.fact_id === ref)))).toBe(true);
+    expect(family.facts.required.some((fact) => /1977/.test(fact.provenance.quote))).toBe(false);
+
+    const report = await validateDifferentiationFamilySlice(family, {
+      sourceContentHash: family.source_document.content_hash,
+      segmentIds: ["seg-1"],
+      chunkIds: ["chunk-1"],
+      chunkSegmentPairs: ["chunk-1:seg-1"],
+      timestampsVerified: false,
+      transcriptionReviewed: true,
+      sourceAnalyzed: true,
+      sourceReviewApproved: true,
+      sourceHashPresent: true,
+      sourceHashCoherent: true,
+      originalMp3Available: true,
+      factualProvenancePresent: true,
+    });
+    expect(report.status === "pass" || report.status === "warning").toBe(true);
+    expect(report.blocking.map((issue) => issue.code)).not.toContain("DIFF_ITEM_FACT_REF_ORPHAN");
   });
 });

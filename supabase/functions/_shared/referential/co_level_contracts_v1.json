@@ -1,10 +1,11 @@
 {
-  "version": "1.1",
+  "version": "1.2",
   "status": "draft_pending_pedagogical_approval",
   "competence": "CO",
   "changelog": {
     "1.0": "Contrat CO A2 initial (Vertical Slice).",
-    "1.1": "Ajout des contrats CO A1/B1/B2 et champs additifs (objectives, qcm_max_choices, politique d'implicite étendue). Le contrat A2 1.0 reste sémantiquement préservé ; les nouvelles familles enregistrent referential_version=1.1."
+    "1.1": "Ajout des contrats CO A1/B1/B2 et champs additifs (objectives, qcm_max_choices, politique d'implicite étendue). Le contrat A2 1.0 reste sémantiquement préservé ; les nouvelles familles enregistrent referential_version=1.1.",
+    "1.2": "Même contrat pédagogique A1/A2/B1/B2. Nouvelle extraction des faits : opinions, arguments, attitudes, points de vue et liens de support conservés. Les nouvelles familles enregistrent referential_version=1.2 et ne réutilisent pas le cache 1.1."
   },
   "source_references": [
     "pedagogical_rules.json",

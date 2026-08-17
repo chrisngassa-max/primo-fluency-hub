@@ -4,5 +4,6 @@ export * from "./fact-hashing.ts";
 export * from "./co-level-contract-loader.ts";
 export * from "./family-validation.ts";
 export * from "./support-compatibility.ts";
+export * from "./fact-extraction.ts";
 export * from "./publish-mastery-point.ts";
 export * from "./generation-idempotence.ts";

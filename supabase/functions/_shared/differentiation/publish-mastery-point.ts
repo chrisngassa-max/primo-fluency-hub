@@ -4,6 +4,10 @@
  * Ce rattachement sert de garde-fou de publication (compétence CO + couverture niveau).
  * Il ne choisit pas le thème pédagogique le plus précis pour la source.
  */
+export const STUDIO_AUDIO_B2_MASTERY_POINT_ID = "c1000000-0000-0000-0000-000000000031";
+export const STUDIO_AUDIO_B2_MASTERY_POINT_NOM =
+  "Comprendre et interpréter des points de vue argumentés";
+
 const LEVEL_ORDER = ["A0", "A1", "A2", "B1", "B2", "C1", "C2"] as const;
 
 export interface CoMasteryPointCandidate {

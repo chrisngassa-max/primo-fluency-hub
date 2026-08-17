@@ -9,14 +9,14 @@ import {
 describe("co_level_contracts_v1 referential", () => {
   it("loads A1/A2/B1/B2 contracts", () => {
     expect(listCoLevelContracts()).toEqual(["A1", "A2", "B1", "B2"]);
-    expect(getCoLevelContract("A1").version).toBe("1.1");
+    expect(getCoLevelContract("A1").version).toBe("1.2");
     expect(getCoLevelContract("A1").contract.volume_items_min).toBe(3);
     expect(getCoLevelContract("A1").contract.volume_items_max).toBe(4);
     expect(getCoLevelContract("A1").contract.qcm_max_choices).toBe(3);
     expect(getCoLevelContract("A1").contract.implicit_allowed).toBe(false);
 
     const a2 = getCoA2LevelContract().contract;
-    expect(getCoA2LevelContract().version).toBe("1.1");
+    expect(getCoA2LevelContract().version).toBe("1.2");
     expect(a2.target_level).toBe("A2");
     expect(a2.volume_items_min).toBe(4);
     expect(a2.volume_items_max).toBe(6);

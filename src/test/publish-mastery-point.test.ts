@@ -5,6 +5,8 @@ import {
   levelRank,
   pickDeterministicCoA2MasteryPoint,
   pickDeterministicCoMasteryPoint,
+  STUDIO_AUDIO_B2_MASTERY_POINT_ID,
+  STUDIO_AUDIO_B2_MASTERY_POINT_NOM,
 } from "../../supabase/functions/_shared/differentiation/publish-mastery-point.ts";
 
 describe("publish mastery point selection", () => {
@@ -166,5 +168,40 @@ describe("publish mastery point selection", () => {
         sous_sections: { epreuves: { competence: "CE" } },
       },
     ], "B1")).toBeNull();
+  });
+
+  it("publishes B2 against the dedicated CO/B2 studio mastery point", () => {
+    const catalog = [
+      {
+        id: "c1000000-0000-0000-0000-000000000001",
+        ordre: 1,
+        niveau_min: "A1",
+        niveau_max: "A2",
+        sous_sections: { ordre: 1, epreuves: { competence: "CO", ordre: 1 } },
+      },
+      {
+        id: "c1000000-0000-0000-0000-000000000003",
+        ordre: 3,
+        niveau_min: "A2",
+        niveau_max: "B1",
+        sous_sections: { ordre: 1, epreuves: { competence: "CO", ordre: 1 } },
+      },
+      {
+        id: STUDIO_AUDIO_B2_MASTERY_POINT_ID,
+        ordre: 10,
+        niveau_min: "B2",
+        niveau_max: "B2",
+        sous_sections: { ordre: 1, epreuves: { competence: "CO", ordre: 1 } },
+      },
+    ];
+
+    expect(STUDIO_AUDIO_B2_MASTERY_POINT_NOM).toBe(
+      "Comprendre et interpréter des points de vue argumentés",
+    );
+
+    const selected = pickDeterministicCoMasteryPoint(catalog, "B2");
+    expect(selected?.id).toBe(STUDIO_AUDIO_B2_MASTERY_POINT_ID);
+    expect(pickDeterministicCoMasteryPoint(catalog, "A2")?.id).not.toBe(STUDIO_AUDIO_B2_MASTERY_POINT_ID);
+    expect(pickDeterministicCoMasteryPoint(catalog, "B1")?.id).not.toBe(STUDIO_AUDIO_B2_MASTERY_POINT_ID);
   });
 });

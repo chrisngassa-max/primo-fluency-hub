@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://captcf.fr/schemas/differentiation-family-slice-v1.schema.json",
   "title": "CapTCF Differentiation Family Slice Contract V1",
-  "description": "Contrat de construction partielle CO pour un seul niveau cible (A1|A2|B1|B2). schema_version reste slice-1.0 : élargissement rétrocompatible (une clé de niveau au lieu de A2 seul). Les anciennes familles A2-only restent valides. Le référentiel pédagogique multi-niveaux est versionné séparément (referential_version 1.1).",
+  "description": "Contrat de construction partielle CO pour un seul niveau cible (A1|A2|B1|B2). schema_version reste slice-1.0 : élargissement rétrocompatible (une clé de niveau au lieu de A2 seul). Les anciennes familles A2-only et 1.1 restent valides. Le référentiel pédagogique multi-niveaux est versionné séparément (referential_version 1.2 pour la nouvelle extraction des faits).",
   "type": "object",
   "additionalProperties": false,
   "required": [

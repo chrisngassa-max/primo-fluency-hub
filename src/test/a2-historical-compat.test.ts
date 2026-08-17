@@ -137,7 +137,7 @@ describe("A2 historical compatibility", () => {
       source_content_hash: family.source_document.content_hash,
       facts_hash: family.facts.facts_hash,
       target_level: "A2",
-      referential_version: "1.1",
+      referential_version: CURRENT_CO_REFERENTIAL_VERSION,
     });
     expect(row.contenu.audio).toEqual({
       source_id: "source-1",

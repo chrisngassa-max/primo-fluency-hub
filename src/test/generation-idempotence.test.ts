@@ -3,7 +3,9 @@ import {
   isPostgresUniqueViolation,
   resolveForceRegenerateGate,
   resolveIdempotentConflictResponse,
+  wouldReuseCachedFamily,
 } from "../../supabase/functions/_shared/differentiation/generation-idempotence.ts";
+import { CURRENT_CO_REFERENTIAL_VERSION } from "../../supabase/functions/_shared/differentiation/co-level-contract-loader.ts";
 
 describe("generation idempotence / concurrency", () => {
   it("detects PostgreSQL 23505 unique violations", () => {
@@ -66,5 +68,10 @@ describe("generation idempotence / concurrency", () => {
     // archived A1 + new A1 : allowed (index excludes archived)
     // published A1 + force_regenerate : blocked
     expect(true).toBe(true);
+  });
+
+  it("never reuses a 1.1 family as 1.2 cache", () => {
+    expect(wouldReuseCachedFamily("1.1", CURRENT_CO_REFERENTIAL_VERSION)).toBe(false);
+    expect(wouldReuseCachedFamily(CURRENT_CO_REFERENTIAL_VERSION, CURRENT_CO_REFERENTIAL_VERSION)).toBe(true);
   });
 });

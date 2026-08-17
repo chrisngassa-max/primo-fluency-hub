@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   CURRENT_CO_REFERENTIAL_VERSION,
   LEGACY_CO_A2_REFERENTIAL_VERSION,
+  LEGACY_MULTILEVEL_REFERENTIAL_VERSION,
   SLICE_SCHEMA_VERSION,
   calculateFactsHash,
   getCoA2LevelContract,
@@ -11,6 +12,7 @@ import {
   type DifferentiationFamilySliceV1,
   type SliceLevel,
 } from "../../supabase/functions/_shared/differentiation/index.ts";
+import { wouldReuseCachedFamily } from "../../supabase/functions/_shared/differentiation/generation-idempotence.ts";
 
 function baseFact(id = "fact_01"): DifferentiationFact {
   return {
@@ -98,11 +100,12 @@ async function familyFor(
 }
 
 describe("referential versioning multi-level", () => {
-  it("keeps schema_version slice-1.0 and bumps referential to 1.1", () => {
+  it("keeps schema_version slice-1.0 and bumps referential to 1.2", () => {
     expect(SLICE_SCHEMA_VERSION).toBe("slice-1.0");
-    expect(CURRENT_CO_REFERENTIAL_VERSION).toBe("1.1");
+    expect(CURRENT_CO_REFERENTIAL_VERSION).toBe("1.2");
+    expect(LEGACY_MULTILEVEL_REFERENTIAL_VERSION).toBe("1.1");
     expect(LEGACY_CO_A2_REFERENTIAL_VERSION).toBe("1.0");
-    expect(getCoLevelContract("A2").version).toBe("1.1");
+    expect(getCoLevelContract("A2").version).toBe("1.2");
   });
 
   it("keeps old A2 family interpretable without rewrite", async () => {
@@ -131,7 +134,7 @@ describe("referential versioning multi-level", () => {
     expect(family.generation?.referential_version).toBe("1.0");
   });
 
-  it.each(["A1", "B1", "B2"] as const)("accepts new %s family with referential 1.1 recorded", async (level) => {
+  it.each(["A1", "B1", "B2"] as const)("accepts new %s family with referential 1.2 recorded", async (level) => {
     const facts = level === "B2"
       ? [
         baseFact("fact_01"),
@@ -148,7 +151,7 @@ describe("referential versioning multi-level", () => {
         ]
         : [baseFact()];
     const family = await familyFor(level, facts);
-    expect(family.generation?.referential_version).toBe("1.1");
+    expect(family.generation?.referential_version).toBe("1.2");
     const report = await validateDifferentiationFamilySlice(family, {
       sourceContentHash: family.source_document.content_hash,
       segmentIds: ["segment-1"],
@@ -157,5 +160,31 @@ describe("referential versioning multi-level", () => {
     });
     expect(report.blocking.map((issue) => issue.code)).not.toContain("DIFF_LEVEL_TRIPLET_MISMATCH");
     expect(report.blocking.map((issue) => issue.code)).not.toContain("DIFF_TRANSFORMATION_NOT_SUPPORTED");
+  });
+
+  it("keeps an existing 1.1 family readable without rewrite", async () => {
+    const facts = [
+      { ...baseFact("fact_01"), semantic_qualifiers: { fact_kind: "main_idea" } },
+      { ...baseFact("fact_02"), semantic_qualifiers: { fact_kind: "chronology" } },
+      { ...baseFact("fact_03"), semantic_qualifiers: { fact_kind: "opinion" } },
+    ];
+    const family = await familyFor("B1", facts, {
+      referentialVersion: LEGACY_MULTILEVEL_REFERENTIAL_VERSION,
+    });
+    const report = await validateDifferentiationFamilySlice(family, {
+      sourceContentHash: family.source_document.content_hash,
+      segmentIds: ["segment-1"],
+      chunkIds: ["chunk-1"],
+      chunkSegmentPairs: ["chunk-1:segment-1"],
+    });
+    expect(family.generation?.referential_version).toBe("1.1");
+    expect(family.schema_version).toBe("slice-1.0");
+    expect(report.blocking.map((issue) => issue.code)).not.toContain("DIFF_SLICE_SCHEMA_INVALID");
+  });
+
+  it("does not treat a 1.1 family as a 1.2 cache hit", () => {
+    expect(wouldReuseCachedFamily("1.1", CURRENT_CO_REFERENTIAL_VERSION)).toBe(false);
+    expect(wouldReuseCachedFamily("1.2", CURRENT_CO_REFERENTIAL_VERSION)).toBe(true);
+    expect(wouldReuseCachedFamily(null, CURRENT_CO_REFERENTIAL_VERSION)).toBe(false);
   });
 });
