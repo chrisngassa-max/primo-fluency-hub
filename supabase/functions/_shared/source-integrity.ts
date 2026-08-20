@@ -7,7 +7,7 @@ export function bytesToLowerHex(bytes: Uint8Array): string {
 export async function sha256ContentHash(bytes: Uint8Array): Promise<Sha256ContentHash> {
   const source = new Uint8Array(bytes.byteLength);
   source.set(bytes);
-  const digest = await crypto.subtle.digest("SHA-256", source.buffer);
+  const digest = await crypto.subtle.digest("SHA-256", source);
   return `sha256:${bytesToLowerHex(new Uint8Array(digest))}`;
 }
 

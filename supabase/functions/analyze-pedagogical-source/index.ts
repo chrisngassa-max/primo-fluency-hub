@@ -107,7 +107,7 @@ async function extractDocxText(bytes: Uint8Array): Promise<string> {
 
 function normalizeExtractedText(value: unknown): string {
   return String(value || "")
-    .replace(/\u0000/g, "")
+    .replaceAll("\u0000", "")
     .replace(/[ \t]{2,}/g, " ")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
