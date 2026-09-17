@@ -9,10 +9,20 @@ Toute migration qui crée une table `public` doit :
 5. **Interdire** `USING (true)` / `WITH CHECK (true)` sauf `TO service_role` documenté.
 6. **Passer le contrôle sécurité** :
 
-```bash
+```powershell
+npm run security:check
+# équivalent direct :
 node scripts/security/assert-lot07-future-guards.mjs
 node scripts/security/assert-no-insecure-account-bootstraps.mjs
 ```
+
+Avec preuves distantes expurgées (gitignored) :
+
+```powershell
+npm run security:check -- --evidence .local-security-evidence\remote.json
+```
+
+Self-test du harness (fixtures négatives) : `npm run security:selftest`.
 
 Les fonctions de bootstrap / création de comptes (`bootstrap-test-accounts`, `create-formateur-account`) restent stubs **410** avec `verify_jwt = true` dans `supabase/config.toml`.
 
