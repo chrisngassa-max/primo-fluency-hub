@@ -1,5 +1,5 @@
 {
-  "_comment": "Fixture: Lot 0.7-style remote — 6 residual Sandbox isolation policies (RESTRICTIVE). Expected: evidence FAIL (fail-closed until Lot 0.8 remote apply).",
+  "_comment": "LEGACY false-positive fixture (Lot 0.7 misread). Obsolete field sandbox_isolation_open_policies — Expected: evidence FAIL (obsolete schema + Lot 0.8B).",
   "project_ref": "gudcenhmzlcvhgbgklzw",
   "captured_at_utc": "2026-09-17T20:14:00Z",
   "anon_table_privilege_count": 0,

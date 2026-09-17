@@ -1,8 +1,18 @@
--- CAPTCF Lot 0.8 — compensatory rollback (secours, NOT in auto migration chain)
--- Restores the 6 RESTRICTIVE "Sandbox isolation" policies as originally defined in
--- supabase/migrations/20260608210000_sandbox_v4.sql.
--- Use ONLY if Lot 0.8 forward apply must be reversed after owner decision.
--- Does NOT reopen anon grants. Does NOT modify historical migrations.
+-- =============================================================================
+-- ABANDONED / DO NOT USE — CAPTCF Lot 0.8B
+-- =============================================================================
+-- Phase B (DROP of the 6 RESTRICTIVE "Sandbox isolation" policies) is CANCELLED.
+-- The six policies currently deployed AS RESTRICTIVE must be PRESERVED.
+--
+-- This file was prepared as a compensatory rollback AFTER a forward DROP that
+-- must never be applied. Keeping it only as documentary archaeology.
+--
+-- DO NOT run this script against production or any shared environment.
+-- DO NOT use it to recreate PERMISSIVE Sandbox isolation policies.
+-- Historical definition source: supabase/migrations/20260608210000_sandbox_v4.sql
+-- =============================================================================
+
+-- (Body retained for documentary history only — not an operational runbook.)
 
 DROP POLICY IF EXISTS "Sandbox isolation" ON public.groups;
 CREATE POLICY "Sandbox isolation" ON public.groups AS RESTRICTIVE FOR SELECT

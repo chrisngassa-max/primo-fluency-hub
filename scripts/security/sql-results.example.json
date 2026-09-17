@@ -1,5 +1,5 @@
 {
-  "_comment": "CAPTCF Lot 1 — import format for transactional SQL test outcomes (BEGIN…ROLLBACK). No secrets, no PII. Fill after running supabase/tests/lot0*.sql via SQL editor or MCP read-only execute.",
+  "_comment": "CAPTCF Lot 1 / 0.8B — import format for transactional SQL test outcomes (BEGIN…ROLLBACK). No secrets, no PII. Fill after running supabase/tests/lot0*.sql via SQL editor or MCP read-only execute.",
   "source": "manual",
   "captured_at_utc": "REPLACE",
   "project_ref": "gudcenhmzlcvhgbgklzw",
@@ -14,11 +14,11 @@
     },
     "lot07_future_guards": {
       "status": "not_run",
-      "notes": "Expect FAIL while residual Sandbox isolation count != 0 (pre Lot 0.8 remote)"
+      "notes": "Lot 0.8B: expect PASS when 6 RESTRICTIVE Sandbox isolation policies match inventory; FAIL on PERMISSIVE open / missing / altered expr"
     },
     "lot08_sandbox_isolation": {
       "status": "not_run",
-      "notes": "Matrix is transactional; residual policies roll back to 6 until Phase B apply"
+      "notes": "Historical DROP simulation only — Phase B ABANDONED; do not apply DROP in production. Prefer lot07 inventory assertions."
     }
   }
 }

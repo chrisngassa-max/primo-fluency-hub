@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * CAPTCF Lot 1 — validate redacted remote evidence JSON (no secrets).
+ * CAPTCF Lot 1 / 0.8B — validate redacted remote evidence JSON (no secrets).
  *
  * Usage:
  *   node scripts/security/validate-remote-evidence.mjs <path>
@@ -22,7 +22,7 @@ const REQUIRED_FIELDS = [
   "anon_dangerous_privilege_tables",
   "anon_sensitive_access",
   "manifestly_permissive_policies",
-  "sandbox_isolation_open_policies",
+  "sandbox_isolation_policies",
   "permissive_sandbox_is_null_policies",
   "account_function_stubs",
 ];
@@ -81,6 +81,12 @@ export function validateEvidenceObject(evidence, opts = {}) {
     }
   }
 
+  if ("sandbox_isolation_open_policies" in obj) {
+    failures.push(
+      "obsolete field sandbox_isolation_open_policies — use sandbox_isolation_policies (Lot 0.8B)",
+    );
+  }
+
   for (const field of REQUIRED_FIELDS) {
     if (!(field in obj)) {
       const msg = `missing required field: ${field}`;
@@ -99,7 +105,7 @@ export function validateEvidenceObject(evidence, opts = {}) {
     "anon_dangerous_privilege_tables",
     "anon_sensitive_access",
     "manifestly_permissive_policies",
-    "sandbox_isolation_open_policies",
+    "sandbox_isolation_policies",
     "permissive_sandbox_is_null_policies",
   ]) {
     if (arrField in obj && !Array.isArray(obj[arrField])) {
@@ -133,17 +139,25 @@ export function validateEvidenceObject(evidence, opts = {}) {
     }
   }
 
-  const sandbox = Array.isArray(obj.sandbox_isolation_open_policies)
-    ? obj.sandbox_isolation_open_policies
+  const inventory = Array.isArray(obj.sandbox_isolation_policies)
+    ? obj.sandbox_isolation_policies
     : [];
-  const sandboxCount = sandbox.length;
+  const inventoryCount = inventory.length;
+  const restrictiveCount = inventory.filter(
+    (p) =>
+      p &&
+      typeof p === "object" &&
+      String(/** @type {Record<string, unknown>} */ (p).permissive || "")
+        .toUpperCase() === "RESTRICTIVE",
+  ).length;
 
   const summary = {
     anon_table_privilege_count:
       typeof obj.anon_table_privilege_count === "number"
         ? obj.anon_table_privilege_count
         : null,
-    sandbox_isolation_open_count: sandboxCount,
+    sandbox_isolation_inventory_count: inventoryCount,
+    sandbox_isolation_restrictive_count: restrictiveCount,
     sandbox_tables_hint: SANDBOX_TABLES,
     stubs_present: Boolean(stubs),
   };

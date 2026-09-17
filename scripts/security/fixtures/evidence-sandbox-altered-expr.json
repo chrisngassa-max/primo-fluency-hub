@@ -1,7 +1,7 @@
 {
-  "_comment": "Fixture: account stubs without verify_jwt protection. Expected: evidence FAIL.",
+  "_comment": "Fixture: Sandbox isolation expression widened/altered. Expected: evidence FAIL.",
   "project_ref": "gudcenhmzlcvhgbgklzw",
-  "captured_at_utc": "2026-09-17T21:00:00Z",
+  "captured_at_utc": "2026-09-17T22:00:00Z",
   "anon_table_privilege_count": 0,
   "anon_dangerous_privilege_tables": [],
   "anon_sensitive_access": [],
@@ -12,7 +12,7 @@
       "policy": "Sandbox isolation",
       "cmd": "SELECT",
       "permissive": "RESTRICTIVE",
-      "qual": "(sandbox_session_id IS NULL) OR can_access_sandbox(sandbox_session_id)"
+      "qual": "(sandbox_session_id IS NULL) OR can_access_sandbox(sandbox_session_id) OR true"
     },
     {
       "table": "group_members",
@@ -52,8 +52,8 @@
   ],
   "permissive_sandbox_is_null_policies": [],
   "account_function_stubs": {
-    "bootstrap-test-accounts": { "verify_jwt": false, "version": 9 },
-    "create-formateur-account": { "verify_jwt": false, "version": 9 }
+    "bootstrap-test-accounts": { "verify_jwt": true, "version": 10 },
+    "create-formateur-account": { "verify_jwt": true, "version": 10 }
   },
   "default_privileges_supabase_admin_public": {
     "tables_grants_anon": true,

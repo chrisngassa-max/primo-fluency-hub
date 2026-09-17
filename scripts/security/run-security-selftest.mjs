@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * CAPTCF Lot 1 — harness self-test against fixtures (no secrets, no PII).
+ * CAPTCF Lot 1 / 0.8B — harness self-test against fixtures (no secrets, no PII).
  *
  * A negative fixture that correctly fails is a SUCCESS for that scenario.
  * Environment errors are never counted as test success.
@@ -136,7 +136,7 @@ function testBadMigrationDetection() {
 }
 
 function main() {
-  console.log("CAPTCF Lot 1 — security selftest\n");
+  console.log("CAPTCF Lot 1 / 0.8B — security selftest\n");
 
   if (!fs.existsSync(harness)) {
     console.error("ENV: harness missing");
@@ -154,7 +154,7 @@ function main() {
 
   results.push(
     expectScenario(
-      "evidence:valid",
+      "evidence:valid (6 RESTRICTIVE)",
       "ok",
       [
         "--skip-local",
@@ -167,7 +167,52 @@ function main() {
 
   results.push(
     expectScenario(
-      "evidence:sandbox-open (Lot 0.7 style)",
+      "evidence:sandbox-permissive",
+      "fail",
+      [
+        "--skip-local",
+        "--evidence",
+        path.join(fixturesDir, "evidence-sandbox-permissive.json"),
+      ],
+      {
+        mustContain: ["PERMISSIVE"],
+      },
+    ),
+  );
+
+  results.push(
+    expectScenario(
+      "evidence:sandbox-missing",
+      "fail",
+      [
+        "--skip-local",
+        "--evidence",
+        path.join(fixturesDir, "evidence-sandbox-missing.json"),
+      ],
+      {
+        mustContain: ["missing"],
+      },
+    ),
+  );
+
+  results.push(
+    expectScenario(
+      "evidence:sandbox-altered-expr",
+      "fail",
+      [
+        "--skip-local",
+        "--evidence",
+        path.join(fixturesDir, "evidence-sandbox-altered-expr.json"),
+      ],
+      {
+        mustContain: ["altered"],
+      },
+    ),
+  );
+
+  results.push(
+    expectScenario(
+      "evidence:sandbox-open-obsolete-field",
       "fail",
       [
         "--skip-local",
@@ -175,7 +220,7 @@ function main() {
         path.join(fixturesDir, "evidence-sandbox-open.json"),
       ],
       {
-        mustContain: ["Sandbox isolation"],
+        mustContain: ["obsolete"],
       },
     ),
   );

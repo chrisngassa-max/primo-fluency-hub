@@ -377,10 +377,10 @@ function main() {
         severity: schema.warnings.length ? "warning" : "info",
         detail: schema.warnings.length
           ? schema.warnings.join("; ")
-          : `ok sandbox_open=${schema.summary.sandbox_isolation_open_count}`,
+          : `ok sandbox_inventory=${schema.summary.sandbox_isolation_inventory_count} restrictive=${schema.summary.sandbox_isolation_restrictive_count}`,
       });
       console.log(
-        `  [${schema.warnings.length ? "WARN" : "PASS"}] evidence schema (sandbox_open=${schema.summary.sandbox_isolation_open_count})`,
+        `  [${schema.warnings.length ? "WARN" : "PASS"}] evidence schema (sandbox_inventory=${schema.summary.sandbox_isolation_inventory_count} restrictive=${schema.summary.sandbox_isolation_restrictive_count})`,
       );
       for (const w of schema.warnings) console.log(`         warn: ${w}`);
 

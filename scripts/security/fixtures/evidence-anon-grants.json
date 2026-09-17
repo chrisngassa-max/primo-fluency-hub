@@ -6,7 +6,50 @@
   "anon_dangerous_privilege_tables": ["profiles", "resultats"],
   "anon_sensitive_access": ["profiles"],
   "manifestly_permissive_policies": [],
-  "sandbox_isolation_open_policies": [],
+  "sandbox_isolation_policies": [
+    {
+      "table": "groups",
+      "policy": "Sandbox isolation",
+      "cmd": "SELECT",
+      "permissive": "RESTRICTIVE",
+      "qual": "(sandbox_session_id IS NULL) OR can_access_sandbox(sandbox_session_id)"
+    },
+    {
+      "table": "group_members",
+      "policy": "Sandbox isolation",
+      "cmd": "SELECT",
+      "permissive": "RESTRICTIVE",
+      "qual": "(sandbox_session_id IS NULL) OR can_access_sandbox(sandbox_session_id)"
+    },
+    {
+      "table": "sessions",
+      "policy": "Sandbox isolation",
+      "cmd": "SELECT",
+      "permissive": "RESTRICTIVE",
+      "qual": "(sandbox_session_id IS NULL) OR can_access_sandbox(sandbox_session_id)"
+    },
+    {
+      "table": "devoirs",
+      "policy": "Sandbox isolation",
+      "cmd": "SELECT",
+      "permissive": "RESTRICTIVE",
+      "qual": "(sandbox_session_id IS NULL) OR can_access_sandbox(sandbox_session_id)"
+    },
+    {
+      "table": "resultats",
+      "policy": "Sandbox isolation",
+      "cmd": "SELECT",
+      "permissive": "RESTRICTIVE",
+      "qual": "(sandbox_session_id IS NULL) OR can_access_sandbox(sandbox_session_id)"
+    },
+    {
+      "table": "profils_eleves",
+      "policy": "Sandbox isolation",
+      "cmd": "SELECT",
+      "permissive": "RESTRICTIVE",
+      "qual": "(sandbox_session_id IS NULL) OR can_access_sandbox(sandbox_session_id)"
+    }
+  ],
   "permissive_sandbox_is_null_policies": [],
   "account_function_stubs": {
     "bootstrap-test-accounts": { "verify_jwt": true, "version": 10 },

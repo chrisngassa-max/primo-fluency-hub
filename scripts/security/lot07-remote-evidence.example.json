@@ -1,14 +1,57 @@
 {
-  "_comment": "CAPTCF Lot 0.7 evidence template — fill from read-only SQL / list_edge_functions. No secrets. Path under .local-security-evidence/ is gitignored.",
+  "_comment": "CAPTCF Lot 0.7/0.8B evidence template — fill from read-only SQL / list_edge_functions. No secrets. Path under .local-security-evidence/ is gitignored.",
   "project_ref": "gudcenhmzlcvhgbgklzw",
   "captured_at_utc": "REPLACE",
   "anon_table_privilege_count": 0,
   "anon_dangerous_privilege_tables": [],
   "anon_sensitive_access": [],
   "manifestly_permissive_policies": [],
-  "sandbox_isolation_open_policies": [],
+  "sandbox_isolation_policies": [
+    {
+      "table": "groups",
+      "policy": "Sandbox isolation",
+      "cmd": "SELECT",
+      "permissive": "RESTRICTIVE",
+      "qual": "(sandbox_session_id IS NULL) OR can_access_sandbox(sandbox_session_id)"
+    },
+    {
+      "table": "group_members",
+      "policy": "Sandbox isolation",
+      "cmd": "SELECT",
+      "permissive": "RESTRICTIVE",
+      "qual": "(sandbox_session_id IS NULL) OR can_access_sandbox(sandbox_session_id)"
+    },
+    {
+      "table": "sessions",
+      "policy": "Sandbox isolation",
+      "cmd": "SELECT",
+      "permissive": "RESTRICTIVE",
+      "qual": "(sandbox_session_id IS NULL) OR can_access_sandbox(sandbox_session_id)"
+    },
+    {
+      "table": "devoirs",
+      "policy": "Sandbox isolation",
+      "cmd": "SELECT",
+      "permissive": "RESTRICTIVE",
+      "qual": "(sandbox_session_id IS NULL) OR can_access_sandbox(sandbox_session_id)"
+    },
+    {
+      "table": "resultats",
+      "policy": "Sandbox isolation",
+      "cmd": "SELECT",
+      "permissive": "RESTRICTIVE",
+      "qual": "(sandbox_session_id IS NULL) OR can_access_sandbox(sandbox_session_id)"
+    },
+    {
+      "table": "profils_eleves",
+      "policy": "Sandbox isolation",
+      "cmd": "SELECT",
+      "permissive": "RESTRICTIVE",
+      "qual": "(sandbox_session_id IS NULL) OR can_access_sandbox(sandbox_session_id)"
+    }
+  ],
   "permissive_sandbox_is_null_policies": [],
-  "_sandbox_note": "After Lot 0.8 remote apply, sandbox_isolation_open_policies must be []. Pre-apply evidence may list the 6 RESTRICTIVE residuals (fail-closed until authorized DROP).",
+  "_sandbox_note": "Lot 0.8B: expect exactly these 6 RESTRICTIVE policies. Do NOT use obsolete sandbox_isolation_open_policies=[]. PERMISSIVE IS NULL OR can_access_sandbox is blocking. Phase B DROP abandoned.",
   "account_function_stubs": {
     "bootstrap-test-accounts": { "verify_jwt": true, "version": 10 },
     "create-formateur-account": { "verify_jwt": true, "version": 10 }

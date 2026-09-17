@@ -1,7 +1,11 @@
--- CAPTCF Lot 0.7 — future guards (transactional; intended to ROLLBACK)
--- Distinguishes: current anon confinement / residual policies / latent DEFAULT PRIVILEGES
+-- CAPTCF Lot 0.7 / 0.8B — future guards (transactional; intended to ROLLBACK)
+-- Distinguishes: current anon confinement / Sandbox RESTRICTIVE inventory / latent DEFAULT PRIVILEGES
 -- Run via SQL editor or MCP execute_sql in a transaction you roll back.
 -- Do not print secrets.
+--
+-- Lot 0.8B: the six "Sandbox isolation" AS RESTRICTIVE policies MUST remain.
+-- A PERMISSIVE policy with (sandbox_session_id IS NULL OR can_access_sandbox(...)) is FAIL.
+-- Unexpected missing / PERMISSIVE conversion / altered expression is FAIL.
 
 BEGIN;
 
@@ -12,8 +16,14 @@ DECLARE
   anon_sensitive int;
   permissive_n int;
   sandbox_n int;
+  permissive_sandbox_n int;
+  bad_row text;
   def_admin_anon_tables boolean := false;
   r record;
+  expected_tables text[] := ARRAY[
+    'groups', 'group_members', 'sessions', 'devoirs', 'resultats', 'profils_eleves'
+  ];
+  t text;
 BEGIN
   -- 1) Current grants: anon must have zero table privileges in public
   SELECT count(*) INTO anon_any
@@ -92,36 +102,69 @@ BEGIN
     RAISE EXCEPTION 'Lot 0.7 FAIL: % manifestly permissive public/anon policy(ies)', permissive_n;
   END IF;
 
-  -- Lot 0.8: residual named "Sandbox isolation" policies must be absent after apply.
-  -- Lot 0.7 originally flagged them under a PERMISSIVE OR misreading; they were
-  -- RESTRICTIVE. Forward fix = DROP (business policies sufficient). Guard keeps
-  -- failing closed until remote Lot 0.8 is applied.
+  -- Lot 0.8B: exactly 6 named Sandbox isolation policies, all RESTRICTIVE SELECT,
+  -- expression = sandbox_session_id IS NULL OR can_access_sandbox(sandbox_session_id)
   SELECT count(*) INTO sandbox_n
   FROM pg_policies
   WHERE schemaname = 'public'
     AND policyname = 'Sandbox isolation'
-    AND tablename IN (
-      'groups', 'group_members', 'sessions', 'devoirs', 'resultats', 'profils_eleves'
-    );
+    AND tablename = ANY (expected_tables);
 
-  IF sandbox_n <> 0 THEN
+  IF sandbox_n <> 6 THEN
     RAISE EXCEPTION
-      'Lot 0.7/0.8 FAIL: % residual Sandbox isolation policies — apply Lot 0.8 after owner authorization (or keep ARRÊT)',
+      'Lot 0.8B FAIL: expected 6 Sandbox isolation policies, found % (unexpected disappearance)',
       sandbox_n;
   END IF;
 
+  FOREACH t IN ARRAY expected_tables
+  LOOP
+    SELECT format('%s|%s|%s|%s', tablename, cmd, permissive, coalesce(qual, ''))
+      INTO bad_row
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = t
+      AND policyname = 'Sandbox isolation';
+
+    IF bad_row IS NULL THEN
+      RAISE EXCEPTION
+        'Lot 0.8B FAIL: missing Sandbox isolation on %', t;
+    END IF;
+
+    IF split_part(bad_row, '|', 2) <> 'SELECT' THEN
+      RAISE EXCEPTION
+        'Lot 0.8B FAIL: % Sandbox isolation cmd=% (expected SELECT)',
+        t, split_part(bad_row, '|', 2);
+    END IF;
+
+    IF split_part(bad_row, '|', 3) <> 'RESTRICTIVE' THEN
+      RAISE EXCEPTION
+        'Lot 0.8B FAIL: % Sandbox isolation is % (expected RESTRICTIVE; PERMISSIVE = exposure)',
+        t, split_part(bad_row, '|', 3);
+    END IF;
+
+    IF NOT (
+      regexp_replace(split_part(bad_row, '|', 4), '\s+', ' ', 'g')
+      ~*
+      '^\(?\s*sandbox_session_id\s+IS\s+NULL\s*\)?\s+OR\s+(public\.)?can_access_sandbox\s*\(\s*sandbox_session_id\s*\)\s*$'
+    ) THEN
+      RAISE EXCEPTION
+        'Lot 0.8B FAIL: % Sandbox isolation expression altered/widened: %',
+        t, split_part(bad_row, '|', 4);
+    END IF;
+  END LOOP;
+
   -- True danger: PERMISSIVE policies that OR-open non-sandbox rows
-  SELECT count(*) INTO sandbox_n
+  SELECT count(*) INTO permissive_sandbox_n
   FROM pg_policies
   WHERE schemaname = 'public'
     AND permissive = 'PERMISSIVE'
     AND coalesce(qual, '') ILIKE '%sandbox_session_id IS NULL%'
     AND coalesce(qual, '') ILIKE '%can_access_sandbox%';
 
-  IF sandbox_n <> 0 THEN
+  IF permissive_sandbox_n <> 0 THEN
     RAISE EXCEPTION
-      'Lot 0.7/0.8 FAIL: % PERMISSIVE policy(ies) open sandbox_session_id IS NULL via can_access_sandbox',
-      sandbox_n;
+      'Lot 0.8B FAIL: % PERMISSIVE policy(ies) open sandbox_session_id IS NULL OR can_access_sandbox',
+      permissive_sandbox_n;
   END IF;
 
   -- Latent DEFAULT PRIVILEGES: supabase_admin → anon on future public tables
@@ -144,7 +187,7 @@ BEGIN
     RAISE NOTICE 'Lot 0.7: supabase_admin public table DEFAULT PRIVILEGES no longer include anon';
   END IF;
 
-  RAISE NOTICE 'Lot 0.7 anon confinement assertions passed (before sandbox check outcome)';
+  RAISE NOTICE 'Lot 0.7/0.8B assertions passed (anon confinement + RESTRICTIVE Sandbox inventory)';
 END $$;
 
 ROLLBACK;

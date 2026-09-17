@@ -1,11 +1,18 @@
 #!/usr/bin/env node
 /**
- * CAPTCF Lot 0.7 — future-proof security guards (local, no secrets).
+ * CAPTCF Lot 0.7 / 0.8B — future-proof security guards (local, no secrets).
  *
  * Distinguishes three layers:
  *   1) repo / migrations state
  *   2) optional observed remote evidence JSON (never prints keys)
  *   3) latent DEFAULT PRIVILEGES risk (system role)
+ *
+ * Lot 0.8B correction:
+ *   - Six RESTRICTIVE "Sandbox isolation" policies are EXPECTED and must be preserved.
+ *   - A PERMISSIVE policy with (sandbox_session_id IS NULL OR can_access_sandbox(...))
+ *     is BLOCKING (true exposure).
+ *   - Missing / converted-to-PERMISSIVE / altered expression → fail.
+ *   - Lot 0.8 Phase B DROP migration is ABANDONED and must not live under migrations/.
  *
  * Usage:
  *   node scripts/security/assert-lot07-future-guards.mjs
@@ -41,6 +48,25 @@ const ACCOUNT_FN_SLUGS = [
   "create-formateur-account",
 ];
 
+/** Exact inventory expected for Sandbox isolation (Lot 0.8B). */
+export const EXPECTED_SANDBOX_ISOLATION = [
+  { table: "groups", policy: "Sandbox isolation", cmd: "SELECT", permissive: "RESTRICTIVE" },
+  { table: "group_members", policy: "Sandbox isolation", cmd: "SELECT", permissive: "RESTRICTIVE" },
+  { table: "sessions", policy: "Sandbox isolation", cmd: "SELECT", permissive: "RESTRICTIVE" },
+  { table: "devoirs", policy: "Sandbox isolation", cmd: "SELECT", permissive: "RESTRICTIVE" },
+  { table: "resultats", policy: "Sandbox isolation", cmd: "SELECT", permissive: "RESTRICTIVE" },
+  { table: "profils_eleves", policy: "Sandbox isolation", cmd: "SELECT", permissive: "RESTRICTIVE" },
+];
+
+/**
+ * Canonical RESTRICTIVE USING expression (parentheses / public. schema optional).
+ * Widened or altered expressions fail.
+ */
+export const SANDBOX_ISOLATION_QUAL_RE =
+  /^\(?\s*sandbox_session_id\s+IS\s+NULL\s*\)?\s+OR\s+(?:public\.)?can_access_sandbox\s*\(\s*sandbox_session_id\s*\)\s*$/i;
+
+const ABANDONED_LOT08_MIGRATION = "20260917223000_lot08_confine_sandbox_isolation.sql";
+
 function section(title) {
   console.log(`\n== ${title} ==`);
 }
@@ -55,6 +81,116 @@ function listMigrations() {
     .readdirSync(dir)
     .filter((f) => f.endsWith(".sql"))
     .sort();
+}
+
+function normalizeQual(qual) {
+  return String(qual || "")
+    .replace(/\s+/g, " ")
+    .replace(/^\(+/, "(")
+    .replace(/\)+$/, ")")
+    .trim();
+}
+
+/**
+ * Validate typed sandbox isolation inventory from evidence.
+ * @param {unknown[]} inventory
+ * @returns {string[]} failure messages
+ */
+export function assertSandboxIsolationInventory(inventory) {
+  const msgs = [];
+  if (!Array.isArray(inventory)) {
+    return ["remote: sandbox_isolation_policies must be an array (typed inventory)"];
+  }
+
+  const byTable = new Map();
+  for (const raw of inventory) {
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
+      msgs.push("remote: sandbox_isolation_policies entries must be objects");
+      continue;
+    }
+    const p = /** @type {Record<string, unknown>} */ (raw);
+    const table = String(p.table || "");
+    if (!table) {
+      msgs.push("remote: sandbox_isolation_policies entry missing table");
+      continue;
+    }
+    if (byTable.has(table)) {
+      msgs.push(`remote: duplicate sandbox_isolation_policies entry for table ${table}`);
+    }
+    byTable.set(table, p);
+  }
+
+  for (const expected of EXPECTED_SANDBOX_ISOLATION) {
+    const got = byTable.get(expected.table);
+    if (!got) {
+      msgs.push(
+        `remote: missing expected RESTRICTIVE Sandbox isolation on ${expected.table}`,
+      );
+      continue;
+    }
+
+    const policy = String(got.policy || got.policyname || "");
+    const cmd = String(got.cmd || "").toUpperCase();
+    const permissive = String(got.permissive || "").toUpperCase();
+    const qual = normalizeQual(got.qual || got.using || got.expression || "");
+
+    if (policy !== expected.policy) {
+      msgs.push(
+        `remote: ${expected.table}: policy name "${policy}" !== "${expected.policy}"`,
+      );
+    }
+    if (cmd !== expected.cmd) {
+      msgs.push(
+        `remote: ${expected.table}: cmd "${cmd}" !== "${expected.cmd}"`,
+      );
+    }
+    if (permissive === "PERMISSIVE") {
+      msgs.push(
+        `remote: ${expected.table}: Sandbox isolation converted to PERMISSIVE (blocking exposure)`,
+      );
+    } else if (permissive !== expected.permissive) {
+      msgs.push(
+        `remote: ${expected.table}: permissive="${permissive}" !== RESTRICTIVE`,
+      );
+    }
+
+    // Accept optional parens around IS NULL and optional public. schema prefix
+    if (!SANDBOX_ISOLATION_QUAL_RE.test(qual)) {
+      msgs.push(
+        `remote: ${expected.table}: Sandbox isolation expression altered/widened (got: ${qual.slice(0, 120)})`,
+      );
+    }
+
+    byTable.delete(expected.table);
+  }
+
+  for (const extra of byTable.keys()) {
+    msgs.push(
+      `remote: unexpected sandbox_isolation_policies table ${extra} (not in expected six)`,
+    );
+  }
+
+  return msgs;
+}
+
+/**
+ * Detect true danger: PERMISSIVE policies opening IS NULL OR can_access_sandbox.
+ * @param {unknown[]} list
+ */
+export function assertNoPermissiveSandboxOpen(list) {
+  const msgs = [];
+  if (!Array.isArray(list)) {
+    if (list !== undefined) {
+      msgs.push("remote: permissive_sandbox_is_null_policies must be an array");
+    }
+    return msgs;
+  }
+  if (list.length) {
+    msgs.push(
+      `remote: PERMISSIVE policies open sandbox_session_id IS NULL OR can_access_sandbox (${list.length})`,
+    );
+  }
+  return msgs;
 }
 
 /** Layer 1 — repository / migrations */
@@ -98,10 +234,25 @@ function checkRepo() {
   const migFiles = listMigrations();
   const lot05 = migFiles.find((f) => f.includes("lot05_confine_placement"));
   const lot06 = migFiles.find((f) => f.includes("lot06_confine_global_anon"));
-  const lot08 = migFiles.find((f) => f.includes("lot08_confine_sandbox_isolation"));
   if (!lot05) failures.push("missing lot05 placement confinement migration");
   if (!lot06) failures.push("missing lot06 global anon confinement migration");
-  if (!lot08) failures.push("missing lot08 sandbox isolation confinement migration");
+
+  // Lot 0.8B: abandoned Phase B DROP must not be appliable via migrations/
+  if (migFiles.includes(ABANDONED_LOT08_MIGRATION)) {
+    failures.push(
+      `abandoned Lot 0.8 Phase B migration must be removed from migrations/: ${ABANDONED_LOT08_MIGRATION}`,
+    );
+  }
+  const lot08Drop = migFiles.find(
+    (f) =>
+      f.includes("lot08_confine_sandbox") ||
+      (f.includes("lot08") && /sandbox/i.test(f)),
+  );
+  if (lot08Drop) {
+    failures.push(
+      `Lot 0.8 Phase B DROP migration must not exist under migrations/ (found ${lot08Drop}); policies RESTRICTIVE must be kept`,
+    );
+  }
 
   if (lot06) {
     const mig = readUtf8(path.join("supabase", "migrations", lot06));
@@ -110,26 +261,29 @@ function checkRepo() {
     }
   }
 
-  if (lot08) {
-    const mig = readUtf8(path.join("supabase", "migrations", lot08));
-    const drops = (mig.match(/DROP POLICY IF EXISTS "Sandbox isolation"/g) || [])
-      .length;
-    if (drops < 6) {
+  // Historical origin of the six RESTRICTIVE policies must still declare AS RESTRICTIVE
+  const sandboxV4 = migFiles.find((f) => f.includes("sandbox_v4"));
+  if (!sandboxV4) {
+    failures.push("missing historical sandbox_v4 migration defining Sandbox isolation");
+  } else {
+    const mig = readUtf8(path.join("supabase", "migrations", sandboxV4));
+    const restrictiveCreates = (
+      mig.match(
+        /CREATE\s+POLICY\s+"Sandbox isolation"[\s\S]{0,80}?AS\s+RESTRICTIVE/gi,
+      ) || []
+    ).length;
+    if (restrictiveCreates < 6) {
       failures.push(
-        "lot08 migration must DROP POLICY IF EXISTS \"Sandbox isolation\" on all 6 tables",
+        "sandbox_v4 must CREATE 6 Sandbox isolation policies AS RESTRICTIVE",
       );
     }
-    // Never recreate a PERMISSIVE open-IS-NULL sandbox gate
     if (
-      /CREATE\s+POLICY\b[\s\S]{0,300}?Sandbox isolation[\s\S]{0,400}?PERMISSIVE/i.test(
+      /CREATE\s+POLICY\s+"Sandbox isolation"[\s\S]{0,120}?AS\s+PERMISSIVE/i.test(
         mig,
-      ) ||
-      (/CREATE\s+POLICY\b[\s\S]{0,500}?sandbox_session_id IS NULL/i.test(mig) &&
-        !/AS\s+RESTRICTIVE/i.test(mig) &&
-        /CREATE\s+POLICY/i.test(mig))
+      )
     ) {
       failures.push(
-        "lot08 must not recreate PERMISSIVE policies opening sandbox_session_id IS NULL",
+        "sandbox_v4 must not define Sandbox isolation as PERMISSIVE",
       );
     }
   }
@@ -164,7 +318,6 @@ function checkRepo() {
       );
     }
     if (!revokesAnon) {
-      // Latent DEFAULT PRIVILEGES (supabase_admin) make this mandatory
       failures.push(
         `${file}: new table migration must REVOKE dangerous privileges from anon (DEFAULT PRIVILEGES residual)`,
       );
@@ -178,7 +331,6 @@ function checkRepo() {
       );
     }
 
-    // Manifestly permissive anonymous/public policies in new migrations
     if (
       /CREATE\s+POLICY\b[\s\S]{0,500}?(USING|WITH\s+CHECK)\s*\(\s*true\s*\)/i.test(
         sql,
@@ -189,10 +341,22 @@ function checkRepo() {
         `${file}: manifestly permissive policy USING/CHECK (true) without TO service_role`,
       );
     }
+
+    // Block accidental PERMISSIVE Sandbox open in new migrations
+    if (
+      /CREATE\s+POLICY\b[\s\S]{0,400}?sandbox_session_id\s+IS\s+NULL[\s\S]{0,200}?can_access_sandbox/i.test(
+        sql,
+      ) &&
+      !/AS\s+RESTRICTIVE/i.test(sql)
+    ) {
+      failures.push(
+        `${file}: PERMISSIVE (or non-RESTRICTIVE) policy with sandbox_session_id IS NULL OR can_access_sandbox is forbidden`,
+      );
+    }
   }
 
   console.log(
-    `Checked account stubs, lot05/06 presence, ${postLot06.length} post-lot06 migration(s)`,
+    `Checked account stubs, lot05/06, sandbox_v4 RESTRICTIVE, abandoned lot08 absent, ${postLot06.length} post-lot06 migration(s)`,
   );
 }
 
@@ -220,7 +384,6 @@ function checkRemoteEvidence() {
     return;
   }
 
-  // Never echo secrets if present by mistake
   for (const key of Object.keys(evidence)) {
     if (/key|secret|password|token|service_role/i.test(key)) {
       failures.push(
@@ -265,19 +428,29 @@ function checkRemoteEvidence() {
     );
   }
 
-  const sandbox = evidence.sandbox_isolation_open_policies || [];
-  if (Array.isArray(sandbox) && sandbox.length) {
-    // Residual named policies — fail closed until Lot 0.8 remote apply
+  // Lot 0.8B: typed inventory replaces obsolete sandbox_isolation_open_policies = []
+  if ("sandbox_isolation_open_policies" in evidence) {
     failures.push(
-      `remote: residual Sandbox isolation policies (${sandbox.length}) — apply Lot 0.8 after owner authorization`,
+      "remote: obsolete field sandbox_isolation_open_policies — use sandbox_isolation_policies typed inventory (Lot 0.8B)",
     );
   }
 
-  const permissiveSandbox = evidence.permissive_sandbox_is_null_policies || [];
-  if (Array.isArray(permissiveSandbox) && permissiveSandbox.length) {
+  if (!("sandbox_isolation_policies" in evidence)) {
     failures.push(
-      `remote: PERMISSIVE policies open sandbox_session_id IS NULL (${permissiveSandbox.length})`,
+      "remote: missing sandbox_isolation_policies (typed inventory of 6 RESTRICTIVE Sandbox isolation policies)",
     );
+  } else {
+    for (const msg of assertSandboxIsolationInventory(
+      evidence.sandbox_isolation_policies,
+    )) {
+      failures.push(msg);
+    }
+  }
+
+  for (const msg of assertNoPermissiveSandboxOpen(
+    evidence.permissive_sandbox_is_null_policies,
+  )) {
+    failures.push(msg);
   }
 
   const stubs = evidence.account_function_stubs || {};
@@ -299,7 +472,6 @@ function checkRemoteEvidence() {
 function checkLatentDefaultPrivileges() {
   section("3) Latent DEFAULT PRIVILEGES risk");
 
-  // Repo cannot mutate supabase_admin defaults; enforce that docs/tests acknowledge residual.
   const testPath = path.join(
     root,
     "supabase",
@@ -314,6 +486,11 @@ function checkLatentDefaultPrivileges() {
   if (!/supabase_admin/i.test(sql) || !/DEFAULT PRIVILEGES/i.test(sql)) {
     failures.push(
       "lot07 SQL test must document/assert supabase_admin DEFAULT PRIVILEGES residual",
+    );
+  }
+  if (!/RESTRICTIVE/i.test(sql) || !/Sandbox isolation/i.test(sql)) {
+    failures.push(
+      "lot07 SQL test must assert RESTRICTIVE Sandbox isolation inventory (Lot 0.8B)",
     );
   }
 
@@ -350,12 +527,15 @@ if (warnings.length) {
 }
 
 if (failures.length) {
-  console.error("\nSECURITY CHECK FAILED (Lot 0.7):");
+  console.error("\nSECURITY CHECK FAILED (Lot 0.7/0.8B):");
   for (const f of failures) console.error(" -", f);
   process.exit(1);
 }
 
-console.log("\nOK: Lot 0.7 future guards passed");
+console.log("\nOK: Lot 0.7/0.8B future guards passed");
 console.log(
   `Sensitive table watchlist (${SENSITIVE_TABLES.length}): ${SENSITIVE_TABLES.join(", ")}`,
+);
+console.log(
+  `Sandbox isolation: expect ${EXPECTED_SANDBOX_ISOLATION.length} RESTRICTIVE policies preserved`,
 );
