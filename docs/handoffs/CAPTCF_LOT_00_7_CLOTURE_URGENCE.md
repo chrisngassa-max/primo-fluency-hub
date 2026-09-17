@@ -12,17 +12,32 @@ Preuves locales : `.local-security-evidence/` (gitignored).
 
 ---
 
-## 0. Décision d’arrêt (critique)
+## 0. Erratum Lot 0.8B (lecture obligatoire)
 
-**Exposition critique ACTIVE découverte (authenticated, pas anon) :**  
+**Le diagnostic d’exposition critique Sandbox de ce handoff est FAUX.**
+
+Les 6 policies `Sandbox isolation` sont **AS RESTRICTIVE**, pas PERMISSIVES.  
+Sous PostgreSQL RLS, une policy **RESTRICTIVE** avec  
+`(sandbox_session_id IS NULL) OR can_access_sandbox(...)`  
+**ne** OU-ouvre **pas** toute la prod à `authenticated` : elle filtre en **ET** avec les policies métier (qui restent le contrôle d’accès réel), et bloque les lignes Sandbox non autorisées.
+
+→ **Urgence Sandbox annulée** (voir `docs/handoffs/CAPTCF_LOT_00_8B_RECTIFICATION_SANDBOX.md`).  
+→ Phase B DROP Lot 0.8 **abandonnée** ; les 6 policies RESTRICTIVE **conservées**.  
+→ Le texte historique ci-dessous est **conservé** pour traçabilité ; les sections marquées ~~barrées~~ ou « ERRATUM » ne doivent plus guider l’action.
+
+---
+
+## 0-bis. Décision d’arrêt (historique Lot 0.7 — ERRATUM)
+
+~~**Exposition critique ACTIVE découverte (authenticated, pas anon) :**~~  
 6 policies `Sandbox isolation` sur `{public}` avec  
 `USING ((sandbox_session_id IS NULL) OR can_access_sandbox(...))`  
 sur `groups`, `group_members`, `sessions`, `devoirs`, `resultats`, `profils_eleves`.
 
-Comme les policies RLS permissives sont **OU**-ées et que `authenticated` a encore `SELECT` sur ces tables, **tout compte authentifié peut lire les lignes de production** (`sandbox_session_id IS NULL`).
+~~Comme les policies RLS permissives sont **OU**-ées…~~  
+**Correction 0.8B :** ces policies sont **RESTRICTIVE** (ET), pas PERMISSIVES (OU). Aucune exposition Sandbox démontrée.
 
-→ **ARRÊT clôture « urgence close » complète** jusqu’à autorisation propriétaire pour Lot 2A (correction policies).  
-→ **Ne pas** traiter ce constat comme détail mineur.  
+→ ~~ARRÊT clôture « urgence close »~~ → **urgence Sandbox annulée** (Lot 0.8B).  
 → Confinement **anon** Lot 0.5/0.6 : **maintenu** (voir §1).
 
 ---
@@ -83,9 +98,9 @@ Autres schémas (hors correction opérateur CapTCF) : `graphql` / `graphql_publi
 
 | Artefact | Rôle |
 |---|---|
-| `scripts/security/assert-lot07-future-guards.mjs` | contrôle local 3 couches |
-| `scripts/security/lot07-remote-evidence.example.json` | schéma evidence sans secret |
-| `supabase/tests/lot07_future_guards.sql` | assertions SQL + `ROLLBACK` |
+| `scripts/security/assert-lot07-future-guards.mjs` | contrôle local 3 couches (**corrigé Lot 0.8B**) |
+| `scripts/security/lot07-remote-evidence.example.json` | schéma evidence sans secret (inventaire typé Sandbox) |
+| `supabase/tests/lot07_future_guards.sql` | assertions SQL + `ROLLBACK` (**6 RESTRICTIVE attendues**) |
 | `docs/security/REGLE_CONTRIBUTION_TABLES.md` | règle contribution courte |
 | héritage | `assert-no-insecure-account-bootstraps.mjs`, `assert-no-prod-bootstrap.mjs`, tests lot05/lot06 |
 
@@ -98,7 +113,7 @@ node scripts/security/assert-no-insecure-account-bootstraps.mjs
 
 # Couche distante observée (JSON gitignored, sans clés)
 node scripts/security/assert-lot07-future-guards.mjs --evidence .local-security-evidence/02-lot07-remote-observed.json
-# → ÉCHEC attendu tant que Sandbox isolation non corrigée (détection active)
+# → Lot 0.8B: PASS si inventaire typé 6 RESTRICTIVE conforme ; FAIL si PERMISSIVE / manquante / expression altérée
 
 # SQL transactionnel (MCP / SQL editor) — ROLLBACK inclus
 # fichier: supabase/tests/lot07_future_guards.sql
@@ -106,8 +121,8 @@ node scripts/security/assert-lot07-future-guards.mjs --evidence .local-security-
 
 ### Couches
 
-1. **Dépôt/migrations** : stubs 410 + `verify_jwt=true` ; présence lot05/06 ; toute migration post-`20260917195043` créant une table doit GRANT explicite + REVOKE anon + policies `TO` explicite.  
-2. **Distant observé** : via evidence JSON ou SQL test — anon=0 ; policies permissives ; stubs remote.  
+1. **Dépôt/migrations** : stubs 410 + `verify_jwt=true` ; présence lot05/06 ; toute migration post-`20260917195043` créant une table doit GRANT explicite + REVOKE anon + policies `TO` explicite ; **pas** de migration DROP Sandbox (Phase B abandonnée).  
+2. **Distant observé** : via evidence JSON ou SQL test — anon=0 ; inventaire typé Sandbox RESTRICTIVE ; stubs remote.  
 3. **Latent DEFAULT PRIVILEGES** : WARNING + obligation REVOKE dans nouvelles migrations ; pas de contournement rôle.
 
 Aucune clé n’est lue ni imprimée.
@@ -124,8 +139,8 @@ Aucune clé n’est lue ni imprimée.
 |---|---:|---|
 | Faux positif anon (neutralisé par GRANT anon = 0) | **113** | PostgREST anon ne peut plus toucher les tables |
 | Nécessitant clause `TO` explicite | **113** | toutes encore `{public}` |
-| Trop large pour authenticated | **7** | 6× Sandbox isolation + `interventions_select` (`is_systeme = true`) |
-| Exposition critique ACTIVE | **6** | Sandbox isolation (voir §0) — **ARRÊT** |
+| Trop large pour authenticated | **1** (révisé) | `interventions_select` (`is_systeme = true`) — hygiène Lot 2A |
+| ~~Exposition critique ACTIVE~~ | **0** | Sandbox isolation = **RESTRICTIVE défense en profondeur** (Lot 0.8B) |
 
 ### Échantillon inventaire (représentatif)
 
@@ -134,12 +149,12 @@ Aucune clé n’est lue ni imprimée.
 | profiles | Users view own profile | SELECT | {public} | `id = auth.uid()` | profils | SELECT | aucune (no GRANT) | OK si TO auth | `TO authenticated` |
 | profiles | Formateurs view their students | SELECT | {public} | has_role + group | élèves du formateur | SELECT | aucune | OK scoped | `TO authenticated` |
 | devoirs | Eleves view own devoirs | SELECT | {public} | `eleve_id = auth.uid()` | devoirs | SELECT | aucune | OK | `TO authenticated` |
-| devoirs | **Sandbox isolation** | SELECT | {public} | `sandbox_session_id IS NULL OR …` | **tous devoirs prod** | SELECT | aucune | **CRITIQUE** | drop/replace AND-filter Lot 2A |
-| groups | **Sandbox isolation** | SELECT | {public} | idem | **tous groupes prod** | SELECT | aucune | **CRITIQUE** | Lot 2A |
-| group_members | **Sandbox isolation** | SELECT | {public} | idem | memberships | SELECT | aucune | **CRITIQUE** | Lot 2A |
-| sessions | **Sandbox isolation** | SELECT | {public} | idem | sessions | SELECT | aucune | **CRITIQUE** | Lot 2A |
-| resultats | **Sandbox isolation** | SELECT | {public} | idem | résultats | SELECT | aucune | **CRITIQUE** | Lot 2A |
-| profils_eleves | **Sandbox isolation** | SELECT | {public} | idem | profils élèves | SELECT | aucune | **CRITIQUE** | Lot 2A |
+| devoirs | **Sandbox isolation** | SELECT | {public} | `sandbox_session_id IS NULL OR …` **AS RESTRICTIVE** | filtre sandbox | SELECT | aucune | **OK (RESTRICTIVE)** — conserver | ne pas DROP |
+| groups | **Sandbox isolation** | SELECT | {public} | idem RESTRICTIVE | filtre sandbox | SELECT | aucune | **OK** | conserver |
+| group_members | **Sandbox isolation** | SELECT | {public} | idem | filtre | SELECT | aucune | **OK** | conserver |
+| sessions | **Sandbox isolation** | SELECT | {public} | idem | filtre | SELECT | aucune | **OK** | conserver |
+| resultats | **Sandbox isolation** | SELECT | {public} | idem | filtre | SELECT | aucune | **OK** | conserver |
+| profils_eleves | **Sandbox isolation** | SELECT | {public} | idem | filtre | SELECT | aucune | **OK** | conserver |
 | interventions | interventions_select | SELECT | {public} | formateur OR `is_systeme` | interventions système | SELECT | aucune | large (lecture catalogue système) | `TO authenticated` + revoir OR |
 | email_send_log | Service role can read… | SELECT | {public} | `auth.role()=service_role` | ops email | SELECT | aucune | OK intent | `TO service_role` |
 | user_roles | Users view own roles | SELECT | {public} | `user_id = auth.uid()` | rôles | SELECT | aucune | OK | `TO authenticated` |
@@ -147,7 +162,7 @@ Aucune clé n’est lue ni imprimée.
 Inventaire complet exportable via :
 
 ```sql
-SELECT tablename, policyname, cmd, roles::text, qual, with_check
+SELECT tablename, policyname, cmd, roles::text, permissive, qual, with_check
 FROM pg_policies
 WHERE schemaname = 'public' AND 'public' = ANY (roles)
 ORDER BY 1, 2;
@@ -208,7 +223,7 @@ Thank you.
 | DEFAULT PRIVILEGES `postgres`→anon | **fermé** |
 | DEFAULT PRIVILEGES `supabase_admin`→anon | **latent** (futurs objets) |
 | Policies `{public}` + auth.uid() | **latent hygiene** (Lot 2A TO) |
-| Sandbox isolation OR-open | **ACTIF authenticated — bloqueur** |
+| Sandbox isolation OR-open | **NON — faux positif Lot 0.7** ; policies **RESTRICTIVE** conservées (0.8B) |
 | `has_role` bifide / B2 IPE | hors urgence (lots suivants) |
 | Autres Edge `verify_jwt=false` | hors Lot 0.7 |
 
@@ -223,31 +238,31 @@ Thank you.
 | Compteurs stables | **OK** |
 | Garde-fou détecte régression anon / migrations | **OK** |
 | DEFAULT PRIVILEGES système documentés + ticket prêt | **OK** (correction support en attente) |
-| Aucune exposition critique ACTIVE nouvelle | **KO** — Sandbox isolation authenticated |
-| Autorisation pour corriger Sandbox | **manquante** |
+| Aucune exposition critique ACTIVE nouvelle | **OK** (Sandbox : urgence annulée Lot 0.8B) |
+| Autorisation pour corriger Sandbox | **N/A** — pas de DROP ; conservation RESTRICTIVE |
 
-**Verdict phase urgence :** confinement **anon** clos opérationnellement ; **clôture globale urgence = NON** tant que Sandbox isolation non autorisée/corrigée.
+**Verdict phase urgence (révisé 0.8B) :** confinement **anon** clos ; **urgence Sandbox annulée** ; clôture urgence opérationnelle **possible** côté Sandbox (risques latents hors Sandbox restent).
 
 ---
 
 ## 8. Travaux transférés
 
-### Lot 1 — exécuteur de tests reproductible (priorité si Sandbox autorisée en parallèle ou après gel)
+### Lot 1 — exécuteur de tests reproductible
 
 - Orchestrer `assert-lot07-*`, lot05/06 SQL, evidence JSON, CI locale sans secrets.
-- Preuves auto pour Lot 2A.
+- Aligné Lot 0.8B : inventaire typé RESTRICTIVE.
 
-### Lot 2A — policies authenticated + `has_role` (priorité **immédiate** pour Sandbox)
+### Lot 2A — policies authenticated + `has_role` (hygiène, **pas** urgence Sandbox)
 
-1. Autorisation propriétaire explicite.
-2. Remplacer/supprimer les 6 `Sandbox isolation` (ne plus ouvrir `IS NULL` en permissive OR).
-3. Ajouter `TO authenticated` / `TO service_role` sur les 113 policies `{public}`.
-4. Unifier contrat `has_role`.
-5. Ne pas rouvrir GRANT anon.
+1. Ajouter `TO authenticated` / `TO service_role` sur les 113 policies `{public}`.
+2. Unifier contrat `has_role`.
+3. **Ne pas** DROP les 6 Sandbox isolation RESTRICTIVE.
+4. Ne pas rouvrir GRANT anon.
 
-**Recommandation coordinateur :**  
-- Si l’objectif est **preuves avant tout** → Lot 1.  
-- Vu **exposition authenticated ACTIVE** → **Lot 2A Sandbox en premier** (autorisation), Lot 1 en parallèle pour le harness.
+**Recommandation coordinateur (révisée) :**  
+- Lot 1 harness : **fait**.  
+- Sandbox : **aucune action distante** ; urgence annulée.  
+- Lot 2A = hygiène `{public}` / `has_role`, hors urgence.
 
 ---
 
@@ -260,7 +275,9 @@ Thank you.
 | Commit 2 | (ce handoff) — `docs(lot-0.7): close emergency phase with residual risk inventory` |
 | Push | **aucun** |
 | Fichiers pédagogiques untracked | **non commités** |
-| Recontrôle distant Lot 0.7 | anon_tables=0 ; counts 61/61/4/29 ; public_policies=113 ; sandbox_open=6 ; admin defaults anon=arwdDxtm |
+| Recontrôle distant Lot 0.7 | anon_tables=0 ; counts 61/61/4/29 ; public_policies=113 ; **Sandbox = 6 RESTRICTIVE (non « open »)** |
+
+**Suite :** voir Lot 0.8B pour retrait migration DROP + garde-fous corrigés.
 
 ---
 
@@ -274,4 +291,4 @@ Thank you.
 
 ---
 
-*Fin handoff Lot 0.7 — ARRÊT partiel sur exposition Sandbox authenticated.*
+*Fin handoff Lot 0.7 — ERRATUM 0.8B : urgence Sandbox annulée ; confinement anon maintenu.*
