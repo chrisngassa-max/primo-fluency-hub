@@ -16,7 +16,7 @@
 |---|---|
 | Branche | `codex-captcf-lot-00-protection-cartographie-20260917` |
 | HEAD initial | `80c4d481a9d324b9d6ef530d17a6944304819134` |
-| HEAD final | `304518eccde1ee8b37a1c0748872f76bd587a714` (+ handoff commit suivant) |
+| HEAD final | `f85ff6bf307a8241f3747295d856bfb5f270c0ab` |
 | Travaux existants | **préservés** (docs pédagogiques untracked non stagés) |
 | AGENTS.md / CLAUDE.md | **absents** du dépôt (noté) |
 
@@ -194,7 +194,7 @@ Non-régression Lot 0.8B : 6 RESTRICTIVE **acceptées** (selftest négatifs PERM
 
 1. `240584b3e08a0d19465f89e979693fe54e894d4e` — `security(lot-2a): inventaire policies/has_role et extension harness`
 2. `304518eccde1ee8b37a1c0748872f76bd587a714` — `security(lot-2a): migrations proposees has_role et policies public`
-3. *(ce handoff)* — `docs(lot-2a): diagnostic Phase A has_role et policies public`
+3. `f85ff6bf307a8241f3747295d856bfb5f270c0ab` — `docs(lot-2a): diagnostic Phase A has_role et policies public`
 
 **Push : aucun.**
 
