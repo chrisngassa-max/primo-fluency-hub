@@ -192,6 +192,7 @@ function importSqlResults(sqlResultsPath) {
     "lot06_anon_privileges_refusal",
     "lot07_future_guards",
     "lot08_sandbox_isolation",
+    "lot2a_has_role_and_public_policies",
   ];
 
   for (const id of expected) {
@@ -294,6 +295,10 @@ function main() {
       {
         id: "local:assert-no-prod-bootstrap",
         rel: "scripts/security/assert-no-prod-bootstrap.mjs",
+      },
+      {
+        id: "local:assert-lot2a-has-role-callers",
+        rel: "scripts/security/assert-lot2a-has-role-callers.mjs",
       },
     ];
 
