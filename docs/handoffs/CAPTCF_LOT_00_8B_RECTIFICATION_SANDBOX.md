@@ -98,11 +98,10 @@ npm run security:selftest  → EXIT 0 (10/10 scenarios matched)
 
 1. `73224857190cb3ac984eb9f51a112d8fbfe4bc58` — `security(lot-0.8b): abandon Phase B DROP; fix Sandbox RESTRICTIVE guards`  
 2. `96bc31ca21ecd9af85c556a6463fadf44c954d69` — `docs(lot-0.8b): rectify Sandbox urgency false positive and handoffs`  
-   (+ tip amend SHA record — voir `git rev-parse HEAD` / log)
+3. tip SHA-record amend(s) sur le handoff — **HEAD final réel :** exécuter `git rev-parse HEAD` (branche `codex-captcf-lot-00-protection-cartographie-20260917`)
 
 **Push : aucun.**  
-**HEAD initial Lot 0.8B :** `400c6bfa272bc5e96ed7b03603418a2aa917c95b`  
-**HEAD final :** `de8467846e94810556c5cd11a5ba9e31d18a687d`
+**HEAD initial Lot 0.8B :** `400c6bfa272bc5e96ed7b03603418a2aa917c95b`
 
 ---
 
