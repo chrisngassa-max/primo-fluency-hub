@@ -1,0 +1,24 @@
+{
+  "_comment": "CAPTCF Lot 1 — import format for transactional SQL test outcomes (BEGIN…ROLLBACK). No secrets, no PII. Fill after running supabase/tests/lot0*.sql via SQL editor or MCP read-only execute.",
+  "source": "manual",
+  "captured_at_utc": "REPLACE",
+  "project_ref": "gudcenhmzlcvhgbgklzw",
+  "tests": {
+    "lot05_placement_rls_refusal": {
+      "status": "not_run",
+      "notes": "Paste PASS/FAIL after ROLLBACK run"
+    },
+    "lot06_anon_privileges_refusal": {
+      "status": "not_run",
+      "notes": ""
+    },
+    "lot07_future_guards": {
+      "status": "not_run",
+      "notes": "Expect FAIL while residual Sandbox isolation count != 0 (pre Lot 0.8 remote)"
+    },
+    "lot08_sandbox_isolation": {
+      "status": "not_run",
+      "notes": "Matrix is transactional; residual policies roll back to 6 until Phase B apply"
+    }
+  }
+}

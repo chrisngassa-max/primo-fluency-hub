@@ -1,0 +1,26 @@
+{
+  "_comment": "Fixture: anon table grants reintroduced. Expected: evidence FAIL.",
+  "project_ref": "gudcenhmzlcvhgbgklzw",
+  "captured_at_utc": "2026-09-17T21:00:00Z",
+  "anon_table_privilege_count": 12,
+  "anon_dangerous_privilege_tables": ["profiles", "resultats"],
+  "anon_sensitive_access": ["profiles"],
+  "manifestly_permissive_policies": [],
+  "sandbox_isolation_open_policies": [],
+  "permissive_sandbox_is_null_policies": [],
+  "account_function_stubs": {
+    "bootstrap-test-accounts": { "verify_jwt": true, "version": 10 },
+    "create-formateur-account": { "verify_jwt": true, "version": 10 }
+  },
+  "default_privileges_supabase_admin_public": {
+    "tables_grants_anon": true,
+    "sequences_grants_anon": true,
+    "functions_grants_anon": true
+  },
+  "critical_counts": {
+    "users": 0,
+    "profiles": 0,
+    "groups": 0,
+    "memberships": 0
+  }
+}
