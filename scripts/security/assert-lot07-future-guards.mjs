@@ -98,13 +98,39 @@ function checkRepo() {
   const migFiles = listMigrations();
   const lot05 = migFiles.find((f) => f.includes("lot05_confine_placement"));
   const lot06 = migFiles.find((f) => f.includes("lot06_confine_global_anon"));
+  const lot08 = migFiles.find((f) => f.includes("lot08_confine_sandbox_isolation"));
   if (!lot05) failures.push("missing lot05 placement confinement migration");
   if (!lot06) failures.push("missing lot06 global anon confinement migration");
+  if (!lot08) failures.push("missing lot08 sandbox isolation confinement migration");
 
   if (lot06) {
     const mig = readUtf8(path.join("supabase", "migrations", lot06));
     if (!/REVOKE ALL ON TABLE public\.%I FROM anon/.test(mig)) {
       failures.push("lot06 migration must REVOKE ALL from anon on public tables");
+    }
+  }
+
+  if (lot08) {
+    const mig = readUtf8(path.join("supabase", "migrations", lot08));
+    const drops = (mig.match(/DROP POLICY IF EXISTS "Sandbox isolation"/g) || [])
+      .length;
+    if (drops < 6) {
+      failures.push(
+        "lot08 migration must DROP POLICY IF EXISTS \"Sandbox isolation\" on all 6 tables",
+      );
+    }
+    // Never recreate a PERMISSIVE open-IS-NULL sandbox gate
+    if (
+      /CREATE\s+POLICY\b[\s\S]{0,300}?Sandbox isolation[\s\S]{0,400}?PERMISSIVE/i.test(
+        mig,
+      ) ||
+      (/CREATE\s+POLICY\b[\s\S]{0,500}?sandbox_session_id IS NULL/i.test(mig) &&
+        !/AS\s+RESTRICTIVE/i.test(mig) &&
+        /CREATE\s+POLICY/i.test(mig))
+    ) {
+      failures.push(
+        "lot08 must not recreate PERMISSIVE policies opening sandbox_session_id IS NULL",
+      );
     }
   }
 
@@ -241,9 +267,16 @@ function checkRemoteEvidence() {
 
   const sandbox = evidence.sandbox_isolation_open_policies || [];
   if (Array.isArray(sandbox) && sandbox.length) {
-    // Active authenticated exposure — fail closed (Lot 0.7 ARRÊT criterion)
+    // Residual named policies — fail closed until Lot 0.8 remote apply
     failures.push(
-      `remote: Sandbox isolation policies open non-sandbox rows to {public} roles (${sandbox.length}) — requires Lot 2A authorization`,
+      `remote: residual Sandbox isolation policies (${sandbox.length}) — apply Lot 0.8 after owner authorization`,
+    );
+  }
+
+  const permissiveSandbox = evidence.permissive_sandbox_is_null_policies || [];
+  if (Array.isArray(permissiveSandbox) && permissiveSandbox.length) {
+    failures.push(
+      `remote: PERMISSIVE policies open sandbox_session_id IS NULL (${permissiveSandbox.length})`,
     );
   }
 

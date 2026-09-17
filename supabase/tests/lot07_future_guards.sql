@@ -92,17 +92,35 @@ BEGIN
     RAISE EXCEPTION 'Lot 0.7 FAIL: % manifestly permissive public/anon policy(ies)', permissive_n;
   END IF;
 
-  -- Known dangerous pattern: Sandbox isolation opens all non-sandbox rows to {public}
+  -- Lot 0.8: residual named "Sandbox isolation" policies must be absent after apply.
+  -- Lot 0.7 originally flagged them under a PERMISSIVE OR misreading; they were
+  -- RESTRICTIVE. Forward fix = DROP (business policies sufficient). Guard keeps
+  -- failing closed until remote Lot 0.8 is applied.
   SELECT count(*) INTO sandbox_n
   FROM pg_policies
   WHERE schemaname = 'public'
     AND policyname = 'Sandbox isolation'
-    AND 'public' = ANY (roles)
-    AND coalesce(qual, '') ILIKE '%sandbox_session_id IS NULL%';
+    AND tablename IN (
+      'groups', 'group_members', 'sessions', 'devoirs', 'resultats', 'profils_eleves'
+    );
 
   IF sandbox_n <> 0 THEN
     RAISE EXCEPTION
-      'Lot 0.7 FAIL (ACTIVE authenticated exposure): % Sandbox isolation policies open non-sandbox rows — stop and request Lot 2A authorization',
+      'Lot 0.7/0.8 FAIL: % residual Sandbox isolation policies — apply Lot 0.8 after owner authorization (or keep ARRÊT)',
+      sandbox_n;
+  END IF;
+
+  -- True danger: PERMISSIVE policies that OR-open non-sandbox rows
+  SELECT count(*) INTO sandbox_n
+  FROM pg_policies
+  WHERE schemaname = 'public'
+    AND permissive = 'PERMISSIVE'
+    AND coalesce(qual, '') ILIKE '%sandbox_session_id IS NULL%'
+    AND coalesce(qual, '') ILIKE '%can_access_sandbox%';
+
+  IF sandbox_n <> 0 THEN
+    RAISE EXCEPTION
+      'Lot 0.7/0.8 FAIL: % PERMISSIVE policy(ies) open sandbox_session_id IS NULL via can_access_sandbox',
       sandbox_n;
   END IF;
 

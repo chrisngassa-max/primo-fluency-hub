@@ -6,14 +6,9 @@
   "anon_dangerous_privilege_tables": [],
   "anon_sensitive_access": [],
   "manifestly_permissive_policies": [],
-  "sandbox_isolation_open_policies": [
-    "devoirs.Sandbox isolation",
-    "group_members.Sandbox isolation",
-    "groups.Sandbox isolation",
-    "profils_eleves.Sandbox isolation",
-    "resultats.Sandbox isolation",
-    "sessions.Sandbox isolation"
-  ],
+  "sandbox_isolation_open_policies": [],
+  "permissive_sandbox_is_null_policies": [],
+  "_sandbox_note": "After Lot 0.8 remote apply, sandbox_isolation_open_policies must be []. Pre-apply evidence may list the 6 RESTRICTIVE residuals (fail-closed until authorized DROP).",
   "account_function_stubs": {
     "bootstrap-test-accounts": { "verify_jwt": true, "version": 10 },
     "create-formateur-account": { "verify_jwt": true, "version": 10 }
