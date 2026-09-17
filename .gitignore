@@ -38,3 +38,7 @@ scripts/stt-benchmark/benchmark-report.json
 
 # Ephemeral local acceptance-test fixtures
 tmp/
+
+# Lot 0.5 local security evidence (never commit)
+.local-security-evidence/
+
