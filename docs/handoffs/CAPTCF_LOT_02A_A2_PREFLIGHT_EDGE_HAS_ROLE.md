@@ -7,7 +7,8 @@
 **Commits locaux A2 préflight :**  
 - `dc1aeb3dfdbc81630698aff69c50e4c15c716865` — `security(lot-2a-a2): align Edge has_role callers to uid/target_role`  
 - `edd5ed489fc3158f8ce37f10cf2a18d1984a8b10` — `docs(lot-2a-a2): preflight Edge has_role before Phase B deploy`  
-**HEAD post-préflight :** `edd5ed489fc3158f8ce37f10cf2a18d1984a8b10`  
+**HEAD post-préflight :** `8d13f4968e205e422f108ae0d8204ed106b4a274`  
+*(commits code+docs : `dc1aeb3d…`, `edd5ed48…`, `8d13f496…`)*  
 **Projet prod :** `gudcenhmzlcvhgbgklzw` (TCF PRO NEW)  
 **Mutation distante :** **aucune** (pas de deploy Edge, pas de migration, pas de policy)  
 **Push :** **aucun**
