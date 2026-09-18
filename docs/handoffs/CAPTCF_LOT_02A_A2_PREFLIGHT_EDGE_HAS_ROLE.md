@@ -4,6 +4,10 @@
 **Opérateur :** agent Lot 2A-A2 préflight  
 **Branche :** `codex-captcf-lot-00-protection-cartographie-20260917`  
 **HEAD pré-fix :** `a0b99d03c94946987376a42e0d82ca2a5f18951d`  
+**Commits locaux A2 préflight :**  
+- `dc1aeb3dfdbc81630698aff69c50e4c15c716865` — `security(lot-2a-a2): align Edge has_role callers to uid/target_role`  
+- `edd5ed489fc3158f8ce37f10cf2a18d1984a8b10` — `docs(lot-2a-a2): preflight Edge has_role before Phase B deploy`  
+**HEAD post-préflight :** `edd5ed489fc3158f8ce37f10cf2a18d1984a8b10`  
 **Projet prod :** `gudcenhmzlcvhgbgklzw` (TCF PRO NEW)  
 **Mutation distante :** **aucune** (pas de deploy Edge, pas de migration, pas de policy)  
 **Push :** **aucun**
