@@ -44,7 +44,7 @@ Deno.serve(async (req) => {
     const admin = createClient(supabaseUrl, serviceRoleKey);
 
     const { data: hasRole } = await admin.rpc("has_role", {
-      _user_id: caller.id, _role: "formateur",
+      uid: caller.id, target_role: "formateur",
     });
     if (!hasRole) {
       return new Response(JSON.stringify({ error: "Réservé aux formateurs" }), {

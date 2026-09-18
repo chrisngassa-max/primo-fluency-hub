@@ -129,8 +129,8 @@ async function assertFormateur(req: Request) {
   const { data: { user }, error } = await caller.auth.getUser();
   if (error || !user) throw Object.assign(new Error("Non autorisé"), { status: 401 });
 
-  const { data: isFormateur } = await admin.rpc("has_role", { _user_id: user.id, _role: "formateur" });
-  const { data: isAdmin } = await admin.rpc("has_role", { _user_id: user.id, _role: "admin" });
+  const { data: isFormateur } = await admin.rpc("has_role", { uid: user.id, target_role: "formateur" });
+  const { data: isAdmin } = await admin.rpc("has_role", { uid: user.id, target_role: "admin" });
 
   if (!isFormateur && !isAdmin) {
     throw Object.assign(new Error("Accès réservé aux formateurs"), { status: 403 });

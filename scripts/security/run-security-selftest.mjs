@@ -267,7 +267,7 @@ function main() {
 
   results.push(testBadMigrationDetection());
 
-  // Lot 2A: --strict must detect legacy has_role named callers (currently present).
+  // Lot 2A-A2: --strict must pass once Edge callers use uid/target_role (no legacy rpc).
   {
     const assertScript = path.join(__dirname, "assert-lot2a-has-role-callers.mjs");
     const r = spawnSync(process.execPath, [assertScript, "--strict"], {
@@ -277,19 +277,20 @@ function main() {
     });
     const detail = ((r.stderr || "") + "\n" + (r.stdout || "")).trim();
     const matched =
-      r.status === 1 &&
-      (detail.includes("legacy") || detail.includes("_user_id") || detail.includes("broken"));
+      r.status === 0 &&
+      detail.includes("RESULT: SUCCESS") &&
+      /legacy_rpc_calls:\s*0/.test(detail);
     results.push({
-      name: "lot2a:has-role-strict-detects-legacy",
+      name: "lot2a:has-role-strict-no-legacy",
       matched,
       envError: r.error != null || r.status === 2,
-      expected: "fail",
+      expected: "ok",
       got: r.status === 0 ? "ok" : r.status === 1 ? "fail" : "env",
       detail: matched ? "ok" : detail.slice(0, 600),
     });
   }
 
-  // Lot 2A: default (non-strict) must keep harness green (warn-only legacy).
+  // Lot 2A: default (non-strict) must stay green (latent migration warn allowed).
   {
     const assertScript = path.join(__dirname, "assert-lot2a-has-role-callers.mjs");
     const r = spawnSync(process.execPath, [assertScript], {
@@ -300,7 +301,7 @@ function main() {
     const detail = ((r.stderr || "") + "\n" + (r.stdout || "")).trim();
     const matched = r.status === 0 && detail.includes("RESULT: SUCCESS");
     results.push({
-      name: "lot2a:has-role-default-warn-only",
+      name: "lot2a:has-role-default-success",
       matched,
       envError: r.error != null || r.status === 2,
       expected: "ok",
