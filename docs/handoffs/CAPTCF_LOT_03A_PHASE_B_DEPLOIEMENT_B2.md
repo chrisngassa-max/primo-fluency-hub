@@ -86,7 +86,7 @@ Aucune autre fonction déployée. Secrets/vars inchangés.
 
 - Migration locale alignée version remote `20260924201358`.  
 - Handoff Phase B (ce fichier).  
-- Commit documentaire local Phase B (voir SHA ci-dessous après commit).  
+- Commit documentaire local Phase B : `01505c1a`.  
 - **Aucun push.**
 
 ---
