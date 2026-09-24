@@ -90,8 +90,8 @@ Build : `npm run build` OK (2026-09-24). Typecheck global non bloquant (sortie n
 
 | Élément | Valeur |
 |---|---|
-| SHA | `5dbb50d396038e0cc7c419df6c45fddfc3584a37` |
-| Court | `5dbb50d3` |
+| SHA | `b4dda50cc625f8f853b392cc5aad9f65625fb6fb` |
+| Court | `b4dda50c` |
 | Message | `fix(ipe): require B2 for naturalisation under 2026 IRN rules` |
 
 **Aucun push.**
