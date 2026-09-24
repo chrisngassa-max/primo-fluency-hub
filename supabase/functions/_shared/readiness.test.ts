@@ -4,6 +4,7 @@ import {
   computeCompetenceIPE,
   computeGlobalIPE,
   computeWeightedScore,
+  isObjectifAtteint,
   loadConfig,
   type CompetenceIPEResult,
 } from "./readiness";
@@ -155,5 +156,15 @@ describe("computeWeightedScore", () => {
     );
     expect(weights_used.preuve_examen).toBe(0.3);
     expect(weights_used.maitrise_periode).toBe(0.4);
+  });
+});
+
+describe("isObjectifAtteint IRN 2026", () => {
+  it("B1 ne suffit pas pour naturalisation (B2)", () => {
+    expect(isObjectifAtteint(7, "B2", config)).toBe(false);
+  });
+
+  it("B2 scale atteint l'objectif naturalisation", () => {
+    expect(isObjectifAtteint(10, "B2", config)).toBe(true);
   });
 });

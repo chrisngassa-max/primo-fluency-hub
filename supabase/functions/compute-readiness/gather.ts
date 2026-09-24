@@ -66,8 +66,14 @@ export function resolveObjectif(input: {
     .filter(Boolean)
     .map((v) => String(v).toUpperCase());
 
-  if (candidates.some((v) => v.includes("B1") || v.includes("B2"))) return "B1";
-  if (input.typeDemarche === "naturalisation") return "B1";
+  // Naturalisation = B2 depuis 2026-01-01 (Service-Public F11926), même si niveau_cible legacy = B1.
+  if (
+    input.typeDemarche === "naturalisation" ||
+    candidates.some((v) => v.includes("B2"))
+  ) {
+    return "B2";
+  }
+  if (candidates.some((v) => v.includes("B1"))) return "B1";
   return "A2";
 }
 

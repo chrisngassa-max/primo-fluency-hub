@@ -22,8 +22,8 @@ const steps = [
   {
     icon: TrendingUp,
     emoji: "📈",
-    title: "Suis ta progression vers B1",
-    description: "Ton tableau de bord montre ta progression compétence par compétence. L'objectif : atteindre le niveau B1 avant ton examen.",
+    title: "Suis ta progression",
+    description: "Ton tableau de bord montre ta progression compétence par compétence. L'objectif : atteindre le niveau requis pour ta démarche (A2, B1 ou B2).",
   },
 ];
 

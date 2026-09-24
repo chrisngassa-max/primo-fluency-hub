@@ -12,6 +12,7 @@ import {
   latestSnapshotsByCompetence,
   isSnapshotStale,
   resolveObjectifFromParcours,
+  objectifLibelleFallback,
   categorizeDevoirs,
   topWeightedErrors,
   bucketSnapshotsWeekly,
@@ -146,8 +147,7 @@ async function fetchEleveFiche(eleveId: string): Promise<EleveReadinessFicheData
   });
 
   const objectifLibelle =
-    config?.objectifs?.[objectif]?.libelle ??
-    (objectif === "B1" ? "Naturalisation" : "Carte de résident");
+    config?.objectifs?.[objectif]?.libelle ?? objectifLibelleFallback(objectif);
 
   const typesMap = new Map(
     (typesRes.data ?? []).map((t) => [

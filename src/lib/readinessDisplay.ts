@@ -3,7 +3,7 @@
 export type ReadinessBande = "fragile" | "construction" | "proche_seuil" | "pret";
 export type ReadinessConfiance = "haute" | "moyenne" | "insuffisante";
 export type ReadinessCompetence = "CO" | "CE" | "EE" | "EO" | "ST" | "GLOBAL";
-export type ReadinessObjectif = "A2" | "B1";
+export type ReadinessObjectif = "A2" | "B1" | "B2";
 
 export interface ReadinessSnapshot {
   id: string;
@@ -117,9 +117,20 @@ export function resolveObjectifFromParcours(input: {
   typeDemarche?: string | null;
 }): ReadinessObjectif {
   const cible = (input.niveauCible ?? "").toUpperCase();
-  if (cible.includes("B1") || cible.includes("B2")) return "B1";
-  if (input.typeDemarche === "naturalisation") return "B1";
+  // Naturalisation = B2 depuis 2026-01-01 (Service-Public F11926).
+  if (input.typeDemarche === "naturalisation" || cible.includes("B2")) return "B2";
+  if (cible.includes("B1")) return "B1";
   return "A2";
+}
+
+const OBJECTIF_LIBELLES: Record<ReadinessObjectif, string> = {
+  A2: "Carte de séjour pluriannuelle",
+  B1: "Carte de résident",
+  B2: "Naturalisation",
+};
+
+export function objectifLibelleFallback(objectif: ReadinessObjectif): string {
+  return OBJECTIF_LIBELLES[objectif];
 }
 
 export function scoreTrend(

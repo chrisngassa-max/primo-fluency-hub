@@ -6,7 +6,7 @@
  */
 import configJson from "./readiness_config_v1.json" with { type: "json" };
 
-export type Objectif = "A2" | "B1";
+export type Objectif = "A2" | "B1" | "B2";
 export type CompetenceEpreuve = "CO" | "CE" | "EE" | "EO";
 export type CompetenceIPE = CompetenceEpreuve | "ST" | "GLOBAL";
 export type Confiance = "haute" | "moyenne" | "insuffisante";
@@ -121,6 +121,15 @@ export function getNiveauRequisScale(
   config: ReadinessConfig = loadConfig(),
 ): number {
   return config.objectifs[objectif].niveau_requis_scale;
+}
+
+/** True si le niveau validé (échelle interne) atteint le seuil de l'objectif IRN. */
+export function isObjectifAtteint(
+  niveauValideScale: number,
+  objectif: Objectif,
+  config: ReadinessConfig = loadConfig(),
+): boolean {
+  return niveauValideScale >= getNiveauRequisScale(objectif, config);
 }
 
 export function getMinSuccessRate(
