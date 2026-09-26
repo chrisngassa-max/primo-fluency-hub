@@ -2,13 +2,18 @@ import { FormEvent, useMemo, useState } from "react";
 import { HelpCircle, MessageCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAidePedagogique } from "@/contexts/AidePedagogiqueContext";
-import {
-  answerContextualQuestion,
-} from "@/lib/avatar/answerContextualQuestion";
+import { useAuth } from "@/contexts/AuthContext";
+import { answerContextualQuestion } from "@/lib/avatar/answerContextualQuestion";
 import type {
   ContextualAssistantAnswer,
   PedagogicalIntent,
 } from "@/lib/avatar/pedagogicalTypes";
+import {
+  ASSISTANT_CONSENT_INFO,
+  getAssistantAiConsent,
+  setAssistantAiConsent,
+  type AssistantConsentStatus,
+} from "@/lib/avatar/assistantConsent";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -26,16 +31,18 @@ const INTENT_BUTTONS: { intent: PedagogicalIntent; label: string }[] = [
 ];
 
 /**
- * Assistant pédagogique textuel — contexte séance/exercice + FAQ fallback.
- * Lot 3B-2 : fournisseur local déterministe, 0 appel payant.
+ * Assistant pédagogique — contexte + consentement Aide + FAQ fallback.
+ * Phase A : 0 appel payant (provider local ; Edge préparé mais flag live OFF).
  */
 export default function AvatarAssistantPanel({ pageHint, className }: Props) {
+  const { user } = useAuth();
   const { context } = useAidePedagogique();
   const [open, setOpen] = useState(false);
   const [question, setQuestion] = useState("");
   const [last, setLast] = useState<ContextualAssistantAnswer | null>(null);
   const [busy, setBusy] = useState(false);
   const [activeIntent, setActiveIntent] = useState<PedagogicalIntent>("expliquer");
+  const [consent, setConsent] = useState<AssistantConsentStatus>(() => getAssistantAiConsent());
 
   const contextLine = useMemo(() => {
     const parts = [
@@ -48,13 +55,25 @@ export default function AvatarAssistantPanel({ pageHint, className }: Props) {
     return parts.length ? parts.join(" · ") : null;
   }, [context]);
 
+  const decideConsent = (status: "accepted" | "refused") => {
+    setAssistantAiConsent(status);
+    setConsent(status);
+  };
+
   const ask = async (event?: FormEvent, intent?: PedagogicalIntent) => {
     event?.preventDefault();
     const chosen = intent ?? activeIntent;
     setActiveIntent(chosen);
     setBusy(true);
     try {
-      const answer = await answerContextualQuestion(question, context, { intent: chosen });
+      const answer = await answerContextualQuestion(question, context, {
+        intent: chosen,
+        authenticated: Boolean(user),
+        assistantConsent: consent,
+        // Phase A : le local déterministe reste utilisable sans consentement Aide.
+        // Le chemin Edge (IA réelle) exige consent === accepted.
+        allowLocalWithoutConsent: true,
+      });
       setLast(answer);
     } finally {
       setBusy(false);
@@ -90,7 +109,7 @@ export default function AvatarAssistantPanel({ pageHint, className }: Props) {
               <div>
                 <p className="text-sm font-semibold text-[#0b234a]">Assistant CapTCF</p>
                 <p className="text-[11px] text-muted-foreground">
-                  S01 contextuel · local (pas d’IA payante)
+                  Préflight IA · FAQ toujours dispo
                 </p>
               </div>
             </div>
@@ -113,6 +132,45 @@ export default function AvatarAssistantPanel({ pageHint, className }: Props) {
               Page : {pageHint}
             </p>
           ) : null}
+
+          {consent === "undecided" ? (
+            <div className="space-y-2 rounded-md border border-amber-200 bg-amber-50 p-2 text-[11px] text-[#0b234a]">
+              <p className="whitespace-pre-line leading-snug">{ASSISTANT_CONSENT_INFO}</p>
+              <div className="flex flex-wrap gap-1">
+                <Button
+                  type="button"
+                  size="sm"
+                  className="h-7 text-xs"
+                  onClick={() => decideConsent("accepted")}
+                >
+                  J’accepte l’IA Aide
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  className="h-7 text-xs"
+                  onClick={() => decideConsent("refused")}
+                >
+                  Refuser (FAQ seule)
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <p className="text-[10px] text-muted-foreground">
+              Consentement Aide : {consent === "accepted" ? "accepté" : "refusé — FAQ locale"}
+              {" · "}
+              <button
+                type="button"
+                className="underline"
+                onClick={() => {
+                  setConsent("undecided");
+                }}
+              >
+                modifier
+              </button>
+            </p>
+          )}
 
           <form onSubmit={(e) => void ask(e)} className="flex flex-col gap-2">
             <label className="sr-only" htmlFor="captcf-avatar-q">

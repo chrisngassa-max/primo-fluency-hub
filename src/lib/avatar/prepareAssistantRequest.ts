@@ -6,6 +6,7 @@ import type {
   PreparedAssistantRequest,
 } from "./pedagogicalTypes";
 import { isPedagogicalLevel } from "./detectPedagogicalIntent";
+import { ASSISTANT_LIMITS, truncateForAssistant } from "./assistantLimits";
 
 /** Clés PII / sensibles interdites dans toute requête préparée. */
 export const FORBIDDEN_REQUEST_KEYS = [
@@ -101,7 +102,7 @@ export function prepareAssistantRequest(params: {
       : [...s01Sources.objectifs];
 
   const request: PreparedAssistantRequest = {
-    question: params.question.trim(),
+    question: truncateForAssistant(params.question, ASSISTANT_LIMITS.maxQuestionChars),
     intent: params.intent,
     niveau,
     session: {
@@ -124,13 +125,13 @@ export function prepareAssistantRequest(params: {
           competence: "CO",
         },
     sources: {
-      faits: [...s01Sources.faits_valides],
-      lexique: s01Sources.lexique.map((m) => ({
+      faits: s01Sources.faits_valides.slice(0, ASSISTANT_LIMITS.maxFacts),
+      lexique: s01Sources.lexique.slice(0, ASSISTANT_LIMITS.maxLexique).map((m) => ({
         mot: m.mot,
         definition_simple: m.definition_simple,
         exemple: m.exemple,
       })),
-      aides: [...variant.aides],
+      aides: [...variant.aides].slice(0, 4),
       mini_exercice:
         s01Sources.mini_exercices[niveau as keyof typeof s01Sources.mini_exercices] ?? null,
     },

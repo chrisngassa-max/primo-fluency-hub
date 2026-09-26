@@ -58,17 +58,26 @@ export type PreparedAssistantRequest = {
     mini_exercice: string | null;
   };
   meta: {
-    provider_mode: "local_deterministic" | "unavailable";
+    provider_mode: "local_deterministic" | "edge_prepared" | "unavailable";
     corpus_version: string;
   };
 };
 
 export type ContextualAssistantAnswer = {
   text: string;
-  intent: PedagogicalIntent | "refuse_evaluation" | "refuse_sources" | "faq_fallback";
+  intent:
+    | PedagogicalIntent
+    | "refuse_evaluation"
+    | "refuse_sources"
+    | "refuse_auth"
+    | "refuse_consent"
+    | "refuse_quota"
+    | "faq_fallback";
   uncertain: boolean;
   refused: boolean;
   source: "contextual" | "faq" | "refuse";
   niveau: PedagogicalLevel;
   disclaimer: string;
+  /** True si un provider IA a réellement été invoqué (pas FAQ / refus). */
+  aiInvoked?: boolean;
 };

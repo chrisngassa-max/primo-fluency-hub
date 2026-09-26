@@ -90,3 +90,7 @@ project_id = "gudcenhmzlcvhgbgklzw"
   # Lot 0.6 — NEVER deploy create-formateur-account without JWT verification
   [functions.create-formateur-account]
     verify_jwt = true
+
+  # Lot 3B-3 Phase A — préparée, NE PAS déployer sans autorisation Phase B
+  [functions.captcf-assistant-qa]
+    verify_jwt = true
