@@ -16,7 +16,7 @@
 | user_id | `d5f26c1c-ce94-4a9f-81f5-68a6b190fdb4` |
 | Rôle | `eleve` |
 | Consent | `ai_processing_consents.consent_ai=true` (`source=smoke_temp_3b3`) |
-| Ban | **oui** — `banned_until` ≈ 2126-09-02 ; sessions/refresh tokens purgés |
+| Ban | **oui** — `banned_until` ≈ 2126-09-02 ; sessions/refresh = **0** ; consent révoqué |
 | Preuves | `.local-security-evidence/` (gitignored) |
 
 ---
