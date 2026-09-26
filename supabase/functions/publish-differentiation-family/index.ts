@@ -7,6 +7,7 @@ import {
   isPedagogicalSourceReadyForDifferentiation,
 } from "../_shared/pedagogical-source-guards.ts";
 import { pickDeterministicCoMasteryPoint } from "../_shared/differentiation/publish-mastery-point.ts";
+import { assertPublishedVariantItemCap } from "../_shared/differentiation/lot05a-c.ts";
 
 const headers = {
   "Access-Control-Allow-Origin": "*",
@@ -53,6 +54,12 @@ Deno.serve(async (request) => {
 
     const payload = family.payload as DifferentiationFamilySliceV1;
     const targetLevel = family.target_level ?? getSliceTargetLevel(payload);
+    const correctivePublication = body.correctif_05a_c === true
+      || payload.generation?.lot_05a_c === true;
+    const itemCap = assertPublishedVariantItemCap(payload, correctivePublication);
+    if (!itemCap.ok) {
+      return json(422, { error: itemCap.error, count: itemCap.count, max: itemCap.max });
+    }
 
     const { data: source } = await admin
       .from("pedagogical_sources")

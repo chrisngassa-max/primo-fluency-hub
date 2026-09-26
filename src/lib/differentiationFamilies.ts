@@ -105,11 +105,16 @@ export async function fetchDifferentiationFamilyFeedback(familyId: string): Prom
 
 export async function generateDifferentiationFamily(
   sourceId: string,
-  options: { forceRegenerate?: boolean; targetLevel?: SliceLevel } = {},
+  options: { forceRegenerate?: boolean; targetLevel?: SliceLevel; correctif05aC?: boolean } = {},
 ) {
-  const { forceRegenerate = false, targetLevel = "A2" } = options;
+  const { forceRegenerate = false, targetLevel = "A2", correctif05aC = false } = options;
   const { data, error } = await supabase.functions.invoke("generate-differentiation-family", {
-    body: { sourceId, force_regenerate: forceRegenerate, target_level: targetLevel },
+    body: {
+      sourceId,
+      force_regenerate: forceRegenerate,
+      target_level: targetLevel,
+      correctif_05a_c: correctif05aC,
+    },
   });
   if (error) throw error;
   if (data?.error) {

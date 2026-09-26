@@ -224,6 +224,13 @@ export async function validateDifferentiationFamilySlice(
   ) {
     blocking.push(issue("DIFF_ITEM_COUNT_OUT_OF_RANGE", `variants.${targetLevel}.exercise.items`, `Le nombre d'items est hors des bornes ${targetLevel}.`));
   }
+  if (typeof context.maxItems === "number" && variant.exercise.items.length > context.maxItems) {
+    blocking.push(issue(
+      "DIFF_ITEM_CAP_EXCEEDED",
+      `variants.${targetLevel}.exercise.items`,
+      `Maximum ${context.maxItems} items pour cette variante.`,
+    ));
+  }
 
   const factUsage = new Map<string, number>();
   for (const [index, item] of variant.exercise.items.entries()) {
