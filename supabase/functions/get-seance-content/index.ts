@@ -129,7 +129,7 @@ Deno.serve(async (req) => {
     // (session_id = sessionId) — la même exigence d'isolation multi-groupes
     // que release_corrections (point 1/3) : ne jamais résoudre "la dernière
     // tentative sur cet exercice_id" tous groupes/séances confondus.
-    let attemptByExercise = new Map<string, Record<string, unknown>>();
+    const attemptByExercise = new Map<string, Record<string, unknown>>();
     if (linkedIds.length > 0) {
       const { data: attempts, error: attemptsError } = await admin
         .from('exercise_attempts')

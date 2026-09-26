@@ -279,7 +279,7 @@ export function buildPedagogicalDirectives(input: BuildInput): PedagogicalDirect
     || switchRule?.competence_suspendue === "EE"
     || switchRule?.competence_suspendue === "EE_EO";
   const structuresWeak = structuresScore == null || structuresScore < 60 || pilierFocus != null;
-  let competence_cible: CompetenceKey | null = shouldDescendFromWriting && structuresWeak
+  const competence_cible: CompetenceKey | null = shouldDescendFromWriting && structuresWeak
     ? "Structures"
     : competence_blocage;
 
