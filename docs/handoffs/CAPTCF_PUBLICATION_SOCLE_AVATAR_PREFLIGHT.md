@@ -2,7 +2,8 @@
 
 **Date :** 2026-09-26  
 **Branche locale :** `codex-captcf-lot-00-protection-cartographie-20260917`  
-**HEAD local :** `7d206a05d76212105bdfdcf146f9daad35fd9c2a` — `feat(avatar): local CapTCF FAQ Q&A prototype for learners`  
+**HEAD local :** `2083b324` — `docs: preflight publication socle CapTCF + Avatar FAQ`  
+**Socle code validé (avant ce doc) :** `7d206a05` — Avatar FAQ MVP  
 **Remote Git (sans fetch/push) :** `origin` → `https://github.com/chrisngassa-max/primo-fluency-hub.git`  
 **Push / merge / déploiement :** **aucun** (préflight uniquement)
 
@@ -55,8 +56,8 @@ Publication front = **push/merge sur `origin/main`** → déploiement Vercel pro
 ## 4. Plage proposée (cache local, sans fetch)
 
 - **From (merge-base local avec `origin/main`) :** `c3870caa`  
-- **To (HEAD) :** `7d206a05`  
-- **Nombre :** **32** commits (`git log --oneline origin/main..HEAD`)  
+- **To (HEAD) :** `2083b324` (inclut ce handoff ; code socle jusqu’à `7d206a05`)  
+- **Nombre :** **33** commits (`git log --oneline origin/main..HEAD` après commit handoff)  
 - **Branche distante cible :** `origin/main`  
 - **Méthode :**  
   1. Autorisation propriétaire : `git fetch origin`  
