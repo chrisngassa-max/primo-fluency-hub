@@ -7,10 +7,10 @@
 
 | État | Valeur |
 |---|---|
-| HEAD branche (après merge) | `1f869bf6` + commit handoff d’intégration (voir log) |
+| HEAD branche (après merge + handoff) | `f60d4291` (+ handoff URL PR si poussé ensuite) |
 | Socle Avatar | `7d206a05` |
 | `origin/main` | `df7e0698f52dfe460a743828a5a02e1cff41416d` |
-| Merge-base réel | `df7e0698` (= `origin/main` après merge) |
+| Merge-base réel | `df7e0698` (= `origin/main`) |
 | Rollback front prod | **`df7e0698` confirmé** (égal à `origin/main` + Vercel prod) |
 | Fusion PR / deploy manuel | **NON** |
 
@@ -79,9 +79,9 @@ Scan `git diff --name-only origin/main...HEAD` : **0** chemin exclu.
 
 | Champ | Valeur |
 |---|---|
-| URL | _(à compléter au push)_ |
-| Statut | OPEN — **non mergée** |
-| CI | _(poll ~2–3 min)_ |
+| URL | https://github.com/chrisngassa-max/primo-fluency-hub/pull/34 |
+| Statut | **OPEN** — **non mergée** — `MERGEABLE` |
+| CI | **PASS** : `test-build-lint` (CI) · Vercel preview · Vercel Preview Comments |
 
 ---
 
