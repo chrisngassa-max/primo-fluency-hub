@@ -1,0 +1,28 @@
+{
+  "_comment": "CAPTCF Lot 1 / 0.8B — import format for transactional SQL test outcomes (BEGIN…ROLLBACK). No secrets, no PII. Fill after running supabase/tests/lot0*.sql via SQL editor or MCP read-only execute.",
+  "source": "manual",
+  "captured_at_utc": "REPLACE",
+  "project_ref": "gudcenhmzlcvhgbgklzw",
+  "tests": {
+    "lot05_placement_rls_refusal": {
+      "status": "not_run",
+      "notes": "Paste PASS/FAIL after ROLLBACK run"
+    },
+    "lot06_anon_privileges_refusal": {
+      "status": "not_run",
+      "notes": ""
+    },
+    "lot07_future_guards": {
+      "status": "not_run",
+      "notes": "Lot 0.8B: expect PASS when 6 RESTRICTIVE Sandbox isolation policies match inventory; FAIL on PERMISSIVE open / missing / altered expr"
+    },
+    "lot08_sandbox_isolation": {
+      "status": "not_run",
+      "notes": "Historical DROP simulation only — Phase B ABANDONED; do not apply DROP in production. Prefer lot07 inventory assertions."
+    },
+    "lot2a_has_role_and_public_policies": {
+      "status": "not_run",
+      "notes": "Lot 2A Phase A: BEGIN…ROLLBACK supabase/tests/lot2a_has_role_and_public_policies.sql — null uid, sandbox RESTRICTIVE=6, public-role count info. Named-arg Edge probes are local assert-lot2a-has-role-callers.mjs."
+    }
+  }
+}

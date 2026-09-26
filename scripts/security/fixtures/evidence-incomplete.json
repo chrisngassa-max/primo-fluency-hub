@@ -1,0 +1,6 @@
+{
+  "_comment": "Fixture: incomplete evidence file. Expected: schema WARN (non-strict) or FAIL (--strict-evidence); harness treats incomplete required fields as warn unless strict.",
+  "project_ref": "gudcenhmzlcvhgbgklzw",
+  "captured_at_utc": "2026-09-17T21:00:00Z",
+  "anon_table_privilege_count": 0
+}

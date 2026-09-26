@@ -30,7 +30,7 @@ Deno.serve(async (req) => {
     const adminClient = createClient(supabaseUrl, serviceKey);
 
     // Check caller is formateur
-    const { data: isFormateur } = await adminClient.rpc("has_role", { _user_id: caller.id, _role: "formateur" });
+    const { data: isFormateur } = await adminClient.rpc("has_role", { uid: caller.id, target_role: "formateur" });
     if (!isFormateur) {
       return new Response(JSON.stringify({ error: "Accès réservé aux formateurs" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }

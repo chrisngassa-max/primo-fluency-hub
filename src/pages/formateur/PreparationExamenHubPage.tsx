@@ -45,7 +45,7 @@ const PreparationExamenHubPage = () => {
               Parcours Langue (TCF IRN)
             </CardTitle>
             <CardDescription>
-              IPE Langue — CO, CE, EE, EO, Structures. Seuils A2 (résident) / B1 (naturalisation).
+              IPE Langue — CO, CE, EE, EO, Structures. Seuils A2 (pluriannuelle) / B1 (résident) / B2 (naturalisation depuis 2026).
             </CardDescription>
           </CardHeader>
           <CardContent>

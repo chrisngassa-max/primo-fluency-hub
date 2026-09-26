@@ -13,9 +13,10 @@
   },
 
   "objectifs": {
-    "_comment": "L'objectif est lu depuis parcours.niveau_cible (+ parcours.type_demarche), jamais posé en dur par groupe.",
-    "A2": { "libelle": "Carte de résident", "niveau_requis_scale": 4 },
-    "B1": { "libelle": "Naturalisation", "niveau_requis_scale": 7 }
+    "_comment": "L'objectif est lu depuis parcours.niveau_cible (+ parcours.type_demarche), jamais posé en dur par groupe. Règle IRN 2026-01-01 : pluriannuelle=A2, résident=B1, naturalisation=B2 (Service-Public F11926).",
+    "A2": { "libelle": "Carte de séjour pluriannuelle", "niveau_requis_scale": 4 },
+    "B1": { "libelle": "Carte de résident", "niveau_requis_scale": 7 },
+    "B2": { "libelle": "Naturalisation", "niveau_requis_scale": 10 }
   },
 
   "bands": {
@@ -39,7 +40,7 @@
     "enabled": true,
     "applies_to": ["EE", "EO"],
     "cap_value": 65,
-    "fragile_threshold_by_objectif": { "A2": 40, "B1": 60 }
+    "fragile_threshold_by_objectif": { "A2": 40, "B1": 60, "B2": 70 }
   },
 
   "component_weights": {
@@ -60,7 +61,7 @@
     "window_days": 28,
     "difficulty_filter": "exercices.difficulte >= (niveau_requis_scale - 1)",
     "_comment_filter": "On mesure la réussite AU niveau de l'examen : un 90 % sur des exercices faciles ne compte pas comme préparation.",
-    "min_success_rate_by_objectif": { "A2": 60, "B1": 65 },
+    "min_success_rate_by_objectif": { "A2": 60, "B1": 65, "B2": 70 },
     "excluded_results": "resultats liés à des events categorie='Comportement' (clic aléatoire, abandon) — jamais dans les stats de niveau"
   },
 
@@ -101,9 +102,10 @@
 
   "structures_socle": {
     "_comment": "Seuils 'socle OK' rectifiés (l'inversion 65/60 du référentiel Gemini aurait exigé moins de grammaire pour la naturalisation que pour la résidence).",
-    "min_success_rate_by_objectif": { "A2": 60, "B1": 65 },
+    "min_success_rate_by_objectif": { "A2": 60, "B1": 65, "B2": 70 },
     "priorites_A2": ["présent verbes usuels (être, avoir, aller, faire, prendre, vouloir, pouvoir)", "futur proche", "interrogation simple (est-ce que, où, quand, combien)", "articles définis/indéfinis/partitifs"],
     "priorites_B1": ["alternance imparfait/passé composé (critique EE/EO)", "conditionnel de politesse (formules figées)", "connecteurs logiques de base (parce que, mais, donc, alors)", "pronoms relatifs simples (qui, que)"],
+    "priorites_B2": ["argumentation structurée (thèse / arguments / conclusion)", "hypothèse et concession (si, même si, bien que)", "registre soutenu adapté à l'entretien de naturalisation", "connecteurs d'opposition et de cause complexes"],
     "hors_scope_v1": ["passé simple", "plus-que-parfait", "subjonctif (hors 'il faut que')", "conditionnel passé"]
   },
 

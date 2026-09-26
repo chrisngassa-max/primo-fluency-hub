@@ -1,0 +1,62 @@
+{
+  "_comment": "Fixture: one RESTRICTIVE Sandbox isolation missing (unexpected disappearance). Expected: evidence FAIL.",
+  "project_ref": "gudcenhmzlcvhgbgklzw",
+  "captured_at_utc": "2026-09-17T22:00:00Z",
+  "anon_table_privilege_count": 0,
+  "anon_dangerous_privilege_tables": [],
+  "anon_sensitive_access": [],
+  "manifestly_permissive_policies": [],
+  "sandbox_isolation_policies": [
+    {
+      "table": "groups",
+      "policy": "Sandbox isolation",
+      "cmd": "SELECT",
+      "permissive": "RESTRICTIVE",
+      "qual": "(sandbox_session_id IS NULL) OR can_access_sandbox(sandbox_session_id)"
+    },
+    {
+      "table": "group_members",
+      "policy": "Sandbox isolation",
+      "cmd": "SELECT",
+      "permissive": "RESTRICTIVE",
+      "qual": "(sandbox_session_id IS NULL) OR can_access_sandbox(sandbox_session_id)"
+    },
+    {
+      "table": "sessions",
+      "policy": "Sandbox isolation",
+      "cmd": "SELECT",
+      "permissive": "RESTRICTIVE",
+      "qual": "(sandbox_session_id IS NULL) OR can_access_sandbox(sandbox_session_id)"
+    },
+    {
+      "table": "devoirs",
+      "policy": "Sandbox isolation",
+      "cmd": "SELECT",
+      "permissive": "RESTRICTIVE",
+      "qual": "(sandbox_session_id IS NULL) OR can_access_sandbox(sandbox_session_id)"
+    },
+    {
+      "table": "resultats",
+      "policy": "Sandbox isolation",
+      "cmd": "SELECT",
+      "permissive": "RESTRICTIVE",
+      "qual": "(sandbox_session_id IS NULL) OR can_access_sandbox(sandbox_session_id)"
+    }
+  ],
+  "permissive_sandbox_is_null_policies": [],
+  "account_function_stubs": {
+    "bootstrap-test-accounts": { "verify_jwt": true, "version": 10 },
+    "create-formateur-account": { "verify_jwt": true, "version": 10 }
+  },
+  "default_privileges_supabase_admin_public": {
+    "tables_grants_anon": true,
+    "sequences_grants_anon": true,
+    "functions_grants_anon": true
+  },
+  "critical_counts": {
+    "users": 0,
+    "profiles": 0,
+    "groups": 0,
+    "memberships": 0
+  }
+}

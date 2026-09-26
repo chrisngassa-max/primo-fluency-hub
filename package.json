@@ -35,7 +35,11 @@
     "dry-run:pre-session-selection": "node --import tsx scripts/pre-session-selection-dry-run.mjs",
     "dry-run:lot8-b2-ce": "node --import tsx scripts/generate-lot8-b2-ce-dry-run.mjs",
     "revalidate:lot8-b2-ce": "node --import tsx scripts/revalidate-lot8-b2-ce.mjs",
-    "dry-run:apply-lot8-b2-ce": "node --import tsx scripts/apply-lot8-b2-ce.mjs"
+    "dry-run:apply-lot8-b2-ce": "node --import tsx scripts/apply-lot8-b2-ce.mjs",
+    "security:check": "node scripts/security/run-security-check.mjs",
+    "security:selftest": "node scripts/security/run-security-selftest.mjs",
+    "security:check:evidence": "node scripts/security/run-security-check.mjs --evidence",
+    "security:validate-evidence": "node scripts/security/validate-remote-evidence.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

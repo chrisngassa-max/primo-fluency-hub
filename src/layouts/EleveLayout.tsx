@@ -17,6 +17,7 @@ import AppFooter from "@/components/AppFooter";
 import { CapPublicHeader } from "@/components/CapBrand";
 import InterventionPlayer from "@/components/eleve/InterventionPlayer";
 import OfflineStatus from "@/components/eleve/OfflineStatus";
+import AvatarAssistantPanel from "@/components/eleve/AvatarAssistantPanel";
 
 const navItems = [
   { title: "Accueil", path: "/eleve", icon: Home },
@@ -68,6 +69,7 @@ const EleveLayout = () => {
     <div className="cap-screen min-h-screen">
       <OfflineStatus />
       <InterventionPlayer sessionId={activeSessionId ?? null} />
+      <AvatarAssistantPanel pageHint={location.pathname} />
       <CapPublicHeader avatar={initiales.slice(0, 2)} showMenu={false} />
 
       <nav className="hidden border-b bg-white/90 px-4 shadow-sm backdrop-blur lg:flex">

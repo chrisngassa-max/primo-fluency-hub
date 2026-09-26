@@ -1,0 +1,78 @@
+{
+  "version": "captcf-avatar-faq-v1",
+  "disclaimer": "Je suis un assistant CapTCF local. Je n’invente pas de règles administratives et je ne donne pas de résultat officiel TCF.",
+  "entries": [
+    {
+      "id": "consigne-lire",
+      "intent": "exercice_consigne",
+      "keywords": ["consigne", "que faire", "comment faire", "instruction", "exercice"],
+      "question_examples": ["Que dois-je faire ?", "Je ne comprends pas la consigne"],
+      "answer_fr": "Lis d’abord la consigne en entier. Repère le verbe d’action (écouter, cocher, écrire, parler). Fais une seule chose à la fois. Si un mot est difficile, demande « Expliquer ».",
+      "example_fr": "Exemple : « Cochez la bonne réponse » → tu choisis A, B ou C, rien d’autre.",
+      "reformulation_fr": "La consigne dit exactement ce qu’il faut faire. Commence par le verbe principal."
+    },
+    {
+      "id": "correction-comprendre",
+      "intent": "exercice_correction",
+      "keywords": ["correction", "pourquoi faux", "bonne réponse", "erreur", "corriger", "faux"],
+      "question_examples": ["Pourquoi c’est faux ?", "Explique la correction"],
+      "answer_fr": "La correction montre la réponse attendue et souvent un détail du texte ou de l’audio. Compare ta réponse et la bonne réponse : cherche le mot ou l’idée qui change le sens.",
+      "example_fr": "Exemple : tu as choisi « mardi », la correction dit « mercredi » → l’audio disait bien « mercredi ».",
+      "reformulation_fr": "Regarde ce qui manque ou ce qui est différent entre ta réponse et la correction."
+    },
+    {
+      "id": "parcours-tcf",
+      "intent": "parcours_tcf",
+      "keywords": ["tcf", "épreuve", "compréhension orale", "compréhension écrite", "expression", "ce", "co", "ee", "eo"],
+      "question_examples": ["C’est quoi le TCF ?", "Quelles sont les épreuves ?"],
+      "answer_fr": "Le TCF IRN prépare quatre compétences : compréhension orale (CO), compréhension écrite (CE), expression écrite (EE) et expression orale (EO). CapTCF t’entraîne séance par séance selon ton objectif (A2, B1 ou B2).",
+      "example_fr": "Exemple : une séance peut commencer par un dialogue (CO) puis un QCM (CE).",
+      "reformulation_fr": "Tu t’entraînes aux quatre parties du TCF, une compétence après l’autre."
+    },
+    {
+      "id": "niveaux-a2-b1-b2",
+      "intent": "niveaux_objectifs",
+      "keywords": ["a2", "b1", "b2", "niveau", "naturalisation", "résident", "pluriannuelle", "objectif"],
+      "question_examples": ["Quel niveau pour la naturalisation ?", "C’est quoi A2 B1 B2 ?"],
+      "answer_fr": "Depuis le 1er janvier 2026 (règle IRN) : A2 = carte de séjour pluriannuelle, B1 = carte de résident, B2 = naturalisation. CapTCF suit ces objectifs. Pour une décision personnelle, demande à ton formateur ou un service officiel.",
+      "example_fr": "Exemple : objectif naturalisation → niveau B2 sur CapTCF.",
+      "reformulation_fr": "A2, B1 et B2 sont des niveaux. Naturalisation demande B2 depuis 2026."
+    },
+    {
+      "id": "mot-difficile",
+      "intent": "lexique",
+      "keywords": ["mot", "signifie", "veut dire", "traduire", "vocabulaire", "lexique"],
+      "question_examples": ["Que veut dire ce mot ?", "Aide-moi pour le vocabulaire"],
+      "answer_fr": "Pour un mot difficile : 1) lis la phrase autour du mot, 2) cherche un synonyme simple, 3) demande un exemple. Sur CapTCF, le lexique de séance liste souvent les mots importants.",
+      "example_fr": "Exemple : « rendez-vous » = moment où tu vas voir quelqu’un (médecin, mairie).",
+      "reformulation_fr": "Utilise le contexte de la phrase, puis un exemple simple."
+    },
+    {
+      "id": "seance-deroule",
+      "intent": "seance",
+      "keywords": ["séance", "seance", "aujourd’hui", "ma séance", "durée", "déroulement"],
+      "question_examples": ["Que faire dans ma séance ?", "Combien de temps ?"],
+      "answer_fr": "Ouvre « Ma séance ». Suis les activités dans l’ordre. Chaque activité a une consigne. Si tu es bloqué, repose la question avec le titre de l’activité.",
+      "example_fr": "Exemple : lexique → écoute → QCM → expression courte.",
+      "reformulation_fr": "Va dans Ma séance et avance activité par activité."
+    }
+  ],
+  "refusals": {
+    "admin": {
+      "keywords": ["préfecture", "prefecture", "délai", "delai", "dossier", "papier", "éligible", "eligible", "avocat", "titre de séjour officiel"],
+      "answer_fr": "Je ne peux pas donner de conseil administratif (préfecture, délais, éligibilité). Demande à ton formateur ou consulte un service officiel (service-public.fr)."
+    },
+    "resultats_officiels": {
+      "keywords": ["score officiel", "résultat officiel", "resultat officiel", "certificat", "attestation tcf", "diplôme", "diplome"],
+      "answer_fr": "Je ne donne pas de résultat ou score officiel TCF. Seul l’organisme certificateur valide ton niveau. Ici, tu t’entraînes seulement."
+    },
+    "autre_eleve": {
+      "keywords": ["autre élève", "autre eleve", "mon camarade", "sa note", "ses résultats", "ses resultats"],
+      "answer_fr": "Je ne parle pas des données d’un autre élève. Je peux seulement t’aider sur ton exercice ou une notion de français."
+    }
+  },
+  "fallback": {
+    "answer_fr": "Je ne suis pas sûr. Reformule avec des mots simples (consigne, correction, mot, TCF, séance). Je réponds seulement avec la FAQ CapTCF — pas d’invention.",
+    "uncertain": true
+  }
+}
