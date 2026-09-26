@@ -1,10 +1,15 @@
 /**
- * Feature flag client — Phase A : toujours faux en prod tant que Phase B non autorisée.
- * Ne jamais activer sans autorisation explicite de déploiement + secrets.
+ * Feature flag client — Lot 3B-3 Phase B.
+ * - explicit VITE_CAPTCF_ASSISTANT_AI_LIVE=true|false wins
+ * - sinon : activé automatiquement en build production (import.meta.env.PROD)
+ * Kill-switch serveur CAPTCF_ASSISTANT_AI_ENABLED reste obligatoire pour tout appel modèle.
  */
 export function isAssistantAiLiveEnabled(): boolean {
   try {
-    return import.meta.env.VITE_CAPTCF_ASSISTANT_AI_LIVE === "true";
+    const explicit = import.meta.env.VITE_CAPTCF_ASSISTANT_AI_LIVE;
+    if (explicit === "true") return true;
+    if (explicit === "false") return false;
+    return import.meta.env.PROD === true;
   } catch {
     return false;
   }
