@@ -19,6 +19,7 @@ import {
   type ExerciceStatut,
   type SeanceExercice,
 } from "@/hooks/useEleveSeances";
+import { useSyncAideContextFromSeance } from "@/hooks/useSyncAideContextFromSeance";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -63,6 +64,9 @@ const MaSeance = () => {
 
   // Couche temps réel : rafraîchit la liste persistée + notifie les nouveaux envois.
   useSeancesLiveRefresh(seanceIds, { notify: true });
+
+  // Panneau Aide : titre / exo / niveau — jamais d’id élève ni de score.
+  useSyncAideContextFromSeance({ seance, exercices });
 
   const openExercice = (ex: SeanceExercice) => {
     if (ex.devoirId) navigate(`/eleve/devoirs/${ex.devoirId}`);

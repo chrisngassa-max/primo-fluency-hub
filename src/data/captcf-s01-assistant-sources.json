@@ -1,0 +1,102 @@
+{
+  "version": "captcf-s01-assistant-sources-v1",
+  "session_code": "S01",
+  "titre": "Accueil, objectifs et cinq thèmes",
+  "lecon_defaut": "Accueil et présentation du parcours CapTCF",
+  "objectifs": [
+    "Présenter le parcours cumulatif A2/B1/B2 et les cinq thèmes civiques",
+    "Réaliser un diagnostic non certificatif A1-B2",
+    "Distinguer droit, devoir et règle"
+  ],
+  "faits_valides": [
+    "Le parcours vers la carte de séjour pluriannuelle (CSP) dure 80 heures.",
+    "Il comprend 25 séances collectives de 3 heures chacune.",
+    "Il comprend deux évaluations hors séances : E1 et E2.",
+    "Le parcours couvre cinq thèmes civiques officiels.",
+    "Un droit, un devoir et une règle sont trois notions différentes.",
+    "Un droit est quelque chose que l’on peut demander (ex. droit à la santé).",
+    "Un devoir est quelque chose que l’on doit faire (ex. respecter la loi).",
+    "Une règle est une consigne précise (ex. règlement intérieur)."
+  ],
+  "lexique": [
+    {
+      "mot": "parcours",
+      "definition_simple": "Ensemble des séances et évaluations à suivre du début à la fin.",
+      "exemple": "Le parcours dure quatre-vingts heures."
+    },
+    {
+      "mot": "objectif",
+      "definition_simple": "Le but que l’on veut atteindre.",
+      "exemple": "Son objectif est la carte de séjour pluriannuelle."
+    },
+    {
+      "mot": "séance",
+      "definition_simple": "Un cours collectif d’une durée fixe.",
+      "exemple": "Chaque séance dure trois heures."
+    },
+    {
+      "mot": "droit",
+      "definition_simple": "Ce qu’une personne peut demander ou faire, garanti par la loi.",
+      "exemple": "Le droit à la santé."
+    },
+    {
+      "mot": "devoir",
+      "definition_simple": "Ce qu’une personne doit faire.",
+      "exemple": "Respecter la loi est un devoir."
+    },
+    {
+      "mot": "règle",
+      "definition_simple": "Une consigne précise, souvent locale.",
+      "exemple": "Une règle du règlement intérieur."
+    }
+  ],
+  "variantes": [
+    {
+      "niveau": "A1",
+      "consigne": "Écoutez le dialogue. Associez chaque personnage à son rôle, puis complétez les phrases avec les mots de la liste.",
+      "aides": [
+        "Awa = apprenante",
+        "Mme Rossi = formatrice",
+        "Mots utiles : parcours, objectif, séance"
+      ],
+      "questions_sans_reponse": [
+        "Combien d'heures dure le parcours d'Awa ?",
+        "Awa veut obtenir sa carte de séjour pluriannuelle."
+      ]
+    },
+    {
+      "niveau": "A2",
+      "consigne": "Racontez avec vos mots ce que veut Awa et comment se déroule son parcours (durée, nombre de séances, évaluations).",
+      "aides": ["Pensez à utiliser : parcours, séance, objectif, examen"],
+      "questions_sans_reponse": [
+        "Combien de séances collectives Awa va-t-elle suivre ?",
+        "Citez un des cinq thèmes civiques mentionnés par Mme Rossi."
+      ]
+    },
+    {
+      "niveau": "B1",
+      "consigne": "Expliquez avec vos propres mots la différence entre un droit, un devoir et une règle, puis justifiez pourquoi le parcours comprend deux évaluations distinctes (E1 et E2).",
+      "aides": [],
+      "questions_sans_reponse": [
+        "Reformulez la différence entre droit, devoir et règle.",
+        "Comparez le rôle de l'évaluation intermédiaire (E1) et de l'évaluation finale (E2)."
+      ]
+    },
+    {
+      "niveau": "B2",
+      "consigne": "Analysez l'organisation du parcours (progressivité, double évaluation, cinq thèmes civiques) et nuancez son intérêt pour un adulte primo-arrivant.",
+      "aides": [],
+      "questions_sans_reponse": [
+        "En quoi la distinction entre droit, devoir et règle est-elle utile pour un nouvel arrivant ?",
+        "Quels sont les avantages et les limites d'un parcours de 80 heures réparti sur 25 semaines ?"
+      ]
+    }
+  ],
+  "mini_exercices": {
+    "A1": "Dis à voix haute : « Un droit, c’est… / Un devoir, c’est… / Une règle, c’est… » avec un exemple simple.",
+    "A2": "Écris 2 phrases : ton objectif + la durée du parcours (sans regarder le corrigé).",
+    "B1": "Explique en 3 phrases la différence droit / devoir / règle, puis cite à quoi servent E1 et E2.",
+    "B2": "Argumente en 4–5 phrases : avantages et limites d’un parcours de 80 h pour un adulte peu disponible."
+  },
+  "disclaimer": "Assistant CapTCF contextuel (séance pilote S01). Sources curriculum validées. Je ne donne pas la réponse d’une évaluation."
+}

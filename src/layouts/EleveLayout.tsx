@@ -18,6 +18,7 @@ import { CapPublicHeader } from "@/components/CapBrand";
 import InterventionPlayer from "@/components/eleve/InterventionPlayer";
 import OfflineStatus from "@/components/eleve/OfflineStatus";
 import AvatarAssistantPanel from "@/components/eleve/AvatarAssistantPanel";
+import { AidePedagogiqueProvider } from "@/contexts/AidePedagogiqueContext";
 
 const navItems = [
   { title: "Accueil", path: "/eleve", icon: Home },
@@ -66,79 +67,81 @@ const EleveLayout = () => {
   });
 
   return (
-    <div className="cap-screen min-h-screen">
-      <OfflineStatus />
-      <InterventionPlayer sessionId={activeSessionId ?? null} />
-      <AvatarAssistantPanel pageHint={location.pathname} />
-      <CapPublicHeader avatar={initiales.slice(0, 2)} showMenu={false} />
+    <AidePedagogiqueProvider>
+      <div className="cap-screen min-h-screen">
+        <OfflineStatus />
+        <InterventionPlayer sessionId={activeSessionId ?? null} />
+        <AvatarAssistantPanel pageHint={location.pathname} />
+        <CapPublicHeader avatar={initiales.slice(0, 2)} showMenu={false} />
 
-      <nav className="hidden border-b bg-white/90 px-4 shadow-sm backdrop-blur lg:flex">
-        <div className="mx-auto flex w-full max-w-5xl gap-1 py-2">
-          {navItems.map((item) => (
+        <nav className="hidden border-b bg-white/90 px-4 shadow-sm backdrop-blur lg:flex">
+          <div className="mx-auto flex w-full max-w-5xl gap-1 py-2">
+            {navItems.map((item) => (
+              <button
+                key={item.path}
+                onClick={() => navigate(item.path)}
+                className={cn(
+                  "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors",
+                  isActive(item.path)
+                    ? "bg-[#e7e9f1] text-[#0b234a]"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                )}
+              >
+                <item.icon className="h-4 w-4" />
+                <span>{item.title}</span>
+              </button>
+            ))}
             <button
-              key={item.path}
-              onClick={() => navigate(item.path)}
-              className={cn(
-                "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors",
-                isActive(item.path)
-                  ? "bg-[#e7e9f1] text-[#0b234a]"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
-              )}
+              onClick={signOut}
+              className="ml-auto rounded-lg px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
-              <item.icon className="h-4 w-4" />
-              <span>{item.title}</span>
+              Se déconnecter
             </button>
-          ))}
-          <button
-            onClick={signOut}
-            className="ml-auto rounded-lg px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          >
-            Se déconnecter
-          </button>
+          </div>
+        </nav>
+
+        <main className="mx-auto w-full max-w-5xl px-5 py-8 pb-32 lg:px-8 lg:pb-8">
+          <Outlet />
+        </main>
+
+        <div className="hidden lg:block">
+          <AppFooter />
         </div>
-      </nav>
 
-      <main className="mx-auto w-full max-w-5xl px-5 py-8 pb-32 lg:px-8 lg:pb-8">
-        <Outlet />
-      </main>
-
-      <div className="hidden lg:block">
-        <AppFooter />
+        <nav
+          className="fixed inset-x-0 bottom-0 z-50 grid border-t border-black/10 bg-white/95 px-1 py-2 shadow-[0_-6px_24px_rgba(15,23,42,0.12)] backdrop-blur lg:hidden"
+          style={{ gridTemplateColumns: `repeat(${navItems.length}, minmax(0, 1fr))` }}
+        >
+          {navItems.map((item) => {
+            const active = isActive(item.path);
+            return (
+              <button
+                key={item.path}
+                onClick={() => navigate(item.path)}
+                className="flex min-w-0 flex-col items-center gap-1 px-0.5 py-1 text-center transition-colors"
+              >
+                <span
+                  className={cn(
+                    "flex h-9 w-9 items-center justify-center rounded-lg transition-colors",
+                    active ? "bg-[#e7e9f1] text-[#0b234a]" : "text-zinc-500"
+                  )}
+                >
+                  <item.icon className="h-6 w-6" strokeWidth={active ? 2.6 : 2.2} />
+                </span>
+                <span
+                  className={cn(
+                    "text-[10px] font-medium leading-[1.05]",
+                    active ? "font-extrabold text-[#0b234a]" : "text-zinc-500"
+                  )}
+                >
+                  {item.title}
+                </span>
+              </button>
+            );
+          })}
+        </nav>
       </div>
-
-      <nav
-        className="fixed inset-x-0 bottom-0 z-50 grid border-t border-black/10 bg-white/95 px-1 py-2 shadow-[0_-6px_24px_rgba(15,23,42,0.12)] backdrop-blur lg:hidden"
-        style={{ gridTemplateColumns: `repeat(${navItems.length}, minmax(0, 1fr))` }}
-      >
-        {navItems.map((item) => {
-          const active = isActive(item.path);
-          return (
-            <button
-              key={item.path}
-              onClick={() => navigate(item.path)}
-              className="flex min-w-0 flex-col items-center gap-1 px-0.5 py-1 text-center transition-colors"
-            >
-              <span
-                className={cn(
-                  "flex h-9 w-9 items-center justify-center rounded-lg transition-colors",
-                  active ? "bg-[#e7e9f1] text-[#0b234a]" : "text-zinc-500"
-                )}
-              >
-                <item.icon className="h-6 w-6" strokeWidth={active ? 2.6 : 2.2} />
-              </span>
-              <span
-                className={cn(
-                  "text-[10px] font-medium leading-[1.05]",
-                  active ? "font-extrabold text-[#0b234a]" : "text-zinc-500"
-                )}
-              >
-                {item.title}
-              </span>
-            </button>
-          );
-        })}
-      </nav>
-    </div>
+    </AidePedagogiqueProvider>
   );
 };
 
