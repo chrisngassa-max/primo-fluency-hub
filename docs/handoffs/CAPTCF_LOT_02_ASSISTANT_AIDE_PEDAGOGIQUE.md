@@ -1,6 +1,72 @@
-# CapTCF — Lot 2 : cartographie et arrêt avant implémentation
+# CapTCF — Lot 2A implémenté localement ; Lot 2B non autorisé
 
-27 septembre 2026. **Lot 2 non terminé. Aucun code fonctionnel Lot 2 ajouté.**
+## État courant — décision propriétaire Lot 2A
+
+**Lot 2A fonctionnel en code local, tests ciblés et build réussis. Aucun déploiement.** Cette section remplace les consignes d'arrêt historiques ci-dessous pour le périmètre minimal autorisé. Le Lot 2B (compteurs protégés et évolution de base) reste non autorisé. Les limites audio/indices acceptées ne constituent plus un motif d'arrêt du Lot 2A.
+
+- Worktree : `C:\Users\Sofiane\Documents\Codex\2026-09-17\files-pasted-by-the-user-mission\CAPTCF-ASSISTANT-PHASEB`.
+- Branche : `captcf-lot-02-assistant-aide-pedagogique` ; départ vérifié `8fad621e5c051f671863105a46aa0ecc2d97a5d2`.
+- Commit code : `88c52658c76b7202483a49592c28320f8e7819c3` (15 fichiers). Documentation dans un commit séparé après ce SHA.
+- Production : inchangée par ce lot ; dernière validation consignée au merge PR #38 `0ce79a36c0613e369d54a6a4db9422e87b3c4fa5`, Edge `captcf-assistant-qa` v6/JWT. Pas de nouvelle vérification distante dans cette reprise. `origin/main` local reste cette référence ; le fetch précédent avait échoué sur Schannel, sans changer TLS/identifiants.
+
+### Fonctions réalisées
+
+Nouveau chemin `kind=pedagogique` authentifié dans l'Edge existante, avant le chemin IA ; aucun import/appel de modèle dans le module pédagogique. Le client transmet question et sélecteurs exercice/item + devoir OU séance, tentative si disponible. Les données d'identité/mode/remise/compteurs/textes client ne sont pas des preuves.
+
+Chargement : client JWT/RLS pour devoir, séance, appartenance au groupe, test actif, tentative et routage ; client serveur pour le contenu non lisible par l'élève, après validation d'accès. Pilote limité aux quatre exercices Louise listés ci-dessous. Publication de famille, source validée, facts_hash commun et hash de contenu concordants contrôlés. L'item doit également correspondre à la variante publiée (instruction/type/choix/justification), pour ne pas servir un corrigé édité sans validation.
+
+- Consigne réelle avec étapes simples déterministes adaptées au type, compétence réelle et objectif de séance disponible. Aucun choix/corrigé dans cette réponse.
+- Explication de l'item : tentative du même élève/exercice et du même devoir (assignment) ou de la même séance, `completed` + `completed_at` + correction libérée, hors évaluation ; justification de la variante validée seulement. Les anciennes tentatives sans rattachement précis ne sont pas assimilées à une remise autorisée.
+- Mode déterminé par le contexte serveur : `devoirs.contexte`, bloc de séance diffusé ou rattachement au parcours intégré ; épreuve `test_sessions` en cours prioritaire. Mode inconnu => refus. Diagnostic/test => restrictions d'évaluation.
+- Recommandation : dernière `routing_decisions` du contexte, `reason_student` et devoir généré encore accessible à l'élève ; aucun calcul readiness/IPE, aucun champ interne exposé. En devoir, après remise seulement ; refus en évaluation. Destination reconstruite sur liste blanche.
+- Atelier : insertion serveur construite dans `session_live_events`, événement `aide_demandee`, après revalidation de séance/appartenance/exercice ; catégorie contrôlée, résumé fixe, aucun texte libre client ni compteur inventé. En évaluation, catégorie technique uniquement. Aucun événement réel envoyé pendant les tests : store en mémoire.
+- Projection externe dédiée et testée : seulement mode/compétence/niveau/type/état de remise sous forme contrôlée. Aucun UUID, nom, email, question libre, objectif libre, correction ou routage. Cette projection n'est envoyée à aucun modèle.
+
+Frontend branché dans DevoirPassation, SeanceApprenant et BilanSeance via un hook de sélecteurs. Le panneau affiche les réponses/refus serveur, permet de choisir l'item, propose « Demander au professeur » et « Problème technique ». Une réponse arrivée après changement de contexte est ignorée ; l'échange affiché est effacé au changement de contexte/utilisateur. Sur erreur serveur, refus/fallback explicite, sans fabriquer une explication locale de l'exercice.
+
+### Limites acceptées et limites de recette
+
+Les cinq noms d'outils sont conservés, sans nouvel agent ni sixième outil. Aucun indice Louise validé disponible : message explicite, aucune substitution par justification, aucune écriture. Replay : refus en évaluation ; sinon annonce du max_listens avec `enforcement=client_existing`, sans URL, lancement audio ou compteur serveur. Pas de persistance d'indices, pas de protection multi-onglets, pas de modification des lecteurs existants. Pas de correction si données manquantes/non fiables. Recommandation limitée aux décisions portant un devoir généré et autorisé ; absence => refus, jamais nouvelle décision IPE.
+
+La fonctionnalité exige le futur déploiement coordonné du frontend et de l'Edge pour être utilisable en production. Aucun smoke distant Lot 2A réalisé et aucune modification des données Louise. La validation locale n'atteste pas de nouveaux enregistrements réels disponibles, d'une correction déjà libérée pour un élève réel, ni de nouvelles politiques RLS distantes. Le chemin échoue explicitement si une lecture est refusée ou si un rattachement manque.
+
+### Vérification réellement exécutée
+
+- 18/18 tests serveur Lot 2A, avec variantes structurelles A1/A2/B1/B2, faux contexte, accès étranger, correction, évaluation, replay, routage, Atelier et zéro appel réseau modèle.
+- 4/4 tests panneau : consigne serveur, refus/fallback, explication libérée, action d'aide humaine.
+- 26/26 tests accueil existants : `accueil-navigation.test.ts` (10), `accueil-conversations-reference.test.ts` (1), `avatar-assistant-contextual.test.ts` (7), `avatar-assistant-preflight-3b3.test.ts` (8).
+- Total : **48/48, 6 fichiers**. Dernière exécution après modifications finales du panneau, suivie de `npm run build` PASS. Avertissements généraux Vite/Browserslist inchangés, non corrigés.
+- TypeScript ciblé sur le nouveau module serveur : PASS. `git diff --check` : PASS.
+- Tests écrits avant leur implémentation respective. Premier lancement serveur bloqué avant exécution par `spawn EPERM` de la sonde optionnelle Vite `net use` : pas de prétention à une exécution rouge serveur à ce stade. Les quatre tests panneau ont ensuite été exécutés rouges (4 échecs fonctionnels), puis verts après branchement.
+- Aucun changement de dépendances : `@testing-library/dom` absent, tests panneau écrits avec React DOM/act existants. Pour Vite sous cette sandbox Windows, préchargement local hors dépôt qui désactive uniquement la sonde optionnelle de lecteurs réseau `net use` ; exécution Vitest avec `--pool=threads`. Ni mocks du code métier ni modification de node_modules pour obtenir les PASS. Le préchargement est conservé dans le dossier `work/` de la conversation, pas dans le code applicatif.
+
+Commande ciblée (avec ce préchargement local dans NODE_OPTIONS si nécessaire dans la sandbox) :
+
+```text
+npm.cmd test -- --pool=threads supabase/functions/_shared/assistant-pedagogique/pedagogique.test.ts src/test/assistant-pedagogique-panel.test.tsx supabase/functions/_shared/assistant-accueil/accueil-navigation.test.ts src/test/accueil-conversations-reference.test.ts src/test/avatar-assistant-contextual.test.ts src/test/avatar-assistant-preflight-3b3.test.ts
+npm.cmd run build
+```
+
+### Fichiers du commit code
+
+- `supabase/functions/_shared/assistant-pedagogique/` : `store.ts`, `load.ts`, `index.ts`, `fixtures.ts`, `pedagogique.test.ts`.
+- `supabase/functions/captcf-assistant-qa/index.ts`.
+- `src/lib/avatar/answerPedagogicalQuestion.ts`, `answerContextualQuestion.ts`, `pedagogicalTypes.ts`.
+- `src/hooks/usePedagogicalHelpContext.ts` ; `src/components/eleve/AvatarAssistantPanel.tsx`.
+- `src/pages/eleve/DevoirPassation.tsx`, `SeanceApprenant.tsx`, `BilanSeance.tsx`.
+- `src/test/assistant-pedagogique-panel.test.tsx`.
+
+Fixtures : les identifiants d'exercices, source, facts_hash, nombres d'items et quotas sont ceux déjà constatés dans le handoff ; textes, affectations, tentatives et apprenant sont synthétiques, explicitement marqués. Aucun indice Louise inventé. Les propositions SQL documentaires préexistantes sont conservées sous `docs/handoffs/proposals/`, hors migrations et hors code fonctionnel ; elles ne sont ni autorisées ni appliquées.
+
+Interdictions respectées : aucun appel Gemini, aucune migration, mutation Supabase distante, publication, push, PR, déploiement ou changement de secret. Aucun exercice distant modifié. Aucun fichier métier/non suivi de `D:\sites\tcf pro` touché ; seules les métadonnées Git partagées nécessaires aux commits locaux ont été écrites avec permission. Artefact `supabase/.temp/linked-project.json` conservé et exclu des commits.
+
+### Transmission actuelle
+
+Reprendre CapTCF assistant élève après Lot 2A local, worktree/branche ci-dessus, commit code `88c52658c76b7202483a49592c28320f8e7819c3` puis commit documentaire séparé. Lire d'abord cette section et le handoff Phase B. Lot 2A testé 18 serveur + 4 panneau + 26 accueil, build PASS ; aucune recette/déploiement distant. Production connue au merge PR #38 `0ce79a36c0613e369d54a6a4db9422e87b3c4fa5`, Edge v6 JWT requis, Gemini OFF. Les compteurs serveur et garanties multi-onglets sont explicitement hors Lot 2A ; pas d'indice Louise, replay client_existing. Lot 2B/SQL non autorisé. Conserver les cinq outils, readiness/routing et Atelier. Pilote source/hash/IDs ci-dessous. Préserver D: et ses 124 fichiers non suivis ainsi que linked-project.json. Aucun push, PR, migration, mutation distante, secret ou déploiement sans nouvelle autorisation. Prochain objectif : revue ciblée du diff et préparation d'une recette élève avant toute demande distincte de publication ; réussite : vérifier les parcours autorisés/refusés, séparer preuves locales et recette distante restant à autoriser, conserver les tests ciblés verts. Aucun audit général ni reprise de l'étude de compteurs dans ce cadre.
+
+## Historique — état avant autorisation du Lot 2A
+
+27 septembre 2026. À ce stade antérieur, Lot 2 non terminé, aucun code fonctionnel ajouté. Les paragraphes d'arrêt suivants documentent le périmètre complet devenu Lot 2B ; ils ne bloquent plus le Lot 2A autorisé ci-dessus.
 
 Phase 2 terminée : voir `CAPTCF_LOT_00_01_ASSISTANT_ACCUEIL_PHASE_B.md`. Branche locale créée : `captcf-lot-02-assistant-aide-pedagogique`, depuis `origin/main` actualisé, SHA `0ce79a36c0613e369d54a6a4db9422e87b3c4fa5`. Worktree : `C:\Users\Sofiane\Documents\Codex\2026-09-17\files-pasted-by-the-user-mission\CAPTCF-ASSISTANT-PHASEB`. Dépôt principal D: inchangé.
 
@@ -65,6 +131,20 @@ Après décision explicite sur la proposition, reprendre les 14 tests rouges de 
 
 **Aucune migration, aucun déploiement, aucun push, aucune PR, aucune modification d'exercice distant ni appel Gemini Lot 2.**
 
-## Prompt prêt à transmettre
+## Complément — nouvelle mission du 27 septembre, proposition SQL uniquement
+
+La nouvelle mission maintient le STOP si une migration est indispensable et demande le SQL proposé et son retour arrière. Documents de revue ajoutés hors de `supabase/migrations` :
+
+- `proposals/lot2-help-state.md` : carte ciblée, cycle constaté, hypothèse de tentative stable non confirmée et limites de la proposition.
+- `proposals/lot2-help-state.proposed.sql` : DDL conditionnel de stockage privé, sans accès applicatif ni RPC ; ne pas appliquer.
+- `proposals/lot2-help-state.rollback.sql` : retrait des seuls objets proposés si vides ; refuse la destruction d'un état utilisé.
+
+Constat local supplémentaire : le hook live et l'index in_progress utilisent élève/exercice sans contexte ; le miroir des résultats finalise cette tentative tandis que submit-seance-answer insère une nouvelle tentative completed. Le cycle stable doit être résolu avant l'activation des compteurs. Ni la règle de nouvelle tentative, ni le coût des segments audio, ni la rétention ne sont confirmés par la nouvelle mission.
+
+HEAD de départ inchangé `8fad621e5c051f671863105a46aa0ecc2d97a5d2`, branche existante conservée. Fetch demandé tenté : après levée de la restriction des métadonnées Git, échec Schannel `SEC_E_NO_CREDENTIALS`. `origin/main` local au merge attendu, fraîcheur distante non confirmée. Pas de changement TLS/credentials. Aucun fichier métier de D: modifié.
+
+Aucun test rouge, test accueil ou build exécuté dans cette reprise documentaire ; aucun code fonctionnel Lot 2 ajouté. Aucune donnée distante relue : les faits Louise restent ceux de la lecture antérieure consignée. Aucun commit supplémentaire effectué ; documents laissés pour revue. La prochaine étape est la confirmation du cycle puis la complétion de la proposition, pas l'application du DDL partiel.
+
+## Ancien prompt — remplacé par la transmission actuelle en tête
 
 Reprendre CapTCF dans le worktree `C:\Users\Sofiane\Documents\Codex\2026-09-17\files-pasted-by-the-user-mission\CAPTCF-ASSISTANT-PHASEB`, branche `captcf-lot-02-assistant-aide-pedagogique`. Lire ce handoff et `CAPTCF_LOT_00_01_ASSISTANT_ACCUEIL_PHASE_B.md`. Phase 2 est validée, production `captcf.fr` READY au SHA merge PR #38 `0ce79a36c0613e369d54a6a4db9422e87b3c4fa5`, Edge v6 JWT requis, Gemini OFF, smoke authentifié et nettoyage complets. Tests Phase B : 26/26 dans 4 fichiers et build PASS selon exécution propriétaire. Lot 2 est arrêté avant code : le compteur d'écoute est client, les états candidats sont modifiables par l'élève, aucun compteur transactionnel protégé n'est branché. La proposition de migration est documentaire seulement. Prochain objectif précis : examiner et arrêter une conception minimale de réservation serveur partagée avec le résolveur audio, confirmer le cycle des tentatives, puis demander l'autorisation spécifique nécessaire avant toute évolution de base. Ne pas appliquer de migration ni commencer une implémentation qui prétend garantir le replay sans ce prérequis. Garder exactement les cinq outils autorisés, réutiliser Atelier/readiness/routing, pilote Louise A1/A2/B1/B2 au facts_hash commun indiqué ci-dessus. Préserver intégralement `D:\sites\tcf pro` et ses fichiers non suivis. Aucun push, PR, déploiement, modification de secret ou d'exercice distant. Après levée explicite du blocage : tests rouges des 14 exigences, implémentation locale, tests ciblés/build, commits code puis docs séparés.
