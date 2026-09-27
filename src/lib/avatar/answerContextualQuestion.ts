@@ -23,6 +23,12 @@ import {
   withTimeout,
 } from "./assistantLimits";
 import type { AssistantConsentStatus } from "./assistantConsent";
+import {
+  isAccueilQuestion,
+  modeFromStudentPath,
+  navigationSnapshotFromPage,
+  orchestrateAccueil,
+} from "../../../supabase/functions/_shared/assistant-accueil/orchestrate";
 
 export type AnswerContextualOptions = {
   intent?: PedagogicalIntent | null;
@@ -42,6 +48,15 @@ export type AnswerContextualOptions = {
   recordConsume?: () => void;
   /** Timeout provider injectable (tests). */
   timeoutMs?: number;
+  /** uid de session, uniquement pour l'accueil local. Jamais recopié vers le modèle. */
+  authUserId?: string | null;
+  pagePath?: string | null;
+  ownDevoirs?: {
+    id: string;
+    titre: string;
+    statut: "en_attente" | "fait" | "expire" | "arrete";
+    eleveId: string;
+  }[];
 };
 
 /**
@@ -83,6 +98,41 @@ export async function answerContextualQuestion(
       niveau,
       disclaimer,
       aiInvoked: false,
+    };
+  }
+
+  if (options.authUserId && isAccueilQuestion(trimmed)) {
+    const mode = modeFromStudentPath(options.pagePath);
+    const snapshot = navigationSnapshotFromPage({
+      authUserId: options.authUserId,
+      mode,
+      niveau,
+      sessionCode: context.sessionCode,
+      sessionTitre: context.sessionTitre,
+      activityTitle: context.exerciceTitre,
+      activityRoute: context.exerciceTitre ? options.pagePath ?? null : null,
+      evaluationRoute: mode === "evaluation" ? options.pagePath ?? null : null,
+      pagePath: options.pagePath,
+      devoirs: (options.ownDevoirs ?? []).filter((devoir) => devoir.eleveId === options.authUserId),
+    });
+    const result = orchestrateAccueil({
+      authUserId: options.authUserId,
+      snapshot,
+      question: trimmed,
+      realAiAllowed: false,
+    });
+    return {
+      text: result.publicResponse.text,
+      intent: result.publicResponse.provider === "faq_fallback" ? "faq_fallback" : "accueil",
+      uncertain: result.publicResponse.visibleFallback,
+      refused: result.refused,
+      source: result.publicResponse.provider === "faq_fallback" ? "faq" : "contextual",
+      niveau,
+      disclaimer,
+      aiInvoked: false,
+      provider: result.publicResponse.provider,
+      openRoute: result.tool?.allowed ? result.tool.route ?? null : null,
+      visibleFallback: result.publicResponse.visibleFallback,
     };
   }
 
@@ -176,6 +226,20 @@ export async function answerContextualQuestion(
       "provider_timeout",
     );
     const text = truncateForAssistant(result.text, ASSISTANT_LIMITS.maxResponseChars);
+    if (result.provider === "faq_fallback") {
+      return {
+        text,
+        intent: "faq_fallback",
+        uncertain: true,
+        refused: false,
+        source: "faq",
+        niveau: prepared.niveau,
+        disclaimer,
+        aiInvoked: false,
+        provider: "faq_fallback",
+        visibleFallback: true,
+      };
+    }
     if (isEdgeLike) recordConsume();
     return {
       text,
@@ -208,5 +272,7 @@ function faqFallback(
     niveau,
     disclaimer: faq.disclaimer || disclaimer,
     aiInvoked: false,
+    provider: "faq_fallback",
+    visibleFallback: true,
   };
 }
