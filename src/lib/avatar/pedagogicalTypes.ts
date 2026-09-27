@@ -11,9 +11,13 @@ export type PedagogicalIntent =
 
 /**
  * Contexte séance/exercice affiché et transmis au moteur.
- * Aucune donnée personnelle (id, email, nom, score, …).
+ * Textes d'affichage sans données personnelles. Les sélecteurs internes
+ * ci-dessous sont exclus de toute projection destinée à un modèle.
  */
 export type AidePedagogiqueContext = {
+  /** Sélecteurs internes pour le serveur CapTCF, jamais pour un modèle. */
+  pedagogical?: PedagogicalSelectors | null;
+  pedagogicalItemCount?: number;
   sessionCode: string | null;
   sessionTitre: string | null;
   objectif: string | null;
@@ -22,6 +26,14 @@ export type AidePedagogiqueContext = {
   exerciceTitre: string | null;
   exerciceConsigne: string | null;
   exerciceCompetence: string | null;
+};
+
+export type PedagogicalSelectors = {
+  exerciseId: string;
+  itemIndex: number;
+  devoirId?: string;
+  sessionId?: string;
+  attemptId?: string;
 };
 
 export const DEFAULT_AIDE_CONTEXT: AidePedagogiqueContext = {
