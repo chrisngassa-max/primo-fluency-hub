@@ -7,3 +7,4 @@ export * from "./support-compatibility.ts";
 export * from "./fact-extraction.ts";
 export * from "./publish-mastery-point.ts";
 export * from "./generation-idempotence.ts";
+export * from "./lot05a-c.ts";

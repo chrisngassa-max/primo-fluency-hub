@@ -2,6 +2,11 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import {
   calculateFactsHash,
   evaluateSupportCompatibility,
+  finalizeVariantItemsForPersist,
+  LOT_05A_C_MAX_ITEMS,
+  resolveCorrectifMode,
+  resolveCorrectifPromptItemBounds,
+  selectReusableFacts,
   FACT_EXTRACTION_PROMPT_HEADER,
   getCoLevelContract,
   isKnownCoLevel,
@@ -241,16 +246,51 @@ Deno.serve(async (request) => {
       `CHUNK ${chunk.id} [segments ${(chunk.pedagogical_source_chunk_segments ?? []).map((link: any) => link.segment_id).join(",")}]: ${chunk.content_text}`
     ).join("\n");
 
-    const factResponse = await geminiJson(
-      `${FACT_EXTRACTION_PROMPT_HEADER}\n${sourceContext}`,
-    );
+    const correctifMode = resolveCorrectifMode(body.correctif_05a_c);
+    let facts: DifferentiationFact[] | null = null;
+    if (correctifMode === "lot05a_c") {
+      const { data: siblings, error: siblingError } = await admin.from("differentiation_families")
+        .select("payload")
+        .eq("source_id", source.id)
+        .eq("source_content_hash", source.content_hash)
+        .eq("competence", COMPETENCE)
+        .neq("id", familyId)
+        .neq("review_status", "archived");
+      if (siblingError) throw siblingError;
+      const reusable = selectReusableFacts((siblings ?? []).map((row) => row.payload));
+      if (reusable.status === "diverged") {
+        await admin.from("differentiation_families").update({
+          generation_status: "failed",
+          generation_error: { code: "FACTS_HASH_DIVERGED", hashes: reusable.hashes },
+          generation_completed_at: new Date().toISOString(),
+        }).eq("id", familyId);
+        return json(422, { error: "FACTS_HASH_DIVERGED", family_id: familyId, target_level: targetLevel });
+      }
+      if (reusable.status === "reuse") {
+        const verified = await calculateFactsHash(reusable.facts);
+        if (verified !== reusable.facts_hash) {
+          await admin.from("differentiation_families").update({
+            generation_status: "failed",
+            generation_error: { code: "FACTS_HASH_INVALID" },
+            generation_completed_at: new Date().toISOString(),
+          }).eq("id", familyId);
+          return json(422, { error: "FACTS_HASH_INVALID", family_id: familyId, target_level: targetLevel });
+        }
+        facts = reusable.facts;
+      }
+    }
 
-    const facts: DifferentiationFact[] = normalizeExtractedFacts(factResponse.facts, {
-      sourceId: source.id,
-      transcriptionId: transcription.id,
-      validSegmentIds: new Set(segments.map((segment) => segment.id)),
-      validChunkIds: new Set(chunks.map((chunk) => chunk.id)),
-    });
+    if (!facts) {
+      const factResponse = await geminiJson(
+        `${FACT_EXTRACTION_PROMPT_HEADER}\n${sourceContext}`,
+      );
+      facts = normalizeExtractedFacts(factResponse.facts, {
+        sourceId: source.id,
+        transcriptionId: transcription.id,
+        validSegmentIds: new Set(segments.map((segment) => segment.id)),
+        validChunkIds: new Set(chunks.map((chunk) => chunk.id)),
+      });
+    }
 
     if (facts.length === 0) throw new Error("NO_VERIFIABLE_FACTS");
 
@@ -276,9 +316,15 @@ Deno.serve(async (request) => {
     }
 
     const qcmMax = contract.qcm_max_choices ?? 4;
+    const itemBounds = resolveCorrectifPromptItemBounds(contract, correctifMode);
+    const promptContract = {
+      ...contract,
+      volume_items_min: itemBounds.volume_items_min,
+      volume_items_max: itemBounds.volume_items_max,
+    };
     const itemsResponse = await geminiJson(
-      `Crée ${contract.volume_items_min} à ${contract.volume_items_max} questions ${targetLevel} de compréhension orale depuis ces faits.
-Applique exactement ce contrat: ${JSON.stringify(contract)}.
+      `Crée ${itemBounds.volume_items_min} à ${itemBounds.volume_items_max} questions ${targetLevel} de compréhension orale depuis ces faits.
+Applique exactement ce contrat: ${JSON.stringify(promptContract)}.
 Transformation: ${transformation.id} — ${transformation.rule.expected_evidence ?? transformation.rule.operation}.
 Interdit: inventer des faits, inventer une difficulté B2, exiger une connaissance extérieure, modifier des timestamps.
 JSON {"title":"...","instruction":"...","format":"qcm|vrai_faux|appariement|ordre_chronologique|mixed","items":[{"id":"item_01","type":"qcm","instruction":"...","choices":[{"id":"a","text":"...","is_correct":true},{"id":"b","text":"...","is_correct":false,"distractor_category":"..."}],"fact_refs":["fact_01"],"justification":"..."}]}.
@@ -293,6 +339,21 @@ ${JSON.stringify(facts)}`,
         id: `item_${String(index + 1).padStart(2, "0")}`,
       }))
       : [];
+    const cappedItems = finalizeVariantItemsForPersist(normalizedItems, correctifMode);
+    if (!cappedItems.ok) {
+      await admin.from("differentiation_families").update({
+        generation_status: "failed",
+        generation_error: { code: cappedItems.error, count: cappedItems.count, max: cappedItems.max },
+        generation_completed_at: new Date().toISOString(),
+      }).eq("id", familyId);
+      return json(422, {
+        error: cappedItems.error,
+        count: cappedItems.count,
+        max: cappedItems.max,
+        family_id: familyId,
+        target_level: targetLevel,
+      });
+    }
 
     const transformationId = transformationIdFor(targetLevel);
     const family = {
@@ -331,7 +392,7 @@ ${JSON.stringify(facts)}`,
             }],
           exercise: {
             ...itemsResponse,
-            items: normalizedItems,
+            items: cappedItems.items,
             steps: ["Écouter", "Répondre"],
             expected_output: "Réponses aux questions",
           },
@@ -348,6 +409,8 @@ ${JSON.stringify(facts)}`,
         target_level: targetLevel,
         referential_version: referentialVersion,
         support_compatibility: compatibility,
+        lot_05a_c: correctifMode === "lot05a_c",
+        max_items: correctifMode === "lot05a_c" ? LOT_05A_C_MAX_ITEMS : null,
       },
       validation_report: { status: "not_run", blocking: [], warnings: [], requires_human_review: [] },
     } as DifferentiationFamilySliceV1;
@@ -368,6 +431,7 @@ ${JSON.stringify(facts)}`,
       sourceHashPresent: hashPresent,
       sourceHashCoherent: hashPresent && family.source_document.content_hash === source.content_hash,
       originalMp3Available: Boolean(source.storage_bucket && source.storage_path),
+      maxItems: correctifMode === "lot05a_c" ? LOT_05A_C_MAX_ITEMS : undefined,
       factualProvenancePresent: facts.every((fact) =>
         Boolean(fact.provenance?.segment_refs?.length && fact.provenance?.chunk_refs?.length && fact.provenance?.quote)
       ),
