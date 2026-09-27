@@ -72,7 +72,8 @@ export type ContextualAssistantAnswer = {
     | "refuse_auth"
     | "refuse_consent"
     | "refuse_quota"
-    | "faq_fallback";
+    | "faq_fallback"
+    | "accueil";
   uncertain: boolean;
   refused: boolean;
   source: "contextual" | "faq" | "refuse";
@@ -80,4 +81,9 @@ export type ContextualAssistantAnswer = {
   disclaimer: string;
   /** True si un provider IA a réellement été invoqué (pas FAQ / refus). */
   aiInvoked?: boolean;
+  /** `faq_fallback` quand la réponse locale est le recours visible. */
+  provider?: "faq_fallback" | "server_context";
+  /** Route déjà filtrée par la liste blanche, si l'accueil en ouvre une. */
+  openRoute?: string | null;
+  visibleFallback?: boolean;
 };
