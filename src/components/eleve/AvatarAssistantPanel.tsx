@@ -1,4 +1,5 @@
 import { FormEvent, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { HelpCircle, MessageCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAidePedagogique } from "@/contexts/AidePedagogiqueContext";
@@ -15,6 +16,7 @@ import {
   type AssistantConsentStatus,
 } from "@/lib/avatar/assistantConsent";
 import { cn } from "@/lib/utils";
+import { isAccueilQuestion } from "../../../supabase/functions/_shared/assistant-accueil/orchestrate";
 
 type Props = {
   /** Contexte page affiché uniquement en UI (jamais envoyé à une API). */
@@ -34,7 +36,31 @@ const INTENT_BUTTONS: { intent: PedagogicalIntent; label: string }[] = [
  * Assistant pédagogique — contexte + consentement Aide + FAQ fallback.
  * Phase A : 0 appel payant (provider local ; Edge préparé mais flag live OFF).
  */
+async function loadOwnDevoirTitles(userId: string) {
+  try {
+    const { supabase } = await import("@/integrations/supabase/client");
+    const { data, error } = await supabase
+      .from("devoirs")
+      .select("id, statut, exercice:exercices(titre)")
+      .eq("eleve_id", userId)
+      .limit(8);
+    if (error || !data) return [];
+    return data.flatMap((row) => {
+      const statut = row.statut;
+      if (statut !== "en_attente" && statut !== "fait" && statut !== "expire" && statut !== "arrete") {
+        return [];
+      }
+      const linked = row.exercice as { titre?: string } | { titre?: string }[] | null;
+      const titre = Array.isArray(linked) ? linked[0]?.titre : linked?.titre;
+      return [{ id: row.id, titre: titre?.trim() || "Devoir", statut, eleveId: userId }];
+    });
+  } catch {
+    return [];
+  }
+}
+
 export default function AvatarAssistantPanel({ pageHint, className }: Props) {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { context } = useAidePedagogique();
   const [open, setOpen] = useState(false);
@@ -66,6 +92,9 @@ export default function AvatarAssistantPanel({ pageHint, className }: Props) {
     setActiveIntent(chosen);
     setBusy(true);
     try {
+      const ownDevoirs = user?.id && isAccueilQuestion(question)
+        ? await loadOwnDevoirTitles(user.id)
+        : [];
       const answer = await answerContextualQuestion(question, context, {
         intent: chosen,
         authenticated: Boolean(user),
@@ -73,8 +102,12 @@ export default function AvatarAssistantPanel({ pageHint, className }: Props) {
         // Phase A : le local déterministe reste utilisable sans consentement Aide.
         // Le chemin Edge (IA réelle) exige consent === accepted.
         allowLocalWithoutConsent: true,
+        authUserId: user?.id ?? null,
+        pagePath: pageHint ?? null,
+        ownDevoirs,
       });
       setLast(answer);
+      if (answer.openRoute) navigate(answer.openRoute);
     } finally {
       setBusy(false);
     }
@@ -109,7 +142,7 @@ export default function AvatarAssistantPanel({ pageHint, className }: Props) {
               <div>
                 <p className="text-sm font-semibold text-[#0b234a]">Assistant CapTCF</p>
                 <p className="text-[11px] text-muted-foreground">
-                  Préflight IA · FAQ toujours dispo
+                  Accueil · FAQ locale si besoin
                 </p>
               </div>
             </div>
@@ -213,8 +246,14 @@ export default function AvatarAssistantPanel({ pageHint, className }: Props) {
                   Réponse limitée — sources ou FAQ
                 </p>
               ) : null}
-              {last.source === "faq" ? (
-                <p className="text-[11px] text-muted-foreground">Fallback FAQ locale</p>
+              {last.source === "faq" || last.provider === "faq_fallback" ? (
+                <p
+                  role="status"
+                  data-provider="faq_fallback"
+                  className="text-[11px] font-semibold text-amber-800"
+                >
+                  FAQ locale — provider=faq_fallback
+                </p>
               ) : null}
               <p className="leading-snug text-[#0b234a]">{last.text}</p>
               <p className="text-[10px] leading-snug text-muted-foreground">{last.disclaimer}</p>

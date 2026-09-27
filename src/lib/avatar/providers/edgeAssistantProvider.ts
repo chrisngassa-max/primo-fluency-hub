@@ -12,7 +12,7 @@ export function createEdgeAssistantProvider(options?: {
   /** Injection tests : forcer available. */
   forceAvailable?: boolean;
   /** Injection tests : remplacer l’invoke. */
-  invokeFn?: (body: PreparedAssistantRequest) => Promise<{ text: string; uncertain?: boolean }>;
+  invokeFn?: (body: PreparedAssistantRequest) => Promise<{ text: string; uncertain?: boolean; provider?: "faq_fallback" | "server_context" }>;
 }): AssistantAiProvider {
   const live = options?.forceAvailable ?? isAssistantAiLiveEnabled();
 
@@ -33,7 +33,8 @@ export function createEdgeAssistantProvider(options?: {
         const data = await options.invokeFn(payload);
         return {
           text: truncateForAssistant(data.text ?? "", ASSISTANT_LIMITS.maxResponseChars),
-          uncertain: Boolean(data.uncertain),
+          uncertain: Boolean(data.uncertain) || data.provider === "faq_fallback",
+          provider: data.provider,
         };
       }
 
@@ -47,9 +48,13 @@ export function createEdgeAssistantProvider(options?: {
         throw new Error("edge_assistant_empty");
       }
 
+      const provider = data.provider === "faq_fallback" || data.provider === "server_context"
+        ? data.provider
+        : undefined;
       return {
         text: truncateForAssistant(data.text, ASSISTANT_LIMITS.maxResponseChars),
-        uncertain: Boolean(data.uncertain),
+        uncertain: Boolean(data.uncertain) || provider === "faq_fallback",
+        provider,
       };
     },
   };
