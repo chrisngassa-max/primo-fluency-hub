@@ -4,7 +4,9 @@
 **Branche :** `captcf-lot-05a-c-correctif-borne`  
 **Projet :** `gudcenhmzlcvhgbgklzw`  
 **Source :** `4a0e8321-9ece-42d7-bf76-8825b1e65e79` (Louise musique et ville)  
-**Séance :** `e925a8ec-9539-473c-9902-eef1790f1a15`
+**Séance :** `e925a8ec-9539-473c-9902-eef1790f1a15`  
+**Commit code plafond ≤6 :** `3d913a77ed318718cd33e42bb7089375ca4b7a9f` (`fix(lot-05a-c): cap generated variants at six items`)  
+**Correspondance Edge :** ce SHA est le correctif local déployé en **`generate-differentiation-family` v25**
 
 ## Verdict
 
@@ -14,12 +16,12 @@ Phase B **OK** pour le pilote Louise uniquement. Faits scellés partagés, plafo
 
 | Fonction | Version | verify_jwt |
 |---|---|---|
-| `generate-differentiation-family` | **v25** (CLI, correctif prompt + tronquage ≤6) | true |
+| `generate-differentiation-family` | **v25** (CLI = SHA `3d913a77…`) | true |
 | `publish-differentiation-family` | v14 (inchangé) | true |
 
 Smokes anonymes post-deploy generate : **401 / 401** (`AUTH_INVALID`), sans `WORKER_ERROR`.
 
-## Correctif runtime (generate v25)
+## Correctif runtime (generate v25 = SHA `3d913a77…`)
 
 - Consigne modèle : `resolveCorrectifPromptItemBounds` (B1 5–6 au lieu de 5–7).
 - Avant persistance : `finalizeVariantItemsForPersist` tronque à 6 puis garde-fou `VARIANT_ITEM_CAP_EXCEEDED`.
