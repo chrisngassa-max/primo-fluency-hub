@@ -76,6 +76,34 @@ export function applyVariantItemCap<T>(items: T[], mode: CorrectifMode): ItemCap
   return { ok: true, items };
 }
 
+/** Plafond de consigne modèle : respecte le contrat, ramené à ≤6 en mode correctif. */
+export function resolveCorrectifPromptItemBounds(
+  contract: { volume_items_min: number; volume_items_max: number },
+  mode: CorrectifMode,
+): { volume_items_min: number; volume_items_max: number } {
+  if (mode === "rollback") {
+    return {
+      volume_items_min: contract.volume_items_min,
+      volume_items_max: contract.volume_items_max,
+    };
+  }
+  const volume_items_max = Math.min(contract.volume_items_max, LOT_05A_C_MAX_ITEMS);
+  const volume_items_min = Math.min(contract.volume_items_min, volume_items_max);
+  return { volume_items_min, volume_items_max };
+}
+
+/**
+ * Avant persistance : en correctif, conserve au plus 6 items puis applique le garde-fou refuse.
+ * En retour arrière : aucun tronquage.
+ */
+export function finalizeVariantItemsForPersist<T>(
+  items: T[],
+  mode: CorrectifMode,
+): ItemCapResult<T> {
+  if (mode === "rollback") return { ok: true, items };
+  return applyVariantItemCap(items.slice(0, LOT_05A_C_MAX_ITEMS), mode);
+}
+
 export function assertPublishedVariantItemCap(
   payload: unknown,
   enabled: boolean,

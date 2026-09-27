@@ -1,10 +1,11 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import {
-  applyVariantItemCap,
   calculateFactsHash,
   evaluateSupportCompatibility,
+  finalizeVariantItemsForPersist,
   LOT_05A_C_MAX_ITEMS,
   resolveCorrectifMode,
+  resolveCorrectifPromptItemBounds,
   selectReusableFacts,
   FACT_EXTRACTION_PROMPT_HEADER,
   getCoLevelContract,
@@ -315,9 +316,15 @@ Deno.serve(async (request) => {
     }
 
     const qcmMax = contract.qcm_max_choices ?? 4;
+    const itemBounds = resolveCorrectifPromptItemBounds(contract, correctifMode);
+    const promptContract = {
+      ...contract,
+      volume_items_min: itemBounds.volume_items_min,
+      volume_items_max: itemBounds.volume_items_max,
+    };
     const itemsResponse = await geminiJson(
-      `Crée ${contract.volume_items_min} à ${contract.volume_items_max} questions ${targetLevel} de compréhension orale depuis ces faits.
-Applique exactement ce contrat: ${JSON.stringify(contract)}.
+      `Crée ${itemBounds.volume_items_min} à ${itemBounds.volume_items_max} questions ${targetLevel} de compréhension orale depuis ces faits.
+Applique exactement ce contrat: ${JSON.stringify(promptContract)}.
 Transformation: ${transformation.id} — ${transformation.rule.expected_evidence ?? transformation.rule.operation}.
 Interdit: inventer des faits, inventer une difficulté B2, exiger une connaissance extérieure, modifier des timestamps.
 JSON {"title":"...","instruction":"...","format":"qcm|vrai_faux|appariement|ordre_chronologique|mixed","items":[{"id":"item_01","type":"qcm","instruction":"...","choices":[{"id":"a","text":"...","is_correct":true},{"id":"b","text":"...","is_correct":false,"distractor_category":"..."}],"fact_refs":["fact_01"],"justification":"..."}]}.
@@ -332,7 +339,7 @@ ${JSON.stringify(facts)}`,
         id: `item_${String(index + 1).padStart(2, "0")}`,
       }))
       : [];
-    const cappedItems = applyVariantItemCap(normalizedItems, correctifMode);
+    const cappedItems = finalizeVariantItemsForPersist(normalizedItems, correctifMode);
     if (!cappedItems.ok) {
       await admin.from("differentiation_families").update({
         generation_status: "failed",

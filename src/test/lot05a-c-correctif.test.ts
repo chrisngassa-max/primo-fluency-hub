@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   applyVariantItemCap,
+  finalizeVariantItemsForPersist,
   resolveCorrectifMode,
+  resolveCorrectifPromptItemBounds,
   sealSharedFacts,
   selectReusableFacts,
   stampSharedFactsOnLevels,
@@ -110,6 +112,24 @@ describe("Lot 5A-C plafond de six items", () => {
     const six = applyVariantItemCap(seven.slice(0, 6), "lot05a_c");
     expect(six.ok).toBe(true);
     if (six.ok) expect(six.items).toHaveLength(6);
+  });
+
+  it("réponse modèle à 7 items → variante finale ≤6 ; garde-fou refuse toujours le dépassement brut", () => {
+    const seven = Array.from({ length: 7 }, (_, index) => ({ id: `item_${String(index + 1).padStart(2, "0")}` }));
+    const b1Contract = { volume_items_min: 5, volume_items_max: 7 };
+    const bounds = resolveCorrectifPromptItemBounds(b1Contract, "lot05a_c");
+    expect(bounds).toEqual({ volume_items_min: 5, volume_items_max: 6 });
+    const finalized = finalizeVariantItemsForPersist(seven, "lot05a_c");
+    expect(finalized.ok).toBe(true);
+    if (finalized.ok) {
+      expect(finalized.items).toHaveLength(6);
+      expect(finalized.items.map((item) => item.id)).toEqual([
+        "item_01", "item_02", "item_03", "item_04", "item_05", "item_06",
+      ]);
+    }
+    const rawGuard = applyVariantItemCap(seven, "lot05a_c");
+    expect(rawGuard.ok).toBe(false);
+    if (!rawGuard.ok) expect(rawGuard.error).toBe("VARIANT_ITEM_CAP_EXCEEDED");
   });
 });
 
