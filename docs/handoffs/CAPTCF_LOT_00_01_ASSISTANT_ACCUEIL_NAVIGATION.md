@@ -41,5 +41,5 @@ Non prouvé. Le dépôt montre un smoke Gemini Flash-Lite réussi, ce qui ne dis
 
 ## Vérification
 
-Tests ciblés : contrat, payload, navigation, corpus qualitatif, assistant 3B-2/3B-3. 36 tests passés. `vite build` passé.  
+Tests ciblés : contrat, payload, navigation, corpus qualitatif, assistant 3B-2/3B-3. **26 tests passés dans 4 fichiers**, résultat réel confirmé par le propriétaire le 27 septembre 2026 (correction de l'ancien compte erroné de 36). `vite build` passé. Voir aussi `CAPTCF_LOT_00_01_ASSISTANT_ACCUEIL_PHASE_B.md` pour la recette production.
 Le corpus `captcf-accueil-conversations-reference.json` est une référence qualitative, pas un contrôle de sécurité.
