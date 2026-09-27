@@ -11,6 +11,7 @@
  * - max tokens courts
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { AIError, callAI } from "../_shared/ai-client.ts";
 import {
   checkConsent,
@@ -19,6 +20,11 @@ import {
   getUserIdFromAuth,
   logAICall,
 } from "../_shared/check-consent.ts";
+import {
+  assembleSnapshotFromRlsRows,
+  orchestrateAccueil,
+  type RlsRows,
+} from "../_shared/assistant-accueil/orchestrate.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -120,6 +126,79 @@ Question élève : ${req.question}`;
   ];
 }
 
+function paidTierProven(): boolean {
+  return Deno.env.get("CAPTCF_ASSISTANT_PAID_TIER_PROVEN") === "true";
+}
+
+function faqFallbackResponse(message: string) {
+  return new Response(
+    JSON.stringify({
+      text: message,
+      uncertain: true,
+      provider: "faq_fallback",
+      visibleFallback: true,
+      aiInvoked: false,
+      realAiBlocked: true,
+      realAiBlockReason: "paid_tier_unproven",
+    }),
+    { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+  );
+}
+
+async function loadAccueilRows(
+  req: Request,
+  authUserId: string,
+  requestedPath: string | null,
+): Promise<RlsRows | null> {
+  const supabaseUrl = Deno.env.get("SUPABASE_URL");
+  const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
+  const authorization = req.headers.get("Authorization");
+  if (!supabaseUrl || !anonKey || !authorization) return null;
+
+  const supa = createClient(supabaseUrl, anonKey, {
+    global: { headers: { Authorization: authorization } },
+  });
+  const { data: devoirs, error } = await supa
+    .from("devoirs")
+    .select("id, eleve_id, statut, exercice:exercices(titre)")
+    .eq("eleve_id", authUserId)
+    .limit(8);
+  if (error) return null;
+
+  const { data: sessions } = await supa
+    .from("sessions")
+    .select("titre, date_seance")
+    .in("statut", ["planifiee", "en_cours"])
+    .order("date_seance", { ascending: true })
+    .limit(3);
+
+  const { data: evaluations } = await supa
+    .from("test_sessions")
+    .select("id, apprenant_id, statut")
+    .eq("apprenant_id", authUserId)
+    .eq("statut", "en_cours")
+    .limit(1);
+
+  return {
+    trustedRls: true,
+    requestedPath,
+    devoirs: (devoirs ?? []).map((row: { id: string; eleve_id: string; statut: string; exercice?: { titre?: string } | { titre?: string }[] | null }) => {
+      const linked = row.exercice;
+      const titre = Array.isArray(linked) ? linked[0]?.titre : linked?.titre;
+      return { id: row.id, eleve_id: row.eleve_id, statut: row.statut, titre };
+    }),
+    sessions: (sessions ?? []).map((row: { titre?: string; date_seance?: string }) => ({
+      titre: row.titre,
+      date_seance: row.date_seance,
+    })),
+    evaluations: (evaluations ?? []).map((row: { id: string; apprenant_id: string; statut: string }) => ({
+      id: row.id,
+      apprenant_id: row.apprenant_id,
+      statut: row.statut,
+    })),
+  };
+}
+
 function sanitizeModelText(text: string): { text: string; uncertain: boolean } {
   let out = text.trim();
   if (out.length > MAX_OUTPUT_CHARS) out = `${out.slice(0, MAX_OUTPUT_CHARS - 1).trimEnd()}…`;
@@ -139,8 +218,87 @@ serve(async (req) => {
 
   const started = Date.now();
   let userId: string | null = null;
+  const body = req.method === "GET" ? null : await req.json().catch(() => null);
 
   try {
+    if (body?.kind === "accueil") {
+      userId = await getUserIdFromAuth(req);
+      if (!userId) {
+        return new Response(JSON.stringify({ error: "unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const requestedPath = typeof body.currentPath === "string" ? body.currentPath : null;
+      const rows = await loadAccueilRows(req, userId, requestedPath);
+      const assembled = rows
+        ? assembleSnapshotFromRlsRows(userId, rows)
+        : null;
+      if (!assembled || !assembled.ok) {
+        await logAICall({
+          function_name: "captcf-assistant-qa",
+          subject_user_id: userId,
+          triggered_by_user_id: userId,
+          status: assembled && !assembled.ok ? "error" : "ok",
+          provider: "faq_fallback",
+          data_categories: ["pedagogical_context"],
+          pseudonymization_level: "pseudonymized",
+          duration_ms: Date.now() - started,
+        });
+        return faqFallbackResponse(
+          "Je ne peux pas ouvrir le contexte de cet élève. FAQ locale.",
+        );
+      }
+
+      const toolNames = new Set([
+        "open_route",
+        "deliver_validated_hint",
+        "replay_audio_segment",
+        "recommend_next_activity",
+        "flag_help_needed",
+      ]);
+      const rawTool = body.tool;
+      const requestedTool = rawTool
+        && typeof rawTool.name === "string"
+        && toolNames.has(rawTool.name)
+        && (rawTool.args == null || typeof rawTool.args === "object")
+        ? { name: rawTool.name, args: rawTool.args ?? {} }
+        : undefined;
+
+      const result = orchestrateAccueil({
+        authUserId: userId,
+        snapshot: assembled.snapshot,
+        question: typeof body.question === "string" ? body.question : "",
+        requestedTool,
+        realAiAllowed: false,
+      });
+      if (result.journal.provider === "faq_fallback") {
+        await logAICall({
+          function_name: "captcf-assistant-qa",
+          subject_user_id: userId,
+          triggered_by_user_id: userId,
+          status: "ok",
+          provider: "faq_fallback",
+          data_categories: ["pedagogical_context"],
+          pseudonymization_level: "pseudonymized",
+          duration_ms: Date.now() - started,
+        });
+      }
+      return new Response(JSON.stringify({
+        text: result.publicResponse.text,
+        provider: result.publicResponse.provider,
+        visibleFallback: result.publicResponse.visibleFallback,
+        contractVersion: result.publicResponse.contractVersion,
+        tool: result.tool,
+        aiInvoked: false,
+        realAiBlocked: !paidTierProven(),
+        realAiBlockReason: paidTierProven() ? null : "paid_tier_unproven",
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     // Kill-switch Phase B : sans ce flag serveur, aucun appel modèle.
     if (Deno.env.get("CAPTCF_ASSISTANT_AI_ENABLED") !== "true") {
       return new Response(
@@ -177,7 +335,6 @@ serve(async (req) => {
       return consentBlockedResponse(consent.reason ?? "consent_missing", corsHeaders);
     }
 
-    const body = await req.json();
     const request = (body?.request ?? body) as PreparedRequest;
     if (!request?.question || !request?.session?.code) {
       return new Response(JSON.stringify({ error: "invalid_payload" }), {
@@ -190,6 +347,24 @@ serve(async (req) => {
 
     const model =
       Deno.env.get("CAPTCF_ASSISTANT_MODEL") ?? "google/gemini-2.5-flash-lite";
+
+    if (!paidTierProven()) {
+      await logAICall({
+        function_name: "captcf-assistant-qa",
+        subject_user_id: userId,
+        triggered_by_user_id: userId,
+        status: "ok",
+        provider: "faq_fallback",
+        model,
+        data_categories: ["pedagogical_context"],
+        pseudonymization_level: "pseudonymized",
+        duration_ms: Date.now() - started,
+        consent_version: consent.consentVersion,
+      });
+      return faqFallbackResponse(
+        "Je réponds avec la FAQ locale. L'IA réelle est bloquée pour les données élèves tant que le palier payant n'est pas prouvé.",
+      );
+    }
 
     const ai = await callAI({
       model,

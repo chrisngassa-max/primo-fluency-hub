@@ -3,6 +3,8 @@ import type { PreparedAssistantRequest } from "../pedagogicalTypes";
 export type AssistantProviderResult = {
   text: string;
   uncertain: boolean;
+  /** Présent quand l'Edge répond par la FAQ, sans appel modèle. */
+  provider?: "faq_fallback" | "server_context";
 };
 
 /**
