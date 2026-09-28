@@ -7,6 +7,7 @@ import {
   findLouiseHintEntry,
   validateHintEntry,
   type HintBankEntry,
+  type HintBankRegistration,
   type SealedItemForHints,
 } from './index.ts';
 import { handlePedagogical, type DataStore } from '../index.ts';
@@ -63,9 +64,20 @@ describe('Lot 2A.2 : banque d’indices Louise', () => {
   });
 
   it('1 entrée draft non servie', () => {
+    const draft = draftClone();
+    const draftRegistry: HintBankRegistration[] = [{
+      bank_id: 'louise-hints-v1',
+      contract_version: 'louise-hints-v1',
+      source_id: LOUISE_SOURCE_ID,
+      facts_hash: LOUISE_FACTS_HASH,
+      review_status: 'validated',
+      exercise_ids: [EXERCISE_A1],
+      entries: [draft],
+      findEntry: () => draft,
+    }];
     const r = deliverValidatedHint({
       mode: 'entrainement', exerciseId: EXERCISE_A1, itemId: 'item_01', factsHash: LOUISE_FACTS_HASH,
-    }, 1, [draftClone()]);
+    }, 1, draftRegistry);
     expect(r.allowed).toBe(false);
     expect(r.text).toBe('Aucun indice validé n’est disponible pour cet exercice.');
     expect(r.projection).toBeNull();

@@ -3,14 +3,12 @@ import type { ActivityMode } from '../assistant-accueil/contract-v1.ts';
 import { isExerciseLinkVisible, resolveLearnerLevelForCompetence } from '../session-visibility.ts';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const SOURCE = '4a0e8321-9ece-42d7-bf76-8825b1e65e79';
-const FACTS = 'sha256:4fd8d5565ba8cedeb8fa0d9bbf20451dece02b4c83157f4303433398ba03f5a5';
-const PILOT = new Set(['62b06150-7942-4c41-bab9-fdba0a4d852c', '972e14a8-9fe1-4f3d-93d1-9a8280028c91', 'bcbcef25-7dcf-4e35-97dd-1fb641ab9815', 'cb06e39a-e914-4729-8ce4-893e7f8faeaf']);
 
 export interface Context {
   owner: string; exerciseId: string; sessionId: string | null; devoirId: string | null;
   mode: ActivityMode; instruction: string; itemType: string; competence: string;
   objective: string; level: string; itemId: string; factsHash: string;
+  sourceId: string;
   factRefs: string[]; submitted: boolean; correctionReleased: boolean;
   justification: string | null; sealedJustification: string | null; maxListens: number | null;
   recommendation: { text: string; route: string } | null;
@@ -26,7 +24,8 @@ export async function loadContext(deps: Dependencies, input: Row): Promise<Conte
   const devoirId = string(input.devoirId) || null;
   let sessionId = string(input.sessionId) || null;
   const attemptId = string(input.attemptId) || null;
-  if (!UUID.test(uid) || !PILOT.has(exerciseId) || (!!devoirId === !!sessionId) ||
+  // Plus de liste blanche Louise : tout exercice UUID rattaché et publié peut être chargé.
+  if (!UUID.test(uid) || !UUID.test(exerciseId) || (!!devoirId === !!sessionId) ||
       (devoirId && !UUID.test(devoirId)) || (sessionId && !UUID.test(sessionId)) || (attemptId && !UUID.test(attemptId)) ||
       !Number.isInteger(input.itemIndex) || Number(input.itemIndex) < 0) throw new Error('invalid_context');
 
@@ -73,13 +72,24 @@ export async function loadContext(deps: Dependencies, input: Row): Promise<Conte
   if (!exercise) throw new Error('exercise_unavailable');
   const data = object(exercise.contenu), meta = object(data.metadata), audio = object(data.audio);
   const family = await one(content, 'differentiation_families', 'source_id, source_content_hash, review_status, payload', { published_exercise_id: exerciseId });
-  const source = await one(content, 'pedagogical_sources', 'content_hash, status, review_status', { id: SOURCE });
-  if (!family || !source || family.review_status !== 'published' || family.source_id !== SOURCE ||
-      meta.source_id !== SOURCE || audio.source_id !== SOURCE || meta.facts_hash !== FACTS ||
-      object(object(family.payload).facts).facts_hash !== FACTS || meta.source_stale === true ||
+  // Source / hash = ceux de la famille publiée de CET exercice (plus de hardcode Louise).
+  const sourceId = string(family?.source_id);
+  const factsHashFamily = string(object(object(family?.payload).facts).facts_hash);
+  const factsHash = string(meta.facts_hash) || factsHashFamily;
+  if (!family || family.review_status !== 'published' || !UUID.test(sourceId) || !/^sha256:[0-9a-f]{64}$/.test(factsHash)) {
+    throw new Error('source_not_validated');
+  }
+  const source = await one(content, 'pedagogical_sources', 'content_hash, status, review_status', { id: sourceId });
+  const audioBound = Boolean(string(audio.source_id) || string(audio.source_content_hash));
+  if (!source || family.source_id !== sourceId || meta.source_id !== sourceId ||
+      meta.facts_hash !== factsHash || factsHashFamily !== factsHash || meta.source_stale === true ||
       source.status !== 'analyzed' || !['utilisable', 'valide'].includes(string(source.review_status)) ||
       !/^sha256:[0-9a-f]{64}$/.test(string(source.content_hash)) ||
-      ![family.source_content_hash, audio.source_content_hash, meta.source_content_hash].every(hash => hash === source.content_hash)) throw new Error('source_not_validated');
+      family.source_content_hash !== source.content_hash ||
+      meta.source_content_hash !== source.content_hash ||
+      (audioBound && (string(audio.source_id) !== sourceId || string(audio.source_content_hash) !== string(source.content_hash)))) {
+    throw new Error('source_not_validated');
+  }
   if (link && session) {
     const profile = await one(user, 'profils_eleves', 'niveau_actuel, niveau_co, niveau_ce, niveau_ee, niveau_eo', { eleve_id: uid });
     const group = await one(user, 'groups', 'niveau', { id: string(session.group_id) });
@@ -151,7 +161,7 @@ export async function loadContext(deps: Dependencies, input: Row): Promise<Conte
     owner: uid, exerciseId, devoirId, sessionId, mode,
     instruction: string(validatedItem.instruction) || string(validatedExercise.instruction), itemType: string(validatedItem.type) || string(exercise.format),
     competence: string(exercise.competence), level: string(exercise.niveau_vise),
-    itemId: string(validatedItem.id), factsHash: FACTS, factRefs, sealedChoices,
+    itemId: string(validatedItem.id), factsHash, sourceId, factRefs, sealedChoices,
     objective: string(session?.objectifs),
     submitted, correctionReleased,
     sealedJustification: string(validatedItem.justification) || null,
