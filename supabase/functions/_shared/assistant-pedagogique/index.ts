@@ -87,6 +87,7 @@ export async function handlePedagogical(deps: Dependencies & { body: unknown }):
             item_id: context.itemId,
             facts_hash: context.factsHash,
             fact_refs: context.factRefs,
+            instruction: context.instruction,
             choices: context.sealedChoices,
             justification: context.sealedJustification,
           },

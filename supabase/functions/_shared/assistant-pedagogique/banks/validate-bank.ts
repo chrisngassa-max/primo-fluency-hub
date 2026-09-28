@@ -14,6 +14,11 @@ const STOP = new Set([
   'faire', 'peut', 'sont', 'vous', 'nous', 'elle', 'ils', 'les', 'des', 'une', 'aux', 'par',
   'sur', 'pas', 'qui', 'que', 'quoi', 'dont', 'est', 'ces', 'ses', 'son', 'sa', 'du', 'de',
   'la', 'le', 'un', 'et', 'ou', 'en', 'au', 'ce', 'il', 'ne', 'se', 'y', 'a', 'd', 'l',
+  // Métalangage d’écoute / consigne : ne révèle pas une option à lui seul.
+  'locuteur', 'auditeur', 'auditeurs', 'passage', 'extrait', 'affirmation', 'propositions',
+  'brouillon', 'conclusion', 'invitation', 'raisonnement', 'discours', 'jugement', 'constat',
+  'sentiment', 'initiative', 'partenaires', 'autonomie', 'categories', 'possibilite',
+  'possibilites', 'structure', 'structures', 'comparaison', 'competence', 'reformule',
 ]);
 
 function normalize(text: string): string {
@@ -68,8 +73,11 @@ export function validateHintEntry(
   const correct = sealed.choices.filter((c) => c.is_correct);
   const wrong = sealed.choices.filter((c) => !c.is_correct);
   const wrongBlob = normalize(wrong.map((c) => c.text).join(' '));
+  const instructionBlob = normalize(sealed.instruction ?? '');
   const discriminant = new Set(
-    correct.flatMap((c) => tokens(c.text)).filter((t) => !wrongBlob.includes(t)),
+    correct
+      .flatMap((c) => tokens(c.text))
+      .filter((t) => !wrongBlob.includes(t) && !instructionBlob.includes(t)),
   );
   const justificationNorm = normalize(sealed.justification ?? '');
   const sealedFactRefs = new Set(sealed.fact_refs);

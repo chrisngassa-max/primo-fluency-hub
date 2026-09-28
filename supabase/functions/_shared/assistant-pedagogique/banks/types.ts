@@ -44,6 +44,7 @@ export interface SealedItemForHints {
   item_id: string;
   facts_hash: string;
   fact_refs: string[];
+  instruction?: string;
   choices: Array<{ id: string; text: string; is_correct: boolean }>;
   justification: string | null;
 }

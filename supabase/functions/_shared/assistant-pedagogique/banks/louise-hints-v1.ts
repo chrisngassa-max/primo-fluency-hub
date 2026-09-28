@@ -8,6 +8,8 @@ import {
 } from './types.ts';
 
 const AUTH = '2026-09-28T00:00:00.000Z';
+const VALIDATED_AT = '2026-09-28';
+const VALIDATOR = 'propriétaire';
 
 function entry(
   level: PilotLevel,
@@ -23,7 +25,7 @@ function entry(
     exercise_id,
     level,
     item_id,
-    review_status: 'draft',
+    review_status: 'validated',
     hints: [
       { ordinal: 1, text: texts[0] },
       { ordinal: 2, text: texts[1] },
@@ -31,8 +33,8 @@ function entry(
     ],
     fact_refs,
     authored_at: AUTH,
-    validated_at: null,
-    validator: null,
+    validated_at: VALIDATED_AT,
+    validator: VALIDATOR,
     contract_version: HINT_CONTRACT_VERSION,
   };
 }
@@ -42,7 +44,7 @@ const A2 = '972e14a8-9fe1-4f3d-93d1-9a8280028c91';
 const B1 = 'bcbcef25-7dcf-4e35-97dd-1fb641ab9815';
 const B2 = 'cb06e39a-e914-4729-8ce4-893e7f8faeaf';
 
-/** Banque Louise v1 — toutes les entrées restent `draft` jusqu’à validation propriétaire. */
+/** Banque Louise v1 — validation propriétaire 2026-09-28 (21 items). */
 export const LOUISE_HINTS_V1: HintBankEntry[] = [
   entry('A1', A1, 'item_01', ['fact_01'], [
     'Écoute bien le début. Le locuteur annonce le sujet de la discussion.',
@@ -61,8 +63,8 @@ export const LOUISE_HINTS_V1: HintBankEntry[] = [
   ]),
   entry('A1', A1, 'item_04', ['fact_15', 'fact_18'], [
     'Écoute ce que le locuteur dit à propos du solfège.',
-    'Il compare le solfège à un outil pour lire ce qui est écrit.',
-    'Cherche à quoi servent les « outils » donnés par le solfège.',
+    'Repère le passage où le locuteur relie le solfège à une compétence musicale.',
+    'Écoute l’action associée aux “outils”, puis reformule-la avec tes mots.',
   ]),
 
   entry('A2', A2, 'item_01', ['fact_01'], [
@@ -83,33 +85,33 @@ export const LOUISE_HINTS_V1: HintBankEntry[] = [
   entry('A2', A2, 'item_04', ['fact_08', 'fact_09', 'fact_10'], [
     'Écoute les façons de jouer avec d’autres personnes.',
     'Plusieurs possibilités de pratique collective sont listées.',
-    'Le locuteur propose plus d’une manière de jouer en groupe.',
+    'Note chaque possibilité entendue au brouillon, puis compare ta liste avec les propositions.',
   ]),
   entry('A2', A2, 'item_05', ['fact_15', 'fact_18'], [
     'Écoute la définition du solfège.',
-    'Le locuteur explique à quoi sert cet apprentissage.',
-    'Relie le solfège à la lecture de ce qui est écrit en musique.',
+    'Repère la comparaison utilisée pour expliquer cet apprentissage.',
+    'Cherche l’action rendue possible par cet apprentissage, sans reprendre les mots des réponses.',
   ]),
   entry('A2', A2, 'item_06', ['fact_28'], [
     'Écoute les avantages mentionnés vers la fin.',
-    'Un effet positif sur la durée de la vie est évoqué.',
-    'Repère la phrase sur l’« espérance de vie ».',
+    'Repère précisément l’avantage évoqué à la fin et compare-le avec l’affirmation.',
+    'Vérifie si l’affirmation garde le même sens que les paroles, sans utiliser tes connaissances personnelles.',
   ]),
 
   entry('B1', B1, 'item_01', ['fact_01', 'fact_02', 'fact_29'], [
     'Écoute l’ensemble : thème annoncé, âge et invitation finale.',
     'Le discours parle d’apprendre la musique à différents moments de la vie.',
-    'Relie les difficultés évoquées et les aspects positifs de cet apprentissage.',
+    'Classe les idées entendues en deux catégories : ce qui demande un effort et ce qui motive à continuer.',
   ]),
   entry('B1', B1, 'item_02', ['fact_04', 'fact_05', 'fact_06', 'fact_07'], [
     'Écoute pourquoi ces adultes sont félicités.',
     'Le locuteur explique ce qui rend cet apprentissage plus exigeant.',
-    'Il compare la facilité d’apprentissage chez l’enfant et chez l’adulte.',
+    'Repère d’abord la comparaison entre deux âges, puis déduis pourquoi le locuteur félicite ces personnes.',
   ]),
   entry('B1', B1, 'item_03', ['fact_08', 'fact_09', 'fact_10'], [
     'Écoute la liste des façons de jouer avec d’autres.',
     'Plusieurs structures ou groupes sont proposés.',
-    'Le locuteur en cite trois, pas une seule.',
+    'Note séparément chaque structure citée, puis compare ta liste avec les propositions.',
   ]),
   entry('B1', B1, 'item_04', ['fact_15', 'fact_16', 'fact_18', 'fact_19'], [
     'Écoute ce qui est indispensable pour jouer exactement ce qui est écrit.',
@@ -118,8 +120,8 @@ export const LOUISE_HINTS_V1: HintBankEntry[] = [
   ]),
   entry('B1', B1, 'item_05', ['fact_14', 'fact_21', 'fact_22', 'fact_23'], [
     'Écoute le ton du locuteur quand il parle du solfège.',
-    'Il exprime à la fois une difficulté et une obligation.',
-    'Retiens qu’il trouve cela pénible, mais qu’on ne peut pas l’éviter.',
+    'Repère deux idées opposées dans le passage sur le solfège.',
+    'Compare ce que le locuteur ressent avec ce qu’il dit devoir faire.',
   ]),
   entry('B1', B1, 'item_06', ['fact_11', 'fact_13', 'fact_20'], [
     'Écoute ce que le locuteur présente comme l’objectif de la pratique.',
@@ -130,7 +132,7 @@ export const LOUISE_HINTS_V1: HintBankEntry[] = [
   entry('B2', B2, 'item_01', ['fact_02', 'fact_03', 'fact_04', 'fact_05', 'fact_06', 'fact_07'], [
     'Écoute le passage sur les adultes qui commencent tard.',
     'Le locuteur mêle difficulté et respect pour ces personnes.',
-    'Il souligne à la fois l’effort demandé et le mérite de se lancer.',
+    'Repère les deux mouvements du discours : le constat sur l’apprentissage, puis le jugement du locuteur.',
   ]),
   entry('B2', B2, 'item_02', ['fact_11', 'fact_12', 'fact_13', 'fact_20'], [
     'Écoute ce vers quoi mène la pratique selon le locuteur.',
@@ -139,18 +141,18 @@ export const LOUISE_HINTS_V1: HintBankEntry[] = [
   ]),
   entry('B2', B2, 'item_03', ['fact_14', 'fact_15', 'fact_18', 'fact_19', 'fact_21', 'fact_22', 'fact_23'], [
     'Écoute le ton du locuteur sur le solfège.',
-    'Il exprime une gêne, puis une nécessité.',
-    'Selon lui, cela déplaît, mais on est obligé d’y passer pour jouer ce qui est écrit.',
+    'Repère le changement entre le sentiment exprimé et la suite du raisonnement.',
+    'Reformule séparément ce que le locuteur ressent et ce qu’il estime nécessaire.',
   ]),
   entry('B2', B2, 'item_04', ['fact_08', 'fact_09', 'fact_10'], [
     'Écoute les trois façons de pratiquer mentionnées.',
-    'Compare le cadre organisé et la formule plus libre.',
-    'Cherche l’option où l’on constitue soi-même un ensemble après un temps seul.',
+    'Distingue ce qui est organisé par d’autres de ce que la personne organise elle-même.',
+    'Pour mesurer l’autonomie, repère qui prend l’initiative et qui choisit les partenaires.',
   ]),
   entry('B2', B2, 'item_05', ['fact_02', 'fact_27', 'fact_28', 'fact_29'], [
     'Écoute la conclusion et l’invitation finale.',
-    'Le locuteur pousse clairement à se mettre à la musique.',
-    'Il insiste aussi sur le fait que l’âge n’est pas un obstacle.',
+    'Repère la forme verbale utilisée dans la conclusion pour s’adresser aux auditeurs.',
+    'Compare l’invitation finale avec ce qui a été dit plus tôt sur le moment de commencer.',
   ]),
 ];
 
