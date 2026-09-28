@@ -10,14 +10,17 @@ function setup(level = 0) {
     },
     insert: vi.fn(async (table, row) => { rows[table].push(row); }),
   };
-  const body = { exerciseId: pilot[level][1], devoirId: devoir, itemIndex: 0, attemptId: attempt, question: 'Explique la consigne plus simplement' };
+  const body = { exerciseId: pilot[level][1], devoirId: devoir, itemIndex: 0, question: 'Explique la consigne plus simplement' };
   return { rows, store, body, ask: (patch = {}, uid = learner) => handlePedagogical({ authUserId: uid, body: { ...body, ...patch }, userStore: store, contentStore: store }) };
 }
 
 describe('Lot 2A : décisions serveur Louise sans modèle', () => {
-  it('1 refuse un autre élève et une tentative étrangère', async () => {
+  it('1 refuse un autre élève et une tentative de séance étrangère', async () => {
     const s = setup(); expect((await s.ask({}, 'other')).refused).toBe(true);
-    s.rows.exercise_attempts[0].learner_id = 'other'; expect((await s.ask()).refused).toBe(true);
+    const foreign = setup();
+    expect((await foreign.ask({
+      devoirId: undefined, sessionId: session, attemptId: attempt, question: 'Pourquoi ma réponse est-elle fausse ?',
+    }, 'other')).refused).toBe(true);
     const noMembership = setup(); noMembership.rows.group_members = [];
     expect((await noMembership.ask({ devoirId: undefined, sessionId: session })).refused).toBe(true);
     expect(noMembership.store.insert).not.toHaveBeenCalled();
@@ -43,12 +46,12 @@ describe('Lot 2A : décisions serveur Louise sans modèle', () => {
     expect((await setup().ask({ question: 'Quelle compétence est travaillée ?', competence: 'EO' })).text).toContain('compréhension orale');
   });
   it('7 justification absente avant remise malgré déclaration client', async () => {
-    const s = setup(); s.rows.exercise_attempts[0].status = 'in_progress';
+    const s = setup(); s.rows.resultats = [];
     const r = await s.ask({ question: 'Pourquoi ma réponse est-elle fausse ?', submitted: true });
     expect(r.refused).toBe(true); expect(JSON.stringify(r)).not.toContain(explanation);
   });
   it('8 justification absente si correction non libérée', async () => {
-    const s = setup(); s.rows.exercise_attempts[0].correction_released_at = null;
+    const s = setup(); s.rows.resultats[0].correction_released_at = null;
     const r = await s.ask({ question: 'Pourquoi ma réponse est-elle fausse ?' });
     expect(r.refused).toBe(true); expect(JSON.stringify(r)).not.toContain(explanation);
   });
@@ -85,7 +88,7 @@ describe('Lot 2A : décisions serveur Louise sans modèle', () => {
   it('15 recommandation venant du routage, après remise seulement en devoir', async () => {
     const s = setup(); const r = await s.ask({ question: 'Que dois-je faire ensuite ?' });
     expect(r.text).toContain('Continue avec ton prochain devoir.'); expect(r.tool?.route).toBe(`/eleve/devoirs/${devoir}`);
-    s.rows.exercise_attempts[0].status = 'in_progress'; expect((await s.ask({ question: 'Que dois-je faire ensuite ?' })).refused).toBe(true);
+    s.rows.resultats = []; expect((await s.ask({ question: 'Que dois-je faire ensuite ?' })).refused).toBe(true);
   });
   it('16 aucune donnée interne du routage ou route arbitraire exposée', async () => {
     const s = setup(); const r = await s.ask({ question: 'Que dois-je faire ensuite ?' });
@@ -108,5 +111,21 @@ describe('Lot 2A : décisions serveur Louise sans modèle', () => {
     try { for (const question of ['Explique la consigne', 'Donne-moi un indice', 'Question inconnue']) {
       const r = await setup().ask({ question, aiEnabled: true }); expect(r.aiInvoked).toBe(false); expect(r.realAiBlocked).toBe(true);
     } expect(fetchSpy).not.toHaveBeenCalled(); } finally { fetchSpy.mockRestore(); }
+  });
+  it('19 devoir : rattachement via resultats, sans exercise_assignments', async () => {
+    const s = setup();
+    const read = vi.spyOn(s.store, 'read');
+    const before = await s.ask({ question: 'Pourquoi ma réponse est-elle fausse ?' });
+    expect(before.refused).toBe(false);
+    expect(read.mock.calls.some(([table]) => table === 'resultats')).toBe(true);
+    expect(read.mock.calls.some(([table]) => table === 'exercise_assignments')).toBe(false);
+    expect(JSON.stringify(read.mock.calls)).not.toContain('source_devoir_id');
+  });
+  it('20 devoir : résultat d’un autre élève ne libère pas la correction', async () => {
+    const s = setup();
+    s.rows.resultats[0].eleve_id = 'other';
+    const r = await s.ask({ question: 'Pourquoi ma réponse est-elle fausse ?', submitted: true, correctionReleased: true });
+    expect(r.refused).toBe(true);
+    expect(JSON.stringify(r)).not.toContain(explanation);
   });
 });
