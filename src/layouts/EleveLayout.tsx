@@ -18,7 +18,9 @@ import { CapPublicHeader } from "@/components/CapBrand";
 import InterventionPlayer from "@/components/eleve/InterventionPlayer";
 import OfflineStatus from "@/components/eleve/OfflineStatus";
 import AvatarAssistantPanel from "@/components/eleve/AvatarAssistantPanel";
-import { AidePedagogiqueProvider } from "@/contexts/AidePedagogiqueContext";
+import { AidePedagogiqueProvider, useAidePedagogique } from "@/contexts/AidePedagogiqueContext";
+import { useEffect } from "react";
+import { pageFamilyFromPath } from "@/lib/avatar/eleveRouteCatalog";
 
 const navItems = [
   { title: "Accueil", path: "/eleve", icon: Home },
@@ -30,6 +32,24 @@ const navItems = [
   { title: "Ma progression", path: "/eleve/progression", icon: TrendingUp },
   { title: "Mon profil", path: "/eleve/profil", icon: User },
 ];
+
+/** Remet le contexte pédagogique à zéro hors passation d’exercice. */
+function AideContextRouteSync({ pathname }: { pathname: string }) {
+  const { resetAideContext, setAideContext } = useAidePedagogique();
+  useEffect(() => {
+    const family = pageFamilyFromPath(pathname);
+    const keepPedagogical =
+      /^\/eleve\/devoirs\/[^/]+/.test(pathname) ||
+      /^\/eleve\/seances\/[^/]+/.test(pathname);
+    if (!keepPedagogical) {
+      setAideContext({ pedagogical: null, pedagogicalItemCount: 0 });
+    }
+    if (family === "evaluation" || family === "acces" || family === "inconnu") {
+      resetAideContext();
+    }
+  }, [pathname, resetAideContext, setAideContext]);
+  return null;
+}
 
 const EleveLayout = () => {
   const { user, signOut } = useAuth();
@@ -44,7 +64,6 @@ const EleveLayout = () => {
     .map((s: string) => s[0].toUpperCase())
     .join("") || "ML";
 
-  // Sprint 10 — fallback : récupère la session active de l'élève (groupes auxquels il appartient)
   const { data: activeSessionId } = useQuery({
     queryKey: ["eleve-active-session", user?.id],
     queryFn: async () => {
@@ -68,9 +87,11 @@ const EleveLayout = () => {
 
   return (
     <AidePedagogiqueProvider>
+      <AideContextRouteSync pathname={location.pathname} />
       <div className="cap-screen min-h-screen">
         <OfflineStatus />
         <InterventionPlayer sessionId={activeSessionId ?? null} />
+        {/* Montage unique Lot 2A.4 — toutes les pages élève. */}
         <AvatarAssistantPanel pageHint={location.pathname} />
         <CapPublicHeader avatar={initiales.slice(0, 2)} showMenu={false} />
 

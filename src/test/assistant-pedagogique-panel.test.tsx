@@ -11,7 +11,7 @@ const { invoke, context } = vi.hoisted(() => ({
 }));
 vi.mock('@/integrations/supabase/client', () => ({ supabase: { functions: { invoke } } }));
 vi.mock('@/contexts/AuthContext', () => ({ useAuth: () => ({ user: { id: '10000000-0000-4000-8000-000000000001' } }) }));
-vi.mock('@/contexts/AidePedagogiqueContext', () => ({ useAidePedagogique: () => ({ context }) }));
+vi.mock('@/contexts/AidePedagogiqueContext', () => ({ useAidePedagogique: () => ({ context, setAideContext: vi.fn(), resetAideContext: vi.fn() }) }));
 let container: HTMLDivElement;
 let root: Root;
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
