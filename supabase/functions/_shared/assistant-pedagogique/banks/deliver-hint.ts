@@ -1,13 +1,7 @@
+import { DEFAULT_HINT_BANKS, type HintBankRegistration } from './registry.ts';
 import { MODE_TOOL_MATRIX, type ActivityMode } from '../../assistant-accueil/contract-v1.ts';
-import { findLouiseHintEntry, LOUISE_HINTS_V1 } from './louise-hints-v1.ts';
+import { HINT_BANK_ID, type HintBankEntry, type HintProjection, type SealedItemForHints } from './types.ts';
 import { validateHintEntry } from './validate-bank.ts';
-import {
-  HINT_BANK_ID,
-  LOUISE_FACTS_HASH,
-  type HintBankEntry,
-  type HintProjection,
-  type SealedItemForHints,
-} from './types.ts';
 
 export interface HintDeliveryContext {
   mode: ActivityMode;
@@ -34,6 +28,8 @@ export interface HintDeliveryResult {
     | 'banque_absente';
 }
 
+const NO_BANK = 'Aucun indice validé n’est disponible pour cet exercice.';
+
 function maxLevel(mode: ActivityMode): number {
   if (mode === 'evaluation') return 0;
   if (mode === 'devoir') return MODE_TOOL_MATRIX.devoir.deliver_validated_hint.maxLevel;
@@ -41,27 +37,27 @@ function maxLevel(mode: ActivityMode): number {
   return 0;
 }
 
-function project(entry: HintBankEntry, ordinal: 1 | 2 | 3): HintProjection | null {
+function project(entry: HintBankEntry, ordinal: 1 | 2 | 3, bankId: string): HintProjection | null {
   if (entry.review_status !== 'validated') return null;
   const hint = entry.hints.find((h) => h.ordinal === ordinal);
   if (!hint?.text) return null;
   return {
     ordinal,
     text: hint.text,
-    bank_id: HINT_BANK_ID,
+    bank_id: bankId,
     review_status: 'validated',
   };
 }
 
 /**
- * Sert uniquement les entrées `review_status=validated`.
- * Les entrées draft / rejected / needs_review sont ignorées (comme une banque vide).
+ * Sert uniquement une entrée `review_status=validated` d’une banque du registre
+ * dont l’empreinte correspond à l’exercice chargé.
  * Aucun fallback justification, choices, scaffolding ou Gemini.
  */
 export function deliverValidatedHint(
   context: HintDeliveryContext,
   requestedLevel: number,
-  bank: readonly HintBankEntry[] = LOUISE_HINTS_V1,
+  registry: readonly HintBankRegistration[] = DEFAULT_HINT_BANKS,
 ): HintDeliveryResult {
   if (context.mode === 'evaluation') {
     return {
@@ -84,61 +80,81 @@ export function deliverValidatedHint(
       reason: 'niveau_indice',
     };
   }
-  if (context.factsHash !== LOUISE_FACTS_HASH) {
+
+  const forExercise = registry.filter(
+    (bank) => bank.review_status === 'validated' && bank.exercise_ids.includes(context.exerciseId),
+  );
+  if (!forExercise.length) {
     return {
       allowed: false,
       refused: true,
-      text: 'Aucun indice validé n’est disponible pour cet exercice.',
-      projection: null,
-      reason: 'facts_hash',
-    };
-  }
-  if (!bank.length) {
-    return {
-      allowed: false,
-      refused: true,
-      text: 'Aucun indice validé n’est disponible pour cet exercice.',
+      text: NO_BANK,
       projection: null,
       reason: 'banque_absente',
     };
   }
-  const entry = findLouiseHintEntry(context.exerciseId, context.itemId, bank);
+  const bank = forExercise.find((candidate) => candidate.facts_hash === context.factsHash) ?? null;
+  if (!bank) {
+    return {
+      allowed: false,
+      refused: true,
+      text: NO_BANK,
+      projection: null,
+      reason: 'facts_hash',
+    };
+  }
+
+  const entry = bank.findEntry(context.exerciseId, context.itemId);
   if (!entry) {
     return {
       allowed: false,
       refused: true,
-      text: 'Aucun indice validé n’est disponible pour cet exercice.',
+      text: NO_BANK,
       projection: null,
       reason: 'foreign_item',
     };
   }
-  if (entry.review_status !== 'validated' || entry.facts_hash !== LOUISE_FACTS_HASH) {
+  if (entry.review_status !== 'validated' || entry.facts_hash !== bank.facts_hash) {
     return {
       allowed: false,
       refused: true,
-      text: 'Aucun indice validé n’est disponible pour cet exercice.',
+      text: NO_BANK,
       projection: null,
       reason: 'draft_or_unavailable',
     };
   }
   if (context.sealedItem) {
-    const issues = validateHintEntry(entry, context.sealedItem);
-    if (issues.length) {
+    if (bank.bank_id === HINT_BANK_ID) {
+      const issues = validateHintEntry(entry, context.sealedItem);
+      if (issues.length) {
+        return {
+          allowed: false,
+          refused: true,
+          text: NO_BANK,
+          projection: null,
+          reason: 'validation_failed',
+        };
+      }
+    } else if (
+      context.sealedItem.exercise_id !== entry.exercise_id ||
+      context.sealedItem.item_id !== entry.item_id ||
+      context.sealedItem.facts_hash !== entry.facts_hash
+    ) {
       return {
         allowed: false,
         refused: true,
-        text: 'Aucun indice validé n’est disponible pour cet exercice.',
+        text: NO_BANK,
         projection: null,
         reason: 'validation_failed',
       };
     }
   }
-  const projection = project(entry, requestedLevel as 1 | 2 | 3);
+  const projection = project(entry, requestedLevel as 1 | 2 | 3, bank.bank_id);
   if (!projection) {
     return {
       allowed: false,
       refused: true,
-      text: 'Aucun indice validé n’est disponible pour cet exercice.',
+      text: NO_BANK,
       projection: null,
       reason: 'draft_or_unavailable',
     };

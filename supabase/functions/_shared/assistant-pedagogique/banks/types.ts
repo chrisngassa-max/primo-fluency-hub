@@ -22,9 +22,10 @@ export interface HintOrdinal {
 }
 
 export interface HintBankEntry {
-  bank_id: typeof HINT_BANK_ID;
-  source_id: typeof LOUISE_SOURCE_ID;
-  facts_hash: typeof LOUISE_FACTS_HASH | string;
+  /** Identifiant de banque (ex. louise-hints-v1). Ouvert pour registres futurs. */
+  bank_id: string;
+  source_id: string;
+  facts_hash: string;
   exercise_id: string;
   level: PilotLevel;
   item_id: string;
@@ -34,7 +35,7 @@ export interface HintBankEntry {
   authored_at: string;
   validated_at: string | null;
   validator: string | null;
-  contract_version: typeof HINT_CONTRACT_VERSION;
+  contract_version: string;
 }
 
 /** Métadonnées scellées nécessaires au validateur (jamais servies au frontend). */
@@ -52,7 +53,7 @@ export interface SealedItemForHints {
 export interface HintProjection {
   ordinal: 1 | 2 | 3;
   text: string;
-  bank_id: typeof HINT_BANK_ID;
+  bank_id: string;
   review_status: 'validated';
 }
 

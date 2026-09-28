@@ -17,3 +17,9 @@ export {
 export { LOUISE_HINTS_V1, findLouiseHintEntry } from './louise-hints-v1.ts';
 export { validateHintEntry, assertBankIntegrity } from './validate-bank.ts';
 export { deliverValidatedHint, type HintDeliveryContext, type HintDeliveryResult } from './deliver-hint.ts';
+export {
+  DEFAULT_HINT_BANKS,
+  LOUISE_HINT_BANK,
+  resolveHintBank,
+  type HintBankRegistration,
+} from './registry.ts';

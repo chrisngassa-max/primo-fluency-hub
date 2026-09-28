@@ -129,7 +129,7 @@ export async function handlePedagogical(deps: Dependencies & { body: unknown }):
         result = reply('Ta demande d’aide a été transmise au formateur.', false, { name: action, allowed: true }); break;
       }
       default:
-        result = { ...refuse('Je peux expliquer la consigne, la compétence ou une correction libérée, et transmettre une demande d’aide.'), provider: 'faq_fallback', visibleFallback: true };
+        result = { ...refuse('Je peux vous expliquer la consigne, la compétence ou une correction libérée, et transmettre une demande d’aide.'), provider: 'faq_fallback', visibleFallback: true };
     }
     return { ...result, externalContext: projectExternal(context) };
   } catch {

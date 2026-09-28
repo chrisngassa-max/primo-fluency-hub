@@ -56,4 +56,21 @@ describe('Lot 2A : panneau branché sur les décisions serveur', () => {
     expect(container.textContent).toContain('Ta demande d’aide a été transmise au formateur.');
     expect(invoke.mock.calls[0][1].body.question).toBe('J’ai besoin du professeur');
   });
+  it('affiche le motif pédagogique précis : aucun indice validé', async () => {
+    await open('Aucun indice validé n’est disponible pour cet exercice.', true);
+    await ask('Donne-moi un indice');
+    expect(container.textContent).toContain('Aucun indice validé n’est disponible pour cet exercice.');
+    expect(container.textContent).not.toContain('Le contexte serveur est indisponible');
+  });
+  it('affiche le motif pédagogique précis : explication après remise', async () => {
+    await open('L’explication est disponible seulement après remise et libération de la correction, hors évaluation.', true);
+    await ask('Pourquoi ma réponse est-elle fausse ?');
+    expect(container.textContent).toContain('après remise et libération');
+    expect(container.textContent).not.toContain('Le contexte serveur est indisponible');
+  });
+  it('affiche le refus spécifique à l’évaluation', async () => {
+    await open('Les indices sont interdits pendant une évaluation.', true);
+    await ask('Donne-moi un indice');
+    expect(container.textContent).toContain('évaluation');
+  });
 });
