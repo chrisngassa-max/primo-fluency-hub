@@ -1,9 +1,9 @@
 # CapTCF — Lot 2A.2 — Fiche de validation des indices Louise
 
-**Branche :** `captcf-lot-02a2-indices-louise`  
-**Banque :** `louise-hints-v1`  
-**Source :** `4a0e8321-9ece-42d7-bf76-8825b1e65e79`  
-**Facts hash :** `sha256:4fd8d5565ba8cedeb8fa0d9bbf20451dece02b4c83157f4303433398ba03f5a5`  
+**Branche :** `captcf-lot-02a2-indices-louise`
+**Banque :** `louise-hints-v1`
+**Source :** `4a0e8321-9ece-42d7-bf76-8825b1e65e79`
+**Facts hash :** `sha256:4fd8d5565ba8cedeb8fa0d9bbf20451dece02b4c83157f4303433398ba03f5a5`
 **Validation propriétaire :** 28 septembre 2026 (`validator=propriétaire`)
 
 ## Synthèse propriétaire
@@ -59,7 +59,7 @@ Matrice de service :
 
 ## Annexe — formateur uniquement
 
-> **Attention :** cette annexe contient des éléments de corrigé pour vérification de cohérence.  
+> **Attention :** cette annexe contient des éléments de corrigé pour vérification de cohérence.
 > Ne pas partager avec les élèves. Ne pas servir via l’assistant.
 
 | Niveau | Item | Exercise ID | Fact refs | Clé (id) | Texte correct (abrégé) | Justification (abrégée) |
