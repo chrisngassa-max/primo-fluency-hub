@@ -30,6 +30,11 @@ import {
   navigationSnapshotFromPage,
   orchestrateAccueil,
 } from "../../../supabase/functions/_shared/assistant-accueil/orchestrate";
+import {
+  answerPageOrientation,
+  isPageOrientationQuestion,
+} from "./answerPageOrientation";
+import { isFormateurOrAdminPath } from "./eleveRouteCatalog";
 
 export type AnswerContextualOptions = {
   helpCategory?: "technique";
@@ -103,8 +108,39 @@ export async function answerContextualQuestion(
     };
   }
 
+  if (isFormateurOrAdminPath(options.pagePath)) {
+    return {
+      text: "Cette page n’est pas dans l’espace élève. Je ne peux pas t’y aider.",
+      intent: "refuse_auth",
+      uncertain: false,
+      refused: true,
+      source: "refuse",
+      niveau,
+      disclaimer,
+      aiInvoked: false,
+    };
+  }
+
   if (context.pedagogical) {
     return answerPedagogicalQuestion(trimmed, context.pedagogical, niveau, options.helpCategory);
+  }
+
+  // Lot 2A.4 — orientation par page (déterministe, sans invention).
+  if (isPageOrientationQuestion(trimmed)) {
+    const pending = (options.ownDevoirs ?? []).filter(
+      (devoir) => devoir.eleveId === options.authUserId && devoir.statut === "en_attente",
+    );
+    const oriented = answerPageOrientation(trimmed, options.pagePath, {
+      niveau,
+      authenticated,
+      facts: {
+        devoirsPendingCount: options.ownDevoirs ? pending.length : null,
+        prochaineSeanceTitre: context.sessionTitre,
+        activiteTitre: context.exerciceTitre,
+        objectif: context.objectif,
+      },
+    });
+    if (oriented) return oriented;
   }
 
   if (options.authUserId && isAccueilQuestion(trimmed)) {
