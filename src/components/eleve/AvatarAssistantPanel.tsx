@@ -1,4 +1,4 @@
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { HelpCircle, MessageCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -62,13 +62,20 @@ async function loadOwnDevoirTitles(userId: string) {
 export default function AvatarAssistantPanel({ pageHint, className }: Props) {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { context } = useAidePedagogique();
+  const { context, setAideContext } = useAidePedagogique();
   const [open, setOpen] = useState(false);
   const [question, setQuestion] = useState("");
   const [last, setLast] = useState<ContextualAssistantAnswer | null>(null);
   const [busy, setBusy] = useState(false);
   const [activeIntent, setActiveIntent] = useState<PedagogicalIntent>("expliquer");
   const [consent, setConsent] = useState<AssistantConsentStatus>(() => getAssistantAiConsent());
+  const requestNumber = useRef(0);
+  const contextKey = JSON.stringify(context.pedagogical ?? null);
+  useEffect(() => {
+    requestNumber.current += 1;
+    setLast(null);
+    setBusy(false);
+  }, [contextKey, user?.id]);
 
   const contextLine = useMemo(() => {
     const parts = [
@@ -86,16 +93,19 @@ export default function AvatarAssistantPanel({ pageHint, className }: Props) {
     setConsent(status);
   };
 
-  const ask = async (event?: FormEvent, intent?: PedagogicalIntent) => {
+  const ask = async (event?: FormEvent, intent?: PedagogicalIntent, preset?: string, helpCategory?: "technique") => {
     event?.preventDefault();
     const chosen = intent ?? activeIntent;
     setActiveIntent(chosen);
     setBusy(true);
+    const request = ++requestNumber.current;
+    const askedQuestion = preset ?? question;
     try {
-      const ownDevoirs = user?.id && isAccueilQuestion(question)
+      const ownDevoirs = !context.pedagogical && user?.id && isAccueilQuestion(askedQuestion)
         ? await loadOwnDevoirTitles(user.id)
         : [];
-      const answer = await answerContextualQuestion(question, context, {
+      const answer = await answerContextualQuestion(askedQuestion, context, {
+        helpCategory,
         intent: chosen,
         authenticated: Boolean(user),
         assistantConsent: consent,
@@ -106,10 +116,11 @@ export default function AvatarAssistantPanel({ pageHint, className }: Props) {
         pagePath: pageHint ?? null,
         ownDevoirs,
       });
+      if (request !== requestNumber.current) return;
       setLast(answer);
       if (answer.openRoute) navigate(answer.openRoute);
     } finally {
-      setBusy(false);
+      if (request === requestNumber.current) setBusy(false);
     }
   };
 
@@ -166,7 +177,9 @@ export default function AvatarAssistantPanel({ pageHint, className }: Props) {
             </p>
           ) : null}
 
-          {consent === "undecided" ? (
+          {context.pedagogical ? (
+            <p className="text-[11px] text-muted-foreground">Cette aide utilise le contenu validé de l’exercice, sans appel à une IA.</p>
+          ) : consent === "undecided" ? (
             <div className="space-y-2 rounded-md border border-amber-200 bg-amber-50 p-2 text-[11px] text-[#0b234a]">
               <p className="whitespace-pre-line leading-snug">{ASSISTANT_CONSENT_INFO}</p>
               <div className="flex flex-wrap gap-1">
@@ -223,20 +236,40 @@ export default function AvatarAssistantPanel({ pageHint, className }: Props) {
           </form>
 
           <div className="flex flex-wrap gap-1">
-            {INTENT_BUTTONS.map(({ intent, label }) => (
+            {(context.pedagogical ? INTENT_BUTTONS.filter(({ intent }) => ["expliquer", "reformuler", "fournir_indice"].includes(intent)) : INTENT_BUTTONS).map(({ intent, label }) => (
               <Button
                 key={intent}
                 type="button"
                 size="sm"
                 variant={activeIntent === intent ? "default" : "outline"}
                 className="h-7 text-xs"
-                disabled={busy || !question.trim()}
-                onClick={() => void ask(undefined, intent)}
+                disabled={busy || (!context.pedagogical && !question.trim())}
+                onClick={() => void ask(undefined, intent, context.pedagogical ? (intent === "fournir_indice" ? "Donne-moi un indice" : "Explique la consigne plus simplement") : undefined)}
               >
                 {label}
               </Button>
             ))}
           </div>
+
+          {context.pedagogical ? (
+            <div className="flex flex-wrap gap-1">
+              <p className="w-full text-[11px] text-muted-foreground">Aide de l’exercice sans IA — question {context.pedagogical.itemIndex + 1}</p>
+              {(context.pedagogicalItemCount ?? 0) > 1 ? (
+                <label className="w-full text-xs">
+                  Question concernée
+                  <select className="ml-2 rounded border p-1" value={context.pedagogical.itemIndex} onChange={(event) => setAideContext({ pedagogical: { ...context.pedagogical!, itemIndex: Number(event.target.value) } })}>
+                    {Array.from({ length: context.pedagogicalItemCount! }, (_, index) => <option key={index} value={index}>{index + 1}</option>)}
+                  </select>
+                </label>
+              ) : null}
+              <Button type="button" size="sm" variant="outline" disabled={busy} onClick={() => void ask(undefined, undefined, "J’ai besoin du professeur")}>
+                Demander au professeur
+              </Button>
+              <Button type="button" size="sm" variant="outline" disabled={busy} onClick={() => void ask(undefined, undefined, "J’ai besoin du professeur", "technique")}>
+                Problème technique
+              </Button>
+            </div>
+          ) : null}
 
           {last ? (
             <div className="space-y-2 rounded-md border bg-[#f8f9fc] p-2 text-sm">

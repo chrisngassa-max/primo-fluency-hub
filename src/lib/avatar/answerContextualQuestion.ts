@@ -1,4 +1,5 @@
 import { answerAvatarQuestion } from "./answerAvatarQuestion";
+import { answerPedagogicalQuestion } from "./answerPedagogicalQuestion";
 import {
   detectPedagogicalIntent,
   isEvaluationAnswerRequest,
@@ -31,6 +32,7 @@ import {
 } from "../../../supabase/functions/_shared/assistant-accueil/orchestrate";
 
 export type AnswerContextualOptions = {
+  helpCategory?: "technique";
   intent?: PedagogicalIntent | null;
   /** Injection tests uniquement. */
   provider?: AssistantAiProvider;
@@ -99,6 +101,10 @@ export async function answerContextualQuestion(
       disclaimer,
       aiInvoked: false,
     };
+  }
+
+  if (context.pedagogical) {
+    return answerPedagogicalQuestion(trimmed, context.pedagogical, niveau, options.helpCategory);
   }
 
   if (options.authUserId && isAccueilQuestion(trimmed)) {

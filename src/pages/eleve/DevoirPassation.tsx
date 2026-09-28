@@ -30,6 +30,7 @@ import {
   startWavRecording,
 } from "@/lib/audioRecorder";
 import { useLiveAttemptSync } from "@/hooks/useLiveAttemptSync";
+import { usePedagogicalHelpContext } from "@/hooks/usePedagogicalHelpContext";
 import { emitLiveEvent } from "@/lib/liveEventEmitter";
 import { corrigerExercice } from "@/lib/correctionExercice";
 import { applyExerciseVariant, resolveStudentExerciseLevel } from "@/lib/exerciseVariant";
@@ -248,6 +249,7 @@ const DevoirPassation = () => {
   const rawItems: any[] = contenu?.items ?? [];
   const items: any[] = rawItems.map((it, idx) => itemOverrides[idx] ? { ...it, ...itemOverrides[idx] } : it);
   const isDone = devoir?.statut === "fait" || devoir?.statut === "arrete";
+  usePedagogicalHelpContext(ex?.id && devoirId ? { exerciseId: ex.id, devoirId, itemIndex: 0 } : null, items.length);
   const metadata = contenu?.metadata;
   const lesson = contenu?.lesson as {
     title?: string;
