@@ -1,5 +1,62 @@
 # CapTCF — Lot 2A implémenté localement ; Lot 2B non autorisé
 
+## Revue du 28 septembre 2026 — recette préparée, non exécutée
+
+Revue ciblée sur `D:\SITES\CAPTCF`, branche `captcf-lot-02-assistant-aide-pedagogique`, HEAD `75b6e7f774a78d586b5001b24738d252228ffd9d`. Commit code `88c52658c76b7202483a49592c28320f8e7819c3`. Commit documentaire précédent `75b6e7f774a78d586b5001b24738d252228ffd9d`. MP3 Louise présent, SHA-256 `B880B3C77F980676858BA05E71E7F3D435E1D8074A633B248D9CE90503D102DB`. Aucun défaut bloquant démontré, aucun commit correctif.
+
+### Vérifié localement
+
+- Autorisation : `auth.uid()` via le JWT ; exercice, devoir, séance, groupe, tentative, mode et remise reconstruits côté serveur ; les textes, compteurs et statuts du navigateur ne servent pas de preuve. Le client service n’est utilisé qu’après le contrôle d’accès JWT/RLS. La réponse ne contient pas les données d’un autre élève.
+- Pédagogie : pas de correction avant remise libérée ; pas d’explication en évaluation ; la justification n’est jamais un indice ; replay refusé en évaluation ; contexte insuffisant = refus visible ; seules les quatre variantes Louise au facts_hash commun passent.
+- IA : `kind=pedagogique` n’appelle pas Gemini. Refus et fallback sont visibles (`provider=faq_fallback`). Cinq outils, aucun nouvel agent. `recommend_next_activity` lit une `routing_decision` existante et n’affiche que `reason_student`. `flag_help_needed` écrit `aide_demandee` sans texte libre.
+- Frontend : un changement d’élève ou de sélecteurs efface l’échange et ignore une réponse tardive. Une erreur serveur affiche un refus, pas une explication inventée. Les boutons disent « Expliquer », « Reformuler », « Indice », « Demander au professeur », « Problème technique ». L’indice absent et le replay restent des réponses serveur, pas une promesse d’indice ni d’écoute garantie.
+- Tests de cette revue : 18 serveur Lot 2A, 4 panneau, 26 accueil, total **48/48**. `npm.cmd run build` PASS. `git diff --check` PASS.
+
+### Limites acceptées
+
+Aucun indice Louise validé : message « Aucun indice validé n’est disponible pour cet exercice. ». Replay limité au lecteur existant hors évaluation (`client_existing`). Pas de compteur serveur multi-onglets. Lot 2B et les fichiers `docs/handoffs/proposals/` restent non autorisés et ne sont pas des migrations.
+
+### Recette distante non exécutée
+
+À n’exécuter qu’avec une autorisation distincte, sur un compte élève synthétique :
+
+1. Déployer ensemble le frontend de cette branche et la seule Edge `captcf-assistant-qa`.
+2. Garder `verify_jwt=true`. Ne pas passer `--no-verify-jwt`.
+3. Smoke anonyme attendu : HTTP 401, sans `WORKER_ERROR`.
+4. Compte élève synthétique, données minimales, sans exercice Louise modifié.
+5. Parcours `DevoirPassation`.
+6. Parcours `SeanceApprenant` ou `BilanSeance`.
+7. Consigne simplifiée.
+8. Indice indisponible explicite.
+9. Explication refusée avant remise.
+10. Explication autorisée après remise et correction libérée.
+11. Replay refusé en évaluation.
+12. Prochaine activité lue depuis une `routing_decision` existante.
+13. Demande d’aide visible dans le Mode Atelier, sans texte libre stocké.
+14. Zéro appel Gemini.
+15. Nettoyage : déconnexion, sessions et refresh révoqués, consentement révoqué, compte banni.
+
+### Publication future — préparée, non lancée
+
+- `origin/main` après fetch : `0ce79a36c0613e369d54a6a4db9422e87b3c4fa5`.
+- Rollback frontend : ce même SHA, déjà en production.
+- Edge actuelle : `captcf-assistant-qa` version **6**, ACTIVE, `verify_jwt=true`.
+- Version qui serait déployée : le code `88c52658c76b7202483a49592c28320f8e7819c3`, pas encore publié. Avant déploiement, télécharger la version 6 ; en cas d’erreur, la redéployer et ne pas fusionner.
+- Diff proposé vers `main` : 21 fichiers (frontend ci-dessous, module `assistant-pedagogique`, `captcf-assistant-qa/index.ts`, handoffs et propositions SQL). Les SQL de `docs/handoffs/proposals/` ne doivent pas être appliqués.
+- Frontend concerné : `AvatarAssistantPanel.tsx`, `usePedagogicalHelpContext.ts`, `answerContextualQuestion.ts`, `answerPedagogicalQuestion.ts`, `pedagogicalTypes.ts`, `DevoirPassation.tsx`, `SeanceApprenant.tsx`, `BilanSeance.tsx`.
+
+Commandes futures, non exécutées ici :
+
+```text
+npx.cmd supabase functions deploy captcf-assistant-qa --project-ref gudcenhmzlcvhgbgklzw --use-api
+```
+
+Le frontend suivrait un déploiement Vercel du SHA fusionné. Le retour arrière frontend est le redéploiement de `0ce79a36c0613e369d54a6a4db9422e87b3c4fa5`. Le retour arrière Edge est le redéploiement de la source version 6 conservée avant le nouveau déploiement.
+
+### Actions qui demandent une nouvelle autorisation
+
+Push, PR, merge, déploiement Edge ou Vercel, recette avec compte élève, migration, mutation Supabase, changement de secret, appel Gemini, modification des exercices Louise. Le Lot 2B reste non autorisé.
+
 ## État courant — décision propriétaire Lot 2A
 
 **Lot 2A fonctionnel en code local, tests ciblés et build réussis. Aucun déploiement.** Cette section remplace les consignes d'arrêt historiques ci-dessous pour le périmètre minimal autorisé. Le Lot 2B (compteurs protégés et évolution de base) reste non autorisé. Les limites audio/indices acceptées ne constituent plus un motif d'arrêt du Lot 2A.
