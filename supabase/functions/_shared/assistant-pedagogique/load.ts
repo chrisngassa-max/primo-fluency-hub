@@ -30,7 +30,6 @@ export async function loadContext(deps: Dependencies, input: Row): Promise<Conte
   let mode: ActivityMode;
   let session: Row | null = null;
   let link: Row | null = null;
-  let assignmentId: string | null = null;
   if (devoirId) {
     const devoir = await one(user, 'devoirs', 'id, eleve_id, exercice_id, session_id, contexte, statut', { id: devoirId, eleve_id: uid, exercice_id: exerciseId });
     if (!devoir || devoir.eleve_id !== uid || devoir.exercice_id !== exerciseId) throw new Error('not_assigned');
@@ -38,8 +37,6 @@ export async function loadContext(deps: Dependencies, input: Row): Promise<Conte
     if (!['devoir', 'entrainement', 'evaluation', 'seance'].includes(string(devoir.contexte))) throw new Error('mode_unknown');
     mode = devoir.contexte === 'seance' ? 'entrainement' : devoir.contexte as ActivityMode;
     sessionId = string(devoir.session_id) || null;
-    const assignment = await one(content, 'exercise_assignments', 'id', { source_devoir_id: devoirId });
-    assignmentId = string(assignment?.id) || null;
   } else {
     // Contexte séance explicite, pas le mode en_ligne de l'exercice.
     mode = 'entrainement';
@@ -102,18 +99,34 @@ export async function loadContext(deps: Dependencies, input: Row): Promise<Conte
   if (item.instruction !== validatedItem.instruction || item.type !== validatedItem.type ||
       item.justification !== validatedItem.justification ||
       JSON.stringify(choices(item.choices)) !== JSON.stringify(choices(validatedItem.choices))) throw new Error('item_changed_since_validation');
-  let attempt: Row | null = null;
-  const filters: Record<string, string | null> = { learner_id: uid, exercise_id: exerciseId };
-  if (devoirId && assignmentId) filters.assignment_id = assignmentId;
-  else if (!devoirId) filters.session_id = sessionId;
-  // Pas de résolution globale élève/exercice : contexte ambigu => pas de correction.
-  if (!devoirId || assignmentId) {
+  // Remise devoir : submit-devoir-result écrit resultats(devoir_id, eleve_id).
+  // Ne pas utiliser exercise_assignments.source_devoir_id (absent du schéma exposé).
+  let submitted = false;
+  let correctionReleased = false;
+  if (devoirId) {
+    const resultat = (await user.read(
+      'resultats',
+      'id, eleve_id, exercice_id, devoir_id, correction_released_at, created_at',
+      { devoir_id: devoirId, eleve_id: uid, exercice_id: exerciseId },
+      true,
+    ))[0] ?? null;
+    if (resultat && resultat.eleve_id === uid && resultat.exercice_id === exerciseId && resultat.devoir_id === devoirId) {
+      submitted = true;
+      correctionReleased = Boolean(resultat.correction_released_at) && mode !== 'evaluation';
+    }
+  } else {
+    const filters: Record<string, string | null> = { learner_id: uid, exercise_id: exerciseId, session_id: sessionId };
     if (attemptId) filters.id = attemptId;
-    attempt = (await user.read('exercise_attempts', 'id, learner_id, exercise_id, assignment_id, session_id, status, completed_at, correction_released_at', filters, !attemptId))[0] ?? null;
+    const attempt = (await user.read(
+      'exercise_attempts',
+      'id, learner_id, exercise_id, session_id, status, completed_at, correction_released_at',
+      filters,
+      !attemptId,
+    ))[0] ?? null;
+    if (attemptId && !attempt) throw new Error('attempt_not_authorized');
+    submitted = attempt?.status === 'completed' && Boolean(attempt.completed_at);
+    correctionReleased = submitted && Boolean(attempt?.correction_released_at) && mode !== 'evaluation';
   }
-  if (attemptId && !attempt) throw new Error('attempt_not_authorized');
-  const submitted = attempt?.status === 'completed' && Boolean(attempt.completed_at);
-  const correctionReleased = submitted && Boolean(attempt?.correction_released_at) && mode !== 'evaluation';
   const max = object(object(meta.level_contract).audio_policy).max_listens;
   let recommendation: Context['recommendation'] = null;
   if (mode !== 'evaluation' && (mode !== 'devoir' || submitted)) {

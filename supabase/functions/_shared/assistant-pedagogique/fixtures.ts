@@ -36,8 +36,9 @@ export function fixture(level = 0): Record<string, Record<string, unknown>[]> {
     } }],
     differentiation_families: [{ published_exercise_id: id, source_id: source, source_content_hash: hash, review_status: 'published', payload: { facts: { facts_hash: factsHash }, variants: { [niveau]: { exercise: { instruction: 'Écoutez le document.', items: structuredClone(items) } } } } }],
     pedagogical_sources: [{ id: source, content_hash: hash, status: 'analyzed', review_status: 'valide' }],
-    exercise_assignments: [{ id: 'assignment', source_devoir_id: devoir }],
-    exercise_attempts: [{ id: attempt, learner_id: learner, exercise_id: id, session_id: session, assignment_id: 'assignment', status: 'completed', completed_at: '2026-09-27', correction_released_at: '2026-09-27' }],
+    // Remise devoir = table resultats (submit-devoir-result). Pas de source_devoir_id.
+    resultats: [{ id: 'resultat-1', devoir_id: devoir, eleve_id: learner, exercice_id: id, created_at: '2026-09-27', correction_released_at: '2026-09-27' }],
+    exercise_attempts: [{ id: attempt, learner_id: learner, exercise_id: id, session_id: session, status: 'completed', completed_at: '2026-09-27', correction_released_at: '2026-09-27' }],
     routing_decisions: [{ eleve_id: learner, exercice_id: id, session_id: session, reason_student: 'Continue avec ton prochain devoir.', reason_trainer: 'SECRET_TRAINER', rule_id: 'SECRET_RULE', context_snapshot: { seuil: 80 }, devoir_genere: devoir }],
     session_live_events: [],
   };
