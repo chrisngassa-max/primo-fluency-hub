@@ -10,9 +10,12 @@ const PILOT = new Set(['62b06150-7942-4c41-bab9-fdba0a4d852c', '972e14a8-9fe1-4f
 export interface Context {
   owner: string; exerciseId: string; sessionId: string | null; devoirId: string | null;
   mode: ActivityMode; instruction: string; itemType: string; competence: string;
-  objective: string; level: string; submitted: boolean; correctionReleased: boolean;
-  justification: string | null; maxListens: number | null;
+  objective: string; level: string; itemId: string; factsHash: string;
+  factRefs: string[]; submitted: boolean; correctionReleased: boolean;
+  justification: string | null; sealedJustification: string | null; maxListens: number | null;
   recommendation: { text: string; route: string } | null;
+  /** Choix scellés pour garde-fous locaux uniquement — jamais projetés. */
+  sealedChoices: Array<{ id: string; text: string; is_correct: boolean }>;
 }
 export interface Dependencies { authUserId: string; userStore: DataStore; contentStore: DataStore }
 
@@ -137,11 +140,22 @@ export async function loadContext(deps: Dependencies, input: Row): Promise<Conte
       if (next) recommendation = { text: string(route.reason_student), route: `/eleve/devoirs/${string(next.id)}` };
     }
   }
+  const sealedChoices = (Array.isArray(validatedItem.choices) ? validatedItem.choices : []).map((choice) => {
+    const c = object(choice);
+    return { id: string(c.id), text: string(c.text), is_correct: c.is_correct === true };
+  });
+  const factRefs = Array.isArray(validatedItem.fact_refs)
+    ? validatedItem.fact_refs.map((ref) => string(ref)).filter(Boolean)
+    : [];
   return {
     owner: uid, exerciseId, devoirId, sessionId, mode,
     instruction: string(validatedItem.instruction) || string(validatedExercise.instruction), itemType: string(validatedItem.type) || string(exercise.format),
-    competence: string(exercise.competence), level: string(exercise.niveau_vise), objective: string(session?.objectifs),
-    submitted, correctionReleased, justification: correctionReleased ? string(validatedItem.justification) || null : null,
+    competence: string(exercise.competence), level: string(exercise.niveau_vise),
+    itemId: string(validatedItem.id), factsHash: FACTS, factRefs, sealedChoices,
+    objective: string(session?.objectifs),
+    submitted, correctionReleased,
+    sealedJustification: string(validatedItem.justification) || null,
+    justification: correctionReleased ? string(validatedItem.justification) || null : null,
     maxListens: Number.isInteger(max) && Number(max) > 0 ? Number(max) : null, recommendation,
   };
 }

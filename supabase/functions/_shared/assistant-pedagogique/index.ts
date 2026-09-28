@@ -1,4 +1,5 @@
 import { ASSISTANT_TOOLS, type AssistantTool } from '../assistant-accueil/contract-v1.ts';
+import { deliverValidatedHint } from './banks/deliver-hint.ts';
 import { loadContext, type Context, type Dependencies } from './load.ts';
 import { object, string, type Row } from './store.ts';
 export type { DataStore } from './store.ts';
@@ -71,10 +72,31 @@ export async function handlePedagogical(deps: Dependencies & { body: unknown }):
         result = context.mode !== 'evaluation' && context.submitted && context.correctionReleased && context.justification
           ? reply(`Voici l’explication validée pour cette question : ${context.justification.slice(0, 1800)}`)
           : refuse('L’explication est disponible seulement après remise et libération de la correction, hors évaluation.'); break;
-      case 'deliver_validated_hint':
-        // Pilote Louise : aucun indice validé constaté. Ne jamais convertir
-        // justification, choices, scaffolding ou texte client en indice.
-        result = refuse(context.mode === 'evaluation' ? 'Les indices sont interdits pendant une évaluation.' : 'Aucun indice validé n’est disponible pour cet exercice.'); break;
+      case 'deliver_validated_hint': {
+        // Banque versionnée uniquement. Jamais justification / choices / Gemini.
+        const rawLevel = Number(object(object(body.tool).args).level);
+        const level = Number.isInteger(rawLevel) && rawLevel >= 1 ? rawLevel : 1;
+        const delivered = deliverValidatedHint({
+          mode: context.mode,
+          exerciseId: context.exerciseId,
+          itemId: context.itemId,
+          factsHash: context.factsHash,
+          sealedItem: {
+            exercise_id: context.exerciseId,
+            level: context.level as 'A1' | 'A2' | 'B1' | 'B2',
+            item_id: context.itemId,
+            facts_hash: context.factsHash,
+            fact_refs: context.factRefs,
+            instruction: context.instruction,
+            choices: context.sealedChoices,
+            justification: context.sealedJustification,
+          },
+        }, level);
+        result = delivered.allowed
+          ? reply(delivered.text, false, { name: action, allowed: true })
+          : refuse(delivered.text);
+        break;
+      }
       case 'replay_audio_segment':
         result = context.mode === 'evaluation' ? refuse('La réécoute supplémentaire est interdite en évaluation.')
           : context.maxListens === null ? refuse('Le contrat d’écoute est indisponible. Utilise les indications du lecteur.')
