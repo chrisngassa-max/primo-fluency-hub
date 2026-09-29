@@ -1,5 +1,61 @@
 # Lot 5B-C — Suite après autorisation explicite de revue
 
+## Phase B C2 livrée — arrêt pédagogique après A2 (29 septembre 2026)
+
+- HEAD local, référence origin et HEAD GitHub identiques : `a5fc54862c5da04af902c98a1aab499c4121ebca`. Les commits manuels `6a6b358f` et `a5fc5486` résolvent le blocage de commits décrit plus bas (historique conservé).
+- [PR #47](https://github.com/chrisngassa-max/primo-fluency-hub/pull/47) : quatre fichiers, helper de génération, test et deux handoffs ; blobs distants identiques au checkout. Aucun fichier Edge/migration. L'ancienne référence locale origin/main était périmée ; contrôle effectué contre le main GitHub réel `8e11677b`.
+- [CI 36602152036](https://github.com/chrisngassa-max/primo-fluency-hub/actions/runs/36602152036) : tests, build et lint success. Preview Vercel Ready `86wE19g1m4Fffyp9D4NEuWmYVbCT`, page publique affichée.
+- Fusion autorisée après contrôles verts, expected head contrôlé, sans push direct main. Nouveau main `60c688338f6d9c22731f2383455119ffcee74096`. Production Vercel success `G7cEgfsqDxjWjJKnichDUPb2jzqQ`.
+- Vérification publique captcf.fr : bundle `/assets/index-OMa-BJb-.js`, appel effectif compilé `generate-differentiation-family` avec `body:{sourceId:e,force_regenerate:n,target_level:r,correctif_05a_c:!0}`. Pas d'interception de requête authentifiée ni lecture de token ; preuve par code servi et métadonnées serveur après génération.
+- Source `abddcf10-a426-4701-88eb-aaf05d9fc707`, projet `gudcenhmzlcvhgbgklzw` : utilisable/analyzed, zéro famille avant appel ; empreintes transcription `fab3d0c9df3b0c2fb5a487c53bcba6b2` et chunks `95b19efdcd194954731d0b000435f383` inchangées.
+- Après rechargement du Studio authentifié : A2 seul sélectionné, bouton activé une seule fois. Famille `a529ba06-2bf1-40e9-b7da-62bbb0142f91` / `A2CO-8F51801D54B0`, six QCM, generation_status generated, review_status draft, payload.status draft, published_exercise_id null. Métadonnées `lot_05a_c:true,max_items:6` : correctif actif en production.
+- Un seul appel Studio, deux appels Gemini selon le chemin serveur réussi (extraction puis items), zéro retry ; tokens/coût non exposés, coût monétaire non déterminable. Le rapport technique interne produit des warnings ; aucune action de validation pédagogique effectuée.
+- **STOP avant confirmation : 18 faits extraits, ensemble non approuvé. A1/B1/B2 non générés.** Hash calculé serveur mais non confirmé : `sha256:02b810eeb8288c090d8b18f938f923ca3ced1f25ad1d1d1dceadb00da217eb0d`.
+- Référence locale lue : `20260812-b1-eclipse/20260812_b1_eclipse/rfi_b1_20260812_une_eclipse_visible_en_europe_transcription.docx`, comparée à la transcription corrigée. Pas de nouvelle écoute indépendante attestée ; aucune affirmation de validation audio complète. Les contradictions textuelles suffisent à refuser la confirmation.
+- Défauts bloquants : fact_01–04 et fact_17–18 attribuent speaker/viewpoint à Élise Gazengel alors que la référence nomme Charlotte Derouin ; Élise recueille les propos. fact_06 ajoute « ou d'une éclipse », altérant le sens : proposition de correction « Selon Didier Queloz, observer une éclipse n'apporte actuellement pas vraiment de nouvelles connaissances sérieuses sur le Soleil ». fact_02/item_02 demandent une durée globale alors que le passage décrit le masquage du Soleil ; préciser la phase décrite.
+- Le panneau faits affiche les 18 faits, case non cochée et confirmation désactivée. Pas de contrôle d'édition/suppression individuelle dans ce panneau ; aucune correction directe en base et aucune nouvelle extraction.
+- Audit transversal supplémentaire : omissions de l'Espagne, de Roquetes/Catalogne et de la présentation de Queloz dans les faits ; réponses QCM B/B/B/C/B/C (position répétitive). Ne pas considérer la capacité B2 déduite automatiquement comme une validation pédagogique.
+
+### Liste complète des faits affichés, avant toute confirmation
+
+1. **fact_01** — La lune va cacher le soleil. Attribution speaker/viewpoint erronée : Charlotte Derouin, et non Élise Gazengel.
+2. **fact_02** — Cela (l'éclipse) va durer quelques minutes. Attribution speaker/viewpoint erronée : Charlotte Derouin, et non Élise Gazengel.
+3. **fact_03** — Il va faire nuit en plein jour. Attribution speaker/viewpoint erronée : Charlotte Derouin, et non Élise Gazengel.
+4. **fact_04** — On parle alors d' éclipse totale. Attribution speaker/viewpoint erronée : Charlotte Derouin, et non Élise Gazengel.
+5. **fact_05** — Une éclipse totale est un événement émotionnel. Texte compatible avec la transcription de référence ; pas une validation audio indépendante.
+6. **fact_06** — Il n'y a aucune information sérieuse qui sort en terme de connaissance du soleil ou d'une éclipse actuellement. À corriger : ajout de « ou » qui change le sens ; Queloz parle de ce qu'une éclipse apporte actuellement à la connaissance du Soleil.
+7. **fact_07** — Une éclipse (totale) est un événement tellement extraordinaire à vivre. Texte compatible avec la transcription de référence ; pas une validation audio indépendante.
+8. **fact_08** — On peut transmettre l'émotion de la science. Texte compatible avec la transcription de référence ; pas une validation audio indépendante.
+9. **fact_09** — Il y a un intérêt de partager quelque chose (via l'éclipse). Texte compatible avec la transcription de référence ; pas une validation audio indépendante.
+10. **fact_10** — L'éclipse donne l'occasion de parler du développement de la connaissance. Texte compatible avec la transcription de référence ; pas une validation audio indépendante.
+11. **fact_11** — L'éclipse donne l'occasion de parler des outils qui permettent actuellement d'étudier le soleil et des grandes questions (comme le futur du soleil ou son fonctionnement). Texte compatible avec la transcription de référence ; pas une validation audio indépendante.
+12. **fact_12** — L'éclipse (ou l'événement) devient un prétexte pour parler de science. Texte compatible avec la transcription de référence ; pas une validation audio indépendante.
+13. **fact_13** — Les gens vous regardent à ce moment-là (quand on utilise un événement spécifique). Texte compatible avec la transcription de référence ; pas une validation audio indépendante.
+14. **fact_14** — On peut en tirer toutes les ficelles d'un événement spécifique (comme l'éclipse). Texte compatible avec la transcription de référence ; pas une validation audio indépendante.
+15. **fact_15** — Il y a un élément sociologique assez fascinant. Texte compatible avec la transcription de référence ; pas une validation audio indépendante.
+16. **fact_16** — des millions de personnes vont regarder cet événement en même temps. Texte compatible avec la transcription de référence ; pas une validation audio indépendante.
+17. **fact_17** — Cette éclipse aura lieu à son maximum autour de 20h. Attribution speaker/viewpoint erronée : Charlotte Derouin, et non Élise Gazengel.
+18. **fact_18** — Les propos ont été recueillis par Élise Gazengel. Attribution speaker/viewpoint erronée : Charlotte Derouin, et non Élise Gazengel.
+
+### Audit des six brouillons A2
+
+| Niveau | N° | Question | Compétence | Faits | Options | Réponse | Justification | Distracteurs | Difficulté réelle | Défaut et décision |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| A2 | 1 | Qu'est-ce qui va cacher le soleil pendant l'éclipse ? | Repérer l’agent d’une action | fact_01 | A: La Terre<br>B: La Lune<br>C: Une étoile<br>D: Un nuage | B : La Lune | Explicite, fact_01. | Terre/étoile plausibles ; nuage non entendu, catégorie erronée. | A1/A2 facile | À corriger : métadonnées du fait et du distracteur. |
+| A2 | 2 | Combien de temps l'éclipse va-t-elle durer ? | Repérer une durée | fact_02 | A: Quelques secondes<br>B: Quelques minutes<br>C: Quelques heures<br>D: Toute la journée | B : Quelques minutes | Le masquage du Soleil dure quelques minutes. | Unités de durée accessibles. | A2 | À corriger : demander la durée du masquage total, pas celle de toute l’éclipse. |
+| A2 | 3 | Que va-t-il se passer pendant l'éclipse totale, en plein jour ? | Repérer une conséquence | fact_03 | A: Il va faire très chaud.<br>B: Il va faire nuit.<br>C: Il va pleuvoir.<br>D: Le soleil va briller plus fort. | B : Il va faire nuit. | Explicite, fact_03. | Pluie/chaleur absentes du support ; dernier choix faible. | A1/A2 facile | À corriger : distracteurs et attribution du fait. |
+| A2 | 4 | Comment Didier Queloz décrit-il une éclipse totale ? | Repérer une appréciation | fact_05, fact_07 | A: C'est un événement ennuyeux.<br>B: C'est un événement dangereux.<br>C: C'est un événement émotionnel et extraordinaire.<br>D: C'est un événement commun. | C : événement émotionnel et extraordinaire. | Deux qualificatifs de Queloz, fact_05/07. | Oppositions faibles ; bonne réponse plus longue. | A2/B1 lexical | À corriger : équilibrer et renforcer les distracteurs. |
+| A2 | 5 | Selon Didier Queloz, pourquoi l'éclipse est-elle un 'prétexte' intéressant ? | Comprendre l’intention de vulgarisation | fact_12, fact_10, fact_11 | A: Pour faire la fête.<br>B: Pour parler de science et de connaissance.<br>C: Pour rester à la maison.<br>D: Pour voyager. | B : parler de science et de connaissance. | fact_10/11/12. | Rester à la maison très faible ; voyage peu pertinent. | A2 haut/B1 | À corriger : mot prétexte et distracteurs trop faciles. |
+| A2 | 6 | À quelle heure l'éclipse sera-t-elle à son maximum ? | Repérer une heure | fact_17 | A: Autour de 8h du matin.<br>B: Autour de 14h.<br>C: Autour de 20h.<br>D: À minuit. | C : autour de 20h. | Heure énoncée, fact_17, pas un timestamp technique. | Heures accessibles, certains choix éliminables avec ce soir. | A2 facile | Acceptable pour le texte ; corriger l’attribution du fait. |
+
+Les décisions sont une revue documentaire, pas une validation dans l'application. Audit A1/B1/B2 et comparaison multilevel impossibles à ce stade : génération bloquée par les faits. Hash commun non applicable, une seule famille.
+
+Aucune importation, transcription ou analyse relancée. Dérive **+39,415 s** conservée ; aucun découpage automatique ni question basée sur ces timestamps. Aucune validation/publication, séance, liaison, devoir ou élève. Aucune Edge ni migration modifiée. Arrêt en attente d'arbitrage sur les faits et d'un chemin d'édition sûr avant scellement ; ne pas régénérer A2 pour masquer le défaut.
+
+Preuves hors Git : `outputs/eclipse-a2-review.json` (payload complet) et `outputs/eclipse-facts-unconfirmed.png` (capture Studio) dans l'espace Codex.
+
+---
+
 ## Lot 5B-C2 — correctif local du payload de génération
 
 29 septembre 2026. Branche `captcf-lot-05b-c-second-audio-pilot`, départ `3dec873b`, ancêtre `bea631b2` conservé. Non-suivis préexistants préservés. Préflight distant en lecture seule : Éclipse `abddcf10-a426-4701-88eb-aaf05d9fc707` toujours `utilisable`, `analyzed`, zéro famille dans le seul projet `gudcenhmzlcvhgbgklzw`.
