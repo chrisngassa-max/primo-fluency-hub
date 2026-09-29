@@ -1,3 +1,53 @@
+# Lot 5B-C — Suite après autorisation explicite de revue
+
+**Date :** 29 septembre 2026. **Verdict : STOP UI — action de passage à utilisable absente du Studio.**
+
+Le propriétaire a explicitement autorisé le passage de la source `abddcf10-a426-4701-88eb-aaf05d9fc707` de `brouillon` à `utilisable`, uniquement pour le pilote interne, via le Studio et sans contournement technique. Il a demandé l'arrêt si l'action était absente ou échouait.
+
+## Vérification réelle du Studio
+
+- Même onglet et session formateur Christian authentifiée.
+- Source « Une éclipse visible en Europe » ; en-tête visible : `analyzed · brouillon`.
+- Ouverture de l'étape 2 « Métadonnées et droits ».
+- Formulaire complet exposé par l'interface : Titre, Origine, Statut des droits, Note de licence, Réutilisable pour les élèves, Réutilisable pour la génération IA, Enregistrer.
+- Aucun contrôle de statut de revue, aucun bouton « utilisable » ou action d'approbation de la source.
+- Le champ « Statut des droits » contient `internal_pilot` : il concerne les droits d'usage et ne doit pas être remplacé par `utilisable`.
+- Les étapes 6 et 7 concernent les variantes, restent bloquées faute de famille et ne permettent pas cette revue de source.
+- Corroboration en lecture seule dans `src/pages/formateur/StudioAudioWizardPage.tsx` : `MetadataRightsForm` enregistre seulement title, rights_status, license_note, source_origin, reusable_for_students et reusable_for_ai. Il ne modifie jamais review_status ; ce dernier est seulement affiché dans l'en-tête.
+
+**Défaut exact : le Studio propose le parcours de génération mais ne fournit pas l'action de revue de source requise par son backend (`SOURCE_REVIEW_NOT_APPROVED` tant que review_status=brouillon).**
+
+## Point d'arrêt et absence de mutation
+
+- Aucun changement de statut réalisé, donc aucune persistance d'un passage à utilisable ne peut être certifiée.
+- Aucun clic Enregistrer, aucune écriture SQL/RPC/Admin API/service_role, aucun recours à une autre interface pour contourner l'absence de l'action.
+- Aucune nouvelle tentative A2 : l'autorisation de relance était conditionnée au passage effectif à utilisable.
+- Faits, facts_hash et familles : aucun produit lors de cette suite ; aucun fait à confirmer ou arbitrer.
+- A1/A2/B1/B2 : aucun nouvel item ou brouillon. Audit pédagogique des quatre variantes toujours impossible faute de génération.
+- Nouveaux appels Gemini : 0 ; nouveaux retries : 0.
+- Bilan cumulé de la recette précédente : une transcription réussie, une analyse réussie, une tentative A2 échouée avant création de famille ; coût fournisseur non disponible.
+- Limite maintenue : horodatages non vérifiés, dérive +39 415 ms. Aucun découpage automatique. La transcription corrigée reste la référence textuelle ; la limite d'absence d'écoute indépendante attestée par l'agent demeure celle documentée précédemment.
+- Droits `internal_pilot`, réutilisation élèves désactivée, aucune diffusion publique.
+- Aucune validation de variante, publication, séance, devoir, élève, modification Louise, push, PR, migration ou déploiement.
+
+## Suite nécessaire
+
+Le Studio doit exposer une action explicite de revue de la source vers `utilisable`, distincte des droits d'usage et de la validation des variantes. Aucun correctif de code n'est réalisé dans cette mission. Reprendre ensuite la même source, vérifier le statut après rafraîchissement, puis effectuer l'unique relance A2 autorisée avant l'audit des faits.
+
+## Traçabilité Git
+
+- Branche : `captcf-lot-05b-c-second-audio-pilot`.
+- Commit précédent conservé : `d32d85e03ff4a3f6983e8e52ee4fff789d9df84d`.
+- Nouveau commit documentaire demandé : `docs(studio): complete second audio generation review`, sans amend, uniquement ce handoff.
+- Fichiers non suivis préexistants conservés ; aucun audio ni document de référence modifié.
+
+Le titre du commit demandé ne signifie pas que la génération a abouti : cette suite documente explicitement le blocage UI.
+
+
+---
+
+# Historique de la recette
+
 # Lot 5B-C — Actualisation de la recette réelle du 29 septembre 2026
 
 Cette actualisation remplace le verdict STOP AUTH du premier arrêt. La recette a réellement repris dans le navigateur interne après connexion manuelle du propriétaire. Le parcours demeure incomplet : arrêt à la première tentative de génération A2.
