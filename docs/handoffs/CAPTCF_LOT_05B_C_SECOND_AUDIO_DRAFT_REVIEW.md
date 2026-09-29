@@ -1,5 +1,47 @@
 # Lot 5B-C — Suite après autorisation explicite de revue
 
+## Lot 5B-C — arrêt préventif avant génération : contrat Studio/Edge incompatible
+
+29 septembre 2026. **BLOQUÉ avant tout appel Gemini.** Source unique `abddcf10-a426-4701-88eb-aaf05d9fc707`, projet unique `gudcenhmzlcvhgbgklzw`.
+
+### Préflight et preuves
+
+- Source toujours `utilisable`, `analyzed`, droits `internal_pilot`, réutilisation élèves désactivée. Session formateur authentifiée reprise dans le Studio, aucun identifiant de connexion lu ou conservé.
+- Transcription et analyse inchangées depuis la clôture Phase B : empreinte transcription `fab3d0c9df3b0c2fb5a487c53bcba6b2`, chunks `95b19efdcd194954731d0b000435f383`, neuf chunks ; source updated_at inchangé `2026-09-29T16:09:08.310003+00:00`.
+- Zéro famille existante, y compris familles archivées. Aucun doublon créé.
+- Contrôle Vercel toujours success pour `8e11677b494e148173155e52eff2f7de67587181`, déploiement `GPFd2GSNCdDGG2U8m4jEEDwKdvjc` ; interface Studio accessible sur captcf.fr. Preuve de livraison héritée de Phase B, sans prétendre disposer d'un nouveau SHA affiché dans le DOM.
+- Étape 5 ouverte : A2 seul coché ; bouton de génération **non activé**. Capture hors dépôt : `outputs/eclipse-generation-preflight.png` dans l'espace de travail Codex.
+
+### Défaut exact empêchant la mission
+
+Vérification en lecture seule du fichier frontend au SHA de production via GitHub et de la fonction Edge réellement déployée (version 27, empreinte de bundle `f02ffd2e1079d57676ee0fc9dd2eaef2c0e59254bbba92b19b4be470bfe926fd`) :
+
+1. `src/lib/differentiationFamilies.ts`, fonction `generateDifferentiationFamily`, envoie uniquement `{ sourceId, force_regenerate, target_level }` ; **aucun `correctif_05a_c: true`**.
+2. Dans l'Edge déployée, `resolveCorrectifMode(body.correctif_05a_c)` retourne `rollback` sauf si la valeur est strictement `true`.
+3. La recherche et réutilisation des faits des familles précédentes n'existent que dans le bloc `correctifMode === "lot05a_c"`. En mode effectif `rollback`, `facts` reste null puis `geminiJson` extrait des faits à chaque nouvelle famille, même après confirmation frontend.
+4. Dans ce même mode, `resolveCorrectifPromptItemBounds` conserve les volumes du contrat et `finalizeVariantItemsForPersist` ne plafonne pas à six. Contrats déployés : A1 3–4, A2 4–6, B1 5–7, B2 5–8 items. Le plafond strict demandé n'est donc pas assuré.
+
+Ce défaut est établi par lecture du chemin d'exécution, **pas par un appel de génération**. Le bouton ne propose aucune option permettant d'activer le correctif. Lancer A2 seul serait possible avec une consigne de 4–6 items, mais ne permettrait pas de poursuivre la mission multilevel sans nouvelle extraction interdite : arrêt avant dépense et création d'un brouillon partiel. Aucun appel direct, contournement de l'interface, changement de code, migration ou déploiement effectué.
+
+### Résultats et audit
+
+| Niveau | family_id | Items | Statut |
+| --- | --- | --- | --- |
+| A2 | Aucun | 0 | Non généré |
+| A1 | Aucun | 0 | Non généré |
+| B1 | Aucun | 0 | Non généré |
+| B2 | Aucun | 0 | Non généré |
+
+- Faits extraits : 0 ; liste vide ; aucun fait confirmé. `facts_hash` : absent. Hash commun : non applicable, aucune famille.
+- Audit pédagogique par item : non réalisable, aucun item créé. Aucun verdict pédagogique inventé ; aucun arbitrage de fait soumis.
+- Gemini : **0 appel** ; retries : **0** ; coût de génération de cette tentative : **0**.
+- Aucune transcription ni analyse relancée ; aucune écoute nouvelle attestée dans cette tentative. La transcription corrigée reste la référence textuelle.
+- Dérive de **+39,415 secondes** maintenue comme limite connue ; aucun timestamp présenté comme précis, aucun découpage automatique.
+- Aucune validation, publication, liaison `session_exercices`, séance, devoir ou élève créé. Aucun push, PR, migration, déploiement ou changement de secret.
+- Reprise nécessaire : corriger et livrer sous autorisation distincte l'intégration Studio/Edge afin de garantir la réutilisation du même ensemble et le plafond de six, puis reprendre le préflight et A2 via l'interface. Ne pas relancer simplement le bouton actuel.
+- Commit antérieur `bea631b2e0bb990db783895aec7e204b699d9bc2` conservé ; nouveau commit documentaire sans amend : `docs(studio): record eclipse multilevel draft review`.
+
+---
 ## Clôture Phase B — livraison et revue Éclipse réussies
 
 29 septembre 2026. **Source Éclipse utilisable ; arrêt avant génération A2.**
