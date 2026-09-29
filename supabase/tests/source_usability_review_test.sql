@@ -55,7 +55,8 @@ SELECT set_config('app.source_review_allowed','true',true);
 SELECT set_config('request.jwt.claim.role','service_role',true);
 SELECT pg_temp.expect_error($q$UPDATE public.pedagogical_sources SET review_status='utilisable' WHERE id='b5000000-0000-0000-0000-000000000001'$q$,'SOURCE_REVIEW_DIRECT_WRITE_FORBIDDEN');
 SELECT pg_temp.expect_error($q$UPDATE public.pedagogical_sources SET review_status='valide' WHERE id='b5000000-0000-0000-0000-000000000001'$q$,'SOURCE_REVIEW_DIRECT_WRITE_FORBIDDEN');
-SELECT pg_temp.expect_error($q$SET ROLE postgres$q$,'permission denied');
+-- Do not assert SET ROLE postgres is denied in an administrative session.
+-- session_user remains postgres; real client isolation is tested over HTTP/JWT.
 SELECT pg_temp.expect_error($q$INSERT INTO public.pedagogical_sources(title,storage_path,created_by,review_status) VALUES('Bypass','x','a5000000-0000-0000-0000-000000000001','utilisable')$q$,'SOURCE_REVIEW_DIRECT_WRITE_FORBIDDEN');
 SELECT pg_temp.expect_error($q$SELECT * FROM public.mark_pedagogical_source_usable('b5000000-0000-0000-0000-000000000001',false,now())$q$,'SOURCE_REVIEW_CONFIRMATION_REQUIRED');
 SELECT pg_temp.expect_error($q$SELECT * FROM public.mark_pedagogical_source_usable('b5000000-0000-0000-0000-000000000001',true,'2000-01-01')$q$,'SOURCE_REVIEW_CONFLICT');
