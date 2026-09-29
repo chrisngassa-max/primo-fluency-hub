@@ -215,8 +215,14 @@ export function assertGenerationAllowed(input: {
   if (source.source_kind !== "audio") {
     return { ok: false, reason: "Le Studio audio n’accepte que les sources audio." };
   }
-  if (!hasUsableTranscription(transcriptionStatus)) {
-    return { ok: false, reason: "La transcription doit être disponible avant la génération." };
+  if (transcriptionStatus !== "reviewed") {
+    return { ok: false, reason: "La transcription doit être relue avant la génération." };
+  }
+  if (!["utilisable", "valide"].includes(source.review_status)) {
+    return { ok: false, reason: "Marquez la source comme utilisable après sa revue (étape 3)." };
+  }
+  if (!hasRights(source) || !source.reusable_for_ai) {
+    return { ok: false, reason: "Renseignez les droits et autorisez la génération IA." };
   }
   if (source.status !== "analyzed") {
     return { ok: false, reason: "Analysez l’audio (chunks sourcés) avant de générer." };
@@ -331,7 +337,7 @@ function stepDoneFlags(input: StudioWorkflowSnapshot, confirmation: StudioFactsC
   return {
     1: Boolean(source?.id && source.source_kind === "audio"),
     2: Boolean(source && hasRights(source)),
-    3: hasUsableTranscription(input.transcriptionStatus),
+    3: input.transcriptionStatus === "reviewed" && source?.status === "analyzed" && ["utilisable", "valide"].includes(source.review_status),
     4: isFactsConfirmationValid(confirmation, sealed),
     5: hasGenerated,
     6: hasValidated || hasGenerated,
@@ -449,7 +455,7 @@ export function resolveStudioSteps(input: StudioWorkflowSnapshot): {
   const nextLabels: Record<StudioStepId, string> = {
     1: "Importez un fichier MP3 pour commencer.",
     2: "Complétez les métadonnées et confirmez les droits d’usage.",
-    3: "Lancez la transcription puis relisez le texte.",
+    3: "Relisez la transcription, terminez l’analyse puis marquez la source comme utilisable.",
     4: sealed
       ? "Vérifiez les faits affichés puis confirmez qu’ils décrivent correctement l’audio."
       : "Générez d’abord A2 pour obtenir les faits, puis confirmez-les ici.",

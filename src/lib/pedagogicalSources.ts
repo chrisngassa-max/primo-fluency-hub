@@ -331,7 +331,6 @@ export async function updatePedagogicalSourceFields(
     reusable_for_students: boolean;
     reusable_for_ai: boolean;
     metadata: Record<string, unknown>;
-    review_status: PedagogicalReviewStatus;
   }>,
 ): Promise<PedagogicalSource> {
   const { data, error } = await supabase

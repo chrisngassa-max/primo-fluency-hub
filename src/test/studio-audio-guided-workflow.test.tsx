@@ -254,7 +254,7 @@ describe("Studio audio guided workflow", () => {
   it("allows A2-only bootstrap when no sealed facts exist yet", () => {
     const result = assertGenerationAllowed({
       source: makeSource(),
-      transcriptionStatus: "ready",
+      transcriptionStatus: "reviewed",
       families: [],
       selectedLevels: ["A2"],
       confirmation: null,

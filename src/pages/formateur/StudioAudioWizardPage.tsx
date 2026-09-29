@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
+import { StudioSourceReview } from "@/components/studio-audio/StudioSourceReview";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -105,7 +106,7 @@ function MetadataRightsForm({
 
 export default function StudioAudioWizardPage() {
   const { sourceId } = useParams<{ sourceId: string }>();
-  const { user } = useAuth();
+  const { user, role } = useAuth();
   const queryClient = useQueryClient();
   const [activeStep, setActiveStep] = useState<StudioStepId>(1);
   const [selectedLevels, setSelectedLevels] = useState<SliceLevel[]>(["A2"]);
@@ -184,7 +185,8 @@ export default function StudioAudioWizardPage() {
 
   const refreshSource = async () => {
     await queryClient.invalidateQueries({ queryKey: ["pedagogical-source", sourceId] });
-    await sourceQuery.refetch();
+    const result = await sourceQuery.refetch();
+    if (result.error) throw result.error;
   };
 
   const selectStep = (stepId: StudioStepId) => {
@@ -285,6 +287,7 @@ export default function StudioAudioWizardPage() {
       {activeStep === 3 && (
         <div className="space-y-6">
           <SourceTranscriptionActions source={source} variant="inline" />
+          <StudioSourceReview key={source.id} source={source} transcriptionStatus={transcriptionStatus} userId={user?.id} role={role} onSaved={refreshSource} />
           <div className="space-y-2">
             <h3 className="font-medium text-sm">Analyse (chunks sourcés)</h3>
             <p className="text-xs text-muted-foreground">
