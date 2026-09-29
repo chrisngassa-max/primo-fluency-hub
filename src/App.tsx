@@ -71,6 +71,8 @@ import PositionnementPassation from "@/pages/eleve/PositionnementPassation";
 import PositionnementResultat from "@/pages/eleve/PositionnementResultat";
 import RessourcesPage from "@/pages/formateur/RessourcesPage";
 import PedagogicalSourcesPage from "@/pages/formateur/PedagogicalSourcesPage";
+import StudioAudioPage from "@/pages/formateur/StudioAudioPage";
+import StudioAudioWizardPage from "@/pages/formateur/StudioAudioWizardPage";
 import BanqueActivites from "@/pages/formateur/BanqueActivites";
 import BilansAtelierPage from "@/pages/formateur/BilansAtelierPage";
 import PositionnementPage from "@/pages/formateur/PositionnementPage";
@@ -190,6 +192,8 @@ const App = () => (
               <Route path="test-resultats/:apprenantId" element={<TestResultatDetail />} />
               <Route path="ressources" element={<RessourcesPage />} />
               <Route path="sources-pedagogiques" element={<PedagogicalSourcesPage />} />
+              <Route path="studio-audio" element={<StudioAudioPage />} />
+              <Route path="studio-audio/:sourceId" element={<StudioAudioWizardPage />} />
               <Route path="intervention" element={<InterventionRapidePage />} />
               <Route path="bibliotheque-interventions" element={<BibliothequeInterventions />} />
               <Route path="banque-activites" element={<BanqueActivites />} />

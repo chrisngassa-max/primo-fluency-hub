@@ -306,6 +306,44 @@ export async function fetchPedagogicalSources(filters: PedagogicalSourceFilters 
   return (data ?? []) as PedagogicalSource[];
 }
 
+export async function fetchPedagogicalSourceById(sourceId: string): Promise<PedagogicalSource | null> {
+  const { data, error } = await supabase
+    .from("pedagogical_sources")
+    .select(SOURCE_COLUMNS)
+    .eq("id", sourceId)
+    .maybeSingle();
+  if (error) throw error;
+  return (data as PedagogicalSource | null) ?? null;
+}
+
+export async function updatePedagogicalSourceFields(
+  sourceId: string,
+  patch: Partial<{
+    title: string;
+    author: string | null;
+    pedagogical_domains: string[];
+    level_min: string | null;
+    level_max: string | null;
+    themes: string[];
+    source_origin: string | null;
+    rights_status: string | null;
+    license_note: string | null;
+    reusable_for_students: boolean;
+    reusable_for_ai: boolean;
+    metadata: Record<string, unknown>;
+    review_status: PedagogicalReviewStatus;
+  }>,
+): Promise<PedagogicalSource> {
+  const { data, error } = await supabase
+    .from("pedagogical_sources")
+    .update(patch)
+    .eq("id", sourceId)
+    .select(SOURCE_COLUMNS)
+    .single();
+  if (error) throw error;
+  return data as PedagogicalSource;
+}
+
 export async function getPedagogicalSourceSignedUrl(source: PedagogicalSource, expiresInSeconds = 3600): Promise<string> {
   const { data, error } = await supabase.storage
     .from(source.storage_bucket || STORAGE_BUCKET)

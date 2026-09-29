@@ -22,6 +22,7 @@ import {
   BarChart3,
   FlaskConical,
   Factory,
+  AudioLines,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
@@ -60,6 +61,7 @@ const pedagogieNav = [
   { title: "Production du parcours", url: "/formateur/production-parcours", icon: Factory },
   { title: "Ressources", url: "/formateur/ressources", icon: Library },
   { title: "Sources pedagogiques", url: "/formateur/sources-pedagogiques", icon: FileText },
+  { title: "Studio audio", url: "/formateur/studio-audio", icon: AudioLines },
   { title: "Ressources pédagogiques", url: "/formateur/banque-activites", icon: Database },
   { title: "Importer programme", url: "/formateur/import-programme", icon: Upload },
 ];
