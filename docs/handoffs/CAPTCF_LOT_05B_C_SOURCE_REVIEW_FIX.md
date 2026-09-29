@@ -1,4 +1,73 @@
-# Lot 5B-C1 — Revue de source dans le Studio : arrêt d'architecture
+# Lot 5B-C1 — Implémentation locale de la revue sécurisée des sources
+
+## État courant — 29 septembre 2026
+
+Implémentation locale terminée au commit **1823c50a** (`fix(studio): secure source usability review`). Branche `captcf-lot-05b-c-second-audio-pilot`, départ `7e3f7e3b` conservé dans l'historique, sans amend. Le commit documentaire suivant porte `docs(studio): document secure source review implementation`.
+
+**Migration non appliquée. SQL contrôlé statiquement, tests SQL préparés mais non exécutés : Docker et psql ne sont pas disponibles sur ce portable.** Cette limite interdit de considérer la sécurité SQL comme validée en exécution ou la fonctionnalité comme livrée en production.
+
+### Objets et contrat serveur
+
+- Migration créée avec le CLI Supabase `migration new` : `supabase/migrations/20260929133719_secure_source_usability_review.sql`.
+- RPC `public.mark_pedagogical_source_usable(p_source_id uuid, p_confirmed boolean, p_expected_updated_at timestamptz)` ; résultat minimal `(source_id, review_status, updated_at, changed)`.
+- `auth.uid()` obligatoire ; `public.has_role(uid, 'formateur'/'admin')` canonique ; propriétaire obligatoire sauf exception admin déjà présente dans les policies.
+- Source verrouillée `FOR UPDATE`, puis transcription courante verrouillée. Statuts acceptés : `brouillon` ou répétition `utilisable` seulement ; aucun paramètre de statut cible.
+- Source audio, hash `sha256:` suivi de 64 caractères hexadécimaux minuscules, références de stockage non vides ; transcription `reviewed`, texte corrigé non vide, auteur/date de revue ; source `analyzed` et au moins un chunk ; droits non vides et `reusable_for_ai=true`.
+- `rights_status` reste du texte libre selon le schéma existant : aucun nouvel enum inventé. La RPC exige une mention de droits et la permission IA ; elle ne prétend pas vérifier juridiquement cette mention ni télécharger le MP3 pour en recalculer le hash.
+- Confirmation explicite et version `updated_at` concordante avant transition. Une répétition déjà utilisable revalide les prérequis puis renvoie `changed=false` sans écriture. Conflit de version, attente de verrou >5 s ou deadlock : refus intelligible, transaction atomique.
+- Seule colonne métier écrite : `review_status='utilisable'`. Le trigger existant gère `updated_at`. Aucun backfill, table nouvelle, exercice, fait, policy ni privilège de table modifié.
+
+### Protection de l'écriture directe
+
+`guard_pedagogical_source_review_status` est un trigger `BEFORE INSERT OR UPDATE OF review_status`, avec fonction **SECURITY INVOKER**. Il refuse tout changement direct et toute insertion avec un statut autre que brouillon sous le rôle SQL client. Un UPDATE sans changement de statut et les autres colonnes conservent leurs permissions/RLS antérieures.
+
+L'exception repose sur `current_user`, rôle SQL effectif `postgres` ou `service_role`, jamais sur une variable personnalisée ou un champ JWT. La RPC **SECURITY DEFINER**, propriétaire contrôlé `postgres`, exécute son UPDATE sous ce rôle après tous ses contrôles. Un client authenticated ne peut ni se transformer en postgres par un GUC/JWT, ni faire `SET ROLE postgres`. Les opérations administratives existantes et les RPC de relecture détenues par postgres restent possibles ; aucune permission supplémentaire accordée à service_role.
+
+Les deux fonctions imposent `search_path=pg_catalog`, les tables et fonctions applicatives sont qualifiées. EXECUTE révoqué à PUBLIC/anon/authenticated/service_role puis accordé à **authenticated seulement pour la RPC**. Le trigger ne dépend pas d'un appel direct du client à sa fonction.
+
+### Interface
+
+- `src/components/studio-audio/StudioSourceReview.tsx` : quatre statuts séparés, bouton uniquement si prérequis UI satisfaits, dialogue volontaire, annulation sans appel, résultat et refus lisibles. Aucun lancement de génération ni publication.
+- `src/lib/sourceUsabilityReview.ts` : appel RPC typé localement, confirmation et version, traduction des refus serveur/réseau.
+- `src/pages/formateur/StudioAudioWizardPage.tsx` : intégration à l'étape 3 ; invalidation et relecture de la source après succès, erreur de rafraîchissement remontée.
+- `src/lib/studioAudioWorkflow.ts` : génération bloquée sans transcription reviewed, source utilisable/valide et droits IA ; étape 3 non terminée tant que la revue manque.
+- `src/lib/pedagogicalSources.ts` : retrait de review_status du patch générique de métadonnées. La vraie protection demeure serveur.
+
+### Validation effectivement exécutée
+
+- 50 tests réussis dans cinq fichiers : nouveau `studio-source-review.test.tsx`, existants `studio-audio-guided-workflow.test.tsx`, `studio-audio-session-link.test.ts`, `studio-audio-b2-mastery-migration.test.ts`, `pedagogical-source-guards.test.ts`.
+- 3 tests statiques supplémentaires réussis : `studio-source-review-migration.test.ts`. Ce sont des assertions sur le contrat SQL écrit, pas une exécution PostgreSQL.
+- Test bootstrap A2 existant actualisé : transcription `reviewed` exigée, ancien scénario `ready` devenu invalide conformément au contrat serveur.
+- Build réussi : `node node_modules/vite/bin/vite.js build`, commande équivalente au script `npm run build` (`vite build`) ; npm absent du PATH. 3770 modules transformés. Avertissements non bloquants : base Browserslist ancienne, gros chunks, imports mixtes statiques/dynamiques.
+- `git diff --check` et contrôle du diff indexé : réussis.
+
+### Tests SQL préparés, non exécutés
+
+- `supabase/tests/source_usability_review_test.sql` : fixtures fictives en transaction terminée par ROLLBACK ; anon/élève/autre formateur refusés, propriétaire et admin acceptés, transcription absente/non revue, analyse/chunks/droits/hash absents, refus UPDATE/INSERT directs y compris valide, tentative de GUC usurpé et SET ROLE, confirmation/version, idempotence, conservation des autres champs et UPDATE de titre autorisé.
+- `supabase/tests/source_usability_review_concurrency.py` : deux connexions psql réelles, attente observable du détenteur du verrou ; deux confirmations avec un seul effet, droits devenus inadmissibles, statut concurrent a_remplacer et dialogue périmé. Fixtures committées uniquement sur base locale jetable puis nettoyées. Hôte imposé 127.0.0.1:54322 ; aucun secret embarqué, PGPASSWORD fourni par l'opérateur.
+- Ces scripts supposent la migration déjà installée dans une base **locale jetable** par l'opérateur ; ils n'appliquent aucune migration eux-mêmes. Leur exécution et la vérification HTTP/PostgREST réelle restent des critères de Phase B, notamment le refus direct et la persistance après rechargement.
+
+### Phase B — à autoriser séparément
+
+1. Sur environnement local jetable équipé de PostgreSQL/Supabase, vérifier le schéma et exécuter migration, tests SQL et concurrence. Vérifier les ACL, le refus anon, le refus PATCH/INSERT PostgREST direct, les modifications metadata permises, l'exception admin et la RPC existante de relecture/transcription.
+2. Examiner les résultats avant toute livraison. La migration serveur et le frontend sont nécessaires ; **aucune modification Edge n'est nécessaire pour cette transition**, le générateur possède déjà sa barrière de revue. Actualiser les types DB générés lors du workflow de livraison si requis.
+3. Après autorisation de migration distante et livraison frontend, installer le contrat SQL avant de rendre le bouton disponible. Vérifier le statut après rechargement et l'absence d'écriture dans exercices/familles/liaisons ; un succès RPC seul ne remplace pas ces contrôles.
+4. Reprendre la source existante `abddcf10-a426-4701-88eb-aaf05d9fc707` depuis Studio sous le formateur propriétaire. Aucun nouvel import, transcription ou analyse payante. Confirmer sa revue explicitement puis rafraîchir. Si un prérequis est refusé, arrêter et arbitrer sans relance automatique.
+5. La suite pédagogique A2/A1/B1/B2 reste hors de ce lot et soumise à la reprise autorisée : faits audités avant confirmation, même facts_hash, six items maximum, variantes draft. Limite connue +39,415 s conservée ; horodatages non précis, aucun découpage automatique.
+
+### Retour arrière
+
+`supabase/secours/20260929133719_secure_source_usability_review_rollback.sql` retire d'abord le trigger, puis les deux fonctions avec RESTRICT dans une transaction. Aucune donnée supprimée, aucun CASCADE, aucune ACL de table à restaurer car aucune n'a changé. Une dépendance inattendue fait échouer la transaction ; l'examiner, ne pas ajouter CASCADE. Les statuts déjà enregistrés resteraient inchangés. Retirer/masquer d'abord le frontend de revue et traiter le retour de l'ancien chemin d'écriture directe comme une régression de sécurité ; rollback uniquement sous contrôle explicite.
+
+### Point d'arrêt respecté
+
+Aucune migration appliquée, mutation distante, modification de la source pilote, transcription/analyse/génération, appel Gemini, push, PR, déploiement, publication, séance, devoir ou élève. Fichiers locaux préexistants non suivis préservés. Aucun fichier Classium concerné. Les deux commits sont locaux.
+
+---
+
+## Archive du constat d'architecture précédent (avant 1823c50a)
+
+Le texte ci-dessous décrit l'état antérieur au correctif et reste conservé pour la traçabilité. Ses mentions « aucun bouton » et « aucune migration créée » ne décrivent plus l'état local courant.
 
 Date : 29 septembre 2026. Mission locale uniquement.
 
