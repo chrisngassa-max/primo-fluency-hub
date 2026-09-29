@@ -1,33 +1,33 @@
-# CapTCF — Lot 5B-B — Studio audio guidé
+# CapTCF â€” Lot 5B-B â€” Studio audio guidÃ©
 
-**Date :** 2026-09-29  
-**Nature :** lot local — UI + orchestration front ; aucun push, PR, déploiement, migration ni mutation distante  
-**Dépôt :** `D:\SITES\CAPTCF`  
-**Branche :** `captcf-lot-05b-b-studio-audio-guide`  
-**HEAD (feat) :** `fad3103a378cad350e428b976ad64e117abd60fe`  
-**Base :** `origin/main` @ `0f6eaed8` (PR #43 présente)  
-**Projet Supabase :** `gudcenhmzlcvhgbgklzw` (non muté dans ce lot)
+**Date :** 2026-09-29
+**Nature :** lot local â€” UI + orchestration front ; aucun push, PR, dÃ©ploiement, migration ni mutation distante
+**DÃ©pÃ´t :** `D:\SITES\CAPTCF`
+**Branche :** `captcf-lot-05b-b-studio-audio-guide`
+**HEAD (feat) :** `fad3103a378cad350e428b976ad64e117abd60fe`
+**Base :** `origin/main` @ `0f6eaed8` (PR #43 prÃ©sente)
+**Projet Supabase :** `gudcenhmzlcvhgbgklzw` (non mutÃ© dans ce lot)
 
 ## Route
 
-| Route | Rôle |
+| Route | RÃ´le |
 | --- | --- |
-| `/formateur/studio-audio` | Accueil Studio : import MP3 audio + reprise d’une source existante |
-| `/formateur/studio-audio/:sourceId` | Wizard 8 étapes branché sur l’état serveur |
-| `/formateur/sources-pedagogiques` | Hub existant **conservé** (pas de doublon métier) |
+| `/formateur/studio-audio` | Accueil Studio : import MP3 audio + reprise dâ€™une source existante |
+| `/formateur/studio-audio/:sourceId` | Wizard 8 Ã©tapes branchÃ© sur lâ€™Ã©tat serveur |
+| `/formateur/sources-pedagogiques` | Hub existant **conservÃ©** (pas de doublon mÃ©tier) |
 
-Menu formateur : entrée **« Studio audio »** (`FormateurSidebar`) à côté de Sources pédagogiques.
+Menu formateur : entrÃ©e **Â« Studio audio Â»** (`FormateurSidebar`) Ã  cÃ´tÃ© de Sources pÃ©dagogiques.
 
-## Composants / libs réutilisés
+## Composants / libs rÃ©utilisÃ©s
 
 - `SourceTranscriptionActions` (variant `inline`)
-- `SourceAnalysisActions` (étape 3, analyse chunks)
-- `SourceDifferentiationFamilyActions` (variant `inline` + gates génération / publication)
+- `SourceAnalysisActions` (Ã©tape 3, analyse chunks)
+- `SourceDifferentiationFamilyActions` (variant `inline` + gates gÃ©nÃ©ration / publication)
 - Libs : `pedagogicalSources`, `pedagogicalSourceTranscriptions`, `pedagogicalSourceAnalysis`, `differentiationFamilies`
-- Edges **inchangées** : `hash-pedagogical-source`, `transcribe-pedagogical-source`, `analyze-pedagogical-source`, `generate-differentiation-family`, `publish-differentiation-family`
-- Rattachement séance : même table `session_exercices` / pattern SessionPilot via `studioAudioSessionLink.ts` (contrôle `groups.formateur_id`)
+- Edges **inchangÃ©es** : `hash-pedagogical-source`, `transcribe-pedagogical-source`, `analyze-pedagogical-source`, `generate-differentiation-family`, `publish-differentiation-family`
+- Rattachement sÃ©ance : mÃªme table `session_exercices` / pattern SessionPilot via `studioAudioSessionLink.ts` (contrÃ´le `groups.formateur_id`)
 
-Nouveaux fichiers d’orchestration (sans dupliquer la logique métier Edge) :
+Nouveaux fichiers dâ€™orchestration (sans dupliquer la logique mÃ©tier Edge) :
 
 - `src/lib/studioAudioWorkflow.ts`
 - `src/lib/studioAudioSessionLink.ts`
@@ -35,83 +35,83 @@ Nouveaux fichiers d’orchestration (sans dupliquer la logique métier Edge) :
 - `src/pages/formateur/StudioAudioPage.tsx`
 - `src/pages/formateur/StudioAudioWizardPage.tsx`
 
-## Huit étapes — fonctionnement
+## Huit Ã©tapes â€” fonctionnement
 
-| # | Étape | Reliée à | État réel |
+| # | Ã‰tape | ReliÃ©e Ã  | Ã‰tat rÃ©el |
 | --- | --- | --- | --- |
-| 1 | Importer l’audio | `createPedagogicalSource` + `hash-pedagogical-source` | **Opérationnel** (UI Studio audio-only) |
-| 2 | Métadonnées / droits | `updatePedagogicalSourceFields` | **Opérationnel** |
-| 3 | Transcrire + relire (+ analyse) | Edges STT / analyze existantes | **Opérationnel** (appel Edge réel si lancé ; **non exécuté** dans ce lot local) |
-| 4 | Confirmer les faits | Affiche faits + `facts_hash` issus des familles ; confirmation dans `pedagogical_sources.metadata.studio_facts_confirmation` | **Opérationnel** côté UI/stockage metadata ; bootstrap A2 si aucun fait |
-| 5 | Choisir A1–B2 + générer | `generate-differentiation-family` + gate multilevel | **Relié** ; **bloqué sans confirmation** si faits absents / non confirmés / hash divergents ; A2 seul autorisé pour amorcer les faits |
-| 6 | Relire les variantes | même composant familles (revue / feedback) | **Opérationnel** |
-| 7 | Valider et publier | `publish-differentiation-family` ; publication refusée si non `validated` ou > 6 items | **Opérationnel** |
-| 8 | Ajouter à une séance | `session_exercices` idempotent + refus séance non gérée | **Opérationnel** (mutation distante **non lancée** en Phase A locale) |
+| 1 | Importer lâ€™audio | `createPedagogicalSource` + `hash-pedagogical-source` | **OpÃ©rationnel** (UI Studio audio-only) |
+| 2 | MÃ©tadonnÃ©es / droits | `updatePedagogicalSourceFields` | **OpÃ©rationnel** |
+| 3 | Transcrire + relire (+ analyse) | Edges STT / analyze existantes | **OpÃ©rationnel** (appel Edge rÃ©el si lancÃ© ; **non exÃ©cutÃ©** dans ce lot local) |
+| 4 | Confirmer les faits | Affiche faits + `facts_hash` issus des familles ; confirmation dans `pedagogical_sources.metadata.studio_facts_confirmation` | **OpÃ©rationnel** cÃ´tÃ© UI/stockage metadata ; bootstrap A2 si aucun fait |
+| 5 | Choisir A1â€“B2 + gÃ©nÃ©rer | `generate-differentiation-family` + gate multilevel | **ReliÃ©** ; **bloquÃ© sans confirmation** si faits absents / non confirmÃ©s / hash divergents ; A2 seul autorisÃ© pour amorcer les faits |
+| 6 | Relire les variantes | mÃªme composant familles (revue / feedback) | **OpÃ©rationnel** |
+| 7 | Valider et publier | `publish-differentiation-family` ; publication refusÃ©e si non `validated` ou > 6 items | **OpÃ©rationnel** |
+| 8 | Ajouter Ã  une sÃ©ance | `session_exercices` idempotent + refus sÃ©ance non gÃ©rÃ©e | **OpÃ©rationnel** (mutation distante **non lancÃ©e** en Phase A locale) |
 
-Barre d’étapes : terminée / courante / disponible / bloquée + raison + action suivante recommandée. Reprise au refresh via données serveur + `recommendedStep`.
+Barre dâ€™Ã©tapes : terminÃ©e / courante / disponible / bloquÃ©e + raison + action suivante recommandÃ©e. Reprise au refresh via donnÃ©es serveur + `recommendedStep`.
 
-## Ce qui reste simulé / bloqué / hors lot
+## Ce qui reste simulÃ© / bloquÃ© / hors lot
 
-- Aucun appel Gemini / STT / génération payante pendant ce lot.
-- Aucun nouvel import MP3 réel traité ici (fichiers oraux locaux préservés non commités).
-- Confirmation des faits : **pas de nouvelle table** — JSON `metadata` existant. Si une migration était un jour souhaitée pour une colonne dédiée, ce n’est **pas** requis aujourd’hui.
-- STT reste le pipeline provisoire Gemini déjà en place.
-- Double statut exercice `draft` vs famille `published` (Louise) : hors périmètre, non corrigé.
+- Aucun appel Gemini / STT / gÃ©nÃ©ration payante pendant ce lot.
+- Aucun nouvel import MP3 rÃ©el traitÃ© ici (fichiers oraux locaux prÃ©servÃ©s non commitÃ©s).
+- Confirmation des faits : **pas de nouvelle table** â€” JSON `metadata` existant. Si une migration Ã©tait un jour souhaitÃ©e pour une colonne dÃ©diÃ©e, ce nâ€™est **pas** requis aujourdâ€™hui.
+- STT reste le pipeline provisoire Gemini dÃ©jÃ  en place.
+- Double statut exercice `draft` vs famille `published` (Louise) : hors pÃ©rimÃ¨tre, non corrigÃ©.
 
-## Migration nécessaire
+## Migration nÃ©cessaire
 
-**Non.** Confirmation des faits persistée dans `pedagogical_sources.metadata.studio_facts_confirmation`.
+**Non.** Confirmation des faits persistÃ©e dans `pedagogical_sources.metadata.studio_facts_confirmation`.
 
-### Si une colonne dédiée était exigée plus tard (non appliqué)
+### Si une colonne dÃ©diÃ©e Ã©tait exigÃ©e plus tard (non appliquÃ©)
 
 ```sql
--- AVANT (proposé seulement)
+-- AVANT (proposÃ© seulement)
 alter table public.pedagogical_sources
   add column if not exists studio_facts_confirmation jsonb;
 
--- RETOUR ARRIÈRE
+-- RETOUR ARRIÃˆRE
 alter table public.pedagogical_sources
   drop column if exists studio_facts_confirmation;
 ```
 
-## Edge Functions modifiées
+## Edge Functions modifiÃ©es
 
-**Non.** Aucun déploiement Edge.
+**Non.** Aucun dÃ©ploiement Edge.
 
-## Tests exécutés
+## Tests exÃ©cutÃ©s
 
 ```text
 npm test -- src/test/studio-audio-guided-workflow.test.tsx \
   src/test/studio-audio-session-link.test.ts \
   src/test/differentiationFamilies-multilevel.test.ts \
   src/test/pedagogical-source-guards.test.ts
-→ 27 passed
+â†’ 27 passed
 
-npm run build → OK
-git diff --check → OK
+npm run build â†’ OK
+git diff --check â†’ OK
 ```
 
-Couverture ciblée : 8 étapes, reprise, blocages transcription/faits/confirmation, hash divergents, sélection A1–B2, plafond 6 items, publication avant validation, rattachement / idempotence / séance non autorisée, erreurs lisibles, a11y barre d’étapes.
+Couverture ciblÃ©e : 8 Ã©tapes, reprise, blocages transcription/faits/confirmation, hash divergents, sÃ©lection A1â€“B2, plafond 6 items, publication avant validation, rattachement / idempotence / sÃ©ance non autorisÃ©e, erreurs lisibles, a11y barre dâ€™Ã©tapes.
 
 ## Limites connues
 
-- L’analyse (chunks) reste un sous-bloc de l’étape 3 (pas une 9ᵉ étape).
-- La génération multilevel réelle consommera Gemini en Phase B.
+- Lâ€™analyse (chunks) reste un sous-bloc de lâ€™Ã©tape 3 (pas une 9áµ‰ Ã©tape).
+- La gÃ©nÃ©ration multilevel rÃ©elle consommera Gemini en Phase B.
 - Pas de drag-and-drop MP3 (input file, comme le hub sources).
-- Le Studio compose les composants existants ; le hub Sources pédagogiques reste utilisable en parallèle.
+- Le Studio compose les composants existants ; le hub Sources pÃ©dagogiques reste utilisable en parallÃ¨le.
 
-## Procédure de recette Phase B (manuel, hors ce lot)
+## ProcÃ©dure de recette Phase B (manuel, hors ce lot)
 
-1. Formateur connecté → menu **Studio audio**.
-2. Reprendre Louise (`4a0e8321-…`) **sans** réimporter de MP3.
-3. Vérifier reprise d’étape, faits + `facts_hash` commun, confirmation metadata.
-4. Générer uniquement les niveaux manquants si besoin (pas de force regenerate inutile).
-5. Valider → publier → « Ajouter à une séance » sur une séance **du formateur**.
-6. Vérifier idempotence (second clic → déjà présent).
-7. Tenter une séance d’un autre formateur → refus.
-8. Aucun `service_role` côté navigateur.
+1. Formateur connectÃ© â†’ menu **Studio audio**.
+2. Reprendre Louise (`4a0e8321-â€¦`) **sans** rÃ©importer de MP3.
+3. VÃ©rifier reprise dâ€™Ã©tape, faits + `facts_hash` commun, confirmation metadata.
+4. GÃ©nÃ©rer uniquement les niveaux manquants si besoin (pas de force regenerate inutile).
+5. Valider â†’ publier â†’ Â« Ajouter Ã  une sÃ©ance Â» sur une sÃ©ance **du formateur**.
+6. VÃ©rifier idempotence (second clic â†’ dÃ©jÃ  prÃ©sent).
+7. Tenter une sÃ©ance dâ€™un autre formateur â†’ refus.
+8. Aucun `service_role` cÃ´tÃ© navigateur.
 
-## Retour arrière proposé
+## Retour arriÃ¨re proposÃ©
 
 ```bash
 git checkout main
@@ -119,14 +119,14 @@ git branch -D captcf-lot-05b-b-studio-audio-guide
 # ou revert des commits feat/docs sur la branche
 ```
 
-Fichiers non suivis à préserver : `docs/fichiers oral/`, `supabase/.temp/`, `.local-security-evidence/`, audit `CAPTCF_AUDIT_STUDIO_AUDIO_EXISTANT.md` s’il reste local.
+Fichiers non suivis Ã  prÃ©server : `docs/fichiers oral/`, `supabase/.temp/`, `.local-security-evidence/`, audit `CAPTCF_AUDIT_STUDIO_AUDIO_EXISTANT.md` sâ€™il reste local.
 
 ## Confirmation Phase A
 
-- aucun push  
-- aucune PR / merge  
-- aucun déploiement Vercel / Edge  
-- aucune migration appliquée  
-- aucune mutation Supabase distante  
-- aucun appel payant Gemini  
-- aucun traitement d’un nouveau MP3  
+- aucun push
+- aucune PR / merge
+- aucun dÃ©ploiement Vercel / Edge
+- aucune migration appliquÃ©e
+- aucune mutation Supabase distante
+- aucun appel payant Gemini
+- aucun traitement dâ€™un nouveau MP3
