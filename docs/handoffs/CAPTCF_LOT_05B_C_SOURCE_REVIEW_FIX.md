@@ -1,5 +1,51 @@
 # Lot 5B-C1 — Implémentation locale de la revue sécurisée des sources
 
+## Reprise avec protocole HTTP/JWT — tests serveur validés
+
+État au 29 septembre 2026 : la seule migration `20260929133719_secure_source_usability_review` est **réappliquée et validée par les contrôles HTTP**. SQL inchangé. Une seule entrée d'historique ; horodatage MCP d'application `20260929155908` aligné sur la version du fichier après application.
+
+Le test administratif précédent était invalide : `SET LOCAL ROLE authenticated` ne change pas `session_user=postgres`. Les capacités de maintenance de postgres/supabase_admin sont hors modèle de menace client. Ce test a été retiré ; il ne signalait pas une vulnérabilité client.
+
+Protocole corrigé au commit `b0591fec` :
+- `supabase/tests/source_usability_review_http.py` utilise Auth /token (password grant) puis REST/PostgREST avec de vrais access tokens. Aucun JWT fabriqué, aucun service_role comme client.
+- Quatre comptes fictifs non distribuables : propriétaire A, formateur B, élève C, administrateur D ; rôles en table canonique user_roles, huit sources temporaires. Création administrative de fixtures, mots de passe aléatoires et JWT uniquement en mémoire ; hashes salés transmis pour provisionnement sans fichier de credentials.
+- 19 assertions HTTP réussies. Anon RPC/PATCH : 401/42501. Élève RPC : 403/42501 STAFF_ROLE_REQUIRED ; étranger RPC : 403/42501 SOURCE_FORBIDDEN. Leur PATCH est filtré par RLS : HTTP 200, zéro ligne retournée/modifiée, statut vérifié inchangé.
+- Propriétaire PATCH vers utilisable ou valide : 403/42501 SOURCE_REVIEW_DIRECT_WRITE_FORBIDDEN. PATCH titre légitime : 200. RPC admissible : 200, changed=true ; répétition : 200, changed=false et même updated_at.
+- Hash/transcription absente ou non revue/analyse/droits manquants : 400/P0001 avec code métier exact, statut inchangé.
+- Administrateur applicatif non propriétaire avec son vrai JWT : 200, conforme à l'exception admin existante.
+- Deux appels RPC parallèles avec JWT A : 200/200, exactement changed=false et changed=true ; source finale utilisable.
+- Déconnexion globale des quatre comptes : 204. Comptes bannis puis supprimés, sessions/refresh tokens/consentements/fixtures supprimés. Tous compteurs à zéro ; mémoire du processus vidée. Aucune authentification du propriétaire réel consultée.
+- Après nettoyage : empreintes sources `8dbcc7a3d5fadc3f63d2151fbaae3828` et exercices `044cd690b5c6cd4487368f8c5644d20f` inchangées. Éclipse toujours brouillon, aucune famille.
+- Preuves expurgées hors Git : `.local-security-evidence/http-fixture-ids.json`, `http-results.json`, `http-cleanup.json`. Ne pas versionner ce dossier.
+- Les 53 tests ciblés passent (6 fichiers), build Vite réussi, git diff --check réussi. Avertissements habituels Browserslist/chunks/imports, non bloquants. Aucun autre correctif.
+- Livraison frontend et recette du dialogue : à compléter après CI/preview vertes. Production précédente pour rollback : main `c8b3752eea45009c953da88314ac7ab07d2fe5dc`, déploiement Vercel `AhV5ky35kiJb87rjXwoMpriCiyDT` (statut GitHub Vercel success).
+- **Aucune génération dans cette mission corrigée** : Gemini 0, A2/A1/B1/B2 non générés, aucune publication/séance/devoir/élève réel. La reprise suivante nécessite l'autorisation de génération A2 puis A1/B1/B2.
+
+---
+
+## Phase B — arrêt après test SQL et rollback (29 septembre 2026)
+
+**Verdict : migration appliquée puis annulée ; frontend non livré ; pilote non repris.**
+
+- Préflight : branche `captcf-lot-05b-c-second-audio-pilot`, HEAD `33b32bee`, commits `1823c50a` et `33b32bee` présents. Non-suivis préexistants préservés. Fetch réussi avec `http.sslBackend=openssl` après échec Schannel ; véritable `origin/main=c8b3752eea45009c953da88314ac7ab07d2fe5dc`. Diff limité à la revue sécurisée et aux handoffs.
+- `npx.cmd` absent du PATH ; CLI autonome contrôlée : 2.75.0, aide générale et `migration up --help` consultées. Documentation officielle consultée : [fonctions, SECURITY DEFINER et EXECUTE](https://supabase.com/docs/guides/database/functions), [triggers](https://supabase.com/docs/guides/database/postgres/triggers), [RLS](https://supabase.com/docs/guides/database/postgres/row-level-security), [changelog](https://supabase.com/changelog). Le rendu changelog.md échoue ; version HTML consultée. Aucune modification de secret ni d'Edge.
+- Sauvegarde hors Git, ignorée : `.local-security-evidence/source-review-before.json`, définitions/contraintes/ACL/policies/triggers/fonctions et source exacte ; `preflight-summary.json` conserve les empreintes. Aucun jeton, identifiant de connexion ou secret enregistré.
+- Source pilote : `brouillon`, transcription courante `reviewed` avec texte corrigé, analyse `analyzed`, neuf chunks, droits `internal_pilot`, IA autorisée, réutilisation élèves désactivée ; zéro famille.
+- Application du seul SQL autorisé via Supabase MCP au projet `gudcenhmzlcvhgbgklzw`. L'outil a enregistré la version d'exécution `20260929154025` ; cette unique entrée a été alignée sur `20260929133719 / secure_source_usability_review`. RPC et trigger présents, ACL RPC postgres/authenticated uniquement, garde postgres uniquement ; sources et exercices inchangés.
+- Tests préparés adaptés au transport SQL MCP : remplacement des commandes psql `\\gset` par variables transactionnelles et blocs d'assertion. Copie exacte dans `.local-security-evidence/source-review-tests-mcp.sql`.
+- **Échec bloquant : `Expected permission denied, got SUCCESS`.** Le test exige que `SET ROLE postgres` échoue après `SET LOCAL ROLE authenticated`, mais la connexion MCP conserve `session_user=postgres`. Un diagnostic séparé sans donnée métier confirme qu'elle peut reprendre `current_user=postgres`. Ce scénario ne représente donc pas une connexion client non privilégiée. Il s'agit d'un défaut du protocole de test ; aucun contournement client démontré, mais validation de sécurité non acquise.
+- Arrêt immédiat conformément à la mission, sans corriger puis réappliquer la migration. Rollback séparé exécuté : deux fonctions supprimées, trigger supprimé, aucun CASCADE ni donnée métier supprimée. Entrée d'historique sauvegardée hors Git puis retirée pour marquer la migration non appliquée ; zéro entrée résiduelle.
+- Vérification après rollback : source exacte, ACL de table, policies et triggers antérieurs identiques à la sauvegarde. Empreinte de toutes les sources `8dbcc7a3d5fadc3f63d2151fbaae3828` ; de tous les exercices `044cd690b5c6cd4487368f8c5644d20f`, identiques avant/après.
+- Nettoyage : transaction de fixtures annulée. Compteurs comptes auth/profils/rôles/sessions/consentements/source/transcription/chunks temporaires tous à zéro. Aucun login ni jeton n'a été créé ; aucune session à révoquer ni compte persistant à bannir. Preuves `source-review-test-failure.json`, `rolled-back-migration-record.json`, `source-review-restored.json` hors Git.
+- Les tests suivants, notamment concurrence et compatibilité complète, ne sont pas annoncés comme réussis. Les 53 tests applicatifs et le build n'ont pas été relancés pendant cette Phase B, leur exécution étant conditionnée au succès SQL.
+- Aucun push, PR, merge ou déploiement Vercel. Aucun SHA main nouveau ni rollback frontend nécessaire : le frontend n'a pas changé.
+- Éclipse reste `brouillon`. Transcription et analyse non relancées ; zéro appel Gemini et zéro retry ; aucun fait/facts_hash créé ; A1/A2/B1/B2 non générés, zéro famille. Aucune validation, publication, séance, devoir ou élève.
+- Reprise nécessaire : corriger le test d'isolation pour utiliser une véritable identité non privilégiée ou vérifier les appartenances de rôles sans confondre `current_user` et `session_user`, puis recommencer la validation bloquante sous autorisation de reprise. La migration et son rollback restent disponibles localement. Horodatages +39,415 s toujours imprécis, aucun découpage automatique.
+
+---
+
+Les sections suivantes décrivent les étapes antérieures à cet arrêt Phase B.
+
 ## État courant — 29 septembre 2026
 
 Implémentation locale terminée au commit **1823c50a** (`fix(studio): secure source usability review`). Branche `captcf-lot-05b-c-second-audio-pilot`, départ `7e3f7e3b` conservé dans l'historique, sans amend. Le commit documentaire suivant porte `docs(studio): document secure source review implementation`.
