@@ -1,5 +1,44 @@
 # Lot 5B-C — Suite après autorisation explicite de revue
 
+## Refus propriétaire des faits — blocage produit avant correction (29 septembre 2026)
+
+Source `abddcf10-a426-4701-88eb-aaf05d9fc707`, famille A2 draft `a529ba06-2bf1-40e9-b7da-62bbb0142f91`. Le propriétaire **refuse** l'ensemble de 18 faits et le hash `sha256:02b810eeb8288c090d8b18f938f923ca3ced1f25ad1d1d1dceadb00da217eb0d`. Ne pas confirmer ni réutiliser ce hash pour A1/B1/B2.
+
+### Possibilités réelles du Studio : aucune édition
+
+Inspection du panneau de production « Vérification des faits communs » : 18 lignes de texte et références de provenance, case de confirmation non cochée, bouton « Confirmer les faits » désactivé. Aucun champ modifiable ni commande modifier/supprimer/fusionner/reproposer les faits seuls. Lecture de `StudioAudioFactsStep.tsx` concordante : affichage par paragraphes, unique action d'écriture = confirmation dans les métadonnées de source. **STOP conformément à la mission**, sans utiliser la génération complète comme remplacement d'une édition.
+
+Aucun nouvel ensemble constitué ou enregistré (0 fait corrigé en base), aucune suppression et aucune attribution modifiée en production. Aucune comparaison audio indépendante supplémentaire attestée : la mission est arrêtée au défaut produit, avant une revue complète audio/transcription/apprenant/corrigé. Les formulations ci-dessous sont des pistes documentaires issues des références déjà lues, pas un ensemble prêt à sceller.
+
+| ID concerné | Correction proposée, non appliquée | Passage de référence | Modification réalisée | Verdict |
+| --- | --- | --- | --- | --- |
+| fact_01–04, fact_17–18 | Corriger speaker/viewpoint en Charlotte Derouin | La transcription locale attribue introduction et conclusion à Charlotte Derouin | Aucune | Attribution à corriger ; conserver Élise Gazengel comme personne ayant recueilli les propos dans l'objet de fact_18 |
+| fact_02 | La Lune cache le Soleil pendant quelques minutes lors de la phase décrite comme éclipse totale | « Pendant quelques minutes […] la Lune va cacher le Soleil », puis « éclipse totale » | Aucune | Ne pas attribuer cette durée à l'ensemble du phénomène ; formulation exacte à contrôler avec l'audio avant adoption |
+| fact_06 | Selon Didier Queloz, une éclipse n'apporte actuellement pas vraiment d'information sérieuse sur la connaissance du Soleil | « aucune […] information sérieuse […] en termes de connaissances du Soleil d'une éclipse, actuellement » | Aucune | Retirer « ou d'une éclipse » ; conserver la restriction actuelle et l'attribution à Queloz |
+
+### Doublons et éléments à réduire
+
+Les IDs fact_05, fact_06, fact_13 et fact_14 apparaissent chacun **une seule fois** dans le DOM actuel et dans le payload A2 sauvegardé. fact_05 traite de l'émotion, fact_06 de l'apport de connaissances : faits distincts. fact_13 décrit l'attention du public et fact_14 l'exploitation de cette occasion : relation causale, pas doublon exact. Les répétitions signalées par le propriétaire ne sont donc pas reproduites dans cet état ; aucune suppression aveugle.
+
+| Ancien ID | Motif de suppression/fusion envisagé, non exécuté |
+| --- | --- |
+| fact_09 | « partager quelque chose » trop vague ; retirer comme fait autonome ou intégrer à l'explication de vulgarisation, après contrôle des références |
+| fact_14 | Métaphore « tirer toutes les ficelles » peu exploitable isolément ; reformuler/fusionner avec fact_12–13 sans perdre le lien avec l'attention du public |
+| fact_15 | « élément sociologique fascinant » incomplet isolément ; fusionner avec fact_16, qui précise l'observation simultanée par des millions de personnes |
+| fact_05 / fact_07 / fact_08 | Chevauchement sur émotion/expérience extraordinaire/transmission : envisager un énoncé attribué à Queloz ; « événement émotionnel » est bien dans le texte et n'est pas à supprimer comme invention |
+
+**Suppressions réalisées : 0.** Aucun ensemble nouveau proposé comme complet pour A1–B2 ; la suffisance pédagogique B2 doit être évaluée et ne peut être fabriquée par ajout d'informations extérieures.
+
+### Plus petit correctif proposé, non implémenté
+
+1. Frontend : ajouter au panneau faits un mode brouillon avec édition du texte et de l'attribution, suppression/fusion, provenance visible et comparaison avant/après. Séparer « Enregistrer les corrections » de « Confirmer ». Aucun appel Gemini requis pour cette édition manuelle.
+2. Serveur : une opération authentifiée de révision de l'ensemble non confirmé, vérifiant rôle et propriété, famille draft/non publiée, absence d'autres variantes réutilisant l'ensemble et version/hash attendu pour éviter les écritures concurrentes. Valider IDs/provenance/références, recalculer le hash côté serveur ; aucune empreinte cliente autoritaire. Persister atomiquement les corrections avec trace avant/après et retirer toute confirmation obsolète.
+3. Cohérence A2 : signaler le brouillon comme à relire dès modification des faits ; bloquer confirmation/génération/publication si un item référence un fait supprimé ou devenu incompatible (notamment item_02). Ne pas changer silencieusement les réponses ni conserver une validation technique obsolète. La confirmation du nouvel ensemble doit rester une action distincte sous nouvelle autorisation propriétaire.
+
+Proposition uniquement : aucune édition de code, SQL, RPC, service_role ou mutation distante utilisée. Aucun push, déploiement, migration, import, transcription ou analyse. **Gemini supplémentaire : 0 ; confirmation : non ; A1/B1/B2 supplémentaires : non ; validation/publication A2 : non ; séance/devoir/élève : aucun.** Dérive +39,415 s toujours connue, sans découpage ni preuve temporelle précise.
+
+---
+
 ## Phase B C2 livrée — arrêt pédagogique après A2 (29 septembre 2026)
 
 - HEAD local, référence origin et HEAD GitHub identiques : `a5fc54862c5da04af902c98a1aab499c4121ebca`. Les commits manuels `6a6b358f` et `a5fc5486` résolvent le blocage de commits décrit plus bas (historique conservé).
