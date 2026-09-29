@@ -109,7 +109,8 @@ export async function generateDifferentiationFamily(
 ) {
   const { forceRegenerate = false, targetLevel = "A2" } = options;
   const { data, error } = await supabase.functions.invoke("generate-differentiation-family", {
-    body: { sourceId, force_regenerate: forceRegenerate, target_level: targetLevel },
+    // Shared by Studio and the source bank: never opt back into per-level fact extraction.
+    body: { sourceId, force_regenerate: forceRegenerate, target_level: targetLevel, correctif_05a_c: true },
   });
   if (error) throw error;
   if (data?.error) {
