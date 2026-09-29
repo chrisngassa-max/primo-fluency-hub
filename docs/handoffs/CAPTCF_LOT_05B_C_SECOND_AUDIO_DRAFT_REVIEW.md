@@ -1,5 +1,11 @@
 # Lot 5B-C — Suite après autorisation explicite de revue
 
+## Éditeur local — arrêt au préalable SQL (29 septembre 2026)
+
+Branche dédiée `captcf-lot-05b-c-facts-editor`, base préservée `5d63f8713ffeff8d59945283a9c46c6072cb333e`, sans fetch. Les JSON actuels suffisent, mais aucun mécanisme transactionnel existant ne réunit révision de famille et invalidation de confirmation sur la source. Une migration de fonctions/gardes est nécessaire dans l'architecture actuelle. Conformément à la clause STOP : **aucun éditeur, aucune extension Edge, aucune migration créée ou appliquée**.
+
+Voir [cartographie, droits, tests à prévoir et suite autorisable](CAPTCF_LOT_05B_C_FACTS_EDITOR.md), [proposition SQL](facts-editor-proposal.sql) et [rollback proposé](facts-editor-rollback-proposal.sql), hors migrations et non exécutés. Aucun test applicatif ni build lancé à cet arrêt ; aucune implémentation déclarée testée. Les 18 faits distants et le hash refusé ci-dessous restent inchangés, sans confirmation. Gemini : 0 ; mutations distantes : 0 ; push/PR/déploiement : aucun. Les fichiers non suivis préexistants restent intacts.
+
 ## Refus propriétaire des faits — blocage produit avant correction (29 septembre 2026)
 
 Source `abddcf10-a426-4701-88eb-aaf05d9fc707`, famille A2 draft `a529ba06-2bf1-40e9-b7da-62bbb0142f91`. Le propriétaire **refuse** l'ensemble de 18 faits et le hash `sha256:02b810eeb8288c090d8b18f938f923ca3ced1f25ad1d1d1dceadb00da217eb0d`. Ne pas confirmer ni réutiliser ce hash pour A1/B1/B2.
