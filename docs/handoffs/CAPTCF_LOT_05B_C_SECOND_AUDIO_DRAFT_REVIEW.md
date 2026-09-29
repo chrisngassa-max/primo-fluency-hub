@@ -1,5 +1,27 @@
 # Lot 5B-C — Suite après autorisation explicite de revue
 
+## Clôture Phase B — livraison et revue Éclipse réussies
+
+29 septembre 2026. **Source Éclipse utilisable ; arrêt avant génération A2.**
+
+- Après push manuel, HEAD local et distant identiques : `ec33f417292704e86526881797d8ee71909c8ce8`.
+- [PR #46](https://github.com/chrisngassa-max/primo-fluency-hub/pull/46) ouverte vers main ; diff des 15 fichiers vérifié, blobs identiques au HEAD local, aucun fichier hors périmètre ni preuve privée ajoutée.
+- [CI #36595125565](https://github.com/chrisngassa-max/primo-fluency-hub/actions/runs/36595125565) : tests, build et lint réussis avant fusion. Preview Vercel Ready `129V685SaZZAn3CFExsgr3eG8iaV`, page publique affichée dans le navigateur interne.
+- Fusion par PR, sans push direct sur main, avec contrôle du HEAD attendu. SHA final main : `8e11677b494e148173155e52eff2f7de67587181`.
+- Déploiement production [GPFd2GSNCdDGG2U8m4jEEDwKdvjc](https://vercel.com/meme3/primo-fluency-hub/GPFd2GSNCdDGG2U8m4jEEDwKdvjc) : contrôle Vercel success sur ce SHA ; nouveau dialogue réellement présent sur captcf.fr après rechargement.
+- Session propriétaire Christian réutilisée, sans lecture de ses identifiants. Statuts affichés séparément : Pilote interne, transcription revue/corrigée, analyse terminée, revue brouillon. Génération initialement bloquée.
+- Dialogue ouvert au clavier ; texte de confirmation explicite et mention « Cela ne publie aucun exercice » vérifiés. Confirmation volontaire via l'interface ; aucun UPDATE administratif de la source. Le composant livré appelle exclusivement la RPC dédiée.
+- Succès UI : « Source utilisable. Aucun exercice n’a été publié par cette action. » Statut conservé après rafraîchissement ; étape de génération disponible, sans clic de génération.
+- Lecture de contrôle : revue `utilisable`, date technique `2026-09-29T16:09:08.310003+00:00`. Comparaison des lignes avant/après : **seuls review_status et updated_at diffèrent**.
+- Empreintes autres sources, transcription pilote, chunks pilote et exercices identiques avant/après. Familles pour Éclipse : **0** ; aucun fait ni facts_hash.
+- Preuves hors Git : `.local-security-evidence/ui-before.json`, `ui-after.json` ; capture locale `outputs/eclipse-utilisable.png` dans l'espace de travail Codex. La réponse finale fournit la capture.
+- Migration unique maintenue, RPC/trigger actifs et protocole HTTP/JWT validé (19 contrôles), nettoyage à zéro. Aucun besoin de réappliquer la migration lors de cette livraison ; aucune Edge déployée.
+- Rollback SQL disponible dans `supabase/secours/20260929133719_secure_source_usability_review_rollback.sql` ; rollback frontend précédent : main `c8b3752eea45009c953da88314ac7ab07d2fe5dc`, déploiement `AhV5ky35kiJb87rjXwoMpriCiyDT`. Aucun rollback exécuté à cette clôture.
+- Transcription et analyse non relancées ; Gemini **0** ; aucune génération A1/A2/B1/B2, validation, publication, séance, devoir ou élève. Horodatages +39,415 s conservés comme limite ; aucun découpage.
+- **Prochaine étape sur nouvelle autorisation : A2 seul, audit des faits, puis A1/B1/B2 avec un seul facts_hash.**
+
+---
+
 ## Reprise avec protocole HTTP/JWT — tests serveur validés
 
 État au 29 septembre 2026 : la seule migration `20260929133719_secure_source_usability_review` est **réappliquée et validée par les contrôles HTTP**. SQL inchangé. Une seule entrée d'historique ; horodatage MCP d'application `20260929155908` aligné sur la version du fichier après application.
