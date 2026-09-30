@@ -1,4 +1,27 @@
-# Lot 5B-C — Suite après autorisation explicite de revue
+# Lot 5B-C — Revue des faits et livraison de l'éditeur
+
+## Reprise du 30 septembre 2026 — état courant
+
+Cette section remplace les états techniques historiques ci-dessous. Phase B déjà autorisée ; aucun renouvellement d'autorisation métier requis. Arrêt avant confirmation, génération/Gemini, validation/publication d'exercice, séance, devoir ou élève.
+
+- Préflight distant : source `abddcf10-a426-4701-88eb-aaf05d9fc707`, A2 `a529ba06-2bf1-40e9-b7da-62bbb0142f91`, version 1, 18 faits, 6 items, draft, aucune confirmation ; hash refusé inchangé. Edge v27 et migration de révision absente.
+- Éditeur existant finalisé ; Edge réconciliée avec v27, contrat borné testé. Fenêtre de concurrence révision/génération corrigée sous verrou source SQL ; archives de faits révisés refusées.
+- 104 tests ciblés passent ; build Vite équivalent au script npm réussi ; diff check et lint ciblé passent. Migration, droits, hash, atomicité, rollback et cinq courses multi-connexions PostgreSQL 17 passent, claims JWT simulés. Rapport `.local-security-evidence/captcf-facts-test-71eac8e3d3c9/resultat.txt` ; conteneur supprimé.
+- Commits SQL `40eb98f8`, UI/Edge `fb0034ea`, documentation séparée. Aucun déploiement à ce stade ; suite via PR/CI/preview/fusion, sans push main.
+- Session navigateur Studio authentifiée disponible. Aucune correction distante effectuée ; vérification audio indépendante encore non attestée. Les pistes pédagogiques historiques restent à confronter aux trois sources avant saisie UI. Dérive +39,415 secondes : aucun découpage automatique.
+
+Voir le [handoff technique courant](CAPTCF_LOT_05B_C_FACTS_EDITOR.md) pour preuves, limites et retour arrière. Les six groupes de fichiers non suivis préexistants restent intacts.
+
+---
+
+## Historique des reprises précédentes (affirmations datées, parfois obsolètes)
+## Migration et éditeur locaux — 30 septembre 2026
+
+Reprise autorisée réalisée sur `captcf-lot-05b-c-facts-editor`, HEAD `72df56e2` inchangé faute de permission Git (`.git/index.lock`). Migration `20260930072021_revise_differentiation_facts_atomically.sql` créée par la CLI officielle, rollback dans `supabase/secours`, tests SQL préparés. RPC basée sur `auth.uid()`, sans identité ni hash final client, garde des droits/concurrence/provenance/références, hash calculé SQL et confirmation invalidée atomiquement. Action Edge `revise_facts` sous JWT utilisateur, éditeur Studio local avec comparaison/annulation/sauvegarde distincte.
+
+**103 tests applicatifs ciblés verts et build réussi. Tests SQL réels non exécutés : Docker Desktop ouvert mais docker.exe interdit d'exécution dans cette session.** La migration n'est pas déclarée validée. La base locale du générateur reste à réconcilier avec le shared-facts déployé ; elle bloque explicitement la génération sur faits révisés pour éviter une réextraction. Aucun artefact déployé.
+
+Voir [handoff complet et commandes des trois commits manuels](CAPTCF_LOT_05B_C_FACTS_EDITOR.md). Faits Éclipse et hash refusé inchangés ; zéro appel Gemini, zéro mutation distante, zéro génération/confirmation/validation/publication, aucun push/PR/déploiement. Les fichiers non suivis préexistants sont préservés. L'ancienne proposition SQL et les décisions ci-dessous sont conservées comme historique, non comme contrat courant.
 
 ## Éditeur local — arrêt au préalable SQL (29 septembre 2026)
 

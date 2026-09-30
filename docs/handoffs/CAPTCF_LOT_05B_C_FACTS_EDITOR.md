@@ -1,4 +1,52 @@
-# Lot 5B-C — Éditeur de faits : préalable transactionnel
+# Lot 5B-C — Éditeur sécurisé des faits
+
+## État vérifié — 30 septembre 2026, reprise après preuves SQL
+
+Cette section fait autorité sur les historiques ci-dessous. L'autorisation Phase B (migration, Edge, frontend et correction via Studio) est acquise. Arrêt impératif avant confirmation/scellement, toute génération ou appel Gemini, validation/publication d'exercice, séance, devoir ou élève.
+
+### Préflight et préservation
+
+- Branche `captcf-lot-05b-c-facts-editor`, HEAD initial `72df56e2d52181627b0d6328d7c9327241310c6e` vérifiés. Travail existant repris ; aucun reset/amend. Aucun AGENTS.md trouvé dans le dépôt ou ses parents D:/ et D:/SITES.
+- Écriture réelle du dépôt vérifiée par les scripts de tests, Git par indexation et commits. Docker client/serveur 29.8.1, contexte desktop-linux, vérifiés. Permissions ciblées nécessaires pour Docker, Git et réseau ; aucune modification ACL, Full access ou sandbox.
+- Tous les non-suivis historiques désignés par le propriétaire restent hors index et intacts. Classium non consulté.
+- Lecture distante : main GitHub `60c688338f6d9c22731f2383455119ffcee74096`, Edge `generate-differentiation-family` ACTIVE v27 avec JWT true. Migration/RPC de révision absentes avant livraison. Source Éclipse sans confirmation ; A2 version 1, 18 faits, 6 items, draft, hash refusé inchangé.
+
+### Contrat UI / Edge / SQL
+
+Édition sujet/prédicat/objet et attribution ; provenance conservée côté serveur et affichée en lecture seule ; questions A2 visibles par fait ; retrait refusé pour les références d'items et de faits conservés ; comparaison avant/après ; annulation locale ; sauvegarde distincte de la confirmation. Les préconditions hash/version/source.updated_at sont capturées à l'ouverture. Un conflit conserve les saisies. Le cache de confirmation est invalidé avant rafraîchissement ; le reçu bloque la confirmation tant que les faits/version ne sont pas rafraîchis.
+
+L'action `revise_facts` utilise le client JWT après `auth.getUser()`, avant tout client administrateur ou chemin modèle. Liste blanche stricte, aucun rôle/acteur/hash final client. La RPC vérifie auth.uid(), rôle formateur, propriété, A2 generated/draft/non publiée et absence d'autre famille active. Verrou source puis familles, reconstruction depuis provenance serveur, hash SQL, invalidation confirmation et validation technique dans une transaction ; items conservés pour relecture.
+
+La canonicalisation SQL reproduit la projection existante `fact-hashing.ts` / `canonical-json.ts`, avec domaine borné explicite et refus hors domaine. La correction d'alias `a.fact_value` est conservée. Parité prouvée sur deux vecteurs TypeScript/SQL (ordre, accents, guillemets, retour ligne, emoji). SECURITY DEFINER limitée à la RPC, owner postgres et search_path pg_catalog ; EXECUTE authenticated seulement, contrôle UID/propriété interne, aucune confiance en user_metadata. Aucun grant table ajouté.
+
+### Réconciliation et concurrence corrigée
+
+Les dépendances de v27 ont été comparées au checkout : lot05a-c, types, family-validation, index et autres dépendances identiques hors fins de ligne/BOM/espaces finaux ; seules les extensions de l'entrypoint appartiennent au lot. Réutilisation du hash et du mode borné existants conservée. Le test obsolète est remplacé par le contrat réel : `REVISED_FACTS_BOUNDED_MODE_REQUIRED` sans booléen strict correctif_05a_c=true ; null avec ce booléen et une confirmation correspondant au hash ; refus sans confirmation ou en force-regenerate.
+
+Le contrôle Edge initial seul laissait une fenêtre entre lecture de confirmation et insertion de génération. La garde SQL `guard_studio_facts_generation` verrouille désormais la même source que la révision, relit confirmation/révisions et vérifie le hash attendu et le booléen borné transmis dans le payload provisoire d'admission. Si la révision gagne, l'insertion non confirmée/obsolète échoue avant Gemini ; si l'insertion gagne, la RPC refuse la révision car les faits sont réutilisés. Une archive du porteur de faits révisés est refusée, y compris via une requête force devenue obsolète. Les verrous sont limités aux transactions DB, aucun appel modèle sous verrou.
+
+### Preuves de validation du code courant
+
+- 8 fichiers ciblés demandés : **104 tests passés**, dernier run 30/09 à 10:59 heure locale. Pas de suite exhaustive locale.
+- Build Vite réussi (3771 modules). `npm.cmd` absent du PATH : exécution du même script avec `node node_modules/vite/bin/vite.js build`. Avertissements existants : Browserslist, bundle volumineux, imports dynamiques.
+- Lint ciblé passé ; `git diff --check` et `git diff --cached --check` passés après nettoyage des lignes finales.
+- PostgreSQL 17 local isolé : migration, rôles anon/authenticated/service_role, refus d'identité/provenance/hash falsifiés, parité, atomicité et rollback passent. Admission positive sur confirmation correspondante et mode borné ; refus hash obsolète, chaîne "true", absence de confirmation et archivage de révision.
+- Cinq scénarios à deux connexions : sauvegarde/sauvegarde ; révision puis génération ; génération puis révision ; révision puis confirmation ; confirmation puis révision. Attente du verrou observée et erreur attendue vérifiée pour chaque scénario.
+- Rapport : `.local-security-evidence/captcf-facts-test-71eac8e3d3c9/resultat.txt`. Conteneur temporaire supprimé. Runner reproductible `supabase/tests/Test-CapTCF-Facts.ps1`, sans réseau runtime, port publié ou montage hôte. Rôles/RLS réels, claims JWT simulés : **pas une validation Supabase complète ni une recette HTTP/JWT**.
+- Preuve antérieure fournie par le propriétaire également lue : `captcf-facts-test-ca6259512cf1/resultat.txt`. Elle ne remplace pas le run étendu ci-dessus.
+
+### Livraison et limites à cette étape
+
+Commits locaux : SQL/tests/rollback `40eb98f8` ; UI/Edge/tests `fb0034ea` ; documentation séparée. Publication prévue via branche/PR, CI et preview puis fusion, jamais push direct main. La CI du dépôt exécute sa suite complète, son build et son lint : contrôle obligatoire du circuit de publication, distinct des tests locaux ciblés.
+
+Aucune migration, Edge ni frontend déployés à la rédaction de cette section. Session Studio formateur authentifiée disponible. Corrections pédagogiques non effectuées : vérifier transcription corrigée, références et audio avant saisie UI. Aucune écoute indépendante encore attestée. Aucun appel Gemini, confirmation, génération, validation/publication d'exercice ou mutation de faits distante.
+
+Advisors de sécurité préexistants inspectés : search_path de fonctions hors lot, fonctions definer existantes, RLS sans policy, protection des mots de passe compromis. Pas d'élargissement de périmètre. La RPC intentionnellement accessible à authenticated reste protégée par rôle/propriété ; [documentation de l'avertissement definer](https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable).
+
+Rollback : désactiver d'abord l'UI/action Edge, contrôler les dépendances puis appliquer `supabase/secours/20260930072021_revise_differentiation_facts_rollback.sql`. Aucun fait métier restauré automatiquement et aucun ancien hash confirmé.
+
+---
+## Historique — arrêt avant autorisation de la migration
 
 Date : 29 septembre 2026. **Arrêt conditionnel demandé avant création d'une migration. Éditeur non implémenté.**
 
