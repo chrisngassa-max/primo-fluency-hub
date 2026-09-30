@@ -1,5 +1,19 @@
 # Lot 5B-C — Éditeur sécurisé des faits
 
+## État actuel — correctif PT409, 30 septembre 2026
+
+Cette section remplace toutes les anciennes autorisations et tous les états de livraison ci-dessous. Le propriétaire autorise le correctif en avant, le push sur PR #48, son application après CI verte, le seul redéploiement generate-differentiation-family, le smoke temporaire, puis la fusion si tous les contrôles passent. Les faits Éclipse, leur confirmation et tout appel Gemini restent interdits.
+
+Correctif `736703fd` : migration CLI `20260930182414_fix_facts_revision_conflict_status.sql`, adaptation minimale de l'Edge et tests. Cause confirmée : le conflit métier levait40001 ; il lève maintenantPT409, traduit en HTTP409 sans retry. La migration20260930072021 n'est pas modifiée. Signature, autorisations, hash et logique transactionnelle sont conservés.
+
+CI du code verte. Migration corrective appliquée seule ; Edge v29 ACTIVE avec verify_jwt=true. Smoke complet réussi dès la première tentative : conflit RPC120ms / Edge493ms, un appel par conflit, sauvegarde200, concurrence200/409, aucune écriture sur refus. Les quatre occurrences de conflit attendues apparaissent dans les logs, sans boucle ni WORKER_ERROR. Nettoyage complet confirmé, Éclipse et les données existantes inchangées, Gemini0. Fusion/Production restent à vérifier après le commit documentaire et sa CI.
+
+Le [rapport Phase B](CAPTCF_LOT_05B_C_PHASE_B.md) détaille la preuve rouge/verte, les mesures avant/après, le nombre d'appels, les sauvegardes et le rollback correctif. Rollback distant non utilisé ; rollback local testé. Ne pas utiliser le rollback global de l'infrastructure décrit dans l'historique pour annuler ce seul correctif.
+
+---
+
+## Historique antérieur — états et autorisations remplacés
+
 ## État vérifié — 30 septembre 2026, reprise après preuves SQL
 
 **Autorisation actuelle : push de `captcf-lot-05b-c-facts-editor` vers `chrisngassa-max/primo-fluency-hub` et ouverture d'une PR vers main, puis attente CI et preview Vercel uniquement.** Le propriétaire a levé explicitement le blocage de destination décrit ci-dessous. Cette reprise n'autorise ni fusion, ni migration distante, ni déploiement Edge, ni correction/confirmation des faits, ni génération/Gemini. Elle remplace la portée Phase B des notes antérieures. Les 24 fichiers de la PR sont limités au lot ; les non-suivis privés sont exclus. Le MP3 curriculum et `supabase/.temp/cli-latest` déjà suivis dans main ont des blobs identiques dans HEAD, sans modification dans le lot.
