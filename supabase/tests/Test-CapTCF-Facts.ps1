@@ -101,11 +101,23 @@ CREATE TRIGGER trg_families_updated_at BEFORE UPDATE ON public.differentiation_f
     Invoke-Docker -CommandArgs @('image','inspect','postgres:17-bookworm','--format','{{.Id}} {{json .RepoDigests}}')
     Run-Sql '00-schema-test.sql' $schema
     Run-Sql '01-migration.sql' (Read-Repo 'supabase/migrations/20260930072021_revise_differentiation_facts_atomically.sql')
+    Run-Sql '01a-conflict-before.sql' ("\set expected_state 40001`n" + (Read-Repo 'supabase/tests/facts_revision_conflict_status.sql'))
+    Run-Sql '01b-backup-function.sql' @'
+CREATE TABLE public.test_rpc_before AS SELECT pg_get_functiondef(oid) AS definition,proacl,proowner,proconfig FROM pg_proc WHERE oid='public.revise_differentiation_facts_atomically(uuid,uuid,text,integer,timestamptz,jsonb)'::regprocedure;
+'@
+    Run-Sql '01c-corrective.sql' (Read-Repo 'supabase/migrations/20260930182414_fix_facts_revision_conflict_status.sql')
+    Run-Sql '01d-conflict-after.sql' ("\set expected_state PT409`n" + (Read-Repo 'supabase/tests/facts_revision_conflict_status.sql'))
     Run-Sql '02-tests-roles.sql' (Read-Repo 'supabase/tests/facts_revision_local.sql')
     . (Join-Path $PSScriptRoot 'Test-CapTCF-Concurrency.ps1')
     Test-FactsConcurrency
     . (Join-Path $PSScriptRoot 'Test-CapTCF-GenerationRace.ps1')
     Test-FactsGenerationRace
+    Run-Sql '02z-corrective-rollback.sql' (Read-Repo 'supabase/secours/20260930182414_fix_facts_revision_conflict_status_rollback.sql')
+    Run-Sql '02z-check-corrective-rollback.sql' @'
+DO $$ BEGIN
+ IF EXISTS(SELECT 1 FROM public.test_rpc_before b,pg_proc p WHERE p.oid='public.revise_differentiation_facts_atomically(uuid,uuid,text,integer,timestamptz,jsonb)'::regprocedure AND (replace(b.definition,chr(13),'') IS DISTINCT FROM replace(pg_get_functiondef(p.oid),chr(13),'') OR b.proacl IS DISTINCT FROM p.proacl OR b.proowner IS DISTINCT FROM p.proowner OR b.proconfig IS DISTINCT FROM p.proconfig)) THEN RAISE EXCEPTION 'CORRECTIVE_ROLLBACK_MISMATCH'; END IF;
+END $$;
+'@
     Run-Sql '03-rollback.sql' (Read-Repo 'supabase/secours/20260930072021_revise_differentiation_facts_rollback.sql')
     Run-Sql '04-check-rollback.sql' @'
 DO $$ BEGIN
