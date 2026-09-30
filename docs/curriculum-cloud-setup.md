@@ -66,14 +66,26 @@ RLS on the tables `training_plan_versions`, `resource_generation_batches`,
 6. Once validated, *Publish* writes to `curriculum_publications` — the
    production app reads only from there.
 
-## 5. Fallbacks
+## 5. Deploy edge function
+
+After changing `supabase/functions/curriculum-batch/`, redeploy from a machine
+with the Supabase CLI linked to your project:
+
+```bash
+supabase functions deploy curriculum-batch
+```
+
+Ensure `GITHUB_TOKEN` and `GITHUB_REPO` are set under **Supabase → Edge Functions
+→ curriculum-batch → Secrets** before testing a batch start from the UI.
+
+## 6. Fallbacks
 
 - `ANTHROPIC_API_KEY` missing → `provider=fake` (deterministic stub text)
 - `GOOGLE_TTS_API_KEY` missing → `provider=svg`/silence placeholder audio
 - Interrupted batch → click *Resume* in the UI, or run the workflow manually
   from **Actions → curriculum-worker → Run workflow** with the batch ID.
 
-## 6. Cron safety net
+## 7. Cron safety net
 
 The workflow also runs every 5 minutes to pick up any batch whose dispatch
 was missed (e.g. edge function timeout). It is a no-op when there are no
