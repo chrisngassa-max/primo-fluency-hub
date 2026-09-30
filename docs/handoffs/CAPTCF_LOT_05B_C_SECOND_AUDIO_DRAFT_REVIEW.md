@@ -2,6 +2,12 @@
 
 ## Reprise du 30 septembre 2026 — état courant
 
+**Dernier état : livraison en attente de l'autorisation technique du push GitHub**, rejeté avant exécution par la revue automatique pour destination/contenu non explicitement autorisés. Commits SQL `40eb98f8`, UI/Edge `fb0034ea`, documentation `7fc3715b`, intégration main sans changement d'arbre `2f37b5b4`. Aucun push/PR/migration distante/déploiement ni fait corrigé.
+
+Revue documentaire complémentaire effectuée : transcription corrigée distante, transcription RFI DOCX, fiches apprenant/corrigé PDF locales. Les références concordent pour l'attribution Charlotte Derouin des fact_01–04 et fact_17–18, la durée de masquage du Soleil (fact_02), et le sens de la déclaration actuelle de Queloz sur les connaissances du Soleil (fact_06). Les copies audio locales complètes ont le même SHA256 `855d46c4125c3ac5c4978dcd67659d1ed81b253492bb92f77aad197361b105ce` ; cela prouve leur identité binaire, **pas une écoute indépendante**, qui reste non attestée. Aucun découpage ni transcription supplémentaire.
+
+Studio authentifié ouvert sur la source existante : 18 faits, hash refusé inchangé, case de confirmation décochée et bouton de confirmation désactivé. Le frontend de production n'a pas encore l'éditeur. Aucune action de traitement ou d'écriture exécutée. La reprise devra achever la livraison, vérifier l'audio et effectuer seulement les corrections via UI, puis s'arrêter avant confirmation.
+
 Cette section remplace les états techniques historiques ci-dessous. Phase B déjà autorisée ; aucun renouvellement d'autorisation métier requis. Arrêt avant confirmation, génération/Gemini, validation/publication d'exercice, séance, devoir ou élève.
 
 - Préflight distant : source `abddcf10-a426-4701-88eb-aaf05d9fc707`, A2 `a529ba06-2bf1-40e9-b7da-62bbb0142f91`, version 1, 18 faits, 6 items, draft, aucune confirmation ; hash refusé inchangé. Edge v27 et migration de révision absente.

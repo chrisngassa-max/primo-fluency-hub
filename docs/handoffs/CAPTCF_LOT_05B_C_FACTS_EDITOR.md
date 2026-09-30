@@ -2,6 +2,8 @@
 
 ## État vérifié — 30 septembre 2026, reprise après preuves SQL
 
+**Dernier état de livraison : push bloqué par la revue automatique.** Les commits demandés sont créés : SQL `40eb98f8`, UI/Edge `fb0034ea`, documentation `7fc3715b`. Merge de `origin/main` ensuite : `2f37b5b4f025fca2d521c3d158fdd241d97da952`, sans changement d'arbre ni conflit. La branche compte 24 fichiers dans la PR projetée, incluant les propositions SQL historiques déjà commitées. La commande `git push -u origin captcf-lot-05b-c-facts-editor` a été rejetée avant exécution : la revue automatique exige l'autorisation explicite d'exporter code/historique vers `https://github.com/chrisngassa-max/primo-fluency-hub`. Demande ciblée transmise au propriétaire ; aucun contournement, push, PR, migration distante ou déploiement. Le reste des contrôles indépendants est terminé. Le HEAD pourra avancer pour consigner ce blocage documentaire.
+
 Cette section fait autorité sur les historiques ci-dessous. L'autorisation Phase B (migration, Edge, frontend et correction via Studio) est acquise. Arrêt impératif avant confirmation/scellement, toute génération ou appel Gemini, validation/publication d'exercice, séance, devoir ou élève.
 
 ### Préflight et préservation
