@@ -169,6 +169,9 @@ export interface DifferentiationFamilySliceV1 {
     target_level?: SliceLevel | null;
     referential_version?: string | null;
     support_compatibility?: SupportCompatibilityResult | null;
+    /** Absent ou false : extraction par niveau et plafond du contrat. */
+    lot_05a_c?: boolean;
+    max_items?: number | null;
   } | null;
   validation_report: SliceValidationReport;
 }
@@ -207,6 +210,8 @@ export interface ValidationContext {
   originalMp3Available?: boolean;
   /** Required facts carry textual segment + chunk provenance. */
   factualProvenancePresent?: boolean;
+  /** Lot 5A-C only. Absent = plafond du contrat référentiel (retour arrière). */
+  maxItems?: number;
 }
 
 export function getSliceTargetLevel(family: DifferentiationFamilySliceV1): SliceLevel {

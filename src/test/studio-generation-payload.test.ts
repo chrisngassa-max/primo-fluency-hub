@@ -79,9 +79,13 @@ describe("Studio generation payload contract", () => {
       });
     }
     const callers = files(join(process.cwd(), "src")).filter((path) =>
-      readFileSync(path, "utf8").includes('"generate-differentiation-family"'));
+      /["']generate-differentiation-family["']/.test(readFileSync(path, "utf8")));
     expect(callers.map((path) => relative(process.cwd(), path).replaceAll("\\", "/")))
-      .toEqual(["src/lib/differentiationFamilies.ts"]);
+      .toEqual(["src/lib/differentiationFamilies.ts", "src/lib/studioFactsRevision.ts"]);
+    // The second caller is revision-only, not an alternate generation payload.
+    const revision = readFileSync("src/lib/studioFactsRevision.ts", "utf8");
+    expect(revision).toContain("action:'revise_facts'");
+    expect(revision).not.toContain("target_level");
     const actions = readFileSync("src/components/pedagogical-sources/SourceDifferentiationFamilyActions.tsx", "utf8");
     expect(actions).toContain("await generateDifferentiationFamiliesForLevels(source.id, selectedLevels");
     const wizard = readFileSync("src/pages/formateur/StudioAudioWizardPage.tsx", "utf8");
