@@ -301,6 +301,20 @@ export default function StudioAudioWizardPage() {
       {activeStep === 4 && user && (
         <StudioAudioFactsStep
           source={source}
+          family={families.find(family => family.id === resolved.sealed?.sourceFamilyId)}
+          onRevised={async () => {
+            // Invalidate locally before network refresh, including refresh failures.
+            queryClient.setQueryData<PedagogicalSource>(["pedagogical-source", sourceId], current => {
+              if (!current) return current;
+              const metadata = { ...current.metadata };
+              delete metadata.studio_facts_confirmation;
+              return { ...current, metadata };
+            });
+            setFamiliesOverride(null);
+            const refreshed = await familiesQuery.refetch();
+            if (refreshed.error) throw refreshed.error;
+            await refreshSource();
+          }}
           sealed={resolved.sealed}
           confirmation={resolved.confirmation}
           divergent={hasDivergentFactsHashes(families)}
