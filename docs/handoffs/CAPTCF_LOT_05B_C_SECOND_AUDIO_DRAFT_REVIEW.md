@@ -2,6 +2,8 @@
 
 ## Reprise du 30 septembre 2026 — état courant
 
+**Périmètre désormais autorisé : push de la branche du lot vers `chrisngassa-max/primo-fluency-hub`, PR vers main, attente CI et preview Vercel.** Autorisation explicite reçue après le rejet automatique ci-dessous. Arrêt avant fusion et toute Phase B : aucune migration distante, Edge, correction/confirmation des faits, génération ou Gemini. Les affirmations d'autorisation Phase B plus anciennes ne s'appliquent pas à cette reprise.
+
 **Dernier état : livraison en attente de l'autorisation technique du push GitHub**, rejeté avant exécution par la revue automatique pour destination/contenu non explicitement autorisés. Commits SQL `40eb98f8`, UI/Edge `fb0034ea`, documentation `7fc3715b`, intégration main sans changement d'arbre `2f37b5b4`. Aucun push/PR/migration distante/déploiement ni fait corrigé.
 
 Revue documentaire complémentaire effectuée : transcription corrigée distante, transcription RFI DOCX, fiches apprenant/corrigé PDF locales. Les références concordent pour l'attribution Charlotte Derouin des fact_01–04 et fact_17–18, la durée de masquage du Soleil (fact_02), et le sens de la déclaration actuelle de Queloz sur les connaissances du Soleil (fact_06). Les copies audio locales complètes ont le même SHA256 `855d46c4125c3ac5c4978dcd67659d1ed81b253492bb92f77aad197361b105ce` ; cela prouve leur identité binaire, **pas une écoute indépendante**, qui reste non attestée. Aucun découpage ni transcription supplémentaire.
