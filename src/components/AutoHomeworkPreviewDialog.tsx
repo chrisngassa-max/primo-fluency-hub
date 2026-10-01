@@ -11,6 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { homeworkContentErrors } from "@/lib/homeworkExecutable";
+import { clearHomeworkRequest, preserveHomeworkRequest, recoveryDeadline } from "@/lib/homeworkSendRecovery";
 import {
   Accordion, AccordionContent, AccordionItem, AccordionTrigger,
 } from "@/components/ui/accordion";
@@ -95,7 +96,11 @@ export default function AutoHomeworkPreviewDialog({
     setStudentHomework([]);
     setSelectedStudentIds(new Set());
     setSending(sendLock.current);
-    if (open) void generateHomework();
+    if (open) {
+      const savedDeadline = recoveryDeadline({ userId, sessionId, groupId });
+      if (savedDeadline) setDeadline(savedDeadline);
+      void generateHomework();
+    }
     return () => { epoch.current += 1; preparation.current += 1; };
   }, [open, sessionId, groupId, userId]);
 
@@ -111,7 +116,8 @@ export default function AutoHomeworkPreviewDialog({
       const { data: members, error: membersErr } = await supabase
         .from("group_members")
         .select("eleve_id, profiles:eleve_id(id, nom, prenom)")
-        .eq("group_id", groupId);
+        .eq("group_id", groupId)
+        .order("eleve_id");
       if (!current()) return;
       if (membersErr) throw membersErr;
       if (!members || members.length === 0) {
@@ -124,7 +130,8 @@ export default function AutoHomeworkPreviewDialog({
       const { data: sessionExercises, error: sessionError } = await supabase
         .from("session_exercices")
         .select("exercice_id, exercices:exercice_id(competence, niveau_vise, difficulte, format, titre, consigne, contenu, point_a_maitriser_id)")
-        .eq("session_id", sessionId);
+        .eq("session_id", sessionId)
+        .order("exercice_id");
 
       if (sessionError) throw sessionError;
       // Fetch results for this session's exercises
@@ -134,6 +141,7 @@ export default function AutoHomeworkPreviewDialog({
             .from("resultats")
             .select("eleve_id, exercice_id, score")
             .in("exercice_id", exerciseIds)
+            .order("id")
         : { data: [], error: null };
 
       if (resultsError) throw resultsError;
@@ -142,6 +150,7 @@ export default function AutoHomeworkPreviewDialog({
       const { data: defaultPoint } = await supabase
         .from("points_a_maitriser")
         .select("id")
+        .order("id")
         .limit(1)
         .single();
 
@@ -280,7 +289,7 @@ export default function AutoHomeworkPreviewDialog({
     && Number.isFinite(new Date(`${deadline}T23:59:00`).getTime())
     && new Date(`${deadline}T23:59:00`).getTime() > Date.now();
   const invalidContent = entries.some(entry => homeworkContentErrors(entry.exercise, true).length > 0);
-  const batchKey = JSON.stringify({ sessionId, groupId, deadline, entries });
+  const batchKey = JSON.stringify({ userId, sessionId, groupId, deadline, entries });
   const ready = open && !loading && !sending && entries.length > 0 && validDeadline && !invalidContent;
   useEffect(() => { setConfirmation(null); setSendError(null); }, [batchKey]);
 
@@ -290,18 +299,23 @@ export default function AutoHomeworkPreviewDialog({
     setSending(true);
     setSendError(null);
     const sendingEpoch = epoch.current;
-    // Keep the same id after any error or lost response, including close/reopen.
-    if (request.current?.key !== batchKey) request.current = { key: batchKey, id: crypto.randomUUID() };
-    const requestId = request.current.id;
     try {
+      const deadlineIso = new Date(`${deadline}T23:59:00`).toISOString();
+      const recovery = await preserveHomeworkRequest({ userId, sessionId, groupId }, deadline,
+        { deadline: deadlineIso, entries }, request.current?.key === batchKey ? request.current.id : undefined);
+      // Account/dialog may have changed while the digest was being calculated.
+      if (!mounted.current || epoch.current !== sendingEpoch) return;
+      const requestId = recovery.requestId;
+      request.current = { key: batchKey, id: requestId };
       const { data, error } = await supabase.rpc("send_automatic_homework" as any, {
         p_request_id: requestId, p_session_id: sessionId, p_group_id: groupId,
-        p_deadline: new Date(`${deadline}T23:59:00`).toISOString(), p_entries: entries,
+        p_deadline: deadlineIso, p_entries: entries,
       } as any);
       if (error) throw error;
       if (!data || (data as any).request_id !== requestId || (data as any).homework_count !== entries.length) {
         throw new Error("Réponse non confirmée. Réessayez le même lot pour vérifier son envoi sans doublon.");
       }
+      clearHomeworkRequest(recovery);
       if (!mounted.current || epoch.current !== sendingEpoch) return;
       request.current = null;
       toast.success(`Devoirs envoyés — ${entries.length} exercice(s)`);

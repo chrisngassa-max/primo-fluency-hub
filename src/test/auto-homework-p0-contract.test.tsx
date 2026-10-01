@@ -4,6 +4,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import AutoHomeworkPreviewDialog from '@/components/AutoHomeworkPreviewDialog';
 import EndOfSessionSection from '@/components/EndOfSessionSection';
+import { webcrypto } from 'node:crypto';
+import { preserveHomeworkRequest } from '@/lib/homeworkSendRecovery';
 
 const state = vi.hoisted(() => ({
   mode: 'validation', content: {} as any, failExerciseAt: 0,
@@ -50,14 +52,15 @@ vi.mock('@/integrations/supabase/client', () => ({ supabase: {
 
 let root: Root; let host: HTMLDivElement; let client: QueryClient;
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
+Object.defineProperty(globalThis.crypto, 'subtle', { configurable: true, value: webcrypto.subtle });
 const complete = { texte: 'Le rendez-vous est mardi.', items: [{ question: 'Quel jour ?', options: ['Mardi', 'Jeudi'], bonne_reponse: 'Mardi' }] };
-async function render(manual = false) {
+async function render(manual = false, userId = 'teacher') {
   host = document.createElement('div'); document.body.append(host); root = createRoot(host);
   client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
   await act(async () => {
     root.render(<QueryClientProvider client={client}>{manual
       ? <EndOfSessionSection sessionId="session" groupId="group" userId="teacher" sessionStatut="en_cours" checkedExerciseIds={['exercise']} />
-      : <AutoHomeworkPreviewDialog open onOpenChange={() => {}} sessionId="session" groupId="group" userId="teacher" durationMinutes={8} />
+      : <AutoHomeworkPreviewDialog open onOpenChange={() => {}} sessionId="session" groupId="group" userId={userId} durationMinutes={8} />
     }</QueryClientProvider>);
   });
   await act(async () => { await new Promise(resolve => setTimeout(resolve, 30)); });
@@ -67,8 +70,14 @@ function button(pattern: RegExp) {
   if (!found) throw new Error(`Bouton absent : ${pattern}`);
   return found;
 }
-async function click(node: HTMLElement) { await act(async () => node.click()); }
+async function click(node: HTMLElement) { await act(async () => { node.click(); await new Promise(r => setTimeout(r, 20)); }); }
+async function reload(userId = 'teacher') {
+  await act(async () => root.unmount()); host.remove(); client.clear();
+  await render(false, userId);
+}
+const stored = () => Object.keys(sessionStorage).filter(key => key.startsWith('captcf:homework-send:')).map(key => JSON.parse(sessionStorage.getItem(key)!));
 beforeEach(() => {
+  sessionStorage.clear();
   state.mode = 'validation'; state.content = structuredClone(complete); state.failExerciseAt = 0;
   state.writes = []; state.exercises = []; state.devoirs = [];
   state.deferMembers = null;
@@ -118,7 +127,7 @@ describe('P0 — contrat devoirs automatiques sûrs, sans réseau', () => {
   it('double clic final : une seule requête, sans insertion directe', async () => {
     await render(); await click(button(/Valider et envoyer/));
     const confirm = button(/Confirmer l.envoi/);
-    await act(async () => { confirm.click(); confirm.click(); });
+    await act(async () => { confirm.click(); confirm.click(); await new Promise(r => setTimeout(r, 20)); });
     expect(state.rpc).toHaveBeenCalledOnce();
     expect(state.writes.every(w => w.table === 'rpc')).toBe(true);
   });
@@ -185,5 +194,72 @@ describe('P0 — contrat devoirs automatiques sûrs, sans réseau', () => {
     expect(state.rpc.mock.calls[1][1].p_request_id).toBe(requestId);
     await act(async () => resolve({ data: null, error: { message: 'RPC indisponible' } }));
     expect(state.writes).toEqual([]);
+  });
+  it('rechargement et réponse perdue : même lot, même request_id, confirmation toujours requise', async () => {
+    state.rpc.mockRejectedValue(new TypeError('Failed to fetch'));
+    await render();
+    const input = document.querySelector<HTMLInputElement>('#homework-deadline')!;
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(input, '2099-02-03');
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    await click(button(/Valider et envoyer/)); await click(button(/Confirmer l.envoi/));
+    const first = state.rpc.mock.calls[0][1];
+    expect(stored()).toHaveLength(1);
+    await reload();
+    expect(document.querySelector<HTMLInputElement>('#homework-deadline')!.value).toBe('2099-02-03');
+    expect(state.rpc).toHaveBeenCalledOnce();
+    expect(document.body.textContent).not.toContain('Confirmer l’envoi');
+    await click(button(/Valider et envoyer/)); await click(button(/Confirmer l.envoi/));
+    expect(state.rpc.mock.calls[1][1].p_request_id).toBe(first.p_request_id);
+    expect(stored()).toHaveLength(1);
+  });
+  it('contenu modifié après rechargement : nouvelle empreinte et confirmation', async () => {
+    state.failExerciseAt = 2;
+    await render(); await click(button(/Valider et envoyer/)); await click(button(/Confirmer l.envoi/));
+    const first = stored()[0];
+    state.content = { ...complete, texte: 'Autre contenu préparé.' };
+    await reload(); expect(state.rpc).toHaveBeenCalledOnce();
+    await click(button(/Valider et envoyer/)); expect(state.rpc).toHaveBeenCalledOnce();
+    await click(button(/Confirmer l.envoi/));
+    expect(state.rpc.mock.calls[1][1].p_request_id).not.toBe(first.requestId);
+    expect(stored().find(r => r.requestId !== first.requestId)?.fingerprint).not.toBe(first.fingerprint);
+  });
+  it('succès serveur confirmé : efface uniquement la reprise correspondante', async () => {
+    state.failExerciseAt = 2;
+    await render(); await click(button(/Valider et envoyer/)); await click(button(/Confirmer l.envoi/));
+    expect(stored()).toHaveLength(1); await reload(); state.failExerciseAt = 0;
+    await click(button(/Valider et envoyer/)); await click(button(/Confirmer l.envoi/));
+    expect(stored()).toEqual([]); expect(state.rpc.mock.calls[1][1].p_request_id).toBe(state.rpc.mock.calls[0][1].p_request_id);
+  });
+  it('autre compte : aucune reprise du premier utilisateur', async () => {
+    state.failExerciseAt = 2;
+    await render(); await click(button(/Valider et envoyer/)); await click(button(/Confirmer l.envoi/));
+    await reload('other-teacher');
+    await click(button(/Valider et envoyer/)); await click(button(/Confirmer l.envoi/));
+    expect(state.rpc.mock.calls[1][1].p_request_id).not.toBe(state.rpc.mock.calls[0][1].p_request_id);
+    expect(stored().map(r => r.userId).sort()).toEqual(['other-teacher', 'teacher']);
+  });
+  it('stockage minimal, empreinte déterministe et échéance/destinataires isolés', async () => {
+    const scope = { userId: 'teacher', sessionId: 'session', groupId: 'group' };
+    const batch = { entries: [{ student_id: 'student', exercise: complete }], deadline: '2099-01-01' };
+    const first = await preserveHomeworkRequest(scope, batch.deadline, batch);
+    const reordered = await preserveHomeworkRequest(scope, batch.deadline, { deadline: batch.deadline, entries: batch.entries });
+    expect(reordered.requestId).toBe(first.requestId);
+    for (const changed of [{ ...batch, deadline: '2099-01-02' }, { ...batch, entries: [{ student_id: 'other-student', exercise: complete }] }, { ...batch, entries: [] }]) {
+      const next = await preserveHomeworkRequest(scope, changed.deadline, changed);
+      expect(next.fingerprint).not.toBe(first.fingerprint); expect(next.requestId).not.toBe(first.requestId);
+    }
+    for (const value of stored()) expect(Object.keys(value).sort()).toEqual(['createdAt', 'deadline', 'fingerprint', 'groupId', 'requestId', 'sessionId', 'userId']);
+    expect(JSON.stringify(stored())).not.toMatch(/rendez-vous|Mardi|bonne_reponse|student|JWT|email|secret/);
+  });
+  it('stockage indisponible : aucun appel réseau ni insertion de secours', async () => {
+    await render();
+    const spy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new DOMException('Quota exceeded'); });
+    try {
+      await click(button(/Valider et envoyer/)); await click(button(/Confirmer l.envoi/));
+      expect(state.rpc).not.toHaveBeenCalled(); expect(state.writes).toEqual([]);
+      expect(document.body.textContent).toContain('Aucun envoi effectué');
+    } finally { spy.mockRestore(); }
   });
 });
