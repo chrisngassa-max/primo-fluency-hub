@@ -242,4 +242,3 @@ CREATE TRIGGER sync_exercise_structured_metadata_trigger BEFORE INSERT OR UPDATE
 CREATE TRIGGER trg_check_civic_publishable BEFORE INSERT OR UPDATE ON public.exercices FOR EACH ROW EXECUTE FUNCTION check_civic_publishable();
 CREATE TRIGGER trg_check_publishable_density BEFORE INSERT OR UPDATE ON public.exercices FOR EACH ROW EXECUTE FUNCTION check_publishable_density();
 CREATE TRIGGER trg_enforce_exercise_modality BEFORE INSERT OR UPDATE OF titre, consigne, competence, format, contenu, is_live_ready ON public.exercices FOR EACH ROW EXECUTE FUNCTION enforce_exercise_modality();
-
