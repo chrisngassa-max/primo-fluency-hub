@@ -1,5 +1,7 @@
 # Lot P0 — devoirs automatiques sûrs : implémentation locale
 
+État courant : P0.2 aligne les gardes sur le schéma réel, sans miroir automatique. Voir [le handoff P0.2](CAPTCF_P0_2_ALIGNEMENT_SCHEMA_REEL.md). Le rapport Phase B antérieur reste un historique d’arrêt, pas une autorisation d’appliquer le SQL corrigé.
+
 Date : 1er octobre 2026. Dépôt : `D:\SITES\CAPTCF`.
 Branche source conservée : `captcf-lot-02b-assistant-help-packs`.
 Branche de publication isolée : `captcf-p0-safe-automatic-homework`, depuis `origin/main` = `67c48e3e70872f895b926048067832bd767ce273` après fetch.
@@ -32,9 +34,9 @@ Les commandes demandées `npx.cmd supabase --version` et `npx.cmd supabase migra
 
 ## Contrat serveur
 
-Toutes les nouvelles fonctions sont `SECURITY INVOKER`, avec `search_path=pg_catalog` et objets qualifiés. Aucun nouveau `SECURITY DEFINER`. Le helper de rôle et le miroir déjà présents ne sont pas remplacés. Le schéma `homework_private` n'est pas exposé par PostgREST. EXECUTE est retiré à PUBLIC/anon ; la RPC n'est accordée qu'à authenticated. Les validateurs internes sont accessibles aux rôles nécessaires aux écritures existantes.
+Toutes les nouvelles fonctions sont `SECURITY INVOKER`, avec `search_path=pg_catalog` et objets qualifiés. Aucun nouveau `SECURITY DEFINER`. Le helper de rôle et les fonctions miroir historiques inactives ne sont pas remplacés ni réactivés. Le schéma `homework_private` n'est pas exposé par PostgREST. EXECUTE est retiré à PUBLIC/anon ; la RPC n'est accordée qu'à authenticated. Les validateurs internes sont accessibles aux rôles nécessaires aux écritures existantes.
 
-La RPC `public.send_automatic_homework(uuid, uuid, uuid, timestamptz, jsonb)` reçoit request_id, séance, groupe, échéance et entrées. L'identité vient de `auth.uid()`. Elle contrôle rôle formateur, propriété du groupe, rattachement de la séance, membres destinataires, date future, séries et contenu. Les clés d'identité injectées dans un exercice sont rejetées. Les types de la vraie table et ses contraintes s'appliquent via `jsonb_populate_record` puis des colonnes d'insertion explicites. Exercices, devoirs, miroirs et reçu sont dans la même transaction.
+La RPC `public.send_automatic_homework(uuid, uuid, uuid, timestamptz, jsonb)` reçoit request_id, séance, groupe, échéance et entrées. L'identité vient de `auth.uid()`. Elle contrôle rôle formateur, propriété du groupe, rattachement de la séance, membres destinataires, date future, séries et contenu. Les clés d'identité injectées dans un exercice sont rejetées. Les types de la vraie table et ses contraintes s'appliquent via `jsonb_populate_record` puis des colonnes d'insertion explicites. Exercices, devoirs et reçu sont dans la même transaction. Les attributions indépendantes dans exercise_assignments ne sont pas créées par cette RPC.
 
 Validation structurelle partagée par fixtures SQL/TypeScript :
 
@@ -51,7 +53,7 @@ Cette validation ne juge pas la qualité pédagogique et ne vérifie pas par ré
 
 ## Écritures directes, RLS et concurrence
 
-Les triggers protègent `exercices`, `devoirs` avant son miroir, et les insertions directes dans `exercise_assignments`. Les brouillons incomplets restent possibles ; un exercice déclaré devoir doit être exécutable. Une simple modification de statut d'un ancien devoir incomplet reste possible, y compris à travers le INSERT ON CONFLICT du miroir existant.
+Les triggers protègent `exercices`, `devoirs` et, séparément, les insertions directes dans `exercise_assignments`. Aucun lien miroir entre les deux voies n’est requis ou réinstallé. Les brouillons incomplets restent possibles ; un exercice déclaré devoir doit être exécutable. Une simple modification de statut d'un ancien devoir incomplet reste possible. La garde d'attribution indépendante tient compte de la nullabilité réelle de learner_id/group_id.
 
 Les colonnes techniques `exercices.p0_homework_executable` et `p0_requires_executable` sur les deux tables d'attribution permettent des clés étrangères composites vers `(id, p0_homework_executable)`. Les attributions exigent true. Une édition qui rend un exercice attribué inexécutable ne peut donc pas faire passer son marqueur à false, même si l'attribution est cachée par RLS à l'auteur de l'exercice. Cela évite un nouveau DEFINER pour rechercher ces attributions.
 
@@ -83,9 +85,9 @@ Commande ciblée : `node node_modules/vitest/vitest.mjs run src/test/auto-homewo
 
 Tests SQL : `python supabase/tests/test_homework_p0_local.py` — **tous réussis** sur PostgreSQL 17 dans un nouveau conteneur Docker jetable, `--network none`, aucun port publié, base sur tmpfs, conteneur supprimé après test. Aucun fichier .env, jeton Supabase ou URL de base distante n'est lu. Rôles authentifiés, RLS et contraintes sont réellement exécutés ; les accès applicatifs utilisent SET LOCAL ROLE, pas le superutilisateur. Le superutilisateur ne sert qu'à construire/inspecter les fixtures isolées et au rollback de recette.
 
-Contrôles réussis : anonyme/sans identité/élève/admin/tiers refusés, membre hors groupe, séance incorrecte, date passée, injection d'identité, 34 fixtures de format/support, écritures directes invalides, brouillons, attributions miroir directes, protection malgré RLS cachant une attribution, audio original publié manuel, édition cassant sa référence, panne FK au deuxième exercice annulant aussi le premier exercice/devoir/miroir/reçu, replay, conflit de payload, reçus privés, concurrence même requête et modification/attribution dans les deux ordres.
+Contrôles réussis : anonyme/sans identité/élève/admin/tiers refusés, membre hors groupe, séance incorrecte, date passée, injection d'identité, 34 fixtures de format/support, écritures directes invalides, brouillons, attributions indépendantes directes, protection malgré RLS cachant une attribution, audio original publié manuel, édition cassant sa référence, panne FK au deuxième exercice annulant aussi le premier exercice/devoir/reçu, sans effet sur les attributions indépendantes, replay, conflit de payload, reçus privés, concurrence même requête et modification/attribution dans les deux ordres.
 
-Le schéma local est un **fixture ciblé** des tables, politiques et contraintes nécessaires ; le vrai SQL du miroir existant est chargé. Ce n'est pas un replay exhaustif de toutes les migrations Supabase, ni une preuve de compatibilité avec un état distant non inspecté. Preuve locale ignorée par Git : `.local-security-evidence/captcf-p0-local-ebdd8c768fd6/result.txt`.
+Le schéma local est un **fixture ciblé** des tables, politiques et contraintes nécessaires ; la fonction historique miroir est chargée mais aucun trigger ne l'active et source_devoir_id est absente, conformément au préflight réel. Le fixture initial supposait ces prérequis à tort ; P0.2 corrige explicitement cette hypothèse. Ce n'est pas un replay exhaustif de toutes les migrations Supabase, ni une preuve de compatibilité avec un état distant non inspecté. Preuve locale ignorée par Git : `.local-security-evidence/captcf-p0-local-ebdd8c768fd6/result.txt`.
 
 Build : `node node_modules/vite/bin/vite.js build` — **réussi**. Avertissements sur Browserslist ancien, imports dynamiques également statiques et taille du bundle ; aucune correction hors périmètre. `git diff --check` et vérification de l'index : réussis. Pas de campagne exhaustive, déploiement ou recette avec des données réelles.
 
@@ -118,9 +120,9 @@ Correctif source : `7e24216e`, intitulé exact `fix(homework): preserve automati
 
 Validation de la branche isolée : **56 tests ciblés verts**, comprenant tous les 50 tests P0 et six tests supplémentaires (rechargement avec échéance restaurée/réseau perdu, nouveau contenu et confirmation, effacement après succès, compte différent, empreinte déterministe/changement de destinataires/stockage minimal, stockage indisponible sans envoi). Build Vite réussi avec les avertissements antérieurs. Diff whitespace propre. Tests PostgreSQL isolés, concurrence et rollback réussis à nouveau sur cette branche.
 
-La migration et son rollback sont identiques octet pour octet aux versions P0 éprouvées. Fonctions nouvelles INVOKER, auth.uid(), chemin fixe, privilèges minimaux, refus anon/PUBLIC, transaction, idempotence et absence de backfill conservés. Le workflow CI de PR exécute test/build/lint ; le workflow curriculum-worker n'est déclenché ni par le push de cette branche ni par la PR. Aucun workflow manuel n'est lancé.
+À la livraison P0.1, la migration et son rollback étaient identiques aux versions P0. Ils sont ensuite corrigés localement dans P0.2 après le préflight interrompu ; ils restent non appliqués à distance. Fonctions nouvelles INVOKER, auth.uid(), chemin fixe, privilèges minimaux, refus anon/PUBLIC, transaction, idempotence et absence de backfill conservés. Le workflow CI de PR exécute test/build/lint ; le workflow curriculum-worker n'est déclenché ni par le push de cette branche ni par la PR. Aucun workflow manuel n'est lancé.
 
-Diff autorisé exact depuis origin/main :
+Diff P0/P0.1 initial depuis origin/main (P0.2 ajoute les handoffs Phase B et P0.2) :
 
 1. `docs/handoffs/CAPTCF_P0_DEVOIRS_AUTOMATIQUES_SURS_PROPOSITION.md`
 2. `src/components/AutoHomeworkPreviewDialog.tsx`
