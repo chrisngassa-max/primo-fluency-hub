@@ -1,0 +1,1196 @@
+[
+  {
+    "name": "complete CE QCM",
+    "valid": true,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Le rendez-vous est mardi.",
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              "Mardi",
+              "Jeudi"
+            ],
+            "bonne_reponse": "Mardi"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "empty content",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {}
+    }
+  },
+  {
+    "name": "empty items",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Le rendez-vous est mardi.",
+        "items": []
+      }
+    }
+  },
+  {
+    "name": "incomplete item",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Le rendez-vous est mardi.",
+        "items": [
+          {
+            "question": "Q"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "unsupported format",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "custom",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Le rendez-vous est mardi.",
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              "Mardi",
+              "Jeudi"
+            ],
+            "bonne_reponse": "Mardi"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "missing title",
+    "valid": false,
+    "exercise": {
+      "titre": " ",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Le rendez-vous est mardi.",
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              "Mardi",
+              "Jeudi"
+            ],
+            "bonne_reponse": "Mardi"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "missing instruction",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": null,
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Le rendez-vous est mardi.",
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              "Mardi",
+              "Jeudi"
+            ],
+            "bonne_reponse": "Mardi"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "unknown competence",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "XYZ",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Le rendez-vous est mardi.",
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              "Mardi",
+              "Jeudi"
+            ],
+            "bonne_reponse": "Mardi"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "numeric question",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Le rendez-vous est mardi.",
+        "items": [
+          {
+            "question": 3,
+            "options": [
+              "Mardi",
+              "Jeudi"
+            ],
+            "bonne_reponse": "Mardi"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "numeric answer",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Le rendez-vous est mardi.",
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              "Mardi",
+              "Jeudi"
+            ],
+            "bonne_reponse": 0
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "choice objects unsupported by player",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Le rendez-vous est mardi.",
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              {
+                "text": "Mardi"
+              },
+              {
+                "text": "Jeudi"
+              }
+            ],
+            "bonne_reponse": "Mardi"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "answer not a choice",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Le rendez-vous est mardi.",
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              "Mardi",
+              "Jeudi"
+            ],
+            "bonne_reponse": "Vendredi"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "duplicate choices",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Le rendez-vous est mardi.",
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              "Mardi",
+              "Mardi"
+            ],
+            "bonne_reponse": "Mardi"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "no CE support",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              "Mardi",
+              "Jeudi"
+            ],
+            "bonne_reponse": "Mardi"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "unsupported CE alias",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte_support": "Texte",
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              "Mardi",
+              "Jeudi"
+            ],
+            "bonne_reponse": "Mardi"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "CE image",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "image": "https://example.invalid/document.png",
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              "Mardi",
+              "Jeudi"
+            ],
+            "bonne_reponse": "Mardi"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "CE empty image fallback",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "image": "",
+        "image_url": "https://example.invalid/document.png",
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              "Mardi",
+              "Jeudi"
+            ],
+            "bonne_reponse": "Mardi"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "vrai_faux textual player contract",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "vrai_faux",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Texte du document.",
+        "items": [
+          {
+            "question": "Complète la réponse : ___",
+            "bonne_reponse": "vrai"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "appariement textual player contract",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "appariement",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Texte du document.",
+        "items": [
+          {
+            "question": "Complète la réponse : ___",
+            "bonne_reponse": "Paris — France"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "texte_lacunaire textual player contract",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "texte_lacunaire",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Texte du document.",
+        "items": [
+          {
+            "question": "Complète la réponse : ___",
+            "bonne_reponse": "mardi"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "transformation textual player contract",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "transformation",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Texte du document.",
+        "items": [
+          {
+            "question": "Complète la réponse : ___",
+            "bonne_reponse": "Je viens mardi"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "invalid true false",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "vrai_faux",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Texte",
+        "items": [
+          {
+            "question": "Vrai ?",
+            "bonne_reponse": "peut-être"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "nested matching not supported",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "appariement",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Texte",
+        "items": [
+          {
+            "question": "Associe",
+            "bonne_reponse": {
+              "A": "B"
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "CO script",
+    "valid": true,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CO",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "script_audio": "Le rendez-vous est mardi.",
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              "Mardi",
+              "Jeudi"
+            ],
+            "bonne_reponse": "Mardi"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "CO missing support",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CO",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Le rendez-vous est mardi.",
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              "Mardi",
+              "Jeudi"
+            ],
+            "bonne_reponse": "Mardi"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "CO unsupported audio_url alias",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CO",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "audio_url": "https://example.invalid/a.mp3",
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              "Mardi",
+              "Jeudi"
+            ],
+            "bonne_reponse": "Mardi"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "CO original reference structural",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CO",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "audio": {
+          "source_id": "source",
+          "source_content_hash": "hash"
+        },
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              "Mardi",
+              "Jeudi"
+            ],
+            "bonne_reponse": "Mardi"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "CO invalid original despite script",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CO",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "audio": {},
+        "script_audio": "Texte",
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              "Mardi",
+              "Jeudi"
+            ],
+            "bonne_reponse": "Mardi"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "EE open response",
+    "valid": true,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "EE",
+      "format": "production_ecrite",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "items": [
+          {
+            "question": "Présente ton projet."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "EE no prepared task",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "EE",
+      "format": "production_ecrite",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {}
+    }
+  },
+  {
+    "name": "EO open response",
+    "valid": true,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "EO",
+      "format": "production_orale",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "items": [
+          {
+            "question": "Présente ton projet."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "EO no prepared task",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "EO",
+      "format": "production_orale",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {}
+    }
+  },
+  {
+    "name": "EE cannot use QCM",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "EE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Le rendez-vous est mardi.",
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              "Mardi",
+              "Jeudi"
+            ],
+            "bonne_reponse": "Mardi"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "EO two items unsupported",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "EO",
+      "format": "production_orale",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "items": [
+          {
+            "question": "Q1"
+          },
+          {
+            "question": "Q2"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "CE short text Bonjour",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Bonjour.",
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              "Mardi",
+              "Jeudi"
+            ],
+            "bonne_reponse": "Mardi"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "CE exactly 20 characters",
+    "valid": true,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "12345678901234567890",
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              "Mardi",
+              "Jeudi"
+            ],
+            "bonne_reponse": "Mardi"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "CE text with image",
+    "valid": true,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Le rendez-vous est mardi.",
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              "Mardi",
+              "Jeudi"
+            ],
+            "bonne_reponse": "Mardi"
+          }
+        ],
+        "image": "https://example.invalid/image.png"
+      }
+    }
+  },
+  {
+    "name": "CE unicode below 20 code points",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "😀😀😀😀😀😀😀😀😀😀",
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              "Mardi",
+              "Jeudi"
+            ],
+            "bonne_reponse": "Mardi"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "CE trim spaces below 20",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "    Bonjour.    ",
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              "Mardi",
+              "Jeudi"
+            ],
+            "bonne_reponse": "Mardi"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "CO original with script",
+    "valid": true,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CO",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "audio": {
+          "source_id": "source",
+          "source_content_hash": "hash"
+        },
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              "Mardi",
+              "Jeudi"
+            ],
+            "bonne_reponse": "Mardi"
+          }
+        ],
+        "script_audio": "Le rendez-vous est mardi."
+      }
+    }
+  },
+  {
+    "name": "vrai_faux textual player contract with sufficient support",
+    "valid": true,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "vrai_faux",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Le rendez-vous est mardi.",
+        "items": [
+          {
+            "question": "Complète la réponse : ___",
+            "bonne_reponse": "vrai"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "appariement textual player contract with sufficient support",
+    "valid": true,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "appariement",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Le rendez-vous est mardi.",
+        "items": [
+          {
+            "question": "Complète la réponse : ___",
+            "bonne_reponse": "Paris — France"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "texte_lacunaire textual player contract with sufficient support",
+    "valid": true,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "texte_lacunaire",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Le rendez-vous est mardi.",
+        "items": [
+          {
+            "question": "Complète la réponse : ___",
+            "bonne_reponse": "mardi"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "transformation textual player contract with sufficient support",
+    "valid": true,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "transformation",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Le rendez-vous est mardi.",
+        "items": [
+          {
+            "question": "Complète la réponse : ___",
+            "bonne_reponse": "Je viens mardi"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "metadata time overflow",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Le rendez-vous est mardi.",
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              "Mardi",
+              "Jeudi"
+            ],
+            "bonne_reponse": "Mardi"
+          }
+        ],
+        "metadata": {
+          "time_limit_seconds": "2147483648"
+        }
+      }
+    }
+  },
+  {
+    "name": "metadata listening overflow",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Le rendez-vous est mardi.",
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              "Mardi",
+              "Jeudi"
+            ],
+            "bonne_reponse": "Mardi"
+          }
+        ],
+        "nombre_ecoutes_max": "999999999999999999999"
+      }
+    }
+  },
+  {
+    "name": "metadata numeric overflow",
+    "valid": false,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Le rendez-vous est mardi.",
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              "Mardi",
+              "Jeudi"
+            ],
+            "bonne_reponse": "Mardi"
+          }
+        ],
+        "time_limit_seconds": 1e+21
+      }
+    }
+  },
+  {
+    "name": "metadata first value wins",
+    "valid": true,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Le rendez-vous est mardi.",
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              "Mardi",
+              "Jeudi"
+            ],
+            "bonne_reponse": "Mardi"
+          }
+        ],
+        "metadata": {
+          "time_limit_seconds": "60"
+        },
+        "time_limit_seconds": "2147483648"
+      }
+    }
+  },
+  {
+    "name": "metadata clamp within int4",
+    "valid": true,
+    "exercise": {
+      "titre": "Rendez-vous",
+      "consigne": "Lis et choisis.",
+      "competence": "CE",
+      "format": "qcm",
+      "niveau_vise": "A2",
+      "difficulte": 3,
+      "point_a_maitriser_id": "20000000-0000-4000-8000-000000000003",
+      "contenu": {
+        "texte": "Le rendez-vous est mardi.",
+        "items": [
+          {
+            "question": "Quel jour ?",
+            "options": [
+              "Mardi",
+              "Jeudi"
+            ],
+            "bonne_reponse": "Mardi"
+          }
+        ],
+        "nombre_ecoutes_max": "2147483647"
+      }
+    }
+  }
+]
