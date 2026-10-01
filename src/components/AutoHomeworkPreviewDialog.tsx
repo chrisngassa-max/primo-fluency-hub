@@ -1,3 +1,4 @@
+import { automaticHomeworkErrorMessage } from '@/lib/automaticHomeworkErrorMessage';
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
@@ -251,10 +252,10 @@ export default function AutoHomeworkPreviewDialog({
       if (!current()) return;
       setStudentHomework(allHomework);
       setSelectedStudentIds(new Set(allHomework.map((student) => student.eleveId)));
-    } catch (e: any) {
+    } catch (e: unknown) {
       if (current()) {
         setStudentHomework([]);
-        toast.error("Préparation impossible", { description: e.message });
+        toast.error("Préparation impossible", { description: automaticHomeworkErrorMessage(e) });
       }
     } finally {
       if (current()) setLoading(false);
@@ -323,9 +324,9 @@ export default function AutoHomeworkPreviewDialog({
       void qc.invalidateQueries({ queryKey: ["devoirs-formateur-all"] });
       onSent?.();
       onOpenChange(false);
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (mounted.current && epoch.current === sendingEpoch) {
-        setSendError(error.message || "Envoi non confirmé. Réessayez ce même lot sans créer de doublon.");
+        setSendError(automaticHomeworkErrorMessage(error));
       }
     } finally {
       sendLock.current = false;
