@@ -1,14 +1,15 @@
 # Lot P0 — devoirs automatiques sûrs : implémentation locale
 
 Date : 1er octobre 2026. Dépôt : `D:\SITES\CAPTCF`.
-Branche conservée : `captcf-lot-02b-assistant-help-packs`.
+Branche source conservée : `captcf-lot-02b-assistant-help-packs`.
+Branche de publication isolée : `captcf-p0-safe-automatic-homework`, depuis `origin/main` = `67c48e3e70872f895b926048067832bd767ce273` après fetch.
 Base : `ea3d9a463c631ac9488335ed3fd80ce81dff2861`.
 Commits antérieurs préservés : `5b15e74d` (tests rouges), `58a90942` (proposition).
 Commit code : `736d8703` — `fix: secure automatic homework with explicit atomic sending`.
 
 ## État et périmètre
 
-Implémentation et recette locales terminées après autorisation propriétaire d'une migration locale unique. Les sept tests rouges sont verts, ainsi que le test du chemin manuel. Aucun changement distant : ni migration Supabase, mutation de production, push, PR, déploiement frontend/Edge, modification de secret ou appel Gemini.
+Implémentation et recette locales terminées après autorisation propriétaire d'une migration locale unique. Les sept tests rouges sont verts, ainsi que le test du chemin manuel. La recette P0 initiale est restée locale. La mission P0.1 autorise désormais le push de la seule branche P0 isolée et l'ouverture d'une PR ; aucune fusion, migration Supabase distante, mutation de production, déploiement de production frontend/Edge, modification de secret ou appel Gemini n'est autorisé.
 
 La quantité générale d'exercices, le Carnet et l'assistant ne sont pas modifiés. Les MP3, ZIP, fichiers Studio, preuves locales et fichiers non suivis présents au départ sont préservés et exclus des commits.
 
@@ -64,7 +65,11 @@ Installation : ajout de colonnes à défaut constant, contraintes composites NOT
 
 Un verrou advisory de transaction sérialise les demandes de même propriétaire/request_id. Le même payload retourne le reçu sans nouvelle création ; un autre payload avec le même identifiant produit `homework_request_conflict`. Deux appels simultanés identiques ne créent qu'un lot.
 
-Le dialogue conserve request_id après erreur réseau et après fermeture/réouverture du même composant. Une reprise du même lot utilise le même identifiant. Ce stockage est en mémoire : un rechargement complet de la page ou un démontage du composant perd cette clé. La déduplication serveur reste garantie pour tout appel présentant le même request_id ; aucune garantie de reprise automatique après rechargement n'est revendiquée.
+P0.1 conserve désormais la reprise dans sessionStorage : un rechargement de page ou un démontage/remontage du composant dans le même onglet retrouve le request_id du même lot. La clé est isolée par utilisateur, séance, groupe et empreinte SHA-256 du payload. Les clés des objets JSON sont normalisées et les lectures de préparation sont ordonnées. L'échéance du dernier lot en attente est restaurée ; aucun contenu ni sélection nominative n'est stocké. Le professeur doit reconstruire le même lot et confirmer de nouveau : un lot différent reçoit une nouvelle empreinte et un nouvel identifiant. Chaque lot non confirmé garde sa propre reprise, même si un autre lot est tenté.
+
+Champs locaux autorisés exclusivement : requestId, fingerprint, userId, sessionId, groupId, deadline, createdAt. Aucun contenu d'exercice, réponse, nom, email, JWT ou secret. L'écriture précède tout appel réseau ; un stockage indisponible bloque l'envoi avec une erreur visible. Une réponse serveur confirmée efface uniquement la reprise correspondante. Une erreur métier ou réseau conserve l'état et laisse corriger le lot, sans insertion directe de secours. Un autre compte ne reprend pas cet état.
+
+Limite volontaire : sessionStorage couvre le rechargement du même onglet, pas la fermeture définitive de cet onglet, un changement de navigateur/appareil ou l'effacement du stockage. Aucun mécanisme n'envoie automatiquement au rechargement. La migration et la RPC sont strictement inchangées dans P0.1.
 
 Rétention : reçus conservés sans purge automatique afin de maintenir la déduplication. Le rollback refuse explicitement de détruire une table de reçus non vide. Une future politique d'archivage/purge et son effet sur les replays nécessiteraient une décision distincte.
 
@@ -104,4 +109,29 @@ Commit code `736d8703`, neuf fichiers :
 - `supabase/tests/homework_p0_schema.sql`
 - `supabase/tests/test_homework_p0_local.py`
 
-Commit documentaire suivant : ce fichier uniquement. Les commits locaux sont créés sans hooks externes, après les vérifications ciblées ci-dessus. Aucune autorisation distante n'est déduite de cette livraison locale.
+Commit documentaire suivant : ce fichier uniquement. Les commits locaux sont créés sans hooks externes, après les vérifications ciblées ci-dessus. L'autorisation P0.1 de push/PR est distincte et explicite ; elle n'autorise ni fusion ni application distante de la migration.
+
+
+## P0.1 — reprise et publication isolée
+
+Correctif source : `7e24216e`, intitulé exact `fix(homework): preserve automatic send id across reload`, sans amend. Après cherry-pick sur la branche dédiée : `1b1f25d8`. Rejeu limité aux commits P0 : tests rouges `e556730a`, proposition `ba529999`, correctif `497132fd`, handoff `7be28d82`, puis reprise `1b1f25d8`. Aucun commit du Lot 2B Assistant n'est importé.
+
+Validation de la branche isolée : **56 tests ciblés verts**, comprenant tous les 50 tests P0 et six tests supplémentaires (rechargement avec échéance restaurée/réseau perdu, nouveau contenu et confirmation, effacement après succès, compte différent, empreinte déterministe/changement de destinataires/stockage minimal, stockage indisponible sans envoi). Build Vite réussi avec les avertissements antérieurs. Diff whitespace propre. Tests PostgreSQL isolés, concurrence et rollback réussis à nouveau sur cette branche.
+
+La migration et son rollback sont identiques octet pour octet aux versions P0 éprouvées. Fonctions nouvelles INVOKER, auth.uid(), chemin fixe, privilèges minimaux, refus anon/PUBLIC, transaction, idempotence et absence de backfill conservés. Le workflow CI de PR exécute test/build/lint ; le workflow curriculum-worker n'est déclenché ni par le push de cette branche ni par la PR. Aucun workflow manuel n'est lancé.
+
+Diff autorisé exact depuis origin/main :
+
+1. `docs/handoffs/CAPTCF_P0_DEVOIRS_AUTOMATIQUES_SURS_PROPOSITION.md`
+2. `src/components/AutoHomeworkPreviewDialog.tsx`
+3. `src/lib/homeworkExecutable.ts`
+4. `src/lib/homeworkSendRecovery.ts`
+5. `src/test/auto-homework-p0-contract.test.tsx`
+6. `src/test/homework-executable.test.ts`
+7. `supabase/migrations/20261001074826_safe_automatic_homework.sql`
+8. `supabase/secours/20261001074826_safe_automatic_homework_rollback.sql`
+9. `supabase/tests/homework_executable_cases.json`
+10. `supabase/tests/homework_p0_schema.sql`
+11. `supabase/tests/test_homework_p0_local.py`
+
+Aucun fichier AssistantHelpEditor, banque d'indices, table/RPC Assistant, captcf-assistant-qa, Classium, audio, ZIP, .env, secret, .local-security-evidence ou supabase/.temp dans le diff. Les fichiers non suivis préexistants sont préservés. Publication de cette branche uniquement après ces contrôles ; état distant CI/Vercel à lire sur la PR pour le HEAD effectivement poussé. Ne pas fusionner ; migration non appliquée en production. Sans cette RPC, le dialogue échoue sans insertion de secours.
