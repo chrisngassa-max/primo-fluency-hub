@@ -1,4 +1,6 @@
--- Disposable PostgreSQL fixture: real roles, RLS and FK; no remote connections.
+-- Disposable targeted fixture, aligned with remote catalogs inspected 2026-10-01.
+-- Only columns/policies required by P0 are reproduced, except exercise_assignments
+-- whose full current column shape is included. Not a full Supabase schema replay.
 CREATE ROLE anon NOLOGIN;
 CREATE ROLE authenticated NOLOGIN;
 CREATE ROLE service_role NOLOGIN BYPASSRLS;
@@ -22,19 +24,22 @@ CREATE TABLE public.points_a_maitriser(id uuid PRIMARY KEY);
 CREATE TABLE public.groups(id uuid PRIMARY KEY,formateur_id uuid NOT NULL REFERENCES public.profiles);
 CREATE TABLE public.sessions(id uuid PRIMARY KEY,group_id uuid NOT NULL REFERENCES public.groups);
 CREATE TABLE public.group_members(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),group_id uuid REFERENCES public.groups,eleve_id uuid REFERENCES public.profiles);
-CREATE TABLE public.exercices(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),formateur_id uuid REFERENCES public.profiles,
+CREATE TABLE public.exercices(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),formateur_id uuid NOT NULL REFERENCES public.profiles,
  point_a_maitriser_id uuid NOT NULL REFERENCES public.points_a_maitriser,
  titre text NOT NULL,consigne text NOT NULL,competence public.competence_type NOT NULL,format public.exercice_format NOT NULL,
- niveau_vise public.niveau_cecrl NOT NULL,difficulte integer CHECK(difficulte BETWEEN 0 AND 10),contenu jsonb NOT NULL DEFAULT '{}',
+ niveau_vise text NOT NULL DEFAULT 'A2',difficulte integer NOT NULL DEFAULT 3 CHECK(difficulte BETWEEN 0 AND 10),contenu jsonb NOT NULL DEFAULT '{}',
  is_devoir boolean NOT NULL DEFAULT false,is_ai_generated boolean NOT NULL DEFAULT false,eleve_id uuid REFERENCES public.profiles,
  statut text DEFAULT 'draft',updated_at timestamptz DEFAULT now());
 CREATE TABLE public.devoirs(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),exercice_id uuid NOT NULL REFERENCES public.exercices ON DELETE CASCADE,
  eleve_id uuid NOT NULL REFERENCES public.profiles,formateur_id uuid NOT NULL REFERENCES public.profiles,
- session_id uuid REFERENCES public.sessions,contexte text,serie integer,raison public.devoir_raison,statut text DEFAULT 'en_attente',date_echeance timestamptz,source_label text);
-CREATE TABLE public.exercise_assignments(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),exercise_id uuid NOT NULL REFERENCES public.exercices ON DELETE CASCADE,
- learner_id uuid NOT NULL REFERENCES public.profiles,assigned_by uuid NOT NULL REFERENCES public.profiles,context text,due_date timestamptz,sync_status text,
- source_devoir_id uuid UNIQUE REFERENCES public.devoirs ON DELETE CASCADE);
-CREATE TABLE public.pedagogical_sources(id uuid PRIMARY KEY,formateur_id uuid,source_kind text,content_hash text,status text,review_status text,storage_bucket text,storage_path text);
+ session_id uuid REFERENCES public.sessions ON DELETE SET NULL,contexte text NOT NULL DEFAULT 'devoir',serie integer,
+ raison public.devoir_raison NOT NULL DEFAULT 'remediation',statut text NOT NULL DEFAULT 'en_attente',
+ date_echeance timestamptz NOT NULL DEFAULT (now()+interval '7 days'),source_label text);
+-- Actual remote assignment shape: independent from devoirs, no source_devoir_id.
+CREATE TABLE public.exercise_assignments(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),exercise_id uuid REFERENCES public.exercices ON DELETE CASCADE,
+ learner_id uuid REFERENCES public.profiles,group_id uuid REFERENCES public.groups,assigned_by uuid REFERENCES public.profiles,
+ context text CHECK(context IN ('autonomie','devoir','live','remediation')),due_date timestamptz,sync_status text DEFAULT 'local',created_at timestamptz DEFAULT now());
+CREATE TABLE public.pedagogical_sources(id uuid PRIMARY KEY,created_by uuid,source_kind text,content_hash text,status text,review_status text,storage_bucket text,storage_path text);
 CREATE TABLE public.differentiation_families(id uuid PRIMARY KEY,published_exercise_id uuid,source_id uuid,source_content_hash text,review_status text);
 GRANT SELECT ON public.pedagogical_sources,public.differentiation_families TO authenticated;
 ALTER TABLE public.exercices ENABLE ROW LEVEL SECURITY;

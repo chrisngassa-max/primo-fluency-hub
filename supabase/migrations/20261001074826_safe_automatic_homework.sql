@@ -126,20 +126,16 @@ END $$;
 CREATE TRIGGER p0_guard_assignment BEFORE INSERT OR UPDATE ON public.devoirs
  FOR EACH ROW EXECUTE FUNCTION homework_private.guard_assignment();
 
-CREATE FUNCTION homework_private.guard_mirror() RETURNS trigger
+-- Independent PlayExercise assignments; devoirs are not mirrored into this table.
+CREATE FUNCTION homework_private.guard_independent_assignment() RETURNS trigger
 LANGUAGE plpgsql SECURITY INVOKER SET search_path=pg_catalog AS $$
 DECLARE e public.exercices;
 BEGIN
- -- The existing mirror is INSERT ... ON CONFLICT DO UPDATE even for a status edit.
- -- Permit only an already-existing identical attribution through that insert arm.
- IF TG_OP='INSERT' AND NEW.source_devoir_id IS NOT NULL THEN
-   PERFORM 1 FROM public.exercise_assignments a WHERE a.source_devoir_id=NEW.source_devoir_id
-     AND a.exercise_id=NEW.exercise_id AND a.learner_id=NEW.learner_id AND a.assigned_by=NEW.assigned_by
-     AND a.p0_requires_executable=NEW.p0_requires_executable FOR KEY SHARE;
-   IF FOUND THEN RETURN NEW; END IF;
- END IF;
  IF TG_OP='UPDATE' THEN
-   IF NEW.exercise_id=OLD.exercise_id AND NEW.learner_id=OLD.learner_id AND NEW.assigned_by=OLD.assigned_by
+   IF NEW.exercise_id IS NOT DISTINCT FROM OLD.exercise_id
+     AND NEW.learner_id IS NOT DISTINCT FROM OLD.learner_id
+     AND NEW.group_id IS NOT DISTINCT FROM OLD.group_id
+     AND NEW.assigned_by IS NOT DISTINCT FROM OLD.assigned_by
      AND NEW.p0_requires_executable=OLD.p0_requires_executable THEN RETURN NEW; END IF;
  END IF;
  SELECT * INTO e FROM public.exercices WHERE id=NEW.exercise_id FOR KEY SHARE;
@@ -151,8 +147,8 @@ BEGIN
  NEW.p0_requires_executable:=true;
  RETURN NEW;
 END $$;
-CREATE TRIGGER p0_guard_mirror BEFORE INSERT OR UPDATE ON public.exercise_assignments
- FOR EACH ROW EXECUTE FUNCTION homework_private.guard_mirror();
+CREATE TRIGGER p0_guard_independent_assignment BEFORE INSERT OR UPDATE ON public.exercise_assignments
+ FOR EACH ROW EXECUTE FUNCTION homework_private.guard_independent_assignment();
 
 -- Not exposed via PostgREST. No educational content, answers or student identifiers.
 -- Retain receipts indefinitely for permanent request-id deduplication; no automatic purge.

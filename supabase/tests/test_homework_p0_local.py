@@ -103,7 +103,9 @@ def main():
             time.sleep(.25)
         file_sql(ROOT / 'supabase/tests/homework_p0_schema.sql')
         file_sql(ROOT / 'supabase/migrations/20260416200037_9ec38d95-f2e3-400c-a5f1-153f9ab10599.sql')
-        sql('CREATE TRIGGER mirror AFTER INSERT OR UPDATE ON public.devoirs FOR EACH ROW EXECUTE FUNCTION public.mirror_devoir_to_assignment()')
+        # The legacy function exists remotely, but no trigger calls it.
+        assert sql("SELECT NOT EXISTS(SELECT 1 FROM pg_attribute WHERE attrelid='public.exercise_assignments'::regclass AND attname='source_devoir_id' AND NOT attisdropped)")=='t'
+        assert sql("SELECT NOT EXISTS(SELECT 1 FROM pg_trigger WHERE NOT tgisinternal AND tgrelid='public.devoirs'::regclass AND tgfoid='public.mirror_devoir_to_assignment()'::regprocedure)")=='t'
         sql('INSERT INTO public.profiles VALUES '+','.join('('+q(uid)+')' for uid in [OWNER, OTHER, LEARNER, OUTSIDER])+
             f"; INSERT INTO public.user_roles VALUES('{OWNER}','formateur'),('{OTHER}','formateur'),('{LEARNER}','eleve'),('{OUTSIDER}','admin');"
             f"INSERT INTO public.groups VALUES('{GROUP}','{OWNER}'); INSERT INTO public.sessions VALUES('{SESSION}','{GROUP}');"
@@ -112,13 +114,20 @@ def main():
         sql(insert_ex(invalid, LEGACY)+';'+insert_ex(EX, VALID)+f";UPDATE public.exercices SET statut='published' WHERE id='{VALID}'")
         # Legacy assignment by a different trainer is invisible to the exercise owner under RLS.
         sql(assign(LEGACY)+';'+assign(VALID, OTHER))
+        sql(f"INSERT INTO public.exercise_assignments(exercise_id,group_id,assigned_by,context) VALUES('{LEGACY}','{GROUP}','{OWNER}','devoir')")
+        legacy_mirror=sql("SELECT md5(pg_get_functiondef('public.mirror_devoir_to_assignment()'::regprocedure))")
         before = snapshot()
         file_sql(MIGRATION)
         assert snapshot() == before
-        print('PASS install: all historical content, homework and mirrors unchanged', flush=True)
+        # P0.2 regression: valid independent assignments must work on the REAL schema.
+        sql(f"INSERT INTO public.exercise_assignments(exercise_id,learner_id,assigned_by,context) VALUES('{VALID}','{LEARNER}','{OWNER}','autonomie')",OWNER)
+        print('PASS real schema: independent assignment accepted without source_devoir_id or mirror trigger',flush=True)
+        print('PASS install: all historical content, homework and independent assignments unchanged', flush=True)
         # Preserve simple status edits of legacy incomplete homework and exercise.
         sql(f"UPDATE public.devoirs SET statut='fait' WHERE exercice_id='{LEGACY}'", OWNER)
         sql(f"UPDATE public.exercices SET statut='draft' WHERE id='{LEGACY}'", OWNER)
+        sql(f"UPDATE public.exercise_assignments SET due_date='2099-02-01' WHERE exercise_id='{LEGACY}'",OWNER)
+        sql(f"UPDATE public.exercise_assignments SET learner_id='{LEARNER}' WHERE exercise_id='{LEGACY}'",OWNER,error='homework_inexecutable')
         print('PASS historical status updates without backfill', flush=True)
         for role, actor, message in [('anon', None, 'permission denied'), ('authenticated', None, 'homework_forbidden'),
                                      ('authenticated', LEARNER, 'homework_forbidden'), ('authenticated', OUTSIDER, 'homework_forbidden'),
@@ -149,9 +158,11 @@ def main():
         sql(f"UPDATE public.exercices SET p0_homework_executable=true,contenu='{{}}' WHERE id='{VALID}'", OWNER, error='p0_homework_executable_fk')
         sql(assign(LEGACY), OWNER, error='homework_inexecutable')
         sql(f"INSERT INTO public.exercise_assignments(exercise_id,learner_id,assigned_by) VALUES('{LEGACY}','{LEARNER}','{OWNER}')", OWNER, error='homework_inexecutable')
-        mirror_only=str(uuid.uuid4()); sql(insert_ex(EX,mirror_only),OWNER)
-        sql(f"INSERT INTO public.exercise_assignments(exercise_id,learner_id,assigned_by) VALUES('{mirror_only}','{LEARNER}','{OWNER}')",OWNER)
-        sql(f"UPDATE public.exercices SET contenu='{{}}' WHERE id='{mirror_only}'",OWNER,error='p0_assignment_executable_fk')
+        independent=str(uuid.uuid4()); sql(insert_ex(EX,independent),OWNER)
+        sql(f"INSERT INTO public.exercise_assignments(exercise_id,learner_id,assigned_by) VALUES('{independent}','{LEARNER}','{OWNER}')",OWNER)
+        sql(f"UPDATE public.exercices SET contenu='{{}}' WHERE id='{independent}'",OWNER,error='p0_assignment_executable_fk')
+        # Existing group-attribution route has a NULL learner, not a devoir link.
+        sql(f"INSERT INTO public.exercise_assignments(exercise_id,group_id,assigned_by,context) VALUES('{independent}','{GROUP}','{OWNER}','devoir')",OWNER)
         print('PASS direct writes rejected, drafts preserved, cross-owner hidden assignments protected', flush=True)
         # A bare original-audio reference is not enough: resolve its actual publication chain.
         audio_id,source_id,family_id=[str(uuid.uuid4()) for _ in range(3)]
@@ -168,12 +179,14 @@ def main():
         broken=copy.deepcopy(audio['contenu']); broken['audio']['source_content_hash']='sha256:wrong'
         sql(f"UPDATE public.exercices SET contenu={q(json.dumps(broken))}::jsonb WHERE id='{audio_id}'",OWNER,error='p0_homework_executable_fk')
         print('PASS original audio: missing publication refused, published manual accepted, broken assigned reference refused',flush=True)
-        # Real mid-loop error AFTER the first exercise, homework and mirror insert.
+        # Real mid-loop error AFTER the first exercise and homework insert.
         batch=entries()+entries(); batch[1]['exercise']['point_a_maitriser_id']=str(uuid.uuid4())
         before_counts=counts(); sql(call(batch), OWNER, error='foreign key constraint'); assert counts()==before_counts
-        print('PASS failure in middle: zero exercises, homework, mirrors or receipts retained', flush=True)
+        print('PASS failure in middle: zero exercises, homework or receipts retained; independent assignments untouched', flush=True)
         request=str(uuid.uuid4()); command=call(request=request)
-        result=sql(command, OWNER); before_counts=counts(); assert sql(command,OWNER)==result and counts()==before_counts
+        start=json.loads(counts()); result=sql(command, OWNER)
+        assert json.loads(counts())==[start[0]+1,start[1]+1,start[2],start[3]+1]
+        before_counts=counts(); assert sql(command,OWNER)==result and counts()==before_counts
         changed=entries(); changed[0]['exercise']['titre']='Changed'; sql(call(changed,request=request),OWNER,error='homework_request_conflict')
         assert sql('SELECT count(*) FROM homework_private.receipts',OTHER)=='0'
         print('PASS successful batch and stable receipt, replay without duplicates, payload conflict and receipt RLS',flush=True)
@@ -181,13 +194,14 @@ def main():
         command=call(request=str(uuid.uuid4())); start=json.loads(counts())
         with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
             results=list(pool.map(lambda _:sql(command,OWNER),range(2)))
-        assert results[0]==results[1] and json.loads(counts())==[n+1 for n in start]
+        assert results[0]==results[1] and json.loads(counts())==[start[0]+1,start[1]+1,start[2],start[3]+1]
         print('PASS concurrent same-request replay: one batch',flush=True)
         # Synchronize using a real server-side advisory lock rather than arbitrary polling of results.
-        for edit_first in [True,False]:
+        for independent_path, edit_first in [(False,True),(False,False),(True,True),(True,False)]:
             exid=str(uuid.uuid4()); sql(insert_ex(EX,exid))
             edit=f"UPDATE public.exercices SET contenu='{{}}' WHERE id='{exid}'"
-            assignment=assign(exid)
+            assignment=(f"INSERT INTO public.exercise_assignments(exercise_id,group_id,assigned_by,context) VALUES('{exid}','{GROUP}','{OWNER}','devoir')"
+                        if independent_path else assign(exid))
             first=edit if edit_first else assignment
             second=assignment if edit_first else edit
             with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
@@ -196,9 +210,9 @@ def main():
                     if sql("SELECT EXISTS(SELECT 1 FROM pg_locks WHERE locktype='advisory' AND objid=819273 AND granted)")=='t': break
                     time.sleep(.025)
                 else: raise AssertionError('concurrency barrier not reached')
-                sql(second,OWNER,error='homework_inexecutable' if edit_first else 'p0_homework_executable_fk')
+                sql(second,OWNER,error='homework_inexecutable' if edit_first else ('p0_assignment_executable_fk' if independent_path else 'p0_homework_executable_fk'))
                 future.result()
-        print('PASS both concurrency orders: edit/assignment cannot distribute an invalid exercise',flush=True)
+        print('PASS both concurrency orders on devoirs AND independent group assignments: no invalid distribution',flush=True)
         # Refusal is itself tested first; nothing may be destroyed to force rollback in production.
         before=snapshot(); file_sql(ROLLBACK,error='p0_rollback_refused_nonempty_receipts'); assert snapshot()==before
         receipts=sql('SELECT jsonb_agg(to_jsonb(r)) FROM homework_private.receipts r')
@@ -207,6 +221,10 @@ def main():
         sql('DELETE FROM homework_private.receipts')
         before=snapshot(); file_sql(ROLLBACK); assert snapshot()==before
         assert sql("SELECT to_regnamespace('homework_private') IS NULL")=='t'
+        assert sql("SELECT NOT EXISTS(SELECT 1 FROM pg_attribute WHERE attrelid='public.exercise_assignments'::regclass AND attname='source_devoir_id' AND NOT attisdropped)")=='t'
+        assert sql("SELECT NOT EXISTS(SELECT 1 FROM pg_trigger WHERE NOT tgisinternal AND tgrelid='public.devoirs'::regclass AND tgfoid='public.mirror_devoir_to_assignment()'::regprocedure)")=='t'
+        assert sql("SELECT to_regprocedure('public.mirror_devoir_to_assignment()') IS NOT NULL")=='t'
+        assert sql("SELECT md5(pg_get_functiondef('public.mirror_devoir_to_assignment()'::regprocedure))")==legacy_mirror
         print('PASS rollback refusal when nonempty, then isolated-fixture rollback: business data unchanged',flush=True)
         (LOG/'result.txt').write_text('PASS all P0 PostgreSQL tests; container network none; no remote connection\n',encoding='utf-8')
     finally:
