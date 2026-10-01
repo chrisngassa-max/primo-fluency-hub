@@ -32,6 +32,7 @@ CREATE TABLE public.exercices(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),form
  statut text DEFAULT 'draft',updated_at timestamptz DEFAULT now());
 ALTER TABLE public.exercices ADD COLUMN sous_competence text;
 ALTER TABLE public.exercices ADD COLUMN is_live_ready boolean DEFAULT false;
+ALTER TABLE public.exercices ADD COLUMN is_template boolean NOT NULL DEFAULT false;
 ALTER TABLE public.exercices ADD COLUMN objectif_tcf text;
 ALTER TABLE public.exercices ADD COLUMN metadata_code text;
 ALTER TABLE public.exercices ADD COLUMN metadata_skill text;
@@ -64,6 +65,10 @@ ALTER TABLE public.group_members ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.exercise_assignments ENABLE ROW LEVEL SECURITY;
 CREATE POLICY own_exercise ON public.exercices USING(formateur_id=auth.uid()) WITH CHECK(formateur_id=auth.uid());
 CREATE POLICY validated_exercise ON public.exercices FOR SELECT USING(auth.uid() IS NOT NULL AND statut IN ('validated','published'));
+-- Existing remote staff SELECT policy can expose draft bank exercises; P0.4
+-- must still require published for an assignment by someone other than owner.
+CREATE POLICY staff_read_bank_exercices ON public.exercices FOR SELECT TO authenticated
+ USING(is_template=false AND eleve_id IS NULL AND (public.has_role(auth.uid(),'formateur') OR public.has_role(auth.uid(),'admin')));
 CREATE POLICY own_devoir ON public.devoirs USING(formateur_id=auth.uid()) WITH CHECK(formateur_id=auth.uid());
 CREATE POLICY learner_devoir ON public.devoirs FOR SELECT USING(eleve_id=auth.uid());
 CREATE POLICY own_group ON public.groups USING(formateur_id=auth.uid());

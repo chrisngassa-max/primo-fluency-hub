@@ -86,9 +86,36 @@ ALTER TABLE public.exercise_assignments ADD CONSTRAINT p0_assignment_executable_
  FOREIGN KEY(exercise_id,p0_requires_executable) REFERENCES public.exercices(id,p0_homework_executable)
  ON UPDATE RESTRICT ON DELETE CASCADE NOT VALID;
 
+-- Row UPDATE/DELETE locks can precede BEFORE ROW triggers. Never wait on an
+-- advisory lock while holding such a row lock: that would invert FK lock order.
+-- A collision aborts this transaction once, with no retry loop or partial write.
+CREATE FUNCTION homework_private.lock_exercises(ids uuid[]) RETURNS void
+LANGUAGE plpgsql SECURITY INVOKER SET search_path=pg_catalog AS $$
+DECLARE exercise_id uuid;
+BEGIN
+ -- A fresh SELECT after acquiring the lock must not reuse an old RR snapshot.
+ IF current_setting('transaction_isolation') NOT IN ('read committed','read uncommitted') THEN
+   RAISE EXCEPTION 'homework_isolation_unsupported' USING ERRCODE='25000';
+ END IF;
+ FOR exercise_id IN SELECT DISTINCT id FROM unnest(ids) AS u(id) WHERE id IS NOT NULL ORDER BY id LOOP
+   IF NOT pg_try_advisory_xact_lock(hashtextextended('captcf:p0:exercise:'||exercise_id::text,0)) THEN
+     RAISE EXCEPTION 'Cet exercice est en cours de modification ou d’attribution. Réessayez après la fin de cette opération.'
+       USING ERRCODE='55P03', DETAIL='homework_exercise_busy';
+   END IF;
+ END LOOP;
+END $$;
+
 CREATE FUNCTION homework_private.guard_exercise() RETURNS trigger
 LANGUAGE plpgsql SECURITY INVOKER SET search_path=pg_catalog AS $$
 BEGIN
+ IF TG_OP='DELETE' THEN
+   PERFORM homework_private.lock_exercises(ARRAY[OLD.id]);
+   RETURN OLD;
+ ELSIF TG_OP='UPDATE' THEN
+   PERFORM homework_private.lock_exercises(ARRAY[OLD.id,NEW.id]);
+ ELSE
+   PERFORM homework_private.lock_exercises(ARRAY[NEW.id]);
+ END IF;
  IF TG_OP='INSERT' THEN
    -- An original audio exercise is inserted before its publication-family link.
    -- New assignments still check that link; incomplete JSON always gets false.
@@ -105,7 +132,7 @@ BEGIN
  -- Turning true to false on an assigned exercise is prevented by the composite FK.
  RETURN NEW;
 END $$;
-CREATE TRIGGER p0_guard_exercise BEFORE INSERT OR UPDATE ON public.exercices
+CREATE TRIGGER p0_guard_exercise BEFORE INSERT OR UPDATE OR DELETE ON public.exercices
  FOR EACH ROW EXECUTE FUNCTION homework_private.guard_exercise();
 
 CREATE FUNCTION homework_private.guard_assignment() RETURNS trigger
@@ -113,12 +140,26 @@ LANGUAGE plpgsql SECURITY INVOKER SET search_path=pg_catalog AS $$
 DECLARE e public.exercices;
 BEGIN
  IF TG_OP='UPDATE' THEN
+   PERFORM homework_private.lock_exercises(ARRAY[OLD.exercice_id,NEW.exercice_id]);
+ ELSE
+   PERFORM homework_private.lock_exercises(ARRAY[NEW.exercice_id]);
+ END IF;
+ IF TG_OP='UPDATE' THEN
    IF NEW.exercice_id=OLD.exercice_id AND NEW.eleve_id=OLD.eleve_id
      AND NEW.formateur_id=OLD.formateur_id AND NEW.session_id IS NOT DISTINCT FROM OLD.session_id
      AND NEW.p0_requires_executable=OLD.p0_requires_executable THEN RETURN NEW; END IF;
  END IF;
- SELECT * INTO e FROM public.exercices WHERE id=NEW.exercice_id FOR KEY SHARE;
- IF NOT FOUND OR NOT homework_private.executable(to_jsonb(e)) OR NOT homework_private.audio_available(to_jsonb(e)) THEN
+ IF NEW.session_id IS NOT NULL AND NOT EXISTS(
+   SELECT 1 FROM public.sessions s JOIN public.groups g ON g.id=s.group_id
+   WHERE s.id=NEW.session_id AND g.formateur_id=auth.uid()
+ ) THEN RAISE EXCEPTION 'homework_group_forbidden' USING ERRCODE='42501'; END IF;
+ IF NOT EXISTS(SELECT 1 FROM public.group_members m JOIN public.groups g ON g.id=m.group_id
+   WHERE m.eleve_id=NEW.eleve_id AND g.formateur_id=auth.uid()
+   AND (NEW.session_id IS NULL OR m.group_id=(SELECT group_id FROM public.sessions WHERE id=NEW.session_id))
+ ) THEN RAISE EXCEPTION 'homework_student_forbidden' USING ERRCODE='42501'; END IF;
+ SELECT * INTO e FROM public.exercices WHERE id=NEW.exercice_id;
+ IF NOT FOUND OR (e.formateur_id IS DISTINCT FROM auth.uid() AND e.statut IS DISTINCT FROM 'published')
+ OR NOT homework_private.executable(to_jsonb(e)) OR NOT homework_private.audio_available(to_jsonb(e)) THEN
    RAISE EXCEPTION 'homework_inexecutable' USING ERRCODE='23514';
  END IF;
  -- A draft audio link may have become published since its last content edit.
@@ -138,14 +179,30 @@ LANGUAGE plpgsql SECURITY INVOKER SET search_path=pg_catalog AS $$
 DECLARE e public.exercices;
 BEGIN
  IF TG_OP='UPDATE' THEN
+   PERFORM homework_private.lock_exercises(ARRAY[OLD.exercise_id,NEW.exercise_id]);
+ ELSE
+   PERFORM homework_private.lock_exercises(ARRAY[NEW.exercise_id]);
+ END IF;
+ IF TG_OP='UPDATE' THEN
    IF NEW.exercise_id IS NOT DISTINCT FROM OLD.exercise_id
      AND NEW.learner_id IS NOT DISTINCT FROM OLD.learner_id
      AND NEW.group_id IS NOT DISTINCT FROM OLD.group_id
      AND NEW.assigned_by IS NOT DISTINCT FROM OLD.assigned_by
      AND NEW.p0_requires_executable=OLD.p0_requires_executable THEN RETURN NEW; END IF;
  END IF;
- SELECT * INTO e FROM public.exercices WHERE id=NEW.exercise_id FOR KEY SHARE;
- IF NOT FOUND OR NOT homework_private.executable(to_jsonb(e)) OR NOT homework_private.audio_available(to_jsonb(e)) THEN
+ IF NEW.group_id IS NOT NULL AND NOT EXISTS(SELECT 1 FROM public.groups
+   WHERE id=NEW.group_id AND formateur_id=auth.uid()) THEN
+   RAISE EXCEPTION 'homework_group_forbidden' USING ERRCODE='42501'; END IF;
+ IF NEW.learner_id IS NOT NULL AND NOT EXISTS(
+   SELECT 1 FROM public.group_members m JOIN public.groups g ON g.id=m.group_id
+   WHERE m.eleve_id=NEW.learner_id AND g.formateur_id=auth.uid()
+     AND (NEW.group_id IS NULL OR m.group_id=NEW.group_id)
+ ) THEN RAISE EXCEPTION 'homework_student_forbidden' USING ERRCODE='42501'; END IF;
+ IF NEW.group_id IS NULL AND NEW.learner_id IS NULL THEN
+   RAISE EXCEPTION 'homework_student_forbidden' USING ERRCODE='42501'; END IF;
+ SELECT * INTO e FROM public.exercices WHERE id=NEW.exercise_id;
+ IF NOT FOUND OR (e.formateur_id IS DISTINCT FROM auth.uid() AND e.statut IS DISTINCT FROM 'published')
+ OR NOT homework_private.executable(to_jsonb(e)) OR NOT homework_private.audio_available(to_jsonb(e)) THEN
    RAISE EXCEPTION 'homework_inexecutable' USING ERRCODE='23514'; END IF;
  IF NOT e.p0_homework_executable THEN
    UPDATE public.exercices SET p0_homework_executable=true WHERE id=e.id;
@@ -217,6 +274,7 @@ BEGIN
 END $$;
 REVOKE ALL ON ALL FUNCTIONS IN SCHEMA homework_private FROM PUBLIC,anon,authenticated,service_role;
 GRANT EXECUTE ON FUNCTION homework_private.has_text(jsonb),homework_private.executable(jsonb),homework_private.audio_available(jsonb) TO authenticated,service_role;
+GRANT EXECUTE ON FUNCTION homework_private.lock_exercises(uuid[]) TO authenticated,service_role;
 REVOKE ALL ON FUNCTION public.send_automatic_homework(uuid,uuid,uuid,timestamptz,jsonb) FROM PUBLIC,anon,service_role;
 GRANT EXECUTE ON FUNCTION public.send_automatic_homework(uuid,uuid,uuid,timestamptz,jsonb) TO authenticated;
 COMMIT;

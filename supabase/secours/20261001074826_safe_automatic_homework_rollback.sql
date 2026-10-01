@@ -23,6 +23,7 @@ ALTER TABLE public.exercices DROP COLUMN p0_homework_executable;
 DROP FUNCTION homework_private.guard_assignment();
 DROP FUNCTION homework_private.guard_exercise();
 DROP FUNCTION homework_private.guard_independent_assignment();
+DROP FUNCTION homework_private.lock_exercises(uuid[]);
 DROP FUNCTION homework_private.audio_available(jsonb);
 DROP FUNCTION homework_private.executable(jsonb);
 DROP FUNCTION homework_private.has_text(jsonb);
