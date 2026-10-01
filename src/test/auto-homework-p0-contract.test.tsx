@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import AutoHomeworkPreviewDialog from '@/components/AutoHomeworkPreviewDialog';
 import EndOfSessionSection from '@/components/EndOfSessionSection';
 import { webcrypto } from 'node:crypto';
+import { toast } from 'sonner';
 import { preserveHomeworkRequest } from '@/lib/homeworkSendRecovery';
 
 const state = vi.hoisted(() => ({
@@ -54,13 +55,14 @@ let root: Root; let host: HTMLDivElement; let client: QueryClient;
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
 Object.defineProperty(globalThis.crypto, 'subtle', { configurable: true, value: webcrypto.subtle });
 const complete = { texte: 'Le rendez-vous est mardi.', items: [{ question: 'Quel jour ?', options: ['Mardi', 'Jeudi'], bonne_reponse: 'Mardi' }] };
+const onDialogChange = vi.fn();
 async function render(manual = false, userId = 'teacher') {
   host = document.createElement('div'); document.body.append(host); root = createRoot(host);
   client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
   await act(async () => {
     root.render(<QueryClientProvider client={client}>{manual
       ? <EndOfSessionSection sessionId="session" groupId="group" userId="teacher" sessionStatut="en_cours" checkedExerciseIds={['exercise']} />
-      : <AutoHomeworkPreviewDialog open onOpenChange={() => {}} sessionId="session" groupId="group" userId={userId} durationMinutes={8} />
+      : <AutoHomeworkPreviewDialog open onOpenChange={onDialogChange} sessionId="session" groupId="group" userId={userId} durationMinutes={8} />
     }</QueryClientProvider>);
   });
   await act(async () => { await new Promise(resolve => setTimeout(resolve, 30)); });
@@ -77,6 +79,8 @@ async function reload(userId = 'teacher') {
 }
 const stored = () => Object.keys(sessionStorage).filter(key => key.startsWith('captcf:homework-send:')).map(key => JSON.parse(sessionStorage.getItem(key)!));
 beforeEach(() => {
+  onDialogChange.mockClear();
+  vi.mocked(toast.error).mockClear();
   sessionStorage.clear();
   state.mode = 'validation'; state.content = structuredClone(complete); state.failExerciseAt = 0;
   state.writes = []; state.exercises = []; state.devoirs = [];
@@ -268,4 +272,37 @@ describe('P0 — contrat devoirs automatiques sûrs, sans réseau', () => {
       expect(document.body.textContent).toContain('Aucun envoi effectué');
     } finally { spy.mockRestore(); }
   });
+});
+
+const safeMessages = {
+  conflict: 'La préparation a changé depuis votre dernière confirmation. Actualisez l’aperçu, puis confirmez de nouveau.',
+  recipient: 'Vous ne pouvez pas envoyer ce devoir au groupe ou à l’élève sélectionné. Vérifiez le destinataire.',
+  content: 'Au moins un exercice n’est pas prêt à être envoyé. Corrigez les éléments signalés, puis réessayez.',
+  busy: 'Cet exercice est en cours de modification ou d’attribution. Réessayez dans un instant.',
+  unknown: 'Le devoir n’a pas pu être envoyé. Aucun contenu n’a été créé. Réessayez ou actualisez la page.',
+};
+it.each([
+  [{ message: 'homework_request_conflict' }, safeMessages.conflict],
+  [{ message: 'homework_group_forbidden' }, safeMessages.recipient],
+  [{ message: 'homework_inexecutable' }, safeMessages.content],
+  [{ details: 'homework_exercise_busy' }, safeMessages.busy],
+  [{ code: '55P03', message: 'SQLSTATE 55P03 public.exercices' }, safeMessages.busy],
+  [{ message: 'SELECT * FROM public.devoirs; at send_automatic_homework stack' }, safeMessages.unknown],
+  [null, safeMessages.unknown],
+  [{ unexpected: ['private stack'] }, safeMessages.unknown],
+])('P0.5 — erreur sûre, dialogue ouvert, aucun retry (%j)', async (error, expected) => {
+  state.rpc.mockRejectedValue(error);
+  await render(); await click(button(/Valider et envoyer/)); await click(button(/Confirmer l.envoi/));
+  await act(async () => { await new Promise(r => setTimeout(r, 80)); });
+  expect(document.querySelector('[role="alert"]')?.textContent).toBe(expected);
+  expect(document.body.textContent).not.toMatch(/homework_|55P03|SQLSTATE|SELECT|public\.|stack|send_automatic/);
+  expect(document.querySelector('[role="dialog"]')).not.toBeNull();
+  expect(onDialogChange).not.toHaveBeenCalled();
+  expect(state.rpc).toHaveBeenCalledOnce(); expect(state.writes).toEqual([]);
+});
+it('P0.5 — erreur de préparation également masquée', async () => {
+  state.deferMembers = Promise.reject({ message: 'SQLSTATE SELECT public.group_members stack' });
+  await render();
+  expect(toast.error).toHaveBeenCalledWith('Préparation impossible', { description: safeMessages.unknown });
+  expect(state.rpc).not.toHaveBeenCalled();
 });
