@@ -1,5 +1,7 @@
 # CapTCF P0.2 — Phase B arrêtée avant application
 
+> Suite P0.3 (2026-10-01) : les divergences ont été corrigées et testées localement dans le contrat P0, sans modifier les triggers distants. Voir [audit complet, matrice et validation P0.3](CAPTCF_P0_3_MODALITES.md). Ce rapport d'arrêt reste historique ; il ne vaut pas autorisation ni application distante. La migration et la RPC restent absentes.
+
 Date : 2026-10-01. Projet unique : `gudcenhmzlcvhgbgklzw`.
 
 ## Décision

@@ -1,3 +1,9 @@
+# État P0.3 — 2026-10-01
+
+Le contrat courant est décrit dans [CAPTCF_P0_3_MODALITES.md](CAPTCF_P0_3_MODALITES.md) : CE avec texte visible d’au moins 20 caractères, CO avec script préparé, refus des métadonnées provoquant un dépassement int4. Les descriptions antérieures ci-dessous sont historiques. Les quatre triggers BEFORE réels sont reproduits fidèlement en local ; 73 tests applicatifs, 49 fixtures SQL, concurrence, rollback et build validés. Migration existante corrigée localement, jamais appliquée. PR #49 à conserver ouverte, sans fusion ni production.
+
+---
+
 # Lot P0 — devoirs automatiques sûrs : implémentation locale
 
 État courant : P0.2 aligne les gardes sur le schéma réel, sans miroir automatique. Voir [le handoff P0.2](CAPTCF_P0_2_ALIGNEMENT_SCHEMA_REEL.md). Le rapport Phase B antérieur reste un historique d’arrêt, pas une autorisation d’appliquer le SQL corrigé.
