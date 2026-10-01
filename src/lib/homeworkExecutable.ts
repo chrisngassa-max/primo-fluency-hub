@@ -12,11 +12,24 @@ export function homeworkContentErrors(ex: HomeworkExercise, forCopy = false): st
   if (!['CE', 'CO', 'EE', 'EO', 'Structures'].includes(String(ex.competence))) errors.push('Compétence inconnue.');
   if (!formats.includes(String(ex.format))) errors.push('Format non pris en charge.');
   if (!record(c) || Object.keys(c).length === 0) return [...errors, 'Contenu incomplet : aucun contenu préparé.'];
-  const image = c.image || c.image_url || c.visual || c.support_visuel || c.illustration || c.media_url;
-  if (ex.competence === 'CE' && !text(c.texte) && !(text(image) && /^https?:\/\//.test(image))) errors.push('Support de lecture manquant.');
+  // Existing metadata trigger casts the first nonempty value to int4 before clamping.
+  const metadata = record(c.metadata) ? c.metadata : {};
+  const jsonText = (v: unknown) => v == null ? undefined : typeof v === 'string' ? v
+    : typeof v === 'number' && Number.isInteger(v) ? BigInt(v).toString() : JSON.stringify(v);
+  for (const values of [
+    [metadata.time_limit_seconds, c.time_limit_seconds, c.duree_estimee_secondes],
+    [metadata.nombre_ecoutes_max, c.nombre_ecoutes_max],
+  ]) {
+    const raw = values.map(jsonText).find(v => v !== undefined && v !== '');
+    if (raw && /^[0-9]+$/.test(raw) && BigInt(raw) > 2147483647n) errors.push('Durée ou nombre d’écoutes hors limites : corrigez les métadonnées.');
+  }
+  // Only texte is rendered as reading support by this P0 player. Count Unicode
+  // code points like PostgreSQL length(), not UTF-16 code units.
+  if (ex.competence === 'CE' && (!text(c.texte) || Array.from(c.texte.replace(/^ +| +$/g, '')).length < 20)) errors.push('Ajoutez un texte support d’au moins 20 caractères.');
   const audio = record(c.audio) && text(c.audio.source_id) && text(c.audio.source_content_hash);
   const hasAudioReference = c.audio !== undefined && c.audio !== null;
   if (ex.competence === 'CO' && !(hasAudioReference ? audio : text(c.script_audio))) errors.push('Support audio manquant ou incomplet.');
+  if (ex.competence === 'CO' && hasAudioReference && !text(c.script_audio)) errors.push('Ajoutez le script audio préparé pour respecter les contraintes de modalité.');
   if (forCopy && ex.competence === 'CO' && hasAudioReference) errors.push('Audio original lié à sa publication : utilisez le chemin manuel pour cet exercice.');
   if (ex.competence === 'CO' && c.metadata?.source_stale === true) errors.push('Support audio à revalider.');
   if ((ex.competence === 'EE') !== (ex.format === 'production_ecrite') || (ex.competence === 'EO') !== (ex.format === 'production_orale')) errors.push('Format incompatible avec la compétence.');

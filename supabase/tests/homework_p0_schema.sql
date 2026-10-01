@@ -30,6 +30,20 @@ CREATE TABLE public.exercices(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),form
  niveau_vise text NOT NULL DEFAULT 'A2',difficulte integer NOT NULL DEFAULT 3 CHECK(difficulte BETWEEN 0 AND 10),contenu jsonb NOT NULL DEFAULT '{}',
  is_devoir boolean NOT NULL DEFAULT false,is_ai_generated boolean NOT NULL DEFAULT false,eleve_id uuid REFERENCES public.profiles,
  statut text DEFAULT 'draft',updated_at timestamptz DEFAULT now());
+ALTER TABLE public.exercices ADD COLUMN sous_competence text;
+ALTER TABLE public.exercices ADD COLUMN is_live_ready boolean DEFAULT false;
+ALTER TABLE public.exercices ADD COLUMN objectif_tcf text;
+ALTER TABLE public.exercices ADD COLUMN metadata_code text;
+ALTER TABLE public.exercices ADD COLUMN metadata_skill text;
+ALTER TABLE public.exercices ADD COLUMN duree_limite_secondes integer;
+ALTER TABLE public.exercices ADD COLUMN aides_disponibles text[] NOT NULL DEFAULT '{}'::text[];
+ALTER TABLE public.exercices ADD COLUMN nombre_ecoutes_max integer;
+ALTER TABLE public.exercices ADD COLUMN transcription_verrouillee boolean NOT NULL DEFAULT false;
+ALTER TABLE public.exercices ADD COLUMN type_differenciation text;
+ALTER TABLE public.exercices ADD COLUMN pedagogical_status text NOT NULL DEFAULT 'draft'::text;
+ALTER TABLE public.exercices ADD COLUMN civic_content boolean NOT NULL DEFAULT false;
+ALTER TABLE public.exercices ADD COLUMN civic_fact_ids text[] NOT NULL DEFAULT '{}'::text[];
+ALTER TABLE public.exercices ADD COLUMN needs_content_review boolean NOT NULL DEFAULT false;
 CREATE TABLE public.devoirs(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),exercice_id uuid NOT NULL REFERENCES public.exercices ON DELETE CASCADE,
  eleve_id uuid NOT NULL REFERENCES public.profiles,formateur_id uuid NOT NULL REFERENCES public.profiles,
  session_id uuid REFERENCES public.sessions ON DELETE SET NULL,contexte text NOT NULL DEFAULT 'devoir',serie integer,

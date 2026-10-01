@@ -93,6 +93,12 @@ beforeEach(() => {
 afterEach(async () => { if (root) await act(async () => root.unmount()); host?.remove(); client?.clear(); });
 
 describe('P0 — contrat devoirs automatiques sûrs, sans réseau', () => {
+  it.each([{ image: 'https://example.invalid/image.png', items: complete.items }, { ...complete, texte: 'Bonjour.' }])('explique le refus du support CE (%j)', async contenu => {
+    state.content = contenu; await render();
+    expect(document.body.textContent).toContain('Ajoutez un texte support d’au moins 20 caractères.');
+    await click(button(/Valider et envoyer/));
+    expect(state.rpc).not.toHaveBeenCalled();
+  });
   it('ouvrir même en mode automatique mémorisé ne crée ni exercice ni attribution', async () => {
     state.mode = 'automatic'; await render(); expect(state.writes).toEqual([]);
   });
@@ -163,14 +169,14 @@ describe('P0 — contrat devoirs automatiques sûrs, sans réseau', () => {
     expect(document.body.textContent).not.toContain('Confirmer l’envoi');
     await click(document.querySelector<HTMLElement>('[role="checkbox"]')!);
     await click(button(/Valider et envoyer/));
-    state.content = { ...complete, texte: 'Un nouveau support.' };
+    state.content = { ...complete, texte: 'Un nouveau support préparé.' };
     await click(button(/Repréparer/));
-    expect(document.body.textContent).toContain('Un nouveau support.');
+    expect(document.body.textContent).toContain('Un nouveau support préparé.');
     expect(document.body.textContent).not.toContain('Confirmer l’envoi');
     expect(state.rpc).not.toHaveBeenCalled();
   });
   it('montre aussi le support image réellement utilisé', async () => {
-    state.content = { image_url: 'https://example.invalid/support.png', items: complete.items };
+    state.content = { ...complete, image_url: 'https://example.invalid/support.png' };
     await render();
     expect(document.querySelector('img')?.getAttribute('src')).toBe(state.content.image_url);
     expect(button(/Valider et envoyer/).disabled).toBe(false);

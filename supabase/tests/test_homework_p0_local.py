@@ -117,6 +117,13 @@ def main():
         sql(f"INSERT INTO public.exercise_assignments(exercise_id,group_id,assigned_by,context) VALUES('{LEGACY}','{GROUP}','{OWNER}','devoir')")
         legacy_mirror=sql("SELECT md5(pg_get_functiondef('public.mirror_devoir_to_assignment()'::regprocedure))")
         before = snapshot()
+        file_sql(ROOT / 'supabase/tests/homework_p0_existing_guards.sql')
+        guards_query="SELECT md5(string_agg(pg_get_triggerdef(t.oid)||pg_get_functiondef(t.tgfoid),'|' ORDER BY t.tgname)) FROM pg_trigger t WHERE t.tgrelid='public.exercices'::regclass AND NOT t.tgisinternal AND t.tgname NOT LIKE 'p0_%'"
+        original_guards=sql(guards_query)
+        # Demonstrate the real pre-P0 trigger failure, with no remote write.
+        for patch in [{'metadata':{'time_limit_seconds':'2147483648'}},{'nombre_ecoutes_max':'999999999999999999999'}]:
+            bad_metadata=copy.deepcopy(EX); bad_metadata['contenu'].update(patch)
+            sql(insert_ex(bad_metadata),OWNER,error='out of range')
         file_sql(MIGRATION)
         assert snapshot() == before
         # P0.2 regression: valid independent assignments must work on the REAL schema.
@@ -143,31 +150,43 @@ def main():
         sql("UPDATE homework_private.receipts SET payload_hash='forged'", OWNER, error='permission denied')
         print('PASS all new functions INVOKER, fixed search_path, anon denied, receipts immutable', flush=True)
         fixtures = json.loads((ROOT / 'supabase/tests/homework_executable_cases.json').read_text(encoding='utf-8'))
+        mismatches = []
+        matrix = []
         for case in fixtures:
             value = sql('SELECT homework_private.executable('+q(json.dumps(case['exercise']))+'::jsonb)', OWNER)
-            assert (value == 't') == case['valid'], (case['name'], value)
+            ex = case['exercise']
+            issues = json.loads(sql('SELECT to_json(public.exercise_modality_issues('+','.join(q(ex.get(k)) if ex.get(k) is not None else 'NULL' for k in ['titre','consigne','competence','format'])+','+q(json.dumps(ex['contenu']))+'::jsonb))'))
+            matrix.append({'name':case['name'],'sql':value=='t','trigger':not issues,'issues':issues,'expected':case['valid']})
+            if (value == 't') != case['valid'] or (value == 't' and issues):
+                mismatches.append(case['name'])
+        (LOG/'modality-matrix.json').write_text(json.dumps(matrix,ensure_ascii=False,indent=2),encoding='utf-8')
+        assert not mismatches, mismatches
+        for case in fixtures:
+            if case['valid']:
+                sql(insert_ex(case['exercise']),OWNER)
         print(f'PASS {len(fixtures)} format/support contract fixtures (shared with frontend)', flush=True)
         for content in [{}, {'texte':'Texte','items':[]}, {'texte':'Texte','items':[{'question':'Q'}]}]:
             bad=copy.deepcopy(EX); bad['contenu']=content
             sql(call(entries(bad)), OWNER, error='homework_inexecutable')
             sql(insert_ex(bad, is_devoir=True), OWNER, error='homework_inexecutable')
-            draft=str(uuid.uuid4()); sql(insert_ex(bad, draft), OWNER)
+            draft=str(uuid.uuid4()); bad['competence']='Structures'; sql(insert_ex(bad, draft), OWNER)
             sql(assign(draft), OWNER, error='homework_inexecutable')
+        invalid_content=q(json.dumps({'texte':EX['contenu']['texte'],'items':[{'question':'Missing answer'}]}))+'::jsonb'
         # Even assignments invisible through RLS protect an exercise via RI, without DEFINER.
-        sql(f"UPDATE public.exercices SET contenu='{{}}' WHERE id='{VALID}'", OWNER, error='p0_homework_executable_fk')
-        sql(f"UPDATE public.exercices SET p0_homework_executable=true,contenu='{{}}' WHERE id='{VALID}'", OWNER, error='p0_homework_executable_fk')
+        sql(f"UPDATE public.exercices SET contenu={invalid_content} WHERE id='{VALID}'", OWNER, error='p0_homework_executable_fk')
+        sql(f"UPDATE public.exercices SET p0_homework_executable=true,contenu={invalid_content} WHERE id='{VALID}'", OWNER, error='p0_homework_executable_fk')
         sql(assign(LEGACY), OWNER, error='homework_inexecutable')
         sql(f"INSERT INTO public.exercise_assignments(exercise_id,learner_id,assigned_by) VALUES('{LEGACY}','{LEARNER}','{OWNER}')", OWNER, error='homework_inexecutable')
         independent=str(uuid.uuid4()); sql(insert_ex(EX,independent),OWNER)
         sql(f"INSERT INTO public.exercise_assignments(exercise_id,learner_id,assigned_by) VALUES('{independent}','{LEARNER}','{OWNER}')",OWNER)
-        sql(f"UPDATE public.exercices SET contenu='{{}}' WHERE id='{independent}'",OWNER,error='p0_assignment_executable_fk')
+        sql(f"UPDATE public.exercices SET contenu={invalid_content} WHERE id='{independent}'",OWNER,error='p0_assignment_executable_fk')
         # Existing group-attribution route has a NULL learner, not a devoir link.
         sql(f"INSERT INTO public.exercise_assignments(exercise_id,group_id,assigned_by,context) VALUES('{independent}','{GROUP}','{OWNER}','devoir')",OWNER)
         print('PASS direct writes rejected, drafts preserved, cross-owner hidden assignments protected', flush=True)
         # A bare original-audio reference is not enough: resolve its actual publication chain.
         audio_id,source_id,family_id=[str(uuid.uuid4()) for _ in range(3)]
         audio=copy.deepcopy(EX); audio['competence']='CO'
-        audio['contenu']={'audio':{'source_id':source_id,'source_content_hash':'sha256:fixture'},'items':EX['contenu']['items']}
+        audio['contenu']={'script_audio':'Le rendez-vous est mardi.','audio':{'source_id':source_id,'source_content_hash':'sha256:fixture'},'items':EX['contenu']['items']}
         sql(insert_ex(audio,audio_id),OWNER)
         sql(assign(audio_id),OWNER,error='homework_inexecutable')
         sql(call(entries(audio)),OWNER,error='homework_original_audio_use_manual')
@@ -199,7 +218,7 @@ def main():
         # Synchronize using a real server-side advisory lock rather than arbitrary polling of results.
         for independent_path, edit_first in [(False,True),(False,False),(True,True),(True,False)]:
             exid=str(uuid.uuid4()); sql(insert_ex(EX,exid))
-            edit=f"UPDATE public.exercices SET contenu='{{}}' WHERE id='{exid}'"
+            edit=f"UPDATE public.exercices SET contenu={invalid_content} WHERE id='{exid}'"
             assignment=(f"INSERT INTO public.exercise_assignments(exercise_id,group_id,assigned_by,context) VALUES('{exid}','{GROUP}','{OWNER}','devoir')"
                         if independent_path else assign(exid))
             first=edit if edit_first else assignment
@@ -225,6 +244,7 @@ def main():
         assert sql("SELECT NOT EXISTS(SELECT 1 FROM pg_trigger WHERE NOT tgisinternal AND tgrelid='public.devoirs'::regclass AND tgfoid='public.mirror_devoir_to_assignment()'::regprocedure)")=='t'
         assert sql("SELECT to_regprocedure('public.mirror_devoir_to_assignment()') IS NOT NULL")=='t'
         assert sql("SELECT md5(pg_get_functiondef('public.mirror_devoir_to_assignment()'::regprocedure))")==legacy_mirror
+        assert sql(guards_query)==original_guards
         print('PASS rollback refusal when nonempty, then isolated-fixture rollback: business data unchanged',flush=True)
         (LOG/'result.txt').write_text('PASS all P0 PostgreSQL tests; container network none; no remote connection\n',encoding='utf-8')
     finally:

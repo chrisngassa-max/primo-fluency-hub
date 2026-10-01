@@ -7,7 +7,7 @@ describe('P0 structural contract, same fixtures as PostgreSQL', () => {
     expect(homeworkContentErrors(exercise).length === 0).toBe(valid);
   });
   it('refuses cloning original audio even with a structurally valid reference', () => {
-    const fixture = cases.find(c => c.name === 'CO original reference structural')!;
+    const fixture = cases.find(c => c.name === 'CO original with script')!;
     expect(homeworkContentErrors(fixture.exercise, true)).toEqual([expect.stringContaining('chemin manuel')]);
   });
 });

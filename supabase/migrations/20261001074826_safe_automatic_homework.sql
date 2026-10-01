@@ -11,18 +11,24 @@ $$;
 
 CREATE FUNCTION homework_private.executable(e jsonb) RETURNS boolean
 LANGUAGE plpgsql IMMUTABLE SECURITY INVOKER SET search_path=pg_catalog AS $$
-DECLARE c jsonb:=e->'contenu'; item jsonb; opt jsonb; image jsonb; f text:=e->>'format'; comp text:=e->>'competence';
+DECLARE c jsonb:=e->'contenu'; item jsonb; opt jsonb; raw_value text; f text:=e->>'format'; comp text:=e->>'competence';
 BEGIN
  IF NOT homework_private.has_text(e->'titre') OR NOT homework_private.has_text(e->'consigne')
  OR comp IS NULL OR comp NOT IN ('CE','CO','EE','EO','Structures')
  OR f IS NULL OR f NOT IN ('qcm','vrai_faux','appariement','texte_lacunaire','transformation','production_ecrite','production_orale')
  OR jsonb_typeof(c) IS DISTINCT FROM 'object' OR c='{}'::jsonb THEN RETURN false; END IF;
- SELECT value INTO image FROM jsonb_array_elements(jsonb_build_array(c->'image',c->'image_url',c->'visual',c->'support_visuel',c->'illustration',c->'media_url')) WITH ORDINALITY
- WHERE value NOT IN ('null'::jsonb,'false'::jsonb,'0'::jsonb,'""'::jsonb) ORDER BY ordinality LIMIT 1;
- IF comp='CE' AND NOT homework_private.has_text(c->'texte') AND NOT
- (homework_private.has_text(image) AND (image #>> '{}') ~ '^https?://') THEN RETURN false; END IF;
+ -- Mirror the existing metadata trigger's int4 cast BEFORE its LEAST/GREATEST clamp.
+ FOREACH raw_value IN ARRAY ARRAY[
+   coalesce(nullif(c#>>'{metadata,time_limit_seconds}',''),nullif(c->>'time_limit_seconds',''),nullif(c->>'duree_estimee_secondes','')),
+   coalesce(nullif(c#>>'{metadata,nombre_ecoutes_max}',''),nullif(c->>'nombre_ecoutes_max',''))
+ ] LOOP
+   IF raw_value ~ '^[0-9]+$' AND NOT pg_input_is_valid(raw_value,'integer') THEN RETURN false; END IF;
+ END LOOP;
+ -- P0 renders texte; image-only and short supports fail the existing modality guard.
+ IF comp='CE' AND (NOT homework_private.has_text(c->'texte') OR length(btrim(c->>'texte'))<20) THEN RETURN false; END IF;
  IF comp='CO' THEN
    IF c#>'{metadata,source_stale}'='true'::jsonb THEN RETURN false; END IF;
+   IF NOT homework_private.has_text(c->'script_audio') THEN RETURN false; END IF;
    IF c->'audio' IS NOT NULL AND c->'audio'<>'null'::jsonb THEN
      IF jsonb_typeof(c->'audio') IS DISTINCT FROM 'object' OR NOT homework_private.has_text(c#>'{audio,source_id}') OR NOT homework_private.has_text(c#>'{audio,source_content_hash}') THEN RETURN false; END IF;
    ELSIF NOT homework_private.has_text(c->'script_audio') THEN RETURN false;
