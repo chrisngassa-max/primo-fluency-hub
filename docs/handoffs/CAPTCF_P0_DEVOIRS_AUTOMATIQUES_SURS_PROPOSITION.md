@@ -1,98 +1,107 @@
-# Lot P0 — devoirs automatiques sûrs : point d'arrêt avant migration
+# Lot P0 — devoirs automatiques sûrs : implémentation locale
 
 Date : 1er octobre 2026. Dépôt : `D:\SITES\CAPTCF`.
 Branche conservée : `captcf-lot-02b-assistant-help-packs`.
-Base de cette mission : `ea3d9a463c631ac9488335ed3fd80ce81dff2861`.
-Commit code de test : `5b15e74d`.
+Base : `ea3d9a463c631ac9488335ed3fd80ce81dff2861`.
+Commits antérieurs préservés : `5b15e74d` (tests rouges), `58a90942` (proposition).
+Commit code : `736d8703` — `fix: secure automatic homework with explicit atomic sending`.
 
-## État réel
+## État et périmètre
 
-**Spécification rouge réalisée ; correction fonctionnelle non implémentée.** La protection serveur complète exige une migration. Arrêt selon l'instruction propriétaire : « Si une migration devient indispensable, arrêter avant de la créer et présenter la proposition. » Aucun fichier de migration, SQL de déploiement, RPC ou Edge nouvelle n'a été créé.
+Implémentation et recette locales terminées après autorisation propriétaire d'une migration locale unique. Les sept tests rouges sont verts, ainsi que le test du chemin manuel. Aucun changement distant : ni migration Supabase, mutation de production, push, PR, déploiement frontend/Edge, modification de secret ou appel Gemini.
 
-Le premier commit ne contient que les tests reproduisant les défauts. Il n'est pas un correctif prêt à publier et rend volontairement la suite ciblée rouge jusqu'à implémentation. Le deuxième commit est documentaire. Aucun autre travail local de la branche n'a été modifié.
+La quantité générale d'exercices, le Carnet et l'assistant ne sont pas modifiés. Les MP3, ZIP, fichiers Studio, preuves locales et fichiers non suivis présents au départ sont préservés et exclus des commits.
 
-## Tests rouges exécutés avant correction
+## Comportement professeur
 
-Fichier : `src/test/auto-homework-p0-contract.test.tsx`.
+L'ouverture ne fait que lire les membres, exercices et résultats de séance. Elle n'envoie rien et ne modifie aucune préférence de groupe. Les contenus existants de séance sont repris explicitement, sans nouvelle génération ni adaptation pédagogique. Les titres, consignes, supports texte/image/script audio, questions, choix et réponses attendues sont visibles. Un contenu absent n'est pas remplacé par une question inventée : il reste signalé et non envoyable.
 
-Le véritable dialogue React et le véritable chemin manuel sont montés avec React Query. Les accès Supabase sont remplacés par un double en mémoire : aucune connexion, écriture ou génération distante. Les fixtures ne représentent aucun élève réel. Les écritures demandées et les créations réussies sont enregistrées séparément ; une panne est injectée à la deuxième création.
+Le premier clic « Valider et envoyer » affiche la confirmation du lot. Seul « Confirmer l'envoi » appelle la RPC. Une modification de sélection, contenu ou échéance annule la confirmation. Le verrou synchrone bloque le double clic et les envois concurrents ; les générations d'ouverture/préparation permettent d'ignorer les réponses anciennes. Si le dialogue est rouvert pendant un envoi, attendre sa fin puis « Repréparer » pour reprendre. Une ancienne réponse ne ferme pas la nouvelle ouverture.
 
-| Cas | Résultat avant correction | Observation |
-|---|---|---|
-| Ouvrir avec mode automatique mémorisé | Rouge | Écritures sur groupe, exercices et devoirs sans confirmation |
-| Contenu vide `{}` | Rouge | Écritures acceptées |
-| Liste d'items vide | Rouge | Écritures acceptées |
-| Item sans options ni correction | Rouge | Écritures acceptées |
-| Exercice source complet : prévisualiser support et question | Rouge | Seules des cartes génériques apparaissent ; contenu non repris |
-| Prévisualiser puis confirmer explicitement l'envoi | Rouge | Le premier clic envoie sans étape de confirmation après vérification |
-| Échec de la deuxième création | Rouge | Première création conservée ; pas d'attribution dans ce cas simulé |
-| Chemin manuel avec exercice existant | Vert | Sélection puis clic explicite ; pas de création d'exercice |
+Le composant appelle exclusivement `send_automatic_homework`. Une RPC absente ou en erreur ne déclenche aucune insertion de secours. Le chemin manuel existant n'est pas réécrit ; les attributions d'exercices complets restent soumises au garde-fou serveur.
 
-Résultat : **8 tests, 7 rouges, 1 vert**. Le cas d'échec partiel est volontairement plus strict que la seule absence d'une attribution sans exercice : il exige aussi de ne pas laisser de création isolée. Le double ne prouve pas l'atomicité PostgreSQL ; un test local de transaction sera nécessaire après autorisation.
+L'audio original est lié à l'identifiant de l'exercice publié et à sa famille. Une simple copie casserait sa résolution : la copie automatique est refusée et l'interface indique le chemin manuel. Le serveur vérifie la chaîne publication/famille/source/hash et les métadonnées de stockage lors d'une attribution manuelle d'audio original.
 
-Commande : `node node_modules/vitest/vitest.mjs run src/test/auto-homework-p0-contract.test.tsx`.
+## Migration et CLI
 
-Build : `node node_modules/vite/bin/vite.js build` **réussi**. Avertissements : données Browserslist anciennes, imports dynamiques également statiques et taille du bundle. Aucun changement opportuniste. Un avertissement React préexistant de bouton imbriqué dans un bouton apparaît pendant le test du dialogue.
+Migration unique : `supabase/migrations/20261001074826_safe_automatic_homework.sql`.
+Rollback séparé : `supabase/secours/20261001074826_safe_automatic_homework_rollback.sql`.
 
-## Pourquoi une Edge seule ne suffit pas
+Les commandes demandées `npx.cmd supabase --version` et `npx.cmd supabase migration new --help` ont été tentées ; `npx.cmd` est indisponible dans cette session. La CLI locale déjà présente `.local-security-evidence/lot05a-c-phase-b/_tools/supabase.exe` a été utilisée après lecture de sa version **2.118.0** et de l'aide. Commande : `migration new safe_automatic_homework`. L'horodatage vient de la CLI, pas d'un nom fabriqué manuellement. Sa mise à jour accessoire de `supabase/.temp/cli-latest` a été restaurée à sa valeur antérieure ; aucun fichier `.temp` n'est commité.
 
-1. `AutoHomeworkPreviewDialog.tsx` insère les exercices successivement puis les devoirs dans une autre requête. L'échec de la deuxième requête ne peut pas annuler la première. Une suppression compensatoire depuis le navigateur ne garantit pas le retour arrière après perte réseau ou fermeture de page.
-2. Les insertions directes du formateur sont autorisées par la politique `Formateurs manage devoirs` dans `20260317202908_adbd594f-a88c-486f-b4d7-9264f4677053.sql`. La politique vérifie l'identité, pas l'exécutabilité du contenu.
-3. Les migrations inspectées n'offrent pas de RPC de création de ce lot exercices + devoirs avec validation structurelle et transaction commune. `assign_live_session_exercises` distribue des exercices existants à une séance ; ce n'est pas une transaction de création de devoirs personnalisés.
-4. `mirror_devoir_to_assignment` réplique les devoirs dans `exercise_assignments`. La protection doit précéder cette attribution et participer à la même transaction.
-5. Ajouter une validation dans une Edge protégerait ses seuls appelants : le chemin REST direct resterait accessible. Ajouter un validateur TypeScript partagé serait utile mais ne constituerait pas la garantie serveur demandée.
+## Contrat serveur
 
-Conclusion fondée sur le dépôt local, sans introspection de la production. Un contrôle de contenu à la frontière base et une opération atomique sont nécessaires pour la garantie complète. Référence consultée : [fonctions PostgreSQL Supabase](https://supabase.com/docs/guides/database/functions). Le chargelog Markdown n'a pas pu être lu par l'outil web (type de contenu non supporté) ; aucune nouvelle API Supabase n'a été implémentée.
+Toutes les nouvelles fonctions sont `SECURITY INVOKER`, avec `search_path=pg_catalog` et objets qualifiés. Aucun nouveau `SECURITY DEFINER`. Le helper de rôle et le miroir déjà présents ne sont pas remplacés. Le schéma `homework_private` n'est pas exposé par PostgREST. EXECUTE est retiré à PUBLIC/anon ; la RPC n'est accordée qu'à authenticated. Les validateurs internes sont accessibles aux rôles nécessaires aux écritures existantes.
 
-## Proposition de migration locale unique — non créée
+La RPC `public.send_automatic_homework(uuid, uuid, uuid, timestamptz, jsonb)` reçoit request_id, séance, groupe, échéance et entrées. L'identité vient de `auth.uid()`. Elle contrôle rôle formateur, propriété du groupe, rattachement de la séance, membres destinataires, date future, séries et contenu. Les clés d'identité injectées dans un exercice sont rejetées. Les types de la vraie table et ses contraintes s'appliquent via `jsonb_populate_record` puis des colonnes d'insertion explicites. Exercices, devoirs, miroirs et reçu sont dans la même transaction.
 
-Périmètre proposé, à autoriser avant rédaction SQL :
+Validation structurelle partagée par fixtures SQL/TypeScript :
 
-### 1. Validation structurelle de l'exercice de devoir
+- QCM : question, deux choix textuels distincts minimum, réponse présente dans les choix.
+- Vrai/faux : question et correction textuelle reconnue.
+- Appariement, texte lacunaire, transformation : contrat effectivement consommé par le lecteur actuel, une question et une réponse textuelle par item ; les structures imbriquées non consommées sont refusées.
+- EE : production écrite avec consignes non vides, sans choix QCM ni correction unique imposée.
+- EO : production orale avec une seule consigne, sans choix QCM ni correction unique imposée.
+- CE : texte ou alias image réellement lu par le lecteur, URL HTTP(S).
+- CO : script audio ou référence originale complète et non périmée ; la référence originale doit également se résoudre côté base pour une attribution directe.
+- Compétence/format inconnu, objet vide, items absents ou mal typés : refus.
 
-- Validateur SQL interne, sans IA, sans jugement pédagogique ni calcul de quantité/durée.
-- Objet JSON attendu ; titre, consigne, compétence et format reconnus. Rejeter les types invalides proprement plutôt que laisser une conversion provoquer une erreur opaque.
-- Pour les formats interactifs, items non vides et complets selon le contrat réel du lecteur/correcteur : question, options et réponse valide pour QCM ; réponses admises pour vrai/faux ; structures spécifiques pour appariement, texte lacunaire et transformation.
-- Vérifier les supports nécessaires CE/CO selon les champs réellement consommés par la passation. Ne pas accepter un champ dont le lecteur ne sait pas se servir.
-- EE/EO : valider leur propre contrat de consigne, support/critères requis et zone de production ; ne pas imposer artificiellement un QCM. Format inconnu refusé sur ce chemin.
-- Réutiliser les règles pertinentes de `exercise-validator.ts` et du correcteur pour définir les fixtures de parité ; ne pas importer le module de régénération IA dans le navigateur et ne jamais appeler sa fonction de régénération.
+Cette validation ne juge pas la qualité pédagogique et ne vérifie pas par réseau qu'une URL ou un fichier de stockage reste disponible.
 
-### 2. Garde-fou sur les écritures directes
+## Écritures directes, RLS et concurrence
 
-- Vérifier les créations d'exercices destinés aux devoirs (`is_devoir`) et les attributions nouvelles/modifiées dans `devoirs`, avant le miroir d'attribution.
-- Vérifier également une modification du contenu/format/support d'un exercice déjà attribué afin qu'un devoir valide ne devienne pas vide après l'envoi.
-- Valider uniquement les opérations nouvelles ou les changements pédagogiques pertinents : pas de nettoyage rétroactif, pas d'interdiction de changer le statut d'un ancien devoir simplement parce que son contenu historique est incomplet.
-- Préserver les brouillons incomplets non attribués de la banque ; ils ne doivent pas devenir distribuables pour autant.
-- Verrouillage cohérent de l'exercice lors d'une attribution et d'une modification pour éviter « validé puis vidé avant attribution ». Test de concurrence local indispensable.
-- Conserver la voie manuelle pour les exercices complets. Le rejet d'un exercice incomplet doit être compréhensible, quelle que soit la voie d'écriture autorisée.
+Les triggers protègent `exercices`, `devoirs` avant son miroir, et les insertions directes dans `exercise_assignments`. Les brouillons incomplets restent possibles ; un exercice déclaré devoir doit être exécutable. Une simple modification de statut d'un ancien devoir incomplet reste possible, y compris à travers le INSERT ON CONFLICT du miroir existant.
 
-### 3. RPC atomique pour ce dialogue uniquement
+Les colonnes techniques `exercices.p0_homework_executable` et `p0_requires_executable` sur les deux tables d'attribution permettent des clés étrangères composites vers `(id, p0_homework_executable)`. Les attributions exigent true. Une édition qui rend un exercice attribué inexécutable ne peut donc pas faire passer son marqueur à false, même si l'attribution est cachée par RLS à l'auteur de l'exercice. Cela évite un nouveau DEFINER pour rechercher ces attributions.
 
-- Créer les exercices préparés et tous les devoirs dans une seule transaction ; une seule erreur annule l'ensemble, y compris les attributions du miroir.
-- `auth.uid()` obligatoire, rôle formateur et propriété séance/groupe vérifiés côté serveur ; destinataires membres du groupe ; aucun `formateur_id` faisant autorité fourni par le client.
-- Préférer `SECURITY INVOKER`, objets qualifiés et `search_path` fixe. Retirer EXECUTE à PUBLIC/anon et l'accorder strictement aux rôles nécessaires. Justifier toute exception avant implementation.
-- Revalider chaque exercice serveur, la date et la correspondance séance/groupe/destinataires avant les insertions.
-- Un identifiant de requête stable et une trace minimale de succès permettraient une reprise idempotente après réponse réseau perdue. Si cette trace nécessite une petite table dédiée, elle doit être incluse explicitement dans la même proposition de migration, sans réutiliser un historique métier incompatible.
-- Pas de commande qui génère, confirme les faits d'une source ou appelle Gemini. Aucune modification des secrets ou des modes généraux de quantité.
+Les contraintes référentielles, les verrous FOR KEY SHARE et les triggers participent à la même transaction. Les deux ordres modification/attribution sont testés avec deux sessions PostgreSQL réellement concurrentes. Pour un brouillon audio dont le lien de publication vient de devenir valide, une nouvelle attribution peut rafraîchir son marqueur technique sous les droits UPDATE existants du propriétaire. Aucun contenu pédagogique n'est réécrit par ce rafraîchissement.
 
-### 4. Tests SQL locaux et retour arrière
+Installation : ajout de colonnes à défaut constant, contraintes composites NOT VALID pour ne pas requalifier rétroactivement les données, aucun UPDATE/backfill métier. Les anciennes lignes conservent le marqueur de compatibilité, mais toute nouvelle attribution est revalidée. Les snapshots métier avant/après installation sont égaux (hors nouvelles colonnes techniques).
 
-- Refus anonyme, rôle inadéquat, groupe tiers, élève hors groupe, contenu invalide et tentative REST directe.
-- Exercice complet accepté, voie manuelle valide préservée, erreur au milieu du lot : zéro création/attribution conservée, y compris miroir.
-- Édition concurrente du contenu, requête répétée et perte de réponse : aucun devoir invalide ni doublon.
-- Pas de modification des anciennes données lors de l'installation de la migration.
-- Rollback SQL à préparer avec la migration, sans supprimer des devoirs existants. Retirer la protection serveur ferait perdre la garantie : l'interface automatique devrait alors rester désactivée, pas revenir à l'ancien envoi implicite.
+## Reçus et idempotence
 
-## Corrections frontend prévues après décision
+`homework_private.receipts` contient uniquement propriétaire, request_id, empreinte du lot, nombres créés et date. Aucun contenu pédagogique, réponse ou identifiant d'élève. RLS forcée par propriétaire et rôle formateur ; authenticated a SELECT/INSERT seulement, pas UPDATE/DELETE. Les objets ne sont pas exposés dans le schéma API public.
 
-- Supprimer l'effet qui appelle l'envoi à l'ouverture et l'option permettant cette ouverture mutante ; ne pas réécrire les préférences distantes simplement en consultant/fermant.
-- Afficher le contenu réellement préparé et les erreurs d'exécutabilité avant toute confirmation. Les objets `{}` actuellement fabriqués doivent rester non envoyables ; ne pas les remplacer silencieusement par des questions inventées ou une duplication maquillée en différenciation.
-- Confirmation explicite du lot affiché, invalidée si contenu, sélection ou échéance changent ; blocage du double clic, de l'envoi pendant préparation et des réponses tardives d'une ancienne ouverture.
-- Appeler la RPC atomique au lieu des écritures successives ; aucun fallback vers les insertions directes en cas d'absence/erreur de RPC.
-- Préserver le chemin manuel existant et les réglages de quantité. Carnet et assistant hors périmètre.
+Un verrou advisory de transaction sérialise les demandes de même propriétaire/request_id. Le même payload retourne le reçu sans nouvelle création ; un autre payload avec le même identifiant produit `homework_request_conflict`. Deux appels simultanés identiques ne créent qu'un lot.
 
-## Décision attendue
+Le dialogue conserve request_id après erreur réseau et après fermeture/réouverture du même composant. Une reprise du même lot utilise le même identifiant. Ce stockage est en mémoire : un rechargement complet de la page ou un démontage du composant perd cette clé. La déduplication serveur reste garantie pour tout appel présentant le même request_id ; aucune garantie de reprise automatique après rechargement n'est revendiquée.
 
-Autoriser, ou non, la **création d'une unique migration locale avec son rollback et ses tests locaux**, pour ce garde-fou et cette transaction. L'autorisation distante resterait absente : aucun push, PR, déploiement, migration distante, mutation Supabase ou appel Gemini.
+Rétention : reçus conservés sans purge automatique afin de maintenir la déduplication. Le rollback refuse explicitement de détruire une table de reçus non vide. Une future politique d'archivage/purge et son effet sur les replays nécessiteraient une décision distincte.
 
-Tous les fichiers non suivis préexistants sont préservés. Aucun secret ou MP3 n'est inclus dans les deux commits. Aucun correctif fonctionnel n'est présenté comme terminé avant cette décision et le passage au vert des tests.
+## Tests et résultats
+
+Avant correction (`5b15e74d`) : **8 tests, 7 rouges, 1 vert**. Les rouges reproduisaient l'ouverture mutante, trois contenus invalides, l'absence de vrais contenus, l'envoi avant confirmation et la création partielle. Le test manuel était déjà vert.
+
+Après correction : **50 tests applicatifs verts** dans deux fichiers : 15 tests du dialogue/chemin manuel et 35 tests du contrat (34 fixtures communes SQL/TypeScript et refus de copie audio original). Les tests additionnels couvrent double clic, confirmation invalidée par sélection/contenu/échéance, image visible, préparation et envoi tardifs, chevauchement, reprise du même request_id et absence d'insertion de secours.
+
+Commande ciblée : `node node_modules/vitest/vitest.mjs run src/test/auto-homework-p0-contract.test.tsx src/test/homework-executable.test.ts`.
+
+Tests SQL : `python supabase/tests/test_homework_p0_local.py` — **tous réussis** sur PostgreSQL 17 dans un nouveau conteneur Docker jetable, `--network none`, aucun port publié, base sur tmpfs, conteneur supprimé après test. Aucun fichier .env, jeton Supabase ou URL de base distante n'est lu. Rôles authentifiés, RLS et contraintes sont réellement exécutés ; les accès applicatifs utilisent SET LOCAL ROLE, pas le superutilisateur. Le superutilisateur ne sert qu'à construire/inspecter les fixtures isolées et au rollback de recette.
+
+Contrôles réussis : anonyme/sans identité/élève/admin/tiers refusés, membre hors groupe, séance incorrecte, date passée, injection d'identité, 34 fixtures de format/support, écritures directes invalides, brouillons, attributions miroir directes, protection malgré RLS cachant une attribution, audio original publié manuel, édition cassant sa référence, panne FK au deuxième exercice annulant aussi le premier exercice/devoir/miroir/reçu, replay, conflit de payload, reçus privés, concurrence même requête et modification/attribution dans les deux ordres.
+
+Le schéma local est un **fixture ciblé** des tables, politiques et contraintes nécessaires ; le vrai SQL du miroir existant est chargé. Ce n'est pas un replay exhaustif de toutes les migrations Supabase, ni une preuve de compatibilité avec un état distant non inspecté. Preuve locale ignorée par Git : `.local-security-evidence/captcf-p0-local-ebdd8c768fd6/result.txt`.
+
+Build : `node node_modules/vite/bin/vite.js build` — **réussi**. Avertissements sur Browserslist ancien, imports dynamiques également statiques et taille du bundle ; aucune correction hors périmètre. `git diff --check` et vérification de l'index : réussis. Pas de campagne exhaustive, déploiement ou recette avec des données réelles.
+
+## Retour arrière
+
+Désactiver le chemin automatique avant tout rollback ; il doit rester désactivé ensuite. Le script retire seulement les objets P0, sans DROP CASCADE ni suppression d'exercices, devoirs ou attributions.
+
+Test réel : refus si les reçus sont non vides, avec snapshot métier inchangé. Ensuite, exclusivement dans le conteneur jetable, archivage des reçus fictifs puis vidage de cette table de recette pour tester le retrait des objets ; snapshot métier encore inchangé. Cette opération de fixture n'autorise aucune suppression de reçus réels.
+
+## Fichiers et commits
+
+Commit code `736d8703`, neuf fichiers :
+
+- `src/components/AutoHomeworkPreviewDialog.tsx`
+- `src/lib/homeworkExecutable.ts`
+- `src/test/auto-homework-p0-contract.test.tsx`
+- `src/test/homework-executable.test.ts`
+- `supabase/migrations/20261001074826_safe_automatic_homework.sql`
+- `supabase/secours/20261001074826_safe_automatic_homework_rollback.sql`
+- `supabase/tests/homework_executable_cases.json`
+- `supabase/tests/homework_p0_schema.sql`
+- `supabase/tests/test_homework_p0_local.py`
+
+Commit documentaire suivant : ce fichier uniquement. Les commits locaux sont créés sans hooks externes, après les vérifications ciblées ci-dessus. Aucune autorisation distante n'est déduite de cette livraison locale.
