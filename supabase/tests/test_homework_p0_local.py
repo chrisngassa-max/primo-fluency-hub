@@ -98,7 +98,7 @@ def main():
            '--mount', 'type=tmpfs,destination=/var/lib/postgresql/data', '-e', 'POSTGRES_HOST_AUTH_METHOD=trust', '-e', 'POSTGRES_DB='+DB, 'postgres:17-bookworm')
     try:
         for _ in range(40):
-            if docker('exec', NAME, 'pg_isready', '-U', 'postgres', check=False).returncode == 0:
+            if docker('exec', NAME, 'pg_isready', '-h', '127.0.0.1', '-U', 'postgres', check=False).returncode == 0:
                 break
             time.sleep(.25)
         file_sql(ROOT / 'supabase/tests/homework_p0_schema.sql')
@@ -117,6 +117,8 @@ def main():
         sql(f"INSERT INTO public.exercise_assignments(exercise_id,group_id,assigned_by,context) VALUES('{LEGACY}','{GROUP}','{OWNER}','devoir')")
         legacy_mirror=sql("SELECT md5(pg_get_functiondef('public.mirror_devoir_to_assignment()'::regprocedure))")
         before = snapshot()
+        policies_query="SELECT md5(string_agg(row_to_json(p)::text,'|' ORDER BY tablename,policyname)) FROM pg_policies p WHERE schemaname='public'"
+        historical_policies=sql(policies_query)
         file_sql(ROOT / 'supabase/tests/homework_p0_existing_guards.sql')
         guards_query="SELECT md5(string_agg(pg_get_triggerdef(t.oid)||pg_get_functiondef(t.tgfoid),'|' ORDER BY t.tgname)) FROM pg_trigger t WHERE t.tgrelid='public.exercices'::regclass AND NOT t.tgisinternal AND t.tgname NOT LIKE 'p0_%'"
         original_guards=sql(guards_query)
@@ -126,6 +128,7 @@ def main():
             sql(insert_ex(bad_metadata),OWNER,error='out of range')
         file_sql(MIGRATION)
         assert snapshot() == before
+        assert sql(policies_query)==historical_policies
         # P0.2 regression: valid independent assignments must work on the REAL schema.
         sql(f"INSERT INTO public.exercise_assignments(exercise_id,learner_id,assigned_by,context) VALUES('{VALID}','{LEARNER}','{OWNER}','autonomie')",OWNER)
         print('PASS real schema: independent assignment accepted without source_devoir_id or mirror trigger',flush=True)
@@ -229,8 +232,10 @@ def main():
                     if sql("SELECT EXISTS(SELECT 1 FROM pg_locks WHERE locktype='advisory' AND objid=819273 AND granted)")=='t': break
                     time.sleep(.025)
                 else: raise AssertionError('concurrency barrier not reached')
-                sql(second,OWNER,error='homework_inexecutable' if edit_first else ('p0_assignment_executable_fk' if independent_path else 'p0_homework_executable_fk'))
+                sql(second,OWNER,error='homework_exercise_busy')
                 future.result()
+            # One explicit post-commit check, not an application retry loop.
+            sql(second,OWNER,error='homework_inexecutable' if edit_first else ('p0_assignment_executable_fk' if independent_path else 'p0_homework_executable_fk'))
         print('PASS both concurrency orders on devoirs AND independent group assignments: no invalid distribution',flush=True)
         # Refusal is itself tested first; nothing may be destroyed to force rollback in production.
         before=snapshot(); file_sql(ROLLBACK,error='p0_rollback_refused_nonempty_receipts'); assert snapshot()==before
@@ -245,6 +250,7 @@ def main():
         assert sql("SELECT to_regprocedure('public.mirror_devoir_to_assignment()') IS NOT NULL")=='t'
         assert sql("SELECT md5(pg_get_functiondef('public.mirror_devoir_to_assignment()'::regprocedure))")==legacy_mirror
         assert sql(guards_query)==original_guards
+        assert sql(policies_query)==historical_policies
         print('PASS rollback refusal when nonempty, then isolated-fixture rollback: business data unchanged',flush=True)
         (LOG/'result.txt').write_text('PASS all P0 PostgreSQL tests; container network none; no remote connection\n',encoding='utf-8')
     finally:
